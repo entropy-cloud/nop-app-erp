@@ -58,6 +58,15 @@
             <option code="CLOSING" label="结账中" value="1"/>
             <option code="CLOSED" label="已结账" value="2"/>
         </dict>
+        <dict label="账户类型" name="erp-fin/fund-account-type" valueType="int">
+            <option code="BANK" label="银行" value="0"/>
+            <option code="CASH" label="现金" value="1"/>
+            <option code="OTHER" label="其他" value="2"/>
+        </dict>
+        <dict label="账户状态" name="erp-fin/fund-account-status" valueType="int">
+            <option code="ACTIVE" label="启用" value="0"/>
+            <option code="INACTIVE" label="停用" value="1"/>
+        </dict>
     </dicts>
 
     <domains>
@@ -215,7 +224,7 @@
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
             <relations>
-                <to-one name="statusRecord" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriodStatus" myFieldName="id" refFieldName="periodId"/>
+                <to-many name="statusRecords" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriodStatus" myFieldName="id" refFieldName="periodId"/>
             </relations>
         </entity>
 
@@ -235,6 +244,31 @@
             </columns>
             <relations>
                 <to-one name="period" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriod" joinColumnName="periodId"/>
+            </relations>
+        </entity>
+
+        <!-- 账户 -->
+        <entity className="app.erp.fin.dao.entity.ErpFinFundAccount"
+                displayName="账户" name="app.erp.fin.dao.entity.ErpFinFundAccount"
+                tableName="erp_fin_fund_account" tag="erp.finance">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="code" displayName="账户编码" domainName="voucherCode" mandatory="true"/>
+                <column name="name" displayName="账户名称" stdSqlType="VARCHAR" precision="200" mandatory="true"/>
+                <column name="accountType" displayName="账户类型" dictName="erp-fin/fund-account-type" mandatory="true"/>
+                <column name="bankName" displayName="开户银行" stdSqlType="VARCHAR" precision="200"/>
+                <column name="bankAccount" displayName="银行账号" stdSqlType="VARCHAR" precision="50"/>
+                <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="openingBalance" displayName="期初余额" domainName="amount" defaultValue="0"/>
+                <column name="currentBalance" displayName="当前余额" domainName="amount" defaultValue="0"/>
+                <column name="status" displayName="状态" dictName="erp-fin/fund-account-status" mandatory="true"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" joinColumnName="currencyId"/>
             </relations>
         </entity>
     </entities>

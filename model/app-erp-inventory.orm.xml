@@ -170,6 +170,7 @@
                 <column name="avgCost" displayName="平均成本" domainName="unitPrice"/>
                 <column name="totalCost" displayName="总成本" domainName="amount"/>
                 <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
             <relations>
@@ -278,6 +279,61 @@
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" joinColumnName="materialId"/>
                 <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" joinColumnName="skuId"/>
                 <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" joinColumnName="uoMId"/>
+            </relations>
+        </entity>
+
+        <!-- 批次台账 -->
+        <entity className="app.erp.inv.dao.entity.ErpInvBatch"
+                displayName="批次台账" name="app.erp.inv.dao.entity.ErpInvBatch"
+                tableName="erp_inv_batch" tag="erp.inventory">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" mandatory="true"/>
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="skuId" displayName="SKU" stdSqlType="BIGINT"/>
+                <column name="warehouseId" displayName="仓库" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="totalQuantity" displayName="总数量" domainName="quantity" mandatory="true"/>
+                <column name="availableQuantity" displayName="可用数量" domainName="quantity" mandatory="true"/>
+                <column name="productionDate" displayName="生产日期" stdSqlType="DATE"/>
+                <column name="expiryDate" displayName="有效期至" stdSqlType="DATE"/>
+                <column name="shelfLifeDays" displayName="保质期(天)" stdSqlType="INT"/>
+                <column name="status" displayName="状态" stdSqlType="VARCHAR" precision="20" mandatory="true"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </relations>
+            <relations>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" joinColumnName="materialId"/>
+                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" joinColumnName="skuId"/>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" joinColumnName="warehouseId"/>
+            </relations>
+        </entity>
+
+        <!-- 序列号台账 -->
+        <entity className="app.erp.inv.dao.entity.ErpInvSerialNumber"
+                displayName="序列号台账" name="app.erp.inv.dao.entity.ErpInvSerialNumber"
+                tableName="erp_inv_serial_number" tag="erp.inventory">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="serialNo" displayName="序列号" stdSqlType="VARCHAR" precision="50" mandatory="true"/>
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="skuId" displayName="SKU" stdSqlType="BIGINT"/>
+                <column name="warehouseId" displayName="当前仓库" stdSqlType="BIGINT"/>
+                <column name="locationId" displayName="当前库位" stdSqlType="BIGINT"/>
+                <column name="status" displayName="状态" stdSqlType="VARCHAR" precision="20" mandatory="true"/>
+                <column name="inBillType" displayName="入库单类型" stdSqlType="VARCHAR" precision="50"/>
+                <column name="inBillCode" displayName="入库单号" stdSqlType="VARCHAR" precision="50"/>
+                <column name="outBillType" displayName="出库单类型" stdSqlType="VARCHAR" precision="50"/>
+                <column name="outBillCode" displayName="出库单号" stdSqlType="VARCHAR" precision="50"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </relations>
+            <relations>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" joinColumnName="materialId"/>
+                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" joinColumnName="skuId"/>
             </relations>
         </entity>
     </entities>

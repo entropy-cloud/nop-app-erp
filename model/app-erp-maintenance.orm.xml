@@ -257,5 +257,22 @@
                 <to-one name="equipment" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipment" joinColumnName="equipmentId"/>
             </relations>
         </entity>
+
+        <!-- 维护团队 -->
+        <entity className="app.erp.mnt.dao.entity.ErpMntMaintenanceTeam"
+                displayName="维护团队" name="app.erp.mnt.dao.entity.ErpMntMaintenanceTeam"
+                tableName="erp_mnt_maintenance_team" tag="erp.maintenance">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="code" displayName="团队编码" domainName="equipmentCode" mandatory="true"/>
+                <column name="name" displayName="团队名称" stdSqlType="VARCHAR" precision="200" mandatory="true"/>
+                <column name="leaderId" displayName="负责人" stdSqlType="BIGINT"/>
+                <column name="description" displayName="描述" stdSqlType="VARCHAR" precision="2000"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+        </entity>
     </entities>
 </orm>

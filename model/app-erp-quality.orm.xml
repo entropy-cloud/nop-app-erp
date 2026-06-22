@@ -82,6 +82,17 @@
             <option code="MITIGATED" label="已缓解" value="1"/>
             <option code="CLOSED" label="已关闭" value="2"/>
         </dict>
+        <dict label="质量目标状态" name="erp-qa/goal-status" valueType="int">
+            <option code="ACTIVE" label="进行中" value="0"/>
+            <option code="ACHIEVED" label="已达成" value="1"/>
+            <option code="FAILED" label="未达成" value="2"/>
+            <option code="CANCELLED" label="已取消" value="3"/>
+        </dict>
+        <dict label="评审类型" name="erp-qa/review-type" valueType="int">
+            <option code="INTERNAL" label="内部评审" value="0"/>
+            <option code="EXTERNAL" label="外部评审" value="1"/>
+            <option code="SUPPLIER" label="供应商评审" value="2"/>
+        </dict>
     </dicts>
 
     <domains>
@@ -272,6 +283,54 @@
                 <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+        </entity>
+
+        <!-- 质量目标 -->
+        <entity className="app.erp.qa.dao.entity.ErpQaQualityGoal"
+                displayName="质量目标" name="app.erp.qa.dao.entity.ErpQaQualityGoal"
+                tableName="erp_qa_quality_goal" tag="erp.quality">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="code" displayName="编码" domainName="orderCode" mandatory="true"/>
+                <column name="name" displayName="名称" stdSqlType="VARCHAR" precision="200" mandatory="true"/>
+                <column name="description" displayName="描述" stdSqlType="VARCHAR" precision="2000"/>
+                <column name="targetValue" displayName="目标值" stdSqlType="VARCHAR" precision="100"/>
+                <column name="currentValue" displayName="当前值" stdSqlType="VARCHAR" precision="100"/>
+                <column name="unit" displayName="单位" stdSqlType="VARCHAR" precision="50"/>
+                <column name="responsiblePersonId" displayName="责任人" stdSqlType="BIGINT"/>
+                <column name="startDate" displayName="开始日期" stdSqlType="DATE"/>
+                <column name="endDate" displayName="结束日期" stdSqlType="DATE"/>
+                <column name="status" displayName="状态" dictName="erp-qa/goal-status" mandatory="true"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+        </entity>
+
+        <!-- 质量评审 -->
+        <entity className="app.erp.qa.dao.entity.ErpQaReview"
+                displayName="质量评审" name="app.erp.qa.dao.entity.ErpQaReview"
+                tableName="erp_qa_review" tag="erp.quality">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="code" displayName="编号" domainName="orderCode" mandatory="true"/>
+                <column name="reviewDate" displayName="评审日期" stdSqlType="DATE" mandatory="true"/>
+                <column name="reviewType" displayName="评审类型" dictName="erp-qa/review-type" mandatory="true"/>
+                <column name="relatedBillType" displayName="关联单据类型" stdSqlType="VARCHAR" precision="50"/>
+                <column name="relatedBillCode" displayName="关联单据号" stdSqlType="VARCHAR" precision="50"/>
+                <column name="participants" displayName="参与人员" stdSqlType="VARCHAR" precision="500"/>
+                <column name="conclusion" displayName="评审结论" stdSqlType="VARCHAR" precision="2000"/>
+                <column name="actionRequired" displayName="是否需要措施" stdSqlType="INT" defaultValue="0"/>
+                <column name="docStatus" displayName="单据状态" dictName="erp-qa/doc-status" mandatory="true"/>
+                <column name="approveStatus" displayName="审核状态" dictName="erp-qa/approve-status" mandatory="true"/>
+                <column name="createdBy" displayName="创建人" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
             </columns>
         </entity>
     </entities>

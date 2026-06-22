@@ -63,6 +63,10 @@
             <option code="APPROVED" label="已审核" value="2"/>
             <option code="REJECTED" label="已驳回" value="3"/>
         </dict>
+        <dict label="资本化来源类型" name="erp-ast/capitalization-source-type" valueType="int">
+            <option code="INVENTORY" label="库存" value="0"/>
+            <option code="CIP" label="在建工程" value="1"/>
+        </dict>
     </dicts>
 
     <domains>
@@ -231,6 +235,36 @@
             </columns>
             <relations>
                 <to-one name="asset" refEntityName="app.erp.ast.dao.entity.ErpAstAsset" joinColumnName="assetId"/>
+            </relations>
+        </entity>
+
+        <!-- 资产资本化 -->
+        <entity className="app.erp.ast.dao.entity.ErpAstAssetCapitalization"
+                displayName="资产资本化" name="app.erp.ast.dao.entity.ErpAstAssetCapitalization"
+                tableName="erp_ast_asset_capitalization" tag="erp.assets">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="code" displayName="单号" domainName="assetCode" mandatory="true"/>
+                <column name="assetCode" displayName="资产编码" domainName="assetCode"/>
+                <column name="assetName" displayName="资产名称" stdSqlType="VARCHAR" precision="200"/>
+                <column name="categoryId" displayName="资产类别" stdSqlType="BIGINT"/>
+                <column name="capitalizationDate" displayName="资本化日期" stdSqlType="DATE" mandatory="true"/>
+                <column name="originalValue" displayName="原值" domainName="amount" mandatory="true"/>
+                <column name="sourceType" displayName="来源类型" dictName="erp-ast/capitalization-source-type" mandatory="true"/>
+                <column name="sourceCode" displayName="来源单号" stdSqlType="VARCHAR" precision="50"/>
+                <column name="docStatus" displayName="单据状态" dictName="erp-ast/doc-status" mandatory="true"/>
+                <column name="approveStatus" displayName="审核状态" dictName="erp-ast/approve-status" mandatory="true"/>
+                <column name="approvedBy" displayName="审核人" stdSqlType="BIGINT"/>
+                <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME"/>
+                <column name="createdBy" displayName="创建人" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
+            </columns>
+            <relations>
+                <to-one name="category" refEntityName="app.erp.ast.dao.entity.ErpAstAssetCategory" joinColumnName="categoryId"/>
             </relations>
         </entity>
     </entities>
