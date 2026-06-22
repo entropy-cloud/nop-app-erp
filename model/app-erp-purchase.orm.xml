@@ -5,20 +5,20 @@
   业务范围：采购订单（头/行）、采购入库单（头/行）、采购发票（头/行）、
             采购退货单（头/行）、付款单（头/行）、付款核销明细
 
-  当前状态：骨架（bootstrap skeleton），实体待设计阶段填充。
+  三轴状态分离：
+    - docStatus: 草稿/已生效/已作废（单据生命周期）
+    - approveStatus: 未提交/已提交/已审核/已驳回（审核流程）
+    - paidStatus: 未付/部分/已付清（收付款进度）
 
-  命名约定（见 docs/architecture/domain-module-split-analysis.md）：
+  参考来源：管伊佳（DepotHead type+subType）、ERPNext（purchase_order）、
+            赤龙（ApInvoiceHead dual-axis status）、若依（三单链）
+
+  命名约定：
     - appName:        app-erp-pur
     - entityPackage:  app.erp.pur.dao.entity
-    - 实体类名:        ErpPur<Entity>     （如 ErpPurOrder、ErpPurReceive、ErpPurInvoice、ErpPurPayment）
-    - 表名:           erp_pur_<entity>   （如 erp_pur_order、erp_pur_receive、erp_pur_invoice）
+    - 实体类名:        ErpPur<Entity>
+    - 表名:           erp_pur_<entity>
     - 字典命名空间:    erp-pur/<dict-name>
-
-  跨工程依赖：
-    - 依赖 app-erp-master-data（物料/供应商/仓库/币种/科目）
-    - 依赖 app-erp-inventory（入库写库存，通过 I*Biz 调用）
-    - 被 app-erp-finance 引用（采购发票/付款触发应付凭证）
-    - 跨工程实体不做 ORM refEntityName 强引用，走 I*Biz
 -->
 <orm ext:registerShortName="true" ext:appName="app-erp-pur" ext:entityPackageName="app.erp.pur.dao.entity"
      ext:basePackageName="app.erp.pur" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-purchase"
@@ -26,39 +26,303 @@
      ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <dicts>
-        <!--
-          字典定义（待设计阶段填充），例如：
-          <dict label="采购单据状态" name="erp-pur/doc-status" valueType="int">
-              <option code="DRAFT" label="草稿" value="0"/>
-              <option code="SUBMITTED" label="已提交" value="1"/>
-              <option code="APPROVED" label="已审核" value="2"/>
-              <option code="REJECTED" label="已驳回" value="3"/>
-              <option code="CANCELLED" label="已取消" value="4"/>
-          </dict>
-          <dict label="付款进度" name="erp-pur/paid-status" valueType="int">
-              <option code="UNPAID" label="未付款" value="0"/>
-              <option code="PARTIAL" label="部分付款" value="1"/>
-              <option code="PAID" label="已付清" value="2"/>
-          </dict>
-        -->
+        <dict label="单据状态" name="erp-pur/doc-status" valueType="int">
+            <option code="DRAFT" label="草稿" value="0"/>
+            <option code="ACTIVE" label="已生效" value="1"/>
+            <option code="CANCELLED" label="已作废" value="2"/>
+        </dict>
+        <dict label="审核状态" name="erp-pur/approve-status" valueType="int">
+            <option code="UNSUBMITTED" label="未提交" value="0"/>
+            <option code="SUBMITTED" label="已提交" value="1"/>
+            <option code="APPROVED" label="已审核" value="2"/>
+            <option code="REJECTED" label="已驳回" value="3"/>
+        </dict>
+        <dict label="付款进度" name="erp-pur/paid-status" valueType="int">
+            <option code="UNPAID" label="未付款" value="0"/>
+            <option code="PARTIAL" label="部分付款" value="1"/>
+            <option code="PAID" label="已付清" value="2"/>
+        </dict>
+        <dict label="收货状态" name="erp-pur/receive-status" valueType="int">
+            <option code="UNRECEIVED" label="未收货" value="0"/>
+            <option code="PARTIAL" label="部分收货" value="1"/>
+            <option code="RECEIVED" label="已收清" value="2"/>
+        </dict>
+        <dict label="采购单据类型" name="erp-pur/biz-type" valueType="int">
+            <option code="ORDER" label="采购订单" value="0"/>
+            <option code="RECEIVE" label="采购入库" value="1"/>
+            <option code="INVOICE" label="采购发票" value="2"/>
+            <option code="PAYMENT" label="付款单" value="3"/>
+            <option code="RETURN" label="采购退货" value="4"/>
+        </dict>
+        <dict label="单据方向" name="erp-pur/doc-direction" valueType="int">
+            <option code="INBOUND" label="入库" value="0"/>
+            <option code="OUTBOUND" label="出库" value="1"/>
+        </dict>
     </dicts>
 
     <domains>
-        <!--
-          公共领域类型（待设计阶段填充），例如：
-          <domain name="amount" stdSqlType="DECIMAL" precision="20" scale="4"/>
-          <domain name="orderCode" precision="50" stdSqlType="VARCHAR"/>
-          <domain name="taxRate" stdSqlType="DECIMAL" precision="10" scale="4"/>
-        -->
+        <domain name="orderCode" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="amount" stdSqlType="DECIMAL" precision="20" scale="4"/>
+        <domain name="taxRate" stdSqlType="DECIMAL" precision="10" scale="4"/>
+        <domain name="quantity" stdSqlType="DECIMAL" precision="20" scale="4"/>
+        <domain name="unitPrice" stdSqlType="DECIMAL" precision="20" scale="4"/>
+        <domain name="taxAmount" stdSqlType="DECIMAL" precision="20" scale="4"/>
+        <domain name="discountRate" stdSqlType="DECIMAL" precision="10" scale="4"/>
+        <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
     </domains>
 
     <entities>
-        <!--
-          实体定义（待设计阶段填充），例如：
-          <entity className="app.erp.pur.dao.entity.ErpPurOrder"
-                  displayName="采购订单" tableName="erp_pur_order">
-              ...
-          </entity>
-        -->
+        <!-- 采购订单头 -->
+        <entity className="app.erp.pur.dao.entity.ErpPurOrder"
+                displayName="采购订单" name="app.erp.pur.dao.entity.ErpPurOrder"
+                tableName="erp_pur_order" tag="erp.purchase">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="code" displayName="单号" domainName="orderCode" mandatory="true"/>
+                <column name="supplierId" displayName="供应商" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="warehouseId" displayName="收货仓库" stdSqlType="BIGINT"/>
+                <column name="orderDate" displayName="订单日期" stdSqlType="DATE" mandatory="true"/>
+                <column name="deliveryDate" displayName="交货日期" stdSqlType="DATE"/>
+                <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="exchangeRate" displayName="汇率" stdSqlType="DECIMAL" precision="20" scale="8" defaultValue="1"/>
+                <column name="totalAmount" displayName="合计金额(不含税)" domainName="amount" defaultValue="0"/>
+                <column name="totalTaxAmount" displayName="合计税额" domainName="taxAmount" defaultValue="0"/>
+                <column name="totalAmountWithTax" displayName="合计金额(含税)" domainName="amount" defaultValue="0"/>
+                <column name="discountRate" displayName="整单折扣率(%)" domainName="discountRate"/>
+                <column name="discountAmount" displayName="折扣金额" domainName="amount" defaultValue="0"/>
+                <column name="paidAmount" displayName="已付金额" domainName="amount" defaultValue="0"/>
+                <column name="docStatus" displayName="单据状态" dictName="erp-pur/doc-status" mandatory="true"/>
+                <column name="approveStatus" displayName="审核状态" dictName="erp-pur/approve-status" mandatory="true"/>
+                <column name="paidStatus" displayName="付款进度" dictName="erp-pur/paid-status"/>
+                <column name="receiveStatus" displayName="收货状态" dictName="erp-pur/receive-status"/>
+                <column name="approvedBy" displayName="审核人" stdSqlType="BIGINT"/>
+                <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME"/>
+                <column name="createdBy" displayName="创建人" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
+            </columns>
+            <relations>
+                <to-one name="supplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" joinColumnName="supplierId"/>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" joinColumnName="warehouseId"/>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" joinColumnName="currencyId"/>
+                <to-many name="lines" refEntityName="app.erp.pur.dao.entity.ErpPurOrderLine" myFieldName="id" refFieldName="orderId"/>
+            </relations>
+        </entity>
+
+        <!-- 采购订单行 -->
+        <entity className="app.erp.pur.dao.entity.ErpPurOrderLine"
+                displayName="采购订单行" name="app.erp.pur.dao.entity.ErpPurOrderLine"
+                tableName="erp_pur_order_line" tag="erp.purchase">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="orderId" displayName="订单ID" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="lineNo" displayName="行号" stdSqlType="INT" mandatory="true"/>
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="skuId" displayName="SKU" stdSqlType="BIGINT"/>
+                <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="quantity" displayName="数量" domainName="quantity" mandatory="true"/>
+                <column name="unitPrice" displayName="单价(不含税)" domainName="unitPrice" mandatory="true"/>
+                <column name="taxRate" displayName="税率(%)" domainName="taxRate"/>
+                <column name="taxAmount" displayName="税额" domainName="taxAmount" defaultValue="0"/>
+                <column name="amount" displayName="金额(不含税)" domainName="amount" mandatory="true"/>
+                <column name="amountWithTax" displayName="金额(含税)" domainName="amount"/>
+                <column name="receivedQuantity" displayName="已收货数量" domainName="quantity" defaultValue="0"/>
+                <column name="invoicedQuantity" displayName="已开票数量" domainName="quantity" defaultValue="0"/>
+                <column name="warehouseId" displayName="收货仓库" stdSqlType="BIGINT"/>
+                <column name="projectId" displayName="项目" stdSqlType="BIGINT"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-one name="order" refEntityName="app.erp.pur.dao.entity.ErpPurOrder" joinColumnName="orderId"/>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" joinColumnName="materialId"/>
+                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" joinColumnName="skuId"/>
+                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" joinColumnName="uoMId"/>
+            </relations>
+        </entity>
+
+        <!-- 采购入库单头 -->
+        <entity className="app.erp.pur.dao.entity.ErpPurReceive"
+                displayName="采购入库单" name="app.erp.pur.dao.entity.ErpPurReceive"
+                tableName="erp_pur_receive" tag="erp.purchase">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="code" displayName="单号" domainName="orderCode" mandatory="true"/>
+                <column name="orderId" displayName="采购订单" stdSqlType="BIGINT"/>
+                <column name="supplierId" displayName="供应商" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="warehouseId" displayName="入库仓库" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="receiveDate" displayName="入库日期" stdSqlType="DATE" mandatory="true"/>
+                <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="exchangeRate" displayName="汇率" stdSqlType="DECIMAL" precision="20" scale="8" defaultValue="1"/>
+                <column name="totalAmount" displayName="合计金额(不含税)" domainName="amount" defaultValue="0"/>
+                <column name="totalTaxAmount" displayName="合计税额" domainName="taxAmount" defaultValue="0"/>
+                <column name="totalAmountWithTax" displayName="合计金额(含税)" domainName="amount" defaultValue="0"/>
+                <column name="docStatus" displayName="单据状态" dictName="erp-pur/doc-status" mandatory="true"/>
+                <column name="approveStatus" displayName="审核状态" dictName="erp-pur/approve-status" mandatory="true"/>
+                <column name="approvedBy" displayName="审核人" stdSqlType="BIGINT"/>
+                <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME"/>
+                <column name="createdBy" displayName="创建人" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
+            </columns>
+            <relations>
+                <to-one name="order" refEntityName="app.erp.pur.dao.entity.ErpPurOrder" joinColumnName="orderId"/>
+                <to-one name="supplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" joinColumnName="supplierId"/>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" joinColumnName="warehouseId"/>
+                <to-many name="lines" refEntityName="app.erp.pur.dao.entity.ErpPurReceiveLine" myFieldName="id" refFieldName="receiveId"/>
+            </relations>
+        </entity>
+
+        <!-- 采购入库单行 -->
+        <entity className="app.erp.pur.dao.entity.ErpPurReceiveLine"
+                displayName="采购入库单行" name="app.erp.pur.dao.entity.ErpPurReceiveLine"
+                tableName="erp_pur_receive_line" tag="erp.purchase">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="receiveId" displayName="入库单ID" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="orderLineId" displayName="订单行ID" stdSqlType="BIGINT"/>
+                <column name="lineNo" displayName="行号" stdSqlType="INT" mandatory="true"/>
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="skuId" displayName="SKU" stdSqlType="BIGINT"/>
+                <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="quantity" displayName="实收数量" domainName="quantity" mandatory="true"/>
+                <column name="unitPrice" displayName="单价(不含税)" domainName="unitPrice"/>
+                <column name="taxRate" displayName="税率(%)" domainName="taxRate"/>
+                <column name="taxAmount" displayName="税额" domainName="taxAmount"/>
+                <column name="amount" displayName="金额(不含税)" domainName="amount"/>
+                <column name="warehouseId" displayName="入库库位" stdSqlType="BIGINT"/>
+                <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-one name="receive" refEntityName="app.erp.pur.dao.entity.ErpPurReceive" joinColumnName="receiveId"/>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" joinColumnName="materialId"/>
+                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" joinColumnName="skuId"/>
+                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" joinColumnName="uoMId"/>
+            </relations>
+        </entity>
+
+        <!-- 采购发票头 -->
+        <entity className="app.erp.pur.dao.entity.ErpPurInvoice"
+                displayName="采购发票" name="app.erp.pur.dao.entity.ErpPurInvoice"
+                tableName="erp_pur_invoice" tag="erp.purchase">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="code" displayName="单号" domainName="orderCode" mandatory="true"/>
+                <column name="supplierId" displayName="供应商" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="invoiceNo" displayName="发票号码" stdSqlType="VARCHAR" precision="50"/>
+                <column name="invoiceDate" displayName="发票日期" stdSqlType="DATE" mandatory="true"/>
+                <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="exchangeRate" displayName="汇率" stdSqlType="DECIMAL" precision="20" scale="8" defaultValue="1"/>
+                <column name="totalAmount" displayName="合计金额(不含税)" domainName="amount" defaultValue="0"/>
+                <column name="totalTaxAmount" displayName="合计税额" domainName="taxAmount" defaultValue="0"/>
+                <column name="totalAmountWithTax" displayName="合计金额(含税)" domainName="amount" defaultValue="0"/>
+                <column name="paidAmount" displayName="已付金额" domainName="amount" defaultValue="0"/>
+                <column name="docStatus" displayName="单据状态" dictName="erp-pur/doc-status" mandatory="true"/>
+                <column name="approveStatus" displayName="审核状态" dictName="erp-pur/approve-status" mandatory="true"/>
+                <column name="paidStatus" displayName="付款进度" dictName="erp-pur/paid-status"/>
+                <column name="approvedBy" displayName="审核人" stdSqlType="BIGINT"/>
+                <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME"/>
+                <column name="createdBy" displayName="创建人" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
+            </columns>
+            <relations>
+                <to-one name="supplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" joinColumnName="supplierId"/>
+                <to-many name="lines" refEntityName="app.erp.pur.dao.entity.ErpPurInvoiceLine" myFieldName="id" refFieldName="invoiceId"/>
+            </relations>
+        </entity>
+
+        <!-- 采购发票行 -->
+        <entity className="app.erp.pur.dao.entity.ErpPurInvoiceLine"
+                displayName="采购发票行" name="app.erp.pur.dao.entity.ErpPurInvoiceLine"
+                tableName="erp_pur_invoice_line" tag="erp.purchase">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="invoiceId" displayName="发票ID" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="receiveLineId" displayName="入库行ID" stdSqlType="BIGINT"/>
+                <column name="lineNo" displayName="行号" stdSqlType="INT" mandatory="true"/>
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="quantity" displayName="数量" domainName="quantity" mandatory="true"/>
+                <column name="unitPrice" displayName="单价(不含税)" domainName="unitPrice"/>
+                <column name="taxRate" displayName="税率(%)" domainName="taxRate"/>
+                <column name="taxAmount" displayName="税额" domainName="taxAmount"/>
+                <column name="amount" displayName="金额(不含税)" domainName="amount"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-one name="invoice" refEntityName="app.erp.pur.dao.entity.ErpPurInvoice" joinColumnName="invoiceId"/>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" joinColumnName="materialId"/>
+            </relations>
+        </entity>
+
+        <!-- 付款单头 -->
+        <entity className="app.erp.pur.dao.entity.ErpPurPayment"
+                displayName="付款单" name="app.erp.pur.dao.entity.ErpPurPayment"
+                tableName="erp_pur_payment" tag="erp.purchase">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="code" displayName="单号" domainName="orderCode" mandatory="true"/>
+                <column name="supplierId" displayName="供应商" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="paymentDate" displayName="付款日期" stdSqlType="DATE" mandatory="true"/>
+                <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="exchangeRate" displayName="汇率" stdSqlType="DECIMAL" precision="20" scale="8" defaultValue="1"/>
+                <column name="totalAmount" displayName="合计金额" domainName="amount" mandatory="true"/>
+                <column name="paymentMethod" displayName="付款方式" stdSqlType="VARCHAR" precision="50"/>
+                <column name="bankAccountId" displayName="付款账户" stdSqlType="BIGINT"/>
+                <column name="docStatus" displayName="单据状态" dictName="erp-pur/doc-status" mandatory="true"/>
+                <column name="approveStatus" displayName="审核状态" dictName="erp-pur/approve-status" mandatory="true"/>
+                <column name="approvedBy" displayName="审核人" stdSqlType="BIGINT"/>
+                <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME"/>
+                <column name="createdBy" displayName="创建人" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
+            </columns>
+            <relations>
+                <to-one name="supplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" joinColumnName="supplierId"/>
+                <to-many name="lines" refEntityName="app.erp.pur.dao.entity.ErpPurPaymentLine" myFieldName="id" refFieldName="paymentId"/>
+            </relations>
+        </entity>
+
+        <!-- 付款核销行（付款与发票多对多） -->
+        <entity className="app.erp.pur.dao.entity.ErpPurPaymentLine"
+                displayName="付款核销行" name="app.erp.pur.dao.entity.ErpPurPaymentLine"
+                tableName="erp_pur_payment_line" tag="erp.purchase">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="paymentId" displayName="付款单ID" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="invoiceId" displayName="发票ID" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="amount" displayName="核销金额" domainName="amount" mandatory="true"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-one name="payment" refEntityName="app.erp.pur.dao.entity.ErpPurPayment" joinColumnName="paymentId"/>
+                <to-one name="invoice" refEntityName="app.erp.pur.dao.entity.ErpPurInvoice" joinColumnName="invoiceId"/>
+            </relations>
+        </entity>
     </entities>
 </orm>

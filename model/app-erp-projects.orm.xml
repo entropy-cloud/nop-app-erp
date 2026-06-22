@@ -2,9 +2,7 @@
 <!--
   app-erp-projects ORM 模型 — 项目管理域（权威数据模型来源）
   ==================================================
-  业务范围：项目、任务、工时记录、项目模板、项目类型、活动类型与成本、项目成员
-
-  当前状态：骨架（bootstrap skeleton），实体待设计阶段填充。
+  业务范围：项目、任务、工时记录、项目类型、活动类型与成本、项目成员
 
   命名约定（见 docs/architecture/domain-module-split-analysis.md）：
     - appName:        app-erp-prj
@@ -25,40 +23,198 @@
      ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <dicts>
-        <!--
-          字典定义（待设计阶段填充），例如：
-          <dict label="项目状态" name="erp-prj/project-status" valueType="int">
-              <option code="DRAFT" label="草稿" value="0"/>
-              <option code="OPEN" label="进行中" value="1"/>
-              <option code="ON_HOLD" label="暂停" value="2"/>
-              <option code="COMPLETED" label="已完成" value="3"/>
-              <option code="CANCELLED" label="已取消" value="4"/>
-          </dict>
-          <dict label="任务状态" name="erp-prj/task-status" valueType="int">
-              <option code="TODO" label="待开始" value="0"/>
-              <option code="IN_PROGRESS" label="进行中" value="1"/>
-              <option code="DONE" label="已完成" value="2"/>
-              <option code="BLOCKED" label="阻塞" value="3"/>
-          </dict>
-        -->
+        <dict label="项目状态" name="erp-prj/project-status" valueType="int">
+            <option code="DRAFT" label="草稿" value="0"/>
+            <option code="OPEN" label="进行中" value="1"/>
+            <option code="ON_HOLD" label="暂停" value="2"/>
+            <option code="COMPLETED" label="已完成" value="3"/>
+            <option code="CANCELLED" label="已取消" value="4"/>
+        </dict>
+        <dict label="任务状态" name="erp-prj/task-status" valueType="int">
+            <option code="TODO" label="待开始" value="0"/>
+            <option code="IN_PROGRESS" label="进行中" value="1"/>
+            <option code="DONE" label="已完成" value="2"/>
+            <option code="BLOCKED" label="阻塞" value="3"/>
+        </dict>
+        <dict label="工时状态" name="erp-prj/timesheet-status" valueType="int">
+            <option code="DRAFT" label="草稿" value="0"/>
+            <option code="SUBMITTED" label="已提交" value="1"/>
+            <option code="APPROVED" label="已审批" value="2"/>
+        </dict>
+        <dict label="优先级" name="erp-prj/priority" valueType="int">
+            <option code="LOW" label="低" value="0"/>
+            <option code="NORMAL" label="普通" value="1"/>
+            <option code="HIGH" label="高" value="2"/>
+            <option code="URGENT" label="紧急" value="3"/>
+        </dict>
     </dicts>
 
     <domains>
-        <!--
-          公共领域类型（待设计阶段填充），例如：
-          <domain name="projectCode" precision="50" stdSqlType="VARCHAR"/>
-          <domain name="taskCode" precision="50" stdSqlType="VARCHAR"/>
-          <domain name="hours" stdSqlType="DECIMAL" precision="10" scale="2"/>
-        -->
+        <domain name="projectCode" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="taskTitle" precision="200" stdSqlType="VARCHAR"/>
+        <domain name="hours" stdSqlType="DECIMAL" precision="10" scale="2"/>
+        <domain name="budget" stdSqlType="DECIMAL" precision="20" scale="4"/>
+        <domain name="costRate" stdSqlType="DECIMAL" precision="20" scale="4"/>
+        <domain name="costAmount" stdSqlType="DECIMAL" precision="20" scale="4"/>
+        <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
     </domains>
 
     <entities>
-        <!--
-          实体定义（待设计阶段填充），例如：
-          <entity className="app.erp.prj.dao.entity.ErpPrjProject"
-                  displayName="项目" tableName="erp_prj_project">
-              ...
-          </entity>
-        -->
+        <!-- 项目 -->
+        <entity className="app.erp.prj.dao.entity.ErpPrjProject"
+                displayName="项目" name="app.erp.prj.dao.entity.ErpPrjProject"
+                tableName="erp_prj_project" tag="erp.projects">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="code" displayName="项目编码" domainName="projectCode" mandatory="true"/>
+                <column name="name" displayName="项目名称" stdSqlType="VARCHAR" precision="200" mandatory="true"/>
+                <column name="projectTypeId" displayName="项目类型" stdSqlType="BIGINT"/>
+                <column name="customerId" displayName="客户" stdSqlType="BIGINT"/>
+                <column name="startDate" displayName="开始日期" stdSqlType="DATE"/>
+                <column name="endDate" displayName="结束日期" stdSqlType="DATE"/>
+                <column name="budget" displayName="预算" domainName="budget" defaultValue="0"/>
+                <column name="status" displayName="状态" dictName="erp-prj/project-status" mandatory="true"/>
+                <column name="managerId" displayName="项目经理" stdSqlType="BIGINT"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
+            </columns>
+            <relations>
+                <to-one name="projectType" refEntityName="app.erp.prj.dao.entity.ErpPrjProjectType" joinColumnName="projectTypeId"/>
+                <to-one name="manager" refEntityName="app.erp.md.dao.entity.ErpMdUser" joinColumnName="managerId"/>
+                <to-many name="tasks" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" myFieldName="id" refFieldName="projectId"/>
+                <to-many name="timesheets" refEntityName="app.erp.prj.dao.entity.ErpPrjTimesheet" myFieldName="id" refFieldName="projectId"/>
+                <to-many name="members" refEntityName="app.erp.prj.dao.entity.ErpPrjProjectUser" myFieldName="id" refFieldName="projectId"/>
+            </relations>
+        </entity>
+
+        <!-- 任务 -->
+        <entity className="app.erp.prj.dao.entity.ErpPrjTask"
+                displayName="任务" name="app.erp.prj.dao.entity.ErpPrjTask"
+                tableName="erp_prj_task" tag="erp.projects">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="projectId" displayName="项目" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="parentTaskId" displayName="父任务" stdSqlType="BIGINT"/>
+                <column name="title" displayName="任务标题" domainName="taskTitle" mandatory="true"/>
+                <column name="assigneeId" displayName="负责人" stdSqlType="BIGINT"/>
+                <column name="plannedStartDate" displayName="计划开始日期" stdSqlType="DATE"/>
+                <column name="plannedEndDate" displayName="计划结束日期" stdSqlType="DATE"/>
+                <column name="actualStartDate" displayName="实际开始日期" stdSqlType="DATE"/>
+                <column name="actualEndDate" displayName="实际结束日期" stdSqlType="DATE"/>
+                <column name="estimatedHours" displayName="预估工时" domainName="hours"/>
+                <column name="actualHours" displayName="实际工时" domainName="hours"/>
+                <column name="dependsOnId" displayName="依赖任务" stdSqlType="BIGINT"/>
+                <column name="status" displayName="状态" dictName="erp-prj/task-status" mandatory="true"/>
+                <column name="priority" displayName="优先级" dictName="erp-prj/priority"/>
+                <column name="sortNum" displayName="排序号" stdSqlType="INT"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
+            </columns>
+            <relations>
+                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" joinColumnName="projectId"/>
+                <to-one name="parentTask" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" joinColumnName="parentTaskId"/>
+                <to-one name="assignee" refEntityName="app.erp.md.dao.entity.ErpMdUser" joinColumnName="assigneeId"/>
+                <to-one name="dependsOn" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" joinColumnName="dependsOnId"/>
+                <to-many name="childTasks" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" myFieldName="id" refFieldName="parentTaskId"/>
+                <to-many name="timesheets" refEntityName="app.erp.prj.dao.entity.ErpPrjTimesheet" myFieldName="id" refFieldName="taskId"/>
+            </relations>
+        </entity>
+
+        <!-- 工时记录 -->
+        <entity className="app.erp.prj.dao.entity.ErpPrjTimesheet"
+                displayName="工时记录" name="app.erp.prj.dao.entity.ErpPrjTimesheet"
+                tableName="erp_prj_timesheet" tag="erp.projects">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="projectId" displayName="项目" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="taskId" displayName="任务" stdSqlType="BIGINT"/>
+                <column name="userId" displayName="用户" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="workDate" displayName="工作日期" stdSqlType="DATE" mandatory="true"/>
+                <column name="hours" displayName="工时" domainName="hours" mandatory="true"/>
+                <column name="activityTypeId" displayName="活动类型" stdSqlType="BIGINT"/>
+                <column name="costRate" displayName="成本费率" domainName="costRate"/>
+                <column name="costAmount" displayName="成本金额" domainName="costAmount"/>
+                <column name="status" displayName="状态" dictName="erp-prj/timesheet-status" mandatory="true"/>
+                <column name="approvedBy" displayName="审批人" stdSqlType="BIGINT"/>
+                <column name="approvedAt" displayName="审批时间" stdSqlType="DATETIME"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" joinColumnName="projectId"/>
+                <to-one name="task" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" joinColumnName="taskId"/>
+                <to-one name="user" refEntityName="app.erp.md.dao.entity.ErpMdUser" joinColumnName="userId"/>
+                <to-one name="activityType" refEntityName="app.erp.prj.dao.entity.ErpPrjActivityType" joinColumnName="activityTypeId"/>
+                <to-one name="approver" refEntityName="app.erp.md.dao.entity.ErpMdUser" joinColumnName="approvedBy"/>
+            </relations>
+        </entity>
+
+        <!-- 项目类型 -->
+        <entity className="app.erp.prj.dao.entity.ErpPrjProjectType"
+                displayName="项目类型" name="app.erp.prj.dao.entity.ErpPrjProjectType"
+                tableName="erp_prj_project_type" tag="erp.projects">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="code" displayName="类型编码" domainName="projectCode" mandatory="true"/>
+                <column name="name" displayName="类型名称" stdSqlType="VARCHAR" precision="200" mandatory="true"/>
+                <column name="defaultSubjectId" displayName="默认科目" stdSqlType="BIGINT"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-one name="defaultSubject" refEntityName="app.erp.fi.dao.entity.ErpFiSubject" joinColumnName="defaultSubjectId"/>
+            </relations>
+        </entity>
+
+        <!-- 活动类型 -->
+        <entity className="app.erp.prj.dao.entity.ErpPrjActivityType"
+                displayName="活动类型" name="app.erp.prj.dao.entity.ErpPrjActivityType"
+                tableName="erp_prj_activity_type" tag="erp.projects">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="code" displayName="类型编码" domainName="projectCode" mandatory="true"/>
+                <column name="name" displayName="类型名称" stdSqlType="VARCHAR" precision="200" mandatory="true"/>
+                <column name="costRate" displayName="成本费率" domainName="costRate"/>
+                <column name="subjectId" displayName="科目" stdSqlType="BIGINT"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-one name="subject" refEntityName="app.erp.fi.dao.entity.ErpFiSubject" joinColumnName="subjectId"/>
+            </relations>
+        </entity>
+
+        <!-- 项目成员 -->
+        <entity className="app.erp.prj.dao.entity.ErpPrjProjectUser"
+                displayName="项目成员" name="app.erp.prj.dao.entity.ErpPrjProjectUser"
+                tableName="erp_prj_project_user" tag="erp.projects">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="projectId" displayName="项目" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="userId" displayName="用户" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="role" displayName="角色" stdSqlType="VARCHAR" precision="50"/>
+                <column name="startDate" displayName="加入日期" stdSqlType="DATE"/>
+                <column name="endDate" displayName="退出日期" stdSqlType="DATE"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" joinColumnName="projectId"/>
+                <to-one name="user" refEntityName="app.erp.md.dao.entity.ErpMdUser" joinColumnName="userId"/>
+            </relations>
+        </entity>
     </entities>
 </orm>

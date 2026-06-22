@@ -3,17 +3,16 @@
   app-erp-master-data ORM 模型 — 主数据域（权威数据模型来源）
   ==================================================
   业务范围：物料/SKU、往来单位（客户/供应商）、仓库/库位、币种/汇率、
-            科目表/科目、计量单位/单位换算、结算方式、支付方式、组织部门
+            科目表/科目、计量单位/单位换算、结算方式、组织部门
 
-  当前状态：骨架（bootstrap skeleton）
-    - 仅含 maven 坐标、空 dicts/domains/entities 段
-    - 实体待设计阶段填充，填充后通过 nop-cli gen 生成 Java 多模块工程
+  参考来源：管伊佳（Material+SKU+Supplier）、Odoo（product）、ERPNext（item）、
+            赤龙（MdFinanceSubject）、iDempiere（C_Currency/C_BPartner）
 
-  命名约定（见 docs/architecture/domain-module-split-analysis.md）：
+  命名约定：
     - appName:        app-erp-md
     - entityPackage:  app.erp.md.dao.entity
-    - 实体类名:        ErpMd<Entity>     （如 ErpMdMaterial、ErpMdPartner、ErpMdWarehouse）
-    - 表名:           erp_md_<entity>   （如 erp_md_material、erp_md_partner、erp_md_warehouse）
+    - 实体类名:        ErpMd<Entity>
+    - 表名:           erp_md_<entity>
     - 字典命名空间:    erp-md/<dict-name>
 -->
 <orm ext:registerShortName="true" ext:appName="app-erp-md" ext:entityPackageName="app.erp.md.dao.entity"
@@ -22,40 +21,325 @@
      ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <dicts>
-        <!--
-          字典定义（待设计阶段填充），例如：
-          <dict label="物料类型" name="erp-md/material-type" valueType="int">
-              <option code="GOODS" label="商品" value="0"/>
-              <option code="MATERIAL" label="原材料" value="1"/>
-              <option code="PRODUCT" label="产成品" value="2"/>
-              <option code="SERVICE" label="服务" value="3"/>
-          </dict>
-          <dict label="往来单位类型" name="erp-md/partner-type" valueType="int">
-              <option code="CUSTOMER" label="客户" value="0"/>
-              <option code="SUPPLIER" label="供应商" value="1"/>
-              <option code="BOTH" label="客户且供应商" value="2"/>
-          </dict>
-        -->
+        <dict label="物料类型" name="erp-md/material-type" valueType="int">
+            <option code="GOODS" label="商品" value="0"/>
+            <option code="RAW_MATERIAL" label="原材料" value="1"/>
+            <option code="SEMI_PRODUCT" label="半成品" value="2"/>
+            <option code="FINISHED_PRODUCT" label="产成品" value="3"/>
+            <option code="SERVICE" label="服务" value="4"/>
+            <option code="PACKAGING" label="包装物" value="5"/>
+            <option code="CONSUMABLE" label="消耗品" value="6"/>
+        </dict>
+        <dict label="物料启用状态" name="erp-md/material-status" valueType="int">
+            <option code="ACTIVE" label="启用" value="0"/>
+            <option code="INACTIVE" label="停用" value="1"/>
+        </dict>
+        <dict label="往来单位类型" name="erp-md/partner-type" valueType="int">
+            <option code="CUSTOMER" label="客户" value="0"/>
+            <option code="SUPPLIER" label="供应商" value="1"/>
+            <option code="BOTH" label="客户且供应商" value="2"/>
+        </dict>
+        <dict label="往来单位启用状态" name="erp-md/partner-status" valueType="int">
+            <option code="ACTIVE" label="启用" value="0"/>
+            <option code="INACTIVE" label="停用" value="1"/>
+        </dict>
+        <dict label="仓库启用状态" name="erp-md/warehouse-status" valueType="int">
+            <option code="ACTIVE" label="启用" value="0"/>
+            <option code="INACTIVE" label="停用" value="1"/>
+        </dict>
+        <dict label="科目类别" name="erp-md/subject-class" valueType="int">
+            <option code="ASSET" label="资产" value="0"/>
+            <option code="LIABILITY" label="负债" value="1"/>
+            <option code="EQUITY" label="权益" value="2"/>
+            <option code="INCOME" label="收入" value="3"/>
+            <option code="EXPENSE" label="费用" value="4"/>
+            <option code="COST" label="成本" value="5"/>
+        </dict>
+        <dict label="科目余额方向" name="erp-md/subject-direction" valueType="int">
+            <option code="DEBIT" label="借方" value="0"/>
+            <option code="CREDIT" label="贷方" value="1"/>
+        </dict>
+        <dict label="科目启用状态" name="erp-md/subject-status" valueType="int">
+            <option code="ACTIVE" label="启用" value="0"/>
+            <option code="INACTIVE" label="停用" value="1"/>
+        </dict>
+        <dict label="组织启用状态" name="erp-md/org-status" valueType="int">
+            <option code="ACTIVE" label="启用" value="0"/>
+            <option code="INACTIVE" label="停用" value="1"/>
+        </dict>
     </dicts>
 
     <domains>
-        <!--
-          公共领域类型（待设计阶段填充），例如：
-          <domain name="partnerCode" precision="50" stdSqlType="VARCHAR"/>
-          <domain name="materialCode" precision="50" stdSqlType="VARCHAR"/>
-          <domain name="subjectCode" precision="50" stdSqlType="VARCHAR"/>
-          <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
-        -->
+        <domain name="materialCode" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="materialName" precision="200" stdSqlType="VARCHAR"/>
+        <domain name="skuCode" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="barcode" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="partnerCode" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="partnerName" precision="200" stdSqlType="VARCHAR"/>
+        <domain name="warehouseCode" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="locationCode" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="currencyCode" precision="10" stdSqlType="VARCHAR"/>
+        <domain name="subjectCode" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="subjectName" precision="200" stdSqlType="VARCHAR"/>
+        <domain name="uoMCode" precision="20" stdSqlType="VARCHAR"/>
+        <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
+        <domain name="address" precision="500" stdSqlType="VARCHAR"/>
+        <domain name="contactPerson" precision="100" stdSqlType="VARCHAR"/>
+        <domain name="phone" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="email" precision="200" stdSqlType="VARCHAR"/>
+        <domain name="bankAccount" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="taxNo" precision="50" stdSqlType="VARCHAR"/>
     </domains>
 
     <entities>
-        <!--
-          实体定义（待设计阶段填充），例如：
-          <entity className="app.erp.md.dao.entity.ErpMdMaterial"
-                  displayName="物料" name="app.erp.md.dao.entity.ErpMdMaterial"
-                  tableName="erp_md_material">
-              ...
-          </entity>
-        -->
+        <!-- 物料主数据 -->
+        <entity className="app.erp.md.dao.entity.ErpMdMaterial"
+                displayName="物料" name="app.erp.md.dao.entity.ErpMdMaterial"
+                tableName="erp_md_material" tag="erp.master">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="code" displayName="物料编码" domainName="materialCode" mandatory="true"/>
+                <column name="name" displayName="物料名称" domainName="materialName" mandatory="true"/>
+                <column name="materialType" displayName="物料类型" dictName="erp-md/material-type" mandatory="true"/>
+                <column name="categoryId" displayName="分类ID" stdSqlType="BIGINT"/>
+                <column name="uoMId" displayName="主计量单位" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="status" displayName="状态" dictName="erp-md/material-status" mandatory="true"/>
+                <column name="isBatchManaged" displayName="是否批次管理" stdSqlType="BOOLEAN" defaultValue="false"/>
+                <column name="isSerialManaged" displayName="是否序列号管理" stdSqlType="BOOLEAN" defaultValue="false"/>
+                <column name="defaultWarehouseId" displayName="默认仓库" stdSqlType="BIGINT"/>
+                <column name="minStock" displayName="最低库存" stdSqlType="DECIMAL" precision="20" scale="4"/>
+                <column name="maxStock" displayName="最高库存" stdSqlType="DECIMAL" precision="20" scale="4"/>
+                <column name="safetyStock" displayName="安全库存" stdSqlType="DECIMAL" precision="20" scale="4"/>
+                <column name="leadTimeDays" displayName="采购提前期(天)" stdSqlType="INT"/>
+                <column name="weight" displayName="重量(kg)" stdSqlType="DECIMAL" precision="12" scale="4"/>
+                <column name="volume" displayName="体积(m³)" stdSqlType="DECIMAL" precision="12" scale="6"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-one name="category" refEntityName="app.erp.md.dao.entity.ErpMdMaterialCategory" joinColumnName="categoryId"/>
+                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" joinColumnName="uoMId"/>
+                <to-one name="defaultWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" joinColumnName="defaultWarehouseId"/>
+                <to-many name="skus" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" myFieldName="id" refFieldName="materialId"/>
+            </relations>
+        </entity>
+
+        <!-- 物料分类（树形） -->
+        <entity className="app.erp.md.dao.entity.ErpMdMaterialCategory"
+                displayName="物料分类" name="app.erp.md.dao.entity.ErpMdMaterialCategory"
+                tableName="erp_md_material_category" tag="erp.master">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="code" displayName="编码" domainName="materialCode" mandatory="true"/>
+                <column name="name" displayName="名称" domainName="materialName" mandatory="true"/>
+                <column name="parentId" displayName="父级ID" stdSqlType="BIGINT"/>
+                <column name="sortNum" displayName="排序" stdSqlType="INT"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-one name="parent" refEntityName="app.erp.md.dao.entity.ErpMdMaterialCategory" joinColumnName="parentId"/>
+                <to-many name="children" refEntityName="app.erp.md.dao.entity.ErpMdMaterialCategory" myFieldName="id" refFieldName="parentId"/>
+            </relations>
+        </entity>
+
+        <!-- 物料 SKU（每行=一个 SKU：单位+条码+价格） -->
+        <entity className="app.erp.md.dao.entity.ErpMdMaterialSku"
+                displayName="物料SKU" name="app.erp.md.dao.entity.ErpMdMaterialSku"
+                tableName="erp_md_material_sku" tag="erp.master">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="materialId" displayName="物料ID" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="skuCode" displayName="SKU编码" domainName="skuCode" mandatory="true"/>
+                <column name="barcode" displayName="条码" domainName="barcode"/>
+                <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="conversionRate" displayName="换算系数" stdSqlType="DECIMAL" precision="12" scale="4" defaultValue="1"/>
+                <column name="purchasePrice" displayName="采购价(不含税)" stdSqlType="DECIMAL" precision="20" scale="4"/>
+                <column name="salePrice" displayName="销售价(不含税)" stdSqlType="DECIMAL" precision="20" scale="4"/>
+                <column name="wholesalePrice" displayName="批发价(不含税)" stdSqlType="DECIMAL" precision="20" scale="4"/>
+                <column name="retailPrice" displayName="零售价(不含税)" stdSqlType="DECIMAL" precision="20" scale="4"/>
+                <column name="taxRate" displayName="默认税率(%)" stdSqlType="DECIMAL" precision="10" scale="4"/>
+                <column name="isDefault" displayName="是否默认SKU" stdSqlType="BOOLEAN" defaultValue="false"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" joinColumnName="materialId"/>
+                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" joinColumnName="uoMId"/>
+            </relations>
+        </entity>
+
+        <!-- 往来单位（客户/供应商一体） -->
+        <entity className="app.erp.md.dao.entity.ErpMdPartner"
+                displayName="往来单位" name="app.erp.md.dao.entity.ErpMdPartner"
+                tableName="erp_md_partner" tag="erp.master">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="code" displayName="编码" domainName="partnerCode" mandatory="true"/>
+                <column name="name" displayName="名称" domainName="partnerName" mandatory="true"/>
+                <column name="partnerType" displayName="类型" dictName="erp-md/partner-type" mandatory="true"/>
+                <column name="status" displayName="状态" dictName="erp-md/partner-status" mandatory="true"/>
+                <column name="contactPerson" displayName="联系人" domainName="contactPerson"/>
+                <column name="phone" displayName="电话" domainName="phone"/>
+                <column name="email" displayName="邮箱" domainName="email"/>
+                <column name="address" displayName="地址" domainName="address"/>
+                <column name="taxNo" displayName="税号" domainName="taxNo"/>
+                <column name="bankName" displayName="开户银行" stdSqlType="VARCHAR" precision="100"/>
+                <column name="bankAccount" displayName="银行账号" domainName="bankAccount"/>
+                <column name="creditLimit" displayName="信用额度" stdSqlType="DECIMAL" precision="20" scale="4"/>
+                <column name="receivableBalance" displayName="应收余额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0"/>
+                <column name="payableBalance" displayName="应付余额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+        </entity>
+
+        <!-- 仓库 -->
+        <entity className="app.erp.md.dao.entity.ErpMdWarehouse"
+                displayName="仓库" name="app.erp.md.dao.entity.ErpMdWarehouse"
+                tableName="erp_md_warehouse" tag="erp.master">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="code" displayName="编码" domainName="warehouseCode" mandatory="true"/>
+                <column name="name" displayName="名称" domainName="materialName" mandatory="true"/>
+                <column name="address" displayName="地址" domainName="address"/>
+                <column name="managerId" displayName="负责人" stdSqlType="BIGINT"/>
+                <column name="status" displayName="状态" dictName="erp-md/warehouse-status" mandatory="true"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-many name="locations" refEntityName="app.erp.md.dao.entity.ErpMdLocation" myFieldName="id" refFieldName="warehouseId"/>
+            </relations>
+        </entity>
+
+        <!-- 库位 -->
+        <entity className="app.erp.md.dao.entity.ErpMdLocation"
+                displayName="库位" name="app.erp.md.dao.entity.ErpMdLocation"
+                tableName="erp_md_location" tag="erp.master">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="warehouseId" displayName="仓库ID" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="code" displayName="编码" domainName="locationCode" mandatory="true"/>
+                <column name="name" displayName="名称" domainName="materialName" mandatory="true"/>
+                <column name="parentId" displayName="父级库位" stdSqlType="BIGINT"/>
+                <column name="isActive" displayName="是否启用" stdSqlType="BOOLEAN" defaultValue="true"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" joinColumnName="warehouseId"/>
+                <to-one name="parent" refEntityName="app.erp.md.dao.entity.ErpMdLocation" joinColumnName="parentId"/>
+            </relations>
+        </entity>
+
+        <!-- 计量单位 -->
+        <entity className="app.erp.md.dao.entity.ErpMdUoM"
+                displayName="计量单位" name="app.erp.md.dao.entity.ErpMdUoM"
+                tableName="erp_md_uom" tag="erp.master">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="code" displayName="编码" domainName="uoMCode" mandatory="true"/>
+                <column name="name" displayName="名称" domainName="materialName" mandatory="true"/>
+                <column name="uoMGroup" displayName="单位组" stdSqlType="VARCHAR" precision="50"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+        </entity>
+
+        <!-- 币种 -->
+        <entity className="app.erp.md.dao.entity.ErpMdCurrency"
+                displayName="币种" name="app.erp.md.dao.entity.ErpMdCurrency"
+                tableName="erp_md_currency" tag="erp.master">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="code" displayName="币种代码" domainName="currencyCode" mandatory="true"/>
+                <column name="name" displayName="名称" domainName="materialName" mandatory="true"/>
+                <column name="symbol" displayName="符号" stdSqlType="VARCHAR" precision="10"/>
+                <column name="decimalPlaces" displayName="小数位数" stdSqlType="INT" defaultValue="2"/>
+                <column name="isActive" displayName="是否启用" stdSqlType="BOOLEAN" defaultValue="true"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+        </entity>
+
+        <!-- 汇率 -->
+        <entity className="app.erp.md.dao.entity.ErpMdExchangeRate"
+                displayName="汇率" name="app.erp.md.dao.entity.ErpMdExchangeRate"
+                tableName="erp_md_exchange_rate" tag="erp.master">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="fromCurrencyId" displayName="源币种" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="toCurrencyId" displayName="目标币种" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="rate" displayName="汇率" stdSqlType="DECIMAL" precision="20" scale="8" mandatory="true"/>
+                <column name="validFrom" displayName="生效日期" stdSqlType="DATE" mandatory="true"/>
+                <column name="validTo" displayName="失效日期" stdSqlType="DATE"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-one name="fromCurrency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" joinColumnName="fromCurrencyId"/>
+                <to-one name="toCurrency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" joinColumnName="toCurrencyId"/>
+            </relations>
+        </entity>
+
+        <!-- 会计科目表 -->
+        <entity className="app.erp.md.dao.entity.ErpMdSubject"
+                displayName="会计科目" name="app.erp.md.dao.entity.ErpMdSubject"
+                tableName="erp_md_subject" tag="erp.master">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="code" displayName="科目编码" domainName="subjectCode" mandatory="true"/>
+                <column name="name" displayName="科目名称" domainName="subjectName" mandatory="true"/>
+                <column name="parentId" displayName="父级科目" stdSqlType="BIGINT"/>
+                <column name="subjectClass" displayName="科目类别" dictName="erp-md/subject-class" mandatory="true"/>
+                <column name="direction" displayName="余额方向" dictName="erp-md/subject-direction" mandatory="true"/>
+                <column name="currencyId" displayName="核算币种" stdSqlType="BIGINT"/>
+                <column name="isAuxiliary" displayName="是否辅助核算" stdSqlType="BOOLEAN" defaultValue="false"/>
+                <column name="auxiliaryType" displayName="辅助核算类型" stdSqlType="VARCHAR" precision="50"/>
+                <column name="status" displayName="状态" dictName="erp-md/subject-status" mandatory="true"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-one name="parent" refEntityName="app.erp.md.dao.entity.ErpMdSubject" joinColumnName="parentId"/>
+                <to-many name="children" refEntityName="app.erp.md.dao.entity.ErpMdSubject" myFieldName="id" refFieldName="parentId"/>
+            </relations>
+        </entity>
+
+        <!-- 组织/部门 -->
+        <entity className="app.erp.md.dao.entity.ErpMdOrganization"
+                displayName="组织" name="app.erp.md.dao.entity.ErpMdOrganization"
+                tableName="erp_md_organization" tag="erp.master">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="code" displayName="编码" domainName="partnerCode" mandatory="true"/>
+                <column name="name" displayName="名称" domainName="partnerName" mandatory="true"/>
+                <column name="parentId" displayName="父级组织" stdSqlType="BIGINT"/>
+                <column name="orgType" displayName="组织类型" stdSqlType="VARCHAR" precision="50"/>
+                <column name="status" displayName="状态" dictName="erp-md/org-status" mandatory="true"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-one name="parent" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" joinColumnName="parentId"/>
+                <to-many name="children" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" myFieldName="id" refFieldName="parentId"/>
+            </relations>
+        </entity>
     </entities>
 </orm>
