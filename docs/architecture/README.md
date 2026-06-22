@@ -12,9 +12,10 @@ Use `docs/design/` for app-layer feature and business design. Use `docs/architec
 2. `customization-capabilities.md` — 定制开发能力总览
 3. `system-baseline.md` — 技术基线与 10 域模块结构
 4. `module-boundaries.md` — 模块依赖方向（DAG）
-5. `domain-module-split-analysis.md` — 10 域拆分决策与命名方案
-6. `competitive-comparison.md` — 竞品架构对标（vs Odoo/ERPNext/iDempiere/Tryton 等，超越点论证）
-7. more specific owner docs as the project grows
+5. `data-dependency-matrix.md` — 数据依赖矩阵（模块间只读/同步写/弱指针）
+6. `domain-module-split-analysis.md` — 10 域拆分决策与命名方案
+7. `competitive-comparison.md` — 竞品架构对标（vs Odoo/ERPNext/iDempiere/Tryton 等，超越点论证）
+8. more specific owner docs as the project grows
 
 ## Owner-Doc Rules
 
@@ -36,6 +37,7 @@ Use `docs/design/` for app-layer feature and business design. Use `docs/architec
 - `customization-capabilities.md` - 定制开发能力总览（Delta/扩展字段/nop-dyn/模块组装/扩展层/BizLoader + 决策矩阵 + 升级路径）
 - `system-baseline.md` - 技术基线、10 域模块结构、多租户策略、Stable Rules
 - `module-boundaries.md` - 模块依赖方向（DAG）、跨工程实体关系硬规则
+- `data-dependency-matrix.md` - 数据依赖矩阵（模块间只读 R / 同步写 S / 弱指针 P 三类依赖、跨域字段目录、业财一体事务边界、billType 枚举）
 - `domain-module-split-analysis.md` - 10 域拆分决策（方案B）、命名与前缀方案、codegen 边界
 - `api-response-conventions.md` - API 响应约定
 - `integration-and-transaction-patterns.md` - 集成与事务模式

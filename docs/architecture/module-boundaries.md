@@ -48,11 +48,22 @@ app-erp-maintenance（依赖 master-data + inventory + assets；被 manufacturin
 
 ## 跨工程实体关系规则
 
-**硬规则**（源自 `../nop-entropy/docs-for-ai/02-core-guides/architecture-principles.md`）：跨工程实体**不做** ORM 层 `refEntityName` 强引用。
+**规则**（源自 `../nop-entropy/docs-for-ai/02-core-guides/cross-module-entity-reference.md`）：在**共享单库 + 单向 DAG** 前提下，业务域通过 `notGenCode="true"` 外部实体引用建立到 master-data 的 ORM `<to-one>` 关联。
 
-- 引用方工程用**纯外键列**（如 `erp_pur_order.material_id VARCHAR`），不带 `<to-one>` 关系声明。
-- 在 BizModel/Processor 层通过 `@Inject IErpMd*Biz`（被引用方在 `*-dao` 暴露的 `I*Biz` 接口）做只读查询和跨工程动作编排。
-- 平台所有内置模块（nop-auth/nop-sys/nop-wf）的源 orm.xml 中 `refEntityName` 全部指向本模块包内实体，零跨包引用——本工程遵循同一约束。
+- **允许**：业务域 orm.xml 声明 `<entity notGenCode="true" tableName="erp_md_*">` 引用 master-data 表，建立 `<to-one>`，支持 EQL 点导航与 GraphQL 展开。
+- **允许**：finance → projects/assets（finance 是 DAG 顶，单向合法）。
+- **禁止**：业务域之间的反向或循环引用（如 inventory → purchase/sales、purchase ↔ sales、projects/assets → finance）。这些走纯外键 + 弱指针 + `I*Biz`。
+- **平台依据**：`nop/schema/orm/entity.xdef` 的 `@notGenCode` 注释 + `nop/orm/xlib/orm-gen.xlib:228` 平台代码生成器自身范式。
+- **完整清单**：哪些业务域引用哪些 master-data 表、to-one 命名、DAG 验证，见 `data-dependency-matrix.md §5.6`。
+
+**跨模块关联查询的两条路线**（完整机制见 `../nop-entropy/docs-for-ai/02-core-guides/cross-module-entity-reference.md`）：
+
+- **路线 1（机制 B，`notGenCode="true"` 外部实体引用）**：已在本工程 9 个业务域 orm.xml 落地（见 `data-dependency-matrix.md §5.6.2` 矩阵）。适用于高频多维关联查询（如 finance 凭证行按 subject/partner/project/warehouse/material 筛选）。
+- **路线 2（机制 D，纯外键 + `I*Biz`）**：断开 ORM 关联，用冗余显示名（列表）+ `@BizLoader`/`requireBiz`（详情）+ EQL 子查询（报表）。适用于业务表之间的引用（凭证反查源单等弱指针场景）。
+
+> **例外**：业务模块需要给主数据实体加业务字段时（类比 nop-app-mall 扩展 `NopAuthUser`），通过 `app-erp-delta` 工程做 `ext:baseClass` Delta 扩展，不在业务域建新表或写跨模块 `<to-one>`。
+
+> **表级数据依赖明细**（哪些模块只读 R / 同步写 S / 弱指针 P 哪些表、跨域字段目录、`billType` 枚举）：见 `data-dependency-matrix.md`。本文只规定模块级依赖方向，数据层细化由该文档承载。
 
 ## 业财打通跨工程协作
 
@@ -75,6 +86,7 @@ app-erp-maintenance（依赖 master-data + inventory + assets；被 manufacturin
 | 质量管理域业务规则 | `docs/design/quality/README.md` |
 | 设备维护域业务规则 | `docs/design/maintenance/README.md` |
 | 模块拆分决策与命名 | `docs/architecture/domain-module-split-analysis.md` |
+| 数据依赖矩阵（表级只读/同步写/弱指针） | `docs/architecture/data-dependency-matrix.md` |
 
 ## 规则
 

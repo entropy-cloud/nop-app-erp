@@ -145,7 +145,7 @@
                     <join><on leftProp="categoryId" rightProp="id"/></join>
                 </to-one>
                 <!-- Cross-module references handled via I*Biz at BizModel level -->
-                <!-- <to-one name="department" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                <to-one name="department" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
                     <join><on leftProp="departmentId" rightProp="id"/></join>
                 </to-one>
                 <to-one name="location" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub">
@@ -156,7 +156,13 @@
                 </to-one>
                 <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
                     <join><on leftProp="currencyId" rightProp="id"/></join>
-                </to-one>-->
+                </to-one>
+                            <!-- 跨模块 to-one（引用 master-data 外部实体，机制 B） -->
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+                <to-one name="location" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub"><join><on leftProp="locationId" rightProp="id"/></join></to-one>
+                <to-one name="category" refEntityName="app.erp.md.dao.entity.ErpMdMaterialCategory" tagSet="pub"><join><on leftProp="categoryId" rightProp="id"/></join></to-one>
+                <to-one name="employee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="employeeId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -186,7 +192,7 @@
             </columns>
             <relations>
                 <!-- Cross-module references handled via I*Biz at BizModel level -->
-                <!-- <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub">
+                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub">
                     <join><on leftProp="subjectId" rightProp="id"/></join>
                 </to-one>
                 <to-one name="depreciationSubject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub">
@@ -194,7 +200,7 @@
                 </to-one>
                 <to-one name="expenseSubject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub">
                     <join><on leftProp="expenseSubjectId" rightProp="id"/></join>
-                </to-one>-->
+                </to-one>
             </relations>
         </entity>
 
@@ -429,9 +435,9 @@
                     <join><on leftProp="categoryId" rightProp="id"/></join>
                 </to-one>
                 <!-- Cross-module reference handled via I*Biz at BizModel level -->
-                <!-- <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
                     <join><on leftProp="currencyId" rightProp="id"/></join>
-                </to-one>-->
+                </to-one>
             </relations>
         </entity>
 
@@ -507,6 +513,79 @@
                     <join><on leftProp="targetAssetId" rightProp="id"/></join>
                 </to-one>
             </relations>
+        </entity>
+
+        <!-- ============================ 外部实体引用（机制 B：notGenCode，不生成本模块 Entity 类） ============================
+             设计依据：docs/architecture/data-dependency-matrix.md §5.6
+             平台依据：nop/schema/orm/entity.xdef @notGenCode + nop/orm/xlib/orm-gen.xlib:228
+             这些实体由 master-data-dao（及 projects-dao/assets-dao）模块生成，本模块仅声明以建立 to-one 关联与 EQL 点导航。
+        ============================ -->
+        <entity displayName="组织" name="app.erp.md.dao.entity.ErpMdOrganization"
+                notGenCode="true" tableName="erp_md_organization">
+            <columns>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string"/>
+                <column name="orgType" code="ORG_TYPE" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="parentId" code="PARENT_ID" stdSqlType="BIGINT" stdDataType="long"/>
+                <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int"/>
+            </columns>
+        </entity>
+
+        <entity displayName="币种" name="app.erp.md.dao.entity.ErpMdCurrency"
+                notGenCode="true" tableName="erp_md_currency">
+            <columns>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string"/>
+                <column name="symbol" code="SYMBOL" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
+                <column name="decimalPlaces" code="DECIMAL_PLACES" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="isFunctional" code="IS_FUNCTIONAL" stdSqlType="BOOLEAN" stdDataType="boolean"/>
+            </columns>
+        </entity>
+
+        <entity displayName="职员" name="app.erp.md.dao.entity.ErpMdEmployee"
+                notGenCode="true" tableName="erp_md_employee">
+            <columns>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string"/>
+                <column name="orgId" code="ORG_ID" stdSqlType="BIGINT" stdDataType="long"/>
+                <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int"/>
+            </columns>
+        </entity>
+
+        <entity displayName="库位" name="app.erp.md.dao.entity.ErpMdLocation"
+                notGenCode="true" tableName="erp_md_location">
+            <columns>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
+                <column name="warehouseId" code="WAREHOUSE_ID" stdSqlType="BIGINT" stdDataType="long"/>
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string"/>
+                <column name="parentId" code="PARENT_ID" stdSqlType="BIGINT" stdDataType="long"/>
+            </columns>
+        </entity>
+
+        <entity displayName="物料分类" name="app.erp.md.dao.entity.ErpMdMaterialCategory"
+                notGenCode="true" tableName="erp_md_material_category">
+            <columns>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string"/>
+                <column name="parentId" code="PARENT_ID" stdSqlType="BIGINT" stdDataType="long"/>
+            </columns>
+        </entity>
+
+        <entity displayName="会计科目" name="app.erp.md.dao.entity.ErpMdSubject"
+                notGenCode="true" tableName="erp_md_subject">
+            <columns>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string"/>
+                <column name="parentId" code="PARENT_ID" stdSqlType="BIGINT" stdDataType="long"/>
+                <column name="subjectClass" code="SUBJECT_CLASS" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="direction" code="DIRECTION" stdSqlType="INTEGER" stdDataType="int"/>
+            </columns>
         </entity>
     </entities>
 </orm>

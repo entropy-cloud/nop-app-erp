@@ -108,8 +108,8 @@
             </columns>
             <relations>
                 <to-one name="projectType" refEntityName="app.erp.prj.dao.entity.ErpPrjProjectType" tagSet="pub"><join><on leftProp="projectTypeId" rightProp="id"/></join></to-one>
-                <!-- <to-one name="manager" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="managerId" rightProp="id"/></join></to-one> -->
-                <!-- <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one> -->
+                <to-one name="manager" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="managerId" rightProp="id"/></join></to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
                 <to-many name="tasks" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="projectId"/></join></to-many>
                 <to-many name="timesheets" refEntityName="app.erp.prj.dao.entity.ErpPrjTimesheet" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="projectId"/></join></to-many>
                 <to-many name="members" refEntityName="app.erp.prj.dao.entity.ErpPrjProjectUser" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="projectId"/></join></to-many>
@@ -149,7 +149,7 @@
             <relations>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub"><join><on leftProp="projectId" rightProp="id"/></join></to-one>
                 <to-one name="parentTask" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub"><join><on leftProp="parentTaskId" rightProp="id"/></join></to-one>
-                <!-- <to-one name="assignee" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"><join><on leftProp="assigneeId" rightProp="id"/></join></to-one> -->
+                <to-one name="assignee" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"><join><on leftProp="assigneeId" rightProp="id"/></join></to-one>
                 <to-one name="dependsOn" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub"><join><on leftProp="dependsOnId" rightProp="id"/></join></to-one>
                 <to-many name="childTasks" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="parentTaskId"/></join></to-many>
                 <to-many name="timesheets" refEntityName="app.erp.prj.dao.entity.ErpPrjTimesheet" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="taskId"/></join></to-many>
@@ -190,9 +190,9 @@
             <relations>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub"><join><on leftProp="projectId" rightProp="id"/></join></to-one>
                 <to-one name="task" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub"><join><on leftProp="taskId" rightProp="id"/></join></to-one>
-                <!-- <to-one name="user" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="userId" rightProp="id"/></join></to-one> -->
+                <to-one name="user" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="userId" rightProp="id"/></join></to-one>
                 <to-one name="activityType" refEntityName="app.erp.prj.dao.entity.ErpPrjActivityType" tagSet="pub"><join><on leftProp="activityTypeId" rightProp="id"/></join></to-one>
-                <!-- <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one> -->
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -214,7 +214,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="11" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
             </columns>
             <relations>
-                <!-- <to-one name="defaultSubject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="defaultSubjectId" rightProp="id"/></join></to-one> -->
+                <to-one name="defaultSubject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="defaultSubjectId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -237,7 +237,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="12" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
             </columns>
             <relations>
-                <!-- <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="subjectId" rightProp="id"/></join></to-one> -->
+                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -261,7 +261,7 @@
             </columns>
             <relations>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub"><join><on leftProp="projectId" rightProp="id"/></join></to-one>
-                <!-- <to-one name="user" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="userId" rightProp="id"/></join></to-one> -->
+                <to-one name="user" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="userId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -317,7 +317,7 @@
             </columns>
             <relations>
                 <to-one name="budget" refEntityName="app.erp.prj.dao.entity.ErpPrjBudget" tagSet="pub"><join><on leftProp="budgetId" rightProp="id"/></join></to-one>
-                <!-- <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="subjectId" rightProp="id"/></join></to-one> -->
+                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -376,7 +376,7 @@
             </columns>
             <relations>
                 <to-one name="costCollection" refEntityName="app.erp.prj.dao.entity.ErpPrjCostCollection" tagSet="pub"><join><on leftProp="costCollectionId" rightProp="id"/></join></to-one>
-                <!-- <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="subjectId" rightProp="id"/></join></to-one> -->
+                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -437,7 +437,7 @@
             </columns>
             <relations>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub"><join><on leftProp="projectId" rightProp="id"/></join></to-one>
-                <!-- <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"><join><on leftProp="customerId" rightProp="id"/></join></to-one> -->
+                <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"><join><on leftProp="customerId" rightProp="id"/></join></to-one>
                 <to-one name="milestone" refEntityName="app.erp.prj.dao.entity.ErpPrjMilestone" tagSet="pub"><join><on leftProp="milestoneId" rightProp="id"/></join></to-one>
                 <to-many name="lines" refEntityName="app.erp.prj.dao.entity.ErpPrjBillingLine" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="billingId"/></join></to-many>
             </relations>
@@ -465,8 +465,72 @@
             </columns>
             <relations>
                 <to-one name="billing" refEntityName="app.erp.prj.dao.entity.ErpPrjBilling" tagSet="pub"><join><on leftProp="billingId" rightProp="id"/></join></to-one>
-                <!-- <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="subjectId" rightProp="id"/></join></to-one> -->
+                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
             </relations>
+        </entity>
+
+        <!-- ============================ 外部实体引用（机制 B：notGenCode，不生成本模块 Entity 类） ============================
+             设计依据：docs/architecture/data-dependency-matrix.md §5.6
+             平台依据：nop/schema/orm/entity.xdef @notGenCode + nop/orm/xlib/orm-gen.xlib:228
+             这些实体由 master-data-dao（及 projects-dao/assets-dao）模块生成，本模块仅声明以建立 to-one 关联与 EQL 点导航。
+        ============================ -->
+        <entity displayName="组织" name="app.erp.md.dao.entity.ErpMdOrganization"
+                notGenCode="true" tableName="erp_md_organization">
+            <columns>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string"/>
+                <column name="orgType" code="ORG_TYPE" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="parentId" code="PARENT_ID" stdSqlType="BIGINT" stdDataType="long"/>
+                <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int"/>
+            </columns>
+        </entity>
+
+        <entity displayName="币种" name="app.erp.md.dao.entity.ErpMdCurrency"
+                notGenCode="true" tableName="erp_md_currency">
+            <columns>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string"/>
+                <column name="symbol" code="SYMBOL" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
+                <column name="decimalPlaces" code="DECIMAL_PLACES" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="isFunctional" code="IS_FUNCTIONAL" stdSqlType="BOOLEAN" stdDataType="boolean"/>
+            </columns>
+        </entity>
+
+        <entity displayName="职员" name="app.erp.md.dao.entity.ErpMdEmployee"
+                notGenCode="true" tableName="erp_md_employee">
+            <columns>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string"/>
+                <column name="orgId" code="ORG_ID" stdSqlType="BIGINT" stdDataType="long"/>
+                <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int"/>
+            </columns>
+        </entity>
+
+        <entity displayName="往来单位" name="app.erp.md.dao.entity.ErpMdPartner"
+                notGenCode="true" tableName="erp_md_partner">
+            <columns>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string"/>
+                <column name="partnerType" code="PARTNER_TYPE" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="creditLimit" code="CREDIT_LIMIT" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
+            </columns>
+        </entity>
+
+        <entity displayName="会计科目" name="app.erp.md.dao.entity.ErpMdSubject"
+                notGenCode="true" tableName="erp_md_subject">
+            <columns>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string"/>
+                <column name="parentId" code="PARENT_ID" stdSqlType="BIGINT" stdDataType="long"/>
+                <column name="subjectClass" code="SUBJECT_CLASS" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="direction" code="DIRECTION" stdSqlType="INTEGER" stdDataType="int"/>
+            </columns>
         </entity>
     </entities>
 </orm>

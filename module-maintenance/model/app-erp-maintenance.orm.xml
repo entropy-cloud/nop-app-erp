@@ -145,8 +145,12 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="21" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
             </columns>
             <relations>
-                <!-- <to-one name="location" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub"><join><on leftProp="locationId" rightProp="id"/></join></to-one> -->
+                <to-one name="location" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub"><join><on leftProp="locationId" rightProp="id"/></join></to-one>
                 <to-one name="category" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipmentCategory" tagSet="pub"><join><on leftProp="categoryId" rightProp="id"/></join></to-one>
+                            <!-- 跨模块 to-one（引用 master-data 外部实体，机制 B） -->
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="location" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub"><join><on leftProp="locationId" rightProp="id"/></join></to-one>
+                <to-one name="category" refEntityName="app.erp.md.dao.entity.ErpMdMaterialCategory" tagSet="pub"><join><on leftProp="categoryId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -334,7 +338,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="13" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
             </columns>
             <relations>
-                <!-- <to-one name="leader" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="leaderId" rightProp="id"/></join></to-one> -->
+                <to-one name="leader" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="leaderId" rightProp="id"/></join></to-one>
                 <to-many name="members" refEntityName="app.erp.mnt.dao.entity.ErpMntMaintenanceTeamMember" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="teamId"/></join></to-many>
             </relations>
         </entity>
@@ -359,7 +363,7 @@
             </columns>
             <relations>
                 <to-one name="team" refEntityName="app.erp.mnt.dao.entity.ErpMntMaintenanceTeam" tagSet="pub"><join><on leftProp="teamId" rightProp="id"/></join></to-one>
-                <!-- <to-one name="employee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="employeeId" rightProp="id"/></join></to-one> -->
+                <to-one name="employee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="employeeId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -422,8 +426,8 @@
             </columns>
             <relations>
                 <to-one name="sparePartUsage" refEntityName="app.erp.mnt.dao.entity.ErpMntSparePartUsage" tagSet="pub"><join><on leftProp="sparePartUsageId" rightProp="id"/></join></to-one>
-                <!-- <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one> -->
-                <!-- <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"><join><on leftProp="uoMId" rightProp="id"/></join></to-one> -->
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
+                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"><join><on leftProp="uoMId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -456,8 +460,91 @@
             </columns>
             <relations>
                 <to-one name="equipment" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipment" tagSet="pub"><join><on leftProp="equipmentId" rightProp="id"/></join></to-one>
-                <!-- <to-one name="calibratedByEmployee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="calibratedBy" rightProp="id"/></join></to-one> -->
+                <to-one name="calibratedByEmployee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="calibratedBy" rightProp="id"/></join></to-one>
             </relations>
+        </entity>
+
+        <!-- ============================ 外部实体引用（机制 B：notGenCode，不生成本模块 Entity 类） ============================
+             设计依据：docs/architecture/data-dependency-matrix.md §5.6
+             平台依据：nop/schema/orm/entity.xdef @notGenCode + nop/orm/xlib/orm-gen.xlib:228
+             这些实体由 master-data-dao（及 projects-dao/assets-dao）模块生成，本模块仅声明以建立 to-one 关联与 EQL 点导航。
+        ============================ -->
+        <entity displayName="组织" name="app.erp.md.dao.entity.ErpMdOrganization"
+                notGenCode="true" tableName="erp_md_organization">
+            <columns>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string"/>
+                <column name="orgType" code="ORG_TYPE" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="parentId" code="PARENT_ID" stdSqlType="BIGINT" stdDataType="long"/>
+                <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int"/>
+            </columns>
+        </entity>
+
+        <entity displayName="库位" name="app.erp.md.dao.entity.ErpMdLocation"
+                notGenCode="true" tableName="erp_md_location">
+            <columns>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
+                <column name="warehouseId" code="WAREHOUSE_ID" stdSqlType="BIGINT" stdDataType="long"/>
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string"/>
+                <column name="parentId" code="PARENT_ID" stdSqlType="BIGINT" stdDataType="long"/>
+            </columns>
+        </entity>
+
+        <entity displayName="物料分类" name="app.erp.md.dao.entity.ErpMdMaterialCategory"
+                notGenCode="true" tableName="erp_md_material_category">
+            <columns>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string"/>
+                <column name="parentId" code="PARENT_ID" stdSqlType="BIGINT" stdDataType="long"/>
+            </columns>
+        </entity>
+
+        <entity displayName="职员" name="app.erp.md.dao.entity.ErpMdEmployee"
+                notGenCode="true" tableName="erp_md_employee">
+            <columns>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string"/>
+                <column name="orgId" code="ORG_ID" stdSqlType="BIGINT" stdDataType="long"/>
+                <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int"/>
+            </columns>
+        </entity>
+
+        <entity displayName="物料" name="app.erp.md.dao.entity.ErpMdMaterial"
+                notGenCode="true" tableName="erp_md_material">
+            <columns>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string"/>
+                <column name="materialType" code="MATERIAL_TYPE" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int"/>
+            </columns>
+        </entity>
+
+        <entity displayName="计量单位" name="app.erp.md.dao.entity.ErpMdUoM"
+                notGenCode="true" tableName="erp_md_uom">
+            <columns>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string"/>
+                <column name="uoMGroup" code="UOM_GROUP" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
+                <column name="isBase" code="IS_BASE" stdSqlType="BOOLEAN" stdDataType="boolean"/>
+            </columns>
+        </entity>
+
+        <entity displayName="仓库" name="app.erp.md.dao.entity.ErpMdWarehouse"
+                notGenCode="true" tableName="erp_md_warehouse">
+            <columns>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string"/>
+                <column name="warehouseType" code="WAREHOUSE_TYPE" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="orgId" code="ORG_ID" stdSqlType="BIGINT" stdDataType="long"/>
+                <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int"/>
+            </columns>
         </entity>
     </entities>
 </orm>
