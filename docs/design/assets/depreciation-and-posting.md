@@ -270,17 +270,9 @@
 
 ## 七、与财务域的交互协议
 
-### 7.1 事件格式
+### 7.1 事件内容
 
-```java
-public class AssetPostingEvent {
-    private String businessType;  // DEPRECIATION/CAPITALIZATION/DISPOSAL_*/VALUE_ADJUSTMENT
-    private String assetId;       // 资产编码
-    private String acctPeriodId;  // 会计期间
-    private BigDecimal amount;    // 金额
-    private Map<String, Object> detail;  // 明细信息
-}
-```
+过账事件包含：业务类型（DEPRECIATION/CAPITALIZATION/DISPOSAL_*/VALUE_ADJUSTMENT）、资产编码、会计期间、金额、明细信息。
 
 ### 7.2 错误处理
 

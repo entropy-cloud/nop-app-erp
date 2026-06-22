@@ -120,17 +120,9 @@
                     └─► 记录让步记录（质检单关联）
 ```
 
-### 3.3 让步记录结构
+### 3.3 让步记录内容
 
-```java
-public class ConcessionRecord {
-    private String inspectionId;     // 质检单编码
-    private String reason;           // 让步理由
-    private String usageType;        // 使用方式（降级/挑选/特采）
-    private String approvedBy;       // 审批人
-    private LocalDateTime approveTime; // 审批时间
-}
-```
+让步记录包含：质检单编码、让步理由、使用方式（降级/挑选/特采）、审批人、审批时间。
 
 ---
 
@@ -194,19 +186,9 @@ CAPA 执行
 
 ## 五、质检模板管理
 
-### 5.1 质检模板结构
+### 5.1 质检模板内容
 
-```java
-public class InspectionTemplate {
-    private String materialId;       // 物料编码（可为空表示全局模板）
-    private String itemName;         // 检验项目名称
-    private String unit;             // 单位
-    private BigDecimal lowerLimit;   // 规格下限
-    private BigDecimal upperLimit;   // 规格上限
-    private String method;           // 检验方法
-    private Boolean critical;        // 是否关键项
-}
-```
+质检模板包含：物料编码（可为空表示全局模板）、检验项目名称、单位、规格下限、规格上限、检验方法、是否关键项。
 
 ### 5.2 模板优先级
 
@@ -263,26 +245,12 @@ public class InspectionTemplate {
 
 ## 七、跨域协作协议
 
-### 7.1 事件格式
+### 7.1 事件内容
 
-```java
-// 质检触发事件
-public class InspectionTriggerEvent {
-    private String referenceType;    // 业务单据类型（PURCHASE_INPUT/SALES_OUTPUT/WORK_ORDER）
-    private String referenceId;      // 业务单据编码
-    private String materialId;       // 物料编码
-    private String warehouseId;      // 仓库编码
-}
-
-// 质检结果事件
-public class InspectionResultEvent {
-    private String inspectionId;     // 质检单编码
-    private String referenceType;    // 业务单据类型
-    private String referenceId;      // 业务单据编码
-    private String status;           // 质检状态（ACCEPTED/CONDITIONAL/REJECTED）
-    private String concessionReason; // 让步理由（CONDITIONAL 时）
-}
-```
+| 事件 | 关键字段 |
+|------|----------|
+| 质检触发事件 | 业务单据类型、业务单据编码、物料编码、仓库编码 |
+| 质检结果事件 | 质检单编码、业务单据类型、业务单据编码、质检状态（ACCEPTED/CONDITIONAL/REJECTED）、让步理由（CONDITIONAL 时） |
 
 ### 7.2 业务域响应
 

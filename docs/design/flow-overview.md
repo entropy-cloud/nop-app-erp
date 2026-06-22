@@ -446,137 +446,25 @@ IErpFinAcctDocProvider.createFacts()
 
 ---
 
-## 七、与 Nop Platform 的集成
+## 七、平台组件使用
 
-### 7.1 事件总线
+本项目使用 Nop Platform 提供的标准组件，具体集成方式见 `docs/architecture/`：
 
-使用 nop-message 进行跨域事件通信：
-
-```java
-// 发布事件
-eventBus.publish(new PostingEvent(businessType, billData));
-
-// 订阅事件
-@EventListener
-public void handlePosting(PostingEvent event) {
-    // 处理过账
-}
-```
-
-### 7.2 定时任务
-
-使用 nop-job 配置定时任务：
-
-| 任务 | 周期 | 职责 |
-|------|------|------|
-| 过账兜底扫描 | 每分钟 | 重新触发未过账单据 |
-| 库存余额同步 | 每小时 | 校验并修复余额与流水一致性 |
-| 期间自动开启 | 每日凌晨 | 自动开启新会计期间 |
-| 折旧批量执行 | 每月末 | 执行所有资产折旧 |
-
-### 7.3 配置管理
-
-通过 nop-config 进行配置管理：
-
-```yaml
-erp:
-  finance:
-    posting:
-      async: true
-      retry-count: 3
-      fallback-scan-interval: 60000
-  inventory:
-    allow-negative-stock: false
-    reserve-quantity: true
-  purchase:
-    match-qty-tolerance: 5
-    match-price-tolerance: 5
-```
-
-### 7.4 审批流程引擎（nop-wf）
-
-使用 nop-wf 工作流引擎实现灵活的审批流程：
-
-**审批流程集成点**：
-
-| 单据类型 | 流程定义 | 触发时机 |
-|----------|----------|----------|
-| 采购订单 | `erp-wf/purchase-order-approval` | 提交审核时 |
-| 销售订单 | `erp-wf/sales-order-approval` | 提交审核时 |
-| 付款单 | `erp-wf/payment-approval` | 提交审核时 |
-| 费用报销 | `erp-wf/expense-approval` | 提交审核时 |
+| 组件 | 用途 |
+|------|------|
+| nop-message | 跨域事件通信 |
+| nop-job | 定时任务（过账兜底、折旧批量、期间开启等） |
+| nop-wf | 单据审批流程 |
+| nop-rule | 科目映射、容差校验等规则引擎 |
+| nop-report | 财务报表与业务报表 |
+| nop-config | 统一配置管理 |
 
 **审批流程与业务状态联动**：
 
 ```
-业务单据提交审核
-        │
-        ├─► 启动 nop-wf 审批流程
-        │
-        ├─► 业务状态变为 APPROVING
-        │
-        └─► 等待审批结果
-                │
-                ├─► 审批通过 → 业务状态变为 APPROVED → 触发后续业务流程
-                │
-                └─► 审批拒绝 → 业务状态变为 REJECTED → 允许修改后重新提交
-```
-
-### 7.5 规则引擎（nop-rule）
-
-使用 nop-rule 规则引擎实现业务规则配置化：
-
-**规则引擎应用场景**：
-
-| 场景 | 规则位置 | 用途 |
-|------|----------|------|
-| 科目映射 | `erp-fin/acct-mapping` | 根据业务类型、物料类别匹配会计科目 |
-| 凭证模板 | `erp-fin/voucher-template` | 凭证分录生成规则 |
-| 审批条件 | `erp-wf/approval-condition` | 审批流程流转条件 |
-| 容差校验 | `erp-fin/tolerance` | 三单匹配容差、预算控制容差 |
-
-**科目映射规则执行流程**：
-
-```
-凭证生成时解析科目
-        │
-        ├─► 收集维度数据（业务类型、物料类别、往来单位组等）
-        │
-        ├─► 调用 nop-rule 执行科目映射规则
-        │
-        ├─► 获取匹配的会计科目编码
-        │
-        └─► 填充凭证分录行
-```
-
-### 7.6 报表引擎（nop-report）
-
-使用 nop-report 报表引擎实现灵活的报表生成：
-
-**报表类型**：
-
-| 报表类型 | 报表定义 | 用途 |
-|----------|----------|------|
-| 资产负债表 | `erp-report/balance-sheet` | 财务报表 |
-| 利润表 | `erp-report/profit-statement` | 财务报表 |
-| 销售日报 | `erp-report/sales-daily` | 业务报表 |
-| 库存报表 | `erp-report/inventory-summary` | 业务报表 |
-| 项目成本报表 | `erp-report/project-cost` | 管理报表 |
-
-**报表执行流程**：
-
-```
-用户请求报表
-        │
-        ├─► 接收报表参数（日期范围、过滤条件等）
-        │
-        ├─► 调用 nop-report 执行报表定义
-        │
-        ├─► 执行 SQL 查询获取数据
-        │
-        ├─► 应用报表模板渲染
-        │
-        └─► 导出为 PDF/EXCEL/HTML 格式
+业务单据提交审核 → 启动审批流程 → 业务状态 APPROVING
+    ├─► 审批通过 → APPROVED → 触发后续业务流程
+    └─► 审批拒绝 → REJECTED → 允许修改后重新提交
 ```
 
 ---

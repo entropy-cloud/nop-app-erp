@@ -41,20 +41,9 @@
 
 ## 二、工时成本计算
 
-### 2.1 工时记录结构
+### 2.1 工时记录内容
 
-```java
-public class Timesheet {
-    private String projectId;        // 项目编码
-    private String taskId;           // 任务编码
-    private String activityType;     // 活动类型（开发/测试/实施等）
-    private String userId;           // 成员编码
-    private LocalDate workDate;      // 工作日期
-    private BigDecimal hours;        // 工时（小时）
-    private BigDecimal costRate;     // 标准成本率（元/小时）
-    private BigDecimal amount;       // 人工成本 = hours × costRate
-}
-```
+工时记录包含：项目编码、任务编码、活动类型（开发/测试/实施等）、成员编码、工作日期、工时（小时）、标准成本率（元/小时）、人工成本（= 工时 × 成本率）。
 
 ### 2.2 成本率配置
 
@@ -112,15 +101,7 @@ public class Timesheet {
 
 ### 3.1 预算结构
 
-```java
-public class ProjectBudget {
-    private String projectId;         // 项目编码
-    private BigDecimal totalBudget;   // 总预算
-    private BigDecimal usedBudget;    // 已使用预算
-    private BigDecimal remaining;     // 剩余预算 = totalBudget - usedBudget
-    private String controlMode;       // 控制模式（WARNING/STRICT）
-}
-```
+项目预算包含：项目编码、总预算、已使用预算、剩余预算（= 总预算 - 已使用预算）、控制模式（WARNING/STRICT）。
 
 ### 3.2 预算控制模式
 
@@ -276,38 +257,8 @@ public class ProjectBudget {
 
 ---
 
-## 八、与 Nop Platform 的集成
+## 八、凭证注册与预算检查
 
-### 8.1 工时成本凭证注册
+项目域实现 `IErpFinAcctDocProvider` 接口注册业务类型 `PROJECT_LABOR_COST`，在工时提交时触发工时成本凭证生成。
 
-项目域实现 `IErpFinAcctDocProvider` 注册业务类型 `PROJECT_LABOR_COST`：
-
-```java
-public class ProjectAcctDocProvider implements IErpFinAcctDocProvider {
-    @Override
-    public Set<BusinessType> getSupportedBusinessTypes() {
-        return Set.of(BusinessType.PROJECT_LABOR_COST);
-    }
-    
-    @Override
-    public List<VoucherLine> createFacts(BillData billData, AcctSchema acctSchema) {
-        // 生成工时成本凭证分录
-    }
-}
-```
-
-### 8.2 预算检查拦截器
-
-使用 Nop Platform 的拦截器机制在业务单据提交时进行预算检查：
-
-```java
-@Interceptor
-public class ProjectBudgetInterceptor {
-    @Inject
-    private IErpPrjProjectBiz projectBiz;
-    
-    public void checkBudget(BillData billData) {
-        // 预算检查逻辑
-    }
-}
-```
+预算检查在业务单据提交时执行，根据项目预算的控制模式（WARNING/STRICT）决定是否允许提交。

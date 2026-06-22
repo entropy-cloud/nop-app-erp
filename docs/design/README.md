@@ -32,7 +32,7 @@
 | 文档 | 职责 |
 |-----|------|
 | `app-overview.md` | 应用界面范围、角色、核心业务流程总览、关键领域区域 |
-| `domain-design-guidelines.md` | 5 个业务域的归属映射与跨域协作规则 |
+| `domain-design-guidelines.md` | 10 个业务域的设计原则、归属映射、跨域协作规则与数据一致性策略 |
 | `domain-glossary.md` | 跨域核心术语统一词汇表 |
 | `flow-overview.md` | 全局业务流程编排（L1 宏观流程、L2 状态机映射、L3 跨域规则） |
 | `roles-and-permissions.md` | ERP 角色与权限模型 |

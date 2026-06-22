@@ -133,18 +133,9 @@
 
 ## 四、停机记录与排产影响
 
-### 4.1 停机记录结构
+### 4.1 停机记录内容
 
-```java
-public class DowntimeEntry {
-    private String equipmentId;      // 设备编码
-    private String workCenterId;     // 关联工作中心（生产设备）
-    private LocalDateTime startTime; // 停机开始时间
-    private LocalDateTime endTime;   // 停机结束时间
-    private String reason;           // 停机原因
-    private String impact;           // 影响范围
-}
-```
+停机记录包含：设备编码、关联工作中心（生产设备）、停机开始/结束时间、停机原因、影响范围。
 
 ### 4.2 停机影响排产
 
@@ -216,15 +207,7 @@ public class DowntimeEntry {
 
 ### 5.3 维护任务模板
 
-```java
-public class MaintenanceTask {
-    private String name;             // 任务名称
-    private String equipmentTypeId;  // 适用设备类型
-    private BigDecimal standardHours; // 标准工时
-    private List<String> spareParts; // 标准备件清单
-    private String instructions;     // 操作说明
-}
-```
+维护任务模板包含：任务名称、适用设备类型、标准工时、标准备件清单、操作说明。
 
 ---
 
@@ -300,31 +283,13 @@ OEE = 可用率 × 性能效率 × 质量合格率
         └─► 工单报工记录（用于计算运行时长和产量）
 ```
 
-### 7.4 事件格式
+### 7.4 事件内容
 
-```java
-// 设备停机事件
-public class EquipmentDownEvent {
-    private String equipmentId;
-    private String workCenterId;
-    private LocalDateTime startTime;
-    private String reason;
-}
-
-// 设备恢复事件
-public class EquipmentUpEvent {
-    private String equipmentId;
-    private String workCenterId;
-    private LocalDateTime endTime;
-}
-
-// 备件消耗事件
-public class SparePartConsumptionEvent {
-    private String visitId;
-    private String materialId;
-    private BigDecimal quantity;
-}
-```
+| 事件 | 关键字段 |
+|------|----------|
+| 设备停机事件 | 设备编码、工作中心、开始时间、停机原因 |
+| 设备恢复事件 | 设备编码、工作中心、结束时间 |
+| 备件消耗事件 | 维护访问编码、物料编码、消耗数量 |
 
 ---
 
