@@ -100,7 +100,6 @@
                 <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME"/>
                 <column name="createdBy" displayName="创建人" stdSqlType="BIGINT" mandatory="true"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
@@ -131,7 +130,6 @@
                 <column name="departmentId" displayName="部门" stdSqlType="BIGINT"/>
                 <column name="projectId" displayName="项目" stdSqlType="BIGINT"/>
                 <column name="warehouseId" displayName="仓库" stdSqlType="BIGINT"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -155,7 +153,6 @@
                 <column name="businessType" displayName="业务类型" dictName="erp-fin/business-type" mandatory="true"/>
                 <column name="templateType" displayName="模板类型" stdSqlType="VARCHAR" precision="50"/>
                 <column name="isActive" displayName="是否启用" stdSqlType="BOOLEAN" defaultValue="true"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -176,7 +173,6 @@
                 <column name="dcDirection" displayName="借贷方向" dictName="erp-fin/dc-direction" mandatory="true"/>
                 <column name="amountExpression" displayName="金额表达式" domainName="amountExpression"/>
                 <column name="memoTemplate" displayName="摘要模板" domainName="memoTemplate"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -195,7 +191,6 @@
                 <column name="billType" displayName="单据类型" stdSqlType="VARCHAR" precision="50" mandatory="true"/>
                 <column name="billCode" displayName="单据编号" stdSqlType="VARCHAR" precision="50" mandatory="true"/>
                 <column name="billLineCode" displayName="单据行号" stdSqlType="VARCHAR" precision="50"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -219,7 +214,6 @@
                 <column name="status" displayName="期间状态" dictName="erp-fin/period-status" mandatory="true"/>
                 <column name="closedBy" displayName="结账人" stdSqlType="BIGINT"/>
                 <column name="closedAt" displayName="结账时间" stdSqlType="DATETIME"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -238,7 +232,6 @@
                 <column name="totalVouchers" displayName="凭证总数" stdSqlType="INT" defaultValue="0"/>
                 <column name="postedVouchers" displayName="已过账凭证数" stdSqlType="INT" defaultValue="0"/>
                 <column name="unpostedVouchers" displayName="未过账凭证数" stdSqlType="INT" defaultValue="0"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -263,7 +256,6 @@
                 <column name="currentBalance" displayName="当前余额" domainName="amount" defaultValue="0"/>
                 <column name="status" displayName="状态" dictName="erp-fin/fund-account-status" mandatory="true"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>

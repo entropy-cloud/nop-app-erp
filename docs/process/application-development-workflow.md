@@ -1,52 +1,52 @@
-# Application Development Workflow
+# 应用开发工作流
 
-## Purpose
+## 目的
 
-This document defines the default lightweight workflow for AI-assisted application development in `nop-app-erp`.
+本文档定义了 `nop-app-erp` 中 AI 辅助应用开发的默认轻量级工作流。
 
-It exists because app-layer projects often fail before coding quality becomes the main issue:
+它的存在是因为应用层项目通常在编码质量成为主要问题之前就失败了：
 
-- raw inputs are incomplete
-- requirement boundaries are unstable
-- prototype fidelity is mistaken for implementation readiness
-- process records are missing
-- teams jump from discussion straight to code
+- 原始输入不完整
+- 需求边界不稳定
+- 原型保真度被误认为是实现就绪状态
+- 流程记录缺失
+- 团队从讨论直接跳到代码
 
-This workflow makes those failure modes explicit.
+此工作流使这些失败模式明确化。
 
-## Default Flow
+## 默认流程
 
-For most small and medium app projects, use this path:
+对于大多数中小型应用项目，使用此路径：
 
-1. `context`
-2. `backlog` when choosing work
-3. `input`
-4. `requirements`
-5. `design`
-6. `task routing and skill selection`
-7. `plan` when planning triggers apply
-8. `draft review` for created plans
-9. `implementation`
-10. `verification`
-11. `closure audit` for created plans
-12. `logs / bugs`
+1. `context`（上下文）
+2. `backlog`（待办事项，选择工作时）
+3. `input`（输入）
+4. `requirements`（需求）
+5. `design`（设计）
+6. `task routing and skill selection`（任务路由和技能选择）
+7. `plan`（计划，当规划触发条件适用时）
+8. `draft review`（草案审查，针对创建的计划）
+9. `implementation`（实施）
+10. `verification`（验证）
+11. `closure audit`（结束审计，针对创建的计划）
+12. `logs / bugs`（日志/缺陷）
 
-Use document audits, retrospectives, skill extraction, and extra testing notes only when the work is ambiguous, risky, or repeatedly failing.
+仅当工作模糊、有风险或反复失败时，才使用文档审计、回顾、技能提取和额外测试笔记。
 
-## Optional Extended Layers
+## 可选扩展层
 
-These are available but not mandatory for every task:
+这些可用但并非每个任务都必需：
 
-1. `discussion`
-2. `document audit`
-3. `retrospective`
-4. `skill extraction`
+1. `discussion`（讨论）
+2. `document audit`（文档审计）
+3. `retrospective`（回顾）
+4. `skill extraction`（技能提取）
 
-Independent draft review and closure audit are not optional for created plans.
+创建的计划必须进行独立草案审查和结束审计。
 
-## Stage 0 - Read Context
+## 阶段 0 - 阅读上下文
 
-Before non-trivial work, read:
+在进行非平凡工作之前，阅读：
 
 - `docs/context/project-context.md`
 - `docs/context/ai-autonomy-policy.md`
@@ -54,253 +54,251 @@ Before non-trivial work, read:
 - `docs/context/source-of-truth-and-precedence.md`
 - `docs/context/conventions.md`
 
-If these files are empty or stale, update factual context before relying on the rest of the workflow. AI may make rules stricter, but must not loosen autonomy, remove blockers, mark stale docs fresh, or downgrade protected areas without human confirmation or human-approved owner-doc evidence.
+如果这些文件为空或过时，请在依赖工作流其余部分之前更新事实上下文。AI 可以使规则更严格，但在无人确认或无人批准的 owner-doc 证据的情况下，不得放宽自主权、移除阻塞项、标记陈旧文档为新鲜或降级保护区域。
 
-For a direct user-requested local low-risk edit, backlog setup is not required if the change clearly fits the no-plan path and verification commands are real.
+对于用户直接请求的本地低风险编辑，如果更改明显符合无计划路径且验证命令真实，则不需要待办事项设置。
 
-## Three-Step Control Loop
+## 三步控制循环
 
-Use this as the main control loop for non-trivial work:
+将此用作非平凡工作的主控制循环：
 
-### A. Generate Design Docs
+### A. 生成设计文档
 
-Split design output into two parts:
+将设计输出分为两部分：
 
-- pure requirement/app behavior design under `docs/requirements/` and `docs/design/`
-- pure technical and architectural design under `docs/architecture/`
+- `docs/requirements/` 和 `docs/design/` 下的纯需求/应用行为设计
+- `docs/architecture/` 下的纯技术和架构设计
 
-These files should reference each other when needed, but should not collapse into one mixed document.
+这些文件应在需要时相互引用，但不应合并为一个混合文档。
 
-After drafting substantial design documents, use an independent subagent or reviewer pass and revise until major objections are resolved.
+起草大量设计文档后，使用独立子代理或审查者通过并修订，直到解决主要异议。
 
-### B. Generate The Plan From Design Docs
+### B. 从设计文档生成计划
 
-Write `docs/plans/` from the settled design baseline, not from raw source material alone.
+从已确定的设计基线编写 `docs/plans/`，而不仅仅从原始源材料编写。
 
-After drafting a plan, use an independent subagent or reviewer pass and revise the plan directly until major objections are resolved.
+起草计划后，使用独立子代理或审查者通过并直接修订计划，直到解决主要异议。
 
-### C. Audit Periodically
+### C. 定期审计
 
-Use document audits at a frequency proportional to project risk. Plan audits and closure audits are mandatory for created plans.
+根据项目风险按比例频率使用文档审计。创建的计划必须进行计划审计和结束审计。
 
-## Stage 1 - Collect Raw Inputs
+## 阶段 1 - 收集原始输入
 
-Store source material under `docs/input/`.
+将源材料存储在 `docs/input/` 下。
 
-Typical sources:
+典型来源：
 
-- PM notes
-- card-set documents
-- prototypes
-- existing system screenshots
-- copied business rules
-- external articles or references
+- PM 笔记
+- 卡片集文档
+- 原型
+- 现有系统截图
+- 复制的业务规则
+- 外部文章或参考资料
 
-Rule:
+规则：
 
-- keep source material close to its original meaning
-- do not rewrite it into polished requirements too early
+- 保持源材料接近其原始含义
+- 不要过早将其重写为精美的需求
 
-## Stage 2 - Clarify Ambiguity When Needed
+## 阶段 2 - 必要时澄清歧义
 
-If the source material is incomplete or contradictory, create a file under `docs/discussions/`.
+如果源材料不完整或相互矛盾，在 `docs/discussions/` 下创建文件。
 
-Use this stage when:
+在以下情况下使用此阶段：
 
-- the PM is too busy to fully specify a complete round
-- multiple interpretations seem plausible
-- a prototype shows surface shape but not business rules
-- developers would otherwise need to infer domain meaning directly from raw files
+- PM 太忙无法完整指定一轮
+- 多种解释似乎都合理
+- 原型显示表面形状但不显示业务规则
+- 开发人员否则需要直接从原始文件推断域含义
 
-Output:
+输出：
 
-- open questions
-- assumptions
-- pending confirmations
-- decisions that unblock synthesis
+- 未解决的问题
+- 假设
+- 待确认事项
+- 解除综合阻塞的决策
 
-## Stage 3 - Synthesize Requirements
+## 阶段 3 - 综合需求
 
-Convert clarified input into implementation-ready files under `docs/requirements/`.
+将澄清后的输入转换为 `docs/requirements/` 下的实现就绪文件。
 
-This stage should answer:
+此阶段应回答：
 
-- what is in scope now
-- what is not in scope now
-- what user-visible behavior is required
-- what data, permissions, and business rules matter
-- what remains unresolved
+- 当前范围内是什么
+- 当前范围外是什么
+- 需要什么用户可见行为
+- 什么数据、权限和业务规则重要
+- 什么仍未解决
 
-Rule:
+规则：
 
-- if the requirement is still not implementation-ready, do not pretend it is ready by writing a weak plan
+- 如果需求仍未实现就绪，不要通过编写薄弱计划来假装它已就绪
 
-## Stage 4 - Update Stable Design Baseline
+## 阶段 4 - 更新稳定设计基线
 
-Move durable decisions into owner docs.
+将持久决策移入 owner docs。
 
-- app-layer feature, role, page, and flow decisions go into `docs/design/`
-- cross-cutting technical and module decisions go into `docs/architecture/`
+- 应用层功能、角色、页面和流程决策进入 `docs/design/`
+- 横切技术和模块决策进入 `docs/architecture/`
 
-Keep requirement/app design and technical architecture design separate, then cross-reference them.
+保持需求/应用设计和技术架构设计分开，然后交叉引用它们。
 
-These files should describe the current supported baseline, not a running negotiation transcript.
+这些文件应描述当前支持的基线，而非正在进行的协商记录。
 
-## Stage 5 - Audit The Documents When Needed
+## 阶段 5 - 必要时审计文档
 
-Before execution, audit the docs baseline only when the work is substantial, ambiguous, or risk-prone.
+在执行前，仅当工作大量、模糊或有风险时才审计文档基线。
 
-At minimum, challenge these risks:
+至少挑战这些风险：
 
-- scope is too broad
-- prototype details are mistaken for complete requirements
-- key business rules are missing
-- unresolved questions are hidden inside “nice looking” text
-- stable owner docs and active requirements disagree
+- 范围太广
+- 原型细节被误认为是完整需求
+- 关键业务规则缺失
+- 未解决的问题隐藏在"看起来不错"的文本中
+- 稳定的 owner docs 与活动需求不一致
 
-Use `docs/audits/` and the prompt templates under `docs/skills/`.
+使用 `docs/audits/` 和 `docs/skills/` 下的提示模板。
 
-For high-risk or cross-boundary work, add a multi-dimensional audit pass.
-When hidden problems are suspected outside the normal checklist, add an open-ended audit pass.
-These audit-style prompts are generic defaults and MUST be customized after copy to match the real project's owner docs, protected areas, verification stack, and recurring failure patterns.
+对于高风险或跨边界工作，添加多维审计通过。当怀疑正常检查清单之外存在隐藏问题时，添加开放式审计通过。这些审计风格的提示是通用默认值，复制后**必须**定制以匹配真实项目的 owner docs、保护区域、验证堆栈和重复失败模式。
 
-## Stage 6 - Route The Task And Select Skills
+## 阶段 6 - 路由任务并选择技能
 
-Before implementation, explicitly decide how the work should be executed:
+实施前，明确决定工作应如何执行：
 
-- classify the task type
-- confirm the owner docs that control the work
-- check `docs/skills/README.md` for reusable method skills
-- record `Skill: <name>` or `Skill: none` in the plan where relevant
+- 分类任务类型
+- 确认控制工作的 owner docs
+- 检查 `docs/skills/README.md` 中的可复用方法技能
+- 在相关计划中记录 `Skill: <name>` 或 `Skill: none`
 
-If no existing skill clearly fits, proceed with the normal docs-driven workflow instead of forcing a weak skill match.
+如果没有现有技能明显适合，则继续使用正常的文档驱动工作流，而不是强制进行薄弱的技能匹配。
 
-## Stage 7 - Write The Plan When Planning Triggers Apply
+## 阶段 7 - 规划触发条件适用时编写计划
 
-Create a plan under `docs/plans/` when work is more than a very small low-risk edit or when any planning trigger in the plan guide applies.
+当工作不仅仅是非常小的低风险编辑或计划指南中的任何规划触发条件适用时，在 `docs/plans/` 下创建计划。
 
-The only no-plan path is a local low-risk change that affects very few files, has clear existing behavior or tests, and does not touch contracts, data/model shape, auth, permissions, integrations, deployment, cross-surface behavior, or stale-doc conflicts. Larger local edits should use the full-plan path in the plan guide.
+唯一的无计划路径是本地低风险更改，影响很少的文件，有明确的现有行为或测试，且不涉及契约、数据/模型形状、认证、权限、集成、部署、跨表面行为或陈旧文档冲突。较大的本地编辑应使用计划指南中的完整计划路径。
 
-The plan should capture:
+计划应捕获：
 
-- current baseline
-- goals
-- non-goals
-- task route and skill selection
-- phased execution
-- proof requirements
-- closure gates
+- 当前基线
+- 目标
+- 非目标
+- 任务路由和技能选择
+- 分阶段执行
+- 证明要求
+- 结束门控
 
-The plan should not become a low-level implementation design dump.
+计划不应成为低级实现设计转储。
 
-## Stage 8 - Audit The Plan
+## 阶段 8 - 审计计划
 
-Before implementation, independently challenge every created plan.
+实施前，独立挑战每个创建的计划。
 
-The audit should test:
+审计应测试：
 
-- is the scope honest
-- are closure gates real
-- are hidden dependencies missing
-- does the plan silently rely on unresolved requirement gaps
+- 范围是否诚实
+- 结束门控是否真实
+- 是否缺少隐藏依赖
+- 计划是否默默依赖未解决的需求差距
 
-If the audit finds blocking issues, revise the plan and repeat the audit until no major objection remains.
+如果审计发现阻塞问题，修订计划并重复审计，直到没有主要异议。
 
-If structured draft review or closure audit repeatedly misses important issues, escalate with `multi-dimensional-audit-prompt.md` or `open-ended-audit-prompt.md` instead of repeating the same narrow review forever.
+如果结构化草案审查或结束审计反复遗漏重要问题，请升级使用 `multi-dimensional-audit-prompt.md` 或 `open-ended-audit-prompt.md`，而不是永远重复相同的狭窄审查。
 
-## Stage 9 - Implement Small Complete Slices
+## 阶段 9 - 实现小而完整的切片
 
-Implement the smallest complete slice that produces a real supported result.
+实现产生真实支持结果的最小完整切片。
 
-Rules:
+规则：
 
-- do not optimize for demo breadth
-- do not create large placeholder surfaces just to look complete
-- prefer one real feature slice over five weak page shells
+- 不要为演示广度优化
+- 不要创建大型占位表面只是为了看起来完整
+- 优先选择一个真实功能切片而不是五个薄弱的页面外壳
 
-## Stage 10 - Verify
+## 阶段 10 - 验证
 
-Run the real verification commands for the repo.
+运行仓库的真实验证命令。
 
-Capture additional proof in:
+在以下位置捕获额外证明：
 
-- `docs/testing/` for manual or exploratory proof
-- `docs/bugs/` for non-obvious regressions
-- `docs/logs/` for dated landing records
+- `docs/testing/` - 手动或探索性证明
+- `docs/bugs/` - 非显而易见的回归
+- `docs/logs/` - 带日期的落地记录
 
-Rule:
+规则：
 
-- every non-trivial bug fix should add or update automated test coverage
+- 每个非平凡 bug 修复应添加或更新自动化测试覆盖
 
-## Stage 11 - Independent Closure Audit
+## 阶段 11 - 独立结束审计
 
-Work tracked by a plan is not automatically closed just because the implementing agent says so.
+计划跟踪的工作不会仅仅因为实施代理说完成就自动关闭。
 
-Closure requires an independent re-check against:
+结束需要针对以下内容进行独立重新检查：
 
-- live code
-- current docs
-- verification results
-- stated closure gates
+- 实时代码
+- 当前文档
+- 验证结果
+- 规定的结束门控
 
-If the plan is not really closed, keep it open. Self-review or self-recorded closure notes do not replace this independent closure pass.
+如果计划并未真正关闭，请保持打开状态。自我审查或自行记录的结束笔记不能替代此独立结束通过。
 
-## Stage 12 - Retrospective When Needed
+## 阶段 12 - 必要时进行回顾
 
-If prototype and implementation still diverged, or if the first requirement set missed key reality, write a retrospective under `docs/retrospectives/`.
+如果原型和实现仍然存在分歧，或者第一个需求集遗漏了关键现实，请在 `docs/retrospectives/` 下写一份回顾。
 
-Good retrospective questions:
+好的回顾问题：
 
-- what source input was missing
-- what requirement decision was postponed too long
-- what assumption looked reasonable but failed in implementation
-- what should move earlier in the workflow next time
+- 缺少什么源输入
+- 什么需求决策推迟太久
+- 什么假设看起来合理但在实施中失败
+- 下次工作流中什么应该提前
 
-## Stage 13 - Skill Extraction When Needed
+## 阶段 13 - 必要时提取技能
 
-If the same issue keeps happening, convert it into a reusable prompt or audit playbook under `docs/skills/`.
+如果相同问题不断发生，将其转换为 `docs/skills/` 下的可复用提示或审计剧本。
 
-Examples:
+示例：
 
-- requirement gap analysis prompt
-- plan audit prompt
-- closure audit prompt
-- multi-dimensional audit prompt
-- open-ended audit prompt
-- reusable review checklist for a repeated method or audit pattern
+- 需求差距分析提示
+- 计划审计提示
+- 结束审计提示
+- 多维审计提示
+- 开放式审计提示
+- 可复用审查清单（用于重复方法或审计模式）
 
-If the output is more of a reusable engineering lesson than a prompt, record it under `docs/lessons/`.
+如果输出更像是可复用工程经验而不是提示，请在 `docs/lessons/` 下记录。
 
-If the same error pattern keeps recurring, do not stop at prose-only memory. Evaluate whether it should be promoted further into a heuristic script, static check, lint rule, CI guard, or codemod. These checks are project-specific and should be tuned to the copied project's real false-positive tolerance, naming conventions, protected areas, and verification model.
+如果相同的错误模式不断重复，不要仅停留在散文式记忆。评估是否应进一步提升为启发式脚本、静态检查、lint 规则、CI 守卫或 codemod。这些检查是项目特定的，应根据复制项目的真实误报容忍度、命名约定、保护区域和验证模型进行调整。
 
-## Relationship To Spec-Driven Development
+## 与规范驱动开发的关系
 
-Spec artifacts can still be useful.
+规范工件仍然有用。
 
-But this workflow does not assume a single `proposal -> design -> task` shape can own all project knowledge.
+但此工作流不假设单一的 `proposal -> design -> task` 形状可以拥有所有项目知识。
 
-Why:
+原因：
 
-- app-layer projects need both time-sensitive execution docs and always-current owner docs
-- raw inputs, discussions, analyses, and retrospectives do not naturally fit one rigid spec artifact
-- spec-only workflows often drift into task completion without clarifying the system’s longer-term shape
+- 应用层项目既需要时间敏感的执行文档，也需要始终最新的 owner docs
+- 原始输入、讨论、分析和回顾不自然地适合一个严格的规范工件
+- 仅规范的工作流通常在不澄清系统长期形状的情况下漂移到任务完成
 
-Use specs if helpful, but keep docs split by responsibility.
+如果有帮助，可以使用规范，但按职责拆分文档。
 
-## Recommended Small/Medium Project Loop
+## 推荐的中小型项目循环
 
-For most non-trivial tasks, the default loop is:
+对于大多数非平凡任务，默认循环是：
 
-1. read or update context
-2. write or update input/requirement files
-3. update design or architecture docs if the supported baseline changed
-4. write or update a plan when planning triggers apply
-5. audit the plan
-6. implement
-7. verify
-8. run closure audit for created plans
-9. record logs and bug notes when needed
+1. 阅读或更新上下文
+2. 编写或更新输入/需求文件
+3. 如果支持的基线更改，更新设计或架构文档
+4. 当规划触发条件适用时，编写或更新计划
+5. 审计计划
+6. 实施
+7. 验证
+8. 对创建的计划运行结束审计
+9. 必要时记录日志和 bug 笔记
 
-Add document audits, retrospectives, and reusable skills only when the problem pattern justifies the extra process.
+仅当问题模式证明额外流程合理时，才添加文档审计、回顾和可复用技能。
 
-Even in the lightweight path, keep the file-in/file-out rule: important instructions, plans, and conclusions should land in files, not only in chat.
+即使在轻量级路径中，也要保持文件输入/输出规则：重要指令、计划和结论应该落地到文件中，而不仅仅留在聊天中。

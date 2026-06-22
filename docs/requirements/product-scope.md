@@ -1,30 +1,30 @@
-# Product Scope
+# 产品范围
 
-## Current Milestone (bootstrap)
+## 当前里程碑（bootstrap）
 
-- Product summary: initialize `nop-app-erp` as an ERP application skeleton on the Nop Platform. Stand up the AGE documentation structure and an empty ORM model, ready for domain design.
-- Users: ERP operators/admins (eventual), developers (immediate)
-- MVP scope:
-  - AGE documentation structure applied and customized for `nop-app-erp`
-  - `model/app-erp.orm.xml` skeleton with correct maven coordinates and empty dicts/domains/entities
-  - ready to receive the first ERP business domain design
-- Deferred scope:
-  - choosing specific ERP business domains (procurement / sales / inventory / finance / etc.) — human decision
-  - ORM entity design — next milestone
-  - multi-module project generation via `nop-cli` — after ORM design
-  - app build/run verification — after codegen
-- Success metrics:
-  - documentation structure is internally consistent (placeholders resolved or explicitly marked)
-  - `model/app-erp.orm.xml` validates as a well-formed orm skeleton
-  - `docs/context/project-context.md` reflects the real bootstrap state
-- Constraints:
-  - no Java modules exist yet; do not invent their paths as live
-  - `nop-entropy` parent POM must be built before any future compilation
+- 产品摘要：将 `nop-app-erp` 初始化为 Nop Platform 上的 ERP 应用骨架。建立 AGE 文档结构和空的 ORM 模型，准备好进行域设计。
+- 用户：ERP 操作员/管理员（最终）、开发人员（立即）
+- MVP 范围：
+  - 为 `nop-app-erp` 应用并定制的 AGE 文档结构
+  - `model/app-erp.orm.xml` 骨架，具有正确的 Maven 坐标和空的字典/域/实体
+  - 准备好接收第一个 ERP 业务域设计
+- 延迟范围：
+  - 选择特定的 ERP 业务域（采购/销售/库存/财务/等）——人工决策
+  - ORM 实体设计——下一个里程碑
+  - 通过 `nop-cli` 生成多模块项目——ORM 设计后
+  - 应用构建/运行验证——代码生成后
+- 成功指标：
+  - 文档结构内部一致（占位符已解析或明确标记）
+  - `model/app-erp.orm.xml` 验证为格式良好的 orm 骨架
+  - `docs/context/project-context.md` 反映真实的 bootstrap 状态
+- 约束：
+  - Java 模块尚未存在；不要假设它们的路径是实时的
+  - `nop-entropy` 父 POM 必须在未来编译之前构建
 
-## Rule
+## 规则
 
-This file owns current milestone scope.
+本文件拥有当前里程碑范围。
 
-Do not duplicate stable app surfaces and workflows here. Put current supported behavior in `docs/design/app-overview.md`.
+不要在此处重复稳定的应用表面和工作流。将当前支持的行为放入 `docs/design/app-overview.md`。
 
-Put implementation sequencing into plans, not here.
+将实现顺序放入计划中，而非此处。

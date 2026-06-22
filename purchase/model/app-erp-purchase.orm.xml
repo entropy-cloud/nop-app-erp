@@ -10,9 +10,6 @@
     - approveStatus: 未提交/已提交/已审核/已驳回（审核流程）
     - paidStatus: 未付/部分/已付清（收付款进度）
 
-  参考来源：管伊佳（DepotHead type+subType）、ERPNext（purchase_order）、
-            赤龙（ApInvoiceHead dual-axis status）、若依（三单链）
-
   命名约定：
     - appName:        app-erp-pur
     - entityPackage:  app.erp.pur.dao.entity
@@ -99,7 +96,6 @@
                 <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME"/>
                 <column name="createdBy" displayName="创建人" stdSqlType="BIGINT" mandatory="true"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
@@ -134,7 +130,6 @@
                 <column name="warehouseId" displayName="收货仓库" stdSqlType="BIGINT"/>
                 <column name="projectId" displayName="项目" stdSqlType="BIGINT"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -168,7 +163,6 @@
                 <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME"/>
                 <column name="createdBy" displayName="创建人" stdSqlType="BIGINT" mandatory="true"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
@@ -201,7 +195,6 @@
                 <column name="warehouseId" displayName="入库库位" stdSqlType="BIGINT"/>
                 <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -236,7 +229,6 @@
                 <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME"/>
                 <column name="createdBy" displayName="创建人" stdSqlType="BIGINT" mandatory="true"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
@@ -264,7 +256,6 @@
                 <column name="taxAmount" displayName="税额" domainName="taxAmount"/>
                 <column name="amount" displayName="金额(不含税)" domainName="amount"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -294,7 +285,6 @@
                 <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME"/>
                 <column name="createdBy" displayName="创建人" stdSqlType="BIGINT" mandatory="true"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
@@ -315,7 +305,6 @@
                 <column name="invoiceId" displayName="发票ID" stdSqlType="BIGINT" mandatory="true"/>
                 <column name="amount" displayName="核销金额" domainName="amount" mandatory="true"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -347,7 +336,6 @@
                 <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME"/>
                 <column name="createdBy" displayName="创建人" stdSqlType="BIGINT" mandatory="true"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
@@ -379,7 +367,6 @@
                 <column name="amount" displayName="金额(不含税)" domainName="amount"/>
                 <column name="reason" displayName="退货原因" stdSqlType="VARCHAR" precision="500"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>

@@ -1,91 +1,91 @@
-# Index Routing Audit Prompt
+# 索引路由审计提示
 
-Use this prompt when auditing whether a documentation directory's index structure achieves its routing goals.
+在审计文档目录的索引结构是否实现其路由目标时使用此提示。
 
-Typical triggers:
+典型触发条件：
 
-- a new docs tree has been created or restructured
-- an existing index has grown stale or inconsistent with the files it points to
-- agents or humans repeatedly fail to find the right document through the index
-- before copying this template into a new project, to verify the copied index still routes correctly
+- 创建或重组了新的文档树
+- 现有索引已过时或与其指向的文件不一致
+- 代理或人工通过索引反复无法找到正确的文档
+- 在将此模板复制到新项目之前，验证复制的索引是否仍然正确路由
 
-## Audit Prompt
+## 审计提示
 
 ```text
-You are auditing the routing effectiveness of a documentation index structure.
+您正在审计文档索引结构的路由有效性。
 
-## Step 1 — Read the index
+## 步骤 1 — 读取索引
 
-Read the top-level index file (e.g. `INDEX.md` or `docs/index.md`) and every sub-index or README that it links to.
+读取顶层索引文件（例如 `INDEX.md` 或 `docs/index.md`）及其链接到的每个子索引或 README。
 
-For each indexed entry, record:
-- the stated purpose or task scenario
-- the path it points to
-- whether the target file exists and its content roughly matches the stated purpose
+对于每个索引条目，记录：
+- 声明的目的或任务场景
+- 指向的路径
+- 目标文件是否存在及其内容是否大致匹配声明的目的
 
-Return a coverage table with columns: | entry | stated purpose | target path | exists | matches purpose | notes |
+返回覆盖表，列：| entry | stated purpose | target path | exists | matches purpose | notes |
 
-Flag any entry where:
-- the target file does not exist
-- the target exists but its content does not match the stated purpose
-- the stated purpose is vague enough that a reader cannot decide if it is relevant
-- multiple entries point to the same target but describe it differently
-- an existing document that should be indexed is missing from the index
+标记任何条目：
+- 目标文件不存在
+- 目标存在但其内容与声明的目的不匹配
+- 声明的目的含糊不清，读者无法确定其是否相关
+- 多个条目指向同一目标但描述不同
+- 应该被索引的现有文档在索引中缺失
 
-## Step 2 — Persona-based routing test
+## 步骤 2 — 基于角色的路由测试
 
-For each persona below, simulate a realistic information need, then trace the shortest path from the index to the answer. Record whether the persona succeeds and how many hops it takes.
+对于下面的每个角色，模拟真实的信息需求，然后追踪从索引到答案的最短路径。记录角色是否成功以及需要多少跳数。
 
-Persona A — New developer joining the project:
-- Need: "How do I set up my dev environment and run the project?"
-- Need: "Where is the code for [main feature area]?"
+角色 A — 加入项目的新开发人员：
+- 需求："如何设置开发环境并运行项目？"
+- 需求："[主要功能区域] 的代码在哪里？"
 
-Persona B — AI agent starting a non-trivial task:
-- Need: "What are the current rules I must follow before writing code?"
-- Need: "Where do I find the owner doc for [technical area]?"
+角色 B — 开始非平凡任务的 AI 代理：
+- 需求："编写代码前必须遵循哪些当前规则？"
+- 需求："[技术领域] 的 owner doc 在哪里？"
 
-Persona C — Reviewer auditing a completed slice:
-- Need: "Where is the plan for the current work and what were its closure gates?"
-- Need: "Where are recent implementation logs?"
+角色 C — 审查完成切片的审查者：
+- 需求："当前工作的计划在哪里，其关闭门控是什么？"
+- 需求："最近的实施日志在哪里？"
 
-Persona D — Maintainer updating documentation:
-- Need: "What is the rule for when to update the index versus when to add a new document?"
-- Need: "Which documents are known to be stale or low-confidence?"
+角色 D — 更新文档的维护者：
+- 需求："何时更新索引与何时添加新文档的规则是什么？"
+- 需求："哪些文档已知过时或置信度低？"
 
-For each persona need, return:
+对于每个角色需求，返回：
 | persona | need | starting point | hops | found | path taken | problem |
 
-If a persona cannot reach the answer through the index alone, record the failure point and what was missing.
+如果角色无法仅通过索引到达答案，记录失败点和缺失的内容。
 
-## Step 3 — Structural quality checks
+## 步骤 3 — 结构质量检查
 
-Check for:
-- orphan files: files in the directory tree that are not reachable from any index entry
-- stale references: index entries pointing to moved, renamed, or deleted files
-- depth imbalance: paths that require more than 3 hops from the top-level index to reach actionable content
-- duplication: the same rule or knowledge stated in multiple indexed files without cross-reference
-- category confusion: documents whose content belongs in a different directory than where the index places them
-- missing intermediate indexes: directories with more than ~10 files that lack their own README or catalog
+检查：
+- 孤立文件：目录树中无法从任何索引条目访问的文件
+- 过时引用：指向已移动、重命名或删除文件的索引条目
+- 深度不平衡：从顶层索引到达可操作内容需要超过 3 跳的路径
+- 重复：同一规则或知识在多个索引文件中声明但没有交叉引用
+- 类别混淆：内容属于与索引放置位置不同的目录的文档
+- 缺少中间索引：文件超过约 10 个但缺少自己的 README 或目录的目录
 
-## Step 4 — Return findings
+## 步骤 4 — 返回发现
 
-Return findings ordered by severity:
+按严重性排序返回发现：
 
-For each finding include:
-- title
-- affected index entry or file path
-- current gap
-- impact on routing effectiveness
-- recommendation
+对于每个发现，包括：
+- 标题
+- 受影响的索引条目或文件路径
+- 当前差距
+- 对路由有效性的影响
+- 建议
 
-If no findings remain, say that explicitly and note residual risks.
+如果没有发现，明确说明并记录剩余风险。
 ```
 
-## Customization Notes
+## 定制说明
 
-After copying this template into a real project:
+将此模板复制到真实项目后：
 
-- Replace the persona needs with realistic questions that match the project's domain and common task types.
-- Add project-specific structural rules (e.g. max index depth, required sub-indexes for directories exceeding N files).
-- If the project uses a tiered index pattern (summary catalog → category catalog → individual documents), add a check for whether each tier's size and granularity are appropriate.
-- Tune the hop-count threshold based on the project's actual documentation depth.
+- 用符合项目域和常见任务类型的真实问题替换角色需求。
+- 添加项目特定的结构规则（例如最大索引深度、超过 N 个文件的目录所需的子索引）。
+- 如果项目使用分层索引模式（摘要目录 → 类别目录 → 单个文档），添加检查每个层级的大小和粒度是否适当。
+- 根据项目的实际文档深度调整跳数阈值。

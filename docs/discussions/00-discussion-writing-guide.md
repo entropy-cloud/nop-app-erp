@@ -1,30 +1,30 @@
-# Discussion Writing Guide
+# 讨论编写指南
 
-## Purpose
+## 目的
 
-Use `docs/discussions/` to capture multi-round clarification for ambiguous work.
+使用 `docs/discussions/` 捕获模糊工作的多轮澄清。
 
-## Good Fits
+## 适用场景
 
-- PM is available only for partial confirmations
-- prototype meaning is unclear
-- several requirement interpretations remain possible
-- developers would otherwise infer domain rules directly from raw files
+- PM 仅可用于部分确认
+- 原型含义不清楚
+- 存在多种需求解释
+- 开发人员否则会直接从原始文件推断领域规则
 
-## Include
+## 包含内容
 
-- source files being discussed
-- open questions
-- candidate interpretations
-- decisions already confirmed
-- unresolved items that block implementation
+- 正在讨论的源文件
+- 未解决的问题
+- 候选解释
+- 已确认的决策
+- 阻止实施的未解决项
 
-## Rule
+## 规则
 
-Discussion files are for clarification, not final truth. Move settled conclusions into `docs/requirements/`, `docs/design/`, or `docs/architecture/`.
+讨论文件用于澄清，而非最终真相。将已解决的结论移入 `docs/requirements/`、`docs/design/` 或 `docs/architecture/`。
 
-## Filename Guidance
+## 文件名指南
 
-Prefer dated filenames:
+优先使用日期文件名：
 
 - `docs/discussions/YYYY-MM-DD-HHmm-topic.md`

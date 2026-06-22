@@ -1,41 +1,41 @@
-# Bug Diagnosis Prompt
+# Bug 诊断提示
 
-Use this skill when the task is bug investigation and the failure is not yet explained by an obvious local defect.
+当任务是 bug 调查且故障尚未被明显的本地缺陷解释时使用此技能。
 
-This skill is for finding the real cause with a reproducible feedback loop before fixing code.
+此技能用于在修复代码之前通过可重现的反馈循环找到真正原因。
 
-## Use When
+## 使用场景
 
-- the bug report is real but the failing layer is unclear
-- the symptom may be downstream of another subsystem
-- the issue is intermittent, stateful, or timing-sensitive
-- the first likely fix would otherwise be guesswork
+- bug 报告真实但失败层不清楚
+- 症状可能是另一个子系统的下游问题
+- 问题是间歇性的、有状态的或时间敏感的
+- 第一个可能的修复否则只是猜测
 
-## Do Not Use When
+## 不使用场景
 
-- the bug is already reduced to a clear one-line defect
-- the task is mainly feature work, not diagnosis
+- bug 已简化为清晰的单行缺陷
+- 任务主要是功能工作，不是诊断
 
-## Required Inputs
+## 必需输入
 
-- bug report or observed symptom
-- relevant owner docs
-- reproduction environment or closest available harness
-- current verification commands
+- bug 报告或观察到的症状
+- 相关的 owner docs
+- 复现环境或最接近的可用测试框架
+- 当前验证命令
 
-## Execution Pattern
+## 执行模式
 
-1. Establish a tight feedback loop.
-2. Reproduce the failure and reduce it to the smallest reliable case.
-3. List 3-5 falsifiable hypotheses.
-4. Run targeted experiments that eliminate hypotheses quickly.
-5. Add or update regression proof before the fix when feasible.
-6. Land the smallest correct fix.
-7. Re-run verification and remove temporary instrumentation.
+1. 建立紧密的反馈循环。
+2. 重现失败并将其简化为最小可靠案例。
+3. 列出 3-5 个可证伪的假设。
+4. 运行有针对性的实验，快速消除假设。
+5. 在可行时，在修复之前添加或更新回归证明。
+6. 实施最小的正确修复。
+7. 重新运行验证并删除临时检测代码。
 
-## Output
+## 输出
 
-- confirmed root cause
-- rejected hypotheses and why they were rejected
-- regression proof path
-- residual risks or follow-up items
+- 确认的根本原因
+- 被拒绝的假设及其被拒绝的原因
+- 回归证明路径
+- 剩余风险或后续项

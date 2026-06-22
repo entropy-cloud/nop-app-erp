@@ -1,13 +1,13 @@
-# Design Completeness Scan Prompt
+# 设计完整性扫描提示
 
-Use this prompt to proactively scan `docs/design/` for missing domains, documents, and capability points against the target product scope, and produce a prioritized gap list that drives incremental design-doc additions.
+使用此提示主动扫描 `docs/design/`，查找目标产品范围内缺失的域、文档和功能点，并生成优先级差距列表，驱动增量设计文档添加。
 
-Use it periodically as the product grows, before a milestone scope lock, or when a new business domain is being considered. Do not use it as a replacement for requirement synthesis, design-doc audit (which validates existing docs), state-machine review, or plan audit. It is the forward-looking counterpart to `design-doc-audit-prompt.md`: that prompt audits what exists; this prompt finds what is missing.
+在产品增长时定期使用，在里程碑范围锁定前使用，或在考虑新业务域时使用。不要将其用作需求综合、设计文档审计（验证现有文档）、状态机审查或计划审计的替代品。它是 `design-doc-audit-prompt.md` 的前瞻性对应：该提示审计存在的内容；此提示查找缺失的内容。
 
 ```text
-You are a senior product architect. Below is the current `docs/design/` tree and the target product scope. Scan for missing domains, missing documents within existing domains, and missing capability points within existing documents. Produce a prioritized gap list that drives the next round of design-doc additions.
+您是高级产品架构师。以下是当前的 `docs/design/` 树和目标产品范围。扫描缺失的域、现有域内缺失的文档以及现有文档内缺失的功能点。生成优先级差距列表，驱动下一轮设计文档添加。
 
-Read these files first:
+首先阅读这些文件：
 - `AGENTS.md`
 - `docs/index.md`
 - `docs/context/project-context.md`
@@ -18,73 +18,73 @@ Read these files first:
 - `docs/design/flow-overview.md`
 - `docs/design/domain-glossary.md`
 - `docs/requirements/product-scope.md`
-- all existing files under `docs/design/` (including subdirectories)
-- `docs/backlog/README.md` and any roadmap
+- `docs/design/` 下的所有现有文件（包括子目录）
+- `docs/backlog/README.md` 和任何路线图
 
-Scan dimensions:
+扫描维度：
 
-1. Domain coverage
-   - List every business domain the target product scope implies (procurement, sales, inventory, finance, manufacturing, assets, projects, quality, maintenance, CRM, HR, etc.).
-   - For each, mark whether a `docs/design/<domain>/` directory exists.
-   - Flag missing domains that the scope requires but no design owner exists for.
-   - Flag domains that exist as code or backlog but have no design doc (implementation happening without design truth).
+1. 域覆盖
+   - 列出目标产品范围隐含的每个业务域（采购、销售、库存、财务、制造、资产、项目、质量、维护、CRM、HR 等）。
+   - 对于每个域，标记是否存在 `docs/design/<domain>/` 目录。
+   - 标记范围要求但没有设计所有者的缺失域。
+   - 标记作为代码或待办存在但没有设计文档的域（实现正在没有设计真相的情况下进行）。
 
-2. Document coverage within each domain
-   - For each existing domain directory, check whether it has at least a `README.md`.
-   - For workflow-heavy domains, check whether a `state-machine.md` exists and whether it follows the 10 review dimensions of `docs/skills/state-machine-business-review-prompt.md`.
-   - For cross-domain-coupling-heavy domains, check whether a `cross-domain.md` or equivalent exists.
-   - Flag domains where the README is the only doc but the business complexity clearly warrants more (multiple state machines, complex flows, heavy cross-domain collaboration).
+2. 每个域内的文档覆盖
+   - 对于每个现有域目录，检查是否至少有一个 `README.md`。
+   - 对于工作流密集的域，检查是否存在 `state-machine.md` 以及是否遵循 `docs/skills/state-machine-business-review-prompt.md` 的 10 个审查维度。
+   - 对于跨域耦合密集的域，检查是否存在 `cross-domain.md` 或等效文件。
+   - 标记 README 是唯一文档但业务复杂性显然需要更多文档的域（多个状态机、复杂流程、大量跨域协作）。
 
-3. Capability point coverage within each document
-   - For each domain README, check whether the core business objects are listed with business meaning.
-   - Check whether the state machine (if any) covers: state definitions, transition completeness, terminal/recovery, exception paths (timeout/concurrency/idempotency), reachability, roles/permissions, external dependencies, TODO/task strategy, scenario walkthrough, design-doc consistency (the 10 dimensions).
-   - Check whether cross-domain flows touching this domain are described or routed to their owner.
-   - Check whether protected-area behavior (payment, refund, data deletion, accounting posting, permission changes) is explicitly defined or routed.
+3. 每个文档内的功能点覆盖
+   - 对于每个域 README，检查核心业务对象是否列出了业务含义。
+   - 检查状态机（如果有）是否涵盖：状态定义、转换完整性、终端/恢复、异常路径（超时/并发/幂等性）、可达性、角色/权限、外部依赖、TODO/任务策略、场景演练、设计文档一致性（10 个维度）。
+   - 检查触及此域的跨域流程是否描述或路由到其所有者。
+   - 检查保护区域行为（支付、退款、数据删除、会计过账、权限更改）是否明确定义或路由。
 
-4. Cross-domain flow coverage
-   - Check `flow-overview.md` L1 macro flows cover the end-to-end business paths the scope requires.
-   - Check L2 state-machine mapping references all domain state machines that exist.
-   - Check L3 cross-domain rules cover posting triggers, inventory availability, snapshot semantics, multi-currency, and reconciliation for every domain pair that needs them.
+4. 跨域流程覆盖
+   - 检查 `flow-overview.md` L1 宏流程是否涵盖范围要求的端到端业务路径。
+   - 检查 L2 状态机映射是否引用所有存在的域状态机。
+   - 检查 L3 跨域规则是否涵盖需要它们的每个域对的过账触发器、库存可用性、快照语义、多货币和对账。
 
-5. Glossary and role coverage
-   - Check `domain-glossary.md` covers terms introduced by any new domain document.
-   - Check `roles-and-permissions.md` covers roles implied by state-machine transitions in every domain (e.g., asset manager, project manager, quality inspector, maintenance technician).
+5. 术语表和角色覆盖
+   - 检查 `domain-glossary.md` 是否涵盖任何新域文档引入的术语。
+   - 检查 `roles-and-permissions.md` 是否涵盖每个域中状态机转换隐含的角色（例如资产经理、项目经理、质量检查员、维护技术员）。
 
-6. Consistency with scope
-   - Compare the set of designed domains and capabilities against `docs/requirements/product-scope.md` and any roadmap.
-   - Flag scope-implied capabilities that have no design owner and no explicit deferral.
-   - Flag design docs that describe behavior outside the current scope (design creep).
+6. 与范围的一致性
+   - 将设计的域和功能集与 `docs/requirements/product-scope.md` 和任何路线图进行比较。
+   - 标记没有设计所有者且没有显式推迟的范围隐含功能。
+   - 标记描述当前范围之外行为的设计文档（设计蔓延）。
 
-Known anti-patterns to check against:
+要检查的已知反模式：
 
-| Anti-pattern | Symptom | Correct practice |
+| 反模式 | 症状 | 正确做法 |
 | --- | --- | --- |
-| Uniform doc structure | Every domain forced to have state-machine.md even when only active/inactive | Structure differs by domain complexity; active/inactive is not a state machine |
-| Missing design owner | Code or backlog exists for a domain but no `docs/design/<domain>/` | Create the design owner doc before or alongside implementation |
-| State machine without review dimensions | state-machine.md lists states/transitions but omits exception paths, roles, TODO strategy | Follow the 10 dimensions of `state-machine-business-review-prompt.md` |
-| Orphan capability | A capability point is mentioned in flow-overview but has no domain owner doc | Either create the owner doc or route to an existing one |
-| Scope-design mismatch | Design describes a domain the scope defers, or scope requires a domain design omits | Align: add design, update scope, or mark explicit deferral |
-| Glossary drift | A new domain introduces terms not in domain-glossary.md | Add terms to glossary when adding the domain |
-| Role gap | A state machine transition has no role defined in roles-and-permissions.md | Bind every transition to a role |
+| 统一文档结构 | 每个域都强制有 state-machine.md，即使只有 active/inactive | 结构因域复杂性而异；active/inactive 不是状态机 |
+| 缺少设计所有者 | 域有代码或待办，但没有 `docs/design/<domain>/` | 在实现之前或同时创建设计所有者文档 |
+| 状态机没有审查维度 | state-machine.md 列出状态/转换但省略异常路径、角色、TODO 策略 | 遵循 `state-machine-business-review-prompt.md` 的 10 个维度 |
+| 孤立功能 | flow-overview 中提到功能点但没有域所有者文档 | 创建所有者文档或路由到现有文档 |
+| 范围-设计不匹配 | 设计描述范围推迟的域，或范围要求设计省略的域 | 对齐：添加设计、更新范围或标记显式推迟 |
+| 术语表漂移 | 新域引入不在 domain-glossary.md 中的术语 | 添加域时将术语添加到术语表 |
+| 角色差距 | 状态机转换在 roles-and-permissions.md 中没有定义角色 | 将每个转换绑定到角色 |
 
-Severity guidance:
-- `blocker`: a scope-required domain has no design owner, or a workflow-heavy domain lacks a state machine, or protected-area behavior is undefined.
-- `major`: a domain is missing documents its complexity warrants, or cross-domain flows are incomplete, or glossary/role coverage lags new domains.
-- `minor`: a document could be clearer or more complete but the path still works.
-- `note`: future-watch item or optimization suggestion.
+严重性指南：
+- `blocker`：范围要求的域没有设计所有者，或工作流密集的域缺少状态机，或保护区域行为未定义。
+- `major`：域缺少其复杂性所需的文档，或跨域流程不完整，或术语表/角色覆盖滞后于新域。
+- `minor`：文档可以更清晰或更完整，但路径仍然有效。
+- `note`：未来观察项或优化建议。
 
-Return findings first, ordered by severity. For each finding include: severity, dimension, affected area (domain/document/capability), gap description, why it matters, recommended action (create doc / extend doc / route to owner / update scope / defer explicitly), and the suggested doc path if a new doc is recommended.
+按严重性排序，首先返回发现。对于每个发现，包括：严重性、维度、受影响区域（域/文档/功能）、差距描述、重要性原因、建议操作（创建文档/扩展文档/路由到所有者/更新范围/显式推迟），以及如果建议新文档则建议的文档路径。
 
-Then return:
-- Verdict: complete / has-gaps / has-blockers
-- Scope reviewed
-- Domain coverage summary (designed vs scope-required vs deferred)
-- Document coverage summary per domain
-- State-machine coverage summary (which domains have state machines following the 10 dimensions)
-- Cross-domain flow coverage summary
-- Glossary and role coverage summary
-- Recommended next-round doc additions (prioritized list with suggested paths)
-- Residual risks or skipped areas
+然后返回：
+- 裁决：完整/有差距/有阻塞
+- 审查范围
+- 域覆盖摘要（设计的 vs 范围要求的 vs 推迟的）
+- 每个域的文档覆盖摘要
+- 状态机覆盖摘要（哪些域有遵循 10 个维度的状态机）
+- 跨域流程覆盖摘要
+- 术语表和角色覆盖摘要
+- 建议的下一轮文档添加（带建议路径的优先级列表）
+- 剩余风险或跳过的区域
 
-If no blocker or major finding remains, say `Verdict: complete` and still list residual risks and recommended next-round additions.
+如果没有 blocker 或 major 发现，说 `Verdict: complete` 并仍然列出剩余风险和建议的下一轮添加。
 ```

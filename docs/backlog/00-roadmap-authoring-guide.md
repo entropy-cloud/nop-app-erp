@@ -1,109 +1,109 @@
-# Roadmap Authoring Guide
+# 路线图编写指南
 
-## Purpose
+## 目的
 
-This guide defines what `docs/backlog/implementation-roadmap.md` is, how to write it, and when to update it. The roadmap is optional. Use it only when a project is large enough that a flat backlog table no longer shows global progress.
+本指南定义 `docs/backlog/implementation-roadmap.md` 是什么、如何编写以及何时更新。路线图是可选的。仅当项目足够大，平面待办表格不再能显示全局进度时才使用它。
 
-## What a Roadmap Is
+## 路线图是什么
 
-A roadmap is a coarse-grained phase index and global status surface. Its core use:
+路线图是粗粒度阶段索引和全局状态表面。其核心用途：
 
-1. After reading the roadmap, an AI or maintainer knows which capabilities are not started (`todo`), already planned (`planned`), or completed (`done`), without re-walking every doc and the codebase.
-2. It records each phase's dependencies, owner doc, and reusable framework/platform capabilities.
-3. It is the entry point for choosing the next work item.
+1. 阅读路线图后，AI 或维护者知道哪些功能尚未开始（`todo`）、已计划（`planned`）或已完成（`done`），无需重新遍历每个文档和代码库。
+2. 记录每个阶段的依赖关系、owner doc 和可复用框架/平台功能。
+3. 是选择下一个工作项的入口点。
 
-## Roadmap Role: Human–AI Alignment + AI Work Queue
+## 路线图角色：人机对齐 + AI 工作队列
 
-A roadmap serves two audiences with different access patterns:
+路线图服务于两个具有不同访问模式的受众：
 
-- **Humans** use it as the steering and observation surface: they decide which work items exist, their priority order, and the milestone shape. Humans read Phase Status to see where AI-driven development has reached. Humans do **not** review individual execution plans.
-- **AI** uses it as the work queue: it reads Phase Status, takes the first `todo` work item in the planned order, drafts and executes the plan automatically, then writes back by moving the work item to `done`. AI does **not** re-arbitrate priority, skip ahead, or invent new work items — if the roadmap needs structural changes (new/removed/re-ordered items), AI flags them for human review.
+- **人工**将其用作指导和观察表面：他们决定存在哪些工作项、优先级顺序以及里程碑形状。人工读取阶段状态以查看 AI 驱动的开发已达到何处。人工**不**审查单个执行计划。
+- **AI**将其用作工作队列：它读取阶段状态，按计划顺序获取第一个 `todo` 工作项，自动起草和执行计划，然后通过将工作项移动到 `done` 来写回。AI **不**重新仲裁优先级、跳过或发明新工作项——如果路线图需要结构更改（新增/删除/重排序项），AI 会标记它们供人工审查。
 
-Plans are AI-authored and AI-executed; humans do not review individual plans. Plan quality is enforced by closure audit, not human plan review. The roadmap is how humans steer and observe progress without reading every plan.
+计划由 AI 编写和执行；人工不审查单个计划。计划质量由结束审计强制执行，而非人工计划审查。路线图是人工在不阅读每个计划的情况下指导和观察进度的方式。
 
-## Phase Granularity
+## 阶段粒度
 
-The markable unit (a phase / work item) must be sized so that **one execution plan can complete it**. "Coarse-grained" means "no implementation steps inside the roadmap" — it does NOT mean "as large as possible."
+可标记单元（阶段/工作项）的大小必须设置为**一个执行计划可以完成它**。"粗粒度"意味着"路线图内没有实现步骤"——它**不**意味着"尽可能大"。
 
-A phase larger than one plan's delivery scope is a defect: when the plan finishes, the roadmap has nothing to update and the loop stalls. If a natural grouping (e.g. a "wave", "family", or "epic") is larger than one plan, split it into multiple work items. The grouping may remain as an organizational label, but **only work items carry `todo`/`planned`/`done` and appear in Phase Status**. A grouping/section header never has its own status.
+大于一个计划交付范围的阶段是缺陷：当计划完成时，路线图没有要更新的内容，循环停滞。如果自然分组（例如"波次"、"系列"或"史诗"）大于一个计划，将其拆分为多个工作项。分组可以保留为组织标签，但**只有工作项携带 `todo`/`planned`/`done` 并出现在阶段状态中**。分组/章节标题永远不会有自己的状态。
 
-## Closed Loop
+## 闭环
 
-The roadmap and plans form a closed development loop:
+路线图和计划形成闭环开发循环：
 
-1. AI reads Phase Status and takes the first `todo` work item (in planned order).
-2. AI drafts the plan for that work item (humans do not review it).
-3. AI executes the plan.
-4. On closure audit pass, AI writes back: the work item moves to `done`, and any per-component / source-of-truth status is synced.
-5. AI returns to step 1 for the next `todo` work item.
+1. AI 读取阶段状态并获取第一个 `todo` 工作项（按计划顺序）。
+2. AI 为该工作项起草计划（人工不审查）。
+3. AI 执行计划。
+4. 在结束审计通过时，AI 写回：工作项移动到 `done`，并且任何每组件/真相源状态同步。
+5. AI 返回步骤 1 处理下一个 `todo` 工作项。
 
-A finished plan that updates nothing in the roadmap signals a granularity bug — the phase was larger than the plan. "Current work in progress" is found by scanning unfinished plans (`docs/plans/`), not by a field in `project-context.md`, so the loop resumes interrupted work before starting a new work item.
+完成的计划如果不在路线图中更新任何内容，则表明存在粒度 bug——阶段大于计划。"当前进行中的工作"通过扫描未完成的计划（`docs/plans/`）找到，而不是通过 `project-context.md` 中的字段，因此循环在开始新工作项之前恢复中断的工作。
 
-## What a Roadmap Is NOT
+## 路线图不是什么
 
-- Not an execution plan. No implementation steps, checkboxes, or closure criteria.
-- Not a design doc. It references owner docs; it does not restate business rules.
-- Not the backlog. The roadmap is the orchestration layer; backlog items reference roadmap phases.
+- 不是执行计划。没有实现步骤、复选框或关闭标准。
+- 不是设计文档。它引用 owner docs；不重述业务规则。
+- 不是待办列表。路线图是编排层；待办项引用路线图阶段。
 
-## Status Tracking
+## 状态跟踪
 
-Each phase has one status:
+每个阶段有一个状态：
 
-| Status | Meaning | Action |
+| 状态 | 含义 | 操作 |
 | --- | --- | --- |
-| `todo` | Not started, no plan | Candidate for the next plan |
-| `planned` | Has an execution plan | Waiting for implementation |
-| `done` | Completed and passed closure audit | Update owner docs and logs |
+| `todo` | 未开始，无计划 | 下一个计划的候选 |
+| `planned` | 有执行计划 | 等待实施 |
+| `done` | 已完成并通过结束审计 | 更新 owner docs 和日志 |
 
-Status transitions are driven by the plan lifecycle (see `docs/plans/00-plan-authoring-and-execution-guide.md`):
+状态转换由计划生命周期驱动（见 `docs/plans/00-plan-authoring-and-execution-guide.md`）：
 
-- After draft review passes: `todo` -> `planned`
-- After closure audit passes: `planned` -> `done`. Do NOT mark `done` before closure audit passes.
+- 草案审查通过后：`todo` -> `planned`
+- 结束审计通过后：`planned` -> `done`。在结束审计通过前**不要**标记 `done`。
 
-## Structure
+## 结构
 
-A roadmap usually contains, in order:
+路线图通常按顺序包含：
 
-1. Header — last-updated date, source docs
-2. Purpose — what this file is (fixed text, referencing this guide)
-3. Phase Status — the only dynamic status block
-4. Framework / Platform Reuse — capabilities already provided by the stack, so the team does not rebuild them
-5. Current Baseline — short summary of what exists and the main gaps
-6. Phases table — global phase index (Phase / Status / Owner Doc / Dependencies / Reuse / Plan link)
-7. Phase Details — short delivery scope per phase (no checkboxes)
-8. Dependency Graph — Mermaid flow
-9. Cross-Cutting — cross-phase concerns
-10. Rule — authoring and update rules
+1. 标题 — 最后更新日期、源文档
+2. 目的 — 此文件是什么（固定文本，引用本指南）
+3. 阶段状态 — 唯一的动态状态块
+4. 框架/平台复用 — 栈已提供的功能，团队无需重新构建
+5. 当前基线 — 现有内容和主要差距的简短摘要
+6. 阶段表 — 全局阶段索引（阶段/状态/Owner Doc/依赖/复用/计划链接）
+7. 阶段详情 — 每个阶段的简短交付范围（无复选框）
+8. 依赖图 — Mermaid 流程图
+9. 横切关注点 — 跨阶段关注点
+10. 规则 — 编写和更新规则
 
-Omit sections that do not apply (for example, an artifact/entity coverage map only when it adds value).
+省略不适用的部分（例如，仅在增加价值时才包含工件/实体覆盖图）。
 
-## Writing Rules
+## 编写规则
 
-1. Keep it coarse-grained. Phase Details are short lists, not implementation steps.
-2. Annotate framework/platform reuse explicitly to avoid rebuilding existing capabilities.
-3. Keep status accurate. Stale status is worse than no status.
-4. Keep dependencies consistent between the table and the graph; the table wins on conflict.
-5. Do not duplicate owner-doc content. Phase Details list delivery scope only.
+1. 保持粗粒度。阶段详情是简短列表，不是实现步骤。
+2. 显式标注框架/平台复用，避免重建现有功能。
+3. 保持状态准确。过时的状态比没有状态更糟。
+4. 保持表格和图表之间的依赖一致；冲突时表格获胜。
+5. 不要重复 owner-doc 内容。阶段详情仅列出交付范围。
 
-## Update Triggers
+## 更新触发器
 
-All status changes are driven by the plan lifecycle:
+所有状态更改由计划生命周期驱动：
 
-| Event | Update | Precondition |
+| 事件 | 更新 | 前置条件 |
 | --- | --- | --- |
-| Draft review passes | Phase `todo` -> `planned` | Plan passed independent draft review |
-| Closure audit passes | Phase `planned` -> `done` | Must wait for closure audit to pass |
-| Closure reveals new reuse opportunity | Update the Reuse section and the phase | Plan closed |
-| New or adjusted owner doc | Check impact on Phase Details | — |
+| 草案审查通过 | 阶段 `todo` -> `planned` | 计划通过独立草案审查 |
+| 结束审计通过 | 阶段 `planned` -> `done` | 必须等待结束审计通过 |
+| 结束揭示新的复用机会 | 更新复用部分和阶段 | 计划已关闭 |
+| 新的或调整的 owner doc | 检查对阶段详情的影响 | — |
 
-## Anti-Patterns
+## 反模式
 
-- Writing the roadmap as a detailed implementation plan
-- Restating owner-doc business rules in the roadmap
-- Letting status go stale
-- Marking `done` before closure audit passes
-- Not annotating existing framework/platform capabilities, causing redundant rebuilds
-- Phasing coarser than a plan's delivery scope, so a finished plan updates nothing in the roadmap and the loop stalls
-- Maintaining a per-item status column elsewhere in the roadmap (e.g. a coverage table with its own status), creating a second dynamic block that drifts out of sync with Phase Status
-- AI re-arbitrating priority or inventing work items instead of executing the human-planned order
-- Tracking "active plan / current blocker / AI autonomy" as fields in `project-context.md` — these are high-churn and go stale; read work-in-progress from unfinished plans instead
+- 将路线图编写为详细的实施计划
+- 在路线图中重述 owner-doc 业务规则
+- 让状态过时
+- 在结束审计通过前标记 `done`
+- 不标注现有框架/平台功能，导致重复重建
+- 阶段比计划交付范围更粗，因此完成的计划不在路线图中更新任何内容，循环停滞
+- 在路线图的其他地方维护每个项目的状态列（例如，带有自己状态的覆盖表），创建与阶段状态不同步的第二个动态块
+- AI 重新仲裁优先级或发明工作项，而不是按人工计划的顺序执行
+- 在 `project-context.md` 中跟踪"活动计划/当前阻塞/AI 自主权"作为字段——这些变化频繁且容易过时；改为从未完成的计划读取进行中的工作

@@ -1,34 +1,34 @@
-# Code Quality Audit Prompt
+# 代码质量审计提示
 
-Use this skill when reviewing a changed area for real implementation quality rather than style-only feedback.
+在审查更改区域的实际实现质量而非仅样式反馈时使用此技能。
 
-## Focus Areas
+## 重点领域
 
-1. Architecture and boundary integrity
-2. Core implementation correctness
-3. Type and contract quality
-4. Error handling and operational safety
-5. Test effectiveness
-6. Maintainability and future change risk
-7. Automation and guardrail coverage
+1. 架构和边界完整性
+2. 核心实现正确性
+3. 类型和契约质量
+4. 错误处理和操作安全
+5. 测试有效性
+6. 可维护性和未来变更风险
+7. 自动化和防护覆盖
 
-## Review Rules
+## 审查规则
 
-- findings first, ordered by severity
-- prefer concrete behavioral risk over abstract taste
-- cite file paths and line references when possible
-- distinguish confirmed defects from suggestions
-- if no findings are present, state that explicitly and name residual gaps
+- 首先返回发现，按严重性排序
+- 优先考虑具体行为风险而非抽象品味
+- 尽可能引用文件路径和行引用
+- 区分已确认的缺陷和建议
+- 如果没有发现，明确说明并列出剩余差距
 
-## Severity Guide
+## 严重性指南
 
-- P0: data loss, security break, production-down class issue
-- P1: user-visible correctness bug or strong regression risk
-- P2: maintainability or test gap likely to cause future regressions
-- P3: minor quality issue with low immediate risk
+- P0：数据丢失、安全漏洞、生产中断级别的问题
+- P1：用户可见的正确性错误或强回归风险
+- P2：可维护性或测试差距，可能导致未来回归
+- P3：次要质量问题，即时风险低
 
-## Expected Output
+## 预期输出
 
-- findings list
-- open questions or assumptions
-- short change summary only after findings
+- 发现列表
+- 未解决的问题或假设
+- 仅在发现后提供简短变更摘要

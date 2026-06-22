@@ -1,33 +1,33 @@
-# Code Refactor Prompt
+# 代码重构提示
 
-Use this skill when the task is to improve structure without changing supported behavior.
+当任务是在不更改支持行为的情况下改进结构时使用此技能。
 
-## Guardrails
+## 防护措施
 
-- no intentional behavior change
-- no hidden contract expansion
-- prefer small, reviewable steps
-- verify after each structural slice when possible
-- preserve existing public names unless rename is part of the task
+- 不故意更改行为
+- 不隐藏契约扩展
+- 优先选择小的、可审查的步骤
+- 尽可能在每个结构切片后进行验证
+- 保留现有的公共名称，除非重命名是任务的一部分
 
-## Allowed Moves
+## 允许的操作
 
-- split oversized files
-- extract coherent helpers or modules
-- merge artificial wrappers
-- remove dead compatibility paths
-- normalize duplicated logic behind one contract
+- 拆分超大文件
+- 提取连贯的辅助函数或模块
+- 合并人工包装器
+- 删除死代码兼容性路径
+- 在一个契约后面规范化重复逻辑
 
-## Execution Pattern
+## 执行模式
 
-1. confirm the live baseline and protected behavior
-2. define the exact structural target
-3. make the smallest safe structural slice
-4. run focused verification
-5. stop if behavior and structure start changing at the same time
+1. 确认实时基线和受保护的行为
+2. 定义确切的结构目标
+3. 进行最小的安全结构切片
+4. 运行集中验证
+5. 如果行为和结构同时开始变化则停止
 
-## Expected Output
+## 预期输出
 
-- refactor summary
-- proof that behavior stayed intact
-- remaining structural debt, if any
+- 重构摘要
+- 行为保持不变的证明
+- 剩余的结构债务（如果有）

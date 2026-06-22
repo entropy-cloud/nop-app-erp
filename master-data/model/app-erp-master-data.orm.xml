@@ -5,9 +5,6 @@
   业务范围：物料/SKU、往来单位（客户/供应商）、仓库/库位、币种/汇率、
             科目表/科目、计量单位/单位换算、结算方式、组织部门
 
-  参考来源：管伊佳（Material+SKU+Supplier）、Odoo（product）、ERPNext（item）、
-            赤龙（MdFinanceSubject）、iDempiere（C_Currency/C_BPartner）
-
   命名约定：
     - appName:        app-erp-md
     - entityPackage:  app.erp.md.dao.entity
@@ -114,7 +111,6 @@
                 <column name="weight" displayName="重量(kg)" stdSqlType="DECIMAL" precision="12" scale="4"/>
                 <column name="volume" displayName="体积(m³)" stdSqlType="DECIMAL" precision="12" scale="6"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -136,7 +132,6 @@
                 <column name="name" displayName="名称" domainName="materialName" mandatory="true"/>
                 <column name="parentId" displayName="父级ID" stdSqlType="BIGINT"/>
                 <column name="sortNum" displayName="排序" stdSqlType="INT"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -163,7 +158,6 @@
                 <column name="retailPrice" displayName="零售价(不含税)" stdSqlType="DECIMAL" precision="20" scale="4"/>
                 <column name="taxRate" displayName="默认税率(%)" stdSqlType="DECIMAL" precision="10" scale="4"/>
                 <column name="isDefault" displayName="是否默认SKU" stdSqlType="BOOLEAN" defaultValue="false"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -194,7 +188,6 @@
                 <column name="receivableBalance" displayName="应收余额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0"/>
                 <column name="payableBalance" displayName="应付余额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -212,7 +205,6 @@
                 <column name="managerId" displayName="负责人" stdSqlType="BIGINT"/>
                 <column name="status" displayName="状态" dictName="erp-md/warehouse-status" mandatory="true"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -232,7 +224,6 @@
                 <column name="name" displayName="名称" domainName="materialName" mandatory="true"/>
                 <column name="parentId" displayName="父级库位" stdSqlType="BIGINT"/>
                 <column name="isActive" displayName="是否启用" stdSqlType="BOOLEAN" defaultValue="true"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -251,7 +242,6 @@
                 <column name="code" displayName="编码" domainName="uoMCode" mandatory="true"/>
                 <column name="name" displayName="名称" domainName="materialName" mandatory="true"/>
                 <column name="uoMGroup" displayName="单位组" stdSqlType="VARCHAR" precision="50"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -268,7 +258,6 @@
                 <column name="symbol" displayName="符号" stdSqlType="VARCHAR" precision="10"/>
                 <column name="decimalPlaces" displayName="小数位数" stdSqlType="INT" defaultValue="2"/>
                 <column name="isActive" displayName="是否启用" stdSqlType="BOOLEAN" defaultValue="true"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -285,7 +274,6 @@
                 <column name="rate" displayName="汇率" stdSqlType="DECIMAL" precision="20" scale="8" mandatory="true"/>
                 <column name="validFrom" displayName="生效日期" stdSqlType="DATE" mandatory="true"/>
                 <column name="validTo" displayName="失效日期" stdSqlType="DATE"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -311,7 +299,6 @@
                 <column name="auxiliaryType" displayName="辅助核算类型" stdSqlType="VARCHAR" precision="50"/>
                 <column name="status" displayName="状态" dictName="erp-md/subject-status" mandatory="true"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -332,7 +319,6 @@
                 <column name="parentId" displayName="父级组织" stdSqlType="BIGINT"/>
                 <column name="orgType" displayName="组织类型" stdSqlType="VARCHAR" precision="50"/>
                 <column name="status" displayName="状态" dictName="erp-md/org-status" mandatory="true"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>

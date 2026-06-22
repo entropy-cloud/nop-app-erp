@@ -1,19 +1,19 @@
-# Integration and Transaction Patterns
+# 集成与事务模式
 
-> Optional starter skeleton. Use when the project integrates with external systems or runs background/polling work. Delete this file if it does not apply.
+> 可选的入门骨架。当项目与外部系统集成或运行后台/轮询工作时使用。如果不适用，请删除此文件。
 
-## Local-First Rule
+## 本地优先规则
 
-1. Operations that affect local state, tasks, and logs MUST pass local validation and persist before any external write.
-2. An external write that depends on a successful local transaction should run in a post-commit hook (for example `runAfterCommit`). Do not abuse this mechanism for queries, polling, load-data, or document-download actions.
-3. If an external action must return an ID before local persistence, the failure/rollback strategy MUST be explicit in the same business method. Never advance the flow first and backfill the ID later.
+1. 影响本地状态、任务和日志的操作必须在任何外部写入之前通过本地验证并持久化。
+2. 依赖成功本地事务的外部写入应在提交后钩子中运行（例如 `runAfterCommit`）。不要将此机制滥用于查询、轮询、加载数据或文档下载操作。
+3. 如果外部操作必须在本地持久化之前返回 ID，则失败/回滚策略必须在同一业务方法中明确。切勿先推进流程然后稍后回填 ID。
 
-## Idempotency
+## 幂等性
 
-- Polling and download actions MUST be idempotent. Repeated execution must not create duplicate tasks, close cases twice, or attach duplicates.
-- Repeated triggers (polling restart, duplicate callback) must be safe to retry.
+- 轮询和下载操作必须是幂等的。重复执行不得创建重复任务、关闭案例两次或附加重复项。
+- 重复触发器（轮询重启、重复回调）必须可以安全重试。
 
-## External-Result Ownership
+## 外部结果所有权
 
-- When a result originates from an external system response or an external decision, the local system is responsible for initiating, querying, downloading, supplementing documents, and making the local follow-up decision only after the external result is clear. The local page does not fabricate the external behavior.
-- Prefer the external system's native semantics for upgrades/escalations when they exist (for example, reuse the same external case id across an escalation).
+- 当结果源自外部系统响应或外部决策时，本地系统负责启动、查询、下载、补充文档，并仅在外部结果明确后做出本地后续决策。本地页面不伪造外部行为。
+- 当存在升级/升级的外部系统原生语义时（例如，在升级过程中重用相同的外部案例 ID），优先使用外部系统的原生语义。

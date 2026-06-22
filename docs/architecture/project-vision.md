@@ -1,33 +1,33 @@
-# Project Vision
+# 项目愿景
 
-## Purpose
+## 目的
 
-Describe the long-term product and engineering attractor for `nop-app-erp`.
+描述 `nop-app-erp` 的长期产品和工程吸引子。
 
-## Fill In
+## 填写内容
 
-- Product goal: a reference enterprise resource planning (ERP) application on the Nop Platform, demonstrating model-first development for typical ERP business domains (e.g. master data, documents, postings). Specific business domain scope is decided during the ORM model design phase.
-- Primary users: ERP system operators/admins, and developers learning Nop Platform from a realistic business-domain app
-- Constraints that must stay true:
-  - `model/app-erp.orm.xml` remains the single source of truth for persisted model
-  - never hand-edit generated code
-  - business exceptions extend `NopException` with `ErrorCode`
-  - build requires `nop-entropy` parent POM in the local Maven repository
-- Explicit non-goals:
-  - not a framework-core project
-  - not a generic admin template
-  - does not replicate nop-app-mall; it is a separate ERP domain
-- Success criteria for the first production milestone: ORM model designed, multi-module project generated, app builds and runs, first ERP business loop is testable end-to-end
-- Required human decision points that AI should not silently invent:
-  - which ERP business domains are in scope (procurement / sales / inventory / finance / etc.)
-  - data-deletion and accounting-posting semantics
-  - auth/permission model beyond nop-auth defaults
-  - external integrations
+- 产品目标：基于 Nop Platform 的参考企业资源规划（ERP）应用，展示典型 ERP 业务领域（如主数据、单据、过账）的模型优先开发。具体业务领域范围在 ORM 模型设计阶段决定。
+- 主要用户：ERP 系统操作员/管理员，以及从真实业务领域应用学习 Nop Platform 的开发人员
+- 必须保持不变的约束：
+  - `model/app-erp.orm.xml` 保持为持久化模型的唯一真相源
+  - 切勿手动编辑生成的代码
+  - 业务异常扩展 `NopException` 并使用 `ErrorCode`
+  - 构建需要本地 Maven 仓库中的 `nop-entropy` 父 POM
+- 明确的非目标：
+  - 不是框架核心项目
+  - 不是通用管理模板
+  - 不复制 nop-app-mall；它是独立的 ERP 域
+- 第一个生产里程碑的成功标准：ORM 模型已设计、多模块项目已生成、应用构建并运行、第一个 ERP 业务循环可端到端测试
+- AI 不应静默发明的必需人工决策点：
+  - 哪些 ERP 业务域在范围内（采购/销售/库存/财务/等）
+  - 数据删除和会计过账语义
+  - 超出 nop-auth 默认值的认证/权限模型
+  - 外部集成
 
-## Notes
+## 注意事项
 
-- Keep this document stable and high level.
-- Do not turn it into a backlog.
-- Do not duplicate current milestone scope from `docs/requirements/product-scope.md`.
-- Do not duplicate current app surfaces from `docs/design/app-overview.md`.
-- Move implementation sequencing into `docs/plans/` or `docs/requirements/`.
+- 保持此文档稳定且高层级。
+- 不要将其变成待办事项。
+- 不要重复 `docs/requirements/product-scope.md` 中的当前里程碑范围。
+- 不要重复 `docs/design/app-overview.md` 中的当前应用表面。
+- 将实现顺序放入 `docs/plans/` 或 `docs/requirements/`。

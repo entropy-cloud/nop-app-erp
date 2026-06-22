@@ -1,13 +1,13 @@
-# References Index
+# 参考索引
 
-## Purpose
+## 目的
 
-This directory holds stable lookup material that supports implementation and review, but does not define mandatory project context by itself.
+此目录包含支持实施和审查的稳定查找材料，但本身不定义强制性项目上下文。
 
-If a rule must be applied by every AI session, put it in `docs/context/` or `AGENTS.md`, not only here.
+如果每个 AI 会话都必须应用规则，请将其放在 `docs/context/` 或 `AGENTS.md` 中，而不仅仅是这里。
 
-## Starter Files
+## 入门文件
 
-- `maintenance-checklist.md` - docs and verification sync checklist
-- `implementation-guide.md` - coding and review conventions for day-to-day work
-- `document-naming-and-timeliness.md` - when to use stable names versus dated filenames
+- `maintenance-checklist.md` - 文档和验证同步检查清单
+- `implementation-guide.md` - 日常工作的编码和审查约定
+- `document-naming-and-timeliness.md` - 何时使用稳定名称与日期文件名

@@ -127,7 +127,6 @@
                 <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME"/>
                 <column name="createdBy" displayName="创建人" stdSqlType="BIGINT" mandatory="true"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
@@ -153,7 +152,6 @@
                 <column name="unit" displayName="计量单位" stdSqlType="VARCHAR" precision="50"/>
                 <column name="result" displayName="行结果" dictName="erp-qa/inspection-result" mandatory="true"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -174,7 +172,6 @@
                 <column name="materialId" displayName="适用物料" stdSqlType="BIGINT"/>
                 <column name="isActive" displayName="是否启用" stdSqlType="INT" mandatory="true" defaultValue="1"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -197,7 +194,6 @@
                 <column name="unit" displayName="计量单位" stdSqlType="VARCHAR" precision="50"/>
                 <column name="isRequired" displayName="是否必检" stdSqlType="INT" mandatory="true" defaultValue="1"/>
                 <column name="sortNum" displayName="排序" stdSqlType="INT" defaultValue="0"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -226,7 +222,6 @@
                 <column name="resolvedAt" displayName="解决时间" stdSqlType="DATETIME"/>
                 <column name="resolution" displayName="解决措施" stdSqlType="VARCHAR" precision="2000"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
@@ -253,7 +248,6 @@
                 <column name="verificationPerson" displayName="验证人" stdSqlType="BIGINT"/>
                 <column name="verificationDate" displayName="验证日期" stdSqlType="DATE"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
@@ -280,7 +274,6 @@
                 <column name="ownerId" displayName="责任人" stdSqlType="BIGINT"/>
                 <column name="status" displayName="状态" dictName="erp-qa/risk-status" mandatory="true"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -303,7 +296,6 @@
                 <column name="endDate" displayName="结束日期" stdSqlType="DATE"/>
                 <column name="status" displayName="状态" dictName="erp-qa/goal-status" mandatory="true"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -327,7 +319,6 @@
                 <column name="approveStatus" displayName="审核状态" dictName="erp-qa/approve-status" mandatory="true"/>
                 <column name="createdBy" displayName="创建人" stdSqlType="BIGINT" mandatory="true"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>

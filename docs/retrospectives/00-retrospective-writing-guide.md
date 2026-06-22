@@ -1,27 +1,27 @@
-# Retrospective Writing Guide
+# 回顾编写指南
 
-## Purpose
+## 目的
 
-Use `docs/retrospectives/` when the team needs to understand why a delivery still missed expectations even after implementation work completed.
+当团队需要理解为什么即使在实施工作完成后交付仍然未达到预期时，使用 `docs/retrospectives/`。
 
-## Good Fits
+## 适用场景
 
-- prototype and implementation diverged more than expected
-- requirement source was insufficient
-- PM-to-dev handoff skipped analysis work
-- the same process gap keeps recurring
-- a new reusable skill or audit prompt should be extracted
+- 原型和实现的差异超出预期
+- 需求来源不足
+- PM 到开发的交接跳过了分析工作
+- 相同的流程差距不断重复出现
+- 应该提取新的可复用技能或审计提示
 
-## Include
+## 包含内容
 
-- original source inputs
-- what was missing or misleading
-- what was discovered only during implementation
-- what should move earlier in the process next time
-- which new skill, audit prompt, or workflow rule should be created
+- 原始源输入
+- 缺少或误导的内容
+- 仅在实施过程中发现的内容
+- 下次应提前在流程中移动的内容
+- 应创建哪些新技能、审计提示或工作流规则
 
-## Filename Guidance
+## 文件名指南
 
-Prefer dated filenames:
+优先使用日期文件名：
 
 - `docs/retrospectives/YYYY-MM-DD-HHmm-topic.md`

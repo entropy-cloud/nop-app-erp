@@ -1,26 +1,26 @@
-# Document Audit Prompt
+# 文档审计提示
 
-Use this prompt when auditing requirement and design documents before implementation.
+在实施前审计需求和设计文档时使用此提示。
 
 ```text
-Read `AGENTS.md`, `docs/index.md`, `docs/process/application-development-workflow.md`, the active files under `docs/input/`, `docs/requirements/`, `docs/design/`, and `docs/architecture/`.
+阅读 `AGENTS.md`、`docs/index.md`、`docs/process/application-development-workflow.md`、`docs/input/`、`docs/requirements/`、`docs/design/` 和 `docs/architecture/` 下的活动文件。
 
-Audit the current document baseline for an app-layer implementation task.
+审计应用层实现任务的当前文档基线。
 
-Focus on:
-- missing scope boundaries
-- unresolved questions disguised as settled requirements
-- mismatch between raw input and synthesized requirement
-- mismatch between requirements and owner docs
-- places where a prototype is being mistaken for a complete requirement source
+重点关注：
+- 缺失的范围边界
+- 伪装成已确定需求的未解决问题
+- 原始输入与综合需求不匹配
+- 需求与 owner docs 不匹配
+- 原型被误认为完整需求源的地方
 
-Return findings first, ordered by severity.
-For each finding, include:
-- title
-- affected file(s)
-- current gap
-- risk to implementation
-- recommendation
+按严重性排序，首先返回发现。
+对于每个发现，包括：
+- 标题
+- 受影响的文件
+- 当前差距
+- 实施风险
+- 建议
 
-If no findings remain, say that explicitly and note residual risks.
+如果没有发现，明确说明并记录剩余风险。
 ```

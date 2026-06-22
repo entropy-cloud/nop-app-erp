@@ -1,61 +1,61 @@
-# Input Processing Guide
+# 输入处理指南
 
-## Purpose
+## 目的
 
-This guide explains how to handle raw source material before it becomes requirements.
+本指南解释如何在原始源材料成为需求之前处理它们。
 
-## Rule
+## 规则
 
-Do not ask AI to code directly from a large raw input dump when the source still mixes:
+当源材料仍然混合以下内容时，不要要求 AI 直接从大型原始输入转储进行编码：
 
-- business goals
-- UI examples
-- implementation guesses
-- missing assumptions
-- half-settled scope
+- 业务目标
+- UI 示例
+- 实施猜测
+- 缺失的假设
+- 半确定的范围
 
-## Recommended Flow
+## 推荐流程
 
-1. Store the raw material in `docs/input/`.
-2. Mark the source type: PM note, card-set doc, prototype, article, or mixed source.
-3. Write unresolved questions into `docs/discussions/`.
-4. Write the synthesized result into `docs/requirements/`.
+1. 将原始材料存储在 `docs/input/` 中。
+2. 标记源类型：PM 笔记、卡片集文档、原型、文章或混合源。
+3. 将未解决的问题写入 `docs/discussions/`。
+4. 将综合结果写入 `docs/requirements/`。
 
-## Useful Source Classification
+## 有用的源分类
 
-- `source-pm-*.md` - product-manager notes
-- `source-prototype-*.md` - prototype interpretation
-- `source-cardset-*.md` - card-set or structured requirement docs
-- `source-article-*.md` - external articles or references
+- `source-pm-*.md` - 产品经理笔记
+- `source-prototype-*.md` - 原型解释
+- `source-cardset-*.md` - 卡片集或结构化需求文档
+- `source-article-*.md` - 外部文章或参考
 
-## Caution
+## 注意事项
 
-Strongly structured source material is useful, but it still may not answer:
+结构良好的源材料很有用，但它仍然可能无法回答：
 
-- actual scope boundary for the current iteration
-- domain judgment needed for a business decision
-- which interactions are core versus optional
-- whether the prototype is complete enough to build from directly
+- 当前迭代的实际范围边界
+- 业务决策所需的领域判断
+- 哪些交互是核心的，哪些是可选的
+- 原型是否足够完整，可以直接构建
 
-## File Header Convention
+## 文件头约定
 
-Every input file placed in this directory SHOULD start with a header:
+放置在此目录中的每个输入文件应从头部开始：
 
     status: new | supplement | supersedes <filename>
     processed: pending | partial | done
 
-- `status` describes the file's relationship to other inputs:
-  - `new` — a standalone new input that does not replace an existing one
-  - `supplement` — additional context for an existing input file
-  - `supersedes <filename>` — replaces a prior input file; the named file is now stale
-- `processed` tracks whether this input has been consumed:
-  - `pending` — not yet processed; agents SHOULD pick this up
-  - `partial` — some questions resolved but unresolved items remain
-  - `done` — fully processed into requirements or discussions; agents may skip this file
+- `status` 描述文件与其他输入的关系：
+  - `new` — 独立的新输入，不替换现有输入
+  - `supplement` — 现有输入文件的额外上下文
+  - `supersedes <filename>` — 替换先前的输入文件；命名文件现在已过时
+- `processed` 跟踪此输入是否已被处理：
+  - `pending` — 尚未处理；代理应处理此文件
+  - `partial` — 一些问题已解决，但仍有未解决的项目
+  - `done` — 已完全处理成需求或讨论；代理可以跳过此文件
 
-If a human places a file without this header, AI SHOULD:
+如果人工放置的文件没有此头部，AI 应：
 
-1. Read the file content.
-2. Infer the status from content and context.
-3. Add the inferred header and note it was AI-inferred.
-4. Proceed with processing.
+1. 读取文件内容。
+2. 从内容和上下文推断状态。
+3. 添加推断的头部并注明是 AI 推断的。
+4. 继续处理。

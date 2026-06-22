@@ -1,44 +1,44 @@
-# Project Conventions
+# 项目约定
 
-## Purpose
+## 目的
 
-This file captures project-wide rules that AI agents should apply by default.
+本文件记录 AI 代理应默认应用的项目范围规则。
 
-Keep it short. If a rule becomes detailed lookup material, move the detail to `docs/references/` and link it here.
+保持简短。如果规则变得详细成为查找材料，将细节移至 `docs/references/` 并在此处链接。
 
-## File-In / File-Out
+## 文件输入/输出
 
-- Important inputs should be written to files before implementation.
-- Important outputs should be written back to the repo, not left only in chat.
-- Raw inputs belong in `docs/input/`.
-- Synthesized implementation-ready requirements belong in `docs/requirements/`.
+- 重要输入应在实现前写入文件。
+- 重要输出应写回仓库，而不仅仅留在聊天中。
+- 原始输入属于 `docs/input/`。
+- 综合的实现就绪需求属于 `docs/requirements/`。
 
-## Design Split
+## 设计拆分
 
-- Requirement/app behavior design belongs in `docs/requirements/` and `docs/design/`.
-- Technical architecture design belongs in `docs/architecture/`.
-- Cross-reference instead of duplicating the same rule in multiple docs.
+- 需求/应用行为设计属于 `docs/requirements/` 和 `docs/design/`。
+- 技术架构设计属于 `docs/architecture/`。
+- 交叉引用而非在多个文档中重复相同规则。
 
-## Review Rule
+## 审查规则
 
-- High-risk or high-ambiguity requirement and design drafts should get an independent subagent or reviewer pass.
-- Every created plan requires independent draft review before implementation and closure audit before completion.
-- Self-review or self-recorded closure evidence cannot be used to mark a created plan complete.
-- Independent review should cite files and evidence, not only say “looks good.”
-- If no independent reviewer is available, record that limitation in the plan or log. Cold replay is not a second reviewer and never resolves protected-area or source-of-truth conflicts by itself.
+- 高风险或高度模糊的需求和设计草案应获得独立子代理或审查者通过。
+- 每个创建的计划在实施前需要独立草案审查，在完成前需要结束审计。
+- 自我审查或自行记录的结束证据不能用于标记创建的计划完成。
+- 独立审查应引用文件和证据，而不仅仅说"看起来不错"。
+- 如果没有独立审查者可用，在计划或日志中记录该限制。冷重播不是第二位审查者，本身永远无法解决保护区域或真相源冲突。
 
-## Bug Rule
+## Bug 规则
 
-- Every non-trivial bug fix should add or update automated test coverage.
-- If automated coverage is impossible, record the reason and manual proof.
+- 每个非平凡 Bug 修复应添加或更新自动化测试覆盖。
+- 如果自动化覆盖不可能，记录原因和手动证明。
 
-## Comment Policy
+## 注释策略
 
-- Prefer no comments by default.
-- Add comments only when a local constraint is easy to misread and code alone is not enough.
+- 默认优先不添加注释。
+- 仅当本地约束容易被误读且代码本身不足以表达时才添加注释。
 
-## Verification Rule
+## 验证规则
 
-- Keep verification commands current in `docs/context/project-context.md`.
-- Do not report verification success for commands that were not actually run.
-- Do not keep placeholder verification commands after copying the template.
+- 保持 `docs/context/project-context.md` 中的验证命令最新。
+- 不要报告未实际运行的命令的验证成功。
+- 复制模板后不要保留占位符验证命令。

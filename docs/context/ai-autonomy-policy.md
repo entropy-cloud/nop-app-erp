@@ -1,90 +1,90 @@
-# AI Autonomy Policy
+# AI 自主政策
 
-## Purpose
+## 目的
 
-This file defines when AI agents may proceed without asking and when they must stop for human input.
+本文件定义 AI 代理何时可以无需询问继续执行，何时必须停止等待人工输入。
 
-Keep it short and project-specific. Update it whenever the team wants AI to take more or less initiative.
+保持简短且项目特定。每当团队希望 AI 采取更多或更少主动性时更新此文件。
 
-AI may make this file stricter by marking work more constrained, but AI must not loosen protected areas, change `ask-first`/`blocked`/`research-only` work to `implement`, or remove blockers without explicit human confirmation or owner-doc evidence marked as human-approved.
+AI 可以通过标记工作为更受约束来使此文件更严格，但 AI 不得放宽保护区域、将 `ask-first`/`blocked`/`research-only` 工作更改为 `implement`，或在没有明确人工确认或标记为人工批准的 owner-doc 证据的情况下移除阻塞项。
 
-AI-authored or AI-modified docs, including owner docs, cannot be used as evidence to loosen autonomy, clear blockers, mark docs fresh, or downgrade protected areas unless a human explicitly approves that evidence.
+AI 编写或修改的文档（包括 owner docs）不能作为放宽自主权、清除阻塞项、标记文档新鲜或降级保护区域的证据，除非人工明确批准该证据。
 
-## Autonomy Levels
+## 自主级别
 
-Use these labels on backlog/roadmap work items (they are per-item, not a global field in `project-context.md`):
+在待办事项/路线图工作项上使用这些标签（它们是每个项目的，而非 `project-context.md` 中的全局字段）：
 
-- `implement` - AI may implement after reading the listed requirement, owner doc, and verification commands.
-- `plan-first` - AI may draft or update the plan, but implementation waits for plan audit and any protected-area approval required by the table below.
-- `ask-first` - AI must ask before changing code or user-visible behavior.
-- `research-only` - AI may inspect, summarize, and propose options, but must not modify product behavior.
-- `blocked` - AI must not proceed until the blocker is resolved in files or by human confirmation.
+- `implement` - AI 可以在阅读列出的需求、owner doc 和验证命令后实施。
+- `plan-first` - AI 可以起草或更新计划，但实施需等待计划审计和下表要求的任何保护区域批准。
+- `ask-first` - AI 必须在更改代码或用户可见行为之前询问。
+- `research-only` - AI 可以检查、总结和提出选项，但不得修改产品行为。
+- `blocked` - AI 在阻塞项解决之前不得继续（在文件中或通过人工确认）。
 
-The default level is `implement` for work items with no explicit label. The default is gated by documentation freshness (`project-context.md`) and the Protected Areas below. A human may tighten the project default by editing this file; AI may tighten (never loosen) it based on evidence.
+没有明确标签的工作项默认级别为 `implement`。默认值受文档新鲜度（`project-context.md`）和下面的保护区域控制。人工可以通过编辑此文件收紧项目默认值；AI 可以根据证据收紧（永不放宽）。
 
-## Reviewer Availability
+## 审查者可用性
 
-Set one value for the copied project:
+为复制的项目设置一个值：
 
-- Reviewer availability: `subagent`
+- 审查者可用性：`subagent`
 
-If this value is still a placeholder, treat reviewer availability as `none` and treat protected-area or high-risk plans as blocked until human/subagent review is configured.
+如果此值仍然是占位符，将审查者可用性视为 `none`，并将保护区域或高风险计划视为阻塞，直到配置人工/子代理审查。
 
-Rules:
+规则：
 
-- `human` or `subagent` - use that reviewer for required plan and closure audits.
-- `none` - cold replay may be used only for non-protected, non-high-risk plans. Cold replay is not a second reviewer; it is a documented self-check performed after implementation context is set aside.
-- Protected areas, unresolved product risk, or source-of-truth conflicts still require human/subagent review or must remain blocked.
+- `human` 或 `subagent` - 使用该审查者进行所需的计划和结束审计。
+- `none` - 冷重播仅可用于非保护、非高风险计划。冷重播不是第二位审查者；它是在实施上下文被搁置后执行的记录自查。
+- 保护区域、未解决的产品风险或真相源冲突仍然需要人工/子代理审查或必须保持阻塞。
 
-## AI May Proceed Without Asking When
+## AI 无需询问即可继续的情况
 
-- the work item is marked `implement` (or has no label and defaults to `implement`) or the user directly requests a local low-risk change
-- a requirement or owner doc describes the work's intended behavior with concrete acceptance criteria
-- for backlog-selected work, the backlog row is `ready`, has no stale links, and does not require a missing plan
-- verification commands in `docs/context/project-context.md` are real commands, not placeholders
-- protected-area placeholders in this file have been replaced with real entries or explicit `none`
-- documentation freshness in `docs/context/project-context.md` is `fresh`, or the active slice has explicitly verified fresh requirement, owner doc, codebase-map route, and touched code area
-- the task does not touch a protected area below
-- open questions are explicitly non-blocking
+- 工作项标记为 `implement`（或没有标签且默认为 `implement`）或用户直接请求本地低风险更改
+- 需求或 owner doc 使用具体验收标准描述工作的预期行为
+- 对于待办事项选择的工作，待办事项行是 `ready`，没有陈旧链接，不需要缺失的计划
+- `docs/context/project-context.md` 中的验证命令是真实命令，不是占位符
+- 此文件中的保护区域占位符已替换为真实条目或显式 `none`
+- `docs/context/project-context.md` 中的文档新鲜度为 `fresh`，或活动切片已明确验证新鲜的需求、owner doc、codebase-map 路由和触及代码区域
+- 任务不触及下面的保护区域
+- 未解决的问题明确标记为非阻塞
 
-## AI Must Ask Or Stop Before
+## AI 必须询问或停止的情况
 
-- changing product scope when the requirement or owner doc is ambiguous
-- changing database/model shape, data deletion, payment, auth, permission, deployment, or external integration behavior without an owner doc and test strategy
-- inventing behavior for an external system that is not described in committed integration docs or tests
-- skipping required verification because commands are missing, broken, or too slow
-- closing a plan whose audit, verification, docs, or checklist evidence is missing
-- proceeding when live code and owner docs conflict and resolving the conflict would change user-visible behavior or public contracts
-- loosening autonomy labels, protected-area rules, or blockers without human confirmation or human-approved owner-doc evidence
-- proceeding with implementation when documentation freshness is `stale`, `unknown`, or `partially stale` for the active slice; first perform baseline research or a plan-first alignment slice
+- 当需求或 owner doc 模糊时更改产品范围
+- 在没有 owner doc 和测试策略的情况下更改数据库/模型形状、数据删除、支付、认证、权限、部署或外部集成行为
+- 为外部系统发明未在已提交的集成文档或测试中描述的行为
+- 因命令缺失、损坏或太慢而跳过所需验证
+- 关闭审计、验证、文档或检查清单证据缺失的计划
+- 当实时代码和 owner docs 冲突且解决冲突会改变用户可见行为或公共契约时继续执行
+- 在没有人工确认或人工批准的 owner-doc 证据的情况下放宽自主标签、保护区域规则或阻塞项
+- 当活动切片的文档新鲜度为 `stale`、`unknown` 或 `partially stale` 时继续实施；首先执行基线研究或 plan-first 对齐切片
 
-## Protected Areas
+## 保护区域
 
-Fill these for the copied project.
+为复制的项目填写这些。
 
-If this table still contains placeholders, AI must treat payment, auth/permissions, data deletion, database/model shape, deployment, and external integrations as `ask-first` or `blocked` until the table is replaced with real entries or explicit `none`.
+如果此表仍然包含占位符，AI 必须将支付、认证/权限、数据删除、数据库/模型形状、部署和外部集成视为 `ask-first` 或 `blocked`，直到表替换为真实条目或显式 `none`。
 
-| Area                          | Rule        | Required Evidence                |
+| 区域 | 规则 | 必需证据 |
 | ----------------------------- | ----------- | -------------------------------- |
-| `model/*.orm.xml` schema      | ask first   | design doc + plan audit          |
-| `model/*.api.xml` contracts   | ask first   | design doc + plan audit          |
-| `data deletion`               | ask first   | owner doc + tests                |
-| `accounting/finance` postings | plan-first  | owner doc + tests                |
-| `auth/permissions`            | plan-first  | owner doc + tests                |
-| `deployment / external integrations` | plan-first | owner doc + tests         |
+| `model/*.orm.xml` 模式 | ask first | design doc + plan audit |
+| `model/*.api.xml` 契约 | ask first | design doc + plan audit |
+| `data deletion` | ask first | owner doc + tests |
+| `accounting/finance` postings | plan-first | owner doc + tests |
+| `auth/permissions` | plan-first | owner doc + tests |
+| `deployment / external integrations` | plan-first | owner doc + tests |
 
-Protected-area rule meanings:
+保护区域规则含义：
 
-- `ask first` - human approval is required before planning or implementation.
-- `plan-first` - AI may draft the plan, but implementation requires plan audit plus the required evidence in the table. If reviewer availability is `none`, implementation stays blocked.
-- `research-only` or `blocked` - AI may not change product behavior.
+- `ask first` - 规划或实施前需要人工批准。
+- `plan-first` - AI 可以起草计划，但实施需要计划审计加上表中的必需证据。如果审查者可用性为 `none`，实施保持阻塞。
+- `research-only` 或 `blocked` - AI 不得更改产品行为。
 
-## Backlog Selection Rule
+## 待办事项选择规则
 
-If the user asks AI to continue work without naming a task, choose the highest-priority item in `docs/backlog/README.md` whose autonomy is `implement` and whose blockers are `none`.
+如果用户要求 AI 在未命名任务的情况下继续工作，选择 `docs/backlog/README.md` 中自主权为 `implement` 且阻塞项为 `none` 的最高优先级项目。
 
-Before implementing the selected item, re-check planning triggers. `Plan: none` does not waive the plan guide.
+在实施所选项目之前，重新检查规划触发条件。`Plan: none` 不免除计划指南。
 
-Direct user requests for local low-risk edits do not require a backlog row, but they still must satisfy the no-plan path and verification rules.
+用户对本地低风险编辑的直接请求不需要待办事项行，但仍必须满足无计划路径和验证规则。
 
-If no safe `implement` item exists, summarize the top blocked, `plan-first`, or `ask-first` item and ask for a decision.
+如果没有安全的 `implement` 项目存在，总结最高的阻塞、`plan-first` 或 `ask-first` 项目并请求决策。

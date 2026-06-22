@@ -1,103 +1,103 @@
-# Design Doc Audit Prompt
+# 设计文档审计提示
 
-Use this prompt when auditing `docs/design/` as the stable app-layer behavior baseline for a formal product.
+在将 `docs/design/` 作为正式产品的稳定应用层行为基线进行审计时使用此提示。
 
-Use it after requirement-to-design updates, before implementation that depends on design truth, or when `docs/design/` needs revalidation after drift. Do not use it as a replacement for requirement synthesis, architecture review, plan audit, closure audit, or roadmap planning.
+在需求到设计更新后、依赖设计真相的实施前或 `docs/design/` 在漂移后需要重新验证时使用。不要将其用作需求综合、架构审查、计划审计、结束审计或路线图规划的替代品。
 
 ```text
-Read these files first:
+首先阅读这些文件：
 - `AGENTS.md`
 - `docs/index.md`
 - `docs/context/project-context.md`
 - `docs/context/source-of-truth-and-precedence.md`
 - `docs/design/README.md`
-- `docs/design/domain-design-guidelines.md` when it exists
-- the relevant requirement file named by the task, plan, backlog item, or user request
-- all files under `docs/design/`
+- `docs/design/domain-design-guidelines.md`（如果存在）
+- 任务、计划、待办项或用户请求指定的相关需求文件
+- `docs/design/` 下的所有文件
 
-Read these only when the target docs depend on them:
-- relevant files under `docs/discussions/` or `docs/input/` when requirement meaning or source intent is disputed
-- relevant files under `docs/architecture/` when a design doc references implementation strategy or cross-cutting technical behavior
-- the project's persisted contract / model source of truth only to verify ownership boundaries or detect schema/contract drift, not to duplicate that truth into design prose
-- a roadmap/backlog file only when the question is implementation ordering rather than stable product behavior
+仅在目标文档依赖它们时阅读：
+- 当需求含义或源意图有争议时，`docs/discussions/` 或 `docs/input/` 下的相关文件
+- 当设计文档引用实现策略或横切技术行为时，`docs/architecture/` 下的相关文件
+- 项目的持久化契约/模型真相源，仅用于验证所有权边界或检测 schema/契约漂移，而非将该真相复制到设计散文中
+- 路线图/待办文件，仅当问题是实现顺序而非稳定产品行为时
 
-Audit `docs/design/` as the app-layer owner documentation for supported product behavior.
+将 `docs/design/` 作为支持产品行为的应用层 owner 文档进行审计。
 
-Do not audit for wording polish first. Prioritize findings that would cause wrong implementation, unclear product behavior, demo-grade shortcuts, bad owner-doc boundaries, duplicated maintenance points, or false closure.
+不要首先审计措辞润色。优先考虑会导致错误实现、不清晰产品行为、演示级捷径、不良 owner-doc 边界、重复维护点或错误关闭的发现。
 
-Check these dimensions:
+检查这些维度：
 
-1. Product baseline
-   - Docs describe formal product behavior, not temporary prototype/demo behavior.
-   - A feature may ship in a small complete slice, but the design must not imply throwaway, mock-only, partial-quality, or later-rewrite behavior unless explicitly limited to development/testing infrastructure outside the product baseline.
-   - Payment, refund, permission, data-deletion, integration, and account-management behavior is either defined as formal product behavior or explicitly routed to requirement clarification.
+1. 产品基线
+   - 文档描述正式产品行为，而非临时原型/演示行为。
+   - 功能可以以小而完整的切片发布，但设计不得暗示一次性、仅模拟、部分质量或后续重写行为，除非明确限制于产品基线之外的开发/测试基础设施。
+   - 支付、退款、权限、数据删除、集成和账户管理行为要么定义为正式产品行为，要么显式路由到需求澄清。
 
-2. Stable-vs-time-sensitive responsibility
-   - Stable design docs answer what the product behavior is, not what the team happens to be implementing this week.
-   - Implementation order, backlog status, plan status, current blockers, active work, and roadmap sequencing are not repeated across design docs.
-   - If roadmap information is needed, it is concentrated in the backlog/roadmap owner rather than scattered through multiple design files.
+2. 稳定与时间敏感责任
+   - 稳定设计文档回答产品行为是什么，而不是团队本周恰好要实现什么。
+   - 实现顺序、待办状态、计划状态、当前阻塞、活动工作和路线图排序不会在设计文档中重复。
+   - 如果需要路线图信息，它集中在待办/路线图所有者中，而不是分散在多个设计文件中。
 
-3. Requirement alignment
-   - Design statements align with the relevant implementation-ready requirement.
-   - Raw input, prototype behavior, copied reference behavior, historical audit text, or chat memory does not override the synthesized requirement.
-   - Any contradiction between requirement and design is classified as: design drift, requirement gap, intentional baseline change, or needs human decision.
-   - The design does not silently add or remove supported behavior affecting user-visible behavior, data/model shape, API behavior, auth/permission behavior, or external integration behavior.
+3. 需求对齐
+   - 设计声明与相关的实现就绪需求对齐。
+   - 原始输入、原型行为、复制的参考行为、历史审计文本或聊天记忆不会覆盖综合需求。
+   - 需求与设计之间的任何矛盾分类为：设计漂移、需求差距、有意基线变更或需要人工决策。
+   - 设计不会静默添加或删除影响用户可见行为、数据/模型形状、API 行为、认证/权限行为或外部集成行为的支持行为。
 
-4. Owner-doc boundary
-   - `docs/design/` explains business semantics, roles, workflows, page behavior, state meanings, and supported user/admin outcomes.
-   - It does not duplicate table catalogs, field-by-field schema, dictionary/status-code catalogs, API contracts, generated code behavior, or platform-specific implementation details.
-   - Implementation concerns (transactions, locking, caching, scheduling mechanics, integration protocol details, module wiring, file-level auth config) are either absent or routed to `docs/architecture/`.
-   - Persisted truth and generated contract truth are cited by owner path when needed instead of restated as prose.
+4. Owner-doc 边界
+   - `docs/design/` 解释业务语义、角色、工作流、页面行为、状态含义和支持的用户/管理员结果。
+   - 它不重复表目录、逐字段 schema、字典/状态代码目录、API 契约、生成代码行为或平台特定实现细节。
+   - 实现关注点（事务、锁定、缓存、调度机制、集成协议细节、模块连接、文件级认证配置）要么不存在，要么路由到 `docs/architecture/`。
+   - 持久化真相和生成契约真相在需要时通过 owner 路径引用，而非作为散文重述。
 
-5. Cross-design consistency
-   - `app-overview.md`, `feature-inventory.md`, domain design docs, and `roles-and-permissions.md` agree on what exists, who can use it, and which owner doc controls the detail.
-   - The same concept is not described with conflicting names, lifecycle states, ownership, or eligibility rules across files.
+5. 跨设计一致性
+   - `app-overview.md`、`feature-inventory.md`、域设计文档和 `roles-and-permissions.md` 在存在的内容、谁可以使用它以及哪个 owner doc 控制细节上达成一致。
+   - 同一概念不会在多个文件中使用冲突的名称、生命周期状态、所有权或资格规则进行描述。
 
-6. Domain-language and bounded-context clarity
-   - Each major business concept has a natural owning domain doc; adjacent docs cite or summarize without becoming competing owners.
-   - Business-facing language is not replaced by table names, enum codes, class names, framework mechanics, or copied raw-input terminology.
-   - Cross-domain processes are described as business workflows and routed to architecture for orchestration details when needed.
+6. 域语言和有界上下文清晰度
+   - 每个主要业务概念都有一个自然的所属域文档；相邻文档引用或汇总而不成为竞争所有者。
+   - 面向业务的语言不会被表名、枚举代码、类名、框架机制或复制的原始输入术语取代。
+   - 跨域流程描述为业务工作流，并在需要时路由到架构以获取编排细节。
 
-7. Workflow and state clarity
-   - Core user/admin flows have enough business-level sequence detail for implementation planning without requiring invented behavior.
-   - State transitions identify who/what triggers them, the business preconditions, and the resulting state or outcome.
-   - Terminal, exceptional, refund/cancel/retry, timeout, fallback, and integration-failure paths are specified at the business level when they affect product behavior.
-   - State names are business-facing; stored codes or enum catalogs remain owned by the contract/model artifacts.
+7. 工作流和状态清晰度
+   - 核心用户/管理员流程具有足够的业务级序列细节用于实施规划，而无需虚构行为。
+   - 状态转换标识触发者、业务前提条件以及生成的状态或结果。
+   - 终端、异常、退款/取消/重试、超时、回退和集成失败路径在影响产品行为时在业务级别指定。
+   - 状态名称面向业务；存储代码或枚举目录由契约/模型工件拥有。
 
-8. Roles, permissions, and protected actions
-   - Role docs describe business permissions consistently with feature/domain docs.
-   - Admin-only, user-only, super-admin-only, system-initiated, and external-callback actions are not blurred.
-   - Sensitive behavior (payment, refund, data deletion, account management, permission management) has an explicit owner-doc baseline or is escalated.
+8. 角色、权限和受保护操作
+   - 角色文档描述的业务权限与功能/域文档一致。
+   - 仅限管理员、仅限用户、仅限超级管理员、系统启动和外部回调操作不模糊。
+   - 敏感行为（支付、退款、数据删除、账户管理、权限管理）有明确的 owner-doc 基线或升级。
 
-9. Page and interaction behavior
-   - Design docs describe important page or interaction outcomes when those outcomes are part of supported app behavior.
-   - Required validation, eligibility, empty/error states, and user-visible feedback are covered at business level when omission would force implementation guessing.
-   - UI/prototype details are not treated as requirements unless the relevant requirement or design owner doc has accepted them.
+9. 页面和交互行为
+   - 设计文档描述重要页面或交互结果，当这些结果是支持应用行为的一部分时。
+   - 当遗漏会导致实施猜测时，在业务级别涵盖所需验证、资格、空/错误状态和用户可见反馈。
+   - UI/原型细节不视为需求，除非相关需求或设计 owner doc 已接受它们。
 
-10. Configuration and operations semantics
-   - Business-facing configuration behavior is separated from technical scheduling, storage, deployment, or integration mechanics.
-   - Operational defaults, fallbacks, and admin-visible controls are defined only when they affect supported app behavior.
+10. 配置和操作语义
+    - 面向业务的配置行为与技术调度、存储、部署或集成机制分离。
+    - 仅在影响支持应用行为时定义操作默认值、回退和管理员可见控件。
 
-11. Maintenance cost and duplication
-   - A design fact has one natural owner doc; other docs link or summarize only when that helps navigation.
-   - Repeated matrices, feature status lists, and copied rule blocks are treated as risks unless they are deliberately the single owner of that information.
+11. 维护成本和重复
+    - 设计事实有一个自然的 owner doc；其他文档仅在有助于导航时链接或汇总。
+    - 重复的矩阵、功能状态列表和复制的规则块视为风险，除非它们故意是该信息的单一所有者。
 
-Severity guidance:
-- `blocker`: would likely cause wrong implementation, demo-grade behavior, unsafe permission/payment/refund behavior, or a source-of-truth violation.
-- `major`: leaves material ambiguity, cross-doc conflict, boundary drift, or high-maintenance duplication.
-- `minor`: improves clarity or navigation but does not block implementation.
-- `note`: residual risk, watch item, or optional cleanup.
+严重性指南：
+- `blocker`：可能导致错误实现、演示级行为、不安全权限/支付/退款行为或真相源违规。
+- `major`：留下实质性歧义、跨文档冲突、边界漂移或高维护重复。
+- `minor`：提高清晰度或导航，但不阻止实现。
+- `note`：剩余风险、观察项或可选清理。
 
-Return findings first, ordered by severity. For each finding include: severity, affected file and line when available, issue, why it matters, and recommended disposition (fix in design, update requirement, move to architecture, move to contract/model owner, move to roadmap/backlog, or ask human decision).
+按严重性排序，首先返回发现。对于每个发现，包括：严重性、受影响文件和行（如果可用）、问题、重要性原因以及建议的处理方式（在设计中修复、更新需求、移至架构、移至契约/模型所有者、移至路线图/待办或请求人工决策）。
 
-Then return:
-- Verdict: pass/fail
-- Scope reviewed
-- Requirement/design conflict classification summary
-- Owner-boundary summary
-- Domain-boundary summary
-- Maintenance-cost summary
-- Residual risks or skipped areas
+然后返回：
+- 裁决：通过/失败
+- 审查范围
+- 需求/设计冲突分类摘要
+- Owner 边界摘要
+- 域边界摘要
+- 维护成本摘要
+- 剩余风险或跳过的区域
 
-If no blocker or major finding remains, say `Verdict: pass` and still list residual risks.
+如果没有 blocker 或 major 发现，说 `Verdict: pass` 并仍然列出剩余风险。
 ```

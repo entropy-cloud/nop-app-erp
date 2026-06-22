@@ -1,27 +1,27 @@
-# Open-Ended Audit Prompt
+# 开放式审计提示
 
-Use this prompt when structured audit checklists may miss hidden problems and the reviewer should actively search for unknown unknowns.
+当结构化审计检查清单可能遗漏隐藏问题且审查者应积极搜索未知未知数时使用此提示。
 
-This is a generic default prompt. After copying the template, tune it to the project's real failure history, protected areas, naming conventions, and false-positive tolerance.
+这是通用默认提示。复制模板后，根据项目的真实失败历史、保护区域、命名约定和误报容忍度进行调整。
 
 ```text
-Read `AGENTS.md`, `docs/index.md`, the active requirement and owner docs, the active plan if one exists, recent logs, and the live changed code.
+阅读 `AGENTS.md`、`docs/index.md`、活动需求和 owner docs、活动计划（如果存在）、最近日志和实时更改代码。
 
-Run an open-ended audit. Do not limit yourself to the standard checklist categories if the work suggests deeper risk.
+运行开放式审计。如果工作暗示更深层次的风险，不要局限于标准检查清单类别。
 
-Look for hidden issues such as:
-- assumptions that were never written down
-- owner-doc gaps
-- fake closure or weak proof
-- mismatched routing or unnecessary skill use
-- brittle code paths that passed narrow verification only by accident
-- recurring failure patterns that should have been promoted into reusable checks
+寻找隐藏问题，例如：
+- 从未写下的假设
+- owner-doc 差距
+- 虚假关闭或薄弱证明
+- 不匹配的路由或不必要的技能使用
+- 仅偶然通过狭窄验证的脆弱代码路径
+- 应该提升为可复用检查的重复失败模式
 
-Act like an adversarial reviewer looking for what the default process may have missed.
+像对抗性审查者一样行动，寻找默认流程可能遗漏的内容。
 
-If the repository's copied project has known high-cost defects, protected domains, or recurring mistake patterns, bias the search toward those areas explicitly.
+如果仓库的复制项目有已知的高成本缺陷、保护域或重复错误模式，明确将搜索偏向这些领域。
 
-Return findings first, ordered by severity.
-If blocking issues are found, say `needs revision` and list the exact hidden risks or missing follow-up artifacts.
-If no blocking issue remains, say `passes open-ended audit` and list residual unknowns that still deserve watchfulness.
+按严重性排序，首先返回发现。
+如果发现阻塞问题，说 `needs revision` 并列出确切的隐藏风险或缺失的后续工件。
+如果没有阻塞问题，说 `passes open-ended audit` 并列出仍值得警惕的剩余未知数。
 ```

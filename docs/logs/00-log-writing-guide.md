@@ -1,45 +1,45 @@
-# Development Log Writing Guide
+# 开发日志编写指南
 
-Development log entries are organized by date, with one file per day.
+开发日志条目按日期组织，每天一个文件。
 
-## Purpose
+## 目的
 
-Each daily log captures short dated notes about:
+每个每日日志记录简短的日期笔记，包括：
 
-- What document was added or updated
-- What design decision was made
-- What work is planned next
-- Small context useful to remember later but not belonging in formal architecture docs
+- 添加或更新了什么文档
+- 做出了什么设计决策
+- 下一步计划做什么工作
+- 以后需要记住的小型上下文，但不属于正式架构文档
 
-## Rules
+## 规则
 
-- **One file per day** - all work on the same day goes into the same file
-- **Append new entries** - add new `### YYYY-MM-DD` sections at the top of the file (reverse chronological)
-- **Keep entries short** - prefer bullet points, link to main docs or code paths
-- **Not source of truth** - this is lightweight context, not normative architecture
-- **Link to real docs** - when referencing a design decision, link to the architecture doc or code path
-- **Treat log files as append-only history** - file length alone is not a defect; do not flag daily logs just because they grow beyond the active-doc size guideline
+- **每天一个文件** - 同一天的所有工作都进入同一个文件
+- **追加新条目** - 在文件顶部添加新的 `### YYYY-MM-DD` 部分（按时间倒序）
+- **保持条目简短** - 优先使用项目符号，链接到主文档或代码路径
+- **不是真相源** - 这是轻量级上下文，不是规范性架构
+- **链接到真实文档** - 引用设计决策时，链接到架构文档或代码路径
+- **将日志文件视为追加历史** - 文件长度本身不是缺陷；不要仅仅因为每日日志超过活动文档大小指南就标记它们
 
-## Path Convention
+## 路径约定
 
 - `docs/logs/{year}/{month}-{day}.md`
 
-## Entry Format
+## 条目格式
 
 ```markdown
 # Development Log - YYYY-MM-DD
 
 ### YYYY-MM-DD
 
-- Brief description of what happened.
-- Link to doc or code path: `docs/architecture/xxx.md` or `src/foo/bar.ts:42`
-- Key decision: ...
-- Next step: ...
+- 发生事件的简短描述。
+- 链接到文档或代码路径：`docs/architecture/xxx.md` 或 `src/foo/bar.ts:42`
+- 关键决策：...
+- 下一步：...
 ```
 
-## Adding A New Entry
+## 添加新条目
 
-1. Open `docs/logs/{year}/{month}-{day}.md` (create it if it does not exist)
-2. Add a `### YYYY-MM-DD` section at the top, before any existing entries
-3. Write the new bullets
-4. If the day already has earlier entries, append after a blank line separator
+1. 打开 `docs/logs/{year}/{month}-{day}.md`（如果不存在则创建）
+2. 在顶部添加 `### YYYY-MM-DD` 部分，在任何现有条目之前
+3. 编写新的项目符号
+4. 如果当天已有早期条目，在空行分隔符后追加

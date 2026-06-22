@@ -1,24 +1,24 @@
-# Requirement Gap Retrospective Prompt
+# 需求差距回顾提示
 
-Use this prompt after implementation when the original requirement or prototype did not fully cover real delivery needs.
+在实施后当原始需求或原型未完全涵盖实际交付需求时使用此提示。
 
 ```text
-Read the original source files under `docs/input/`, the relevant `docs/discussions/`, the final requirement files, the related design docs, the implementation plan, and the landed code/logs.
+阅读 `docs/input/` 下的原始源文件、相关的 `docs/discussions/`、最终需求文件、相关设计文档、实施计划以及落地代码/日志。
 
-Analyze why the original requirement baseline failed to fully cover the final implementation reality.
+分析为什么原始需求基线未能完全涵盖最终实施现实。
 
-Focus on:
-- which source inputs were incomplete
-- which assumptions remained implicit too long
-- where prototype fidelity was mistaken for requirement completeness
-- where PM-to-implementation handoff lacked intermediate analysis
-- what should move earlier into requirement synthesis or design
-- what reusable skill, audit rule, or workflow change should be created
+重点关注：
+- 哪些源输入不完整
+- 哪些假设保持隐含太久
+- 原型保真度在哪里被误认为需求完整性
+- PM 到实施的交接在哪里缺少中间分析
+- 什么应该更早地进入需求综合或设计
+- 应该创建什么可复用技能、审计规则或工作流变更
 
-Produce a retrospective-ready analysis with:
-- summary
-- root causes
-- missed signals
-- process improvements
-- candidate reusable skills or audit prompts
+生成一个准备好回顾的分析，包含：
+- 摘要
+- 根本原因
+- 遗漏的信号
+- 流程改进
+- 候选可复用技能或审计提示
 ```

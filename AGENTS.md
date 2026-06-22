@@ -1,84 +1,84 @@
 # AGENTS.md
 
-## Project Intent
+## 项目意图
 
-`nop-app-erp` is an enterprise resource planning (ERP) reference application built on the Nop Platform, using Attractor-Guided Engineering workflow for AI-assisted application development.
+`nop-app-erp` 是基于 Nop Platform 构建的企业资源规划（ERP）参考应用，采用 Attractor-Guided Engineering（AGE）工作流进行 AI 辅助应用开发。
 
-This repository is an application-layer product built on the Nop low-code platform (nop-entropy), not a framework-core project.
+本仓库是构建在 Nop 低代码平台（nop-entropy）之上的应用层产品，而非框架核心项目。
 
-The repo is the source of truth. Chat is only a temporary working surface.
+仓库是唯一真相源，聊天记录仅作为临时工作表面。
 
-Before writing non-trivial code, agents must first understand:
+在编写非平凡代码之前，代理必须首先理解：
 
 - `docs/context/project-context.md`
 - `docs/context/ai-autonomy-policy.md`
 - `docs/context/codebase-map.md`
-- the requirement, backlog, roadmap, plan, or user request that defines the current slice
-- the relevant owner docs routed from `docs/index.md`
-- the relevant raw inputs under `docs/input/` when requirement meaning depends on source material
+- 定义当前切片的需求、待办事项（backlog）、路线图、计划或用户请求
+- 从 `docs/index.md` 路由的相关 owner docs
+- 当需求含义依赖于源材料时，`docs/input/` 下的相关原始输入
 
-Read `docs/context/source-of-truth-and-precedence.md` when facts conflict or you are unsure which artifact owns the answer.
-Read `docs/process/application-development-workflow.md` when planning or workflow decisions are part of the task.
+当事实冲突或不确定哪个工件拥有答案时，请阅读 `docs/context/source-of-truth-and-precedence.md`。
+当规划或工作流决策是任务的一部分时，请阅读 `docs/process/application-development-workflow.md`。
 
-## Quick Routing
+## 快速路由
 
-| If you need to... | Start with | Then check |
+| 如果你需要... | 从这里开始 | 然后检查 |
 | --- | --- | --- |
-| understand the product baseline | `docs/requirements/product-scope.md` | `docs/design/app-overview.md` |
-| choose the next work item | `docs/backlog/README.md` | relevant requirement and owner docs |
-| implement a feature | relevant requirement or backlog item | `docs/design/`, `docs/architecture/`, `<domain>/model/*.orm.xml`, plan guide if triggers apply |
-| change persisted model or API contract | `<domain>/model/*.orm.xml`, `<domain>/model/*.api.xml` | Nop docs under `../nop-entropy/docs-for-ai/` |
-| change a page or view | relevant design owner doc | AMIS `.view.xml` files under `app-erp-web` (after codegen setup) |
-| review a planned or completed slice | relevant plan under `docs/plans/` | plan/closure audit prompts; ordinary audit evidence stays in the plan |
-| run or verify the project | `docs/context/project-context.md` | `docs/context/codebase-map.md` |
-| draft, execute, or audit a plan under `docs/plans/` | `docs/plans/00-plan-authoring-and-execution-guide.md` | `docs/logs/00-log-writing-guide.md` |
+| 了解产品基线 | `docs/requirements/product-scope.md` | `docs/design/app-overview.md` |
+| 选择下一个工作项 | `docs/backlog/README.md` | 相关需求和 owner docs |
+| 实现一个功能 | 相关需求或待办项 | `docs/design/`、`docs/architecture/`、`<domain>/model/*.orm.xml`，如需触发则参考计划指南 |
+| 更改持久化模型或 API 契约 | `<domain>/model/*.orm.xml`、`<domain>/model/*.api.xml` | `../nop-entropy/docs-for-ai/` 下的 Nop 文档 |
+| 更改页面或视图 | 相关设计 owner doc | `app-erp-web` 下的 AMIS `.view.xml` 文件（代码生成设置后） |
+| 审查已计划或已完成的切片 | `docs/plans/` 下的相关计划 | 计划/结束审计提示；普通审计证据保留在计划中 |
+| 运行或验证项目 | `docs/context/project-context.md` | `docs/context/codebase-map.md` |
+| 起草、执行或审计 `docs/plans/` 下的计划 | `docs/plans/00-plan-authoring-and-execution-guide.md` | `docs/logs/00-log-writing-guide.md` |
 
-### Plan Authoring And Execution
+### 计划起草与执行
 
-When creating, revising, executing, or auditing a file under `docs/plans/`, you MUST read `docs/plans/00-plan-authoring-and-execution-guide.md` first. Plans are execution docs with explicit status, scope, exit criteria, and validation checklists. Tick off checklist items as you complete them. Re-audit the live repo before claiming completion.
+创建、修订、执行或审计 `docs/plans/` 下的文件时，必须首先阅读 `docs/plans/00-plan-authoring-and-execution-guide.md`。计划是具有明确状态、范围、退出标准和验证检查清单的执行文档。完成时勾选检查清单项。在声称完成之前，重新审计实时仓库。
 
-## Task Routing
+## 任务路由
 
-Before writing code, agents MUST classify the task first:
+编写代码前，代理必须首先对任务进行分类：
 
-1. Determine the task type:
-   - requirement clarification
-   - app-layer design change
-   - architecture change
-   - implementation-only change
-   - bug investigation
-   - verification or audit work
-2. Use `docs/index.md` to read the owner docs for that task type before acting.
-3. Check `docs/skills/README.md` for candidate reusable skills before drafting or revising a plan.
-4. For non-trivial work, record the chosen route and planned skill usage in the plan before implementation.
+1. 确定任务类型：
+   - 需求澄清
+   - 应用层设计变更
+   - 架构变更
+   - 仅实现变更
+   - Bug 调查
+   - 验证或审计工作
+2. 在行动前，使用 `docs/index.md` 阅读该任务类型的 owner docs。
+3. 在起草或修订计划前，检查 `docs/skills/README.md` 中的候选可复用技能。
+4. 对于非平凡工作，在实现前记录所选路线和计划的技能使用情况。
 
-Do not jump from a feature request directly to code unless the route is already obvious from the relevant requirement and owner docs.
+除非从相关需求和 owner docs 中路线已经很明显，否则不要从功能请求直接跳转到代码。
 
-## Operating Rules
+## 操作规则
 
-1. Prefer file-in, file-out collaboration.
-2. Do not treat chat summaries as durable project memory.
-3. Do not jump from raw PM text or prototype screenshots straight to code when scope is still unclear.
-4. If input is ambiguous, first create or update a file in `docs/discussions/` or `docs/requirements/`.
-5. Create or update a plan before implementation when the planning triggers below apply.
-6. Keep `docs/design/` and `docs/architecture/` focused on the stable supported product baseline, not migration history, roadmap sequencing, or execution status.
-7. Keep `docs/design/` focused on business semantics, workflows, and state meanings; keep persisted entities, field sets, and data dictionaries authoritative in `<domain>/model/*.orm.xml` rather than duplicating them in prose.
-8. Keep logs short, dated, and append-only. After completing any significant code change, you MUST update the daily dev log at `docs/logs/{year}/{month}-{day}.md` (reverse chronological, see `docs/logs/00-log-writing-guide.md` for format). Changes to `nop-entropy` must be logged in `nop-entropy/ai-dev/logs/`, not in this project's `docs/logs/`.
-9. Record non-obvious regressions in `docs/bugs/`.
-10. If prototype and implementation diverge materially, capture the reason in `docs/retrospectives/` instead of silently moving on.
-11. Promote repeated process lessons into `docs/skills/` or `docs/audits/` only when the pattern is recurring enough to justify reuse.
-12. For high-risk or high-ambiguity requirement, design, or plan drafts, request an independent subagent or reviewer pass and revise until major objections are resolved. Every created plan MUST pass an independent plan audit before implementation begins and an independent closure audit before being marked complete.
-13. Keep code comments minimal. Prefer self-explanatory code; add only rare comments when a local constraint is otherwise easy to misread.
-14. When a referenced file is not found at its expected path, check `docs/archive/` before concluding it does not exist. Archived files retain their original relative name under `docs/archive/`. Do not move files to `docs/archive/` without human approval.
-15. Treat reusable skills as method selectors, not substitutes for requirements, design, or architecture docs. Business knowledge belongs in owner docs first.
+1. 优先采用文件输入/输出协作方式。
+2. 不要将聊天摘要视为持久项目记忆。
+3. 当范围仍不明确时，不要从原始 PM 文本或原型截图直接跳到代码。
+4. 如果输入模糊，首先在 `docs/discussions/` 或 `docs/requirements/` 中创建或更新文件。
+5. 当以下规划触发条件适用时，在实现前创建或更新计划。
+6. 保持 `docs/design/` 和 `docs/architecture/` 专注于稳定支持的产品基线，而非迁移历史、路线图顺序或执行状态。
+7. 保持 `docs/design/` 专注于业务语义、工作流和状态含义；将持久化实体、字段集和数据字典保存在 `<domain>/model/*.orm.xml` 中作为权威来源，而非在散文中重复。
+8. 保持日志简短、带日期且仅追加。完成任何重大代码更改后，必须更新每日开发日志 `docs/logs/{year}/{month}-{day}.md`（按时间倒序，格式见 `docs/logs/00-log-writing-guide.md`）。对 `nop-entropy` 的更改必须记录在 `nop-entropy/ai-dev/logs/` 中，而非本项目的 `docs/logs/`。
+9. 在 `docs/bugs/` 中记录非显而易见的回归问题。
+10. 如果原型和实现存在实质性差异，在 `docs/retrospectives/` 中记录原因，而非默默继续。
+11. 只有当模式重复出现足以证明复用合理时，才将重复的过程经验提升到 `docs/skills/` 或 `docs/audits/`。
+12. 对于高风险或高度模糊的需求、设计或计划草案，请求独立子代理或审查者通过并修订，直到解决主要异议。每个创建的计划必须在实施开始前通过独立计划审计，并在标记完成前通过独立结束审计。
+13. 保持代码注释最少。优先使用自解释代码；仅当本地约束容易被误读且代码本身不足以表达时，才添加罕见注释。
+14. 当引用的文件未在预期路径找到时，在断定不存在之前检查 `docs/archive/`。归档文件在 `docs/archive/` 下保留其原始相对名称。未经人工批准，不要将文件移动到 `docs/archive/`。
+15. 将可复用技能视为方法选择器，而非需求、设计或架构文档的替代品。业务知识首先属于 owner docs。
 
-## Current Project Stage
+## 当前项目阶段
 
-`nop-app-erp` is in the **bootstrap / pre-codegen stage**. The AGE documentation structure and ORM model skeletons exist. The Maven multi-module structure will be generated by `nop-cli` from `<domain>/model/*.orm.xml` after each domain's ORM model is designed.
+`nop-app-erp` 处于 **bootstrap / 预代码生成阶段**。AGE 文档结构和 ORM 模型骨架已存在。Maven 多模块结构将在每个域的 ORM 模型设计完成后，由 `nop-cli` 从 `<domain>/model/*.orm.xml` 生成。
 
-### Multi-Domain Directory Structure
+### 多域目录结构
 
-Following the nop-entropy pattern (see `docs-for-ai/01-repo-map/domain-module-pattern.md`), each sub-domain is a **top-level directory** with its own `model/` subdirectory:
+遵循 nop-entropy 模式（见 `docs-for-ai/01-repo-map/domain-module-pattern.md`），每个子域是一个**顶层目录**，包含自己的 `model/` 子目录：
 
 ```text
 nop-app-erp/
@@ -115,9 +115,9 @@ nop-app-erp/
 └── docs/...
 ```
 
-### Standard Module Chain (per domain)
+### 标准模块链（每域）
 
-Each domain follows the nop-entropy standard chain (see `docs-for-ai/01-repo-map/domain-module-pattern.md`):
+每个域遵循 nop-entropy 标准链（见 `docs-for-ai/01-repo-map/domain-module-pattern.md`）：
 
 ```text
 model → codegen → dao → meta → service → web → app → api
@@ -132,164 +132,164 @@ model → codegen → dao → meta → service → web → app → api
 - `{domain}-app/` — 应用打包与启动
 - `{domain}-api/` — 外部 RPC 接口契约
 
-Until the ORM model and generated modules exist:
+在 ORM 模型和生成模块存在之前：
 
-- do not invent Java module paths, package names, or view paths as if they already exist
-- design and discussion work should focus on `<domain>/model/*.orm.xml` and `docs/design/`, `docs/architecture/`, `docs/requirements/`
-- the verification commands in `docs/context/project-context.md` are not yet executable; they will become valid after the first codegen pass
+- 不要假设 Java 模块路径、包名或视图路径已存在
+- 设计和讨论工作应集中在 `<domain>/model/*.orm.xml` 以及 `docs/design/`、`docs/architecture/`、`docs/requirements/`
+- `docs/context/project-context.md` 中的验证命令尚不可执行；首次代码生成通过后才生效
 
-## Nop Platform Specific Rules
+## Nop Platform 特定规则
 
-- Code generation is driven by XML models (`<domain>/model/*.orm.xml`, `<domain>/model/*.api.xml`). XLSX files can be generated from XML via `nop-cli convert` but are not the source of truth. Do not manually edit generated code; regenerate from models instead.
-- ORM XML files (`*.orm.xml`) define entity mappings. The authoritative model source is `<domain>/model/app-erp-<domain>.orm.xml`; everything else is generated.
-- Business logic lives in `*.xbiz.xml` and BizModel Java classes in `{domain}-service` (after codegen).
-- SQL libraries are defined in `*.sql-lib.xml` files.
-- Build requires `nop-entropy` parent to be built first.
-- The project uses Maven multi-module structure. Each domain generates: codegen → dao → service → web → app, with delta/meta as additional modules. The `api` module is generated last as the external RPC interface.
+- 代码生成由 XML 模型驱动（`<domain>/model/*.orm.xml`、`<domain>/model/*.api.xml`）。XLSX 文件可通过 `nop-cli convert` 从 XML 生成，但不是真相源。不要手动编辑生成的代码；应从模型重新生成。
+- ORM XML 文件（`*.orm.xml`）定义实体映射。权威模型源是 `<domain>/model/app-erp-<domain>.orm.xml`；其他一切都是生成的。
+- 业务逻辑位于 `*.xbiz.xml` 和 `{domain}-service` 中的 BizModel Java 类（代码生成后）。
+- SQL 库定义在 `*.sql-lib.xml` 文件中。
+- 构建需要先构建 `nop-entropy` 父项目。
+- 项目使用 Maven 多模块结构。每个域生成：codegen → dao → service → web → app，delta/meta 作为附加模块。`api` 模块最后生成为外部 RPC 接口契约。
 
-### Nop Platform Documentation (`nop-entropy/docs-for-ai/`)
+### Nop Platform 文档（`nop-entropy/docs-for-ai/`）
 
-The Nop Platform's authoritative development documentation lives at `../nop-entropy/docs-for-ai/` (sibling directory). This is the primary reference for all Nop platform conventions, APIs, and development patterns.
+Nop Platform 的权威开发文档位于 `../nop-entropy/docs-for-ai/`（兄弟目录）。这是所有 Nop 平台约定、API 和开发模式的主要参考。
 
-**When to read it:** Before implementing any feature that involves Nop platform APIs, code generation, BizModel patterns, page/view customization, delta customization, testing, or any non-trivial platform interaction.
+**何时阅读：** 在实现任何涉及 Nop 平台 API、代码生成、BizModel 模式、页面/视图定制、delta 定制、测试或任何非平凡平台交互的功能之前。
 
-**How to use it:**
+**如何使用：**
 
-1. Start with `docs-for-ai/INDEX.md` — contains a routing table mapping ~40 common tasks to the correct document.
-2. Recommended lookup order: INDEX → `00-start-here/` → `03-runbooks/` → `02-core-guides/` → `01-repo-map/` → `04-reference/`
-3. `00-start-here/ai-defaults.md` — core decision framework: Model → Delta → Java, anti-patterns table, self-check list.
-4. `02-core-guides/` — canonical pattern documents covering model-first development, service layer (CrudBizModel), page customization, delta mechanism, auth, testing, etc.
-5. `03-runbooks/` — task-oriented step-by-step guides for common operations (create entity, write BizModel method, build page, etc.).
-6. `04-reference/common-java-helpers.md` and `04-reference/safe-api-reference.md` — quick reference for platform helper utilities and CrudBizModel safe APIs.
+1. 从 `docs-for-ai/INDEX.md` 开始 — 包含路由表，映射约 40 个常见任务到正确文档。
+2. 推荐查找顺序：INDEX → `00-start-here/` → `03-runbooks/` → `02-core-guides/` → `01-repo-map/` → `04-reference/`
+3. `00-start-here/ai-defaults.md` — 核心决策框架：Model → Delta → Java，反模式表，自检清单。
+4. `02-core-guides/` — 规范模式文档，涵盖模型优先开发、服务层（CrudBizModel）、页面定制、delta 机制、认证、测试等。
+5. `03-runbooks/` — 面向任务的分步指南，用于常见操作（创建实体、编写 BizModel 方法、构建页面等）。
+6. `04-reference/common-java-helpers.md` 和 `04-reference/safe-api-reference.md` — 平台辅助工具和 CrudBizModel 安全 API 的快速参考。
 
-**Key rules from platform docs that apply to this project:**
+**平台文档中适用于本项目的关键规则：**
 
-- Decision order: Model → Delta → Java. Always prefer model/Delta/customization over writing new Java code.
-- Never manually edit generated files (files under `_gen/`, with `_` prefix, or `_app.orm.xml`/`_service.beans.xml`).
-- Use `CrudBizModel<T>` for standard entity services; use `@BizQuery`/`@BizMutation` annotations.
-- Use platform helpers: `CoreMetrics.currentTimeMillis()` not `System.currentTimeMillis()`, `JsonTool` not third-party JSON libs, `StringHelper` not Apache Commons.
-- `@Inject` fields cannot be `private` in Nop's IoC container.
-- `@BizMutation` auto-wraps transactions; do not add `@Transactional` unless you need explicit propagation control.
-- **Cross-entity access**: within BizModel, always inject `I*Biz` interfaces for other entities. Use `IDaoProvider` / `IOrmTemplate` / `@SqlLibMapper` only when `I*Biz` cannot satisfy the requirement, and document the reason in a code comment.
-- **Exception handling**: all business exceptions MUST extend `NopException`. Use `ErrorCode` + `NopException` for public/GraphQL-facing errors (description in Chinese, i18n handles translation).
+- 决策顺序：Model → Delta → Java。始终优先使用模型/Delta/定制而非编写新 Java 代码。
+- 切勿手动编辑生成的文件（`_gen/` 下的文件、带 `_` 前缀的文件，或 `_app.orm.xml`/`_service.beans.xml`）。
+- 标准实体服务使用 `CrudBizModel<T>`；使用 `@BizQuery`/`@BizMutation` 注解。
+- 使用平台辅助工具：`CoreMetrics.currentTimeMillis()` 而非 `System.currentTimeMillis()`，`JsonTool` 而非第三方 JSON 库，`StringHelper` 而非 Apache Commons。
+- 在 Nop 的 IoC 容器中，`@Inject` 字段不能是 `private`。
+- `@BizMutation` 自动包装事务；除非需要显式传播控制，否则不要添加 `@Transactional`。
+- **跨实体访问**：在 BizModel 中，始终为其他实体注入 `I*Biz` 接口。仅当 `I*Biz` 无法满足需求时才使用 `IDaoProvider` / `IOrmTemplate` / `@SqlLibMapper`，并在代码注释中记录原因。
+- **异常处理**：所有业务异常必须扩展 `NopException`。公共/GraphQL 面向错误使用 `ErrorCode` + `NopException`（描述为中文，i18n 处理翻译）。
 
-## Mandatory Skill Loading
+## 强制技能加载
 
-Before doing **any** implementation work, agents **MUST** scan the available skills list and load every skill whose description matches the current task. This rule applies to **all** agents — main agent, subagent, and audit/review agent — without exception.
+在进行**任何**实现工作之前，代理**必须**扫描可用技能列表并加载每个描述与当前任务匹配的技能。此规则适用于**所有**代理 — 主代理、子代理和审计/审查代理 — 无一例外。
 
-**Matching rule:** A skill matches when its `description` or trigger words cover the work about to be done (e.g. designing an ORM model, writing a BizModel method, creating a view.xml page, writing a test class). When multiple skills match, load all of them.
+**匹配规则：** 当技能的 `description` 或触发词涵盖即将进行的工作时（例如设计 ORM 模型、编写 BizModel 方法、创建 view.xml 页面、编写测试类），技能匹配。多个技能匹配时，全部加载。
 
-**Execution discipline:**
+**执行规范：**
 
-1. **Before writing code or designing models**, scan available skills and load every matching skill. The skill is the single entry point — it contains the required-reading routing table, code patterns, and anti-pattern self-check lists.
-2. After the skill is loaded, read the docs it routes you to. The skill does not replace reading platform docs — it selects which docs to read for the current task.
-3. After adding or modifying code or models, use the selfcheck mechanism provided by the loaded skill to verify no anti-patterns.
-4. If a task spans multiple phases, re-scan and load matching skills when entering each new phase.
-5. If no skill matches the current task, proceed without loading — but do not skip the scan step itself.
+1. **在编写代码或设计模型之前**，扫描可用技能并加载所有匹配的技能。技能是单一入口点 — 包含必需阅读的路由表、代码模式和反模式自检清单。
+2. 加载技能后，阅读它路由到的文档。技能不替代阅读平台文档 — 它选择当前任务应阅读的文档。
+3. 添加或修改代码或模型后，使用技能提供的自检机制验证无反模式。
+4. 如果任务跨越多个阶段，进入每个新阶段时重新扫描并加载匹配的技能。
+5. 如果没有技能匹配当前任务，继续执行但不要跳过扫描步骤本身。
 
-## Read This First
+## 首先阅读
 
 - `docs/context/project-context.md`
 - `docs/context/ai-autonomy-policy.md`
 - `docs/context/codebase-map.md`
-- the requirement, backlog, roadmap, plan, or user request that defines the current slice
-- the relevant owner docs routed from `docs/index.md`
+- 定义当前切片的需求、待办事项、路线图、计划或用户请求
+- 从 `docs/index.md` 路由的相关 owner docs
 
-Read additionally when needed:
+根据需要额外阅读：
 
-- `docs/context/source-of-truth-and-precedence.md` for ownership or conflict questions
-- `docs/context/conventions.md` for project-wide conventions
-- `docs/process/application-development-workflow.md` for workflow questions
-- `docs/index.md` when you need routing beyond the active files
+- `docs/context/source-of-truth-and-precedence.md` — 所有权或冲突问题
+- `docs/context/conventions.md` — 项目范围约定
+- `docs/process/application-development-workflow.md` — 工作流问题
+- `docs/index.md` — 当需要超出活动文件的路由时
 
-## Documentation Ownership
+## 文档所有权
 
-- `docs/context/` owns mandatory AI context, source-of-truth precedence, and project-wide conventions.
-- `docs/backlog/` owns roadmap, implementation ordering, and candidate work selection.
-- `docs/input/` owns raw external inputs such as PM notes, card docs, article extracts, prototype references, and copied source material.
-- `docs/discussions/` owns requirement clarification conversations and unresolved question records.
-- `docs/requirements/` owns implementation-ready requirement synthesis.
-- `docs/design/` owns stable app-layer business and feature design.
-- `docs/architecture/` owns cross-cutting technical and module-boundary truth.
-- `<domain>/model/*.orm.xml` and `<domain>/model/*.api.xml` own persisted model structure, data dictionaries, and generated contract truth.
-- `docs/lessons/` owns durable reusable lessons extracted from bugs, audits, and retrospectives.
-- `docs/plans/` owns execution and closure criteria for non-trivial work.
-- `docs/audits/` owns audit methodology and specialized audit records.
-- `docs/skills/` owns reusable prompts, review playbooks, and audit prompt templates.
-- `docs/logs/` owns dated implementation memory.
-- `docs/testing/` owns manual and exploratory testing records.
-- `docs/bugs/` owns non-obvious bug histories and regression notes.
-- `docs/analysis/` owns research, tradeoff analysis, and rejected directions.
-- `docs/retrospectives/` owns post-implementation gap analysis and process improvements.
+- `docs/context/` — 强制 AI 上下文、真相源优先级和项目范围约定
+- `docs/backlog/` — 路线图、实现顺序和候选工作选择
+- `docs/input/` — 原始外部输入，如 PM 笔记、卡片文档、文章摘录、原型参考和复制的源材料
+- `docs/discussions/` — 需求澄清对话和未解决问题记录
+- `docs/requirements/` — 实现就绪需求综合
+- `docs/design/` — 稳定的应用层业务和功能设计
+- `docs/architecture/` — 跨领域技术和模块边界真相
+- `<domain>/model/*.orm.xml` 和 `<domain>/model/*.api.xml` — 持久化模型结构、数据字典和生成的契约真相
+- `docs/lessons/` — 从 Bug、审计和回顾中提取的持久可复用经验
+- `docs/plans/` — 非平凡工作的执行和结束标准
+- `docs/audits/` — 审计方法论和专业审计记录
+- `docs/skills/` — 可复用提示、审查剧本和审计提示模板
+- `docs/logs/` — 带日期的实现记忆
+- `docs/testing/` — 手动和探索性测试记录
+- `docs/bugs/` — 非显而易见的 Bug 历史和回归笔记
+- `docs/analysis/` — 研究、权衡分析和被拒绝的方向
+- `docs/retrospectives/` — 实现后差距分析和流程改进
 
-Do not hide mandatory rules in `docs/references/`; if an AI must apply it by default, put it in `docs/context/` or `AGENTS.md`.
+不要将强制规则隐藏在 `docs/references/` 中；如果 AI 必须默认应用它，将其放在 `docs/context/` 或 `AGENTS.md` 中。
 
-## Default Workflow
+## 默认工作流
 
-1. Gather raw materials in `docs/input/`.
-2. If needed, clarify ambiguity in `docs/discussions/`.
-3. Synthesize implementation-ready requirements in `docs/requirements/`.
-4. Split stable design output into app-layer design under `docs/design/` and technical design under `docs/architecture/`, with the two referencing each other when needed.
-5. Route the task and select candidate reusable skills.
-6. Write or update a plan when the planning triggers apply, and record skill usage per phase or item when relevant.
-7. Audit the plan before implementation.
-8. Implement the smallest complete slice.
-9. Run verification.
-10. Run closure audit for created plans.
-11. Record logs and any needed bug notes.
+1. 在 `docs/input/` 中收集原材料。
+2. 如有需要，在 `docs/discussions/` 中澄清歧义。
+3. 在 `docs/requirements/` 中综合实现就绪需求。
+4. 将稳定设计输出拆分为 `docs/design/` 下的应用层设计和 `docs/architecture/` 下的技术设计，必要时相互引用。
+5. 路由任务并选择候选可复用技能。
+6. 当规划触发条件适用时，编写或更新计划，并在相关时按阶段或项目记录技能使用情况。
+7. 实施前审计计划。
+8. 实现最小完整切片。
+9. 运行验证。
+10. 对创建的计划进行结束审计。
+11. 记录日志和任何需要的 Bug 笔记。
 
-## Optional Workflow Layers
+## 可选工作流层
 
-Use these when warranted by task complexity. Plan and closure audits are mandatory for created plans.
+当任务复杂性需要时使用这些。创建的计划必须进行计划和结束审计。
 
-- `docs/audits/` for specialized, complex, disputed, reusable, or future-replay-worthy audit evidence; ordinary plan/closure audit evidence belongs in the plan by default
-- `docs/testing/` for manual or exploratory proof
-- `docs/retrospectives/` for material requirement/prototype gaps
-- `docs/skills/` for reusable prompts after repeated failures
-- `docs/lessons/` for durable engineering lessons after repeated failures
+- `docs/audits/` — 用于专业、复杂、有争议、可复用或未来可重放的审计证据；普通计划/结束审计证据默认保留在计划中
+- `docs/testing/` — 用于手动或探索性证明
+- `docs/retrospectives/` — 用于实质性需求/原型差距
+- `docs/skills/` — 用于重复失败后的可复用提示
+- `docs/lessons/` — 用于重复失败后的持久工程经验
 
-Use `multi-dimensional-audit-prompt.md` when work must be challenged across several dimensions at once. Use `open-ended-audit-prompt.md` when the standard checklist may miss hidden risks. These prompts are generic defaults and MUST be customized after copy to match the project's real owner docs, protected areas, verification model, and recurring failure patterns.
+当工作必须同时跨多个维度进行挑战时，使用 `multi-dimensional-audit-prompt.md`。当标准检查清单可能遗漏隐藏风险时，使用 `open-ended-audit-prompt.md`。这些提示是通用默认值，复制后**必须**定制以匹配项目的真实 owner docs、保护区域、验证模型和重复失败模式。
 
-## Planning Rule
+## 规划规则
 
-Create a plan when the task has any of these traits:
+当任务具有以下任何特征时创建计划：
 
-- changes API, database/model, auth, integration, deployment, or public contract behavior
-- changes user-visible behavior across more than one feature surface
-- touches multiple modules and changes shared behavior
-- is expected to take more than one AI session
-- modifies more than 5 total files or is likely to exceed roughly 200 changed lines
-- needs staged execution or explicit closure gates
-- has unresolved product or technical risk that must not be hidden in chat
+- 更改 API、数据库/模型、认证、集成、部署或公共契约行为
+- 跨多个功能表面更改用户可见行为
+- 涉及多个模块并更改共享行为
+- 预计需要多个 AI 会话
+- 修改超过 5 个文件或可能超过大约 200 行更改
+- 需要分阶段执行或显式结束门控
+- 存在未解决的产品或技术风险，不能隐藏在聊天中
 
-Skip a formal plan only for local low-risk edits such as copy changes, small styling fixes, test-only cleanups, and single-file behavior fixes with clear existing tests.
+仅对于本地低风险编辑（如文案更改、小型样式修复、仅测试清理以及具有明确现有测试的单文件行为修复），可以跳过正式计划。
 
-All created plans MUST pass independent subagent or reviewer audit before implementation begins and again before the plan is marked complete. Protected areas, unresolved product risk, and source-of-truth conflicts require human/subagent review or stay open.
+所有创建的计划必须在实施开始前通过独立子代理或审查者审计，并在标记完成前再次通过审计。保护区域、未解决的产品风险或真相源冲突需要人工/子代理审查或保持阻塞。
 
-## Skill Usage Rule
+## 技能使用规则
 
-Before using a reusable skill, confirm all of the following:
+使用可复用技能前，确认以下所有条件：
 
-- the task type and route are already clear from the requirement and owner docs
-- the skill matches the work method, not just a similar business label
-- required inputs listed in `docs/skills/README.md` are available
-- the expected output is known and can be stored in the correct docs location
+- 任务类型和路由已从需求和 owner docs 中明确
+- 技能匹配工作方法，而非仅相似的业务标签
+- `docs/skills/README.md` 中列出的必需输入可用
+- 预期输出已知且可存储在正确的文档位置
 
-For non-trivial plans, each phase or item that depends on a reusable skill should record `Skill: <name>` or `Skill: none`.
+对于非平凡计划，每个依赖可复用技能的阶段或项目应记录 `Skill: <name>` 或 `Skill: none`。
 
-## Docs Maintenance
+## 文档维护
 
-After completing any significant code change, you MUST:
+完成任何重大代码更改后，必须：
 
-1. **Update the daily dev log** at `docs/logs/{year}/{month}-{day}.md` (reverse chronological, see `docs/logs/00-log-writing-guide.md` for format).
-2. **Update relevant owner docs** in `docs/design/` or `docs/architecture/` when the change affects app-layer behavior or technical structure.
+1. **更新每日开发日志** — `docs/logs/{year}/{month}-{day}.md`（按时间倒序，格式见 `docs/logs/00-log-writing-guide.md`）。
+2. **更新相关 owner docs** — 当更改影响应用层行为或技术结构时，更新 `docs/design/` 或 `docs/architecture/` 中的相关文档。
 
-When verification passes completely (full green), record the verification status in the log entry and include it in the git commit message. This provides reliable known-good baselines for future debugging.
+当验证完全通过（全绿）时，在日志条目中记录验证状态并将其包含在 git 提交消息中。这为未来调试提供可靠的已知良好基线。
 
-## Verification Baseline
+## 验证基线
 
-Do not assume this template's example commands are valid for the copied project.
+不要假设此模板的示例命令对复制的项目有效。
 
-Use the real commands listed in `docs/context/project-context.md`.
+使用 `docs/context/project-context.md` 中列出的真实命令。
 
-If verification commands are blank or still placeholders, stop and fill them before reporting verification success.
+如果验证命令为空或仍然是占位符，在报告验证成功前停止并填写它们。

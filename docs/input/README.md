@@ -1,17 +1,17 @@
-# Input Index
+# 输入索引
 
-Use this directory for raw external inputs.
+使用此目录存放原始外部输入。
 
-Examples:
+示例：
 
-- PM notes
-- card-set documents
-- prototype notes
-- copied user feedback
-- article extracts
-- screenshots with commentary
-- old system behavior summaries
+- PM 笔记
+- 卡片集文档
+- 原型笔记
+- 复制的用户反馈
+- 文章摘录
+- 带注释的截图
+- 旧系统行为摘要
 
-These files are not automatically implementation-ready.
+这些文件不是自动实现就绪的。
 
-Start with `00-input-processing-guide.md`.
+从 `00-input-processing-guide.md` 开始。

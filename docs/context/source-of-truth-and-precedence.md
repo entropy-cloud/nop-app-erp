@@ -1,157 +1,157 @@
-# Source Of Truth And Precedence
+# 真相源与优先级
 
-## Purpose
+## 目的
 
-This file defines which artifact answers which question.
+本文件定义哪个工件回答哪个问题。
 
-Use it to avoid mixing stable truth, execution notes, and historical context.
+使用它来避免混淆稳定真相、执行笔记和历史上下文。
 
-## Precedence By Question
+## 按问题划分的优先级
 
-### What should be built now?
+### 现在应该构建什么？
 
-Primary source:
+主要来源：
 
 - `docs/requirements/`
 
-Support sources:
+支持来源：
 
 - `docs/input/`
 - `docs/discussions/`
 
-Rule:
+规则：
 
-- `docs/input/` preserves raw source material
-- `docs/requirements/` is the implementation-ready interpretation
-- if they differ, update the requirement file explicitly instead of silently relying on chat memory
+- `docs/input/` 保留原始源材料
+- `docs/requirements/` 是实现就绪的解释
+- 如果它们不同，显式更新需求文件，而不是默默依赖聊天记忆
 
-### What is the current supported app behavior?
+### 当前支持的应用行为是什么？
 
-Primary source:
+主要来源：
 
 - `docs/design/`
 
-Rule:
+规则：
 
-- `docs/design/` owns app-layer feature, flow, role, and page behavior
-- feature requirement files may drive changes, but stable app behavior should converge into owner docs under `docs/design/`
+- `docs/design/` 拥有应用层功能、流程、角色和页面行为
+- 功能需求文件可能驱动变更，但稳定的应用行为应收敛到 `docs/design/` 下的 owner docs
 
-### What is the current supported technical structure?
+### 当前支持的技术结构是什么？
 
-Primary source:
+主要来源：
 
 - `docs/architecture/`
 
-Rule:
+规则：
 
-- `docs/architecture/` owns technical boundaries, module responsibilities, and cross-cutting implementation rules
+- `docs/architecture/` 拥有技术边界、模块职责和横切实现规则
 
-### What is the database truth?
+### 数据库真相是什么？
 
-Primary source:
+主要来源：
 
-- the project's database model files
+- 项目的数据库模型文件
 
-Examples:
+示例：
 
 - `model/`
-- schema DSL files
-- ORM model definitions
+- schema DSL 文件
+- ORM 模型定义
 
-Rule:
+规则：
 
-- database definitions are owned by model/schema artifacts, not by plan text or prose documentation
-- documentation may explain intent, but the model files are the source of truth
+- 数据库定义由模型/模式工件拥有，而非计划文本或散文文档
+- 文档可以解释意图，但模型文件是真相源
 
-### What is the API contract truth?
+### API 契约真相是什么？
 
-Primary source:
+主要来源：
 
-- API schema files, OpenAPI/GraphQL definitions, route definitions, or backend contract tests
+- API schema 文件、OpenAPI/GraphQL 定义、路由定义或后端契约测试
 
-Rule:
+规则：
 
-- prose docs may summarize API intent, but executable or schema-level API contracts win
+- 散文文档可以总结 API 意图，但可执行或 schema 级别的 API 契约获胜
 
-### What is the external integration truth?
+### 外部集成真相是什么？
 
-Primary source:
+主要来源：
 
-- integration contract docs from the external system
-- committed adapter configuration or integration tests
+- 外部系统的集成契约文档
+- 已提交的适配器配置或集成测试
 
-Rule:
+规则：
 
-- do not invent external system behavior from UI requirements alone
+- 不要仅从 UI 需求发明外部系统行为
 
-### What is the environment/deployment truth?
+### 环境/部署真相是什么？
 
-Primary source:
+主要来源：
 
-- deployment manifests
-- environment schema files
-- infrastructure configuration
+- 部署清单
+- 环境 schema 文件
+- 基础设施配置
 
-Rule:
+规则：
 
-- plans and docs may describe deployment intent, but the committed deployment/config artifacts are the operational source
+- 计划和文档可以描述部署意图，但已提交的部署/配置工件是操作源
 
-### How should this slice be executed and closed?
+### 此切片应如何执行和关闭？
 
-Primary source:
+主要来源：
 
 - `docs/plans/`
 
-Rule:
+规则：
 
-- plans are execution contracts, not long-term owner docs
+- 计划是执行契约，而非长期 owner docs
 
-### What actually happened during execution?
+### 执行期间实际发生了什么？
 
-Primary source:
+主要来源：
 
 - `docs/logs/`
 
-Support sources:
+支持来源：
 
 - `docs/testing/`
 - `docs/bugs/`
 - `docs/audits/`
 - `docs/retrospectives/`
 
-### What should future AI sessions learn from repeated failures?
+### 未来 AI 会话应从重复失败中学到什么？
 
-Primary source:
+主要来源：
 
 - `docs/skills/`
 - `docs/lessons/`
 
-Rule:
+规则：
 
-- use `docs/skills/` for reusable prompts and playbooks
-- use `docs/lessons/` for reusable engineering lessons and cautionary patterns
+- 使用 `docs/skills/` 存储可复用提示和剧本
+- 使用 `docs/lessons/` 存储可复用工程经验和警示模式
 
-## Conflict Resolution
+## 冲突解决
 
-- If raw input and synthesized requirements disagree, update `docs/requirements/` or reopen clarification before coding.
-- If requirements and owner docs disagree, decide whether the requirement changes the supported baseline; then update `docs/design/` or `docs/architecture/` explicitly.
-- If live code and owner docs disagree, treat it as either implementation drift or stale docs; do not silently choose one.
-- If resolving a conflict changes user-visible behavior, data/model shape, API behavior, auth/permission behavior, or external integration behavior, stop and ask for confirmation.
-- If verification fails, the plan is not closed even if implementation appears complete.
-- If model/schema files and prose docs disagree on database truth, model/schema files win; update the prose docs or model intentionally.
+- 如果原始输入和综合需求不一致，在编码前更新 `docs/requirements/` 或重新打开澄清。
+- 如果需求和 owner docs 不一致，决定需求是否更改支持的基线；然后显式更新 `docs/design/` 或 `docs/architecture/`。
+- 如果实时代码和 owner docs 不一致，将其视为实现漂移或文档过时；不要默默选择一方。
+- 如果解决冲突会改变用户可见行为、数据/模型形状、API 行为、认证/权限行为或外部集成行为，请停止并请求确认。
+- 如果验证失败，即使实现看起来完成，计划也不会关闭。
+- 如果模型/schema 文件和散文文档在数据库真相上不一致，模型/schema 文件获胜；有意更新散文文档或模型。
 
-## Legacy Or Stale-Docs Mode
+## 遗留或过时文档模式
 
-Use this mode when `docs/context/project-context.md` marks documentation freshness as `stale`, `unknown`, or `partially stale` for the active slice.
+当 `docs/context/project-context.md` 将活动切片的文档新鲜度标记为 `stale`、`unknown` 或 `partially stale` 时使用此模式。
 
-- Live code and executable contracts are evidence of current behavior, not automatically desired behavior.
-- Owner docs are intended attractors only after they are revalidated against live code, requirements, and human/product intent.
-- Before changing behavior, classify each conflict as `implementation drift`, `doc drift`, or `intentional legacy behavior` in a requirement, discussion, analysis, or plan file.
-- AI autonomy defaults to `research-only` or `plan-first` until a baseline audit or human confirmation records what should be preserved versus changed. For `partially stale`, this restriction applies only to slices whose requirement, owner doc, codebase-map route, or touched code area has not been verified fresh.
-- Do not "fix" code to match stale docs or rewrite docs to match code without recording the drift classification.
+- 实时代码和可执行契约是当前行为的证据，而非自动期望的行为。
+- Owner docs 仅在针对实时代码、需求和人工/产品意图重新验证后才是预期的吸引子。
+- 在更改行为之前，在需求、讨论、分析或计划文件中将每个冲突分类为 `implementation drift`、`doc drift` 或 `intentional legacy behavior`。
+- 在基线审计或人工确认记录应保留与应更改的内容之前，AI 自主权默认为 `research-only` 或 `plan-first`。对于 `partially stale`，此限制仅适用于其需求、owner doc、codebase-map 路由或触及代码区域未验证为新鲜的切片。
+- 不要在不记录漂移分类的情况下"修复"代码以匹配陈旧文档或重写文档以匹配代码。
 
-## Simple Rule Of Thumb
+## 简单经验法则
 
-- stable behavior and structure belong in owner docs
-- execution belongs in plans and logs
-- history and diagnosis belong in bugs, audits, testing notes, retrospectives, and lessons
+- 稳定行为和结构属于 owner docs
+- 执行属于计划和日志
+- 历史和诊断属于 bugs、audits、testing notes、retrospectives 和 lessons

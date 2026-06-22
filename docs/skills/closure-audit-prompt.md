@@ -1,29 +1,29 @@
-# Closure Audit Prompt
+# 结束审计提示
 
-Use this prompt when independently checking whether a planned slice is actually complete.
+在独立检查计划切片是否实际完成时使用此提示。
 
-All created plans require closure audit.
+所有创建的计划都需要结束审计。
 
 ```text
-Read `AGENTS.md`, `docs/index.md`, the active requirement/design docs, the active plan, the latest related log entry, and the live changed code.
+阅读 `AGENTS.md`、`docs/index.md`、活动需求/设计文档、活动计划、最新相关日志条目和实时更改代码。
 
-Audit whether the claimed implementation is truly closed.
+审计声称的实现是否真正关闭。
 
-Check `docs/context/ai-autonomy-policy.md` reviewer availability. Cold replay is not a second reviewer and never approves protected areas, unresolved product risk, or source-of-truth conflicts.
+检查 `docs/context/ai-autonomy-policy.md` 审查者可用性。冷重播不是第二位审查者，从不批准保护区域、未解决的产品风险或真相源冲突。
 
-This audit must be run by an independent subagent or reviewer, not the implementing agent continuing the same closure decision.
+此审计必须由独立子代理或审查者运行，而不是由实施代理继续同一关闭决策。
 
-Focus on:
-- whether live behavior matches the stated requirement
-- whether the plan's closure gates are actually satisfied
-- whether proof exists in files and verification results, not only in chat
-- whether docs were updated where the supported baseline changed
-- whether any remaining gap is still in scope
-- whether task routing and recorded skill usage still match the delivered work
-- whether any autonomy or backlog state was loosened without durable evidence
-- whether verification failures or unrun commands are being hidden
+重点关注：
+- 实时行为是否符合规定的需求
+- 计划的关闭门控是否实际满足
+- 证明是否存在于文件和验证结果中，而不仅仅是聊天中
+- 在支持的基线更改的地方是否更新了文档
+- 是否有任何剩余差距仍在范围内
+- 任务路由和记录的技能使用是否仍然与交付的工作匹配
+- 是否在没有持久证据的情况下放宽了任何自主权或待办事项状态
+- 是否隐藏了验证失败或未运行的命令
 
-Return findings first, ordered by severity.
-If closure is blocked, say `needs revision` and list the exact missing proof or changes.
-If the slice is acceptable, say `passes closure audit` and note any residual risks. The closure result must leave durable evidence in the plan `## Closure` section, with optional links to the daily log or a stored audit file. Do not approve closure based on self-recorded evidence from the implementing agent alone.
+按严重性排序，首先返回发现。
+如果关闭被阻止，说 `needs revision` 并列出确切缺少的证明或更改。
+如果切片可接受，说 `passes closure audit` 并记录任何剩余风险。关闭结果必须在计划的 `## Closure` 部分留下持久证据，可选择性链接到每日日志或存储的审计文件。不要仅基于实施代理的自我记录证据批准关闭。
 ```

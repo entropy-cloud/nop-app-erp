@@ -1,29 +1,29 @@
-# Code Refactor Discovery Prompt
+# 代码重构发现提示
 
-Use this skill to discover refactoring candidates before changing structure.
+在更改结构之前使用此技能发现重构候选。
 
-## Scan Dimensions
+## 扫描维度
 
-1. oversized files
-2. duplicate or unconverged logic
-3. hidden cross-module coupling
-4. mixed responsibilities in one module
-5. fragile async or lifecycle patterns
-6. boundary violations between layers
-7. tests that mirror implementation instead of contract
-8. stale compatibility residue
-9. docs/code drift around the changed area
+1. 超大文件
+2. 重复或未收敛的逻辑
+3. 隐藏的跨模块耦合
+4. 一个模块中的混合职责
+5. 脆弱的异步或生命周期模式
+6. 层间边界违规
+7. 镜像实现而非契约的测试
+8. 过时的兼容性残留
+9. 更改区域周围的文档/代码漂移
 
-## Review Rules
+## 审查规则
 
-- do not propose refactors just because code looks busy
-- prioritize structural risks that will keep recurring
-- separate behavior-preserving refactors from contract changes
-- name the concrete payoff: split, merge, isolate, unify, or delete
+- 不要仅仅因为代码看起来复杂就提议重构
+- 优先处理会持续重复出现的结构风险
+- 将保留行为的重构与契约变更分开
+- 命名具体收益：拆分、合并、隔离、统一或删除
 
-## Expected Output
+## 预期输出
 
-- candidate list with evidence
-- why each candidate matters
-- suggested ordering
-- explicit note when no worthwhile refactor is justified
+- 带证据的候选列表
+- 每个候选重要的原因
+- 建议的顺序
+- 当没有值得的重构时明确说明

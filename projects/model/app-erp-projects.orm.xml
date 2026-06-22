@@ -76,7 +76,6 @@
                 <column name="status" displayName="状态" dictName="erp-prj/project-status" mandatory="true"/>
                 <column name="managerId" displayName="项目经理" stdSqlType="BIGINT"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
@@ -111,7 +110,6 @@
                 <column name="priority" displayName="优先级" dictName="erp-prj/priority"/>
                 <column name="sortNum" displayName="排序号" stdSqlType="INT"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
@@ -144,7 +142,6 @@
                 <column name="approvedBy" displayName="审批人" stdSqlType="BIGINT"/>
                 <column name="approvedAt" displayName="审批时间" stdSqlType="DATETIME"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -167,7 +164,6 @@
                 <column name="name" displayName="类型名称" stdSqlType="VARCHAR" precision="200" mandatory="true"/>
                 <column name="defaultSubjectId" displayName="默认科目" stdSqlType="BIGINT"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -187,7 +183,6 @@
                 <column name="costRate" displayName="成本费率" domainName="costRate"/>
                 <column name="subjectId" displayName="科目" stdSqlType="BIGINT"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -207,7 +202,6 @@
                 <column name="role" displayName="角色" stdSqlType="VARCHAR" precision="50"/>
                 <column name="startDate" displayName="加入日期" stdSqlType="DATE"/>
                 <column name="endDate" displayName="退出日期" stdSqlType="DATE"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>

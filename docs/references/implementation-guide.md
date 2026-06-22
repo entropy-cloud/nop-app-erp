@@ -1,32 +1,32 @@
-# Implementation Guide
+# 实施指南
 
-## Purpose
+## 目的
 
-This guide captures day-to-day coding expectations for AI and humans.
+本指南记录 AI 和人工的日常编码期望。
 
-## Core Rules
+## 核心规则
 
-- prefer the smallest correct change
-- follow existing patterns before inventing new abstractions
-- keep state ownership explicit
-- avoid demo-only placeholders unless the active requirement explicitly allows them
-- add tests when a bug or contract could regress silently
-- do not put code-level technical details into plan files unless they are needed for scope, proof, or contract reasoning
-- prefer no comments by default; add only rare, high-value comments when a local constraint is easy to misread
+- 优先选择最小的正确更改
+- 在发明新抽象之前遵循现有模式
+- 保持状态所有权明确
+- 避免仅演示用的占位符，除非活动需求明确允许
+- 当 bug 或契约可能静默回归时添加测试
+- 不要将代码级技术细节放入计划文件，除非它们是范围、证明或契约推理所必需的
+- 默认优先不添加注释；仅当本地约束容易被误读时才添加罕见的高价值注释
 
-## Review Lens
+## 审查视角
 
-When reviewing work, check for:
+审查工作时，检查：
 
-- boundary violations
-- hidden assumptions not written to files
-- fake completion based only on UI shape or chat claims
-- missing verification for user-visible behavior
+- 边界违规
+- 未写入文件的隐藏假设
+- 仅基于 UI 形状或聊天声明的虚假完成
+- 用户可见行为缺少验证
 
-## Collaboration Rule
+## 协作规则
 
-If a repeated instruction keeps reappearing in chat, promote it into `AGENTS.md`, `docs/architecture/`, or `docs/references/`.
+如果重复的指令不断出现在聊天中，将其提升到 `AGENTS.md`、`docs/architecture/` 或 `docs/references/`。
 
-If a repeated review pattern keeps finding the same class of issue, promote it into `docs/skills/` or `docs/audits/`.
+如果重复的审查模式不断发现同一类问题，将其提升到 `docs/skills/` 或 `docs/audits/`。
 
-If the same defect pattern keeps recurring after that, evaluate whether it should be promoted further into a heuristic script, static check, lint rule, CI guard, or codemod. Prefer lightweight checks first, and tune them to the copied project's real conventions, naming patterns, and false-positive tolerance.
+如果在那之后相同的缺陷模式仍然反复出现，评估是否应进一步提升为启发式脚本、静态检查、lint 规则、CI 防护或代码修改。首选轻量级检查，并根据复制项目的真实约定、命名模式和误报容忍度进行调整。

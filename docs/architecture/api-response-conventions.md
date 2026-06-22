@@ -1,23 +1,23 @@
-# API Response Conventions
+# API 响应约定
 
-> Optional starter skeleton. Use when the project exposes HTTP/REST or RPC APIs and needs a shared response convention. Delete this file if it does not apply.
+> 可选的入门骨架。当项目暴露 HTTP/REST 或 RPC API 并需要共享响应约定时使用。如果不适用，请删除此文件。
 
-## Principle
+## 原则
 
-- Prefer the project's standard response envelope; do not invent a new ad-hoc map protocol for each endpoint.
-- Use typed response/DTO shapes instead of untyped maps for both parameters and return values.
+- 优先使用项目的标准响应信封；不要为每个端点发明新的临时映射协议。
+- 参数和返回值都使用类型化的响应/DTO 形状，而不是无类型映射。
 
-## Status Code Discipline
+## 状态码规范
 
-- Business-expected failures (validation, state-not-allowed, no-result, external business rejection, user-facing prompts) MUST NOT surface as HTTP 500. Return HTTP 200 with a business failure status code and message in the body.
-- HTTP 500 is reserved for genuinely unexpected system errors (program defects, null pointers, infrastructure failure, unknown runtime errors). A normal business branch is never a 500.
+- 业务预期失败（验证、状态不允许、无结果、外部业务拒绝、用户提示）不得显示为 HTTP 500。返回 HTTP 200，正文包含业务失败状态码和消息。
+- HTTP 500 保留用于真正意外的系统错误（程序缺陷、空指针、基础设施故障、未知运行时错误）。正常业务分支永远不是 500。
 
-## Success Responses
+## 成功响应
 
-- Success responses default to the success status and `data` only.
-- Do not attach `msg`/`message`/`description` fields to success responses unless the requirement explicitly requires a success toast. This prevents frontends from auto-popping unintended notifications.
-- "No data found" and similar states belong in business fields inside `data`, rendered by the page, not in a success message field.
+- 成功响应默认为成功状态和 `data`。
+- 除非需求明确要求成功提示，否则不要在成功响应上附加 `msg`/`message`/`description` 字段。这可防止前端自动弹出意外通知。
+- "未找到数据"和类似状态属于 `data` 内的业务字段，由页面呈现，而不是在成功消息字段中。
 
-## Rule
+## 规则
 
-When changing or adding an endpoint, check what the frontend consumes. If the frontend calls the API directly (form/service/ajax), keep the response shape the frontend expects and avoid success-scenario notification fields.
+更改或添加端点时，检查前端消费的内容。如果前端直接调用 API（表单/服务/ajax），保持前端期望的响应形状，避免成功场景通知字段。

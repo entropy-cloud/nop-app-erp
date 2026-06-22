@@ -1,108 +1,108 @@
-# Plan Authoring And Execution Guide
+# 计划起草与执行指南
 
-## Goal
+## 目标
 
-`docs/plans/` is for non-trivial execution slices that need explicit scope, closure criteria, and proof.
+`docs/plans/` 用于需要明确范围、结束标准和证明的非平凡执行切片。
 
-## When To Write A Plan
+## 何时编写计划
 
-Write a plan when the task:
+当任务满足以下条件时编写计划：
 
-- changes API, database/model, auth, integration, deployment, or public contract behavior
-- changes user-visible behavior across more than one feature surface
-- touches multiple modules and changes shared behavior
-- is expected to take more than one AI session
-- modifies more than 5 total files or is likely to exceed roughly 200 changed lines
-- needs staged implementation or explicit proof before closure
+- 更改 API、数据库/模型、认证、集成、部署或公共契约行为
+- 跨多个功能表面更改用户可见行为
+- 涉及多个模块并更改共享行为
+- 预计需要多个 AI 会话
+- 修改超过 5 个文件或可能超过大约 200 行更改
+- 需要分阶段实施或在结束前明确证明
 
-## Plan Decision Table
+## 计划决策表
 
-| Scope                                                                                                                               | Plan Level | Audit Rule                                                      | Examples                                                                               |
+| 范围 | 计划级别 | 审计规则 | 示例 |
 | ----------------------------------------------------------------------------------------------------------------------------------- | ---------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| Trivial local edit                                                                                                                  | No plan    | No draft review                                                 | typo/copy change, single style tweak, test-only cleanup                                |
-| Non-trivial tracked work                                                                                                            | Full plan  | independent draft review and independent closure audit required | small UI polish with docs/test update, simple local bug fix with clear existing test   |
-| Contract, data/model, API, auth, permission, integration, deployment, cross-surface, stale-doc conflict, or clearly high-risk scope | Full plan  | independent draft review and independent closure audit required | checkout flow, login behavior, data migration, external webhook, multi-module refactor |
+| 琐碎的本地编辑 | 无计划 | 无草案审查 | 打字错误/文案更改、单一样式调整、仅测试清理 |
+| 非平凡跟踪工作 | 完整计划 | 需要独立草案审查和独立结束审计 | 带文档/测试更新的小型 UI 改进、带明确现有测试的简单本地 bug 修复 |
+| 契约、数据/模型、API、认证、权限、集成、部署、跨表面、陈旧文档冲突或明显高风险范围 | 完整计划 | 需要独立草案审查和独立结束审计 | 结账流程、登录行为、数据迁移、外部 webhook、多模块重构 |
 
-If unsure, use a full plan.
+如果不确定，使用完整计划。
 
-## Minimum Rules
+## 最低规则
 
-1. **Start from live baseline.** Read the repo first, then write `Current Baseline`. Do not rely on memory or old plans. For net-new features, the baseline must inventory all existing code the feature will touch or contradict — hardcoded values, missing hooks, incompatible patterns. An inventory is not optional.
-2. **Write Goals and Non-Goals.** If either is unclear, the plan boundary is not ready.
-3. **Use checkboxes for execution and closure.** Unchecked items mean unfinished work until closure.
-4. **One plan, one result surface.** If the plan needs multiple independent closure criteria, it is too wide. Split it. Multi-module extraction or migration that shares the same behavioral contract and closure criteria is still ONE result surface — do not over-split.
-5. **Proof before closure.** Do not mark a plan complete until the repo contains verifiable proof for every exit criterion.
-6. **No code-design dumps.** The plan captures scope, proof, and closure logic, not low-level implementation detail. Exception: refactoring and extraction plans MUST include the interface contracts between extracted modules — these are structural boundary definitions, not implementation pseudocode.
-7. **Tag items with types.** Each execution item must be `Fix`, `Add`, `Decision`, `Proof`, or `Follow-up`. `Fix` covers defect repairs; `Add` covers net-new code or config. An item may carry multiple types (e.g., `Decision | Add`); when it does, all implied obligations apply. A confirmed live defect or contract drift must be `Fix`, not `Follow-up`. When 80%+ of items in a phase share one type, declare the uniform type at the phase level instead of per-item (e.g., `Phase 1 — Fix-heavy (8/10 items tagged Fix)`).
-8. **Record skill usage deliberately.** For each phase or item where a reusable skill matters, record `Skill: <name>` or `Skill: none`. Skills choose the work method, not the business truth. If a skill is named, its required inputs and expected output must already be clear from `docs/skills/README.md` and the referenced owner docs.
-9. **Record Decisions with rationale.** Every `Decision` item must document the choice, the alternatives considered, and the residual risk if any. Write the rationale into the plan or a referenced doc. If a decision requires prototyping or exploration before committing, add a temporary `Explore` item that must conclude before the `Decision` resolves. Framework-forced or obvious choices (e.g., "must match existing framework pattern") can be noted as constrained without full alternatives analysis.
-10. **Checklist integrity before closure.** Before marking a plan complete, no in-scope checklist item may remain unchecked. Either complete it or explicitly move it out of scope with a written reason. Scope narrowing after plan approval is a scope change and must be recorded with rationale; silently removing items from scope is a violation.
-11. **Text consistency before closure.** Before closing, verify that `Plan Status`, every phase `Status`, every phase `Exit Criteria`, `Closure Gates`, and the `docs/logs/` entry all agree. No `completed` at the top while a phase inside still says `draft`.
-12. **Independent draft review and closure audit.** Do not implement a created plan until independent draft review has revised it into an acceptable execution contract, and do not mark it complete as a side effect of finishing the last implementation slice. Use a separate review pass. Closure audit MUST NOT run in the execution session: it must be performed by an independent subagent (a fresh session that does not reuse the executor's context) iterating until pass; the executor must not self-audit, must not tick the closure-audit gate, and must not leave it `[ ]` as a "human gate" placeholder. If no independent agent is available, the executor must explicitly spawn a fresh subagent session to audit; otherwise the plan stays open. Protected areas, unresolved product risk, and source-of-truth conflicts require human/subagent review or stay open.
-13. **Non-degradable items** cannot be downgraded to non-blocking follow-ups: confirmed live defects, confirmed contract drift, confirmed owner-doc drift, and CI/lint rules already fixed in the repo.
-14. **Prefer one owner plan for multiple capabilities of the same component.** When several independent capabilities belong to the same component (same owner doc, same result surface), write them as phases inside a single plan rather than one plan per capability. Split into separate plans only when they carry materially different closure criteria, owner-doc obligations, or verification paths. This is the concrete form of rule 4 ("one plan, one result surface") for the common "component capability enhancement" shape, and exists to prevent a queue cluttered with one-capability-per-plan fragments.
+1. **从实时基线开始。** 先读取仓库，然后编写 `Current Baseline`。不要依赖记忆或旧计划。对于全新功能，基线必须盘点功能将触及或矛盾的所有现有代码 — 硬编码值、缺失的钩子、不兼容的模式。盘点是必需的。
+2. **编写目标和非目标。** 如果任何一个不清楚，计划边界尚未就绪。
+3. **使用复选框进行执行和结束。** 未勾选的项目意味着在结束前未完成的工作。
+4. **一个计划，一个结果表面。** 如果计划需要多个独立结束标准，则范围太广。拆分它。共享相同行为契约和结束标准的多模块提取或迁移仍然是**一个**结果表面 — 不要过度拆分。
+5. **结束前证明。** 在仓库包含每个退出标准的可验证证明之前，不要标记计划完成。
+6. **无代码设计转储。** 计划捕获范围、证明和结束逻辑，而非低级实现细节。例外：重构和提取计划**必须**包含提取模块之间的接口契约 — 这些是结构边界定义，而非实现伪代码。
+7. **用类型标记项目。** 每个执行项目必须是 `Fix`、`Add`、`Decision`、`Proof` 或 `Follow-up`。`Fix` 涵盖缺陷修复；`Add` 涵盖新增代码或配置。项目可能携带多个类型（例如 `Decision | Add`）；当携带多个类型时，所有隐含义务都适用。已确认的实时缺陷或契约漂移必须是 `Fix`，而非 `Follow-up`。当一个阶段中 80%+ 的项目共享一种类型时，在阶段级别声明统一类型而非每个项目单独声明（例如 `Phase 1 — Fix-heavy (8/10 items tagged Fix)`）。
+8. **刻意记录技能使用。** 对于可复用技能重要的每个阶段或项目，记录 `Skill: <name>` 或 `Skill: none`。技能选择工作方法，而非业务真相。如果命名了技能，其必需输入和预期输出必须已经从 `docs/skills/README.md` 和引用的 owner docs 中明确。
+9. **记录带有理由的决策。** 每个 `Decision` 项目必须记录选择、考虑的替代方案以及任何残留风险。将理由写入计划或引用的文档中。如果决策需要在提交前进行原型设计或探索，添加临时的 `Explore` 项目，该项目必须在 `Decision` 解决之前完成。框架强制或明显的选择（例如"必须匹配现有框架模式"）可以作为约束记录，无需完整的替代方案分析。
+10. **结束前检查清单完整性。** 在标记计划完成之前，范围内的任何检查清单项目都不得保持未勾选状态。要么完成它，要么明确将其移出范围并写入理由。计划批准后的范围缩小是范围变更，必须记录理由；静默从范围中移除项目是违规行为。
+11. **结束前文本一致性。** 结束前，验证 `Plan Status`、每个阶段的 `Status`、每个阶段的 `Exit Criteria`、`Closure Gates` 和 `docs/logs/` 条目都一致。顶部显示 `completed` 而内部某个阶段仍显示 `draft` 是不允许的。
+12. **独立草案审查和结束审计。** 在独立草案审查将计划修订为可接受的执行契约之前，不要实施创建的计划；不要将其标记为完成作为完成最后一个实现切片的副作用。使用单独的审查通过。结束审计**不得**在执行会话中运行：必须由独立子代理（不重用执行者上下文的新会话）执行直到通过；执行者不得自我审计，不得勾选结束审计门控，不得将其留为 `[ ]` 作为"人工门控"占位符。如果没有独立代理可用，执行者必须显式生成新的子代理会话进行审计；否则计划保持打开状态。保护区域、未解决的产品风险和真相源冲突需要人工/子代理审查或保持阻塞。
+13. **不可降级项目**不能降级为非阻塞跟进：已确认的实时缺陷、已确认的契约漂移、已确认的 owner-doc 漂移以及仓库中已修复的 CI/lint 规则。
+14. **同一组件的多个功能优先使用一个 owner plan。** 当多个独立功能属于同一组件（相同的 owner doc、相同的结果表面）时，将它们写为单个计划中的阶段，而不是每个功能一个计划。仅当它们具有实质性不同的结束标准、owner-doc 义务或验证路径时才拆分为单独的计划。这是规则 4（"一个计划，一个结果表面"）针对常见"组件功能增强"形状的具体形式，旨在防止队列被每个功能一个计划的碎片 clutter。
 
-## Plan Status Flow
+## 计划状态流程
 
-Use these statuses deliberately:
+有意使用这些状态：
 
-- `draft` - the plan exists but has not yet passed independent draft review
-- `active` - independent draft review has converged on an acceptable execution contract and implementation may begin
-- `completed` - independent closure audit accepted closure
-- `superseded | replaced | deferred | cancelled` - use when the plan no longer owns live closure in its original form
+- `draft` - 计划存在但尚未通过独立草案审查
+- `active` - 独立草案审查已收敛到可接受的执行契约，可以开始实施
+- `completed` - 独立结束审计接受结束
+- `superseded | replaced | deferred | cancelled` - 当计划不再以其原始形式拥有实时结束时使用
 
-Recommended default flow for created plans:
+创建计划的推荐默认流程：
 
-1. create the first honest draft as `draft`
-2. run independent draft review until the draft is acceptable
-3. record the iterations in `## Draft Review Record`
-4. change `Plan Status` to `active`
-5. execute and update phase/workstream statuses
-6. close only after independent closure audit
+1. 创建第一个诚实草案为 `draft`
+2. 运行独立草案审查直到草案可接受
+3. 在 `## Draft Review Record` 中记录迭代
+4. 将 `Plan Status` 更改为 `active`
+5. 执行并更新阶段/工作流状态
+6. 仅在独立结束审计后关闭
 
-### Anti-Slacking Rule
+### 反松弛规则
 
-Every in-scope item before closure must land in exactly one state: `landed`, `adjudicated as residual-risk-only`, `moved to explicit successor ownership`, or `removed from scope with recorded reason`.
+结束前的每个范围内项目必须恰好处于一种状态：`landed`、`adjudicated as residual-risk-only`、`moved to explicit successor ownership` 或 `removed from scope with recorded reason`。
 
-The following words are forbidden for in-scope items: `optional`, `if time permits`, `consider`, `maybe`, `nice to have`, `as needed`. If an item is truly optional, move it out of scope explicitly rather than leaving it in a fuzzy state.
+范围内项目禁止使用以下词语：`optional`、`if time permits`、`consider`、`maybe`、`nice to have`、`as needed`。如果项目确实是可选的，请明确将其移出范围，而不是让它处于模糊状态。
 
-A `Follow-up` item must name the trigger condition that would promote it into scope (e.g., "when user count exceeds 10K"). A `Deferred But Adjudicated` item must name the event or decision that would reopen it (e.g., "if the new API is adopted, this work may become redundant").
+`Follow-up` 项目必须命名将其提升到范围内的触发条件（例如"当用户数量超过 10K 时"）。`Deferred But Adjudicated` 项目必须命名将重新打开它的事件或决策（例如"如果采用新 API，这项工作可能变得多余"）。
 
-## When Executing
+## 执行时
 
-1. Before implementation, revise the plan directly until independent draft review finds no blocking issue, then record the draft-review evidence durably in the plan by default.
-2. Keep new plans at `Plan Status: draft` during draft review. Change to `active` only after the draft-review record shows the plan is acceptable for execution.
-3. When you start a slice, update its `Status` to `in progress`.
-4. When you finish a slice, update its `Status` to `completed` and check off all its execution items and exit criteria.
-5. Before executing a phase, confirm the listed `Skill` still matches the task and available inputs. If not, update the plan before proceeding.
-6. owner-doc alignment is a **plan-level** obligation, not a fixed per-phase item. A phase's exit criteria should list a doc-update step **only when that phase actually changes the live baseline, a public contract, or owner behavior**. Do not write `No owner-doc update required` as boilerplate to fill a slot — if nothing changed, write nothing. Overall owner-doc consistency is verified in the closure step (text consistency check), not repeated in every phase exit. This is the same logic as rule 10 (checklist integrity): do not pad exit criteria with no-op items.
-7. **Full-repo verification belongs in Closure Gates, not in phase exit criteria by default.** A phase's exit criteria should only include checks needed to prove that phase delivered its observable result and to unblock later phases (typically a focused unit test or a localized typecheck of the new code). Do not repeat full-repo `typecheck`/`build`/`lint`/`test` in every phase exit — run them once at closure (Closure Gates already cover this). Exception: if a phase changes a public contract that the very next phase immediately depends on, write a localized check (e.g., "typecheck of the changed package passes") to unblock, but a full `build` is not required per phase.
-8. Do not mark a slice complete because the function signature exists. Verify that the behavior, error handling, and test coverage land too.
-9. If an item cannot be completed, move it to `Deferred But Adjudicated` with classification and reason. Do not leave it unchecked in the execution list.
-10. Keep `docs/logs/` in sync with plan progress. A single aggregate log entry at plan closure is sufficient when all phases cover the same feature in one sprint; individual phase entries are required only when a phase spans a different day or a distinct deliverable.
+1. 实施前，直接修订计划直到独立草案审查未发现阻塞问题，然后默认将草案审查证据持久记录在计划中。
+2. 草案审查期间保持新计划为 `Plan Status: draft`。仅在草案审查记录显示计划可接受执行后才更改为 `active`。
+3. 开始切片时，将其 `Status` 更新为 `in progress`。
+4. 完成切片时，将其 `Status` 更新为 `completed` 并勾选其所有执行项目和退出标准。
+5. 执行阶段前，确认列出的 `Skill` 仍然匹配任务和可用输入。如果不匹配，在继续前更新计划。
+6. owner-doc 对齐是**计划级**义务，而非固定的每阶段项目。阶段的退出标准应列出文档更新步骤**仅当该阶段实际更改实时基线、公共契约或 owner 行为时**。不要写 `No owner-doc update required` 作为填充槽的样板 — 如果没有更改，什么都不写。整体 owner-doc 一致性在结束步骤（文本一致性检查）中验证，而非在每个阶段退出中重复。这与规则 10（检查清单完整性）相同的逻辑：不要用无操作项目填充退出标准。
+7. **完整仓库验证默认属于 Closure Gates，而非阶段退出标准。** 阶段的退出标准应仅包括证明该阶段交付其可观察结果以及解除后续阶段阻塞所需的检查（通常是重点单元测试或新代码的本地化类型检查）。不要在每个阶段退出中重复完整仓库的 `typecheck`/`build`/`lint`/`test` — 在结束时运行一次（Closure Gates 已经涵盖此）。例外：如果一个阶段更改了下一阶段立即依赖的公共契约，写一个本地化检查（例如"更改包的类型检查通过"）来解除阻塞，但不需要每个阶段都进行完整的 `build`。
+8. 不要因为函数签名存在就标记切片完成。验证行为、错误处理和测试覆盖也已落地。
+9. 如果项目无法完成，将其移至 `Deferred But Adjudicated` 并分类和说明原因。不要将其留在执行列表中未勾选。
+10. 保持 `docs/logs/` 与计划进度同步。当所有阶段在一个 sprint 中涵盖同一功能时，计划结束时的单个聚合日志条目就足够了；仅当阶段跨越不同日期或不同可交付成果时才需要单独的阶段条目。
 
-## When Closing
+## 结束时
 
-Before setting `Plan Status: completed`, do all of the following:
+在设置 `Plan Status: completed` 之前，完成以下所有操作：
 
-**All created plans:**
+**所有创建的计划：**
 
-1. Check every phase `Exit Criteria` — every one must be `[x]`.
-2. Check every `Closure Gates` item — every one must be `[x]`.
-3. Verify text consistency: top status, phase statuses, exit criteria, closure gates, and log entry all agree.
-4. Distinguish "interface exists" from "behavior is complete". Verify the actual runtime behavior with a test or demo, not just the type signature.
-5. Run the real verification commands for the repo. For plans whose primary result surface is visual, behavioral, or UX-driven, customize the verification gates with explicit justification in the plan.
-6. Closure audit MUST NOT run in the execution session. Spawn an independent subagent (fresh session, no executor context) to audit until pass; the executor must not self-audit, must not tick the closure-audit gate, and must not leave it `[ ]` as a "human gate". If no independent agent is available, the plan stays open.
-7. If the plan used a solo cold-replay fallback (see `AGENTS.md` Reviewer-Availability Fallback), the closure record MUST state it was used and confirm the cold-replay self-check was performed against the plan, affected docs, the actual diff, and real verification commands.
+1. 检查每个阶段的 `Exit Criteria` — 每个必须是 `[x]`。
+2. 检查每个 `Closure Gates` 项目 — 每个必须是 `[x]`。
+3. 验证文本一致性：顶部状态、阶段状态、退出标准、结束门控和日志条目都一致。
+4. 区分"接口存在"与"行为完整"。使用测试或演示验证实际运行时行为，而非仅类型签名。
+5. 运行仓库的真实验证命令。对于主要结果表面是视觉、行为或 UX 驱动的计划，在计划中使用明确理由自定义验证门控。
+6. 结束审计**不得**在执行会话中运行。生成独立子代理（新会话，无执行者上下文）进行审计直到通过；执行者不得自我审计，不得勾选结束审计门控，不得将其留为 `[ ]` 作为"人工门控"。如果没有独立代理可用，计划保持打开状态。
+7. 如果计划使用了单独冷重播回退（见 `AGENTS.md` 审查者可用性回退），结束记录**必须**声明已使用它，并确认针对计划、受影响文档、实际差异和真实验证命令执行了冷重播自检。
 
-**Full closure** (multi-session, multi-module, or high-risk plans — add these):
+**完整结束**（多会话、多模块或高风险计划 — 添加这些）：
 
-7. Re-read the entire plan from the top, not just the most recent slice.
-8. Record independent closure-audit evidence in the plan's `Closure` section and link any stored audit file under `docs/audits/` when one exists.
+7. 从头开始重新阅读整个计划，而不仅仅是最近的切片。
+8. 在计划的 `Closure` 部分记录独立结束审计证据，并在存在时链接 `docs/audits/` 下的任何存储审计文件。
 
-If any of these fail, the plan stays open.
+如果任何一项失败，计划保持打开状态。
 
-## Template
+## 模板
 
 ```md
 # <plan-id> <title>
@@ -115,28 +115,28 @@ If any of these fail, the plan stays open.
 
 ## Current Baseline
 
-- <what is true today>
-- <what gap remains>
+- <当前真实情况>
+- <剩余差距>
 
 ## Goals
 
-- <result to achieve>
+- <要实现的结果>
 
 ## Non-Goals
 
-- <explicitly excluded work>
+- <明确排除的工作>
 
 ## Task Route
 
 - Type: `<requirement clarification | app-layer design change | architecture change | implementation-only change | bug investigation | verification or audit work>`
 - Owner Docs: `<paths>`
-- Skill Selection Basis: `<why these skills or none apply>`
+- Skill Selection Basis: `<为什么应用这些技能或不应用>`
 
 ## Infrastructure And Config Prereqs
 
-- <ports, env vars, CORS, secrets, .env, external services this feature depends on>
-- <if none, write "No infra prereqs beyond existing baseline">
-- <for data-migration plans: include rollback strategy or script path>
+- <此功能依赖的端口、环境变量、CORS、密钥、.env、外部服务>
+- <如果没有，写"No infra prereqs beyond existing baseline">
+- <对于数据迁移计划：包括回滚策略或脚本路径>
 
 ## Execution Plan
 
@@ -147,21 +147,21 @@ Targets: `<paths>`
 Skill: `<skill-name | none>`
 
 - Item Types: `Fix | Decision | Proof | Follow-up`
-- Prereqs: <phases or external dependencies that must complete first>
+- Prereqs: <必须先完成的阶段或外部依赖>
 
 - [ ] <implementation item>
       - Skill: `<skill-name | none>`
-- [ ] <Decision: record rationale and alternatives in the item or a referenced doc>
+- [ ] <Decision: 在项目或引用文档中记录理由和替代方案>
   - Skill: `<skill-name | none>`
-- [ ] <Proof: specify test strategy (unit/integration/e2e) and exact verification commands>
+- [ ] <Proof: 指定测试策略（单元/集成/e2e）和确切验证命令>
   - Skill: `<skill-name | none>`
 
 Exit Criteria:
 
-> Write only what this phase actually delivers as an observable result, plus any localized check needed to unblock later phases. Do not pad with boilerplate: omit the owner-doc line entirely when nothing changed (do not write `No owner-doc update required` to fill a slot). Full-repo `typecheck`/`build`/`lint`/`test` belong in Closure Gates, not here (see When Executing rule 7). `docs/logs/` is a plan-level closure step, not a per-phase item.
+> 仅写此阶段实际交付的可观察结果，以及解除后续阶段阻塞所需的任何本地化检查。不要用样板填充：当没有更改时完全省略 owner-doc 行（不要写 `No owner-doc update required` 来填充槽）。完整仓库的 `typecheck`/`build`/`lint`/`test` 属于 Closure Gates，而非此处（见执行时规则 7）。`docs/logs/` 是计划级结束步骤，而非每阶段项目。
 
-- [ ] <observable result this phase delivers — specify success and failure modes>
-- [ ] <localized verification, only if a later phase depends on it: focused unit test or typecheck of the changed code>
+- [ ] <此阶段交付的可观察结果 — 指定成功和失败模式>
+- [ ] <本地化验证，仅当后续阶段依赖它时：重点单元测试或更改代码的类型检查>
 
 ## Draft Review Record
 
@@ -170,16 +170,16 @@ Exit Criteria:
 
 ## Closure Gates
 
-> Close only after every item here and every phase's Exit Criteria is checked `[x]`. **Full-repo verification lives here**: run `typecheck`/`build`/`lint`/`test` (or the project's equivalents) once at closure. Do not repeat these in phase exit criteria — phases only verify what they delivered plus what unblocks later phases (see When Executing rule 7). For plans with no code change (docs-only), drop the verification command gate and state why.
+> 仅在所有项目和每个阶段的退出标准都勾选 `[x]` 后关闭。**完整仓库验证在此处**：在结束时运行 `typecheck`/`build`/`lint`/`test`（或项目等效命令）一次。不要在阶段退出标准中重复这些 — 阶段仅验证其交付的内容以及解除后续阶段阻塞的内容（见执行时规则 7）。对于无代码更改的计划（仅文档），删除验证命令门控并说明原因。
 
-- [ ] in-scope behavior is complete
-- [ ] relevant docs are aligned
-- [ ] verification has run (specify which commands; customize for visual/UX domains if needed)
-- [ ] no in-scope item downgraded to deferred/follow-up
-- [ ] independent draft review completed and recorded
-- [ ] text consistency verified: status, phases, gates, and log all agree
-- [ ] closure audit performed by an independent subagent (fresh session); executor did not self-audit and did not leave this `[ ]` as a human-gate placeholder
-- [ ] closure evidence exists in files
+- [ ] 范围内行为完成
+- [ ] 相关文档对齐
+- [ ] 已运行验证（指定哪些命令；如果需要，针对视觉/UX 域自定义）
+- [ ] 无范围内项目降级为 deferred/follow-up
+- [ ] 独立草案审查已完成并记录
+- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [ ] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -200,5 +200,5 @@ Closure Audit Evidence:
 
 Follow-up:
 
-- <non-blocking follow-up items only; confirmed defects must not appear here>
+- <仅非阻塞跟进项目；已确认的缺陷不得出现在此处>
 ```

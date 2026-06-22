@@ -1,28 +1,28 @@
-# AGE Practice Gap Audit Prompt
+# AGE 实践差距审计提示
 
-Use this prompt when a project has copied or partially adopted the Attractor-Guided Engineering template, but the team needs to see where live practice still differs from expected AGE workflow.
+当项目已复制或部分采用 Attractor-Guided Engineering 模板，但团队需要查看实时实践与预期 AGE 工作流仍有差距的地方时使用此提示。
 
-Typical triggers:
+典型触发条件：
 
-- a legacy project started using AGE in the middle of delivery
-- multiple rounds of doc structure, routing, or guide prompt changes have happened and drift is suspected
-- the repo appears to have some AGE files, but work still jumps from request to code
-- humans want a concrete migration baseline before tightening autonomy or process rules
+- 遗留项目在交付过程中开始使用 AGE
+- 发生了多轮文档结构、路由或指南提示更改，怀疑存在漂移
+- 仓库似乎有一些 AGE 文件，但工作仍然从请求直接跳转到代码
+- 人工希望在收紧自主权或流程规则之前获得具体的迁移基线
 
-## Audit Prompt
+## 审计提示
 
 ```text
-You are auditing the gap between the current project's actual working practices and the intended Attractor-Guided Engineering baseline.
+您正在审计当前项目的实际工作实践与预期的 Attractor-Guided Engineering 基线之间的差距。
 
-Your job is not to demand template-perfect conformity. Distinguish between:
-- intentional project-specific customization
-- partial AGE rollout that is acceptable for the current stage
-- obvious workflow drift that creates delivery risk
-- placeholder or stale template content that makes AGE look adopted when it is not operational
+您的工作不是要求模板完美一致。区分：
+- 有意的项目特定定制
+- 当前阶段可接受的部分 AGE 推出
+- 明显的工作流漂移，会产生交付风险
+- 占位符或过时模板内容，使 AGE 看起来已采用但实际上未运行
 
-## Step 1 - Read the AGE baseline
+## 步骤 1 - 阅读 AGE 基线
 
-Read at minimum:
+至少阅读：
 - `AGENTS.md`
 - `docs/index.md`
 - `docs/process/application-development-workflow.md`
@@ -31,131 +31,131 @@ Read at minimum:
 - `docs/context/codebase-map.md`
 - `docs/context/source-of-truth-and-precedence.md`
 - `docs/skills/README.md`
-- `docs/backlog/README.md` if it exists
-- `docs/plans/00-plan-authoring-and-execution-guide.md` if it exists
-- `docs/audits/00-audit-execution-guide.md` if it exists
+- `docs/backlog/README.md`（如果存在）
+- `docs/plans/00-plan-authoring-and-execution-guide.md`（如果存在）
+- `docs/audits/00-audit-execution-guide.md`（如果存在）
 - `docs/logs/index.md`
 - `docs/analysis/README.md`
-- the active requirement, owner doc, and active plan referenced from `docs/context/project-context.md` when they exist
+- `docs/context/project-context.md` 引用的活动需求、owner doc 和活动计划（如果存在）
 
-Also inspect enough live repo structure to verify whether the documented workflow is actually being used.
+还要检查足够的实时仓库结构，以验证记录的工作流是否实际被使用。
 
-## Step 2 - Compare claimed process vs live evidence
+## 步骤 2 - 比较声称的流程 vs 实时证据
 
-Check for evidence of real use, partial use, or missing use in these areas:
+检查这些领域中实际使用、部分使用或未使用的证据：
 
-1. Context discipline
-- are `project-context`, autonomy policy, and codebase map filled with real project values or still placeholders?
-- do agents have enough live routing information to act safely?
+1. 上下文纪律
+- `project-context`、自主权策略和代码库映射是否填充了真实项目值还是仍然是占位符？
+- 代理是否有足够的实时路由信息来安全行动？
 
-2. Source-of-truth discipline
-- are requirements, design, architecture, plans, logs, bugs, testing, analysis, and retrospectives used for their intended ownership boundaries?
-- are major decisions living only in chat or scattered in the wrong directories?
+2. 真相源纪律
+- 需求、设计、架构、计划、日志、bug、测试、分析和回顾是否用于其预期的所有权边界？
+- 重大决策是否仅存在于聊天中或分散在错误的目录中？
 
-3. Requirement and design flow
-- does work move through `input -> requirements -> design/architecture` when needed?
-- is the team skipping directly from raw requests or prototypes to implementation?
+3. 需求和设计流程
+- 工作是否在需要时通过 `input -> requirements -> design/architecture` 移动？
+- 团队是否直接从原始请求或原型跳转到实施？
 
-4. Task routing and skill selection
-- do active tasks show explicit task classification and owner-doc routing?
-- are skills used as reusable methods instead of replacing requirement or design truth?
+4. 任务路由和技能选择
+- 活动任务是否显示明确的任务分类和 owner-doc 路由？
+- 技能是否用作可复用方法而非替代需求或设计真相？
 
-5. Planning discipline
-- for non-trivial work, are plans present when the planning triggers say they should be?
-- are phases, proof requirements, closure gates, and skill selections real or placeholder-only?
+5. 规划纪律
+- 对于非平凡工作，规划触发器表明应该有计划时是否存在计划？
+- 阶段、证明要求、关闭门控和技能选择是真实的还是仅占位符？
 
-6. Audit discipline
-- do created plans show real plan-audit and closure-audit evidence?
-- where audits are absent, is the omission low-risk and explainable, or a real process gap?
+6. 审计纪律
+- 创建的计划是否显示真实的计划审计和结束审计证据？
+- 在缺少审计的地方，遗漏是低风险且可解释的，还是真正的流程差距？
 
-7. Verification discipline
-- are verification commands real?
-- do logs, testing notes, or changed code show that verification is actually being run?
+7. 验证纪律
+- 验证命令是否真实？
+- 日志、测试笔记或更改的代码是否显示验证实际正在运行？
 
-8. Durable memory discipline
-- after significant work, do logs exist?
-- do bugs, analysis notes, or retrospectives exist where the workflow says they should?
+8. 持久记忆纪律
+- 重大工作完成后是否存在日志？
+- 工作流表明应该存在的地方是否存在 bug、分析笔记或回顾？
 
-9. Template adaptation quality
-- has the copied template been customized to the real project, or is there still misleading generic content?
-- are repeated adjustments to docs structure or prompts captured as stable guidance, or are they recurring ad hoc fixes?
+9. 模板适应质量
+- 复制的模板是否已针对真实项目进行定制，还是仍然存在误导性的通用内容？
+- 对文档结构或提示的重复调整是否被捕获为稳定指南，还是反复的临时修复？
 
-## Step 3 - Classify each gap honestly
+## 步骤 3 - 诚实地分类每个差距
 
-For each notable difference from AGE, classify it as one of:
+对于与 AGE 的每个显著差异，将其分类为：
 - `intentional-customization`
 - `acceptable-partial-adoption`
 - `operational-gap`
 - `stale-template-drift`
 - `missing-evidence`
 
-Do not report a difference as a defect unless there is a concrete risk, such as:
-- AI may act on stale or placeholder docs
-- owner-doc boundaries are unclear
-- planning or audit obligations are silently skipped
-- important delivery knowledge is not landing in durable files
-- the repo signals AGE compliance but the evidence is missing
+除非存在具体风险，否则不要将差异报告为缺陷，例如：
+- AI 可能对过时或占位符文档采取行动
+- owner-doc 边界不清楚
+- 规划或审计义务被静默跳过
+- 重要的交付知识没有落地到持久文件中
+- 仓库表明 AGE 合规但证据缺失
 
-## Step 4 - Write the analysis note to docs/analysis
+## 步骤 4 - 将分析笔记写入 docs/analysis
 
-Create a dated analysis file at:
+创建带日期的分析文件：
 - `docs/analysis/YYYY-MM-DD-HHmm-age-practice-gap-audit.md`
 
-If a same-day file with that exact name already exists, append a short differentiator slug such as:
+如果当天已存在同名文件，则附加简短的区分标签，例如：
 - `docs/analysis/YYYY-MM-DD-HHmm-age-practice-gap-audit-round-2.md`
 
-The file must contain these sections:
+文件必须包含这些部分：
 
 1. `# AGE Practice Gap Audit - YYYY-MM-DD`
 2. `## Scope`
-- repo or branch context if relevant
-- what baseline docs were read
-- what live areas were sampled
+- 仓库或分支上下文（如果相关）
+- 读取了哪些基线文档
+- 采样了哪些实时区域
 
 3. `## Executive Summary`
-- 3-6 bullets
-- include whether the repo is mostly aligned, partially adopted, or largely not operating under AGE yet
+- 3-6 个项目符号
+- 包括仓库是否基本对齐、部分采用或尚未在 AGE 下运行
 
 4. `## Alignment Matrix`
-- a table with columns:
+- 表格列：
 `| Area | Expected AGE Practice | Current Evidence | Status | Classification | Risk | Next Action |`
-- cover at least: context, routing, requirements, design/architecture, planning, audits, verification, logs, optional layers, template customization
+- 至少涵盖：上下文、路由、需求、设计/架构、规划、审计、验证、日志、可选层、模板定制
 
 5. `## Findings`
-- findings first, ordered by severity
-- for each finding include:
-  - title
-  - affected file(s) or area(s)
-  - current gap
-  - why this matters operationally
-  - whether it is drift, partial adoption, or intentional customization
-  - recommended smallest corrective slice
+- 首先返回发现，按严重性排序
+- 对于每个发现，包括：
+  - 标题
+  - 受影响的文件或区域
+  - 当前差距
+  - 为什么这在操作上很重要
+  - 是漂移、部分采用还是有意定制
+  - 建议的最小纠正切片
 
 6. `## Healthy Deviations`
-- list differences that are acceptable project-specific adaptations and should not be "fixed" blindly
+- 列出可接受的项目特定适应差异，不应盲目"修复"
 
 7. `## Suggested Migration Order`
-- list the smallest practical next slices in order
-- prefer workflow-enabling fixes before broad doc expansion
+- 按顺序列出最小的实际下一个切片
+- 优先选择工作流启用修复，然后再进行广泛文档扩展
 
 8. `## Evidence Reviewed`
-- concise bullet list of the key files and repo areas checked
+- 检查的关键文件和仓库区域的简明项目符号列表
 
-## Step 5 - Return a concise user-facing summary
+## 步骤 5 - 返回简明的面向用户的摘要
 
-After saving the file, return:
-- the output path
-- the top 3-5 gaps
-- the most important acceptable customizations, if any
+保存文件后，返回：
+- 输出路径
+- 前 3-5 个差距
+- 最重要的可接受定制（如有）
 
-If no major gaps are found, say that explicitly and note residual risks or evidence limits.
+如果没有发现主要差距，明确说明并记录剩余风险或证据限制。
 ```
 
-## Customization Notes
+## 定制说明
 
-After copying this template into a real project:
+将此模板复制到真实项目后：
 
-- replace generic AGE baseline file paths with the real project's strongest process anchors if they differ
-- add project-specific protected areas and common failure modes to the gap checklist
-- tune what counts as acceptable partial adoption based on project age, migration stage, and team maturity
-- if the project repeatedly fails this audit in the same way, promote the recurring gap into a checklist, lintable rule, or stronger context guidance
+- 如果通用 AGE 基线文件路径不同，将其替换为项目最强的流程锚点
+- 在差距检查清单中添加项目特定的保护区域和常见失败模式
+- 根据项目年龄、迁移阶段和团队成熟度调整可接受的部分采用标准
+- 如果项目以相同方式反复未能通过此审计，将重复出现的差距提升为检查清单、可 lint 规则或更强的上下文指南

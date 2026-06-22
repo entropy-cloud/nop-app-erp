@@ -1,8 +1,8 @@
-## Module Boundaries
+# 模块边界
 
-## Purpose
+## 目的
 
-Define the main code ownership boundaries for `nop-app-erp`.
+定义 `nop-app-erp` 的主要代码所有权边界。
 
 ## 领域工程依赖方向（DAG）
 
@@ -76,6 +76,6 @@ app-erp-maintenance（依赖 master-data + inventory + assets；被 manufacturin
 | 设备维护域业务规则 | `docs/design/maintenance/README.md` |
 | 模块拆分决策与命名 | `docs/architecture/domain-module-split-analysis.md` |
 
-## Rule
+## 规则
 
-If a recurring design argument depends on module ownership, write the answer here instead of re-litigating it in chat.
+如果重复出现的设计争论依赖于模块所有权，在此处写下答案，而非在聊天中重新辩论。

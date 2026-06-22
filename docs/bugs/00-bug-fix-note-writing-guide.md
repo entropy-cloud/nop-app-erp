@@ -1,155 +1,155 @@
-# Bug Fix Note Writing Guide
+# Bug 修复笔记编写指南
 
-## Purpose
+## 目的
 
-Use `docs/bugs/` for non-obvious regressions, subtle root causes, and fixes that should influence future review.
+使用 `docs/bugs/` 存放非明显回归、微妙根本原因以及应影响未来审查的修复。
 
-The goal is not to repeat the full diff. The goal is to preserve what went wrong, how it was found, why it happened, and how it is protected from returning.
+目标不是重复完整的差异。目标是保留出了什么问题、如何发现、为什么发生以及如何防止其重现。
 
-## When To Write A Bug Note
+## 何时编写 Bug 笔记
 
-Write one when at least one of these is true:
+满足以下至少一项时编写：
 
-- the bug had a non-obvious root cause
-- the bug crossed module or package boundaries
-- the bug looked like one thing but was actually caused by another layer
-- the fix added or changed regression tests
-- future refactors could easily reintroduce the same problem
+- bug 有非明显的根本原因
+- bug 跨越模块或包边界
+- bug 看起来像一件事但实际上是由另一层引起的
+- 修复添加或更改了回归测试
+- 未来重构很容易重新引入相同问题
 
-Do not write one for every tiny typo or trivial one-line fix.
+不要为每个微小的拼写错误或琐碎的单行修复编写。
 
-## Required Sections
+## 必需部分
 
-Each bug note should include these sections. Keep each section short.
+每个 bug 笔记应包含这些部分。保持每个部分简短。
 
-### 1. Problem
+### 1. 问题
 
-Describe the observed symptom in 2-5 lines. Include what broke, where, the smallest reproducible behavior, and the impact or severity (affected users, data integrity, blast radius).
+用 2-5 行描述观察到的症状。包括什么坏了、在哪里坏了、最小可重现行为以及影响或严重性（受影响的用户、数据完整性、影响范围）。
 
-### Reproduction
+### 复现
 
-Describe the required environment state and triggering action so a future reader can reproduce. Include the exact steps, any preconditions (e.g., "must be logged in as admin", "requires 2000 concurrent requests"), and a minimal reproduction script if applicable.
+描述所需的环境状态和触发操作，以便未来读者可以重现。包括确切步骤、任何前提条件（例如"必须以管理员身份登录"、"需要 2000 个并发请求"），以及适用的最小复现脚本。
 
-### 2. Diagnostic Method
+### 2. 诊断方法
 
-This section is mandatory. Describe how the issue was located, not only the final root cause.
+此部分是必需的。描述问题是如何定位的，而不仅仅是最终的根本原因。
 
-Include:
+包括：
 
-- what made diagnosis difficult
-- what was inspected first and why
-- what hypotheses were tested and rejected (required if diagnosis was non-trivial)
-- what direct evidence confirmed the true cause
+- 什么使诊断变得困难
+- 首先检查了什么以及为什么
+- 测试和拒绝了哪些假设（如果诊断是非平凡的，则必需）
+- 什么直接证据证实了真正原因
 
-If diagnosis was straightforward (single smoking-gun metric or log), state that explicitly and explain why no iteration was needed — e.g., "the crash stack trace pointed exactly at the return statement in our code (frame 2 was ours)". Otherwise, include at least one alternative path that was ruled out.
+如果诊断很直接（单一确凿的指标或日志），明确说明并解释为什么不需要迭代——例如，"崩溃堆栈跟踪恰好指向我们代码中的 return 语句（第 2 帧是我们的）"。否则，至少包含一条被排除的替代路径。
 
-### 3. Root Cause
+### 3. 根本原因
 
-Explain the real cause in 1-3 bullets. Mention the actual module or subsystem involved. If the bug had multiple causes, separate them clearly.
+用 1-3 个项目符号解释真正原因。提及涉及的实际模块或子系统。如果 bug 有多个原因，请清楚地分开它们。
 
-**Boundary rule:** Diagnostic Method covers the investigation _process_ and evidence trail. Root Cause covers the mechanistic _explanation_ of why the bug occurred in terms of system internals. The two sections should not repeat the same information. For bugs where the investigation directly reveals the mechanism (the causal link IS the evidence trail), the two sections may be merged under `*Diagnosis & Root Cause` with a note explaining why.
+**边界规则**：诊断方法涵盖调查_过程_和证据线索。根本原因涵盖为什么 bug 发生的机制_解释_，用系统内部术语表达。这两个部分不应重复相同的信息。对于调查直接揭示机制（因果关系 IS 证据线索）的 bug，可以在 `*诊断与根本原因` 下合并这两个部分，并附带说明原因。
 
-### 4. Fix
+### 4. 修复
 
-Explain the solution in terms of design intent, not line-by-line code changes. Include what changed, where, and why it addresses the root cause.
+从设计意图的角度解释解决方案，而不是逐行代码更改。包括更改了什么、在哪里更改以及为什么它解决了根本原因。
 
-### 5. Tests
+### 5. 测试
 
-List the regression coverage added or updated. Include the test file path, what the test protects, and the test level (unit / component / integration / e2e). For e2e-only coverage, explain why lower levels are not feasible.
+列出添加或更新的回归覆盖。包括测试文件路径、测试保护的内容以及测试级别（单元/组件/集成/e2e）。对于仅 e2e 覆盖，解释为什么较低级别不可行。
 
-If automated testing is impractical (race conditions, timing, third-party dependency), document the manual verification procedure and state explicitly why an automated test was not added.
+如果自动化测试不切实际（竞争条件、时序、第三方依赖），记录手动验证过程并明确说明为什么未添加自动化测试。
 
-### 6. Affected Artifacts
+### 6. 受影响的工件
 
-List the code files, config files, deployment manifests, or infrastructure definitions that were changed. Use `path/to/file.ts:line-numbers` format with a brief annotation. Do not paste large diffs.
+列出更改的代码文件、配置文件、部署清单或基础设施定义。使用 `path/to/file.ts:line-numbers` 格式并附带简短注释。不要粘贴大型差异。
 
-### 7. Notes For Future Refactors
+### 7. 未来重构注意事项
 
-Add 1-3 bullets describing what future changes should be careful not to break. Name a concrete code pattern in the affected artifacts and a concrete mistake scenario (e.g., "if someone swaps the pool library, the new driver may rely on `finalize()` instead of explicit `close()`"). This section is important because the main value of these notes is long-term memory.
+添加 1-3 个项目符号，描述未来更改应注意不要破坏什么。命名受影响工件中的具体代码模式和具体错误场景（例如，"如果有人更换池库，新驱动程序可能依赖 `finalize()` 而不是显式的 `close()`"）。此部分很重要，因为这些笔记的主要价值是长期记忆。
 
-### 8. Prevention Gap (optional)
+### 8. 预防差距（可选）
 
-Add 1-2 bullets on what review, test, or process step was missing that let this bug ship. This is about systemic gaps, not individual blame. Example: "no load test exercised the 2000-concurrent-request path" or "no route-based navigation test existed for this page."
+添加 1-2 个项目符号，说明缺少什么审查、测试或流程步骤导致此 bug 发布。这是关于系统性差距，而不是个人责任。例如："没有负载测试执行 2000 并发请求路径"或"此页面不存在基于路由的导航测试"。
 
-## Recommended Template
+## 推荐模板
 
 ```md
-# 0X Short Bug Fix Title
+# 0X 简短 Bug 修复标题
 
-## Problem
+## 问题
 
-- what broke
-- where it broke
-- minimal visible symptom
-- impact or severity
+- 什么坏了
+- 在哪里坏了
+- 最小可见症状
+- 影响或严重性
 
-## Reproduction
+## 复现
 
-- environment and preconditions
-- triggering steps
-- minimal reproduction script if applicable
+- 环境和前提条件
+- 触发步骤
+- 适用的最小复现脚本
 
-## Diagnostic Method
+## 诊断方法
 
-- diagnosis difficulty (why this was hard, or "straightforward")
-- investigation path (what was checked first)
-- rejected hypotheses (if diagnosis was non-trivial)
-- decisive evidence that confirmed the issue
+- 诊断难度（为什么这很难，或"直接"）
+- 调查路径（首先检查了什么）
+- 被拒绝的假设（如果诊断是非平凡的）
+- 确认问题的决定性证据
 
-## Root Cause
+## 根本原因
 
-- actual cause 1
-- actual cause 2
-- (may merge with Diagnostic Method as `*Diagnosis & Root Cause` if the evidence trail IS the mechanism)
+- 实际原因 1
+- 实际原因 2
+- （如果证据线索就是机制，可以与诊断方法合并为 `*诊断与根本原因`）
 
-## Fix
+## 修复
 
-- main change 1
-- main change 2
+- 主要更改 1
+- 主要更改 2
 
-## Tests
+## 测试
 
-- `path/to/test-file` - what it verifies (level: unit/component/integration/e2e)
-- if no automated test: manual verification steps and reason
+- `path/to/test-file` - 验证内容（级别：unit/component/integration/e2e）
+- 如果没有自动化测试：手动验证步骤和原因
 
-## Affected Artifacts
+## 受影响的工件
 
-- `path/to/file:lines` - annotation
+- `path/to/file:lines` - 注释
 
-## Notes For Future Refactors
+## 未来重构注意事项
 
-- risk or invariant 1 (concrete pattern + concrete mistake scenario)
-- risk or invariant 2
+- 风险或不变量 1（具体模式 + 具体错误场景）
+- 风险或不变量 2
 
-## Prevention Gap (optional)
+## 预防差距（可选）
 
-- what review/test/process step was missing
+- 缺少什么审查/测试/流程步骤
 ```
 
-## Filename Guidance
+## 文件名指南
 
-For small and medium projects, either style is acceptable:
+对于中小型项目，两种风格都可以接受：
 
-- numbered: `docs/bugs/01-short-bug-name.md`
-- dated: `docs/bugs/YYYY-MM-DD-HHmm-short-bug-name.md`
+- 编号：`docs/bugs/01-short-bug-name.md`
+- 日期：`docs/bugs/YYYY-MM-DD-HHmm-short-bug-name.md`
 
-If you expect bug notes to become a long-lived reference library, prefer numbered filenames.
+如果您希望 bug 笔记成为长期参考库，首选编号文件名。
 
-## Validation Checklist
+## 验证清单
 
-Before committing a bug note, verify:
+提交 bug 笔记之前，验证：
 
-- [ ] Problem includes impact or severity
-- [ ] Reproduction includes environment, trigger, and minimal steps
-- [ ] Diagnostic Method describes the investigation _process_, not just the cause
-- [ ] Diagnostic Method includes rejected hypotheses (or explicitly states "straightforward" with reason)
-- [ ] Root Cause names the specific module or subsystem; or merged section is annotated
-- [ ] Fix explains _why_ the change works, not just _what_ changed
-- [ ] Tests include test level (unit/component/integration/e2e), or documents manual verification with explicit reason
-- [ ] Notes For Future Refactors names a concrete pattern and a concrete mistake scenario
+- [ ] 问题包含影响或严重性
+- [ ] 复现包含环境、触发器和最小步骤
+- [ ] 诊断方法描述调查_过程_，而不仅仅是原因
+- [ ] 诊断方法包括被拒绝的假设（或明确说明"直接"并给出原因）
+- [ ] 根本原因命名特定模块或子系统；或合并部分有注释
+- [ ] 修复解释_为什么_更改有效，而不仅仅是_什么_更改了
+- [ ] 测试包括测试级别（unit/component/integration/e2e），或记录手动验证并给出明确原因
+- [ ] 未来重构注意事项命名具体模式和具体错误场景
 
-## Other Rules
+## 其他规则
 
-- Every non-trivial bug fix should add or update automated test coverage.
-- If a bug note is created, include the test proof path or verification evidence.
-- Use `docs/architecture/` for current design truth, `docs/bugs/` to remember important failures and why the fix exists.
+- 每个非平凡的 bug 修复都应该添加或更新自动化测试覆盖。
+- 如果创建了 bug 笔记，请包含测试证明路径或验证证据。
+- 使用 `docs/architecture/` 存储当前设计真相，使用 `docs/bugs/` 记住重要的失败以及修复存在的原因。

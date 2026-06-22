@@ -1,99 +1,99 @@
-# Audit Execution Guide
+# 审计执行指南
 
-## Purpose
+## 目的
 
-This guide defines the default audit checkpoints for app-layer development.
+本指南定义应用层开发的默认审计检查点。
 
-Independent draft review and closure audit are mandatory for created plans.
+创建的计划必须进行独立草案审查和结束审计。
 
-Every created plan must record durable review evidence in at least one place. Default practice: keep draft-review evidence in the plan itself as a short `Draft Review Record` note, keep closure evidence in the plan `## Closure` section, and use the daily log or a file under `docs/audits/` only when extra traceability is useful. Do not leave review results only in chat.
+每个创建的计划必须在至少一个地方记录持久审查证据。默认做法：将草案审查证据作为简短的 `Draft Review Record` 注释保存在计划本身中，将结束证据保存在计划的 `## Closure` 部分，仅在需要额外可追溯性时才使用每日日志或 `docs/audits/` 下的文件。不要将审查结果仅留在聊天中。
 
-Cold replay is not a second reviewer and cannot approve plan creation, plan closure, or protected-area scope changes by itself.
+冷重播不是第二位审查者，本身不能批准计划创建、计划关闭或保护区域范围变更。
 
-## Three Default Audits
+## 三个默认审计
 
-1. document audit
-2. draft review
-3. closure audit
+1. 文档审计
+2. 草案审查
+3. 结束审计
 
-These are audit objects.
+这些是审计对象。
 
-The project may also apply audit styles across those objects:
+项目还可以在这些对象上应用审计风格：
 
-- multi-dimensional audit - challenge the work across several dimensions at once
-- open-ended audit - search for hidden issues beyond the standard checklist
+- 多维审计 - 同时跨多个维度挑战工作
+- 开放式审计 - 搜索标准检查清单之外的隐藏问题
 
-Examples:
+示例：
 
-- multi-dimensional draft review
-- open-ended closure audit
+- 多维草案审查
+- 开放式结束审计
 
-The template provides generic default prompts for these styles under `docs/skills/`. Copied projects should tune those prompts to their own owner docs, protected areas, verification stack, and known failure modes.
+模板在 `docs/skills/` 下为这些风格提供通用默认提示。复制的项目应根据自己的 owner docs、保护区域、验证堆栈和已知失败模式调整这些提示。
 
-## Document Audit
+## 文档审计
 
-Run after requirement/design updates and before large implementation work.
+在需求/设计更新后、大型实施工作前运行。
 
-For high-risk, cross-module, or cross-doc work, consider layering `multi-dimensional-audit-prompt.md` on top of the normal document audit.
+对于高风险、跨模块或跨文档工作，考虑在正常文档审计之上添加 `multi-dimensional-audit-prompt.md`。
 
-Check for:
+检查：
 
-- missing scope boundaries
-- unresolved questions disguised as settled requirements
-- mismatch between raw input and synthesized requirement
-- mismatch between requirement and owner docs
+- 缺失的范围边界
+- 伪装成已确定需求的未解决问题
+- 原始输入与综合需求不匹配
+- 需求与 owner docs 不匹配
 
-## Draft Review
+## 草案审查
 
-Run after writing a plan and before implementation.
+在编写计划后、实施前运行。
 
-If the plan crosses multiple owner-doc boundaries, protected areas, or verification surfaces, add `multi-dimensional-audit-prompt.md`.
+如果计划跨越多个 owner-doc 边界、保护区域或验证表面，添加 `multi-dimensional-audit-prompt.md`。
 
-Check for:
+检查：
 
-- dishonest closure gates
-- hidden dependencies
-- unowned leftovers
-- plan scope that still depends on unresolved requirements
-- missing proof strategy for each acceptance criterion
-- missing or weak task routing and skill-selection rationale in the plan
+- 不诚实的结束门控
+- 隐藏依赖
+- 无主剩余项
+- 计划范围仍依赖未解决的需求
+- 每个验收标准缺少证明策略
+- 计划中缺少或薄弱的任务路由和技能选择理由
 
-## Closure Audit
+## 结束审计
 
-Run after implementation and verification for every created plan.
+对每个创建的计划在实施和验证后运行。
 
-If normal closure checks keep passing while hidden regressions or weak proof still appear later, add `open-ended-audit-prompt.md`.
+如果正常关闭检查继续通过，但后来仍出现隐藏回归或薄弱证明，添加 `open-ended-audit-prompt.md`。
 
-Closure audit must be a distinct independent pass performed by an independent subagent or reviewer. Self-review, self-audit, or self-recorded closure evidence cannot justify `Plan Status: completed`.
+结束审计必须是由独立子代理或审查者执行的独立通过。自我审查、自我审计或自行记录的结束证据不能证明 `Plan Status: completed`。
 
-Check for:
+检查：
 
-- live behavior really landed
-- docs are aligned
-- claimed proof actually exists
-- plan closure gates are truly satisfied
-- no in-scope item was downgraded to a vague follow-up
-- verification failures are not being treated as non-blocking without explicit adjudication
+- 实时行为真正落地
+- 文档对齐
+- 声称的证明实际存在
+- 计划关闭门控真正满足
+- 无范围内项目降级为模糊的跟进
+- 验证失败在没有明确裁决的情况下不被视为非阻塞
 
-Draft-review findings should revise the plan directly. Do not require a formal `## Plan Audit` section in every plan.
+草案审查发现应直接修订计划。不要求每个计划都有正式的 `## Plan Audit` 部分。
 
-Minimum durable draft-review evidence:
+最低持久草案审查证据：
 
-- reviewer / agent
-- verdict
-- concise revision summary or rationale for the final shape
+- 审查者/代理
+- 裁决
+- 简洁的修订摘要或最终形状的理由
 
-Keep this evidence in a short `Draft Review Record` section inside the plan by default. Escalate to `docs/logs/` or `docs/audits/` only when the review is non-trivial, disputed, reusable, or likely to matter later. The canonical expectations for when a plan is `draft`, `active`, and `completed` belong in the plan guide.
+默认将此证据保存在计划内的简短 `Draft Review Record` 部分中。仅当审查是非平凡的、有争议的、可复用的或以后可能重要时，才升级到 `docs/logs/` 或 `docs/audits/`。计划处于 `draft`、`active` 和 `completed` 状态的标准期望属于计划指南。
 
-## Output Rule
+## 输出规则
 
-Review results must be recorded durably for every created plan. Use a separate file when the audit is non-trivial, disputed, reusable, or likely to matter later.
+每个创建的计划必须持久记录审查结果。当审计是非平凡的、有争议的、可复用的或以后可能重要时，使用单独的文件。
 
-Use `docs/skills/` for reusable prompt templates and `docs/logs/` for small audit notes attached to daily execution.
+使用 `docs/skills/` 存储可复用提示模板，使用 `docs/logs/` 存储附加到每日执行的小型审计笔记。
 
-## Filename Guidance
+## 文件名指南
 
-Prefer dated filenames for audit records:
+审计记录优先使用日期文件名：
 
 - `docs/audits/YYYY-MM-DD-HHmm-document-audit-topic.md`
 - `docs/audits/YYYY-MM-DD-HHmm-draft-review-topic.md`

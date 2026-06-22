@@ -1,98 +1,98 @@
-# State Machine Business Review Prompt
+# 状态机业务审查提示
 
-Use this prompt when auditing a state machine design as the supported business behavior baseline for a workflow-heavy feature: order lifecycle, approval flow, dispute/case flow, after-sales flow, subscription lifecycle, or any multi-state business object.
+在将状态机设计审计为工作流密集型功能（订单生命周期、审批流程、争议/案例流程、售后流程、订阅生命周期或任何多状态业务对象）的支持业务行为基线时使用此提示。
 
-Use it after a state machine is first defined, after a non-trivial transition change, or when implementation depends on transition truth. Do not use it as a replacement for requirement synthesis, design-doc audit, plan audit, or closure audit.
+在状态机首次定义后、非平凡转换更改后或实施依赖转换真相时使用。不要将其用作需求综合、设计文档审计、计划审计或结束审计的替代品。
 
 ```text
-You are a senior business analyst and technical architect. Below is a state machine design document (state list, transition matrix, triggers, role permissions, business notes). Review it along the dimensions below and call out business-logic errors, omissions, contradictions, and unreasonable choices. Do not stop at the surface — walk every transition through a real business scenario.
+您是高级业务分析师和技术架构师。以下是状态机设计文档（状态列表、转换矩阵、触发器、角色权限、业务注释）。按照以下维度进行审查，并指出业务逻辑错误、遗漏、矛盾和不合理的选择。不要停留在表面——通过真实业务场景遍历每个转换。
 
-Read these files first:
+首先阅读这些文件：
 - `AGENTS.md`
 - `docs/index.md`
 - `docs/context/project-context.md`
 - `docs/context/source-of-truth-and-precedence.md`
-- the owner doc that defines this state machine
-- the relevant requirement file
+- 定义此状态机的所有者文档
+- 相关需求文件
 
-Review dimensions:
+审查维度：
 
-1. State definition
-   - Does each state name clearly express a business waiting point (a state is "waiting for X", not "do X")?
-   - Is every state from business start to every terminal covered, including cancel / reject / return / timeout exits?
-   - Are any two states semantically the same, or expressible by a business field instead of a dedicated state?
-   - Are any states actually actions rather than waiting points?
+1. 状态定义
+   - 每个状态名称是否清楚表达业务等待点（状态是"等待 X"，而不是"做 X"）？
+   - 是否覆盖从业务开始到每个终端的所有状态，包括取消/拒绝/返回/超时出口？
+   - 是否有两个状态在语义上相同，或可以通过业务字段而非专用状态表达？
+   - 是否有状态实际上是动作而非等待点？
 
-2. Transition completeness
-   - For each state, are all incoming and all outgoing transitions listed?
-   - Walk every transition and ask: is this path legitimate in real business?
-   - Are illegal forward jumps, illegal backward jumps, or missing conditional branches present?
-   - For transitions needing external triggers (polling, callback), is the trigger mechanism defined?
+2. 转换完整性
+   - 对于每个状态，是否列出所有传入和所有传出转换？
+   - 遍历每个转换并问：此路径在实际业务中是否合法？
+   - 是否存在非法向前跳转、非法向后跳转或缺失的条件分支？
+   - 对于需要外部触发器（轮询、回调）的转换，是否定义了触发机制？
 
-3. Terminal states and recovery
-   - List all terminal states (no outgoing edge); confirm each is a legitimate business end.
-   - Can a terminal state be reactivated (reopen, re-appeal)? If so, is the path explicit?
-   - Are archived and active cases distinguishable and correctly stored?
+3. 终端状态和恢复
+   - 列出所有终端状态（无出边）；确认每个都是合法的业务结束。
+   - 终端状态是否可以重新激活（重新打开、重新上诉）？如果可以，路径是否明确？
+   - 归档和活动案例是否可区分并正确存储？
 
-4. Exception paths
-   - Timeout, reject/return, cancel/revoke, external-system failure, duplicate operation, concurrent operation — are all covered?
-   - Are idempotency rules defined for repeated triggers (polling restart, duplicate callback)?
+4. 异常路径
+   - 超时、拒绝/返回、取消/撤销、外部系统故障、重复操作、并发操作——是否都涵盖？
+   - 是否为重复触发器（轮询重启、重复回调）定义了幂等性规则？
 
-5. Reachability
-   - From the start state, is every state reachable? Are there unreachable states (empty incoming edges)?
-   - Are there paths that can never reach a terminal (deadlock or infinite loop)? Are legitimate cycles given exit conditions?
+5. 可达性
+   - 从开始状态，每个状态是否都可达？是否有不可达状态（空传入边）？
+   - 是否有永远无法到达终端的路径（死锁或无限循环）？合法循环是否有退出条件？
 
-6. Roles and permissions
-   - Is every transition bound to an executing role?
-   - Are there dangerous operations open to any role (e.g., final close)? Are multi-role conflicts handled?
-   - Are role names and state names drawn from the same business vocabulary?
+6. 角色和权限
+   - 每个转换是否绑定到执行角色？
+   - 是否有危险操作对任何角色开放（例如最终关闭）？是否处理多角色冲突？
+   - 角色名称和状态名称是否来自相同的业务词汇表？
 
-7. External dependencies
-   - Are external-system statuses mapped/wrapped before becoming internal states, or used raw?
-   - Is the inbound channel (polling / callback / manual) defined for each external transition?
-   - Is there a fallback when the external system times out or is unavailable?
+7. 外部依赖
+   - 外部系统状态在成为内部状态之前是否映射/包装，还是直接使用？
+   - 每个外部转换的入站通道（轮询/回调/手动）是否定义？
+   - 当外部系统超时或不可用时是否有回退？
 
-8. TODO / task strategy
-   - Does every non-terminal state produce a clear todo task of the right type (assigned / pool / monitor / confirm)?
-   - Are "needs human decision" states producing assigned or pool tasks, "just waiting" states producing monitor tasks, "ready, needs confirm" states producing confirm tasks?
-   - Are there states where someone is expected to act but no todo is produced (cases silently sinking)?
+8. TODO / 任务策略
+   - 每个非终端状态是否产生正确类型的清晰待办任务（分配/池/监控/确认）？
+   - "需要人工决策"状态是否产生分配或池任务，"只是等待"状态是否产生监控任务，"准备好，需要确认"状态是否产生确认任务？
+   - 是否存在期望有人行动但不产生待办事项的状态（案例静默下沉）？
 
-9. Scenario walkthrough (most important)
-   - Walk 2-3 representative scenarios end to end: happy path, reject/return path, abnormal termination, external trigger, timeout.
+9. 场景演练（最重要）
+   - 端到端演练 2-3 个代表性场景：快乐路径、拒绝/返回路径、异常终止、外部触发、超时。
 
-10. Consistency with design docs
-   - Does every state have a matching page, API, permission, and business note in the owner doc?
-   - Are there "designed but not in the state machine" or "in the state machine but undescribed" inconsistencies?
+10. 与设计文档的一致性
+    - 每个状态在所有者文档中是否有匹配的页面、API、权限和业务注释？
+    - 是否存在"设计了但不在状态机中"或"在状态机中但未描述"的不一致？
 
-Known anti-patterns to check against:
+要检查的已知反模式：
 
-| Anti-pattern | Symptom | Correct practice |
+| 反模式 | 症状 | 正确做法 |
 | --- | --- | --- |
-| Action-as-state | "Create refund" as a state | Creating refund is an action; waiting for refund result is the state |
-| Missing state | After rejection the case hangs with no state | Return needs an explicit state (e.g., needs-supplement) |
-| Illegal jump | From "pending review" straight to "closed" | Must pass intermediate states |
-| Unbounded cycle | A->B->C->A with no exit | Cycles need a termination condition |
-| Role drift | Reviewer performing final-close action | Bind every operation to the correct role |
-| Silent state | State exists but produces no todo | Non-terminal states must produce a clear todo |
-| Condition-as-state | A dedicated state per condition branch | Use a business field to branch; states express "waiting for what" |
-| Raw external mapping | Third-party API return value used directly as state | Wrap into an internal business state first |
-| Terminal is not terminal | CLOSED still has outgoing edges | Terminal definition must match the business end |
+| 动作作为状态 | "创建退款"作为状态 | 创建退款是动作；等待退款结果是状态 |
+| 缺少状态 | 拒绝后案例挂起且无状态 | 返回需要显式状态（例如需要补充） |
+| 非法跳转 | 从"待审核"直接到"关闭" | 必须经过中间状态 |
+| 无界循环 | A->B->C->A 无退出 | 循环需要终止条件 |
+| 角色漂移 | 审核员执行最终关闭操作 | 将每个操作绑定到正确角色 |
+| 静默状态 | 状态存在但不产生待办事项 | 非终端状态必须产生清晰的待办事项 |
+| 条件作为状态 | 每个条件分支有专用状态 | 使用业务字段分支；状态表达"等待什么" |
+| 原始外部映射 | 第三方 API 返回值直接用作状态 | 先包装成内部业务状态 |
+| 终端不是终端 | CLOSED 仍然有出边 | 终端定义必须匹配业务结束 |
 
-Severity guidance:
-- P0 blocker: breaks the business path or causes data errors
-- P1 major: causes wrong state changes or case anomalies
-- P2 minor: not best-practice but the path still works
-- P3 suggestion: optimization suggestion
+严重性指南：
+- P0 blocker：破坏业务路径或导致数据错误
+- P1 major：导致错误状态更改或案例异常
+- P2 minor：不是最佳实践但路径仍然有效
+- P3 suggestion：优化建议
 
-Return findings first, ordered by severity. For each finding include: severity, location (state/transition), issue, why it matters, recommended fix, and reference (business rule or doc).
+按严重性排序，首先返回发现。对于每个发现，包括：严重性、位置（状态/转换）、问题、重要性原因、建议修复和参考（业务规则或文档）。
 
-Then return:
-- Verdict: pass/fail
-- Scope reviewed
-- Reachability summary
-- Role/permission summary
-- External-dependency summary
-- Residual risks or skipped areas
+然后返回：
+- 裁决：通过/失败
+- 审查范围
+- 可达性摘要
+- 角色/权限摘要
+- 外部依赖摘要
+- 剩余风险或跳过的区域
 
-If no P0 or P1 finding remains, say `Verdict: pass` and still list residual risks.
+如果没有 P0 或 P1 发现，说 `Verdict: pass` 并仍然列出剩余风险。
 ```

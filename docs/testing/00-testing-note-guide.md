@@ -1,20 +1,20 @@
-# Testing Note Guide
+# 测试笔记指南
 
-## Include
+## 包含内容
 
-- date
-- environment
-- scenario under test
-- observed behavior
-- expected behavior
-- whether follow-up is required
+- 日期
+- 环境
+- 测试场景
+- 观察到的行为
+- 预期行为
+- 是否需要后续行动
 
-## Rule
+## 规则
 
-If the testing discovery reveals a non-obvious defect or lasting regression pattern, also create a note under `docs/bugs/`.
+如果测试发现揭示了非明显缺陷或持续回归模式，也在 `docs/bugs/` 下创建笔记。
 
-If a bug is fixed in code, prefer automated regression coverage in addition to any manual note here.
+如果 bug 在代码中修复，除了此处的任何手动笔记外，首选自动化回归覆盖。
 
-## Path Convention
+## 路径约定
 
 - `docs/testing/YYYY/MM-DD.md`

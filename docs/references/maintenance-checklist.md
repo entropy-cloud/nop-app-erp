@@ -1,64 +1,64 @@
-# Documentation Maintenance Checklist
+# 文档维护检查清单
 
-## Purpose
+## 目的
 
-Use this file after changes land to check whether repo memory stayed in sync.
+在更改落地后使用此文件检查仓库记忆是否保持同步。
 
-## Always Review After Non-Trivial Code Changes
+## 非平凡代码更改后始终审查
 
-1. The relevant owner doc in `docs/architecture/`
-2. The daily log in `docs/logs/`
-3. Any affected requirement, plan, bug note, or testing note
-4. `docs/testing/known-good-baselines.md` when a meaningful full verification baseline was established
+1. `docs/architecture/` 中的相关 owner doc
+2. `docs/logs/` 中的每日日志
+3. 任何受影响的需求、计划、bug 笔记或测试笔记
+4. 建立有意义的完整验证基线时的 `docs/testing/known-good-baselines.md`
 
-## Change Triggers
+## 更改触发条件
 
-### Architecture Or Boundary Change
+### 架构或边界更改
 
-Review:
+审查：
 
 - `docs/architecture/system-baseline.md`
 - `docs/architecture/module-boundaries.md`
-- `docs/index.md` if routing changed
+- 如果路由更改，`docs/index.md`
 
-### Product Intent Or Scope Change
+### 产品意图或范围更改
 
-Review:
+审查：
 
-- the relevant file in `docs/input/` if the source material itself changed
-- the relevant file in `docs/discussions/` if requirement interpretation changed
-- the relevant file in `docs/requirements/`
-- `docs/architecture/project-vision.md` if the change affects long-term direction
+- 如果源材料本身更改，`docs/input/` 中的相关文件
+- 如果需求解释更改，`docs/discussions/` 中的相关文件
+- `docs/requirements/` 中的相关文件
+- 如果更改影响长期方向，`docs/architecture/project-vision.md`
 
-### App-Layer Feature Or Flow Change
+### 应用层功能或流程更改
 
-Review:
+审查：
 
-- the most relevant file in `docs/design/`
-- `docs/requirements/` if user-facing scope changed
-- `docs/testing/` if manual/exploratory proof was needed
+- `docs/design/` 中最相关的文件
+- 如果面向用户的范围更改，`docs/requirements/`
+- 如果需要手动/探索性证明，`docs/testing/`
 
-### Non-Trivial Implementation Slice
+### 非平凡实施切片
 
-Review:
+审查：
 
-- the active plan under `docs/plans/`
-- the relevant file under `docs/audits/` if an audit was part of the slice
+- `docs/plans/` 下的活动计划
+- 如果审计是切片的一部分，`docs/audits/` 下的相关文件
 - `docs/logs/YYYY/MM-DD.md`
-- `docs/testing/` if exploratory/manual proof was needed
+- 如果需要探索性/手动证明，`docs/testing/`
 
-Created plans require independent draft review before implementation and closure audit before completion.
+创建的计划需要在实施前进行独立草案审查，并在完成前进行结束审计。
 
-### Subtle Regression Or Root Cause Discovery
+### 微妙回归或根本原因发现
 
-Review:
+审查：
 
 - `docs/bugs/`
-- `docs/retrospectives/` if the problem exposed a process or requirement gap
-- any affected owner doc
+- 如果问题暴露了流程或需求差距，`docs/retrospectives/`
+- 任何受影响的 owner doc
 
-## Verification Baseline
+## 验证基线
 
-Use the real project commands from `docs/context/project-context.md`.
+使用 `docs/context/project-context.md` 中的真实项目命令。
 
-If that file still contains placeholders, fill it before claiming verification success.
+如果该文件仍包含占位符，请在声称验证成功前填写。

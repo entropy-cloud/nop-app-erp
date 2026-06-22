@@ -1,133 +1,133 @@
-# Implementation Roadmap
+# 实施路线图
 
-> Last Updated: 2026-06-22
-> Source: `docs/requirements/product-scope.md`, `docs/design/app-overview.md`, `docs/architecture/system-baseline.md`
+> 最后更新：2026-06-22
+> 来源：`docs/requirements/product-scope.md`、`docs/design/app-overview.md`、`docs/architecture/system-baseline.md`
 
-## Purpose
+## 目的
 
-This file is the global status index from design to implementation. After reading it, an AI or maintainer knows what is not started, planned, or completed without re-walking every doc and the codebase.
+本文件是从设计到实施的全局状态索引。阅读后，AI 或维护者无需重新浏览每个文档和代码库即可知道哪些未开始、已计划或已完成。
 
-It contains no implementation detail. Each `planned` phase is owned by its execution plan.
+不包含实施细节。每个 `planned` 阶段由其执行计划拥有。
 
-> This roadmap is optional. See `docs/backlog/00-roadmap-authoring-guide.md` for authoring and update rules. Small projects can delete this file and rely on the backlog table alone.
+> 此路线图是可选的。有关编写和更新规则，请参阅 `docs/backlog/00-roadmap-authoring-guide.md`。小型项目可以删除此文件并仅依赖待办事项表。
 
-## Phase Status
+## 阶段状态
 
-> **This is the only dynamic status block. Update status here only.**
-> The roadmap is a human–AI alignment artifact: humans set the work items and their order; AI takes the first `todo` item in order, drafts/executes the plan automatically (humans do not review individual plans), and writes the item back to `done` on closure audit. See `docs/backlog/00-roadmap-authoring-guide.md` (Roadmap Role, Phase Granularity, Closed Loop).
+> **这是唯一的动态状态块。仅在此处更新状态。**
+> 路线图是人机对齐工件：人类设置工作项及其顺序；AI 按顺序获取第一个 `todo` 项，自动起草/执行计划（人类不审查单个计划），并在结束审计时将该项写回 `done`。请参阅 `docs/backlog/00-roadmap-authoring-guide.md`（路线图角色、阶段粒度、闭环）。
 
-- 1. Bootstrap (AGE init + ORM skeleton): `done`
-- 2. ERP domain selection + ORM model design: `todo`
-- 3. Multi-module codegen + first build: `todo`
-- 4. First ERP business loop end-to-end: `todo`
+- 1. Bootstrap（AGE 初始化 + ORM 骨架）：`done`
+- 2. ERP 域选择 + ORM 模型设计：`todo`
+- 3. 多模块代码生成 + 首次构建：`todo`
+- 4. 第一个 ERP 业务循环端到端：`todo`
 
-## Status Values
+## 状态值
 
-| Status | Meaning |
+| 状态 | 含义 |
 | --- | --- |
-| `todo` | Not started, no plan |
-| `planned` | Has an execution plan |
-| `done` | Completed and passed closure audit |
+| `todo` | 未开始，无计划 |
+| `planned` | 有执行计划 |
+| `done` | 已完成并通过结束审计 |
 
-## Framework / Platform Reuse
+## 框架/平台复用
 
-Capabilities already provided by the stack, so the project does not rebuild them:
+堆栈已提供的能力，项目不再重建：
 
-| Capability | Provided by | Notes |
+| 能力 | 提供者 | 备注 |
 | --- | --- | --- |
-| Auth / users / roles | `nop-auth` (+ `app-erp-delta`) | already-introduced via Nop platform |
-| ORM + codegen | `nop-orm`, `nop-cli` | already-introduced |
-| AMIS pages + site-map | `nop-web`, `nop-web-amis-editor` | already-introduced |
-| File storage | `nop-biz-file-core` | already-introduced |
-| ERP business domain logic | — | not-introduced (next milestone) |
+| 认证 / 用户 / 角色 | `nop-auth`（+ `app-erp-delta`） | 通过 Nop 平台已引入 |
+| ORM + 代码生成 | `nop-orm`、`nop-cli` | 已引入 |
+| AMIS 页面 + 站点地图 | `nop-web`、`nop-web-amis-editor` | 已引入 |
+| 文件存储 | `nop-biz-file-core` | 已引入 |
+| ERP 业务域逻辑 | — | 未引入（下一个里程碑） |
 
-## Current Baseline
+## 当前基线
 
-**Already implemented:**
+**已实现：**
 
-- AGE documentation structure applied and customized for `nop-app-erp`
-- `model/app-erp.orm.xml` skeleton with maven coordinates, empty dicts/domains/entities
+- 为 `nop-app-erp` 应用并定制的 AGE 文档结构
+- `model/app-erp.orm.xml` 骨架，包含 Maven 坐标、空字典/域/实体
 
-**Main gaps:**
+**主要差距：**
 
-- specific ERP business domains not yet chosen (human decision)
-- no entities in ORM model yet
-- no generated Maven modules; project does not build yet
+- 特定 ERP 业务域尚未选择（人工决策）
+- ORM 模型中尚无实体
+- 无生成的 Maven 模块；项目尚未构建
 
 ---
 
-## Phases
+## 阶段
 
-| # | Phase | Owner Doc | Dependencies | Reuse |
+| # | 阶段 | Owner Doc | 依赖 | 复用 |
 | --- | --- | --- | --- | --- |
-| 1 | Bootstrap (AGE init + ORM skeleton) | `docs/architecture/system-baseline.md` | — | nop platform modules |
-| 2 | ERP domain selection + ORM model design | `docs/design/app-overview.md` | phase 1 | nop-orm, nop-cli |
-| 3 | Multi-module codegen + first build | `docs/architecture/system-baseline.md` | phase 2 | nop-cli templates |
-| 4 | First ERP business loop end-to-end | `docs/design/app-overview.md` | phase 3 | nop-auth, nop-web |
+| 1 | Bootstrap（AGE 初始化 + ORM 骨架） | `docs/architecture/system-baseline.md` | — | nop 平台模块 |
+| 2 | ERP 域选择 + ORM 模型设计 | `docs/design/app-overview.md` | 阶段 1 | nop-orm, nop-cli |
+| 3 | 多模块代码生成 + 首次构建 | `docs/architecture/system-baseline.md` | 阶段 2 | nop-cli 模板 |
+| 4 | 第一个 ERP 业务循环端到端 | `docs/design/app-overview.md` | 阶段 3 | nop-auth, nop-web |
 
 ---
 
-## Phase Details
+## 阶段详情
 
-### 1. Bootstrap (AGE init + ORM skeleton)
+### 1. Bootstrap（AGE 初始化 + ORM 骨架）
 
-> Status: see Phase Status above (done)
+> 状态：见上方阶段状态（done）
 
-**Goal:** initialize `nop-app-erp` with AGE documentation structure and an empty ORM model skeleton ready for ERP domain design.
+**目标：** 使用 AGE 文档结构初始化 `nop-app-erp`，并准备好空的 ORM 模型骨架供 ERP 域设计。
 
-**Delivery scope:**
+**交付范围：**
 
-- AGE docs tree copied and customized
-- `model/app-erp.orm.xml` skeleton with maven coordinates
-- root files (AGENTS.md, README, .gitignore, build scripts)
-- backlog, roadmap, context docs reflect real bootstrap state
+- AGE 文档树已复制并定制
+- `model/app-erp.orm.xml` 骨架，包含 Maven 坐标
+- 根文件（AGENTS.md、README、.gitignore、构建脚本）
+- 待办事项、路线图、上下文文档反映真实的 bootstrap 状态
 
-**Out of scope:** Java modules, entity design, build verification (all deferred).
+**范围外：** Java 模块、实体设计、构建验证（均延迟）。
 
-**Modules / areas:** `docs/`, `model/`.
+**模块/区域：** `docs/`、`model/`。
 
-### 2. ERP domain selection + ORM model design
+### 2. ERP 域选择 + ORM 模型设计
 
-> Status: see Phase Status above (todo)
+> 状态：见上方阶段状态（todo）
 
-**Goal:** decide which ERP business domains are in scope and design the first entities in `model/app-erp.orm.xml`.
+**目标：** 决定哪些 ERP 业务域在范围内，并在 `model/app-erp.orm.xml` 中设计第一批实体。
 
-**Delivery scope:**
+**交付范围：**
 
-- requirement doc for the chosen domain(s)
-- entities, dicts, domains in `model/app-erp.orm.xml`
+- 所选域的需求文档
+- `model/app-erp.orm.xml` 中的实体、字典、域
 
-**Out of scope:** Java generation (phase 3).
+**范围外：** Java 生成（阶段 3）。
 
-**Modules / areas:** `model/`, `docs/requirements/`, `docs/design/`.
+**模块/区域：** `model/`、`docs/requirements/`、`docs/design/`。
 
-### 3. Multi-module codegen + first build
+### 3. 多模块代码生成 + 首次构建
 
-> Status: see Phase Status above (todo)
+> 状态：见上方阶段状态（todo）
 
-**Goal:** generate the Maven multi-module project and confirm it builds.
+**目标：** 生成 Maven 多模块项目并确认它可以构建。
 
-**Delivery scope:**
+**交付范围：**
 
-- run `nop-cli gen` to produce api/codegen/dao/service/web/app/delta/meta modules
-- real verification commands in `docs/context/project-context.md`
-- `mvn clean package -DskipTests` passes
-- first known-good baseline row in `docs/testing/known-good-baselines.md`
+- 运行 `nop-cli gen` 生成 api/codegen/dao/service/web/app/delta/meta 模块
+- `docs/context/project-context.md` 中的真实验证命令
+- `mvn clean package -DskipTests` 通过
+- `docs/testing/known-good-baselines.md` 中的第一个已知良好基线行
 
-### 4. First ERP business loop end-to-end
+### 4. 第一个 ERP 业务循环端到端
 
-> Status: see Phase Status above (todo)
+> 状态：见上方阶段状态（todo）
 
-**Goal:** implement and test the first complete ERP business loop.
+**目标：** 实现并测试第一个完整的 ERP 业务循环。
 
-**Delivery scope:**
+**交付范围：**
 
-- BizModel logic, AMIS pages, auth for the first domain
-- end-to-end manual + automated test
+- 第一个域的 BizModel 逻辑、AMIS 页面、认证
+- 端到端手动 + 自动化测试
 
 ---
 
-## Dependency Graph
+## 依赖图
 
 ```mermaid
 graph TD
@@ -138,18 +138,18 @@ graph TD
     P1 --> P2 --> P3 --> P4
 ```
 
-## Cross-Cutting
+## 横切关注点
 
-| Concern | Notes |
+| 关注点 | 备注 |
 | --- | --- |
-| Error handling | business exceptions extend `NopException` + `ErrorCode` |
-| Permissions | nop-auth defaults + delta overrides in `app-erp-delta` |
-| Testing | JUnit 5 + nop-autotest (after codegen) |
-| Owner-doc sync | update design/architecture when a phase closes |
-| Dev log | update `docs/logs/` after each implementation |
+| 错误处理 | 业务异常扩展 `NopException` + `ErrorCode` |
+| 权限 | nop-auth 默认值 + `app-erp-delta` 中的 delta 覆盖 |
+| 测试 | JUnit 5 + nop-autotest（代码生成后） |
+| Owner-doc 同步 | 阶段关闭时更新 design/architecture |
+| 开发日志 | 每次实施后更新 `docs/logs/` |
 
-## Rule
+## 规则
 
-- This file is a status index and coarse-grained split, not an execution plan.
-- Each `planned` phase is owned by its execution plan.
-- Phase status changes update the Phase Status block at the top of this file only.
+- 本文件是状态索引和粗粒度拆分，而非执行计划。
+- 每个 `planned` 阶段由其执行计划拥有。
+- 阶段状态更改仅更新此文件顶部的阶段状态块。

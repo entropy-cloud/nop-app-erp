@@ -99,7 +99,6 @@
                 <column name="installDate" displayName="安装日期" stdSqlType="DATE"/>
                 <column name="warrantyExpiry" displayName="保修到期" stdSqlType="DATE"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
@@ -120,7 +119,6 @@
                 <column name="name" displayName="分类名称" stdSqlType="VARCHAR" precision="200" mandatory="true"/>
                 <column name="parentId" displayName="上级分类ID" stdSqlType="BIGINT"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -147,7 +145,6 @@
                 <column name="nextDueDate" displayName="下次到期日" stdSqlType="DATE"/>
                 <column name="isActive" displayName="是否启用" stdSqlType="INT" defaultValue="1"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -174,7 +171,6 @@
                 <column name="endTime" displayName="结束时间" stdSqlType="DATETIME"/>
                 <column name="totalMinutes" displayName="总分钟数" domainName="downtimeMinutes"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
@@ -199,7 +195,6 @@
                 <column name="completedBy" displayName="完成人" stdSqlType="BIGINT"/>
                 <column name="completedAt" displayName="完成时间" stdSqlType="DATETIME"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -226,7 +221,6 @@
                 <column name="completedBy" displayName="完成人" stdSqlType="BIGINT"/>
                 <column name="completedAt" displayName="完成时间" stdSqlType="DATETIME"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
@@ -249,7 +243,6 @@
                 <column name="reason" displayName="原因" stdSqlType="VARCHAR" precision="500"/>
                 <column name="relatedJobOrderId" displayName="关联生产工单ID" stdSqlType="BIGINT"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -269,7 +262,6 @@
                 <column name="leaderId" displayName="负责人" stdSqlType="BIGINT"/>
                 <column name="description" displayName="描述" stdSqlType="VARCHAR" precision="2000"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>

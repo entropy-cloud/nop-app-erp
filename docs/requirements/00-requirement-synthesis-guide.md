@@ -1,50 +1,50 @@
-# Requirement Synthesis Guide
+# 需求综合指南
 
-## Purpose
+## 目的
 
-Use this guide to convert raw inputs into implementation-ready requirements.
+使用本指南将原始输入转换为实现就绪的需求。
 
-## Inputs
+## 输入
 
-- `docs/input/` raw materials
-- `docs/discussions/` clarification notes
-- existing `docs/design/` and `docs/architecture/` owner docs
+- `docs/input/` 原始材料
+- `docs/discussions/` 澄清笔记
+- 现有的 `docs/design/` 和 `docs/architecture/` owner docs
 
-## Output Expectations
+## 输出期望
 
-A requirement file should clearly state:
+需求文件应清楚说明：
 
-- goal
-- scope
-- non-goals
-- core user flows
-- business rules
-- permissions or role impact
-- edge cases already known
-- unresolved questions
-- acceptance criteria
+- 目标
+- 范围
+- 非目标
+- 核心用户流程
+- 业务规则
+- 权限或角色影响
+- 已知的边缘情况
+- 未解决的问题
+- 验收标准
 
-## Rule
+## 规则
 
-Do not hide unresolved ambiguity behind polished language. Write it down explicitly.
+不要用华丽的语言隐藏未解决的歧义。明确写下来。
 
-## Implementation-Ready Gate
+## 实现就绪门控
 
-A requirement is implementation-ready only when these are true:
+只有满足以下条件时，需求才是实现就绪的：
 
-- [ ] in-scope behavior is concrete enough to build without guessing user-visible behavior
-- [ ] non-goals are explicit
-- [ ] primary user flow is described
-- [ ] roles/permissions are covered or explicitly not relevant
-- [ ] data/model impact is covered or explicitly not relevant
-- [ ] API/integration impact is covered or explicitly not relevant
-- [ ] empty, loading, error, and permission-denied states are covered where user-visible
-- [ ] acceptance criteria are testable
-- [ ] open questions are either non-blocking or explicitly block implementation
+- [ ] 范围内行为足够具体，可以在不猜测用户可见行为的情况下构建
+- [ ] 非目标是明确的
+- [ ] 描述了主要用户流程
+- [ ] 角色/权限已涵盖或明确不相关
+- [ ] 数据/模型影响已涵盖或明确不相关
+- [ ] API/集成影响已涵盖或明确不相关
+- [ ] 用户可见的空状态、加载状态、错误状态和权限拒绝状态已涵盖
+- [ ] 验收标准可测试
+- [ ] 未解决的问题要么是非阻塞的，要么明确阻塞实施
 
-Stop and ask for clarification if an open question changes user-visible behavior, data/model shape, API behavior, auth/permission behavior, or external integration behavior.
+如果未解决的问题改变用户可见行为、数据/模型形状、API 行为、认证/权限行为或外部集成行为，请停止并请求澄清。
 
-## Minimal Requirement Skeleton
+## 最小需求骨架
 
 ```md
 # Feature: <name>

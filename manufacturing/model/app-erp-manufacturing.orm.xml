@@ -100,7 +100,6 @@
                 <column name="useMultiLevelBom" displayName="展开多层BOM" stdSqlType="BOOLEAN" defaultValue="false"/>
                 <column name="inspectionRequired" displayName="需要质检" stdSqlType="BOOLEAN" defaultValue="false"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -126,7 +125,6 @@
                 <column name="quantity" displayName="数量" domainName="quantity" mandatory="true"/>
                 <column name="operationId" displayName="工序ID" stdSqlType="BIGINT"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -152,7 +150,6 @@
                 <column name="timeUnit" displayName="时间单位" stdSqlType="VARCHAR" precision="20"/>
                 <column name="rate" displayName="效率系数" domainName="rate" defaultValue="1"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -175,7 +172,6 @@
                 <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true"/>
                 <column name="quantity" displayName="数量" domainName="quantity" mandatory="true"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -197,7 +193,6 @@
                 <column name="name" displayName="工艺路线名称" stdSqlType="VARCHAR" precision="200"/>
                 <column name="isActive" displayName="是否有效" stdSqlType="BOOLEAN" defaultValue="true"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -222,7 +217,6 @@
                 <column name="setupTime" displayName="准备时间" domainName="timeInMins"/>
                 <column name="runTime" displayName="加工时间" domainName="timeInMins"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -246,7 +240,6 @@
                 <column name="workHoursPerDay" displayName="日工时" stdSqlType="DECIMAL" precision="8" scale="2"/>
                 <column name="isExternal" displayName="是否外协" stdSqlType="BOOLEAN" defaultValue="false"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -272,7 +265,6 @@
                 <column name="approveStatus" displayName="审核状态" dictName="erp-mfg/approve-status"/>
                 <column name="priority" displayName="优先级" dictName="erp-mfg/priority"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
@@ -301,7 +293,6 @@
                 <column name="actualStartTime" displayName="实际开始时间" stdSqlType="DATETIME"/>
                 <column name="actualEndTime" displayName="实际结束时间" stdSqlType="DATETIME"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
-                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>

@@ -1,26 +1,26 @@
-# Multi-Dimensional Audit Prompt
+# 多维审计提示
 
-Use this prompt when a normal object-specific audit is not enough and the work must be challenged across multiple dimensions at once.
+当普通对象特定审计不够且工作必须同时跨多个维度受到挑战时使用此提示。
 
-This is a generic default prompt. After copying the template, tune it to the project's real owner docs, protected areas, verification stack, deployment model, and known risk areas.
+这是通用默认提示。复制模板后，根据项目的真实 owner docs、保护区域、验证堆栈、部署模型和已知风险区域进行调整。
 
 ```text
-Read `AGENTS.md`, `docs/index.md`, the active requirement and owner docs, the relevant plan or changed area, and the latest verification or audit evidence.
+阅读 `AGENTS.md`、`docs/index.md`、活动需求和 owner docs、相关计划或更改区域，以及最新验证或审计证据。
 
-Audit the work across multiple dimensions, not only one artifact at a time.
+跨多个维度审计工作，而非一次仅审计一个工件。
 
-Check at least these dimensions:
-- requirement correctness
-- owner-doc alignment
-- architecture or boundary impact
-- verification adequacy
-- regression risk
-- routing and skill-selection correctness
-- backlog or autonomy-policy drift
+至少检查这些维度：
+- 需求正确性
+- owner-doc 对齐
+- 架构或边界影响
+- 验证充分性
+- 回归风险
+- 路由和技能选择正确性
+- 待办或自主权策略漂移
 
-Do not assume the template's default dimensions are enough for every repository. Add project-specific dimensions when the copied project has protected domains, integration-heavy flows, security-sensitive paths, regulated workflows, or unusual deployment constraints.
+不要假设模板的默认维度对每个仓库都足够。当复制的项目有保护域、集成密集型流程、安全敏感路径、受监管工作流或不寻常的部署约束时，添加项目特定维度。
 
-Return findings first, ordered by severity.
-If blocking issues are found, say `needs revision` and list the exact files, dimensions, and missing evidence.
-If no blocking issue remains, say `passes multi-dimensional audit` and list residual risks by dimension.
+按严重性排序，首先返回发现。
+如果发现阻塞问题，说 `needs revision` 并列出确切的文件、维度和缺失证据。
+如果没有阻塞问题，说 `passes multi-dimensional audit` 并按维度列出剩余风险。
 ```

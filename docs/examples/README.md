@@ -1,10 +1,10 @@
-# Examples Index
+# 示例索引
 
-Use this directory for copyable example skeletons.
+使用此目录获取可复制的示例骨架。
 
-These files are intentionally small. Copy one, rename it to the real dated filename, then fill it in.
+这些文件故意设计得很小。复制一个，将其重命名为真实的日期文件名，然后填写内容。
 
-## Available Examples
+## 可用示例
 
 - `complete-small-app-walkthrough.md`
 - `2026-05-21-0900-feature-requirement.example.md`
@@ -13,4 +13,4 @@ These files are intentionally small. Copy one, rename it to the real dated filen
 - `2026-05-21-1430-document-audit.example.md`
 - `2026-05-21-1700-retrospective.example.md`
 
-Start with `complete-small-app-walkthrough.md` if you want to see the intended end-to-end flow before copying skeletons.
+如果您想在复制骨架之前查看预期的端到端流程，请从 `complete-small-app-walkthrough.md` 开始。
