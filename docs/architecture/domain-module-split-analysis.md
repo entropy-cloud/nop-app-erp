@@ -63,7 +63,7 @@ nop-app-erp/                          （聚合根，pom packaging=pom）
 └── docs/
 ```
 
-> **bootstrap 阶段说明**：当前 5 份 `model/app-erp-<domain>.orm.xml` 暂存在项目根 `model/` 下作为权威源模型。待首个领域实体设计完成、`nop-cli gen` 跑通后，每份 orm.xml 随其工程目录就位（移到 `app-erp-<domain>/model/` 下）。
+> **bootstrap 阶段说明**：当前 10 份 `module-<domain>/model/app-erp-<domain>.orm.xml` 暂存在各 `module-<domain>/` 目录下作为权威源模型。待首个领域实体设计完成、`nop-cli gen` 跑通后，每份 orm.xml 随其工程目录就位（移到 `app-erp-<domain>/model/` 下）。
 
 ### 2.2 领域工程内部结构（由 nop-cli gen 自动生成，不手写）
 
@@ -170,7 +170,7 @@ finance 工程定义凭证生成接口与注册中心，各业务工程（purcha
 | 阶段 | 触发条件 | 做什么 |
 |---|---|---|
 | **阶段 0（当前）** | bootstrap | 5 份 orm.xml 骨架暂存 `model/`；设计文档立项；本文定稿 |
-| **阶段 1** | 首个域（建议 master-data）实体设计完成 | 跑 `nop-cli gen` 生成 master-data 工程；验证生成链路；将 `master-data/model/app-erp-master-data.orm.xml` 移入工程目录 |
+| **阶段 1** | 首个域（建议 master-data）实体设计完成 | 跑 `nop-cli gen` 生成 master-data 工程；验证生成链路；将 `module-master-data/model/app-erp-master-data.orm.xml` 移入工程目录 |
 | **阶段 2** | 第二个域实体设计完成 | 生成第二个领域工程；验证跨工程 `I*Biz` 调用 |
 | **阶段 3** | 全部 5 域工程就位 | `app-erp-app` 聚合启动；端到端联调业财打通 |
 

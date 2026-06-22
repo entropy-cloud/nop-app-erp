@@ -34,6 +34,7 @@
 | 了解哪个域文档拥有概念（多域项目） | `docs/design/domain-design-guidelines.md` | `docs/design/` 下的相关域文档 |
 | 了解全局流程和状态/域/页面映射 | `docs/design/flow-overview.md` | `docs/design/` 下的相关域文档 |
 | 了解当前技术基线 | `docs/architecture/system-baseline.md` | `docs/architecture/module-boundaries.md` |
+| 了解与竞品的对标和超越点 | `docs/architecture/competitive-comparison.md` | `docs/design/erp-design-audit-checklist.md` |
 | 了解持久化模型或字典真相 | `docs/context/source-of-truth-and-precedence.md` | `model/app-erp.orm.xml`、`model/app-erp.api.xml`（代码生成后） |
 | 了解 Nop 实现决策顺序 | `../nop-entropy/docs-for-ai/00-start-here/ai-defaults.md` | `../nop-entropy/docs-for-ai/02-core-guides/model-first-development.md`、`../nop-entropy/docs-for-ai/02-core-guides/service-layer.md` |
 | 决定更改应使用模型、Delta、钩子还是 Java | `../nop-entropy/docs-for-ai/INDEX.md` | `../nop-entropy/docs-for-ai/03-runbooks/` |

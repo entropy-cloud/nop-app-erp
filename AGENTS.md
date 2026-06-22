@@ -82,34 +82,34 @@
 
 ```text
 nop-app-erp/
-├── master-data/
+├── module-master-data/
 │   └── model/
 │       └── app-erp-master-data.orm.xml    # 源模型（唯一真相）
-├── purchase/
+├── module-purchase/
 │   └── model/
 │       └── app-erp-purchase.orm.xml
-├── sales/
+├── module-sales/
 │   └── model/
 │       └── app-erp-sales.orm.xml
-├── inventory/
+├── module-inventory/
 │   └── model/
 │       └── app-erp-inventory.orm.xml
-├── finance/
+├── module-finance/
 │   └── model/
 │       └── app-erp-finance.orm.xml
-├── assets/
+├── module-assets/
 │   └── model/
 │       └── app-erp-assets.orm.xml
-├── manufacturing/
+├── module-manufacturing/
 │   └── model/
 │       └── app-erp-manufacturing.orm.xml
-├── projects/
+├── module-projects/
 │   └── model/
 │       └── app-erp-projects.orm.xml
-├── maintenance/
+├── module-maintenance/
 │   └── model/
 │       └── app-erp-maintenance.orm.xml
-├── quality/
+├── module-quality/
 │   └── model/
 │       └── app-erp-quality.orm.xml
 └── docs/...

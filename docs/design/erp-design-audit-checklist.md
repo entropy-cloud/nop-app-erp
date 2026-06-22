@@ -1,6 +1,12 @@
 # ERP 设计核对清单
 
 > 本清单用于核对 nop-app-erp 各子域设计的完善程度，确保达到并超过主流开源 ERP 产品的水平。
+>
+> **实现状态（2026-06-22 更新）：** 10 域 ORM 模型已升级到产品级基线（共 **145 实体**，见各 `<domain>/model/app-erp-<domain>.orm.xml`）。下方"已完成项（✅）"小节列出已在模型中落地的能力，并标注模型证据。架构对标与"超越点"分析见 `docs/architecture/competitive-comparison.md`。
+>
+> **类型规范：** 所有 10 域 orm.xml 已对齐 nop-entropy 官方惯例（对照 `docs-for-ai/02-core-guides/orm-model-design.md` + `code-style.md` + 源模型 `nop-auth.orm.xml`）：每列显式 `code`(UPPER_SNAKE_CASE) + `propId`(从1连续) + `stdSqlType`(仅 StdSqlType 枚举值) + `stdDataType`；字典字段用 `ext:dict=`（valueType=int，option value 10/20/30 递增）；通用字段走 domain 复用（delVersion/version/createdBy/createTime/updatedBy/updateTime/remark）+ 实体配 `useLogicalDelete`+`deleteFlagProp=delVersion`；关系用 `<join><on/></join>` 形式 + `tagSet="pub"`/`"pub,cascade-delete,insertable,updatable"`。
+>
+> **公共字段约定：** 所有业务单据头统一携带 `orgId`（业务组织）、`businessDate`（业务日期）、`posted`（业财过账标志）、`postedAt/postedBy`、`version`（乐观锁）；所有金额类单据头/行统一携带 `currencyId` + `exchangeRate` + `amountSource`（源币金额）+ `amountFunctional`（本位币金额）。详见 `docs/design/domain-design-guidelines.md` 的"单据标准字段约定"小节。
 
 ---
 
@@ -180,63 +186,68 @@
 ### 已完成项（✅）
 
 #### 一、业财一体化设计
-- ✅ 凭证头（VoucherHead）：凭证字、凭证号、凭证日期、制单人、审核人
-- ✅ 借贷分录行（VoucherLine）：科目编码、借方金额、贷方金额（每行只填一侧）、摘要
-- ✅ 业财回链表（VoucherBillR）：凭证号、单据类型、单据号、行号
-- ✅ 统一 `onSubmit/onReverse` 钩子入口
-- ✅ 审批触发同时落地库存与凭证（同事务）
-- ✅ 凭证模板表 + 占位符支持
-- ✅ 按业务类型区分模板
-- ✅ 异步过账支持（EventBus/消息队列）
-- ✅ `posted` 字段标记 + 兜底扫描任务
+- ✅ 凭证头（`ErpFinVoucher`）：凭证字、凭证号、凭证日期、`orgId`、`acctSchemaId`、制单人、审核人、过账人/时间
+- ✅ 借贷分录行（`ErpFinVoucherLine`）：科目、借/贷金额、`currencyId`+`exchangeRate`+`amountSource`+`amountFunctional`（双币种）、辅助核算（往来/部门/项目/仓库/物料）、`acctSchemaId`（多账套）
+- ✅ 业财回链表（`ErpFinVoucherBillR`）：凭证号、单据类型、单据号、行号
+- ✅ 凭证模板表（`ErpFinVoucherTemplate`/`Line`）+ 占位符 + 按 `businessType` 区分模板
+- ✅ `posted` 字段 + `postedAt`/`postedBy`：业务单据头统一携带（采购/销售/库存/资产/项目/维护/质量/制造工单）
+- ✅ 兜底扫描任务：通过 `posted=false` 的源单据扫描触发补过账（见 `docs/design/finance/posting.md`）
 
 #### 二、库存三层模型
-- ✅ 库存移动单（计划/执行合一）：移动类型、来源/目标库位、数量、批次/序列号
-- ✅ 不可变库存流水：数量、单价、金额、FIFO队列、源单引用
-- ✅ 库存余额快照：按 item×warehouse×lot 聚合
-- ✅ 移动单上下游关联
-- ✅ 作业类型参数化
-- ✅ 采购到货→生产领料→销售出库全链路追溯
+- ✅ 库存移动单（`ErpInvStockMove`/`Line`）：移动类型、来源/目标库位、数量、批次/序列号、`businessDate`/`orgId`/`posted`
+- ✅ 不可变库存流水（`ErpInvStockLedger`）：数量、单价、金额、`costMethod`、`acctSchemaId`、源单引用
+- ✅ 库存余额快照（`ErpInvStockBalance`）：按 material×warehouse×lot 聚合，含预留/冻结/可用量
+- ✅ 成本层（`ErpInvCostLayer`）：FIFO/批次/具体辨认的多层成本核算载体
+- ✅ 库存预留单（`ErpInvReservation`/`Line`）：记录级预留（支撑可用量校验与按订单/工单预留）
+- ✅ 拣货单（`ErpInvPickingOrder`/`Line`）：出库作业链
+- ✅ 移动单上下游关联（`relatedBillType`/`relatedBillCode`）+ 采购到货→生产领料→销售出库全链路追溯
+- ✅ 作业类型参数化（`erp-inv/operation-type`）+ 批次/序列号台账状态字典化
 
 #### 三、单据模型设计
-- ✅ `docType` + `bizType` 双维度设计
-- ✅ 三单链闭环（订单→出入库→发票→收付款）
-- ✅ 三轴状态分离：业务状态 + 审批状态 + 财务状态
-- ✅ 价税分离：`taxRate`/`taxAmount`/`amount` 三件套
+- ✅ `docStatus` + `approveStatus` 双维度设计（含制造工单 10 态、作业卡 8 态）
+- ✅ 三单链闭环（请购→询价→报价→订单→出入库→发票→收付款→核销）
+- ✅ 三轴状态分离：业务状态 + 审批状态 + `posted`（业财状态）
+- ✅ 价税分离：`taxRate`/`taxRateId`（税率主数据）/`taxAmount`/`amount`/`amountWithTax`
 
 #### 四、主数据设计
-- ✅ `Material` + `MaterialSku` 分离
-- ✅ 多单位换算支持
-- ✅ 供应商/客户一体表
-- ✅ 序列号台账独立表
+- ✅ `ErpMdMaterial` + `ErpMdMaterialSku` 分离（含计价方法、批次/序列号管理标志）
+- ✅ 多单位换算（`ErpMdUoMConversion`：物料级 + 通用级换算系数）
+- ✅ 往来单位一体表（`ErpMdPartner`）+ 多地址（`ErpMdPartnerAddress`）+ 多联系人（`ErpMdPartnerContact`）+ 多银行账户（`ErpMdBankAccount`）
+- ✅ 序列号台账（`ErpInvSerialNumber`）+ 批次台账（`ErpInvBatch`）独立表
+- ✅ 税率主数据（`ErpMdTaxRate`）+ 结算方式（`ErpMdSettlementMethod`）+ 职员（`ErpMdEmployee`，解耦 Partner 重载）
 
 #### 五、科目表与成本核算
-- ✅ 父子树形科目 + 段值编码
-- ✅ 多会计科目表并行
-- ✅ 多种成本方法：移动加权平均/FIFO/批次
+- ✅ 父子树形科目（`ErpMdSubject`）+ 段值编码 + 辅助核算开关
+- ✅ 多会计核算表并行（`ErpMdAcctSchema` + `ErpMdAcctSchemaCoa`：财务/管理/税务/合并/预算账套）
+- ✅ 多种成本方法（`erp-md/cost-method`：移动加权/全月加权/FIFO/LIFO/标准/具体辨认/批次）
 
 #### 六、应收应付核销
-- ✅ 多对多核销表
-- ✅ 头级 `paidStatus` 聚合
-- ✅ 三单匹配支持
+- ✅ 应收应付明细账（`ErpFinArApItem`）：open-item 模型，逐笔核销（替代"魔法更新 Partner 余额"）
+- ✅ 核销单（`ErpFinReconciliation`/`Line`）：付款/收款 ↔ 发票多对多 + 汇兑损益
+- ✅ 头级 `paidStatus`/`writtenOffStatus` 聚合（采购付款/销售收款）
+- ✅ 三单匹配支持（采购订单→入库→发票）
 
 #### 七、状态机设计
-- ✅ 声明式状态机设计
-- ✅ 双轴/三轴状态分离
+- ✅ 声明式状态机设计（见各域 `state-machine.md`）
+- ✅ 双轴/三轴状态分离（业务 + 审批 + 业财过账）
 
 #### 八、多公司/多币种/多租户
-- ✅ `orgId` 字段表达公司/组织维度
-- ✅ 凭证行双币种字段（源币种 + 本位币）
+- ✅ `orgId` 字段表达公司/组织维度（所有业务单据头 + 组织树 `ErpMdOrganization`）
+- ✅ 双币种字段（`currencyId` + `exchangeRate` + `amountSource` + `amountFunctional`）在所有金额类单据统一
+- ✅ 多账套并行核算（`acctSchemaId` 在凭证头/行 + 总账余额 + 存货估值）
+- ✅ 多租户：走平台标准（不在源模型预置 `tenantId`，见 `docs/architecture/customization-capabilities.md`）
 
 #### 九、流程与自动化
-- ✅ 域间边界与交互模式定义
-- ✅ 跨域协作规则（同步调用 + 事件驱动）
+- ✅ 域间边界与交互模式定义（见 `docs/architecture/integration-and-transaction-patterns.md`）
+- ✅ 跨域协作规则（同步调用 I*Biz + 事件驱动）
 - ✅ 事务边界与一致性策略
 - ✅ 错误处理与恢复机制
 
 #### 十、架构约束与最佳实践
-- ✅ 域设计指南（设计原则、权限安全、性能优化）
+- ✅ 域设计指南（设计原则、权限安全、性能优化，含"单据标准字段约定"）
 - ✅ 与 Nop Platform 对齐（技术栈、代码生成、配置管理）
+- ✅ 制造全链（`ErpMfgMrpPlan`/`ProductionVersion`/`WorkOrderLine`/`MaterialIssue`/`JobCardTimeLog`/`SubcontractOrder`/`CostRollup`）
+- ✅ 跨域 DAG 架构（master-data 为根，业务域间走 I*Biz 不做 ORM 强引用，无循环）
 - ✅ 版本演进策略（向后兼容、数据迁移、灰度发布）
 
 #### 十一、Nop Platform 核心组件集成

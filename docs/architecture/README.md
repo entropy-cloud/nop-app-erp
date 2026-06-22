@@ -13,7 +13,8 @@ Use `docs/design/` for app-layer feature and business design. Use `docs/architec
 3. `system-baseline.md` — 技术基线与 10 域模块结构
 4. `module-boundaries.md` — 模块依赖方向（DAG）
 5. `domain-module-split-analysis.md` — 10 域拆分决策与命名方案
-6. more specific owner docs as the project grows
+6. `competitive-comparison.md` — 竞品架构对标（vs Odoo/ERPNext/iDempiere/Tryton 等，超越点论证）
+7. more specific owner docs as the project grows
 
 ## Owner-Doc Rules
 
@@ -38,3 +39,4 @@ Use `docs/design/` for app-layer feature and business design. Use `docs/architec
 - `domain-module-split-analysis.md` - 10 域拆分决策（方案B）、命名与前缀方案、codegen 边界
 - `api-response-conventions.md` - API 响应约定
 - `integration-and-transaction-patterns.md` - 集成与事务模式
+- `competitive-comparison.md` - 竞品架构对标（Odoo/ERPNext/metasfresh/iDempiere/Tryton/Openbravo/MixERP），8 个"超越点"杠杆与汇总表、诚实声明

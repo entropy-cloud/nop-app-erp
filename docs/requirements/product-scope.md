@@ -32,10 +32,10 @@ nop-app-erp 是基于 Nop 平台架构的**产品化通用 ERP 产品**，可快
 
 ## 当前里程碑（ORM 模型设计 + 定制能力规划）
 
-- 产品摘要：10 域 ORM 模型已填充（共 88 实体），目录式设计文档已建立，定制能力文档已就位，准备进入 codegen 与端到端验证阶段。
+- 产品摘要：10 域 ORM 模型已填充（共 145 实体），目录式设计文档已建立，定制能力文档已就位，准备进入 codegen 与端到端验证阶段。
 - 用户：实施方（基于基线定制各领域 ERP）、开发人员（完善模型与生成链路）
 - 当前已完成：
-  - 10 份 `<domain>/model/app-erp-<domain>.orm.xml` 权威源模型（88 实体）
+  - 10 份 `<domain>/model/app-erp-<domain>.orm.xml` 权威源模型（145 实体）
   - 10 域目录式设计文档（README + state-machine + 跨域协作等）
   - 全局设计文档（app-overview/flow-overview/domain-glossary/roles-and-permissions/feature-inventory）
   - 架构文档（system-baseline/module-boundaries/domain-module-split-analysis/customization-capabilities）

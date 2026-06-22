@@ -278,7 +278,55 @@
 
 ---
 
-## 十、总结
+## 十、单据标准字段约定
+
+所有业务单据头（采购/销售/库存/资产/项目/维护/质量/制造工单等）必须统一携带以下四组公共字段。这是业财一体、多组织、多币种、多账套并行核算的基线，也是跨域统计与兜底扫描的统一入口。
+
+### 10.1 组织与时间维度
+
+| 字段 | 含义 | 备注 |
+| --- | --- | --- |
+| `orgId` | 业务组织（引用 `ErpMdOrganization`） | 多公司/多部门维度；查询过滤与权限隔离的依据 |
+| `businessDate` | 业务日期 | 区别于 `createdAt`（系统创建时间）；用于期间归集与报表口径 |
+| `createdAt`/`updatedAt` | 审计时间 | 框架自动维护 |
+
+### 10.2 业财过账标志
+
+| 字段 | 含义 | 备注 |
+| --- | --- | --- |
+| `posted` | 业财过账标志（BOOLEAN） | 业务单据是否已生成会计凭证；`false` 表示待过账 |
+| `postedAt` | 过账时间 | 凭证生成时刻 |
+| `postedBy` | 过账人 | 触发过账的作业/用户 |
+
+> 兜底扫描：定时任务扫描 `posted=false` 且满足过账条件（已审核 + 单据生效）的单据，触发 `IErpFinAcctDocProvider` 补过账，保证业财最终一致。详见 `docs/design/finance/posting.md`。
+
+### 10.3 多币种四件套（金额类单据头/行）
+
+| 字段 | 含义 | 备注 |
+| --- | --- | --- |
+| `currencyId` | 交易币种（引用 `ErpMdCurrency`） | 源币种 |
+| `exchangeRate` | 汇率 | 源币种 → 本位币 |
+| `amountSource` | 源币种金额 | 原始业务金额 |
+| `amountFunctional` | 本位币金额 | `amountSource × exchangeRate`，凭证记账依据 |
+
+### 10.4 并发控制
+
+| 字段 | 含义 | 备注 |
+| --- | --- | --- |
+| `version` | 乐观锁版本号 | 框架自动维护 |
+
+### 10.5 多账套维度（财务与存货估值相关）
+
+凭证头/行（`ErpFinVoucher`/`ErpFinVoucherLine`）与存货估值（`ErpInvCostLayer`/`ErpInvStockLedger`/`ErpFinGlBalance`）额外携带 `acctSchemaId`（引用 `ErpMdAcctSchema`），支撑多套账并行核算（财务账/管理账/税务账/合并账/预算账）。
+
+### 10.6 设计决策与反模式
+
+- **决策**：`orgId`/`posted`/`businessDate`/`currencyId` 等标准维度使用**物理列**而非扩展字段（EAV）。理由：这些维度是所有单据的通用查询过滤、索引、统计口径，物理列的查询性能与索引能力远优于 EAV；EAV 仅用于真正按需扩展的业务属性。
+- **反模式**（禁止）：用扩展字段承载 `orgId`/`posted`；用 `ErpMdPartner` 的余额字段"魔法更新"代替 AR/AP open-item 明细账（已改为 `ErpFinArApItem` + `ErpFinReconciliation`）。
+
+---
+
+## 十一、总结
 
 本指南定义了 nop-app-erp 的核心设计原则与约束，各域设计时必须遵守：
 
@@ -288,5 +336,5 @@
 4. **事务边界**：区分强一致性与最终一致性
 5. **权限安全**：职责分离、审计日志
 6. **审计追溯**：回链表保证数据可追溯
-
+7. **标准字段**：所有业务单据头统一携带 orgId/businessDate/posted/多币种四件套
 各域设计文档应引用本指南，确保设计一致性。技术实现细节（锁策略、缓存、索引、平台组件集成）见 `docs/architecture/`。

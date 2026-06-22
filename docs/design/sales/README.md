@@ -8,7 +8,7 @@
 
 - 本域负责：销售订单、销售出库、销售发票、收款、销售退货。
 - 本域不负责：物料/客户主数据（master-data 域）；出库写库存（inventory 域，本域调用）；应收凭证生成（finance 域，本域单据触发）。
-- 持久化字段、字典、状态码以 `sales/model/app-erp-sales.orm.xml` 为准。
+- 持久化字段、字典、状态码以 `module-sales/model/app-erp-sales.orm.xml` 为准。
 - 跨域协作规则见 `../domain-design-guidelines.md`，全局流程见 `../flow-overview.md`。
 
 ## 工程与模型
@@ -17,7 +17,7 @@
 |----|----|
 | Maven 工程 | `app-erp-sales` |
 | appName | `app-erp-sal` |
-| 权威模型 | `sales/model/app-erp-sales.orm.xml` |
+| 权威模型 | `module-sales/model/app-erp-sales.orm.xml` |
 | 实体包 | `app.erp.sal.dao.entity` |
 | 表前缀 | `erp_sal_` |
 | 类名前缀 | `ErpSal*` |

@@ -46,21 +46,21 @@ ERP 业务按 10 个独立领域工程组织（见 `docs/architecture/domain-mod
 
 | 域目录 | 工程 | 权威模型 | 文档结构（因域而异） |
 |--------|------|----------|----------------------|
-| `master-data/` | `app-erp-master-data` | `model/app-erp-master-data.orm.xml` | 仅 README（启停二态非状态机，内嵌一节） |
-| `inventory/` | `app-erp-inventory` | `model/app-erp-inventory.orm.xml` | README + state-machine + cross-domain |
-| `purchase/` | `app-erp-purchase` | `model/app-erp-purchase.orm.xml` | README + state-machine + three-way-match |
-| `sales/` | `app-erp-sales` | `model/app-erp-sales.orm.xml` | README + state-machine（与采购对称） |
-| `finance/` | `app-erp-finance` | `model/app-erp-finance.orm.xml` | README + state-machine + posting（业财打通） |
+| `master-data/` | `app-erp-master-data` | `module-master-data/model/app-erp-master-data.orm.xml` | 仅 README（启停二态非状态机，内嵌一节） |
+| `inventory/` | `app-erp-inventory` | `module-inventory/model/app-erp-inventory.orm.xml` | README + state-machine + cross-domain |
+| `purchase/` | `app-erp-purchase` | `module-purchase/model/app-erp-purchase.orm.xml` | README + state-machine + three-way-match |
+| `sales/` | `app-erp-sales` | `module-sales/model/app-erp-sales.orm.xml` | README + state-machine（与采购对称） |
+| `finance/` | `app-erp-finance` | `module-finance/model/app-erp-finance.orm.xml` | README + state-machine + posting（业财打通） |
 
 ### 扩展业务域（资产/项目/制造/质量/维护）
 
 | 域目录 | 工程 | 权威模型 | 文档结构 |
 |--------|------|----------|----------|
-| `assets/` | `app-erp-assets` | `model/app-erp-assets.orm.xml` | README + state-machine（资产生命周期+折旧） |
-| `projects/` | `app-erp-projects` | `model/app-erp-projects.orm.xml` | README + state-machine（项目+任务） |
-| `manufacturing/` | `app-erp-manufacturing` | `model/app-erp-manufacturing.orm.xml` | README + state-machine + bom-and-routing |
-| `quality/` | `app-erp-quality` | `model/app-erp-quality.orm.xml` | README + state-machine（质检+NCR） |
-| `maintenance/` | `app-erp-maintenance` | `model/app-erp-maintenance.orm.xml` | README + state-machine（维护访问+请求） |
+| `assets/` | `app-erp-assets` | `module-assets/model/app-erp-assets.orm.xml` | README + state-machine（资产生命周期+折旧） |
+| `projects/` | `app-erp-projects` | `module-projects/model/app-erp-projects.orm.xml` | README + state-machine（项目+任务） |
+| `manufacturing/` | `app-erp-manufacturing` | `module-manufacturing/model/app-erp-manufacturing.orm.xml` | README + state-machine + bom-and-routing |
+| `quality/` | `app-erp-quality` | `module-quality/model/app-erp-quality.orm.xml` | README + state-machine（质检+NCR） |
+| `maintenance/` | `app-erp-maintenance` | `module-maintenance/model/app-erp-maintenance.orm.xml` | README + state-machine（维护访问+请求） |
 
 **结构选择原则**：
 - 状态机重的域（inventory/purchase/sales/finance）才有独立 `state-machine.md`。
@@ -72,7 +72,7 @@ ERP 业务按 10 个独立领域工程组织（见 `docs/architecture/domain-mod
 ## 编写规则
 
 - 保持 `docs/design/` 聚焦于业务语义、角色、流程和支持行为。
-- 通用 Nop 应用 owner-doc 与领域设计规则以上游 `../nop-entropy/docs-for-ai/02-core-guides/application-project-docs-and-domain-design.md` 为准。
+- 通用 Nop 应用 owner-doc 与领域设计规则以上游 `../nop-entropy-wt/nop-entropy-master/docs-for-ai/02-core-guides/application-project-docs-and-domain-design.md` 为准（若已正式定位 `nop-entropy` 兄弟目录，则替换为该路径）。
 - `domain-design-guidelines.md` 只负责 ERP 项目自己的领域归属映射和本地解释。
 - 术语冲突或中英文对应不一致时，以 `domain-glossary.md` 为准。
 - 当文档需要持久化模型细节时，应引用 `model/app-erp-<domain>.orm.xml`，不要重复抄写 schema。

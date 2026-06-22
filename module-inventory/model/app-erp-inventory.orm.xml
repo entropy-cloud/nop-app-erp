@@ -1,0 +1,619 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  app-erp-inventory ORM 模型 — 库存域（权威数据模型来源）
+  ==================================================
+  业务范围：库存移动单（头/行）、库存流水（不可变）、库存余额（快照）、
+            库存预留单（头/行）、成本层、调拨单（头/行）、盘点单（头/行）、
+            拣货单（头/行）、批次台账、序列号台账
+
+  三轴状态分离：
+    - docStatus: 草稿/已确认/已完成/已取消（单据生命周期）
+    - approveStatus: 未提交/已提交/已审核/已驳回（审核流程）
+    - posted: 业财过账标志（与库存估值过账联动）
+
+  跨切面公共字段（见 docs/design/domain-design-guidelines.md "单据标准字段约定"）：
+    - 所有单据头携带：orgId、businessDate、posted、postedAt/postedBy、version
+    - 金额类携带：currencyId、exchangeRate、amountSource、amountFunctional
+
+  命名约定（见 docs/architecture/domain-module-split-analysis.md）：
+    - appName:        app-erp-inv
+    - entityPackage:  app.erp.inv.dao.entity
+    - 实体类名:        ErpInv<Entity>
+    - 表名:           erp_inv_<entity>
+    - 字典命名空间:    erp-inv/<dict-name>
+
+  跨工程依赖：
+    - 依赖 app-erp-master-data（物料/仓库/库位/批次规则引用 ErpMd*）
+    - 被 app-erp-purchase / app-erp-sales 依赖（出入库写库存）
+    - 被 app-erp-finance 引用（存货估值过账）
+    - 跨工程实体不做 ORM refEntityName 强引用，走 I*Biz
+-->
+<orm ext:registerShortName="true" ext:appName="app-erp-inv" ext:entityPackageName="app.erp.inv.dao.entity"
+     ext:basePackageName="app.erp.inv" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-inventory"
+     ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
+     ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+
+    <dicts>
+        <dict label="库存移动状态" name="erp-inv/move-status" valueType="int">
+            <option code="DRAFT" label="草稿" value="10"/>
+            <option code="CONFIRMED" label="已确认" value="20"/>
+            <option code="DONE" label="已完成" value="30"/>
+            <option code="CANCELLED" label="已取消" value="40"/>
+        </dict>
+        <dict label="库存作业类型" name="erp-inv/operation-type" valueType="int">
+            <option code="INCOMING" label="入库" value="10"/>
+            <option code="OUTGOING" label="出库" value="20"/>
+            <option code="INTERNAL" label="内部调拨" value="30"/>
+            <option code="MANUFACTURE" label="制造" value="40"/>
+        </dict>
+        <dict label="库存移动方向" name="erp-inv/move-direction" valueType="int">
+            <option code="INBOUND" label="入库" value="10"/>
+            <option code="OUTBOUND" label="出库" value="20"/>
+        </dict>
+        <dict label="审核状态" name="erp-inv/approve-status" valueType="int">
+            <option code="UNSUBMITTED" label="未提交" value="10"/>
+            <option code="SUBMITTED" label="已提交" value="20"/>
+            <option code="APPROVED" label="已审核" value="30"/>
+            <option code="REJECTED" label="已驳回" value="40"/>
+        </dict>
+        <dict label="批次状态" name="erp-inv/batch-status" valueType="int">
+            <option code="OPEN" label="在用" value="10"/>
+            <option code="LOCKED" label="锁定" value="20"/>
+            <option code="EXPIRED" label="已过期" value="30"/>
+            <option code="CONSUMED" label="已耗尽" value="40"/>
+            <option code="BLOCKED" label="质量冻结" value="50"/>
+        </dict>
+        <dict label="序列号状态" name="erp-inv/serial-status" valueType="int">
+            <option code="IN_STOCK" label="在库" value="10"/>
+            <option code="OUT" label="已出库" value="20"/>
+            <option code="RESERVED" label="已预留" value="30"/>
+            <option code="BLOCKED" label="冻结" value="40"/>
+        </dict>
+        <dict label="预留状态" name="erp-inv/reservation-status" valueType="int">
+            <option code="OPEN" label="生效中" value="10"/>
+            <option code="PARTIALLY_CONSUMED" label="部分消耗" value="20"/>
+            <option code="CONSUMED" label="已全部消耗" value="30"/>
+            <option code="CANCELLED" label="已取消" value="40"/>
+            <option code="EXPIRED" label="已过期" value="50"/>
+        </dict>
+        <dict label="拣货状态" name="erp-inv/picking-status" valueType="int">
+            <option code="PENDING" label="待拣货" value="10"/>
+            <option code="PICKING" label="拣货中" value="20"/>
+            <option code="PICKED" label="已拣货" value="30"/>
+            <option code="CANCELLED" label="已取消" value="40"/>
+        </dict>
+        <dict label="盘点类型" name="erp-inv/take-type" valueType="int">
+            <option code="FULL" label="全面盘点" value="10"/>
+            <option code="SAMPLE" label="抽样盘点" value="20"/>
+            <option code="CYCLE" label="循环盘点" value="30"/>
+        </dict>
+    </dicts>
+
+    <domains>
+    <domain name="boolFlag" stdSqlType="TINYINT"/>
+    <domain name="delVersion" stdSqlType="BIGINT"/>
+    <domain name="version" stdSqlType="INTEGER"/>
+    <domain name="createTime" stdSqlType="TIMESTAMP"/>
+    <domain name="createdBy" precision="50" stdSqlType="VARCHAR"/>
+    <domain name="updateTime" stdSqlType="TIMESTAMP"/>
+    <domain name="updatedBy" precision="50" stdSqlType="VARCHAR"/>
+    <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
+    <domain name="code" precision="50" stdSqlType="VARCHAR"/>
+    <domain name="name" precision="200" stdSqlType="VARCHAR"/>
+    <domain name="amount" stdSqlType="DECIMAL" precision="20" scale="4"/>
+    <domain name="quantity" stdSqlType="DECIMAL" precision="20" scale="4"/>
+    <domain name="unitPrice" stdSqlType="DECIMAL" precision="20" scale="4"/>
+    <domain name="exchangeRate" stdSqlType="DECIMAL" precision="20" scale="8"/>
+        <domain name="orderCode" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="amount" stdSqlType="DECIMAL" precision="20" scale="4"/>
+        <domain name="quantity" stdSqlType="DECIMAL" precision="20" scale="4"/>
+        <domain name="unitPrice" stdSqlType="DECIMAL" precision="20" scale="4"/>
+        <domain name="exchangeRate" stdSqlType="DECIMAL" precision="20" scale="8"/>
+        <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
+    </domains>
+
+    <entities>
+        <!-- 库存移动单头 -->
+        <entity className="app.erp.inv.dao.entity.ErpInvStockMove"
+                displayName="库存移动单" name="app.erp.inv.dao.entity.ErpInvStockMove"
+                tableName="erp_inv_stock_move" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
+                <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="moveType" displayName="作业类型" ext:dict="erp-inv/operation-type" mandatory="true" code="MOVE_TYPE" propId="3" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="4" stdDataType="long"/>
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="5" stdDataType="date"/>
+                <column name="sourceWarehouseId" displayName="源仓库" stdSqlType="BIGINT" code="SOURCE_WAREHOUSE_ID" propId="6" stdDataType="long"/>
+                <column name="sourceLocationId" displayName="源库位" stdSqlType="BIGINT" code="SOURCE_LOCATION_ID" propId="7" stdDataType="long"/>
+                <column name="destWarehouseId" displayName="目标仓库" stdSqlType="BIGINT" code="DEST_WAREHOUSE_ID" propId="8" stdDataType="long"/>
+                <column name="destLocationId" displayName="目标库位" stdSqlType="BIGINT" code="DEST_LOCATION_ID" propId="9" stdDataType="long"/>
+                <column name="docStatus" displayName="单据状态" ext:dict="erp-inv/move-status" mandatory="true" code="DOC_STATUS" propId="10" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="approveStatus" displayName="审核状态" ext:dict="erp-inv/approve-status" mandatory="true" code="APPROVE_STATUS" propId="11" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="posted" displayName="已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="12" stdDataType="boolean"/>
+                <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="13" stdDataType="datetime"/>
+                <column name="postedBy" displayName="过账人" stdSqlType="BIGINT" code="POSTED_BY" propId="14" stdDataType="long"/>
+                <column name="relatedBillType" displayName="关联单据类型" stdSqlType="VARCHAR" precision="50" code="RELATED_BILL_TYPE" propId="15" stdDataType="string"/>
+                <column name="relatedBillCode" displayName="关联单据号" stdSqlType="VARCHAR" precision="50" code="RELATED_BILL_CODE" propId="16" stdDataType="string"/>
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="17" stdSqlType="VARCHAR" stdDataType="string"/>
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="18" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="19" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="20" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="21" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="22" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="23" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="remark" code="REMARK" displayName="备注" propId="24" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
+            </columns>
+            <relations>
+                <to-one name="sourceWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="sourceWarehouseId" rightProp="id"/></join></to-one>
+                <to-one name="destWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="destWarehouseId" rightProp="id"/></join></to-one>
+                <to-many name="lines" refEntityName="app.erp.inv.dao.entity.ErpInvStockMoveLine" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="moveId"/></join></to-many>
+            </relations>
+        </entity>
+
+        <!-- 库存移动单行 -->
+        <entity className="app.erp.inv.dao.entity.ErpInvStockMoveLine"
+                displayName="库存移动单行" name="app.erp.inv.dao.entity.ErpInvStockMoveLine"
+                tableName="erp_inv_stock_move_line" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
+                <column name="moveId" displayName="移动单ID" stdSqlType="BIGINT" mandatory="true" code="MOVE_ID" propId="2" stdDataType="long"/>
+                <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int"/>
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="4" stdDataType="long"/>
+                <column name="skuId" displayName="SKU" stdSqlType="BIGINT" code="SKU_ID" propId="5" stdDataType="long"/>
+                <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UO_M_ID" propId="6" stdDataType="long"/>
+                <column name="quantity" displayName="数量" domain="quantity" mandatory="true" code="QUANTITY" propId="7" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="unitCost" displayName="单位成本" domain="unitPrice" code="UNIT_COST" propId="8" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="totalCost" displayName="总成本" domain="amount" code="TOTAL_COST" propId="9" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="10" stdDataType="long"/>
+                <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="11" stdDataType="string"/>
+                <column name="serialNo" displayName="序列号" stdSqlType="VARCHAR" precision="50" code="SERIAL_NO" propId="12" stdDataType="string"/>
+                <column name="sourceLocationId" displayName="源库位" stdSqlType="BIGINT" code="SOURCE_LOCATION_ID" propId="13" stdDataType="long"/>
+                <column name="destLocationId" displayName="目标库位" stdSqlType="BIGINT" code="DEST_LOCATION_ID" propId="14" stdDataType="long"/>
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="15" stdSqlType="VARCHAR" stdDataType="string"/>
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="16" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="17" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="18" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="19" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="20" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="21" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="remark" code="REMARK" displayName="备注" propId="22" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
+            </columns>
+            <relations>
+                <to-one name="move" refEntityName="app.erp.inv.dao.entity.ErpInvStockMove" tagSet="pub"><join><on leftProp="moveId" rightProp="id"/></join></to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
+                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one>
+                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"><join><on leftProp="uoMId" rightProp="id"/></join></to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+            </relations>
+        </entity>
+
+        <!-- 库存流水（不可变） -->
+        <entity className="app.erp.inv.dao.entity.ErpInvStockLedger"
+                displayName="库存流水" name="app.erp.inv.dao.entity.ErpInvStockLedger"
+                tableName="erp_inv_stock_ledger" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
+                <column name="code" displayName="流水号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long"/>
+                <column name="moveId" displayName="移动单ID" stdSqlType="BIGINT" mandatory="true" code="MOVE_ID" propId="4" stdDataType="long"/>
+                <column name="moveLineId" displayName="移动单行ID" stdSqlType="BIGINT" mandatory="true" code="MOVE_LINE_ID" propId="5" stdDataType="long"/>
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="6" stdDataType="long"/>
+                <column name="skuId" displayName="SKU" stdSqlType="BIGINT" code="SKU_ID" propId="7" stdDataType="long"/>
+                <column name="warehouseId" displayName="仓库" stdSqlType="BIGINT" mandatory="true" code="WAREHOUSE_ID" propId="8" stdDataType="long"/>
+                <column name="locationId" displayName="库位" stdSqlType="BIGINT" code="LOCATION_ID" propId="9" stdDataType="long"/>
+                <column name="quantity" displayName="数量" domain="quantity" mandatory="true" code="QUANTITY" propId="10" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="unitCost" displayName="单位成本" domain="unitPrice" code="UNIT_COST" propId="11" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="totalCost" displayName="总成本" domain="amount" code="TOTAL_COST" propId="12" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="balanceQuantity" displayName="结存数量" domain="quantity" mandatory="true" code="BALANCE_QUANTITY" propId="13" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="balanceTotalCost" displayName="结存总成本" domain="amount" mandatory="true" code="BALANCE_TOTAL_COST" propId="14" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="costMethod" displayName="计价方法" ext:dict="erp-md/cost-method" code="COST_METHOD" propId="15" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="acctSchemaId" displayName="账套" stdSqlType="BIGINT" code="ACCT_SCHEMA_ID" propId="16" stdDataType="long"/>
+                <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="17" stdDataType="long"/>
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" code="BUSINESS_DATE" propId="18" stdDataType="date"/>
+                <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="19" stdDataType="string"/>
+                <column name="serialNo" displayName="序列号" stdSqlType="VARCHAR" precision="50" code="SERIAL_NO" propId="20" stdDataType="string"/>
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="21" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="22" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="23" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="24" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="25" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="26" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-one name="move" refEntityName="app.erp.inv.dao.entity.ErpInvStockMove" tagSet="pub"><join><on leftProp="moveId" rightProp="id"/></join></to-one>
+                <to-one name="moveLine" refEntityName="app.erp.inv.dao.entity.ErpInvStockMoveLine" tagSet="pub"><join><on leftProp="moveLineId" rightProp="id"/></join></to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
+                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
+            </relations>
+        </entity>
+
+        <!-- 库存余额快照 -->
+        <entity className="app.erp.inv.dao.entity.ErpInvStockBalance"
+                displayName="库存余额" name="app.erp.inv.dao.entity.ErpInvStockBalance"
+                tableName="erp_inv_stock_balance" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long"/>
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="3" stdDataType="long"/>
+                <column name="skuId" displayName="SKU" stdSqlType="BIGINT" code="SKU_ID" propId="4" stdDataType="long"/>
+                <column name="warehouseId" displayName="仓库" stdSqlType="BIGINT" mandatory="true" code="WAREHOUSE_ID" propId="5" stdDataType="long"/>
+                <column name="locationId" displayName="库位" stdSqlType="BIGINT" code="LOCATION_ID" propId="6" stdDataType="long"/>
+                <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="7" stdDataType="string"/>
+                <column name="totalQuantity" displayName="总数量" domain="quantity" mandatory="true" code="TOTAL_QUANTITY" propId="8" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="reservedQuantity" displayName="预留数量" domain="quantity" defaultValue="0" code="RESERVED_QUANTITY" propId="9" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="lockedQuantity" displayName="冻结数量" domain="quantity" defaultValue="0" code="LOCKED_QUANTITY" propId="10" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="availableQuantity" displayName="可用数量" domain="quantity" mandatory="true" code="AVAILABLE_QUANTITY" propId="11" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="costMethod" displayName="计价方法" ext:dict="erp-md/cost-method" code="COST_METHOD" propId="12" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="avgCost" displayName="平均成本" domain="unitPrice" code="AVG_COST" propId="13" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="totalCost" displayName="总成本" domain="amount" code="TOTAL_COST" propId="14" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="15" stdDataType="long"/>
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="16" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="17" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="18" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="19" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="20" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="21" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
+                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+            </relations>
+        </entity>
+
+        <!-- 库存预留单头（记录级预留，支撑可用量校验与按订单/工单预留） -->
+        <entity className="app.erp.inv.dao.entity.ErpInvReservation"
+                displayName="库存预留单" name="app.erp.inv.dao.entity.ErpInvReservation"
+                tableName="erp_inv_reservation" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
+                <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long"/>
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="4" stdDataType="date"/>
+                <column name="sourceBillType" displayName="来源单据类型(如 SALES_ORDER/WORK_ORDER)" stdSqlType="VARCHAR" precision="50" mandatory="true" code="SOURCE_BILL_TYPE" propId="5" stdDataType="string"/>
+                <column name="sourceBillCode" displayName="来源单据号" stdSqlType="VARCHAR" precision="50" mandatory="true" code="SOURCE_BILL_CODE" propId="6" stdDataType="string"/>
+                <column name="reservedForPartnerId" displayName="为谁预留(往来单位)" stdSqlType="BIGINT" code="RESERVED_FOR_PARTNER_ID" propId="7" stdDataType="long"/>
+                <column name="status" displayName="状态" ext:dict="erp-inv/reservation-status" mandatory="true" code="STATUS" propId="8" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="validUntil" displayName="预留有效期至" stdSqlType="DATETIME" code="VALID_UNTIL" propId="9" stdDataType="datetime"/>
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="10" stdSqlType="VARCHAR" stdDataType="string"/>
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="11" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="12" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="13" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="14" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="15" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="remark" code="REMARK" displayName="备注" propId="17" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
+            </columns>
+            <relations>
+                <to-many name="lines" refEntityName="app.erp.inv.dao.entity.ErpInvReservationLine" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="reservationId"/></join></to-many>
+            </relations>
+        </entity>
+
+        <!-- 库存预留单行 -->
+        <entity className="app.erp.inv.dao.entity.ErpInvReservationLine"
+                displayName="库存预留单行" name="app.erp.inv.dao.entity.ErpInvReservationLine"
+                tableName="erp_inv_reservation_line" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
+                <column name="reservationId" displayName="预留单ID" stdSqlType="BIGINT" mandatory="true" code="RESERVATION_ID" propId="2" stdDataType="long"/>
+                <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int"/>
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="4" stdDataType="long"/>
+                <column name="skuId" displayName="SKU" stdSqlType="BIGINT" code="SKU_ID" propId="5" stdDataType="long"/>
+                <column name="warehouseId" displayName="仓库" stdSqlType="BIGINT" mandatory="true" code="WAREHOUSE_ID" propId="6" stdDataType="long"/>
+                <column name="locationId" displayName="库位" stdSqlType="BIGINT" code="LOCATION_ID" propId="7" stdDataType="long"/>
+                <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="8" stdDataType="string"/>
+                <column name="reservedQuantity" displayName="预留数量" domain="quantity" mandatory="true" code="RESERVED_QUANTITY" propId="9" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="consumedQuantity" displayName="已消耗数量" domain="quantity" defaultValue="0" code="CONSUMED_QUANTITY" propId="10" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="uomId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UOM_ID" propId="11" stdDataType="long"/>
+                <column name="sourceLineCode" displayName="来源行号" stdSqlType="VARCHAR" precision="50" code="SOURCE_LINE_CODE" propId="12" stdDataType="string"/>
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="13" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="14" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="15" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="16" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="17" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-one name="reservation" refEntityName="app.erp.inv.dao.entity.ErpInvReservation" tagSet="pub"><join><on leftProp="reservationId" rightProp="id"/></join></to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
+                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
+            </relations>
+        </entity>
+
+        <!-- 成本层（支撑 FIFO/批次/具体辨认的多层成本核算） -->
+        <entity className="app.erp.inv.dao.entity.ErpInvCostLayer"
+                displayName="成本层" name="app.erp.inv.dao.entity.ErpInvCostLayer"
+                tableName="erp_inv_cost_layer" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long"/>
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="3" stdDataType="long"/>
+                <column name="skuId" displayName="SKU" stdSqlType="BIGINT" code="SKU_ID" propId="4" stdDataType="long"/>
+                <column name="warehouseId" displayName="仓库" stdSqlType="BIGINT" mandatory="true" code="WAREHOUSE_ID" propId="5" stdDataType="long"/>
+                <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="6" stdDataType="string"/>
+                <column name="costMethod" displayName="计价方法" ext:dict="erp-md/cost-method" mandatory="true" code="COST_METHOD" propId="7" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="incomingQuantity" displayName="入库数量" domain="quantity" mandatory="true" code="INCOMING_QUANTITY" propId="8" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="remainingQuantity" displayName="剩余数量" domain="quantity" mandatory="true" code="REMAINING_QUANTITY" propId="9" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="unitCost" displayName="单位成本" domain="unitPrice" mandatory="true" code="UNIT_COST" propId="10" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="totalCost" displayName="总成本" domain="amount" mandatory="true" code="TOTAL_COST" propId="11" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="12" stdDataType="long"/>
+                <column name="incomingDate" displayName="入库日期" stdSqlType="DATE" code="INCOMING_DATE" propId="13" stdDataType="date"/>
+                <column name="incomingMoveId" displayName="入库移动单" stdSqlType="BIGINT" code="INCOMING_MOVE_ID" propId="14" stdDataType="long"/>
+                <column name="acctSchemaId" displayName="账套" stdSqlType="BIGINT" code="ACCT_SCHEMA_ID" propId="15" stdDataType="long"/>
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="16" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="17" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="18" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="19" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="20" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="21" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
+                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+            </relations>
+        </entity>
+
+        <!-- 调拨单 -->
+        <entity className="app.erp.inv.dao.entity.ErpInvTransferOrder"
+                displayName="调拨单" name="app.erp.inv.dao.entity.ErpInvTransferOrder"
+                tableName="erp_inv_transfer_order" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
+                <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long"/>
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="4" stdDataType="date"/>
+                <column name="fromWarehouseId" displayName="调出仓库" stdSqlType="BIGINT" mandatory="true" code="FROM_WAREHOUSE_ID" propId="5" stdDataType="long"/>
+                <column name="toWarehouseId" displayName="调入仓库" stdSqlType="BIGINT" mandatory="true" code="TO_WAREHOUSE_ID" propId="6" stdDataType="long"/>
+                <column name="inTransitWarehouseId" displayName="在途仓库" stdSqlType="BIGINT" code="IN_TRANSIT_WAREHOUSE_ID" propId="7" stdDataType="long"/>
+                <column name="docStatus" displayName="单据状态" ext:dict="erp-inv/move-status" mandatory="true" code="DOC_STATUS" propId="8" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="approveStatus" displayName="审核状态" ext:dict="erp-inv/approve-status" mandatory="true" code="APPROVE_STATUS" propId="9" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="posted" displayName="已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="10" stdDataType="boolean"/>
+                <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="11" stdDataType="datetime"/>
+                <column name="postedBy" displayName="过账人" stdSqlType="BIGINT" code="POSTED_BY" propId="12" stdDataType="long"/>
+                <column name="approvedBy" displayName="审核人" stdSqlType="BIGINT" code="APPROVED_BY" propId="13" stdDataType="long"/>
+                <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="14" stdDataType="datetime"/>
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="15" stdSqlType="VARCHAR" stdDataType="string"/>
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="16" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="17" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="18" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="19" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="20" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="21" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="remark" code="REMARK" displayName="备注" propId="22" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
+            </columns>
+            <relations>
+                <to-one name="fromWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="fromWarehouseId" rightProp="id"/></join></to-one>
+                <to-one name="toWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="toWarehouseId" rightProp="id"/></join></to-one>
+                <to-one name="inTransitWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="inTransitWarehouseId" rightProp="id"/></join></to-one>
+                <to-many name="lines" refEntityName="app.erp.inv.dao.entity.ErpInvTransferOrderLine" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="transferId"/></join></to-many>
+            </relations>
+        </entity>
+
+        <!-- 调拨单行 -->
+        <entity className="app.erp.inv.dao.entity.ErpInvTransferOrderLine"
+                displayName="调拨单行" name="app.erp.inv.dao.entity.ErpInvTransferOrderLine"
+                tableName="erp_inv_transfer_order_line" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
+                <column name="transferId" displayName="调拨单ID" stdSqlType="BIGINT" mandatory="true" code="TRANSFER_ID" propId="2" stdDataType="long"/>
+                <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int"/>
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="4" stdDataType="long"/>
+                <column name="skuId" displayName="SKU" stdSqlType="BIGINT" code="SKU_ID" propId="5" stdDataType="long"/>
+                <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UO_M_ID" propId="6" stdDataType="long"/>
+                <column name="quantity" displayName="数量" domain="quantity" mandatory="true" code="QUANTITY" propId="7" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="8" stdDataType="string"/>
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="9" stdSqlType="VARCHAR" stdDataType="string"/>
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="10" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="11" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="12" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="13" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="14" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="15" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="remark" code="REMARK" displayName="备注" propId="16" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
+            </columns>
+            <relations>
+                <to-one name="transfer" refEntityName="app.erp.inv.dao.entity.ErpInvTransferOrder" tagSet="pub"><join><on leftProp="transferId" rightProp="id"/></join></to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
+                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one>
+                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"><join><on leftProp="uoMId" rightProp="id"/></join></to-one>
+            </relations>
+        </entity>
+
+        <!-- 盘点单 -->
+        <entity className="app.erp.inv.dao.entity.ErpInvStockTake"
+                displayName="盘点单" name="app.erp.inv.dao.entity.ErpInvStockTake"
+                tableName="erp_inv_stock_take" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
+                <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long"/>
+                <column name="businessDate" displayName="盘点日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="4" stdDataType="date"/>
+                <column name="takeType" displayName="盘点类型" ext:dict="erp-inv/take-type" code="TAKE_TYPE" propId="5" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="warehouseId" displayName="盘点仓库" stdSqlType="BIGINT" mandatory="true" code="WAREHOUSE_ID" propId="6" stdDataType="long"/>
+                <column name="docStatus" displayName="单据状态" ext:dict="erp-inv/move-status" mandatory="true" code="DOC_STATUS" propId="7" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="approveStatus" displayName="审核状态" ext:dict="erp-inv/approve-status" mandatory="true" code="APPROVE_STATUS" propId="8" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="posted" displayName="已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="9" stdDataType="boolean"/>
+                <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="10" stdDataType="datetime"/>
+                <column name="postedBy" displayName="过账人" stdSqlType="BIGINT" code="POSTED_BY" propId="11" stdDataType="long"/>
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="12" stdSqlType="VARCHAR" stdDataType="string"/>
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="13" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="14" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="15" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="16" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="17" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="remark" code="REMARK" displayName="备注" propId="19" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
+            </columns>
+            <relations>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
+                <to-many name="lines" refEntityName="app.erp.inv.dao.entity.ErpInvStockTakeLine" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="takeId"/></join></to-many>
+            </relations>
+        </entity>
+
+        <!-- 盘点单行 -->
+        <entity className="app.erp.inv.dao.entity.ErpInvStockTakeLine"
+                displayName="盘点单行" name="app.erp.inv.dao.entity.ErpInvStockTakeLine"
+                tableName="erp_inv_stock_take_line" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
+                <column name="takeId" displayName="盘点单ID" stdSqlType="BIGINT" mandatory="true" code="TAKE_ID" propId="2" stdDataType="long"/>
+                <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int"/>
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="4" stdDataType="long"/>
+                <column name="skuId" displayName="SKU" stdSqlType="BIGINT" code="SKU_ID" propId="5" stdDataType="long"/>
+                <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UO_M_ID" propId="6" stdDataType="long"/>
+                <column name="locationId" displayName="库位" stdSqlType="BIGINT" code="LOCATION_ID" propId="7" stdDataType="long"/>
+                <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="8" stdDataType="string"/>
+                <column name="bookQuantity" displayName="账面数量" domain="quantity" mandatory="true" code="BOOK_QUANTITY" propId="9" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="actualQuantity" displayName="实盘数量" domain="quantity" mandatory="true" code="ACTUAL_QUANTITY" propId="10" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="differenceQuantity" displayName="差异数量" domain="quantity" mandatory="true" code="DIFFERENCE_QUANTITY" propId="11" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="unitCost" displayName="单位成本" domain="unitPrice" code="UNIT_COST" propId="12" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="differenceAmount" displayName="差异金额" domain="amount" code="DIFFERENCE_AMOUNT" propId="13" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="14" stdSqlType="VARCHAR" stdDataType="string"/>
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="15" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="16" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="17" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="18" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="19" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="20" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="remark" code="REMARK" displayName="备注" propId="21" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
+            </columns>
+            <relations>
+                <to-one name="take" refEntityName="app.erp.inv.dao.entity.ErpInvStockTake" tagSet="pub"><join><on leftProp="takeId" rightProp="id"/></join></to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
+                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one>
+                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"><join><on leftProp="uoMId" rightProp="id"/></join></to-one>
+            </relations>
+        </entity>
+
+        <!-- 拣货单头 -->
+        <entity className="app.erp.inv.dao.entity.ErpInvPickingOrder"
+                displayName="拣货单" name="app.erp.inv.dao.entity.ErpInvPickingOrder"
+                tableName="erp_inv_picking_order" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
+                <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long"/>
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="4" stdDataType="date"/>
+                <column name="warehouseId" displayName="拣货仓库" stdSqlType="BIGINT" mandatory="true" code="WAREHOUSE_ID" propId="5" stdDataType="long"/>
+                <column name="pickerId" displayName="拣货人(职员)" stdSqlType="BIGINT" code="PICKER_ID" propId="6" stdDataType="long"/>
+                <column name="docStatus" displayName="单据状态" ext:dict="erp-inv/picking-status" mandatory="true" code="DOC_STATUS" propId="7" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="relatedBillType" displayName="关联单据类型(SALES_DELIVERY/WORK_ORDER_ISSUE)" stdSqlType="VARCHAR" precision="50" code="RELATED_BILL_TYPE" propId="8" stdDataType="string"/>
+                <column name="relatedBillCode" displayName="关联单据号" stdSqlType="VARCHAR" precision="50" code="RELATED_BILL_CODE" propId="9" stdDataType="string"/>
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="10" stdSqlType="VARCHAR" stdDataType="string"/>
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="11" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="12" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="13" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="14" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="15" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="remark" code="REMARK" displayName="备注" propId="17" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
+            </columns>
+            <relations>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
+                <to-many name="lines" refEntityName="app.erp.inv.dao.entity.ErpInvPickingOrderLine" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="pickingId"/></join></to-many>
+            </relations>
+        </entity>
+
+        <!-- 拣货单行 -->
+        <entity className="app.erp.inv.dao.entity.ErpInvPickingOrderLine"
+                displayName="拣货单行" name="app.erp.inv.dao.entity.ErpInvPickingOrderLine"
+                tableName="erp_inv_picking_order_line" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
+                <column name="pickingId" displayName="拣货单ID" stdSqlType="BIGINT" mandatory="true" code="PICKING_ID" propId="2" stdDataType="long"/>
+                <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int"/>
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="4" stdDataType="long"/>
+                <column name="skuId" displayName="SKU" stdSqlType="BIGINT" code="SKU_ID" propId="5" stdDataType="long"/>
+                <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UO_M_ID" propId="6" stdDataType="long"/>
+                <column name="sourceLocationId" displayName="拣货库位" stdSqlType="BIGINT" code="SOURCE_LOCATION_ID" propId="7" stdDataType="long"/>
+                <column name="quantity" displayName="应拣数量" domain="quantity" mandatory="true" code="QUANTITY" propId="8" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="pickedQuantity" displayName="已拣数量" domain="quantity" defaultValue="0" code="PICKED_QUANTITY" propId="9" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="10" stdDataType="string"/>
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="11" stdSqlType="VARCHAR" stdDataType="string"/>
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="12" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="13" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="14" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="15" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="16" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="remark" code="REMARK" displayName="备注" propId="18" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
+            </columns>
+            <relations>
+                <to-one name="picking" refEntityName="app.erp.inv.dao.entity.ErpInvPickingOrder" tagSet="pub"><join><on leftProp="pickingId" rightProp="id"/></join></to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
+                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one>
+                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"><join><on leftProp="uoMId" rightProp="id"/></join></to-one>
+            </relations>
+        </entity>
+
+        <!-- 批次台账 -->
+        <entity className="app.erp.inv.dao.entity.ErpInvBatch"
+                displayName="批次台账" name="app.erp.inv.dao.entity.ErpInvBatch"
+                tableName="erp_inv_batch" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long"/>
+                <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" mandatory="true" code="BATCH_NO" propId="3" stdDataType="string"/>
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="4" stdDataType="long"/>
+                <column name="skuId" displayName="SKU" stdSqlType="BIGINT" code="SKU_ID" propId="5" stdDataType="long"/>
+                <column name="warehouseId" displayName="仓库" stdSqlType="BIGINT" mandatory="true" code="WAREHOUSE_ID" propId="6" stdDataType="long"/>
+                <column name="totalQuantity" displayName="总数量" domain="quantity" mandatory="true" code="TOTAL_QUANTITY" propId="7" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="availableQuantity" displayName="可用数量" domain="quantity" mandatory="true" code="AVAILABLE_QUANTITY" propId="8" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="productionDate" displayName="生产日期" stdSqlType="DATE" code="PRODUCTION_DATE" propId="9" stdDataType="date"/>
+                <column name="expiryDate" displayName="有效期至" stdSqlType="DATE" code="EXPIRY_DATE" propId="10" stdDataType="date"/>
+                <column name="shelfLifeDays" displayName="保质期(天)" stdSqlType="INTEGER" code="SHELF_LIFE_DAYS" propId="11" stdDataType="int"/>
+                <column name="status" displayName="状态" ext:dict="erp-inv/batch-status" mandatory="true" code="STATUS" propId="12" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="13" stdSqlType="VARCHAR" stdDataType="string"/>
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="14" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="15" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="16" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="17" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="18" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="19" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="remark" code="REMARK" displayName="备注" propId="20" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
+            </columns>
+            <relations>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
+                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
+            </relations>
+        </entity>
+
+        <!-- 序列号台账 -->
+        <entity className="app.erp.inv.dao.entity.ErpInvSerialNumber"
+                displayName="序列号台账" name="app.erp.inv.dao.entity.ErpInvSerialNumber"
+                tableName="erp_inv_serial_number" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long"/>
+                <column name="serialNo" displayName="序列号" stdSqlType="VARCHAR" precision="50" mandatory="true" code="SERIAL_NO" propId="3" stdDataType="string"/>
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="4" stdDataType="long"/>
+                <column name="skuId" displayName="SKU" stdSqlType="BIGINT" code="SKU_ID" propId="5" stdDataType="long"/>
+                <column name="warehouseId" displayName="当前仓库" stdSqlType="BIGINT" code="WAREHOUSE_ID" propId="6" stdDataType="long"/>
+                <column name="locationId" displayName="当前库位" stdSqlType="BIGINT" code="LOCATION_ID" propId="7" stdDataType="long"/>
+                <column name="status" displayName="状态" ext:dict="erp-inv/serial-status" mandatory="true" code="STATUS" propId="8" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="inBillType" displayName="入库单类型" stdSqlType="VARCHAR" precision="50" code="IN_BILL_TYPE" propId="9" stdDataType="string"/>
+                <column name="inBillCode" displayName="入库单号" stdSqlType="VARCHAR" precision="50" code="IN_BILL_CODE" propId="10" stdDataType="string"/>
+                <column name="outBillType" displayName="出库单类型" stdSqlType="VARCHAR" precision="50" code="OUT_BILL_TYPE" propId="11" stdDataType="string"/>
+                <column name="outBillCode" displayName="出库单号" stdSqlType="VARCHAR" precision="50" code="OUT_BILL_CODE" propId="12" stdDataType="string"/>
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="13" stdSqlType="VARCHAR" stdDataType="string"/>
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="14" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="15" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="16" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="17" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="18" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="19" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="remark" code="REMARK" displayName="备注" propId="20" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
+            </columns>
+            <relations>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
+                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one>
+            </relations>
+        </entity>
+    </entities>
+</orm>
