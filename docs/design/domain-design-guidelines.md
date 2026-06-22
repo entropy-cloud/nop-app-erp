@@ -12,21 +12,21 @@ ERP 业务按 10 个独立领域工程组织（见 `docs/architecture/domain-mod
 
 | 领域 | 设计目录 | 工程 | 权威模型 | 拥有的业务术语 |
 |------|----------|------|----------|----------------|
-| 主数据 | `master-data/` | `app-erp-master-data` | `model/app-erp-master-data.orm.xml` | 物料、SKU、往来单位、仓库、库位、计量单位、币种、汇率、科目表、科目 |
-| 库存 | `inventory/` | `app-erp-inventory` | `model/app-erp-inventory.orm.xml` | 库存移动单、库存流水、库存余额、调拨、盘点、批次、序列号、作业类型、预留量、可用量 |
-| 采购 | `purchase/` | `app-erp-purchase` | `model/app-erp-purchase.orm.xml` | 采购订单、采购入库、采购发票、付款、采购退货、三单匹配、应付核销 |
-| 销售 | `sales/` | `app-erp-sales` | `model/app-erp-sales.orm.xml` | 销售订单、销售出库、销售发票、收款、销售退货、应收核销 |
-| 财务 | `finance/` | `app-erp-finance` | `model/app-erp-finance.orm.xml` | 凭证、凭证分录行、凭证模板、科目、过账、借贷、应付/应收、总账、会计期间、成本核算 |
+| 主数据 | `master-data/` | `app-erp-master-data` | `master-data/model/app-erp-master-data.orm.xml` | 物料、SKU、往来单位、仓库、库位、计量单位、币种、汇率、科目表、科目 |
+| 库存 | `inventory/` | `app-erp-inventory` | `inventory/model/app-erp-inventory.orm.xml` | 库存移动单、库存流水、库存余额、调拨、盘点、批次、序列号、作业类型、预留量、可用量 |
+| 采购 | `purchase/` | `app-erp-purchase` | `purchase/model/app-erp-purchase.orm.xml` | 采购订单、采购入库、采购发票、付款、采购退货、三单匹配、应付核销 |
+| 销售 | `sales/` | `app-erp-sales` | `sales/model/app-erp-sales.orm.xml` | 销售订单、销售出库、销售发票、收款、销售退货、应收核销 |
+| 财务 | `finance/` | `app-erp-finance` | `finance/model/app-erp-finance.orm.xml` | 凭证、凭证分录行、凭证模板、科目、过账、借贷、应付/应收、总账、会计期间、成本核算 |
 
 ### 扩展业务域（资产/项目/制造/质量/维护）
 
 | 领域 | 设计目录 | 工程 | 权威模型 | 拥有的业务术语 |
 |------|----------|------|----------|----------------|
-| 固定资产 | `assets/` | `app-erp-assets` | `model/app-erp-assets.orm.xml` | 资产卡片、资产类别、折旧计划、资产移动、资产价值调整、资本化、报废/出售 |
-| 项目管理 | `projects/` | `app-erp-projects` | `model/app-erp-projects.orm.xml` | 项目、任务、工时记录、活动类型、项目辅助核算 |
-| 制造 | `manufacturing/` | `app-erp-manufacturing` | `model/app-erp-manufacturing.orm.xml` | BOM、工单、作业卡、工艺路线、工作中心、生产计划、齐套、领料、完工 |
-| 质量管理 | `quality/` | `app-erp-quality` | `model/app-erp-quality.orm.xml` | 质检单、质检模板、不符合项（NCR）、纠正预防措施（CAPA）、让步接收 |
-| 设备维护 | `maintenance/` | `app-erp-maintenance` | `model/app-erp-maintenance.orm.xml` | 设备、维护计划、维护访问、维护请求、维护团队、停机记录 |
+| 固定资产 | `assets/` | `app-erp-assets` | `assets/model/app-erp-assets.orm.xml` | 资产卡片、资产类别、折旧计划、资产移动、资产价值调整、资本化、报废/出售 |
+| 项目管理 | `projects/` | `app-erp-projects` | `projects/model/app-erp-projects.orm.xml` | 项目、任务、工时记录、活动类型、项目辅助核算 |
+| 制造 | `manufacturing/` | `app-erp-manufacturing` | `manufacturing/model/app-erp-manufacturing.orm.xml` | BOM、工单、作业卡、工艺路线、工作中心、生产计划、齐套、领料、完工 |
+| 质量管理 | `quality/` | `app-erp-quality` | `quality/model/app-erp-quality.orm.xml` | 质检单、质检模板、不符合项（NCR）、纠正预防措施（CAPA）、让步接收 |
+| 设备维护 | `maintenance/` | `app-erp-maintenance` | `maintenance/model/app-erp-maintenance.orm.xml` | 设备、维护计划、维护访问、维护请求、维护团队、停机记录 |
 
 ## 跨域流程归属
 

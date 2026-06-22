@@ -16,7 +16,7 @@
 | 审核状态 | approveStatus | 全部 | 无（未提交/已提交/已审核/已驳回） |
 | 收款状态 | receivedStatus | 销售发票 | 字段名不同（采购用 paidStatus） |
 
-持久化状态码字典以 `model/app-erp-sales.orm.xml` 为准。
+持久化状态码字典以 `sales/model/app-erp-sales.orm.xml` 为准。
 
 ## 1. 状态定义（审核轴）
 
@@ -139,7 +139,7 @@
 ## 10. 与设计文档一致性
 
 - 销售域与采购域的对称性见 `sales/README.md`。
-- 状态码持久化值归 `model/app-erp-sales.orm.xml`。
+- 状态码持久化值归 `sales/model/app-erp-sales.orm.xml`。
 - 业财打通见 `finance/posting.md`。
 - 可用量校验规则见 `inventory/cross-domain.md`。
 
