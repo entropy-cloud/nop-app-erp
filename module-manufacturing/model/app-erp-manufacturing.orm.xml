@@ -142,7 +142,7 @@
         <!-- BOM 头 -->
         <entity className="app.erp.mfg.dao.entity.ErpMfgBom"
                 displayName="BOM" name="app.erp.mfg.dao.entity.ErpMfgBom"
-                tableName="erp_mfg_bom" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mfg_bom" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="BOM编码" domain="bomCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -172,7 +172,7 @@
         <!-- BOM 行 -->
         <entity className="app.erp.mfg.dao.entity.ErpMfgBomLine"
                 displayName="BOM行" name="app.erp.mfg.dao.entity.ErpMfgBomLine"
-                tableName="erp_mfg_bom_line" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mfg_bom_line" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="bomId" displayName="BOM ID" stdSqlType="BIGINT" mandatory="true" code="BOM_ID" propId="2" stdDataType="long"/>
@@ -201,7 +201,7 @@
         <!-- BOM 工艺 -->
         <entity className="app.erp.mfg.dao.entity.ErpMfgBomOperation"
                 displayName="BOM工艺" name="app.erp.mfg.dao.entity.ErpMfgBomOperation"
-                tableName="erp_mfg_bom_operation" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mfg_bom_operation" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="bomId" displayName="BOM ID" stdSqlType="BIGINT" mandatory="true" code="BOM_ID" propId="2" stdDataType="long"/>
@@ -228,7 +228,7 @@
         <!-- BOM 联副产品 -->
         <entity className="app.erp.mfg.dao.entity.ErpMfgBomByproduct"
                 displayName="BOM联副产品" name="app.erp.mfg.dao.entity.ErpMfgBomByproduct"
-                tableName="erp_mfg_bom_byproduct" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mfg_bom_byproduct" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="bomId" displayName="BOM ID" stdSqlType="BIGINT" mandatory="true" code="BOM_ID" propId="2" stdDataType="long"/>
@@ -256,7 +256,7 @@
         <!-- 工艺路线 -->
         <entity className="app.erp.mfg.dao.entity.ErpMfgRouting"
                 displayName="工艺路线" name="app.erp.mfg.dao.entity.ErpMfgRouting"
-                tableName="erp_mfg_routing" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mfg_routing" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="工艺路线编码" domain="routingCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -278,7 +278,7 @@
         <!-- 工艺路线工序 -->
         <entity className="app.erp.mfg.dao.entity.ErpMfgRoutingOperation"
                 displayName="工艺路线工序" name="app.erp.mfg.dao.entity.ErpMfgRoutingOperation"
-                tableName="erp_mfg_routing_operation" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mfg_routing_operation" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="routingId" displayName="工艺路线ID" stdSqlType="BIGINT" mandatory="true" code="ROUTING_ID" propId="2" stdDataType="long"/>
@@ -307,7 +307,7 @@
         <!-- 工作中心 -->
         <entity className="app.erp.mfg.dao.entity.ErpMfgWorkcenter"
                 displayName="工作中心" name="app.erp.mfg.dao.entity.ErpMfgWorkcenter"
-                tableName="erp_mfg_workcenter" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mfg_workcenter" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="工作中心编码" domain="workcenterCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -330,7 +330,7 @@
         <!-- 工单 -->
         <entity className="app.erp.mfg.dao.entity.ErpMfgWorkOrder"
                 displayName="工单" name="app.erp.mfg.dao.entity.ErpMfgWorkOrder"
-                tableName="erp_mfg_work_order" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mfg_work_order" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="工单号" domain="workOrderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -385,7 +385,7 @@
         <!-- 工单行（多产出/多投入，替代单 productId 的弱表达） -->
         <entity className="app.erp.mfg.dao.entity.ErpMfgWorkOrderLine"
                 displayName="工单行" name="app.erp.mfg.dao.entity.ErpMfgWorkOrderLine"
-                tableName="erp_mfg_work_order_line" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mfg_work_order_line" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="workOrderId" displayName="工单ID" stdSqlType="BIGINT" mandatory="true" code="WORK_ORDER_ID" propId="2" stdDataType="long"/>
@@ -418,7 +418,7 @@
         <!-- 生产版本（SAP 风格：产品 × BOM × 工艺路线 × 有效期） -->
         <entity className="app.erp.mfg.dao.entity.ErpMfgProductionVersion"
                 displayName="生产版本" name="app.erp.mfg.dao.entity.ErpMfgProductionVersion"
-                tableName="erp_mfg_production_version" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mfg_production_version" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="版本编码" domain="workOrderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -449,7 +449,7 @@
         <!-- MRP 计划头 -->
         <entity className="app.erp.mfg.dao.entity.ErpMfgMrpPlan"
                 displayName="MRP计划" name="app.erp.mfg.dao.entity.ErpMfgMrpPlan"
-                tableName="erp_mfg_mrp_plan" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mfg_mrp_plan" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="计划号" domain="workOrderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -474,7 +474,7 @@
         <!-- MRP 计划行/计划订单 -->
         <entity className="app.erp.mfg.dao.entity.ErpMfgMrpPlanLine"
                 displayName="MRP计划行" name="app.erp.mfg.dao.entity.ErpMfgMrpPlanLine"
-                tableName="erp_mfg_mrp_plan_line" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mfg_mrp_plan_line" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="mrpPlanId" displayName="MRP计划ID" stdSqlType="BIGINT" mandatory="true" code="MRP_PLAN_ID" propId="2" stdDataType="long"/>
@@ -508,7 +508,7 @@
         <!-- MRP 独立需求 -->
         <entity className="app.erp.mfg.dao.entity.ErpMfgMrpDemand"
                 displayName="MRP独立需求" name="app.erp.mfg.dao.entity.ErpMfgMrpDemand"
-                tableName="erp_mfg_mrp_demand" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mfg_mrp_demand" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="mrpPlanId" displayName="MRP计划ID" stdSqlType="BIGINT" mandatory="true" code="MRP_PLAN_ID" propId="2" stdDataType="long"/>
@@ -537,7 +537,7 @@
         <!-- 领料单头（绑定工单/作业卡，触发库存出库） -->
         <entity className="app.erp.mfg.dao.entity.ErpMfgMaterialIssue"
                 displayName="领料单" name="app.erp.mfg.dao.entity.ErpMfgMaterialIssue"
-                tableName="erp_mfg_material_issue" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mfg_material_issue" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="workOrderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -570,7 +570,7 @@
         <!-- 领料单行 -->
         <entity className="app.erp.mfg.dao.entity.ErpMfgMaterialIssueLine"
                 displayName="领料单行" name="app.erp.mfg.dao.entity.ErpMfgMaterialIssueLine"
-                tableName="erp_mfg_material_issue_line" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mfg_material_issue_line" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="issueId" displayName="领料单ID" stdSqlType="BIGINT" mandatory="true" code="ISSUE_ID" propId="2" stdDataType="long"/>
@@ -604,7 +604,7 @@
         <!-- 委外加工单头 -->
         <entity className="app.erp.mfg.dao.entity.ErpMfgSubcontractOrder"
                 displayName="委外加工单" name="app.erp.mfg.dao.entity.ErpMfgSubcontractOrder"
-                tableName="erp_mfg_subcontract_order" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mfg_subcontract_order" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="workOrderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -642,7 +642,7 @@
         <!-- 委外加工单行 -->
         <entity className="app.erp.mfg.dao.entity.ErpMfgSubcontractOrderLine"
                 displayName="委外加工单行" name="app.erp.mfg.dao.entity.ErpMfgSubcontractOrderLine"
-                tableName="erp_mfg_subcontract_order_line" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mfg_subcontract_order_line" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="subcontractOrderId" displayName="委外单ID" stdSqlType="BIGINT" mandatory="true" code="SUBCONTRACT_ORDER_ID" propId="2" stdDataType="long"/>
@@ -670,7 +670,7 @@
         <!-- 标准成本滚算头 -->
         <entity className="app.erp.mfg.dao.entity.ErpMfgCostRollup"
                 displayName="标准成本滚算" name="app.erp.mfg.dao.entity.ErpMfgCostRollup"
-                tableName="erp_mfg_cost_rollup" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mfg_cost_rollup" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="workOrderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -694,7 +694,7 @@
         <!-- 标准成本滚算行（按产品汇总 材料成本+人工+制造费用+委外） -->
         <entity className="app.erp.mfg.dao.entity.ErpMfgCostRollupLine"
                 displayName="标准成本滚算行" name="app.erp.mfg.dao.entity.ErpMfgCostRollupLine"
-                tableName="erp_mfg_cost_rollup_line" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mfg_cost_rollup_line" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="costRollupId" displayName="滚算单ID" stdSqlType="BIGINT" mandatory="true" code="COST_ROLLUP_ID" propId="2" stdDataType="long"/>
@@ -725,7 +725,7 @@
         <!-- 作业卡 -->
         <entity className="app.erp.mfg.dao.entity.ErpMfgJobCard"
                 displayName="作业卡" name="app.erp.mfg.dao.entity.ErpMfgJobCard"
-                tableName="erp_mfg_job_card" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mfg_job_card" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="workOrderId" displayName="工单ID" stdSqlType="BIGINT" mandatory="true" code="WORK_ORDER_ID" propId="2" stdDataType="long"/>
@@ -755,7 +755,7 @@
         <!-- 作业工时记录（按操作员逐条，state-machine.md 引用） -->
         <entity className="app.erp.mfg.dao.entity.ErpMfgJobCardTimeLog"
                 displayName="作业工时记录" name="app.erp.mfg.dao.entity.ErpMfgJobCardTimeLog"
-                tableName="erp_mfg_job_card_time_log" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mfg_job_card_time_log" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="jobCardId" displayName="作业卡ID" stdSqlType="BIGINT" mandatory="true" code="JOB_CARD_ID" propId="2" stdDataType="long"/>

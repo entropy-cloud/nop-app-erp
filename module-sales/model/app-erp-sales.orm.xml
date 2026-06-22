@@ -91,7 +91,7 @@
         <!-- 销售报价单头 -->
         <entity className="app.erp.sal.dao.entity.ErpSalQuotation"
                 displayName="销售报价单" name="app.erp.sal.dao.entity.ErpSalQuotation"
-                tableName="erp_sal_quotation" tagSet="gid" registerShortName="true"
+                tableName="erp_sal_quotation" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -135,7 +135,7 @@
         <!-- 销售报价单行 -->
         <entity className="app.erp.sal.dao.entity.ErpSalQuotationLine"
                 displayName="销售报价单行" name="app.erp.sal.dao.entity.ErpSalQuotationLine"
-                tableName="erp_sal_quotation_line" tagSet="gid" registerShortName="true"
+                tableName="erp_sal_quotation_line" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -175,7 +175,7 @@
         <!-- 销售合同头 -->
         <entity className="app.erp.sal.dao.entity.ErpSalContract"
                 displayName="销售合同" name="app.erp.sal.dao.entity.ErpSalContract"
-                tableName="erp_sal_contract" tagSet="gid" registerShortName="true"
+                tableName="erp_sal_contract" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -217,7 +217,7 @@
         <!-- 销售订单头 -->
         <entity className="app.erp.sal.dao.entity.ErpSalOrder"
                 displayName="销售订单" name="app.erp.sal.dao.entity.ErpSalOrder"
-                tableName="erp_sal_order" tagSet="gid" registerShortName="true"
+                tableName="erp_sal_order" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -281,7 +281,7 @@
         <!-- 销售订单行 -->
         <entity className="app.erp.sal.dao.entity.ErpSalOrderLine"
                 displayName="销售订单行" name="app.erp.sal.dao.entity.ErpSalOrderLine"
-                tableName="erp_sal_order_line" tagSet="gid" registerShortName="true"
+                tableName="erp_sal_order_line" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -330,7 +330,7 @@
         <!-- 销售出库单头 -->
         <entity className="app.erp.sal.dao.entity.ErpSalDelivery"
                 displayName="销售出库单" name="app.erp.sal.dao.entity.ErpSalDelivery"
-                tableName="erp_sal_delivery" tagSet="gid" registerShortName="true"
+                tableName="erp_sal_delivery" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -383,7 +383,7 @@
         <!-- 销售出库单行 -->
         <entity className="app.erp.sal.dao.entity.ErpSalDeliveryLine"
                 displayName="销售出库单行" name="app.erp.sal.dao.entity.ErpSalDeliveryLine"
-                tableName="erp_sal_delivery_line" tagSet="gid" registerShortName="true"
+                tableName="erp_sal_delivery_line" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -429,7 +429,7 @@
         <!-- 销售发票头 -->
         <entity className="app.erp.sal.dao.entity.ErpSalInvoice"
                 displayName="销售发票" name="app.erp.sal.dao.entity.ErpSalInvoice"
-                tableName="erp_sal_invoice" tagSet="gid" registerShortName="true"
+                tableName="erp_sal_invoice" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -480,7 +480,7 @@
         <!-- 销售发票行 -->
         <entity className="app.erp.sal.dao.entity.ErpSalInvoiceLine"
                 displayName="销售发票行" name="app.erp.sal.dao.entity.ErpSalInvoiceLine"
-                tableName="erp_sal_invoice_line" tagSet="gid" registerShortName="true"
+                tableName="erp_sal_invoice_line" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -517,7 +517,7 @@
         <!-- 收款单头 -->
         <entity className="app.erp.sal.dao.entity.ErpSalReceipt"
                 displayName="收款单" name="app.erp.sal.dao.entity.ErpSalReceipt"
-                tableName="erp_sal_receipt" tagSet="gid" registerShortName="true"
+                tableName="erp_sal_receipt" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -571,7 +571,7 @@
         <!-- 收款核销行（收款与发票多对多） -->
         <entity className="app.erp.sal.dao.entity.ErpSalReceiptLine"
                 displayName="收款核销行" name="app.erp.sal.dao.entity.ErpSalReceiptLine"
-                tableName="erp_sal_receipt_line" tagSet="gid" registerShortName="true"
+                tableName="erp_sal_receipt_line" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -601,7 +601,7 @@
         <!-- 销售退货单头 -->
         <entity className="app.erp.sal.dao.entity.ErpSalReturn"
                 displayName="销售退货单" name="app.erp.sal.dao.entity.ErpSalReturn"
-                tableName="erp_sal_return" tagSet="gid" registerShortName="true"
+                tableName="erp_sal_return" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -654,7 +654,7 @@
         <!-- 销售退货单行 -->
         <entity className="app.erp.sal.dao.entity.ErpSalReturnLine"
                 displayName="销售退货单行" name="app.erp.sal.dao.entity.ErpSalReturnLine"
-                tableName="erp_sal_return_line" tagSet="gid" registerShortName="true"
+                tableName="erp_sal_return_line" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">

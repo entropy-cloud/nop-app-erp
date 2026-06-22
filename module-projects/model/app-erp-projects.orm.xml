@@ -81,7 +81,7 @@
         <!-- 项目 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjProject"
                 displayName="项目" name="app.erp.prj.dao.entity.ErpPrjProject"
-                tableName="erp_prj_project" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_project" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="项目编码" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -121,7 +121,7 @@
         <!-- 任务 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjTask"
                 displayName="任务" name="app.erp.prj.dao.entity.ErpPrjTask"
-                tableName="erp_prj_task" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_task" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="projectId" displayName="项目" stdSqlType="BIGINT" mandatory="true" code="PROJECT_ID" propId="2" stdDataType="long"/>
@@ -159,7 +159,7 @@
         <!-- 工时记录 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjTimesheet"
                 displayName="工时记录" name="app.erp.prj.dao.entity.ErpPrjTimesheet"
-                tableName="erp_prj_timesheet" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_timesheet" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -199,7 +199,7 @@
         <!-- 项目类型 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjProjectType"
                 displayName="项目类型" name="app.erp.prj.dao.entity.ErpPrjProjectType"
-                tableName="erp_prj_project_type" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_project_type" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="类型编码" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -221,7 +221,7 @@
         <!-- 活动类型 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjActivityType"
                 displayName="活动类型" name="app.erp.prj.dao.entity.ErpPrjActivityType"
-                tableName="erp_prj_activity_type" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_activity_type" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="类型编码" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -244,7 +244,7 @@
         <!-- 项目成员 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjProjectUser"
                 displayName="项目成员" name="app.erp.prj.dao.entity.ErpPrjProjectUser"
-                tableName="erp_prj_project_user" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_project_user" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="projectId" displayName="项目" stdSqlType="BIGINT" mandatory="true" code="PROJECT_ID" propId="2" stdDataType="long"/>
@@ -268,7 +268,7 @@
         <!-- 项目预算头 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjBudget"
                 displayName="项目预算" name="app.erp.prj.dao.entity.ErpPrjBudget"
-                tableName="erp_prj_budget" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_budget" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -296,7 +296,7 @@
         <!-- 项目预算行 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjBudgetLine"
                 displayName="项目预算行" name="app.erp.prj.dao.entity.ErpPrjBudgetLine"
-                tableName="erp_prj_budget_line" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_budget_line" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="budgetId" displayName="预算ID" stdSqlType="BIGINT" mandatory="true" code="BUDGET_ID" propId="2" stdDataType="long"/>
@@ -324,7 +324,7 @@
         <!-- 项目成本归集头（汇总采购/工时/费用到项目） -->
         <entity className="app.erp.prj.dao.entity.ErpPrjCostCollection"
                 displayName="项目成本归集" name="app.erp.prj.dao.entity.ErpPrjCostCollection"
-                tableName="erp_prj_cost_collection" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_cost_collection" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -355,7 +355,7 @@
         <!-- 项目成本归集行 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjCostCollectionLine"
                 displayName="项目成本归集行" name="app.erp.prj.dao.entity.ErpPrjCostCollectionLine"
-                tableName="erp_prj_cost_collection_line" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_cost_collection_line" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="costCollectionId" displayName="归集单ID" stdSqlType="BIGINT" mandatory="true" code="COST_COLLECTION_ID" propId="2" stdDataType="long"/>
@@ -383,7 +383,7 @@
         <!-- 项目里程碑 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjMilestone"
                 displayName="项目里程碑" name="app.erp.prj.dao.entity.ErpPrjMilestone"
-                tableName="erp_prj_milestone" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_milestone" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="projectId" displayName="项目" stdSqlType="BIGINT" mandatory="true" code="PROJECT_ID" propId="2" stdDataType="long"/>
@@ -410,7 +410,7 @@
         <!-- 项目开票头 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjBilling"
                 displayName="项目开票" name="app.erp.prj.dao.entity.ErpPrjBilling"
-                tableName="erp_prj_billing" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_billing" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -446,7 +446,7 @@
         <!-- 项目开票行 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjBillingLine"
                 displayName="项目开票行" name="app.erp.prj.dao.entity.ErpPrjBillingLine"
-                tableName="erp_prj_billing_line" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_billing_line" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="billingId" displayName="开票单ID" stdSqlType="BIGINT" mandatory="true" code="BILLING_ID" propId="2" stdDataType="long"/>

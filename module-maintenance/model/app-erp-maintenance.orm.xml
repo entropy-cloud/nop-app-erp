@@ -120,7 +120,7 @@
         <!-- 设备 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntEquipment"
                 displayName="设备" name="app.erp.mnt.dao.entity.ErpMntEquipment"
-                tableName="erp_mnt_equipment" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mnt_equipment" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="设备编码" domain="equipmentCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -153,7 +153,7 @@
         <!-- 设备分类 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntEquipmentCategory"
                 displayName="设备分类" name="app.erp.mnt.dao.entity.ErpMntEquipmentCategory"
-                tableName="erp_mnt_equipment_category" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mnt_equipment_category" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="分类编码" stdSqlType="VARCHAR" precision="50" mandatory="true" code="CODE" propId="2" stdDataType="string"/>
@@ -175,7 +175,7 @@
         <!-- 维护计划 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntSchedule"
                 displayName="维护计划" name="app.erp.mnt.dao.entity.ErpMntSchedule"
-                tableName="erp_mnt_schedule" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mnt_schedule" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="计划编码" domain="scheduleCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -205,7 +205,7 @@
         <!-- 维护访问 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntVisit"
                 displayName="维护访问" name="app.erp.mnt.dao.entity.ErpMntVisit"
-                tableName="erp_mnt_visit" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mnt_visit" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="访问编码" domain="visitCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -237,7 +237,7 @@
         <!-- 维护任务 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntVisitTask"
                 displayName="维护任务" name="app.erp.mnt.dao.entity.ErpMntVisitTask"
-                tableName="erp_mnt_visit_task" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mnt_visit_task" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="visitId" displayName="维护访问ID" stdSqlType="BIGINT" mandatory="true" code="VISIT_ID" propId="2" stdDataType="long"/>
@@ -262,7 +262,7 @@
         <!-- 维护请求 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntRequest"
                 displayName="维护请求" name="app.erp.mnt.dao.entity.ErpMntRequest"
-                tableName="erp_mnt_request" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mnt_request" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="请求编码" domain="requestCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -292,7 +292,7 @@
         <!-- 停机记录 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntDowntimeEntry"
                 displayName="停机记录" name="app.erp.mnt.dao.entity.ErpMntDowntimeEntry"
-                tableName="erp_mnt_downtime_entry" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mnt_downtime_entry" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="equipmentId" displayName="设备ID" stdSqlType="BIGINT" mandatory="true" code="EQUIPMENT_ID" propId="2" stdDataType="long"/>
@@ -317,7 +317,7 @@
         <!-- 维护团队 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntMaintenanceTeam"
                 displayName="维护团队" name="app.erp.mnt.dao.entity.ErpMntMaintenanceTeam"
-                tableName="erp_mnt_maintenance_team" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mnt_maintenance_team" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="团队编码" domain="equipmentCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -342,7 +342,7 @@
         <!-- 维护团队成员 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntMaintenanceTeamMember"
                 displayName="维护团队成员" name="app.erp.mnt.dao.entity.ErpMntMaintenanceTeamMember"
-                tableName="erp_mnt_maintenance_team_member" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mnt_maintenance_team_member" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="teamId" displayName="团队ID" stdSqlType="BIGINT" mandatory="true" code="TEAM_ID" propId="2" stdDataType="long"/>
@@ -366,7 +366,7 @@
         <!-- 备件消耗行（维修消耗备件触发 inventory 出库） -->
         <entity className="app.erp.mnt.dao.entity.ErpMntSparePartUsage"
                 displayName="备件消耗" name="app.erp.mnt.dao.entity.ErpMntSparePartUsage"
-                tableName="erp_mnt_spare_part_usage" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mnt_spare_part_usage" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="requestCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -401,7 +401,7 @@
         <!-- 备件消耗行 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntSparePartUsageLine"
                 displayName="备件消耗行" name="app.erp.mnt.dao.entity.ErpMntSparePartUsageLine"
-                tableName="erp_mnt_spare_part_usage_line" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mnt_spare_part_usage_line" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="sparePartUsageId" displayName="备件消耗单ID" stdSqlType="BIGINT" mandatory="true" code="SPARE_PART_USAGE_ID" propId="2" stdDataType="long"/>
@@ -430,7 +430,7 @@
         <!-- 校准记录（量具/设备校准） -->
         <entity className="app.erp.mnt.dao.entity.ErpMntCalibration"
                 displayName="校准记录" name="app.erp.mnt.dao.entity.ErpMntCalibration"
-                tableName="erp_mnt_calibration" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mnt_calibration" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="requestCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>

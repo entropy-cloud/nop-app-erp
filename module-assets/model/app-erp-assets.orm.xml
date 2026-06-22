@@ -109,7 +109,7 @@
         <!-- 固定资产卡片 -->
         <entity className="app.erp.ast.dao.entity.ErpAstAsset"
                 displayName="固定资产" name="app.erp.ast.dao.entity.ErpAstAsset"
-                tableName="erp_ast_asset" tagSet="gid" registerShortName="true"
+                tableName="erp_ast_asset" tagSet="gid,erp.assets" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -163,7 +163,7 @@
         <!-- 资产类别 -->
         <entity className="app.erp.ast.dao.entity.ErpAstAssetCategory"
                 displayName="资产类别" name="app.erp.ast.dao.entity.ErpAstAssetCategory"
-                tableName="erp_ast_asset_category" tagSet="gid" registerShortName="true"
+                tableName="erp_ast_asset_category" tagSet="gid,erp.assets" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -201,7 +201,7 @@
         <!-- 折旧计划 -->
         <entity className="app.erp.ast.dao.entity.ErpAstDepreciationSchedule"
                 displayName="折旧计划" name="app.erp.ast.dao.entity.ErpAstDepreciationSchedule"
-                tableName="erp_ast_depreciation_schedule" tagSet="gid" registerShortName="true"
+                tableName="erp_ast_depreciation_schedule" tagSet="gid,erp.assets" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -237,7 +237,7 @@
         <!-- 资产移动 -->
         <entity className="app.erp.ast.dao.entity.ErpAstMovement"
                 displayName="资产移动" name="app.erp.ast.dao.entity.ErpAstMovement"
-                tableName="erp_ast_movement" tagSet="gid" registerShortName="true"
+                tableName="erp_ast_movement" tagSet="gid,erp.assets" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -278,7 +278,7 @@
         <!-- 资产价值调整 -->
         <entity className="app.erp.ast.dao.entity.ErpAstValueAdjustment"
                 displayName="资产价值调整" name="app.erp.ast.dao.entity.ErpAstValueAdjustment"
-                tableName="erp_ast_value_adjustment" tagSet="gid" registerShortName="true"
+                tableName="erp_ast_value_adjustment" tagSet="gid,erp.assets" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -318,7 +318,7 @@
         <!-- 资产处置 -->
         <entity className="app.erp.ast.dao.entity.ErpAstDisposal"
                 displayName="资产处置" name="app.erp.ast.dao.entity.ErpAstDisposal"
-                tableName="erp_ast_disposal" tagSet="gid" registerShortName="true"
+                tableName="erp_ast_disposal" tagSet="gid,erp.assets" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -358,7 +358,7 @@
         <!-- 资产资本化 -->
         <entity className="app.erp.ast.dao.entity.ErpAstAssetCapitalization"
                 displayName="资产资本化" name="app.erp.ast.dao.entity.ErpAstAssetCapitalization"
-                tableName="erp_ast_asset_capitalization" tagSet="gid" registerShortName="true"
+                tableName="erp_ast_asset_capitalization" tagSet="gid,erp.assets" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -399,7 +399,7 @@
         <!-- 在建工程（CIP）主数据 -->
         <entity className="app.erp.ast.dao.entity.ErpAstCip"
                 displayName="在建工程" name="app.erp.ast.dao.entity.ErpAstCip"
-                tableName="erp_ast_cip" tagSet="gid" registerShortName="true"
+                tableName="erp_ast_cip" tagSet="gid,erp.assets" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -438,7 +438,7 @@
         <!-- 资产拆分单头 -->
         <entity className="app.erp.ast.dao.entity.ErpAstSplit"
                 displayName="资产拆分单" name="app.erp.ast.dao.entity.ErpAstSplit"
-                tableName="erp_ast_split" tagSet="gid" registerShortName="true"
+                tableName="erp_ast_split" tagSet="gid,erp.assets" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -475,7 +475,7 @@
         <!-- 资产合并单头 -->
         <entity className="app.erp.ast.dao.entity.ErpAstMerge"
                 displayName="资产合并单" name="app.erp.ast.dao.entity.ErpAstMerge"
-                tableName="erp_ast_merge" tagSet="gid" registerShortName="true"
+                tableName="erp_ast_merge" tagSet="gid,erp.assets" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
