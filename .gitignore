@@ -31,3 +31,6 @@ db/
 
 # Windows artifact
 nul
+
+# Local tool configs
+.opencode/
