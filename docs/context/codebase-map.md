@@ -12,18 +12,18 @@ Keep it current enough to route common work. Do not turn it into a full architec
 
 | Area                | Path                                  | Notes                                                       | Last Verified | Confidence |
 | ------------------- | ------------------------------------- | ----------------------------------------------------------- | ------------- | ---------- |
-| ORM model (truth)   | `model/app-erp-master-data.orm.xml`   | 主数据域权威模型（物料/SKU/往来单位/仓库/科目表）          | 2026-06-22    | high       |
-| ORM model (truth)   | `model/app-erp-inventory.orm.xml`     | 库存域权威模型（移动单/流水/余额/调拨/盘点）               | 2026-06-22    | high       |
-| ORM model (truth)   | `model/app-erp-purchase.orm.xml`      | 采购域权威模型（订单/入库/发票/付款/退货）                 | 2026-06-22    | high       |
-| ORM model (truth)   | `model/app-erp-sales.orm.xml`         | 销售域权威模型（订单/出库/发票/收款/退货）                 | 2026-06-22    | high       |
-| ORM model (truth)   | `model/app-erp-finance.orm.xml`       | 财务域权威模型（凭证/科目/核销/期末结账）                  | 2026-06-22    | high       |
-| ORM model (truth)   | `model/app-erp-assets.orm.xml`        | 固定资产域权威模型（资产卡片/折旧/资本化/处置）            | 2026-06-22    | high       |
-| ORM model (truth)   | `model/app-erp-projects.orm.xml`      | 项目管理域权威模型（项目/任务/工时）                       | 2026-06-22    | high       |
-| ORM model (truth)   | `model/app-erp-manufacturing.orm.xml` | 制造域权威模型（BOM/工单/作业卡/工艺路线）                 | 2026-06-22    | high       |
-| ORM model (truth)   | `model/app-erp-quality.orm.xml`       | 质量管理域权威模型（质检/NCR/CAPA）                        | 2026-06-22    | high       |
-| ORM model (truth)   | `model/app-erp-maintenance.orm.xml`   | 设备维护域权威模型（设备/维护计划/访问/请求）              | 2026-06-22    | high       |
-| ORM model (deprecated) | `model/app-erp.orm.xml`            | bootstrap 占位骨架，已废弃，待删除或转聚合入口             | 2026-06-22    | high       |
-| API model           | `model/app-erp-<domain>.api.xml`      | Generated during/after codegen; not yet present             | —             | high       |
+| ORM model (truth)   | `model/master-data/app-erp-master-data.orm.xml` | 主数据域权威模型（物料/SKU/往来单位/仓库/科目表） | 2026-06-22 | high |
+| ORM model (truth)   | `model/inventory/app-erp-inventory.orm.xml` | 库存域权威模型（移动单/流水/余额/调拨/盘点） | 2026-06-22 | high |
+| ORM model (truth)   | `model/purchase/app-erp-purchase.orm.xml` | 采购域权威模型（订单/入库/发票/付款/退货） | 2026-06-22 | high |
+| ORM model (truth)   | `model/sales/app-erp-sales.orm.xml` | 销售域权威模型（订单/出库/发票/收款/退货） | 2026-06-22 | high |
+| ORM model (truth)   | `model/finance/app-erp-finance.orm.xml` | 财务域权威模型（凭证/科目/核销/期末结账） | 2026-06-22 | high |
+| ORM model (truth)   | `model/assets/app-erp-assets.orm.xml` | 固定资产域权威模型（资产卡片/折旧/资本化/处置） | 2026-06-22 | high |
+| ORM model (truth)   | `model/projects/app-erp-projects.orm.xml` | 项目管理域权威模型（项目/任务/工时） | 2026-06-22 | high |
+| ORM model (truth)   | `model/manufacturing/app-erp-manufacturing.orm.xml` | 制造域权威模型（BOM/工单/作业卡/工艺路线） | 2026-06-22 | high |
+| ORM model (truth)   | `model/quality/app-erp-quality.orm.xml` | 质量管理域权威模型（质检/NCR/CAPA） | 2026-06-22 | high |
+| ORM model (truth)   | `model/maintenance/app-erp-maintenance.orm.xml` | 设备维护域权威模型（设备/维护计划/访问/请求） | 2026-06-22 | high |
+| ORM model (deprecated) | `model/app-erp.orm.xml` | bootstrap 占位骨架，已废弃，待删除或转聚合入口 | 2026-06-22 | high |
+| API model           | `model/<domain>/app-erp-<domain>.api.xml` | Generated during/after codegen; not yet present | — | high |
 | Docs router         | `docs/index.md`                      | Top-level navigation                                        | 2026-06-22    | high       |
 | 领域工程（10 个）    | `app-erp-<domain>/`                   | 每域独立 Maven 工程，由 nop-cli gen 生成 — after codegen    | —             | medium     |
 | 聚合启动工程         | `app-erp-app/`                       | Quarkus main + 聚合所有领域工程依赖 — after codegen         | —             | medium     |
