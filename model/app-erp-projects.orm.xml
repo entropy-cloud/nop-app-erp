@@ -83,7 +83,7 @@
             </columns>
             <relations>
                 <to-one name="projectType" refEntityName="app.erp.prj.dao.entity.ErpPrjProjectType" joinColumnName="projectTypeId"/>
-                <to-one name="manager" refEntityName="app.erp.md.dao.entity.ErpMdUser" joinColumnName="managerId"/>
+                <to-one name="manager" refEntityName="app.erp.md.dao.entity.ErpMdPartner" joinColumnName="managerId"/>
                 <to-many name="tasks" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" myFieldName="id" refFieldName="projectId"/>
                 <to-many name="timesheets" refEntityName="app.erp.prj.dao.entity.ErpPrjTimesheet" myFieldName="id" refFieldName="projectId"/>
                 <to-many name="members" refEntityName="app.erp.prj.dao.entity.ErpPrjProjectUser" myFieldName="id" refFieldName="projectId"/>
@@ -119,7 +119,7 @@
             <relations>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" joinColumnName="projectId"/>
                 <to-one name="parentTask" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" joinColumnName="parentTaskId"/>
-                <to-one name="assignee" refEntityName="app.erp.md.dao.entity.ErpMdUser" joinColumnName="assigneeId"/>
+                <to-one name="assignee" refEntityName="app.erp.md.dao.entity.ErpMdPartner" joinColumnName="assigneeId"/>
                 <to-one name="dependsOn" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" joinColumnName="dependsOnId"/>
                 <to-many name="childTasks" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" myFieldName="id" refFieldName="parentTaskId"/>
                 <to-many name="timesheets" refEntityName="app.erp.prj.dao.entity.ErpPrjTimesheet" myFieldName="id" refFieldName="taskId"/>
@@ -151,9 +151,9 @@
             <relations>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" joinColumnName="projectId"/>
                 <to-one name="task" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" joinColumnName="taskId"/>
-                <to-one name="user" refEntityName="app.erp.md.dao.entity.ErpMdUser" joinColumnName="userId"/>
+                <to-one name="user" refEntityName="app.erp.md.dao.entity.ErpMdPartner" joinColumnName="userId"/>
                 <to-one name="activityType" refEntityName="app.erp.prj.dao.entity.ErpPrjActivityType" joinColumnName="activityTypeId"/>
-                <to-one name="approver" refEntityName="app.erp.md.dao.entity.ErpMdUser" joinColumnName="approvedBy"/>
+                <to-one name="approver" refEntityName="app.erp.md.dao.entity.ErpMdPartner" joinColumnName="approvedBy"/>
             </relations>
         </entity>
 
@@ -172,7 +172,7 @@
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
             <relations>
-                <to-one name="defaultSubject" refEntityName="app.erp.fi.dao.entity.ErpFiSubject" joinColumnName="defaultSubjectId"/>
+                <to-one name="defaultSubject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" joinColumnName="defaultSubjectId"/>
             </relations>
         </entity>
 
@@ -192,7 +192,7 @@
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
             <relations>
-                <to-one name="subject" refEntityName="app.erp.fi.dao.entity.ErpFiSubject" joinColumnName="subjectId"/>
+                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" joinColumnName="subjectId"/>
             </relations>
         </entity>
 
@@ -213,7 +213,7 @@
             </columns>
             <relations>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" joinColumnName="projectId"/>
-                <to-one name="user" refEntityName="app.erp.md.dao.entity.ErpMdUser" joinColumnName="userId"/>
+                <to-one name="user" refEntityName="app.erp.md.dao.entity.ErpMdPartner" joinColumnName="userId"/>
             </relations>
         </entity>
     </entities>

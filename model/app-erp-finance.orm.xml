@@ -131,7 +131,6 @@
                 <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" joinColumnName="currencyId"/>
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" joinColumnName="partnerId"/>
                 <to-one name="department" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" joinColumnName="departmentId"/>
-                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" joinColumnName="projectId"/>
                 <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" joinColumnName="warehouseId"/>
             </relations>
         </entity>
@@ -189,6 +188,7 @@
                 <column name="billLineCode" displayName="单据行号" stdSqlType="VARCHAR" precision="50"/>
                 <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
             <relations>
                 <to-one name="voucher" refEntityName="app.erp.fin.dao.entity.ErpFinVoucher" joinColumnName="voucherId"/>
@@ -230,6 +230,7 @@
                 <column name="postedVouchers" displayName="已过账凭证数" stdSqlType="INT" defaultValue="0"/>
                 <column name="unpostedVouchers" displayName="未过账凭证数" stdSqlType="INT" defaultValue="0"/>
                 <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
             <relations>

@@ -54,6 +54,17 @@
             <option code="PREVENTIVE" label="预防" value="1"/>
             <option code="CAPA" label="纠正预防" value="2"/>
         </dict>
+        <dict label="单据状态" name="erp-qa/doc-status" valueType="int">
+            <option code="DRAFT" label="草稿" value="0"/>
+            <option code="ACTIVE" label="已生效" value="1"/>
+            <option code="CANCELLED" label="已作废" value="2"/>
+        </dict>
+        <dict label="审核状态" name="erp-qa/approve-status" valueType="int">
+            <option code="UNSUBMITTED" label="未提交" value="0"/>
+            <option code="SUBMITTED" label="已提交" value="1"/>
+            <option code="APPROVED" label="已审核" value="2"/>
+            <option code="REJECTED" label="已驳回" value="3"/>
+        </dict>
         <dict label="不合格严重程度" name="erp-qa/severity" valueType="int">
             <option code="LOW" label="低" value="0"/>
             <option code="NORMAL" label="一般" value="1"/>
@@ -99,8 +110,8 @@
                 <column name="inspectionDate" displayName="检验日期" stdSqlType="DATE" mandatory="true"/>
                 <column name="inspectorId" displayName="检验员" stdSqlType="BIGINT"/>
                 <column name="result" displayName="质检结果" dictName="erp-qa/inspection-result" mandatory="true"/>
-                <column name="docStatus" displayName="单据状态" dictName="erp-pur/doc-status" mandatory="true"/>
-                <column name="approveStatus" displayName="审核状态" dictName="erp-pur/approve-status" mandatory="true"/>
+                <column name="docStatus" displayName="单据状态" dictName="erp-qa/doc-status" mandatory="true"/>
+                <column name="approveStatus" displayName="审核状态" dictName="erp-qa/approve-status" mandatory="true"/>
                 <column name="approvedBy" displayName="审核人" stdSqlType="BIGINT"/>
                 <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME"/>
                 <column name="createdBy" displayName="创建人" stdSqlType="BIGINT" mandatory="true"/>

@@ -311,5 +311,71 @@
                 <to-one name="invoice" refEntityName="app.erp.sal.dao.entity.ErpSalInvoice" joinColumnName="invoiceId"/>
             </relations>
         </entity>
+
+        <!-- 销售退货单头 -->
+        <entity className="app.erp.sal.dao.entity.ErpSalReturn"
+                displayName="销售退货单" name="app.erp.sal.dao.entity.ErpSalReturn"
+                tableName="erp_sal_return" tag="erp.sales">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="code" displayName="单号" domainName="orderCode" mandatory="true"/>
+                <column name="deliveryId" displayName="出库单" stdSqlType="BIGINT"/>
+                <column name="customerId" displayName="客户" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="warehouseId" displayName="入库仓库" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="returnDate" displayName="退货日期" stdSqlType="DATE" mandatory="true"/>
+                <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="exchangeRate" displayName="汇率" stdSqlType="DECIMAL" precision="20" scale="8" defaultValue="1"/>
+                <column name="totalAmount" displayName="合计金额(不含税)" domainName="amount" defaultValue="0"/>
+                <column name="totalTaxAmount" displayName="合计税额" domainName="taxAmount" defaultValue="0"/>
+                <column name="totalAmountWithTax" displayName="合计金额(含税)" domainName="amount" defaultValue="0"/>
+                <column name="docStatus" displayName="单据状态" dictName="erp-sal/doc-status" mandatory="true"/>
+                <column name="approveStatus" displayName="审核状态" dictName="erp-sal/approve-status" mandatory="true"/>
+                <column name="approvedBy" displayName="审核人" stdSqlType="BIGINT"/>
+                <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME"/>
+                <column name="createdBy" displayName="创建人" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
+            </columns>
+            <relations>
+                <to-one name="delivery" refEntityName="app.erp.sal.dao.entity.ErpSalDelivery" joinColumnName="deliveryId"/>
+                <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" joinColumnName="customerId"/>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" joinColumnName="warehouseId"/>
+                <to-many name="lines" refEntityName="app.erp.sal.dao.entity.ErpSalReturnLine" myFieldName="id" refFieldName="returnId"/>
+            </relations>
+        </entity>
+
+        <!-- 销售退货单行 -->
+        <entity className="app.erp.sal.dao.entity.ErpSalReturnLine"
+                displayName="销售退货单行" name="app.erp.sal.dao.entity.ErpSalReturnLine"
+                tableName="erp_sal_return_line" tag="erp.sales">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="returnId" displayName="退货单ID" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="deliveryLineId" displayName="出库行ID" stdSqlType="BIGINT"/>
+                <column name="lineNo" displayName="行号" stdSqlType="INT" mandatory="true"/>
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="skuId" displayName="SKU" stdSqlType="BIGINT"/>
+                <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="quantity" displayName="退货数量" domainName="quantity" mandatory="true"/>
+                <column name="unitPrice" displayName="单价(不含税)" domainName="unitPrice"/>
+                <column name="taxRate" displayName="税率(%)" domainName="taxRate"/>
+                <column name="taxAmount" displayName="税额" domainName="taxAmount"/>
+                <column name="amount" displayName="金额(不含税)" domainName="amount"/>
+                <column name="reason" displayName="退货原因" stdSqlType="VARCHAR" precision="500"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-one name="return" refEntityName="app.erp.sal.dao.entity.ErpSalReturn" joinColumnName="returnId"/>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" joinColumnName="materialId"/>
+                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" joinColumnName="skuId"/>
+                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" joinColumnName="uoMId"/>
+            </relations>
+        </entity>
     </entities>
 </orm>
