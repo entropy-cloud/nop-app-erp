@@ -48,9 +48,9 @@ ERP 业务按 10 个独立领域工程组织（见 `docs/architecture/domain-mod
 |--------|------|----------|----------------------|
 | `master-data/` | `app-erp-master-data` | `module-master-data/model/app-erp-master-data.orm.xml` | 仅 README（启停二态非状态机，内嵌一节） |
 | `inventory/` | `app-erp-inventory` | `module-inventory/model/app-erp-inventory.orm.xml` | README + state-machine + cross-domain |
-| `purchase/` | `app-erp-purchase` | `module-purchase/model/app-erp-purchase.orm.xml` | README + state-machine + three-way-match |
-| `sales/` | `app-erp-sales` | `module-sales/model/app-erp-sales.orm.xml` | README + state-machine（与采购对称） |
-| `finance/` | `app-erp-finance` | `module-finance/model/app-erp-finance.orm.xml` | README + state-machine + posting（业财打通） |
+| `purchase/` | `app-erp-purchase` | `module-purchase/model/app-erp-purchase.orm.xml` | README + state-machine + three-way-match + returns |
+| `sales/` | `app-erp-sales` | `module-sales/model/app-erp-sales.orm.xml` | README + state-machine + returns |
+| `finance/` | `app-erp-finance` | `module-finance/model/app-erp-finance.orm.xml` | README + state-machine + posting + period-close + ar-ap-reconciliation + multiple-accounting-schemas |
 
 ### 扩展业务域（资产/项目/制造/质量/维护）
 

@@ -151,7 +151,7 @@
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default"/>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default"/>
                 <column name="code" code="CODE" displayName="物料编码" propId="2" domain="code" stdSqlType="VARCHAR" precision="50" mandatory="true"/>
                 <column name="name" code="NAME" displayName="物料名称" propId="3" domain="name" stdSqlType="VARCHAR" precision="200" mandatory="true"/>
                 <column name="materialType" code="MATERIAL_TYPE" displayName="物料类型" propId="4" stdSqlType="INTEGER" stdDataType="int" mandatory="true" ext:dict="erp-md/material-type"/>
@@ -204,7 +204,7 @@
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default"/>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default"/>
                 <column name="code" code="CODE" displayName="编码" propId="2" domain="code" stdSqlType="VARCHAR" precision="50" mandatory="true"/>
                 <column name="name" code="NAME" displayName="名称" propId="3" domain="name" stdSqlType="VARCHAR" precision="200" mandatory="true"/>
                 <column name="parentId" code="PARENT_ID" displayName="父级ID" propId="4" stdSqlType="BIGINT" stdDataType="long"/>
@@ -234,7 +234,7 @@
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default"/>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default"/>
                 <column name="materialId" code="MATERIAL_ID" displayName="物料ID" propId="2" stdSqlType="BIGINT" stdDataType="long" mandatory="true"/>
                 <column name="skuCode" code="SKU_CODE" displayName="SKU编码" propId="3" stdSqlType="VARCHAR" precision="50" mandatory="true"/>
                 <column name="barcode" code="BARCODE" displayName="条码" propId="4" stdSqlType="VARCHAR" precision="50"/>
@@ -274,7 +274,7 @@
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default"/>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default"/>
                 <column name="code" code="CODE" displayName="编码" propId="2" domain="code" stdSqlType="VARCHAR" precision="50" mandatory="true"/>
                 <column name="name" code="NAME" displayName="名称" propId="3" domain="name" stdSqlType="VARCHAR" precision="200" mandatory="true"/>
                 <column name="partnerType" code="PARTNER_TYPE" displayName="类型" propId="4" stdSqlType="INTEGER" stdDataType="int" mandatory="true" ext:dict="erp-md/partner-type"/>
@@ -317,7 +317,7 @@
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default"/>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default"/>
                 <column name="partnerId" code="PARTNER_ID" displayName="往来单位" propId="2" stdSqlType="BIGINT" stdDataType="long" mandatory="true"/>
                 <column name="addressType" code="ADDRESS_TYPE" displayName="地址类型" propId="3" stdSqlType="INTEGER" stdDataType="int" mandatory="true" ext:dict="erp-md/address-type"/>
                 <column name="contactPerson" code="CONTACT_PERSON" displayName="联系人" propId="4" stdSqlType="VARCHAR" precision="100"/>
@@ -346,7 +346,7 @@
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default"/>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default"/>
                 <column name="partnerId" code="PARTNER_ID" displayName="往来单位" propId="2" stdSqlType="BIGINT" stdDataType="long" mandatory="true"/>
                 <column name="contactPerson" code="CONTACT_PERSON" displayName="联系人姓名" propId="3" stdSqlType="VARCHAR" precision="100" mandatory="true"/>
                 <column name="position" code="POSITION" displayName="职务" propId="4" stdSqlType="VARCHAR" precision="100"/>
@@ -376,7 +376,7 @@
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default"/>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default"/>
                 <column name="code" code="CODE" displayName="编码" propId="2" domain="code" stdSqlType="VARCHAR" precision="50" mandatory="true"/>
                 <column name="name" code="NAME" displayName="名称" propId="3" domain="name" stdSqlType="VARCHAR" precision="200" mandatory="true"/>
                 <column name="warehouseType" code="WAREHOUSE_TYPE" displayName="仓库类型" propId="4" stdSqlType="INTEGER" stdDataType="int" ext:dict="erp-md/warehouse-type"/>
@@ -413,7 +413,7 @@
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default"/>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default"/>
                 <column name="warehouseId" code="WAREHOUSE_ID" displayName="仓库ID" propId="2" stdSqlType="BIGINT" stdDataType="long" mandatory="true"/>
                 <column name="code" code="CODE" displayName="编码" propId="3" domain="code" stdSqlType="VARCHAR" precision="50" mandatory="true"/>
                 <column name="name" code="NAME" displayName="名称" propId="4" domain="name" stdSqlType="VARCHAR" precision="200" mandatory="true"/>
@@ -444,7 +444,7 @@
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default"/>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default"/>
                 <column name="code" code="CODE" displayName="编码" propId="2" domain="code" stdSqlType="VARCHAR" precision="20" mandatory="true"/>
                 <column name="name" code="NAME" displayName="名称" propId="3" domain="name" stdSqlType="VARCHAR" precision="200" mandatory="true"/>
                 <column name="uoMGroup" code="UOM_GROUP" displayName="单位组" propId="4" stdSqlType="VARCHAR" precision="50"/>
@@ -466,7 +466,7 @@
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default"/>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default"/>
                 <column name="materialId" code="MATERIAL_ID" displayName="物料(空表示通用)" propId="2" stdSqlType="BIGINT" stdDataType="long"/>
                 <column name="fromUoMId" code="FROM_UOM_ID" displayName="源单位" propId="3" stdSqlType="BIGINT" stdDataType="long" mandatory="true"/>
                 <column name="toUoMId" code="TO_UOM_ID" displayName="目标单位" propId="4" stdSqlType="BIGINT" stdDataType="long" mandatory="true"/>
@@ -499,7 +499,7 @@
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default"/>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default"/>
                 <column name="code" code="CODE" displayName="币种代码" propId="2" stdSqlType="VARCHAR" precision="10" mandatory="true"/>
                 <column name="name" code="NAME" displayName="名称" propId="3" domain="name" stdSqlType="VARCHAR" precision="200" mandatory="true"/>
                 <column name="symbol" code="SYMBOL" displayName="符号" propId="4" stdSqlType="VARCHAR" precision="10"/>
@@ -523,7 +523,7 @@
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default"/>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default"/>
                 <column name="fromCurrencyId" code="FROM_CURRENCY_ID" displayName="源币种" propId="2" stdSqlType="BIGINT" stdDataType="long" mandatory="true"/>
                 <column name="toCurrencyId" code="TO_CURRENCY_ID" displayName="目标币种" propId="3" stdSqlType="BIGINT" stdDataType="long" mandatory="true"/>
                 <column name="rateType" code="RATE_TYPE" displayName="汇率类型" propId="4" stdSqlType="VARCHAR" precision="30" defaultValue="SPOT"/>
@@ -555,7 +555,7 @@
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default"/>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default"/>
                 <column name="code" code="CODE" displayName="税率编码" propId="2" domain="code" stdSqlType="VARCHAR" precision="50" mandatory="true"/>
                 <column name="name" code="NAME" displayName="税率名称" propId="3" domain="name" stdSqlType="VARCHAR" precision="200" mandatory="true"/>
                 <column name="taxType" code="TAX_TYPE" displayName="税种" propId="4" stdSqlType="INTEGER" stdDataType="int" mandatory="true" ext:dict="erp-md/tax-type"/>
@@ -582,7 +582,7 @@
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default"/>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default"/>
                 <column name="code" code="CODE" displayName="编码" propId="2" domain="code" stdSqlType="VARCHAR" precision="50" mandatory="true"/>
                 <column name="name" code="NAME" displayName="名称" propId="3" domain="name" stdSqlType="VARCHAR" precision="200" mandatory="true"/>
                 <column name="settlementType" code="SETTLEMENT_TYPE" displayName="结算类型" propId="4" stdSqlType="INTEGER" stdDataType="int" mandatory="true" ext:dict="erp-md/settlement-type"/>
@@ -606,7 +606,7 @@
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default"/>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default"/>
                 <column name="partnerId" code="PARTNER_ID" displayName="往来单位" propId="2" stdSqlType="BIGINT" stdDataType="long" mandatory="true"/>
                 <column name="bankName" code="BANK_NAME" displayName="开户银行" propId="3" stdSqlType="VARCHAR" precision="200" mandatory="true"/>
                 <column name="bankBranch" code="BANK_BRANCH" displayName="支行" propId="4" stdSqlType="VARCHAR" precision="200"/>
@@ -636,7 +636,7 @@
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default"/>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default"/>
                 <column name="code" code="CODE" displayName="工号" propId="2" domain="code" stdSqlType="VARCHAR" precision="50" mandatory="true"/>
                 <column name="name" code="NAME" displayName="姓名" propId="3" domain="name" stdSqlType="VARCHAR" precision="200" mandatory="true"/>
                 <column name="orgId" code="ORG_ID" displayName="所属组织/部门" propId="4" stdSqlType="BIGINT" stdDataType="long"/>
@@ -670,7 +670,7 @@
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default"/>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default"/>
                 <column name="code" code="CODE" displayName="科目编码" propId="2" stdSqlType="VARCHAR" precision="50" mandatory="true"/>
                 <column name="name" code="NAME" displayName="科目名称" propId="3" stdSqlType="VARCHAR" precision="200" mandatory="true"/>
                 <column name="parentId" code="PARENT_ID" displayName="父级科目" propId="4" stdSqlType="BIGINT" stdDataType="long"/>
@@ -714,7 +714,7 @@
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default"/>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default"/>
                 <column name="code" code="CODE" displayName="账套编码" propId="2" domain="code" stdSqlType="VARCHAR" precision="50" mandatory="true"/>
                 <column name="name" code="NAME" displayName="账套名称" propId="3" domain="name" stdSqlType="VARCHAR" precision="200" mandatory="true"/>
                 <column name="orgId" code="ORG_ID" displayName="核算组织" propId="4" stdSqlType="BIGINT" stdDataType="long" mandatory="true"/>
@@ -752,7 +752,7 @@
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default"/>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default"/>
                 <column name="acctSchemaId" code="ACCT_SCHEMA_ID" displayName="账套" propId="2" stdSqlType="BIGINT" stdDataType="long" mandatory="true"/>
                 <column name="name" code="NAME" displayName="科目表名称" propId="3" domain="name" stdSqlType="VARCHAR" precision="200" mandatory="true"/>
                 <column name="isPrimary" code="IS_PRIMARY" displayName="是否主科目表" propId="4" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="false"/>
@@ -778,7 +778,7 @@
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default"/>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default"/>
                 <column name="code" code="CODE" displayName="编码" propId="2" domain="code" stdSqlType="VARCHAR" precision="50" mandatory="true"/>
                 <column name="name" code="NAME" displayName="名称" propId="3" domain="name" stdSqlType="VARCHAR" precision="200" mandatory="true"/>
                 <column name="parentId" code="PARENT_ID" displayName="父级组织" propId="4" stdSqlType="BIGINT" stdDataType="long"/>

@@ -104,6 +104,9 @@
 | `README.md`（本文件） | 域概览、凭证模型、跨域协作 |
 | `state-machine.md` | 凭证状态机、会计期间状态 |
 | `posting.md` | 业财打通机制、凭证模板、过账引擎、科目映射 |
+| `period-close.md` | 期末结账流程、成本核算、反结账机制 |
+| `ar-ap-reconciliation.md` | 应收应付核销机制、余额计算、账龄分析 |
+| `multiple-accounting-schemas.md` | 多账套并行核算机制、账套管理、账套转换 |
 
 ## 实现落位提示
 
