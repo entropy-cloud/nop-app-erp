@@ -19,7 +19,7 @@
     - 业务单据头携带：orgId、businessDate、posted、postedAt/postedBy、version
     - 金额类携带：currencyId、exchangeRate、amountSource、amountFunctional
 -->
-<orm ext:registerShortName="true" ext:appName="app-erp-md" ext:entityPackageName="app.erp.md.dao.entity"
+<orm ext:registerShortName="true" ext:appName="erp-md" ext:entityPackageName="app.erp.md.dao.entity"
      ext:basePackageName="app.erp.md" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-master-data"
      ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
      ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef">

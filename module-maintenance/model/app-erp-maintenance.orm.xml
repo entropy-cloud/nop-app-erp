@@ -24,7 +24,7 @@
     - 维修消耗备件触发 inventory 出库（通过 I*Biz）
     - 跨工程实体不做 ORM refEntityName 强引用，走 I*Biz
 -->
-<orm ext:registerShortName="true" ext:appName="app-erp-mnt" ext:entityPackageName="app.erp.mnt.dao.entity"
+<orm ext:registerShortName="true" ext:appName="erp-mnt" ext:entityPackageName="app.erp.mnt.dao.entity"
      ext:basePackageName="app.erp.mnt" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-maintenance"
      ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
      ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef">
@@ -109,21 +109,18 @@
     <domain name="quantity" stdSqlType="DECIMAL" precision="20" scale="4"/>
     <domain name="unitPrice" stdSqlType="DECIMAL" precision="20" scale="4"/>
     <domain name="exchangeRate" stdSqlType="DECIMAL" precision="20" scale="8"/>
-        <domain name="equipmentCode" precision="50" stdSqlType="VARCHAR"/>
-        <domain name="visitCode" precision="50" stdSqlType="VARCHAR"/>
-        <domain name="scheduleCode" precision="50" stdSqlType="VARCHAR"/>
-        <domain name="requestCode" precision="50" stdSqlType="VARCHAR"/>
-        <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
-        <domain name="downtimeMinutes" stdSqlType="DECIMAL" precision="12" scale="2"/>
-        <domain name="quantity" stdSqlType="DECIMAL" precision="20" scale="4"/>
-        <domain name="amount" stdSqlType="DECIMAL" precision="20" scale="4"/>
+    <domain name="equipmentCode" precision="50" stdSqlType="VARCHAR"/>
+    <domain name="visitCode" precision="50" stdSqlType="VARCHAR"/>
+    <domain name="scheduleCode" precision="50" stdSqlType="VARCHAR"/>
+    <domain name="requestCode" precision="50" stdSqlType="VARCHAR"/>
+    <domain name="downtimeMinutes" stdSqlType="DECIMAL" precision="12" scale="2"/>
     </domains>
 
     <entities>
         <!-- 设备 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntEquipment"
                 displayName="设备" name="app.erp.mnt.dao.entity.ErpMntEquipment"
-                tableName="erp_mnt_equipment" tag="erp.maintenance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mnt_equipment" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="设备编码" domain="equipmentCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -146,10 +143,9 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="19" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="20" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="21" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="22" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
-                <to-one name="location" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub"><join><on leftProp="locationId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="location" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub"><join><on leftProp="locationId" rightProp="id"/></join></to-one> -->
                 <to-one name="category" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipmentCategory" tagSet="pub"><join><on leftProp="categoryId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
@@ -157,7 +153,7 @@
         <!-- 设备分类 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntEquipmentCategory"
                 displayName="设备分类" name="app.erp.mnt.dao.entity.ErpMntEquipmentCategory"
-                tableName="erp_mnt_equipment_category" tag="erp.maintenance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mnt_equipment_category" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="分类编码" stdSqlType="VARCHAR" precision="50" mandatory="true" code="CODE" propId="2" stdDataType="string"/>
@@ -170,7 +166,6 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="9" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="10" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="11" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="12" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="parent" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipmentCategory" tagSet="pub"><join><on leftProp="parentId" rightProp="id"/></join></to-one>
@@ -180,7 +175,7 @@
         <!-- 维护计划 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntSchedule"
                 displayName="维护计划" name="app.erp.mnt.dao.entity.ErpMntSchedule"
-                tableName="erp_mnt_schedule" tag="erp.maintenance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mnt_schedule" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="计划编码" domain="scheduleCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -201,7 +196,6 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="17" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="18" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="19" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="20" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="equipment" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipment" tagSet="pub"><join><on leftProp="equipmentId" rightProp="id"/></join></to-one>
@@ -211,7 +205,7 @@
         <!-- 维护访问 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntVisit"
                 displayName="维护访问" name="app.erp.mnt.dao.entity.ErpMntVisit"
-                tableName="erp_mnt_visit" tag="erp.maintenance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mnt_visit" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="访问编码" domain="visitCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -232,7 +226,6 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="17" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="18" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="19" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="20" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="schedule" refEntityName="app.erp.mnt.dao.entity.ErpMntSchedule" tagSet="pub"><join><on leftProp="scheduleId" rightProp="id"/></join></to-one>
@@ -244,7 +237,7 @@
         <!-- 维护任务 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntVisitTask"
                 displayName="维护任务" name="app.erp.mnt.dao.entity.ErpMntVisitTask"
-                tableName="erp_mnt_visit_task" tag="erp.maintenance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mnt_visit_task" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="visitId" displayName="维护访问ID" stdSqlType="BIGINT" mandatory="true" code="VISIT_ID" propId="2" stdDataType="long"/>
@@ -260,7 +253,6 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="12" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="13" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="14" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="15" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="visit" refEntityName="app.erp.mnt.dao.entity.ErpMntVisit" tagSet="pub"><join><on leftProp="visitId" rightProp="id"/></join></to-one>
@@ -270,7 +262,7 @@
         <!-- 维护请求 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntRequest"
                 displayName="维护请求" name="app.erp.mnt.dao.entity.ErpMntRequest"
-                tableName="erp_mnt_request" tag="erp.maintenance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mnt_request" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="请求编码" domain="requestCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -291,7 +283,6 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="17" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="18" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="19" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="20" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="equipment" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipment" tagSet="pub"><join><on leftProp="equipmentId" rightProp="id"/></join></to-one>
@@ -301,7 +292,7 @@
         <!-- 停机记录 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntDowntimeEntry"
                 displayName="停机记录" name="app.erp.mnt.dao.entity.ErpMntDowntimeEntry"
-                tableName="erp_mnt_downtime_entry" tag="erp.maintenance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mnt_downtime_entry" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="equipmentId" displayName="设备ID" stdSqlType="BIGINT" mandatory="true" code="EQUIPMENT_ID" propId="2" stdDataType="long"/>
@@ -317,7 +308,6 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="12" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="13" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="14" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="15" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="equipment" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipment" tagSet="pub"><join><on leftProp="equipmentId" rightProp="id"/></join></to-one>
@@ -327,7 +317,7 @@
         <!-- 维护团队 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntMaintenanceTeam"
                 displayName="维护团队" name="app.erp.mnt.dao.entity.ErpMntMaintenanceTeam"
-                tableName="erp_mnt_maintenance_team" tag="erp.maintenance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mnt_maintenance_team" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="团队编码" domain="equipmentCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -342,10 +332,9 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="11" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="12" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="13" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="14" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
-                <to-one name="leader" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="leaderId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="leader" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="leaderId" rightProp="id"/></join></to-one> -->
                 <to-many name="members" refEntityName="app.erp.mnt.dao.entity.ErpMntMaintenanceTeamMember" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="teamId"/></join></to-many>
             </relations>
         </entity>
@@ -353,7 +342,7 @@
         <!-- 维护团队成员 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntMaintenanceTeamMember"
                 displayName="维护团队成员" name="app.erp.mnt.dao.entity.ErpMntMaintenanceTeamMember"
-                tableName="erp_mnt_maintenance_team_member" tag="erp.maintenance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mnt_maintenance_team_member" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="teamId" displayName="团队ID" stdSqlType="BIGINT" mandatory="true" code="TEAM_ID" propId="2" stdDataType="long"/>
@@ -370,14 +359,14 @@
             </columns>
             <relations>
                 <to-one name="team" refEntityName="app.erp.mnt.dao.entity.ErpMntMaintenanceTeam" tagSet="pub"><join><on leftProp="teamId" rightProp="id"/></join></to-one>
-                <to-one name="employee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="employeeId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="employee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="employeeId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
 
         <!-- 备件消耗行（维修消耗备件触发 inventory 出库） -->
         <entity className="app.erp.mnt.dao.entity.ErpMntSparePartUsage"
                 displayName="备件消耗" name="app.erp.mnt.dao.entity.ErpMntSparePartUsage"
-                tableName="erp_mnt_spare_part_usage" tag="erp.maintenance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mnt_spare_part_usage" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="requestCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -400,7 +389,6 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="19" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="20" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="21" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="22" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="visit" refEntityName="app.erp.mnt.dao.entity.ErpMntVisit" tagSet="pub"><join><on leftProp="visitId" rightProp="id"/></join></to-one>
@@ -413,7 +401,7 @@
         <!-- 备件消耗行 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntSparePartUsageLine"
                 displayName="备件消耗行" name="app.erp.mnt.dao.entity.ErpMntSparePartUsageLine"
-                tableName="erp_mnt_spare_part_usage_line" tag="erp.maintenance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mnt_spare_part_usage_line" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="sparePartUsageId" displayName="备件消耗单ID" stdSqlType="BIGINT" mandatory="true" code="SPARE_PART_USAGE_ID" propId="2" stdDataType="long"/>
@@ -431,19 +419,18 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="14" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="15" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="17" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="sparePartUsage" refEntityName="app.erp.mnt.dao.entity.ErpMntSparePartUsage" tagSet="pub"><join><on leftProp="sparePartUsageId" rightProp="id"/></join></to-one>
-                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
-                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"><join><on leftProp="uoMId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"><join><on leftProp="uoMId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
 
         <!-- 校准记录（量具/设备校准） -->
         <entity className="app.erp.mnt.dao.entity.ErpMntCalibration"
                 displayName="校准记录" name="app.erp.mnt.dao.entity.ErpMntCalibration"
-                tableName="erp_mnt_calibration" tag="erp.maintenance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mnt_calibration" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="requestCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -466,11 +453,10 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="19" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="20" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="21" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="22" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="equipment" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipment" tagSet="pub"><join><on leftProp="equipmentId" rightProp="id"/></join></to-one>
-                <to-one name="calibratedByEmployee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="calibratedBy" rightProp="id"/></join></to-one>
+                <!-- <to-one name="calibratedByEmployee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="calibratedBy" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
     </entities>

@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 评审类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 内部评审
+    value: 10
+    description: 
+  
+  - label: 外部评审
+    value: 20
+    description: 
+  
+  - label: 供应商评审
+    value: 30
+    description: 
+  

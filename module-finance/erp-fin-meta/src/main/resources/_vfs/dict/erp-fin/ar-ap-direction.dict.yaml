@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: AR/AP 方向
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 应收(AR)
+    value: 10
+    description: 
+  
+  - label: 应付(AP)
+    value: 20
+    description: 
+  

@@ -22,7 +22,7 @@
     - 可被 app-erp-sales 引用（按项目销售/结算）
     - 跨工程实体不做 ORM refEntityName 强引用，走 I*Biz
 -->
-<orm ext:registerShortName="true" ext:appName="app-erp-prj" ext:entityPackageName="app.erp.prj.dao.entity"
+<orm ext:registerShortName="true" ext:appName="erp-prj" ext:entityPackageName="app.erp.prj.dao.entity"
      ext:basePackageName="app.erp.prj" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-projects"
      ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
      ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef">
@@ -69,22 +69,19 @@
     <domain name="quantity" stdSqlType="DECIMAL" precision="20" scale="4"/>
     <domain name="unitPrice" stdSqlType="DECIMAL" precision="20" scale="4"/>
     <domain name="exchangeRate" stdSqlType="DECIMAL" precision="20" scale="8"/>
-        <domain name="projectCode" precision="50" stdSqlType="VARCHAR"/>
-        <domain name="taskTitle" precision="200" stdSqlType="VARCHAR"/>
-        <domain name="hours" stdSqlType="DECIMAL" precision="10" scale="2"/>
-        <domain name="budget" stdSqlType="DECIMAL" precision="20" scale="4"/>
-        <domain name="costRate" stdSqlType="DECIMAL" precision="20" scale="4"/>
-        <domain name="costAmount" stdSqlType="DECIMAL" precision="20" scale="4"/>
-        <domain name="amount" stdSqlType="DECIMAL" precision="20" scale="4"/>
-        <domain name="exchangeRate" stdSqlType="DECIMAL" precision="20" scale="8"/>
-        <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
+    <domain name="projectCode" precision="50" stdSqlType="VARCHAR"/>
+    <domain name="taskTitle" precision="200" stdSqlType="VARCHAR"/>
+    <domain name="hours" stdSqlType="DECIMAL" precision="10" scale="2"/>
+    <domain name="budget" stdSqlType="DECIMAL" precision="20" scale="4"/>
+    <domain name="costRate" stdSqlType="DECIMAL" precision="20" scale="4"/>
+    <domain name="costAmount" stdSqlType="DECIMAL" precision="20" scale="4"/>
     </domains>
 
     <entities>
         <!-- 项目 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjProject"
                 displayName="项目" name="app.erp.prj.dao.entity.ErpPrjProject"
-                tableName="erp_prj_project" tag="erp.projects" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_project" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="项目编码" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -108,12 +105,11 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="20" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="21" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="22" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="23" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="projectType" refEntityName="app.erp.prj.dao.entity.ErpPrjProjectType" tagSet="pub"><join><on leftProp="projectTypeId" rightProp="id"/></join></to-one>
-                <to-one name="manager" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="managerId" rightProp="id"/></join></to-one>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="manager" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="managerId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one> -->
                 <to-many name="tasks" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="projectId"/></join></to-many>
                 <to-many name="timesheets" refEntityName="app.erp.prj.dao.entity.ErpPrjTimesheet" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="projectId"/></join></to-many>
                 <to-many name="members" refEntityName="app.erp.prj.dao.entity.ErpPrjProjectUser" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="projectId"/></join></to-many>
@@ -125,7 +121,7 @@
         <!-- 任务 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjTask"
                 displayName="任务" name="app.erp.prj.dao.entity.ErpPrjTask"
-                tableName="erp_prj_task" tag="erp.projects" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_task" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="projectId" displayName="项目" stdSqlType="BIGINT" mandatory="true" code="PROJECT_ID" propId="2" stdDataType="long"/>
@@ -149,12 +145,11 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="20" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="21" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="22" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="23" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub"><join><on leftProp="projectId" rightProp="id"/></join></to-one>
                 <to-one name="parentTask" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub"><join><on leftProp="parentTaskId" rightProp="id"/></join></to-one>
-                <to-one name="assignee" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"><join><on leftProp="assigneeId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="assignee" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"><join><on leftProp="assigneeId" rightProp="id"/></join></to-one> -->
                 <to-one name="dependsOn" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub"><join><on leftProp="dependsOnId" rightProp="id"/></join></to-one>
                 <to-many name="childTasks" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="parentTaskId"/></join></to-many>
                 <to-many name="timesheets" refEntityName="app.erp.prj.dao.entity.ErpPrjTimesheet" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="taskId"/></join></to-many>
@@ -164,7 +159,7 @@
         <!-- 工时记录 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjTimesheet"
                 displayName="工时记录" name="app.erp.prj.dao.entity.ErpPrjTimesheet"
-                tableName="erp_prj_timesheet" tag="erp.projects" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_timesheet" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -191,21 +186,20 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="23" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="24" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="25" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="26" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub"><join><on leftProp="projectId" rightProp="id"/></join></to-one>
                 <to-one name="task" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub"><join><on leftProp="taskId" rightProp="id"/></join></to-one>
-                <to-one name="user" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="userId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="user" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="userId" rightProp="id"/></join></to-one> -->
                 <to-one name="activityType" refEntityName="app.erp.prj.dao.entity.ErpPrjActivityType" tagSet="pub"><join><on leftProp="activityTypeId" rightProp="id"/></join></to-one>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
 
         <!-- 项目类型 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjProjectType"
                 displayName="项目类型" name="app.erp.prj.dao.entity.ErpPrjProjectType"
-                tableName="erp_prj_project_type" tag="erp.projects" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_project_type" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="类型编码" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -218,17 +212,16 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="9" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="10" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="11" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="12" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
-                <to-one name="defaultSubject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="defaultSubjectId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="defaultSubject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="defaultSubjectId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
 
         <!-- 活动类型 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjActivityType"
                 displayName="活动类型" name="app.erp.prj.dao.entity.ErpPrjActivityType"
-                tableName="erp_prj_activity_type" tag="erp.projects" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_activity_type" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="类型编码" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -242,17 +235,16 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="10" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="11" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="12" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="13" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
-                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="subjectId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
 
         <!-- 项目成员 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjProjectUser"
                 displayName="项目成员" name="app.erp.prj.dao.entity.ErpPrjProjectUser"
-                tableName="erp_prj_project_user" tag="erp.projects" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_project_user" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="projectId" displayName="项目" stdSqlType="BIGINT" mandatory="true" code="PROJECT_ID" propId="2" stdDataType="long"/>
@@ -269,14 +261,14 @@
             </columns>
             <relations>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub"><join><on leftProp="projectId" rightProp="id"/></join></to-one>
-                <to-one name="user" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="userId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="user" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="userId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
 
         <!-- 项目预算头 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjBudget"
                 displayName="项目预算" name="app.erp.prj.dao.entity.ErpPrjBudget"
-                tableName="erp_prj_budget" tag="erp.projects" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_budget" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -294,7 +286,6 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="14" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="15" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="17" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub"><join><on leftProp="projectId" rightProp="id"/></join></to-one>
@@ -305,7 +296,7 @@
         <!-- 项目预算行 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjBudgetLine"
                 displayName="项目预算行" name="app.erp.prj.dao.entity.ErpPrjBudgetLine"
-                tableName="erp_prj_budget_line" tag="erp.projects" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_budget_line" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="budgetId" displayName="预算ID" stdSqlType="BIGINT" mandatory="true" code="BUDGET_ID" propId="2" stdDataType="long"/>
@@ -323,18 +314,17 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="14" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="15" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="17" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="budget" refEntityName="app.erp.prj.dao.entity.ErpPrjBudget" tagSet="pub"><join><on leftProp="budgetId" rightProp="id"/></join></to-one>
-                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="subjectId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
 
         <!-- 项目成本归集头（汇总采购/工时/费用到项目） -->
         <entity className="app.erp.prj.dao.entity.ErpPrjCostCollection"
                 displayName="项目成本归集" name="app.erp.prj.dao.entity.ErpPrjCostCollection"
-                tableName="erp_prj_cost_collection" tag="erp.projects" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_cost_collection" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -355,7 +345,6 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="17" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="18" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="19" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="20" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub"><join><on leftProp="projectId" rightProp="id"/></join></to-one>
@@ -366,7 +355,7 @@
         <!-- 项目成本归集行 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjCostCollectionLine"
                 displayName="项目成本归集行" name="app.erp.prj.dao.entity.ErpPrjCostCollectionLine"
-                tableName="erp_prj_cost_collection_line" tag="erp.projects" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_cost_collection_line" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="costCollectionId" displayName="归集单ID" stdSqlType="BIGINT" mandatory="true" code="COST_COLLECTION_ID" propId="2" stdDataType="long"/>
@@ -384,18 +373,17 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="14" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="15" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="17" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="costCollection" refEntityName="app.erp.prj.dao.entity.ErpPrjCostCollection" tagSet="pub"><join><on leftProp="costCollectionId" rightProp="id"/></join></to-one>
-                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="subjectId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
 
         <!-- 项目里程碑 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjMilestone"
                 displayName="项目里程碑" name="app.erp.prj.dao.entity.ErpPrjMilestone"
-                tableName="erp_prj_milestone" tag="erp.projects" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_milestone" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="projectId" displayName="项目" stdSqlType="BIGINT" mandatory="true" code="PROJECT_ID" propId="2" stdDataType="long"/>
@@ -413,7 +401,6 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="14" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="15" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="17" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub"><join><on leftProp="projectId" rightProp="id"/></join></to-one>
@@ -423,7 +410,7 @@
         <!-- 项目开票头 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjBilling"
                 displayName="项目开票" name="app.erp.prj.dao.entity.ErpPrjBilling"
-                tableName="erp_prj_billing" tag="erp.projects" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_billing" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -447,11 +434,10 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="20" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="21" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="22" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="23" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub"><join><on leftProp="projectId" rightProp="id"/></join></to-one>
-                <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"><join><on leftProp="customerId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"><join><on leftProp="customerId" rightProp="id"/></join></to-one> -->
                 <to-one name="milestone" refEntityName="app.erp.prj.dao.entity.ErpPrjMilestone" tagSet="pub"><join><on leftProp="milestoneId" rightProp="id"/></join></to-one>
                 <to-many name="lines" refEntityName="app.erp.prj.dao.entity.ErpPrjBillingLine" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="billingId"/></join></to-many>
             </relations>
@@ -460,7 +446,7 @@
         <!-- 项目开票行 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjBillingLine"
                 displayName="项目开票行" name="app.erp.prj.dao.entity.ErpPrjBillingLine"
-                tableName="erp_prj_billing_line" tag="erp.projects" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_billing_line" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="billingId" displayName="开票单ID" stdSqlType="BIGINT" mandatory="true" code="BILLING_ID" propId="2" stdDataType="long"/>
@@ -476,11 +462,10 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="12" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="13" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="14" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="15" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="billing" refEntityName="app.erp.prj.dao.entity.ErpPrjBilling" tagSet="pub"><join><on leftProp="billingId" rightProp="id"/></join></to-one>
-                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="subjectId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
     </entities>

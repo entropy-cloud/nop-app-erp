@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:ioc="ioc"
+       xmlns="http://www.springframework.org/schema/beans" x:extends="/nop/biz/defaults/service-base.beans.xml"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="app.erp.mnt.service.entity.ErpMntEquipmentCategoryBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMntEquipmentCategory" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mnt.biz.IErpMntEquipmentCategoryBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMntEquipmentCategory"/>
+    </bean>
+
+    <bean id="app.erp.mnt.service.entity.ErpMntMaintenanceTeamBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMntMaintenanceTeam" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mnt.biz.IErpMntMaintenanceTeamBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMntMaintenanceTeam"/>
+    </bean>
+
+    <bean id="app.erp.mnt.service.entity.ErpMntEquipmentBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMntEquipment" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mnt.biz.IErpMntEquipmentBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMntEquipment"/>
+    </bean>
+
+    <bean id="app.erp.mnt.service.entity.ErpMntMaintenanceTeamMemberBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMntMaintenanceTeamMember" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mnt.biz.IErpMntMaintenanceTeamMemberBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMntMaintenanceTeamMember"/>
+    </bean>
+
+    <bean id="app.erp.mnt.service.entity.ErpMntScheduleBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMntSchedule" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mnt.biz.IErpMntScheduleBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMntSchedule"/>
+    </bean>
+
+    <bean id="app.erp.mnt.service.entity.ErpMntRequestBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMntRequest" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mnt.biz.IErpMntRequestBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMntRequest"/>
+    </bean>
+
+    <bean id="app.erp.mnt.service.entity.ErpMntDowntimeEntryBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMntDowntimeEntry" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mnt.biz.IErpMntDowntimeEntryBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMntDowntimeEntry"/>
+    </bean>
+
+    <bean id="app.erp.mnt.service.entity.ErpMntCalibrationBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMntCalibration" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mnt.biz.IErpMntCalibrationBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMntCalibration"/>
+    </bean>
+
+    <bean id="app.erp.mnt.service.entity.ErpMntVisitBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMntVisit" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.mnt.biz.IErpMntVisitBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMntVisit"/>
+    </bean>
+
+    <bean id="app.erp.mnt.service.entity.ErpMntVisitTaskBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMntVisitTask" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mnt.biz.IErpMntVisitTaskBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMntVisitTask"/>
+    </bean>
+
+    <bean id="app.erp.mnt.service.entity.ErpMntSparePartUsageBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMntSparePartUsage" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mnt.biz.IErpMntSparePartUsageBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMntSparePartUsage"/>
+    </bean>
+
+    <bean id="app.erp.mnt.service.entity.ErpMntSparePartUsageLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMntSparePartUsageLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mnt.biz.IErpMntSparePartUsageLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMntSparePartUsageLine"/>
+    </bean>
+</beans>

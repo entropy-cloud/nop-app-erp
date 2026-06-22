@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 收款进度
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 未收款
+    value: 10
+    description: 
+  
+  - label: 部分收款
+    value: 20
+    description: 
+  
+  - label: 已收清
+    value: 30
+    description: 
+  

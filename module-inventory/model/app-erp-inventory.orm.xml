@@ -28,7 +28,7 @@
     - 被 app-erp-finance 引用（存货估值过账）
     - 跨工程实体不做 ORM refEntityName 强引用，走 I*Biz
 -->
-<orm ext:registerShortName="true" ext:appName="app-erp-inv" ext:entityPackageName="app.erp.inv.dao.entity"
+<orm ext:registerShortName="true" ext:appName="erp-inv" ext:entityPackageName="app.erp.inv.dao.entity"
      ext:basePackageName="app.erp.inv" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-inventory"
      ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
      ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef">
@@ -104,19 +104,14 @@
     <domain name="quantity" stdSqlType="DECIMAL" precision="20" scale="4"/>
     <domain name="unitPrice" stdSqlType="DECIMAL" precision="20" scale="4"/>
     <domain name="exchangeRate" stdSqlType="DECIMAL" precision="20" scale="8"/>
-        <domain name="orderCode" precision="50" stdSqlType="VARCHAR"/>
-        <domain name="amount" stdSqlType="DECIMAL" precision="20" scale="4"/>
-        <domain name="quantity" stdSqlType="DECIMAL" precision="20" scale="4"/>
-        <domain name="unitPrice" stdSqlType="DECIMAL" precision="20" scale="4"/>
-        <domain name="exchangeRate" stdSqlType="DECIMAL" precision="20" scale="8"/>
-        <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
+    <domain name="orderCode" precision="50" stdSqlType="VARCHAR"/>
     </domains>
 
     <entities>
         <!-- 库存移动单头 -->
         <entity className="app.erp.inv.dao.entity.ErpInvStockMove"
                 displayName="库存移动单" name="app.erp.inv.dao.entity.ErpInvStockMove"
-                tableName="erp_inv_stock_move" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_inv_stock_move" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -141,11 +136,10 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="21" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="22" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="23" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="24" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
-                <to-one name="sourceWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="sourceWarehouseId" rightProp="id"/></join></to-one>
-                <to-one name="destWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="destWarehouseId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="sourceWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="sourceWarehouseId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="destWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="destWarehouseId" rightProp="id"/></join></to-one> -->
                 <to-many name="lines" refEntityName="app.erp.inv.dao.entity.ErpInvStockMoveLine" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="moveId"/></join></to-many>
             </relations>
         </entity>
@@ -153,7 +147,7 @@
         <!-- 库存移动单行 -->
         <entity className="app.erp.inv.dao.entity.ErpInvStockMoveLine"
                 displayName="库存移动单行" name="app.erp.inv.dao.entity.ErpInvStockMoveLine"
-                tableName="erp_inv_stock_move_line" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_inv_stock_move_line" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="moveId" displayName="移动单ID" stdSqlType="BIGINT" mandatory="true" code="MOVE_ID" propId="2" stdDataType="long"/>
@@ -176,21 +170,20 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="19" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="20" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="21" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="22" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="move" refEntityName="app.erp.inv.dao.entity.ErpInvStockMove" tagSet="pub"><join><on leftProp="moveId" rightProp="id"/></join></to-one>
-                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
-                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one>
-                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"><join><on leftProp="uoMId" rightProp="id"/></join></to-one>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"><join><on leftProp="uoMId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
 
         <!-- 库存流水（不可变） -->
         <entity className="app.erp.inv.dao.entity.ErpInvStockLedger"
                 displayName="库存流水" name="app.erp.inv.dao.entity.ErpInvStockLedger"
-                tableName="erp_inv_stock_ledger" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_inv_stock_ledger" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="流水号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -222,16 +215,16 @@
             <relations>
                 <to-one name="move" refEntityName="app.erp.inv.dao.entity.ErpInvStockMove" tagSet="pub"><join><on leftProp="moveId" rightProp="id"/></join></to-one>
                 <to-one name="moveLine" refEntityName="app.erp.inv.dao.entity.ErpInvStockMoveLine" tagSet="pub"><join><on leftProp="moveLineId" rightProp="id"/></join></to-one>
-                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
-                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one>
-                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
 
         <!-- 库存余额快照 -->
         <entity className="app.erp.inv.dao.entity.ErpInvStockBalance"
                 displayName="库存余额" name="app.erp.inv.dao.entity.ErpInvStockBalance"
-                tableName="erp_inv_stock_balance" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_inv_stock_balance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long"/>
@@ -256,17 +249,17 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="21" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
             </columns>
             <relations>
-                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
-                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one>
-                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
 
         <!-- 库存预留单头（记录级预留，支撑可用量校验与按订单/工单预留） -->
         <entity className="app.erp.inv.dao.entity.ErpInvReservation"
                 displayName="库存预留单" name="app.erp.inv.dao.entity.ErpInvReservation"
-                tableName="erp_inv_reservation" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_inv_reservation" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -284,7 +277,6 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="14" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="15" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="17" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-many name="lines" refEntityName="app.erp.inv.dao.entity.ErpInvReservationLine" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="reservationId"/></join></to-many>
@@ -294,7 +286,7 @@
         <!-- 库存预留单行 -->
         <entity className="app.erp.inv.dao.entity.ErpInvReservationLine"
                 displayName="库存预留单行" name="app.erp.inv.dao.entity.ErpInvReservationLine"
-                tableName="erp_inv_reservation_line" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_inv_reservation_line" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="reservationId" displayName="预留单ID" stdSqlType="BIGINT" mandatory="true" code="RESERVATION_ID" propId="2" stdDataType="long"/>
@@ -317,16 +309,16 @@
             </columns>
             <relations>
                 <to-one name="reservation" refEntityName="app.erp.inv.dao.entity.ErpInvReservation" tagSet="pub"><join><on leftProp="reservationId" rightProp="id"/></join></to-one>
-                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
-                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one>
-                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
 
         <!-- 成本层（支撑 FIFO/批次/具体辨认的多层成本核算） -->
         <entity className="app.erp.inv.dao.entity.ErpInvCostLayer"
                 displayName="成本层" name="app.erp.inv.dao.entity.ErpInvCostLayer"
-                tableName="erp_inv_cost_layer" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_inv_cost_layer" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long"/>
@@ -351,17 +343,17 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="21" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
             </columns>
             <relations>
-                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
-                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one>
-                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
 
         <!-- 调拨单 -->
         <entity className="app.erp.inv.dao.entity.ErpInvTransferOrder"
                 displayName="调拨单" name="app.erp.inv.dao.entity.ErpInvTransferOrder"
-                tableName="erp_inv_transfer_order" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_inv_transfer_order" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -384,12 +376,11 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="19" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="20" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="21" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="22" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
-                <to-one name="fromWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="fromWarehouseId" rightProp="id"/></join></to-one>
-                <to-one name="toWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="toWarehouseId" rightProp="id"/></join></to-one>
-                <to-one name="inTransitWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="inTransitWarehouseId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="fromWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="fromWarehouseId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="toWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="toWarehouseId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="inTransitWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="inTransitWarehouseId" rightProp="id"/></join></to-one> -->
                 <to-many name="lines" refEntityName="app.erp.inv.dao.entity.ErpInvTransferOrderLine" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="transferId"/></join></to-many>
             </relations>
         </entity>
@@ -397,7 +388,7 @@
         <!-- 调拨单行 -->
         <entity className="app.erp.inv.dao.entity.ErpInvTransferOrderLine"
                 displayName="调拨单行" name="app.erp.inv.dao.entity.ErpInvTransferOrderLine"
-                tableName="erp_inv_transfer_order_line" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_inv_transfer_order_line" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="transferId" displayName="调拨单ID" stdSqlType="BIGINT" mandatory="true" code="TRANSFER_ID" propId="2" stdDataType="long"/>
@@ -414,20 +405,19 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="13" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="14" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="15" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="16" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="transfer" refEntityName="app.erp.inv.dao.entity.ErpInvTransferOrder" tagSet="pub"><join><on leftProp="transferId" rightProp="id"/></join></to-one>
-                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
-                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one>
-                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"><join><on leftProp="uoMId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"><join><on leftProp="uoMId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
 
         <!-- 盘点单 -->
         <entity className="app.erp.inv.dao.entity.ErpInvStockTake"
                 displayName="盘点单" name="app.erp.inv.dao.entity.ErpInvStockTake"
-                tableName="erp_inv_stock_take" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_inv_stock_take" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -447,10 +437,9 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="16" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="17" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="19" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
-                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one> -->
                 <to-many name="lines" refEntityName="app.erp.inv.dao.entity.ErpInvStockTakeLine" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="takeId"/></join></to-many>
             </relations>
         </entity>
@@ -458,7 +447,7 @@
         <!-- 盘点单行 -->
         <entity className="app.erp.inv.dao.entity.ErpInvStockTakeLine"
                 displayName="盘点单行" name="app.erp.inv.dao.entity.ErpInvStockTakeLine"
-                tableName="erp_inv_stock_take_line" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_inv_stock_take_line" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="takeId" displayName="盘点单ID" stdSqlType="BIGINT" mandatory="true" code="TAKE_ID" propId="2" stdDataType="long"/>
@@ -480,20 +469,19 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="18" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="19" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="20" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="21" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="take" refEntityName="app.erp.inv.dao.entity.ErpInvStockTake" tagSet="pub"><join><on leftProp="takeId" rightProp="id"/></join></to-one>
-                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
-                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one>
-                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"><join><on leftProp="uoMId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"><join><on leftProp="uoMId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
 
         <!-- 拣货单头 -->
         <entity className="app.erp.inv.dao.entity.ErpInvPickingOrder"
                 displayName="拣货单" name="app.erp.inv.dao.entity.ErpInvPickingOrder"
-                tableName="erp_inv_picking_order" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_inv_picking_order" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -511,10 +499,9 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="14" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="15" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="17" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
-                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one> -->
                 <to-many name="lines" refEntityName="app.erp.inv.dao.entity.ErpInvPickingOrderLine" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="pickingId"/></join></to-many>
             </relations>
         </entity>
@@ -522,7 +509,7 @@
         <!-- 拣货单行 -->
         <entity className="app.erp.inv.dao.entity.ErpInvPickingOrderLine"
                 displayName="拣货单行" name="app.erp.inv.dao.entity.ErpInvPickingOrderLine"
-                tableName="erp_inv_picking_order_line" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_inv_picking_order_line" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="pickingId" displayName="拣货单ID" stdSqlType="BIGINT" mandatory="true" code="PICKING_ID" propId="2" stdDataType="long"/>
@@ -541,20 +528,19 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="15" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="16" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="18" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="picking" refEntityName="app.erp.inv.dao.entity.ErpInvPickingOrder" tagSet="pub"><join><on leftProp="pickingId" rightProp="id"/></join></to-one>
-                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
-                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one>
-                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"><join><on leftProp="uoMId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"><join><on leftProp="uoMId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
 
         <!-- 批次台账 -->
         <entity className="app.erp.inv.dao.entity.ErpInvBatch"
                 displayName="批次台账" name="app.erp.inv.dao.entity.ErpInvBatch"
-                tableName="erp_inv_batch" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_inv_batch" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long"/>
@@ -575,19 +561,18 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="17" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="18" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="19" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="20" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
-                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
-                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one>
-                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
 
         <!-- 序列号台账 -->
         <entity className="app.erp.inv.dao.entity.ErpInvSerialNumber"
                 displayName="序列号台账" name="app.erp.inv.dao.entity.ErpInvSerialNumber"
-                tableName="erp_inv_serial_number" tag="erp.inventory" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_inv_serial_number" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long"/>
@@ -608,11 +593,10 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="17" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="18" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="19" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="20" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
-                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
-                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
     </entities>

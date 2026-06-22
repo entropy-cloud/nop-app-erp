@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 凭证字
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 收
+    value: 10
+    description: 
+  
+  - label: 付
+    value: 20
+    description: 
+  
+  - label: 转
+    value: 30
+    description: 
+  

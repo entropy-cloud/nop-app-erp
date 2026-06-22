@@ -1,0 +1,27 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 核算表性质
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 财务账(法定账)
+    value: 10
+    description: 
+  
+  - label: 管理账(内部账)
+    value: 20
+    description: 
+  
+  - label: 税务账
+    value: 30
+    description: 
+  
+  - label: 合并账
+    value: 40
+    description: 
+  
+  - label: 预算账
+    value: 50
+    description: 
+  

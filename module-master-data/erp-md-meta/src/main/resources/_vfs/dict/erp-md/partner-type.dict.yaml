@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 往来单位类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 客户
+    value: 10
+    description: 
+  
+  - label: 供应商
+    value: 20
+    description: 
+  
+  - label: 客户且供应商
+    value: 30
+    description: 
+  
+  - label: 员工(内部往来)
+    value: 40
+    description: 
+  

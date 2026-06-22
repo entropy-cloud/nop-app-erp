@@ -1,0 +1,11 @@
+package app.erp.pur.dao.entity;
+
+import io.nop.api.core.annotations.biz.BizObjName;
+import app.erp.pur.dao.entity._gen._ErpPurReceive;
+
+
+@BizObjName("ErpPurReceive")
+public class ErpPurReceive extends _ErpPurReceive{
+
+
+}

@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 工时状态
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 草稿
+    value: 10
+    description: 
+  
+  - label: 已提交
+    value: 20
+    description: 
+  
+  - label: 已审批
+    value: 30
+    description: 
+  

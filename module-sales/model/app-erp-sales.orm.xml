@@ -25,7 +25,7 @@
     - 表名:           erp_sal_<entity>
     - 字典命名空间:    erp-sal/<dict-name>
 -->
-<orm ext:registerShortName="true" ext:appName="app-erp-sal" ext:entityPackageName="app.erp.sal.dao.entity"
+<orm ext:registerShortName="true" ext:appName="erp-sal" ext:entityPackageName="app.erp.sal.dao.entity"
      ext:basePackageName="app.erp.sal" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-sales"
      ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
      ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef">
@@ -120,12 +120,12 @@
                 <column name="remark" code="REMARK" displayName="备注" propId="22" domain="remark" stdSqlType="VARCHAR" precision="1000"/>
             </columns>
             <relations>
-                <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub">
+                <!-- <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub">
                     <join><on leftProp="customerId" rightProp="id"/></join>
-                </to-one>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
+                </to-one> -->
+                <!-- <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
                     <join><on leftProp="currencyId" rightProp="id"/></join>
-                </to-one>
+                </to-one> -->
                 <to-many name="lines" refEntityName="app.erp.sal.dao.entity.ErpSalQuotationLine" tagSet="pub,cascade-delete,insertable,updatable">
                     <join><on leftProp="id" rightProp="quotationId"/></join>
                 </to-many>
@@ -163,12 +163,12 @@
                 <to-one name="quotation" refEntityName="app.erp.sal.dao.entity.ErpSalQuotation" tagSet="pub">
                     <join><on leftProp="quotationId" rightProp="id"/></join>
                 </to-one>
-                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
+                <!-- <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
                     <join><on leftProp="materialId" rightProp="id"/></join>
-                </to-one>
-                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub">
+                </to-one> -->
+                <!-- <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub">
                     <join><on leftProp="uoMId" rightProp="id"/></join>
-                </to-one>
+                </to-one> -->
             </relations>
         </entity>
 
@@ -205,12 +205,12 @@
                 <column name="remark" code="REMARK" displayName="备注" propId="23" domain="remark" stdSqlType="VARCHAR" precision="1000"/>
             </columns>
             <relations>
-                <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub">
+                <!-- <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub">
                     <join><on leftProp="customerId" rightProp="id"/></join>
-                </to-one>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
+                </to-one> -->
+                <!-- <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
                     <join><on leftProp="currencyId" rightProp="id"/></join>
-                </to-one>
+                </to-one> -->
             </relations>
         </entity>
 
@@ -260,18 +260,18 @@
                 <column name="remark" code="REMARK" displayName="备注" propId="36" domain="remark" stdSqlType="VARCHAR" precision="1000"/>
             </columns>
             <relations>
-                <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub">
+                <!-- <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub">
                     <join><on leftProp="customerId" rightProp="id"/></join>
-                </to-one>
-                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub">
+                </to-one> -->
+                <!-- <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub">
                     <join><on leftProp="warehouseId" rightProp="id"/></join>
-                </to-one>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
+                </to-one> -->
+                <!-- <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
                     <join><on leftProp="currencyId" rightProp="id"/></join>
-                </to-one>
-                <to-one name="settlementMethod" refEntityName="app.erp.md.dao.entity.ErpMdSettlementMethod" tagSet="pub">
+                </to-one> -->
+                <!-- <to-one name="settlementMethod" refEntityName="app.erp.md.dao.entity.ErpMdSettlementMethod" tagSet="pub">
                     <join><on leftProp="settlementMethodId" rightProp="id"/></join>
-                </to-one>
+                </to-one> -->
                 <to-many name="lines" refEntityName="app.erp.sal.dao.entity.ErpSalOrderLine" tagSet="pub,cascade-delete,insertable,updatable">
                     <join><on leftProp="id" rightProp="orderId"/></join>
                 </to-many>
@@ -315,18 +315,15 @@
                 <to-one name="order" refEntityName="app.erp.sal.dao.entity.ErpSalOrder" tagSet="pub">
                     <join><on leftProp="orderId" rightProp="id"/></join>
                 </to-one>
-                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
+                <!-- <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
                     <join><on leftProp="materialId" rightProp="id"/></join>
-                </to-one>
-                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub">
+                </to-one> -->
+                <!-- <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub">
                     <join><on leftProp="skuId" rightProp="id"/></join>
-                </to-one>
-                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub">
+                </to-one> -->
+                <!-- <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub">
                     <join><on leftProp="uoMId" rightProp="id"/></join>
-                </to-one>
-                <to-one name="taxRate" refEntityName="app.erp.md.dao.entity.ErpMdTaxRate" tagSet="pub">
-                    <join><on leftProp="taxRateId" rightProp="id"/></join>
-                </to-one>
+                </to-one> -->
             </relations>
         </entity>
 
@@ -371,12 +368,12 @@
                 <to-one name="order" refEntityName="app.erp.sal.dao.entity.ErpSalOrder" tagSet="pub">
                     <join><on leftProp="orderId" rightProp="id"/></join>
                 </to-one>
-                <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub">
+                <!-- <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub">
                     <join><on leftProp="customerId" rightProp="id"/></join>
-                </to-one>
-                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub">
+                </to-one> -->
+                <!-- <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub">
                     <join><on leftProp="warehouseId" rightProp="id"/></join>
-                </to-one>
+                </to-one> -->
                 <to-many name="lines" refEntityName="app.erp.sal.dao.entity.ErpSalDeliveryLine" tagSet="pub,cascade-delete,insertable,updatable">
                     <join><on leftProp="id" rightProp="deliveryId"/></join>
                 </to-many>
@@ -417,15 +414,15 @@
                 <to-one name="delivery" refEntityName="app.erp.sal.dao.entity.ErpSalDelivery" tagSet="pub">
                     <join><on leftProp="deliveryId" rightProp="id"/></join>
                 </to-one>
-                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
+                <!-- <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
                     <join><on leftProp="materialId" rightProp="id"/></join>
-                </to-one>
-                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub">
+                </to-one> -->
+                <!-- <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub">
                     <join><on leftProp="skuId" rightProp="id"/></join>
-                </to-one>
-                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub">
+                </to-one> -->
+                <!-- <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub">
                     <join><on leftProp="uoMId" rightProp="id"/></join>
-                </to-one>
+                </to-one> -->
             </relations>
         </entity>
 
@@ -468,12 +465,12 @@
                 <column name="remark" code="REMARK" displayName="备注" propId="29" domain="remark" stdSqlType="VARCHAR" precision="1000"/>
             </columns>
             <relations>
-                <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub">
+                <!-- <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub">
                     <join><on leftProp="customerId" rightProp="id"/></join>
-                </to-one>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
+                </to-one> -->
+                <!-- <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
                     <join><on leftProp="currencyId" rightProp="id"/></join>
-                </to-one>
+                </to-one> -->
                 <to-many name="lines" refEntityName="app.erp.sal.dao.entity.ErpSalInvoiceLine" tagSet="pub,cascade-delete,insertable,updatable">
                     <join><on leftProp="id" rightProp="invoiceId"/></join>
                 </to-many>
@@ -511,9 +508,9 @@
                 <to-one name="invoice" refEntityName="app.erp.sal.dao.entity.ErpSalInvoice" tagSet="pub">
                     <join><on leftProp="invoiceId" rightProp="id"/></join>
                 </to-one>
-                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
+                <!-- <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
                     <join><on leftProp="materialId" rightProp="id"/></join>
-                </to-one>
+                </to-one> -->
             </relations>
         </entity>
 
@@ -556,15 +553,15 @@
                 <column name="remark" code="REMARK" displayName="备注" propId="29" domain="remark" stdSqlType="VARCHAR" precision="1000"/>
             </columns>
             <relations>
-                <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub">
+                <!-- <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub">
                     <join><on leftProp="customerId" rightProp="id"/></join>
-                </to-one>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
+                </to-one> -->
+                <!-- <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
                     <join><on leftProp="currencyId" rightProp="id"/></join>
-                </to-one>
-                <to-one name="settlementMethod" refEntityName="app.erp.md.dao.entity.ErpMdSettlementMethod" tagSet="pub">
+                </to-one> -->
+                <!-- <to-one name="settlementMethod" refEntityName="app.erp.md.dao.entity.ErpMdSettlementMethod" tagSet="pub">
                     <join><on leftProp="settlementMethodId" rightProp="id"/></join>
-                </to-one>
+                </to-one> -->
                 <to-many name="lines" refEntityName="app.erp.sal.dao.entity.ErpSalReceiptLine" tagSet="pub,cascade-delete,insertable,updatable">
                     <join><on leftProp="id" rightProp="receiptId"/></join>
                 </to-many>
@@ -642,12 +639,12 @@
                 <to-one name="delivery" refEntityName="app.erp.sal.dao.entity.ErpSalDelivery" tagSet="pub">
                     <join><on leftProp="deliveryId" rightProp="id"/></join>
                 </to-one>
-                <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub">
+                <!-- <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub">
                     <join><on leftProp="customerId" rightProp="id"/></join>
-                </to-one>
-                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub">
+                </to-one> -->
+                <!-- <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub">
                     <join><on leftProp="warehouseId" rightProp="id"/></join>
-                </to-one>
+                </to-one> -->
                 <to-many name="lines" refEntityName="app.erp.sal.dao.entity.ErpSalReturnLine" tagSet="pub,cascade-delete,insertable,updatable">
                     <join><on leftProp="id" rightProp="returnId"/></join>
                 </to-many>
@@ -687,15 +684,15 @@
                 <to-one name="return" refEntityName="app.erp.sal.dao.entity.ErpSalReturn" tagSet="pub">
                     <join><on leftProp="returnId" rightProp="id"/></join>
                 </to-one>
-                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
+                <!-- <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
                     <join><on leftProp="materialId" rightProp="id"/></join>
-                </to-one>
-                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub">
+                </to-one> -->
+                <!-- <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub">
                     <join><on leftProp="skuId" rightProp="id"/></join>
-                </to-one>
-                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub">
+                </to-one> -->
+                <!-- <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub">
                     <join><on leftProp="uoMId" rightProp="id"/></join>
-                </to-one>
+                </to-one> -->
             </relations>
         </entity>
     </entities>

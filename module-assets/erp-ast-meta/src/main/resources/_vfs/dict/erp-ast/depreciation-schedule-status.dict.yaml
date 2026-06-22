@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 折旧计划状态
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 待执行
+    value: 10
+    description: 
+  
+  - label: 已执行
+    value: 20
+    description: 
+  
+  - label: 已冲销
+    value: 30
+    description: 
+  

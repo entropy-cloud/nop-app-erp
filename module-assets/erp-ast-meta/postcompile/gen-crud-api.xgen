@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<c:script>
+codeGenerator.withTplDir('/nop/templates/crud-api')
+    .withTargetDir("../erp-ast-api/src/main/java")
+    .execute("/", { moduleId: "erp/ast", apiPackageName: "app.erp.ast.api" }, $scope);
+</c:script>

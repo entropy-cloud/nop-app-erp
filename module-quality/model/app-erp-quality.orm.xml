@@ -25,7 +25,7 @@
     - 质检不合格可触发采购退货/销售退货/工单返工（通过 I*Biz 反向通知）
     - 跨工程实体不做 ORM refEntityName 强引用，走 I*Biz
 -->
-<orm ext:registerShortName="true" ext:appName="app-erp-qa" ext:entityPackageName="app.erp.qa.dao.entity"
+<orm ext:registerShortName="true" ext:appName="erp-qa" ext:entityPackageName="app.erp.qa.dao.entity"
      ext:basePackageName="app.erp.qa" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-quality"
      ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
      ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef">
@@ -110,18 +110,16 @@
     <domain name="quantity" stdSqlType="DECIMAL" precision="20" scale="4"/>
     <domain name="unitPrice" stdSqlType="DECIMAL" precision="20" scale="4"/>
     <domain name="exchangeRate" stdSqlType="DECIMAL" precision="20" scale="8"/>
-        <domain name="orderCode" precision="50" stdSqlType="VARCHAR"/>
-        <domain name="measuredValue" stdSqlType="DECIMAL" precision="20" scale="6"/>
-        <domain name="specLimit" stdSqlType="DECIMAL" precision="20" scale="6"/>
-        <domain name="quantity" stdSqlType="DECIMAL" precision="20" scale="4"/>
-        <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
+    <domain name="orderCode" precision="50" stdSqlType="VARCHAR"/>
+    <domain name="measuredValue" stdSqlType="DECIMAL" precision="20" scale="6"/>
+    <domain name="specLimit" stdSqlType="DECIMAL" precision="20" scale="6"/>
     </domains>
 
     <entities>
         <!-- 质检单 -->
         <entity className="app.erp.qa.dao.entity.ErpQaInspection"
                 displayName="质检单" name="app.erp.qa.dao.entity.ErpQaInspection"
-                tableName="erp_qa_inspection" tag="erp.quality" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_qa_inspection" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -152,13 +150,12 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="27" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="28" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="29" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="30" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
-                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
-                <to-one name="supplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"><join><on leftProp="supplierId" rightProp="id"/></join></to-one>
-                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
-                <to-one name="inspector" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="inspectorId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="supplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"><join><on leftProp="supplierId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="inspector" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="inspectorId" rightProp="id"/></join></to-one> -->
                 <to-many name="lines" refEntityName="app.erp.qa.dao.entity.ErpQaInspectionLine" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="inspectionId"/></join></to-many>
             </relations>
         </entity>
@@ -166,7 +163,7 @@
         <!-- 质检单行 -->
         <entity className="app.erp.qa.dao.entity.ErpQaInspectionLine"
                 displayName="质检单行" name="app.erp.qa.dao.entity.ErpQaInspectionLine"
-                tableName="erp_qa_inspection_line" tag="erp.quality" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_qa_inspection_line" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="inspectionId" displayName="质检单ID" stdSqlType="BIGINT" mandatory="true" code="INSPECTION_ID" propId="2" stdDataType="long"/>
@@ -185,7 +182,6 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="15" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="16" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="18" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="inspection" refEntityName="app.erp.qa.dao.entity.ErpQaInspection" tagSet="pub"><join><on leftProp="inspectionId" rightProp="id"/></join></to-one>
@@ -195,7 +191,7 @@
         <!-- 质检模板 -->
         <entity className="app.erp.qa.dao.entity.ErpQaInspectionTemplate"
                 displayName="质检模板" name="app.erp.qa.dao.entity.ErpQaInspectionTemplate"
-                tableName="erp_qa_inspection_template" tag="erp.quality" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_qa_inspection_template" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -210,7 +206,6 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="11" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="12" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="13" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="14" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-many name="lines" refEntityName="app.erp.qa.dao.entity.ErpQaInspectionTemplateLine" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="templateId"/></join></to-many>
@@ -220,7 +215,7 @@
         <!-- 质检模板行 -->
         <entity className="app.erp.qa.dao.entity.ErpQaInspectionTemplateLine"
                 displayName="质检模板行" name="app.erp.qa.dao.entity.ErpQaInspectionTemplateLine"
-                tableName="erp_qa_inspection_template_line" tag="erp.quality" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_qa_inspection_template_line" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="templateId" displayName="模板ID" stdSqlType="BIGINT" mandatory="true" code="TEMPLATE_ID" propId="2" stdDataType="long"/>
@@ -246,7 +241,7 @@
         <!-- 不合格品报告 -->
         <entity className="app.erp.qa.dao.entity.ErpQaNonConformance"
                 displayName="不合格品报告" name="app.erp.qa.dao.entity.ErpQaNonConformance"
-                tableName="erp_qa_non_conformance" tag="erp.quality" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_qa_non_conformance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -269,7 +264,6 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="19" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="20" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="21" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="22" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-many name="actions" refEntityName="app.erp.qa.dao.entity.ErpQaAction" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="ncrId"/></join></to-many>
@@ -279,7 +273,7 @@
         <!-- 纠正预防措施 -->
         <entity className="app.erp.qa.dao.entity.ErpQaAction"
                 displayName="纠正预防措施" name="app.erp.qa.dao.entity.ErpQaAction"
-                tableName="erp_qa_action" tag="erp.quality" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_qa_action" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="ncrId" displayName="不合格品报告ID" stdSqlType="BIGINT" mandatory="true" code="NCR_ID" propId="2" stdDataType="long"/>
@@ -299,7 +293,6 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="16" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="17" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="19" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="ncr" refEntityName="app.erp.qa.dao.entity.ErpQaNonConformance" tagSet="pub"><join><on leftProp="ncrId" rightProp="id"/></join></to-one>
@@ -309,7 +302,7 @@
         <!-- 风险登记 -->
         <entity className="app.erp.qa.dao.entity.ErpQaRiskRegister"
                 displayName="风险登记" name="app.erp.qa.dao.entity.ErpQaRiskRegister"
-                tableName="erp_qa_risk_register" tag="erp.quality" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_qa_risk_register" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="编号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -329,14 +322,13 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="16" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="17" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="19" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
         </entity>
 
         <!-- 质量目标 -->
         <entity className="app.erp.qa.dao.entity.ErpQaQualityGoal"
                 displayName="质量目标" name="app.erp.qa.dao.entity.ErpQaQualityGoal"
-                tableName="erp_qa_quality_goal" tag="erp.quality" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_qa_quality_goal" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -356,17 +348,16 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="16" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="17" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="19" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
-                <to-one name="responsiblePerson" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="responsiblePersonId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="responsiblePerson" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="responsiblePersonId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
 
         <!-- 质量评审 -->
         <entity className="app.erp.qa.dao.entity.ErpQaReview"
                 displayName="质量评审" name="app.erp.qa.dao.entity.ErpQaReview"
-                tableName="erp_qa_review" tag="erp.quality" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_qa_review" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="编号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -387,14 +378,13 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="17" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="18" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="19" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="20" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
         </entity>
 
         <!-- 抽样方案（AQL） -->
         <entity className="app.erp.qa.dao.entity.ErpQaSamplingPlan"
                 displayName="抽样方案" name="app.erp.qa.dao.entity.ErpQaSamplingPlan"
-                tableName="erp_qa_sampling_plan" tag="erp.quality" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_qa_sampling_plan" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -413,14 +403,13 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="15" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="16" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="18" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
         </entity>
 
         <!-- 量具/检验设备校准 -->
         <entity className="app.erp.qa.dao.entity.ErpQaCalibration"
                 displayName="量具校准" name="app.erp.qa.dao.entity.ErpQaCalibration"
-                tableName="erp_qa_calibration" tag="erp.quality" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_qa_calibration" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -444,10 +433,9 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="20" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="21" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="22" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="23" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
-                <to-one name="calibratedByEmployee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="calibratedBy" rightProp="id"/></join></to-one>
+                <!-- <to-one name="calibratedByEmployee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="calibratedBy" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
     </entities>

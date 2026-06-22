@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:ioc="ioc"
+       xmlns="http://www.springframework.org/schema/beans" x:extends="/nop/biz/defaults/service-base.beans.xml"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="app.erp.qa.service.entity.ErpQaInspectionBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpQaInspection" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.qa.biz.IErpQaInspectionBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpQaInspection"/>
+    </bean>
+
+    <bean id="app.erp.qa.service.entity.ErpQaInspectionTemplateBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpQaInspectionTemplate" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.qa.biz.IErpQaInspectionTemplateBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpQaInspectionTemplate"/>
+    </bean>
+
+    <bean id="app.erp.qa.service.entity.ErpQaNonConformanceBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpQaNonConformance" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.qa.biz.IErpQaNonConformanceBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpQaNonConformance"/>
+    </bean>
+
+    <bean id="app.erp.qa.service.entity.ErpQaRiskRegisterBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpQaRiskRegister" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.qa.biz.IErpQaRiskRegisterBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpQaRiskRegister"/>
+    </bean>
+
+    <bean id="app.erp.qa.service.entity.ErpQaQualityGoalBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpQaQualityGoal" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.qa.biz.IErpQaQualityGoalBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpQaQualityGoal"/>
+    </bean>
+
+    <bean id="app.erp.qa.service.entity.ErpQaReviewBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpQaReview" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.qa.biz.IErpQaReviewBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpQaReview"/>
+    </bean>
+
+    <bean id="app.erp.qa.service.entity.ErpQaSamplingPlanBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpQaSamplingPlan" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.qa.biz.IErpQaSamplingPlanBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpQaSamplingPlan"/>
+    </bean>
+
+    <bean id="app.erp.qa.service.entity.ErpQaCalibrationBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpQaCalibration" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.qa.biz.IErpQaCalibrationBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpQaCalibration"/>
+    </bean>
+
+    <bean id="app.erp.qa.service.entity.ErpQaInspectionLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpQaInspectionLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.qa.biz.IErpQaInspectionLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpQaInspectionLine"/>
+    </bean>
+
+    <bean id="app.erp.qa.service.entity.ErpQaInspectionTemplateLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpQaInspectionTemplateLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.qa.biz.IErpQaInspectionTemplateLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpQaInspectionTemplateLine"/>
+    </bean>
+
+    <bean id="app.erp.qa.service.entity.ErpQaActionBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpQaAction" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.qa.biz.IErpQaActionBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpQaAction"/>
+    </bean>
+</beans>

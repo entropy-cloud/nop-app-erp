@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 序列号状态
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 在库
+    value: 10
+    description: 
+  
+  - label: 已出库
+    value: 20
+    description: 
+  
+  - label: 已预留
+    value: 30
+    description: 
+  
+  - label: 冻结
+    value: 40
+    description: 
+  

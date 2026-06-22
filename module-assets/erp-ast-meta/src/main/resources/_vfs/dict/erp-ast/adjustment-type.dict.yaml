@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 价值调整类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 减值
+    value: 10
+    description: 
+  
+  - label: 重估
+    value: 20
+    description: 
+  

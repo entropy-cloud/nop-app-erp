@@ -1,0 +1,27 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 账户类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 银行
+    value: 10
+    description: 
+  
+  - label: 现金
+    value: 20
+    description: 
+  
+  - label: 支付宝
+    value: 30
+    description: 
+  
+  - label: 微信
+    value: 40
+    description: 
+  
+  - label: 其他
+    value: 50
+    description: 
+  

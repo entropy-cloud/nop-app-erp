@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:ioc="ioc"
+       xmlns="http://www.springframework.org/schema/beans" x:extends="/nop/biz/defaults/service-base.beans.xml"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="app.erp.pur.service.entity.ErpPurRequisitionBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPurRequisition" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.pur.biz.IErpPurRequisitionBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpPurRequisition"/>
+    </bean>
+
+    <bean id="app.erp.pur.service.entity.ErpPurSupplierPriceListBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPurSupplierPriceList" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.pur.biz.IErpPurSupplierPriceListBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpPurSupplierPriceList"/>
+    </bean>
+
+    <bean id="app.erp.pur.service.entity.ErpPurOrderBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPurOrder" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.pur.biz.IErpPurOrderBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpPurOrder"/>
+    </bean>
+
+    <bean id="app.erp.pur.service.entity.ErpPurInvoiceBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPurInvoice" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.pur.biz.IErpPurInvoiceBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpPurInvoice"/>
+    </bean>
+
+    <bean id="app.erp.pur.service.entity.ErpPurPaymentBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPurPayment" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.pur.biz.IErpPurPaymentBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpPurPayment"/>
+    </bean>
+
+    <bean id="app.erp.pur.service.entity.ErpPurRequisitionLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPurRequisitionLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.pur.biz.IErpPurRequisitionLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpPurRequisitionLine"/>
+    </bean>
+
+    <bean id="app.erp.pur.service.entity.ErpPurRfqBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPurRfq" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.pur.biz.IErpPurRfqBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpPurRfq"/>
+    </bean>
+
+    <bean id="app.erp.pur.service.entity.ErpPurOrderLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPurOrderLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.pur.biz.IErpPurOrderLineBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpPurOrderLine"/>
+    </bean>
+
+    <bean id="app.erp.pur.service.entity.ErpPurReceiveBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPurReceive" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.pur.biz.IErpPurReceiveBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpPurReceive"/>
+    </bean>
+
+    <bean id="app.erp.pur.service.entity.ErpPurInvoiceLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPurInvoiceLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.pur.biz.IErpPurInvoiceLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpPurInvoiceLine"/>
+    </bean>
+
+    <bean id="app.erp.pur.service.entity.ErpPurPaymentLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPurPaymentLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.pur.biz.IErpPurPaymentLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpPurPaymentLine"/>
+    </bean>
+
+    <bean id="app.erp.pur.service.entity.ErpPurRfqLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPurRfqLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.pur.biz.IErpPurRfqLineBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpPurRfqLine"/>
+    </bean>
+
+    <bean id="app.erp.pur.service.entity.ErpPurQuotationBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPurQuotation" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.pur.biz.IErpPurQuotationBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpPurQuotation"/>
+    </bean>
+
+    <bean id="app.erp.pur.service.entity.ErpPurReceiveLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPurReceiveLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.pur.biz.IErpPurReceiveLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpPurReceiveLine"/>
+    </bean>
+
+    <bean id="app.erp.pur.service.entity.ErpPurReturnBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPurReturn" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.pur.biz.IErpPurReturnBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpPurReturn"/>
+    </bean>
+
+    <bean id="app.erp.pur.service.entity.ErpPurQuotationLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPurQuotationLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.pur.biz.IErpPurQuotationLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpPurQuotationLine"/>
+    </bean>
+
+    <bean id="app.erp.pur.service.entity.ErpPurReturnLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPurReturnLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.pur.biz.IErpPurReturnLineBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpPurReturnLine"/>
+    </bean>
+</beans>

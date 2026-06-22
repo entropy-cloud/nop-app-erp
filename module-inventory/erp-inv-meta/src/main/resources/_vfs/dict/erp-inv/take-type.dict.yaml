@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 盘点类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 全面盘点
+    value: 10
+    description: 
+  
+  - label: 抽样盘点
+    value: 20
+    description: 
+  
+  - label: 循环盘点
+    value: 30
+    description: 
+  

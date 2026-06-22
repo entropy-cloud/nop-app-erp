@@ -1,0 +1,59 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 业务类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 采购入库
+    value: 10
+    description: 
+  
+  - label: 销售出库
+    value: 20
+    description: 
+  
+  - label: 应付发票
+    value: 30
+    description: 
+  
+  - label: 应收发票
+    value: 40
+    description: 
+  
+  - label: 付款
+    value: 50
+    description: 
+  
+  - label: 收款
+    value: 60
+    description: 
+  
+  - label: 折旧
+    value: 70
+    description: 
+  
+  - label: 资本化
+    value: 80
+    description: 
+  
+  - label: 处置
+    value: 90
+    description: 
+  
+  - label: 生产成本结转
+    value: 100
+    description: 
+  
+  - label: 项目成本归集
+    value: 110
+    description: 
+  
+  - label: 期末结转
+    value: 120
+    description: 
+  
+  - label: 汇兑损益
+    value: 130
+    description: 
+  

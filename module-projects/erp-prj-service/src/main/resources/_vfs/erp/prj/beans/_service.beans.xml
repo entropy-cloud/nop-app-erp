@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:ioc="ioc"
+       xmlns="http://www.springframework.org/schema/beans" x:extends="/nop/biz/defaults/service-base.beans.xml"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="app.erp.prj.service.entity.ErpPrjProjectTypeBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPrjProjectType" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.prj.biz.IErpPrjProjectTypeBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpPrjProjectType"/>
+    </bean>
+
+    <bean id="app.erp.prj.service.entity.ErpPrjActivityTypeBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPrjActivityType" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.prj.biz.IErpPrjActivityTypeBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpPrjActivityType"/>
+    </bean>
+
+    <bean id="app.erp.prj.service.entity.ErpPrjProjectBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPrjProject" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.prj.biz.IErpPrjProjectBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpPrjProject"/>
+    </bean>
+
+    <bean id="app.erp.prj.service.entity.ErpPrjTaskBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPrjTask" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.prj.biz.IErpPrjTaskBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpPrjTask"/>
+    </bean>
+
+    <bean id="app.erp.prj.service.entity.ErpPrjProjectUserBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPrjProjectUser" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.prj.biz.IErpPrjProjectUserBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpPrjProjectUser"/>
+    </bean>
+
+    <bean id="app.erp.prj.service.entity.ErpPrjBudgetBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPrjBudget" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.prj.biz.IErpPrjBudgetBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpPrjBudget"/>
+    </bean>
+
+    <bean id="app.erp.prj.service.entity.ErpPrjCostCollectionBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPrjCostCollection" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.prj.biz.IErpPrjCostCollectionBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpPrjCostCollection"/>
+    </bean>
+
+    <bean id="app.erp.prj.service.entity.ErpPrjMilestoneBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPrjMilestone" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.prj.biz.IErpPrjMilestoneBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpPrjMilestone"/>
+    </bean>
+
+    <bean id="app.erp.prj.service.entity.ErpPrjTimesheetBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPrjTimesheet" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.prj.biz.IErpPrjTimesheetBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpPrjTimesheet"/>
+    </bean>
+
+    <bean id="app.erp.prj.service.entity.ErpPrjBudgetLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPrjBudgetLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.prj.biz.IErpPrjBudgetLineBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpPrjBudgetLine"/>
+    </bean>
+
+    <bean id="app.erp.prj.service.entity.ErpPrjCostCollectionLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPrjCostCollectionLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.prj.biz.IErpPrjCostCollectionLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpPrjCostCollectionLine"/>
+    </bean>
+
+    <bean id="app.erp.prj.service.entity.ErpPrjBillingBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPrjBilling" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.prj.biz.IErpPrjBillingBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpPrjBilling"/>
+    </bean>
+
+    <bean id="app.erp.prj.service.entity.ErpPrjBillingLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPrjBillingLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.prj.biz.IErpPrjBillingLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpPrjBillingLine"/>
+    </bean>
+</beans>

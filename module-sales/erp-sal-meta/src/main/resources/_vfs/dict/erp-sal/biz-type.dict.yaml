@@ -1,0 +1,35 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 销售单据类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 销售报价
+    value: 10
+    description: 
+  
+  - label: 销售合同
+    value: 20
+    description: 
+  
+  - label: 销售订单
+    value: 30
+    description: 
+  
+  - label: 销售出库
+    value: 40
+    description: 
+  
+  - label: 销售发票
+    value: 50
+    description: 
+  
+  - label: 收款单
+    value: 60
+    description: 
+  
+  - label: 销售退货
+    value: 70
+    description: 
+  

@@ -1,0 +1,31 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 科目类别
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 资产
+    value: 10
+    description: 
+  
+  - label: 负债
+    value: 20
+    description: 
+  
+  - label: 权益
+    value: 30
+    description: 
+  
+  - label: 收入
+    value: 40
+    description: 
+  
+  - label: 费用
+    value: 50
+    description: 
+  
+  - label: 成本
+    value: 60
+    description: 
+  

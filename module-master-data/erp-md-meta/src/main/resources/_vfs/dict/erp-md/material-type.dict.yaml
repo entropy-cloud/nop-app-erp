@@ -1,0 +1,35 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 物料类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 商品
+    value: 10
+    description: 
+  
+  - label: 原材料
+    value: 20
+    description: 
+  
+  - label: 半成品
+    value: 30
+    description: 
+  
+  - label: 产成品
+    value: 40
+    description: 
+  
+  - label: 服务
+    value: 50
+    description: 
+  
+  - label: 包装物
+    value: 60
+    description: 
+  
+  - label: 消耗品
+    value: 70
+    description: 
+  

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:ioc="ioc"
+       xmlns="http://www.springframework.org/schema/beans" x:extends="/nop/biz/defaults/service-base.beans.xml"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgBomBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgBom" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.mfg.biz.IErpMfgBomBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMfgBom"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgWorkcenterBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgWorkcenter" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgWorkcenterBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMfgWorkcenter"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgRoutingBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgRouting" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgRoutingBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMfgRouting"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgMrpPlanBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgMrpPlan" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgMrpPlanBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMfgMrpPlan"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgCostRollupBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgCostRollup" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgCostRollupBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMfgCostRollup"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgBomLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgBomLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgBomLineBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMfgBomLine"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgBomByproductBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgBomByproduct" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgBomByproductBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMfgBomByproduct"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgBomOperationBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgBomOperation" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgBomOperationBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMfgBomOperation"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgRoutingOperationBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgRoutingOperation" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgRoutingOperationBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMfgRoutingOperation"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgProductionVersionBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgProductionVersion" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgProductionVersionBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMfgProductionVersion"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgMrpPlanLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgMrpPlanLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgMrpPlanLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMfgMrpPlanLine"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgMrpDemandBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgMrpDemand" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgMrpDemandBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMfgMrpDemand"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgCostRollupLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgCostRollupLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgCostRollupLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMfgCostRollupLine"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgWorkOrderBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgWorkOrder" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgWorkOrderBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMfgWorkOrder"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgWorkOrderLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgWorkOrderLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgWorkOrderLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMfgWorkOrderLine"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgSubcontractOrderBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgSubcontractOrder" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgSubcontractOrderBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMfgSubcontractOrder"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgJobCardBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgJobCard" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgJobCardBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMfgJobCard"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgSubcontractOrderLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgSubcontractOrderLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgSubcontractOrderLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMfgSubcontractOrderLine"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgMaterialIssueBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgMaterialIssue" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgMaterialIssueBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMfgMaterialIssue"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgJobCardTimeLogBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgJobCardTimeLog" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgJobCardTimeLogBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMfgJobCardTimeLog"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgMaterialIssueLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgMaterialIssueLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgMaterialIssueLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMfgMaterialIssueLine"/>
+    </bean>
+</beans>

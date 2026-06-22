@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:ioc="ioc"
+       xmlns="http://www.springframework.org/schema/beans" x:extends="/nop/biz/defaults/service-base.beans.xml"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="app.erp.sal.service.entity.ErpSalQuotationBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpSalQuotation" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.sal.biz.IErpSalQuotationBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpSalQuotation"/>
+    </bean>
+
+    <bean id="app.erp.sal.service.entity.ErpSalContractBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpSalContract" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.sal.biz.IErpSalContractBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpSalContract"/>
+    </bean>
+
+    <bean id="app.erp.sal.service.entity.ErpSalOrderBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpSalOrder" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.sal.biz.IErpSalOrderBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpSalOrder"/>
+    </bean>
+
+    <bean id="app.erp.sal.service.entity.ErpSalInvoiceBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpSalInvoice" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.sal.biz.IErpSalInvoiceBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpSalInvoice"/>
+    </bean>
+
+    <bean id="app.erp.sal.service.entity.ErpSalReceiptBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpSalReceipt" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.sal.biz.IErpSalReceiptBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpSalReceipt"/>
+    </bean>
+
+    <bean id="app.erp.sal.service.entity.ErpSalQuotationLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpSalQuotationLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.sal.biz.IErpSalQuotationLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpSalQuotationLine"/>
+    </bean>
+
+    <bean id="app.erp.sal.service.entity.ErpSalOrderLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpSalOrderLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.sal.biz.IErpSalOrderLineBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpSalOrderLine"/>
+    </bean>
+
+    <bean id="app.erp.sal.service.entity.ErpSalDeliveryBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpSalDelivery" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.sal.biz.IErpSalDeliveryBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpSalDelivery"/>
+    </bean>
+
+    <bean id="app.erp.sal.service.entity.ErpSalInvoiceLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpSalInvoiceLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.sal.biz.IErpSalInvoiceLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpSalInvoiceLine"/>
+    </bean>
+
+    <bean id="app.erp.sal.service.entity.ErpSalReceiptLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpSalReceiptLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.sal.biz.IErpSalReceiptLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpSalReceiptLine"/>
+    </bean>
+
+    <bean id="app.erp.sal.service.entity.ErpSalDeliveryLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpSalDeliveryLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.sal.biz.IErpSalDeliveryLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpSalDeliveryLine"/>
+    </bean>
+
+    <bean id="app.erp.sal.service.entity.ErpSalReturnBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpSalReturn" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.sal.biz.IErpSalReturnBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpSalReturn"/>
+    </bean>
+
+    <bean id="app.erp.sal.service.entity.ErpSalReturnLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpSalReturnLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.sal.biz.IErpSalReturnLineBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpSalReturnLine"/>
+    </bean>
+</beans>

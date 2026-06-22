@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:ioc="ioc"
+       xmlns="http://www.springframework.org/schema/beans" x:extends="/nop/biz/defaults/service-base.beans.xml"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="app.erp.md.service.entity.ErpMdMaterialCategoryBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMdMaterialCategory" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.md.biz.IErpMdMaterialCategoryBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMdMaterialCategory"/>
+    </bean>
+
+    <bean id="app.erp.md.service.entity.ErpMdUoMBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMdUoM" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.md.biz.IErpMdUoMBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMdUoM"/>
+    </bean>
+
+    <bean id="app.erp.md.service.entity.ErpMdTaxRateBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMdTaxRate" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.md.biz.IErpMdTaxRateBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMdTaxRate"/>
+    </bean>
+
+    <bean id="app.erp.md.service.entity.ErpMdPartnerBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMdPartner" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.md.biz.IErpMdPartnerBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMdPartner"/>
+    </bean>
+
+    <bean id="app.erp.md.service.entity.ErpMdCurrencyBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMdCurrency" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.md.biz.IErpMdCurrencyBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMdCurrency"/>
+    </bean>
+
+    <bean id="app.erp.md.service.entity.ErpMdSettlementMethodBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMdSettlementMethod" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.md.biz.IErpMdSettlementMethodBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMdSettlementMethod"/>
+    </bean>
+
+    <bean id="app.erp.md.service.entity.ErpMdPartnerAddressBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMdPartnerAddress" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.md.biz.IErpMdPartnerAddressBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMdPartnerAddress"/>
+    </bean>
+
+    <bean id="app.erp.md.service.entity.ErpMdPartnerContactBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMdPartnerContact" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.md.biz.IErpMdPartnerContactBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMdPartnerContact"/>
+    </bean>
+
+    <bean id="app.erp.md.service.entity.ErpMdBankAccountBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMdBankAccount" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.md.biz.IErpMdBankAccountBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMdBankAccount"/>
+    </bean>
+
+    <bean id="app.erp.md.service.entity.ErpMdExchangeRateBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMdExchangeRate" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.md.biz.IErpMdExchangeRateBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMdExchangeRate"/>
+    </bean>
+
+    <bean id="app.erp.md.service.entity.ErpMdSubjectBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMdSubject" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.md.biz.IErpMdSubjectBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMdSubject"/>
+    </bean>
+
+    <bean id="app.erp.md.service.entity.ErpMdOrganizationBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMdOrganization" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.md.biz.IErpMdOrganizationBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMdOrganization"/>
+    </bean>
+
+    <bean id="app.erp.md.service.entity.ErpMdEmployeeBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMdEmployee" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.md.biz.IErpMdEmployeeBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMdEmployee"/>
+    </bean>
+
+    <bean id="app.erp.md.service.entity.ErpMdAcctSchemaBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMdAcctSchema" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.md.biz.IErpMdAcctSchemaBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMdAcctSchema"/>
+    </bean>
+
+    <bean id="app.erp.md.service.entity.ErpMdWarehouseBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMdWarehouse" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.md.biz.IErpMdWarehouseBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMdWarehouse"/>
+    </bean>
+
+    <bean id="app.erp.md.service.entity.ErpMdAcctSchemaCoaBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMdAcctSchemaCoa" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.md.biz.IErpMdAcctSchemaCoaBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMdAcctSchemaCoa"/>
+    </bean>
+
+    <bean id="app.erp.md.service.entity.ErpMdMaterialBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMdMaterial" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.md.biz.IErpMdMaterialBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMdMaterial"/>
+    </bean>
+
+    <bean id="app.erp.md.service.entity.ErpMdLocationBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMdLocation" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.md.biz.IErpMdLocationBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMdLocation"/>
+    </bean>
+
+    <bean id="app.erp.md.service.entity.ErpMdMaterialSkuBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMdMaterialSku" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.md.biz.IErpMdMaterialSkuBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMdMaterialSku"/>
+    </bean>
+
+    <bean id="app.erp.md.service.entity.ErpMdUoMConversionBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMdUoMConversion" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.md.biz.IErpMdUoMConversionBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMdUoMConversion"/>
+    </bean>
+</beans>

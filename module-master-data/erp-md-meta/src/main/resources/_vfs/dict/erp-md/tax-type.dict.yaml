@@ -1,0 +1,27 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 税种
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 增值税
+    value: 10
+    description: 
+  
+  - label: 销售税
+    value: 20
+    description: 
+  
+  - label: 预提税
+    value: 30
+    description: 
+  
+  - label: 关税
+    value: 40
+    description: 
+  
+  - label: 其他
+    value: 50
+    description: 
+  

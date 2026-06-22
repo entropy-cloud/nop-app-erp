@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 库存作业类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 入库
+    value: 10
+    description: 
+  
+  - label: 出库
+    value: 20
+    description: 
+  
+  - label: 内部调拨
+    value: 30
+    description: 
+  
+  - label: 制造
+    value: 40
+    description: 
+  

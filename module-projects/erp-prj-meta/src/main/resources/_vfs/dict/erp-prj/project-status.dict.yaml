@@ -1,0 +1,27 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 项目状态
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 草稿
+    value: 10
+    description: 
+  
+  - label: 进行中
+    value: 20
+    description: 
+  
+  - label: 暂停
+    value: 30
+    description: 
+  
+  - label: 已完成
+    value: 40
+    description: 
+  
+  - label: 已取消
+    value: 50
+    description: 
+  

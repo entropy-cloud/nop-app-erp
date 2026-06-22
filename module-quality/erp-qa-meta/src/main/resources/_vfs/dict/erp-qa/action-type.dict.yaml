@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 纠正措施类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 纠正
+    value: 10
+    description: 
+  
+  - label: 预防
+    value: 20
+    description: 
+  
+  - label: 纠正预防
+    value: 30
+    description: 
+  

@@ -37,7 +37,7 @@
     - 表名:           erp_ast_<entity>
     - 字典命名空间:    erp-ast/<dict-name>
 -->
-<orm ext:registerShortName="true" ext:appName="app-erp-ast" ext:entityPackageName="app.erp.ast.dao.entity"
+<orm ext:registerShortName="true" ext:appName="erp-ast" ext:entityPackageName="app.erp.ast.dao.entity"
      ext:basePackageName="app.erp.ast" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-assets"
      ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
      ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef">
@@ -144,7 +144,8 @@
                 <to-one name="category" refEntityName="app.erp.ast.dao.entity.ErpAstAssetCategory" tagSet="pub">
                     <join><on leftProp="categoryId" rightProp="id"/></join>
                 </to-one>
-                <to-one name="department" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                <!-- Cross-module references handled via I*Biz at BizModel level -->
+                <!-- <to-one name="department" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
                     <join><on leftProp="departmentId" rightProp="id"/></join>
                 </to-one>
                 <to-one name="location" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub">
@@ -155,7 +156,7 @@
                 </to-one>
                 <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
                     <join><on leftProp="currencyId" rightProp="id"/></join>
-                </to-one>
+                </to-one>-->
             </relations>
         </entity>
 
@@ -184,7 +185,8 @@
                 <column name="remark" code="REMARK" displayName="备注" propId="15" domain="remark" stdSqlType="VARCHAR" precision="1000"/>
             </columns>
             <relations>
-                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub">
+                <!-- Cross-module references handled via I*Biz at BizModel level -->
+                <!-- <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub">
                     <join><on leftProp="subjectId" rightProp="id"/></join>
                 </to-one>
                 <to-one name="depreciationSubject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub">
@@ -192,7 +194,7 @@
                 </to-one>
                 <to-one name="expenseSubject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub">
                     <join><on leftProp="expenseSubjectId" rightProp="id"/></join>
-                </to-one>
+                </to-one>-->
             </relations>
         </entity>
 
@@ -426,9 +428,10 @@
                 <to-one name="category" refEntityName="app.erp.ast.dao.entity.ErpAstAssetCategory" tagSet="pub">
                     <join><on leftProp="categoryId" rightProp="id"/></join>
                 </to-one>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
+                <!-- Cross-module reference handled via I*Biz at BizModel level -->
+                <!-- <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
                     <join><on leftProp="currencyId" rightProp="id"/></join>
-                </to-one>
+                </to-one>-->
             </relations>
         </entity>
 

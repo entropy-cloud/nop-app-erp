@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: BOM 类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 制造
+    value: 10
+    description: 
+  
+  - label: 虚拟件/Kit
+    value: 20
+    description: 
+  

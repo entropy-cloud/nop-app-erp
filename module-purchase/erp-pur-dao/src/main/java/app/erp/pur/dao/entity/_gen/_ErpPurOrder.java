@@ -1,0 +1,1916 @@
+package app.erp.pur.dao.entity._gen;
+
+import io.nop.orm.model.IEntityModel;
+import io.nop.orm.support.DynamicOrmEntity;
+import io.nop.orm.support.OrmEntitySet; //NOPMD - suppressed UnusedImports - Auto Gen Code
+import io.nop.orm.IOrmEntitySet; //NOPMD - suppressed UnusedImports - Auto Gen Code
+import io.nop.api.core.convert.ConvertHelper;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Arrays;
+import java.util.List;
+
+import app.erp.pur.dao.entity.ErpPurOrder;
+
+// tell cpd to start ignoring code - CPD-OFF
+/**
+ *  采购订单: erp_pur_order
+ */
+@SuppressWarnings({"PMD.UselessOverridingMethod","PMD.UnusedLocalVariable","java:S3008","java:S1602","java:S1128","java:S1161",
+        "PMD.UnnecessaryFullyQualifiedName","PMD.EmptyControlStatement","java:S116","java:S115","java:S101","java:S3776"})
+public class _ErpPurOrder extends DynamicOrmEntity{
+    
+    /* ID: ID BIGINT */
+    public static final String PROP_NAME_id = "id";
+    public static final int PROP_ID_id = 1;
+    
+    /* 单号: CODE VARCHAR */
+    public static final String PROP_NAME_code = "code";
+    public static final int PROP_ID_code = 2;
+    
+    /* 业务组织: ORG_ID BIGINT */
+    public static final String PROP_NAME_orgId = "orgId";
+    public static final int PROP_ID_orgId = 3;
+    
+    /* 请购单: REQUISITION_ID BIGINT */
+    public static final String PROP_NAME_requisitionId = "requisitionId";
+    public static final int PROP_ID_requisitionId = 4;
+    
+    /* 报价单: QUOTATION_ID BIGINT */
+    public static final String PROP_NAME_quotationId = "quotationId";
+    public static final int PROP_ID_quotationId = 5;
+    
+    /* 供应商: SUPPLIER_ID BIGINT */
+    public static final String PROP_NAME_supplierId = "supplierId";
+    public static final int PROP_ID_supplierId = 6;
+    
+    /* 收货仓库: WAREHOUSE_ID BIGINT */
+    public static final String PROP_NAME_warehouseId = "warehouseId";
+    public static final int PROP_ID_warehouseId = 7;
+    
+    /* 订单日期: BUSINESS_DATE DATE */
+    public static final String PROP_NAME_businessDate = "businessDate";
+    public static final int PROP_ID_businessDate = 8;
+    
+    /* 交货日期: DELIVERY_DATE DATE */
+    public static final String PROP_NAME_deliveryDate = "deliveryDate";
+    public static final int PROP_ID_deliveryDate = 9;
+    
+    /* 币种: CURRENCY_ID BIGINT */
+    public static final String PROP_NAME_currencyId = "currencyId";
+    public static final int PROP_ID_currencyId = 10;
+    
+    /* 汇率: EXCHANGE_RATE DECIMAL */
+    public static final String PROP_NAME_exchangeRate = "exchangeRate";
+    public static final int PROP_ID_exchangeRate = 11;
+    
+    /* 合计金额(源币不含税): AMOUNT_SOURCE DECIMAL */
+    public static final String PROP_NAME_amountSource = "amountSource";
+    public static final int PROP_ID_amountSource = 12;
+    
+    /* 合计金额(本位币不含税): AMOUNT_FUNCTIONAL DECIMAL */
+    public static final String PROP_NAME_amountFunctional = "amountFunctional";
+    public static final int PROP_ID_amountFunctional = 13;
+    
+    /* 合计金额(本位币不含税): TOTAL_AMOUNT DECIMAL */
+    public static final String PROP_NAME_totalAmount = "totalAmount";
+    public static final int PROP_ID_totalAmount = 14;
+    
+    /* 合计税额: TOTAL_TAX_AMOUNT DECIMAL */
+    public static final String PROP_NAME_totalTaxAmount = "totalTaxAmount";
+    public static final int PROP_ID_totalTaxAmount = 15;
+    
+    /* 合计金额(含税): TOTAL_AMOUNT_WITH_TAX DECIMAL */
+    public static final String PROP_NAME_totalAmountWithTax = "totalAmountWithTax";
+    public static final int PROP_ID_totalAmountWithTax = 16;
+    
+    /* 整单折扣率(%): DISCOUNT_RATE DECIMAL */
+    public static final String PROP_NAME_discountRate = "discountRate";
+    public static final int PROP_ID_discountRate = 17;
+    
+    /* 折扣金额: DISCOUNT_AMOUNT DECIMAL */
+    public static final String PROP_NAME_discountAmount = "discountAmount";
+    public static final int PROP_ID_discountAmount = 18;
+    
+    /* 已付金额: PAID_AMOUNT DECIMAL */
+    public static final String PROP_NAME_paidAmount = "paidAmount";
+    public static final int PROP_ID_paidAmount = 19;
+    
+    /* 结算方式: SETTLEMENT_METHOD_ID BIGINT */
+    public static final String PROP_NAME_settlementMethodId = "settlementMethodId";
+    public static final int PROP_ID_settlementMethodId = 20;
+    
+    /* 单据状态: DOC_STATUS INTEGER */
+    public static final String PROP_NAME_docStatus = "docStatus";
+    public static final int PROP_ID_docStatus = 21;
+    
+    /* 审核状态: APPROVE_STATUS INTEGER */
+    public static final String PROP_NAME_approveStatus = "approveStatus";
+    public static final int PROP_ID_approveStatus = 22;
+    
+    /* 付款进度: PAID_STATUS INTEGER */
+    public static final String PROP_NAME_paidStatus = "paidStatus";
+    public static final int PROP_ID_paidStatus = 23;
+    
+    /* 收货状态: RECEIVE_STATUS INTEGER */
+    public static final String PROP_NAME_receiveStatus = "receiveStatus";
+    public static final int PROP_ID_receiveStatus = 24;
+    
+    /* 已过账: POSTED BOOLEAN */
+    public static final String PROP_NAME_posted = "posted";
+    public static final int PROP_ID_posted = 25;
+    
+    /* 过账时间: POSTED_AT DATETIME */
+    public static final String PROP_NAME_postedAt = "postedAt";
+    public static final int PROP_ID_postedAt = 26;
+    
+    /* 过账人: POSTED_BY BIGINT */
+    public static final String PROP_NAME_postedBy = "postedBy";
+    public static final int PROP_ID_postedBy = 27;
+    
+    /* 审核人: APPROVED_BY BIGINT */
+    public static final String PROP_NAME_approvedBy = "approvedBy";
+    public static final int PROP_ID_approvedBy = 28;
+    
+    /* 审核时间: APPROVED_AT DATETIME */
+    public static final String PROP_NAME_approvedAt = "approvedAt";
+    public static final int PROP_ID_approvedAt = 29;
+    
+    /* 备注: REMARK VARCHAR */
+    public static final String PROP_NAME_remark = "remark";
+    public static final int PROP_ID_remark = 30;
+    
+    /* 逻辑删除版本: DEL_VERSION BIGINT */
+    public static final String PROP_NAME_delVersion = "delVersion";
+    public static final int PROP_ID_delVersion = 31;
+    
+    /* 数据版本: VERSION INTEGER */
+    public static final String PROP_NAME_version = "version";
+    public static final int PROP_ID_version = 32;
+    
+    /* 创建人: CREATED_BY VARCHAR */
+    public static final String PROP_NAME_createdBy = "createdBy";
+    public static final int PROP_ID_createdBy = 33;
+    
+    /* 创建时间: CREATE_TIME TIMESTAMP */
+    public static final String PROP_NAME_createTime = "createTime";
+    public static final int PROP_ID_createTime = 34;
+    
+    /* 修改人: UPDATED_BY VARCHAR */
+    public static final String PROP_NAME_updatedBy = "updatedBy";
+    public static final int PROP_ID_updatedBy = 35;
+    
+    /* 修改时间: UPDATE_TIME TIMESTAMP */
+    public static final String PROP_NAME_updateTime = "updateTime";
+    public static final int PROP_ID_updateTime = 36;
+    
+
+    private static int _PROP_ID_BOUND = 37;
+
+    
+    /* relation:  */
+    public static final String PROP_NAME_lines = "lines";
+    
+
+    protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
+    protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
+
+    private static final String[] PROP_ID_TO_NAME = new String[37];
+    private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
+    static{
+      
+          PROP_ID_TO_NAME[PROP_ID_id] = PROP_NAME_id;
+          PROP_NAME_TO_ID.put(PROP_NAME_id, PROP_ID_id);
+      
+          PROP_ID_TO_NAME[PROP_ID_code] = PROP_NAME_code;
+          PROP_NAME_TO_ID.put(PROP_NAME_code, PROP_ID_code);
+      
+          PROP_ID_TO_NAME[PROP_ID_orgId] = PROP_NAME_orgId;
+          PROP_NAME_TO_ID.put(PROP_NAME_orgId, PROP_ID_orgId);
+      
+          PROP_ID_TO_NAME[PROP_ID_requisitionId] = PROP_NAME_requisitionId;
+          PROP_NAME_TO_ID.put(PROP_NAME_requisitionId, PROP_ID_requisitionId);
+      
+          PROP_ID_TO_NAME[PROP_ID_quotationId] = PROP_NAME_quotationId;
+          PROP_NAME_TO_ID.put(PROP_NAME_quotationId, PROP_ID_quotationId);
+      
+          PROP_ID_TO_NAME[PROP_ID_supplierId] = PROP_NAME_supplierId;
+          PROP_NAME_TO_ID.put(PROP_NAME_supplierId, PROP_ID_supplierId);
+      
+          PROP_ID_TO_NAME[PROP_ID_warehouseId] = PROP_NAME_warehouseId;
+          PROP_NAME_TO_ID.put(PROP_NAME_warehouseId, PROP_ID_warehouseId);
+      
+          PROP_ID_TO_NAME[PROP_ID_businessDate] = PROP_NAME_businessDate;
+          PROP_NAME_TO_ID.put(PROP_NAME_businessDate, PROP_ID_businessDate);
+      
+          PROP_ID_TO_NAME[PROP_ID_deliveryDate] = PROP_NAME_deliveryDate;
+          PROP_NAME_TO_ID.put(PROP_NAME_deliveryDate, PROP_ID_deliveryDate);
+      
+          PROP_ID_TO_NAME[PROP_ID_currencyId] = PROP_NAME_currencyId;
+          PROP_NAME_TO_ID.put(PROP_NAME_currencyId, PROP_ID_currencyId);
+      
+          PROP_ID_TO_NAME[PROP_ID_exchangeRate] = PROP_NAME_exchangeRate;
+          PROP_NAME_TO_ID.put(PROP_NAME_exchangeRate, PROP_ID_exchangeRate);
+      
+          PROP_ID_TO_NAME[PROP_ID_amountSource] = PROP_NAME_amountSource;
+          PROP_NAME_TO_ID.put(PROP_NAME_amountSource, PROP_ID_amountSource);
+      
+          PROP_ID_TO_NAME[PROP_ID_amountFunctional] = PROP_NAME_amountFunctional;
+          PROP_NAME_TO_ID.put(PROP_NAME_amountFunctional, PROP_ID_amountFunctional);
+      
+          PROP_ID_TO_NAME[PROP_ID_totalAmount] = PROP_NAME_totalAmount;
+          PROP_NAME_TO_ID.put(PROP_NAME_totalAmount, PROP_ID_totalAmount);
+      
+          PROP_ID_TO_NAME[PROP_ID_totalTaxAmount] = PROP_NAME_totalTaxAmount;
+          PROP_NAME_TO_ID.put(PROP_NAME_totalTaxAmount, PROP_ID_totalTaxAmount);
+      
+          PROP_ID_TO_NAME[PROP_ID_totalAmountWithTax] = PROP_NAME_totalAmountWithTax;
+          PROP_NAME_TO_ID.put(PROP_NAME_totalAmountWithTax, PROP_ID_totalAmountWithTax);
+      
+          PROP_ID_TO_NAME[PROP_ID_discountRate] = PROP_NAME_discountRate;
+          PROP_NAME_TO_ID.put(PROP_NAME_discountRate, PROP_ID_discountRate);
+      
+          PROP_ID_TO_NAME[PROP_ID_discountAmount] = PROP_NAME_discountAmount;
+          PROP_NAME_TO_ID.put(PROP_NAME_discountAmount, PROP_ID_discountAmount);
+      
+          PROP_ID_TO_NAME[PROP_ID_paidAmount] = PROP_NAME_paidAmount;
+          PROP_NAME_TO_ID.put(PROP_NAME_paidAmount, PROP_ID_paidAmount);
+      
+          PROP_ID_TO_NAME[PROP_ID_settlementMethodId] = PROP_NAME_settlementMethodId;
+          PROP_NAME_TO_ID.put(PROP_NAME_settlementMethodId, PROP_ID_settlementMethodId);
+      
+          PROP_ID_TO_NAME[PROP_ID_docStatus] = PROP_NAME_docStatus;
+          PROP_NAME_TO_ID.put(PROP_NAME_docStatus, PROP_ID_docStatus);
+      
+          PROP_ID_TO_NAME[PROP_ID_approveStatus] = PROP_NAME_approveStatus;
+          PROP_NAME_TO_ID.put(PROP_NAME_approveStatus, PROP_ID_approveStatus);
+      
+          PROP_ID_TO_NAME[PROP_ID_paidStatus] = PROP_NAME_paidStatus;
+          PROP_NAME_TO_ID.put(PROP_NAME_paidStatus, PROP_ID_paidStatus);
+      
+          PROP_ID_TO_NAME[PROP_ID_receiveStatus] = PROP_NAME_receiveStatus;
+          PROP_NAME_TO_ID.put(PROP_NAME_receiveStatus, PROP_ID_receiveStatus);
+      
+          PROP_ID_TO_NAME[PROP_ID_posted] = PROP_NAME_posted;
+          PROP_NAME_TO_ID.put(PROP_NAME_posted, PROP_ID_posted);
+      
+          PROP_ID_TO_NAME[PROP_ID_postedAt] = PROP_NAME_postedAt;
+          PROP_NAME_TO_ID.put(PROP_NAME_postedAt, PROP_ID_postedAt);
+      
+          PROP_ID_TO_NAME[PROP_ID_postedBy] = PROP_NAME_postedBy;
+          PROP_NAME_TO_ID.put(PROP_NAME_postedBy, PROP_ID_postedBy);
+      
+          PROP_ID_TO_NAME[PROP_ID_approvedBy] = PROP_NAME_approvedBy;
+          PROP_NAME_TO_ID.put(PROP_NAME_approvedBy, PROP_ID_approvedBy);
+      
+          PROP_ID_TO_NAME[PROP_ID_approvedAt] = PROP_NAME_approvedAt;
+          PROP_NAME_TO_ID.put(PROP_NAME_approvedAt, PROP_ID_approvedAt);
+      
+          PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
+          PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
+      
+          PROP_ID_TO_NAME[PROP_ID_delVersion] = PROP_NAME_delVersion;
+          PROP_NAME_TO_ID.put(PROP_NAME_delVersion, PROP_ID_delVersion);
+      
+          PROP_ID_TO_NAME[PROP_ID_version] = PROP_NAME_version;
+          PROP_NAME_TO_ID.put(PROP_NAME_version, PROP_ID_version);
+      
+          PROP_ID_TO_NAME[PROP_ID_createdBy] = PROP_NAME_createdBy;
+          PROP_NAME_TO_ID.put(PROP_NAME_createdBy, PROP_ID_createdBy);
+      
+          PROP_ID_TO_NAME[PROP_ID_createTime] = PROP_NAME_createTime;
+          PROP_NAME_TO_ID.put(PROP_NAME_createTime, PROP_ID_createTime);
+      
+          PROP_ID_TO_NAME[PROP_ID_updatedBy] = PROP_NAME_updatedBy;
+          PROP_NAME_TO_ID.put(PROP_NAME_updatedBy, PROP_ID_updatedBy);
+      
+          PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
+          PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
+      
+    }
+
+    
+    /* ID: ID */
+    private java.lang.Long _id;
+    
+    /* 单号: CODE */
+    private java.lang.String _code;
+    
+    /* 业务组织: ORG_ID */
+    private java.lang.Long _orgId;
+    
+    /* 请购单: REQUISITION_ID */
+    private java.lang.Long _requisitionId;
+    
+    /* 报价单: QUOTATION_ID */
+    private java.lang.Long _quotationId;
+    
+    /* 供应商: SUPPLIER_ID */
+    private java.lang.Long _supplierId;
+    
+    /* 收货仓库: WAREHOUSE_ID */
+    private java.lang.Long _warehouseId;
+    
+    /* 订单日期: BUSINESS_DATE */
+    private java.time.LocalDate _businessDate;
+    
+    /* 交货日期: DELIVERY_DATE */
+    private java.time.LocalDate _deliveryDate;
+    
+    /* 币种: CURRENCY_ID */
+    private java.lang.Long _currencyId;
+    
+    /* 汇率: EXCHANGE_RATE */
+    private java.lang.String _exchangeRate;
+    
+    /* 合计金额(源币不含税): AMOUNT_SOURCE */
+    private java.lang.String _amountSource;
+    
+    /* 合计金额(本位币不含税): AMOUNT_FUNCTIONAL */
+    private java.lang.String _amountFunctional;
+    
+    /* 合计金额(本位币不含税): TOTAL_AMOUNT */
+    private java.lang.String _totalAmount;
+    
+    /* 合计税额: TOTAL_TAX_AMOUNT */
+    private java.lang.String _totalTaxAmount;
+    
+    /* 合计金额(含税): TOTAL_AMOUNT_WITH_TAX */
+    private java.lang.String _totalAmountWithTax;
+    
+    /* 整单折扣率(%): DISCOUNT_RATE */
+    private java.lang.String _discountRate;
+    
+    /* 折扣金额: DISCOUNT_AMOUNT */
+    private java.lang.String _discountAmount;
+    
+    /* 已付金额: PAID_AMOUNT */
+    private java.lang.String _paidAmount;
+    
+    /* 结算方式: SETTLEMENT_METHOD_ID */
+    private java.lang.Long _settlementMethodId;
+    
+    /* 单据状态: DOC_STATUS */
+    private java.lang.Integer _docStatus;
+    
+    /* 审核状态: APPROVE_STATUS */
+    private java.lang.Integer _approveStatus;
+    
+    /* 付款进度: PAID_STATUS */
+    private java.lang.Integer _paidStatus;
+    
+    /* 收货状态: RECEIVE_STATUS */
+    private java.lang.Integer _receiveStatus;
+    
+    /* 已过账: POSTED */
+    private java.lang.Boolean _posted;
+    
+    /* 过账时间: POSTED_AT */
+    private java.time.LocalDateTime _postedAt;
+    
+    /* 过账人: POSTED_BY */
+    private java.lang.Long _postedBy;
+    
+    /* 审核人: APPROVED_BY */
+    private java.lang.Long _approvedBy;
+    
+    /* 审核时间: APPROVED_AT */
+    private java.time.LocalDateTime _approvedAt;
+    
+    /* 备注: REMARK */
+    private java.lang.String _remark;
+    
+    /* 逻辑删除版本: DEL_VERSION */
+    private java.lang.Long _delVersion;
+    
+    /* 数据版本: VERSION */
+    private java.lang.Integer _version;
+    
+    /* 创建人: CREATED_BY */
+    private java.lang.String _createdBy;
+    
+    /* 创建时间: CREATE_TIME */
+    private java.sql.Timestamp _createTime;
+    
+    /* 修改人: UPDATED_BY */
+    private java.lang.String _updatedBy;
+    
+    /* 修改时间: UPDATE_TIME */
+    private java.sql.Timestamp _updateTime;
+    
+
+    public _ErpPurOrder(){
+        // for debug
+    }
+
+    protected ErpPurOrder newInstance(){
+        ErpPurOrder entity = new ErpPurOrder();
+        entity.orm_attach(orm_enhancer());
+        entity.orm_entityModel(orm_entityModel());
+        return entity;
+    }
+
+    @Override
+    public ErpPurOrder cloneInstance() {
+        ErpPurOrder entity = newInstance();
+        orm_forEachInitedProp((value, propId) -> {
+            entity.orm_propValue(propId,value);
+        });
+        return entity;
+    }
+
+    @Override
+    public String orm_entityName() {
+      // 如果存在实体模型对象，则以模型对象上的设置为准
+      IEntityModel entityModel = orm_entityModel();
+      if(entityModel != null)
+          return entityModel.getName();
+      return "app.erp.pur.dao.entity.ErpPurOrder";
+    }
+
+    @Override
+    public int orm_propIdBound(){
+      IEntityModel entityModel = orm_entityModel();
+      if(entityModel != null)
+          return entityModel.getPropIdBound();
+      return _PROP_ID_BOUND;
+    }
+
+    @Override
+    public Object orm_id() {
+    
+        return buildSimpleId(PROP_ID_id);
+     
+    }
+
+    @Override
+    public boolean orm_isPrimary(int propId) {
+        
+            return propId == PROP_ID_id;
+          
+    }
+
+    @Override
+    public String orm_propName(int propId) {
+        if(propId >= PROP_ID_TO_NAME.length)
+            return super.orm_propName(propId);
+        String propName = PROP_ID_TO_NAME[propId];
+        if(propName == null)
+           return super.orm_propName(propId);
+        return propName;
+    }
+
+    @Override
+    public int orm_propId(String propName) {
+        Integer propId = PROP_NAME_TO_ID.get(propName);
+        if(propId == null)
+            return super.orm_propId(propName);
+        return propId;
+    }
+
+    @Override
+    public Object orm_propValue(int propId) {
+        switch(propId){
+        
+            case PROP_ID_id:
+               return getId();
+        
+            case PROP_ID_code:
+               return getCode();
+        
+            case PROP_ID_orgId:
+               return getOrgId();
+        
+            case PROP_ID_requisitionId:
+               return getRequisitionId();
+        
+            case PROP_ID_quotationId:
+               return getQuotationId();
+        
+            case PROP_ID_supplierId:
+               return getSupplierId();
+        
+            case PROP_ID_warehouseId:
+               return getWarehouseId();
+        
+            case PROP_ID_businessDate:
+               return getBusinessDate();
+        
+            case PROP_ID_deliveryDate:
+               return getDeliveryDate();
+        
+            case PROP_ID_currencyId:
+               return getCurrencyId();
+        
+            case PROP_ID_exchangeRate:
+               return getExchangeRate();
+        
+            case PROP_ID_amountSource:
+               return getAmountSource();
+        
+            case PROP_ID_amountFunctional:
+               return getAmountFunctional();
+        
+            case PROP_ID_totalAmount:
+               return getTotalAmount();
+        
+            case PROP_ID_totalTaxAmount:
+               return getTotalTaxAmount();
+        
+            case PROP_ID_totalAmountWithTax:
+               return getTotalAmountWithTax();
+        
+            case PROP_ID_discountRate:
+               return getDiscountRate();
+        
+            case PROP_ID_discountAmount:
+               return getDiscountAmount();
+        
+            case PROP_ID_paidAmount:
+               return getPaidAmount();
+        
+            case PROP_ID_settlementMethodId:
+               return getSettlementMethodId();
+        
+            case PROP_ID_docStatus:
+               return getDocStatus();
+        
+            case PROP_ID_approveStatus:
+               return getApproveStatus();
+        
+            case PROP_ID_paidStatus:
+               return getPaidStatus();
+        
+            case PROP_ID_receiveStatus:
+               return getReceiveStatus();
+        
+            case PROP_ID_posted:
+               return getPosted();
+        
+            case PROP_ID_postedAt:
+               return getPostedAt();
+        
+            case PROP_ID_postedBy:
+               return getPostedBy();
+        
+            case PROP_ID_approvedBy:
+               return getApprovedBy();
+        
+            case PROP_ID_approvedAt:
+               return getApprovedAt();
+        
+            case PROP_ID_remark:
+               return getRemark();
+        
+            case PROP_ID_delVersion:
+               return getDelVersion();
+        
+            case PROP_ID_version:
+               return getVersion();
+        
+            case PROP_ID_createdBy:
+               return getCreatedBy();
+        
+            case PROP_ID_createTime:
+               return getCreateTime();
+        
+            case PROP_ID_updatedBy:
+               return getUpdatedBy();
+        
+            case PROP_ID_updateTime:
+               return getUpdateTime();
+        
+           default:
+              return super.orm_propValue(propId);
+        }
+    }
+
+    
+
+    @Override
+    public void orm_propValue(int propId, Object value){
+        switch(propId){
+        
+            case PROP_ID_id:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_id));
+               }
+               setId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_code:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_code));
+               }
+               setCode(typedValue);
+               break;
+            }
+        
+            case PROP_ID_orgId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_orgId));
+               }
+               setOrgId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_requisitionId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_requisitionId));
+               }
+               setRequisitionId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_quotationId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_quotationId));
+               }
+               setQuotationId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_supplierId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_supplierId));
+               }
+               setSupplierId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_warehouseId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_warehouseId));
+               }
+               setWarehouseId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_businessDate:{
+               java.time.LocalDate typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLocalDate(value,
+                       err-> newTypeConversionError(PROP_NAME_businessDate));
+               }
+               setBusinessDate(typedValue);
+               break;
+            }
+        
+            case PROP_ID_deliveryDate:{
+               java.time.LocalDate typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLocalDate(value,
+                       err-> newTypeConversionError(PROP_NAME_deliveryDate));
+               }
+               setDeliveryDate(typedValue);
+               break;
+            }
+        
+            case PROP_ID_currencyId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_currencyId));
+               }
+               setCurrencyId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_exchangeRate:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_exchangeRate));
+               }
+               setExchangeRate(typedValue);
+               break;
+            }
+        
+            case PROP_ID_amountSource:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_amountSource));
+               }
+               setAmountSource(typedValue);
+               break;
+            }
+        
+            case PROP_ID_amountFunctional:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_amountFunctional));
+               }
+               setAmountFunctional(typedValue);
+               break;
+            }
+        
+            case PROP_ID_totalAmount:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_totalAmount));
+               }
+               setTotalAmount(typedValue);
+               break;
+            }
+        
+            case PROP_ID_totalTaxAmount:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_totalTaxAmount));
+               }
+               setTotalTaxAmount(typedValue);
+               break;
+            }
+        
+            case PROP_ID_totalAmountWithTax:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_totalAmountWithTax));
+               }
+               setTotalAmountWithTax(typedValue);
+               break;
+            }
+        
+            case PROP_ID_discountRate:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_discountRate));
+               }
+               setDiscountRate(typedValue);
+               break;
+            }
+        
+            case PROP_ID_discountAmount:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_discountAmount));
+               }
+               setDiscountAmount(typedValue);
+               break;
+            }
+        
+            case PROP_ID_paidAmount:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_paidAmount));
+               }
+               setPaidAmount(typedValue);
+               break;
+            }
+        
+            case PROP_ID_settlementMethodId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_settlementMethodId));
+               }
+               setSettlementMethodId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_docStatus:{
+               java.lang.Integer typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toInteger(value,
+                       err-> newTypeConversionError(PROP_NAME_docStatus));
+               }
+               setDocStatus(typedValue);
+               break;
+            }
+        
+            case PROP_ID_approveStatus:{
+               java.lang.Integer typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toInteger(value,
+                       err-> newTypeConversionError(PROP_NAME_approveStatus));
+               }
+               setApproveStatus(typedValue);
+               break;
+            }
+        
+            case PROP_ID_paidStatus:{
+               java.lang.Integer typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toInteger(value,
+                       err-> newTypeConversionError(PROP_NAME_paidStatus));
+               }
+               setPaidStatus(typedValue);
+               break;
+            }
+        
+            case PROP_ID_receiveStatus:{
+               java.lang.Integer typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toInteger(value,
+                       err-> newTypeConversionError(PROP_NAME_receiveStatus));
+               }
+               setReceiveStatus(typedValue);
+               break;
+            }
+        
+            case PROP_ID_posted:{
+               java.lang.Boolean typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBoolean(value,
+                       err-> newTypeConversionError(PROP_NAME_posted));
+               }
+               setPosted(typedValue);
+               break;
+            }
+        
+            case PROP_ID_postedAt:{
+               java.time.LocalDateTime typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLocalDateTime(value,
+                       err-> newTypeConversionError(PROP_NAME_postedAt));
+               }
+               setPostedAt(typedValue);
+               break;
+            }
+        
+            case PROP_ID_postedBy:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_postedBy));
+               }
+               setPostedBy(typedValue);
+               break;
+            }
+        
+            case PROP_ID_approvedBy:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_approvedBy));
+               }
+               setApprovedBy(typedValue);
+               break;
+            }
+        
+            case PROP_ID_approvedAt:{
+               java.time.LocalDateTime typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLocalDateTime(value,
+                       err-> newTypeConversionError(PROP_NAME_approvedAt));
+               }
+               setApprovedAt(typedValue);
+               break;
+            }
+        
+            case PROP_ID_remark:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_remark));
+               }
+               setRemark(typedValue);
+               break;
+            }
+        
+            case PROP_ID_delVersion:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_delVersion));
+               }
+               setDelVersion(typedValue);
+               break;
+            }
+        
+            case PROP_ID_version:{
+               java.lang.Integer typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toInteger(value,
+                       err-> newTypeConversionError(PROP_NAME_version));
+               }
+               setVersion(typedValue);
+               break;
+            }
+        
+            case PROP_ID_createdBy:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_createdBy));
+               }
+               setCreatedBy(typedValue);
+               break;
+            }
+        
+            case PROP_ID_createTime:{
+               java.sql.Timestamp typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toTimestamp(value,
+                       err-> newTypeConversionError(PROP_NAME_createTime));
+               }
+               setCreateTime(typedValue);
+               break;
+            }
+        
+            case PROP_ID_updatedBy:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_updatedBy));
+               }
+               setUpdatedBy(typedValue);
+               break;
+            }
+        
+            case PROP_ID_updateTime:{
+               java.sql.Timestamp typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toTimestamp(value,
+                       err-> newTypeConversionError(PROP_NAME_updateTime));
+               }
+               setUpdateTime(typedValue);
+               break;
+            }
+        
+           default:
+              super.orm_propValue(propId,value);
+        }
+    }
+
+    @Override
+    public void orm_internalSet(int propId, Object value) {
+        switch(propId){
+        
+            case PROP_ID_id:{
+               onInitProp(propId);
+               this._id = (java.lang.Long)value;
+               orm_id(); // 如果是设置主键字段，则触发watcher
+               break;
+            }
+        
+            case PROP_ID_code:{
+               onInitProp(propId);
+               this._code = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_orgId:{
+               onInitProp(propId);
+               this._orgId = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_requisitionId:{
+               onInitProp(propId);
+               this._requisitionId = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_quotationId:{
+               onInitProp(propId);
+               this._quotationId = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_supplierId:{
+               onInitProp(propId);
+               this._supplierId = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_warehouseId:{
+               onInitProp(propId);
+               this._warehouseId = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_businessDate:{
+               onInitProp(propId);
+               this._businessDate = (java.time.LocalDate)value;
+               
+               break;
+            }
+        
+            case PROP_ID_deliveryDate:{
+               onInitProp(propId);
+               this._deliveryDate = (java.time.LocalDate)value;
+               
+               break;
+            }
+        
+            case PROP_ID_currencyId:{
+               onInitProp(propId);
+               this._currencyId = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_exchangeRate:{
+               onInitProp(propId);
+               this._exchangeRate = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_amountSource:{
+               onInitProp(propId);
+               this._amountSource = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_amountFunctional:{
+               onInitProp(propId);
+               this._amountFunctional = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_totalAmount:{
+               onInitProp(propId);
+               this._totalAmount = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_totalTaxAmount:{
+               onInitProp(propId);
+               this._totalTaxAmount = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_totalAmountWithTax:{
+               onInitProp(propId);
+               this._totalAmountWithTax = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_discountRate:{
+               onInitProp(propId);
+               this._discountRate = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_discountAmount:{
+               onInitProp(propId);
+               this._discountAmount = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_paidAmount:{
+               onInitProp(propId);
+               this._paidAmount = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_settlementMethodId:{
+               onInitProp(propId);
+               this._settlementMethodId = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_docStatus:{
+               onInitProp(propId);
+               this._docStatus = (java.lang.Integer)value;
+               
+               break;
+            }
+        
+            case PROP_ID_approveStatus:{
+               onInitProp(propId);
+               this._approveStatus = (java.lang.Integer)value;
+               
+               break;
+            }
+        
+            case PROP_ID_paidStatus:{
+               onInitProp(propId);
+               this._paidStatus = (java.lang.Integer)value;
+               
+               break;
+            }
+        
+            case PROP_ID_receiveStatus:{
+               onInitProp(propId);
+               this._receiveStatus = (java.lang.Integer)value;
+               
+               break;
+            }
+        
+            case PROP_ID_posted:{
+               onInitProp(propId);
+               this._posted = (java.lang.Boolean)value;
+               
+               break;
+            }
+        
+            case PROP_ID_postedAt:{
+               onInitProp(propId);
+               this._postedAt = (java.time.LocalDateTime)value;
+               
+               break;
+            }
+        
+            case PROP_ID_postedBy:{
+               onInitProp(propId);
+               this._postedBy = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_approvedBy:{
+               onInitProp(propId);
+               this._approvedBy = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_approvedAt:{
+               onInitProp(propId);
+               this._approvedAt = (java.time.LocalDateTime)value;
+               
+               break;
+            }
+        
+            case PROP_ID_remark:{
+               onInitProp(propId);
+               this._remark = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_delVersion:{
+               onInitProp(propId);
+               this._delVersion = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_version:{
+               onInitProp(propId);
+               this._version = (java.lang.Integer)value;
+               
+               break;
+            }
+        
+            case PROP_ID_createdBy:{
+               onInitProp(propId);
+               this._createdBy = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_createTime:{
+               onInitProp(propId);
+               this._createTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_updatedBy:{
+               onInitProp(propId);
+               this._updatedBy = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_updateTime:{
+               onInitProp(propId);
+               this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+           default:
+              super.orm_internalSet(propId,value);
+        }
+    }
+
+    
+    /**
+     * ID: ID
+     */
+    public final java.lang.Long getId(){
+         onPropGet(PROP_ID_id);
+         return _id;
+    }
+
+    /**
+     * ID: ID
+     */
+    public final void setId(java.lang.Long value){
+        if(onPropSet(PROP_ID_id,value)){
+            this._id = value;
+            internalClearRefs(PROP_ID_id);
+            orm_id();
+        }
+    }
+    
+    /**
+     * 单号: CODE
+     */
+    public final java.lang.String getCode(){
+         onPropGet(PROP_ID_code);
+         return _code;
+    }
+
+    /**
+     * 单号: CODE
+     */
+    public final void setCode(java.lang.String value){
+        if(onPropSet(PROP_ID_code,value)){
+            this._code = value;
+            internalClearRefs(PROP_ID_code);
+            
+        }
+    }
+    
+    /**
+     * 业务组织: ORG_ID
+     */
+    public final java.lang.Long getOrgId(){
+         onPropGet(PROP_ID_orgId);
+         return _orgId;
+    }
+
+    /**
+     * 业务组织: ORG_ID
+     */
+    public final void setOrgId(java.lang.Long value){
+        if(onPropSet(PROP_ID_orgId,value)){
+            this._orgId = value;
+            internalClearRefs(PROP_ID_orgId);
+            
+        }
+    }
+    
+    /**
+     * 请购单: REQUISITION_ID
+     */
+    public final java.lang.Long getRequisitionId(){
+         onPropGet(PROP_ID_requisitionId);
+         return _requisitionId;
+    }
+
+    /**
+     * 请购单: REQUISITION_ID
+     */
+    public final void setRequisitionId(java.lang.Long value){
+        if(onPropSet(PROP_ID_requisitionId,value)){
+            this._requisitionId = value;
+            internalClearRefs(PROP_ID_requisitionId);
+            
+        }
+    }
+    
+    /**
+     * 报价单: QUOTATION_ID
+     */
+    public final java.lang.Long getQuotationId(){
+         onPropGet(PROP_ID_quotationId);
+         return _quotationId;
+    }
+
+    /**
+     * 报价单: QUOTATION_ID
+     */
+    public final void setQuotationId(java.lang.Long value){
+        if(onPropSet(PROP_ID_quotationId,value)){
+            this._quotationId = value;
+            internalClearRefs(PROP_ID_quotationId);
+            
+        }
+    }
+    
+    /**
+     * 供应商: SUPPLIER_ID
+     */
+    public final java.lang.Long getSupplierId(){
+         onPropGet(PROP_ID_supplierId);
+         return _supplierId;
+    }
+
+    /**
+     * 供应商: SUPPLIER_ID
+     */
+    public final void setSupplierId(java.lang.Long value){
+        if(onPropSet(PROP_ID_supplierId,value)){
+            this._supplierId = value;
+            internalClearRefs(PROP_ID_supplierId);
+            
+        }
+    }
+    
+    /**
+     * 收货仓库: WAREHOUSE_ID
+     */
+    public final java.lang.Long getWarehouseId(){
+         onPropGet(PROP_ID_warehouseId);
+         return _warehouseId;
+    }
+
+    /**
+     * 收货仓库: WAREHOUSE_ID
+     */
+    public final void setWarehouseId(java.lang.Long value){
+        if(onPropSet(PROP_ID_warehouseId,value)){
+            this._warehouseId = value;
+            internalClearRefs(PROP_ID_warehouseId);
+            
+        }
+    }
+    
+    /**
+     * 订单日期: BUSINESS_DATE
+     */
+    public final java.time.LocalDate getBusinessDate(){
+         onPropGet(PROP_ID_businessDate);
+         return _businessDate;
+    }
+
+    /**
+     * 订单日期: BUSINESS_DATE
+     */
+    public final void setBusinessDate(java.time.LocalDate value){
+        if(onPropSet(PROP_ID_businessDate,value)){
+            this._businessDate = value;
+            internalClearRefs(PROP_ID_businessDate);
+            
+        }
+    }
+    
+    /**
+     * 交货日期: DELIVERY_DATE
+     */
+    public final java.time.LocalDate getDeliveryDate(){
+         onPropGet(PROP_ID_deliveryDate);
+         return _deliveryDate;
+    }
+
+    /**
+     * 交货日期: DELIVERY_DATE
+     */
+    public final void setDeliveryDate(java.time.LocalDate value){
+        if(onPropSet(PROP_ID_deliveryDate,value)){
+            this._deliveryDate = value;
+            internalClearRefs(PROP_ID_deliveryDate);
+            
+        }
+    }
+    
+    /**
+     * 币种: CURRENCY_ID
+     */
+    public final java.lang.Long getCurrencyId(){
+         onPropGet(PROP_ID_currencyId);
+         return _currencyId;
+    }
+
+    /**
+     * 币种: CURRENCY_ID
+     */
+    public final void setCurrencyId(java.lang.Long value){
+        if(onPropSet(PROP_ID_currencyId,value)){
+            this._currencyId = value;
+            internalClearRefs(PROP_ID_currencyId);
+            
+        }
+    }
+    
+    /**
+     * 汇率: EXCHANGE_RATE
+     */
+    public final java.lang.String getExchangeRate(){
+         onPropGet(PROP_ID_exchangeRate);
+         return _exchangeRate;
+    }
+
+    /**
+     * 汇率: EXCHANGE_RATE
+     */
+    public final void setExchangeRate(java.lang.String value){
+        if(onPropSet(PROP_ID_exchangeRate,value)){
+            this._exchangeRate = value;
+            internalClearRefs(PROP_ID_exchangeRate);
+            
+        }
+    }
+    
+    /**
+     * 合计金额(源币不含税): AMOUNT_SOURCE
+     */
+    public final java.lang.String getAmountSource(){
+         onPropGet(PROP_ID_amountSource);
+         return _amountSource;
+    }
+
+    /**
+     * 合计金额(源币不含税): AMOUNT_SOURCE
+     */
+    public final void setAmountSource(java.lang.String value){
+        if(onPropSet(PROP_ID_amountSource,value)){
+            this._amountSource = value;
+            internalClearRefs(PROP_ID_amountSource);
+            
+        }
+    }
+    
+    /**
+     * 合计金额(本位币不含税): AMOUNT_FUNCTIONAL
+     */
+    public final java.lang.String getAmountFunctional(){
+         onPropGet(PROP_ID_amountFunctional);
+         return _amountFunctional;
+    }
+
+    /**
+     * 合计金额(本位币不含税): AMOUNT_FUNCTIONAL
+     */
+    public final void setAmountFunctional(java.lang.String value){
+        if(onPropSet(PROP_ID_amountFunctional,value)){
+            this._amountFunctional = value;
+            internalClearRefs(PROP_ID_amountFunctional);
+            
+        }
+    }
+    
+    /**
+     * 合计金额(本位币不含税): TOTAL_AMOUNT
+     */
+    public final java.lang.String getTotalAmount(){
+         onPropGet(PROP_ID_totalAmount);
+         return _totalAmount;
+    }
+
+    /**
+     * 合计金额(本位币不含税): TOTAL_AMOUNT
+     */
+    public final void setTotalAmount(java.lang.String value){
+        if(onPropSet(PROP_ID_totalAmount,value)){
+            this._totalAmount = value;
+            internalClearRefs(PROP_ID_totalAmount);
+            
+        }
+    }
+    
+    /**
+     * 合计税额: TOTAL_TAX_AMOUNT
+     */
+    public final java.lang.String getTotalTaxAmount(){
+         onPropGet(PROP_ID_totalTaxAmount);
+         return _totalTaxAmount;
+    }
+
+    /**
+     * 合计税额: TOTAL_TAX_AMOUNT
+     */
+    public final void setTotalTaxAmount(java.lang.String value){
+        if(onPropSet(PROP_ID_totalTaxAmount,value)){
+            this._totalTaxAmount = value;
+            internalClearRefs(PROP_ID_totalTaxAmount);
+            
+        }
+    }
+    
+    /**
+     * 合计金额(含税): TOTAL_AMOUNT_WITH_TAX
+     */
+    public final java.lang.String getTotalAmountWithTax(){
+         onPropGet(PROP_ID_totalAmountWithTax);
+         return _totalAmountWithTax;
+    }
+
+    /**
+     * 合计金额(含税): TOTAL_AMOUNT_WITH_TAX
+     */
+    public final void setTotalAmountWithTax(java.lang.String value){
+        if(onPropSet(PROP_ID_totalAmountWithTax,value)){
+            this._totalAmountWithTax = value;
+            internalClearRefs(PROP_ID_totalAmountWithTax);
+            
+        }
+    }
+    
+    /**
+     * 整单折扣率(%): DISCOUNT_RATE
+     */
+    public final java.lang.String getDiscountRate(){
+         onPropGet(PROP_ID_discountRate);
+         return _discountRate;
+    }
+
+    /**
+     * 整单折扣率(%): DISCOUNT_RATE
+     */
+    public final void setDiscountRate(java.lang.String value){
+        if(onPropSet(PROP_ID_discountRate,value)){
+            this._discountRate = value;
+            internalClearRefs(PROP_ID_discountRate);
+            
+        }
+    }
+    
+    /**
+     * 折扣金额: DISCOUNT_AMOUNT
+     */
+    public final java.lang.String getDiscountAmount(){
+         onPropGet(PROP_ID_discountAmount);
+         return _discountAmount;
+    }
+
+    /**
+     * 折扣金额: DISCOUNT_AMOUNT
+     */
+    public final void setDiscountAmount(java.lang.String value){
+        if(onPropSet(PROP_ID_discountAmount,value)){
+            this._discountAmount = value;
+            internalClearRefs(PROP_ID_discountAmount);
+            
+        }
+    }
+    
+    /**
+     * 已付金额: PAID_AMOUNT
+     */
+    public final java.lang.String getPaidAmount(){
+         onPropGet(PROP_ID_paidAmount);
+         return _paidAmount;
+    }
+
+    /**
+     * 已付金额: PAID_AMOUNT
+     */
+    public final void setPaidAmount(java.lang.String value){
+        if(onPropSet(PROP_ID_paidAmount,value)){
+            this._paidAmount = value;
+            internalClearRefs(PROP_ID_paidAmount);
+            
+        }
+    }
+    
+    /**
+     * 结算方式: SETTLEMENT_METHOD_ID
+     */
+    public final java.lang.Long getSettlementMethodId(){
+         onPropGet(PROP_ID_settlementMethodId);
+         return _settlementMethodId;
+    }
+
+    /**
+     * 结算方式: SETTLEMENT_METHOD_ID
+     */
+    public final void setSettlementMethodId(java.lang.Long value){
+        if(onPropSet(PROP_ID_settlementMethodId,value)){
+            this._settlementMethodId = value;
+            internalClearRefs(PROP_ID_settlementMethodId);
+            
+        }
+    }
+    
+    /**
+     * 单据状态: DOC_STATUS
+     */
+    public final java.lang.Integer getDocStatus(){
+         onPropGet(PROP_ID_docStatus);
+         return _docStatus;
+    }
+
+    /**
+     * 单据状态: DOC_STATUS
+     */
+    public final void setDocStatus(java.lang.Integer value){
+        if(onPropSet(PROP_ID_docStatus,value)){
+            this._docStatus = value;
+            internalClearRefs(PROP_ID_docStatus);
+            
+        }
+    }
+    
+    /**
+     * 审核状态: APPROVE_STATUS
+     */
+    public final java.lang.Integer getApproveStatus(){
+         onPropGet(PROP_ID_approveStatus);
+         return _approveStatus;
+    }
+
+    /**
+     * 审核状态: APPROVE_STATUS
+     */
+    public final void setApproveStatus(java.lang.Integer value){
+        if(onPropSet(PROP_ID_approveStatus,value)){
+            this._approveStatus = value;
+            internalClearRefs(PROP_ID_approveStatus);
+            
+        }
+    }
+    
+    /**
+     * 付款进度: PAID_STATUS
+     */
+    public final java.lang.Integer getPaidStatus(){
+         onPropGet(PROP_ID_paidStatus);
+         return _paidStatus;
+    }
+
+    /**
+     * 付款进度: PAID_STATUS
+     */
+    public final void setPaidStatus(java.lang.Integer value){
+        if(onPropSet(PROP_ID_paidStatus,value)){
+            this._paidStatus = value;
+            internalClearRefs(PROP_ID_paidStatus);
+            
+        }
+    }
+    
+    /**
+     * 收货状态: RECEIVE_STATUS
+     */
+    public final java.lang.Integer getReceiveStatus(){
+         onPropGet(PROP_ID_receiveStatus);
+         return _receiveStatus;
+    }
+
+    /**
+     * 收货状态: RECEIVE_STATUS
+     */
+    public final void setReceiveStatus(java.lang.Integer value){
+        if(onPropSet(PROP_ID_receiveStatus,value)){
+            this._receiveStatus = value;
+            internalClearRefs(PROP_ID_receiveStatus);
+            
+        }
+    }
+    
+    /**
+     * 已过账: POSTED
+     */
+    public final java.lang.Boolean getPosted(){
+         onPropGet(PROP_ID_posted);
+         return _posted;
+    }
+
+    /**
+     * 已过账: POSTED
+     */
+    public final void setPosted(java.lang.Boolean value){
+        if(onPropSet(PROP_ID_posted,value)){
+            this._posted = value;
+            internalClearRefs(PROP_ID_posted);
+            
+        }
+    }
+    
+    /**
+     * 过账时间: POSTED_AT
+     */
+    public final java.time.LocalDateTime getPostedAt(){
+         onPropGet(PROP_ID_postedAt);
+         return _postedAt;
+    }
+
+    /**
+     * 过账时间: POSTED_AT
+     */
+    public final void setPostedAt(java.time.LocalDateTime value){
+        if(onPropSet(PROP_ID_postedAt,value)){
+            this._postedAt = value;
+            internalClearRefs(PROP_ID_postedAt);
+            
+        }
+    }
+    
+    /**
+     * 过账人: POSTED_BY
+     */
+    public final java.lang.Long getPostedBy(){
+         onPropGet(PROP_ID_postedBy);
+         return _postedBy;
+    }
+
+    /**
+     * 过账人: POSTED_BY
+     */
+    public final void setPostedBy(java.lang.Long value){
+        if(onPropSet(PROP_ID_postedBy,value)){
+            this._postedBy = value;
+            internalClearRefs(PROP_ID_postedBy);
+            
+        }
+    }
+    
+    /**
+     * 审核人: APPROVED_BY
+     */
+    public final java.lang.Long getApprovedBy(){
+         onPropGet(PROP_ID_approvedBy);
+         return _approvedBy;
+    }
+
+    /**
+     * 审核人: APPROVED_BY
+     */
+    public final void setApprovedBy(java.lang.Long value){
+        if(onPropSet(PROP_ID_approvedBy,value)){
+            this._approvedBy = value;
+            internalClearRefs(PROP_ID_approvedBy);
+            
+        }
+    }
+    
+    /**
+     * 审核时间: APPROVED_AT
+     */
+    public final java.time.LocalDateTime getApprovedAt(){
+         onPropGet(PROP_ID_approvedAt);
+         return _approvedAt;
+    }
+
+    /**
+     * 审核时间: APPROVED_AT
+     */
+    public final void setApprovedAt(java.time.LocalDateTime value){
+        if(onPropSet(PROP_ID_approvedAt,value)){
+            this._approvedAt = value;
+            internalClearRefs(PROP_ID_approvedAt);
+            
+        }
+    }
+    
+    /**
+     * 备注: REMARK
+     */
+    public final java.lang.String getRemark(){
+         onPropGet(PROP_ID_remark);
+         return _remark;
+    }
+
+    /**
+     * 备注: REMARK
+     */
+    public final void setRemark(java.lang.String value){
+        if(onPropSet(PROP_ID_remark,value)){
+            this._remark = value;
+            internalClearRefs(PROP_ID_remark);
+            
+        }
+    }
+    
+    /**
+     * 逻辑删除版本: DEL_VERSION
+     */
+    public final java.lang.Long getDelVersion(){
+         onPropGet(PROP_ID_delVersion);
+         return _delVersion;
+    }
+
+    /**
+     * 逻辑删除版本: DEL_VERSION
+     */
+    public final void setDelVersion(java.lang.Long value){
+        if(onPropSet(PROP_ID_delVersion,value)){
+            this._delVersion = value;
+            internalClearRefs(PROP_ID_delVersion);
+            
+        }
+    }
+    
+    /**
+     * 数据版本: VERSION
+     */
+    public final java.lang.Integer getVersion(){
+         onPropGet(PROP_ID_version);
+         return _version;
+    }
+
+    /**
+     * 数据版本: VERSION
+     */
+    public final void setVersion(java.lang.Integer value){
+        if(onPropSet(PROP_ID_version,value)){
+            this._version = value;
+            internalClearRefs(PROP_ID_version);
+            
+        }
+    }
+    
+    /**
+     * 创建人: CREATED_BY
+     */
+    public final java.lang.String getCreatedBy(){
+         onPropGet(PROP_ID_createdBy);
+         return _createdBy;
+    }
+
+    /**
+     * 创建人: CREATED_BY
+     */
+    public final void setCreatedBy(java.lang.String value){
+        if(onPropSet(PROP_ID_createdBy,value)){
+            this._createdBy = value;
+            internalClearRefs(PROP_ID_createdBy);
+            
+        }
+    }
+    
+    /**
+     * 创建时间: CREATE_TIME
+     */
+    public final java.sql.Timestamp getCreateTime(){
+         onPropGet(PROP_ID_createTime);
+         return _createTime;
+    }
+
+    /**
+     * 创建时间: CREATE_TIME
+     */
+    public final void setCreateTime(java.sql.Timestamp value){
+        if(onPropSet(PROP_ID_createTime,value)){
+            this._createTime = value;
+            internalClearRefs(PROP_ID_createTime);
+            
+        }
+    }
+    
+    /**
+     * 修改人: UPDATED_BY
+     */
+    public final java.lang.String getUpdatedBy(){
+         onPropGet(PROP_ID_updatedBy);
+         return _updatedBy;
+    }
+
+    /**
+     * 修改人: UPDATED_BY
+     */
+    public final void setUpdatedBy(java.lang.String value){
+        if(onPropSet(PROP_ID_updatedBy,value)){
+            this._updatedBy = value;
+            internalClearRefs(PROP_ID_updatedBy);
+            
+        }
+    }
+    
+    /**
+     * 修改时间: UPDATE_TIME
+     */
+    public final java.sql.Timestamp getUpdateTime(){
+         onPropGet(PROP_ID_updateTime);
+         return _updateTime;
+    }
+
+    /**
+     * 修改时间: UPDATE_TIME
+     */
+    public final void setUpdateTime(java.sql.Timestamp value){
+        if(onPropSet(PROP_ID_updateTime,value)){
+            this._updateTime = value;
+            internalClearRefs(PROP_ID_updateTime);
+            
+        }
+    }
+    
+    private final OrmEntitySet<app.erp.pur.dao.entity.ErpPurOrderLine> _lines = new OrmEntitySet<>(this, PROP_NAME_lines,
+        null, null,app.erp.pur.dao.entity.ErpPurOrderLine.class);
+
+    /**
+     * 。 refPropName: , keyProp: {rel.keyProp}
+     */
+    public final IOrmEntitySet<app.erp.pur.dao.entity.ErpPurOrderLine> getLines(){
+       return _lines;
+    }
+       
+}
+// resume CPD analysis - CPD-ON

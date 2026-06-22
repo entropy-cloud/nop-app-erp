@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 模块结账状态
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 未结
+    value: 10
+    description: 
+  
+  - label: 结账中
+    value: 20
+    description: 
+  
+  - label: 已结
+    value: 30
+    description: 
+  

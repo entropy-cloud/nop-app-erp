@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 校准结果
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 合格
+    value: 10
+    description: 
+  
+  - label: 不合格
+    value: 20
+    description: 
+  
+  - label: 调整后合格
+    value: 30
+    description: 
+  

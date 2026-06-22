@@ -1,0 +1,27 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 批次状态
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 在用
+    value: 10
+    description: 
+  
+  - label: 锁定
+    value: 20
+    description: 
+  
+  - label: 已过期
+    value: 30
+    description: 
+  
+  - label: 已耗尽
+    value: 40
+    description: 
+  
+  - label: 质量冻结
+    value: 50
+    description: 
+  

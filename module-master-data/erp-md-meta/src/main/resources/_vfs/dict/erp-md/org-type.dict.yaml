@@ -1,0 +1,31 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 组织类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 集团
+    value: 10
+    description: 
+  
+  - label: 公司
+    value: 20
+    description: 
+  
+  - label: 分公司
+    value: 30
+    description: 
+  
+  - label: 部门
+    value: 40
+    description: 
+  
+  - label: 车间
+    value: 50
+    description: 
+  
+  - label: 门店
+    value: 60
+    description: 
+  

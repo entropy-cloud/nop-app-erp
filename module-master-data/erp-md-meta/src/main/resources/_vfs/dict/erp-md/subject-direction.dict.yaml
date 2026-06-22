@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 科目余额方向
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 借方
+    value: 10
+    description: 
+  
+  - label: 贷方
+    value: 20
+    description: 
+  

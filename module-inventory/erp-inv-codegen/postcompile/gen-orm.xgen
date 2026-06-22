@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<c:script>
+// 根据ORM模型生成dao/entity/xbiz
+codeGenerator.withTargetDir("../").renderModel('../../model/erp-inv.orm.xml','/nop/templates/orm', '/',$scope);
+codeGenerator.withTargetDir("../erp-inv-dao/src/main/java").renderModel('../../erp-inv-dao/src/main/resources/_vfs/erp/inv/orm/app.orm.xml',
+    '/nop/templates/orm-entity','/',$scope);
+</c:script>

@@ -1,0 +1,31 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 仓库类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 普通仓
+    value: 10
+    description: 
+  
+  - label: 在途仓
+    value: 20
+    description: 
+  
+  - label: 报废仓
+    value: 30
+    description: 
+  
+  - label: 受托代销仓
+    value: 40
+    description: 
+  
+  - label: 委托代销仓
+    value: 50
+    description: 
+  
+  - label: 保税仓
+    value: 60
+    description: 
+  

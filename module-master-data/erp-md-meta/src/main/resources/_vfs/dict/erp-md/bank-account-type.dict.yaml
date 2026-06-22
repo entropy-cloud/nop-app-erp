@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 银行账户类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 活期
+    value: 10
+    description: 
+  
+  - label: 定期
+    value: 20
+    description: 
+  
+  - label: 信用账户
+    value: 30
+    description: 
+  
+  - label: 其他
+    value: 40
+    description: 
+  

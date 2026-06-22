@@ -25,7 +25,7 @@
     - 通过 I*Biz 引用 purchase/sales/inventory 的业务单据（凭证生成的源单），不做 ORM 强引用
     - 处于 DAG 顶层，无下游业务工程依赖
 -->
-<orm ext:registerShortName="true" ext:appName="app-erp-fin" ext:entityPackageName="app.erp.fin.dao.entity"
+<orm ext:registerShortName="true" ext:appName="erp-fin" ext:entityPackageName="app.erp.fin.dao.entity"
      ext:basePackageName="app.erp.fin" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-finance"
      ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
      ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef">
@@ -114,23 +114,20 @@
     <domain name="quantity" stdSqlType="DECIMAL" precision="20" scale="4"/>
     <domain name="unitPrice" stdSqlType="DECIMAL" precision="20" scale="4"/>
     <domain name="exchangeRate" stdSqlType="DECIMAL" precision="20" scale="8"/>
-        <domain name="voucherCode" precision="50" stdSqlType="VARCHAR"/>
-        <domain name="amount" stdSqlType="DECIMAL" precision="20" scale="4"/>
-        <domain name="exchangeRate" stdSqlType="DECIMAL" precision="20" scale="8"/>
-        <domain name="subjectCode" precision="50" stdSqlType="VARCHAR"/>
-        <domain name="subjectName" precision="200" stdSqlType="VARCHAR"/>
-        <domain name="voucherNo" precision="50" stdSqlType="VARCHAR"/>
-        <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
-        <domain name="memo" precision="1000" stdSqlType="VARCHAR"/>
-        <domain name="memoTemplate" precision="1000" stdSqlType="VARCHAR"/>
-        <domain name="amountExpression" precision="200" stdSqlType="VARCHAR"/>
+    <domain name="voucherCode" precision="50" stdSqlType="VARCHAR"/>
+    <domain name="subjectCode" precision="50" stdSqlType="VARCHAR"/>
+    <domain name="subjectName" precision="200" stdSqlType="VARCHAR"/>
+    <domain name="voucherNo" precision="50" stdSqlType="VARCHAR"/>
+    <domain name="memo" precision="1000" stdSqlType="VARCHAR"/>
+    <domain name="memoTemplate" precision="1000" stdSqlType="VARCHAR"/>
+    <domain name="amountExpression" precision="200" stdSqlType="VARCHAR"/>
     </domains>
 
     <entities>
         <!-- 会计凭证头 -->
         <entity className="app.erp.fin.dao.entity.ErpFinVoucher"
                 displayName="会计凭证" name="app.erp.fin.dao.entity.ErpFinVoucher"
-                tableName="erp_fin_voucher" tag="erp.finance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_fin_voucher" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="凭证号" domain="voucherCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -154,11 +151,10 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="20" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="21" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="22" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="23" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="period" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriod" tagSet="pub"><join><on leftProp="periodId" rightProp="id"/></join></to-one>
-                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub"><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub"><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one> -->
                 <to-many name="lines" refEntityName="app.erp.fin.dao.entity.ErpFinVoucherLine" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="voucherId"/></join></to-many>
                 <to-many name="billLinks" refEntityName="app.erp.fin.dao.entity.ErpFinVoucherBillR" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="voucherId"/></join></to-many>
             </relations>
@@ -167,7 +163,7 @@
         <!-- 凭证分录行 -->
         <entity className="app.erp.fin.dao.entity.ErpFinVoucherLine"
                 displayName="凭证分录行" name="app.erp.fin.dao.entity.ErpFinVoucherLine"
-                tableName="erp_fin_voucher_line" tag="erp.finance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_fin_voucher_line" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="voucherId" displayName="凭证ID" stdSqlType="BIGINT" mandatory="true" code="VOUCHER_ID" propId="2" stdDataType="long"/>
@@ -201,19 +197,19 @@
             </columns>
             <relations>
                 <to-one name="voucher" refEntityName="app.erp.fin.dao.entity.ErpFinVoucher" tagSet="pub"><join><on leftProp="voucherId" rightProp="id"/></join></to-one>
-                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
-                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub"><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
-                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
-                <to-one name="department" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"><join><on leftProp="departmentId" rightProp="id"/></join></to-one>
-                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="subjectId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub"><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"><join><on leftProp="partnerId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="department" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"><join><on leftProp="departmentId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
 
         <!-- 凭证模板头 -->
         <entity className="app.erp.fin.dao.entity.ErpFinVoucherTemplate"
                 displayName="凭证模板" name="app.erp.fin.dao.entity.ErpFinVoucherTemplate"
-                tableName="erp_fin_voucher_template" tag="erp.finance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_fin_voucher_template" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="模板编码" domain="voucherCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -233,7 +229,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
             </columns>
             <relations>
-                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub"><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub"><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one> -->
                 <to-many name="lines" refEntityName="app.erp.fin.dao.entity.ErpFinVoucherTemplateLine" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="templateId"/></join></to-many>
             </relations>
         </entity>
@@ -241,7 +237,7 @@
         <!-- 凭证模板行 -->
         <entity className="app.erp.fin.dao.entity.ErpFinVoucherTemplateLine"
                 displayName="凭证模板行" name="app.erp.fin.dao.entity.ErpFinVoucherTemplateLine"
-                tableName="erp_fin_voucher_template_line" tag="erp.finance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_fin_voucher_template_line" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="templateId" displayName="模板ID" stdSqlType="BIGINT" mandatory="true" code="TEMPLATE_ID" propId="2" stdDataType="long"/>
@@ -267,7 +263,7 @@
         <!-- 业财回链表 -->
         <entity className="app.erp.fin.dao.entity.ErpFinVoucherBillR"
                 displayName="业财回链" name="app.erp.fin.dao.entity.ErpFinVoucherBillR"
-                tableName="erp_fin_voucher_bill_r" tag="erp.finance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_fin_voucher_bill_r" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="voucherId" displayName="凭证ID" stdSqlType="BIGINT" mandatory="true" code="VOUCHER_ID" propId="2" stdDataType="long"/>
@@ -290,7 +286,7 @@
         <!-- 会计期间 -->
         <entity className="app.erp.fin.dao.entity.ErpFinAccountingPeriod"
                 displayName="会计期间" name="app.erp.fin.dao.entity.ErpFinAccountingPeriod"
-                tableName="erp_fin_accounting_period" tag="erp.finance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_fin_accounting_period" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="期间编码" domain="voucherCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -320,7 +316,7 @@
         <!-- 期间结账状态（按账套 × 模块 AR/AP/INV/GL） -->
         <entity className="app.erp.fin.dao.entity.ErpFinAccountingPeriodStatus"
                 displayName="期间结账状态" name="app.erp.fin.dao.entity.ErpFinAccountingPeriodStatus"
-                tableName="erp_fin_accounting_period_status" tag="erp.finance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_fin_accounting_period_status" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="periodId" displayName="期间ID" stdSqlType="BIGINT" mandatory="true" code="PERIOD_ID" propId="2" stdDataType="long"/>
@@ -342,14 +338,14 @@
             </columns>
             <relations>
                 <to-one name="period" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriod" tagSet="pub"><join><on leftProp="periodId" rightProp="id"/></join></to-one>
-                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub"><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub"><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
 
         <!-- 应收应付明细账（open-item 模型，逐笔核销） -->
         <entity className="app.erp.fin.dao.entity.ErpFinArApItem"
                 displayName="应收应付明细账" name="app.erp.fin.dao.entity.ErpFinArApItem"
-                tableName="erp_fin_ar_ap_item" tag="erp.finance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_fin_ar_ap_item" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="voucherCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -378,19 +374,18 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="25" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="26" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="27" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="28" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
-                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
-                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub"><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"><join><on leftProp="partnerId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub"><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
 
         <!-- 核销单头（付款/收款与发票多对多核销） -->
         <entity className="app.erp.fin.dao.entity.ErpFinReconciliation"
                 displayName="核销单" name="app.erp.fin.dao.entity.ErpFinReconciliation"
-                tableName="erp_fin_reconciliation" tag="erp.finance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_fin_reconciliation" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="单号" domain="voucherCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -414,12 +409,11 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="20" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="21" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="22" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="23" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
-                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
-                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub"><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"><join><on leftProp="partnerId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub"><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one> -->
                 <to-many name="lines" refEntityName="app.erp.fin.dao.entity.ErpFinReconciliationLine" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="reconciliationId"/></join></to-many>
             </relations>
         </entity>
@@ -427,7 +421,7 @@
         <!-- 核销单行（付款/收款项 ↔ 发票项多对多） -->
         <entity className="app.erp.fin.dao.entity.ErpFinReconciliationLine"
                 displayName="核销单行" name="app.erp.fin.dao.entity.ErpFinReconciliationLine"
-                tableName="erp_fin_reconciliation_line" tag="erp.finance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_fin_reconciliation_line" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="reconciliationId" displayName="核销单ID" stdSqlType="BIGINT" mandatory="true" code="RECONCILIATION_ID" propId="2" stdDataType="long"/>
@@ -443,7 +437,6 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="12" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="13" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="14" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="15" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
                 <to-one name="reconciliation" refEntityName="app.erp.fin.dao.entity.ErpFinReconciliation" tagSet="pub"><join><on leftProp="reconciliationId" rightProp="id"/></join></to-one>
@@ -453,7 +446,7 @@
         <!-- 总账余额快照（按 账套×科目×期间×辅助维度 聚合） -->
         <entity className="app.erp.fin.dao.entity.ErpFinGlBalance"
                 displayName="总账余额" name="app.erp.fin.dao.entity.ErpFinGlBalance"
-                tableName="erp_fin_gl_balance" tag="erp.finance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_fin_gl_balance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="orgId" displayName="组织" stdSqlType="BIGINT" mandatory="true" code="ORG_ID" propId="2" stdDataType="long"/>
@@ -482,17 +475,17 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="24" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
             </columns>
             <relations>
-                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub"><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub"><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one> -->
                 <to-one name="period" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriod" tagSet="pub"><join><on leftProp="periodId" rightProp="id"/></join></to-one>
-                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="subjectId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
 
         <!-- 试算平衡表快照（期末结账产出） -->
         <entity className="app.erp.fin.dao.entity.ErpFinTrialBalance"
                 displayName="试算平衡表" name="app.erp.fin.dao.entity.ErpFinTrialBalance"
-                tableName="erp_fin_trial_balance" tag="erp.finance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_fin_trial_balance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="orgId" displayName="组织" stdSqlType="BIGINT" mandatory="true" code="ORG_ID" propId="2" stdDataType="long"/>
@@ -516,16 +509,16 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="20" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
             </columns>
             <relations>
-                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub"><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub"><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one> -->
                 <to-one name="period" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriod" tagSet="pub"><join><on leftProp="periodId" rightProp="id"/></join></to-one>
-                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="subjectId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
 
         <!-- 资金账户 -->
         <entity className="app.erp.fin.dao.entity.ErpFinFundAccount"
                 displayName="资金账户" name="app.erp.fin.dao.entity.ErpFinFundAccount"
-                tableName="erp_fin_fund_account" tag="erp.finance" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_fin_fund_account" tagSet="gid" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
                 <column name="code" displayName="账户编码" domain="voucherCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
@@ -546,11 +539,10 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="17" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="18" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="19" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="remark" code="REMARK" displayName="备注" propId="20" domain="remark" stdSqlType="VARCHAR" precision="1000" stdDataType="string"/>
             </columns>
             <relations>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
-                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
+                <!-- <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one> -->
+                <!-- <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"><join><on leftProp="subjectId" rightProp="id"/></join></to-one> -->
             </relations>
         </entity>
     </entities>

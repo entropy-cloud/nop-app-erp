@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: MRP 需求来源
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 销售订单
+    value: 10
+    description: 
+  
+  - label: 预测
+    value: 20
+    description: 
+  
+  - label: 安全库存
+    value: 30
+    description: 
+  
+  - label: 手工录入
+    value: 40
+    description: 
+  

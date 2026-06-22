@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: AR/AP 状态
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 未核销
+    value: 10
+    description: 
+  
+  - label: 部分核销
+    value: 20
+    description: 
+  
+  - label: 已核销
+    value: 30
+    description: 
+  
+  - label: 已作废
+    value: 40
+    description: 
+  

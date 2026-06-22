@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:ioc="ioc"
+       xmlns="http://www.springframework.org/schema/beans" x:extends="/nop/biz/defaults/service-base.beans.xml"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="app.erp.ast.service.entity.ErpAstAssetCategoryBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpAstAssetCategory" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ast.biz.IErpAstAssetCategoryBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpAstAssetCategory"/>
+    </bean>
+
+    <bean id="app.erp.ast.service.entity.ErpAstAssetBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpAstAsset" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.ast.biz.IErpAstAssetBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpAstAsset"/>
+    </bean>
+
+    <bean id="app.erp.ast.service.entity.ErpAstAssetCapitalizationBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpAstAssetCapitalization" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ast.biz.IErpAstAssetCapitalizationBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpAstAssetCapitalization"/>
+    </bean>
+
+    <bean id="app.erp.ast.service.entity.ErpAstCipBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpAstCip" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.ast.biz.IErpAstCipBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpAstCip"/>
+    </bean>
+
+    <bean id="app.erp.ast.service.entity.ErpAstDepreciationScheduleBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpAstDepreciationSchedule" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ast.biz.IErpAstDepreciationScheduleBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpAstDepreciationSchedule"/>
+    </bean>
+
+    <bean id="app.erp.ast.service.entity.ErpAstMovementBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpAstMovement" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ast.biz.IErpAstMovementBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpAstMovement"/>
+    </bean>
+
+    <bean id="app.erp.ast.service.entity.ErpAstValueAdjustmentBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpAstValueAdjustment" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ast.biz.IErpAstValueAdjustmentBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpAstValueAdjustment"/>
+    </bean>
+
+    <bean id="app.erp.ast.service.entity.ErpAstDisposalBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpAstDisposal" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ast.biz.IErpAstDisposalBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpAstDisposal"/>
+    </bean>
+
+    <bean id="app.erp.ast.service.entity.ErpAstSplitBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpAstSplit" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.ast.biz.IErpAstSplitBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpAstSplit"/>
+    </bean>
+
+    <bean id="app.erp.ast.service.entity.ErpAstMergeBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpAstMerge" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.ast.biz.IErpAstMergeBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpAstMerge"/>
+    </bean>
+</beans>

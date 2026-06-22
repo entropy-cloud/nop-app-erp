@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 地址类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 账单地址
+    value: 10
+    description: 
+  
+  - label: 发货地址
+    value: 20
+    description: 
+  
+  - label: 注册地址
+    value: 30
+    description: 
+  
+  - label: 其他
+    value: 40
+    description: 
+  

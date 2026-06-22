@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 重复类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 每日
+    value: 10
+    description: 
+  
+  - label: 每周
+    value: 20
+    description: 
+  
+  - label: 每月
+    value: 30
+    description: 
+  
+  - label: 每年
+    value: 40
+    description: 
+  

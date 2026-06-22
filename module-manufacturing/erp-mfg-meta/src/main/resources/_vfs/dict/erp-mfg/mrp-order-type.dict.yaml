@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: MRP 计划订单类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 计划订单
+    value: 10
+    description: 
+  
+  - label: 请购建议
+    value: 20
+    description: 
+  
+  - label: 工单建议
+    value: 30
+    description: 
+  
+  - label: 委外建议
+    value: 40
+    description: 
+  
