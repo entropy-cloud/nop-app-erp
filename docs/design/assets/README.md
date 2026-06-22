@@ -76,6 +76,7 @@
 |------|------|
 | `README.md`（本文件） | 域概览、资产与折旧模型、跨域协作 |
 | `state-machine.md` | 资产卡片状态机、折旧计划状态 |
+| `depreciation-and-posting.md` | 折旧与财务打通详细机制 |
 
 ## 实现落位提示
 

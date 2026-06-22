@@ -73,6 +73,7 @@
 |------|------|
 | `README.md`（本文件） | 域概览、质检与业务单据关联 |
 | `state-machine.md` | 质检单与不符合项状态机 |
+| `inspection-integration.md` | 质检与业务集成详细机制 |
 
 ## 实现落位提示
 

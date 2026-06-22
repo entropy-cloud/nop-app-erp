@@ -87,6 +87,7 @@
 |------|------|
 | `README.md`（本文件） | 域概览、与 assets 分工、维护计划模型 |
 | `state-machine.md` | 维护访问与维护请求状态机 |
+| `equipment-integration.md` | 设备与业务集成详细机制 |
 
 ## 实现落位提示
 

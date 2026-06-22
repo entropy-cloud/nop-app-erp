@@ -1,23 +1,34 @@
-# nop-app-erp
+# nop-erp
 
 #### 介绍
 
-基于 Nop 平台（nop-entropy）构建的企业资源计划（ERP）参考应用工程。采用 Attractor-Guided Engineering（AGE）工作流进行 AI 辅助开发。
+基于 Nop 平台（nop-entropy）架构的**产品化通用 ERP 产品**，可快速定制适配各个领域的业务 ERP 系统（零售、制造、贸易、医疗、教育等）。充分利用 Nop 平台内置的扩展能力（Delta 定制、扩展字段、动态实体、模块动态组装等），在不改基线源码的前提下实现各领域客户化。采用 Attractor-Ged Engineering（AGE）工作流进行 AI 辅助开发。
 
-> 当前阶段：**bootstrap（骨架初始化）**。仅包含 AGE 文档结构与空的 ORM 模型骨架，Java 多模块工程尚未生成。
+产品定位与定制能力见 `docs/architecture/project-vision.md` 与 `docs/architecture/customization-capabilities.md`。
+
+#### 业务域范围
+
+内置 10 个业务域，覆盖中等规模 ERP 的进销存+财务一体化+制造全链，交付时按需组装：
+
+- **核心域（进销存+财务）**：主数据、库存、采购、销售、财务
+- **扩展域**：固定资产、项目管理、制造、质量管理、设备维护
 
 #### 软件架构
 
-1. `model/app-erp.orm.xml` — XML 格式的权威数据模型（实体、字典、领域类型）
-2. `app-erp-api` — 对外暴露的服务接口（代码生成后产生）
-3. `app-erp-codegen` — 打包时根据 `app-erp.orm.xml` 自动生成后台工程代码
-4. `app-erp-dao` — 后台数据库访问代码与实体代码
-5. `app-erp-service` — 后台服务实现代码
-6. `app-erp-web` — 前端页面对应的 JSON 和 JS 代码（AMIS）
-7. `deploy` — 根据数据模型自动生成的数据库建表语句
-8. `docs/` — AGE 文档结构（需求、设计、架构、计划、日志等）
+每业务域一个独立 Maven 工程，由聚合工程 `app-erp-app` 组装启动。每域工程由 `nop-cli gen` 从 `<domain>/model/app-erp-<domain>.orm.xml` 自动生成标准 8 层骨架：
 
-> 上面的模块 2-7 当前均不存在，需在 ORM 模型设计完成后通过 `nop-cli` 工具生成。
+1. `<domain>/model/app-erp-<domain>.orm.xml` — XML 格式的权威数据模型（实体、字典、领域类型），每域一份
+2. `app-erp-<domain>-codegen` — 代码生成入口，根据 orm.xml 自动生成后台工程代码
+3. `app-erp-<domain>-api` — 对外暴露的服务接口
+4. `app-erp-<domain>-dao` — 数据库访问代码与实体代码
+5. `app-erp-<domain>-service` — 服务实现代码（BizModel）
+6. `app-erp-<domain>-web` — 前端页面（AMIS）
+7. `app-erp-<domain>-meta` — XMeta 元数据与 i18n
+8. `app-erp-app` — 聚合启动工程（Quarkus）
+9. `deploy` — 根据数据模型自动生成的数据库建表语句
+10. `docs/` — AGE 文档结构（需求、设计、架构、计划、日志等）
+
+> 上面的模块 2-8 当前均不存在，需在 ORM 模型设计完成后通过 `nop-cli` 工具生成。模块拆分决策见 `docs/architecture/domain-module-split-analysis.md`。
 
 #### 环境准备
 

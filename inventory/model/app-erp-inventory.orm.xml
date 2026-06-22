@@ -2,18 +2,24 @@
 <!--
   app-erp-inventory ORM 模型 — 库存域（权威数据模型来源）
   ==================================================
-  业务范围：库存移动单（计划/执行）、库存流水（不可变）、库存余额（快照）、
-            调拨单、盘点单
+  业务范围：库存移动单（头/行）、库存流水（不可变）、库存余额（快照）、
+            库存预留单（头/行）、成本层、调拨单（头/行）、盘点单（头/行）、
+            拣货单（头/行）、批次台账、序列号台账
 
   三轴状态分离：
     - docStatus: 草稿/已确认/已完成/已取消（单据生命周期）
     - approveStatus: 未提交/已提交/已审核/已驳回（审核流程）
+    - posted: 业财过账标志（与库存估值过账联动）
+
+  跨切面公共字段（见 docs/design/domain-design-guidelines.md "单据标准字段约定"）：
+    - 所有单据头携带：orgId、businessDate、posted、postedAt/postedBy、version
+    - 金额类携带：currencyId、exchangeRate、amountSource、amountFunctional
 
   命名约定（见 docs/architecture/domain-module-split-analysis.md）：
     - appName:        app-erp-inv
     - entityPackage:  app.erp.inv.dao.entity
-    - 实体类名:        ErpInv<Entity>     （如 ErpInvStockMove、ErpInvStockLedger、ErpInvStockBalance）
-    - 表名:           erp_inv_<entity>   （如 erp_inv_stock_move、erp_inv_stock_ledger）
+    - 实体类名:        ErpInv<Entity>
+    - 表名:           erp_inv_<entity>
     - 字典命名空间:    erp-inv/<dict-name>
 
   跨工程依赖：
@@ -50,6 +56,37 @@
             <option code="APPROVED" label="已审核" value="2"/>
             <option code="REJECTED" label="已驳回" value="3"/>
         </dict>
+        <dict label="批次状态" name="erp-inv/batch-status" valueType="int">
+            <option code="OPEN" label="在用" value="0"/>
+            <option code="LOCKED" label="锁定" value="1"/>
+            <option code="EXPIRED" label="已过期" value="2"/>
+            <option code="CONSUMED" label="已耗尽" value="3"/>
+            <option code="BLOCKED" label="质量冻结" value="4"/>
+        </dict>
+        <dict label="序列号状态" name="erp-inv/serial-status" valueType="int">
+            <option code="IN_STOCK" label="在库" value="0"/>
+            <option code="OUT" label="已出库" value="1"/>
+            <option code="RESERVED" label="已预留" value="2"/>
+            <option code="BLOCKED" label="冻结" value="3"/>
+        </dict>
+        <dict label="预留状态" name="erp-inv/reservation-status" valueType="int">
+            <option code="OPEN" label="生效中" value="0"/>
+            <option code="PARTIALLY_CONSUMED" label="部分消耗" value="1"/>
+            <option code="CONSUMED" label="已全部消耗" value="2"/>
+            <option code="CANCELLED" label="已取消" value="3"/>
+            <option code="EXPIRED" label="已过期" value="4"/>
+        </dict>
+        <dict label="拣货状态" name="erp-inv/picking-status" valueType="int">
+            <option code="PENDING" label="待拣货" value="0"/>
+            <option code="PICKING" label="拣货中" value="1"/>
+            <option code="PICKED" label="已拣货" value="2"/>
+            <option code="CANCELLED" label="已取消" value="3"/>
+        </dict>
+        <dict label="盘点类型" name="erp-inv/take-type" valueType="int">
+            <option code="FULL" label="全面盘点" value="0"/>
+            <option code="SAMPLE" label="抽样盘点" value="1"/>
+            <option code="CYCLE" label="循环盘点" value="2"/>
+        </dict>
     </dicts>
 
     <domains>
@@ -57,6 +94,7 @@
         <domain name="amount" stdSqlType="DECIMAL" precision="20" scale="4"/>
         <domain name="quantity" stdSqlType="DECIMAL" precision="20" scale="4"/>
         <domain name="unitPrice" stdSqlType="DECIMAL" precision="20" scale="4"/>
+        <domain name="exchangeRate" stdSqlType="DECIMAL" precision="20" scale="8"/>
         <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
     </domains>
 
@@ -69,12 +107,17 @@
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
                 <column name="code" displayName="单号" domainName="orderCode" mandatory="true"/>
                 <column name="moveType" displayName="作业类型" dictName="erp-inv/operation-type" mandatory="true"/>
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT"/>
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true"/>
                 <column name="sourceWarehouseId" displayName="源仓库" stdSqlType="BIGINT"/>
                 <column name="sourceLocationId" displayName="源库位" stdSqlType="BIGINT"/>
                 <column name="destWarehouseId" displayName="目标仓库" stdSqlType="BIGINT"/>
                 <column name="destLocationId" displayName="目标库位" stdSqlType="BIGINT"/>
                 <column name="docStatus" displayName="单据状态" dictName="erp-inv/move-status" mandatory="true"/>
                 <column name="approveStatus" displayName="审核状态" dictName="erp-inv/approve-status" mandatory="true"/>
+                <column name="posted" displayName="已过账" stdSqlType="BOOLEAN" defaultValue="false"/>
+                <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME"/>
+                <column name="postedBy" displayName="过账人" stdSqlType="BIGINT"/>
                 <column name="relatedBillType" displayName="关联单据类型" stdSqlType="VARCHAR" precision="50"/>
                 <column name="relatedBillCode" displayName="关联单据号" stdSqlType="VARCHAR" precision="50"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
@@ -103,6 +146,7 @@
                 <column name="quantity" displayName="数量" domainName="quantity" mandatory="true"/>
                 <column name="unitCost" displayName="单位成本" domainName="unitPrice"/>
                 <column name="totalCost" displayName="总成本" domainName="amount"/>
+                <column name="currencyId" displayName="币种" stdSqlType="BIGINT"/>
                 <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50"/>
                 <column name="serialNo" displayName="序列号" stdSqlType="VARCHAR" precision="50"/>
                 <column name="sourceLocationId" displayName="源库位" stdSqlType="BIGINT"/>
@@ -116,6 +160,7 @@
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" joinColumnName="materialId"/>
                 <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" joinColumnName="skuId"/>
                 <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" joinColumnName="uoMId"/>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" joinColumnName="currencyId"/>
             </relations>
         </entity>
 
@@ -126,6 +171,7 @@
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
                 <column name="code" displayName="流水号" domainName="orderCode" mandatory="true"/>
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT"/>
                 <column name="moveId" displayName="移动单ID" stdSqlType="BIGINT" mandatory="true"/>
                 <column name="moveLineId" displayName="移动单行ID" stdSqlType="BIGINT" mandatory="true"/>
                 <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true"/>
@@ -137,6 +183,10 @@
                 <column name="totalCost" displayName="总成本" domainName="amount"/>
                 <column name="balanceQuantity" displayName="结存数量" domainName="quantity" mandatory="true"/>
                 <column name="balanceTotalCost" displayName="结存总成本" domainName="amount" mandatory="true"/>
+                <column name="costMethod" displayName="计价方法" dictName="erp-md/cost-method"/>
+                <column name="acctSchemaId" displayName="账套" stdSqlType="BIGINT"/>
+                <column name="currencyId" displayName="币种" stdSqlType="BIGINT"/>
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE"/>
                 <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50"/>
                 <column name="serialNo" displayName="序列号" stdSqlType="VARCHAR" precision="50"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
@@ -156,6 +206,7 @@
                 tableName="erp_inv_stock_balance" tag="erp.inventory">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT"/>
                 <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true"/>
                 <column name="skuId" displayName="SKU" stdSqlType="BIGINT"/>
                 <column name="warehouseId" displayName="仓库" stdSqlType="BIGINT" mandatory="true"/>
@@ -163,9 +214,12 @@
                 <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50"/>
                 <column name="totalQuantity" displayName="总数量" domainName="quantity" mandatory="true"/>
                 <column name="reservedQuantity" displayName="预留数量" domainName="quantity" defaultValue="0"/>
+                <column name="lockedQuantity" displayName="冻结数量" domainName="quantity" defaultValue="0"/>
                 <column name="availableQuantity" displayName="可用数量" domainName="quantity" mandatory="true"/>
+                <column name="costMethod" displayName="计价方法" dictName="erp-md/cost-method"/>
                 <column name="avgCost" displayName="平均成本" domainName="unitPrice"/>
                 <column name="totalCost" displayName="总成本" domainName="amount"/>
+                <column name="currencyId" displayName="币种" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
             </columns>
@@ -173,6 +227,90 @@
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" joinColumnName="materialId"/>
                 <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" joinColumnName="skuId"/>
                 <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" joinColumnName="warehouseId"/>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" joinColumnName="currencyId"/>
+            </relations>
+        </entity>
+
+        <!-- 库存预留单头（记录级预留，支撑可用量校验与按订单/工单预留） -->
+        <entity className="app.erp.inv.dao.entity.ErpInvReservation"
+                displayName="库存预留单" name="app.erp.inv.dao.entity.ErpInvReservation"
+                tableName="erp_inv_reservation" tag="erp.inventory">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="code" displayName="单号" domainName="orderCode" mandatory="true"/>
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT"/>
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true"/>
+                <column name="sourceBillType" displayName="来源单据类型(如 SALES_ORDER/WORK_ORDER)" stdSqlType="VARCHAR" precision="50" mandatory="true"/>
+                <column name="sourceBillCode" displayName="来源单据号" stdSqlType="VARCHAR" precision="50" mandatory="true"/>
+                <column name="reservedForPartnerId" displayName="为谁预留(往来单位)" stdSqlType="BIGINT"/>
+                <column name="status" displayName="状态" dictName="erp-inv/reservation-status" mandatory="true"/>
+                <column name="validUntil" displayName="预留有效期至" stdSqlType="DATETIME"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
+            </columns>
+            <relations>
+                <to-many name="lines" refEntityName="app.erp.inv.dao.entity.ErpInvReservationLine" myFieldName="id" refFieldName="reservationId"/>
+            </relations>
+        </entity>
+
+        <!-- 库存预留单行 -->
+        <entity className="app.erp.inv.dao.entity.ErpInvReservationLine"
+                displayName="库存预留单行" name="app.erp.inv.dao.entity.ErpInvReservationLine"
+                tableName="erp_inv_reservation_line" tag="erp.inventory">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="reservationId" displayName="预留单ID" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="lineNo" displayName="行号" stdSqlType="INT" mandatory="true"/>
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="skuId" displayName="SKU" stdSqlType="BIGINT"/>
+                <column name="warehouseId" displayName="仓库" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="locationId" displayName="库位" stdSqlType="BIGINT"/>
+                <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50"/>
+                <column name="reservedQuantity" displayName="预留数量" domainName="quantity" mandatory="true"/>
+                <column name="consumedQuantity" displayName="已消耗数量" domainName="quantity" defaultValue="0"/>
+                <column name="uomId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="sourceLineCode" displayName="来源行号" stdSqlType="VARCHAR" precision="50"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-one name="reservation" refEntityName="app.erp.inv.dao.entity.ErpInvReservation" joinColumnName="reservationId"/>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" joinColumnName="materialId"/>
+                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" joinColumnName="skuId"/>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" joinColumnName="warehouseId"/>
+            </relations>
+        </entity>
+
+        <!-- 成本层（支撑 FIFO/批次/具体辨认的多层成本核算） -->
+        <entity className="app.erp.inv.dao.entity.ErpInvCostLayer"
+                displayName="成本层" name="app.erp.inv.dao.entity.ErpInvCostLayer"
+                tableName="erp_inv_cost_layer" tag="erp.inventory">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT"/>
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="skuId" displayName="SKU" stdSqlType="BIGINT"/>
+                <column name="warehouseId" displayName="仓库" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50"/>
+                <column name="costMethod" displayName="计价方法" dictName="erp-md/cost-method" mandatory="true"/>
+                <column name="incomingQuantity" displayName="入库数量" domainName="quantity" mandatory="true"/>
+                <column name="remainingQuantity" displayName="剩余数量" domainName="quantity" mandatory="true"/>
+                <column name="unitCost" displayName="单位成本" domainName="unitPrice" mandatory="true"/>
+                <column name="totalCost" displayName="总成本" domainName="amount" mandatory="true"/>
+                <column name="currencyId" displayName="币种" stdSqlType="BIGINT"/>
+                <column name="incomingDate" displayName="入库日期" stdSqlType="DATE"/>
+                <column name="incomingMoveId" displayName="入库移动单" stdSqlType="BIGINT"/>
+                <column name="acctSchemaId" displayName="账套" stdSqlType="BIGINT"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" joinColumnName="materialId"/>
+                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" joinColumnName="skuId"/>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" joinColumnName="warehouseId"/>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" joinColumnName="currencyId"/>
             </relations>
         </entity>
 
@@ -183,10 +321,16 @@
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
                 <column name="code" displayName="单号" domainName="orderCode" mandatory="true"/>
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT"/>
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true"/>
                 <column name="fromWarehouseId" displayName="调出仓库" stdSqlType="BIGINT" mandatory="true"/>
                 <column name="toWarehouseId" displayName="调入仓库" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="inTransitWarehouseId" displayName="在途仓库" stdSqlType="BIGINT"/>
                 <column name="docStatus" displayName="单据状态" dictName="erp-inv/move-status" mandatory="true"/>
                 <column name="approveStatus" displayName="审核状态" dictName="erp-inv/approve-status" mandatory="true"/>
+                <column name="posted" displayName="已过账" stdSqlType="BOOLEAN" defaultValue="false"/>
+                <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME"/>
+                <column name="postedBy" displayName="过账人" stdSqlType="BIGINT"/>
                 <column name="approvedBy" displayName="审核人" stdSqlType="BIGINT"/>
                 <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME"/>
                 <column name="createdBy" displayName="创建人" stdSqlType="BIGINT" mandatory="true"/>
@@ -198,6 +342,7 @@
             <relations>
                 <to-one name="fromWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" joinColumnName="fromWarehouseId"/>
                 <to-one name="toWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" joinColumnName="toWarehouseId"/>
+                <to-one name="inTransitWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" joinColumnName="inTransitWarehouseId"/>
                 <to-many name="lines" refEntityName="app.erp.inv.dao.entity.ErpInvTransferOrderLine" myFieldName="id" refFieldName="transferId"/>
             </relations>
         </entity>
@@ -214,6 +359,7 @@
                 <column name="skuId" displayName="SKU" stdSqlType="BIGINT"/>
                 <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true"/>
                 <column name="quantity" displayName="数量" domainName="quantity" mandatory="true"/>
+                <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
@@ -233,9 +379,15 @@
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
                 <column name="code" displayName="单号" domainName="orderCode" mandatory="true"/>
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT"/>
+                <column name="businessDate" displayName="盘点日期" stdSqlType="DATE" mandatory="true"/>
+                <column name="takeType" displayName="盘点类型" dictName="erp-inv/take-type"/>
                 <column name="warehouseId" displayName="盘点仓库" stdSqlType="BIGINT" mandatory="true"/>
                 <column name="docStatus" displayName="单据状态" dictName="erp-inv/move-status" mandatory="true"/>
                 <column name="approveStatus" displayName="审核状态" dictName="erp-inv/approve-status" mandatory="true"/>
+                <column name="posted" displayName="已过账" stdSqlType="BOOLEAN" defaultValue="false"/>
+                <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME"/>
+                <column name="postedBy" displayName="过账人" stdSqlType="BIGINT"/>
                 <column name="createdBy" displayName="创建人" stdSqlType="BIGINT" mandatory="true"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
@@ -259,9 +411,13 @@
                 <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true"/>
                 <column name="skuId" displayName="SKU" stdSqlType="BIGINT"/>
                 <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="locationId" displayName="库位" stdSqlType="BIGINT"/>
+                <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50"/>
                 <column name="bookQuantity" displayName="账面数量" domainName="quantity" mandatory="true"/>
                 <column name="actualQuantity" displayName="实盘数量" domainName="quantity" mandatory="true"/>
                 <column name="differenceQuantity" displayName="差异数量" domainName="quantity" mandatory="true"/>
+                <column name="unitCost" displayName="单位成本" domainName="unitPrice"/>
+                <column name="differenceAmount" displayName="差异金额" domainName="amount"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
@@ -274,12 +430,65 @@
             </relations>
         </entity>
 
+        <!-- 拣货单头 -->
+        <entity className="app.erp.inv.dao.entity.ErpInvPickingOrder"
+                displayName="拣货单" name="app.erp.inv.dao.entity.ErpInvPickingOrder"
+                tableName="erp_inv_picking_order" tag="erp.inventory">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="code" displayName="单号" domainName="orderCode" mandatory="true"/>
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT"/>
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true"/>
+                <column name="warehouseId" displayName="拣货仓库" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="pickerId" displayName="拣货人(职员)" stdSqlType="BIGINT"/>
+                <column name="docStatus" displayName="单据状态" dictName="erp-inv/picking-status" mandatory="true"/>
+                <column name="relatedBillType" displayName="关联单据类型(SALES_DELIVERY/WORK_ORDER_ISSUE)" stdSqlType="VARCHAR" precision="50"/>
+                <column name="relatedBillCode" displayName="关联单据号" stdSqlType="VARCHAR" precision="50"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="version" displayName="版本号" stdSqlType="INT" defaultValue="0"/>
+            </columns>
+            <relations>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" joinColumnName="warehouseId"/>
+                <to-many name="lines" refEntityName="app.erp.inv.dao.entity.ErpInvPickingOrderLine" myFieldName="id" refFieldName="pickingId"/>
+            </relations>
+        </entity>
+
+        <!-- 拣货单行 -->
+        <entity className="app.erp.inv.dao.entity.ErpInvPickingOrderLine"
+                displayName="拣货单行" name="app.erp.inv.dao.entity.ErpInvPickingOrderLine"
+                tableName="erp_inv_picking_order_line" tag="erp.inventory">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="pickingId" displayName="拣货单ID" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="lineNo" displayName="行号" stdSqlType="INT" mandatory="true"/>
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="skuId" displayName="SKU" stdSqlType="BIGINT"/>
+                <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true"/>
+                <column name="sourceLocationId" displayName="拣货库位" stdSqlType="BIGINT"/>
+                <column name="quantity" displayName="应拣数量" domainName="quantity" mandatory="true"/>
+                <column name="pickedQuantity" displayName="已拣数量" domainName="quantity" defaultValue="0"/>
+                <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50"/>
+                <column name="remark" displayName="备注" domainName="remark"/>
+                <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
+                <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
+            </columns>
+            <relations>
+                <to-one name="picking" refEntityName="app.erp.inv.dao.entity.ErpInvPickingOrder" joinColumnName="pickingId"/>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" joinColumnName="materialId"/>
+                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" joinColumnName="skuId"/>
+                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" joinColumnName="uoMId"/>
+            </relations>
+        </entity>
+
         <!-- 批次台账 -->
         <entity className="app.erp.inv.dao.entity.ErpInvBatch"
                 displayName="批次台账" name="app.erp.inv.dao.entity.ErpInvBatch"
                 tableName="erp_inv_batch" tag="erp.inventory">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT"/>
                 <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" mandatory="true"/>
                 <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true"/>
                 <column name="skuId" displayName="SKU" stdSqlType="BIGINT"/>
@@ -289,7 +498,7 @@
                 <column name="productionDate" displayName="生产日期" stdSqlType="DATE"/>
                 <column name="expiryDate" displayName="有效期至" stdSqlType="DATE"/>
                 <column name="shelfLifeDays" displayName="保质期(天)" stdSqlType="INT"/>
-                <column name="status" displayName="状态" stdSqlType="VARCHAR" precision="20" mandatory="true"/>
+                <column name="status" displayName="状态" dictName="erp-inv/batch-status" mandatory="true"/>
                 <column name="remark" displayName="备注" domainName="remark"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
@@ -307,12 +516,13 @@
                 tableName="erp_inv_serial_number" tag="erp.inventory">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true"/>
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT"/>
                 <column name="serialNo" displayName="序列号" stdSqlType="VARCHAR" precision="50" mandatory="true"/>
                 <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true"/>
                 <column name="skuId" displayName="SKU" stdSqlType="BIGINT"/>
                 <column name="warehouseId" displayName="当前仓库" stdSqlType="BIGINT"/>
                 <column name="locationId" displayName="当前库位" stdSqlType="BIGINT"/>
-                <column name="status" displayName="状态" stdSqlType="VARCHAR" precision="20" mandatory="true"/>
+                <column name="status" displayName="状态" dictName="erp-inv/serial-status" mandatory="true"/>
                 <column name="inBillType" displayName="入库单类型" stdSqlType="VARCHAR" precision="50"/>
                 <column name="inBillCode" displayName="入库单号" stdSqlType="VARCHAR" precision="50"/>
                 <column name="outBillType" displayName="出库单类型" stdSqlType="VARCHAR" precision="50"/>

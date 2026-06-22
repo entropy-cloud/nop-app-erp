@@ -8,10 +8,12 @@ Use `docs/design/` for app-layer feature and business design. Use `docs/architec
 
 ## Suggested Reading Order
 
-1. `project-vision.md`
-2. `system-baseline.md`
-3. `module-boundaries.md`
-4. more specific owner docs as the project grows
+1. `project-vision.md` — 产品定位（产品化通用 ERP）
+2. `customization-capabilities.md` — 定制开发能力总览
+3. `system-baseline.md` — 技术基线与 10 域模块结构
+4. `module-boundaries.md` — 模块依赖方向（DAG）
+5. `domain-module-split-analysis.md` — 10 域拆分决策与命名方案
+6. more specific owner docs as the project grows
 
 ## Owner-Doc Rules
 
@@ -29,6 +31,10 @@ Use `docs/design/` for app-layer feature and business design. Use `docs/architec
 
 ## Initial Owner Docs
 
-- `project-vision.md` - product and system intent
-- `system-baseline.md` - current stack and runtime baseline
-- `module-boundaries.md` - package/module/domain ownership boundaries
+- `project-vision.md` - 产品定位（产品化通用 ERP）、主要用户、不变约束、非目标、里程碑
+- `customization-capabilities.md` - 定制开发能力总览（Delta/扩展字段/nop-dyn/模块组装/扩展层/BizLoader + 决策矩阵 + 升级路径）
+- `system-baseline.md` - 技术基线、10 域模块结构、多租户策略、Stable Rules
+- `module-boundaries.md` - 模块依赖方向（DAG）、跨工程实体关系硬规则
+- `domain-module-split-analysis.md` - 10 域拆分决策（方案B）、命名与前缀方案、codegen 边界
+- `api-response-conventions.md` - API 响应约定
+- `integration-and-transaction-patterns.md` - 集成与事务模式
