@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  app-erp-inventory ORM 模型 — 库存域（权威数据模型来源）
+  ==================================================
+  业务范围：库存移动单（计划/执行）、库存流水（不可变）、库存余额（快照）、
+            调拨单、盘点单、批次台账、序列号台账、作业类型
+
+  当前状态：骨架（bootstrap skeleton），实体待设计阶段填充。
+
+  命名约定（见 docs/architecture/domain-module-split-analysis.md）：
+    - appName:        app-erp-inv
+    - entityPackage:  app.erp.inv.dao.entity
+    - 实体类名:        ErpInv<Entity>     （如 ErpInvStockMove、ErpInvStockLedger、ErpInvStockBalance）
+    - 表名:           erp_inv_<entity>   （如 erp_inv_stock_move、erp_inv_stock_ledger）
+    - 字典命名空间:    erp-inv/<dict-name>
+
+  跨工程依赖：
+    - 依赖 app-erp-master-data（物料/仓库/库位/批次规则引用 ErpMd*）
+    - 被 app-erp-purchase / app-erp-sales 依赖（出入库写库存）
+    - 被 app-erp-finance 引用（存货估值过账）
+    - 跨工程实体不做 ORM refEntityName 强引用，走 I*Biz
+-->
+<orm ext:registerShortName="true" ext:appName="app-erp-inv" ext:entityPackageName="app.erp.inv.dao.entity"
+     ext:basePackageName="app.erp.inv" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-inventory"
+     ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
+     ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+
+    <dicts>
+        <!--
+          字典定义（待设计阶段填充），例如：
+          <dict label="库存移动状态" name="erp-inv/move-status" valueType="int">
+              <option code="DRAFT" label="草稿" value="0"/>
+              <option code="CONFIRMED" label="已确认" value="1"/>
+              <option code="DONE" label="已完成" value="2"/>
+              <option code="CANCELLED" label="已取消" value="3"/>
+          </dict>
+          <dict label="库存作业类型" name="erp-inv/operation-type" valueType="int">
+              <option code="INCOMING" label="入库" value="0"/>
+              <option code="OUTGOING" label="出库" value="1"/>
+              <option code="INTERNAL" label="内部调拨" value="2"/>
+              <option code="MANUFACTURE" label="制造" value="3"/>
+          </dict>
+        -->
+    </dicts>
+
+    <domains>
+        <!--
+          公共领域类型（待设计阶段填充），例如：
+          <domain name="quantity" stdSqlType="DECIMAL" precision="20" scale="4"/>
+          <domain name="moveCode" precision="50" stdSqlType="VARCHAR"/>
+        -->
+    </domains>
+
+    <entities>
+        <!--
+          实体定义（待设计阶段填充），例如：
+          <entity className="app.erp.inv.dao.entity.ErpInvStockMove"
+                  displayName="库存移动单" tableName="erp_inv_stock_move">
+              ...
+          </entity>
+        -->
+    </entities>
+</orm>

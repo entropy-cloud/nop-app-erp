@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  app-erp-quality ORM 模型 — 质量管理域（权威数据模型来源）
+  ==================================================
+  业务范围：质检单（关联采购入库/销售出库/工单）、质检模板与参数、质量目标、
+            不合格品处理（NCR 不符合报告）、纠正预防措施（CAPA）、质量评审
+
+  当前状态：骨架（bootstrap skeleton），实体待设计阶段填充。
+
+  命名约定（见 docs/architecture/domain-module-split-analysis.md）：
+    - appName:        app-erp-qa
+    - entityPackage:  app.erp.qa.dao.entity
+    - 实体类名:        ErpQa<Entity>     （如 ErpQaInspection、ErpQaInspectionTemplate、ErpQaNonConformance、ErpQaAction）
+    - 表名:           erp_qa_<entity>   （如 erp_qa_inspection、erp_qa_inspection_template、erp_qa_non_conformance）
+    - 字典命名空间:    erp-qa/<dict-name>
+
+  跨工程依赖：
+    - 依赖 app-erp-master-data（物料、检验标准）
+    - 被 app-erp-purchase 引用（采购入库触发来料质检）
+    - 被 app-erp-sales 引用（销售出库触发发货质检）
+    - 被 app-erp-manufacturing 引用（工单完工触发制程质检）
+    - 质检不合格可触发采购退货/销售退货/工单返工（通过 I*Biz 反向通知）
+    - 跨工程实体不做 ORM refEntityName 强引用，走 I*Biz
+-->
+<orm ext:registerShortName="true" ext:appName="app-erp-qa" ext:entityPackageName="app.erp.qa.dao.entity"
+     ext:basePackageName="app.erp.qa" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-quality"
+     ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
+     ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+
+    <dicts>
+        <!--
+          字典定义（待设计阶段填充），例如：
+          <dict label="检验类型" name="erp-qa/inspection-type" valueType="int">
+              <option code="INCOMING" label="来料检验" value="0"/>
+              <option code="IN_PROCESS" label="制程检验" value="1"/>
+              <option code="FINAL" label="完工检验" value="2"/>
+              <option code="OUTGOING" label="出货检验" value="3"/>
+          </dict>
+          <dict label="质检结果" name="erp-qa/inspection-result" valueType="int">
+              <option code="PENDING" label="待检" value="0"/>
+              <option code="ACCEPTED" label="合格" value="1"/>
+              <option code="CONDITIONAL" label="让步接收" value="2"/>
+              <option code="REJECTED" label="不合格" value="3"/>
+          </dict>
+          <dict label="不符合项状态" name="erp-qa/ncr-status" valueType="int">
+              <option code="OPEN" label="待处理" value="0"/>
+              <option code="IN_REVIEW" label="评审中" value="1"/>
+              <option code="RESOLVED" label="已解决" value="2"/>
+              <option code="CANCELLED" label="已取消" value="3"/>
+          </dict>
+          <dict label="纠正措施类型" name="erp-qa/action-type" valueType="int">
+              <option code="CORRECTIVE" label="纠正" value="0"/>
+              <option code="PREVENTIVE" label="预防" value="1"/>
+              <option code="CAPA" label="纠正预防" value="2"/>
+          </dict>
+        -->
+    </dicts>
+
+    <domains>
+        <!--
+          公共领域类型（待设计阶段填充），例如：
+          <domain name="inspectionCode" precision="50" stdSqlType="VARCHAR"/>
+          <domain name="measuredValue" stdSqlType="DECIMAL" precision="20" scale="6"/>
+          <domain name="specLimit" stdSqlType="DECIMAL" precision="20" scale="6"/>
+        -->
+    </domains>
+
+    <entities>
+        <!--
+          实体定义（待设计阶段填充），例如：
+          <entity className="app.erp.qa.dao.entity.ErpQaInspection"
+                  displayName="质检单" tableName="erp_qa_inspection">
+              ...
+          </entity>
+        -->
+    </entities>
+</orm>

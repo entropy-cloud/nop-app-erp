@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  app-erp-manufacturing ORM 模型 — 制造域（权威数据模型来源）
+  ==================================================
+  业务范围：BOM（头/行/工艺/联副产品）、工单、工序作业卡（Job Card）、工艺路线（Routing）、
+            工作中心（Workcenter）、生产计划、停机记录、外协
+
+  当前状态：骨架（bootstrap skeleton），实体待设计阶段填充。
+
+  命名约定（见 docs/architecture/domain-module-split-analysis.md）：
+    - appName:        app-erp-mfg
+    - entityPackage:  app.erp.mfg.dao.entity
+    - 实体类名:        ErpMfg<Entity>     （如 ErpMfgBom、ErpMfgWorkOrder、ErpMfgJobCard、ErpMfgRouting）
+    - 表名:           erp_mfg_<entity>   （如 erp_mfg_bom、erp_mfg_work_order、erp_mfg_job_card）
+    - 字典命名空间:    erp-mfg/<dict-name>
+
+  跨工程依赖：
+    - 依赖 app-erp-master-data（物料/SKU、仓库、工作中心主数据）
+    - 依赖 app-erp-inventory（领料消耗/完工入库写库存，通过 I*Biz 调用）
+    - 被 app-erp-finance 引用（生产订单触发存货估值凭证、成本结转）
+    - 可被 app-erp-quality 引用（工单完工触发质检）
+    - 跨工程实体不做 ORM refEntityName 强引用，走 I*Biz
+-->
+<orm ext:registerShortName="true" ext:appName="app-erp-mfg" ext:entityPackageName="app.erp.mfg.dao.entity"
+     ext:basePackageName="app.erp.mfg" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-manufacturing"
+     ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
+     ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+
+    <dicts>
+        <!--
+          字典定义（待设计阶段填充），例如：
+          <dict label="工单状态" name="erp-mfg/work-order-status" valueType="int">
+              <option code="DRAFT" label="草稿" value="0"/>
+              <option code="SUBMITTED" label="已提交" value="1"/>
+              <option code="NOT_STARTED" label="未开始" value="2"/>
+              <option code="IN_PROCESS" label="生产中" value="3"/>
+              <option code="STOCK_RESERVED" label="已齐套" value="4"/>
+              <option code="STOCK_PARTIAL" label="部分齐套" value="5"/>
+              <option code="COMPLETED" label="已完工" value="6"/>
+              <option code="STOPPED" label="已停工" value="7"/>
+              <option code="CLOSED" label="已关闭" value="8"/>
+              <option code="CANCELLED" label="已取消" value="9"/>
+          </dict>
+          <dict label="作业卡状态" name="erp-mfg/job-card-status" valueType="int">
+              <option code="OPEN" label="待开始" value="0"/>
+              <option code="WORK_IN_PROGRESS" label="作业中" value="1"/>
+              <option code="PARTIALLY_TRANSFERRED" label="部分转序" value="2"/>
+              <option code="MATERIAL_TRANSFERRED" label="已转序" value="3"/>
+              <option code="ON_HOLD" label="暂停" value="4"/>
+              <option code="SUBMITTED" label="已提交" value="5"/>
+              <option code="COMPLETED" label="已完成" value="6"/>
+              <option code="CANCELLED" label="已取消" value="7"/>
+          </dict>
+          <dict label="BOM 类型" name="erp-mfg/bom-type" valueType="int">
+              <option code="NORMAL" label="制造" value="0"/>
+              <option code="PHANTOM" label="虚拟件/Kit" value="1"/>
+          </dict>
+          <dict label="消耗控制" name="erp-mfg/consumption" valueType="int">
+              <option code="FLEXIBLE" label="允许超耗" value="0"/>
+              <option code="WARNING" label="超耗警告" value="1"/>
+              <option code="STRICT" label="严格按 BOM" value="2"/>
+          </dict>
+        -->
+    </dicts>
+
+    <domains>
+        <!--
+          公共领域类型（待设计阶段填充），例如：
+          <domain name="bomCode" precision="50" stdSqlType="VARCHAR"/>
+          <domain name="workOrderCode" precision="50" stdSqlType="VARCHAR"/>
+          <domain name="quantity" stdSqlType="DECIMAL" precision="20" scale="4"/>
+          <domain name="timeInMins" stdSqlType="DECIMAL" precision="12" scale="2"/>
+        -->
+    </domains>
+
+    <entities>
+        <!--
+          实体定义（待设计阶段填充），例如：
+          <entity className="app.erp.mfg.dao.entity.ErpMfgBom"
+                  displayName="BOM" tableName="erp_mfg_bom">
+              ...
+          </entity>
+        -->
+    </entities>
+</orm>

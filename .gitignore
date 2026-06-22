@@ -1,0 +1,33 @@
+# IDE
+/.idea/
+*.iml
+.settings/
+
+# Build and release folders
+bin-debug/
+bin-release/
+[Oo]bj/
+[Bb]in/
+target/
+_dump/
+
+# Other
+*.swf
+*.air
+*.ipa
+*.apk
+
+# Node.js (tools directory only)
+node_modules/
+
+# OS files
+.DS_Store
+
+# Tools
+tools/report/
+
+# Local database
+db/
+
+# Windows artifact
+nul

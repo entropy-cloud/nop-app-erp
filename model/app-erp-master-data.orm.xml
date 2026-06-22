@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  app-erp-master-data ORM 模型 — 主数据域（权威数据模型来源）
+  ==================================================
+  业务范围：物料/SKU、往来单位（客户/供应商）、仓库/库位、币种/汇率、
+            科目表/科目、计量单位/单位换算、结算方式、支付方式、组织部门
+
+  当前状态：骨架（bootstrap skeleton）
+    - 仅含 maven 坐标、空 dicts/domains/entities 段
+    - 实体待设计阶段填充，填充后通过 nop-cli gen 生成 Java 多模块工程
+
+  命名约定（见 docs/architecture/domain-module-split-analysis.md）：
+    - appName:        app-erp-md
+    - entityPackage:  app.erp.md.dao.entity
+    - 实体类名:        ErpMd<Entity>     （如 ErpMdMaterial、ErpMdPartner、ErpMdWarehouse）
+    - 表名:           erp_md_<entity>   （如 erp_md_material、erp_md_partner、erp_md_warehouse）
+    - 字典命名空间:    erp-md/<dict-name>
+-->
+<orm ext:registerShortName="true" ext:appName="app-erp-md" ext:entityPackageName="app.erp.md.dao.entity"
+     ext:basePackageName="app.erp.md" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-master-data"
+     ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
+     ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+
+    <dicts>
+        <!--
+          字典定义（待设计阶段填充），例如：
+          <dict label="物料类型" name="erp-md/material-type" valueType="int">
+              <option code="GOODS" label="商品" value="0"/>
+              <option code="MATERIAL" label="原材料" value="1"/>
+              <option code="PRODUCT" label="产成品" value="2"/>
+              <option code="SERVICE" label="服务" value="3"/>
+          </dict>
+          <dict label="往来单位类型" name="erp-md/partner-type" valueType="int">
+              <option code="CUSTOMER" label="客户" value="0"/>
+              <option code="SUPPLIER" label="供应商" value="1"/>
+              <option code="BOTH" label="客户且供应商" value="2"/>
+          </dict>
+        -->
+    </dicts>
+
+    <domains>
+        <!--
+          公共领域类型（待设计阶段填充），例如：
+          <domain name="partnerCode" precision="50" stdSqlType="VARCHAR"/>
+          <domain name="materialCode" precision="50" stdSqlType="VARCHAR"/>
+          <domain name="subjectCode" precision="50" stdSqlType="VARCHAR"/>
+          <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
+        -->
+    </domains>
+
+    <entities>
+        <!--
+          实体定义（待设计阶段填充），例如：
+          <entity className="app.erp.md.dao.entity.ErpMdMaterial"
+                  displayName="物料" name="app.erp.md.dao.entity.ErpMdMaterial"
+                  tableName="erp_md_material">
+              ...
+          </entity>
+        -->
+    </entities>
+</orm>

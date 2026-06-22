@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  app-erp-maintenance ORM 模型 — 设备维护域（权威数据模型来源）
+  ==================================================
+  业务范围：设备/资产维护（与资产域协作）、维护计划（周期性预防维护）、维护访问（实际执行）、
+            维护请求（报修）、维护团队与任务、停机记录（与制造域协作）
+
+  注意：本域聚焦"设备/资产的维护执行"，与 app-erp-assets 的"资产卡片与折旧"分工：
+    - assets 域：资产的价值管理（卡片、折旧、资本化、价值调整）
+    - maintenance 域：资产的实物维护（计划、访问、维修、停机）
+    - 资产维护历史可被 assets 域引用查询，但维护执行由本域负责
+
+  当前状态：骨架（bootstrap skeleton），实体待设计阶段填充。
+
+  命名约定（见 docs/architecture/domain-module-split-analysis.md）：
+    - appName:        app-erp-mnt
+    - entityPackage:  app.erp.mnt.dao.entity
+    - 实体类名:        ErpMnt<Entity>     （如 ErpMntEquipment、ErpMntSchedule、ErpMntVisit、ErpMntRequest）
+    - 表名:           erp_mnt_<entity>   （如 erp_mnt_equipment、erp_mnt_schedule、erp_mnt_visit）
+    - 字典命名空间:    erp-mnt/<dict-name>
+
+  跨工程依赖：
+    - 依赖 app-erp-assets（资产/设备主数据引用，资产停机状态联动）
+    - 依赖 app-erp-master-data（物料/备件、人员）
+    - 可被 app-erp-manufacturing 引用（工作中心停机影响排产）
+    - 维修消耗备件触发 inventory 出库（通过 I*Biz）
+    - 跨工程实体不做 ORM refEntityName 强引用，走 I*Biz
+-->
+<orm ext:registerShortName="true" ext:appName="app-erp-mnt" ext:entityPackageName="app.erp.mnt.dao.entity"
+     ext:basePackageName="app.erp.mnt" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-maintenance"
+     ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
+     ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+
+    <dicts>
+        <!--
+          字典定义（待设计阶段填充），例如：
+          <dict label="维护计划类型" name="erp-mnt/schedule-type" valueType="int">
+              <option code="PREVENTIVE" label="预防性维护" value="0"/>
+              <option code="PREDICTIVE" label="预测性维护" value="1"/>
+              <option code="CALIBRATION" label="校准" value="2"/>
+          </dict>
+          <dict label="维护访问状态" name="erp-mnt/visit-status" valueType="int">
+              <option code="DRAFT" label="草稿" value="0"/>
+              <option code="SCHEDULED" label="已排程" value="1"/>
+              <option code="IN_PROGRESS" label="执行中" value="2"/>
+              <option code="COMPLETED" label="已完成" value="3"/>
+              <option code="CANCELLED" label="已取消" value="4"/>
+          </dict>
+          <dict label="维护请求状态" name="erp-mnt/request-status" valueType="int">
+              <option code="OPEN" label="待受理" value="0"/>
+              <option code="ACCEPTED" label="已受理" value="1"/>
+              <option code="IN_PROGRESS" label="维修中" value="2"/>
+              <option code="COMPLETED" label="已完成" value="3"/>
+              <option code="REJECTED" label="已拒绝" value="4"/>
+              <option code="CANCELLED" label="已取消" value="5"/>
+          </dict>
+          <dict label="设备状态" name="erp-mnt/equipment-status" valueType="int">
+              <option code="RUNNING" label="运行中" value="0"/>
+              <option code="IDLE" label="闲置" value="1"/>
+              <option code="UNDER_MAINTENANCE" label="维护中" value="2"/>
+              <option code="DOWN" label="故障停机" value="3"/>
+              <option code="DECOMMISSIONED" label="已停用" value="4"/>
+          </dict>
+        -->
+    </dicts>
+
+    <domains>
+        <!--
+          公共领域类型（待设计阶段填充），例如：
+          <domain name="equipmentCode" precision="50" stdSqlType="VARCHAR"/>
+          <domain name="visitCode" precision="50" stdSqlType="VARCHAR"/>
+          <domain name="downtimeMinutes" stdSqlType="DECIMAL" precision="12" scale="2"/>
+        -->
+    </domains>
+
+    <entities>
+        <!--
+          实体定义（待设计阶段填充），例如：
+          <entity className="app.erp.mnt.dao.entity.ErpMntEquipment"
+                  displayName="设备" tableName="erp_mnt_equipment">
+              ...
+          </entity>
+        -->
+    </entities>
+</orm>

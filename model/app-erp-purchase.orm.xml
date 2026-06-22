@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  app-erp-purchase ORM 模型 — 采购域（权威数据模型来源）
+  ==================================================
+  业务范围：采购订单（头/行）、采购入库单（头/行）、采购发票（头/行）、
+            采购退货单（头/行）、付款单（头/行）、付款核销明细
+
+  当前状态：骨架（bootstrap skeleton），实体待设计阶段填充。
+
+  命名约定（见 docs/architecture/domain-module-split-analysis.md）：
+    - appName:        app-erp-pur
+    - entityPackage:  app.erp.pur.dao.entity
+    - 实体类名:        ErpPur<Entity>     （如 ErpPurOrder、ErpPurReceive、ErpPurInvoice、ErpPurPayment）
+    - 表名:           erp_pur_<entity>   （如 erp_pur_order、erp_pur_receive、erp_pur_invoice）
+    - 字典命名空间:    erp-pur/<dict-name>
+
+  跨工程依赖：
+    - 依赖 app-erp-master-data（物料/供应商/仓库/币种/科目）
+    - 依赖 app-erp-inventory（入库写库存，通过 I*Biz 调用）
+    - 被 app-erp-finance 引用（采购发票/付款触发应付凭证）
+    - 跨工程实体不做 ORM refEntityName 强引用，走 I*Biz
+-->
+<orm ext:registerShortName="true" ext:appName="app-erp-pur" ext:entityPackageName="app.erp.pur.dao.entity"
+     ext:basePackageName="app.erp.pur" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-purchase"
+     ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
+     ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+
+    <dicts>
+        <!--
+          字典定义（待设计阶段填充），例如：
+          <dict label="采购单据状态" name="erp-pur/doc-status" valueType="int">
+              <option code="DRAFT" label="草稿" value="0"/>
+              <option code="SUBMITTED" label="已提交" value="1"/>
+              <option code="APPROVED" label="已审核" value="2"/>
+              <option code="REJECTED" label="已驳回" value="3"/>
+              <option code="CANCELLED" label="已取消" value="4"/>
+          </dict>
+          <dict label="付款进度" name="erp-pur/paid-status" valueType="int">
+              <option code="UNPAID" label="未付款" value="0"/>
+              <option code="PARTIAL" label="部分付款" value="1"/>
+              <option code="PAID" label="已付清" value="2"/>
+          </dict>
+        -->
+    </dicts>
+
+    <domains>
+        <!--
+          公共领域类型（待设计阶段填充），例如：
+          <domain name="amount" stdSqlType="DECIMAL" precision="20" scale="4"/>
+          <domain name="orderCode" precision="50" stdSqlType="VARCHAR"/>
+          <domain name="taxRate" stdSqlType="DECIMAL" precision="10" scale="4"/>
+        -->
+    </domains>
+
+    <entities>
+        <!--
+          实体定义（待设计阶段填充），例如：
+          <entity className="app.erp.pur.dao.entity.ErpPurOrder"
+                  displayName="采购订单" tableName="erp_pur_order">
+              ...
+          </entity>
+        -->
+    </entities>
+</orm>

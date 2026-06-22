@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ⚠️ DEPRECATED — 本文件为 bootstrap 阶段占位骨架，不再是权威数据模型来源
+  ==================================================
+
+  正式数据模型已按业务域拆分到以下 5 份独立 orm.xml（每域对应一个独立 Maven 工程）：
+
+    - model/app-erp-master-data.orm.xml   （主数据域，appName=app-erp-md）
+    - model/app-erp-inventory.orm.xml     （库存域，   appName=app-erp-inv）
+    - model/app-erp-purchase.orm.xml      （采购域，   appName=app-erp-pur）
+    - model/app-erp-sales.orm.xml         （销售域，   appName=app-erp-sal）
+    - model/app-erp-finance.orm.xml       （财务域，   appName=app-erp-fin）
+
+  拆分决策与命名规则见 docs/architecture/domain-module-split-analysis.md。
+
+  本文件的后续处理（删除或转为聚合入口）待人工确认。在此之前不要在此文件添加实体。
+-->
+<orm ext:registerShortName="true" ext:appName="app-erp" ext:entityPackageName="app.erp.dao.entity"
+     ext:basePackageName="app.erp" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp"
+     ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
+     ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+
+    <dicts>
+        <!--
+          字典定义示例（待设计阶段填充）：
+          <dict label="单据状态" name="erp/doc-status" valueType="int">
+              <option code="DRAFT" label="草稿" value="0"/>
+              <option code="SUBMITTED" label="已提交" value="1"/>
+              <option code="AUDITED" label="已审核" value="2"/>
+          </dict>
+        -->
+    </dicts>
+
+    <domains>
+        <!--
+          公共领域类型定义（待设计阶段填充），例如：
+          <domain name="docNo" precision="50" stdSqlType="VARCHAR"/>
+          <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
+        -->
+    </domains>
+
+    <entities>
+        <!--
+          实体定义（待设计阶段填充），例如：
+          <entity className="app.erp.dao.entity.ErpMaterial"
+                  displayName="物料" name="app.erp.dao.entity.ErpMaterial"
+                  tableName="erp_material">
+              <comment>物料主数据</comment>
+              <columns>
+                  <column name="sid" code="SID" stdSqlType="VARCHAR" precision="32" primary="true"/>
+                  <column name="materialNo" code="MATERIAL_NO" stdSqlType="VARCHAR" precision="50"/>
+                  ...
+              </columns>
+          </entity>
+        -->
+    </entities>
+</orm>
