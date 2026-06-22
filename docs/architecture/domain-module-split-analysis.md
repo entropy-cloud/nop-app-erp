@@ -1,6 +1,6 @@
 # 领域模块拆分决策：进销存+财务一体化的工程结构
 
-> **状态**：已生效架构决策（已确认）。落地实施（codegen 生成 Java 模块）仍受 `model/*.orm.xml` ask-first 保护区域约束。
+> **状态**：已生效架构决策（已确认）。落地实施（codegen 生成 Java 模块）仍受 `<domain>/model/*.orm.xml` ask-first 保护区域约束。
 >
 > **本文定位**：记录 nop-app-erp 多领域工程的拆分决策、前缀方案、跨工程协作规则。`docs/architecture/system-baseline.md` 引用本文作为模块结构的依据。
 
@@ -81,7 +81,7 @@ app-erp-<domain>/
 └── pom.xml
 ```
 
-**不手写 pom.xml 或 Java 模块目录**——这些由 `nop-cli gen` 生成。bootstrap 阶段只维护 `model/*.orm.xml` 源模型与设计文档。
+**不手写 pom.xml 或 Java 模块目录**——这些由 `nop-cli gen` 生成。bootstrap 阶段只维护 `<domain>/model/*.orm.xml` 源模型与设计文档。
 
 ## 3. 命名与前缀方案
 
@@ -157,7 +157,7 @@ finance 工程定义凭证生成接口与注册中心，各业务工程（purcha
 | 任务 | 何时做 | 方式 |
 |---|---|---|
 | 首次生成领域工程骨架 | 该域首批实体设计完成（建议 ≥3 实体）后 | `nop-cli gen model/app-erp-<domain>.orm.xml -t=/nop/templates/orm -o=app-erp-<domain>/` |
-| 后续模型变更（加字段/加表） | 随时 | 改 `model/*.orm.xml` → `./mvnw clean install` 触发增量再生 |
+| 后续模型变更（加字段/加表） | 随时 | 改 `<domain>/model/*.orm.xml` → `./mvnw clean install` 触发增量再生 |
 | BizModel 业务逻辑 | codegen 后 | 在 `*-service` 保留层手写（非 `_gen`） |
 | 页面定制 | codegen 后 | 在 `*-web` 保留层 `*.view.xml` 继承 `_gen/_*.view.xml` |
 | 跨工程 I*Biz 接口 | codegen 后 | 在 `*-dao/.../biz/` 定义，调用方 `@Inject` |
@@ -170,7 +170,7 @@ finance 工程定义凭证生成接口与注册中心，各业务工程（purcha
 | 阶段 | 触发条件 | 做什么 |
 |---|---|---|
 | **阶段 0（当前）** | bootstrap | 5 份 orm.xml 骨架暂存 `model/`；设计文档立项；本文定稿 |
-| **阶段 1** | 首个域（建议 master-data）实体设计完成 | 跑 `nop-cli gen` 生成 master-data 工程；验证生成链路；将 `model/app-erp-master-data.orm.xml` 移入工程目录 |
+| **阶段 1** | 首个域（建议 master-data）实体设计完成 | 跑 `nop-cli gen` 生成 master-data 工程；验证生成链路；将 `master-data/model/app-erp-master-data.orm.xml` 移入工程目录 |
 | **阶段 2** | 第二个域实体设计完成 | 生成第二个领域工程；验证跨工程 `I*Biz` 调用 |
 | **阶段 3** | 全部 5 域工程就位 | `app-erp-app` 聚合启动；端到端联调业财打通 |
 
