@@ -48,7 +48,7 @@ mvn -T 2C clean install -DskipTests -Dquarkus.package.type=uber-jar
 
 **第二步：设计 ORM 模型**
 
-编辑 `model/app-erp.orm.xml`，按 `docs/design/`、`docs/requirements/` 中的设计填充实体、字典、领域类型。
+编辑 `module-<domain>/model/app-erp-<domain>.orm.xml`，按 `docs/design/`、`docs/requirements/` 中的设计填充实体、字典、领域类型。
 
 **第三步：通过 nop-cli 生成多模块工程**（待 ORM 模型完成后执行）
 

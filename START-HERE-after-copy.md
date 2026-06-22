@@ -19,7 +19,7 @@ For a direct local low-risk edit, do not block on a polished backlog or codebase
 
 Before any implementation code can be generated, these must be completed (in roughly this order):
 
-- [ ] Design the initial ORM model in `model/app-erp.orm.xml` (entities, dictionaries, domains).
+- [ ] Design the initial ORM model in `module-<domain>/model/app-erp-<domain>.orm.xml` (entities, dictionaries, domains).
 - [ ] Run `nop-cli` to generate the Maven multi-module structure and Java sources.
 - [ ] Fill in real verification commands in `docs/context/project-context.md`.
 - [ ] Wire up `nop-entropy` parent POM and confirm the project builds.

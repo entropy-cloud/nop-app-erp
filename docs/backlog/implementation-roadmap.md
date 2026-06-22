@@ -46,7 +46,7 @@
 **已实现：**
 
 - 为 `nop-app-erp` 应用并定制的 AGE 文档结构
-- `model/app-erp.orm.xml` 骨架，包含 Maven 坐标、空字典/域/实体
+- `module-<domain>/model/app-erp-<domain>.orm.xml` 骨架，包含 Maven 坐标、空字典/域/实体
 
 **主要差距：**
 
@@ -78,7 +78,7 @@
 **交付范围：**
 
 - AGE 文档树已复制并定制
-- `model/app-erp.orm.xml` 骨架，包含 Maven 坐标
+- 各域 ORM 模型骨架已就位
 - 根文件（AGENTS.md、README、.gitignore、构建脚本）
 - 待办事项、路线图、上下文文档反映真实的 bootstrap 状态
 
@@ -90,12 +90,12 @@
 
 > 状态：见上方阶段状态（todo）
 
-**目标：** 决定哪些 ERP 业务域在范围内，并在 `model/app-erp.orm.xml` 中设计第一批实体。
+**目标：** 10 个业务域已确定，在各 `module-<domain>/model/` 中设计实体。
 
 **交付范围：**
 
 - 所选域的需求文档
-- `model/app-erp.orm.xml` 中的实体、字典、域
+- 各域 ORM 模型中的实体、字典、域
 
 **范围外：** Java 生成（阶段 3）。
 

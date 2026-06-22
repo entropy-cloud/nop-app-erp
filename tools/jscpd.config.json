@@ -1,0 +1,12 @@
+{
+  "minLines": 6,
+  "minTokens": 50,
+  "ignore": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/coverage/**",
+    "**/tmp/**",
+    "**/report/**",
+    "**/.git/**"
+  ]
+}

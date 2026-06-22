@@ -23,7 +23,7 @@
 
 - 前端栈：百度 AMIS（`.view.xml` 文件中的 JSON 驱动 UI）— 代码生成后可用
 - 后端栈：Java 17+、Quarkus、Nop Platform（nop-entropy 2.0.0-SNAPSHOT）— 代码生成后可用
-- 数据库/模型源：`model/app-erp.orm.xml` 中的 XML 模型；`model/app-erp.api.xml` 将在代码生成期间/之后生成
+- 数据库/模型源：`module-<domain>/model/app-erp-<domain>.orm.xml` 中的 XML 模型
 
 ## 当前项目阶段
 
@@ -32,7 +32,7 @@
 在 ORM 模型和生成模块存在之前：
 
 - 不要假设 Java 模块路径、包名或视图路径已存在
-- 设计和讨论工作应集中在 `model/app-erp.orm.xml` 以及 `docs/design/`、`docs/architecture/`、`docs/requirements/`
+- 设计和讨论工作应集中在 `module-<domain>/model/` 以及 `docs/design/`、`docs/architecture/`、`docs/requirements/`
 - 下面的验证命令尚不可执行；仅在首次代码生成通过后才生效
 
 ## 验证命令
@@ -83,4 +83,4 @@ AI 必须在继续之前停止并等待人工输入，当：
 - AI 可以根据实时仓库证据纠正事实上下文，但在无人确认的情况下不得将陈旧文档标记为新鲜或降级保护区域。
 - 当命令仍包含 `<fill real command>` 占位符或针对不存在的模块时，不要报告验证成功。
 - 构建需要 `nop-entropy` 父 POM 首先在本地 Maven 仓库中可用。
-- 当前重点是 `model/app-erp.orm.xml` 中的 ORM 模型设计；在代码生成运行之前不要假设 Java 模块/包/视图路径。
+- 当前重点是 `module-<domain>/model/` 中的 ORM 模型设计；在代码生成运行之前不要假设 Java 模块/包/视图路径。

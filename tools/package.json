@@ -1,0 +1,21 @@
+{
+  "name": "age-template-tools",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.0.0",
+  "scripts": {
+    "check": "pnpm check:oversized-code-files && pnpm check:active-doc-code-anchors && pnpm check:docs-garbled",
+    "check:oversized-code-files": "node ./check-oversized-code-files.mjs",
+    "check:active-doc-code-anchors": "node ./check-active-doc-code-anchors.mjs",
+    "check:docs-garbled": "node ./check-docs-garbled.mjs",
+    "check:duplicates": "node ./check-duplicates.mjs",
+    "audit:suspects": "node ./audit/discover-audit-suspects.mjs",
+    "stats": "node ./code-stats.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "jscpd": "^4.0.9",
+    "prettier": "^3.8.3"
+  }
+}

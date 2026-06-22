@@ -22,7 +22,7 @@
 | ORM 模型（真相） | `module-manufacturing/model/app-erp-manufacturing.orm.xml` | 制造域权威模型（BOM/工单/作业卡/工艺路线） | 2026-06-22 | high |
 | ORM 模型（真相） | `module-quality/model/app-erp-quality.orm.xml` | 质量管理域权威模型（质检/NCR/CAPA） | 2026-06-22 | high |
 | ORM 模型（真相） | `module-maintenance/model/app-erp-maintenance.orm.xml` | 设备维护域权威模型（设备/维护计划/访问/请求） | 2026-06-22 | high |
-| ORM 模型（已废弃） | `model/app-erp.orm.xml` | bootstrap 占位骨架，已废弃，待删除或转聚合入口 | 2026-06-22 | high |
+| ~~ORM 模型（已废弃）~~ | ~~`model/app-erp.orm.xml`~~ | 已删除。ORM 模型已拆分到各 `module-<domain>/model/` | 2026-06-22 | — |
 | API 模型 | `<domain>/model/app-erp-<domain>.api.xml` | 代码生成期间/之后生成；尚未存在 | — | high |
 | 文档路由器 | `docs/index.md` | 顶层导航 | 2026-06-22 | high |
 | 领域工程（10 个） | `app-erp-<domain>/` | 每域独立 Maven 工程，由 nop-cli gen 生成 — codegen 后 | — | medium |
@@ -32,9 +32,9 @@
 
 | 任务类型 | 从这里开始 | 然后检查 | 验证 | 最后验证 | 置信度 |
 | ------------------------- | -------------------------------- | --------------------------------------------------- | ----------------------- | ------------- | ---------- |
-| 设计实体/字典 | `model/app-erp.orm.xml` | `docs/design/`、`../nop-entropy/docs-for-ai/02-core-guides/model-first-development.md` | schema review | 2026-06-22 | high |
-| 更改模型/模式 | `model/app-erp.orm.xml` | owner doc + plan（保护区域：`ask first`） | regenerate + build | 2026-06-22 | high |
-| 生成模块 | `model/app-erp.orm.xml` | `codegen.sh`、`../nop-entropy/docs-for-ai/03-runbooks/` | `mvn compile` | — | medium |
+| 设计实体/字典 | `module-<domain>/model/app-erp-<domain>.orm.xml` | `docs/design/`、`../nop-entropy/docs-for-ai/02-core-guides/model-first-development.md` | schema review | 2026-06-22 | high |
+| 更改模型/模式 | `module-<domain>/model/app-erp-<domain>.orm.xml` | owner doc + plan（保护区域：`ask first`） | regenerate + build | 2026-06-22 | high |
+| 生成模块 | `module-<domain>/model/app-erp-<domain>.orm.xml` | `codegen.sh`、`../nop-entropy/docs-for-ai/03-runbooks/` | `mvn compile` | — | medium |
 | 添加页面/屏幕（后期） | `app-erp-web/_vfs/.../*.view.xml` | 相关设计文档 | `mvn test` / manual | — | medium |
 | 添加 API/处理器（后期） | `app-erp-service/` BizModel | `../nop-entropy/docs-for-ai/03-runbooks/write-bizmodel-method.md` | `mvn test` | — | medium |
 | 更改权限（后期） | `app-erp-app/_vfs/app/erp/auth/` | `docs/design/roles-and-permissions.md` | manual / e2e | — | medium |
@@ -45,7 +45,7 @@
 
 | 路径 | 风险 | 首选方法 |
 | ------------------------------- | ---------------------------------------------- | ---------------------------------------------------------- |
-| `model/app-erp.orm.xml` | 核心文件；驱动所有代码生成；保护区域 | 直接编辑；模式更改需要计划/设计文档 |
+| `module-<domain>/model/app-erp-<domain>.orm.xml` | 核心文件；驱动各域代码生成；保护区域 | 直接编辑；模式更改需要计划/设计文档 |
 | `model/app-erp.api.xml` | 生成的契约（代码生成后） | 切勿手动编辑；从 ORM 模型重新生成 |
 | `*/_gen/`、`_` 前缀文件 | 自动生成；手动编辑会静默丢失 | 切勿手动编辑；更改源模型并重新生成 |
 | `app-erp-app/_vfs/_delta/` | Delta 覆盖 nop core | 通过 delta 机制编辑，切勿修补 nop core |

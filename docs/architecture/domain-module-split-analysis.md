@@ -108,7 +108,7 @@ app-erp-<domain>/
 | 字典命名空间 | `erp-<简称>/<dict-name>` | `erp-ast/asset-status`、`erp-mfg/work-order-status`、`erp-qa/inspection-result` |
 
 **前缀选择理由**：
-- 主前缀 `Erp` 与现有 `model/app-erp.orm.xml` 骨架约定一致，避免与 nop 内置实体（`Nop*` 前缀）冲突。
+- 主前缀 `Erp` 与 nop 内置实体（`Nop*` 前缀）区分，各域 ORM 模型在 `module-<domain>/model/` 中。
 - 二级简称取业务域英文首字母缩写（md/inv/pur/sal/fin），3 字符长度统一，表名 `erp_inv_stock_move` 比 `erp_inventory_stock_move` 更简洁直观。
 - 类名 `ErpInvStockMove` 比无二级前缀的 `ErpStockMove` 更易定位所属域，避免跨域实体名冲突（如 `ErpOrder` 不明确是采购还是销售订单）。
 
