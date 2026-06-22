@@ -302,7 +302,7 @@
                 <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
-            </relations>
+            </columns>
             <relations>
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" joinColumnName="materialId"/>
                 <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" joinColumnName="skuId"/>
@@ -330,7 +330,7 @@
                 <column name="tenantId" displayName="租户ID" stdSqlType="BIGINT"/>
                 <column name="createdAt" displayName="创建时间" stdSqlType="DATETIME" mandatory="true"/>
                 <column name="updatedAt" displayName="更新时间" stdSqlType="DATETIME" mandatory="true"/>
-            </relations>
+            </columns>
             <relations>
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" joinColumnName="materialId"/>
                 <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" joinColumnName="skuId"/>
