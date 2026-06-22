@@ -6,7 +6,7 @@ Define the main code ownership boundaries for `nop-app-erp`.
 
 ## 领域工程依赖方向（DAG）
 
-nop-app-erp 按 5 个业务域拆成独立 Maven 工程，依赖方向严格单向（DAG）。详细决策见 `domain-module-split-analysis.md`。
+nop-app-erp 按 10 个业务域拆成独立 Maven 工程，依赖方向严格单向（DAG）。详细决策见 `domain-module-split-analysis.md`。
 
 ```
 app-erp-master-data（基础，无业务依赖）
@@ -16,15 +16,34 @@ app-erp-inventory（依赖 master-data：物料/仓库）
 app-erp-purchase / app-erp-sales（依赖 master-data + inventory）
         ↑
 app-erp-finance（依赖 master-data + 各业务域的 I*Biz）
+
+扩展域：
+app-erp-assets（依赖 master-data + inventory；被 finance 引用）
+app-erp-projects（依赖 master-data；被 finance 引用）
+app-erp-manufacturing（依赖 master-data + inventory；被 finance/quality 引用）
+app-erp-quality（依赖 master-data；被 purchase/sales/manufacturing 引用）
+app-erp-maintenance（依赖 master-data + inventory + assets；被 manufacturing 引用）
 ```
+
+### 核心业务域
 
 | 领域工程 | 允许依赖 | 禁止依赖 |
 |----------|----------|----------|
 | `app-erp-master-data` | （无业务依赖，仅平台） | 任何业务域 |
-| `app-erp-inventory` | master-data | purchase / sales / finance |
-| `app-erp-purchase` | master-data / inventory | sales / finance |
-| `app-erp-sales` | master-data / inventory | purchase / finance |
-| `app-erp-finance` | master-data + 各域 `I*Biz`（只读查询） | （处于 DAG 顶层） |
+| `app-erp-inventory` | master-data | purchase / sales / finance / 扩展域 |
+| `app-erp-purchase` | master-data / inventory | sales / finance / 扩展域 |
+| `app-erp-sales` | master-data / inventory | purchase / finance / 扩展域 |
+| `app-erp-finance` | master-data + 各域 `I*Biz`（只读查询） | （处于核心 DAG 顶层） |
+
+### 扩展业务域
+
+| 领域工程 | 允许依赖 | 禁止依赖 |
+|----------|----------|----------|
+| `app-erp-assets` | master-data / inventory | finance（finance 引用 assets，不反向） |
+| `app-erp-projects` | master-data | finance / 其他扩展域 |
+| `app-erp-manufacturing` | master-data / inventory | finance / quality / maintenance |
+| `app-erp-quality` | master-data | 任何业务域（quality 被业务域引用，不反向依赖） |
+| `app-erp-maintenance` | master-data / inventory / assets | manufacturing / finance |
 | `app-erp-app`（聚合） | 所有领域工程的 `-service`/`-web` | — |
 
 ## 跨工程实体关系规则
@@ -50,6 +69,11 @@ app-erp-finance（依赖 master-data + 各业务域的 I*Biz）
 | 采购域业务规则 | `docs/design/purchase/README.md` |
 | 销售域业务规则 | `docs/design/sales/README.md` |
 | 财务域业务规则 | `docs/design/finance/README.md` |
+| 固定资产域业务规则 | `docs/design/assets/README.md` |
+| 项目管理域业务规则 | `docs/design/projects/README.md` |
+| 制造域业务规则 | `docs/design/manufacturing/README.md` |
+| 质量管理域业务规则 | `docs/design/quality/README.md` |
+| 设备维护域业务规则 | `docs/design/maintenance/README.md` |
 | 模块拆分决策与命名 | `docs/architecture/domain-module-split-analysis.md` |
 
 ## Rule

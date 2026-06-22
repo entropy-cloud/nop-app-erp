@@ -20,7 +20,15 @@ Record the current supported implementation baseline for `nop-app-erp`.
 
 nop-app-erp 采用**每业务域独立 Maven 工程**结构，由 `app-erp-app` 聚合启动。详细决策与命名规则见 `domain-module-split-analysis.md`。
 
-领域工程依赖方向（DAG）：master-data ← inventory ← purchase/sales ← finance。
+领域工程分两层：核心业务域（5 个，进销存+财务）与扩展业务域（5 个，资产/项目/制造/质量/维护）。依赖方向（DAG）：
+
+```
+master-data ← inventory ← purchase/sales ← finance
+                                       ↑
+assets/projects/manufacturing/quality/maintenance（扩展域，各自依赖核心域）
+```
+
+### 核心业务域
 
 | 领域工程 | appName | 表前缀 | 类名前缀 | 权威模型 |
 |----------|---------|--------|----------|----------|
@@ -29,6 +37,17 @@ nop-app-erp 采用**每业务域独立 Maven 工程**结构，由 `app-erp-app` 
 | `app-erp-purchase` | `app-erp-pur` | `erp_pur_` | `ErpPur*` | `model/app-erp-purchase.orm.xml` |
 | `app-erp-sales` | `app-erp-sal` | `erp_sal_` | `ErpSal*` | `model/app-erp-sales.orm.xml` |
 | `app-erp-finance` | `app-erp-fin` | `erp_fin_` | `ErpFin*` | `model/app-erp-finance.orm.xml` |
+
+### 扩展业务域
+
+| 领域工程 | appName | 表前缀 | 类名前缀 | 权威模型 |
+|----------|---------|--------|----------|----------|
+| `app-erp-assets` | `app-erp-ast` | `erp_ast_` | `ErpAst*` | `model/app-erp-assets.orm.xml` |
+| `app-erp-projects` | `app-erp-prj` | `erp_prj_` | `ErpPrj*` | `model/app-erp-projects.orm.xml` |
+| `app-erp-manufacturing` | `app-erp-mfg` | `erp_mfg_` | `ErpMfg*` | `model/app-erp-manufacturing.orm.xml` |
+| `app-erp-quality` | `app-erp-qa` | `erp_qa_` | `ErpQa*` | `model/app-erp-quality.orm.xml` |
+| `app-erp-maintenance` | `app-erp-mnt` | `erp_mnt_` | `ErpMnt*` | `model/app-erp-maintenance.orm.xml` |
+
 | `app-erp-app`（聚合） | — | — | — | — |
 
 每个领域工程内部由 `nop-cli gen` 生成标准 8 层骨架（遵循 `../nop-entropy/docs-for-ai/01-repo-map/domain-module-pattern.md`）：
