@@ -42,6 +42,9 @@
 | `code-quality-audit-prompt.md` | 审查代码的行为风险和实现质量 | 仅需要格式或琐碎细节 | 更改文件、owner docs、测试或验证证据 | 按严重性排序的发现 |
 | `code-refactor-discovery-prompt.md` | 结构清理候选需要在重构前发现 | 结构目标已经达成一致 | 目标区域、owner docs、当前代码 | 排名重构候选 |
 | `code-refactor-prompt.md` | 行为保留结构重构工作是任务 | 任务更改支持的行为 | 目标区域、不变量、验证命令 | 安全重构执行和证明 |
+| `orm-model-audit-prompt.md` | `<domain>/model/*.orm.xml` 需要规范与完整性审计（类型/长度/字典/标准字段/业务字段/关系） | 单模块内部审计、需求综合 | `domain-design-guidelines.md` §10/§11、平台 `orm-model-design.md`、所有 orm.xml | 按维度的问题清单 + 裁决 + 字段补齐统计 |
+| `cross-module-dependency-audit-prompt.md` | 多模块跨工程数据依赖合理性、DAG 合规性、外部实体引用一致性审计 | 单模块审计、需求综合 | `module-boundaries.md`、`data-dependency-matrix.md`、`cross-module-entity-reference.md`、所有 orm.xml | DAG 验证结果 + 外部实体声明完整性矩阵 + 裁决 |
+| `nop-platform-conformance-audit-prompt.md` | 项目设计与实现对 Nop Platform 最佳实践的遵循度审计 | 业务设计审计（用 design-doc-audit）、ORM 字段审计（用 orm-model-audit） | `../nop-entropy/docs-for-ai/` 全部、项目 architecture 文档 | 12 维度合规率 + 反模式清单 + 裁决 |
 
 ## 入门技能
 
@@ -59,6 +62,9 @@
 - `bug-diagnosis-prompt.md`
 - `code-quality-audit-prompt.md`
 - `code-refactor-discovery-prompt.md`
+- `orm-model-audit-prompt.md`
+- `cross-module-dependency-audit-prompt.md`
+- `nop-platform-conformance-audit-prompt.md`
 - `code-refactor-prompt.md`
 
 ## 与工具原生技能的关系
