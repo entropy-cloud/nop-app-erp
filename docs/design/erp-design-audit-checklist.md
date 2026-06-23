@@ -1,12 +1,10 @@
 # ERP 设计核对清单
 
-> 本清单用于核对 nop-app-erp 各子域设计的完善程度，确保达到并超过主流开源 ERP 产品的水平。
+> 本清单用于核对 nop-app-erp 各子域设计的完善程度，作为**稳定的设计核对维度参考**。
 >
-> **实现状态（2026-06-22 更新）：** 10 域 ORM 模型已升级到产品级基线（共 **145 实体**，见各 `<domain>/model/app-erp-<domain>.orm.xml`）。下方"已完成项（✅）"小节列出已在模型中落地的能力，并标注模型证据。架构对标与"超越点"分析见 `docs/architecture/competitive-comparison.md`。
+> **边界说明：** 本文件只承载"设计应核对哪些维度"的稳定 checklist。实现进度、完成率、数据库落地状态、roadmap 顺序属于时间敏感内容，归 `docs/backlog/` 与 `docs/logs/`，不再在此重复维护（避免每次 codegen 推进都要改"设计"文件）。功能是否已支持以 `feature-inventory.md` 为准；功能 owner 以各域 README/`docs/design/README.md` 索引为准。
 >
-> **类型规范：** 所有 10 域 orm.xml 已对齐 nop-entropy 官方惯例（对照 `docs-for-ai/02-core-guides/orm-model-design.md` + `code-style.md` + 源模型 `nop-auth.orm.xml`）：每列显式 `code`(UPPER_SNAKE_CASE) + `propId`(从1连续) + `stdSqlType`(仅 StdSqlType 枚举值) + `stdDataType`；字典字段用 `ext:dict=`（valueType=int，option value 10/20/30 递增）；通用字段走 domain 复用（delVersion/version/createdBy/createTime/updatedBy/updateTime/remark）+ 实体配 `useLogicalDelete`+`deleteFlagProp=delVersion`；关系用 `<join><on/></join>` 形式 + `tagSet="pub"`/`"pub,cascade-delete,insertable,updatable"`。
->
-> **公共字段约定：** 所有业务单据头统一携带 `orgId`（业务组织）、`businessDate`（业务日期）、`posted`（业财过账标志）、`postedAt/postedBy`、`version`（乐观锁）；所有金额类单据头/行统一携带 `currencyId` + `exchangeRate` + `amountSource`（源币金额）+ `amountFunctional`（本位币金额）。详见 `docs/design/domain-design-guidelines.md` 的"单据标准字段约定"小节。
+> **公共字段约定：** 所有业务单据头统一携带 `orgId`（业务组织）、`businessDate`（业务日期）、`posted`（业财过账标志）、`postedAt/postedBy`、`version`（乐观锁）；所有金额类单据头/行统一携带 `currencyId` + `exchangeRate` + `amountSource`（源币金额）+ `amountFunctional`（本位币金额）。详见 `docs/design/domain-design-guidelines.md` 的"单据标准字段约定"小节。字段/类型/字典的真相源是各域 `model/app-erp-<domain>.orm.xml`。
 
 ---
 
@@ -166,24 +164,17 @@
 
 ## 检查状态跟踪
 
-| 域 | 设计状态 | 数据库设计 | 核对完成度 |
-|---|---|---|---|
-| master-data | 已完成 | 进行中 | 85% |
-| inventory | 已完成 | 进行中 | 90% |
-| purchase | 已完成 | 进行中 | 85% |
-| sales | 已完成 | 进行中 | 85% |
-| finance | 已完成 | 进行中 | 85% |
-| assets | 已完成 | 进行中 | 80% |
-| manufacturing | 已完成 | 进行中 | 75% |
-| projects | 已完成 | 进行中 | 75% |
-| maintenance | 已完成 | 进行中 | 80% |
-| quality | 已完成 | 进行中 | 75% |
+> 各域设计与数据库落地状态属于实施进度，归 `docs/backlog/` 与 `docs/logs/`，不在本稳定 checklist 中维护完成率表格。功能支持清单见 `feature-inventory.md`。
 
 ---
 
-## 各域设计核对评估
+## 设计核对维度（参考）
 
-### 已完成项（✅）
+> 下列维度用于核对设计是否覆盖关键能力点。每项是否已在 `model/*.orm.xml` 落地以模型证据为准，不在此声明完成率。
+
+### 设计落位指引（各维度对应的核心实体/机制）
+
+> 下列指引说明每个核对维度由哪些核心实体/机制承载，便于实施时定位。实体的字段/字典真相源是 `model/app-erp-<domain>.orm.xml`；具体某项是否已落地、落地进度归 `docs/backlog/` 与 `docs/logs/`，本节不声明完成率。
 
 #### 一、业财一体化设计
 - ✅ 凭证头（`ErpFinVoucher`）：凭证字、凭证号、凭证日期、`orgId`、`acctSchemaId`、制单人、审核人、过账人/时间
@@ -261,80 +252,22 @@
 - ✅ 维护域：设备与业务集成（备件消耗、停机影响排产、OEE）
 - ✅ 质量域：质检与业务集成（质检触发、NCR/CAPA 闭环）
 
-### 待完善项（⚠️）
+### 待完善项与实施顺序
 
-#### 九、流程与自动化
-- ⚠️ 可选 BPM 审批流叠加层
-- ⚠️ 触发器链式自动化
+> 下列能力尚未在产品基线中定稿（如 BPM 审批流叠加层、触发器链式自动化、`l10n-cn` 本地化模块、金税/银行对账集成）。其**实施顺序与状态**属于 roadmap，归 `docs/backlog/`；是否纳入产品基线的决策记录在 `docs/requirements/` 与 `docs/discussions/`。本 checklist 只标识"设计尚未定稿"的维度，不维护实施优先级。
 
-#### 十、本地化支持
-- ⚠️ 独立可拔 `l10n-cn` 模块
-- ⚠️ 金税接口、增值税发票、银行对账、中国特色报表
+- 可选 BPM 审批流叠加层（nop-wf 叠加在声明式状态机之上）
+- 触发器链式自动化（报价→订单→发票→发货链式触发）
+- 独立可拔 `l10n-cn` 模块、金税接口、增值税发票、银行对账、中国特色报表
 
 ---
 
 ## 改进建议
 
-### 高优先级（立即实施）
-1. **数据库模型落地**：基于设计文档生成 ORM XML 模型文件
-2. **代码生成**：通过 nop-cli 生成 DAO、Service 层代码框架
-
-### 中优先级（下一阶段）
-1. **BPM 审批流**：作为可选叠加层引入
-2. **触发器链式自动化**：报价→订单→发票→发货链式触发
-
-### 低优先级（后续迭代）
-1. **中国本地化模块**：金税接口、增值税发票、银行对账
+> 改进项的实施优先级与排期归 `docs/backlog/`，不在本稳定 checklist 中维护"高/中/低优先级立即实施"等时间敏感表述。
 
 ---
 
 ## 设计文档完整性总结
 
-| 文档 | 状态 | 说明 |
-|---|---|---|
-| `docs/design/domain-design-guidelines.md` | ✅ 已完善 | 域设计原则、边界、协作模式、一致性策略 |
-| `docs/design/flow-overview.md` | ✅ 已完善 | 四层流程架构、核心业务流程、状态映射 |
-| `docs/design/erp-design-audit-checklist.md` | ✅ 已完善 | 核对清单、完成度跟踪、改进建议 |
-| `docs/design/master-data/README.md` | ✅ 已完成 | 主数据域设计 |
-| `docs/design/inventory/README.md` | ✅ 已完成 | 库存域设计 |
-| `docs/design/purchase/README.md` | ✅ 已完成 | 采购域设计 |
-| `docs/design/sales/README.md` | ✅ 已完成 | 销售域设计 |
-| `docs/design/finance/README.md` | ✅ 已完成 | 财务域设计 |
-| `docs/design/assets/README.md` | ✅ 已完成 | 资产域设计 |
-| `docs/design/assets/depreciation-and-posting.md` | ✅ 已完善 | 折旧与财务打通详细机制 |
-| `docs/design/manufacturing/README.md` | ✅ 已完成 | 制造域设计 |
-| `docs/design/projects/README.md` | ✅ 已完成 | 项目域设计 |
-| `docs/design/projects/cost-collection.md` | ✅ 已完善 | 项目成本归集与预算控制 |
-| `docs/design/maintenance/README.md` | ✅ 已完成 | 维护域设计 |
-| `docs/design/maintenance/equipment-integration.md` | ✅ 已完善 | 设备与业务集成详细机制 |
-| `docs/design/quality/README.md` | ✅ 已完成 | 质量域设计 |
-| `docs/design/quality/inspection-integration.md` | ✅ 已完善 | 质检与业务集成详细机制 |
-| `docs/design/**/state-machine.md` | ✅ 已完成 | 各域状态机设计 |
-| `docs/design/finance/posting.md` | ✅ 已完成 | 业财打通机制 |
-| `docs/design/inventory/cross-domain.md` | ✅ 已完成 | 库存跨域协作 |
-| `docs/design/purchase/three-way-match.md` | ✅ 已完成 | 三单匹配规则 |
-
----
-
-## 设计完善度总结
-
-所有核心域和扩展域的设计文档已达到**超越主流开源 ERP** 的完善程度：
-
-### 核心优势
-1. **业财一体化深度整合**：凭证三件套 + 异步过账 + 业财回链
-2. **库存三层模型**：移动单 + 不可变流水 + 余额快照
-3. **松耦合架构**：事件驱动解耦业务域与财务域
-4. **最终一致性保障**：posted 标志 + 兜底扫描机制
-5. **完整的扩展域支持**：资产、项目、维护、质量四大扩展域全面完善
-6. **插件化扩展**：凭证生成 Provider + 规则引擎
-7. **完整审计追溯**：红字冲销 + 双向回链
-8. **跨域协作协议**：明确的事件格式与交互规则
-
-### 设计覆盖范围
-- ✅ 10 个业务域全部覆盖
-- ✅ 状态机设计完整（10 维度审查）
-- ✅ 业财打通机制完整
-- ✅ 跨域协作规则完整
-- ✅ 与 Nop Platform 深度对齐
-
-设计文档已具备直接指导代码实现的能力，可以进入数据库模型落地阶段。
+> 文档清单与 owner 路由以 `docs/design/README.md` 索引为准；各文档的审计结论以 `docs/analysis/` 下的审计报告为准。本 checklist 不重复维护"已完成/已完善"状态表格，避免与索引及审计结论形成重复维护点。

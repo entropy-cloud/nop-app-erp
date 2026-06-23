@@ -80,18 +80,32 @@
 
 ## 通用单据状态词汇
 
+> **取值归属**：下表只统一**跨域通用的业务状态语义**。各域 `docStatus`/`approveStatus` 的具体取值集合因域而异（如 purchase/sales 初始态用 DRAFT、inventory 用 CONFIRMED、finance 凭证用 POSTED、assets 用 IN_SERVICE/SCRAPPED 等），以 `domain-design-guidelines.md` §11.2/§11.3 为准；状态码的持久化值（字典 option code/value）归各域 `model/app-erp-<domain>.orm.xml` 的字典定义。本表不重复这些域专属状态，避免与 §11 及 orm.xml 形成第二个真相源。
+
 | 英文 | 中文标准译法 | 说明 |
 |------|--------------|------|
-| DRAFT | 草稿 | 单据已创建但未生效 |
+| DRAFT | 草稿 | 单据已创建但未生效（多域通用初始态） |
 | SUBMITTED | 已提交 | 单据已提交审核 |
 | APPROVED | 已审核 | 单据已审核通过 |
-| REJECTED | 已驳回 | 单据审核被驳回 |
-| CANCELLED | 已作废 | 单据作废 |
-| DONE | 已完成 | 单据已执行完成 |
-| OPEN | 待处理/待开始 | 等待处理或开始 |
+| REJECTED | 已驳回 | 单据审核被驳回；**反审核的目标态也是 REJECTED**（见 `domain-design-guidelines.md` §11.4，非初始态 UNSUBMITTED） |
+| CANCELLED | 已作废 | 单据作废（多域通用作废态） |
+| DONE | 已完成 | 单据已执行完成（如 inventory 移动单终态） |
+| OPEN | 待处理/待开始 | 等待处理或开始（如项目进行中、维护请求待受理） |
 | IN_PROGRESS | 进行中/执行中 | 正在执行 |
-| COMPLETED | 已完成 | 终态：正常完成 |
-| ON_HOLD | 暂停 | 暂时停止执行 |
+| COMPLETED | 已完成 | 终态：正常完成（如项目/任务/质检/维护访问终态） |
+| ON_HOLD | 暂停 | 暂时停止执行（如项目/作业卡/资产闲置的语义近似态） |
+
+### 域专属状态（非通用，仅指针）
+
+以下状态因域而异，业务含义见对应域 owner doc，本表不展开以避免重复维护：
+
+- 采购/销售收付款进度（UNPAID/PARTIAL/PAID、UNRECEIVED/PARTIAL/RECEIVED）：见 `purchase/state-machine.md`、`sales/state-machine.md`。
+- 库存（CONFIRMED）、盘点（COUNTING）：见 `inventory/state-machine.md`。
+- 财务凭证（POSTED）、会计期间（CLOSING/CLOSED_FINAL）：见 `finance/state-machine.md`。
+- 资产（IN_SERVICE/IDLE/SCRAPPED/SOLD）、折旧计划（PENDING/EXECUTED/REVERSED）：见 `assets/state-machine.md`。
+- 工单（NOT_STARTED/STOCK_RESERVED/STOCK_PARTIAL/IN_PROCESS/STOPPED/CLOSED 等）、作业卡、预留（UNRESERVED/RESERVED/PICKED/RELEASED）：见 `manufacturing/state-machine.md`、`manufacturing/material-reservation.md`。
+- 质检（PENDING/ACCEPTED/CONDITIONAL）、NCR（OPEN/IN_REVIEW/RESOLVED）：见 `quality/state-machine.md`。
+- 维护访问（SCHEDULED）、维护请求（ACCEPTED）：见 `maintenance/state-machine.md`。
 
 ## 资产/项目/制造/质量/维护词汇
 

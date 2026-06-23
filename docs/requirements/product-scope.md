@@ -55,7 +55,7 @@ nop-app-erp 是基于 Nop 平台架构的**产品化通用 ERP 产品**，可快
 - 约束：
   - `model/*.orm.xml` 是 ask-first 保护区域
   - `nop-entropy` 父 POM 必须在 codegen 前构建
-  - 跨工程实体不做 ORM 强引用，走 `I*Biz`
+  - 跨工程实体引用：业务域 → master-data 通过 `notGenCode="true"` 外部实体引用建立 ORM `<to-one>`（机制 B，单向 DAG）；业务域之间走纯外键 + 弱指针 + `I*Biz`。详见 `docs/architecture/data-dependency-matrix.md §5.6`
 
 ## 规则
 

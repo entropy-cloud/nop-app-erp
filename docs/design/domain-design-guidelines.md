@@ -326,7 +326,70 @@
 
 ---
 
-## 十一、总结
+## 十一、状态机命名与跨域映射规范
+
+> 本节统一各域状态命名约定，避免跨域流程串联时出现语义混乱。
+
+### 11.1 双轴状态分离
+
+所有业务单据头使用**双轴状态**：
+
+- **`docStatus`（业务生命周期）**：表达单据在业务流程中的位置，独立于审批。
+- **`approveStatus`（审批状态）**：表达审批流结果，可与 docStatus 解耦组合。
+
+加上业财一体标志 `posted`（boolean），构成**三轴状态**。三者独立、可组合（如 `docStatus=APPROVED, approveStatus=APPROVED, posted=true` 是稳定终态）。
+
+### 11.2 各域 docStatus 取值约定
+
+不同业务性质的单据使用不同的状态值集合，但**初始态都用 DRAFT**，**作废态都用 CANCELLED**：
+
+| 域 | 单据类型 | docStatus 取值 | 说明 |
+|---|---|---|---|
+| purchase/sales | 订单/出入库/发票/收付款 | `DRAFT` / `SUBMITTED` / `APPROVED` / `REJECTED` / `CANCELLED` | 通用业务单据 |
+| inventory | 移动单/盘点单/拣货单 | `DRAFT` / `CONFIRMED` / `DONE` / `CANCELLED` | 作业类单据（无审批轴，作业确认即生效） |
+| finance | 凭证 | `DRAFT` / `POSTED` / `CANCELLED` | 凭证特殊：无 SUBMITTED，DRAFT 直接过账到 POSTED |
+| finance | 会计期间 | `CLOSED` / `OPEN` / `CLOSING` / `CLOSED_FINAL` | 时间窗口状态机 |
+| assets | 资产卡片 | `DRAFT` / `IN_SERVICE` / `IDLE` / `SCRAPPED` / `SOLD` | 资产生命周期 |
+| manufacturing | 工单 | `DRAFT` / `SUBMITTED` / `NOT_STARTED` / `RELEASED` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 制造执行链 |
+| projects | 项目/任务 | `DRAFT` / `PLANNED` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 项目生命周期 |
+| quality | 质检/NCR/CAPA | `DRAFT` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 质量流程 |
+| maintenance | 工单/请求 | `DRAFT` / `SCHEDULED` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 维护执行 |
+
+### 11.3 approveStatus 取值约定（仅带审批的单据）
+
+| approveStatus | 业务含义 |
+|---|---|
+| `UNSUBMITTED` | 未提交审批（初始） |
+| `PENDING` | 审批中 |
+| `APPROVED` | 审批通过 |
+| `REJECTED` | 审批拒绝（可修改后重新提交） |
+
+> inventory 的作业单（移动单/盘点单/拣货单）通常不经过审批流，`approveStatus` 可省略或保持 `UNSUBMITTED`。
+
+### 11.4 反审核目标态
+
+反审核（已审核单据撤销审核）的目标态是 `REJECTED`（可重新提交），**不是 `UNSUBMITTED`**（初始态）。语义理由：
+
+- 反审核的单据已发生过业务（如已生成下游单据、已过账），不应回退为"未提交"。
+- `REJECTED` 保留"曾审核过"的历史语义，便于审计追溯。
+- 从 `REJECTED` 可重新 `SUBMITTED` 进入审批，或显式作废到 `CANCELLED`。
+
+### 11.5 跨域状态映射
+
+业务域之间串联流程时，状态映射规则：
+
+| 上游域 → 下游域 | 映射规则 |
+|---|---|
+| purchase.`Receive` APPROVED → inventory.`StockMove` | 上游 APPROVED 触发下游 DRAFT → CONFIRMED（同事务） |
+| sales.`Delivery` APPROVED → inventory.`StockMove` | 同上 |
+| 业务单据 APPROVED → finance.`Voucher` | 上游 APPROVED 触发 posted=false，异步生成凭证（凭证走自身 DRAFT → POSTED） |
+| 业务单据 CANCELLED → finance.`Voucher` | 上游作废 → 按业财回链反查 → 生成红字凭证冲销 |
+
+> **跨域状态映射不直接耦合字段值**，而是通过事件/接口触发下游单据的状态迁移。下游单据的状态机独立运转。
+
+---
+
+## 十二、总结
 
 本指南定义了 nop-app-erp 的核心设计原则与约束，各域设计时必须遵守：
 

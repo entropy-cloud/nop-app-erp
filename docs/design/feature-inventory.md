@@ -19,13 +19,13 @@
 | 采购订单 | purchase | `purchase/README.md` | 采购意向、部分收货、三单匹配起点 |
 | 采购入库 | purchase | `purchase/README.md` | 收货写库存 |
 | 采购发票 | purchase | `purchase/README.md` | 应付凭证来源、三单匹配 |
-| 付款与核销 | purchase | `purchase/state-machine.md` | 多对多核销、付款进度 |
+| 付款与核销 | purchase/finance | `finance/ar-ap-reconciliation.md` | 多对多核销（open-item 明细账）、付款进度见 `purchase/state-machine.md` |
 | 采购退货 | purchase | `purchase/README.md` | 反向出库 |
 | 三单匹配 | purchase | `purchase/three-way-match.md` | 订单-入库-发票一致性校验 |
 | 销售订单 | sales | `sales/README.md` | 销售意向、部分发货、赠品/折扣 |
 | 销售出库 | sales | `sales/README.md` | 发货扣库存、可用量校验 |
 | 销售发票 | sales | `sales/README.md` | 应收凭证来源 |
-| 收款与核销 | sales | `sales/state-machine.md` | 多对多核销、收款进度 |
+| 收款与核销 | sales/finance | `finance/ar-ap-reconciliation.md` | 多对多核销（open-item 明细账）、收款进度见 `sales/state-machine.md` |
 | 销售退货 | sales | `sales/README.md` | 反向入库、退款 |
 | 库存移动单 | inventory | `inventory/state-machine.md` | 三层模型：移动单/流水/余额 |
 | 库存调拨 | inventory | `inventory/README.md` | 同仓/跨仓调拨 |
