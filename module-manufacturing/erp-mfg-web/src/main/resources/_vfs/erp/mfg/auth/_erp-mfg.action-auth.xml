@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
+
+    <site id="main">
+        <resource id="test-orm-erp-mfg" displayName="测试erp-mfg" i18n-en:displayName="Test erp-mfg"
+                  icon="ion:grid-outline" resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-mfg"
+                  component="layouts/default/index">
+            <children>
+                <resource id="ErpMfgBom-main" displayName="BOM" orderNo="10001" i18n-en:displayName="" icon="blocks"
+                          component="AMIS" resourceType="SUBM" url="/erp/mfg/pages/ErpMfgBom/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMfgBom:query" displayName="查询BOM" i18n-en:displayName="" orderNo="10002"
+                                  resourceType="FNPT">
+                            <permissions>ErpMfgBom:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMfgBom:mutation" displayName="修改BOM" i18n-en:displayName=""
+                                  orderNo="10003" resourceType="FNPT">
+                            <permissions>ErpMfgBom:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMfgBomByproduct-main" displayName="BOM联副产品" orderNo="10004" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mfg/pages/ErpMfgBomByproduct/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMfgBomByproduct:query" displayName="查询BOM联副产品" i18n-en:displayName=""
+                                  orderNo="10005" resourceType="FNPT">
+                            <permissions>ErpMfgBomByproduct:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMfgBomByproduct:mutation" displayName="修改BOM联副产品" i18n-en:displayName=""
+                                  orderNo="10006" resourceType="FNPT">
+                            <permissions>ErpMfgBomByproduct:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMfgBomLine-main" displayName="BOM行" orderNo="10007" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mfg/pages/ErpMfgBomLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMfgBomLine:query" displayName="查询BOM行" i18n-en:displayName=""
+                                  orderNo="10008" resourceType="FNPT">
+                            <permissions>ErpMfgBomLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMfgBomLine:mutation" displayName="修改BOM行" i18n-en:displayName=""
+                                  orderNo="10009" resourceType="FNPT">
+                            <permissions>ErpMfgBomLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMfgBomOperation-main" displayName="BOM工艺" orderNo="10010" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mfg/pages/ErpMfgBomOperation/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMfgBomOperation:query" displayName="查询BOM工艺" i18n-en:displayName=""
+                                  orderNo="10011" resourceType="FNPT">
+                            <permissions>ErpMfgBomOperation:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMfgBomOperation:mutation" displayName="修改BOM工艺" i18n-en:displayName=""
+                                  orderNo="10012" resourceType="FNPT">
+                            <permissions>ErpMfgBomOperation:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMfgCostRollup-main" displayName="标准成本滚算" orderNo="10013" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mfg/pages/ErpMfgCostRollup/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMfgCostRollup:query" displayName="查询标准成本滚算" i18n-en:displayName=""
+                                  orderNo="10014" resourceType="FNPT">
+                            <permissions>ErpMfgCostRollup:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMfgCostRollup:mutation" displayName="修改标准成本滚算" i18n-en:displayName=""
+                                  orderNo="10015" resourceType="FNPT">
+                            <permissions>ErpMfgCostRollup:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMfgCostRollupLine-main" displayName="标准成本滚算行" orderNo="10016" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mfg/pages/ErpMfgCostRollupLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMfgCostRollupLine:query" displayName="查询标准成本滚算行" i18n-en:displayName=""
+                                  orderNo="10017" resourceType="FNPT">
+                            <permissions>ErpMfgCostRollupLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMfgCostRollupLine:mutation" displayName="修改标准成本滚算行" i18n-en:displayName=""
+                                  orderNo="10018" resourceType="FNPT">
+                            <permissions>ErpMfgCostRollupLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMfgJobCard-main" displayName="作业卡" orderNo="10019" i18n-en:displayName="" icon="blocks"
+                          component="AMIS" resourceType="SUBM" url="/erp/mfg/pages/ErpMfgJobCard/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMfgJobCard:query" displayName="查询作业卡" i18n-en:displayName=""
+                                  orderNo="10020" resourceType="FNPT">
+                            <permissions>ErpMfgJobCard:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMfgJobCard:mutation" displayName="修改作业卡" i18n-en:displayName=""
+                                  orderNo="10021" resourceType="FNPT">
+                            <permissions>ErpMfgJobCard:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMfgJobCardTimeLog-main" displayName="作业工时记录" orderNo="10022" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mfg/pages/ErpMfgJobCardTimeLog/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMfgJobCardTimeLog:query" displayName="查询作业工时记录" i18n-en:displayName=""
+                                  orderNo="10023" resourceType="FNPT">
+                            <permissions>ErpMfgJobCardTimeLog:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMfgJobCardTimeLog:mutation" displayName="修改作业工时记录" i18n-en:displayName=""
+                                  orderNo="10024" resourceType="FNPT">
+                            <permissions>ErpMfgJobCardTimeLog:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMfgMaterialIssue-main" displayName="领料单" orderNo="10025" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mfg/pages/ErpMfgMaterialIssue/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMfgMaterialIssue:query" displayName="查询领料单" i18n-en:displayName=""
+                                  orderNo="10026" resourceType="FNPT">
+                            <permissions>ErpMfgMaterialIssue:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMfgMaterialIssue:mutation" displayName="修改领料单" i18n-en:displayName=""
+                                  orderNo="10027" resourceType="FNPT">
+                            <permissions>ErpMfgMaterialIssue:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMfgMaterialIssueLine-main" displayName="领料单行" orderNo="10028" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mfg/pages/ErpMfgMaterialIssueLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMfgMaterialIssueLine:query" displayName="查询领料单行" i18n-en:displayName=""
+                                  orderNo="10029" resourceType="FNPT">
+                            <permissions>ErpMfgMaterialIssueLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMfgMaterialIssueLine:mutation" displayName="修改领料单行" i18n-en:displayName=""
+                                  orderNo="10030" resourceType="FNPT">
+                            <permissions>ErpMfgMaterialIssueLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMfgMrpDemand-main" displayName="MRP独立需求" orderNo="10031" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mfg/pages/ErpMfgMrpDemand/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMfgMrpDemand:query" displayName="查询MRP独立需求" i18n-en:displayName=""
+                                  orderNo="10032" resourceType="FNPT">
+                            <permissions>ErpMfgMrpDemand:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMfgMrpDemand:mutation" displayName="修改MRP独立需求" i18n-en:displayName=""
+                                  orderNo="10033" resourceType="FNPT">
+                            <permissions>ErpMfgMrpDemand:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMfgMrpPlan-main" displayName="MRP计划" orderNo="10034" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mfg/pages/ErpMfgMrpPlan/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMfgMrpPlan:query" displayName="查询MRP计划" i18n-en:displayName=""
+                                  orderNo="10035" resourceType="FNPT">
+                            <permissions>ErpMfgMrpPlan:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMfgMrpPlan:mutation" displayName="修改MRP计划" i18n-en:displayName=""
+                                  orderNo="10036" resourceType="FNPT">
+                            <permissions>ErpMfgMrpPlan:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMfgMrpPlanLine-main" displayName="MRP计划行" orderNo="10037" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mfg/pages/ErpMfgMrpPlanLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMfgMrpPlanLine:query" displayName="查询MRP计划行" i18n-en:displayName=""
+                                  orderNo="10038" resourceType="FNPT">
+                            <permissions>ErpMfgMrpPlanLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMfgMrpPlanLine:mutation" displayName="修改MRP计划行" i18n-en:displayName=""
+                                  orderNo="10039" resourceType="FNPT">
+                            <permissions>ErpMfgMrpPlanLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMfgProductionVersion-main" displayName="生产版本" orderNo="10040" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mfg/pages/ErpMfgProductionVersion/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMfgProductionVersion:query" displayName="查询生产版本" i18n-en:displayName=""
+                                  orderNo="10041" resourceType="FNPT">
+                            <permissions>ErpMfgProductionVersion:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMfgProductionVersion:mutation" displayName="修改生产版本" i18n-en:displayName=""
+                                  orderNo="10042" resourceType="FNPT">
+                            <permissions>ErpMfgProductionVersion:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMfgRouting-main" displayName="工艺路线" orderNo="10043" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mfg/pages/ErpMfgRouting/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMfgRouting:query" displayName="查询工艺路线" i18n-en:displayName=""
+                                  orderNo="10044" resourceType="FNPT">
+                            <permissions>ErpMfgRouting:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMfgRouting:mutation" displayName="修改工艺路线" i18n-en:displayName=""
+                                  orderNo="10045" resourceType="FNPT">
+                            <permissions>ErpMfgRouting:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMfgRoutingOperation-main" displayName="工艺路线工序" orderNo="10046" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mfg/pages/ErpMfgRoutingOperation/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMfgRoutingOperation:query" displayName="查询工艺路线工序" i18n-en:displayName=""
+                                  orderNo="10047" resourceType="FNPT">
+                            <permissions>ErpMfgRoutingOperation:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMfgRoutingOperation:mutation" displayName="修改工艺路线工序"
+                                  i18n-en:displayName="" orderNo="10048" resourceType="FNPT">
+                            <permissions>ErpMfgRoutingOperation:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMfgSubcontractOrder-main" displayName="委外加工单" orderNo="10049" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mfg/pages/ErpMfgSubcontractOrder/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMfgSubcontractOrder:query" displayName="查询委外加工单" i18n-en:displayName=""
+                                  orderNo="10050" resourceType="FNPT">
+                            <permissions>ErpMfgSubcontractOrder:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMfgSubcontractOrder:mutation" displayName="修改委外加工单" i18n-en:displayName=""
+                                  orderNo="10051" resourceType="FNPT">
+                            <permissions>ErpMfgSubcontractOrder:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMfgSubcontractOrderLine-main" displayName="委外加工单行" orderNo="10052"
+                          i18n-en:displayName="" icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mfg/pages/ErpMfgSubcontractOrderLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMfgSubcontractOrderLine:query" displayName="查询委外加工单行"
+                                  i18n-en:displayName="" orderNo="10053" resourceType="FNPT">
+                            <permissions>ErpMfgSubcontractOrderLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMfgSubcontractOrderLine:mutation" displayName="修改委外加工单行"
+                                  i18n-en:displayName="" orderNo="10054" resourceType="FNPT">
+                            <permissions>ErpMfgSubcontractOrderLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMfgWorkOrder-main" displayName="工单" orderNo="10055" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mfg/pages/ErpMfgWorkOrder/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMfgWorkOrder:query" displayName="查询工单" i18n-en:displayName=""
+                                  orderNo="10056" resourceType="FNPT">
+                            <permissions>ErpMfgWorkOrder:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMfgWorkOrder:mutation" displayName="修改工单" i18n-en:displayName=""
+                                  orderNo="10057" resourceType="FNPT">
+                            <permissions>ErpMfgWorkOrder:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMfgWorkOrderLine-main" displayName="工单行" orderNo="10058" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mfg/pages/ErpMfgWorkOrderLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMfgWorkOrderLine:query" displayName="查询工单行" i18n-en:displayName=""
+                                  orderNo="10059" resourceType="FNPT">
+                            <permissions>ErpMfgWorkOrderLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMfgWorkOrderLine:mutation" displayName="修改工单行" i18n-en:displayName=""
+                                  orderNo="10060" resourceType="FNPT">
+                            <permissions>ErpMfgWorkOrderLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMfgWorkcenter-main" displayName="工作中心" orderNo="10061" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mfg/pages/ErpMfgWorkcenter/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMfgWorkcenter:query" displayName="查询工作中心" i18n-en:displayName=""
+                                  orderNo="10062" resourceType="FNPT">
+                            <permissions>ErpMfgWorkcenter:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMfgWorkcenter:mutation" displayName="修改工作中心" i18n-en:displayName=""
+                                  orderNo="10063" resourceType="FNPT">
+                            <permissions>ErpMfgWorkcenter:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
+</auth>

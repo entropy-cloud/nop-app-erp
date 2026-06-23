@@ -1,0 +1,106 @@
+site:
+  resource:
+    ErpPurInvoice-main:
+      displayName: ''
+    ErpPurInvoiceLine-main:
+      displayName: ''
+    ErpPurOrder-main:
+      displayName: ''
+    ErpPurOrderLine-main:
+      displayName: ''
+    ErpPurPayment-main:
+      displayName: ''
+    ErpPurPaymentLine-main:
+      displayName: ''
+    ErpPurQuotation-main:
+      displayName: ''
+    ErpPurQuotationLine-main:
+      displayName: ''
+    ErpPurReceive-main:
+      displayName: ''
+    ErpPurReceiveLine-main:
+      displayName: ''
+    ErpPurRequisition-main:
+      displayName: ''
+    ErpPurRequisitionLine-main:
+      displayName: ''
+    ErpPurReturn-main:
+      displayName: ''
+    ErpPurReturnLine-main:
+      displayName: ''
+    ErpPurRfq-main:
+      displayName: ''
+    ErpPurRfqLine-main:
+      displayName: ''
+    ErpPurSupplierPriceList-main:
+      displayName: ''
+    FNPT:ErpPurInvoice:mutation:
+      displayName: ''
+    FNPT:ErpPurInvoice:query:
+      displayName: ''
+    FNPT:ErpPurInvoiceLine:mutation:
+      displayName: ''
+    FNPT:ErpPurInvoiceLine:query:
+      displayName: ''
+    FNPT:ErpPurOrder:mutation:
+      displayName: ''
+    FNPT:ErpPurOrder:query:
+      displayName: ''
+    FNPT:ErpPurOrderLine:mutation:
+      displayName: ''
+    FNPT:ErpPurOrderLine:query:
+      displayName: ''
+    FNPT:ErpPurPayment:mutation:
+      displayName: ''
+    FNPT:ErpPurPayment:query:
+      displayName: ''
+    FNPT:ErpPurPaymentLine:mutation:
+      displayName: ''
+    FNPT:ErpPurPaymentLine:query:
+      displayName: ''
+    FNPT:ErpPurQuotation:mutation:
+      displayName: ''
+    FNPT:ErpPurQuotation:query:
+      displayName: ''
+    FNPT:ErpPurQuotationLine:mutation:
+      displayName: ''
+    FNPT:ErpPurQuotationLine:query:
+      displayName: ''
+    FNPT:ErpPurReceive:mutation:
+      displayName: ''
+    FNPT:ErpPurReceive:query:
+      displayName: ''
+    FNPT:ErpPurReceiveLine:mutation:
+      displayName: ''
+    FNPT:ErpPurReceiveLine:query:
+      displayName: ''
+    FNPT:ErpPurRequisition:mutation:
+      displayName: ''
+    FNPT:ErpPurRequisition:query:
+      displayName: ''
+    FNPT:ErpPurRequisitionLine:mutation:
+      displayName: ''
+    FNPT:ErpPurRequisitionLine:query:
+      displayName: ''
+    FNPT:ErpPurReturn:mutation:
+      displayName: ''
+    FNPT:ErpPurReturn:query:
+      displayName: ''
+    FNPT:ErpPurReturnLine:mutation:
+      displayName: ''
+    FNPT:ErpPurReturnLine:query:
+      displayName: ''
+    FNPT:ErpPurRfq:mutation:
+      displayName: ''
+    FNPT:ErpPurRfq:query:
+      displayName: ''
+    FNPT:ErpPurRfqLine:mutation:
+      displayName: ''
+    FNPT:ErpPurRfqLine:query:
+      displayName: ''
+    FNPT:ErpPurSupplierPriceList:mutation:
+      displayName: ''
+    FNPT:ErpPurSupplierPriceList:query:
+      displayName: ''
+    test-orm-erp-pur:
+      displayName: Test erp-pur

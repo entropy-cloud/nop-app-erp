@@ -1,0 +1,21 @@
+{
+  "id": 0,
+  "routingId": 0,
+  "lineNo": 0,
+  "operationCode": "",
+  "operationName": "",
+  "workcenterId": 0,
+  "standardTime": "2000-01-01 14:00:00",
+  "timeUnit": "",
+  "setupTime": "2000-01-01 14:00:00",
+  "runTime": "2000-01-01 14:00:00",
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "routing": null,
+  "workcenter": null
+}

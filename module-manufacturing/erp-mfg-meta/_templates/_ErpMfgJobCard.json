@@ -1,0 +1,23 @@
+{
+  "id": 0,
+  "workOrderId": 0,
+  "operationId": 0,
+  "lineNo": 0,
+  "plannedQuantity": "",
+  "completedQuantity": "",
+  "scrappedQuantity": "",
+  "status": 0,
+  "status_label": "",
+  "workcenterId": 0,
+  "actualStartTime": "2000-01-01 14:00:00",
+  "actualEndTime": "2000-01-01 14:00:00",
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "workOrder": null,
+  "workcenter": null
+}

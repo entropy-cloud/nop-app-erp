@@ -1,0 +1,82 @@
+site:
+  resource:
+    ErpPrjActivityType-main:
+      displayName: ''
+    ErpPrjBilling-main:
+      displayName: ''
+    ErpPrjBillingLine-main:
+      displayName: ''
+    ErpPrjBudget-main:
+      displayName: ''
+    ErpPrjBudgetLine-main:
+      displayName: ''
+    ErpPrjCostCollection-main:
+      displayName: ''
+    ErpPrjCostCollectionLine-main:
+      displayName: ''
+    ErpPrjMilestone-main:
+      displayName: ''
+    ErpPrjProject-main:
+      displayName: ''
+    ErpPrjProjectType-main:
+      displayName: ''
+    ErpPrjProjectUser-main:
+      displayName: ''
+    ErpPrjTask-main:
+      displayName: ''
+    ErpPrjTimesheet-main:
+      displayName: ''
+    FNPT:ErpPrjActivityType:mutation:
+      displayName: ''
+    FNPT:ErpPrjActivityType:query:
+      displayName: ''
+    FNPT:ErpPrjBilling:mutation:
+      displayName: ''
+    FNPT:ErpPrjBilling:query:
+      displayName: ''
+    FNPT:ErpPrjBillingLine:mutation:
+      displayName: ''
+    FNPT:ErpPrjBillingLine:query:
+      displayName: ''
+    FNPT:ErpPrjBudget:mutation:
+      displayName: ''
+    FNPT:ErpPrjBudget:query:
+      displayName: ''
+    FNPT:ErpPrjBudgetLine:mutation:
+      displayName: ''
+    FNPT:ErpPrjBudgetLine:query:
+      displayName: ''
+    FNPT:ErpPrjCostCollection:mutation:
+      displayName: ''
+    FNPT:ErpPrjCostCollection:query:
+      displayName: ''
+    FNPT:ErpPrjCostCollectionLine:mutation:
+      displayName: ''
+    FNPT:ErpPrjCostCollectionLine:query:
+      displayName: ''
+    FNPT:ErpPrjMilestone:mutation:
+      displayName: ''
+    FNPT:ErpPrjMilestone:query:
+      displayName: ''
+    FNPT:ErpPrjProject:mutation:
+      displayName: ''
+    FNPT:ErpPrjProject:query:
+      displayName: ''
+    FNPT:ErpPrjProjectType:mutation:
+      displayName: ''
+    FNPT:ErpPrjProjectType:query:
+      displayName: ''
+    FNPT:ErpPrjProjectUser:mutation:
+      displayName: ''
+    FNPT:ErpPrjProjectUser:query:
+      displayName: ''
+    FNPT:ErpPrjTask:mutation:
+      displayName: ''
+    FNPT:ErpPrjTask:query:
+      displayName: ''
+    FNPT:ErpPrjTimesheet:mutation:
+      displayName: ''
+    FNPT:ErpPrjTimesheet:query:
+      displayName: ''
+    test-orm-erp-prj:
+      displayName: Test erp-prj

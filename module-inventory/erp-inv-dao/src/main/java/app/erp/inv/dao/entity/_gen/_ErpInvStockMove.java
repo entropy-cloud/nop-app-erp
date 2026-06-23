@@ -117,6 +117,12 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
 
     
     /* relation:  */
+    public static final String PROP_NAME_sourceWarehouse = "sourceWarehouse";
+    
+    /* relation:  */
+    public static final String PROP_NAME_destWarehouse = "destWarehouse";
+    
+    /* relation:  */
     public static final String PROP_NAME_lines = "lines";
     
 
@@ -1265,6 +1271,52 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdWarehouse getSourceWarehouse(){
+       return (app.erp.md.dao.entity.ErpMdWarehouse)internalGetRefEntity(PROP_NAME_sourceWarehouse);
+    }
+
+    public final void setSourceWarehouse(app.erp.md.dao.entity.ErpMdWarehouse refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setSourceWarehouseId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_sourceWarehouse, refEntity,()->{
+           
+                           this.setSourceWarehouseId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdWarehouse getDestWarehouse(){
+       return (app.erp.md.dao.entity.ErpMdWarehouse)internalGetRefEntity(PROP_NAME_destWarehouse);
+    }
+
+    public final void setDestWarehouse(app.erp.md.dao.entity.ErpMdWarehouse refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setDestWarehouseId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_destWarehouse, refEntity,()->{
+           
+                           this.setDestWarehouseId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
     private final OrmEntitySet<app.erp.inv.dao.entity.ErpInvStockMoveLine> _lines = new OrmEntitySet<>(this, PROP_NAME_lines,
         null, null,app.erp.inv.dao.entity.ErpInvStockMoveLine.class);
 

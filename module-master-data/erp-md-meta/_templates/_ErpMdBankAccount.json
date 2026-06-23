@@ -1,0 +1,18 @@
+{
+  "id": 0,
+  "partnerId": 0,
+  "bankName": "",
+  "bankBranch": "",
+  "bankAccount": "",
+  "accountType": 0,
+  "accountType_label": "",
+  "accountHolder": "",
+  "isDefault": false,
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "partner": null
+}

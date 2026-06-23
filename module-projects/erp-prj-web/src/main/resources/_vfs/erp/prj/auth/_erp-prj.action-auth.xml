@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
+
+    <site id="main">
+        <resource id="test-orm-erp-prj" displayName="测试erp-prj" i18n-en:displayName="Test erp-prj"
+                  icon="ion:grid-outline" resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-prj"
+                  component="layouts/default/index">
+            <children>
+                <resource id="ErpPrjActivityType-main" displayName="活动类型" orderNo="10001" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/prj/pages/ErpPrjActivityType/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPrjActivityType:query" displayName="查询活动类型" i18n-en:displayName=""
+                                  orderNo="10002" resourceType="FNPT">
+                            <permissions>ErpPrjActivityType:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPrjActivityType:mutation" displayName="修改活动类型" i18n-en:displayName=""
+                                  orderNo="10003" resourceType="FNPT">
+                            <permissions>ErpPrjActivityType:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPrjBilling-main" displayName="项目开票" orderNo="10004" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/prj/pages/ErpPrjBilling/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPrjBilling:query" displayName="查询项目开票" i18n-en:displayName=""
+                                  orderNo="10005" resourceType="FNPT">
+                            <permissions>ErpPrjBilling:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPrjBilling:mutation" displayName="修改项目开票" i18n-en:displayName=""
+                                  orderNo="10006" resourceType="FNPT">
+                            <permissions>ErpPrjBilling:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPrjBillingLine-main" displayName="项目开票行" orderNo="10007" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/prj/pages/ErpPrjBillingLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPrjBillingLine:query" displayName="查询项目开票行" i18n-en:displayName=""
+                                  orderNo="10008" resourceType="FNPT">
+                            <permissions>ErpPrjBillingLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPrjBillingLine:mutation" displayName="修改项目开票行" i18n-en:displayName=""
+                                  orderNo="10009" resourceType="FNPT">
+                            <permissions>ErpPrjBillingLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPrjBudget-main" displayName="项目预算" orderNo="10010" i18n-en:displayName="" icon="blocks"
+                          component="AMIS" resourceType="SUBM" url="/erp/prj/pages/ErpPrjBudget/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPrjBudget:query" displayName="查询项目预算" i18n-en:displayName=""
+                                  orderNo="10011" resourceType="FNPT">
+                            <permissions>ErpPrjBudget:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPrjBudget:mutation" displayName="修改项目预算" i18n-en:displayName=""
+                                  orderNo="10012" resourceType="FNPT">
+                            <permissions>ErpPrjBudget:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPrjBudgetLine-main" displayName="项目预算行" orderNo="10013" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/prj/pages/ErpPrjBudgetLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPrjBudgetLine:query" displayName="查询项目预算行" i18n-en:displayName=""
+                                  orderNo="10014" resourceType="FNPT">
+                            <permissions>ErpPrjBudgetLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPrjBudgetLine:mutation" displayName="修改项目预算行" i18n-en:displayName=""
+                                  orderNo="10015" resourceType="FNPT">
+                            <permissions>ErpPrjBudgetLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPrjCostCollection-main" displayName="项目成本归集" orderNo="10016" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/prj/pages/ErpPrjCostCollection/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPrjCostCollection:query" displayName="查询项目成本归集" i18n-en:displayName=""
+                                  orderNo="10017" resourceType="FNPT">
+                            <permissions>ErpPrjCostCollection:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPrjCostCollection:mutation" displayName="修改项目成本归集" i18n-en:displayName=""
+                                  orderNo="10018" resourceType="FNPT">
+                            <permissions>ErpPrjCostCollection:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPrjCostCollectionLine-main" displayName="项目成本归集行" orderNo="10019"
+                          i18n-en:displayName="" icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/prj/pages/ErpPrjCostCollectionLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPrjCostCollectionLine:query" displayName="查询项目成本归集行"
+                                  i18n-en:displayName="" orderNo="10020" resourceType="FNPT">
+                            <permissions>ErpPrjCostCollectionLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPrjCostCollectionLine:mutation" displayName="修改项目成本归集行"
+                                  i18n-en:displayName="" orderNo="10021" resourceType="FNPT">
+                            <permissions>ErpPrjCostCollectionLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPrjMilestone-main" displayName="项目里程碑" orderNo="10022" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/prj/pages/ErpPrjMilestone/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPrjMilestone:query" displayName="查询项目里程碑" i18n-en:displayName=""
+                                  orderNo="10023" resourceType="FNPT">
+                            <permissions>ErpPrjMilestone:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPrjMilestone:mutation" displayName="修改项目里程碑" i18n-en:displayName=""
+                                  orderNo="10024" resourceType="FNPT">
+                            <permissions>ErpPrjMilestone:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPrjProject-main" displayName="项目" orderNo="10025" i18n-en:displayName="" icon="blocks"
+                          component="AMIS" resourceType="SUBM" url="/erp/prj/pages/ErpPrjProject/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPrjProject:query" displayName="查询项目" i18n-en:displayName=""
+                                  orderNo="10026" resourceType="FNPT">
+                            <permissions>ErpPrjProject:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPrjProject:mutation" displayName="修改项目" i18n-en:displayName=""
+                                  orderNo="10027" resourceType="FNPT">
+                            <permissions>ErpPrjProject:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPrjProjectType-main" displayName="项目类型" orderNo="10028" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/prj/pages/ErpPrjProjectType/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPrjProjectType:query" displayName="查询项目类型" i18n-en:displayName=""
+                                  orderNo="10029" resourceType="FNPT">
+                            <permissions>ErpPrjProjectType:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPrjProjectType:mutation" displayName="修改项目类型" i18n-en:displayName=""
+                                  orderNo="10030" resourceType="FNPT">
+                            <permissions>ErpPrjProjectType:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPrjProjectUser-main" displayName="项目成员" orderNo="10031" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/prj/pages/ErpPrjProjectUser/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPrjProjectUser:query" displayName="查询项目成员" i18n-en:displayName=""
+                                  orderNo="10032" resourceType="FNPT">
+                            <permissions>ErpPrjProjectUser:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPrjProjectUser:mutation" displayName="修改项目成员" i18n-en:displayName=""
+                                  orderNo="10033" resourceType="FNPT">
+                            <permissions>ErpPrjProjectUser:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPrjTask-main" displayName="任务" orderNo="10034" i18n-en:displayName="" icon="blocks"
+                          component="AMIS" resourceType="SUBM" url="/erp/prj/pages/ErpPrjTask/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPrjTask:query" displayName="查询任务" i18n-en:displayName="" orderNo="10035"
+                                  resourceType="FNPT">
+                            <permissions>ErpPrjTask:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPrjTask:mutation" displayName="修改任务" i18n-en:displayName=""
+                                  orderNo="10036" resourceType="FNPT">
+                            <permissions>ErpPrjTask:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPrjTimesheet-main" displayName="工时记录" orderNo="10037" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/prj/pages/ErpPrjTimesheet/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPrjTimesheet:query" displayName="查询工时记录" i18n-en:displayName=""
+                                  orderNo="10038" resourceType="FNPT">
+                            <permissions>ErpPrjTimesheet:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPrjTimesheet:mutation" displayName="修改工时记录" i18n-en:displayName=""
+                                  orderNo="10039" resourceType="FNPT">
+                            <permissions>ErpPrjTimesheet:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
+</auth>

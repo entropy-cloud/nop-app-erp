@@ -1,0 +1,22 @@
+{
+  "id": 0,
+  "code": "",
+  "name": "",
+  "warehouseType": 0,
+  "warehouseType_label": "",
+  "orgId": 0,
+  "address": "",
+  "managerId": 0,
+  "status": 0,
+  "status_label": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "remark": "",
+  "organization": null,
+  "manager": null,
+  "locations": null
+}

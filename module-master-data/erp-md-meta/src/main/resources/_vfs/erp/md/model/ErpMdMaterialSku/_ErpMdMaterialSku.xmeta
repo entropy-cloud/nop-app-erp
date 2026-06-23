@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen" xmlns:biz="biz"
+      displayName="物料SKU" tagSet="gid,erp.master-data" xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.md.dao.entity.ErpMdMaterialSku</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" tagSet="seq-default" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="materialId" displayName="物料ID" propId="2" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true" ext:relation="material">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="skuCode" displayName="SKU编码" propId="3" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="barcode" displayName="条码" propId="4" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="uoMId" displayName="计量单位" propId="5" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true" ext:relation="uoM">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="conversionRate" displayName="换算系数" propId="6" queryable="true" sortable="true" insertable="true"
+              updatable="true" defaultValue="1">
+            <schema type="java.math.BigDecimal" precision="12" scale="4"/>
+        </prop>
+        <prop name="purchasePrice" displayName="采购价(不含税)" propId="7" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="salePrice" displayName="销售价(不含税)" propId="8" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="wholesalePrice" displayName="批发价(不含税)" propId="9" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="retailPrice" displayName="零售价(不含税)" propId="10" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="taxRateId" displayName="默认税率" propId="11" queryable="true" sortable="true" insertable="true"
+              updatable="true" ext:relation="taxRate">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="isDefault" displayName="是否默认SKU" propId="12" queryable="true" sortable="true" insertable="true"
+              updatable="true" defaultValue="false">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="13" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="14" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="15" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="16" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="17" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="18" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="material" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="materialId" ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true"
+              lazy="true">
+            <schema bizObjName="ErpMdMaterial"/>
+        </prop>
+        <prop name="uoM" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="uoMId"
+              ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true" lazy="true">
+            <schema bizObjName="ErpMdUoM"/>
+        </prop>
+        <prop name="taxRate" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="taxRateId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdTaxRate"/>
+        </prop>
+    </props>
+</meta>

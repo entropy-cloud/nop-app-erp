@@ -1,4 +1,60 @@
 
+CREATE TABLE erp_md_organization(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  org_type INT4  ,
+  parent_id INT8  ,
+  status INT4  ,
+  constraint PK_erp_md_organization primary key (id)
+);
+
+CREATE TABLE erp_md_location(
+  id INT8  ,
+  warehouse_id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  parent_id INT8  ,
+  constraint PK_erp_md_location primary key (id)
+);
+
+CREATE TABLE erp_md_employee(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  org_id INT8  ,
+  status INT4  ,
+  constraint PK_erp_md_employee primary key (id)
+);
+
+CREATE TABLE erp_md_currency(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  symbol VARCHAR(50)  ,
+  decimal_places INT4  ,
+  is_functional BOOLEAN  ,
+  constraint PK_erp_md_currency primary key (id)
+);
+
+CREATE TABLE erp_md_subject(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  parent_id INT8  ,
+  subject_class INT4  ,
+  direction INT4  ,
+  constraint PK_erp_md_subject primary key (id)
+);
+
+CREATE TABLE erp_md_material_category(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  parent_id INT8  ,
+  constraint PK_erp_md_material_category primary key (id)
+);
+
 CREATE TABLE erp_ast_asset_category(
   id INT8 NOT NULL ,
   code VARCHAR(50) NOT NULL ,
@@ -73,6 +129,10 @@ CREATE TABLE erp_ast_asset_capitalization(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
+  business_date DATE  ,
+  exchange_rate NUMERIC(20,8) default 1   ,
+  amount_source NUMERIC(20,4) default 0   ,
+  amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_ast_asset_capitalization primary key (id)
 );
 
@@ -96,6 +156,12 @@ CREATE TABLE erp_ast_cip(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
+  posted BOOLEAN default false   ,
+  posted_at TIMESTAMP  ,
+  posted_by VARCHAR(50)  ,
+  exchange_rate NUMERIC(20,8) default 1   ,
+  amount_source NUMERIC(20,4) default 0   ,
+  amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_ast_cip primary key (id)
 );
 
@@ -120,6 +186,11 @@ CREATE TABLE erp_ast_depreciation_schedule(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  business_date DATE  ,
+  currency_id INT8  ,
+  exchange_rate NUMERIC(20,8) default 1   ,
+  amount_source NUMERIC(20,4) default 0   ,
+  amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_ast_depreciation_schedule primary key (id)
 );
 
@@ -149,6 +220,10 @@ CREATE TABLE erp_ast_movement(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
+  currency_id INT8  ,
+  exchange_rate NUMERIC(20,8) default 1   ,
+  amount_source NUMERIC(20,4) default 0   ,
+  amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_ast_movement primary key (id)
 );
 
@@ -177,6 +252,8 @@ CREATE TABLE erp_ast_value_adjustment(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
+  amount_source NUMERIC(20,4) default 0   ,
+  amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_ast_value_adjustment primary key (id)
 );
 
@@ -205,6 +282,8 @@ CREATE TABLE erp_ast_disposal(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
+  amount_source NUMERIC(20,4) default 0   ,
+  amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_ast_disposal primary key (id)
 );
 
@@ -230,6 +309,9 @@ CREATE TABLE erp_ast_split(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
+  exchange_rate NUMERIC(20,8) default 1   ,
+  amount_source NUMERIC(20,4) default 0   ,
+  amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_ast_split primary key (id)
 );
 
@@ -255,10 +337,25 @@ CREATE TABLE erp_ast_merge(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
+  exchange_rate NUMERIC(20,8) default 1   ,
+  amount_source NUMERIC(20,4) default 0   ,
+  amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_ast_merge primary key (id)
 );
 
 
+      COMMENT ON TABLE erp_md_organization IS '组织';
+                
+      COMMENT ON TABLE erp_md_location IS '库位';
+                
+      COMMENT ON TABLE erp_md_employee IS '职员';
+                
+      COMMENT ON TABLE erp_md_currency IS '币种';
+                
+      COMMENT ON TABLE erp_md_subject IS '会计科目';
+                
+      COMMENT ON TABLE erp_md_material_category IS '物料分类';
+                
       COMMENT ON TABLE erp_ast_asset_category IS '资产类别';
                 
       COMMENT ON COLUMN erp_ast_asset_category.id IS 'ID';
@@ -395,6 +492,14 @@ CREATE TABLE erp_ast_merge(
                     
       COMMENT ON COLUMN erp_ast_asset_capitalization.remark IS '备注';
                     
+      COMMENT ON COLUMN erp_ast_asset_capitalization.business_date IS '业务日期';
+                    
+      COMMENT ON COLUMN erp_ast_asset_capitalization.exchange_rate IS '汇率';
+                    
+      COMMENT ON COLUMN erp_ast_asset_capitalization.amount_source IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_ast_asset_capitalization.amount_functional IS '本位币金额';
+                    
       COMMENT ON TABLE erp_ast_cip IS '在建工程';
                 
       COMMENT ON COLUMN erp_ast_cip.id IS 'ID';
@@ -434,6 +539,18 @@ CREATE TABLE erp_ast_merge(
       COMMENT ON COLUMN erp_ast_cip.update_time IS '修改时间';
                     
       COMMENT ON COLUMN erp_ast_cip.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_ast_cip.posted IS '是否已过账';
+                    
+      COMMENT ON COLUMN erp_ast_cip.posted_at IS '过账时间';
+                    
+      COMMENT ON COLUMN erp_ast_cip.posted_by IS '过账人';
+                    
+      COMMENT ON COLUMN erp_ast_cip.exchange_rate IS '汇率';
+                    
+      COMMENT ON COLUMN erp_ast_cip.amount_source IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_ast_cip.amount_functional IS '本位币金额';
                     
       COMMENT ON TABLE erp_ast_depreciation_schedule IS '折旧计划';
                 
@@ -476,6 +593,16 @@ CREATE TABLE erp_ast_merge(
       COMMENT ON COLUMN erp_ast_depreciation_schedule.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_ast_depreciation_schedule.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_ast_depreciation_schedule.business_date IS '业务日期';
+                    
+      COMMENT ON COLUMN erp_ast_depreciation_schedule.currency_id IS '币种';
+                    
+      COMMENT ON COLUMN erp_ast_depreciation_schedule.exchange_rate IS '汇率';
+                    
+      COMMENT ON COLUMN erp_ast_depreciation_schedule.amount_source IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_ast_depreciation_schedule.amount_functional IS '本位币金额';
                     
       COMMENT ON TABLE erp_ast_movement IS '资产移动';
                 
@@ -529,6 +656,14 @@ CREATE TABLE erp_ast_merge(
                     
       COMMENT ON COLUMN erp_ast_movement.remark IS '备注';
                     
+      COMMENT ON COLUMN erp_ast_movement.currency_id IS '币种';
+                    
+      COMMENT ON COLUMN erp_ast_movement.exchange_rate IS '汇率';
+                    
+      COMMENT ON COLUMN erp_ast_movement.amount_source IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_ast_movement.amount_functional IS '本位币金额';
+                    
       COMMENT ON TABLE erp_ast_value_adjustment IS '资产价值调整';
                 
       COMMENT ON COLUMN erp_ast_value_adjustment.id IS 'ID';
@@ -578,6 +713,10 @@ CREATE TABLE erp_ast_merge(
       COMMENT ON COLUMN erp_ast_value_adjustment.update_time IS '修改时间';
                     
       COMMENT ON COLUMN erp_ast_value_adjustment.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_ast_value_adjustment.amount_source IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_ast_value_adjustment.amount_functional IS '本位币金额';
                     
       COMMENT ON TABLE erp_ast_disposal IS '资产处置';
                 
@@ -629,6 +768,10 @@ CREATE TABLE erp_ast_merge(
                     
       COMMENT ON COLUMN erp_ast_disposal.remark IS '备注';
                     
+      COMMENT ON COLUMN erp_ast_disposal.amount_source IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_ast_disposal.amount_functional IS '本位币金额';
+                    
       COMMENT ON TABLE erp_ast_split IS '资产拆分单';
                 
       COMMENT ON COLUMN erp_ast_split.id IS 'ID';
@@ -673,6 +816,12 @@ CREATE TABLE erp_ast_merge(
                     
       COMMENT ON COLUMN erp_ast_split.remark IS '备注';
                     
+      COMMENT ON COLUMN erp_ast_split.exchange_rate IS '汇率';
+                    
+      COMMENT ON COLUMN erp_ast_split.amount_source IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_ast_split.amount_functional IS '本位币金额';
+                    
       COMMENT ON TABLE erp_ast_merge IS '资产合并单';
                 
       COMMENT ON COLUMN erp_ast_merge.id IS 'ID';
@@ -716,4 +865,10 @@ CREATE TABLE erp_ast_merge(
       COMMENT ON COLUMN erp_ast_merge.update_time IS '修改时间';
                     
       COMMENT ON COLUMN erp_ast_merge.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_ast_merge.exchange_rate IS '汇率';
+                    
+      COMMENT ON COLUMN erp_ast_merge.amount_source IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_ast_merge.amount_functional IS '本位币金额';
                     

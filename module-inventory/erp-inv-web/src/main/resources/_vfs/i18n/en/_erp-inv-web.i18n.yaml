@@ -1,0 +1,94 @@
+site:
+  resource:
+    ErpInvBatch-main:
+      displayName: ''
+    ErpInvCostLayer-main:
+      displayName: ''
+    ErpInvPickingOrder-main:
+      displayName: ''
+    ErpInvPickingOrderLine-main:
+      displayName: ''
+    ErpInvReservation-main:
+      displayName: ''
+    ErpInvReservationLine-main:
+      displayName: ''
+    ErpInvSerialNumber-main:
+      displayName: ''
+    ErpInvStockBalance-main:
+      displayName: ''
+    ErpInvStockLedger-main:
+      displayName: ''
+    ErpInvStockMove-main:
+      displayName: ''
+    ErpInvStockMoveLine-main:
+      displayName: ''
+    ErpInvStockTake-main:
+      displayName: ''
+    ErpInvStockTakeLine-main:
+      displayName: ''
+    ErpInvTransferOrder-main:
+      displayName: ''
+    ErpInvTransferOrderLine-main:
+      displayName: ''
+    FNPT:ErpInvBatch:mutation:
+      displayName: ''
+    FNPT:ErpInvBatch:query:
+      displayName: ''
+    FNPT:ErpInvCostLayer:mutation:
+      displayName: ''
+    FNPT:ErpInvCostLayer:query:
+      displayName: ''
+    FNPT:ErpInvPickingOrder:mutation:
+      displayName: ''
+    FNPT:ErpInvPickingOrder:query:
+      displayName: ''
+    FNPT:ErpInvPickingOrderLine:mutation:
+      displayName: ''
+    FNPT:ErpInvPickingOrderLine:query:
+      displayName: ''
+    FNPT:ErpInvReservation:mutation:
+      displayName: ''
+    FNPT:ErpInvReservation:query:
+      displayName: ''
+    FNPT:ErpInvReservationLine:mutation:
+      displayName: ''
+    FNPT:ErpInvReservationLine:query:
+      displayName: ''
+    FNPT:ErpInvSerialNumber:mutation:
+      displayName: ''
+    FNPT:ErpInvSerialNumber:query:
+      displayName: ''
+    FNPT:ErpInvStockBalance:mutation:
+      displayName: ''
+    FNPT:ErpInvStockBalance:query:
+      displayName: ''
+    FNPT:ErpInvStockLedger:mutation:
+      displayName: ''
+    FNPT:ErpInvStockLedger:query:
+      displayName: ''
+    FNPT:ErpInvStockMove:mutation:
+      displayName: ''
+    FNPT:ErpInvStockMove:query:
+      displayName: ''
+    FNPT:ErpInvStockMoveLine:mutation:
+      displayName: ''
+    FNPT:ErpInvStockMoveLine:query:
+      displayName: ''
+    FNPT:ErpInvStockTake:mutation:
+      displayName: ''
+    FNPT:ErpInvStockTake:query:
+      displayName: ''
+    FNPT:ErpInvStockTakeLine:mutation:
+      displayName: ''
+    FNPT:ErpInvStockTakeLine:query:
+      displayName: ''
+    FNPT:ErpInvTransferOrder:mutation:
+      displayName: ''
+    FNPT:ErpInvTransferOrder:query:
+      displayName: ''
+    FNPT:ErpInvTransferOrderLine:mutation:
+      displayName: ''
+    FNPT:ErpInvTransferOrderLine:query:
+      displayName: ''
+    test-orm-erp-inv:
+      displayName: Test erp-inv

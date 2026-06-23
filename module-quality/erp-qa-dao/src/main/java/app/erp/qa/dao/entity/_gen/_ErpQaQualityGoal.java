@@ -96,6 +96,9 @@ public class _ErpQaQualityGoal extends DynamicOrmEntity{
     private static int _PROP_ID_BOUND = 19;
 
     
+    /* relation:  */
+    public static final String PROP_NAME_responsiblePerson = "responsiblePerson";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1017,5 +1020,28 @@ public class _ErpQaQualityGoal extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdEmployee getResponsiblePerson(){
+       return (app.erp.md.dao.entity.ErpMdEmployee)internalGetRefEntity(PROP_NAME_responsiblePerson);
+    }
+
+    public final void setResponsiblePerson(app.erp.md.dao.entity.ErpMdEmployee refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setResponsiblePersonId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_responsiblePerson, refEntity,()->{
+           
+                           this.setResponsiblePersonId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
 }
 // resume CPD analysis - CPD-ON

@@ -113,6 +113,15 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
 
     
     /* relation:  */
+    public static final String PROP_NAME_partner = "partner";
+    
+    /* relation:  */
+    public static final String PROP_NAME_acctSchema = "acctSchema";
+    
+    /* relation:  */
+    public static final String PROP_NAME_currency = "currency";
+    
+    /* relation:  */
     public static final String PROP_NAME_lines = "lines";
     
 
@@ -1216,6 +1225,75 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdPartner getPartner(){
+       return (app.erp.md.dao.entity.ErpMdPartner)internalGetRefEntity(PROP_NAME_partner);
+    }
+
+    public final void setPartner(app.erp.md.dao.entity.ErpMdPartner refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setPartnerId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_partner, refEntity,()->{
+           
+                           this.setPartnerId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdAcctSchema getAcctSchema(){
+       return (app.erp.md.dao.entity.ErpMdAcctSchema)internalGetRefEntity(PROP_NAME_acctSchema);
+    }
+
+    public final void setAcctSchema(app.erp.md.dao.entity.ErpMdAcctSchema refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setAcctSchemaId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_acctSchema, refEntity,()->{
+           
+                           this.setAcctSchemaId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdCurrency getCurrency(){
+       return (app.erp.md.dao.entity.ErpMdCurrency)internalGetRefEntity(PROP_NAME_currency);
+    }
+
+    public final void setCurrency(app.erp.md.dao.entity.ErpMdCurrency refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCurrencyId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_currency, refEntity,()->{
+           
+                           this.setCurrencyId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
     private final OrmEntitySet<app.erp.fin.dao.entity.ErpFinReconciliationLine> _lines = new OrmEntitySet<>(this, PROP_NAME_lines,
         null, null,app.erp.fin.dao.entity.ErpFinReconciliationLine.class);
 

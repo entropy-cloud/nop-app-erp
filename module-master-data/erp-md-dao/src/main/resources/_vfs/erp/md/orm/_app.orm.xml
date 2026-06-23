@@ -134,7 +134,7 @@
         <entity className="app.erp.md.dao.entity.ErpMdMaterial" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="物料"
                 name="app.erp.md.dao.entity.ErpMdMaterial" registerShortName="true" tableName="erp_md_material"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
                 versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
@@ -220,8 +220,8 @@
         <entity className="app.erp.md.dao.entity.ErpMdMaterialCategory" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="物料分类"
                 name="app.erp.md.dao.entity.ErpMdMaterialCategory" registerShortName="true"
-                tableName="erp_md_material_category" tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version">
+                tableName="erp_md_material_category" tagSet="gid,erp.master-data" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -263,7 +263,7 @@
         <entity className="app.erp.md.dao.entity.ErpMdMaterialSku" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="物料SKU"
                 name="app.erp.md.dao.entity.ErpMdMaterialSku" registerShortName="true" tableName="erp_md_material_sku"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
                 versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
@@ -324,7 +324,7 @@
         <entity className="app.erp.md.dao.entity.ErpMdPartner" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="往来单位"
                 name="app.erp.md.dao.entity.ErpMdPartner" registerShortName="true" tableName="erp_md_partner"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
                 versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
@@ -394,8 +394,8 @@
         <entity className="app.erp.md.dao.entity.ErpMdPartnerAddress" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="往来单位地址"
                 name="app.erp.md.dao.entity.ErpMdPartnerAddress" registerShortName="true"
-                tableName="erp_md_partner_address" tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version">
+                tableName="erp_md_partner_address" tagSet="gid,erp.master-data" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -435,8 +435,8 @@
         <entity className="app.erp.md.dao.entity.ErpMdPartnerContact" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="往来单位联系人"
                 name="app.erp.md.dao.entity.ErpMdPartnerContact" registerShortName="true"
-                tableName="erp_md_partner_contact" tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version">
+                tableName="erp_md_partner_contact" tagSet="gid,erp.master-data" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -478,7 +478,7 @@
         <entity className="app.erp.md.dao.entity.ErpMdWarehouse" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="仓库"
                 name="app.erp.md.dao.entity.ErpMdWarehouse" registerShortName="true" tableName="erp_md_warehouse"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
                 versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
@@ -533,7 +533,7 @@
         <entity className="app.erp.md.dao.entity.ErpMdLocation" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="库位"
                 name="app.erp.md.dao.entity.ErpMdLocation" registerShortName="true" tableName="erp_md_location"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
                 versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
@@ -576,8 +576,9 @@
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdUoM" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="计量单位"
-                name="app.erp.md.dao.entity.ErpMdUoM" registerShortName="true" tableName="erp_md_uom" tagSet="gid"
-                updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
+                name="app.erp.md.dao.entity.ErpMdUoM" registerShortName="true" tableName="erp_md_uom"
+                tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -606,8 +607,8 @@
         <entity className="app.erp.md.dao.entity.ErpMdUoMConversion" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="单位换算"
                 name="app.erp.md.dao.entity.ErpMdUoMConversion" registerShortName="true"
-                tableName="erp_md_uom_conversion" tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version">
+                tableName="erp_md_uom_conversion" tagSet="gid,erp.master-data" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -653,7 +654,7 @@
         <entity className="app.erp.md.dao.entity.ErpMdCurrency" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="币种"
                 name="app.erp.md.dao.entity.ErpMdCurrency" registerShortName="true" tableName="erp_md_currency"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
                 versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
@@ -687,7 +688,7 @@
         <entity className="app.erp.md.dao.entity.ErpMdExchangeRate" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="汇率"
                 name="app.erp.md.dao.entity.ErpMdExchangeRate" registerShortName="true" tableName="erp_md_exchange_rate"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
                 versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
@@ -733,7 +734,7 @@
         <entity className="app.erp.md.dao.entity.ErpMdTaxRate" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="税率"
                 name="app.erp.md.dao.entity.ErpMdTaxRate" registerShortName="true" tableName="erp_md_tax_rate"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
                 versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
@@ -773,8 +774,8 @@
         <entity className="app.erp.md.dao.entity.ErpMdSettlementMethod" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="结算方式"
                 name="app.erp.md.dao.entity.ErpMdSettlementMethod" registerShortName="true"
-                tableName="erp_md_settlement_method" tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version">
+                tableName="erp_md_settlement_method" tagSet="gid,erp.master-data" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -807,7 +808,7 @@
         <entity className="app.erp.md.dao.entity.ErpMdBankAccount" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="银行账户"
                 name="app.erp.md.dao.entity.ErpMdBankAccount" registerShortName="true" tableName="erp_md_bank_account"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
                 versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
@@ -850,7 +851,7 @@
         <entity className="app.erp.md.dao.entity.ErpMdEmployee" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="职员"
                 name="app.erp.md.dao.entity.ErpMdEmployee" registerShortName="true" tableName="erp_md_employee"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
                 versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
@@ -900,7 +901,7 @@
         <entity className="app.erp.md.dao.entity.ErpMdSubject" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="会计科目"
                 name="app.erp.md.dao.entity.ErpMdSubject" registerShortName="true" tableName="erp_md_subject"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
                 versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
@@ -970,7 +971,7 @@
         <entity className="app.erp.md.dao.entity.ErpMdAcctSchema" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="会计核算表(账套)"
                 name="app.erp.md.dao.entity.ErpMdAcctSchema" registerShortName="true" tableName="erp_md_acct_schema"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
                 versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
@@ -1029,8 +1030,8 @@
         <entity className="app.erp.md.dao.entity.ErpMdAcctSchemaCoa" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="账套科目表"
                 name="app.erp.md.dao.entity.ErpMdAcctSchemaCoa" registerShortName="true"
-                tableName="erp_md_acct_schema_coa" tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version">
+                tableName="erp_md_acct_schema_coa" tagSet="gid,erp.master-data" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -1064,7 +1065,7 @@
         <entity className="app.erp.md.dao.entity.ErpMdOrganization" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="组织"
                 name="app.erp.md.dao.entity.ErpMdOrganization" registerShortName="true" tableName="erp_md_organization"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
                 versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"

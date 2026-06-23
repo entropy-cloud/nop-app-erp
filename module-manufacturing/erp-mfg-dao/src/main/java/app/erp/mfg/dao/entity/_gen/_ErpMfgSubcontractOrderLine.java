@@ -87,6 +87,12 @@ public class _ErpMfgSubcontractOrderLine extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_subcontractOrder = "subcontractOrder";
     
+    /* relation:  */
+    public static final String PROP_NAME_material = "material";
+    
+    /* relation:  */
+    public static final String PROP_NAME_uoM = "uoM";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -890,6 +896,52 @@ public class _ErpMfgSubcontractOrderLine extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_subcontractOrder, refEntity,()->{
            
                            this.setSubcontractOrderId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdMaterial getMaterial(){
+       return (app.erp.md.dao.entity.ErpMdMaterial)internalGetRefEntity(PROP_NAME_material);
+    }
+
+    public final void setMaterial(app.erp.md.dao.entity.ErpMdMaterial refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setMaterialId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_material, refEntity,()->{
+           
+                           this.setMaterialId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdUoM getUoM(){
+       return (app.erp.md.dao.entity.ErpMdUoM)internalGetRefEntity(PROP_NAME_uoM);
+    }
+
+    public final void setUoM(app.erp.md.dao.entity.ErpMdUoM refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setUoMId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_uoM, refEntity,()->{
+           
+                           this.setUoMId(refEntity.getId());
                        
            });
            }

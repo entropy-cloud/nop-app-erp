@@ -1,0 +1,82 @@
+site:
+  resource:
+    ErpSalContract-main:
+      displayName: ''
+    ErpSalDelivery-main:
+      displayName: ''
+    ErpSalDeliveryLine-main:
+      displayName: ''
+    ErpSalInvoice-main:
+      displayName: ''
+    ErpSalInvoiceLine-main:
+      displayName: ''
+    ErpSalOrder-main:
+      displayName: ''
+    ErpSalOrderLine-main:
+      displayName: ''
+    ErpSalQuotation-main:
+      displayName: ''
+    ErpSalQuotationLine-main:
+      displayName: ''
+    ErpSalReceipt-main:
+      displayName: ''
+    ErpSalReceiptLine-main:
+      displayName: ''
+    ErpSalReturn-main:
+      displayName: ''
+    ErpSalReturnLine-main:
+      displayName: ''
+    FNPT:ErpSalContract:mutation:
+      displayName: ''
+    FNPT:ErpSalContract:query:
+      displayName: ''
+    FNPT:ErpSalDelivery:mutation:
+      displayName: ''
+    FNPT:ErpSalDelivery:query:
+      displayName: ''
+    FNPT:ErpSalDeliveryLine:mutation:
+      displayName: ''
+    FNPT:ErpSalDeliveryLine:query:
+      displayName: ''
+    FNPT:ErpSalInvoice:mutation:
+      displayName: ''
+    FNPT:ErpSalInvoice:query:
+      displayName: ''
+    FNPT:ErpSalInvoiceLine:mutation:
+      displayName: ''
+    FNPT:ErpSalInvoiceLine:query:
+      displayName: ''
+    FNPT:ErpSalOrder:mutation:
+      displayName: ''
+    FNPT:ErpSalOrder:query:
+      displayName: ''
+    FNPT:ErpSalOrderLine:mutation:
+      displayName: ''
+    FNPT:ErpSalOrderLine:query:
+      displayName: ''
+    FNPT:ErpSalQuotation:mutation:
+      displayName: ''
+    FNPT:ErpSalQuotation:query:
+      displayName: ''
+    FNPT:ErpSalQuotationLine:mutation:
+      displayName: ''
+    FNPT:ErpSalQuotationLine:query:
+      displayName: ''
+    FNPT:ErpSalReceipt:mutation:
+      displayName: ''
+    FNPT:ErpSalReceipt:query:
+      displayName: ''
+    FNPT:ErpSalReceiptLine:mutation:
+      displayName: ''
+    FNPT:ErpSalReceiptLine:query:
+      displayName: ''
+    FNPT:ErpSalReturn:mutation:
+      displayName: ''
+    FNPT:ErpSalReturn:query:
+      displayName: ''
+    FNPT:ErpSalReturnLine:mutation:
+      displayName: ''
+    FNPT:ErpSalReturnLine:query:
+      displayName: ''
+    test-orm-erp-sal:
+      displayName: Test erp-sal

@@ -89,6 +89,9 @@ public class _ErpFinVoucherTemplate extends DynamicOrmEntity{
 
     
     /* relation:  */
+    public static final String PROP_NAME_acctSchema = "acctSchema";
+    
+    /* relation:  */
     public static final String PROP_NAME_lines = "lines";
     
 
@@ -922,6 +925,29 @@ public class _ErpFinVoucherTemplate extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdAcctSchema getAcctSchema(){
+       return (app.erp.md.dao.entity.ErpMdAcctSchema)internalGetRefEntity(PROP_NAME_acctSchema);
+    }
+
+    public final void setAcctSchema(app.erp.md.dao.entity.ErpMdAcctSchema refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setAcctSchemaId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_acctSchema, refEntity,()->{
+           
+                           this.setAcctSchemaId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
     private final OrmEntitySet<app.erp.fin.dao.entity.ErpFinVoucherTemplateLine> _lines = new OrmEntitySet<>(this, PROP_NAME_lines,
         null, null,app.erp.fin.dao.entity.ErpFinVoucherTemplateLine.class);
 

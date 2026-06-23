@@ -1,0 +1,22 @@
+{
+  "id": 0,
+  "code": "",
+  "name": "",
+  "description": "",
+  "targetValue": 0.0,
+  "currentValue": 0.0,
+  "unit": "",
+  "responsiblePersonId": 0,
+  "startDate": "2000-01-01",
+  "endDate": "2000-01-01",
+  "status": 0,
+  "status_label": "",
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "responsiblePerson": null
+}

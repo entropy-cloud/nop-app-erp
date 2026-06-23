@@ -1,4 +1,13 @@
 
+CREATE TABLE erp_md_location(
+  id INT8  ,
+  warehouse_id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  parent_id INT8  ,
+  constraint PK_erp_md_location primary key (id)
+);
+
 CREATE TABLE erp_mnt_equipment_category(
   id INT8 NOT NULL ,
   code VARCHAR(50) NOT NULL ,
@@ -14,21 +23,59 @@ CREATE TABLE erp_mnt_equipment_category(
   constraint PK_erp_mnt_equipment_category primary key (id)
 );
 
-CREATE TABLE erp_mnt_maintenance_team(
-  id INT8 NOT NULL ,
-  code VARCHAR(50) NOT NULL ,
-  name VARCHAR(200) NOT NULL ,
+CREATE TABLE erp_md_organization(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  org_type INT4  ,
+  parent_id INT8  ,
+  status INT4  ,
+  constraint PK_erp_md_organization primary key (id)
+);
+
+CREATE TABLE erp_md_employee(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
   org_id INT8  ,
-  leader_id INT8  ,
-  description VARCHAR(2000)  ,
-  remark VARCHAR(1000)  ,
-  del_version INT8 default 0  NOT NULL ,
-  version INT4 default 0  NOT NULL ,
-  created_by VARCHAR(50) NOT NULL ,
-  create_time TIMESTAMP NOT NULL ,
-  updated_by VARCHAR(50) NOT NULL ,
-  update_time TIMESTAMP NOT NULL ,
-  constraint PK_erp_mnt_maintenance_team primary key (id)
+  status INT4  ,
+  constraint PK_erp_md_employee primary key (id)
+);
+
+CREATE TABLE erp_md_material(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  material_type INT4  ,
+  status INT4  ,
+  constraint PK_erp_md_material primary key (id)
+);
+
+CREATE TABLE erp_md_uom(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  uom_group VARCHAR(50)  ,
+  is_base BOOLEAN  ,
+  constraint PK_erp_md_uom primary key (id)
+);
+
+CREATE TABLE erp_md_material_category(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  parent_id INT8  ,
+  constraint PK_erp_md_material_category primary key (id)
+);
+
+CREATE TABLE erp_md_warehouse(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  warehouse_type INT4  ,
+  org_id INT8  ,
+  status INT4  ,
+  constraint PK_erp_md_warehouse primary key (id)
 );
 
 CREATE TABLE erp_mnt_equipment(
@@ -56,20 +103,21 @@ CREATE TABLE erp_mnt_equipment(
   constraint PK_erp_mnt_equipment primary key (id)
 );
 
-CREATE TABLE erp_mnt_maintenance_team_member(
+CREATE TABLE erp_mnt_maintenance_team(
   id INT8 NOT NULL ,
-  team_id INT8 NOT NULL ,
-  employee_id INT8 NOT NULL ,
-  role VARCHAR(50)  ,
-  joined_at TIMESTAMP  ,
-  left_at TIMESTAMP  ,
+  code VARCHAR(50) NOT NULL ,
+  name VARCHAR(200) NOT NULL ,
+  org_id INT8  ,
+  leader_id INT8  ,
+  description VARCHAR(2000)  ,
+  remark VARCHAR(1000)  ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
   created_by VARCHAR(50) NOT NULL ,
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
-  constraint PK_erp_mnt_maintenance_team_member primary key (id)
+  constraint PK_erp_mnt_maintenance_team primary key (id)
 );
 
 CREATE TABLE erp_mnt_schedule(
@@ -161,6 +209,22 @@ CREATE TABLE erp_mnt_calibration(
   constraint PK_erp_mnt_calibration primary key (id)
 );
 
+CREATE TABLE erp_mnt_maintenance_team_member(
+  id INT8 NOT NULL ,
+  team_id INT8 NOT NULL ,
+  employee_id INT8 NOT NULL ,
+  role VARCHAR(50)  ,
+  joined_at TIMESTAMP  ,
+  left_at TIMESTAMP  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_mnt_maintenance_team_member primary key (id)
+);
+
 CREATE TABLE erp_mnt_visit(
   id INT8 NOT NULL ,
   code VARCHAR(50) NOT NULL ,
@@ -181,6 +245,11 @@ CREATE TABLE erp_mnt_visit(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  org_id INT8  ,
+  business_date DATE  ,
+  posted BOOLEAN default false   ,
+  posted_at TIMESTAMP  ,
+  posted_by VARCHAR(50)  ,
   constraint PK_erp_mnt_visit primary key (id)
 );
 
@@ -248,6 +317,8 @@ CREATE TABLE erp_mnt_spare_part_usage_line(
 );
 
 
+      COMMENT ON TABLE erp_md_location IS '库位';
+                
       COMMENT ON TABLE erp_mnt_equipment_category IS '设备分类';
                 
       COMMENT ON COLUMN erp_mnt_equipment_category.id IS 'ID';
@@ -272,34 +343,18 @@ CREATE TABLE erp_mnt_spare_part_usage_line(
                     
       COMMENT ON COLUMN erp_mnt_equipment_category.update_time IS '修改时间';
                     
-      COMMENT ON TABLE erp_mnt_maintenance_team IS '维护团队';
+      COMMENT ON TABLE erp_md_organization IS '组织';
                 
-      COMMENT ON COLUMN erp_mnt_maintenance_team.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_mnt_maintenance_team.code IS '团队编码';
-                    
-      COMMENT ON COLUMN erp_mnt_maintenance_team.name IS '团队名称';
-                    
-      COMMENT ON COLUMN erp_mnt_maintenance_team.org_id IS '所属组织';
-                    
-      COMMENT ON COLUMN erp_mnt_maintenance_team.leader_id IS '负责人(职员)';
-                    
-      COMMENT ON COLUMN erp_mnt_maintenance_team.description IS '描述';
-                    
-      COMMENT ON COLUMN erp_mnt_maintenance_team.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_mnt_maintenance_team.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_mnt_maintenance_team.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_mnt_maintenance_team.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_mnt_maintenance_team.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_mnt_maintenance_team.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_mnt_maintenance_team.update_time IS '修改时间';
-                    
+      COMMENT ON TABLE erp_md_employee IS '职员';
+                
+      COMMENT ON TABLE erp_md_material IS '物料';
+                
+      COMMENT ON TABLE erp_md_uom IS '计量单位';
+                
+      COMMENT ON TABLE erp_md_material_category IS '物料分类';
+                
+      COMMENT ON TABLE erp_md_warehouse IS '仓库';
+                
       COMMENT ON TABLE erp_mnt_equipment IS '设备';
                 
       COMMENT ON COLUMN erp_mnt_equipment.id IS 'ID';
@@ -344,31 +399,33 @@ CREATE TABLE erp_mnt_spare_part_usage_line(
                     
       COMMENT ON COLUMN erp_mnt_equipment.update_time IS '修改时间';
                     
-      COMMENT ON TABLE erp_mnt_maintenance_team_member IS '维护团队成员';
+      COMMENT ON TABLE erp_mnt_maintenance_team IS '维护团队';
                 
-      COMMENT ON COLUMN erp_mnt_maintenance_team_member.id IS 'ID';
+      COMMENT ON COLUMN erp_mnt_maintenance_team.id IS 'ID';
                     
-      COMMENT ON COLUMN erp_mnt_maintenance_team_member.team_id IS '团队ID';
+      COMMENT ON COLUMN erp_mnt_maintenance_team.code IS '团队编码';
                     
-      COMMENT ON COLUMN erp_mnt_maintenance_team_member.employee_id IS '成员(职员)';
+      COMMENT ON COLUMN erp_mnt_maintenance_team.name IS '团队名称';
                     
-      COMMENT ON COLUMN erp_mnt_maintenance_team_member.role IS '角色';
+      COMMENT ON COLUMN erp_mnt_maintenance_team.org_id IS '所属组织';
                     
-      COMMENT ON COLUMN erp_mnt_maintenance_team_member.joined_at IS '加入时间';
+      COMMENT ON COLUMN erp_mnt_maintenance_team.leader_id IS '负责人(职员)';
                     
-      COMMENT ON COLUMN erp_mnt_maintenance_team_member.left_at IS '退出时间';
+      COMMENT ON COLUMN erp_mnt_maintenance_team.description IS '描述';
                     
-      COMMENT ON COLUMN erp_mnt_maintenance_team_member.del_version IS '逻辑删除版本';
+      COMMENT ON COLUMN erp_mnt_maintenance_team.remark IS '备注';
                     
-      COMMENT ON COLUMN erp_mnt_maintenance_team_member.version IS '数据版本';
+      COMMENT ON COLUMN erp_mnt_maintenance_team.del_version IS '逻辑删除版本';
                     
-      COMMENT ON COLUMN erp_mnt_maintenance_team_member.created_by IS '创建人';
+      COMMENT ON COLUMN erp_mnt_maintenance_team.version IS '数据版本';
                     
-      COMMENT ON COLUMN erp_mnt_maintenance_team_member.create_time IS '创建时间';
+      COMMENT ON COLUMN erp_mnt_maintenance_team.created_by IS '创建人';
                     
-      COMMENT ON COLUMN erp_mnt_maintenance_team_member.updated_by IS '修改人';
+      COMMENT ON COLUMN erp_mnt_maintenance_team.create_time IS '创建时间';
                     
-      COMMENT ON COLUMN erp_mnt_maintenance_team_member.update_time IS '修改时间';
+      COMMENT ON COLUMN erp_mnt_maintenance_team.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_mnt_maintenance_team.update_time IS '修改时间';
                     
       COMMENT ON TABLE erp_mnt_schedule IS '维护计划';
                 
@@ -524,6 +581,32 @@ CREATE TABLE erp_mnt_spare_part_usage_line(
                     
       COMMENT ON COLUMN erp_mnt_calibration.update_time IS '修改时间';
                     
+      COMMENT ON TABLE erp_mnt_maintenance_team_member IS '维护团队成员';
+                
+      COMMENT ON COLUMN erp_mnt_maintenance_team_member.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_mnt_maintenance_team_member.team_id IS '团队ID';
+                    
+      COMMENT ON COLUMN erp_mnt_maintenance_team_member.employee_id IS '成员(职员)';
+                    
+      COMMENT ON COLUMN erp_mnt_maintenance_team_member.role IS '角色';
+                    
+      COMMENT ON COLUMN erp_mnt_maintenance_team_member.joined_at IS '加入时间';
+                    
+      COMMENT ON COLUMN erp_mnt_maintenance_team_member.left_at IS '退出时间';
+                    
+      COMMENT ON COLUMN erp_mnt_maintenance_team_member.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_mnt_maintenance_team_member.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_mnt_maintenance_team_member.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_mnt_maintenance_team_member.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_mnt_maintenance_team_member.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_mnt_maintenance_team_member.update_time IS '修改时间';
+                    
       COMMENT ON TABLE erp_mnt_visit IS '维护访问';
                 
       COMMENT ON COLUMN erp_mnt_visit.id IS 'ID';
@@ -563,6 +646,16 @@ CREATE TABLE erp_mnt_spare_part_usage_line(
       COMMENT ON COLUMN erp_mnt_visit.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_mnt_visit.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_mnt_visit.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_mnt_visit.business_date IS '业务日期';
+                    
+      COMMENT ON COLUMN erp_mnt_visit.posted IS '是否已过账';
+                    
+      COMMENT ON COLUMN erp_mnt_visit.posted_at IS '过账时间';
+                    
+      COMMENT ON COLUMN erp_mnt_visit.posted_by IS '过账人';
                     
       COMMENT ON TABLE erp_mnt_visit_task IS '维护任务';
                 

@@ -95,6 +95,9 @@ public class _ErpFinAccountingPeriodStatus extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_period = "period";
     
+    /* relation:  */
+    public static final String PROP_NAME_acctSchema = "acctSchema";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -988,6 +991,29 @@ public class _ErpFinAccountingPeriodStatus extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_period, refEntity,()->{
            
                            this.setPeriodId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdAcctSchema getAcctSchema(){
+       return (app.erp.md.dao.entity.ErpMdAcctSchema)internalGetRefEntity(PROP_NAME_acctSchema);
+    }
+
+    public final void setAcctSchema(app.erp.md.dao.entity.ErpMdAcctSchema refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setAcctSchemaId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_acctSchema, refEntity,()->{
+           
+                           this.setAcctSchemaId(refEntity.getId());
                        
            });
            }

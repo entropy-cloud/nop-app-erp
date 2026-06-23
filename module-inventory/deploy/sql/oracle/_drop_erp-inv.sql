@@ -1,15 +1,23 @@
 
-drop table erp_inv_stock_move;
-drop table erp_inv_stock_balance;
+drop table erp_md_warehouse;
+drop table erp_md_material;
+drop table erp_md_material_sku;
+drop table erp_md_uom;
+drop table erp_md_currency;
+drop table erp_md_location;
+drop table erp_md_organization;
+drop table erp_md_acct_schema;
 drop table erp_inv_reservation;
-drop table erp_inv_cost_layer;
+drop table erp_inv_stock_move;
 drop table erp_inv_transfer_order;
 drop table erp_inv_stock_take;
 drop table erp_inv_picking_order;
 drop table erp_inv_batch;
 drop table erp_inv_serial_number;
-drop table erp_inv_stock_move_line;
+drop table erp_inv_cost_layer;
+drop table erp_inv_stock_balance;
 drop table erp_inv_reservation_line;
+drop table erp_inv_stock_move_line;
 drop table erp_inv_transfer_order_line;
 drop table erp_inv_stock_take_line;
 drop table erp_inv_picking_order_line;

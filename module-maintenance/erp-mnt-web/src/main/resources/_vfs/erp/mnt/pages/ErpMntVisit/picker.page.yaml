@@ -1,0 +1,3 @@
+
+x:gen-extends: |
+    <web:GenPage view="ErpMntVisit.view.xml" page="picker" xpl:lib="/nop/web/xlib/web.xlib" />

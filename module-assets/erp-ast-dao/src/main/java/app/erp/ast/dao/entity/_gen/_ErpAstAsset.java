@@ -127,6 +127,21 @@ public class _ErpAstAsset extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_category = "category";
     
+    /* relation:  */
+    public static final String PROP_NAME_department = "department";
+    
+    /* relation:  */
+    public static final String PROP_NAME_location = "location";
+    
+    /* relation:  */
+    public static final String PROP_NAME_employee = "employee";
+    
+    /* relation:  */
+    public static final String PROP_NAME_currency = "currency";
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1380,6 +1395,121 @@ public class _ErpAstAsset extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_category, refEntity,()->{
            
                            this.setCategoryId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getDepartment(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_department);
+    }
+
+    public final void setDepartment(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setDepartmentId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_department, refEntity,()->{
+           
+                           this.setDepartmentId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdLocation getLocation(){
+       return (app.erp.md.dao.entity.ErpMdLocation)internalGetRefEntity(PROP_NAME_location);
+    }
+
+    public final void setLocation(app.erp.md.dao.entity.ErpMdLocation refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setLocationId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_location, refEntity,()->{
+           
+                           this.setLocationId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdEmployee getEmployee(){
+       return (app.erp.md.dao.entity.ErpMdEmployee)internalGetRefEntity(PROP_NAME_employee);
+    }
+
+    public final void setEmployee(app.erp.md.dao.entity.ErpMdEmployee refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setEmployeeId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_employee, refEntity,()->{
+           
+                           this.setEmployeeId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdCurrency getCurrency(){
+       return (app.erp.md.dao.entity.ErpMdCurrency)internalGetRefEntity(PROP_NAME_currency);
+    }
+
+    public final void setCurrency(app.erp.md.dao.entity.ErpMdCurrency refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCurrencyId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_currency, refEntity,()->{
+           
+                           this.setCurrencyId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
                        
            });
            }

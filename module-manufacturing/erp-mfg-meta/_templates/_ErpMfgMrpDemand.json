@@ -1,0 +1,22 @@
+{
+  "id": 0,
+  "mrpPlanId": 0,
+  "lineNo": 0,
+  "materialId": 0,
+  "uoMId": 0,
+  "demandSource": 0,
+  "demandSource_label": "",
+  "sourceBillType": "",
+  "sourceBillCode": "",
+  "quantity": "",
+  "requirementDate": "2000-01-01",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "mrpPlan": null,
+  "material": null,
+  "uoM": null
+}

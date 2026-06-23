@@ -1,4 +1,13 @@
 
+CREATE TABLE erp_md_location(
+  ID BIGINT NULL    COMMENT 'null',
+  WAREHOUSE_ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  PARENT_ID BIGINT NULL    COMMENT 'null',
+  constraint PK_erp_md_location primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_mnt_equipment_category(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '分类编码',
@@ -14,21 +23,59 @@ CREATE TABLE erp_mnt_equipment_category(
   constraint PK_erp_mnt_equipment_category primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_mnt_maintenance_team(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  CODE VARCHAR(50) NOT NULL    COMMENT '团队编码',
-  NAME VARCHAR(200) NOT NULL    COMMENT '团队名称',
-  ORG_ID BIGINT NULL    COMMENT '所属组织',
-  LEADER_ID BIGINT NULL    COMMENT '负责人(职员)',
-  DESCRIPTION VARCHAR(2000) NULL    COMMENT '描述',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_mnt_maintenance_team primary key (ID)
+CREATE TABLE erp_md_organization(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  ORG_TYPE INTEGER NULL    COMMENT 'null',
+  PARENT_ID BIGINT NULL    COMMENT 'null',
+  STATUS INTEGER NULL    COMMENT 'null',
+  constraint PK_erp_md_organization primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_employee(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  ORG_ID BIGINT NULL    COMMENT 'null',
+  STATUS INTEGER NULL    COMMENT 'null',
+  constraint PK_erp_md_employee primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_material(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  MATERIAL_TYPE INTEGER NULL    COMMENT 'null',
+  STATUS INTEGER NULL    COMMENT 'null',
+  constraint PK_erp_md_material primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_uom(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  UOM_GROUP VARCHAR(50) NULL    COMMENT 'null',
+  IS_BASE BOOLEAN NULL    COMMENT 'null',
+  constraint PK_erp_md_uom primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_material_category(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  PARENT_ID BIGINT NULL    COMMENT 'null',
+  constraint PK_erp_md_material_category primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_warehouse(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  WAREHOUSE_TYPE INTEGER NULL    COMMENT 'null',
+  ORG_ID BIGINT NULL    COMMENT 'null',
+  STATUS INTEGER NULL    COMMENT 'null',
+  constraint PK_erp_md_warehouse primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_mnt_equipment(
@@ -56,20 +103,21 @@ CREATE TABLE erp_mnt_equipment(
   constraint PK_erp_mnt_equipment primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_mnt_maintenance_team_member(
+CREATE TABLE erp_mnt_maintenance_team(
   ID BIGINT NOT NULL    COMMENT 'ID',
-  TEAM_ID BIGINT NOT NULL    COMMENT '团队ID',
-  EMPLOYEE_ID BIGINT NOT NULL    COMMENT '成员(职员)',
-  ROLE VARCHAR(50) NULL    COMMENT '角色',
-  JOINED_AT DATETIME NULL    COMMENT '加入时间',
-  LEFT_AT DATETIME NULL    COMMENT '退出时间',
+  CODE VARCHAR(50) NOT NULL    COMMENT '团队编码',
+  NAME VARCHAR(200) NOT NULL    COMMENT '团队名称',
+  ORG_ID BIGINT NULL    COMMENT '所属组织',
+  LEADER_ID BIGINT NULL    COMMENT '负责人(职员)',
+  DESCRIPTION VARCHAR(2000) NULL    COMMENT '描述',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
   CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
   CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_mnt_maintenance_team_member primary key (ID)
+  constraint PK_erp_mnt_maintenance_team primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_mnt_schedule(
@@ -161,6 +209,22 @@ CREATE TABLE erp_mnt_calibration(
   constraint PK_erp_mnt_calibration primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_mnt_maintenance_team_member(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  TEAM_ID BIGINT NOT NULL    COMMENT '团队ID',
+  EMPLOYEE_ID BIGINT NOT NULL    COMMENT '成员(职员)',
+  ROLE VARCHAR(50) NULL    COMMENT '角色',
+  JOINED_AT DATETIME NULL    COMMENT '加入时间',
+  LEFT_AT DATETIME NULL    COMMENT '退出时间',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_mnt_maintenance_team_member primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_mnt_visit(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '访问编码',
@@ -181,6 +245,11 @@ CREATE TABLE erp_mnt_visit(
   CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  BUSINESS_DATE DATE NULL    COMMENT '业务日期',
+  POSTED BOOLEAN default 0  NULL    COMMENT '是否已过账',
+  POSTED_AT DATETIME(3) NULL    COMMENT '过账时间',
+  POSTED_BY VARCHAR(50) NULL    COMMENT '过账人',
   constraint PK_erp_mnt_visit primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
@@ -248,13 +317,25 @@ CREATE TABLE erp_mnt_spare_part_usage_line(
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 
+   ALTER TABLE erp_md_location COMMENT '库位';
+                
    ALTER TABLE erp_mnt_equipment_category COMMENT '设备分类';
                 
-   ALTER TABLE erp_mnt_maintenance_team COMMENT '维护团队';
+   ALTER TABLE erp_md_organization COMMENT '组织';
+                
+   ALTER TABLE erp_md_employee COMMENT '职员';
+                
+   ALTER TABLE erp_md_material COMMENT '物料';
+                
+   ALTER TABLE erp_md_uom COMMENT '计量单位';
+                
+   ALTER TABLE erp_md_material_category COMMENT '物料分类';
+                
+   ALTER TABLE erp_md_warehouse COMMENT '仓库';
                 
    ALTER TABLE erp_mnt_equipment COMMENT '设备';
                 
-   ALTER TABLE erp_mnt_maintenance_team_member COMMENT '维护团队成员';
+   ALTER TABLE erp_mnt_maintenance_team COMMENT '维护团队';
                 
    ALTER TABLE erp_mnt_schedule COMMENT '维护计划';
                 
@@ -263,6 +344,8 @@ CREATE TABLE erp_mnt_spare_part_usage_line(
    ALTER TABLE erp_mnt_downtime_entry COMMENT '停机记录';
                 
    ALTER TABLE erp_mnt_calibration COMMENT '校准记录';
+                
+   ALTER TABLE erp_mnt_maintenance_team_member COMMENT '维护团队成员';
                 
    ALTER TABLE erp_mnt_visit COMMENT '维护访问';
                 

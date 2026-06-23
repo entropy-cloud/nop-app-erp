@@ -1,0 +1,82 @@
+site:
+  resource:
+    ErpFinAccountingPeriod-main:
+      displayName: ''
+    ErpFinAccountingPeriodStatus-main:
+      displayName: ''
+    ErpFinArApItem-main:
+      displayName: ''
+    ErpFinFundAccount-main:
+      displayName: ''
+    ErpFinGlBalance-main:
+      displayName: ''
+    ErpFinReconciliation-main:
+      displayName: ''
+    ErpFinReconciliationLine-main:
+      displayName: ''
+    ErpFinTrialBalance-main:
+      displayName: ''
+    ErpFinVoucher-main:
+      displayName: ''
+    ErpFinVoucherBillR-main:
+      displayName: ''
+    ErpFinVoucherLine-main:
+      displayName: ''
+    ErpFinVoucherTemplate-main:
+      displayName: ''
+    ErpFinVoucherTemplateLine-main:
+      displayName: ''
+    FNPT:ErpFinAccountingPeriod:mutation:
+      displayName: ''
+    FNPT:ErpFinAccountingPeriod:query:
+      displayName: ''
+    FNPT:ErpFinAccountingPeriodStatus:mutation:
+      displayName: ''
+    FNPT:ErpFinAccountingPeriodStatus:query:
+      displayName: ''
+    FNPT:ErpFinArApItem:mutation:
+      displayName: ''
+    FNPT:ErpFinArApItem:query:
+      displayName: ''
+    FNPT:ErpFinFundAccount:mutation:
+      displayName: ''
+    FNPT:ErpFinFundAccount:query:
+      displayName: ''
+    FNPT:ErpFinGlBalance:mutation:
+      displayName: ''
+    FNPT:ErpFinGlBalance:query:
+      displayName: ''
+    FNPT:ErpFinReconciliation:mutation:
+      displayName: ''
+    FNPT:ErpFinReconciliation:query:
+      displayName: ''
+    FNPT:ErpFinReconciliationLine:mutation:
+      displayName: ''
+    FNPT:ErpFinReconciliationLine:query:
+      displayName: ''
+    FNPT:ErpFinTrialBalance:mutation:
+      displayName: ''
+    FNPT:ErpFinTrialBalance:query:
+      displayName: ''
+    FNPT:ErpFinVoucher:mutation:
+      displayName: ''
+    FNPT:ErpFinVoucher:query:
+      displayName: ''
+    FNPT:ErpFinVoucherBillR:mutation:
+      displayName: ''
+    FNPT:ErpFinVoucherBillR:query:
+      displayName: ''
+    FNPT:ErpFinVoucherLine:mutation:
+      displayName: ''
+    FNPT:ErpFinVoucherLine:query:
+      displayName: ''
+    FNPT:ErpFinVoucherTemplate:mutation:
+      displayName: ''
+    FNPT:ErpFinVoucherTemplate:query:
+      displayName: ''
+    FNPT:ErpFinVoucherTemplateLine:mutation:
+      displayName: ''
+    FNPT:ErpFinVoucherTemplateLine:query:
+      displayName: ''
+    test-orm-erp-fin:
+      displayName: Test erp-fin

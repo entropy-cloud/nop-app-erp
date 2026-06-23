@@ -91,6 +91,9 @@ public class _ErpPrjBudgetLine extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_budget = "budget";
     
+    /* relation:  */
+    public static final String PROP_NAME_subject = "subject";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -939,6 +942,29 @@ public class _ErpPrjBudgetLine extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_budget, refEntity,()->{
            
                            this.setBudgetId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdSubject getSubject(){
+       return (app.erp.md.dao.entity.ErpMdSubject)internalGetRefEntity(PROP_NAME_subject);
+    }
+
+    public final void setSubject(app.erp.md.dao.entity.ErpMdSubject refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setSubjectId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_subject, refEntity,()->{
+           
+                           this.setSubjectId(refEntity.getId());
                        
            });
            }

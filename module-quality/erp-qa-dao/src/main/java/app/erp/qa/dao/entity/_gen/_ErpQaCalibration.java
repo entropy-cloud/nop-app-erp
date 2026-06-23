@@ -112,6 +112,9 @@ public class _ErpQaCalibration extends DynamicOrmEntity{
     private static int _PROP_ID_BOUND = 23;
 
     
+    /* relation:  */
+    public static final String PROP_NAME_calibratedByEmployee = "calibratedByEmployee";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1213,5 +1216,28 @@ public class _ErpQaCalibration extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdEmployee getCalibratedByEmployee(){
+       return (app.erp.md.dao.entity.ErpMdEmployee)internalGetRefEntity(PROP_NAME_calibratedByEmployee);
+    }
+
+    public final void setCalibratedByEmployee(app.erp.md.dao.entity.ErpMdEmployee refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCalibratedBy(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_calibratedByEmployee, refEntity,()->{
+           
+                           this.setCalibratedBy(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
 }
 // resume CPD analysis - CPD-ON

@@ -1,5 +1,15 @@
 
-    alter table erp_prj_project_type add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+    alter table erp_md_employee add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_currency add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_partner add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_subject add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_organization add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_prj_project_type add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_prj_activity_type add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -24,6 +34,21 @@ alter table erp_prj_cost_collection_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '
 alter table erp_prj_billing add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_prj_billing_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_employee drop primary key;
+alter table erp_md_employee add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_currency drop primary key;
+alter table erp_md_currency add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_partner drop primary key;
+alter table erp_md_partner add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_subject drop primary key;
+alter table erp_md_subject add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_organization drop primary key;
+alter table erp_md_organization add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_prj_project_type drop primary key;
 alter table erp_prj_project_type add primary key (NOP_TENANT_ID, ID);

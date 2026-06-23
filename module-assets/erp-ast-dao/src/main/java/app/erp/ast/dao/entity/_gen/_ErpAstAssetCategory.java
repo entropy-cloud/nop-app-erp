@@ -84,6 +84,15 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
     private static int _PROP_ID_BOUND = 16;
 
     
+    /* relation:  */
+    public static final String PROP_NAME_subject = "subject";
+    
+    /* relation:  */
+    public static final String PROP_NAME_depreciationSubject = "depreciationSubject";
+    
+    /* relation:  */
+    public static final String PROP_NAME_expenseSubject = "expenseSubject";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -870,5 +879,74 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdSubject getSubject(){
+       return (app.erp.md.dao.entity.ErpMdSubject)internalGetRefEntity(PROP_NAME_subject);
+    }
+
+    public final void setSubject(app.erp.md.dao.entity.ErpMdSubject refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setSubjectId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_subject, refEntity,()->{
+           
+                           this.setSubjectId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdSubject getDepreciationSubject(){
+       return (app.erp.md.dao.entity.ErpMdSubject)internalGetRefEntity(PROP_NAME_depreciationSubject);
+    }
+
+    public final void setDepreciationSubject(app.erp.md.dao.entity.ErpMdSubject refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setDepreciationSubjectId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_depreciationSubject, refEntity,()->{
+           
+                           this.setDepreciationSubjectId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdSubject getExpenseSubject(){
+       return (app.erp.md.dao.entity.ErpMdSubject)internalGetRefEntity(PROP_NAME_expenseSubject);
+    }
+
+    public final void setExpenseSubject(app.erp.md.dao.entity.ErpMdSubject refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setExpenseSubjectId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_expenseSubject, refEntity,()->{
+           
+                           this.setExpenseSubjectId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
 }
 // resume CPD analysis - CPD-ON

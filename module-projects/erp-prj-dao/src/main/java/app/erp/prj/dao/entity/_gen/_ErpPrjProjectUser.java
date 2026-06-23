@@ -75,6 +75,9 @@ public class _ErpPrjProjectUser extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_project = "project";
     
+    /* relation:  */
+    public static final String PROP_NAME_user = "user";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -743,6 +746,29 @@ public class _ErpPrjProjectUser extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_project, refEntity,()->{
            
                            this.setProjectId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdEmployee getUser(){
+       return (app.erp.md.dao.entity.ErpMdEmployee)internalGetRefEntity(PROP_NAME_user);
+    }
+
+    public final void setUser(app.erp.md.dao.entity.ErpMdEmployee refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setUserId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_user, refEntity,()->{
+           
+                           this.setUserId(refEntity.getId());
                        
            });
            }

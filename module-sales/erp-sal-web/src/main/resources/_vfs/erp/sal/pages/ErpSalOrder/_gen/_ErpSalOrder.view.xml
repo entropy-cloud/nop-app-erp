@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:schema="/nop/schema/xui/xview.xdef" bizObjName="ErpSalOrder" xmlns:i18n-en="i18n-en"
+      xmlns:x="/nop/schema/xdsl.xdef" xmlns:j="j" xmlns:c="c" xmlns:gql="gql" xmlns:view-gen="view-gen" xmlns:xpl="xpl">
+
+    <objMeta>/erp/sal/model/ErpSalOrder/ErpSalOrder.xmeta</objMeta>
+
+    <controlLib>/nop/web/xlib/control.xlib</controlLib>
+
+    <x:gen-extends>
+        <view-gen:DefaultViewGenExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <view-gen:DefaultViewPostExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:post-extends>
+
+    <grids>
+        <grid id="list" x:abstract="true">
+            <cols>
+
+                <!--ID-->
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--单号-->
+                <col id="code" mandatory="true" sortable="true"/>
+
+                <!--业务组织-->
+                <col id="orgId" ui:number="true" sortable="true"/>
+
+                <!--报价单-->
+                <col id="quotationId" ui:number="true" sortable="true"/>
+
+                <!--销售合同-->
+                <col id="contractId" ui:number="true" sortable="true"/>
+
+                <!--客户-->
+                <col id="customerId" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--发货仓库-->
+                <col id="warehouseId" ui:number="true" sortable="true"/>
+
+                <!--订单日期-->
+                <col id="businessDate" mandatory="true" sortable="true"/>
+
+                <!--交货日期-->
+                <col id="deliveryDate" sortable="true"/>
+
+                <!--币种-->
+                <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--汇率-->
+                <col id="exchangeRate" ui:number="true" sortable="true"/>
+
+                <!--合计金额(源币不含税)-->
+                <col id="amountSource" ui:number="true" sortable="true"/>
+
+                <!--合计金额(本位币不含税)-->
+                <col id="amountFunctional" ui:number="true" sortable="true"/>
+
+                <!--合计金额(不含税)-->
+                <col id="totalAmount" ui:number="true" sortable="true"/>
+
+                <!--合计税额-->
+                <col id="totalTaxAmount" ui:number="true" sortable="true"/>
+
+                <!--合计金额(含税)-->
+                <col id="totalAmountWithTax" ui:number="true" sortable="true"/>
+
+                <!--整单折扣率(%)-->
+                <col id="discountRate" ui:number="true" sortable="true"/>
+
+                <!--折扣金额-->
+                <col id="discountAmount" ui:number="true" sortable="true"/>
+
+                <!--已收金额-->
+                <col id="receivedAmount" ui:number="true" sortable="true"/>
+
+                <!--结算方式-->
+                <col id="settlementMethodId" ui:number="true" sortable="true"/>
+
+                <!--单据状态-->
+                <col id="docStatus" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--审核状态-->
+                <col id="approveStatus" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--收款进度-->
+                <col id="receivedStatus" ui:number="true" sortable="true"/>
+
+                <!--发货进度-->
+                <col id="deliveryStatus" ui:number="true" sortable="true"/>
+
+                <!--已过账-->
+                <col id="posted" sortable="true"/>
+
+                <!--过账时间-->
+                <col id="postedAt" sortable="true"/>
+
+                <!--过账人-->
+                <col id="postedBy" ui:number="true" sortable="true"/>
+
+                <!--审核人-->
+                <col id="approvedBy" ui:number="true" sortable="true"/>
+
+                <!--审核时间-->
+                <col id="approvedAt" sortable="true"/>
+
+                <!--逻辑删除版本-->
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--创建人-->
+                <col id="createdBy" mandatory="true" sortable="true"/>
+
+                <!--创建时间-->
+                <col id="createTime" mandatory="true" sortable="true"/>
+
+                <!--修改人-->
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+
+                <!--修改时间-->
+                <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--备注-->
+                <col id="remark" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list" x:prototype="list" x:abstract="true"/>
+    </grids>
+
+    <forms>
+        <form id="view" editMode="view" title="查看-销售订单" i18n-en:title="">
+            <layout>
+ id[ID] code[单号]
+ orgId[业务组织] quotationId[报价单]
+ contractId[销售合同] customerId[客户]
+ warehouseId[发货仓库] businessDate[订单日期]
+ deliveryDate[交货日期] currencyId[币种]
+ exchangeRate[汇率] amountSource[合计金额(源币不含税)]
+ amountFunctional[合计金额(本位币不含税)] totalAmount[合计金额(不含税)]
+ totalTaxAmount[合计税额] totalAmountWithTax[合计金额(含税)]
+ discountRate[整单折扣率(%)] discountAmount[折扣金额]
+ receivedAmount[已收金额] settlementMethodId[结算方式]
+ docStatus[单据状态] approveStatus[审核状态]
+ receivedStatus[收款进度] deliveryStatus[发货进度]
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人] approvedBy[审核人]
+ approvedAt[审核时间] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ remark[备注] 
+</layout>
+        </form>
+        <form id="add" editMode="add" title="新增-销售订单" i18n-en:title="">
+            <layout>
+ id[ID] code[单号]
+ orgId[业务组织] quotationId[报价单]
+ contractId[销售合同] customerId[客户]
+ warehouseId[发货仓库] businessDate[订单日期]
+ deliveryDate[交货日期] currencyId[币种]
+ exchangeRate[汇率] amountSource[合计金额(源币不含税)]
+ amountFunctional[合计金额(本位币不含税)] totalAmount[合计金额(不含税)]
+ totalTaxAmount[合计税额] totalAmountWithTax[合计金额(含税)]
+ discountRate[整单折扣率(%)] discountAmount[折扣金额]
+ receivedAmount[已收金额] settlementMethodId[结算方式]
+ docStatus[单据状态] approveStatus[审核状态]
+ receivedStatus[收款进度] deliveryStatus[发货进度]
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人] approvedBy[审核人]
+ approvedAt[审核时间] remark[备注]
+</layout>
+        </form>
+        <form id="edit" editMode="edit" title="编辑-销售订单" i18n-en:title="">
+            <layout>
+ id[ID] code[单号]
+ orgId[业务组织] quotationId[报价单]
+ contractId[销售合同] customerId[客户]
+ warehouseId[发货仓库] businessDate[订单日期]
+ deliveryDate[交货日期] currencyId[币种]
+ exchangeRate[汇率] amountSource[合计金额(源币不含税)]
+ amountFunctional[合计金额(本位币不含税)] totalAmount[合计金额(不含税)]
+ totalTaxAmount[合计税额] totalAmountWithTax[合计金额(含税)]
+ discountRate[整单折扣率(%)] discountAmount[折扣金额]
+ receivedAmount[已收金额] settlementMethodId[结算方式]
+ docStatus[单据状态] approveStatus[审核状态]
+ receivedStatus[收款进度] deliveryStatus[发货进度]
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人] approvedBy[审核人]
+ approvedAt[审核时间] delVersion[逻辑删除版本]
+ remark[备注] 
+</layout>
+        </form>
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-销售订单" i18n-en:title=""/>
+    </forms>
+
+    <pages>
+        <crud name="view-list" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpSalOrder__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </crud>
+        <crud name="main" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpSalOrder__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+            <listActions>
+                <action id="batch-delete-button" label="@i18n:common.batchDelete" batch="true">
+                    <api url="@mutation:ErpSalOrder__batchDelete?ids=$ids"/>
+                    <confirmText>@i18n:common.confirmBatchDelete</confirmText>
+                </action>
+                <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
+                    <dialog page="add"/>
+                </action>
+            </listActions>
+            <rowActions>
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+                <action id="row-update-button" level="primary" label="@i18n:common.edit" x:abstract="true">
+                    <dialog page="update"/>
+                </action>
+                <action id="row-delete-button" level="danger" label="@i18n:common.delete" x:abstract="true">
+                    <api url="@mutation:ErpSalOrder__delete?id=$id"/>
+                    <confirmText>@i18n:common.confirmDelete</confirmText>
+                </action>
+                <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
+                    <action id="row-update-button" label="@i18n:common.edit">
+                        <dialog page="update"/>
+                    </action>
+                    <action id="row-delete-button" label="@i18n:common.delete">
+                        <api url="@mutation:ErpSalOrder__delete?id=$id"/>
+                        <confirmText>@i18n:common.confirmDelete</confirmText>
+                    </action>
+                </actionGroup>
+            </rowActions>
+        </crud>
+        <picker name="picker" grid="pick-list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table noOperations="true">
+                <api url="@query:ErpSalOrder__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </picker>
+        <simple name="add" form="add">
+            <api url="@mutation:ErpSalOrder__save/id"/>
+        </simple>
+        <simple name="view" form="view">
+            <initApi url="@query:ErpSalOrder__get?id=$id" gql:selection="{@formSelection}"/>
+        </simple>
+        <simple name="update" form="edit">
+            <initApi url="@query:ErpSalOrder__get?id=$id" gql:selection="{@formSelection}"/>
+            <api url="@mutation:ErpSalOrder__update/id?id=$id" withFormData="true"/>
+        </simple>
+    </pages>
+</view>

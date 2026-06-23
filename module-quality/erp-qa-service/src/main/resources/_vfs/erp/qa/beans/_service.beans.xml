@@ -5,13 +5,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean id="app.erp.qa.service.entity.ErpQaInspectionBizModel" ioc:type="@bean:id" ioc:default="true"/>
-
-    <bean id="biz_ErpQaInspection" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.qa.biz.IErpQaInspectionBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
-        <property name="bizObjName" value="ErpQaInspection"/>
-    </bean>
-
     <bean id="app.erp.qa.service.entity.ErpQaInspectionTemplateBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpQaInspectionTemplate" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -35,13 +28,6 @@
         <property name="bizObjName" value="ErpQaRiskRegister"/>
     </bean>
 
-    <bean id="app.erp.qa.service.entity.ErpQaQualityGoalBizModel" ioc:type="@bean:id" ioc:default="true"/>
-
-    <bean id="biz_ErpQaQualityGoal" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.qa.biz.IErpQaQualityGoalBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
-        <property name="bizObjName" value="ErpQaQualityGoal"/>
-    </bean>
-
     <bean id="app.erp.qa.service.entity.ErpQaReviewBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpQaReview" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.qa.biz.IErpQaReviewBiz"
@@ -56,6 +42,13 @@
         <property name="bizObjName" value="ErpQaSamplingPlan"/>
     </bean>
 
+    <bean id="app.erp.qa.service.entity.ErpQaQualityGoalBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpQaQualityGoal" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.qa.biz.IErpQaQualityGoalBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpQaQualityGoal"/>
+    </bean>
+
     <bean id="app.erp.qa.service.entity.ErpQaCalibrationBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpQaCalibration" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -63,12 +56,11 @@
         <property name="bizObjName" value="ErpQaCalibration"/>
     </bean>
 
-    <bean id="app.erp.qa.service.entity.ErpQaInspectionLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+    <bean id="app.erp.qa.service.entity.ErpQaInspectionBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
-    <bean id="biz_ErpQaInspectionLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.qa.biz.IErpQaInspectionLineBiz" ioc:force-lazy-property="true" lazy-init="true"
-          primary="true">
-        <property name="bizObjName" value="ErpQaInspectionLine"/>
+    <bean id="biz_ErpQaInspection" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.qa.biz.IErpQaInspectionBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpQaInspection"/>
     </bean>
 
     <bean id="app.erp.qa.service.entity.ErpQaInspectionTemplateLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
@@ -84,5 +76,13 @@
     <bean id="biz_ErpQaAction" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.qa.biz.IErpQaActionBiz"
           ioc:force-lazy-property="true" lazy-init="true" primary="true">
         <property name="bizObjName" value="ErpQaAction"/>
+    </bean>
+
+    <bean id="app.erp.qa.service.entity.ErpQaInspectionLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpQaInspectionLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.qa.biz.IErpQaInspectionLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpQaInspectionLine"/>
     </bean>
 </beans>

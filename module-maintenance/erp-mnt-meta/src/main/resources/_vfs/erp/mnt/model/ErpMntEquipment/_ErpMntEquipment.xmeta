@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen" xmlns:biz="biz"
+      displayName="设备" tagSet="gid,erp.maintenance" xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.mnt.dao.entity.ErpMntEquipment</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" tagSet="seq-default" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="code" displayName="设备编码" propId="2" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="equipmentCode" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="name" displayName="设备名称" propId="3" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="orgId" displayName="所属组织" propId="4" queryable="true" sortable="true" insertable="true"
+              updatable="true" ext:relation="org">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="assetId" displayName="资产卡片(关联 assets 域)" propId="5" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="workcenterId" displayName="关联工作中心(关联 mfg 域)" propId="6" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="locationId" displayName="位置ID" propId="7" queryable="true" sortable="true" insertable="true"
+              updatable="true" ext:relation="location">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="categoryId" displayName="分类ID" propId="8" queryable="true" sortable="true" insertable="true"
+              updatable="true" ext:relation="category">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="status" displayName="状态" propId="9" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.lang.Integer" dict="erp-mnt/equipment-status"/>
+        </prop>
+        <prop name="serialNo" displayName="序列号" propId="10" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="manufacturer" displayName="制造商" propId="11" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="model" displayName="型号" propId="12" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="installDate" displayName="安装日期" propId="13" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="warrantyExpiry" displayName="保修到期" propId="14" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="15" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="16" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="17" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="18" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="19" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="20" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="21" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="location" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="locationId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdLocation"/>
+        </prop>
+        <prop name="category" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="categoryId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMntEquipmentCategory"/>
+        </prop>
+        <prop name="org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="orgId"
+              ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+    </props>
+</meta>

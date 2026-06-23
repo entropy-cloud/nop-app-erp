@@ -100,6 +100,12 @@ public class _ErpInvSerialNumber extends DynamicOrmEntity{
     private static int _PROP_ID_BOUND = 20;
 
     
+    /* relation:  */
+    public static final String PROP_NAME_material = "material";
+    
+    /* relation:  */
+    public static final String PROP_NAME_sku = "sku";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1066,5 +1072,51 @@ public class _ErpInvSerialNumber extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdMaterial getMaterial(){
+       return (app.erp.md.dao.entity.ErpMdMaterial)internalGetRefEntity(PROP_NAME_material);
+    }
+
+    public final void setMaterial(app.erp.md.dao.entity.ErpMdMaterial refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setMaterialId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_material, refEntity,()->{
+           
+                           this.setMaterialId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdMaterialSku getSku(){
+       return (app.erp.md.dao.entity.ErpMdMaterialSku)internalGetRefEntity(PROP_NAME_sku);
+    }
+
+    public final void setSku(app.erp.md.dao.entity.ErpMdMaterialSku refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setSkuId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_sku, refEntity,()->{
+           
+                           this.setSkuId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
 }
 // resume CPD analysis - CPD-ON

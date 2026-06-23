@@ -1,0 +1,22 @@
+{
+  "id": 0,
+  "code": "",
+  "name": "",
+  "acctSchemaId": 0,
+  "businessType": 0,
+  "businessType_label": "",
+  "voucherType": 0,
+  "voucherType_label": "",
+  "templateType": "",
+  "isActive": false,
+  "validFrom": "2000-01-01",
+  "validTo": "2000-01-01",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "acctSchema": null,
+  "lines": null
+}

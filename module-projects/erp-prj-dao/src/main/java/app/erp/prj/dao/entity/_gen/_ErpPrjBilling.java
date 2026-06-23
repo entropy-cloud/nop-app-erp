@@ -108,12 +108,23 @@ public class _ErpPrjBilling extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 22;
     
+    /* 源币种金额: AMOUNT_SOURCE DECIMAL */
+    public static final String PROP_NAME_amountSource = "amountSource";
+    public static final int PROP_ID_amountSource = 23;
+    
+    /* 本位币金额: AMOUNT_FUNCTIONAL DECIMAL */
+    public static final String PROP_NAME_amountFunctional = "amountFunctional";
+    public static final int PROP_ID_amountFunctional = 24;
+    
 
-    private static int _PROP_ID_BOUND = 23;
+    private static int _PROP_ID_BOUND = 25;
 
     
     /* relation:  */
     public static final String PROP_NAME_project = "project";
+    
+    /* relation:  */
+    public static final String PROP_NAME_customer = "customer";
     
     /* relation:  */
     public static final String PROP_NAME_milestone = "milestone";
@@ -125,7 +136,7 @@ public class _ErpPrjBilling extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[23];
+    private static final String[] PROP_ID_TO_NAME = new String[25];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -195,6 +206,12 @@ public class _ErpPrjBilling extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
+          PROP_ID_TO_NAME[PROP_ID_amountSource] = PROP_NAME_amountSource;
+          PROP_NAME_TO_ID.put(PROP_NAME_amountSource, PROP_ID_amountSource);
+      
+          PROP_ID_TO_NAME[PROP_ID_amountFunctional] = PROP_NAME_amountFunctional;
+          PROP_NAME_TO_ID.put(PROP_NAME_amountFunctional, PROP_ID_amountFunctional);
+      
     }
 
     
@@ -263,6 +280,12 @@ public class _ErpPrjBilling extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* 源币种金额: AMOUNT_SOURCE */
+    private java.lang.String _amountSource;
+    
+    /* 本位币金额: AMOUNT_FUNCTIONAL */
+    private java.lang.String _amountFunctional;
     
 
     public _ErpPrjBilling(){
@@ -403,6 +426,12 @@ public class _ErpPrjBilling extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_amountSource:
+               return getAmountSource();
+        
+            case PROP_ID_amountFunctional:
+               return getAmountFunctional();
         
            default:
               return super.orm_propValue(propId);
@@ -635,6 +664,26 @@ public class _ErpPrjBilling extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_amountSource:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_amountSource));
+               }
+               setAmountSource(typedValue);
+               break;
+            }
+        
+            case PROP_ID_amountFunctional:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_amountFunctional));
+               }
+               setAmountFunctional(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -794,6 +843,20 @@ public class _ErpPrjBilling extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_amountSource:{
+               onInitProp(propId);
+               this._amountSource = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_amountFunctional:{
+               onInitProp(propId);
+               this._amountFunctional = (java.lang.String)value;
                
                break;
             }
@@ -1223,6 +1286,44 @@ public class _ErpPrjBilling extends DynamicOrmEntity{
     }
     
     /**
+     * 源币种金额: AMOUNT_SOURCE
+     */
+    public final java.lang.String getAmountSource(){
+         onPropGet(PROP_ID_amountSource);
+         return _amountSource;
+    }
+
+    /**
+     * 源币种金额: AMOUNT_SOURCE
+     */
+    public final void setAmountSource(java.lang.String value){
+        if(onPropSet(PROP_ID_amountSource,value)){
+            this._amountSource = value;
+            internalClearRefs(PROP_ID_amountSource);
+            
+        }
+    }
+    
+    /**
+     * 本位币金额: AMOUNT_FUNCTIONAL
+     */
+    public final java.lang.String getAmountFunctional(){
+         onPropGet(PROP_ID_amountFunctional);
+         return _amountFunctional;
+    }
+
+    /**
+     * 本位币金额: AMOUNT_FUNCTIONAL
+     */
+    public final void setAmountFunctional(java.lang.String value){
+        if(onPropSet(PROP_ID_amountFunctional,value)){
+            this._amountFunctional = value;
+            internalClearRefs(PROP_ID_amountFunctional);
+            
+        }
+    }
+    
+    /**
      * 
      */
     public final app.erp.prj.dao.entity.ErpPrjProject getProject(){
@@ -1239,6 +1340,29 @@ public class _ErpPrjBilling extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_project, refEntity,()->{
            
                            this.setProjectId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdPartner getCustomer(){
+       return (app.erp.md.dao.entity.ErpMdPartner)internalGetRefEntity(PROP_NAME_customer);
+    }
+
+    public final void setCustomer(app.erp.md.dao.entity.ErpMdPartner refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCustomerId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_customer, refEntity,()->{
+           
+                           this.setCustomerId(refEntity.getId());
                        
            });
            }

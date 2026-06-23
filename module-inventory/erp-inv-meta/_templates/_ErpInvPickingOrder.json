@@ -1,0 +1,21 @@
+{
+  "id": 0,
+  "code": "",
+  "orgId": 0,
+  "businessDate": "2000-01-01",
+  "warehouseId": 0,
+  "pickerId": 0,
+  "docStatus": 0,
+  "docStatus_label": "",
+  "relatedBillType": "",
+  "relatedBillCode": "",
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "warehouse": null,
+  "lines": null
+}

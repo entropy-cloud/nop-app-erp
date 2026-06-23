@@ -1,0 +1,21 @@
+{
+  "id": 0,
+  "code": "",
+  "riskDate": "2000-01-01",
+  "description": "",
+  "category": "",
+  "likelihood": 0,
+  "severity": 0,
+  "riskScore": 0,
+  "mitigation": "",
+  "ownerId": 0,
+  "status": 0,
+  "status_label": "",
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00"
+}

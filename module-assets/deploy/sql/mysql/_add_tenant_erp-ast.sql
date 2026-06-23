@@ -1,5 +1,17 @@
 
-    alter table erp_ast_asset_category add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+    alter table erp_md_organization add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_location add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_employee add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_currency add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_subject add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_material_category add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_ast_asset_category add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ast_asset add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -18,6 +30,24 @@ alter table erp_ast_disposal add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 alter table erp_ast_split add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ast_merge add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_organization drop primary key;
+alter table erp_md_organization add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_location drop primary key;
+alter table erp_md_location add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_employee drop primary key;
+alter table erp_md_employee add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_currency drop primary key;
+alter table erp_md_currency add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_subject drop primary key;
+alter table erp_md_subject add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_material_category drop primary key;
+alter table erp_md_material_category add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_ast_asset_category drop primary key;
 alter table erp_ast_asset_category add primary key (NOP_TENANT_ID, ID);

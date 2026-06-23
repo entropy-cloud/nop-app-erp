@@ -1,0 +1,64 @@
+site:
+  resource:
+    ErpAstAsset-main:
+      displayName: ''
+    ErpAstAssetCapitalization-main:
+      displayName: ''
+    ErpAstAssetCategory-main:
+      displayName: ''
+    ErpAstCip-main:
+      displayName: ''
+    ErpAstDepreciationSchedule-main:
+      displayName: ''
+    ErpAstDisposal-main:
+      displayName: ''
+    ErpAstMerge-main:
+      displayName: ''
+    ErpAstMovement-main:
+      displayName: ''
+    ErpAstSplit-main:
+      displayName: ''
+    ErpAstValueAdjustment-main:
+      displayName: ''
+    FNPT:ErpAstAsset:mutation:
+      displayName: ''
+    FNPT:ErpAstAsset:query:
+      displayName: ''
+    FNPT:ErpAstAssetCapitalization:mutation:
+      displayName: ''
+    FNPT:ErpAstAssetCapitalization:query:
+      displayName: ''
+    FNPT:ErpAstAssetCategory:mutation:
+      displayName: ''
+    FNPT:ErpAstAssetCategory:query:
+      displayName: ''
+    FNPT:ErpAstCip:mutation:
+      displayName: ''
+    FNPT:ErpAstCip:query:
+      displayName: ''
+    FNPT:ErpAstDepreciationSchedule:mutation:
+      displayName: ''
+    FNPT:ErpAstDepreciationSchedule:query:
+      displayName: ''
+    FNPT:ErpAstDisposal:mutation:
+      displayName: ''
+    FNPT:ErpAstDisposal:query:
+      displayName: ''
+    FNPT:ErpAstMerge:mutation:
+      displayName: ''
+    FNPT:ErpAstMerge:query:
+      displayName: ''
+    FNPT:ErpAstMovement:mutation:
+      displayName: ''
+    FNPT:ErpAstMovement:query:
+      displayName: ''
+    FNPT:ErpAstSplit:mutation:
+      displayName: ''
+    FNPT:ErpAstSplit:query:
+      displayName: ''
+    FNPT:ErpAstValueAdjustment:mutation:
+      displayName: ''
+    FNPT:ErpAstValueAdjustment:query:
+      displayName: ''
+    test-orm-erp-ast:
+      displayName: Test erp-ast

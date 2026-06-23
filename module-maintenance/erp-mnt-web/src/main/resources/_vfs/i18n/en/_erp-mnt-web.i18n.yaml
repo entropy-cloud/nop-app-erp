@@ -1,0 +1,76 @@
+site:
+  resource:
+    ErpMntCalibration-main:
+      displayName: ''
+    ErpMntDowntimeEntry-main:
+      displayName: ''
+    ErpMntEquipment-main:
+      displayName: ''
+    ErpMntEquipmentCategory-main:
+      displayName: ''
+    ErpMntMaintenanceTeam-main:
+      displayName: ''
+    ErpMntMaintenanceTeamMember-main:
+      displayName: ''
+    ErpMntRequest-main:
+      displayName: ''
+    ErpMntSchedule-main:
+      displayName: ''
+    ErpMntSparePartUsage-main:
+      displayName: ''
+    ErpMntSparePartUsageLine-main:
+      displayName: ''
+    ErpMntVisit-main:
+      displayName: ''
+    ErpMntVisitTask-main:
+      displayName: ''
+    FNPT:ErpMntCalibration:mutation:
+      displayName: ''
+    FNPT:ErpMntCalibration:query:
+      displayName: ''
+    FNPT:ErpMntDowntimeEntry:mutation:
+      displayName: ''
+    FNPT:ErpMntDowntimeEntry:query:
+      displayName: ''
+    FNPT:ErpMntEquipment:mutation:
+      displayName: ''
+    FNPT:ErpMntEquipment:query:
+      displayName: ''
+    FNPT:ErpMntEquipmentCategory:mutation:
+      displayName: ''
+    FNPT:ErpMntEquipmentCategory:query:
+      displayName: ''
+    FNPT:ErpMntMaintenanceTeam:mutation:
+      displayName: ''
+    FNPT:ErpMntMaintenanceTeam:query:
+      displayName: ''
+    FNPT:ErpMntMaintenanceTeamMember:mutation:
+      displayName: ''
+    FNPT:ErpMntMaintenanceTeamMember:query:
+      displayName: ''
+    FNPT:ErpMntRequest:mutation:
+      displayName: ''
+    FNPT:ErpMntRequest:query:
+      displayName: ''
+    FNPT:ErpMntSchedule:mutation:
+      displayName: ''
+    FNPT:ErpMntSchedule:query:
+      displayName: ''
+    FNPT:ErpMntSparePartUsage:mutation:
+      displayName: ''
+    FNPT:ErpMntSparePartUsage:query:
+      displayName: ''
+    FNPT:ErpMntSparePartUsageLine:mutation:
+      displayName: ''
+    FNPT:ErpMntSparePartUsageLine:query:
+      displayName: ''
+    FNPT:ErpMntVisit:mutation:
+      displayName: ''
+    FNPT:ErpMntVisit:query:
+      displayName: ''
+    FNPT:ErpMntVisitTask:mutation:
+      displayName: ''
+    FNPT:ErpMntVisitTask:query:
+      displayName: ''
+    test-orm-erp-mnt:
+      displayName: Test erp-mnt

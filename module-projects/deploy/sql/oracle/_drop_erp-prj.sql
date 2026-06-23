@@ -1,4 +1,9 @@
 
+drop table erp_md_employee;
+drop table erp_md_currency;
+drop table erp_md_partner;
+drop table erp_md_subject;
+drop table erp_md_organization;
 drop table erp_prj_project_type;
 drop table erp_prj_activity_type;
 drop table erp_prj_project;

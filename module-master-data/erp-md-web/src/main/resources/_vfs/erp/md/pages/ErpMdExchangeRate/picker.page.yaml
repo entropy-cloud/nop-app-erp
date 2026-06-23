@@ -1,0 +1,3 @@
+
+x:gen-extends: |
+    <web:GenPage view="ErpMdExchangeRate.view.xml" page="picker" xpl:lib="/nop/web/xlib/web.xlib" />

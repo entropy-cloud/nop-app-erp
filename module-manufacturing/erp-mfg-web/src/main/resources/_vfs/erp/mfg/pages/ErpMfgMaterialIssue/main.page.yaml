@@ -1,0 +1,3 @@
+
+x:gen-extends: |
+    <web:GenPage view="ErpMfgMaterialIssue.view.xml" page="main" xpl:lib="/nop/web/xlib/web.xlib" />

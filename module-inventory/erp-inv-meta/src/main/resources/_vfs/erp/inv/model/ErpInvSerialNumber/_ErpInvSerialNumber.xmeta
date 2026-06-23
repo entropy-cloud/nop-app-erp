@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen" xmlns:biz="biz"
+      displayName="序列号台账" tagSet="gid,erp.inventory" xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.inv.dao.entity.ErpInvSerialNumber</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" tagSet="seq-default" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="orgId" displayName="业务组织" propId="2" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="serialNo" displayName="序列号" propId="3" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="materialId" displayName="物料" propId="4" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true" ext:relation="material">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="skuId" displayName="SKU" propId="5" queryable="true" sortable="true" insertable="true"
+              updatable="true" ext:relation="sku">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="warehouseId" displayName="当前仓库" propId="6" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="locationId" displayName="当前库位" propId="7" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="status" displayName="状态" propId="8" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.lang.Integer" dict="erp-inv/serial-status"/>
+        </prop>
+        <prop name="inBillType" displayName="入库单类型" propId="9" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="inBillCode" displayName="入库单号" propId="10" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="outBillType" displayName="出库单类型" propId="11" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="outBillCode" displayName="出库单号" propId="12" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="13" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="14" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="15" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="16" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="17" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="18" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="19" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="material" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="materialId" ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true"
+              lazy="true">
+            <schema bizObjName="ErpMdMaterial"/>
+        </prop>
+        <prop name="sku" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="skuId"
+              ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdMaterialSku"/>
+        </prop>
+    </props>
+</meta>

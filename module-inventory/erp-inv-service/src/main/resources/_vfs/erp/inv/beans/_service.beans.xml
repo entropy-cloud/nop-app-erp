@@ -5,21 +5,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean id="app.erp.inv.service.entity.ErpInvStockMoveBizModel" ioc:type="@bean:id" ioc:default="true"/>
-
-    <bean id="biz_ErpInvStockMove" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.inv.biz.IErpInvStockMoveBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
-        <property name="bizObjName" value="ErpInvStockMove"/>
-    </bean>
-
-    <bean id="app.erp.inv.service.entity.ErpInvStockBalanceBizModel" ioc:type="@bean:id" ioc:default="true"/>
-
-    <bean id="biz_ErpInvStockBalance" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.inv.biz.IErpInvStockBalanceBiz" ioc:force-lazy-property="true" lazy-init="true"
-          primary="true">
-        <property name="bizObjName" value="ErpInvStockBalance"/>
-    </bean>
-
     <bean id="app.erp.inv.service.entity.ErpInvReservationBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpInvReservation" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -28,11 +13,11 @@
         <property name="bizObjName" value="ErpInvReservation"/>
     </bean>
 
-    <bean id="app.erp.inv.service.entity.ErpInvCostLayerBizModel" ioc:type="@bean:id" ioc:default="true"/>
+    <bean id="app.erp.inv.service.entity.ErpInvStockMoveBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
-    <bean id="biz_ErpInvCostLayer" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.inv.biz.IErpInvCostLayerBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
-        <property name="bizObjName" value="ErpInvCostLayer"/>
+    <bean id="biz_ErpInvStockMove" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.inv.biz.IErpInvStockMoveBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpInvStockMove"/>
     </bean>
 
     <bean id="app.erp.inv.service.entity.ErpInvTransferOrderBizModel" ioc:type="@bean:id" ioc:default="true"/>
@@ -73,12 +58,19 @@
         <property name="bizObjName" value="ErpInvSerialNumber"/>
     </bean>
 
-    <bean id="app.erp.inv.service.entity.ErpInvStockMoveLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+    <bean id="app.erp.inv.service.entity.ErpInvCostLayerBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
-    <bean id="biz_ErpInvStockMoveLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.inv.biz.IErpInvStockMoveLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+    <bean id="biz_ErpInvCostLayer" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.inv.biz.IErpInvCostLayerBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpInvCostLayer"/>
+    </bean>
+
+    <bean id="app.erp.inv.service.entity.ErpInvStockBalanceBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpInvStockBalance" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.inv.biz.IErpInvStockBalanceBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
-        <property name="bizObjName" value="ErpInvStockMoveLine"/>
+        <property name="bizObjName" value="ErpInvStockBalance"/>
     </bean>
 
     <bean id="app.erp.inv.service.entity.ErpInvReservationLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
@@ -87,6 +79,14 @@
           ioc:type="app.erp.inv.biz.IErpInvReservationLineBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
         <property name="bizObjName" value="ErpInvReservationLine"/>
+    </bean>
+
+    <bean id="app.erp.inv.service.entity.ErpInvStockMoveLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpInvStockMoveLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.inv.biz.IErpInvStockMoveLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpInvStockMoveLine"/>
     </bean>
 
     <bean id="app.erp.inv.service.entity.ErpInvTransferOrderLineBizModel" ioc:type="@bean:id" ioc:default="true"/>

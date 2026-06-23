@@ -21,6 +21,138 @@ CREATE TABLE erp_pur_requisition(
   constraint PK_erp_pur_requisition primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_md_material(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  MATERIAL_TYPE INTEGER NULL    COMMENT 'null',
+  STATUS INTEGER NULL    COMMENT 'null',
+  constraint PK_erp_md_material primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_uom(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  UOM_GROUP VARCHAR(50) NULL    COMMENT 'null',
+  IS_BASE BOOLEAN NULL    COMMENT 'null',
+  constraint PK_erp_md_uom primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_partner(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  PARTNER_TYPE INTEGER NULL    COMMENT 'null',
+  STATUS INTEGER NULL    COMMENT 'null',
+  CREDIT_LIMIT VARCHAR(50) NULL    COMMENT 'null',
+  constraint PK_erp_md_partner primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_currency(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  SYMBOL VARCHAR(50) NULL    COMMENT 'null',
+  DECIMAL_PLACES INTEGER NULL    COMMENT 'null',
+  IS_FUNCTIONAL BOOLEAN NULL    COMMENT 'null',
+  constraint PK_erp_md_currency primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_warehouse(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  WAREHOUSE_TYPE INTEGER NULL    COMMENT 'null',
+  ORG_ID BIGINT NULL    COMMENT 'null',
+  STATUS INTEGER NULL    COMMENT 'null',
+  constraint PK_erp_md_warehouse primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_settlement_method(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  SETTLEMENT_TYPE INTEGER NULL    COMMENT 'null',
+  STATUS INTEGER NULL    COMMENT 'null',
+  constraint PK_erp_md_settlement_method primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_organization(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  ORG_TYPE INTEGER NULL    COMMENT 'null',
+  PARENT_ID BIGINT NULL    COMMENT 'null',
+  STATUS INTEGER NULL    COMMENT 'null',
+  constraint PK_erp_md_organization primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_material_sku(
+  ID BIGINT NULL    COMMENT 'null',
+  MATERIAL_ID BIGINT NULL    COMMENT 'null',
+  SKU_CODE VARCHAR(50) NULL    COMMENT 'null',
+  BARCODE VARCHAR(50) NULL    COMMENT 'null',
+  constraint PK_erp_md_material_sku primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_tax_rate(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  TAX_TYPE INTEGER NULL    COMMENT 'null',
+  RATE VARCHAR(50) NULL    COMMENT 'null',
+  constraint PK_erp_md_tax_rate primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_bank_account(
+  ID BIGINT NULL    COMMENT 'null',
+  PARTNER_ID BIGINT NULL    COMMENT 'null',
+  BANK_NAME VARCHAR(50) NULL    COMMENT 'null',
+  BANK_ACCOUNT VARCHAR(50) NULL    COMMENT 'null',
+  ACCOUNT_TYPE INTEGER NULL    COMMENT 'null',
+  constraint PK_erp_md_bank_account primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_pur_rfq(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '单号',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  REQUISITION_ID BIGINT NULL    COMMENT '请购单',
+  BUSINESS_DATE DATE NOT NULL    COMMENT '询价日期',
+  VALID_UNTIL DATE NULL    COMMENT '报价有效期至',
+  DOC_STATUS INTEGER NOT NULL    COMMENT '单据状态',
+  APPROVE_STATUS INTEGER NOT NULL    COMMENT '审核状态',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_pur_rfq primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_pur_requisition_line(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  REQUISITION_ID BIGINT NOT NULL    COMMENT '请购单ID',
+  LINE_NO INTEGER NOT NULL    COMMENT '行号',
+  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
+  UO_M_ID BIGINT NOT NULL    COMMENT '计量单位',
+  QUANTITY DECIMAL(20,4) NOT NULL    COMMENT '请购数量',
+  REQUIRED_DATE DATE NULL    COMMENT '需求日期',
+  SUGGESTED_SUPPLIER_ID BIGINT NULL    COMMENT '建议供应商',
+  PROJECT_ID BIGINT NULL    COMMENT '项目',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_pur_requisition_line primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_pur_supplier_price_list(
   ID BIGINT NOT NULL    COMMENT 'ID',
   SUPPLIER_ID BIGINT NOT NULL    COMMENT '供应商',
@@ -42,46 +174,6 @@ CREATE TABLE erp_pur_supplier_price_list(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   constraint PK_erp_pur_supplier_price_list primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_pur_order(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  CODE VARCHAR(50) NOT NULL    COMMENT '单号',
-  ORG_ID BIGINT NULL    COMMENT '业务组织',
-  REQUISITION_ID BIGINT NULL    COMMENT '请购单',
-  QUOTATION_ID BIGINT NULL    COMMENT '报价单',
-  SUPPLIER_ID BIGINT NOT NULL    COMMENT '供应商',
-  WAREHOUSE_ID BIGINT NULL    COMMENT '收货仓库',
-  BUSINESS_DATE DATE NOT NULL    COMMENT '订单日期',
-  DELIVERY_DATE DATE NULL    COMMENT '交货日期',
-  CURRENCY_ID BIGINT NOT NULL    COMMENT '币种',
-  EXCHANGE_RATE DECIMAL(20,8) default 1  NULL    COMMENT '汇率',
-  AMOUNT_SOURCE DECIMAL(20,4) default 0  NULL    COMMENT '合计金额(源币不含税)',
-  AMOUNT_FUNCTIONAL DECIMAL(20,4) default 0  NULL    COMMENT '合计金额(本位币不含税)',
-  TOTAL_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '合计金额(本位币不含税)',
-  TOTAL_TAX_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '合计税额',
-  TOTAL_AMOUNT_WITH_TAX DECIMAL(20,4) default 0  NULL    COMMENT '合计金额(含税)',
-  DISCOUNT_RATE DECIMAL(10,4) NULL    COMMENT '整单折扣率(%)',
-  DISCOUNT_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '折扣金额',
-  PAID_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '已付金额',
-  SETTLEMENT_METHOD_ID BIGINT NULL    COMMENT '结算方式',
-  DOC_STATUS INTEGER NOT NULL    COMMENT '单据状态',
-  APPROVE_STATUS INTEGER NOT NULL    COMMENT '审核状态',
-  PAID_STATUS INTEGER NULL    COMMENT '付款进度',
-  RECEIVE_STATUS INTEGER NULL    COMMENT '收货状态',
-  POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
-  POSTED_AT DATETIME NULL    COMMENT '过账时间',
-  POSTED_BY BIGINT NULL    COMMENT '过账人',
-  APPROVED_BY BIGINT NULL    COMMENT '审核人',
-  APPROVED_AT DATETIME NULL    COMMENT '审核时间',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_pur_order primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_pur_invoice(
@@ -150,16 +242,36 @@ CREATE TABLE erp_pur_payment(
   constraint PK_erp_pur_payment primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_pur_requisition_line(
+CREATE TABLE erp_pur_order(
   ID BIGINT NOT NULL    COMMENT 'ID',
-  REQUISITION_ID BIGINT NOT NULL    COMMENT '请购单ID',
-  LINE_NO INTEGER NOT NULL    COMMENT '行号',
-  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
-  UO_M_ID BIGINT NOT NULL    COMMENT '计量单位',
-  QUANTITY DECIMAL(20,4) NOT NULL    COMMENT '请购数量',
-  REQUIRED_DATE DATE NULL    COMMENT '需求日期',
-  SUGGESTED_SUPPLIER_ID BIGINT NULL    COMMENT '建议供应商',
-  PROJECT_ID BIGINT NULL    COMMENT '项目',
+  CODE VARCHAR(50) NOT NULL    COMMENT '单号',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  REQUISITION_ID BIGINT NULL    COMMENT '请购单',
+  QUOTATION_ID BIGINT NULL    COMMENT '报价单',
+  SUPPLIER_ID BIGINT NOT NULL    COMMENT '供应商',
+  WAREHOUSE_ID BIGINT NULL    COMMENT '收货仓库',
+  BUSINESS_DATE DATE NOT NULL    COMMENT '订单日期',
+  DELIVERY_DATE DATE NULL    COMMENT '交货日期',
+  CURRENCY_ID BIGINT NOT NULL    COMMENT '币种',
+  EXCHANGE_RATE DECIMAL(20,8) default 1  NULL    COMMENT '汇率',
+  AMOUNT_SOURCE DECIMAL(20,4) default 0  NULL    COMMENT '合计金额(源币不含税)',
+  AMOUNT_FUNCTIONAL DECIMAL(20,4) default 0  NULL    COMMENT '合计金额(本位币不含税)',
+  TOTAL_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '合计金额(本位币不含税)',
+  TOTAL_TAX_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '合计税额',
+  TOTAL_AMOUNT_WITH_TAX DECIMAL(20,4) default 0  NULL    COMMENT '合计金额(含税)',
+  DISCOUNT_RATE DECIMAL(10,4) NULL    COMMENT '整单折扣率(%)',
+  DISCOUNT_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '折扣金额',
+  PAID_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '已付金额',
+  SETTLEMENT_METHOD_ID BIGINT NULL    COMMENT '结算方式',
+  DOC_STATUS INTEGER NOT NULL    COMMENT '单据状态',
+  APPROVE_STATUS INTEGER NOT NULL    COMMENT '审核状态',
+  PAID_STATUS INTEGER NULL    COMMENT '付款进度',
+  RECEIVE_STATUS INTEGER NULL    COMMENT '收货状态',
+  POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
+  POSTED_AT DATETIME NULL    COMMENT '过账时间',
+  POSTED_BY BIGINT NULL    COMMENT '过账人',
+  APPROVED_BY BIGINT NULL    COMMENT '审核人',
+  APPROVED_AT DATETIME NULL    COMMENT '审核时间',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -167,16 +279,38 @@ CREATE TABLE erp_pur_requisition_line(
   CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_pur_requisition_line primary key (ID)
+  constraint PK_erp_pur_order primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_pur_rfq(
+CREATE TABLE erp_pur_rfq_line(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  RFQ_ID BIGINT NOT NULL    COMMENT '询价单ID',
+  LINE_NO INTEGER NOT NULL    COMMENT '行号',
+  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
+  UO_M_ID BIGINT NOT NULL    COMMENT '计量单位',
+  QUANTITY DECIMAL(20,4) NOT NULL    COMMENT '询价数量',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_pur_rfq_line primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_pur_quotation(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '单号',
   ORG_ID BIGINT NULL    COMMENT '业务组织',
-  REQUISITION_ID BIGINT NULL    COMMENT '请购单',
-  BUSINESS_DATE DATE NOT NULL    COMMENT '询价日期',
-  VALID_UNTIL DATE NULL    COMMENT '报价有效期至',
+  RFQ_ID BIGINT NULL    COMMENT '询价单',
+  SUPPLIER_ID BIGINT NOT NULL    COMMENT '供应商',
+  CURRENCY_ID BIGINT NOT NULL    COMMENT '币种',
+  EXCHANGE_RATE DECIMAL(20,8) default 1  NULL    COMMENT '汇率',
+  BUSINESS_DATE DATE NOT NULL    COMMENT '报价日期',
+  VALID_FROM DATE NULL    COMMENT '生效日期',
+  VALID_TO DATE NULL    COMMENT '失效日期',
+  IS_ACCEPTED BOOLEAN default 0  NULL    COMMENT '是否中标',
   DOC_STATUS INTEGER NOT NULL    COMMENT '单据状态',
   APPROVE_STATUS INTEGER NOT NULL    COMMENT '审核状态',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
@@ -186,7 +320,44 @@ CREATE TABLE erp_pur_rfq(
   CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_pur_rfq primary key (ID)
+  constraint PK_erp_pur_quotation primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_pur_invoice_line(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  INVOICE_ID BIGINT NOT NULL    COMMENT '发票ID',
+  RECEIVE_LINE_ID BIGINT NULL    COMMENT '入库行ID',
+  LINE_NO INTEGER NOT NULL    COMMENT '行号',
+  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
+  UO_M_ID BIGINT NOT NULL    COMMENT '计量单位',
+  QUANTITY DECIMAL(20,4) NOT NULL    COMMENT '数量',
+  UNIT_PRICE DECIMAL(20,4) NULL    COMMENT '单价(不含税)',
+  TAX_RATE DECIMAL(10,4) NULL    COMMENT '税率(%)',
+  TAX_AMOUNT DECIMAL(20,4) NULL    COMMENT '税额',
+  AMOUNT DECIMAL(20,4) NULL    COMMENT '金额(不含税)',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_pur_invoice_line primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_pur_payment_line(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  PAYMENT_ID BIGINT NOT NULL    COMMENT '付款单ID',
+  INVOICE_ID BIGINT NOT NULL    COMMENT '发票ID',
+  AMOUNT DECIMAL(20,4) NOT NULL    COMMENT '核销金额',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_pur_payment_line primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_pur_order_line(
@@ -250,18 +421,16 @@ CREATE TABLE erp_pur_receive(
   constraint PK_erp_pur_receive primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_pur_invoice_line(
+CREATE TABLE erp_pur_quotation_line(
   ID BIGINT NOT NULL    COMMENT 'ID',
-  INVOICE_ID BIGINT NOT NULL    COMMENT '发票ID',
-  RECEIVE_LINE_ID BIGINT NULL    COMMENT '入库行ID',
+  QUOTATION_ID BIGINT NOT NULL    COMMENT '报价单ID',
   LINE_NO INTEGER NOT NULL    COMMENT '行号',
   MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
   UO_M_ID BIGINT NOT NULL    COMMENT '计量单位',
-  QUANTITY DECIMAL(20,4) NOT NULL    COMMENT '数量',
-  UNIT_PRICE DECIMAL(20,4) NULL    COMMENT '单价(不含税)',
+  QUANTITY DECIMAL(20,4) NULL    COMMENT '数量',
+  UNIT_PRICE DECIMAL(20,4) NOT NULL    COMMENT '报价单价(不含税)',
   TAX_RATE DECIMAL(10,4) NULL    COMMENT '税率(%)',
-  TAX_AMOUNT DECIMAL(20,4) NULL    COMMENT '税额',
-  AMOUNT DECIMAL(20,4) NULL    COMMENT '金额(不含税)',
+  LEAD_TIME_DAYS INTEGER NULL    COMMENT '交货周期(天)',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -269,63 +438,7 @@ CREATE TABLE erp_pur_invoice_line(
   CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_pur_invoice_line primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_pur_payment_line(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  PAYMENT_ID BIGINT NOT NULL    COMMENT '付款单ID',
-  INVOICE_ID BIGINT NOT NULL    COMMENT '发票ID',
-  AMOUNT DECIMAL(20,4) NOT NULL    COMMENT '核销金额',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_pur_payment_line primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_pur_rfq_line(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  RFQ_ID BIGINT NOT NULL    COMMENT '询价单ID',
-  LINE_NO INTEGER NOT NULL    COMMENT '行号',
-  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
-  UO_M_ID BIGINT NOT NULL    COMMENT '计量单位',
-  QUANTITY DECIMAL(20,4) NOT NULL    COMMENT '询价数量',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_pur_rfq_line primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_pur_quotation(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  CODE VARCHAR(50) NOT NULL    COMMENT '单号',
-  ORG_ID BIGINT NULL    COMMENT '业务组织',
-  RFQ_ID BIGINT NULL    COMMENT '询价单',
-  SUPPLIER_ID BIGINT NOT NULL    COMMENT '供应商',
-  CURRENCY_ID BIGINT NOT NULL    COMMENT '币种',
-  EXCHANGE_RATE DECIMAL(20,8) default 1  NULL    COMMENT '汇率',
-  BUSINESS_DATE DATE NOT NULL    COMMENT '报价日期',
-  VALID_FROM DATE NULL    COMMENT '生效日期',
-  VALID_TO DATE NULL    COMMENT '失效日期',
-  IS_ACCEPTED BOOLEAN default 0  NULL    COMMENT '是否中标',
-  DOC_STATUS INTEGER NOT NULL    COMMENT '单据状态',
-  APPROVE_STATUS INTEGER NOT NULL    COMMENT '审核状态',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_pur_quotation primary key (ID)
+  constraint PK_erp_pur_quotation_line primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_pur_receive_line(
@@ -386,26 +499,6 @@ CREATE TABLE erp_pur_return(
   constraint PK_erp_pur_return primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_pur_quotation_line(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  QUOTATION_ID BIGINT NOT NULL    COMMENT '报价单ID',
-  LINE_NO INTEGER NOT NULL    COMMENT '行号',
-  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
-  UO_M_ID BIGINT NOT NULL    COMMENT '计量单位',
-  QUANTITY DECIMAL(20,4) NULL    COMMENT '数量',
-  UNIT_PRICE DECIMAL(20,4) NOT NULL    COMMENT '报价单价(不含税)',
-  TAX_RATE DECIMAL(10,4) NULL    COMMENT '税率(%)',
-  LEAD_TIME_DAYS INTEGER NULL    COMMENT '交货周期(天)',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_pur_quotation_line primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
 CREATE TABLE erp_pur_return_line(
   ID BIGINT NOT NULL    COMMENT 'ID',
   RETURN_ID BIGINT NOT NULL    COMMENT '退货单ID',
@@ -433,35 +526,55 @@ CREATE TABLE erp_pur_return_line(
 
    ALTER TABLE erp_pur_requisition COMMENT '采购请购单';
                 
-   ALTER TABLE erp_pur_supplier_price_list COMMENT '供应商价格清单';
+   ALTER TABLE erp_md_material COMMENT '物料';
                 
-   ALTER TABLE erp_pur_order COMMENT '采购订单';
+   ALTER TABLE erp_md_uom COMMENT '计量单位';
+                
+   ALTER TABLE erp_md_partner COMMENT '往来单位';
+                
+   ALTER TABLE erp_md_currency COMMENT '币种';
+                
+   ALTER TABLE erp_md_warehouse COMMENT '仓库';
+                
+   ALTER TABLE erp_md_settlement_method COMMENT '结算方式';
+                
+   ALTER TABLE erp_md_organization COMMENT '组织';
+                
+   ALTER TABLE erp_md_material_sku COMMENT '物料SKU';
+                
+   ALTER TABLE erp_md_tax_rate COMMENT '税率';
+                
+   ALTER TABLE erp_md_bank_account COMMENT '银行账户';
+                
+   ALTER TABLE erp_pur_rfq COMMENT '采购询价单';
+                
+   ALTER TABLE erp_pur_requisition_line COMMENT '采购请购单行';
+                
+   ALTER TABLE erp_pur_supplier_price_list COMMENT '供应商价格清单';
                 
    ALTER TABLE erp_pur_invoice COMMENT '采购发票';
                 
    ALTER TABLE erp_pur_payment COMMENT '付款单';
                 
-   ALTER TABLE erp_pur_requisition_line COMMENT '采购请购单行';
-                
-   ALTER TABLE erp_pur_rfq COMMENT '采购询价单';
-                
-   ALTER TABLE erp_pur_order_line COMMENT '采购订单行';
-                
-   ALTER TABLE erp_pur_receive COMMENT '采购入库单';
-                
-   ALTER TABLE erp_pur_invoice_line COMMENT '采购发票行';
-                
-   ALTER TABLE erp_pur_payment_line COMMENT '付款核销行';
+   ALTER TABLE erp_pur_order COMMENT '采购订单';
                 
    ALTER TABLE erp_pur_rfq_line COMMENT '采购询价单行';
                 
    ALTER TABLE erp_pur_quotation COMMENT '供应商报价单';
                 
+   ALTER TABLE erp_pur_invoice_line COMMENT '采购发票行';
+                
+   ALTER TABLE erp_pur_payment_line COMMENT '付款核销行';
+                
+   ALTER TABLE erp_pur_order_line COMMENT '采购订单行';
+                
+   ALTER TABLE erp_pur_receive COMMENT '采购入库单';
+                
+   ALTER TABLE erp_pur_quotation_line COMMENT '供应商报价单行';
+                
    ALTER TABLE erp_pur_receive_line COMMENT '采购入库单行';
                 
    ALTER TABLE erp_pur_return COMMENT '采购退货单';
-                
-   ALTER TABLE erp_pur_quotation_line COMMENT '供应商报价单行';
                 
    ALTER TABLE erp_pur_return_line COMMENT '采购退货单行';
                 

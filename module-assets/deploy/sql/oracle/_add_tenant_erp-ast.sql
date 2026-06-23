@@ -1,5 +1,17 @@
 
-    alter table erp_ast_asset_category add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+    alter table erp_md_organization add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_location add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_employee add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_currency add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_subject add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_material_category add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
+alter table erp_ast_asset_category add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ast_asset add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
@@ -18,6 +30,24 @@ alter table erp_ast_disposal add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL
 alter table erp_ast_split add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ast_merge add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_organization drop constraint PK_erp_md_organization;
+alter table erp_md_organization add constraint PK_erp_md_organization primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_location drop constraint PK_erp_md_location;
+alter table erp_md_location add constraint PK_erp_md_location primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_employee drop constraint PK_erp_md_employee;
+alter table erp_md_employee add constraint PK_erp_md_employee primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_currency drop constraint PK_erp_md_currency;
+alter table erp_md_currency add constraint PK_erp_md_currency primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_subject drop constraint PK_erp_md_subject;
+alter table erp_md_subject add constraint PK_erp_md_subject primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_material_category drop constraint PK_erp_md_material_category;
+alter table erp_md_material_category add constraint PK_erp_md_material_category primary key (NOP_TENANT_ID, ID);
 
 alter table erp_ast_asset_category drop constraint PK_erp_ast_asset_category;
 alter table erp_ast_asset_category add constraint PK_erp_ast_asset_category primary key (NOP_TENANT_ID, ID);

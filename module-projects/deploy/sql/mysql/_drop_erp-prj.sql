@@ -1,4 +1,9 @@
 
+drop table  if exists  erp_md_employee;
+drop table  if exists  erp_md_currency;
+drop table  if exists  erp_md_partner;
+drop table  if exists  erp_md_subject;
+drop table  if exists  erp_md_organization;
 drop table  if exists  erp_prj_project_type;
 drop table  if exists  erp_prj_activity_type;
 drop table  if exists  erp_prj_project;

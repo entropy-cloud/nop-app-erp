@@ -116,6 +116,12 @@ public class _ErpPrjProject extends DynamicOrmEntity{
     public static final String PROP_NAME_projectType = "projectType";
     
     /* relation:  */
+    public static final String PROP_NAME_manager = "manager";
+    
+    /* relation:  */
+    public static final String PROP_NAME_currency = "currency";
+    
+    /* relation:  */
     public static final String PROP_NAME_tasks = "tasks";
     
     /* relation:  */
@@ -1248,6 +1254,52 @@ public class _ErpPrjProject extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_projectType, refEntity,()->{
            
                            this.setProjectTypeId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdEmployee getManager(){
+       return (app.erp.md.dao.entity.ErpMdEmployee)internalGetRefEntity(PROP_NAME_manager);
+    }
+
+    public final void setManager(app.erp.md.dao.entity.ErpMdEmployee refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setManagerId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_manager, refEntity,()->{
+           
+                           this.setManagerId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdCurrency getCurrency(){
+       return (app.erp.md.dao.entity.ErpMdCurrency)internalGetRefEntity(PROP_NAME_currency);
+    }
+
+    public final void setCurrency(app.erp.md.dao.entity.ErpMdCurrency refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCurrencyId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_currency, refEntity,()->{
+           
+                           this.setCurrencyId(refEntity.getId());
                        
            });
            }

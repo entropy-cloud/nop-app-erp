@@ -1,35 +1,50 @@
 
-CREATE TABLE erp_qa_inspection(
-  id INT8 NOT NULL ,
-  code VARCHAR(50) NOT NULL ,
+CREATE TABLE erp_md_material(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  material_type INT4  ,
+  status INT4  ,
+  constraint PK_erp_md_material primary key (id)
+);
+
+CREATE TABLE erp_md_partner(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  partner_type INT4  ,
+  status INT4  ,
+  credit_limit VARCHAR(50)  ,
+  constraint PK_erp_md_partner primary key (id)
+);
+
+CREATE TABLE erp_md_warehouse(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  warehouse_type INT4  ,
   org_id INT8  ,
-  inspection_type INT4 NOT NULL ,
-  related_bill_type VARCHAR(50)  ,
-  related_bill_code VARCHAR(50)  ,
-  related_line_code VARCHAR(50)  ,
-  material_id INT8 NOT NULL ,
-  supplier_id INT8  ,
-  warehouse_id INT8  ,
-  inspection_date DATE NOT NULL ,
-  lot_quantity NUMERIC(20,4)  ,
-  sample_quantity NUMERIC(20,4)  ,
-  inspector_id INT8  ,
-  result INT4 NOT NULL ,
-  doc_status INT4 NOT NULL ,
-  approve_status INT4 NOT NULL ,
-  posted BOOLEAN default false   ,
-  posted_at TIMESTAMP  ,
-  posted_by INT8  ,
-  approved_by INT8  ,
-  approved_at TIMESTAMP  ,
-  remark VARCHAR(1000)  ,
-  del_version INT8 default 0  NOT NULL ,
-  version INT4 default 0  NOT NULL ,
-  created_by VARCHAR(50) NOT NULL ,
-  create_time TIMESTAMP NOT NULL ,
-  updated_by VARCHAR(50) NOT NULL ,
-  update_time TIMESTAMP NOT NULL ,
-  constraint PK_erp_qa_inspection primary key (id)
+  status INT4  ,
+  constraint PK_erp_md_warehouse primary key (id)
+);
+
+CREATE TABLE erp_md_employee(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  org_id INT8  ,
+  status INT4  ,
+  constraint PK_erp_md_employee primary key (id)
+);
+
+CREATE TABLE erp_md_organization(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  org_type INT4  ,
+  parent_id INT8  ,
+  status INT4  ,
+  constraint PK_erp_md_organization primary key (id)
 );
 
 CREATE TABLE erp_qa_inspection_template(
@@ -96,28 +111,6 @@ CREATE TABLE erp_qa_risk_register(
   constraint PK_erp_qa_risk_register primary key (id)
 );
 
-CREATE TABLE erp_qa_quality_goal(
-  id INT8 NOT NULL ,
-  code VARCHAR(50) NOT NULL ,
-  name VARCHAR(200) NOT NULL ,
-  description VARCHAR(2000)  ,
-  target_value NUMERIC(20,4)  ,
-  current_value NUMERIC(20,4)  ,
-  unit VARCHAR(50)  ,
-  responsible_person_id INT8  ,
-  start_date DATE  ,
-  end_date DATE  ,
-  status INT4 NOT NULL ,
-  remark VARCHAR(1000)  ,
-  del_version INT8 default 0  NOT NULL ,
-  version INT4 default 0  NOT NULL ,
-  created_by VARCHAR(50) NOT NULL ,
-  create_time TIMESTAMP NOT NULL ,
-  updated_by VARCHAR(50) NOT NULL ,
-  update_time TIMESTAMP NOT NULL ,
-  constraint PK_erp_qa_quality_goal primary key (id)
-);
-
 CREATE TABLE erp_qa_review(
   id INT8 NOT NULL ,
   code VARCHAR(50) NOT NULL ,
@@ -162,6 +155,28 @@ CREATE TABLE erp_qa_sampling_plan(
   constraint PK_erp_qa_sampling_plan primary key (id)
 );
 
+CREATE TABLE erp_qa_quality_goal(
+  id INT8 NOT NULL ,
+  code VARCHAR(50) NOT NULL ,
+  name VARCHAR(200) NOT NULL ,
+  description VARCHAR(2000)  ,
+  target_value NUMERIC(20,4)  ,
+  current_value NUMERIC(20,4)  ,
+  unit VARCHAR(50)  ,
+  responsible_person_id INT8  ,
+  start_date DATE  ,
+  end_date DATE  ,
+  status INT4 NOT NULL ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_qa_quality_goal primary key (id)
+);
+
 CREATE TABLE erp_qa_calibration(
   id INT8 NOT NULL ,
   code VARCHAR(50) NOT NULL ,
@@ -188,17 +203,29 @@ CREATE TABLE erp_qa_calibration(
   constraint PK_erp_qa_calibration primary key (id)
 );
 
-CREATE TABLE erp_qa_inspection_line(
+CREATE TABLE erp_qa_inspection(
   id INT8 NOT NULL ,
-  inspection_id INT8 NOT NULL ,
-  line_no INT4 NOT NULL ,
-  parameter_id INT8  ,
-  parameter_name VARCHAR(200)  ,
-  spec_min NUMERIC(20,6)  ,
-  spec_max NUMERIC(20,6)  ,
-  measured_value NUMERIC(20,6)  ,
-  unit VARCHAR(50)  ,
+  code VARCHAR(50) NOT NULL ,
+  org_id INT8  ,
+  inspection_type INT4 NOT NULL ,
+  related_bill_type VARCHAR(50)  ,
+  related_bill_code VARCHAR(50)  ,
+  related_line_code VARCHAR(50)  ,
+  material_id INT8 NOT NULL ,
+  supplier_id INT8  ,
+  warehouse_id INT8  ,
+  inspection_date DATE NOT NULL ,
+  lot_quantity NUMERIC(20,4)  ,
+  sample_quantity NUMERIC(20,4)  ,
+  inspector_id INT8  ,
   result INT4 NOT NULL ,
+  doc_status INT4 NOT NULL ,
+  approve_status INT4 NOT NULL ,
+  posted BOOLEAN default false   ,
+  posted_at TIMESTAMP  ,
+  posted_by INT8  ,
+  approved_by INT8  ,
+  approved_at TIMESTAMP  ,
   remark VARCHAR(1000)  ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
@@ -206,7 +233,7 @@ CREATE TABLE erp_qa_inspection_line(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
-  constraint PK_erp_qa_inspection_line primary key (id)
+  constraint PK_erp_qa_inspection primary key (id)
 );
 
 CREATE TABLE erp_qa_inspection_template_line(
@@ -250,67 +277,38 @@ CREATE TABLE erp_qa_action(
   constraint PK_erp_qa_action primary key (id)
 );
 
+CREATE TABLE erp_qa_inspection_line(
+  id INT8 NOT NULL ,
+  inspection_id INT8 NOT NULL ,
+  line_no INT4 NOT NULL ,
+  parameter_id INT8  ,
+  parameter_name VARCHAR(200)  ,
+  spec_min NUMERIC(20,6)  ,
+  spec_max NUMERIC(20,6)  ,
+  measured_value NUMERIC(20,6)  ,
+  unit VARCHAR(50)  ,
+  result INT4 NOT NULL ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_qa_inspection_line primary key (id)
+);
 
-      COMMENT ON TABLE erp_qa_inspection IS '质检单';
+
+      COMMENT ON TABLE erp_md_material IS '物料';
                 
-      COMMENT ON COLUMN erp_qa_inspection.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.code IS '单号';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.org_id IS '业务组织';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.inspection_type IS '检验类型';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.related_bill_type IS '关联单据类型';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.related_bill_code IS '关联单据号';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.related_line_code IS '关联单据行号';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.material_id IS '物料';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.supplier_id IS '供应商';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.warehouse_id IS '仓库';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.inspection_date IS '检验日期';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.lot_quantity IS '批量';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.sample_quantity IS '抽样数量';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.inspector_id IS '检验员(职员)';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.result IS '质检结果';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.doc_status IS '单据状态';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.approve_status IS '审核状态';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.posted IS '已过账(质量结论已回写业务单据)';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.posted_at IS '过账时间';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.posted_by IS '过账人';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.approved_by IS '审核人';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.approved_at IS '审核时间';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.update_time IS '修改时间';
-                    
+      COMMENT ON TABLE erp_md_partner IS '往来单位';
+                
+      COMMENT ON TABLE erp_md_warehouse IS '仓库';
+                
+      COMMENT ON TABLE erp_md_employee IS '职员';
+                
+      COMMENT ON TABLE erp_md_organization IS '组织';
+                
       COMMENT ON TABLE erp_qa_inspection_template IS '质检模板';
                 
       COMMENT ON COLUMN erp_qa_inspection_template.id IS 'ID';
@@ -421,44 +419,6 @@ CREATE TABLE erp_qa_action(
                     
       COMMENT ON COLUMN erp_qa_risk_register.update_time IS '修改时间';
                     
-      COMMENT ON TABLE erp_qa_quality_goal IS '质量目标';
-                
-      COMMENT ON COLUMN erp_qa_quality_goal.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_qa_quality_goal.code IS '编码';
-                    
-      COMMENT ON COLUMN erp_qa_quality_goal.name IS '名称';
-                    
-      COMMENT ON COLUMN erp_qa_quality_goal.description IS '描述';
-                    
-      COMMENT ON COLUMN erp_qa_quality_goal.target_value IS '目标值';
-                    
-      COMMENT ON COLUMN erp_qa_quality_goal.current_value IS '当前值';
-                    
-      COMMENT ON COLUMN erp_qa_quality_goal.unit IS '单位';
-                    
-      COMMENT ON COLUMN erp_qa_quality_goal.responsible_person_id IS '责任人';
-                    
-      COMMENT ON COLUMN erp_qa_quality_goal.start_date IS '开始日期';
-                    
-      COMMENT ON COLUMN erp_qa_quality_goal.end_date IS '结束日期';
-                    
-      COMMENT ON COLUMN erp_qa_quality_goal.status IS '状态';
-                    
-      COMMENT ON COLUMN erp_qa_quality_goal.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_qa_quality_goal.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_qa_quality_goal.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_qa_quality_goal.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_qa_quality_goal.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_qa_quality_goal.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_qa_quality_goal.update_time IS '修改时间';
-                    
       COMMENT ON TABLE erp_qa_review IS '质量评审';
                 
       COMMENT ON COLUMN erp_qa_review.id IS 'ID';
@@ -535,6 +495,44 @@ CREATE TABLE erp_qa_action(
                     
       COMMENT ON COLUMN erp_qa_sampling_plan.update_time IS '修改时间';
                     
+      COMMENT ON TABLE erp_qa_quality_goal IS '质量目标';
+                
+      COMMENT ON COLUMN erp_qa_quality_goal.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_qa_quality_goal.code IS '编码';
+                    
+      COMMENT ON COLUMN erp_qa_quality_goal.name IS '名称';
+                    
+      COMMENT ON COLUMN erp_qa_quality_goal.description IS '描述';
+                    
+      COMMENT ON COLUMN erp_qa_quality_goal.target_value IS '目标值';
+                    
+      COMMENT ON COLUMN erp_qa_quality_goal.current_value IS '当前值';
+                    
+      COMMENT ON COLUMN erp_qa_quality_goal.unit IS '单位';
+                    
+      COMMENT ON COLUMN erp_qa_quality_goal.responsible_person_id IS '责任人';
+                    
+      COMMENT ON COLUMN erp_qa_quality_goal.start_date IS '开始日期';
+                    
+      COMMENT ON COLUMN erp_qa_quality_goal.end_date IS '结束日期';
+                    
+      COMMENT ON COLUMN erp_qa_quality_goal.status IS '状态';
+                    
+      COMMENT ON COLUMN erp_qa_quality_goal.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_qa_quality_goal.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_qa_quality_goal.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_qa_quality_goal.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_qa_quality_goal.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_qa_quality_goal.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_qa_quality_goal.update_time IS '修改时间';
+                    
       COMMENT ON TABLE erp_qa_calibration IS '量具校准';
                 
       COMMENT ON COLUMN erp_qa_calibration.id IS 'ID';
@@ -581,41 +579,65 @@ CREATE TABLE erp_qa_action(
                     
       COMMENT ON COLUMN erp_qa_calibration.update_time IS '修改时间';
                     
-      COMMENT ON TABLE erp_qa_inspection_line IS '质检单行';
+      COMMENT ON TABLE erp_qa_inspection IS '质检单';
                 
-      COMMENT ON COLUMN erp_qa_inspection_line.id IS 'ID';
+      COMMENT ON COLUMN erp_qa_inspection.id IS 'ID';
                     
-      COMMENT ON COLUMN erp_qa_inspection_line.inspection_id IS '质检单ID';
+      COMMENT ON COLUMN erp_qa_inspection.code IS '单号';
                     
-      COMMENT ON COLUMN erp_qa_inspection_line.line_no IS '行号';
+      COMMENT ON COLUMN erp_qa_inspection.org_id IS '业务组织';
                     
-      COMMENT ON COLUMN erp_qa_inspection_line.parameter_id IS '检验参数';
+      COMMENT ON COLUMN erp_qa_inspection.inspection_type IS '检验类型';
                     
-      COMMENT ON COLUMN erp_qa_inspection_line.parameter_name IS '检验参数名称';
+      COMMENT ON COLUMN erp_qa_inspection.related_bill_type IS '关联单据类型';
                     
-      COMMENT ON COLUMN erp_qa_inspection_line.spec_min IS '规格下限';
+      COMMENT ON COLUMN erp_qa_inspection.related_bill_code IS '关联单据号';
                     
-      COMMENT ON COLUMN erp_qa_inspection_line.spec_max IS '规格上限';
+      COMMENT ON COLUMN erp_qa_inspection.related_line_code IS '关联单据行号';
                     
-      COMMENT ON COLUMN erp_qa_inspection_line.measured_value IS '实测值';
+      COMMENT ON COLUMN erp_qa_inspection.material_id IS '物料';
                     
-      COMMENT ON COLUMN erp_qa_inspection_line.unit IS '计量单位';
+      COMMENT ON COLUMN erp_qa_inspection.supplier_id IS '供应商';
                     
-      COMMENT ON COLUMN erp_qa_inspection_line.result IS '行结果';
+      COMMENT ON COLUMN erp_qa_inspection.warehouse_id IS '仓库';
                     
-      COMMENT ON COLUMN erp_qa_inspection_line.remark IS '备注';
+      COMMENT ON COLUMN erp_qa_inspection.inspection_date IS '检验日期';
                     
-      COMMENT ON COLUMN erp_qa_inspection_line.del_version IS '逻辑删除版本';
+      COMMENT ON COLUMN erp_qa_inspection.lot_quantity IS '批量';
                     
-      COMMENT ON COLUMN erp_qa_inspection_line.version IS '数据版本';
+      COMMENT ON COLUMN erp_qa_inspection.sample_quantity IS '抽样数量';
                     
-      COMMENT ON COLUMN erp_qa_inspection_line.created_by IS '创建人';
+      COMMENT ON COLUMN erp_qa_inspection.inspector_id IS '检验员(职员)';
                     
-      COMMENT ON COLUMN erp_qa_inspection_line.create_time IS '创建时间';
+      COMMENT ON COLUMN erp_qa_inspection.result IS '质检结果';
                     
-      COMMENT ON COLUMN erp_qa_inspection_line.updated_by IS '修改人';
+      COMMENT ON COLUMN erp_qa_inspection.doc_status IS '单据状态';
                     
-      COMMENT ON COLUMN erp_qa_inspection_line.update_time IS '修改时间';
+      COMMENT ON COLUMN erp_qa_inspection.approve_status IS '审核状态';
+                    
+      COMMENT ON COLUMN erp_qa_inspection.posted IS '已过账(质量结论已回写业务单据)';
+                    
+      COMMENT ON COLUMN erp_qa_inspection.posted_at IS '过账时间';
+                    
+      COMMENT ON COLUMN erp_qa_inspection.posted_by IS '过账人';
+                    
+      COMMENT ON COLUMN erp_qa_inspection.approved_by IS '审核人';
+                    
+      COMMENT ON COLUMN erp_qa_inspection.approved_at IS '审核时间';
+                    
+      COMMENT ON COLUMN erp_qa_inspection.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_qa_inspection.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_qa_inspection.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_qa_inspection.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_qa_inspection.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_qa_inspection.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_qa_inspection.update_time IS '修改时间';
                     
       COMMENT ON TABLE erp_qa_inspection_template_line IS '质检模板行';
                 
@@ -686,4 +708,40 @@ CREATE TABLE erp_qa_action(
       COMMENT ON COLUMN erp_qa_action.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_qa_action.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_qa_inspection_line IS '质检单行';
+                
+      COMMENT ON COLUMN erp_qa_inspection_line.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_qa_inspection_line.inspection_id IS '质检单ID';
+                    
+      COMMENT ON COLUMN erp_qa_inspection_line.line_no IS '行号';
+                    
+      COMMENT ON COLUMN erp_qa_inspection_line.parameter_id IS '检验参数';
+                    
+      COMMENT ON COLUMN erp_qa_inspection_line.parameter_name IS '检验参数名称';
+                    
+      COMMENT ON COLUMN erp_qa_inspection_line.spec_min IS '规格下限';
+                    
+      COMMENT ON COLUMN erp_qa_inspection_line.spec_max IS '规格上限';
+                    
+      COMMENT ON COLUMN erp_qa_inspection_line.measured_value IS '实测值';
+                    
+      COMMENT ON COLUMN erp_qa_inspection_line.unit IS '计量单位';
+                    
+      COMMENT ON COLUMN erp_qa_inspection_line.result IS '行结果';
+                    
+      COMMENT ON COLUMN erp_qa_inspection_line.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_qa_inspection_line.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_qa_inspection_line.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_qa_inspection_line.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_qa_inspection_line.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_qa_inspection_line.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_qa_inspection_line.update_time IS '修改时间';
                     

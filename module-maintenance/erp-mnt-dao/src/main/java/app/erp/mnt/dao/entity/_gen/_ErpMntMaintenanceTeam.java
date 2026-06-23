@@ -77,6 +77,9 @@ public class _ErpMntMaintenanceTeam extends DynamicOrmEntity{
 
     
     /* relation:  */
+    public static final String PROP_NAME_leader = "leader";
+    
+    /* relation:  */
     public static final String PROP_NAME_members = "members";
     
 
@@ -775,6 +778,29 @@ public class _ErpMntMaintenanceTeam extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdEmployee getLeader(){
+       return (app.erp.md.dao.entity.ErpMdEmployee)internalGetRefEntity(PROP_NAME_leader);
+    }
+
+    public final void setLeader(app.erp.md.dao.entity.ErpMdEmployee refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setLeaderId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_leader, refEntity,()->{
+           
+                           this.setLeaderId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
     private final OrmEntitySet<app.erp.mnt.dao.entity.ErpMntMaintenanceTeamMember> _members = new OrmEntitySet<>(this, PROP_NAME_members,
         null, null,app.erp.mnt.dao.entity.ErpMntMaintenanceTeamMember.class);
 

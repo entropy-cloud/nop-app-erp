@@ -131,7 +131,13 @@ public class _ErpPrjTimesheet extends DynamicOrmEntity{
     public static final String PROP_NAME_task = "task";
     
     /* relation:  */
+    public static final String PROP_NAME_user = "user";
+    
+    /* relation:  */
     public static final String PROP_NAME_activityType = "activityType";
+    
+    /* relation:  */
+    public static final String PROP_NAME_currency = "currency";
     
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
@@ -1418,6 +1424,29 @@ public class _ErpPrjTimesheet extends DynamicOrmEntity{
     /**
      * 
      */
+    public final app.erp.md.dao.entity.ErpMdEmployee getUser(){
+       return (app.erp.md.dao.entity.ErpMdEmployee)internalGetRefEntity(PROP_NAME_user);
+    }
+
+    public final void setUser(app.erp.md.dao.entity.ErpMdEmployee refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setUserId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_user, refEntity,()->{
+           
+                           this.setUserId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
     public final app.erp.prj.dao.entity.ErpPrjActivityType getActivityType(){
        return (app.erp.prj.dao.entity.ErpPrjActivityType)internalGetRefEntity(PROP_NAME_activityType);
     }
@@ -1432,6 +1461,29 @@ public class _ErpPrjTimesheet extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_activityType, refEntity,()->{
            
                            this.setActivityTypeId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdCurrency getCurrency(){
+       return (app.erp.md.dao.entity.ErpMdCurrency)internalGetRefEntity(PROP_NAME_currency);
+    }
+
+    public final void setCurrency(app.erp.md.dao.entity.ErpMdCurrency refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCurrencyId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_currency, refEntity,()->{
+           
+                           this.setCurrencyId(refEntity.getId());
                        
            });
            }

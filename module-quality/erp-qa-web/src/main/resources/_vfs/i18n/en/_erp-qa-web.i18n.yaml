@@ -1,0 +1,70 @@
+site:
+  resource:
+    ErpQaAction-main:
+      displayName: ''
+    ErpQaCalibration-main:
+      displayName: ''
+    ErpQaInspection-main:
+      displayName: ''
+    ErpQaInspectionLine-main:
+      displayName: ''
+    ErpQaInspectionTemplate-main:
+      displayName: ''
+    ErpQaInspectionTemplateLine-main:
+      displayName: ''
+    ErpQaNonConformance-main:
+      displayName: ''
+    ErpQaQualityGoal-main:
+      displayName: ''
+    ErpQaReview-main:
+      displayName: ''
+    ErpQaRiskRegister-main:
+      displayName: ''
+    ErpQaSamplingPlan-main:
+      displayName: ''
+    FNPT:ErpQaAction:mutation:
+      displayName: ''
+    FNPT:ErpQaAction:query:
+      displayName: ''
+    FNPT:ErpQaCalibration:mutation:
+      displayName: ''
+    FNPT:ErpQaCalibration:query:
+      displayName: ''
+    FNPT:ErpQaInspection:mutation:
+      displayName: ''
+    FNPT:ErpQaInspection:query:
+      displayName: ''
+    FNPT:ErpQaInspectionLine:mutation:
+      displayName: ''
+    FNPT:ErpQaInspectionLine:query:
+      displayName: ''
+    FNPT:ErpQaInspectionTemplate:mutation:
+      displayName: ''
+    FNPT:ErpQaInspectionTemplate:query:
+      displayName: ''
+    FNPT:ErpQaInspectionTemplateLine:mutation:
+      displayName: ''
+    FNPT:ErpQaInspectionTemplateLine:query:
+      displayName: ''
+    FNPT:ErpQaNonConformance:mutation:
+      displayName: ''
+    FNPT:ErpQaNonConformance:query:
+      displayName: ''
+    FNPT:ErpQaQualityGoal:mutation:
+      displayName: ''
+    FNPT:ErpQaQualityGoal:query:
+      displayName: ''
+    FNPT:ErpQaReview:mutation:
+      displayName: ''
+    FNPT:ErpQaReview:query:
+      displayName: ''
+    FNPT:ErpQaRiskRegister:mutation:
+      displayName: ''
+    FNPT:ErpQaRiskRegister:query:
+      displayName: ''
+    FNPT:ErpQaSamplingPlan:mutation:
+      displayName: ''
+    FNPT:ErpQaSamplingPlan:query:
+      displayName: ''
+    test-orm-erp-qa:
+      displayName: Test erp-qa

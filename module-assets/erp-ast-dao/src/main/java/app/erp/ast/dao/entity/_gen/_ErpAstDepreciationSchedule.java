@@ -100,8 +100,28 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 20;
     
+    /* 业务日期: BUSINESS_DATE DATE */
+    public static final String PROP_NAME_businessDate = "businessDate";
+    public static final int PROP_ID_businessDate = 21;
+    
+    /* 币种: CURRENCY_ID BIGINT */
+    public static final String PROP_NAME_currencyId = "currencyId";
+    public static final int PROP_ID_currencyId = 22;
+    
+    /* 汇率: EXCHANGE_RATE DECIMAL */
+    public static final String PROP_NAME_exchangeRate = "exchangeRate";
+    public static final int PROP_ID_exchangeRate = 23;
+    
+    /* 源币种金额: AMOUNT_SOURCE DECIMAL */
+    public static final String PROP_NAME_amountSource = "amountSource";
+    public static final int PROP_ID_amountSource = 24;
+    
+    /* 本位币金额: AMOUNT_FUNCTIONAL DECIMAL */
+    public static final String PROP_NAME_amountFunctional = "amountFunctional";
+    public static final int PROP_ID_amountFunctional = 25;
+    
 
-    private static int _PROP_ID_BOUND = 21;
+    private static int _PROP_ID_BOUND = 26;
 
     
     /* relation:  */
@@ -111,7 +131,7 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[21];
+    private static final String[] PROP_ID_TO_NAME = new String[26];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -175,6 +195,21 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
+          PROP_ID_TO_NAME[PROP_ID_businessDate] = PROP_NAME_businessDate;
+          PROP_NAME_TO_ID.put(PROP_NAME_businessDate, PROP_ID_businessDate);
+      
+          PROP_ID_TO_NAME[PROP_ID_currencyId] = PROP_NAME_currencyId;
+          PROP_NAME_TO_ID.put(PROP_NAME_currencyId, PROP_ID_currencyId);
+      
+          PROP_ID_TO_NAME[PROP_ID_exchangeRate] = PROP_NAME_exchangeRate;
+          PROP_NAME_TO_ID.put(PROP_NAME_exchangeRate, PROP_ID_exchangeRate);
+      
+          PROP_ID_TO_NAME[PROP_ID_amountSource] = PROP_NAME_amountSource;
+          PROP_NAME_TO_ID.put(PROP_NAME_amountSource, PROP_ID_amountSource);
+      
+          PROP_ID_TO_NAME[PROP_ID_amountFunctional] = PROP_NAME_amountFunctional;
+          PROP_NAME_TO_ID.put(PROP_NAME_amountFunctional, PROP_ID_amountFunctional);
+      
     }
 
     
@@ -237,6 +272,21 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* 业务日期: BUSINESS_DATE */
+    private java.time.LocalDate _businessDate;
+    
+    /* 币种: CURRENCY_ID */
+    private java.lang.Long _currencyId;
+    
+    /* 汇率: EXCHANGE_RATE */
+    private java.lang.String _exchangeRate;
+    
+    /* 源币种金额: AMOUNT_SOURCE */
+    private java.lang.String _amountSource;
+    
+    /* 本位币金额: AMOUNT_FUNCTIONAL */
+    private java.lang.String _amountFunctional;
     
 
     public _ErpAstDepreciationSchedule(){
@@ -371,6 +421,21 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_businessDate:
+               return getBusinessDate();
+        
+            case PROP_ID_currencyId:
+               return getCurrencyId();
+        
+            case PROP_ID_exchangeRate:
+               return getExchangeRate();
+        
+            case PROP_ID_amountSource:
+               return getAmountSource();
+        
+            case PROP_ID_amountFunctional:
+               return getAmountFunctional();
         
            default:
               return super.orm_propValue(propId);
@@ -583,6 +648,56 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_businessDate:{
+               java.time.LocalDate typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLocalDate(value,
+                       err-> newTypeConversionError(PROP_NAME_businessDate));
+               }
+               setBusinessDate(typedValue);
+               break;
+            }
+        
+            case PROP_ID_currencyId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_currencyId));
+               }
+               setCurrencyId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_exchangeRate:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_exchangeRate));
+               }
+               setExchangeRate(typedValue);
+               break;
+            }
+        
+            case PROP_ID_amountSource:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_amountSource));
+               }
+               setAmountSource(typedValue);
+               break;
+            }
+        
+            case PROP_ID_amountFunctional:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_amountFunctional));
+               }
+               setAmountFunctional(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -728,6 +843,41 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_businessDate:{
+               onInitProp(propId);
+               this._businessDate = (java.time.LocalDate)value;
+               
+               break;
+            }
+        
+            case PROP_ID_currencyId:{
+               onInitProp(propId);
+               this._currencyId = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_exchangeRate:{
+               onInitProp(propId);
+               this._exchangeRate = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_amountSource:{
+               onInitProp(propId);
+               this._amountSource = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_amountFunctional:{
+               onInitProp(propId);
+               this._amountFunctional = (java.lang.String)value;
                
                break;
             }
@@ -1114,6 +1264,101 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_updateTime,value)){
             this._updateTime = value;
             internalClearRefs(PROP_ID_updateTime);
+            
+        }
+    }
+    
+    /**
+     * 业务日期: BUSINESS_DATE
+     */
+    public final java.time.LocalDate getBusinessDate(){
+         onPropGet(PROP_ID_businessDate);
+         return _businessDate;
+    }
+
+    /**
+     * 业务日期: BUSINESS_DATE
+     */
+    public final void setBusinessDate(java.time.LocalDate value){
+        if(onPropSet(PROP_ID_businessDate,value)){
+            this._businessDate = value;
+            internalClearRefs(PROP_ID_businessDate);
+            
+        }
+    }
+    
+    /**
+     * 币种: CURRENCY_ID
+     */
+    public final java.lang.Long getCurrencyId(){
+         onPropGet(PROP_ID_currencyId);
+         return _currencyId;
+    }
+
+    /**
+     * 币种: CURRENCY_ID
+     */
+    public final void setCurrencyId(java.lang.Long value){
+        if(onPropSet(PROP_ID_currencyId,value)){
+            this._currencyId = value;
+            internalClearRefs(PROP_ID_currencyId);
+            
+        }
+    }
+    
+    /**
+     * 汇率: EXCHANGE_RATE
+     */
+    public final java.lang.String getExchangeRate(){
+         onPropGet(PROP_ID_exchangeRate);
+         return _exchangeRate;
+    }
+
+    /**
+     * 汇率: EXCHANGE_RATE
+     */
+    public final void setExchangeRate(java.lang.String value){
+        if(onPropSet(PROP_ID_exchangeRate,value)){
+            this._exchangeRate = value;
+            internalClearRefs(PROP_ID_exchangeRate);
+            
+        }
+    }
+    
+    /**
+     * 源币种金额: AMOUNT_SOURCE
+     */
+    public final java.lang.String getAmountSource(){
+         onPropGet(PROP_ID_amountSource);
+         return _amountSource;
+    }
+
+    /**
+     * 源币种金额: AMOUNT_SOURCE
+     */
+    public final void setAmountSource(java.lang.String value){
+        if(onPropSet(PROP_ID_amountSource,value)){
+            this._amountSource = value;
+            internalClearRefs(PROP_ID_amountSource);
+            
+        }
+    }
+    
+    /**
+     * 本位币金额: AMOUNT_FUNCTIONAL
+     */
+    public final java.lang.String getAmountFunctional(){
+         onPropGet(PROP_ID_amountFunctional);
+         return _amountFunctional;
+    }
+
+    /**
+     * 本位币金额: AMOUNT_FUNCTIONAL
+     */
+    public final void setAmountFunctional(java.lang.String value){
+        if(onPropSet(PROP_ID_amountFunctional,value)){
+            this._amountFunctional = value;
+            internalClearRefs(PROP_ID_amountFunctional);
             
         }
     }

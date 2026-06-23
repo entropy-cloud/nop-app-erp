@@ -275,12 +275,7 @@
                 <to-many name="lines" refEntityName="app.erp.sal.dao.entity.ErpSalOrderLine" tagSet="pub,cascade-delete,insertable,updatable">
                     <join><on leftProp="id" rightProp="orderId"/></join>
                 </to-many>
-                            <!-- 跨模块 to-one（引用 master-data 外部实体，机制 B） -->
-                <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"><join><on leftProp="customerId" rightProp="id"/></join></to-one>
-                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"><join><on leftProp="orgId" rightProp="id"/></join></to-one>
-                <to-one name="settlementMethod" refEntityName="app.erp.md.dao.entity.ErpMdSettlementMethod" tagSet="pub"><join><on leftProp="settlementMethodId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -330,11 +325,7 @@
                 <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub">
                     <join><on leftProp="uoMId" rightProp="id"/></join>
                 </to-one>
-                            <!-- 跨模块 to-one（引用 master-data 外部实体，机制 B） -->
-                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
-                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"><join><on leftProp="skuId" rightProp="id"/></join></to-one>
-                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"><join><on leftProp="uoMId" rightProp="id"/></join></to-one>
-                <to-one name="taxRate" refEntityName="app.erp.md.dao.entity.ErpMdTaxRate" tagSet="pub"><join><on leftProp="taxRateId" rightProp="id"/></join></to-one>
+                <to-one name="taxRateMd" refEntityName="app.erp.md.dao.entity.ErpMdTaxRate" tagSet="pub"><join><on leftProp="taxRateId" rightProp="id"/></join></to-one>
                 <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
             </relations>
         </entity>

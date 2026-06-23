@@ -1,0 +1,23 @@
+{
+  "id": 0,
+  "code": "",
+  "name": "",
+  "orgId": 0,
+  "year": 0,
+  "month": 0,
+  "startDate": "2000-01-01",
+  "endDate": "2000-01-01",
+  "quarter": 0,
+  "isAdjustment": false,
+  "status": 0,
+  "status_label": "",
+  "closedBy": 0,
+  "closedAt": "2000-01-01 14:00:00",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "statusRecords": null
+}

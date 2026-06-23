@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:schema="/nop/schema/xui/xview.xdef" bizObjName="ErpFinVoucherLine" xmlns:i18n-en="i18n-en"
+      xmlns:x="/nop/schema/xdsl.xdef" xmlns:j="j" xmlns:c="c" xmlns:gql="gql" xmlns:view-gen="view-gen" xmlns:xpl="xpl">
+
+    <objMeta>/erp/fin/model/ErpFinVoucherLine/ErpFinVoucherLine.xmeta</objMeta>
+
+    <controlLib>/nop/web/xlib/control.xlib</controlLib>
+
+    <x:gen-extends>
+        <view-gen:DefaultViewGenExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <view-gen:DefaultViewPostExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:post-extends>
+
+    <grids>
+        <grid id="list" x:abstract="true">
+            <cols>
+
+                <!--ID-->
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--凭证ID-->
+                <col id="voucherId" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--行号-->
+                <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--科目ID-->
+                <col id="subjectId" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--科目编码-->
+                <col id="subjectCode" mandatory="true" sortable="true"/>
+
+                <!--科目名称-->
+                <col id="subjectName" sortable="true"/>
+
+                <!--借贷方向-->
+                <col id="dcDirection" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--借方金额(本位币)-->
+                <col id="debitAmount" sortable="true"/>
+
+                <!--贷方金额(本位币)-->
+                <col id="creditAmount" sortable="true"/>
+
+                <!--币种-->
+                <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--汇率-->
+                <col id="exchangeRate" sortable="true"/>
+
+                <!--源币种金额-->
+                <col id="amountSource" sortable="true"/>
+
+                <!--本位币金额-->
+                <col id="amountFunctional" sortable="true"/>
+
+                <!--账套-->
+                <col id="acctSchemaId" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--核算组织-->
+                <col id="orgId" ui:number="true" sortable="true"/>
+
+                <!--摘要-->
+                <col id="memo" sortable="true"/>
+
+                <!--辅助-往来单位-->
+                <col id="partnerId" ui:number="true" sortable="true"/>
+
+                <!--辅助-部门-->
+                <col id="departmentId" ui:number="true" sortable="true"/>
+
+                <!--辅助-项目-->
+                <col id="projectId" ui:number="true" sortable="true"/>
+
+                <!--辅助-仓库-->
+                <col id="warehouseId" ui:number="true" sortable="true"/>
+
+                <!--辅助-物料-->
+                <col id="materialId" ui:number="true" sortable="true"/>
+
+                <!--业务类型-->
+                <col id="businessType" ui:number="true" sortable="true"/>
+
+                <!--逻辑删除版本-->
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--创建人-->
+                <col id="createdBy" mandatory="true" sortable="true"/>
+
+                <!--创建时间-->
+                <col id="createTime" mandatory="true" sortable="true"/>
+
+                <!--修改人-->
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+
+                <!--修改时间-->
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list" x:prototype="list" x:abstract="true"/>
+    </grids>
+
+    <forms>
+        <form id="view" editMode="view" title="查看-凭证分录行" i18n-en:title="">
+            <layout>
+ id[ID] voucherId[凭证ID]
+ lineNo[行号] subjectId[科目ID]
+ subjectCode[科目编码] subjectName[科目名称]
+ dcDirection[借贷方向] debitAmount[借方金额(本位币)]
+ creditAmount[贷方金额(本位币)] currencyId[币种]
+ exchangeRate[汇率] amountSource[源币种金额]
+ amountFunctional[本位币金额] acctSchemaId[账套]
+ orgId[核算组织] memo[摘要]
+ partnerId[辅助-往来单位] departmentId[辅助-部门]
+ projectId[辅助-项目] warehouseId[辅助-仓库]
+ materialId[辅助-物料] businessType[业务类型]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
+</layout>
+        </form>
+        <form id="add" editMode="add" title="新增-凭证分录行" i18n-en:title="">
+            <layout>
+ id[ID] voucherId[凭证ID]
+ lineNo[行号] subjectId[科目ID]
+ subjectCode[科目编码] subjectName[科目名称]
+ dcDirection[借贷方向] debitAmount[借方金额(本位币)]
+ creditAmount[贷方金额(本位币)] currencyId[币种]
+ exchangeRate[汇率] amountSource[源币种金额]
+ amountFunctional[本位币金额] acctSchemaId[账套]
+ orgId[核算组织] memo[摘要]
+ partnerId[辅助-往来单位] departmentId[辅助-部门]
+ projectId[辅助-项目] warehouseId[辅助-仓库]
+ materialId[辅助-物料] businessType[业务类型]
+</layout>
+        </form>
+        <form id="edit" editMode="edit" title="编辑-凭证分录行" i18n-en:title="">
+            <layout>
+ id[ID] voucherId[凭证ID]
+ lineNo[行号] subjectId[科目ID]
+ subjectCode[科目编码] subjectName[科目名称]
+ dcDirection[借贷方向] debitAmount[借方金额(本位币)]
+ creditAmount[贷方金额(本位币)] currencyId[币种]
+ exchangeRate[汇率] amountSource[源币种金额]
+ amountFunctional[本位币金额] acctSchemaId[账套]
+ orgId[核算组织] memo[摘要]
+ partnerId[辅助-往来单位] departmentId[辅助-部门]
+ projectId[辅助-项目] warehouseId[辅助-仓库]
+ materialId[辅助-物料] businessType[业务类型]
+ delVersion[逻辑删除版本] 
+</layout>
+        </form>
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-凭证分录行" i18n-en:title=""/>
+    </forms>
+
+    <pages>
+        <crud name="view-list" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpFinVoucherLine__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </crud>
+        <crud name="main" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpFinVoucherLine__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+            <listActions>
+                <action id="batch-delete-button" label="@i18n:common.batchDelete" batch="true">
+                    <api url="@mutation:ErpFinVoucherLine__batchDelete?ids=$ids"/>
+                    <confirmText>@i18n:common.confirmBatchDelete</confirmText>
+                </action>
+                <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
+                    <dialog page="add"/>
+                </action>
+            </listActions>
+            <rowActions>
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+                <action id="row-update-button" level="primary" label="@i18n:common.edit" x:abstract="true">
+                    <dialog page="update"/>
+                </action>
+                <action id="row-delete-button" level="danger" label="@i18n:common.delete" x:abstract="true">
+                    <api url="@mutation:ErpFinVoucherLine__delete?id=$id"/>
+                    <confirmText>@i18n:common.confirmDelete</confirmText>
+                </action>
+                <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
+                    <action id="row-update-button" label="@i18n:common.edit">
+                        <dialog page="update"/>
+                    </action>
+                    <action id="row-delete-button" label="@i18n:common.delete">
+                        <api url="@mutation:ErpFinVoucherLine__delete?id=$id"/>
+                        <confirmText>@i18n:common.confirmDelete</confirmText>
+                    </action>
+                </actionGroup>
+            </rowActions>
+        </crud>
+        <picker name="picker" grid="pick-list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table noOperations="true">
+                <api url="@query:ErpFinVoucherLine__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </picker>
+        <simple name="add" form="add">
+            <api url="@mutation:ErpFinVoucherLine__save/id"/>
+        </simple>
+        <simple name="view" form="view">
+            <initApi url="@query:ErpFinVoucherLine__get?id=$id" gql:selection="{@formSelection}"/>
+        </simple>
+        <simple name="update" form="edit">
+            <initApi url="@query:ErpFinVoucherLine__get?id=$id" gql:selection="{@formSelection}"/>
+            <api url="@mutation:ErpFinVoucherLine__update/id?id=$id" withFormData="true"/>
+        </simple>
+    </pages>
+</view>

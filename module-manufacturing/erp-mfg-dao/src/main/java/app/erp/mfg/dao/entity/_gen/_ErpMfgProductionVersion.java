@@ -97,6 +97,9 @@ public class _ErpMfgProductionVersion extends DynamicOrmEntity{
 
     
     /* relation:  */
+    public static final String PROP_NAME_product = "product";
+    
+    /* relation:  */
     public static final String PROP_NAME_bom = "bom";
     
     /* relation:  */
@@ -1023,6 +1026,29 @@ public class _ErpMfgProductionVersion extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdMaterial getProduct(){
+       return (app.erp.md.dao.entity.ErpMdMaterial)internalGetRefEntity(PROP_NAME_product);
+    }
+
+    public final void setProduct(app.erp.md.dao.entity.ErpMdMaterial refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setProductId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_product, refEntity,()->{
+           
+                           this.setProductId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
     /**
      * 
      */

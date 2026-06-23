@@ -1,4 +1,53 @@
 
+CREATE TABLE erp_md_employee(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  ORG_ID BIGINT NULL    COMMENT 'null',
+  STATUS INTEGER NULL    COMMENT 'null',
+  constraint PK_erp_md_employee primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_currency(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  SYMBOL VARCHAR(50) NULL    COMMENT 'null',
+  DECIMAL_PLACES INTEGER NULL    COMMENT 'null',
+  IS_FUNCTIONAL BOOLEAN NULL    COMMENT 'null',
+  constraint PK_erp_md_currency primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_partner(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  PARTNER_TYPE INTEGER NULL    COMMENT 'null',
+  STATUS INTEGER NULL    COMMENT 'null',
+  CREDIT_LIMIT VARCHAR(50) NULL    COMMENT 'null',
+  constraint PK_erp_md_partner primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_subject(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  PARENT_ID BIGINT NULL    COMMENT 'null',
+  SUBJECT_CLASS INTEGER NULL    COMMENT 'null',
+  DIRECTION INTEGER NULL    COMMENT 'null',
+  constraint PK_erp_md_subject primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_organization(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  ORG_TYPE INTEGER NULL    COMMENT 'null',
+  PARENT_ID BIGINT NULL    COMMENT 'null',
+  STATUS INTEGER NULL    COMMENT 'null',
+  constraint PK_erp_md_organization primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_prj_project_type(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '类型编码',
@@ -138,6 +187,9 @@ CREATE TABLE erp_prj_cost_collection(
   CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  EXCHANGE_RATE DECIMAL(20,8) default 1  NULL    COMMENT '汇率',
+  AMOUNT_SOURCE DECIMAL(20,4) default 0  NULL    COMMENT '源币种金额',
+  AMOUNT_FUNCTIONAL DECIMAL(20,4) default 0  NULL    COMMENT '本位币金额',
   constraint PK_erp_prj_cost_collection primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
@@ -253,6 +305,8 @@ CREATE TABLE erp_prj_billing(
   CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  AMOUNT_SOURCE DECIMAL(20,4) default 0  NULL    COMMENT '源币种金额',
+  AMOUNT_FUNCTIONAL DECIMAL(20,4) default 0  NULL    COMMENT '本位币金额',
   constraint PK_erp_prj_billing primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
@@ -275,6 +329,16 @@ CREATE TABLE erp_prj_billing_line(
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 
+   ALTER TABLE erp_md_employee COMMENT '职员';
+                
+   ALTER TABLE erp_md_currency COMMENT '币种';
+                
+   ALTER TABLE erp_md_partner COMMENT '往来单位';
+                
+   ALTER TABLE erp_md_subject COMMENT '会计科目';
+                
+   ALTER TABLE erp_md_organization COMMENT '组织';
+                
    ALTER TABLE erp_prj_project_type COMMENT '项目类型';
                 
    ALTER TABLE erp_prj_activity_type COMMENT '活动类型';

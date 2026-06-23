@@ -1,0 +1,23 @@
+{
+  "id": 0,
+  "materialId": 0,
+  "skuCode": "",
+  "barcode": "",
+  "uoMId": 0,
+  "conversionRate": 0.0,
+  "purchasePrice": 0.0,
+  "salePrice": 0.0,
+  "wholesalePrice": 0.0,
+  "retailPrice": 0.0,
+  "taxRateId": 0,
+  "isDefault": false,
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "material": null,
+  "uoM": null,
+  "taxRate": null
+}

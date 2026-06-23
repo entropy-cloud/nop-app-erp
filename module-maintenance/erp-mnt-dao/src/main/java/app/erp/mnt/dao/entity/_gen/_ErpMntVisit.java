@@ -96,8 +96,28 @@ public class _ErpMntVisit extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 19;
     
+    /* 业务组织: ORG_ID BIGINT */
+    public static final String PROP_NAME_orgId = "orgId";
+    public static final int PROP_ID_orgId = 20;
+    
+    /* 业务日期: BUSINESS_DATE DATE */
+    public static final String PROP_NAME_businessDate = "businessDate";
+    public static final int PROP_ID_businessDate = 21;
+    
+    /* 是否已过账: POSTED BOOLEAN */
+    public static final String PROP_NAME_posted = "posted";
+    public static final int PROP_ID_posted = 22;
+    
+    /* 过账时间: POSTED_AT TIMESTAMP */
+    public static final String PROP_NAME_postedAt = "postedAt";
+    public static final int PROP_ID_postedAt = 23;
+    
+    /* 过账人: POSTED_BY VARCHAR */
+    public static final String PROP_NAME_postedBy = "postedBy";
+    public static final int PROP_ID_postedBy = 24;
+    
 
-    private static int _PROP_ID_BOUND = 20;
+    private static int _PROP_ID_BOUND = 25;
 
     
     /* relation:  */
@@ -113,7 +133,7 @@ public class _ErpMntVisit extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[20];
+    private static final String[] PROP_ID_TO_NAME = new String[25];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -174,6 +194,21 @@ public class _ErpMntVisit extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
+          PROP_ID_TO_NAME[PROP_ID_orgId] = PROP_NAME_orgId;
+          PROP_NAME_TO_ID.put(PROP_NAME_orgId, PROP_ID_orgId);
+      
+          PROP_ID_TO_NAME[PROP_ID_businessDate] = PROP_NAME_businessDate;
+          PROP_NAME_TO_ID.put(PROP_NAME_businessDate, PROP_ID_businessDate);
+      
+          PROP_ID_TO_NAME[PROP_ID_posted] = PROP_NAME_posted;
+          PROP_NAME_TO_ID.put(PROP_NAME_posted, PROP_ID_posted);
+      
+          PROP_ID_TO_NAME[PROP_ID_postedAt] = PROP_NAME_postedAt;
+          PROP_NAME_TO_ID.put(PROP_NAME_postedAt, PROP_ID_postedAt);
+      
+          PROP_ID_TO_NAME[PROP_ID_postedBy] = PROP_NAME_postedBy;
+          PROP_NAME_TO_ID.put(PROP_NAME_postedBy, PROP_ID_postedBy);
+      
     }
 
     
@@ -233,6 +268,21 @@ public class _ErpMntVisit extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* 业务组织: ORG_ID */
+    private java.lang.Long _orgId;
+    
+    /* 业务日期: BUSINESS_DATE */
+    private java.time.LocalDate _businessDate;
+    
+    /* 是否已过账: POSTED */
+    private java.lang.Boolean _posted;
+    
+    /* 过账时间: POSTED_AT */
+    private java.sql.Timestamp _postedAt;
+    
+    /* 过账人: POSTED_BY */
+    private java.lang.String _postedBy;
     
 
     public _ErpMntVisit(){
@@ -364,6 +414,21 @@ public class _ErpMntVisit extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_orgId:
+               return getOrgId();
+        
+            case PROP_ID_businessDate:
+               return getBusinessDate();
+        
+            case PROP_ID_posted:
+               return getPosted();
+        
+            case PROP_ID_postedAt:
+               return getPostedAt();
+        
+            case PROP_ID_postedBy:
+               return getPostedBy();
         
            default:
               return super.orm_propValue(propId);
@@ -566,6 +631,56 @@ public class _ErpMntVisit extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_orgId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_orgId));
+               }
+               setOrgId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_businessDate:{
+               java.time.LocalDate typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLocalDate(value,
+                       err-> newTypeConversionError(PROP_NAME_businessDate));
+               }
+               setBusinessDate(typedValue);
+               break;
+            }
+        
+            case PROP_ID_posted:{
+               java.lang.Boolean typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBoolean(value,
+                       err-> newTypeConversionError(PROP_NAME_posted));
+               }
+               setPosted(typedValue);
+               break;
+            }
+        
+            case PROP_ID_postedAt:{
+               java.sql.Timestamp typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toTimestamp(value,
+                       err-> newTypeConversionError(PROP_NAME_postedAt));
+               }
+               setPostedAt(typedValue);
+               break;
+            }
+        
+            case PROP_ID_postedBy:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_postedBy));
+               }
+               setPostedBy(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -704,6 +819,41 @@ public class _ErpMntVisit extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_orgId:{
+               onInitProp(propId);
+               this._orgId = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_businessDate:{
+               onInitProp(propId);
+               this._businessDate = (java.time.LocalDate)value;
+               
+               break;
+            }
+        
+            case PROP_ID_posted:{
+               onInitProp(propId);
+               this._posted = (java.lang.Boolean)value;
+               
+               break;
+            }
+        
+            case PROP_ID_postedAt:{
+               onInitProp(propId);
+               this._postedAt = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_postedBy:{
+               onInitProp(propId);
+               this._postedBy = (java.lang.String)value;
                
                break;
             }
@@ -1071,6 +1221,101 @@ public class _ErpMntVisit extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_updateTime,value)){
             this._updateTime = value;
             internalClearRefs(PROP_ID_updateTime);
+            
+        }
+    }
+    
+    /**
+     * 业务组织: ORG_ID
+     */
+    public final java.lang.Long getOrgId(){
+         onPropGet(PROP_ID_orgId);
+         return _orgId;
+    }
+
+    /**
+     * 业务组织: ORG_ID
+     */
+    public final void setOrgId(java.lang.Long value){
+        if(onPropSet(PROP_ID_orgId,value)){
+            this._orgId = value;
+            internalClearRefs(PROP_ID_orgId);
+            
+        }
+    }
+    
+    /**
+     * 业务日期: BUSINESS_DATE
+     */
+    public final java.time.LocalDate getBusinessDate(){
+         onPropGet(PROP_ID_businessDate);
+         return _businessDate;
+    }
+
+    /**
+     * 业务日期: BUSINESS_DATE
+     */
+    public final void setBusinessDate(java.time.LocalDate value){
+        if(onPropSet(PROP_ID_businessDate,value)){
+            this._businessDate = value;
+            internalClearRefs(PROP_ID_businessDate);
+            
+        }
+    }
+    
+    /**
+     * 是否已过账: POSTED
+     */
+    public final java.lang.Boolean getPosted(){
+         onPropGet(PROP_ID_posted);
+         return _posted;
+    }
+
+    /**
+     * 是否已过账: POSTED
+     */
+    public final void setPosted(java.lang.Boolean value){
+        if(onPropSet(PROP_ID_posted,value)){
+            this._posted = value;
+            internalClearRefs(PROP_ID_posted);
+            
+        }
+    }
+    
+    /**
+     * 过账时间: POSTED_AT
+     */
+    public final java.sql.Timestamp getPostedAt(){
+         onPropGet(PROP_ID_postedAt);
+         return _postedAt;
+    }
+
+    /**
+     * 过账时间: POSTED_AT
+     */
+    public final void setPostedAt(java.sql.Timestamp value){
+        if(onPropSet(PROP_ID_postedAt,value)){
+            this._postedAt = value;
+            internalClearRefs(PROP_ID_postedAt);
+            
+        }
+    }
+    
+    /**
+     * 过账人: POSTED_BY
+     */
+    public final java.lang.String getPostedBy(){
+         onPropGet(PROP_ID_postedBy);
+         return _postedBy;
+    }
+
+    /**
+     * 过账人: POSTED_BY
+     */
+    public final void setPostedBy(java.lang.String value){
+        if(onPropSet(PROP_ID_postedBy,value)){
+            this._postedBy = value;
+            internalClearRefs(PROP_ID_postedBy);
             
         }
     }

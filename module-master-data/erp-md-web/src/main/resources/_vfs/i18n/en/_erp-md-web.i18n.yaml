@@ -1,0 +1,124 @@
+site:
+  resource:
+    ErpMdAcctSchema-main:
+      displayName: ''
+    ErpMdAcctSchemaCoa-main:
+      displayName: ''
+    ErpMdBankAccount-main:
+      displayName: ''
+    ErpMdCurrency-main:
+      displayName: ''
+    ErpMdEmployee-main:
+      displayName: ''
+    ErpMdExchangeRate-main:
+      displayName: ''
+    ErpMdLocation-main:
+      displayName: ''
+    ErpMdMaterial-main:
+      displayName: ''
+    ErpMdMaterialCategory-main:
+      displayName: ''
+    ErpMdMaterialSku-main:
+      displayName: ''
+    ErpMdOrganization-main:
+      displayName: ''
+    ErpMdPartner-main:
+      displayName: ''
+    ErpMdPartnerAddress-main:
+      displayName: ''
+    ErpMdPartnerContact-main:
+      displayName: ''
+    ErpMdSettlementMethod-main:
+      displayName: ''
+    ErpMdSubject-main:
+      displayName: ''
+    ErpMdTaxRate-main:
+      displayName: ''
+    ErpMdUoM-main:
+      displayName: ''
+    ErpMdUoMConversion-main:
+      displayName: ''
+    ErpMdWarehouse-main:
+      displayName: ''
+    FNPT:ErpMdAcctSchema:mutation:
+      displayName: ''
+    FNPT:ErpMdAcctSchema:query:
+      displayName: ''
+    FNPT:ErpMdAcctSchemaCoa:mutation:
+      displayName: ''
+    FNPT:ErpMdAcctSchemaCoa:query:
+      displayName: ''
+    FNPT:ErpMdBankAccount:mutation:
+      displayName: ''
+    FNPT:ErpMdBankAccount:query:
+      displayName: ''
+    FNPT:ErpMdCurrency:mutation:
+      displayName: ''
+    FNPT:ErpMdCurrency:query:
+      displayName: ''
+    FNPT:ErpMdEmployee:mutation:
+      displayName: ''
+    FNPT:ErpMdEmployee:query:
+      displayName: ''
+    FNPT:ErpMdExchangeRate:mutation:
+      displayName: ''
+    FNPT:ErpMdExchangeRate:query:
+      displayName: ''
+    FNPT:ErpMdLocation:mutation:
+      displayName: ''
+    FNPT:ErpMdLocation:query:
+      displayName: ''
+    FNPT:ErpMdMaterial:mutation:
+      displayName: ''
+    FNPT:ErpMdMaterial:query:
+      displayName: ''
+    FNPT:ErpMdMaterialCategory:mutation:
+      displayName: ''
+    FNPT:ErpMdMaterialCategory:query:
+      displayName: ''
+    FNPT:ErpMdMaterialSku:mutation:
+      displayName: ''
+    FNPT:ErpMdMaterialSku:query:
+      displayName: ''
+    FNPT:ErpMdOrganization:mutation:
+      displayName: ''
+    FNPT:ErpMdOrganization:query:
+      displayName: ''
+    FNPT:ErpMdPartner:mutation:
+      displayName: ''
+    FNPT:ErpMdPartner:query:
+      displayName: ''
+    FNPT:ErpMdPartnerAddress:mutation:
+      displayName: ''
+    FNPT:ErpMdPartnerAddress:query:
+      displayName: ''
+    FNPT:ErpMdPartnerContact:mutation:
+      displayName: ''
+    FNPT:ErpMdPartnerContact:query:
+      displayName: ''
+    FNPT:ErpMdSettlementMethod:mutation:
+      displayName: ''
+    FNPT:ErpMdSettlementMethod:query:
+      displayName: ''
+    FNPT:ErpMdSubject:mutation:
+      displayName: ''
+    FNPT:ErpMdSubject:query:
+      displayName: ''
+    FNPT:ErpMdTaxRate:mutation:
+      displayName: ''
+    FNPT:ErpMdTaxRate:query:
+      displayName: ''
+    FNPT:ErpMdUoM:mutation:
+      displayName: ''
+    FNPT:ErpMdUoM:query:
+      displayName: ''
+    FNPT:ErpMdUoMConversion:mutation:
+      displayName: ''
+    FNPT:ErpMdUoMConversion:query:
+      displayName: ''
+    FNPT:ErpMdWarehouse:mutation:
+      displayName: ''
+    FNPT:ErpMdWarehouse:query:
+      displayName: ''
+    test-orm-erp-md:
+      displayName: Test erp-md

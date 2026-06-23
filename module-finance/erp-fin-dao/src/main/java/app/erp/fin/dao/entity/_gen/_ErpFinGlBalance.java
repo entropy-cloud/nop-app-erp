@@ -121,7 +121,16 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
 
     
     /* relation:  */
+    public static final String PROP_NAME_acctSchema = "acctSchema";
+    
+    /* relation:  */
     public static final String PROP_NAME_period = "period";
+    
+    /* relation:  */
+    public static final String PROP_NAME_subject = "subject";
+    
+    /* relation:  */
+    public static final String PROP_NAME_currency = "currency";
     
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
@@ -1317,6 +1326,29 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
     /**
      * 
      */
+    public final app.erp.md.dao.entity.ErpMdAcctSchema getAcctSchema(){
+       return (app.erp.md.dao.entity.ErpMdAcctSchema)internalGetRefEntity(PROP_NAME_acctSchema);
+    }
+
+    public final void setAcctSchema(app.erp.md.dao.entity.ErpMdAcctSchema refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setAcctSchemaId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_acctSchema, refEntity,()->{
+           
+                           this.setAcctSchemaId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
     public final app.erp.fin.dao.entity.ErpFinAccountingPeriod getPeriod(){
        return (app.erp.fin.dao.entity.ErpFinAccountingPeriod)internalGetRefEntity(PROP_NAME_period);
     }
@@ -1331,6 +1363,52 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_period, refEntity,()->{
            
                            this.setPeriodId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdSubject getSubject(){
+       return (app.erp.md.dao.entity.ErpMdSubject)internalGetRefEntity(PROP_NAME_subject);
+    }
+
+    public final void setSubject(app.erp.md.dao.entity.ErpMdSubject refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setSubjectId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_subject, refEntity,()->{
+           
+                           this.setSubjectId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdCurrency getCurrency(){
+       return (app.erp.md.dao.entity.ErpMdCurrency)internalGetRefEntity(PROP_NAME_currency);
+    }
+
+    public final void setCurrency(app.erp.md.dao.entity.ErpMdCurrency refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCurrencyId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_currency, refEntity,()->{
+           
+                           this.setCurrencyId(refEntity.getId());
                        
            });
            }

@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:schema="/nop/schema/xui/xview.xdef" bizObjName="ErpQaCalibration" xmlns:i18n-en="i18n-en"
+      xmlns:x="/nop/schema/xdsl.xdef" xmlns:j="j" xmlns:c="c" xmlns:gql="gql" xmlns:view-gen="view-gen" xmlns:xpl="xpl">
+
+    <objMeta>/erp/qa/model/ErpQaCalibration/ErpQaCalibration.xmeta</objMeta>
+
+    <controlLib>/nop/web/xlib/control.xlib</controlLib>
+
+    <x:gen-extends>
+        <view-gen:DefaultViewGenExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <view-gen:DefaultViewPostExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:post-extends>
+
+    <grids>
+        <grid id="list" x:abstract="true">
+            <cols>
+
+                <!--ID-->
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--单号-->
+                <col id="code" mandatory="true" sortable="true"/>
+
+                <!--业务组织-->
+                <col id="orgId" ui:number="true" sortable="true"/>
+
+                <!--量具/设备名称-->
+                <col id="instrumentName" mandatory="true" sortable="true"/>
+
+                <!--量具编号-->
+                <col id="instrumentCode" sortable="true"/>
+
+                <!--校准日期-->
+                <col id="businessDate" mandatory="true" sortable="true"/>
+
+                <!--参考标准-->
+                <col id="standardRef" sortable="true"/>
+
+                <!--测量值-->
+                <col id="measuredValue" sortable="true"/>
+
+                <!--目标值-->
+                <col id="targetValue" sortable="true"/>
+
+                <!--允差-->
+                <col id="tolerance" sortable="true"/>
+
+                <!--校准结果-->
+                <col id="result" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--下次校准日期-->
+                <col id="nextCalibrationDate" sortable="true"/>
+
+                <!--校准人(职员)-->
+                <col id="calibratedBy" ui:number="true" sortable="true"/>
+
+                <!--单据状态-->
+                <col id="docStatus" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--审核状态-->
+                <col id="approveStatus" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--备注-->
+                <col id="remark" sortable="true"/>
+
+                <!--逻辑删除版本-->
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--创建人-->
+                <col id="createdBy" mandatory="true" sortable="true"/>
+
+                <!--创建时间-->
+                <col id="createTime" mandatory="true" sortable="true"/>
+
+                <!--修改人-->
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+
+                <!--修改时间-->
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list" x:prototype="list" x:abstract="true"/>
+    </grids>
+
+    <forms>
+        <form id="view" editMode="view" title="查看-量具校准" i18n-en:title="">
+            <layout>
+ id[ID] code[单号]
+ orgId[业务组织] instrumentName[量具/设备名称]
+ instrumentCode[量具编号] businessDate[校准日期]
+ standardRef[参考标准] measuredValue[测量值]
+ targetValue[目标值] tolerance[允差]
+ result[校准结果] nextCalibrationDate[下次校准日期]
+ calibratedBy[校准人(职员)] docStatus[单据状态]
+ approveStatus[审核状态] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
+</layout>
+        </form>
+        <form id="add" editMode="add" title="新增-量具校准" i18n-en:title="">
+            <layout>
+ id[ID] code[单号]
+ orgId[业务组织] instrumentName[量具/设备名称]
+ instrumentCode[量具编号] businessDate[校准日期]
+ standardRef[参考标准] measuredValue[测量值]
+ targetValue[目标值] tolerance[允差]
+ result[校准结果] nextCalibrationDate[下次校准日期]
+ calibratedBy[校准人(职员)] docStatus[单据状态]
+ approveStatus[审核状态] remark[备注]
+</layout>
+        </form>
+        <form id="edit" editMode="edit" title="编辑-量具校准" i18n-en:title="">
+            <layout>
+ id[ID] code[单号]
+ orgId[业务组织] instrumentName[量具/设备名称]
+ instrumentCode[量具编号] businessDate[校准日期]
+ standardRef[参考标准] measuredValue[测量值]
+ targetValue[目标值] tolerance[允差]
+ result[校准结果] nextCalibrationDate[下次校准日期]
+ calibratedBy[校准人(职员)] docStatus[单据状态]
+ approveStatus[审核状态] remark[备注]
+ delVersion[逻辑删除版本] 
+</layout>
+        </form>
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-量具校准" i18n-en:title=""/>
+    </forms>
+
+    <pages>
+        <crud name="view-list" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpQaCalibration__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </crud>
+        <crud name="main" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpQaCalibration__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+            <listActions>
+                <action id="batch-delete-button" label="@i18n:common.batchDelete" batch="true">
+                    <api url="@mutation:ErpQaCalibration__batchDelete?ids=$ids"/>
+                    <confirmText>@i18n:common.confirmBatchDelete</confirmText>
+                </action>
+                <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
+                    <dialog page="add"/>
+                </action>
+            </listActions>
+            <rowActions>
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+                <action id="row-update-button" level="primary" label="@i18n:common.edit" x:abstract="true">
+                    <dialog page="update"/>
+                </action>
+                <action id="row-delete-button" level="danger" label="@i18n:common.delete" x:abstract="true">
+                    <api url="@mutation:ErpQaCalibration__delete?id=$id"/>
+                    <confirmText>@i18n:common.confirmDelete</confirmText>
+                </action>
+                <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
+                    <action id="row-update-button" label="@i18n:common.edit">
+                        <dialog page="update"/>
+                    </action>
+                    <action id="row-delete-button" label="@i18n:common.delete">
+                        <api url="@mutation:ErpQaCalibration__delete?id=$id"/>
+                        <confirmText>@i18n:common.confirmDelete</confirmText>
+                    </action>
+                </actionGroup>
+            </rowActions>
+        </crud>
+        <picker name="picker" grid="pick-list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table noOperations="true">
+                <api url="@query:ErpQaCalibration__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </picker>
+        <simple name="add" form="add">
+            <api url="@mutation:ErpQaCalibration__save/id"/>
+        </simple>
+        <simple name="view" form="view">
+            <initApi url="@query:ErpQaCalibration__get?id=$id" gql:selection="{@formSelection}"/>
+        </simple>
+        <simple name="update" form="edit">
+            <initApi url="@query:ErpQaCalibration__get?id=$id" gql:selection="{@formSelection}"/>
+            <api url="@mutation:ErpQaCalibration__update/id?id=$id" withFormData="true"/>
+        </simple>
+    </pages>
+</view>

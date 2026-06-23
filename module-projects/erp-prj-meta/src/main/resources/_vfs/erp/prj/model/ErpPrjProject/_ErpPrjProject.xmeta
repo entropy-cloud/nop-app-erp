@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen" xmlns:biz="biz"
+      displayName="项目" tagSet="gid,erp.projects" xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.prj.dao.entity.ErpPrjProject</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" tagSet="seq-default" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="code" displayName="项目编码" propId="2" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="projectCode" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="name" displayName="项目名称" propId="3" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="orgId" displayName="业务组织" propId="4" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="projectTypeId" displayName="项目类型" propId="5" queryable="true" sortable="true" insertable="true"
+              updatable="true" ext:relation="projectType">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="customerId" displayName="客户" propId="6" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="currencyId" displayName="币种" propId="7" queryable="true" sortable="true" insertable="true"
+              updatable="true" ext:relation="currency">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="startDate" displayName="开始日期" propId="8" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="endDate" displayName="结束日期" propId="9" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="budget" displayName="预算总额" propId="10" queryable="true" sortable="true" insertable="true"
+              updatable="true" defaultValue="0">
+            <schema domain="budget" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="committedCost" displayName="已承诺成本" propId="11" queryable="true" sortable="true" insertable="true"
+              updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="actualCost" displayName="实际成本" propId="12" queryable="true" sortable="true" insertable="true"
+              updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="billedAmount" displayName="已开票金额" propId="13" queryable="true" sortable="true" insertable="true"
+              updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="status" displayName="状态" propId="14" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.lang.Integer" dict="erp-prj/project-status"/>
+        </prop>
+        <prop name="managerId" displayName="项目经理(职员)" propId="15" queryable="true" sortable="true" insertable="true"
+              updatable="true" ext:relation="manager">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="16" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="17" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="18" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="19" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="20" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="21" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="22" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="projectType" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="projectTypeId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpPrjProjectType"/>
+        </prop>
+        <prop name="manager" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="managerId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdEmployee"/>
+        </prop>
+        <prop name="currency" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="currencyId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdCurrency"/>
+        </prop>
+        <prop name="tasks" tagSet="pub,cascade-delete,insertable,updatable" ext:kind="to-many" internal="true"
+              ext:joinLeftProp="id" ext:joinRightProp="projectId" insertable="true" updatable="true" lazy="true">
+            <schema>
+                <item bizObjName="ErpPrjTask"/>
+            </schema>
+        </prop>
+        <prop name="timesheets" tagSet="pub,cascade-delete,insertable,updatable" ext:kind="to-many" internal="true"
+              ext:joinLeftProp="id" ext:joinRightProp="projectId" insertable="true" updatable="true" lazy="true">
+            <schema>
+                <item bizObjName="ErpPrjTimesheet"/>
+            </schema>
+        </prop>
+        <prop name="members" tagSet="pub,cascade-delete,insertable,updatable" ext:kind="to-many" internal="true"
+              ext:joinLeftProp="id" ext:joinRightProp="projectId" insertable="true" updatable="true" lazy="true">
+            <schema>
+                <item bizObjName="ErpPrjProjectUser"/>
+            </schema>
+        </prop>
+        <prop name="budgets" tagSet="pub,cascade-delete,insertable,updatable" ext:kind="to-many" internal="true"
+              ext:joinLeftProp="id" ext:joinRightProp="projectId" insertable="true" updatable="true" lazy="true">
+            <schema>
+                <item bizObjName="ErpPrjBudget"/>
+            </schema>
+        </prop>
+        <prop name="milestones" tagSet="pub,cascade-delete,insertable,updatable" ext:kind="to-many" internal="true"
+              ext:joinLeftProp="id" ext:joinRightProp="projectId" insertable="true" updatable="true" lazy="true">
+            <schema>
+                <item bizObjName="ErpPrjMilestone"/>
+            </schema>
+        </prop>
+    </props>
+</meta>

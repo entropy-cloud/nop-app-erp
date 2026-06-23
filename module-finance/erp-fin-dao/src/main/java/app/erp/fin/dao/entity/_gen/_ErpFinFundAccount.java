@@ -100,6 +100,12 @@ public class _ErpFinFundAccount extends DynamicOrmEntity{
     private static int _PROP_ID_BOUND = 20;
 
     
+    /* relation:  */
+    public static final String PROP_NAME_currency = "currency";
+    
+    /* relation:  */
+    public static final String PROP_NAME_subject = "subject";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1066,5 +1072,51 @@ public class _ErpFinFundAccount extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdCurrency getCurrency(){
+       return (app.erp.md.dao.entity.ErpMdCurrency)internalGetRefEntity(PROP_NAME_currency);
+    }
+
+    public final void setCurrency(app.erp.md.dao.entity.ErpMdCurrency refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCurrencyId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_currency, refEntity,()->{
+           
+                           this.setCurrencyId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdSubject getSubject(){
+       return (app.erp.md.dao.entity.ErpMdSubject)internalGetRefEntity(PROP_NAME_subject);
+    }
+
+    public final void setSubject(app.erp.md.dao.entity.ErpMdSubject refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setSubjectId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_subject, refEntity,()->{
+           
+                           this.setSubjectId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
 }
 // resume CPD analysis - CPD-ON

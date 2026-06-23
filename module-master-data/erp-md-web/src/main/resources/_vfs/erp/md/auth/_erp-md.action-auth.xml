@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
+
+    <site id="main">
+        <resource id="test-orm-erp-md" displayName="测试erp-md" i18n-en:displayName="Test erp-md" icon="ion:grid-outline"
+                  resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-md" component="layouts/default/index">
+            <children>
+                <resource id="ErpMdAcctSchema-main" displayName="会计核算表(账套)" orderNo="10001" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/md/pages/ErpMdAcctSchema/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMdAcctSchema:query" displayName="查询会计核算表(账套)" i18n-en:displayName=""
+                                  orderNo="10002" resourceType="FNPT">
+                            <permissions>ErpMdAcctSchema:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMdAcctSchema:mutation" displayName="修改会计核算表(账套)" i18n-en:displayName=""
+                                  orderNo="10003" resourceType="FNPT">
+                            <permissions>ErpMdAcctSchema:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMdAcctSchemaCoa-main" displayName="账套科目表" orderNo="10004" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/md/pages/ErpMdAcctSchemaCoa/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMdAcctSchemaCoa:query" displayName="查询账套科目表" i18n-en:displayName=""
+                                  orderNo="10005" resourceType="FNPT">
+                            <permissions>ErpMdAcctSchemaCoa:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMdAcctSchemaCoa:mutation" displayName="修改账套科目表" i18n-en:displayName=""
+                                  orderNo="10006" resourceType="FNPT">
+                            <permissions>ErpMdAcctSchemaCoa:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMdBankAccount-main" displayName="银行账户" orderNo="10007" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/md/pages/ErpMdBankAccount/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMdBankAccount:query" displayName="查询银行账户" i18n-en:displayName=""
+                                  orderNo="10008" resourceType="FNPT">
+                            <permissions>ErpMdBankAccount:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMdBankAccount:mutation" displayName="修改银行账户" i18n-en:displayName=""
+                                  orderNo="10009" resourceType="FNPT">
+                            <permissions>ErpMdBankAccount:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMdCurrency-main" displayName="币种" orderNo="10010" i18n-en:displayName="" icon="blocks"
+                          component="AMIS" resourceType="SUBM" url="/erp/md/pages/ErpMdCurrency/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMdCurrency:query" displayName="查询币种" i18n-en:displayName=""
+                                  orderNo="10011" resourceType="FNPT">
+                            <permissions>ErpMdCurrency:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMdCurrency:mutation" displayName="修改币种" i18n-en:displayName=""
+                                  orderNo="10012" resourceType="FNPT">
+                            <permissions>ErpMdCurrency:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMdEmployee-main" displayName="职员" orderNo="10013" i18n-en:displayName="" icon="blocks"
+                          component="AMIS" resourceType="SUBM" url="/erp/md/pages/ErpMdEmployee/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMdEmployee:query" displayName="查询职员" i18n-en:displayName=""
+                                  orderNo="10014" resourceType="FNPT">
+                            <permissions>ErpMdEmployee:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMdEmployee:mutation" displayName="修改职员" i18n-en:displayName=""
+                                  orderNo="10015" resourceType="FNPT">
+                            <permissions>ErpMdEmployee:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMdExchangeRate-main" displayName="汇率" orderNo="10016" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/md/pages/ErpMdExchangeRate/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMdExchangeRate:query" displayName="查询汇率" i18n-en:displayName=""
+                                  orderNo="10017" resourceType="FNPT">
+                            <permissions>ErpMdExchangeRate:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMdExchangeRate:mutation" displayName="修改汇率" i18n-en:displayName=""
+                                  orderNo="10018" resourceType="FNPT">
+                            <permissions>ErpMdExchangeRate:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMdLocation-main" displayName="库位" orderNo="10019" i18n-en:displayName="" icon="blocks"
+                          component="AMIS" resourceType="SUBM" url="/erp/md/pages/ErpMdLocation/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMdLocation:query" displayName="查询库位" i18n-en:displayName=""
+                                  orderNo="10020" resourceType="FNPT">
+                            <permissions>ErpMdLocation:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMdLocation:mutation" displayName="修改库位" i18n-en:displayName=""
+                                  orderNo="10021" resourceType="FNPT">
+                            <permissions>ErpMdLocation:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMdMaterial-main" displayName="物料" orderNo="10022" i18n-en:displayName="" icon="blocks"
+                          component="AMIS" resourceType="SUBM" url="/erp/md/pages/ErpMdMaterial/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMdMaterial:query" displayName="查询物料" i18n-en:displayName=""
+                                  orderNo="10023" resourceType="FNPT">
+                            <permissions>ErpMdMaterial:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMdMaterial:mutation" displayName="修改物料" i18n-en:displayName=""
+                                  orderNo="10024" resourceType="FNPT">
+                            <permissions>ErpMdMaterial:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMdMaterialCategory-main" displayName="物料分类" orderNo="10025" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/md/pages/ErpMdMaterialCategory/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMdMaterialCategory:query" displayName="查询物料分类" i18n-en:displayName=""
+                                  orderNo="10026" resourceType="FNPT">
+                            <permissions>ErpMdMaterialCategory:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMdMaterialCategory:mutation" displayName="修改物料分类" i18n-en:displayName=""
+                                  orderNo="10027" resourceType="FNPT">
+                            <permissions>ErpMdMaterialCategory:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMdMaterialSku-main" displayName="物料SKU" orderNo="10028" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/md/pages/ErpMdMaterialSku/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMdMaterialSku:query" displayName="查询物料SKU" i18n-en:displayName=""
+                                  orderNo="10029" resourceType="FNPT">
+                            <permissions>ErpMdMaterialSku:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMdMaterialSku:mutation" displayName="修改物料SKU" i18n-en:displayName=""
+                                  orderNo="10030" resourceType="FNPT">
+                            <permissions>ErpMdMaterialSku:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMdOrganization-main" displayName="组织" orderNo="10031" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/md/pages/ErpMdOrganization/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMdOrganization:query" displayName="查询组织" i18n-en:displayName=""
+                                  orderNo="10032" resourceType="FNPT">
+                            <permissions>ErpMdOrganization:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMdOrganization:mutation" displayName="修改组织" i18n-en:displayName=""
+                                  orderNo="10033" resourceType="FNPT">
+                            <permissions>ErpMdOrganization:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMdPartner-main" displayName="往来单位" orderNo="10034" i18n-en:displayName="" icon="blocks"
+                          component="AMIS" resourceType="SUBM" url="/erp/md/pages/ErpMdPartner/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMdPartner:query" displayName="查询往来单位" i18n-en:displayName=""
+                                  orderNo="10035" resourceType="FNPT">
+                            <permissions>ErpMdPartner:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMdPartner:mutation" displayName="修改往来单位" i18n-en:displayName=""
+                                  orderNo="10036" resourceType="FNPT">
+                            <permissions>ErpMdPartner:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMdPartnerAddress-main" displayName="往来单位地址" orderNo="10037" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/md/pages/ErpMdPartnerAddress/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMdPartnerAddress:query" displayName="查询往来单位地址" i18n-en:displayName=""
+                                  orderNo="10038" resourceType="FNPT">
+                            <permissions>ErpMdPartnerAddress:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMdPartnerAddress:mutation" displayName="修改往来单位地址" i18n-en:displayName=""
+                                  orderNo="10039" resourceType="FNPT">
+                            <permissions>ErpMdPartnerAddress:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMdPartnerContact-main" displayName="往来单位联系人" orderNo="10040" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/md/pages/ErpMdPartnerContact/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMdPartnerContact:query" displayName="查询往来单位联系人" i18n-en:displayName=""
+                                  orderNo="10041" resourceType="FNPT">
+                            <permissions>ErpMdPartnerContact:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMdPartnerContact:mutation" displayName="修改往来单位联系人" i18n-en:displayName=""
+                                  orderNo="10042" resourceType="FNPT">
+                            <permissions>ErpMdPartnerContact:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMdSettlementMethod-main" displayName="结算方式" orderNo="10043" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/md/pages/ErpMdSettlementMethod/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMdSettlementMethod:query" displayName="查询结算方式" i18n-en:displayName=""
+                                  orderNo="10044" resourceType="FNPT">
+                            <permissions>ErpMdSettlementMethod:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMdSettlementMethod:mutation" displayName="修改结算方式" i18n-en:displayName=""
+                                  orderNo="10045" resourceType="FNPT">
+                            <permissions>ErpMdSettlementMethod:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMdSubject-main" displayName="会计科目" orderNo="10046" i18n-en:displayName="" icon="blocks"
+                          component="AMIS" resourceType="SUBM" url="/erp/md/pages/ErpMdSubject/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMdSubject:query" displayName="查询会计科目" i18n-en:displayName=""
+                                  orderNo="10047" resourceType="FNPT">
+                            <permissions>ErpMdSubject:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMdSubject:mutation" displayName="修改会计科目" i18n-en:displayName=""
+                                  orderNo="10048" resourceType="FNPT">
+                            <permissions>ErpMdSubject:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMdTaxRate-main" displayName="税率" orderNo="10049" i18n-en:displayName="" icon="blocks"
+                          component="AMIS" resourceType="SUBM" url="/erp/md/pages/ErpMdTaxRate/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMdTaxRate:query" displayName="查询税率" i18n-en:displayName="" orderNo="10050"
+                                  resourceType="FNPT">
+                            <permissions>ErpMdTaxRate:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMdTaxRate:mutation" displayName="修改税率" i18n-en:displayName=""
+                                  orderNo="10051" resourceType="FNPT">
+                            <permissions>ErpMdTaxRate:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMdUoM-main" displayName="计量单位" orderNo="10052" i18n-en:displayName="" icon="blocks"
+                          component="AMIS" resourceType="SUBM" url="/erp/md/pages/ErpMdUoM/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMdUoM:query" displayName="查询计量单位" i18n-en:displayName="" orderNo="10053"
+                                  resourceType="FNPT">
+                            <permissions>ErpMdUoM:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMdUoM:mutation" displayName="修改计量单位" i18n-en:displayName=""
+                                  orderNo="10054" resourceType="FNPT">
+                            <permissions>ErpMdUoM:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMdUoMConversion-main" displayName="单位换算" orderNo="10055" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/md/pages/ErpMdUoMConversion/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMdUoMConversion:query" displayName="查询单位换算" i18n-en:displayName=""
+                                  orderNo="10056" resourceType="FNPT">
+                            <permissions>ErpMdUoMConversion:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMdUoMConversion:mutation" displayName="修改单位换算" i18n-en:displayName=""
+                                  orderNo="10057" resourceType="FNPT">
+                            <permissions>ErpMdUoMConversion:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMdWarehouse-main" displayName="仓库" orderNo="10058" i18n-en:displayName="" icon="blocks"
+                          component="AMIS" resourceType="SUBM" url="/erp/md/pages/ErpMdWarehouse/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMdWarehouse:query" displayName="查询仓库" i18n-en:displayName=""
+                                  orderNo="10059" resourceType="FNPT">
+                            <permissions>ErpMdWarehouse:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMdWarehouse:mutation" displayName="修改仓库" i18n-en:displayName=""
+                                  orderNo="10060" resourceType="FNPT">
+                            <permissions>ErpMdWarehouse:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
+</auth>

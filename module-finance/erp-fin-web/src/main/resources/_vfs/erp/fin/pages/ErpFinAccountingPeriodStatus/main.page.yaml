@@ -1,0 +1,3 @@
+
+x:gen-extends: |
+    <web:GenPage view="ErpFinAccountingPeriodStatus.view.xml" page="main" xpl:lib="/nop/web/xlib/web.xlib" />

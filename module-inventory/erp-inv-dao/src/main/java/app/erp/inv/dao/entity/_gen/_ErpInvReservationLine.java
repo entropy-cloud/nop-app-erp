@@ -99,6 +99,15 @@ public class _ErpInvReservationLine extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_reservation = "reservation";
     
+    /* relation:  */
+    public static final String PROP_NAME_material = "material";
+    
+    /* relation:  */
+    public static final String PROP_NAME_sku = "sku";
+    
+    /* relation:  */
+    public static final String PROP_NAME_warehouse = "warehouse";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1037,6 +1046,75 @@ public class _ErpInvReservationLine extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_reservation, refEntity,()->{
            
                            this.setReservationId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdMaterial getMaterial(){
+       return (app.erp.md.dao.entity.ErpMdMaterial)internalGetRefEntity(PROP_NAME_material);
+    }
+
+    public final void setMaterial(app.erp.md.dao.entity.ErpMdMaterial refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setMaterialId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_material, refEntity,()->{
+           
+                           this.setMaterialId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdMaterialSku getSku(){
+       return (app.erp.md.dao.entity.ErpMdMaterialSku)internalGetRefEntity(PROP_NAME_sku);
+    }
+
+    public final void setSku(app.erp.md.dao.entity.ErpMdMaterialSku refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setSkuId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_sku, refEntity,()->{
+           
+                           this.setSkuId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdWarehouse getWarehouse(){
+       return (app.erp.md.dao.entity.ErpMdWarehouse)internalGetRefEntity(PROP_NAME_warehouse);
+    }
+
+    public final void setWarehouse(app.erp.md.dao.entity.ErpMdWarehouse refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setWarehouseId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_warehouse, refEntity,()->{
+           
+                           this.setWarehouseId(refEntity.getId());
                        
            });
            }

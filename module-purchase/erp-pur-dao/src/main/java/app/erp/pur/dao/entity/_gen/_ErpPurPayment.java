@@ -141,6 +141,15 @@ public class _ErpPurPayment extends DynamicOrmEntity{
 
     
     /* relation:  */
+    public static final String PROP_NAME_supplier = "supplier";
+    
+    /* relation:  */
+    public static final String PROP_NAME_currency = "currency";
+    
+    /* relation:  */
+    public static final String PROP_NAME_settlementMethod = "settlementMethod";
+    
+    /* relation:  */
     public static final String PROP_NAME_lines = "lines";
     
 
@@ -1559,6 +1568,75 @@ public class _ErpPurPayment extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdPartner getSupplier(){
+       return (app.erp.md.dao.entity.ErpMdPartner)internalGetRefEntity(PROP_NAME_supplier);
+    }
+
+    public final void setSupplier(app.erp.md.dao.entity.ErpMdPartner refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setSupplierId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_supplier, refEntity,()->{
+           
+                           this.setSupplierId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdCurrency getCurrency(){
+       return (app.erp.md.dao.entity.ErpMdCurrency)internalGetRefEntity(PROP_NAME_currency);
+    }
+
+    public final void setCurrency(app.erp.md.dao.entity.ErpMdCurrency refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCurrencyId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_currency, refEntity,()->{
+           
+                           this.setCurrencyId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdSettlementMethod getSettlementMethod(){
+       return (app.erp.md.dao.entity.ErpMdSettlementMethod)internalGetRefEntity(PROP_NAME_settlementMethod);
+    }
+
+    public final void setSettlementMethod(app.erp.md.dao.entity.ErpMdSettlementMethod refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setSettlementMethodId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_settlementMethod, refEntity,()->{
+           
+                           this.setSettlementMethodId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
     private final OrmEntitySet<app.erp.pur.dao.entity.ErpPurPaymentLine> _lines = new OrmEntitySet<>(this, PROP_NAME_lines,
         null, null,app.erp.pur.dao.entity.ErpPurPaymentLine.class);
 

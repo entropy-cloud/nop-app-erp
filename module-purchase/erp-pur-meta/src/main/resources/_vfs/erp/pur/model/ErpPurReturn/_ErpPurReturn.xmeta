@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen" xmlns:biz="biz"
+      displayName="采购退货单" tagSet="gid,erp.purchase" xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.pur.dao.entity.ErpPurReturn</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" tagSet="seq-default" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="code" displayName="单号" propId="2" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="orderCode" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="orgId" displayName="业务组织" propId="3" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="receiveId" displayName="入库单" propId="4" queryable="true" sortable="true" insertable="true"
+              updatable="true" ext:relation="receive">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="supplierId" displayName="供应商" propId="5" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true" ext:relation="supplier">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="warehouseId" displayName="出库仓库" propId="6" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true" ext:relation="warehouse">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="businessDate" displayName="退货日期" propId="7" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="currencyId" displayName="币种" propId="8" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="exchangeRate" displayName="汇率" propId="9" queryable="true" sortable="true" insertable="true"
+              updatable="true" defaultValue="1">
+            <schema domain="exchangeRate" type="java.lang.String" precision="20" scale="8"/>
+        </prop>
+        <prop name="amountSource" displayName="合计金额(源币)" propId="10" queryable="true" sortable="true" insertable="true"
+              updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="amountFunctional" displayName="合计金额(本位币)" propId="11" queryable="true" sortable="true"
+              insertable="true" updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="totalAmount" displayName="合计金额(不含税)" propId="12" queryable="true" sortable="true" insertable="true"
+              updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="totalTaxAmount" displayName="合计税额" propId="13" queryable="true" sortable="true" insertable="true"
+              updatable="true" defaultValue="0">
+            <schema domain="taxAmount" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="totalAmountWithTax" displayName="合计金额(含税)" propId="14" queryable="true" sortable="true"
+              insertable="true" updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="docStatus" displayName="单据状态" propId="15" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.lang.Integer" dict="erp-pur/doc-status"/>
+        </prop>
+        <prop name="approveStatus" displayName="审核状态" propId="16" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.lang.Integer" dict="erp-pur/approve-status"/>
+        </prop>
+        <prop name="posted" displayName="已过账" propId="17" queryable="true" sortable="true" insertable="true"
+              updatable="true" defaultValue="false">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="postedAt" displayName="过账时间" propId="18" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.time.LocalDateTime"/>
+        </prop>
+        <prop name="postedBy" displayName="过账人" propId="19" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="approvedBy" displayName="审核人" propId="20" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="approvedAt" displayName="审核时间" propId="21" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.time.LocalDateTime"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="22" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="23" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="24" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="25" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="26" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="27" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="28" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="receive" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="receiveId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpPurReceive"/>
+        </prop>
+        <prop name="supplier" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="supplierId" ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true"
+              lazy="true">
+            <schema bizObjName="ErpMdPartner"/>
+        </prop>
+        <prop name="warehouse" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="warehouseId" ext:joinRightProp="id" insertable="false" updatable="false"
+              mandatory="true" lazy="true">
+            <schema bizObjName="ErpMdWarehouse"/>
+        </prop>
+        <prop name="lines" tagSet="pub,cascade-delete,insertable,updatable" ext:kind="to-many" internal="true"
+              ext:joinLeftProp="id" ext:joinRightProp="returnId" insertable="true" updatable="true" lazy="true">
+            <schema>
+                <item bizObjName="ErpPurReturnLine"/>
+            </schema>
+        </prop>
+    </props>
+</meta>

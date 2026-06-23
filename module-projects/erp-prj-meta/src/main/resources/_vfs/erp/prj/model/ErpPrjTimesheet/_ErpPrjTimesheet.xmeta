@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen" xmlns:biz="biz"
+      displayName="工时记录" tagSet="gid,erp.projects" xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.prj.dao.entity.ErpPrjTimesheet</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" tagSet="seq-default" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="code" displayName="单号" propId="2" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="projectCode" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="orgId" displayName="业务组织" propId="3" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="projectId" displayName="项目" propId="4" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true" ext:relation="project">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="taskId" displayName="任务" propId="5" queryable="true" sortable="true" insertable="true"
+              updatable="true" ext:relation="task">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="userId" displayName="用户(职员)" propId="6" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true" ext:relation="user">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="workDate" displayName="工作日期" propId="7" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="hours" displayName="工时" propId="8" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="hours" type="java.lang.String" precision="10" scale="2"/>
+        </prop>
+        <prop name="activityTypeId" displayName="活动类型" propId="9" queryable="true" sortable="true" insertable="true"
+              updatable="true" ext:relation="activityType">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="currencyId" displayName="币种" propId="10" queryable="true" sortable="true" insertable="true"
+              updatable="true" ext:relation="currency">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="costRate" displayName="成本费率" propId="11" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema domain="costRate" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="costAmount" displayName="成本金额" propId="12" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema domain="costAmount" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="status" displayName="状态" propId="13" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.lang.Integer" dict="erp-prj/timesheet-status"/>
+        </prop>
+        <prop name="posted" displayName="已过账(已转成本凭证)" propId="14" queryable="true" sortable="true" insertable="true"
+              updatable="true" defaultValue="false">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="postedAt" displayName="过账时间" propId="15" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.time.LocalDateTime"/>
+        </prop>
+        <prop name="postedBy" displayName="过账人" propId="16" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="approvedBy" displayName="审批人" propId="17" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="approvedAt" displayName="审批时间" propId="18" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.time.LocalDateTime"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="19" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="20" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="21" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="22" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="23" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="24" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="25" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="project" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="projectId" ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true"
+              lazy="true">
+            <schema bizObjName="ErpPrjProject"/>
+        </prop>
+        <prop name="task" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="taskId"
+              ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpPrjTask"/>
+        </prop>
+        <prop name="user" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="userId"
+              ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true" lazy="true">
+            <schema bizObjName="ErpMdEmployee"/>
+        </prop>
+        <prop name="activityType" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="activityTypeId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpPrjActivityType"/>
+        </prop>
+        <prop name="currency" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="currencyId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdCurrency"/>
+        </prop>
+    </props>
+</meta>

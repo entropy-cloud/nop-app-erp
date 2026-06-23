@@ -1,0 +1,23 @@
+{
+  "id": 0,
+  "ncrId": 0,
+  "actionType": 0,
+  "actionType_label": "",
+  "description": "",
+  "responsiblePerson": 0,
+  "dueDate": "2000-01-01",
+  "status": 0,
+  "status_label": "",
+  "completedBy": 0,
+  "completedAt": "2000-01-01 14:00:00",
+  "verificationPerson": 0,
+  "verificationDate": "2000-01-01",
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "ncr": null
+}

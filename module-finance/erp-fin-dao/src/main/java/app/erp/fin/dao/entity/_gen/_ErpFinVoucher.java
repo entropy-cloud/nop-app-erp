@@ -116,6 +116,9 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
     public static final String PROP_NAME_period = "period";
     
     /* relation:  */
+    public static final String PROP_NAME_acctSchema = "acctSchema";
+    
+    /* relation:  */
     public static final String PROP_NAME_lines = "lines";
     
     /* relation:  */
@@ -1239,6 +1242,29 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_period, refEntity,()->{
            
                            this.setPeriodId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdAcctSchema getAcctSchema(){
+       return (app.erp.md.dao.entity.ErpMdAcctSchema)internalGetRefEntity(PROP_NAME_acctSchema);
+    }
+
+    public final void setAcctSchema(app.erp.md.dao.entity.ErpMdAcctSchema refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setAcctSchemaId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_acctSchema, refEntity,()->{
+           
+                           this.setAcctSchemaId(refEntity.getId());
                        
            });
            }

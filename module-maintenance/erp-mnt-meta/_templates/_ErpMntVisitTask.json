@@ -1,0 +1,18 @@
+{
+  "id": 0,
+  "visitId": 0,
+  "lineNo": 0,
+  "taskDescription": "",
+  "status": 0,
+  "status_label": "",
+  "completedBy": 0,
+  "completedAt": "2000-01-01 14:00:00",
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "visit": null
+}

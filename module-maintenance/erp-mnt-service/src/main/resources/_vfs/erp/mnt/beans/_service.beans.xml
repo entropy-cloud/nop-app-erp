@@ -13,14 +13,6 @@
         <property name="bizObjName" value="ErpMntEquipmentCategory"/>
     </bean>
 
-    <bean id="app.erp.mnt.service.entity.ErpMntMaintenanceTeamBizModel" ioc:type="@bean:id" ioc:default="true"/>
-
-    <bean id="biz_ErpMntMaintenanceTeam" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.mnt.biz.IErpMntMaintenanceTeamBiz" ioc:force-lazy-property="true" lazy-init="true"
-          primary="true">
-        <property name="bizObjName" value="ErpMntMaintenanceTeam"/>
-    </bean>
-
     <bean id="app.erp.mnt.service.entity.ErpMntEquipmentBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpMntEquipment" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -28,12 +20,12 @@
         <property name="bizObjName" value="ErpMntEquipment"/>
     </bean>
 
-    <bean id="app.erp.mnt.service.entity.ErpMntMaintenanceTeamMemberBizModel" ioc:type="@bean:id" ioc:default="true"/>
+    <bean id="app.erp.mnt.service.entity.ErpMntMaintenanceTeamBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
-    <bean id="biz_ErpMntMaintenanceTeamMember" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.mnt.biz.IErpMntMaintenanceTeamMemberBiz" ioc:force-lazy-property="true" lazy-init="true"
+    <bean id="biz_ErpMntMaintenanceTeam" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mnt.biz.IErpMntMaintenanceTeamBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
-        <property name="bizObjName" value="ErpMntMaintenanceTeamMember"/>
+        <property name="bizObjName" value="ErpMntMaintenanceTeam"/>
     </bean>
 
     <bean id="app.erp.mnt.service.entity.ErpMntScheduleBizModel" ioc:type="@bean:id" ioc:default="true"/>
@@ -64,6 +56,14 @@
           ioc:type="app.erp.mnt.biz.IErpMntCalibrationBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
         <property name="bizObjName" value="ErpMntCalibration"/>
+    </bean>
+
+    <bean id="app.erp.mnt.service.entity.ErpMntMaintenanceTeamMemberBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMntMaintenanceTeamMember" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mnt.biz.IErpMntMaintenanceTeamMemberBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMntMaintenanceTeamMember"/>
     </bean>
 
     <bean id="app.erp.mnt.service.entity.ErpMntVisitBizModel" ioc:type="@bean:id" ioc:default="true"/>

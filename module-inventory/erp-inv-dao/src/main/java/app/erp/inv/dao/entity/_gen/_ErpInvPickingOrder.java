@@ -89,6 +89,9 @@ public class _ErpInvPickingOrder extends DynamicOrmEntity{
 
     
     /* relation:  */
+    public static final String PROP_NAME_warehouse = "warehouse";
+    
+    /* relation:  */
     public static final String PROP_NAME_lines = "lines";
     
 
@@ -922,6 +925,29 @@ public class _ErpInvPickingOrder extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdWarehouse getWarehouse(){
+       return (app.erp.md.dao.entity.ErpMdWarehouse)internalGetRefEntity(PROP_NAME_warehouse);
+    }
+
+    public final void setWarehouse(app.erp.md.dao.entity.ErpMdWarehouse refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setWarehouseId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_warehouse, refEntity,()->{
+           
+                           this.setWarehouseId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
     private final OrmEntitySet<app.erp.inv.dao.entity.ErpInvPickingOrderLine> _lines = new OrmEntitySet<>(this, PROP_NAME_lines,
         null, null,app.erp.inv.dao.entity.ErpInvPickingOrderLine.class);
 

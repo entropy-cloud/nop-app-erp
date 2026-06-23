@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
+
+    <site id="main">
+        <resource id="test-orm-erp-pur" displayName="测试erp-pur" i18n-en:displayName="Test erp-pur"
+                  icon="ion:grid-outline" resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-pur"
+                  component="layouts/default/index">
+            <children>
+                <resource id="ErpPurInvoice-main" displayName="采购发票" orderNo="10001" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/pur/pages/ErpPurInvoice/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPurInvoice:query" displayName="查询采购发票" i18n-en:displayName=""
+                                  orderNo="10002" resourceType="FNPT">
+                            <permissions>ErpPurInvoice:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPurInvoice:mutation" displayName="修改采购发票" i18n-en:displayName=""
+                                  orderNo="10003" resourceType="FNPT">
+                            <permissions>ErpPurInvoice:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPurInvoiceLine-main" displayName="采购发票行" orderNo="10004" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/pur/pages/ErpPurInvoiceLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPurInvoiceLine:query" displayName="查询采购发票行" i18n-en:displayName=""
+                                  orderNo="10005" resourceType="FNPT">
+                            <permissions>ErpPurInvoiceLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPurInvoiceLine:mutation" displayName="修改采购发票行" i18n-en:displayName=""
+                                  orderNo="10006" resourceType="FNPT">
+                            <permissions>ErpPurInvoiceLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPurOrder-main" displayName="采购订单" orderNo="10007" i18n-en:displayName="" icon="blocks"
+                          component="AMIS" resourceType="SUBM" url="/erp/pur/pages/ErpPurOrder/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPurOrder:query" displayName="查询采购订单" i18n-en:displayName=""
+                                  orderNo="10008" resourceType="FNPT">
+                            <permissions>ErpPurOrder:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPurOrder:mutation" displayName="修改采购订单" i18n-en:displayName=""
+                                  orderNo="10009" resourceType="FNPT">
+                            <permissions>ErpPurOrder:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPurOrderLine-main" displayName="采购订单行" orderNo="10010" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/pur/pages/ErpPurOrderLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPurOrderLine:query" displayName="查询采购订单行" i18n-en:displayName=""
+                                  orderNo="10011" resourceType="FNPT">
+                            <permissions>ErpPurOrderLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPurOrderLine:mutation" displayName="修改采购订单行" i18n-en:displayName=""
+                                  orderNo="10012" resourceType="FNPT">
+                            <permissions>ErpPurOrderLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPurPayment-main" displayName="付款单" orderNo="10013" i18n-en:displayName="" icon="blocks"
+                          component="AMIS" resourceType="SUBM" url="/erp/pur/pages/ErpPurPayment/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPurPayment:query" displayName="查询付款单" i18n-en:displayName=""
+                                  orderNo="10014" resourceType="FNPT">
+                            <permissions>ErpPurPayment:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPurPayment:mutation" displayName="修改付款单" i18n-en:displayName=""
+                                  orderNo="10015" resourceType="FNPT">
+                            <permissions>ErpPurPayment:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPurPaymentLine-main" displayName="付款核销行" orderNo="10016" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/pur/pages/ErpPurPaymentLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPurPaymentLine:query" displayName="查询付款核销行" i18n-en:displayName=""
+                                  orderNo="10017" resourceType="FNPT">
+                            <permissions>ErpPurPaymentLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPurPaymentLine:mutation" displayName="修改付款核销行" i18n-en:displayName=""
+                                  orderNo="10018" resourceType="FNPT">
+                            <permissions>ErpPurPaymentLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPurQuotation-main" displayName="供应商报价单" orderNo="10019" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/pur/pages/ErpPurQuotation/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPurQuotation:query" displayName="查询供应商报价单" i18n-en:displayName=""
+                                  orderNo="10020" resourceType="FNPT">
+                            <permissions>ErpPurQuotation:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPurQuotation:mutation" displayName="修改供应商报价单" i18n-en:displayName=""
+                                  orderNo="10021" resourceType="FNPT">
+                            <permissions>ErpPurQuotation:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPurQuotationLine-main" displayName="供应商报价单行" orderNo="10022" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/pur/pages/ErpPurQuotationLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPurQuotationLine:query" displayName="查询供应商报价单行" i18n-en:displayName=""
+                                  orderNo="10023" resourceType="FNPT">
+                            <permissions>ErpPurQuotationLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPurQuotationLine:mutation" displayName="修改供应商报价单行" i18n-en:displayName=""
+                                  orderNo="10024" resourceType="FNPT">
+                            <permissions>ErpPurQuotationLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPurReceive-main" displayName="采购入库单" orderNo="10025" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/pur/pages/ErpPurReceive/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPurReceive:query" displayName="查询采购入库单" i18n-en:displayName=""
+                                  orderNo="10026" resourceType="FNPT">
+                            <permissions>ErpPurReceive:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPurReceive:mutation" displayName="修改采购入库单" i18n-en:displayName=""
+                                  orderNo="10027" resourceType="FNPT">
+                            <permissions>ErpPurReceive:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPurReceiveLine-main" displayName="采购入库单行" orderNo="10028" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/pur/pages/ErpPurReceiveLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPurReceiveLine:query" displayName="查询采购入库单行" i18n-en:displayName=""
+                                  orderNo="10029" resourceType="FNPT">
+                            <permissions>ErpPurReceiveLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPurReceiveLine:mutation" displayName="修改采购入库单行" i18n-en:displayName=""
+                                  orderNo="10030" resourceType="FNPT">
+                            <permissions>ErpPurReceiveLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPurRequisition-main" displayName="采购请购单" orderNo="10031" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/pur/pages/ErpPurRequisition/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPurRequisition:query" displayName="查询采购请购单" i18n-en:displayName=""
+                                  orderNo="10032" resourceType="FNPT">
+                            <permissions>ErpPurRequisition:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPurRequisition:mutation" displayName="修改采购请购单" i18n-en:displayName=""
+                                  orderNo="10033" resourceType="FNPT">
+                            <permissions>ErpPurRequisition:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPurRequisitionLine-main" displayName="采购请购单行" orderNo="10034" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/pur/pages/ErpPurRequisitionLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPurRequisitionLine:query" displayName="查询采购请购单行" i18n-en:displayName=""
+                                  orderNo="10035" resourceType="FNPT">
+                            <permissions>ErpPurRequisitionLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPurRequisitionLine:mutation" displayName="修改采购请购单行" i18n-en:displayName=""
+                                  orderNo="10036" resourceType="FNPT">
+                            <permissions>ErpPurRequisitionLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPurReturn-main" displayName="采购退货单" orderNo="10037" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/pur/pages/ErpPurReturn/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPurReturn:query" displayName="查询采购退货单" i18n-en:displayName=""
+                                  orderNo="10038" resourceType="FNPT">
+                            <permissions>ErpPurReturn:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPurReturn:mutation" displayName="修改采购退货单" i18n-en:displayName=""
+                                  orderNo="10039" resourceType="FNPT">
+                            <permissions>ErpPurReturn:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPurReturnLine-main" displayName="采购退货单行" orderNo="10040" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/pur/pages/ErpPurReturnLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPurReturnLine:query" displayName="查询采购退货单行" i18n-en:displayName=""
+                                  orderNo="10041" resourceType="FNPT">
+                            <permissions>ErpPurReturnLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPurReturnLine:mutation" displayName="修改采购退货单行" i18n-en:displayName=""
+                                  orderNo="10042" resourceType="FNPT">
+                            <permissions>ErpPurReturnLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPurRfq-main" displayName="采购询价单" orderNo="10043" i18n-en:displayName="" icon="blocks"
+                          component="AMIS" resourceType="SUBM" url="/erp/pur/pages/ErpPurRfq/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPurRfq:query" displayName="查询采购询价单" i18n-en:displayName="" orderNo="10044"
+                                  resourceType="FNPT">
+                            <permissions>ErpPurRfq:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPurRfq:mutation" displayName="修改采购询价单" i18n-en:displayName=""
+                                  orderNo="10045" resourceType="FNPT">
+                            <permissions>ErpPurRfq:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPurRfqLine-main" displayName="采购询价单行" orderNo="10046" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/pur/pages/ErpPurRfqLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPurRfqLine:query" displayName="查询采购询价单行" i18n-en:displayName=""
+                                  orderNo="10047" resourceType="FNPT">
+                            <permissions>ErpPurRfqLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPurRfqLine:mutation" displayName="修改采购询价单行" i18n-en:displayName=""
+                                  orderNo="10048" resourceType="FNPT">
+                            <permissions>ErpPurRfqLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPurSupplierPriceList-main" displayName="供应商价格清单" orderNo="10049" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/pur/pages/ErpPurSupplierPriceList/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPurSupplierPriceList:query" displayName="查询供应商价格清单" i18n-en:displayName=""
+                                  orderNo="10050" resourceType="FNPT">
+                            <permissions>ErpPurSupplierPriceList:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPurSupplierPriceList:mutation" displayName="修改供应商价格清单"
+                                  i18n-en:displayName="" orderNo="10051" resourceType="FNPT">
+                            <permissions>ErpPurSupplierPriceList:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
+</auth>

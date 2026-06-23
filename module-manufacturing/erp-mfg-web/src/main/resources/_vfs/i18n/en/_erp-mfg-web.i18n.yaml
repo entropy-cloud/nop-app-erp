@@ -1,0 +1,130 @@
+site:
+  resource:
+    ErpMfgBom-main:
+      displayName: ''
+    ErpMfgBomByproduct-main:
+      displayName: ''
+    ErpMfgBomLine-main:
+      displayName: ''
+    ErpMfgBomOperation-main:
+      displayName: ''
+    ErpMfgCostRollup-main:
+      displayName: ''
+    ErpMfgCostRollupLine-main:
+      displayName: ''
+    ErpMfgJobCard-main:
+      displayName: ''
+    ErpMfgJobCardTimeLog-main:
+      displayName: ''
+    ErpMfgMaterialIssue-main:
+      displayName: ''
+    ErpMfgMaterialIssueLine-main:
+      displayName: ''
+    ErpMfgMrpDemand-main:
+      displayName: ''
+    ErpMfgMrpPlan-main:
+      displayName: ''
+    ErpMfgMrpPlanLine-main:
+      displayName: ''
+    ErpMfgProductionVersion-main:
+      displayName: ''
+    ErpMfgRouting-main:
+      displayName: ''
+    ErpMfgRoutingOperation-main:
+      displayName: ''
+    ErpMfgSubcontractOrder-main:
+      displayName: ''
+    ErpMfgSubcontractOrderLine-main:
+      displayName: ''
+    ErpMfgWorkOrder-main:
+      displayName: ''
+    ErpMfgWorkOrderLine-main:
+      displayName: ''
+    ErpMfgWorkcenter-main:
+      displayName: ''
+    FNPT:ErpMfgBom:mutation:
+      displayName: ''
+    FNPT:ErpMfgBom:query:
+      displayName: ''
+    FNPT:ErpMfgBomByproduct:mutation:
+      displayName: ''
+    FNPT:ErpMfgBomByproduct:query:
+      displayName: ''
+    FNPT:ErpMfgBomLine:mutation:
+      displayName: ''
+    FNPT:ErpMfgBomLine:query:
+      displayName: ''
+    FNPT:ErpMfgBomOperation:mutation:
+      displayName: ''
+    FNPT:ErpMfgBomOperation:query:
+      displayName: ''
+    FNPT:ErpMfgCostRollup:mutation:
+      displayName: ''
+    FNPT:ErpMfgCostRollup:query:
+      displayName: ''
+    FNPT:ErpMfgCostRollupLine:mutation:
+      displayName: ''
+    FNPT:ErpMfgCostRollupLine:query:
+      displayName: ''
+    FNPT:ErpMfgJobCard:mutation:
+      displayName: ''
+    FNPT:ErpMfgJobCard:query:
+      displayName: ''
+    FNPT:ErpMfgJobCardTimeLog:mutation:
+      displayName: ''
+    FNPT:ErpMfgJobCardTimeLog:query:
+      displayName: ''
+    FNPT:ErpMfgMaterialIssue:mutation:
+      displayName: ''
+    FNPT:ErpMfgMaterialIssue:query:
+      displayName: ''
+    FNPT:ErpMfgMaterialIssueLine:mutation:
+      displayName: ''
+    FNPT:ErpMfgMaterialIssueLine:query:
+      displayName: ''
+    FNPT:ErpMfgMrpDemand:mutation:
+      displayName: ''
+    FNPT:ErpMfgMrpDemand:query:
+      displayName: ''
+    FNPT:ErpMfgMrpPlan:mutation:
+      displayName: ''
+    FNPT:ErpMfgMrpPlan:query:
+      displayName: ''
+    FNPT:ErpMfgMrpPlanLine:mutation:
+      displayName: ''
+    FNPT:ErpMfgMrpPlanLine:query:
+      displayName: ''
+    FNPT:ErpMfgProductionVersion:mutation:
+      displayName: ''
+    FNPT:ErpMfgProductionVersion:query:
+      displayName: ''
+    FNPT:ErpMfgRouting:mutation:
+      displayName: ''
+    FNPT:ErpMfgRouting:query:
+      displayName: ''
+    FNPT:ErpMfgRoutingOperation:mutation:
+      displayName: ''
+    FNPT:ErpMfgRoutingOperation:query:
+      displayName: ''
+    FNPT:ErpMfgSubcontractOrder:mutation:
+      displayName: ''
+    FNPT:ErpMfgSubcontractOrder:query:
+      displayName: ''
+    FNPT:ErpMfgSubcontractOrderLine:mutation:
+      displayName: ''
+    FNPT:ErpMfgSubcontractOrderLine:query:
+      displayName: ''
+    FNPT:ErpMfgWorkOrder:mutation:
+      displayName: ''
+    FNPT:ErpMfgWorkOrder:query:
+      displayName: ''
+    FNPT:ErpMfgWorkOrderLine:mutation:
+      displayName: ''
+    FNPT:ErpMfgWorkOrderLine:query:
+      displayName: ''
+    FNPT:ErpMfgWorkcenter:mutation:
+      displayName: ''
+    FNPT:ErpMfgWorkcenter:query:
+      displayName: ''
+    test-orm-erp-mfg:
+      displayName: Test erp-mfg

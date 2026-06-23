@@ -1,0 +1,21 @@
+{
+  "id": 0,
+  "sparePartUsageId": 0,
+  "lineNo": 0,
+  "materialId": 0,
+  "uoMId": 0,
+  "quantity": "",
+  "unitCost": 0.0,
+  "amount": "",
+  "batchNo": "",
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "sparePartUsage": null,
+  "material": null,
+  "uoM": null
+}

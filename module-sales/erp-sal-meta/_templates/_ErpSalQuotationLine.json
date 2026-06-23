@@ -1,0 +1,23 @@
+{
+  "id": 0,
+  "quotationId": 0,
+  "lineNo": 0,
+  "materialId": 0,
+  "uoMId": 0,
+  "quantity": 0.0,
+  "unitPrice": 0.0,
+  "taxRate": 0.0,
+  "taxAmount": 0.0,
+  "amount": 0.0,
+  "amountWithTax": 0.0,
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "remark": "",
+  "quotation": null,
+  "material": null,
+  "uoM": null
+}

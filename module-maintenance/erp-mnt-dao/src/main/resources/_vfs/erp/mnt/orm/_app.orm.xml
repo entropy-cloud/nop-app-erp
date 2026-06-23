@@ -105,7 +105,7 @@
         <entity className="app.erp.mnt.dao.entity.ErpMntEquipment" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="设备"
                 name="app.erp.mnt.dao.entity.ErpMntEquipment" registerShortName="true" tableName="erp_mnt_equipment"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                tagSet="gid,erp.maintenance" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
                 versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
@@ -151,9 +151,19 @@
                         propId="21" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
             </columns>
             <relations>
+                <to-one name="location" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub">
+                    <join>
+                        <on leftProp="locationId" rightProp="id"/>
+                    </join>
+                </to-one>
                 <to-one name="category" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipmentCategory" tagSet="pub">
                     <join>
                         <on leftProp="categoryId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -161,8 +171,8 @@
         <entity className="app.erp.mnt.dao.entity.ErpMntEquipmentCategory" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="设备分类"
                 name="app.erp.mnt.dao.entity.ErpMntEquipmentCategory" registerShortName="true"
-                tableName="erp_mnt_equipment_category" tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version">
+                tableName="erp_mnt_equipment_category" tagSet="gid,erp.maintenance" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -198,7 +208,7 @@
         <entity className="app.erp.mnt.dao.entity.ErpMntSchedule" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="维护计划"
                 name="app.erp.mnt.dao.entity.ErpMntSchedule" registerShortName="true" tableName="erp_mnt_schedule"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                tagSet="gid,erp.maintenance" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
                 versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
@@ -251,7 +261,7 @@
         <entity className="app.erp.mnt.dao.entity.ErpMntVisit" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="维护访问"
                 name="app.erp.mnt.dao.entity.ErpMntVisit" registerShortName="true" tableName="erp_mnt_visit"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                tagSet="gid,erp.maintenance" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
                 versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
@@ -292,6 +302,15 @@
                         precision="50" propId="18" stdDataType="string" stdSqlType="VARCHAR"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="20" stdDataType="long" stdSqlType="BIGINT"/>
+                <column code="BUSINESS_DATE" displayName="业务日期" name="businessDate" propId="21" stdDataType="date"
+                        stdSqlType="DATE"/>
+                <column code="POSTED" defaultValue="false" displayName="是否已过账" name="posted" propId="22"
+                        stdDataType="boolean" stdSqlType="BOOLEAN"/>
+                <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="23" stdDataType="timestamp"
+                        stdSqlType="TIMESTAMP"/>
+                <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="50" propId="24"
+                        stdDataType="string" stdSqlType="VARCHAR"/>
             </columns>
             <relations>
                 <to-one name="schedule" refEntityName="app.erp.mnt.dao.entity.ErpMntSchedule" tagSet="pub">
@@ -315,7 +334,7 @@
         <entity className="app.erp.mnt.dao.entity.ErpMntVisitTask" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="维护任务"
                 name="app.erp.mnt.dao.entity.ErpMntVisitTask" registerShortName="true" tableName="erp_mnt_visit_task"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                tagSet="gid,erp.maintenance" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
                 versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
@@ -358,7 +377,7 @@
         <entity className="app.erp.mnt.dao.entity.ErpMntRequest" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="维护请求"
                 name="app.erp.mnt.dao.entity.ErpMntRequest" registerShortName="true" tableName="erp_mnt_request"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                tagSet="gid,erp.maintenance" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
                 versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
@@ -411,8 +430,8 @@
         <entity className="app.erp.mnt.dao.entity.ErpMntDowntimeEntry" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="停机记录"
                 name="app.erp.mnt.dao.entity.ErpMntDowntimeEntry" registerShortName="true"
-                tableName="erp_mnt_downtime_entry" tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version">
+                tableName="erp_mnt_downtime_entry" tagSet="gid,erp.maintenance" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -454,8 +473,8 @@
         <entity className="app.erp.mnt.dao.entity.ErpMntMaintenanceTeam" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="维护团队"
                 name="app.erp.mnt.dao.entity.ErpMntMaintenanceTeam" registerShortName="true"
-                tableName="erp_mnt_maintenance_team" tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version">
+                tableName="erp_mnt_maintenance_team" tagSet="gid,erp.maintenance" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -484,6 +503,11 @@
                         propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
             </columns>
             <relations>
+                <to-one name="leader" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub">
+                    <join>
+                        <on leftProp="leaderId" rightProp="id"/>
+                    </join>
+                </to-one>
                 <to-many cascadeDelete="true" name="members"
                          refEntityName="app.erp.mnt.dao.entity.ErpMntMaintenanceTeamMember"
                          tagSet="pub,cascade-delete,insertable,updatable">
@@ -496,7 +520,7 @@
         <entity className="app.erp.mnt.dao.entity.ErpMntMaintenanceTeamMember" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="维护团队成员"
                 name="app.erp.mnt.dao.entity.ErpMntMaintenanceTeamMember" registerShortName="true"
-                tableName="erp_mnt_maintenance_team_member" tagSet="gid" updateTimeProp="updateTime"
+                tableName="erp_mnt_maintenance_team_member" tagSet="gid,erp.maintenance" updateTimeProp="updateTime"
                 updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
@@ -530,13 +554,18 @@
                         <on leftProp="teamId" rightProp="id"/>
                     </join>
                 </to-one>
+                <to-one name="employee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub">
+                    <join>
+                        <on leftProp="employeeId" rightProp="id"/>
+                    </join>
+                </to-one>
             </relations>
         </entity>
         <entity className="app.erp.mnt.dao.entity.ErpMntSparePartUsage" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="备件消耗"
                 name="app.erp.mnt.dao.entity.ErpMntSparePartUsage" registerShortName="true"
-                tableName="erp_mnt_spare_part_usage" tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version">
+                tableName="erp_mnt_spare_part_usage" tagSet="gid,erp.maintenance" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -608,7 +637,7 @@
         <entity className="app.erp.mnt.dao.entity.ErpMntSparePartUsageLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="备件消耗行"
                 name="app.erp.mnt.dao.entity.ErpMntSparePartUsageLine" registerShortName="true"
-                tableName="erp_mnt_spare_part_usage_line" tagSet="gid" updateTimeProp="updateTime"
+                tableName="erp_mnt_spare_part_usage_line" tagSet="gid,erp.maintenance" updateTimeProp="updateTime"
                 updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
@@ -650,12 +679,22 @@
                         <on leftProp="sparePartUsageId" rightProp="id"/>
                     </join>
                 </to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
+                    <join>
+                        <on leftProp="materialId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub">
+                    <join>
+                        <on leftProp="uoMId" rightProp="id"/>
+                    </join>
+                </to-one>
             </relations>
         </entity>
         <entity className="app.erp.mnt.dao.entity.ErpMntCalibration" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="校准记录"
                 name="app.erp.mnt.dao.entity.ErpMntCalibration" registerShortName="true" tableName="erp_mnt_calibration"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                tagSet="gid,erp.maintenance" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
                 versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
@@ -706,7 +745,85 @@
                         <on leftProp="equipmentId" rightProp="id"/>
                     </join>
                 </to-one>
+                <to-one name="calibratedByEmployee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub">
+                    <join>
+                        <on leftProp="calibratedBy" rightProp="id"/>
+                    </join>
+                </to-one>
             </relations>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdOrganization" displayName="组织"
+                name="app.erp.md.dao.entity.ErpMdOrganization" notGenCode="true" tableName="erp_md_organization">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="ORG_TYPE" name="orgType" propId="4" stdDataType="int" stdSqlType="INTEGER"/>
+                <column code="PARENT_ID" name="parentId" propId="5" stdDataType="long" stdSqlType="BIGINT"/>
+                <column code="STATUS" name="status" propId="6" stdDataType="int" stdSqlType="INTEGER"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdLocation" displayName="库位"
+                name="app.erp.md.dao.entity.ErpMdLocation" notGenCode="true" tableName="erp_md_location">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"/>
+                <column code="WAREHOUSE_ID" name="warehouseId" propId="2" stdDataType="long" stdSqlType="BIGINT"/>
+                <column code="CODE" name="code" precision="50" propId="3" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="NAME" name="name" precision="200" propId="4" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="PARENT_ID" name="parentId" propId="5" stdDataType="long" stdSqlType="BIGINT"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdMaterialCategory" displayName="物料分类"
+                name="app.erp.md.dao.entity.ErpMdMaterialCategory" notGenCode="true"
+                tableName="erp_md_material_category">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="PARENT_ID" name="parentId" propId="4" stdDataType="long" stdSqlType="BIGINT"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdEmployee" displayName="职员"
+                name="app.erp.md.dao.entity.ErpMdEmployee" notGenCode="true" tableName="erp_md_employee">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="ORG_ID" name="orgId" propId="4" stdDataType="long" stdSqlType="BIGINT"/>
+                <column code="STATUS" name="status" propId="5" stdDataType="int" stdSqlType="INTEGER"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdMaterial" displayName="物料"
+                name="app.erp.md.dao.entity.ErpMdMaterial" notGenCode="true" tableName="erp_md_material">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="MATERIAL_TYPE" name="materialType" propId="4" stdDataType="int" stdSqlType="INTEGER"/>
+                <column code="STATUS" name="status" propId="5" stdDataType="int" stdSqlType="INTEGER"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdUoM" displayName="计量单位" name="app.erp.md.dao.entity.ErpMdUoM"
+                notGenCode="true" tableName="erp_md_uom">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="UOM_GROUP" name="uoMGroup" precision="50" propId="4" stdDataType="string"
+                        stdSqlType="VARCHAR"/>
+                <column code="IS_BASE" name="isBase" propId="5" stdDataType="boolean" stdSqlType="BOOLEAN"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdWarehouse" displayName="仓库"
+                name="app.erp.md.dao.entity.ErpMdWarehouse" notGenCode="true" tableName="erp_md_warehouse">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="WAREHOUSE_TYPE" name="warehouseType" propId="4" stdDataType="int" stdSqlType="INTEGER"/>
+                <column code="ORG_ID" name="orgId" propId="5" stdDataType="long" stdSqlType="BIGINT"/>
+                <column code="STATUS" name="status" propId="6" stdDataType="int" stdSqlType="INTEGER"/>
+            </columns>
         </entity>
     </entities>
 </orm>

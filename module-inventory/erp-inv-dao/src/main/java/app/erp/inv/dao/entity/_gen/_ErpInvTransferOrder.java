@@ -109,6 +109,15 @@ public class _ErpInvTransferOrder extends DynamicOrmEntity{
 
     
     /* relation:  */
+    public static final String PROP_NAME_fromWarehouse = "fromWarehouse";
+    
+    /* relation:  */
+    public static final String PROP_NAME_toWarehouse = "toWarehouse";
+    
+    /* relation:  */
+    public static final String PROP_NAME_inTransitWarehouse = "inTransitWarehouse";
+    
+    /* relation:  */
     public static final String PROP_NAME_lines = "lines";
     
 
@@ -1167,6 +1176,75 @@ public class _ErpInvTransferOrder extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdWarehouse getFromWarehouse(){
+       return (app.erp.md.dao.entity.ErpMdWarehouse)internalGetRefEntity(PROP_NAME_fromWarehouse);
+    }
+
+    public final void setFromWarehouse(app.erp.md.dao.entity.ErpMdWarehouse refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setFromWarehouseId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_fromWarehouse, refEntity,()->{
+           
+                           this.setFromWarehouseId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdWarehouse getToWarehouse(){
+       return (app.erp.md.dao.entity.ErpMdWarehouse)internalGetRefEntity(PROP_NAME_toWarehouse);
+    }
+
+    public final void setToWarehouse(app.erp.md.dao.entity.ErpMdWarehouse refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setToWarehouseId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_toWarehouse, refEntity,()->{
+           
+                           this.setToWarehouseId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdWarehouse getInTransitWarehouse(){
+       return (app.erp.md.dao.entity.ErpMdWarehouse)internalGetRefEntity(PROP_NAME_inTransitWarehouse);
+    }
+
+    public final void setInTransitWarehouse(app.erp.md.dao.entity.ErpMdWarehouse refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setInTransitWarehouseId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_inTransitWarehouse, refEntity,()->{
+           
+                           this.setInTransitWarehouseId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
     private final OrmEntitySet<app.erp.inv.dao.entity.ErpInvTransferOrderLine> _lines = new OrmEntitySet<>(this, PROP_NAME_lines,
         null, null,app.erp.inv.dao.entity.ErpInvTransferOrderLine.class);
 

@@ -1,4 +1,53 @@
 
+CREATE TABLE erp_md_employee(
+  ID NUMBER(20)  ,
+  CODE VARCHAR2(50)  ,
+  NAME VARCHAR2(200)  ,
+  ORG_ID NUMBER(20)  ,
+  STATUS INTEGER  ,
+  constraint PK_erp_md_employee primary key (ID)
+);
+
+CREATE TABLE erp_md_currency(
+  ID NUMBER(20)  ,
+  CODE VARCHAR2(50)  ,
+  NAME VARCHAR2(200)  ,
+  SYMBOL VARCHAR2(50)  ,
+  DECIMAL_PLACES INTEGER  ,
+  IS_FUNCTIONAL CHAR(1)  ,
+  constraint PK_erp_md_currency primary key (ID)
+);
+
+CREATE TABLE erp_md_partner(
+  ID NUMBER(20)  ,
+  CODE VARCHAR2(50)  ,
+  NAME VARCHAR2(200)  ,
+  PARTNER_TYPE INTEGER  ,
+  STATUS INTEGER  ,
+  CREDIT_LIMIT VARCHAR2(50)  ,
+  constraint PK_erp_md_partner primary key (ID)
+);
+
+CREATE TABLE erp_md_subject(
+  ID NUMBER(20)  ,
+  CODE VARCHAR2(50)  ,
+  NAME VARCHAR2(200)  ,
+  PARENT_ID NUMBER(20)  ,
+  SUBJECT_CLASS INTEGER  ,
+  DIRECTION INTEGER  ,
+  constraint PK_erp_md_subject primary key (ID)
+);
+
+CREATE TABLE erp_md_organization(
+  ID NUMBER(20)  ,
+  CODE VARCHAR2(50)  ,
+  NAME VARCHAR2(200)  ,
+  ORG_TYPE INTEGER  ,
+  PARENT_ID NUMBER(20)  ,
+  STATUS INTEGER  ,
+  constraint PK_erp_md_organization primary key (ID)
+);
+
 CREATE TABLE erp_prj_project_type(
   ID NUMBER(20) NOT NULL ,
   CODE VARCHAR2(50) NOT NULL ,
@@ -138,6 +187,9 @@ CREATE TABLE erp_prj_cost_collection(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
+  EXCHANGE_RATE NUMBER(20,8) default 1   ,
+  AMOUNT_SOURCE NUMBER(20,4) default 0   ,
+  AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
   constraint PK_erp_prj_cost_collection primary key (ID)
 );
 
@@ -253,6 +305,8 @@ CREATE TABLE erp_prj_billing(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
+  AMOUNT_SOURCE NUMBER(20,4) default 0   ,
+  AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
   constraint PK_erp_prj_billing primary key (ID)
 );
 
@@ -275,6 +329,16 @@ CREATE TABLE erp_prj_billing_line(
 );
 
 
+      COMMENT ON TABLE erp_md_employee IS '职员';
+                
+      COMMENT ON TABLE erp_md_currency IS '币种';
+                
+      COMMENT ON TABLE erp_md_partner IS '往来单位';
+                
+      COMMENT ON TABLE erp_md_subject IS '会计科目';
+                
+      COMMENT ON TABLE erp_md_organization IS '组织';
+                
       COMMENT ON TABLE erp_prj_project_type IS '项目类型';
                 
       COMMENT ON COLUMN erp_prj_project_type.ID IS 'ID';
@@ -517,6 +581,12 @@ CREATE TABLE erp_prj_billing_line(
                     
       COMMENT ON COLUMN erp_prj_cost_collection.UPDATE_TIME IS '修改时间';
                     
+      COMMENT ON COLUMN erp_prj_cost_collection.EXCHANGE_RATE IS '汇率';
+                    
+      COMMENT ON COLUMN erp_prj_cost_collection.AMOUNT_SOURCE IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_prj_cost_collection.AMOUNT_FUNCTIONAL IS '本位币金额';
+                    
       COMMENT ON TABLE erp_prj_milestone IS '项目里程碑';
                 
       COMMENT ON COLUMN erp_prj_milestone.ID IS 'ID';
@@ -716,6 +786,10 @@ CREATE TABLE erp_prj_billing_line(
       COMMENT ON COLUMN erp_prj_billing.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_prj_billing.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_prj_billing.AMOUNT_SOURCE IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_prj_billing.AMOUNT_FUNCTIONAL IS '本位币金额';
                     
       COMMENT ON TABLE erp_prj_billing_line IS '项目开票行';
                 

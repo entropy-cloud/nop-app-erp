@@ -124,8 +124,9 @@
     <entities>
         <entity className="app.erp.mfg.dao.entity.ErpMfgBom" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="BOM"
-                name="app.erp.mfg.dao.entity.ErpMfgBom" registerShortName="true" tableName="erp_mfg_bom" tagSet="gid"
-                updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
+                name="app.erp.mfg.dao.entity.ErpMfgBom" registerShortName="true" tableName="erp_mfg_bom"
+                tagSet="gid,erp.manufacturing" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -161,6 +162,11 @@
                         propId="16" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
             </columns>
             <relations>
+                <to-one name="product" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
+                    <join>
+                        <on leftProp="productId" rightProp="id"/>
+                    </join>
+                </to-one>
                 <to-many cascadeDelete="true" name="lines" refEntityName="app.erp.mfg.dao.entity.ErpMfgBomLine"
                          tagSet="pub,cascade-delete,insertable,updatable">
                     <join>
@@ -186,8 +192,8 @@
         <entity className="app.erp.mfg.dao.entity.ErpMfgBomLine" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="BOM行"
                 name="app.erp.mfg.dao.entity.ErpMfgBomLine" registerShortName="true" tableName="erp_mfg_bom_line"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                tagSet="gid,erp.manufacturing" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -225,13 +231,28 @@
                         <on leftProp="bomId" rightProp="id"/>
                     </join>
                 </to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
+                    <join>
+                        <on leftProp="materialId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub">
+                    <join>
+                        <on leftProp="skuId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub">
+                    <join>
+                        <on leftProp="uoMId" rightProp="id"/>
+                    </join>
+                </to-one>
             </relations>
         </entity>
         <entity className="app.erp.mfg.dao.entity.ErpMfgBomOperation" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="BOM工艺"
                 name="app.erp.mfg.dao.entity.ErpMfgBomOperation" registerShortName="true"
-                tableName="erp_mfg_bom_operation" tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version">
+                tableName="erp_mfg_bom_operation" tagSet="gid,erp.manufacturing" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -280,8 +301,8 @@
         <entity className="app.erp.mfg.dao.entity.ErpMfgBomByproduct" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="BOM联副产品"
                 name="app.erp.mfg.dao.entity.ErpMfgBomByproduct" registerShortName="true"
-                tableName="erp_mfg_bom_byproduct" tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version">
+                tableName="erp_mfg_bom_byproduct" tagSet="gid,erp.manufacturing" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -317,13 +338,28 @@
                         <on leftProp="bomId" rightProp="id"/>
                     </join>
                 </to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
+                    <join>
+                        <on leftProp="materialId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub">
+                    <join>
+                        <on leftProp="skuId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub">
+                    <join>
+                        <on leftProp="uoMId" rightProp="id"/>
+                    </join>
+                </to-one>
             </relations>
         </entity>
         <entity className="app.erp.mfg.dao.entity.ErpMfgRouting" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工艺路线"
                 name="app.erp.mfg.dao.entity.ErpMfgRouting" registerShortName="true" tableName="erp_mfg_routing"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                tagSet="gid,erp.manufacturing" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -361,8 +397,8 @@
         <entity className="app.erp.mfg.dao.entity.ErpMfgRoutingOperation" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工艺路线工序"
                 name="app.erp.mfg.dao.entity.ErpMfgRoutingOperation" registerShortName="true"
-                tableName="erp_mfg_routing_operation" tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version">
+                tableName="erp_mfg_routing_operation" tagSet="gid,erp.manufacturing" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -415,8 +451,8 @@
         <entity className="app.erp.mfg.dao.entity.ErpMfgWorkcenter" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工作中心"
                 name="app.erp.mfg.dao.entity.ErpMfgWorkcenter" registerShortName="true" tableName="erp_mfg_workcenter"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                tagSet="gid,erp.manufacturing" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -453,8 +489,8 @@
         <entity className="app.erp.mfg.dao.entity.ErpMfgWorkOrder" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工单"
                 name="app.erp.mfg.dao.entity.ErpMfgWorkOrder" registerShortName="true" tableName="erp_mfg_work_order"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                tagSet="gid,erp.manufacturing" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -534,6 +570,12 @@
                         precision="50" propId="37" stdDataType="string" stdSqlType="VARCHAR"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="38" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
+                <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" name="exchangeRate" precision="20"
+                        propId="39" scale="8" stdDataType="string" stdSqlType="DECIMAL"/>
+                <column code="AMOUNT_SOURCE" defaultValue="0" displayName="源币种金额" name="amountSource" precision="20"
+                        propId="40" scale="4" stdDataType="string" stdSqlType="DECIMAL"/>
+                <column code="AMOUNT_FUNCTIONAL" defaultValue="0" displayName="本位币金额" name="amountFunctional"
+                        precision="20" propId="41" scale="4" stdDataType="string" stdSqlType="DECIMAL"/>
             </columns>
             <relations>
                 <to-one name="bom" refEntityName="app.erp.mfg.dao.entity.ErpMfgBom" tagSet="pub">
@@ -552,6 +594,16 @@
                         <on leftProp="productionVersionId" rightProp="id"/>
                     </join>
                 </to-one>
+                <to-one name="product" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
+                    <join>
+                        <on leftProp="productId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
+                    <join>
+                        <on leftProp="currencyId" rightProp="id"/>
+                    </join>
+                </to-one>
                 <to-many cascadeDelete="true" name="lines" refEntityName="app.erp.mfg.dao.entity.ErpMfgWorkOrderLine"
                          tagSet="pub,cascade-delete,insertable,updatable">
                     <join>
@@ -564,13 +616,18 @@
                         <on leftProp="id" rightProp="workOrderId"/>
                     </join>
                 </to-many>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
             </relations>
         </entity>
         <entity className="app.erp.mfg.dao.entity.ErpMfgWorkOrderLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工单行"
                 name="app.erp.mfg.dao.entity.ErpMfgWorkOrderLine" registerShortName="true"
-                tableName="erp_mfg_work_order_line" tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version">
+                tableName="erp_mfg_work_order_line" tagSet="gid,erp.manufacturing" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -619,13 +676,28 @@
                         <on leftProp="workOrderId" rightProp="id"/>
                     </join>
                 </to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
+                    <join>
+                        <on leftProp="materialId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub">
+                    <join>
+                        <on leftProp="skuId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub">
+                    <join>
+                        <on leftProp="uoMId" rightProp="id"/>
+                    </join>
+                </to-one>
             </relations>
         </entity>
         <entity className="app.erp.mfg.dao.entity.ErpMfgProductionVersion" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="生产版本"
                 name="app.erp.mfg.dao.entity.ErpMfgProductionVersion" registerShortName="true"
-                tableName="erp_mfg_production_version" tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version">
+                tableName="erp_mfg_production_version" tagSet="gid,erp.manufacturing" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -665,6 +737,11 @@
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
             </columns>
             <relations>
+                <to-one name="product" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
+                    <join>
+                        <on leftProp="productId" rightProp="id"/>
+                    </join>
+                </to-one>
                 <to-one name="bom" refEntityName="app.erp.mfg.dao.entity.ErpMfgBom" tagSet="pub">
                     <join>
                         <on leftProp="bomId" rightProp="id"/>
@@ -680,8 +757,8 @@
         <entity className="app.erp.mfg.dao.entity.ErpMfgMrpPlan" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="MRP计划"
                 name="app.erp.mfg.dao.entity.ErpMfgMrpPlan" registerShortName="true" tableName="erp_mfg_mrp_plan"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                tagSet="gid,erp.manufacturing" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -727,8 +804,8 @@
         <entity className="app.erp.mfg.dao.entity.ErpMfgMrpPlanLine" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="MRP计划行"
                 name="app.erp.mfg.dao.entity.ErpMfgMrpPlanLine" registerShortName="true"
-                tableName="erp_mfg_mrp_plan_line" tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version">
+                tableName="erp_mfg_mrp_plan_line" tagSet="gid,erp.manufacturing" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -783,13 +860,23 @@
                         <on leftProp="mrpPlanId" rightProp="id"/>
                     </join>
                 </to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
+                    <join>
+                        <on leftProp="materialId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub">
+                    <join>
+                        <on leftProp="uoMId" rightProp="id"/>
+                    </join>
+                </to-one>
             </relations>
         </entity>
         <entity className="app.erp.mfg.dao.entity.ErpMfgMrpDemand" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="MRP独立需求"
                 name="app.erp.mfg.dao.entity.ErpMfgMrpDemand" registerShortName="true" tableName="erp_mfg_mrp_demand"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                tagSet="gid,erp.manufacturing" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -830,13 +917,23 @@
                         <on leftProp="mrpPlanId" rightProp="id"/>
                     </join>
                 </to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
+                    <join>
+                        <on leftProp="materialId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub">
+                    <join>
+                        <on leftProp="uoMId" rightProp="id"/>
+                    </join>
+                </to-one>
             </relations>
         </entity>
         <entity className="app.erp.mfg.dao.entity.ErpMfgMaterialIssue" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="领料单"
                 name="app.erp.mfg.dao.entity.ErpMfgMaterialIssue" registerShortName="true"
-                tableName="erp_mfg_material_issue" tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version">
+                tableName="erp_mfg_material_issue" tagSet="gid,erp.manufacturing" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -875,6 +972,14 @@
                         precision="50" propId="18" stdDataType="string" stdSqlType="VARCHAR"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
+                <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="20" stdDataType="long"
+                        stdSqlType="BIGINT"/>
+                <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" name="exchangeRate" precision="20"
+                        propId="21" scale="8" stdDataType="string" stdSqlType="DECIMAL"/>
+                <column code="AMOUNT_SOURCE" defaultValue="0" displayName="源币种金额" name="amountSource" precision="20"
+                        propId="22" scale="4" stdDataType="string" stdSqlType="DECIMAL"/>
+                <column code="AMOUNT_FUNCTIONAL" defaultValue="0" displayName="本位币金额" name="amountFunctional"
+                        precision="20" propId="23" scale="4" stdDataType="string" stdSqlType="DECIMAL"/>
             </columns>
             <relations>
                 <to-one name="workOrder" refEntityName="app.erp.mfg.dao.entity.ErpMfgWorkOrder" tagSet="pub">
@@ -885,6 +990,11 @@
                 <to-one name="jobCard" refEntityName="app.erp.mfg.dao.entity.ErpMfgJobCard" tagSet="pub">
                     <join>
                         <on leftProp="jobCardId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub">
+                    <join>
+                        <on leftProp="warehouseId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-many cascadeDelete="true" name="lines"
@@ -899,8 +1009,8 @@
         <entity className="app.erp.mfg.dao.entity.ErpMfgMaterialIssueLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="领料单行"
                 name="app.erp.mfg.dao.entity.ErpMfgMaterialIssueLine" registerShortName="true"
-                tableName="erp_mfg_material_issue_line" tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version">
+                tableName="erp_mfg_material_issue_line" tagSet="gid,erp.manufacturing" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -950,13 +1060,28 @@
                         <on leftProp="issueId" rightProp="id"/>
                     </join>
                 </to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
+                    <join>
+                        <on leftProp="materialId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub">
+                    <join>
+                        <on leftProp="skuId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub">
+                    <join>
+                        <on leftProp="uoMId" rightProp="id"/>
+                    </join>
+                </to-one>
             </relations>
         </entity>
         <entity className="app.erp.mfg.dao.entity.ErpMfgSubcontractOrder" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="委外加工单"
                 name="app.erp.mfg.dao.entity.ErpMfgSubcontractOrder" registerShortName="true"
-                tableName="erp_mfg_subcontract_order" tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version">
+                tableName="erp_mfg_subcontract_order" tagSet="gid,erp.manufacturing" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -1003,6 +1128,10 @@
                         precision="50" propId="22" stdDataType="string" stdSqlType="VARCHAR"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="23" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
+                <column code="AMOUNT_SOURCE" defaultValue="0" displayName="源币种金额" name="amountSource" precision="20"
+                        propId="24" scale="4" stdDataType="string" stdSqlType="DECIMAL"/>
+                <column code="AMOUNT_FUNCTIONAL" defaultValue="0" displayName="本位币金额" name="amountFunctional"
+                        precision="20" propId="25" scale="4" stdDataType="string" stdSqlType="DECIMAL"/>
             </columns>
             <relations>
                 <to-one name="workOrder" refEntityName="app.erp.mfg.dao.entity.ErpMfgWorkOrder" tagSet="pub">
@@ -1010,9 +1139,19 @@
                         <on leftProp="workOrderId" rightProp="id"/>
                     </join>
                 </to-one>
+                <to-one name="supplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub">
+                    <join>
+                        <on leftProp="supplierId" rightProp="id"/>
+                    </join>
+                </to-one>
                 <to-one name="workcenter" refEntityName="app.erp.mfg.dao.entity.ErpMfgWorkcenter" tagSet="pub">
                     <join>
                         <on leftProp="workcenterId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
+                    <join>
+                        <on leftProp="currencyId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-many cascadeDelete="true" name="lines"
@@ -1027,7 +1166,7 @@
         <entity className="app.erp.mfg.dao.entity.ErpMfgSubcontractOrderLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="委外加工单行"
                 name="app.erp.mfg.dao.entity.ErpMfgSubcontractOrderLine" registerShortName="true"
-                tableName="erp_mfg_subcontract_order_line" tagSet="gid" updateTimeProp="updateTime"
+                tableName="erp_mfg_subcontract_order_line" tagSet="gid,erp.manufacturing" updateTimeProp="updateTime"
                 updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
@@ -1068,13 +1207,23 @@
                         <on leftProp="subcontractOrderId" rightProp="id"/>
                     </join>
                 </to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
+                    <join>
+                        <on leftProp="materialId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub">
+                    <join>
+                        <on leftProp="uoMId" rightProp="id"/>
+                    </join>
+                </to-one>
             </relations>
         </entity>
         <entity className="app.erp.mfg.dao.entity.ErpMfgCostRollup" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="标准成本滚算"
                 name="app.erp.mfg.dao.entity.ErpMfgCostRollup" registerShortName="true" tableName="erp_mfg_cost_rollup"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                tagSet="gid,erp.manufacturing" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -1114,8 +1263,8 @@
         <entity className="app.erp.mfg.dao.entity.ErpMfgCostRollupLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="标准成本滚算行"
                 name="app.erp.mfg.dao.entity.ErpMfgCostRollupLine" registerShortName="true"
-                tableName="erp_mfg_cost_rollup_line" tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version">
+                tableName="erp_mfg_cost_rollup_line" tagSet="gid,erp.manufacturing" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -1161,13 +1310,23 @@
                         <on leftProp="costRollupId" rightProp="id"/>
                     </join>
                 </to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
+                    <join>
+                        <on leftProp="materialId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub">
+                    <join>
+                        <on leftProp="uoMId" rightProp="id"/>
+                    </join>
+                </to-one>
             </relations>
         </entity>
         <entity className="app.erp.mfg.dao.entity.ErpMfgJobCard" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="作业卡"
                 name="app.erp.mfg.dao.entity.ErpMfgJobCard" registerShortName="true" tableName="erp_mfg_job_card"
-                tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                tagSet="gid,erp.manufacturing" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -1225,8 +1384,8 @@
         <entity className="app.erp.mfg.dao.entity.ErpMfgJobCardTimeLog" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="作业工时记录"
                 name="app.erp.mfg.dao.entity.ErpMfgJobCardTimeLog" registerShortName="true"
-                tableName="erp_mfg_job_card_time_log" tagSet="gid" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version">
+                tableName="erp_mfg_job_card_time_log" tagSet="gid,erp.manufacturing" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -1286,6 +1445,93 @@
                     </join>
                 </to-one>
             </relations>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdMaterial" displayName="物料"
+                name="app.erp.md.dao.entity.ErpMdMaterial" notGenCode="true" tableName="erp_md_material">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="MATERIAL_TYPE" name="materialType" propId="4" stdDataType="int" stdSqlType="INTEGER"/>
+                <column code="STATUS" name="status" propId="5" stdDataType="int" stdSqlType="INTEGER"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdMaterialSku" displayName="物料SKU"
+                name="app.erp.md.dao.entity.ErpMdMaterialSku" notGenCode="true" tableName="erp_md_material_sku">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"/>
+                <column code="MATERIAL_ID" name="materialId" propId="2" stdDataType="long" stdSqlType="BIGINT"/>
+                <column code="SKU_CODE" name="skuCode" precision="50" propId="3" stdDataType="string"
+                        stdSqlType="VARCHAR"/>
+                <column code="BARCODE" name="barcode" precision="50" propId="4" stdDataType="string"
+                        stdSqlType="VARCHAR"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdUoM" displayName="计量单位" name="app.erp.md.dao.entity.ErpMdUoM"
+                notGenCode="true" tableName="erp_md_uom">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="UOM_GROUP" name="uoMGroup" precision="50" propId="4" stdDataType="string"
+                        stdSqlType="VARCHAR"/>
+                <column code="IS_BASE" name="isBase" propId="5" stdDataType="boolean" stdSqlType="BOOLEAN"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdWarehouse" displayName="仓库"
+                name="app.erp.md.dao.entity.ErpMdWarehouse" notGenCode="true" tableName="erp_md_warehouse">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="WAREHOUSE_TYPE" name="warehouseType" propId="4" stdDataType="int" stdSqlType="INTEGER"/>
+                <column code="ORG_ID" name="orgId" propId="5" stdDataType="long" stdSqlType="BIGINT"/>
+                <column code="STATUS" name="status" propId="6" stdDataType="int" stdSqlType="INTEGER"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdLocation" displayName="库位"
+                name="app.erp.md.dao.entity.ErpMdLocation" notGenCode="true" tableName="erp_md_location">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"/>
+                <column code="WAREHOUSE_ID" name="warehouseId" propId="2" stdDataType="long" stdSqlType="BIGINT"/>
+                <column code="CODE" name="code" precision="50" propId="3" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="NAME" name="name" precision="200" propId="4" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="PARENT_ID" name="parentId" propId="5" stdDataType="long" stdSqlType="BIGINT"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdOrganization" displayName="组织"
+                name="app.erp.md.dao.entity.ErpMdOrganization" notGenCode="true" tableName="erp_md_organization">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="ORG_TYPE" name="orgType" propId="4" stdDataType="int" stdSqlType="INTEGER"/>
+                <column code="PARENT_ID" name="parentId" propId="5" stdDataType="long" stdSqlType="BIGINT"/>
+                <column code="STATUS" name="status" propId="6" stdDataType="int" stdSqlType="INTEGER"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdCurrency" displayName="币种"
+                name="app.erp.md.dao.entity.ErpMdCurrency" notGenCode="true" tableName="erp_md_currency">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="SYMBOL" name="symbol" precision="50" propId="4" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="DECIMAL_PLACES" name="decimalPlaces" propId="5" stdDataType="int" stdSqlType="INTEGER"/>
+                <column code="IS_FUNCTIONAL" name="isFunctional" propId="6" stdDataType="boolean" stdSqlType="BOOLEAN"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdPartner" displayName="往来单位"
+                name="app.erp.md.dao.entity.ErpMdPartner" notGenCode="true" tableName="erp_md_partner">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="PARTNER_TYPE" name="partnerType" propId="4" stdDataType="int" stdSqlType="INTEGER"/>
+                <column code="STATUS" name="status" propId="5" stdDataType="int" stdSqlType="INTEGER"/>
+                <column code="CREDIT_LIMIT" name="creditLimit" precision="50" propId="6" stdDataType="string"
+                        stdSqlType="VARCHAR"/>
+            </columns>
         </entity>
     </entities>
 </orm>

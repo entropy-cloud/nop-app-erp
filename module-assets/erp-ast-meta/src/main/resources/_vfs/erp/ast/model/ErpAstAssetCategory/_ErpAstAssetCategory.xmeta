@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen" xmlns:biz="biz"
+      displayName="资产类别" tagSet="gid,erp.assets" xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.ast.dao.entity.ErpAstAssetCategory</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" tagSet="seq-default" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="code" displayName="类别编码" propId="2" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="assetCode" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="name" displayName="类别名称" propId="3" mandatory="true" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="name" type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="depreciationMethod" displayName="默认折旧方法" propId="4" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.lang.Integer" dict="erp-ast/depreciation-method"/>
+        </prop>
+        <prop name="usefulLifeMonths" displayName="默认使用年限(月)" propId="5" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="subjectId" displayName="资产科目" propId="6" queryable="true" sortable="true" insertable="true"
+              updatable="true" ext:relation="subject">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="depreciationSubjectId" displayName="累计折旧科目" propId="7" queryable="true" sortable="true"
+              insertable="true" updatable="true" ext:relation="depreciationSubject">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="expenseSubjectId" displayName="折旧费用科目" propId="8" queryable="true" sortable="true" insertable="true"
+              updatable="true" ext:relation="expenseSubject">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="9" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="10" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="11" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="12" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="13" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="14" mandatory="true" queryable="true" sortable="true"
+              insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="15" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="subject" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="subjectId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdSubject"/>
+        </prop>
+        <prop name="depreciationSubject" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="depreciationSubjectId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdSubject"/>
+        </prop>
+        <prop name="expenseSubject" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="expenseSubjectId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdSubject"/>
+        </prop>
+    </props>
+</meta>

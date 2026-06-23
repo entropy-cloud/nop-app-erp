@@ -25,6 +25,15 @@
 - 设备维护：设备、维护计划、维护访问、维护请求、停机记录
 - 系统管理：用户、角色、权限、组织、配置（复用 nop-auth/nop-sys）
 
+> 上面的分组仅用于产品概览，**不是菜单权威源**。菜单结构、页面入口与功能权限点（`TOPM`/`SUBM`/`FNPT` 三级资源）以每域的 `*.action-auth.xml` 为唯一真相源，遵循 AGENTS.md 第 7 条"持久化与契约真相保存在模型 XML、散文不复述"的同一原则，本文档不重复菜单树细节。
+
+## 菜单权威源与定制约定
+
+- **权威源**：菜单与功能权限点以 `*.action-auth.xml` 为准（`TOPM` 一级菜单 / `SUBM` 子菜单 / `FNPT` 功能点），加载路径为 `/nop/main/auth/app.action-auth.xml`，应用层聚合各模块配置。平台规范见 `nop-entropy/docs-for-ai/02-core-guides/auth-and-permissions.md`。
+- **生成产物**：代码生成会为每个域产出 `_{moduleName}.action-auth.xml`（下划线前缀），它从 `model/*.orm.xml` 的 `ext:icon` 自动推导出每个实体的菜单骨架（SUBM 的 `icon`、两个 FNPT `{objName}:query` 与 `{objName}:mutation`）。这是**代码生成产物而非测试用文件**，按平台规则禁止手工修改。
+- **本项目定制方式**：不为整棵菜单另起一份散文规划。每个域手写一份非下划线的 `{moduleName}.action-auth.xml`，通过 `x:extends` 继承生成产物，再对不需要的自动生成项用 `x:override="remove"` 删除（合并算子语义见 `nop-entropy/docs-for-ai/02-core-guides/xdef-and-xdsl.md` 的 `x:override` 表）。菜单图标、排序、路由等细节也在这份手写文件中沉淀，不在 `docs/design/` 中复述。
+- **与权限的衔接**：`FNPT` 资源声明的权限标识与 `roles-and-permissions.md` 的角色矩阵对接。操作权限检查默认关闭（`nop.auth.enable-action-auth=false`），启用后按角色过滤菜单并对未授权资源标记 DISABLED。
+
 ## 主要用户角色
 
 - 超级管理员：拥有全系统访问权限

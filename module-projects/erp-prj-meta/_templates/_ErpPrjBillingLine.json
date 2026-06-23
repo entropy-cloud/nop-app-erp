@@ -1,0 +1,18 @@
+{
+  "id": 0,
+  "billingId": 0,
+  "lineNo": 0,
+  "costCategory": "",
+  "taskId": 0,
+  "subjectId": 0,
+  "amount": "",
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "billing": null,
+  "subject": null
+}

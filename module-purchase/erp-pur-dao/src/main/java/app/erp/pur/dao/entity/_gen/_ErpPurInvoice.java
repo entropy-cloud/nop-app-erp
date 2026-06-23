@@ -141,6 +141,12 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
 
     
     /* relation:  */
+    public static final String PROP_NAME_supplier = "supplier";
+    
+    /* relation:  */
+    public static final String PROP_NAME_currency = "currency";
+    
+    /* relation:  */
     public static final String PROP_NAME_lines = "lines";
     
 
@@ -1559,6 +1565,52 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdPartner getSupplier(){
+       return (app.erp.md.dao.entity.ErpMdPartner)internalGetRefEntity(PROP_NAME_supplier);
+    }
+
+    public final void setSupplier(app.erp.md.dao.entity.ErpMdPartner refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setSupplierId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_supplier, refEntity,()->{
+           
+                           this.setSupplierId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdCurrency getCurrency(){
+       return (app.erp.md.dao.entity.ErpMdCurrency)internalGetRefEntity(PROP_NAME_currency);
+    }
+
+    public final void setCurrency(app.erp.md.dao.entity.ErpMdCurrency refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCurrencyId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_currency, refEntity,()->{
+           
+                           this.setCurrencyId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
     private final OrmEntitySet<app.erp.pur.dao.entity.ErpPurInvoiceLine> _lines = new OrmEntitySet<>(this, PROP_NAME_lines,
         null, null,app.erp.pur.dao.entity.ErpPurInvoiceLine.class);
 

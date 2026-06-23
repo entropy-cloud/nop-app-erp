@@ -1,0 +1,23 @@
+{
+  "id": 0,
+  "code": "",
+  "productId": 0,
+  "bomId": 0,
+  "routingId": 0,
+  "validFrom": "2000-01-01",
+  "validTo": "2000-01-01",
+  "lotSizeFrom": "",
+  "lotSizeTo": "",
+  "isDefault": false,
+  "isActive": false,
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "product": null,
+  "bom": null,
+  "routing": null
+}

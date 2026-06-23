@@ -1,0 +1,21 @@
+{
+  "id": 0,
+  "inspectionId": 0,
+  "lineNo": 0,
+  "parameterId": 0,
+  "parameterName": "",
+  "specMin": "",
+  "specMax": "",
+  "measuredValue": "",
+  "unit": "",
+  "result": 0,
+  "result_label": "",
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "inspection": null
+}

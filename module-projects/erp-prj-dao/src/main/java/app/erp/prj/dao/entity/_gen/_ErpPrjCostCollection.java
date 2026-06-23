@@ -96,8 +96,20 @@ public class _ErpPrjCostCollection extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 19;
     
+    /* 汇率: EXCHANGE_RATE DECIMAL */
+    public static final String PROP_NAME_exchangeRate = "exchangeRate";
+    public static final int PROP_ID_exchangeRate = 20;
+    
+    /* 源币种金额: AMOUNT_SOURCE DECIMAL */
+    public static final String PROP_NAME_amountSource = "amountSource";
+    public static final int PROP_ID_amountSource = 21;
+    
+    /* 本位币金额: AMOUNT_FUNCTIONAL DECIMAL */
+    public static final String PROP_NAME_amountFunctional = "amountFunctional";
+    public static final int PROP_ID_amountFunctional = 22;
+    
 
-    private static int _PROP_ID_BOUND = 20;
+    private static int _PROP_ID_BOUND = 23;
 
     
     /* relation:  */
@@ -110,7 +122,7 @@ public class _ErpPrjCostCollection extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[20];
+    private static final String[] PROP_ID_TO_NAME = new String[23];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -171,6 +183,15 @@ public class _ErpPrjCostCollection extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
+          PROP_ID_TO_NAME[PROP_ID_exchangeRate] = PROP_NAME_exchangeRate;
+          PROP_NAME_TO_ID.put(PROP_NAME_exchangeRate, PROP_ID_exchangeRate);
+      
+          PROP_ID_TO_NAME[PROP_ID_amountSource] = PROP_NAME_amountSource;
+          PROP_NAME_TO_ID.put(PROP_NAME_amountSource, PROP_ID_amountSource);
+      
+          PROP_ID_TO_NAME[PROP_ID_amountFunctional] = PROP_NAME_amountFunctional;
+          PROP_NAME_TO_ID.put(PROP_NAME_amountFunctional, PROP_ID_amountFunctional);
+      
     }
 
     
@@ -230,6 +251,15 @@ public class _ErpPrjCostCollection extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* 汇率: EXCHANGE_RATE */
+    private java.lang.String _exchangeRate;
+    
+    /* 源币种金额: AMOUNT_SOURCE */
+    private java.lang.String _amountSource;
+    
+    /* 本位币金额: AMOUNT_FUNCTIONAL */
+    private java.lang.String _amountFunctional;
     
 
     public _ErpPrjCostCollection(){
@@ -361,6 +391,15 @@ public class _ErpPrjCostCollection extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_exchangeRate:
+               return getExchangeRate();
+        
+            case PROP_ID_amountSource:
+               return getAmountSource();
+        
+            case PROP_ID_amountFunctional:
+               return getAmountFunctional();
         
            default:
               return super.orm_propValue(propId);
@@ -563,6 +602,36 @@ public class _ErpPrjCostCollection extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_exchangeRate:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_exchangeRate));
+               }
+               setExchangeRate(typedValue);
+               break;
+            }
+        
+            case PROP_ID_amountSource:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_amountSource));
+               }
+               setAmountSource(typedValue);
+               break;
+            }
+        
+            case PROP_ID_amountFunctional:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_amountFunctional));
+               }
+               setAmountFunctional(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -701,6 +770,27 @@ public class _ErpPrjCostCollection extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_exchangeRate:{
+               onInitProp(propId);
+               this._exchangeRate = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_amountSource:{
+               onInitProp(propId);
+               this._amountSource = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_amountFunctional:{
+               onInitProp(propId);
+               this._amountFunctional = (java.lang.String)value;
                
                break;
             }
@@ -1068,6 +1158,63 @@ public class _ErpPrjCostCollection extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_updateTime,value)){
             this._updateTime = value;
             internalClearRefs(PROP_ID_updateTime);
+            
+        }
+    }
+    
+    /**
+     * 汇率: EXCHANGE_RATE
+     */
+    public final java.lang.String getExchangeRate(){
+         onPropGet(PROP_ID_exchangeRate);
+         return _exchangeRate;
+    }
+
+    /**
+     * 汇率: EXCHANGE_RATE
+     */
+    public final void setExchangeRate(java.lang.String value){
+        if(onPropSet(PROP_ID_exchangeRate,value)){
+            this._exchangeRate = value;
+            internalClearRefs(PROP_ID_exchangeRate);
+            
+        }
+    }
+    
+    /**
+     * 源币种金额: AMOUNT_SOURCE
+     */
+    public final java.lang.String getAmountSource(){
+         onPropGet(PROP_ID_amountSource);
+         return _amountSource;
+    }
+
+    /**
+     * 源币种金额: AMOUNT_SOURCE
+     */
+    public final void setAmountSource(java.lang.String value){
+        if(onPropSet(PROP_ID_amountSource,value)){
+            this._amountSource = value;
+            internalClearRefs(PROP_ID_amountSource);
+            
+        }
+    }
+    
+    /**
+     * 本位币金额: AMOUNT_FUNCTIONAL
+     */
+    public final java.lang.String getAmountFunctional(){
+         onPropGet(PROP_ID_amountFunctional);
+         return _amountFunctional;
+    }
+
+    /**
+     * 本位币金额: AMOUNT_FUNCTIONAL
+     */
+    public final void setAmountFunctional(java.lang.String value){
+        if(onPropSet(PROP_ID_amountFunctional,value)){
+            this._amountFunctional = value;
+            internalClearRefs(PROP_ID_amountFunctional);
             
         }
     }

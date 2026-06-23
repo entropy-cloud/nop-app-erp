@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:schema="/nop/schema/xui/xview.xdef" bizObjName="ErpMfgMrpPlanLine" xmlns:i18n-en="i18n-en"
+      xmlns:x="/nop/schema/xdsl.xdef" xmlns:j="j" xmlns:c="c" xmlns:gql="gql" xmlns:view-gen="view-gen" xmlns:xpl="xpl">
+
+    <objMeta>/erp/mfg/model/ErpMfgMrpPlanLine/ErpMfgMrpPlanLine.xmeta</objMeta>
+
+    <controlLib>/nop/web/xlib/control.xlib</controlLib>
+
+    <x:gen-extends>
+        <view-gen:DefaultViewGenExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <view-gen:DefaultViewPostExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:post-extends>
+
+    <grids>
+        <grid id="list" x:abstract="true">
+            <cols>
+
+                <!--ID-->
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--MRP计划ID-->
+                <col id="mrpPlanId" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--行号-->
+                <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--物料-->
+                <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--计量单位-->
+                <col id="uoMId" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--建议类型-->
+                <col id="orderType" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--毛需求-->
+                <col id="grossRequirement" mandatory="true" sortable="true"/>
+
+                <!--预计入库-->
+                <col id="scheduledReceipt" sortable="true"/>
+
+                <!--现有库存-->
+                <col id="onHand" sortable="true"/>
+
+                <!--净需求-->
+                <col id="netRequirement" mandatory="true" sortable="true"/>
+
+                <!--计划数量-->
+                <col id="plannedQuantity" mandatory="true" sortable="true"/>
+
+                <!--计划到货/开工日期-->
+                <col id="plannedDate" mandatory="true" sortable="true"/>
+
+                <!--父需求行(多级 BOM 展开)-->
+                <col id="parentLineId" ui:number="true" sortable="true"/>
+
+                <!--是否已转正式单据-->
+                <col id="isFirmed" sortable="true"/>
+
+                <!--转换后单据号-->
+                <col id="convertedBillCode" sortable="true"/>
+
+                <!--逻辑删除版本-->
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--创建人-->
+                <col id="createdBy" mandatory="true" sortable="true"/>
+
+                <!--创建时间-->
+                <col id="createTime" mandatory="true" sortable="true"/>
+
+                <!--修改人-->
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+
+                <!--修改时间-->
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list" x:prototype="list" x:abstract="true"/>
+    </grids>
+
+    <forms>
+        <form id="view" editMode="view" title="查看-MRP计划行" i18n-en:title="">
+            <layout>
+ id[ID] mrpPlanId[MRP计划ID]
+ lineNo[行号] materialId[物料]
+ uoMId[计量单位] orderType[建议类型]
+ grossRequirement[毛需求] scheduledReceipt[预计入库]
+ onHand[现有库存] netRequirement[净需求]
+ plannedQuantity[计划数量] plannedDate[计划到货/开工日期]
+ parentLineId[父需求行(多级 BOM 展开)] isFirmed[是否已转正式单据]
+ convertedBillCode[转换后单据号] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+</layout>
+        </form>
+        <form id="add" editMode="add" title="新增-MRP计划行" i18n-en:title="">
+            <layout>
+ id[ID] mrpPlanId[MRP计划ID]
+ lineNo[行号] materialId[物料]
+ uoMId[计量单位] orderType[建议类型]
+ grossRequirement[毛需求] scheduledReceipt[预计入库]
+ onHand[现有库存] netRequirement[净需求]
+ plannedQuantity[计划数量] plannedDate[计划到货/开工日期]
+ parentLineId[父需求行(多级 BOM 展开)] isFirmed[是否已转正式单据]
+ convertedBillCode[转换后单据号] 
+</layout>
+        </form>
+        <form id="edit" editMode="edit" title="编辑-MRP计划行" i18n-en:title="">
+            <layout>
+ id[ID] mrpPlanId[MRP计划ID]
+ lineNo[行号] materialId[物料]
+ uoMId[计量单位] orderType[建议类型]
+ grossRequirement[毛需求] scheduledReceipt[预计入库]
+ onHand[现有库存] netRequirement[净需求]
+ plannedQuantity[计划数量] plannedDate[计划到货/开工日期]
+ parentLineId[父需求行(多级 BOM 展开)] isFirmed[是否已转正式单据]
+ convertedBillCode[转换后单据号] delVersion[逻辑删除版本]
+</layout>
+        </form>
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-MRP计划行" i18n-en:title=""/>
+    </forms>
+
+    <pages>
+        <crud name="view-list" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpMfgMrpPlanLine__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </crud>
+        <crud name="main" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpMfgMrpPlanLine__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+            <listActions>
+                <action id="batch-delete-button" label="@i18n:common.batchDelete" batch="true">
+                    <api url="@mutation:ErpMfgMrpPlanLine__batchDelete?ids=$ids"/>
+                    <confirmText>@i18n:common.confirmBatchDelete</confirmText>
+                </action>
+                <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
+                    <dialog page="add"/>
+                </action>
+            </listActions>
+            <rowActions>
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+                <action id="row-update-button" level="primary" label="@i18n:common.edit" x:abstract="true">
+                    <dialog page="update"/>
+                </action>
+                <action id="row-delete-button" level="danger" label="@i18n:common.delete" x:abstract="true">
+                    <api url="@mutation:ErpMfgMrpPlanLine__delete?id=$id"/>
+                    <confirmText>@i18n:common.confirmDelete</confirmText>
+                </action>
+                <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
+                    <action id="row-update-button" label="@i18n:common.edit">
+                        <dialog page="update"/>
+                    </action>
+                    <action id="row-delete-button" label="@i18n:common.delete">
+                        <api url="@mutation:ErpMfgMrpPlanLine__delete?id=$id"/>
+                        <confirmText>@i18n:common.confirmDelete</confirmText>
+                    </action>
+                </actionGroup>
+            </rowActions>
+        </crud>
+        <picker name="picker" grid="pick-list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table noOperations="true">
+                <api url="@query:ErpMfgMrpPlanLine__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </picker>
+        <simple name="add" form="add">
+            <api url="@mutation:ErpMfgMrpPlanLine__save/id"/>
+        </simple>
+        <simple name="view" form="view">
+            <initApi url="@query:ErpMfgMrpPlanLine__get?id=$id" gql:selection="{@formSelection}"/>
+        </simple>
+        <simple name="update" form="edit">
+            <initApi url="@query:ErpMfgMrpPlanLine__get?id=$id" gql:selection="{@formSelection}"/>
+            <api url="@mutation:ErpMfgMrpPlanLine__update/id?id=$id" withFormData="true"/>
+        </simple>
+    </pages>
+</view>

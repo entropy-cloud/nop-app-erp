@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
+
+    <site id="main">
+        <resource id="test-orm-erp-mnt" displayName="测试erp-mnt" i18n-en:displayName="Test erp-mnt"
+                  icon="ion:grid-outline" resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-mnt"
+                  component="layouts/default/index">
+            <children>
+                <resource id="ErpMntCalibration-main" displayName="校准记录" orderNo="10001" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mnt/pages/ErpMntCalibration/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMntCalibration:query" displayName="查询校准记录" i18n-en:displayName=""
+                                  orderNo="10002" resourceType="FNPT">
+                            <permissions>ErpMntCalibration:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMntCalibration:mutation" displayName="修改校准记录" i18n-en:displayName=""
+                                  orderNo="10003" resourceType="FNPT">
+                            <permissions>ErpMntCalibration:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMntDowntimeEntry-main" displayName="停机记录" orderNo="10004" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mnt/pages/ErpMntDowntimeEntry/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMntDowntimeEntry:query" displayName="查询停机记录" i18n-en:displayName=""
+                                  orderNo="10005" resourceType="FNPT">
+                            <permissions>ErpMntDowntimeEntry:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMntDowntimeEntry:mutation" displayName="修改停机记录" i18n-en:displayName=""
+                                  orderNo="10006" resourceType="FNPT">
+                            <permissions>ErpMntDowntimeEntry:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMntEquipment-main" displayName="设备" orderNo="10007" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mnt/pages/ErpMntEquipment/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMntEquipment:query" displayName="查询设备" i18n-en:displayName=""
+                                  orderNo="10008" resourceType="FNPT">
+                            <permissions>ErpMntEquipment:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMntEquipment:mutation" displayName="修改设备" i18n-en:displayName=""
+                                  orderNo="10009" resourceType="FNPT">
+                            <permissions>ErpMntEquipment:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMntEquipmentCategory-main" displayName="设备分类" orderNo="10010" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mnt/pages/ErpMntEquipmentCategory/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMntEquipmentCategory:query" displayName="查询设备分类" i18n-en:displayName=""
+                                  orderNo="10011" resourceType="FNPT">
+                            <permissions>ErpMntEquipmentCategory:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMntEquipmentCategory:mutation" displayName="修改设备分类" i18n-en:displayName=""
+                                  orderNo="10012" resourceType="FNPT">
+                            <permissions>ErpMntEquipmentCategory:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMntMaintenanceTeam-main" displayName="维护团队" orderNo="10013" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mnt/pages/ErpMntMaintenanceTeam/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMntMaintenanceTeam:query" displayName="查询维护团队" i18n-en:displayName=""
+                                  orderNo="10014" resourceType="FNPT">
+                            <permissions>ErpMntMaintenanceTeam:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMntMaintenanceTeam:mutation" displayName="修改维护团队" i18n-en:displayName=""
+                                  orderNo="10015" resourceType="FNPT">
+                            <permissions>ErpMntMaintenanceTeam:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMntMaintenanceTeamMember-main" displayName="维护团队成员" orderNo="10016"
+                          i18n-en:displayName="" icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mnt/pages/ErpMntMaintenanceTeamMember/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMntMaintenanceTeamMember:query" displayName="查询维护团队成员"
+                                  i18n-en:displayName="" orderNo="10017" resourceType="FNPT">
+                            <permissions>ErpMntMaintenanceTeamMember:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMntMaintenanceTeamMember:mutation" displayName="修改维护团队成员"
+                                  i18n-en:displayName="" orderNo="10018" resourceType="FNPT">
+                            <permissions>ErpMntMaintenanceTeamMember:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMntRequest-main" displayName="维护请求" orderNo="10019" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mnt/pages/ErpMntRequest/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMntRequest:query" displayName="查询维护请求" i18n-en:displayName=""
+                                  orderNo="10020" resourceType="FNPT">
+                            <permissions>ErpMntRequest:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMntRequest:mutation" displayName="修改维护请求" i18n-en:displayName=""
+                                  orderNo="10021" resourceType="FNPT">
+                            <permissions>ErpMntRequest:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMntSchedule-main" displayName="维护计划" orderNo="10022" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mnt/pages/ErpMntSchedule/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMntSchedule:query" displayName="查询维护计划" i18n-en:displayName=""
+                                  orderNo="10023" resourceType="FNPT">
+                            <permissions>ErpMntSchedule:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMntSchedule:mutation" displayName="修改维护计划" i18n-en:displayName=""
+                                  orderNo="10024" resourceType="FNPT">
+                            <permissions>ErpMntSchedule:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMntSparePartUsage-main" displayName="备件消耗" orderNo="10025" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mnt/pages/ErpMntSparePartUsage/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMntSparePartUsage:query" displayName="查询备件消耗" i18n-en:displayName=""
+                                  orderNo="10026" resourceType="FNPT">
+                            <permissions>ErpMntSparePartUsage:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMntSparePartUsage:mutation" displayName="修改备件消耗" i18n-en:displayName=""
+                                  orderNo="10027" resourceType="FNPT">
+                            <permissions>ErpMntSparePartUsage:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMntSparePartUsageLine-main" displayName="备件消耗行" orderNo="10028" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mnt/pages/ErpMntSparePartUsageLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMntSparePartUsageLine:query" displayName="查询备件消耗行" i18n-en:displayName=""
+                                  orderNo="10029" resourceType="FNPT">
+                            <permissions>ErpMntSparePartUsageLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMntSparePartUsageLine:mutation" displayName="修改备件消耗行"
+                                  i18n-en:displayName="" orderNo="10030" resourceType="FNPT">
+                            <permissions>ErpMntSparePartUsageLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMntVisit-main" displayName="维护访问" orderNo="10031" i18n-en:displayName="" icon="blocks"
+                          component="AMIS" resourceType="SUBM" url="/erp/mnt/pages/ErpMntVisit/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMntVisit:query" displayName="查询维护访问" i18n-en:displayName=""
+                                  orderNo="10032" resourceType="FNPT">
+                            <permissions>ErpMntVisit:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMntVisit:mutation" displayName="修改维护访问" i18n-en:displayName=""
+                                  orderNo="10033" resourceType="FNPT">
+                            <permissions>ErpMntVisit:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMntVisitTask-main" displayName="维护任务" orderNo="10034" i18n-en:displayName=""
+                          icon="blocks" component="AMIS" resourceType="SUBM"
+                          url="/erp/mnt/pages/ErpMntVisitTask/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMntVisitTask:query" displayName="查询维护任务" i18n-en:displayName=""
+                                  orderNo="10035" resourceType="FNPT">
+                            <permissions>ErpMntVisitTask:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMntVisitTask:mutation" displayName="修改维护任务" i18n-en:displayName=""
+                                  orderNo="10036" resourceType="FNPT">
+                            <permissions>ErpMntVisitTask:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
+</auth>

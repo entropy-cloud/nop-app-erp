@@ -75,6 +75,9 @@ public class _ErpMntMaintenanceTeamMember extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_team = "team";
     
+    /* relation:  */
+    public static final String PROP_NAME_employee = "employee";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -743,6 +746,29 @@ public class _ErpMntMaintenanceTeamMember extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_team, refEntity,()->{
            
                            this.setTeamId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdEmployee getEmployee(){
+       return (app.erp.md.dao.entity.ErpMdEmployee)internalGetRefEntity(PROP_NAME_employee);
+    }
+
+    public final void setEmployee(app.erp.md.dao.entity.ErpMdEmployee refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setEmployeeId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_employee, refEntity,()->{
+           
+                           this.setEmployeeId(refEntity.getId());
                        
            });
            }

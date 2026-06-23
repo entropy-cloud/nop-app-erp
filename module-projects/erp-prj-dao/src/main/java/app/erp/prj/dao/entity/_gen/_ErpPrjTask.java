@@ -119,6 +119,9 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     public static final String PROP_NAME_parentTask = "parentTask";
     
     /* relation:  */
+    public static final String PROP_NAME_assignee = "assignee";
+    
+    /* relation:  */
     public static final String PROP_NAME_dependsOn = "dependsOn";
     
     /* relation:  */
@@ -1268,6 +1271,29 @@ public class _ErpPrjTask extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_parentTask, refEntity,()->{
            
                            this.setParentTaskId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdPartner getAssignee(){
+       return (app.erp.md.dao.entity.ErpMdPartner)internalGetRefEntity(PROP_NAME_assignee);
+    }
+
+    public final void setAssignee(app.erp.md.dao.entity.ErpMdPartner refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setAssigneeId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_assignee, refEntity,()->{
+           
+                           this.setAssigneeId(refEntity.getId());
                        
            });
            }

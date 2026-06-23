@@ -1,15 +1,24 @@
 
 drop table erp_fin_accounting_period;
+drop table erp_md_acct_schema;
+drop table erp_md_subject;
+drop table erp_md_currency;
+drop table erp_md_partner;
+drop table erp_md_organization;
+drop table erp_md_warehouse;
+drop table erp_md_material;
+drop table erp_prj_project;
+drop table erp_ast_asset;
+drop table erp_fin_voucher;
 drop table erp_fin_voucher_template;
+drop table erp_fin_accounting_period_status;
+drop table erp_fin_trial_balance;
+drop table erp_fin_gl_balance;
+drop table erp_fin_fund_account;
 drop table erp_fin_ar_ap_item;
 drop table erp_fin_reconciliation;
-drop table erp_fin_fund_account;
-drop table erp_fin_voucher;
-drop table erp_fin_accounting_period_status;
-drop table erp_fin_gl_balance;
-drop table erp_fin_trial_balance;
-drop table erp_fin_voucher_template_line;
-drop table erp_fin_reconciliation_line;
 drop table erp_fin_voucher_line;
 drop table erp_fin_voucher_bill_r;
+drop table erp_fin_voucher_template_line;
+drop table erp_fin_reconciliation_line;
 

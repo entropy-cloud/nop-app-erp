@@ -1,4 +1,97 @@
 
+CREATE TABLE erp_md_partner(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  partner_type INT4  ,
+  status INT4  ,
+  credit_limit VARCHAR(50)  ,
+  constraint PK_erp_md_partner primary key (id)
+);
+
+CREATE TABLE erp_md_currency(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  symbol VARCHAR(50)  ,
+  decimal_places INT4  ,
+  is_functional BOOLEAN  ,
+  constraint PK_erp_md_currency primary key (id)
+);
+
+CREATE TABLE erp_md_material(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  material_type INT4  ,
+  status INT4  ,
+  constraint PK_erp_md_material primary key (id)
+);
+
+CREATE TABLE erp_md_uom(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  uom_group VARCHAR(50)  ,
+  is_base BOOLEAN  ,
+  constraint PK_erp_md_uom primary key (id)
+);
+
+CREATE TABLE erp_md_warehouse(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  warehouse_type INT4  ,
+  org_id INT8  ,
+  status INT4  ,
+  constraint PK_erp_md_warehouse primary key (id)
+);
+
+CREATE TABLE erp_md_settlement_method(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  settlement_type INT4  ,
+  status INT4  ,
+  constraint PK_erp_md_settlement_method primary key (id)
+);
+
+CREATE TABLE erp_md_organization(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  org_type INT4  ,
+  parent_id INT8  ,
+  status INT4  ,
+  constraint PK_erp_md_organization primary key (id)
+);
+
+CREATE TABLE erp_md_material_sku(
+  id INT8  ,
+  material_id INT8  ,
+  sku_code VARCHAR(50)  ,
+  barcode VARCHAR(50)  ,
+  constraint PK_erp_md_material_sku primary key (id)
+);
+
+CREATE TABLE erp_md_tax_rate(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  tax_type INT4  ,
+  rate VARCHAR(50)  ,
+  constraint PK_erp_md_tax_rate primary key (id)
+);
+
+CREATE TABLE erp_md_bank_account(
+  id INT8  ,
+  partner_id INT8  ,
+  bank_name VARCHAR(50)  ,
+  bank_account VARCHAR(50)  ,
+  account_type INT4  ,
+  constraint PK_erp_md_bank_account primary key (id)
+);
+
 CREATE TABLE erp_sal_quotation(
   id INT8 NOT NULL ,
   code VARCHAR(50) NOT NULL ,
@@ -50,46 +143,6 @@ CREATE TABLE erp_sal_contract(
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
   constraint PK_erp_sal_contract primary key (id)
-);
-
-CREATE TABLE erp_sal_order(
-  id INT8 NOT NULL ,
-  code VARCHAR(50) NOT NULL ,
-  org_id INT8  ,
-  quotation_id INT8  ,
-  contract_id INT8  ,
-  customer_id INT8 NOT NULL ,
-  warehouse_id INT8  ,
-  business_date DATE NOT NULL ,
-  delivery_date DATE  ,
-  currency_id INT8 NOT NULL ,
-  exchange_rate NUMERIC(20,8) default 1   ,
-  amount_source NUMERIC(20,4) default 0   ,
-  amount_functional NUMERIC(20,4) default 0   ,
-  total_amount NUMERIC(20,4) default 0   ,
-  total_tax_amount NUMERIC(20,4) default 0   ,
-  total_amount_with_tax NUMERIC(20,4) default 0   ,
-  discount_rate NUMERIC(10,4)  ,
-  discount_amount NUMERIC(20,4) default 0   ,
-  received_amount NUMERIC(20,4) default 0   ,
-  settlement_method_id INT8  ,
-  doc_status INT4 NOT NULL ,
-  approve_status INT4 NOT NULL ,
-  received_status INT4  ,
-  delivery_status INT4  ,
-  posted BOOLEAN default false   ,
-  posted_at TIMESTAMP  ,
-  posted_by INT8  ,
-  approved_by INT8  ,
-  approved_at TIMESTAMP  ,
-  del_version INT8 default 0  NOT NULL ,
-  version INT4 default 0  NOT NULL ,
-  created_by VARCHAR(50) NOT NULL ,
-  create_time TIMESTAMP NOT NULL ,
-  updated_by VARCHAR(50) NOT NULL ,
-  update_time TIMESTAMP NOT NULL ,
-  remark VARCHAR(1000)  ,
-  constraint PK_erp_sal_order primary key (id)
 );
 
 CREATE TABLE erp_sal_invoice(
@@ -158,6 +211,46 @@ CREATE TABLE erp_sal_receipt(
   constraint PK_erp_sal_receipt primary key (id)
 );
 
+CREATE TABLE erp_sal_order(
+  id INT8 NOT NULL ,
+  code VARCHAR(50) NOT NULL ,
+  org_id INT8  ,
+  quotation_id INT8  ,
+  contract_id INT8  ,
+  customer_id INT8 NOT NULL ,
+  warehouse_id INT8  ,
+  business_date DATE NOT NULL ,
+  delivery_date DATE  ,
+  currency_id INT8 NOT NULL ,
+  exchange_rate NUMERIC(20,8) default 1   ,
+  amount_source NUMERIC(20,4) default 0   ,
+  amount_functional NUMERIC(20,4) default 0   ,
+  total_amount NUMERIC(20,4) default 0   ,
+  total_tax_amount NUMERIC(20,4) default 0   ,
+  total_amount_with_tax NUMERIC(20,4) default 0   ,
+  discount_rate NUMERIC(10,4)  ,
+  discount_amount NUMERIC(20,4) default 0   ,
+  received_amount NUMERIC(20,4) default 0   ,
+  settlement_method_id INT8  ,
+  doc_status INT4 NOT NULL ,
+  approve_status INT4 NOT NULL ,
+  received_status INT4  ,
+  delivery_status INT4  ,
+  posted BOOLEAN default false   ,
+  posted_at TIMESTAMP  ,
+  posted_by INT8  ,
+  approved_by INT8  ,
+  approved_at TIMESTAMP  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  remark VARCHAR(1000)  ,
+  constraint PK_erp_sal_order primary key (id)
+);
+
 CREATE TABLE erp_sal_quotation_line(
   id INT8 NOT NULL ,
   quotation_id INT8 NOT NULL ,
@@ -178,6 +271,43 @@ CREATE TABLE erp_sal_quotation_line(
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
   constraint PK_erp_sal_quotation_line primary key (id)
+);
+
+CREATE TABLE erp_sal_invoice_line(
+  id INT8 NOT NULL ,
+  invoice_id INT8 NOT NULL ,
+  delivery_line_id INT8  ,
+  line_no INT4 NOT NULL ,
+  material_id INT8 NOT NULL ,
+  uom_id INT8 NOT NULL ,
+  quantity NUMERIC(20,4) NOT NULL ,
+  unit_price NUMERIC(20,4)  ,
+  tax_rate NUMERIC(10,4)  ,
+  tax_amount NUMERIC(20,4)  ,
+  amount NUMERIC(20,4)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  remark VARCHAR(1000)  ,
+  constraint PK_erp_sal_invoice_line primary key (id)
+);
+
+CREATE TABLE erp_sal_receipt_line(
+  id INT8 NOT NULL ,
+  receipt_id INT8 NOT NULL ,
+  invoice_id INT8 NOT NULL ,
+  amount NUMERIC(20,4) NOT NULL ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  remark VARCHAR(1000)  ,
+  constraint PK_erp_sal_receipt_line primary key (id)
 );
 
 CREATE TABLE erp_sal_order_line(
@@ -238,43 +368,6 @@ CREATE TABLE erp_sal_delivery(
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
   constraint PK_erp_sal_delivery primary key (id)
-);
-
-CREATE TABLE erp_sal_invoice_line(
-  id INT8 NOT NULL ,
-  invoice_id INT8 NOT NULL ,
-  delivery_line_id INT8  ,
-  line_no INT4 NOT NULL ,
-  material_id INT8 NOT NULL ,
-  uom_id INT8 NOT NULL ,
-  quantity NUMERIC(20,4) NOT NULL ,
-  unit_price NUMERIC(20,4)  ,
-  tax_rate NUMERIC(10,4)  ,
-  tax_amount NUMERIC(20,4)  ,
-  amount NUMERIC(20,4)  ,
-  del_version INT8 default 0  NOT NULL ,
-  version INT4 default 0  NOT NULL ,
-  created_by VARCHAR(50) NOT NULL ,
-  create_time TIMESTAMP NOT NULL ,
-  updated_by VARCHAR(50) NOT NULL ,
-  update_time TIMESTAMP NOT NULL ,
-  remark VARCHAR(1000)  ,
-  constraint PK_erp_sal_invoice_line primary key (id)
-);
-
-CREATE TABLE erp_sal_receipt_line(
-  id INT8 NOT NULL ,
-  receipt_id INT8 NOT NULL ,
-  invoice_id INT8 NOT NULL ,
-  amount NUMERIC(20,4) NOT NULL ,
-  del_version INT8 default 0  NOT NULL ,
-  version INT4 default 0  NOT NULL ,
-  created_by VARCHAR(50) NOT NULL ,
-  create_time TIMESTAMP NOT NULL ,
-  updated_by VARCHAR(50) NOT NULL ,
-  update_time TIMESTAMP NOT NULL ,
-  remark VARCHAR(1000)  ,
-  constraint PK_erp_sal_receipt_line primary key (id)
 );
 
 CREATE TABLE erp_sal_delivery_line(
@@ -359,6 +452,26 @@ CREATE TABLE erp_sal_return_line(
 );
 
 
+      COMMENT ON TABLE erp_md_partner IS '往来单位';
+                
+      COMMENT ON TABLE erp_md_currency IS '币种';
+                
+      COMMENT ON TABLE erp_md_material IS '物料';
+                
+      COMMENT ON TABLE erp_md_uom IS '计量单位';
+                
+      COMMENT ON TABLE erp_md_warehouse IS '仓库';
+                
+      COMMENT ON TABLE erp_md_settlement_method IS '结算方式';
+                
+      COMMENT ON TABLE erp_md_organization IS '组织';
+                
+      COMMENT ON TABLE erp_md_material_sku IS '物料SKU';
+                
+      COMMENT ON TABLE erp_md_tax_rate IS '税率';
+                
+      COMMENT ON TABLE erp_md_bank_account IS '银行账户';
+                
       COMMENT ON TABLE erp_sal_quotation IS '销售报价单';
                 
       COMMENT ON COLUMN erp_sal_quotation.id IS 'ID';
@@ -452,80 +565,6 @@ CREATE TABLE erp_sal_return_line(
       COMMENT ON COLUMN erp_sal_contract.update_time IS '修改时间';
                     
       COMMENT ON COLUMN erp_sal_contract.remark IS '备注';
-                    
-      COMMENT ON TABLE erp_sal_order IS '销售订单';
-                
-      COMMENT ON COLUMN erp_sal_order.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_sal_order.code IS '单号';
-                    
-      COMMENT ON COLUMN erp_sal_order.org_id IS '业务组织';
-                    
-      COMMENT ON COLUMN erp_sal_order.quotation_id IS '报价单';
-                    
-      COMMENT ON COLUMN erp_sal_order.contract_id IS '销售合同';
-                    
-      COMMENT ON COLUMN erp_sal_order.customer_id IS '客户';
-                    
-      COMMENT ON COLUMN erp_sal_order.warehouse_id IS '发货仓库';
-                    
-      COMMENT ON COLUMN erp_sal_order.business_date IS '订单日期';
-                    
-      COMMENT ON COLUMN erp_sal_order.delivery_date IS '交货日期';
-                    
-      COMMENT ON COLUMN erp_sal_order.currency_id IS '币种';
-                    
-      COMMENT ON COLUMN erp_sal_order.exchange_rate IS '汇率';
-                    
-      COMMENT ON COLUMN erp_sal_order.amount_source IS '合计金额(源币不含税)';
-                    
-      COMMENT ON COLUMN erp_sal_order.amount_functional IS '合计金额(本位币不含税)';
-                    
-      COMMENT ON COLUMN erp_sal_order.total_amount IS '合计金额(不含税)';
-                    
-      COMMENT ON COLUMN erp_sal_order.total_tax_amount IS '合计税额';
-                    
-      COMMENT ON COLUMN erp_sal_order.total_amount_with_tax IS '合计金额(含税)';
-                    
-      COMMENT ON COLUMN erp_sal_order.discount_rate IS '整单折扣率(%)';
-                    
-      COMMENT ON COLUMN erp_sal_order.discount_amount IS '折扣金额';
-                    
-      COMMENT ON COLUMN erp_sal_order.received_amount IS '已收金额';
-                    
-      COMMENT ON COLUMN erp_sal_order.settlement_method_id IS '结算方式';
-                    
-      COMMENT ON COLUMN erp_sal_order.doc_status IS '单据状态';
-                    
-      COMMENT ON COLUMN erp_sal_order.approve_status IS '审核状态';
-                    
-      COMMENT ON COLUMN erp_sal_order.received_status IS '收款进度';
-                    
-      COMMENT ON COLUMN erp_sal_order.delivery_status IS '发货进度';
-                    
-      COMMENT ON COLUMN erp_sal_order.posted IS '已过账';
-                    
-      COMMENT ON COLUMN erp_sal_order.posted_at IS '过账时间';
-                    
-      COMMENT ON COLUMN erp_sal_order.posted_by IS '过账人';
-                    
-      COMMENT ON COLUMN erp_sal_order.approved_by IS '审核人';
-                    
-      COMMENT ON COLUMN erp_sal_order.approved_at IS '审核时间';
-                    
-      COMMENT ON COLUMN erp_sal_order.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_sal_order.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_sal_order.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_sal_order.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_sal_order.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_sal_order.update_time IS '修改时间';
-                    
-      COMMENT ON COLUMN erp_sal_order.remark IS '备注';
                     
       COMMENT ON TABLE erp_sal_invoice IS '销售发票';
                 
@@ -647,6 +686,80 @@ CREATE TABLE erp_sal_return_line(
                     
       COMMENT ON COLUMN erp_sal_receipt.remark IS '备注';
                     
+      COMMENT ON TABLE erp_sal_order IS '销售订单';
+                
+      COMMENT ON COLUMN erp_sal_order.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_sal_order.code IS '单号';
+                    
+      COMMENT ON COLUMN erp_sal_order.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_sal_order.quotation_id IS '报价单';
+                    
+      COMMENT ON COLUMN erp_sal_order.contract_id IS '销售合同';
+                    
+      COMMENT ON COLUMN erp_sal_order.customer_id IS '客户';
+                    
+      COMMENT ON COLUMN erp_sal_order.warehouse_id IS '发货仓库';
+                    
+      COMMENT ON COLUMN erp_sal_order.business_date IS '订单日期';
+                    
+      COMMENT ON COLUMN erp_sal_order.delivery_date IS '交货日期';
+                    
+      COMMENT ON COLUMN erp_sal_order.currency_id IS '币种';
+                    
+      COMMENT ON COLUMN erp_sal_order.exchange_rate IS '汇率';
+                    
+      COMMENT ON COLUMN erp_sal_order.amount_source IS '合计金额(源币不含税)';
+                    
+      COMMENT ON COLUMN erp_sal_order.amount_functional IS '合计金额(本位币不含税)';
+                    
+      COMMENT ON COLUMN erp_sal_order.total_amount IS '合计金额(不含税)';
+                    
+      COMMENT ON COLUMN erp_sal_order.total_tax_amount IS '合计税额';
+                    
+      COMMENT ON COLUMN erp_sal_order.total_amount_with_tax IS '合计金额(含税)';
+                    
+      COMMENT ON COLUMN erp_sal_order.discount_rate IS '整单折扣率(%)';
+                    
+      COMMENT ON COLUMN erp_sal_order.discount_amount IS '折扣金额';
+                    
+      COMMENT ON COLUMN erp_sal_order.received_amount IS '已收金额';
+                    
+      COMMENT ON COLUMN erp_sal_order.settlement_method_id IS '结算方式';
+                    
+      COMMENT ON COLUMN erp_sal_order.doc_status IS '单据状态';
+                    
+      COMMENT ON COLUMN erp_sal_order.approve_status IS '审核状态';
+                    
+      COMMENT ON COLUMN erp_sal_order.received_status IS '收款进度';
+                    
+      COMMENT ON COLUMN erp_sal_order.delivery_status IS '发货进度';
+                    
+      COMMENT ON COLUMN erp_sal_order.posted IS '已过账';
+                    
+      COMMENT ON COLUMN erp_sal_order.posted_at IS '过账时间';
+                    
+      COMMENT ON COLUMN erp_sal_order.posted_by IS '过账人';
+                    
+      COMMENT ON COLUMN erp_sal_order.approved_by IS '审核人';
+                    
+      COMMENT ON COLUMN erp_sal_order.approved_at IS '审核时间';
+                    
+      COMMENT ON COLUMN erp_sal_order.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_sal_order.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_sal_order.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_sal_order.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_sal_order.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_sal_order.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_sal_order.remark IS '备注';
+                    
       COMMENT ON TABLE erp_sal_quotation_line IS '销售报价单行';
                 
       COMMENT ON COLUMN erp_sal_quotation_line.id IS 'ID';
@@ -684,6 +797,68 @@ CREATE TABLE erp_sal_return_line(
       COMMENT ON COLUMN erp_sal_quotation_line.update_time IS '修改时间';
                     
       COMMENT ON COLUMN erp_sal_quotation_line.remark IS '备注';
+                    
+      COMMENT ON TABLE erp_sal_invoice_line IS '销售发票行';
+                
+      COMMENT ON COLUMN erp_sal_invoice_line.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_sal_invoice_line.invoice_id IS '发票ID';
+                    
+      COMMENT ON COLUMN erp_sal_invoice_line.delivery_line_id IS '出库行ID';
+                    
+      COMMENT ON COLUMN erp_sal_invoice_line.line_no IS '行号';
+                    
+      COMMENT ON COLUMN erp_sal_invoice_line.material_id IS '物料';
+                    
+      COMMENT ON COLUMN erp_sal_invoice_line.uom_id IS '计量单位';
+                    
+      COMMENT ON COLUMN erp_sal_invoice_line.quantity IS '数量';
+                    
+      COMMENT ON COLUMN erp_sal_invoice_line.unit_price IS '单价(不含税)';
+                    
+      COMMENT ON COLUMN erp_sal_invoice_line.tax_rate IS '税率(%)';
+                    
+      COMMENT ON COLUMN erp_sal_invoice_line.tax_amount IS '税额';
+                    
+      COMMENT ON COLUMN erp_sal_invoice_line.amount IS '金额(不含税)';
+                    
+      COMMENT ON COLUMN erp_sal_invoice_line.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_sal_invoice_line.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_sal_invoice_line.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_sal_invoice_line.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_sal_invoice_line.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_sal_invoice_line.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_sal_invoice_line.remark IS '备注';
+                    
+      COMMENT ON TABLE erp_sal_receipt_line IS '收款核销行';
+                
+      COMMENT ON COLUMN erp_sal_receipt_line.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_sal_receipt_line.receipt_id IS '收款单ID';
+                    
+      COMMENT ON COLUMN erp_sal_receipt_line.invoice_id IS '发票ID';
+                    
+      COMMENT ON COLUMN erp_sal_receipt_line.amount IS '核销金额';
+                    
+      COMMENT ON COLUMN erp_sal_receipt_line.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_sal_receipt_line.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_sal_receipt_line.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_sal_receipt_line.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_sal_receipt_line.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_sal_receipt_line.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_sal_receipt_line.remark IS '备注';
                     
       COMMENT ON TABLE erp_sal_order_line IS '销售订单行';
                 
@@ -792,68 +967,6 @@ CREATE TABLE erp_sal_return_line(
       COMMENT ON COLUMN erp_sal_delivery.update_time IS '修改时间';
                     
       COMMENT ON COLUMN erp_sal_delivery.remark IS '备注';
-                    
-      COMMENT ON TABLE erp_sal_invoice_line IS '销售发票行';
-                
-      COMMENT ON COLUMN erp_sal_invoice_line.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_sal_invoice_line.invoice_id IS '发票ID';
-                    
-      COMMENT ON COLUMN erp_sal_invoice_line.delivery_line_id IS '出库行ID';
-                    
-      COMMENT ON COLUMN erp_sal_invoice_line.line_no IS '行号';
-                    
-      COMMENT ON COLUMN erp_sal_invoice_line.material_id IS '物料';
-                    
-      COMMENT ON COLUMN erp_sal_invoice_line.uom_id IS '计量单位';
-                    
-      COMMENT ON COLUMN erp_sal_invoice_line.quantity IS '数量';
-                    
-      COMMENT ON COLUMN erp_sal_invoice_line.unit_price IS '单价(不含税)';
-                    
-      COMMENT ON COLUMN erp_sal_invoice_line.tax_rate IS '税率(%)';
-                    
-      COMMENT ON COLUMN erp_sal_invoice_line.tax_amount IS '税额';
-                    
-      COMMENT ON COLUMN erp_sal_invoice_line.amount IS '金额(不含税)';
-                    
-      COMMENT ON COLUMN erp_sal_invoice_line.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_sal_invoice_line.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_sal_invoice_line.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_sal_invoice_line.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_sal_invoice_line.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_sal_invoice_line.update_time IS '修改时间';
-                    
-      COMMENT ON COLUMN erp_sal_invoice_line.remark IS '备注';
-                    
-      COMMENT ON TABLE erp_sal_receipt_line IS '收款核销行';
-                
-      COMMENT ON COLUMN erp_sal_receipt_line.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_sal_receipt_line.receipt_id IS '收款单ID';
-                    
-      COMMENT ON COLUMN erp_sal_receipt_line.invoice_id IS '发票ID';
-                    
-      COMMENT ON COLUMN erp_sal_receipt_line.amount IS '核销金额';
-                    
-      COMMENT ON COLUMN erp_sal_receipt_line.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_sal_receipt_line.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_sal_receipt_line.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_sal_receipt_line.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_sal_receipt_line.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_sal_receipt_line.update_time IS '修改时间';
-                    
-      COMMENT ON COLUMN erp_sal_receipt_line.remark IS '备注';
                     
       COMMENT ON TABLE erp_sal_delivery_line IS '销售出库单行';
                 

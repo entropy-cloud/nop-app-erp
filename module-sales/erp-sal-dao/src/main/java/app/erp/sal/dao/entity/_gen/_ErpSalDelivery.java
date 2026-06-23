@@ -140,6 +140,12 @@ public class _ErpSalDelivery extends DynamicOrmEntity{
     public static final String PROP_NAME_order = "order";
     
     /* relation:  */
+    public static final String PROP_NAME_customer = "customer";
+    
+    /* relation:  */
+    public static final String PROP_NAME_warehouse = "warehouse";
+    
+    /* relation:  */
     public static final String PROP_NAME_lines = "lines";
     
 
@@ -1530,6 +1536,52 @@ public class _ErpSalDelivery extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_order, refEntity,()->{
            
                            this.setOrderId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdPartner getCustomer(){
+       return (app.erp.md.dao.entity.ErpMdPartner)internalGetRefEntity(PROP_NAME_customer);
+    }
+
+    public final void setCustomer(app.erp.md.dao.entity.ErpMdPartner refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCustomerId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_customer, refEntity,()->{
+           
+                           this.setCustomerId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdWarehouse getWarehouse(){
+       return (app.erp.md.dao.entity.ErpMdWarehouse)internalGetRefEntity(PROP_NAME_warehouse);
+    }
+
+    public final void setWarehouse(app.erp.md.dao.entity.ErpMdWarehouse refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setWarehouseId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_warehouse, refEntity,()->{
+           
+                           this.setWarehouseId(refEntity.getId());
                        
            });
            }

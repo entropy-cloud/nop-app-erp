@@ -157,12 +157,7 @@
                 <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
                     <join><on leftProp="currencyId" rightProp="id"/></join>
                 </to-one>
-                            <!-- 跨模块 to-one（引用 master-data 外部实体，机制 B） -->
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"><join><on leftProp="orgId" rightProp="id"/></join></to-one>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
-                <to-one name="location" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub"><join><on leftProp="locationId" rightProp="id"/></join></to-one>
-                <to-one name="category" refEntityName="app.erp.md.dao.entity.ErpMdMaterialCategory" tagSet="pub"><join><on leftProp="categoryId" rightProp="id"/></join></to-one>
-                <to-one name="employee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="employeeId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 

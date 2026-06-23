@@ -169,7 +169,22 @@ public class _ErpPurOrder extends DynamicOrmEntity{
 
     
     /* relation:  */
+    public static final String PROP_NAME_supplier = "supplier";
+    
+    /* relation:  */
+    public static final String PROP_NAME_warehouse = "warehouse";
+    
+    /* relation:  */
+    public static final String PROP_NAME_currency = "currency";
+    
+    /* relation:  */
+    public static final String PROP_NAME_settlementMethod = "settlementMethod";
+    
+    /* relation:  */
     public static final String PROP_NAME_lines = "lines";
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
     
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
@@ -1902,6 +1917,98 @@ public class _ErpPurOrder extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdPartner getSupplier(){
+       return (app.erp.md.dao.entity.ErpMdPartner)internalGetRefEntity(PROP_NAME_supplier);
+    }
+
+    public final void setSupplier(app.erp.md.dao.entity.ErpMdPartner refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setSupplierId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_supplier, refEntity,()->{
+           
+                           this.setSupplierId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdWarehouse getWarehouse(){
+       return (app.erp.md.dao.entity.ErpMdWarehouse)internalGetRefEntity(PROP_NAME_warehouse);
+    }
+
+    public final void setWarehouse(app.erp.md.dao.entity.ErpMdWarehouse refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setWarehouseId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_warehouse, refEntity,()->{
+           
+                           this.setWarehouseId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdCurrency getCurrency(){
+       return (app.erp.md.dao.entity.ErpMdCurrency)internalGetRefEntity(PROP_NAME_currency);
+    }
+
+    public final void setCurrency(app.erp.md.dao.entity.ErpMdCurrency refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCurrencyId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_currency, refEntity,()->{
+           
+                           this.setCurrencyId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdSettlementMethod getSettlementMethod(){
+       return (app.erp.md.dao.entity.ErpMdSettlementMethod)internalGetRefEntity(PROP_NAME_settlementMethod);
+    }
+
+    public final void setSettlementMethod(app.erp.md.dao.entity.ErpMdSettlementMethod refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setSettlementMethodId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_settlementMethod, refEntity,()->{
+           
+                           this.setSettlementMethodId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
     private final OrmEntitySet<app.erp.pur.dao.entity.ErpPurOrderLine> _lines = new OrmEntitySet<>(this, PROP_NAME_lines,
         null, null,app.erp.pur.dao.entity.ErpPurOrderLine.class);
 
@@ -1910,6 +2017,29 @@ public class _ErpPurOrder extends DynamicOrmEntity{
      */
     public final IOrmEntitySet<app.erp.pur.dao.entity.ErpPurOrderLine> getLines(){
        return _lines;
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
     }
        
 }
