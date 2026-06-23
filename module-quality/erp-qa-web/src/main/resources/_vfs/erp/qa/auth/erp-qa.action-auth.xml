@@ -43,7 +43,11 @@
                                   i18n-en:displayName="Non-Conformance Report" icon="x-circle"
                                   component="AMIS" resourceType="SUBM" orderNo="300"
                                   url="/erp/qa/pages/ErpQaNonConformance/main.page.yaml"/>
-                    </children>
+                    
+                        <resource id="ncr-disposal" displayName="不合格品处置单"
+                                  i18n-en:displayName="NCR Disposal" icon="trash-2"
+                                  component="AMIS" resourceType="SUBM" orderNo="310"
+                                  url="/erp/qa/pages/ncr-disposal/main.page.yaml"/></children>
                 </resource>
                 <!-- 纠正预防 -->
                 <resource id="qa-capa" displayName="纠正预防" i18n-en:displayName="Corrective Action"

@@ -20,6 +20,8 @@ site:
       displayName: Sampling Plan
     erp-qa:
       displayName: Quality
+    ncr-disposal:
+      displayName: NCR Disposal
     qa-capa:
       displayName: Corrective Action
     qa-dashboard:

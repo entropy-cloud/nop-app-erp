@@ -20,14 +20,24 @@ site:
       displayName: Voucher Business Link
     ErpFinVoucherTemplate-main:
       displayName: Voucher Template
+    balance-sheet:
+      displayName: Balance Sheet
+    cash-flow:
+      displayName: Cash Flow Statement
     erp-fin:
       displayName: Finance
+    expense-claim:
+      displayName: Expense Claim
     fin-arap:
       displayName: AR/AP
     fin-dashboard:
       displayName: Finance Overview
     fin-dashboard-main:
       displayName: Finance Overview
+    fin-distribution:
+      displayName: GL Distribution
+    fin-expense:
+      displayName: Expense Claim
     fin-fund:
       displayName: Fund
     fin-gl:
@@ -36,5 +46,11 @@ site:
       displayName: Accounting Period
     fin-recon:
       displayName: Reconciliation
+    fin-report:
+      displayName: Financial Statements
     fin-voucher:
       displayName: Voucher
+    gl-distribution:
+      displayName: Distribution Rule
+    income-statement:
+      displayName: Income Statement

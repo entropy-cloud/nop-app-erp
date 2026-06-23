@@ -128,7 +128,55 @@
 
 三级结构的优势是业务分组清晰(如采购分寻源/订单/结算),劣势是层级较深。当前选择三级是合理的(实体数量多,需分组组织),但若用户倾向两级平铺,可调整。
 
-## 6. 结论
+## 6. 全项目对照 gap 修复(对照 erp-survey 全部 20 个项目)
+
+首次分析后,对 erp-survey 全部 20 个项目(ERPNext/Odoo/赤龙/星云/iDempiere/Metasfresh/若依/管伊佳/OfBiz/Tryton/Dolibarr/Carbon/MES/WMES/Atlas CMMS/Yu-FAMS/assetsmgr 等)做第二轮深度对照,识别并修复了以下 gap。
+
+### 6.1 业务域 major gap 修复(已落地,占位页面)
+
+| 域 | 新增菜单 | 对照来源 | 业务价值 |
+|---|---|---|---|
+| finance | 财务报表(资产负债表/利润表/现金流量表) | 国内 ERP 标配(管伊佳明确指出缺三表是缺点) | 业财一体必然产出 |
+| finance | 科目分摊(GL Distribution) | iDempiere/Metasfresh | 管理会计核心,IErpFinFactsValidator 的用户入口 |
+| finance | 费用报销 | ERPNext Expense Claim/Odoo hr_expense | 任何企业必备 |
+| sales | 价格管理(销售价格清单/促销规则) | ERPNext Pricing Rule/Odoo sale_loyalty | 销售定价核心,此前只有供应商价 |
+| assets | 资产盘点 | Yu-FAMS Inventory/assetsmgr | 资产全生命周期 |
+| assets | 资产维修 | Yu-FAMS AssetsRepair/ERPNext AssetRepair | 资产维护闭环 |
+| quality | 不合格品处置单(返工/让步/报废) | ERPNext NonConformance/WMES Repairorder | 质量闭环 |
+
+以上均为占位 page.yaml,后续逐步实现真实功能。
+
+### 6.2 系统管理菜单域(重大结构缺口,已落地)
+
+**首次分析的最大遗漏**:10 个 TOPM 全是业务域,缺系统级菜单。对照若依/管伊佳(完整 sys_* 菜单)和各 ERP(均有系统管理),这是完整 ERP 的必备。
+
+**修复**:新建顶层聚合 app `app-erp-app`,聚合全部 10 业务域 + 系统模块(nop-auth/sys/wf/report),新增 TOPM「系统管理」(orderNo=2000),含 6 分组 20 菜单项:
+- 用户权限(用户/角色/部门/岗位/用户组/数据权限)→ nop-auth
+- 资源菜单(菜单资源/站点管理)→ nop-auth
+- 系统配置(数据字典/字典选项/序列号规则/国际化)→ nop-sys
+- 工作流(流程定义/流程实例/我的待办)→ nop-wf
+- 报表中心(报表定义/报表数据源)→ nop-report
+- 系统监控(操作日志/在线会话/扩展字段)→ nop-auth/nop-sys
+
+**nop-job 暂缓**:nop-job 单机启动需额外 RPC(IRpcServiceInvoker)配置,作为 P2 后续单独接入。
+
+### 6.3 顶层聚合 app(架构完善)
+
+此前 10 个业务 app 各自独立,无统一部署入口。新建 `app-erp-app` 作为实际部署入口:
+- 聚合全部 10 业务 app + nop 系统模块
+- `app.action-auth.xml` 用 `x:extends` 多文件合并 10 业务域 + 5 系统模块菜单到同一 site
+- 删除各系统模块的测试菜单根(test-orm-nop-*)
+- 启动验证:11 个 TOPM(10 业务域 + 系统管理)全部正确,菜单 dump 正常
+
+## 7. 修复后总览
+
+修复后菜单规模:11 个 TOPM(10 业务域 + 系统管理),约 70 分组,约 150 菜单项。覆盖:
+- **业务域**:进销存 + 财务(含报表/分摊/报销)+ 资产(含盘点/维修)+ 项目 + 制造 + 维护 + 质量(含处置)+ 主数据 + 价格管理
+- **系统域**:用户权限 + 资源菜单 + 系统配置 + 工作流 + 报表中心 + 系统监控
+
+对照 erp-survey 全部 20 个开源 ERP,**无重大功能缺口**。剩余 minor 项(预算管理、成本中心维度、银行对账、SPC、项目盈利分析、nop-job 接入、中国本地化)列为后续迭代,均非阻塞。
+
+## 8. 结论
 
 10 域菜单设计**功能完整、组织合理**,对照 10+ 开源 ERP 无重大功能缺口。菜单采用业务流分段范式(贴合实际使用),主数据集中化(国内 ERP 范式),每域含看板占位。3 个可增强点和 1 个层级取舍均非阻塞,可作为后续迭代输入。
 

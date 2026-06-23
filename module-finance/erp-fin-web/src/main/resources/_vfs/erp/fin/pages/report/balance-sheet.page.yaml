@@ -1,0 +1,7 @@
+type: page
+title: "资产负债表"
+body:
+  - type: alert
+    body: "资产负债表 — 待实现占位页面"
+    level: info
+    className: m-3

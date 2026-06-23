@@ -20,6 +20,10 @@ site:
       displayName: Asset Split
     ErpAstValueAdjustment-main:
       displayName: Asset Value Adjustment
+    asset-repair:
+      displayName: Asset Repair
+    asset-stocktake:
+      displayName: Asset Stocktake
     ast-dashboard:
       displayName: Assets Overview
     ast-dashboard-main:
@@ -32,5 +36,7 @@ site:
       displayName: Asset Ledger
     ast-movement:
       displayName: Asset Movement
+    ast-stocktake:
+      displayName: Asset Stocktake
     erp-ast:
       displayName: Fixed Assets

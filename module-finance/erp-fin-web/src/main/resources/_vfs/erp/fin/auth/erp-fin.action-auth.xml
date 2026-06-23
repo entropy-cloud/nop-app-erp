@@ -87,6 +87,44 @@
                                   url="/erp/fin/pages/ErpFinFundAccount/main.page.yaml"/>
                     </children>
                 </resource>
+                <!-- 财务报表 -->
+                <resource id="fin-report" displayName="财务报表" i18n-en:displayName="Financial Statements"
+                          icon="bar-chart-3" resourceType="SUBM" orderNo="700">
+                    <children>
+                        <resource id="balance-sheet" displayName="资产负债表"
+                                  i18n-en:displayName="Balance Sheet" icon="scale"
+                                  component="AMIS" resourceType="SUBM" orderNo="7010"
+                                  url="/erp/fin/pages/report/balance-sheet.page.yaml"/>
+                        <resource id="income-statement" displayName="利润表"
+                                  i18n-en:displayName="Income Statement" icon="trending-up"
+                                  component="AMIS" resourceType="SUBM" orderNo="7020"
+                                  url="/erp/fin/pages/report/income-statement.page.yaml"/>
+                        <resource id="cash-flow" displayName="现金流量表"
+                                  i18n-en:displayName="Cash Flow Statement" icon="banknote"
+                                  component="AMIS" resourceType="SUBM" orderNo="7030"
+                                  url="/erp/fin/pages/report/cash-flow.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 科目分摊 -->
+                <resource id="fin-distribution" displayName="科目分摊" i18n-en:displayName="GL Distribution"
+                          icon="split" resourceType="SUBM" orderNo="800">
+                    <children>
+                        <resource id="gl-distribution" displayName="分摊规则"
+                                  i18n-en:displayName="Distribution Rule" icon="split"
+                                  component="AMIS" resourceType="SUBM" orderNo="8010"
+                                  url="/erp/fin/pages/gl-distribution/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 费用报销 -->
+                <resource id="fin-expense" displayName="费用报销" i18n-en:displayName="Expense Claim"
+                          icon="wallet-receipt" resourceType="SUBM" orderNo="900">
+                    <children>
+                        <resource id="expense-claim" displayName="费用报销单"
+                                  i18n-en:displayName="Expense Claim" icon="wallet-receipt"
+                                  component="AMIS" resourceType="SUBM" orderNo="9010"
+                                  url="/erp/fin/pages/expense-claim/main.page.yaml"/>
+                    </children>
+                </resource>
                 <!-- 报表看板 -->
                 <resource id="fin-dashboard" displayName="财务概览" i18n-en:displayName="Finance Overview"
                           icon="pie-chart" resourceType="SUBM" orderNo="999">

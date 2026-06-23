@@ -16,6 +16,8 @@ site:
       displayName: Sales Return
     erp-sal:
       displayName: Sales
+    pricing-rule:
+      displayName: Pricing Rule
     sal-contract:
       displayName: Contract
     sal-dashboard:
@@ -28,9 +30,13 @@ site:
       displayName: Invoice
     sal-order:
       displayName: Order
+    sal-pricing:
+      displayName: Pricing
     sal-quotation:
       displayName: Quotation
     sal-receipt:
       displayName: Receipt
     sal-return:
       displayName: Return
+    sales-price-list:
+      displayName: Sales Price List

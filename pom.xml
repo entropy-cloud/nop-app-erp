@@ -31,5 +31,7 @@
         <module>module-manufacturing</module>
         <module>module-quality</module>
         <module>module-maintenance</module>
+        <!-- 顶层聚合 app:实际部署入口,聚合全部业务域 + 系统模块菜单 -->
+        <module>app-erp-app</module>
     </modules>
 </project>

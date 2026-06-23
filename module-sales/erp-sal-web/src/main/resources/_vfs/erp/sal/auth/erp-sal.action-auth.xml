@@ -81,6 +81,20 @@
                                   url="/erp/sal/pages/ErpSalReturn/main.page.yaml"/>
                     </children>
                 </resource>
+                <!-- 价格管理 -->
+                <resource id="sal-pricing" displayName="价格管理" i18n-en:displayName="Pricing"
+                          icon="tag" resourceType="SUBM" orderNo="800">
+                    <children>
+                        <resource id="sales-price-list" displayName="销售价格清单"
+                                  i18n-en:displayName="Sales Price List" icon="tag"
+                                  component="AMIS" resourceType="SUBM" orderNo="8010"
+                                  url="/erp/sal/pages/sales-price-list/main.page.yaml"/>
+                        <resource id="pricing-rule" displayName="促销规则"
+                                  i18n-en:displayName="Pricing Rule" icon="percent"
+                                  component="AMIS" resourceType="SUBM" orderNo="8020"
+                                  url="/erp/sal/pages/pricing-rule/main.page.yaml"/>
+                    </children>
+                </resource>
                 <!-- 报表看板 -->
                 <resource id="sal-dashboard" displayName="销售概览" i18n-en:displayName="Sales Overview"
                           icon="trending-up" resourceType="SUBM" orderNo="999">

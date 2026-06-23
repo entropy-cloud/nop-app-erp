@@ -55,7 +55,11 @@
                                   i18n-en:displayName="Asset Merge" icon="git-merge"
                                   component="AMIS" resourceType="SUBM" orderNo="330"
                                   url="/erp/ast/pages/ErpAstMerge/main.page.yaml"/>
-                    </children>
+                    
+                        <resource id="asset-repair" displayName="资产维修"
+                                  i18n-en:displayName="Asset Repair" icon="wrench"
+                                  component="AMIS" resourceType="SUBM" orderNo="350"
+                                  url="/erp/ast/pages/asset-repair/main.page.yaml"/></children>
                 </resource>
                 <!-- 处置资本化 -->
                 <resource id="ast-disposal" displayName="处置资本化" i18n-en:displayName="Disposal &amp; Capitalization"
@@ -73,6 +77,16 @@
                                   i18n-en:displayName="CIP" icon="hard-hat"
                                   component="AMIS" resourceType="SUBM" orderNo="420"
                                   url="/erp/ast/pages/ErpAstCip/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 资产盘点 -->
+                <resource id="ast-stocktake" displayName="资产盘点" i18n-en:displayName="Asset Stocktake"
+                          icon="clipboard-list" resourceType="SUBM" orderNo="600">
+                    <children>
+                        <resource id="asset-stocktake" displayName="资产盘点单"
+                                  i18n-en:displayName="Asset Stocktake" icon="clipboard-list"
+                                  component="AMIS" resourceType="SUBM" orderNo="6010"
+                                  url="/erp/ast/pages/asset-stocktake/main.page.yaml"/>
                     </children>
                 </resource>
                 <!-- 报表看板 -->
