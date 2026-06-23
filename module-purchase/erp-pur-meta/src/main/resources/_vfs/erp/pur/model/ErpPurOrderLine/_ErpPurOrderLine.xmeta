@@ -120,24 +120,27 @@
             <schema bizObjName="ErpPurOrder"/>
         </prop>
         <prop name="material" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="materialId" ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true"
-              lazy="true">
+              ext:joinLeftProp="materialId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdMaterial"/>
         </prop>
         <prop name="sku" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="skuId"
-              ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdMaterialSku"/>
         </prop>
         <prop name="uoM" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="uoMId"
-              ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true" lazy="true">
+              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true"
+              lazy="true">
             <schema bizObjName="ErpMdUoM"/>
         </prop>
         <prop name="taxRateMd" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="taxRateId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+              ext:joinLeftProp="taxRateId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
             <schema bizObjName="ErpMdTaxRate"/>
         </prop>
         <prop name="warehouse" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="warehouseId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+              ext:joinLeftProp="warehouseId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
             <schema bizObjName="ErpMdWarehouse"/>
         </prop>
     </props>

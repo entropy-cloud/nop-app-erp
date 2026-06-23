@@ -1,5 +1,87 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<auth x:extends="_erp-pur.action-auth.xml" x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<auth x:extends="_erp-pur.action-auth.xml" x:schema="/nop/schema/action-auth.xdef"
+     xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
 
-    <site id="main"/>
+    <site id="main">
+        <!-- 删除自动生成的测试菜单根(含其下全部 SUBM,业务菜单在下文重新组织) -->
+        <resource id="test-orm-erp-pur" x:override="remove"/>
+
+        <!-- 采购管理:采购域一级菜单,菜单组织参照 ERPNext buying 域的业务阶段分组 -->
+        <resource id="erp-pur" displayName="采购管理" i18n-en:displayName="Purchase"
+                  icon="shopping-cart" resourceType="TOPM" orderNo="200"
+                  routePath="/erp-pur" component="layouts/default/index">
+            <children>
+                <!-- 采购寻源:询价 / 报价 / 价格清单 -->
+                <resource id="erp-pur-sourcing" displayName="采购寻源"
+                          i18n-en:displayName="Sourcing" icon="search" resourceType="SUBM" orderNo="100">
+                    <children>
+                        <resource id="ErpPurRfq-main" displayName="采购询价单"
+                                  i18n-en:displayName="Purchase RFQ" icon="message-circle-question"
+                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  url="/erp/pur/pages/ErpPurRfq/main.page.yaml"/>
+                        <resource id="ErpPurQuotation-main" displayName="供应商报价单"
+                                  i18n-en:displayName="Supplier Quotation" icon="file-sign"
+                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  url="/erp/pur/pages/ErpPurQuotation/main.page.yaml"/>
+                        <resource id="ErpPurSupplierPriceList-main" displayName="供应商价格清单"
+                                  i18n-en:displayName="Supplier Price List" icon="list-checks"
+                                  component="AMIS" resourceType="SUBM" orderNo="120"
+                                  url="/erp/pur/pages/ErpPurSupplierPriceList/main.page.yaml"/>
+                    </children>
+                </resource>
+
+                <!-- 采购订单:请购 / 订单 -->
+                <resource id="erp-pur-order" displayName="采购订单"
+                          i18n-en:displayName="Purchase Order" icon="shopping-cart" resourceType="SUBM" orderNo="200">
+                    <children>
+                        <resource id="ErpPurRequisition-main" displayName="采购请购单"
+                                  i18n-en:displayName="Purchase Requisition" icon="file-text"
+                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  url="/erp/pur/pages/ErpPurRequisition/main.page.yaml"/>
+                        <resource id="ErpPurOrder-main" displayName="采购订单"
+                                  i18n-en:displayName="Purchase Order" icon="shopping-cart"
+                                  component="AMIS" resourceType="SUBM" orderNo="210"
+                                  url="/erp/pur/pages/ErpPurOrder/main.page.yaml"/>
+                    </children>
+                </resource>
+
+                <!-- 采购入库:收货入库 -->
+                <resource id="erp-pur-receipt" displayName="采购入库"
+                          i18n-en:displayName="Goods Receipt" icon="package-plus" resourceType="SUBM" orderNo="300">
+                    <children>
+                        <resource id="ErpPurReceive-main" displayName="采购入库单"
+                                  i18n-en:displayName="Purchase Receipt" icon="package-plus"
+                                  component="AMIS" resourceType="SUBM" orderNo="300"
+                                  url="/erp/pur/pages/ErpPurReceive/main.page.yaml"/>
+                    </children>
+                </resource>
+
+                <!-- 采购结算:发票 / 付款 -->
+                <resource id="erp-pur-billing" displayName="采购结算"
+                          i18n-en:displayName="Billing" icon="receipt" resourceType="SUBM" orderNo="400">
+                    <children>
+                        <resource id="ErpPurInvoice-main" displayName="采购发票"
+                                  i18n-en:displayName="Purchase Invoice" icon="receipt"
+                                  component="AMIS" resourceType="SUBM" orderNo="400"
+                                  url="/erp/pur/pages/ErpPurInvoice/main.page.yaml"/>
+                        <resource id="ErpPurPayment-main" displayName="付款单"
+                                  i18n-en:displayName="Payment" icon="banknote"
+                                  component="AMIS" resourceType="SUBM" orderNo="410"
+                                  url="/erp/pur/pages/ErpPurPayment/main.page.yaml"/>
+                    </children>
+                </resource>
+
+                <!-- 采购退货 -->
+                <resource id="erp-pur-return" displayName="采购退货"
+                          i18n-en:displayName="Return" icon="undo-2" resourceType="SUBM" orderNo="500">
+                    <children>
+                        <resource id="ErpPurReturn-main" displayName="采购退货单"
+                                  i18n-en:displayName="Purchase Return" icon="undo-2"
+                                  component="AMIS" resourceType="SUBM" orderNo="500"
+                                  url="/erp/pur/pages/ErpPurReturn/main.page.yaml"/>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
 </auth>

@@ -2,105 +2,31 @@ site:
   resource:
     ErpPurInvoice-main:
       displayName: Purchase Invoice
-    ErpPurInvoiceLine-main:
-      displayName: Purchase Invoice Line
     ErpPurOrder-main:
       displayName: Purchase Order
-    ErpPurOrderLine-main:
-      displayName: Purchase Order Line
     ErpPurPayment-main:
       displayName: Payment
-    ErpPurPaymentLine-main:
-      displayName: Payment Settlement Line
     ErpPurQuotation-main:
       displayName: Supplier Quotation
-    ErpPurQuotationLine-main:
-      displayName: Supplier Quotation Line
     ErpPurReceive-main:
       displayName: Purchase Receipt
-    ErpPurReceiveLine-main:
-      displayName: Purchase Receipt Line
     ErpPurRequisition-main:
       displayName: Purchase Requisition
-    ErpPurRequisitionLine-main:
-      displayName: Purchase Requisition Line
     ErpPurReturn-main:
       displayName: Purchase Return
-    ErpPurReturnLine-main:
-      displayName: Purchase Return Line
     ErpPurRfq-main:
       displayName: Purchase RFQ
-    ErpPurRfqLine-main:
-      displayName: Purchase RFQ Line
     ErpPurSupplierPriceList-main:
       displayName: Supplier Price List
-    FNPT:ErpPurInvoice:mutation:
-      displayName: Modify Purchase Invoice
-    FNPT:ErpPurInvoice:query:
-      displayName: Query Purchase Invoice
-    FNPT:ErpPurInvoiceLine:mutation:
-      displayName: Modify Purchase Invoice Line
-    FNPT:ErpPurInvoiceLine:query:
-      displayName: Query Purchase Invoice Line
-    FNPT:ErpPurOrder:mutation:
-      displayName: Modify Purchase Order
-    FNPT:ErpPurOrder:query:
-      displayName: Query Purchase Order
-    FNPT:ErpPurOrderLine:mutation:
-      displayName: Modify Purchase Order Line
-    FNPT:ErpPurOrderLine:query:
-      displayName: Query Purchase Order Line
-    FNPT:ErpPurPayment:mutation:
-      displayName: Modify Payment
-    FNPT:ErpPurPayment:query:
-      displayName: Query Payment
-    FNPT:ErpPurPaymentLine:mutation:
-      displayName: Modify Payment Settlement Line
-    FNPT:ErpPurPaymentLine:query:
-      displayName: Query Payment Settlement Line
-    FNPT:ErpPurQuotation:mutation:
-      displayName: Modify Supplier Quotation
-    FNPT:ErpPurQuotation:query:
-      displayName: Query Supplier Quotation
-    FNPT:ErpPurQuotationLine:mutation:
-      displayName: Modify Supplier Quotation Line
-    FNPT:ErpPurQuotationLine:query:
-      displayName: Query Supplier Quotation Line
-    FNPT:ErpPurReceive:mutation:
-      displayName: Modify Purchase Receipt
-    FNPT:ErpPurReceive:query:
-      displayName: Query Purchase Receipt
-    FNPT:ErpPurReceiveLine:mutation:
-      displayName: Modify Purchase Receipt Line
-    FNPT:ErpPurReceiveLine:query:
-      displayName: Query Purchase Receipt Line
-    FNPT:ErpPurRequisition:mutation:
-      displayName: Modify Purchase Requisition
-    FNPT:ErpPurRequisition:query:
-      displayName: Query Purchase Requisition
-    FNPT:ErpPurRequisitionLine:mutation:
-      displayName: Modify Purchase Requisition Line
-    FNPT:ErpPurRequisitionLine:query:
-      displayName: Query Purchase Requisition Line
-    FNPT:ErpPurReturn:mutation:
-      displayName: Modify Purchase Return
-    FNPT:ErpPurReturn:query:
-      displayName: Query Purchase Return
-    FNPT:ErpPurReturnLine:mutation:
-      displayName: Modify Purchase Return Line
-    FNPT:ErpPurReturnLine:query:
-      displayName: Query Purchase Return Line
-    FNPT:ErpPurRfq:mutation:
-      displayName: Modify Purchase RFQ
-    FNPT:ErpPurRfq:query:
-      displayName: Query Purchase RFQ
-    FNPT:ErpPurRfqLine:mutation:
-      displayName: Modify Purchase RFQ Line
-    FNPT:ErpPurRfqLine:query:
-      displayName: Query Purchase RFQ Line
-    FNPT:ErpPurSupplierPriceList:mutation:
-      displayName: Modify Supplier Price List
-    FNPT:ErpPurSupplierPriceList:query:
-      displayName: Query Supplier Price List
-    test-orm-erp-pur:
-      displayName: Test erp-pur
+    erp-pur:
+      displayName: Purchase
+    erp-pur-billing:
+      displayName: Billing
+    erp-pur-order:
+      displayName: Purchase Order
+    erp-pur-receipt:
+      displayName: Goods Receipt
+    erp-pur-return:
+      displayName: Return
+    erp-pur-sourcing:
+      displayName: Sourcing
