@@ -40,10 +40,12 @@
   ├─ 提交 → 已提交 (SUBMITTED)
   │            ├─ 审核通过 → 已审核 (APPROVED)
   │            │              ├─ [触发后续业务：写库存/生成凭证]
-  │            │              └─ 反审核 → 回到未提交（需先冲销已生成结果）
+  │            │              └─ 反审核 → 已驳回（REJECTED，需先冲销已生成结果）
   │            └─ 驳回 → 已驳回 (REJECTED)
   │                          └─ 修改后重新提交 → 已提交
   └─ 作废 → 已作废（docStatus=CANCELLED）
+
+> **反审核目标态说明**：反审核目标态是 `REJECTED`（可重新提交），**不是** `UNSUBMITTED`（初始态）。语义理由见 `../domain-design-guidelines.md` §11.4——反审核的单据已发生过业务（已生成下游单据、已过账），不应回退为"未提交"；`REJECTED` 保留"曾审核过"的历史语义，便于审计追溯。
 ```
 
 每条迁移的触发、前置、结果：
@@ -54,7 +56,7 @@
 | SUBMITTED → APPROVED | 审核人/管理员 | 已提交状态；入库单需可用量充足（库存校验）；发票需三单匹配通过 | 触发后续业务（见下文） |
 | SUBMITTED → REJECTED | 审核人/管理员 | 已提交状态 | 退回修改 |
 | REJECTED → SUBMITTED | 采购员 | 已驳回状态、已修改 | 重新提交 |
-| APPROVED → UNSUBMITTED（反审核） | 审核人/管理员 | 已审核、且已冲销所有已生成结果（库存冲销移动单、财务红字凭证） | 回到未提交 |
+| APPROVED → REJECTED（反审核） | 审核人/管理员 | 已审核、且已冲销所有已生成结果（库存冲销移动单、财务红字凭证） | 回到已驳回（保留曾审核语义） |
 | 任意非终态 → 作废 | 采购员/管理员 | 单据未到终态 | docStatus → CANCELLED |
 
 **SUBMITTED → APPROVED 触发的后续业务**（按单据类型）：
@@ -71,7 +73,7 @@
 
 - **终态**：`已审核（APPROVED）`（审核轴终态）、`已作废（docStatus=CANCELLED）`。
 - **已审核的纠错路径**：
-  - **反审核**：需先冲销所有已生成结果（库存冲销、财务红字凭证），才能 APPROVED → UNSUBMITTED。这是强约束，防止已入账数据被篡改。
+  - **反审核**：需先冲销所有已生成结果（库存冲销、财务红字凭证），才能 APPROVED → REJECTED（非回 UNSUBMITTED）。这是强约束，防止已入账数据被篡改。反审核目标态是 `REJECTED` 而非初始态 `UNSUBMITTED`，详见 `../domain-design-guidelines.md` §11.4。
   - **红冲单据**：不修改原已审核单据，而是生成红字退货单/红字发票冲销。这是更安全的纠错方式（保留审计轨迹）。
 - **已作废不可恢复**：作废是终态，需重新创建单据。
 - **已驳回可恢复**：修改后重新提交。
@@ -93,9 +95,9 @@
 
 - **从 UNSUBMITTED 可达**：SUBMITTED、APPROVED、REJECTED、作废 全部可达。
 - **REJECTED → SUBMITTED → APPROVED** 路径保证驳回后可重新推进。
-- **APPROVED → UNSUBMITTED（反审核）** 是唯一的"回退"路径，且需冲销前置。
+- **APPROVED → REJECTED（反审核）** 是唯一的"回退到可修改态"路径，且需冲销前置；目标态是 REJECTED（保留曾审核语义），不是初始态 UNSUBMITTED。
 - **无不可达状态、无死锁**：APPROVED 与作废是终态；反审核是显式路径非循环。
-- **合法循环的退出条件**：UNSUBMITTED→SUBMITTED→REJECTED→UNSUBMITTED（驳回修改重提）是合法循环，退出条件是"审核通过 → APPROVED 终态"。
+- **合法循环的退出条件**：UNSUBMITTED→SUBMITTED→REJECTED→SUBMITTED（驳回修改重提）是合法循环，退出条件是"审核通过 → APPROVED 终态"。
 
 ## 6. 角色与权限
 
@@ -106,7 +108,7 @@
 | 提交（UNSUBMITTED→SUBMITTED） | 采购员（单据创建人） |
 | 审核通过（SUBMITTED→APPROVED） | 审核人/管理员（按单据类型配置审批流） |
 | 驳回（SUBMITTED→REJECTED） | 审核人/管理员 |
-| 反审核（APPROVED→UNSUBMITTED） | 管理员（高权限，因需冲销已入账数据） |
+| 反审核（APPROVED→REJECTED） | 管理员（高权限，因需冲销已入账数据；目标态 REJECTED 非 UNSUBMITTED，见 §11.4） |
 | 作废 | 采购员（草稿/未提交阶段）/ 管理员（已审核后作废需高权限） |
 
 危险操作控制：
@@ -159,7 +161,7 @@
 
 1. 入库单已 APPROVED，库存已增加、暂估凭证已生成。
 2. 管理员反审核 → 校验"是否已冲销"：库存冲销移动单未生成、暂估凭证未红冲 → 拒绝反审核。
-3. 先生成冲销移动单 + 红字凭证 → 反审核成功 → 入库单回到 UNSUBMITTED。
+3. 先生成冲销移动单 + 红字凭证 → 反审核成功 → 入库单回到 REJECTED（保留曾审核语义，可修改后重新提交，而非回退到初始态 UNSUBMITTED）。
 
 ### 场景 D：部分付款
 
@@ -194,6 +196,6 @@
 
 审查本状态机时，使用 `docs/skills/state-machine-business-review-prompt.md`，重点检查：
 - 三轴状态分离是否真正独立（付款状态是否被误当作工作流状态）。
-- 反审核的冲销前置是否覆盖所有已生成结果（库存、凭证、核销）。
+- 反审核的冲销前置是否覆盖所有已生成结果（库存、凭证、核销）；反审核目标态是否为 REJECTED（不是 UNSUBMITTED，见 `../domain-design-guidelines.md` §11.4）。
 - 角色职责分离（采购员 vs 审核人 vs 管理员）是否落实。
 - 三单匹配失败路径是否在发票审核时拦截。
