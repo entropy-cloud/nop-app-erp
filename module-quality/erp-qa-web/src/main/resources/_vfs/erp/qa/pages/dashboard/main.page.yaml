@@ -1,0 +1,7 @@
+type: page
+title: "质量概览"
+body:
+  - type: alert
+    body: "Quality Overview — 待实现占位页面"
+    level: info
+    className: m-3

@@ -4,16 +4,10 @@ site:
       displayName: Activity Type
     ErpPrjBilling-main:
       displayName: Project Billing
-    ErpPrjBillingLine-main:
-      displayName: Project Billing Line
     ErpPrjBudget-main:
       displayName: Project Budget
-    ErpPrjBudgetLine-main:
-      displayName: Project Budget Line
     ErpPrjCostCollection-main:
       displayName: Project Cost Collection
-    ErpPrjCostCollectionLine-main:
-      displayName: Project Cost Collection Line
     ErpPrjMilestone-main:
       displayName: Project Milestone
     ErpPrjProject-main:
@@ -26,57 +20,19 @@ site:
       displayName: Task
     ErpPrjTimesheet-main:
       displayName: Timesheet
-    FNPT:ErpPrjActivityType:mutation:
-      displayName: Modify Activity Type
-    FNPT:ErpPrjActivityType:query:
-      displayName: Query Activity Type
-    FNPT:ErpPrjBilling:mutation:
-      displayName: Modify Project Billing
-    FNPT:ErpPrjBilling:query:
-      displayName: Query Project Billing
-    FNPT:ErpPrjBillingLine:mutation:
-      displayName: Modify Project Billing Line
-    FNPT:ErpPrjBillingLine:query:
-      displayName: Query Project Billing Line
-    FNPT:ErpPrjBudget:mutation:
-      displayName: Modify Project Budget
-    FNPT:ErpPrjBudget:query:
-      displayName: Query Project Budget
-    FNPT:ErpPrjBudgetLine:mutation:
-      displayName: Modify Project Budget Line
-    FNPT:ErpPrjBudgetLine:query:
-      displayName: Query Project Budget Line
-    FNPT:ErpPrjCostCollection:mutation:
-      displayName: Modify Project Cost Collection
-    FNPT:ErpPrjCostCollection:query:
-      displayName: Query Project Cost Collection
-    FNPT:ErpPrjCostCollectionLine:mutation:
-      displayName: Modify Project Cost Collection Line
-    FNPT:ErpPrjCostCollectionLine:query:
-      displayName: Query Project Cost Collection Line
-    FNPT:ErpPrjMilestone:mutation:
-      displayName: Modify Project Milestone
-    FNPT:ErpPrjMilestone:query:
-      displayName: Query Project Milestone
-    FNPT:ErpPrjProject:mutation:
-      displayName: Modify Project
-    FNPT:ErpPrjProject:query:
-      displayName: Query Project
-    FNPT:ErpPrjProjectType:mutation:
-      displayName: Modify Project Type
-    FNPT:ErpPrjProjectType:query:
-      displayName: Query Project Type
-    FNPT:ErpPrjProjectUser:mutation:
-      displayName: Modify Project Member
-    FNPT:ErpPrjProjectUser:query:
-      displayName: Query Project Member
-    FNPT:ErpPrjTask:mutation:
-      displayName: Modify Task
-    FNPT:ErpPrjTask:query:
-      displayName: Query Task
-    FNPT:ErpPrjTimesheet:mutation:
-      displayName: Modify Timesheet
-    FNPT:ErpPrjTimesheet:query:
-      displayName: Query Timesheet
-    test-orm-erp-prj:
-      displayName: Test erp-prj
+    erp-prj:
+      displayName: Projects
+    prj-billing:
+      displayName: Billing
+    prj-budget:
+      displayName: Budget
+    prj-cost:
+      displayName: Cost
+    prj-dashboard:
+      displayName: Projects Overview
+    prj-dashboard-main:
+      displayName: Projects Overview
+    prj-project:
+      displayName: Project
+    prj-task:
+      displayName: Task & Timesheet

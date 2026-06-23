@@ -6,12 +6,8 @@ site:
       displayName: Cost Layer
     ErpInvPickingOrder-main:
       displayName: Picking Order
-    ErpInvPickingOrderLine-main:
-      displayName: Picking Order Line
     ErpInvReservation-main:
       displayName: Stock Reservation
-    ErpInvReservationLine-main:
-      displayName: Stock Reservation Line
     ErpInvSerialNumber-main:
       displayName: Serial Number Ledger
     ErpInvStockBalance-main:
@@ -20,75 +16,27 @@ site:
       displayName: Stock Ledger
     ErpInvStockMove-main:
       displayName: Stock Move
-    ErpInvStockMoveLine-main:
-      displayName: Stock Move Line
     ErpInvStockTake-main:
       displayName: Stock Take
-    ErpInvStockTakeLine-main:
-      displayName: Stock Take Line
     ErpInvTransferOrder-main:
       displayName: Transfer Order
-    ErpInvTransferOrderLine-main:
-      displayName: Transfer Order Line
-    FNPT:ErpInvBatch:mutation:
-      displayName: Modify Batch Ledger
-    FNPT:ErpInvBatch:query:
-      displayName: Query Batch Ledger
-    FNPT:ErpInvCostLayer:mutation:
-      displayName: Modify Cost Layer
-    FNPT:ErpInvCostLayer:query:
-      displayName: Query Cost Layer
-    FNPT:ErpInvPickingOrder:mutation:
-      displayName: Modify Picking Order
-    FNPT:ErpInvPickingOrder:query:
-      displayName: Query Picking Order
-    FNPT:ErpInvPickingOrderLine:mutation:
-      displayName: Modify Picking Order Line
-    FNPT:ErpInvPickingOrderLine:query:
-      displayName: Query Picking Order Line
-    FNPT:ErpInvReservation:mutation:
-      displayName: Modify Stock Reservation
-    FNPT:ErpInvReservation:query:
-      displayName: Query Stock Reservation
-    FNPT:ErpInvReservationLine:mutation:
-      displayName: Modify Stock Reservation Line
-    FNPT:ErpInvReservationLine:query:
-      displayName: Query Stock Reservation Line
-    FNPT:ErpInvSerialNumber:mutation:
-      displayName: Modify Serial Number Ledger
-    FNPT:ErpInvSerialNumber:query:
-      displayName: Query Serial Number Ledger
-    FNPT:ErpInvStockBalance:mutation:
-      displayName: Modify Stock Balance
-    FNPT:ErpInvStockBalance:query:
-      displayName: Query Stock Balance
-    FNPT:ErpInvStockLedger:mutation:
-      displayName: Modify Stock Ledger
-    FNPT:ErpInvStockLedger:query:
-      displayName: Query Stock Ledger
-    FNPT:ErpInvStockMove:mutation:
-      displayName: Modify Stock Move
-    FNPT:ErpInvStockMove:query:
-      displayName: Query Stock Move
-    FNPT:ErpInvStockMoveLine:mutation:
-      displayName: Modify Stock Move Line
-    FNPT:ErpInvStockMoveLine:query:
-      displayName: Query Stock Move Line
-    FNPT:ErpInvStockTake:mutation:
-      displayName: Modify Stock Take
-    FNPT:ErpInvStockTake:query:
-      displayName: Query Stock Take
-    FNPT:ErpInvStockTakeLine:mutation:
-      displayName: Modify Stock Take Line
-    FNPT:ErpInvStockTakeLine:query:
-      displayName: Query Stock Take Line
-    FNPT:ErpInvTransferOrder:mutation:
-      displayName: Modify Transfer Order
-    FNPT:ErpInvTransferOrder:query:
-      displayName: Query Transfer Order
-    FNPT:ErpInvTransferOrderLine:mutation:
-      displayName: Modify Transfer Order Line
-    FNPT:ErpInvTransferOrderLine:query:
-      displayName: Query Transfer Order Line
-    test-orm-erp-inv:
-      displayName: Test erp-inv
+    erp-inv:
+      displayName: Inventory
+    inv-batch:
+      displayName: Batch & Serial
+    inv-cost:
+      displayName: Cost
+    inv-dashboard:
+      displayName: Inventory Overview
+    inv-dashboard-main:
+      displayName: Inventory Overview
+    inv-ledger:
+      displayName: Ledger & Balance
+    inv-move:
+      displayName: Stock Operation
+    inv-reservation:
+      displayName: Reservation
+    inv-take:
+      displayName: Stock Take
+    inv-transfer:
+      displayName: Transfer

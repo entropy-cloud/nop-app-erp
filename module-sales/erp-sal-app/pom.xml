@@ -33,6 +33,11 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <artifactId>app-erp-master-data-web</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-auth-web</artifactId>
         </dependency>

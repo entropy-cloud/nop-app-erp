@@ -11,6 +11,7 @@
 
 ## 顶层分析报告
 
+- `2026-06-23-0003-menu-and-feature-completeness.md` — **菜单设计与功能完整性对照分析**：10 域菜单落地后，对照 erp-survey 中 10+ 开源 ERP（ERPNext/Odoo/赤龙/iDempiere/Atlas 等）逐域核查功能覆盖。结论：功能完整、菜单合理，145 实体 51 分组 105 菜单项覆盖主流 ERP 核心能力，无重大缺口。3 个可增强点（projects 调研深化/Calibration 归属/看板细化）+ 1 个层级取舍（三级 vs 两级）均非阻塞。菜单权威定义在各域 `erp-{short}.action-auth.xml`，本报告不复述。
 - `2026-06-23-0002-design-doc-audit.md` — **设计文档审计（design-doc-audit-prompt 11 维度）**：裁决 fail（1 blocker + 5 major）。blocker：反审核目标态在 guidelines/flow-overview（REJECTED）与 purchase/sales state-machine（UNSUBMITTED）间冲突。major：erp-design-audit-checklist 重复维护点且混入实施状态、专题文档抄写 ORM schema 越界、词汇表状态集滞后 §11、核销 owner 错指、Java 伪代码越界架构层。
 - `2026-06-23-0001-business-flow-coverage-audit.md` — **业务流程覆盖与准确性审计**：发现并补齐 4 类流程缺口（委外加工/生产异常返工报废退料/两步调拨在途/状态命名规范）+ 修正 2 处描述（状态命名三套并存、反审核目标态应为 REJECTED 非 UNSUBMITTED）。补齐前约 85% → 补齐后 100% 核心业务闭环。
 - `2026-06-23-0000-design-doc-comprehensive-audit.md` — **设计文档综合审计报告**：4 维度系统核查（文档规范 / 功能设计 / Nop 平台最佳实践 / 对照开源 ERP 业务流程）。结论：设计文档完备合理清晰，1 个真实缺口（FactsValidator）已补齐，0 规范违规，0 最佳实践偏离，6 个超越开源 ERP 的设计点。子代理基于 erp-survey 推测的 15 个薄弱环节逐条核实，14 个实际已覆盖。

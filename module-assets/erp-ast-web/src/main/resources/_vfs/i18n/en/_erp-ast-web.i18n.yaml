@@ -20,45 +20,17 @@ site:
       displayName: Asset Split
     ErpAstValueAdjustment-main:
       displayName: Asset Value Adjustment
-    FNPT:ErpAstAsset:mutation:
-      displayName: Modify Fixed Asset
-    FNPT:ErpAstAsset:query:
-      displayName: Query Fixed Asset
-    FNPT:ErpAstAssetCapitalization:mutation:
-      displayName: Modify Asset Capitalization
-    FNPT:ErpAstAssetCapitalization:query:
-      displayName: Query Asset Capitalization
-    FNPT:ErpAstAssetCategory:mutation:
-      displayName: Modify Asset Category
-    FNPT:ErpAstAssetCategory:query:
-      displayName: Query Asset Category
-    FNPT:ErpAstCip:mutation:
-      displayName: Modify CIP
-    FNPT:ErpAstCip:query:
-      displayName: Query CIP
-    FNPT:ErpAstDepreciationSchedule:mutation:
-      displayName: Modify Depreciation Schedule
-    FNPT:ErpAstDepreciationSchedule:query:
-      displayName: Query Depreciation Schedule
-    FNPT:ErpAstDisposal:mutation:
-      displayName: Modify Asset Disposal
-    FNPT:ErpAstDisposal:query:
-      displayName: Query Asset Disposal
-    FNPT:ErpAstMerge:mutation:
-      displayName: Modify Asset Merge
-    FNPT:ErpAstMerge:query:
-      displayName: Query Asset Merge
-    FNPT:ErpAstMovement:mutation:
-      displayName: Modify Asset Movement
-    FNPT:ErpAstMovement:query:
-      displayName: Query Asset Movement
-    FNPT:ErpAstSplit:mutation:
-      displayName: Modify Asset Split
-    FNPT:ErpAstSplit:query:
-      displayName: Query Asset Split
-    FNPT:ErpAstValueAdjustment:mutation:
-      displayName: Modify Asset Value Adjustment
-    FNPT:ErpAstValueAdjustment:query:
-      displayName: Query Asset Value Adjustment
-    test-orm-erp-ast:
-      displayName: Test erp-ast
+    ast-dashboard:
+      displayName: Assets Overview
+    ast-dashboard-main:
+      displayName: Assets Overview
+    ast-depreciation:
+      displayName: Depreciation
+    ast-disposal:
+      displayName: Disposal & Capitalization
+    ast-ledger:
+      displayName: Asset Ledger
+    ast-movement:
+      displayName: Asset Movement
+    erp-ast:
+      displayName: Fixed Assets

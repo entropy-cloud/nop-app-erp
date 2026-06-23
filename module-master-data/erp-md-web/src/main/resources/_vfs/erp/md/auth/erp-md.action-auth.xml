@@ -1,5 +1,143 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<auth x:extends="_erp-md.action-auth.xml" x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<auth x:extends="_erp-md.action-auth.xml" x:schema="/nop/schema/action-auth.xdef"
+     xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
 
-    <site id="main"/>
+    <site id="main">
+        <!-- 删除自动生成的测试菜单根 -->
+        <resource id="test-orm-erp-md" x:override="remove"/>
+
+        <!-- 主数据管理:master-data域一级菜单 -->
+        <resource id="erp-md" displayName="主数据管理" i18n-en:displayName="Master Data"
+                  icon="database" resourceType="TOPM" orderNo="100"
+                  routePath="/erp-md" component="layouts/default/index">
+            <children>
+                <!-- 物料 -->
+                <resource id="md-material" displayName="物料" i18n-en:displayName="Material"
+                          icon="package" resourceType="SUBM" orderNo="100">
+                    <children>
+                        <resource id="ErpMdMaterial-main" displayName="物料"
+                                  i18n-en:displayName="Material" icon="package"
+                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  url="/erp/md/pages/ErpMdMaterial/main.page.yaml"/>
+                        <resource id="ErpMdMaterialCategory-main" displayName="物料分类"
+                                  i18n-en:displayName="Material Category" icon="folder-tree"
+                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  url="/erp/md/pages/ErpMdMaterialCategory/main.page.yaml"/>
+                        <resource id="ErpMdMaterialSku-main" displayName="物料SKU"
+                                  i18n-en:displayName="Material SKU" icon="package-2"
+                                  component="AMIS" resourceType="SUBM" orderNo="120"
+                                  url="/erp/md/pages/ErpMdMaterialSku/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 往来单位 -->
+                <resource id="md-partner" displayName="往来单位" i18n-en:displayName="Business Partner"
+                          icon="users" resourceType="SUBM" orderNo="200">
+                    <children>
+                        <resource id="ErpMdPartner-main" displayName="往来单位"
+                                  i18n-en:displayName="Business Partner" icon="users"
+                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  url="/erp/md/pages/ErpMdPartner/main.page.yaml"/>
+                        <resource id="ErpMdPartnerAddress-main" displayName="往来单位地址"
+                                  i18n-en:displayName="Partner Address" icon="map-pin"
+                                  component="AMIS" resourceType="SUBM" orderNo="210"
+                                  url="/erp/md/pages/ErpMdPartnerAddress/main.page.yaml"/>
+                        <resource id="ErpMdPartnerContact-main" displayName="往来单位联系人"
+                                  i18n-en:displayName="Partner Contact" icon="contact"
+                                  component="AMIS" resourceType="SUBM" orderNo="220"
+                                  url="/erp/md/pages/ErpMdPartnerContact/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 仓储组织 -->
+                <resource id="md-org" displayName="仓储组织" i18n-en:displayName="Warehouse &amp; Org"
+                          icon="warehouse" resourceType="SUBM" orderNo="300">
+                    <children>
+                        <resource id="ErpMdWarehouse-main" displayName="仓库"
+                                  i18n-en:displayName="Warehouse" icon="warehouse"
+                                  component="AMIS" resourceType="SUBM" orderNo="300"
+                                  url="/erp/md/pages/ErpMdWarehouse/main.page.yaml"/>
+                        <resource id="ErpMdLocation-main" displayName="库位"
+                                  i18n-en:displayName="Location" icon="map-pin"
+                                  component="AMIS" resourceType="SUBM" orderNo="310"
+                                  url="/erp/md/pages/ErpMdLocation/main.page.yaml"/>
+                        <resource id="ErpMdOrganization-main" displayName="组织"
+                                  i18n-en:displayName="Organization" icon="building-2"
+                                  component="AMIS" resourceType="SUBM" orderNo="320"
+                                  url="/erp/md/pages/ErpMdOrganization/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 计量计价 -->
+                <resource id="md-uom" displayName="计量计价" i18n-en:displayName="UoM &amp; Pricing"
+                          icon="coins" resourceType="SUBM" orderNo="400">
+                    <children>
+                        <resource id="ErpMdUoM-main" displayName="计量单位"
+                                  i18n-en:displayName="Unit of Measure" icon="ruler"
+                                  component="AMIS" resourceType="SUBM" orderNo="400"
+                                  url="/erp/md/pages/ErpMdUoM/main.page.yaml"/>
+                        <resource id="ErpMdUoMConversion-main" displayName="单位换算"
+                                  i18n-en:displayName="UoM Conversion" icon="arrow-left-right"
+                                  component="AMIS" resourceType="SUBM" orderNo="410"
+                                  url="/erp/md/pages/ErpMdUoMConversion/main.page.yaml"/>
+                        <resource id="ErpMdCurrency-main" displayName="币种"
+                                  i18n-en:displayName="Currency" icon="coins"
+                                  component="AMIS" resourceType="SUBM" orderNo="420"
+                                  url="/erp/md/pages/ErpMdCurrency/main.page.yaml"/>
+                        <resource id="ErpMdExchangeRate-main" displayName="汇率"
+                                  i18n-en:displayName="Exchange Rate" icon="trending-up"
+                                  component="AMIS" resourceType="SUBM" orderNo="430"
+                                  url="/erp/md/pages/ErpMdExchangeRate/main.page.yaml"/>
+                        <resource id="ErpMdTaxRate-main" displayName="税率"
+                                  i18n-en:displayName="Tax Rate" icon="percent"
+                                  component="AMIS" resourceType="SUBM" orderNo="440"
+                                  url="/erp/md/pages/ErpMdTaxRate/main.page.yaml"/>
+                        <resource id="ErpMdSettlementMethod-main" displayName="结算方式"
+                                  i18n-en:displayName="Settlement Method" icon="credit-card"
+                                  component="AMIS" resourceType="SUBM" orderNo="450"
+                                  url="/erp/md/pages/ErpMdSettlementMethod/main.page.yaml"/>
+                        <resource id="ErpMdBankAccount-main" displayName="银行账户"
+                                  i18n-en:displayName="Bank Account" icon="land-bank"
+                                  component="AMIS" resourceType="SUBM" orderNo="460"
+                                  url="/erp/md/pages/ErpMdBankAccount/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 会计科目 -->
+                <resource id="md-account" displayName="会计科目" i18n-en:displayName="Accounting Subject"
+                          icon="book-open-text" resourceType="SUBM" orderNo="500">
+                    <children>
+                        <resource id="ErpMdSubject-main" displayName="会计科目"
+                                  i18n-en:displayName="Accounting Subject" icon="book-open-text"
+                                  component="AMIS" resourceType="SUBM" orderNo="500"
+                                  url="/erp/md/pages/ErpMdSubject/main.page.yaml"/>
+                        <resource id="ErpMdAcctSchema-main" displayName="会计核算表(账套)"
+                                  i18n-en:displayName="Accounting Schema" icon="book-up"
+                                  component="AMIS" resourceType="SUBM" orderNo="510"
+                                  url="/erp/md/pages/ErpMdAcctSchema/main.page.yaml"/>
+                        <resource id="ErpMdAcctSchemaCoa-main" displayName="账套科目表"
+                                  i18n-en:displayName="Chart of Accounts" icon="list"
+                                  component="AMIS" resourceType="SUBM" orderNo="520"
+                                  url="/erp/md/pages/ErpMdAcctSchemaCoa/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 人员 -->
+                <resource id="md-hr" displayName="人员" i18n-en:displayName="Employee"
+                          icon="user-round" resourceType="SUBM" orderNo="600">
+                    <children>
+                        <resource id="ErpMdEmployee-main" displayName="职员"
+                                  i18n-en:displayName="Employee" icon="user-round"
+                                  component="AMIS" resourceType="SUBM" orderNo="600"
+                                  url="/erp/md/pages/ErpMdEmployee/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 报表看板 -->
+                <resource id="md-dashboard" displayName="主数据概览" i18n-en:displayName="Master Data Overview"
+                          icon="layout-dashboard" resourceType="SUBM" orderNo="999">
+                    <children>
+                        <resource id="md-dashboard-main" displayName="主数据概览"
+                                  i18n-en:displayName="Master Data Overview" icon="layout-dashboard"
+                                  component="AMIS" resourceType="SUBM" orderNo="9990"
+                                  url="/erp/md/pages/dashboard/main.page.yaml"/>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
 </auth>

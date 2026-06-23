@@ -80,17 +80,18 @@
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
         <prop name="subject" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="subjectId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+              ext:joinLeftProp="subjectId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
             <schema bizObjName="ErpMdSubject"/>
         </prop>
         <prop name="depreciationSubject" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="depreciationSubjectId" ext:joinRightProp="id" insertable="false" updatable="false"
-              lazy="true">
+              ext:joinLeftProp="depreciationSubjectId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
             <schema bizObjName="ErpMdSubject"/>
         </prop>
         <prop name="expenseSubject" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="expenseSubjectId" ext:joinRightProp="id" insertable="false" updatable="false"
-              lazy="true">
+              ext:joinLeftProp="expenseSubjectId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
             <schema bizObjName="ErpMdSubject"/>
         </prop>
     </props>

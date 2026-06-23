@@ -25,7 +25,7 @@
 <orm ext:registerShortName="true" ext:appName="erp-prj" ext:entityPackageName="app.erp.prj.dao.entity"
      ext:basePackageName="app.erp.prj" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-projects"
      ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
-     ext:allowIdAsColName="true" ext:icon="briefcase" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
+     ext:allowIdAsColName="true" ext:icon="briefcase" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:biz="biz">
 
     <dicts>
         <dict label="项目状态" name="erp-prj/project-status" valueType="int">
@@ -480,7 +480,7 @@
              这些实体由 master-data-dao（及 projects-dao/assets-dao）模块生成，本模块仅声明以建立 to-one 关联与 EQL 点导航。
         ============================ -->
         <entity displayName="组织" name="app.erp.md.dao.entity.ErpMdOrganization"
-                notGenCode="true" tableName="erp_md_organization">
+                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
                 <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
@@ -492,7 +492,7 @@
         </entity>
 
         <entity displayName="币种" name="app.erp.md.dao.entity.ErpMdCurrency"
-                notGenCode="true" tableName="erp_md_currency">
+                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_currency">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
                 <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
@@ -504,7 +504,7 @@
         </entity>
 
         <entity displayName="职员" name="app.erp.md.dao.entity.ErpMdEmployee"
-                notGenCode="true" tableName="erp_md_employee">
+                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_employee">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
                 <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
@@ -515,7 +515,7 @@
         </entity>
 
         <entity displayName="往来单位" name="app.erp.md.dao.entity.ErpMdPartner"
-                notGenCode="true" tableName="erp_md_partner">
+                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_partner">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
                 <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
@@ -527,7 +527,7 @@
         </entity>
 
         <entity displayName="会计科目" name="app.erp.md.dao.entity.ErpMdSubject"
-                notGenCode="true" tableName="erp_md_subject">
+                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_subject">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
                 <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>

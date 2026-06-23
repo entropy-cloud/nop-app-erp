@@ -1,5 +1,109 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<auth x:extends="_erp-inv.action-auth.xml" x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<auth x:extends="_erp-inv.action-auth.xml" x:schema="/nop/schema/action-auth.xdef"
+     xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
 
-    <site id="main"/>
+    <site id="main">
+        <!-- 删除自动生成的测试菜单根 -->
+        <resource id="test-orm-erp-inv" x:override="remove"/>
+
+        <!-- 仓库管理:inventory域一级菜单 -->
+        <resource id="erp-inv" displayName="仓库管理" i18n-en:displayName="Inventory"
+                  icon="warehouse" resourceType="TOPM" orderNo="400"
+                  routePath="/erp-inv" component="layouts/default/index">
+            <children>
+                <!-- 库存作业 -->
+                <resource id="inv-move" displayName="库存作业" i18n-en:displayName="Stock Operation"
+                          icon="arrow-left-right" resourceType="SUBM" orderNo="100">
+                    <children>
+                        <resource id="ErpInvStockMove-main" displayName="库存移动单"
+                                  i18n-en:displayName="Stock Move" icon="arrow-left-right"
+                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  url="/erp/inv/pages/ErpInvStockMove/main.page.yaml"/>
+                        <resource id="ErpInvPickingOrder-main" displayName="拣货单"
+                                  i18n-en:displayName="Picking Order" icon="package-search"
+                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  url="/erp/inv/pages/ErpInvPickingOrder/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 流水余额 -->
+                <resource id="inv-ledger" displayName="流水余额" i18n-en:displayName="Ledger &amp; Balance"
+                          icon="trending-up" resourceType="SUBM" orderNo="200">
+                    <children>
+                        <resource id="ErpInvStockLedger-main" displayName="库存流水"
+                                  i18n-en:displayName="Stock Ledger" icon="trending-up"
+                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  url="/erp/inv/pages/ErpInvStockLedger/main.page.yaml"/>
+                        <resource id="ErpInvStockBalance-main" displayName="库存余额"
+                                  i18n-en:displayName="Stock Balance" icon="scale"
+                                  component="AMIS" resourceType="SUBM" orderNo="210"
+                                  url="/erp/inv/pages/ErpInvStockBalance/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 调拨 -->
+                <resource id="inv-transfer" displayName="调拨" i18n-en:displayName="Transfer"
+                          icon="arrow-right-left" resourceType="SUBM" orderNo="300">
+                    <children>
+                        <resource id="ErpInvTransferOrder-main" displayName="调拨单"
+                                  i18n-en:displayName="Transfer Order" icon="arrow-right-left"
+                                  component="AMIS" resourceType="SUBM" orderNo="300"
+                                  url="/erp/inv/pages/ErpInvTransferOrder/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 盘点 -->
+                <resource id="inv-take" displayName="盘点" i18n-en:displayName="Stock Take"
+                          icon="clipboard-list" resourceType="SUBM" orderNo="400">
+                    <children>
+                        <resource id="ErpInvStockTake-main" displayName="盘点单"
+                                  i18n-en:displayName="Stock Take" icon="clipboard-list"
+                                  component="AMIS" resourceType="SUBM" orderNo="400"
+                                  url="/erp/inv/pages/ErpInvStockTake/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 预留 -->
+                <resource id="inv-reservation" displayName="预留" i18n-en:displayName="Reservation"
+                          icon="bookmark" resourceType="SUBM" orderNo="500">
+                    <children>
+                        <resource id="ErpInvReservation-main" displayName="库存预留单"
+                                  i18n-en:displayName="Stock Reservation" icon="bookmark"
+                                  component="AMIS" resourceType="SUBM" orderNo="500"
+                                  url="/erp/inv/pages/ErpInvReservation/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 批次序列号 -->
+                <resource id="inv-batch" displayName="批次序列号" i18n-en:displayName="Batch &amp; Serial"
+                          icon="boxes" resourceType="SUBM" orderNo="600">
+                    <children>
+                        <resource id="ErpInvBatch-main" displayName="批次台账"
+                                  i18n-en:displayName="Batch Ledger" icon="boxes"
+                                  component="AMIS" resourceType="SUBM" orderNo="600"
+                                  url="/erp/inv/pages/ErpInvBatch/main.page.yaml"/>
+                        <resource id="ErpInvSerialNumber-main" displayName="序列号台账"
+                                  i18n-en:displayName="Serial Number Ledger" icon="hash"
+                                  component="AMIS" resourceType="SUBM" orderNo="610"
+                                  url="/erp/inv/pages/ErpInvSerialNumber/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 成本 -->
+                <resource id="inv-cost" displayName="成本" i18n-en:displayName="Cost"
+                          icon="layers" resourceType="SUBM" orderNo="700">
+                    <children>
+                        <resource id="ErpInvCostLayer-main" displayName="成本层"
+                                  i18n-en:displayName="Cost Layer" icon="layers"
+                                  component="AMIS" resourceType="SUBM" orderNo="700"
+                                  url="/erp/inv/pages/ErpInvCostLayer/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 报表看板 -->
+                <resource id="inv-dashboard" displayName="库存概览" i18n-en:displayName="Inventory Overview"
+                          icon="boxes" resourceType="SUBM" orderNo="999">
+                    <children>
+                        <resource id="inv-dashboard-main" displayName="库存概览"
+                                  i18n-en:displayName="Inventory Overview" icon="boxes"
+                                  component="AMIS" resourceType="SUBM" orderNo="9990"
+                                  url="/erp/inv/pages/dashboard/main.page.yaml"/>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
 </auth>

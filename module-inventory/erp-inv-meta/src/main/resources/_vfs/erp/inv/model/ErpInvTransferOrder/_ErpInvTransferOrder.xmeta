@@ -104,18 +104,18 @@
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
         <prop name="fromWarehouse" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="fromWarehouseId" ext:joinRightProp="id" insertable="false" updatable="false"
-              mandatory="true" lazy="true">
+              ext:joinLeftProp="fromWarehouseId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdWarehouse"/>
         </prop>
         <prop name="toWarehouse" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="toWarehouseId" ext:joinRightProp="id" insertable="false" updatable="false"
-              mandatory="true" lazy="true">
+              ext:joinLeftProp="toWarehouseId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdWarehouse"/>
         </prop>
         <prop name="inTransitWarehouse" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="inTransitWarehouseId" ext:joinRightProp="id" insertable="false" updatable="false"
-              lazy="true">
+              ext:joinLeftProp="inTransitWarehouseId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
             <schema bizObjName="ErpMdWarehouse"/>
         </prop>
         <prop name="lines" tagSet="pub,cascade-delete,insertable,updatable" ext:kind="to-many" internal="true"

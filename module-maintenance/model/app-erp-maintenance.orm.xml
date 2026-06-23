@@ -27,7 +27,7 @@
 <orm ext:registerShortName="true" ext:appName="erp-mnt" ext:entityPackageName="app.erp.mnt.dao.entity"
      ext:basePackageName="app.erp.mnt" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-maintenance"
      ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
-     ext:allowIdAsColName="true" ext:icon="wrench" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
+     ext:allowIdAsColName="true" ext:icon="wrench" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:biz="biz">
 
     <dicts>
         <dict label="维护计划类型" name="erp-mnt/schedule-type" valueType="int">
@@ -472,7 +472,7 @@
              这些实体由 master-data-dao（及 projects-dao/assets-dao）模块生成，本模块仅声明以建立 to-one 关联与 EQL 点导航。
         ============================ -->
         <entity displayName="组织" name="app.erp.md.dao.entity.ErpMdOrganization"
-                notGenCode="true" tableName="erp_md_organization">
+                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
                 <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
@@ -484,7 +484,7 @@
         </entity>
 
         <entity displayName="库位" name="app.erp.md.dao.entity.ErpMdLocation"
-                notGenCode="true" tableName="erp_md_location">
+                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_location">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
                 <column name="warehouseId" code="WAREHOUSE_ID" stdSqlType="BIGINT" stdDataType="long"/>
@@ -495,7 +495,7 @@
         </entity>
 
         <entity displayName="物料分类" name="app.erp.md.dao.entity.ErpMdMaterialCategory"
-                notGenCode="true" tableName="erp_md_material_category">
+                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_material_category">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
                 <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
@@ -505,7 +505,7 @@
         </entity>
 
         <entity displayName="职员" name="app.erp.md.dao.entity.ErpMdEmployee"
-                notGenCode="true" tableName="erp_md_employee">
+                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_employee">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
                 <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
@@ -516,7 +516,7 @@
         </entity>
 
         <entity displayName="物料" name="app.erp.md.dao.entity.ErpMdMaterial"
-                notGenCode="true" tableName="erp_md_material">
+                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_material">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
                 <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
@@ -527,7 +527,7 @@
         </entity>
 
         <entity displayName="计量单位" name="app.erp.md.dao.entity.ErpMdUoM"
-                notGenCode="true" tableName="erp_md_uom">
+                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_uom">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
                 <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
@@ -538,7 +538,7 @@
         </entity>
 
         <entity displayName="仓库" name="app.erp.md.dao.entity.ErpMdWarehouse"
-                notGenCode="true" tableName="erp_md_warehouse">
+                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_warehouse">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
                 <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>

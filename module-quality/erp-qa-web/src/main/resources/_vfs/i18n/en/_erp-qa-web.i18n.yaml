@@ -6,12 +6,8 @@ site:
       displayName: Gauge Calibration
     ErpQaInspection-main:
       displayName: Inspection
-    ErpQaInspectionLine-main:
-      displayName: Inspection Line
     ErpQaInspectionTemplate-main:
       displayName: Inspection Template
-    ErpQaInspectionTemplateLine-main:
-      displayName: Inspection Template Line
     ErpQaNonConformance-main:
       displayName: Non-Conformance Report
     ErpQaQualityGoal-main:
@@ -22,49 +18,19 @@ site:
       displayName: Risk Register
     ErpQaSamplingPlan-main:
       displayName: Sampling Plan
-    FNPT:ErpQaAction:mutation:
-      displayName: Modify Corrective Action
-    FNPT:ErpQaAction:query:
-      displayName: Query Corrective Action
-    FNPT:ErpQaCalibration:mutation:
-      displayName: Modify Gauge Calibration
-    FNPT:ErpQaCalibration:query:
-      displayName: Query Gauge Calibration
-    FNPT:ErpQaInspection:mutation:
-      displayName: Modify Inspection
-    FNPT:ErpQaInspection:query:
-      displayName: Query Inspection
-    FNPT:ErpQaInspectionLine:mutation:
-      displayName: Modify Inspection Line
-    FNPT:ErpQaInspectionLine:query:
-      displayName: Query Inspection Line
-    FNPT:ErpQaInspectionTemplate:mutation:
-      displayName: Modify Inspection Template
-    FNPT:ErpQaInspectionTemplate:query:
-      displayName: Query Inspection Template
-    FNPT:ErpQaInspectionTemplateLine:mutation:
-      displayName: Modify Inspection Template Line
-    FNPT:ErpQaInspectionTemplateLine:query:
-      displayName: Query Inspection Template Line
-    FNPT:ErpQaNonConformance:mutation:
-      displayName: Modify Non-Conformance Report
-    FNPT:ErpQaNonConformance:query:
-      displayName: Query Non-Conformance Report
-    FNPT:ErpQaQualityGoal:mutation:
-      displayName: Modify Quality Goal
-    FNPT:ErpQaQualityGoal:query:
-      displayName: Query Quality Goal
-    FNPT:ErpQaReview:mutation:
-      displayName: Modify Quality Review
-    FNPT:ErpQaReview:query:
-      displayName: Query Quality Review
-    FNPT:ErpQaRiskRegister:mutation:
-      displayName: Modify Risk Register
-    FNPT:ErpQaRiskRegister:query:
-      displayName: Query Risk Register
-    FNPT:ErpQaSamplingPlan:mutation:
-      displayName: Modify Sampling Plan
-    FNPT:ErpQaSamplingPlan:query:
-      displayName: Query Sampling Plan
-    test-orm-erp-qa:
-      displayName: Test erp-qa
+    erp-qa:
+      displayName: Quality
+    qa-capa:
+      displayName: Corrective Action
+    qa-dashboard:
+      displayName: Quality Overview
+    qa-dashboard-main:
+      displayName: Quality Overview
+    qa-goal:
+      displayName: Quality Goal
+    qa-inspection:
+      displayName: Inspection
+    qa-ncr:
+      displayName: Non-Conformance
+    qa-standard:
+      displayName: Standard

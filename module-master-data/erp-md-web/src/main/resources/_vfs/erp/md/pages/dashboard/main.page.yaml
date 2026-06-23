@@ -1,0 +1,7 @@
+type: page
+title: "主数据概览"
+body:
+  - type: alert
+    body: "Master Data Overview — 待实现占位页面"
+    level: info
+    className: m-3

@@ -10,67 +10,27 @@ site:
       displayName: Equipment Category
     ErpMntMaintenanceTeam-main:
       displayName: Maintenance Team
-    ErpMntMaintenanceTeamMember-main:
-      displayName: Maintenance Team Member
     ErpMntRequest-main:
       displayName: Maintenance Request
     ErpMntSchedule-main:
       displayName: Maintenance Schedule
     ErpMntSparePartUsage-main:
       displayName: Spare Part Usage
-    ErpMntSparePartUsageLine-main:
-      displayName: Spare Part Usage Line
     ErpMntVisit-main:
       displayName: Maintenance Visit
-    ErpMntVisitTask-main:
-      displayName: Maintenance Task
-    FNPT:ErpMntCalibration:mutation:
-      displayName: Modify Calibration
-    FNPT:ErpMntCalibration:query:
-      displayName: Query Calibration
-    FNPT:ErpMntDowntimeEntry:mutation:
-      displayName: Modify Downtime Entry
-    FNPT:ErpMntDowntimeEntry:query:
-      displayName: Query Downtime Entry
-    FNPT:ErpMntEquipment:mutation:
-      displayName: Modify Equipment
-    FNPT:ErpMntEquipment:query:
-      displayName: Query Equipment
-    FNPT:ErpMntEquipmentCategory:mutation:
-      displayName: Modify Equipment Category
-    FNPT:ErpMntEquipmentCategory:query:
-      displayName: Query Equipment Category
-    FNPT:ErpMntMaintenanceTeam:mutation:
-      displayName: Modify Maintenance Team
-    FNPT:ErpMntMaintenanceTeam:query:
-      displayName: Query Maintenance Team
-    FNPT:ErpMntMaintenanceTeamMember:mutation:
-      displayName: Modify Maintenance Team Member
-    FNPT:ErpMntMaintenanceTeamMember:query:
-      displayName: Query Maintenance Team Member
-    FNPT:ErpMntRequest:mutation:
-      displayName: Modify Maintenance Request
-    FNPT:ErpMntRequest:query:
-      displayName: Query Maintenance Request
-    FNPT:ErpMntSchedule:mutation:
-      displayName: Modify Maintenance Schedule
-    FNPT:ErpMntSchedule:query:
-      displayName: Query Maintenance Schedule
-    FNPT:ErpMntSparePartUsage:mutation:
-      displayName: Modify Spare Part Usage
-    FNPT:ErpMntSparePartUsage:query:
-      displayName: Query Spare Part Usage
-    FNPT:ErpMntSparePartUsageLine:mutation:
-      displayName: Modify Spare Part Usage Line
-    FNPT:ErpMntSparePartUsageLine:query:
-      displayName: Query Spare Part Usage Line
-    FNPT:ErpMntVisit:mutation:
-      displayName: Modify Maintenance Visit
-    FNPT:ErpMntVisit:query:
-      displayName: Query Maintenance Visit
-    FNPT:ErpMntVisitTask:mutation:
-      displayName: Modify Maintenance Task
-    FNPT:ErpMntVisitTask:query:
-      displayName: Query Maintenance Task
-    test-orm-erp-mnt:
-      displayName: Test erp-mnt
+    erp-mnt:
+      displayName: Maintenance
+    mnt-dashboard:
+      displayName: Maintenance Overview
+    mnt-dashboard-main:
+      displayName: Maintenance Overview
+    mnt-equipment:
+      displayName: Equipment
+    mnt-schedule:
+      displayName: Schedule
+    mnt-spare:
+      displayName: Spare Part
+    mnt-team:
+      displayName: Team
+    mnt-work:
+      displayName: Work Order

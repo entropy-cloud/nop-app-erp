@@ -1,0 +1,7 @@
+type: page
+title: "销售概览"
+body:
+  - type: alert
+    body: "Sales Overview — 待实现占位页面"
+    level: info
+    className: m-3

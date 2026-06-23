@@ -1,5 +1,97 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<auth x:extends="_erp-prj.action-auth.xml" x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<auth x:extends="_erp-prj.action-auth.xml" x:schema="/nop/schema/action-auth.xdef"
+     xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
 
-    <site id="main"/>
+    <site id="main">
+        <!-- 删除自动生成的测试菜单根 -->
+        <resource id="test-orm-erp-prj" x:override="remove"/>
+
+        <!-- 项目管理:projects域一级菜单 -->
+        <resource id="erp-prj" displayName="项目管理" i18n-en:displayName="Projects"
+                  icon="briefcase" resourceType="TOPM" orderNo="700"
+                  routePath="/erp-prj" component="layouts/default/index">
+            <children>
+                <!-- 项目 -->
+                <resource id="prj-project" displayName="项目" i18n-en:displayName="Project"
+                          icon="briefcase" resourceType="SUBM" orderNo="100">
+                    <children>
+                        <resource id="ErpPrjProject-main" displayName="项目"
+                                  i18n-en:displayName="Project" icon="briefcase"
+                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  url="/erp/prj/pages/ErpPrjProject/main.page.yaml"/>
+                        <resource id="ErpPrjProjectType-main" displayName="项目类型"
+                                  i18n-en:displayName="Project Type" icon="folder"
+                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  url="/erp/prj/pages/ErpPrjProjectType/main.page.yaml"/>
+                        <resource id="ErpPrjProjectUser-main" displayName="项目成员"
+                                  i18n-en:displayName="Project Member" icon="users"
+                                  component="AMIS" resourceType="SUBM" orderNo="120"
+                                  url="/erp/prj/pages/ErpPrjProjectUser/main.page.yaml"/>
+                        <resource id="ErpPrjMilestone-main" displayName="项目里程碑"
+                                  i18n-en:displayName="Project Milestone" icon="flag"
+                                  component="AMIS" resourceType="SUBM" orderNo="130"
+                                  url="/erp/prj/pages/ErpPrjMilestone/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 任务工时 -->
+                <resource id="prj-task" displayName="任务工时" i18n-en:displayName="Task &amp; Timesheet"
+                          icon="list-checks" resourceType="SUBM" orderNo="200">
+                    <children>
+                        <resource id="ErpPrjTask-main" displayName="任务"
+                                  i18n-en:displayName="Task" icon="list-checks"
+                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  url="/erp/prj/pages/ErpPrjTask/main.page.yaml"/>
+                        <resource id="ErpPrjActivityType-main" displayName="活动类型"
+                                  i18n-en:displayName="Activity Type" icon="folder"
+                                  component="AMIS" resourceType="SUBM" orderNo="210"
+                                  url="/erp/prj/pages/ErpPrjActivityType/main.page.yaml"/>
+                        <resource id="ErpPrjTimesheet-main" displayName="工时记录"
+                                  i18n-en:displayName="Timesheet" icon="clock"
+                                  component="AMIS" resourceType="SUBM" orderNo="220"
+                                  url="/erp/prj/pages/ErpPrjTimesheet/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 预算 -->
+                <resource id="prj-budget" displayName="预算" i18n-en:displayName="Budget"
+                          icon="wallet" resourceType="SUBM" orderNo="300">
+                    <children>
+                        <resource id="ErpPrjBudget-main" displayName="项目预算"
+                                  i18n-en:displayName="Project Budget" icon="wallet"
+                                  component="AMIS" resourceType="SUBM" orderNo="300"
+                                  url="/erp/prj/pages/ErpPrjBudget/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 成本 -->
+                <resource id="prj-cost" displayName="成本" i18n-en:displayName="Cost"
+                          icon="coins" resourceType="SUBM" orderNo="400">
+                    <children>
+                        <resource id="ErpPrjCostCollection-main" displayName="项目成本归集"
+                                  i18n-en:displayName="Project Cost Collection" icon="coins"
+                                  component="AMIS" resourceType="SUBM" orderNo="400"
+                                  url="/erp/prj/pages/ErpPrjCostCollection/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 开票 -->
+                <resource id="prj-billing" displayName="开票" i18n-en:displayName="Billing"
+                          icon="receipt" resourceType="SUBM" orderNo="500">
+                    <children>
+                        <resource id="ErpPrjBilling-main" displayName="项目开票"
+                                  i18n-en:displayName="Project Billing" icon="receipt"
+                                  component="AMIS" resourceType="SUBM" orderNo="500"
+                                  url="/erp/prj/pages/ErpPrjBilling/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 报表看板 -->
+                <resource id="prj-dashboard" displayName="项目概览" i18n-en:displayName="Projects Overview"
+                          icon="kanban" resourceType="SUBM" orderNo="999">
+                    <children>
+                        <resource id="prj-dashboard-main" displayName="项目概览"
+                                  i18n-en:displayName="Projects Overview" icon="kanban"
+                                  component="AMIS" resourceType="SUBM" orderNo="9990"
+                                  url="/erp/prj/pages/dashboard/main.page.yaml"/>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
 </auth>

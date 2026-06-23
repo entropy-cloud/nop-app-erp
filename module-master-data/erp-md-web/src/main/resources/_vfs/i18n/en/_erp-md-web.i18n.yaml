@@ -40,85 +40,21 @@ site:
       displayName: UoM Conversion
     ErpMdWarehouse-main:
       displayName: Warehouse
-    FNPT:ErpMdAcctSchema:mutation:
-      displayName: Modify Accounting Schema
-    FNPT:ErpMdAcctSchema:query:
-      displayName: Query Accounting Schema
-    FNPT:ErpMdAcctSchemaCoa:mutation:
-      displayName: Modify Chart of Accounts
-    FNPT:ErpMdAcctSchemaCoa:query:
-      displayName: Query Chart of Accounts
-    FNPT:ErpMdBankAccount:mutation:
-      displayName: Modify Bank Account
-    FNPT:ErpMdBankAccount:query:
-      displayName: Query Bank Account
-    FNPT:ErpMdCurrency:mutation:
-      displayName: Modify Currency
-    FNPT:ErpMdCurrency:query:
-      displayName: Query Currency
-    FNPT:ErpMdEmployee:mutation:
-      displayName: Modify Employee
-    FNPT:ErpMdEmployee:query:
-      displayName: Query Employee
-    FNPT:ErpMdExchangeRate:mutation:
-      displayName: Modify Exchange Rate
-    FNPT:ErpMdExchangeRate:query:
-      displayName: Query Exchange Rate
-    FNPT:ErpMdLocation:mutation:
-      displayName: Modify Location
-    FNPT:ErpMdLocation:query:
-      displayName: Query Location
-    FNPT:ErpMdMaterial:mutation:
-      displayName: Modify Material
-    FNPT:ErpMdMaterial:query:
-      displayName: Query Material
-    FNPT:ErpMdMaterialCategory:mutation:
-      displayName: Modify Material Category
-    FNPT:ErpMdMaterialCategory:query:
-      displayName: Query Material Category
-    FNPT:ErpMdMaterialSku:mutation:
-      displayName: Modify Material SKU
-    FNPT:ErpMdMaterialSku:query:
-      displayName: Query Material SKU
-    FNPT:ErpMdOrganization:mutation:
-      displayName: Modify Organization
-    FNPT:ErpMdOrganization:query:
-      displayName: Query Organization
-    FNPT:ErpMdPartner:mutation:
-      displayName: Modify Business Partner
-    FNPT:ErpMdPartner:query:
-      displayName: Query Business Partner
-    FNPT:ErpMdPartnerAddress:mutation:
-      displayName: Modify Partner Address
-    FNPT:ErpMdPartnerAddress:query:
-      displayName: Query Partner Address
-    FNPT:ErpMdPartnerContact:mutation:
-      displayName: Modify Partner Contact
-    FNPT:ErpMdPartnerContact:query:
-      displayName: Query Partner Contact
-    FNPT:ErpMdSettlementMethod:mutation:
-      displayName: Modify Settlement Method
-    FNPT:ErpMdSettlementMethod:query:
-      displayName: Query Settlement Method
-    FNPT:ErpMdSubject:mutation:
-      displayName: Modify Accounting Subject
-    FNPT:ErpMdSubject:query:
-      displayName: Query Accounting Subject
-    FNPT:ErpMdTaxRate:mutation:
-      displayName: Modify Tax Rate
-    FNPT:ErpMdTaxRate:query:
-      displayName: Query Tax Rate
-    FNPT:ErpMdUoM:mutation:
-      displayName: Modify Unit of Measure
-    FNPT:ErpMdUoM:query:
-      displayName: Query Unit of Measure
-    FNPT:ErpMdUoMConversion:mutation:
-      displayName: Modify UoM Conversion
-    FNPT:ErpMdUoMConversion:query:
-      displayName: Query UoM Conversion
-    FNPT:ErpMdWarehouse:mutation:
-      displayName: Modify Warehouse
-    FNPT:ErpMdWarehouse:query:
-      displayName: Query Warehouse
-    test-orm-erp-md:
-      displayName: Test erp-md
+    erp-md:
+      displayName: Master Data
+    md-account:
+      displayName: Accounting Subject
+    md-dashboard:
+      displayName: Master Data Overview
+    md-dashboard-main:
+      displayName: Master Data Overview
+    md-hr:
+      displayName: Employee
+    md-material:
+      displayName: Material
+    md-org:
+      displayName: Warehouse & Org
+    md-partner:
+      displayName: Business Partner
+    md-uom:
+      displayName: UoM & Pricing

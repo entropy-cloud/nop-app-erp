@@ -117,7 +117,8 @@
             <schema bizObjName="ErpPrjTask"/>
         </prop>
         <prop name="assignee" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="assigneeId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+              ext:joinLeftProp="assigneeId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
             <schema bizObjName="ErpMdPartner"/>
         </prop>
         <prop name="dependsOn" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"

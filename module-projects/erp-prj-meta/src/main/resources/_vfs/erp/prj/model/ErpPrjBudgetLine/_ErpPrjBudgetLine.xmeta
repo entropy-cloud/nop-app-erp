@@ -88,7 +88,8 @@
             <schema bizObjName="ErpPrjBudget"/>
         </prop>
         <prop name="subject" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="subjectId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+              ext:joinLeftProp="subjectId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
             <schema bizObjName="ErpMdSubject"/>
         </prop>
     </props>

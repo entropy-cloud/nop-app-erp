@@ -1,5 +1,97 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<auth x:extends="_erp-sal.action-auth.xml" x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<auth x:extends="_erp-sal.action-auth.xml" x:schema="/nop/schema/action-auth.xdef"
+     xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
 
-    <site id="main"/>
+    <site id="main">
+        <!-- 删除自动生成的测试菜单根 -->
+        <resource id="test-orm-erp-sal" x:override="remove"/>
+
+        <!-- 销售管理:sales域一级菜单 -->
+        <resource id="erp-sal" displayName="销售管理" i18n-en:displayName="Sales"
+                  icon="receipt" resourceType="TOPM" orderNo="300"
+                  routePath="/erp-sal" component="layouts/default/index">
+            <children>
+                <!-- 报价 -->
+                <resource id="sal-quotation" displayName="报价" i18n-en:displayName="Quotation"
+                          icon="file-sign" resourceType="SUBM" orderNo="100">
+                    <children>
+                        <resource id="ErpSalQuotation-main" displayName="销售报价单"
+                                  i18n-en:displayName="Sales Quotation" icon="file-sign"
+                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  url="/erp/sal/pages/ErpSalQuotation/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 合同 -->
+                <resource id="sal-contract" displayName="合同" i18n-en:displayName="Contract"
+                          icon="file-text" resourceType="SUBM" orderNo="200">
+                    <children>
+                        <resource id="ErpSalContract-main" displayName="销售合同"
+                                  i18n-en:displayName="Sales Contract" icon="file-text"
+                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  url="/erp/sal/pages/ErpSalContract/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 订单 -->
+                <resource id="sal-order" displayName="订单" i18n-en:displayName="Order"
+                          icon="shopping-cart" resourceType="SUBM" orderNo="300">
+                    <children>
+                        <resource id="ErpSalOrder-main" displayName="销售订单"
+                                  i18n-en:displayName="Sales Order" icon="shopping-cart"
+                                  component="AMIS" resourceType="SUBM" orderNo="300"
+                                  url="/erp/sal/pages/ErpSalOrder/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 发货 -->
+                <resource id="sal-delivery" displayName="发货" i18n-en:displayName="Delivery"
+                          icon="package-minus" resourceType="SUBM" orderNo="400">
+                    <children>
+                        <resource id="ErpSalDelivery-main" displayName="销售出库单"
+                                  i18n-en:displayName="Sales Delivery" icon="package-minus"
+                                  component="AMIS" resourceType="SUBM" orderNo="400"
+                                  url="/erp/sal/pages/ErpSalDelivery/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 开票 -->
+                <resource id="sal-invoice" displayName="开票" i18n-en:displayName="Invoice"
+                          icon="receipt" resourceType="SUBM" orderNo="500">
+                    <children>
+                        <resource id="ErpSalInvoice-main" displayName="销售发票"
+                                  i18n-en:displayName="Sales Invoice" icon="receipt"
+                                  component="AMIS" resourceType="SUBM" orderNo="500"
+                                  url="/erp/sal/pages/ErpSalInvoice/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 收款结算 -->
+                <resource id="sal-receipt" displayName="收款结算" i18n-en:displayName="Receipt"
+                          icon="banknote" resourceType="SUBM" orderNo="600">
+                    <children>
+                        <resource id="ErpSalReceipt-main" displayName="收款单"
+                                  i18n-en:displayName="Receipt" icon="banknote"
+                                  component="AMIS" resourceType="SUBM" orderNo="600"
+                                  url="/erp/sal/pages/ErpSalReceipt/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 退货 -->
+                <resource id="sal-return" displayName="退货" i18n-en:displayName="Return"
+                          icon="undo-2" resourceType="SUBM" orderNo="700">
+                    <children>
+                        <resource id="ErpSalReturn-main" displayName="销售退货单"
+                                  i18n-en:displayName="Sales Return" icon="undo-2"
+                                  component="AMIS" resourceType="SUBM" orderNo="700"
+                                  url="/erp/sal/pages/ErpSalReturn/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 报表看板 -->
+                <resource id="sal-dashboard" displayName="销售概览" i18n-en:displayName="Sales Overview"
+                          icon="trending-up" resourceType="SUBM" orderNo="999">
+                    <children>
+                        <resource id="sal-dashboard-main" displayName="销售概览"
+                                  i18n-en:displayName="Sales Overview" icon="trending-up"
+                                  component="AMIS" resourceType="SUBM" orderNo="9990"
+                                  url="/erp/sal/pages/dashboard/main.page.yaml"/>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
 </auth>

@@ -1,0 +1,7 @@
+type: page
+title: "财务概览"
+body:
+  - type: alert
+    body: "Finance Overview — 待实现占位页面"
+    level: info
+    className: m-3

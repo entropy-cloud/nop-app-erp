@@ -112,8 +112,8 @@
             <schema bizObjName="ErpFinAccountingPeriod"/>
         </prop>
         <prop name="acctSchema" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="acctSchemaId" ext:joinRightProp="id" insertable="false" updatable="false"
-              mandatory="true" lazy="true">
+              ext:joinLeftProp="acctSchemaId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdAcctSchema"/>
         </prop>
         <prop name="lines" tagSet="pub,cascade-delete,insertable,updatable" ext:kind="to-many" internal="true"

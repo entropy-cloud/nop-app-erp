@@ -1,5 +1,103 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<auth x:extends="_erp-fin.action-auth.xml" x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<auth x:extends="_erp-fin.action-auth.xml" x:schema="/nop/schema/action-auth.xdef"
+     xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
 
-    <site id="main"/>
+    <site id="main">
+        <!-- 删除自动生成的测试菜单根 -->
+        <resource id="test-orm-erp-fin" x:override="remove"/>
+
+        <!-- 财务管理:finance域一级菜单 -->
+        <resource id="erp-fin" displayName="财务管理" i18n-en:displayName="Finance"
+                  icon="landmark" resourceType="TOPM" orderNo="500"
+                  routePath="/erp-fin" component="layouts/default/index">
+            <children>
+                <!-- 凭证 -->
+                <resource id="fin-voucher" displayName="凭证" i18n-en:displayName="Voucher"
+                          icon="book-up" resourceType="SUBM" orderNo="100">
+                    <children>
+                        <resource id="ErpFinVoucher-main" displayName="会计凭证"
+                                  i18n-en:displayName="Accounting Voucher" icon="book-up"
+                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  url="/erp/fin/pages/ErpFinVoucher/main.page.yaml"/>
+                        <resource id="ErpFinVoucherTemplate-main" displayName="凭证模板"
+                                  i18n-en:displayName="Voucher Template" icon="book-template"
+                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  url="/erp/fin/pages/ErpFinVoucherTemplate/main.page.yaml"/>
+                        <resource id="ErpFinVoucherBillR-main" displayName="业财回链"
+                                  i18n-en:displayName="Voucher Business Link" icon="link"
+                                  component="AMIS" resourceType="SUBM" orderNo="120"
+                                  url="/erp/fin/pages/ErpFinVoucherBillR/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 会计期间 -->
+                <resource id="fin-period" displayName="会计期间" i18n-en:displayName="Accounting Period"
+                          icon="calendar" resourceType="SUBM" orderNo="200">
+                    <children>
+                        <resource id="ErpFinAccountingPeriod-main" displayName="会计期间"
+                                  i18n-en:displayName="Accounting Period" icon="calendar"
+                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  url="/erp/fin/pages/ErpFinAccountingPeriod/main.page.yaml"/>
+                        <resource id="ErpFinAccountingPeriodStatus-main" displayName="期间结账状态"
+                                  i18n-en:displayName="Period Close Status" icon="calendar-check"
+                                  component="AMIS" resourceType="SUBM" orderNo="210"
+                                  url="/erp/fin/pages/ErpFinAccountingPeriodStatus/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 应收应付 -->
+                <resource id="fin-arap" displayName="应收应付" i18n-en:displayName="AR/AP"
+                          icon="arrow-left-right" resourceType="SUBM" orderNo="300">
+                    <children>
+                        <resource id="ErpFinArApItem-main" displayName="应收应付明细账"
+                                  i18n-en:displayName="AR/AP Subledger" icon="arrow-left-right"
+                                  component="AMIS" resourceType="SUBM" orderNo="300"
+                                  url="/erp/fin/pages/ErpFinArApItem/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 核销 -->
+                <resource id="fin-recon" displayName="核销" i18n-en:displayName="Reconciliation"
+                          icon="check-check" resourceType="SUBM" orderNo="400">
+                    <children>
+                        <resource id="ErpFinReconciliation-main" displayName="核销单"
+                                  i18n-en:displayName="Reconciliation" icon="check-check"
+                                  component="AMIS" resourceType="SUBM" orderNo="400"
+                                  url="/erp/fin/pages/ErpFinReconciliation/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 总账 -->
+                <resource id="fin-gl" displayName="总账" i18n-en:displayName="General Ledger"
+                          icon="scale" resourceType="SUBM" orderNo="500">
+                    <children>
+                        <resource id="ErpFinGlBalance-main" displayName="总账余额"
+                                  i18n-en:displayName="GL Balance" icon="scale"
+                                  component="AMIS" resourceType="SUBM" orderNo="500"
+                                  url="/erp/fin/pages/ErpFinGlBalance/main.page.yaml"/>
+                        <resource id="ErpFinTrialBalance-main" displayName="试算平衡表"
+                                  i18n-en:displayName="Trial Balance" icon="git-compare"
+                                  component="AMIS" resourceType="SUBM" orderNo="510"
+                                  url="/erp/fin/pages/ErpFinTrialBalance/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 资金 -->
+                <resource id="fin-fund" displayName="资金" i18n-en:displayName="Fund"
+                          icon="wallet" resourceType="SUBM" orderNo="600">
+                    <children>
+                        <resource id="ErpFinFundAccount-main" displayName="资金账户"
+                                  i18n-en:displayName="Fund Account" icon="wallet"
+                                  component="AMIS" resourceType="SUBM" orderNo="600"
+                                  url="/erp/fin/pages/ErpFinFundAccount/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 报表看板 -->
+                <resource id="fin-dashboard" displayName="财务概览" i18n-en:displayName="Finance Overview"
+                          icon="pie-chart" resourceType="SUBM" orderNo="999">
+                    <children>
+                        <resource id="fin-dashboard-main" displayName="财务概览"
+                                  i18n-en:displayName="Finance Overview" icon="pie-chart"
+                                  component="AMIS" resourceType="SUBM" orderNo="9990"
+                                  url="/erp/fin/pages/dashboard/main.page.yaml"/>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
 </auth>

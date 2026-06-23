@@ -104,7 +104,8 @@
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
         <prop name="location" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="locationId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+              ext:joinLeftProp="locationId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
             <schema bizObjName="ErpMdLocation"/>
         </prop>
         <prop name="category" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
@@ -112,7 +113,7 @@
             <schema bizObjName="ErpMntEquipmentCategory"/>
         </prop>
         <prop name="org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="orgId"
-              ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
         </prop>
     </props>

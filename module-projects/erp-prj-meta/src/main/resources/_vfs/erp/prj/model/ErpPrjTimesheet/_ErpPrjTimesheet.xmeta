@@ -129,7 +129,8 @@
             <schema bizObjName="ErpPrjTask"/>
         </prop>
         <prop name="user" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="userId"
-              ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true" lazy="true">
+              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true"
+              lazy="true">
             <schema bizObjName="ErpMdEmployee"/>
         </prop>
         <prop name="activityType" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
@@ -137,7 +138,8 @@
             <schema bizObjName="ErpPrjActivityType"/>
         </prop>
         <prop name="currency" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="currencyId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+              ext:joinLeftProp="currencyId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
             <schema bizObjName="ErpMdCurrency"/>
         </prop>
     </props>

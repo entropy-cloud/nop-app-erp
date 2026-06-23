@@ -72,7 +72,7 @@
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
         <prop name="leader" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="leaderId"
-              ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdEmployee"/>
         </prop>
         <prop name="members" tagSet="pub,cascade-delete,insertable,updatable" ext:kind="to-many" internal="true"

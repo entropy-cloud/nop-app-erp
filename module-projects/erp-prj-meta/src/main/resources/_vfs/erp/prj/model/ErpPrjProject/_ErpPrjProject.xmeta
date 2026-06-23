@@ -112,11 +112,13 @@
             <schema bizObjName="ErpPrjProjectType"/>
         </prop>
         <prop name="manager" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="managerId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+              ext:joinLeftProp="managerId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
             <schema bizObjName="ErpMdEmployee"/>
         </prop>
         <prop name="currency" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="currencyId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+              ext:joinLeftProp="currencyId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
             <schema bizObjName="ErpMdCurrency"/>
         </prop>
         <prop name="tasks" tagSet="pub,cascade-delete,insertable,updatable" ext:kind="to-many" internal="true"

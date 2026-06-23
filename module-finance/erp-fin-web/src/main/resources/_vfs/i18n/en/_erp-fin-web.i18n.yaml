@@ -12,71 +12,29 @@ site:
       displayName: GL Balance
     ErpFinReconciliation-main:
       displayName: Reconciliation
-    ErpFinReconciliationLine-main:
-      displayName: Reconciliation Line
     ErpFinTrialBalance-main:
       displayName: Trial Balance
     ErpFinVoucher-main:
       displayName: Accounting Voucher
     ErpFinVoucherBillR-main:
       displayName: Voucher Business Link
-    ErpFinVoucherLine-main:
-      displayName: Voucher Line
     ErpFinVoucherTemplate-main:
       displayName: Voucher Template
-    ErpFinVoucherTemplateLine-main:
-      displayName: Voucher Template Line
-    FNPT:ErpFinAccountingPeriod:mutation:
-      displayName: Modify Accounting Period
-    FNPT:ErpFinAccountingPeriod:query:
-      displayName: Query Accounting Period
-    FNPT:ErpFinAccountingPeriodStatus:mutation:
-      displayName: Modify Period Close Status
-    FNPT:ErpFinAccountingPeriodStatus:query:
-      displayName: Query Period Close Status
-    FNPT:ErpFinArApItem:mutation:
-      displayName: Modify AR/AP Subledger
-    FNPT:ErpFinArApItem:query:
-      displayName: Query AR/AP Subledger
-    FNPT:ErpFinFundAccount:mutation:
-      displayName: Modify Fund Account
-    FNPT:ErpFinFundAccount:query:
-      displayName: Query Fund Account
-    FNPT:ErpFinGlBalance:mutation:
-      displayName: Modify GL Balance
-    FNPT:ErpFinGlBalance:query:
-      displayName: Query GL Balance
-    FNPT:ErpFinReconciliation:mutation:
-      displayName: Modify Reconciliation
-    FNPT:ErpFinReconciliation:query:
-      displayName: Query Reconciliation
-    FNPT:ErpFinReconciliationLine:mutation:
-      displayName: Modify Reconciliation Line
-    FNPT:ErpFinReconciliationLine:query:
-      displayName: Query Reconciliation Line
-    FNPT:ErpFinTrialBalance:mutation:
-      displayName: Modify Trial Balance
-    FNPT:ErpFinTrialBalance:query:
-      displayName: Query Trial Balance
-    FNPT:ErpFinVoucher:mutation:
-      displayName: Modify Accounting Voucher
-    FNPT:ErpFinVoucher:query:
-      displayName: Query Accounting Voucher
-    FNPT:ErpFinVoucherBillR:mutation:
-      displayName: Modify Voucher Business Link
-    FNPT:ErpFinVoucherBillR:query:
-      displayName: Query Voucher Business Link
-    FNPT:ErpFinVoucherLine:mutation:
-      displayName: Modify Voucher Line
-    FNPT:ErpFinVoucherLine:query:
-      displayName: Query Voucher Line
-    FNPT:ErpFinVoucherTemplate:mutation:
-      displayName: Modify Voucher Template
-    FNPT:ErpFinVoucherTemplate:query:
-      displayName: Query Voucher Template
-    FNPT:ErpFinVoucherTemplateLine:mutation:
-      displayName: Modify Voucher Template Line
-    FNPT:ErpFinVoucherTemplateLine:query:
-      displayName: Query Voucher Template Line
-    test-orm-erp-fin:
-      displayName: Test erp-fin
+    erp-fin:
+      displayName: Finance
+    fin-arap:
+      displayName: AR/AP
+    fin-dashboard:
+      displayName: Finance Overview
+    fin-dashboard-main:
+      displayName: Finance Overview
+    fin-fund:
+      displayName: Fund
+    fin-gl:
+      displayName: General Ledger
+    fin-period:
+      displayName: Accounting Period
+    fin-recon:
+      displayName: Reconciliation
+    fin-voucher:
+      displayName: Voucher

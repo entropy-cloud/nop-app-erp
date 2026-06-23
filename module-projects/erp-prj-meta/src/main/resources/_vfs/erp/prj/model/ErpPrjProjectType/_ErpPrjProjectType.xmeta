@@ -64,8 +64,8 @@
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
         <prop name="defaultSubject" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="defaultSubjectId" ext:joinRightProp="id" insertable="false" updatable="false"
-              lazy="true">
+              ext:joinLeftProp="defaultSubjectId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
             <schema bizObjName="ErpMdSubject"/>
         </prop>
     </props>

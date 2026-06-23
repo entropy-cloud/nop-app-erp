@@ -1,5 +1,93 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<auth x:extends="_erp-mnt.action-auth.xml" x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<auth x:extends="_erp-mnt.action-auth.xml" x:schema="/nop/schema/action-auth.xdef"
+     xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
 
-    <site id="main"/>
+    <site id="main">
+        <!-- 删除自动生成的测试菜单根 -->
+        <resource id="test-orm-erp-mnt" x:override="remove"/>
+
+        <!-- 设备维护:maintenance域一级菜单 -->
+        <resource id="erp-mnt" displayName="设备维护" i18n-en:displayName="Maintenance"
+                  icon="wrench" resourceType="TOPM" orderNo="900"
+                  routePath="/erp-mnt" component="layouts/default/index">
+            <children>
+                <!-- 设备主数据 -->
+                <resource id="mnt-equipment" displayName="设备主数据" i18n-en:displayName="Equipment"
+                          icon="cog" resourceType="SUBM" orderNo="100">
+                    <children>
+                        <resource id="ErpMntEquipment-main" displayName="设备"
+                                  i18n-en:displayName="Equipment" icon="cog"
+                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  url="/erp/mnt/pages/ErpMntEquipment/main.page.yaml"/>
+                        <resource id="ErpMntEquipmentCategory-main" displayName="设备分类"
+                                  i18n-en:displayName="Equipment Category" icon="folder-tree"
+                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  url="/erp/mnt/pages/ErpMntEquipmentCategory/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 维护计划 -->
+                <resource id="mnt-schedule" displayName="维护计划" i18n-en:displayName="Schedule"
+                          icon="calendar-clock" resourceType="SUBM" orderNo="200">
+                    <children>
+                        <resource id="ErpMntSchedule-main" displayName="维护计划"
+                                  i18n-en:displayName="Maintenance Schedule" icon="calendar-clock"
+                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  url="/erp/mnt/pages/ErpMntSchedule/main.page.yaml"/>
+                        <resource id="ErpMntCalibration-main" displayName="校准记录"
+                                  i18n-en:displayName="Calibration" icon="gauge"
+                                  component="AMIS" resourceType="SUBM" orderNo="210"
+                                  url="/erp/mnt/pages/ErpMntCalibration/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 维护工单 -->
+                <resource id="mnt-work" displayName="维护工单" i18n-en:displayName="Work Order"
+                          icon="life-buoy" resourceType="SUBM" orderNo="300">
+                    <children>
+                        <resource id="ErpMntVisit-main" displayName="维护访问"
+                                  i18n-en:displayName="Maintenance Visit" icon="clipboard-check"
+                                  component="AMIS" resourceType="SUBM" orderNo="300"
+                                  url="/erp/mnt/pages/ErpMntVisit/main.page.yaml"/>
+                        <resource id="ErpMntRequest-main" displayName="维护请求"
+                                  i18n-en:displayName="Maintenance Request" icon="life-buoy"
+                                  component="AMIS" resourceType="SUBM" orderNo="310"
+                                  url="/erp/mnt/pages/ErpMntRequest/main.page.yaml"/>
+                        <resource id="ErpMntDowntimeEntry-main" displayName="停机记录"
+                                  i18n-en:displayName="Downtime Entry" icon="timer-off"
+                                  component="AMIS" resourceType="SUBM" orderNo="320"
+                                  url="/erp/mnt/pages/ErpMntDowntimeEntry/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 团队 -->
+                <resource id="mnt-team" displayName="团队" i18n-en:displayName="Team"
+                          icon="users" resourceType="SUBM" orderNo="400">
+                    <children>
+                        <resource id="ErpMntMaintenanceTeam-main" displayName="维护团队"
+                                  i18n-en:displayName="Maintenance Team" icon="users"
+                                  component="AMIS" resourceType="SUBM" orderNo="400"
+                                  url="/erp/mnt/pages/ErpMntMaintenanceTeam/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 备件 -->
+                <resource id="mnt-spare" displayName="备件" i18n-en:displayName="Spare Part"
+                          icon="package-minus" resourceType="SUBM" orderNo="500">
+                    <children>
+                        <resource id="ErpMntSparePartUsage-main" displayName="备件消耗"
+                                  i18n-en:displayName="Spare Part Usage" icon="package-minus"
+                                  component="AMIS" resourceType="SUBM" orderNo="500"
+                                  url="/erp/mnt/pages/ErpMntSparePartUsage/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 报表看板 -->
+                <resource id="mnt-dashboard" displayName="维护概览" i18n-en:displayName="Maintenance Overview"
+                          icon="gauge" resourceType="SUBM" orderNo="999">
+                    <children>
+                        <resource id="mnt-dashboard-main" displayName="维护概览"
+                                  i18n-en:displayName="Maintenance Overview" icon="gauge"
+                                  component="AMIS" resourceType="SUBM" orderNo="9990"
+                                  url="/erp/mnt/pages/dashboard/main.page.yaml"/>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
 </auth>

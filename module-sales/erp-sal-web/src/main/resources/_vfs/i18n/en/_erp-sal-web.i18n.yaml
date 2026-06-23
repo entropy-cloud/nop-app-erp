@@ -4,79 +4,33 @@ site:
       displayName: Sales Contract
     ErpSalDelivery-main:
       displayName: Sales Delivery
-    ErpSalDeliveryLine-main:
-      displayName: Sales Delivery Line
     ErpSalInvoice-main:
       displayName: Sales Invoice
-    ErpSalInvoiceLine-main:
-      displayName: Sales Invoice Line
     ErpSalOrder-main:
       displayName: Sales Order
-    ErpSalOrderLine-main:
-      displayName: Sales Order Line
     ErpSalQuotation-main:
       displayName: Sales Quotation
-    ErpSalQuotationLine-main:
-      displayName: Sales Quotation Line
     ErpSalReceipt-main:
       displayName: Receipt
-    ErpSalReceiptLine-main:
-      displayName: Receipt Settlement Line
     ErpSalReturn-main:
       displayName: Sales Return
-    ErpSalReturnLine-main:
-      displayName: Sales Return Line
-    FNPT:ErpSalContract:mutation:
-      displayName: Modify Sales Contract
-    FNPT:ErpSalContract:query:
-      displayName: Query Sales Contract
-    FNPT:ErpSalDelivery:mutation:
-      displayName: Modify Sales Delivery
-    FNPT:ErpSalDelivery:query:
-      displayName: Query Sales Delivery
-    FNPT:ErpSalDeliveryLine:mutation:
-      displayName: Modify Sales Delivery Line
-    FNPT:ErpSalDeliveryLine:query:
-      displayName: Query Sales Delivery Line
-    FNPT:ErpSalInvoice:mutation:
-      displayName: Modify Sales Invoice
-    FNPT:ErpSalInvoice:query:
-      displayName: Query Sales Invoice
-    FNPT:ErpSalInvoiceLine:mutation:
-      displayName: Modify Sales Invoice Line
-    FNPT:ErpSalInvoiceLine:query:
-      displayName: Query Sales Invoice Line
-    FNPT:ErpSalOrder:mutation:
-      displayName: Modify Sales Order
-    FNPT:ErpSalOrder:query:
-      displayName: Query Sales Order
-    FNPT:ErpSalOrderLine:mutation:
-      displayName: Modify Sales Order Line
-    FNPT:ErpSalOrderLine:query:
-      displayName: Query Sales Order Line
-    FNPT:ErpSalQuotation:mutation:
-      displayName: Modify Sales Quotation
-    FNPT:ErpSalQuotation:query:
-      displayName: Query Sales Quotation
-    FNPT:ErpSalQuotationLine:mutation:
-      displayName: Modify Sales Quotation Line
-    FNPT:ErpSalQuotationLine:query:
-      displayName: Query Sales Quotation Line
-    FNPT:ErpSalReceipt:mutation:
-      displayName: Modify Receipt
-    FNPT:ErpSalReceipt:query:
-      displayName: Query Receipt
-    FNPT:ErpSalReceiptLine:mutation:
-      displayName: Modify Receipt Settlement Line
-    FNPT:ErpSalReceiptLine:query:
-      displayName: Query Receipt Settlement Line
-    FNPT:ErpSalReturn:mutation:
-      displayName: Modify Sales Return
-    FNPT:ErpSalReturn:query:
-      displayName: Query Sales Return
-    FNPT:ErpSalReturnLine:mutation:
-      displayName: Modify Sales Return Line
-    FNPT:ErpSalReturnLine:query:
-      displayName: Query Sales Return Line
-    test-orm-erp-sal:
-      displayName: Test erp-sal
+    erp-sal:
+      displayName: Sales
+    sal-contract:
+      displayName: Contract
+    sal-dashboard:
+      displayName: Sales Overview
+    sal-dashboard-main:
+      displayName: Sales Overview
+    sal-delivery:
+      displayName: Delivery
+    sal-invoice:
+      displayName: Invoice
+    sal-order:
+      displayName: Order
+    sal-quotation:
+      displayName: Quotation
+    sal-receipt:
+      displayName: Receipt
+    sal-return:
+      displayName: Return

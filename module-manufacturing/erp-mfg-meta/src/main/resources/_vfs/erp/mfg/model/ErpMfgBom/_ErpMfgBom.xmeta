@@ -84,8 +84,8 @@
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
         <prop name="product" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="productId" ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true"
-              lazy="true">
+              ext:joinLeftProp="productId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdMaterial"/>
         </prop>
         <prop name="lines" tagSet="pub,cascade-delete,insertable,updatable" ext:kind="to-many" internal="true"

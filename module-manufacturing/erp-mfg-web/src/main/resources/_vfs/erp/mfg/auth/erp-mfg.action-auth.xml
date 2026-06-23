@@ -1,5 +1,101 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<auth x:extends="_erp-mfg.action-auth.xml" x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<auth x:extends="_erp-mfg.action-auth.xml" x:schema="/nop/schema/action-auth.xdef"
+     xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
 
-    <site id="main"/>
+    <site id="main">
+        <!-- 删除自动生成的测试菜单根 -->
+        <resource id="test-orm-erp-mfg" x:override="remove"/>
+
+        <!-- 制造管理:manufacturing域一级菜单 -->
+        <resource id="erp-mfg" displayName="制造管理" i18n-en:displayName="Manufacturing"
+                  icon="factory" resourceType="TOPM" orderNo="800"
+                  routePath="/erp-mfg" component="layouts/default/index">
+            <children>
+                <!-- 基础数据 -->
+                <resource id="mfg-master" displayName="基础数据" i18n-en:displayName="Master Data"
+                          icon="git-branch" resourceType="SUBM" orderNo="100">
+                    <children>
+                        <resource id="ErpMfgBom-main" displayName="BOM"
+                                  i18n-en:displayName="BOM" icon="git-branch"
+                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  url="/erp/mfg/pages/ErpMfgBom/main.page.yaml"/>
+                        <resource id="ErpMfgRouting-main" displayName="工艺路线"
+                                  i18n-en:displayName="Routing" icon="route"
+                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  url="/erp/mfg/pages/ErpMfgRouting/main.page.yaml"/>
+                        <resource id="ErpMfgWorkcenter-main" displayName="工作中心"
+                                  i18n-en:displayName="Work Center" icon="cog"
+                                  component="AMIS" resourceType="SUBM" orderNo="120"
+                                  url="/erp/mfg/pages/ErpMfgWorkcenter/main.page.yaml"/>
+                        <resource id="ErpMfgProductionVersion-main" displayName="生产版本"
+                                  i18n-en:displayName="Production Version" icon="git-tag"
+                                  component="AMIS" resourceType="SUBM" orderNo="130"
+                                  url="/erp/mfg/pages/ErpMfgProductionVersion/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 工单执行 -->
+                <resource id="mfg-execution" displayName="工单执行" i18n-en:displayName="Execution"
+                          icon="factory" resourceType="SUBM" orderNo="200">
+                    <children>
+                        <resource id="ErpMfgWorkOrder-main" displayName="工单"
+                                  i18n-en:displayName="Work Order" icon="factory"
+                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  url="/erp/mfg/pages/ErpMfgWorkOrder/main.page.yaml"/>
+                        <resource id="ErpMfgJobCard-main" displayName="作业卡"
+                                  i18n-en:displayName="Job Card" icon="credit-card"
+                                  component="AMIS" resourceType="SUBM" orderNo="210"
+                                  url="/erp/mfg/pages/ErpMfgJobCard/main.page.yaml"/>
+                        <resource id="ErpMfgMaterialIssue-main" displayName="领料单"
+                                  i18n-en:displayName="Material Issue" icon="package-minus"
+                                  component="AMIS" resourceType="SUBM" orderNo="220"
+                                  url="/erp/mfg/pages/ErpMfgMaterialIssue/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- MRP计划 -->
+                <resource id="mfg-mrp" displayName="MRP计划" i18n-en:displayName="MRP"
+                          icon="calendar-clock" resourceType="SUBM" orderNo="300">
+                    <children>
+                        <resource id="ErpMfgMrpPlan-main" displayName="MRP计划"
+                                  i18n-en:displayName="MRP Plan" icon="calendar-clock"
+                                  component="AMIS" resourceType="SUBM" orderNo="300"
+                                  url="/erp/mfg/pages/ErpMfgMrpPlan/main.page.yaml"/>
+                        <resource id="ErpMfgMrpDemand-main" displayName="MRP独立需求"
+                                  i18n-en:displayName="MRP Demand" icon="git-pull-request-arrow"
+                                  component="AMIS" resourceType="SUBM" orderNo="310"
+                                  url="/erp/mfg/pages/ErpMfgMrpDemand/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 委外 -->
+                <resource id="mfg-subcontract" displayName="委外" i18n-en:displayName="Subcontract"
+                          icon="truck" resourceType="SUBM" orderNo="400">
+                    <children>
+                        <resource id="ErpMfgSubcontractOrder-main" displayName="委外加工单"
+                                  i18n-en:displayName="Subcontract Order" icon="truck"
+                                  component="AMIS" resourceType="SUBM" orderNo="400"
+                                  url="/erp/mfg/pages/ErpMfgSubcontractOrder/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 成本 -->
+                <resource id="mfg-cost" displayName="成本" i18n-en:displayName="Cost"
+                          icon="calculator" resourceType="SUBM" orderNo="500">
+                    <children>
+                        <resource id="ErpMfgCostRollup-main" displayName="标准成本滚算"
+                                  i18n-en:displayName="Cost Rollup" icon="calculator"
+                                  component="AMIS" resourceType="SUBM" orderNo="500"
+                                  url="/erp/mfg/pages/ErpMfgCostRollup/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 报表看板 -->
+                <resource id="mfg-dashboard" displayName="制造概览" i18n-en:displayName="Manufacturing Overview"
+                          icon="activity" resourceType="SUBM" orderNo="999">
+                    <children>
+                        <resource id="mfg-dashboard-main" displayName="制造概览"
+                                  i18n-en:displayName="Manufacturing Overview" icon="activity"
+                                  component="AMIS" resourceType="SUBM" orderNo="9990"
+                                  url="/erp/mfg/pages/dashboard/main.page.yaml"/>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
 </auth>

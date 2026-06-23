@@ -1,5 +1,91 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<auth x:extends="_erp-ast.action-auth.xml" x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<auth x:extends="_erp-ast.action-auth.xml" x:schema="/nop/schema/action-auth.xdef"
+     xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
 
-    <site id="main"/>
+    <site id="main">
+        <!-- 删除自动生成的测试菜单根 -->
+        <resource id="test-orm-erp-ast" x:override="remove"/>
+
+        <!-- 固定资产管理:assets域一级菜单 -->
+        <resource id="erp-ast" displayName="固定资产管理" i18n-en:displayName="Fixed Assets"
+                  icon="truck" resourceType="TOPM" orderNo="600"
+                  routePath="/erp-ast" component="layouts/default/index">
+            <children>
+                <!-- 资产台账 -->
+                <resource id="ast-ledger" displayName="资产台账" i18n-en:displayName="Asset Ledger"
+                          icon="truck" resourceType="SUBM" orderNo="100">
+                    <children>
+                        <resource id="ErpAstAsset-main" displayName="固定资产"
+                                  i18n-en:displayName="Fixed Asset" icon="truck"
+                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  url="/erp/ast/pages/ErpAstAsset/main.page.yaml"/>
+                        <resource id="ErpAstAssetCategory-main" displayName="资产类别"
+                                  i18n-en:displayName="Asset Category" icon="folder-tree"
+                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  url="/erp/ast/pages/ErpAstAssetCategory/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 折旧 -->
+                <resource id="ast-depreciation" displayName="折旧" i18n-en:displayName="Depreciation"
+                          icon="trending-down" resourceType="SUBM" orderNo="200">
+                    <children>
+                        <resource id="ErpAstDepreciationSchedule-main" displayName="折旧计划"
+                                  i18n-en:displayName="Depreciation Schedule" icon="trending-down"
+                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  url="/erp/ast/pages/ErpAstDepreciationSchedule/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 资产变动 -->
+                <resource id="ast-movement" displayName="资产变动" i18n-en:displayName="Asset Movement"
+                          icon="move" resourceType="SUBM" orderNo="300">
+                    <children>
+                        <resource id="ErpAstMovement-main" displayName="资产移动"
+                                  i18n-en:displayName="Asset Movement" icon="move"
+                                  component="AMIS" resourceType="SUBM" orderNo="300"
+                                  url="/erp/ast/pages/ErpAstMovement/main.page.yaml"/>
+                        <resource id="ErpAstValueAdjustment-main" displayName="资产价值调整"
+                                  i18n-en:displayName="Asset Value Adjustment" icon="sliders-horizontal"
+                                  component="AMIS" resourceType="SUBM" orderNo="310"
+                                  url="/erp/ast/pages/ErpAstValueAdjustment/main.page.yaml"/>
+                        <resource id="ErpAstSplit-main" displayName="资产拆分单"
+                                  i18n-en:displayName="Asset Split" icon="split"
+                                  component="AMIS" resourceType="SUBM" orderNo="320"
+                                  url="/erp/ast/pages/ErpAstSplit/main.page.yaml"/>
+                        <resource id="ErpAstMerge-main" displayName="资产合并单"
+                                  i18n-en:displayName="Asset Merge" icon="git-merge"
+                                  component="AMIS" resourceType="SUBM" orderNo="330"
+                                  url="/erp/ast/pages/ErpAstMerge/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 处置资本化 -->
+                <resource id="ast-disposal" displayName="处置资本化" i18n-en:displayName="Disposal &amp; Capitalization"
+                          icon="trash-2" resourceType="SUBM" orderNo="400">
+                    <children>
+                        <resource id="ErpAstDisposal-main" displayName="资产处置"
+                                  i18n-en:displayName="Asset Disposal" icon="trash-2"
+                                  component="AMIS" resourceType="SUBM" orderNo="400"
+                                  url="/erp/ast/pages/ErpAstDisposal/main.page.yaml"/>
+                        <resource id="ErpAstAssetCapitalization-main" displayName="资产资本化"
+                                  i18n-en:displayName="Asset Capitalization" icon="badge-plus"
+                                  component="AMIS" resourceType="SUBM" orderNo="410"
+                                  url="/erp/ast/pages/ErpAstAssetCapitalization/main.page.yaml"/>
+                        <resource id="ErpAstCip-main" displayName="在建工程"
+                                  i18n-en:displayName="CIP" icon="hard-hat"
+                                  component="AMIS" resourceType="SUBM" orderNo="420"
+                                  url="/erp/ast/pages/ErpAstCip/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 报表看板 -->
+                <resource id="ast-dashboard" displayName="资产概览" i18n-en:displayName="Assets Overview"
+                          icon="truck" resourceType="SUBM" orderNo="999">
+                    <children>
+                        <resource id="ast-dashboard-main" displayName="资产概览"
+                                  i18n-en:displayName="Assets Overview" icon="truck"
+                                  component="AMIS" resourceType="SUBM" orderNo="9990"
+                                  url="/erp/ast/pages/dashboard/main.page.yaml"/>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
 </auth>
