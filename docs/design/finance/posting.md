@@ -118,6 +118,48 @@ ErpFinAcctDocRegistry 维护 ImmutableMap<BusinessType, IErpFinAcctDocProvider>
   - 运行时按 businessType 查 Provider
 ```
 
+### 凭证写库前校验扩展点（IErpFinFactsValidator）
+
+> 参考 Metasfresh 的 `IFactsValidator` 扩展机制。允许第三方在凭证写库前对借贷分录行做业务校验或改写（如按租户定制借贷规则、按维度分摊、特殊行业调整）。
+
+**接口设计**：
+
+```
+IErpFinFactsValidator（凭证分录校验/改写扩展点）
+  ├─ validate(facts: List<VoucherLine>, context: AcctDocContext) → List<VoucherLine>
+  │   ├─ 可校验：借贷平衡、科目有效性、维度完整性
+  │   ├─ 可改写：调整分录行（如按部门分摊金额）、追加分录行（如计提附加税）
+  │   └─ 可拒绝：throw NopException 阻止过账（如不满足行业合规要求）
+  └─ getOrder() → int  // 多个 Validator 的执行顺序
+```
+
+**注册机制**（与 Provider 同模式）：
+
+```
+ErpFinAcctDocRegistry
+  ├─ @Inject List<IErpFinAcctDocProvider> providers   // 生成借贷分录
+  └─ @Inject List<IErpFinFactsValidator> validators   // 校验/改写分录（可选，可多个）
+
+过账流程：
+  1. Provider.createFacts() → 原始分录行
+  2. 按顺序调用所有 FactsValidator.validate() → 校验/改写后的分录行
+  3. 最终借贷平衡校验 → 写库
+```
+
+**典型应用场景**：
+
+| 场景 | Validator 行为 |
+|------|----------------|
+| 按部门/项目分摊金额 | 改写：单行拆成多行（GL Distribution 范式） |
+| 行业附加税计提 | 追加：新增税额分录行 |
+| 租户定制借贷规则 | 改写：按租户配置调整科目映射 |
+| 合规校验（如现金流分类） | 拒绝：不符合现金流量表分类的凭证 throw NopException |
+| 跨账套同步 | 追加：在多 AcctSchema 下各生成一组分录 |
+
+**与 GL Distribution（科目分摊）的关系**：GL Distribution 是 FactsValidator 的一个具体实现——按部门/项目/产品线将一条分录拆成多条。本工程不强制实现 GL Distribution，但通过 FactsValidator 扩展点保留了实现能力（参考 iDempiere/Metasfresh 的 `MGLDistribution` + `FactsValidator` 组合）。
+
+> **新增校验规则 = 新增 Validator Bean，零改动财务核心**。与 Provider 机制配套，形成"生成 → 校验/改写 → 落库"的完整可插拔流水线。
+
 ## 科目映射
 
 ### 多维科目解析

@@ -27,29 +27,12 @@
 
 ## 账套模型
 
-### 科目表结构
+> 字段以 `module-master-data/model/app-erp-master-data.orm.xml`（`ErpMdAcctSchema`/`ErpMdAcctSchemaCoa`）与 `module-finance/model/app-erp-finance.orm.xml`（凭证/余额的 `acctSchemaId`）为准；本节只描述业务语义，不重复逐字段 schema。账套维度字段统一命名为 `acctSchemaId`（外键引用 `ErpMdAcctSchema`）。
 
-```
-会计科目表（AccountingSchema）
-  ├─ schemaId（账套ID）
-  ├─ schemaName（账套名称）
-  ├─ schemaType（账套类型：财务/管理/税务/合并/预算）
-  ├─ currencyId（本位币）
-  ├─ costingMethod（成本核算方法）
-  ├─ isActive（是否启用）
-  └─ parentSchemaId（上级账套，用于账套继承）
+### 科目表结构（业务语义）
 
-会计科目（Account）
-  ├─ accountId（科目ID）
-  ├─ schemaId（所属账套）
-  ├─ accountCode（科目编码）
-  ├─ accountName（科目名称）
-  ├─ accountType（科目类型：资产/负债/权益/收入/费用）
-  ├─ parentAccountId（上级科目）
-  ├─ isDetail（是否明细科目）
-  ├─ balanceDirection（余额方向：借/贷）
-  └─ isActive（是否启用）
-```
+- 会计科目表（AcctSchema）：账套名称、账套类型（财务/管理/税务/合并/预算）、本位币、成本核算方法、启用标志、上级账套（用于账套继承）。
+- 会计科目（Subject/Account）：所属账套、科目编码、科目名称、科目类型（资产/负债/权益/收入/费用）、上级科目、是否明细科目、余额方向（借/贷）、启用标志。
 
 ### 账套继承关系
 
@@ -112,39 +95,15 @@
 
 ### 账套级联字段
 
-所有涉及金额的实体需携带账套维度：
+所有涉及金额的实体需携带账套维度（统一字段名 `acctSchemaId`，引用 `ErpMdAcctSchema`）：
 
-```
-凭证（Voucher）
-  ├─ voucherId
-  ├─ schemaId（账套ID）← 关键维度
-  ├─ voucherNo
-  └─ voucherLines[]
+| 实体 | 账套维度字段 | 说明 |
+|------|--------------|------|
+| 凭证（`ErpFinVoucher`）/ 凭证分录行（`ErpFinVoucherLine`） | `acctSchemaId` | 凭证头与分录行均带账套维度，支撑多套账并行 |
+| 库存流水（`ErpInvStockLedger`）/ 存货成本层（`ErpInvCostLayer`） | `acctSchemaId` | 存货估值按账套独立核算 |
+| 总账余额（`ErpFinGlBalance`） | `acctSchemaId` | 按账套 × 科目 × 期间汇总 |
 
-凭证分录行（VoucherLine）
-  ├─ lineId
-  ├─ voucherId
-  ├─ schemaId（账套ID）← 关键维度
-  ├─ accountId
-  ├─ drAmount
-  ├─ crAmount
-  └─ dimensions[]
-
-库存流水（StockLedger）
-  ├─ ledgerId
-  ├─ costingSchemaId（成本账套）← 关键维度
-  ├─ unitCost
-  └─ totalCost
-
-余额表（Balance）
-  ├─ balanceId
-  ├─ schemaId（账套ID）← 关键维度
-  ├─ accountId
-  ├─ periodId
-  ├─ drBalance
-  ├─ crBalance
-  └─ dimensions[]
-```
+> 具体字段定义、类型与字典以对应域 `model/app-erp-<domain>.orm.xml` 为准；本表只标识账套维度的落位，不重复 schema。
 
 ## 账套管理
 
