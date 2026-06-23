@@ -224,7 +224,12 @@
                 <column name="endTime" displayName="结束时间" stdSqlType="DATETIME" code="END_TIME" propId="11" stdDataType="datetime"/>
                 <column name="totalMinutes" displayName="总分钟数" domain="downtimeMinutes" code="TOTAL_MINUTES" propId="12" stdSqlType="VARCHAR" stdDataType="string"/>
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="13" stdSqlType="VARCHAR" stdDataType="string"/>
-                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="14" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
+                                            <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" stdDataType="long" code="ORG_ID"/>
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" stdDataType="date" code="BUSINESS_DATE"/>
+                <column name="posted" displayName="是否已过账" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="false" code="POSTED"/>
+                <column name="postedAt" displayName="过账时间" stdSqlType="TIMESTAMP" stdDataType="timestamp" code="POSTED_AT"/>
+                <column name="postedBy" displayName="过账人" stdSqlType="VARCHAR" precision="50" stdDataType="string" code="POSTED_BY"/>
+<column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="14" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="15" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="16" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="17" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>

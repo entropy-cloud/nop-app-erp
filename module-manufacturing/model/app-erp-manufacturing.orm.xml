@@ -368,7 +368,10 @@
                 <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="30" stdDataType="datetime"/>
                 <column name="postedBy" displayName="过账人" stdSqlType="BIGINT" code="POSTED_BY" propId="31" stdDataType="long"/>
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="32" stdSqlType="VARCHAR" stdDataType="string"/>
-                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="33" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
+                                            <column name="exchangeRate" displayName="汇率" stdSqlType="DECIMAL" precision="20" scale="8" defaultValue="1" stdDataType="string" code="EXCHANGE_RATE"/>
+                <column name="amountSource" displayName="源币种金额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" stdDataType="string" code="AMOUNT_SOURCE"/>
+                <column name="amountFunctional" displayName="本位币金额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" stdDataType="string" code="AMOUNT_FUNCTIONAL"/>
+<column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="33" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="34" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="35" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="36" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
@@ -559,7 +562,11 @@
                 <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="11" stdDataType="datetime"/>
                 <column name="postedBy" displayName="过账人" stdSqlType="BIGINT" code="POSTED_BY" propId="12" stdDataType="long"/>
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="13" stdSqlType="VARCHAR" stdDataType="string"/>
-                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="14" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
+                                            <column name="currencyId" displayName="币种" stdSqlType="BIGINT" stdDataType="long" code="CURRENCY_ID"/>
+                <column name="exchangeRate" displayName="汇率" stdSqlType="DECIMAL" precision="20" scale="8" defaultValue="1" stdDataType="string" code="EXCHANGE_RATE"/>
+                <column name="amountSource" displayName="源币种金额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" stdDataType="string" code="AMOUNT_SOURCE"/>
+                <column name="amountFunctional" displayName="本位币金额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" stdDataType="string" code="AMOUNT_FUNCTIONAL"/>
+<column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="14" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="15" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="16" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="17" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
@@ -630,7 +637,9 @@
                 <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="15" stdDataType="datetime"/>
                 <column name="postedBy" displayName="过账人" stdSqlType="BIGINT" code="POSTED_BY" propId="16" stdDataType="long"/>
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="17" stdSqlType="VARCHAR" stdDataType="string"/>
-                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="18" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
+                                            <column name="amountSource" displayName="源币种金额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" stdDataType="string" code="AMOUNT_SOURCE"/>
+                <column name="amountFunctional" displayName="本位币金额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" stdDataType="string" code="AMOUNT_FUNCTIONAL"/>
+<column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="18" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="19" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="20" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="21" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
