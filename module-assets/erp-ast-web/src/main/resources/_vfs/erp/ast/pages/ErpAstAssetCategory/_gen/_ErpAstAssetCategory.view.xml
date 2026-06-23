@@ -65,7 +65,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-资产类别" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-资产类别" i18n-en:title="View Asset Category">
             <layout>
  id[ID] code[类别编码]
  name[类别名称] depreciationMethod[默认折旧方法]
@@ -76,7 +76,7 @@
  updateTime[修改时间] remark[备注]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-资产类别" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-资产类别" i18n-en:title="Add Asset Category">
             <layout>
  id[ID]
  code[类别编码]
@@ -89,7 +89,7 @@
  remark[备注]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-资产类别" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-资产类别" i18n-en:title="Edit Asset Category">
             <layout>
  id[ID] code[类别编码]
  name[类别名称] depreciationMethod[默认折旧方法]
@@ -100,7 +100,7 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-资产类别" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-资产类别" i18n-en:title="Update Asset Category"/>
     </forms>
 
     <pages>

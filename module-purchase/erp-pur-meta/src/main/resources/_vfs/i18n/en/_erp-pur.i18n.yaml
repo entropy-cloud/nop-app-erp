@@ -1,22 +1,22 @@
 entity:
   label:
-    ErpPurInvoice: null
-    ErpPurInvoiceLine: null
-    ErpPurOrder: null
-    ErpPurOrderLine: null
-    ErpPurPayment: null
-    ErpPurPaymentLine: null
-    ErpPurQuotation: null
-    ErpPurQuotationLine: null
-    ErpPurReceive: null
-    ErpPurReceiveLine: null
-    ErpPurRequisition: null
-    ErpPurRequisitionLine: null
-    ErpPurReturn: null
-    ErpPurReturnLine: null
-    ErpPurRfq: null
-    ErpPurRfqLine: null
-    ErpPurSupplierPriceList: null
+    ErpPurInvoice: Purchase Invoice
+    ErpPurInvoiceLine: Purchase Invoice Line
+    ErpPurOrder: Purchase Order
+    ErpPurOrderLine: Purchase Order Line
+    ErpPurPayment: Payment
+    ErpPurPaymentLine: Payment Settlement Line
+    ErpPurQuotation: Supplier Quotation
+    ErpPurQuotationLine: Supplier Quotation Line
+    ErpPurReceive: Purchase Receipt
+    ErpPurReceiveLine: Purchase Receipt Line
+    ErpPurRequisition: Purchase Requisition
+    ErpPurRequisitionLine: Purchase Requisition Line
+    ErpPurReturn: Purchase Return
+    ErpPurReturnLine: Purchase Return Line
+    ErpPurRfq: Purchase RFQ
+    ErpPurRfqLine: Purchase RFQ Line
+    ErpPurSupplierPriceList: Supplier Price List
 prop:
   label:
     ErpPurInvoice:

@@ -68,7 +68,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-项目预算行" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-项目预算行" i18n-en:title="View Project Budget Line">
             <layout>
  id[ID] budgetId[预算ID]
  lineNo[行号] costCategory[成本类别(人工/材料/费用/分包)]
@@ -80,7 +80,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-项目预算行" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-项目预算行" i18n-en:title="Add Project Budget Line">
             <layout>
  id[ID] budgetId[预算ID]
  lineNo[行号] costCategory[成本类别(人工/材料/费用/分包)]
@@ -89,7 +89,7 @@
  actualAmount[实际金额] remark[备注]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-项目预算行" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-项目预算行" i18n-en:title="Edit Project Budget Line">
             <layout>
  id[ID] budgetId[预算ID]
  lineNo[行号] costCategory[成本类别(人工/材料/费用/分包)]
@@ -101,7 +101,8 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-项目预算行" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-项目预算行"
+              i18n-en:title="Update Project Budget Line"/>
     </forms>
 
     <pages>

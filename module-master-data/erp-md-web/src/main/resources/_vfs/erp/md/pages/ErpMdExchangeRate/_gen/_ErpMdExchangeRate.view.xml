@@ -59,7 +59,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-汇率" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-汇率" i18n-en:title="View Exchange Rate">
             <layout>
  id[ID] fromCurrencyId[源币种]
  toCurrencyId[目标币种] rateType[汇率类型]
@@ -69,7 +69,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-汇率" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-汇率" i18n-en:title="Add Exchange Rate">
             <layout>
  id[ID]
  fromCurrencyId[源币种]
@@ -80,7 +80,7 @@
  validTo[失效日期]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-汇率" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-汇率" i18n-en:title="Edit Exchange Rate">
             <layout>
  id[ID]
  fromCurrencyId[源币种]
@@ -94,7 +94,7 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-汇率" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-汇率" i18n-en:title="Update Exchange Rate"/>
     </forms>
 
     <pages>

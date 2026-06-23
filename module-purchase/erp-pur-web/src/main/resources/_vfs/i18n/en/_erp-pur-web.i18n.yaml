@@ -1,106 +1,106 @@
 site:
   resource:
     ErpPurInvoice-main:
-      displayName: ''
+      displayName: Purchase Invoice
     ErpPurInvoiceLine-main:
-      displayName: ''
+      displayName: Purchase Invoice Line
     ErpPurOrder-main:
-      displayName: ''
+      displayName: Purchase Order
     ErpPurOrderLine-main:
-      displayName: ''
+      displayName: Purchase Order Line
     ErpPurPayment-main:
-      displayName: ''
+      displayName: Payment
     ErpPurPaymentLine-main:
-      displayName: ''
+      displayName: Payment Settlement Line
     ErpPurQuotation-main:
-      displayName: ''
+      displayName: Supplier Quotation
     ErpPurQuotationLine-main:
-      displayName: ''
+      displayName: Supplier Quotation Line
     ErpPurReceive-main:
-      displayName: ''
+      displayName: Purchase Receipt
     ErpPurReceiveLine-main:
-      displayName: ''
+      displayName: Purchase Receipt Line
     ErpPurRequisition-main:
-      displayName: ''
+      displayName: Purchase Requisition
     ErpPurRequisitionLine-main:
-      displayName: ''
+      displayName: Purchase Requisition Line
     ErpPurReturn-main:
-      displayName: ''
+      displayName: Purchase Return
     ErpPurReturnLine-main:
-      displayName: ''
+      displayName: Purchase Return Line
     ErpPurRfq-main:
-      displayName: ''
+      displayName: Purchase RFQ
     ErpPurRfqLine-main:
-      displayName: ''
+      displayName: Purchase RFQ Line
     ErpPurSupplierPriceList-main:
-      displayName: ''
+      displayName: Supplier Price List
     FNPT:ErpPurInvoice:mutation:
-      displayName: ''
+      displayName: Modify Purchase Invoice
     FNPT:ErpPurInvoice:query:
-      displayName: ''
+      displayName: Query Purchase Invoice
     FNPT:ErpPurInvoiceLine:mutation:
-      displayName: ''
+      displayName: Modify Purchase Invoice Line
     FNPT:ErpPurInvoiceLine:query:
-      displayName: ''
+      displayName: Query Purchase Invoice Line
     FNPT:ErpPurOrder:mutation:
-      displayName: ''
+      displayName: Modify Purchase Order
     FNPT:ErpPurOrder:query:
-      displayName: ''
+      displayName: Query Purchase Order
     FNPT:ErpPurOrderLine:mutation:
-      displayName: ''
+      displayName: Modify Purchase Order Line
     FNPT:ErpPurOrderLine:query:
-      displayName: ''
+      displayName: Query Purchase Order Line
     FNPT:ErpPurPayment:mutation:
-      displayName: ''
+      displayName: Modify Payment
     FNPT:ErpPurPayment:query:
-      displayName: ''
+      displayName: Query Payment
     FNPT:ErpPurPaymentLine:mutation:
-      displayName: ''
+      displayName: Modify Payment Settlement Line
     FNPT:ErpPurPaymentLine:query:
-      displayName: ''
+      displayName: Query Payment Settlement Line
     FNPT:ErpPurQuotation:mutation:
-      displayName: ''
+      displayName: Modify Supplier Quotation
     FNPT:ErpPurQuotation:query:
-      displayName: ''
+      displayName: Query Supplier Quotation
     FNPT:ErpPurQuotationLine:mutation:
-      displayName: ''
+      displayName: Modify Supplier Quotation Line
     FNPT:ErpPurQuotationLine:query:
-      displayName: ''
+      displayName: Query Supplier Quotation Line
     FNPT:ErpPurReceive:mutation:
-      displayName: ''
+      displayName: Modify Purchase Receipt
     FNPT:ErpPurReceive:query:
-      displayName: ''
+      displayName: Query Purchase Receipt
     FNPT:ErpPurReceiveLine:mutation:
-      displayName: ''
+      displayName: Modify Purchase Receipt Line
     FNPT:ErpPurReceiveLine:query:
-      displayName: ''
+      displayName: Query Purchase Receipt Line
     FNPT:ErpPurRequisition:mutation:
-      displayName: ''
+      displayName: Modify Purchase Requisition
     FNPT:ErpPurRequisition:query:
-      displayName: ''
+      displayName: Query Purchase Requisition
     FNPT:ErpPurRequisitionLine:mutation:
-      displayName: ''
+      displayName: Modify Purchase Requisition Line
     FNPT:ErpPurRequisitionLine:query:
-      displayName: ''
+      displayName: Query Purchase Requisition Line
     FNPT:ErpPurReturn:mutation:
-      displayName: ''
+      displayName: Modify Purchase Return
     FNPT:ErpPurReturn:query:
-      displayName: ''
+      displayName: Query Purchase Return
     FNPT:ErpPurReturnLine:mutation:
-      displayName: ''
+      displayName: Modify Purchase Return Line
     FNPT:ErpPurReturnLine:query:
-      displayName: ''
+      displayName: Query Purchase Return Line
     FNPT:ErpPurRfq:mutation:
-      displayName: ''
+      displayName: Modify Purchase RFQ
     FNPT:ErpPurRfq:query:
-      displayName: ''
+      displayName: Query Purchase RFQ
     FNPT:ErpPurRfqLine:mutation:
-      displayName: ''
+      displayName: Modify Purchase RFQ Line
     FNPT:ErpPurRfqLine:query:
-      displayName: ''
+      displayName: Query Purchase RFQ Line
     FNPT:ErpPurSupplierPriceList:mutation:
-      displayName: ''
+      displayName: Modify Supplier Price List
     FNPT:ErpPurSupplierPriceList:query:
-      displayName: ''
+      displayName: Query Supplier Price List
     test-orm-erp-pur:
       displayName: Test erp-pur

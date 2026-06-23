@@ -62,7 +62,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-银行账户" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-银行账户" i18n-en:title="View Bank Account">
             <layout>
  id[ID] partnerId[往来单位]
  bankName[开户银行] bankBranch[支行]
@@ -73,7 +73,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-银行账户" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-银行账户" i18n-en:title="Add Bank Account">
             <layout>
  id[ID]
  partnerId[往来单位]
@@ -85,7 +85,7 @@
  isDefault[是否默认]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-银行账户" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-银行账户" i18n-en:title="Edit Bank Account">
             <layout>
  id[ID]
  partnerId[往来单位]
@@ -100,7 +100,7 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-银行账户" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-银行账户" i18n-en:title="Update Bank Account"/>
     </forms>
 
     <pages>

@@ -1,82 +1,82 @@
 site:
   resource:
     ErpFinAccountingPeriod-main:
-      displayName: ''
+      displayName: Accounting Period
     ErpFinAccountingPeriodStatus-main:
-      displayName: ''
+      displayName: Period Close Status
     ErpFinArApItem-main:
-      displayName: ''
+      displayName: AR/AP Subledger
     ErpFinFundAccount-main:
-      displayName: ''
+      displayName: Fund Account
     ErpFinGlBalance-main:
-      displayName: ''
+      displayName: GL Balance
     ErpFinReconciliation-main:
-      displayName: ''
+      displayName: Reconciliation
     ErpFinReconciliationLine-main:
-      displayName: ''
+      displayName: Reconciliation Line
     ErpFinTrialBalance-main:
-      displayName: ''
+      displayName: Trial Balance
     ErpFinVoucher-main:
-      displayName: ''
+      displayName: Accounting Voucher
     ErpFinVoucherBillR-main:
-      displayName: ''
+      displayName: Voucher Business Link
     ErpFinVoucherLine-main:
-      displayName: ''
+      displayName: Voucher Line
     ErpFinVoucherTemplate-main:
-      displayName: ''
+      displayName: Voucher Template
     ErpFinVoucherTemplateLine-main:
-      displayName: ''
+      displayName: Voucher Template Line
     FNPT:ErpFinAccountingPeriod:mutation:
-      displayName: ''
+      displayName: Modify Accounting Period
     FNPT:ErpFinAccountingPeriod:query:
-      displayName: ''
+      displayName: Query Accounting Period
     FNPT:ErpFinAccountingPeriodStatus:mutation:
-      displayName: ''
+      displayName: Modify Period Close Status
     FNPT:ErpFinAccountingPeriodStatus:query:
-      displayName: ''
+      displayName: Query Period Close Status
     FNPT:ErpFinArApItem:mutation:
-      displayName: ''
+      displayName: Modify AR/AP Subledger
     FNPT:ErpFinArApItem:query:
-      displayName: ''
+      displayName: Query AR/AP Subledger
     FNPT:ErpFinFundAccount:mutation:
-      displayName: ''
+      displayName: Modify Fund Account
     FNPT:ErpFinFundAccount:query:
-      displayName: ''
+      displayName: Query Fund Account
     FNPT:ErpFinGlBalance:mutation:
-      displayName: ''
+      displayName: Modify GL Balance
     FNPT:ErpFinGlBalance:query:
-      displayName: ''
+      displayName: Query GL Balance
     FNPT:ErpFinReconciliation:mutation:
-      displayName: ''
+      displayName: Modify Reconciliation
     FNPT:ErpFinReconciliation:query:
-      displayName: ''
+      displayName: Query Reconciliation
     FNPT:ErpFinReconciliationLine:mutation:
-      displayName: ''
+      displayName: Modify Reconciliation Line
     FNPT:ErpFinReconciliationLine:query:
-      displayName: ''
+      displayName: Query Reconciliation Line
     FNPT:ErpFinTrialBalance:mutation:
-      displayName: ''
+      displayName: Modify Trial Balance
     FNPT:ErpFinTrialBalance:query:
-      displayName: ''
+      displayName: Query Trial Balance
     FNPT:ErpFinVoucher:mutation:
-      displayName: ''
+      displayName: Modify Accounting Voucher
     FNPT:ErpFinVoucher:query:
-      displayName: ''
+      displayName: Query Accounting Voucher
     FNPT:ErpFinVoucherBillR:mutation:
-      displayName: ''
+      displayName: Modify Voucher Business Link
     FNPT:ErpFinVoucherBillR:query:
-      displayName: ''
+      displayName: Query Voucher Business Link
     FNPT:ErpFinVoucherLine:mutation:
-      displayName: ''
+      displayName: Modify Voucher Line
     FNPT:ErpFinVoucherLine:query:
-      displayName: ''
+      displayName: Query Voucher Line
     FNPT:ErpFinVoucherTemplate:mutation:
-      displayName: ''
+      displayName: Modify Voucher Template
     FNPT:ErpFinVoucherTemplate:query:
-      displayName: ''
+      displayName: Query Voucher Template
     FNPT:ErpFinVoucherTemplateLine:mutation:
-      displayName: ''
+      displayName: Modify Voucher Template Line
     FNPT:ErpFinVoucherTemplateLine:query:
-      displayName: ''
+      displayName: Query Voucher Template Line
     test-orm-erp-fin:
       displayName: Test erp-fin

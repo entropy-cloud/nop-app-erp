@@ -74,7 +74,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-标准成本滚算行" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-标准成本滚算行" i18n-en:title="View Cost Rollup Line">
             <layout>
  id[ID] costRollupId[滚算单ID]
  lineNo[行号] materialId[产品]
@@ -87,7 +87,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-标准成本滚算行" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-标准成本滚算行" i18n-en:title="Add Cost Rollup Line">
             <layout>
  id[ID] costRollupId[滚算单ID]
  lineNo[行号] materialId[产品]
@@ -97,7 +97,7 @@
  unitCost[单位标准成本] currencyId[币种]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-标准成本滚算行" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-标准成本滚算行" i18n-en:title="Edit Cost Rollup Line">
             <layout>
  id[ID] costRollupId[滚算单ID]
  lineNo[行号] materialId[产品]
@@ -110,7 +110,8 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-标准成本滚算行" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-标准成本滚算行"
+              i18n-en:title="Update Cost Rollup Line"/>
     </forms>
 
     <pages>

@@ -74,7 +74,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-物料SKU" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-物料SKU" i18n-en:title="View Material SKU">
             <layout>
  id[ID] materialId[物料ID]
  skuCode[SKU编码] barcode[条码]
@@ -87,7 +87,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-物料SKU" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-物料SKU" i18n-en:title="Add Material SKU">
             <layout>
  id[ID] materialId[物料ID]
  skuCode[SKU编码] barcode[条码]
@@ -97,7 +97,7 @@
  taxRateId[默认税率] isDefault[是否默认SKU]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-物料SKU" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-物料SKU" i18n-en:title="Edit Material SKU">
             <layout>
  id[ID] materialId[物料ID]
  skuCode[SKU编码] barcode[条码]
@@ -110,7 +110,7 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-物料SKU" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-物料SKU" i18n-en:title="Update Material SKU"/>
     </forms>
 
     <pages>

@@ -1,18 +1,18 @@
 entity:
   label:
-    ErpFinAccountingPeriod: null
-    ErpFinAccountingPeriodStatus: null
-    ErpFinArApItem: null
-    ErpFinFundAccount: null
-    ErpFinGlBalance: null
-    ErpFinReconciliation: null
-    ErpFinReconciliationLine: null
-    ErpFinTrialBalance: null
-    ErpFinVoucher: null
-    ErpFinVoucherBillR: null
-    ErpFinVoucherLine: null
-    ErpFinVoucherTemplate: null
-    ErpFinVoucherTemplateLine: null
+    ErpFinAccountingPeriod: Accounting Period
+    ErpFinAccountingPeriodStatus: Period Close Status
+    ErpFinArApItem: AR/AP Subledger
+    ErpFinFundAccount: Fund Account
+    ErpFinGlBalance: GL Balance
+    ErpFinReconciliation: Reconciliation
+    ErpFinReconciliationLine: Reconciliation Line
+    ErpFinTrialBalance: Trial Balance
+    ErpFinVoucher: Accounting Voucher
+    ErpFinVoucherBillR: Voucher Business Link
+    ErpFinVoucherLine: Voucher Line
+    ErpFinVoucherTemplate: Voucher Template
+    ErpFinVoucherTemplateLine: Voucher Template Line
 prop:
   label:
     ErpFinAccountingPeriod:

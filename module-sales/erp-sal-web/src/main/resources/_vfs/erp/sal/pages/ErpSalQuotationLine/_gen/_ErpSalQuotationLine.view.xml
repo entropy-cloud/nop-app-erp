@@ -74,7 +74,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-销售报价单行" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-销售报价单行" i18n-en:title="View Sales Quotation Line">
             <layout>
  id[ID] quotationId[报价单ID]
  lineNo[行号] materialId[物料]
@@ -87,7 +87,7 @@
  remark[备注] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-销售报价单行" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-销售报价单行" i18n-en:title="Add Sales Quotation Line">
             <layout>
  id[ID] quotationId[报价单ID]
  lineNo[行号] materialId[物料]
@@ -97,7 +97,7 @@
  amountWithTax[金额(含税)] remark[备注]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-销售报价单行" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-销售报价单行" i18n-en:title="Edit Sales Quotation Line">
             <layout>
  id[ID] quotationId[报价单ID]
  lineNo[行号] materialId[物料]
@@ -110,7 +110,8 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-销售报价单行" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-销售报价单行"
+              i18n-en:title="Update Sales Quotation Line"/>
     </forms>
 
     <pages>

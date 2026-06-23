@@ -2,9 +2,9 @@
 <orm ext:registerShortName="true" ext:appName="erp-prj" ext:entityPackageName="app.erp.prj.dao.entity"
      ext:basePackageName="app.erp.prj" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-projects"
      ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
-     ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef"
-     xmlns:i18n-en="i18n-en" xmlns:ref-i18n-en="ref-i18n-en" xmlns:ext="ext" xmlns:orm-gen="orm-gen" xmlns:xpl="xpl"
-     xmlns:ui="ui">
+     ext:allowIdAsColName="true" ext:icon="briefcase" xmlns:i18n-en="i18n-en" x:schema="/nop/schema/orm/orm.xdef"
+     xmlns:x="/nop/schema/xdsl.xdef" xmlns:ref-i18n-en="ref-i18n-en" xmlns:ext="ext" xmlns:orm-gen="orm-gen"
+     xmlns:xpl="xpl" xmlns:ui="ui">
 
     <x:post-extends x:override="replace">
         <orm-gen:DefaultPostExtends xpl:lib="/nop/orm/xlib/orm-gen.xlib"/>
@@ -69,7 +69,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目"
                 name="app.erp.prj.dao.entity.ErpPrjProject" registerShortName="true" tableName="erp_prj_project"
                 tagSet="gid,erp.projects" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                versionProp="version" ext:icon="briefcase" i18n-en:displayName="Project">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -167,7 +167,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="任务"
                 name="app.erp.prj.dao.entity.ErpPrjTask" registerShortName="true" tableName="erp_prj_task"
                 tagSet="gid,erp.projects" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                versionProp="version" ext:icon="list-checks" i18n-en:displayName="Task">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -253,7 +253,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工时记录"
                 name="app.erp.prj.dao.entity.ErpPrjTimesheet" registerShortName="true" tableName="erp_prj_timesheet"
                 tagSet="gid,erp.projects" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                versionProp="version" ext:icon="clock" i18n-en:displayName="Timesheet">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -336,7 +336,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目类型"
                 name="app.erp.prj.dao.entity.ErpPrjProjectType" registerShortName="true"
                 tableName="erp_prj_project_type" tagSet="gid,erp.projects" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="folder"
+                i18n-en:displayName="Project Type">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -373,7 +374,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="活动类型"
                 name="app.erp.prj.dao.entity.ErpPrjActivityType" registerShortName="true"
                 tableName="erp_prj_activity_type" tagSet="gid,erp.projects" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="folder"
+                i18n-en:displayName="Activity Type">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -412,7 +414,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目成员"
                 name="app.erp.prj.dao.entity.ErpPrjProjectUser" registerShortName="true"
                 tableName="erp_prj_project_user" tagSet="gid,erp.projects" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="users"
+                i18n-en:displayName="Project Member">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -456,7 +459,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目预算"
                 name="app.erp.prj.dao.entity.ErpPrjBudget" registerShortName="true" tableName="erp_prj_budget"
                 tagSet="gid,erp.projects" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                versionProp="version" ext:icon="wallet" i18n-en:displayName="Project Budget">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -508,7 +511,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目预算行"
                 name="app.erp.prj.dao.entity.ErpPrjBudgetLine" registerShortName="true" tableName="erp_prj_budget_line"
                 tagSet="gid,erp.projects" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                versionProp="version" ext:icon="list" i18n-en:displayName="Project Budget Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -560,7 +563,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目成本归集"
                 name="app.erp.prj.dao.entity.ErpPrjCostCollection" registerShortName="true"
                 tableName="erp_prj_cost_collection" tagSet="gid,erp.projects" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="coins"
+                i18n-en:displayName="Project Cost Collection">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -625,7 +629,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目成本归集行"
                 name="app.erp.prj.dao.entity.ErpPrjCostCollectionLine" registerShortName="true"
                 tableName="erp_prj_cost_collection_line" tagSet="gid,erp.projects" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list"
+                i18n-en:displayName="Project Cost Collection Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -676,7 +681,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目里程碑"
                 name="app.erp.prj.dao.entity.ErpPrjMilestone" registerShortName="true" tableName="erp_prj_milestone"
                 tagSet="gid,erp.projects" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                versionProp="version" ext:icon="flag" i18n-en:displayName="Project Milestone">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -723,7 +728,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目开票"
                 name="app.erp.prj.dao.entity.ErpPrjBilling" registerShortName="true" tableName="erp_prj_billing"
                 tagSet="gid,erp.projects" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                versionProp="version" ext:icon="receipt" i18n-en:displayName="Project Billing">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -801,7 +806,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目开票行"
                 name="app.erp.prj.dao.entity.ErpPrjBillingLine" registerShortName="true"
                 tableName="erp_prj_billing_line" tagSet="gid,erp.projects" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list"
+                i18n-en:displayName="Project Billing Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>

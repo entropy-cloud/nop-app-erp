@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
-      xmlns:xpl="xpl" ext:model="orm" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen" xmlns:biz="biz"
-      displayName="资产拆分单" tagSet="gid,erp.assets" xmlns:ui="ui" xmlns:orm="orm">
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="split" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen"
+      xmlns:biz="biz" displayName="资产拆分单" i18n-en:displayName="Asset Split" tagSet="gid,erp.assets" xmlns:ui="ui"
+      xmlns:orm="orm">
 
     <entityName>app.erp.ast.dao.entity.ErpAstSplit</entityName>
 

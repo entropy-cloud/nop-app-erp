@@ -1,26 +1,26 @@
 entity:
   label:
-    ErpMfgBom: null
-    ErpMfgBomByproduct: null
-    ErpMfgBomLine: null
-    ErpMfgBomOperation: null
-    ErpMfgCostRollup: null
-    ErpMfgCostRollupLine: null
-    ErpMfgJobCard: null
-    ErpMfgJobCardTimeLog: null
-    ErpMfgMaterialIssue: null
-    ErpMfgMaterialIssueLine: null
-    ErpMfgMrpDemand: null
-    ErpMfgMrpPlan: null
-    ErpMfgMrpPlanLine: null
-    ErpMfgProductionVersion: null
-    ErpMfgRouting: null
-    ErpMfgRoutingOperation: null
-    ErpMfgSubcontractOrder: null
-    ErpMfgSubcontractOrderLine: null
-    ErpMfgWorkOrder: null
-    ErpMfgWorkOrderLine: null
-    ErpMfgWorkcenter: null
+    ErpMfgBom: BOM
+    ErpMfgBomByproduct: BOM By-product
+    ErpMfgBomLine: BOM Line
+    ErpMfgBomOperation: BOM Operation
+    ErpMfgCostRollup: Cost Rollup
+    ErpMfgCostRollupLine: Cost Rollup Line
+    ErpMfgJobCard: Job Card
+    ErpMfgJobCardTimeLog: Job Card Time Log
+    ErpMfgMaterialIssue: Material Issue
+    ErpMfgMaterialIssueLine: Material Issue Line
+    ErpMfgMrpDemand: MRP Demand
+    ErpMfgMrpPlan: MRP Plan
+    ErpMfgMrpPlanLine: MRP Plan Line
+    ErpMfgProductionVersion: Production Version
+    ErpMfgRouting: Routing
+    ErpMfgRoutingOperation: Routing Operation
+    ErpMfgSubcontractOrder: Subcontract Order
+    ErpMfgSubcontractOrderLine: Subcontract Order Line
+    ErpMfgWorkOrder: Work Order
+    ErpMfgWorkOrderLine: Work Order Line
+    ErpMfgWorkcenter: Work Center
 prop:
   label:
     ErpMfgBom:

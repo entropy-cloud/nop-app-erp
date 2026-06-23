@@ -59,7 +59,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-币种" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-币种" i18n-en:title="View Currency">
             <layout>
  id[ID] code[币种代码]
  name[名称] symbol[符号]
@@ -69,7 +69,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-币种" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-币种" i18n-en:title="Add Currency">
             <layout>
  id[ID]
  code[币种代码]
@@ -80,7 +80,7 @@
  isActive[是否启用]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-币种" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-币种" i18n-en:title="Edit Currency">
             <layout>
  id[ID]
  code[币种代码]
@@ -94,7 +94,7 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-币种" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-币种" i18n-en:title="Update Currency"/>
     </forms>
 
     <pages>

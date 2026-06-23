@@ -1,25 +1,25 @@
 entity:
   label:
-    ErpMdAcctSchema: null
-    ErpMdAcctSchemaCoa: null
-    ErpMdBankAccount: null
-    ErpMdCurrency: null
-    ErpMdEmployee: null
-    ErpMdExchangeRate: null
-    ErpMdLocation: null
-    ErpMdMaterial: null
-    ErpMdMaterialCategory: null
-    ErpMdMaterialSku: null
-    ErpMdOrganization: null
-    ErpMdPartner: null
-    ErpMdPartnerAddress: null
-    ErpMdPartnerContact: null
-    ErpMdSettlementMethod: null
-    ErpMdSubject: null
-    ErpMdTaxRate: null
-    ErpMdUoM: null
-    ErpMdUoMConversion: null
-    ErpMdWarehouse: null
+    ErpMdAcctSchema: Accounting Schema
+    ErpMdAcctSchemaCoa: Chart of Accounts
+    ErpMdBankAccount: Bank Account
+    ErpMdCurrency: Currency
+    ErpMdEmployee: Employee
+    ErpMdExchangeRate: Exchange Rate
+    ErpMdLocation: Location
+    ErpMdMaterial: Material
+    ErpMdMaterialCategory: Material Category
+    ErpMdMaterialSku: Material SKU
+    ErpMdOrganization: Organization
+    ErpMdPartner: Business Partner
+    ErpMdPartnerAddress: Partner Address
+    ErpMdPartnerContact: Partner Contact
+    ErpMdSettlementMethod: Settlement Method
+    ErpMdSubject: Accounting Subject
+    ErpMdTaxRate: Tax Rate
+    ErpMdUoM: Unit of Measure
+    ErpMdUoMConversion: UoM Conversion
+    ErpMdWarehouse: Warehouse
 prop:
   label:
     ErpMdAcctSchema:

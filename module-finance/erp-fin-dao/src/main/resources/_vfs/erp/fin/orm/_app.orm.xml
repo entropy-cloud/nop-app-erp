@@ -2,9 +2,9 @@
 <orm ext:registerShortName="true" ext:appName="erp-fin" ext:entityPackageName="app.erp.fin.dao.entity"
      ext:basePackageName="app.erp.fin" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-finance"
      ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
-     ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef"
-     xmlns:i18n-en="i18n-en" xmlns:ref-i18n-en="ref-i18n-en" xmlns:ext="ext" xmlns:orm-gen="orm-gen" xmlns:xpl="xpl"
-     xmlns:ui="ui">
+     ext:allowIdAsColName="true" ext:icon="landmark" xmlns:i18n-en="i18n-en" x:schema="/nop/schema/orm/orm.xdef"
+     xmlns:x="/nop/schema/xdsl.xdef" xmlns:ref-i18n-en="ref-i18n-en" xmlns:ext="ext" xmlns:orm-gen="orm-gen"
+     xmlns:xpl="xpl" xmlns:ui="ui">
 
     <x:post-extends x:override="replace">
         <orm-gen:DefaultPostExtends xpl:lib="/nop/orm/xlib/orm-gen.xlib"/>
@@ -112,7 +112,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="会计凭证"
                 name="app.erp.fin.dao.entity.ErpFinVoucher" registerShortName="true" tableName="erp_fin_voucher"
                 tagSet="gid,erp.finance" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                versionProp="version" ext:icon="book-up" i18n-en:displayName="Accounting Voucher">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -188,7 +188,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="凭证分录行"
                 name="app.erp.fin.dao.entity.ErpFinVoucherLine" registerShortName="true"
                 tableName="erp_fin_voucher_line" tagSet="gid,erp.finance" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list"
+                i18n-en:displayName="Voucher Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -304,7 +305,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="凭证模板"
                 name="app.erp.fin.dao.entity.ErpFinVoucherTemplate" registerShortName="true"
                 tableName="erp_fin_voucher_template" tagSet="gid,erp.finance" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="book-template"
+                i18n-en:displayName="Voucher Template">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -358,7 +360,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="凭证模板行"
                 name="app.erp.fin.dao.entity.ErpFinVoucherTemplateLine" registerShortName="true"
                 tableName="erp_fin_voucher_template_line" tagSet="gid,erp.finance" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list"
+                i18n-en:displayName="Voucher Template Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -403,7 +406,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="业财回链"
                 name="app.erp.fin.dao.entity.ErpFinVoucherBillR" registerShortName="true"
                 tableName="erp_fin_voucher_bill_r" tagSet="gid,erp.finance" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="link"
+                i18n-en:displayName="Voucher Business Link">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -442,7 +446,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="会计期间"
                 name="app.erp.fin.dao.entity.ErpFinAccountingPeriod" registerShortName="true"
                 tableName="erp_fin_accounting_period" tagSet="gid,erp.finance" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="calendar"
+                i18n-en:displayName="Accounting Period">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -495,7 +500,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="期间结账状态"
                 name="app.erp.fin.dao.entity.ErpFinAccountingPeriodStatus" registerShortName="true"
                 tableName="erp_fin_accounting_period_status" tagSet="gid,erp.finance" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="calendar-check"
+                i18n-en:displayName="Period Close Status">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -549,7 +555,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="应收应付明细账"
                 name="app.erp.fin.dao.entity.ErpFinArApItem" registerShortName="true" tableName="erp_fin_ar_ap_item"
                 tagSet="gid,erp.finance" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                versionProp="version" ext:icon="arrow-left-right" i18n-en:displayName="AR/AP Subledger">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -634,7 +640,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="核销单"
                 name="app.erp.fin.dao.entity.ErpFinReconciliation" registerShortName="true"
                 tableName="erp_fin_reconciliation" tagSet="gid,erp.finance" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="check-check"
+                i18n-en:displayName="Reconciliation">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -712,7 +719,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="核销单行"
                 name="app.erp.fin.dao.entity.ErpFinReconciliationLine" registerShortName="true"
                 tableName="erp_fin_reconciliation_line" tagSet="gid,erp.finance" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list"
+                i18n-en:displayName="Reconciliation Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -757,7 +765,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="总账余额"
                 name="app.erp.fin.dao.entity.ErpFinGlBalance" registerShortName="true" tableName="erp_fin_gl_balance"
                 tagSet="gid,erp.finance" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                versionProp="version" ext:icon="scale" i18n-en:displayName="GL Balance">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -842,7 +850,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="试算平衡表"
                 name="app.erp.fin.dao.entity.ErpFinTrialBalance" registerShortName="true"
                 tableName="erp_fin_trial_balance" tagSet="gid,erp.finance" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="git-compare"
+                i18n-en:displayName="Trial Balance">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -907,7 +916,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="资金账户"
                 name="app.erp.fin.dao.entity.ErpFinFundAccount" registerShortName="true"
                 tableName="erp_fin_fund_account" tagSet="gid,erp.finance" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="wallet"
+                i18n-en:displayName="Fund Account">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
-      xmlns:xpl="xpl" ext:model="orm" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen" xmlns:biz="biz"
-      displayName="委外加工单" tagSet="gid,erp.manufacturing" xmlns:ui="ui" xmlns:orm="orm">
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="truck" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen"
+      xmlns:biz="biz" displayName="委外加工单" i18n-en:displayName="Subcontract Order" tagSet="gid,erp.manufacturing"
+      xmlns:ui="ui" xmlns:orm="orm">
 
     <entityName>app.erp.mfg.dao.entity.ErpMfgSubcontractOrder</entityName>
 

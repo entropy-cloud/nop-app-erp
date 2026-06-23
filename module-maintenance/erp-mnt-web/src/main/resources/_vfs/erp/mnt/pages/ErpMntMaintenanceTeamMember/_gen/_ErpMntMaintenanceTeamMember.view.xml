@@ -56,7 +56,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-维护团队成员" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-维护团队成员" i18n-en:title="View Maintenance Team Member">
             <layout>
  id[ID] teamId[团队ID]
  employeeId[成员(职员)] role[角色]
@@ -66,7 +66,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-维护团队成员" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-维护团队成员" i18n-en:title="Add Maintenance Team Member">
             <layout>
  id[ID]
  teamId[团队ID]
@@ -76,7 +76,7 @@
  leftAt[退出时间]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-维护团队成员" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-维护团队成员" i18n-en:title="Edit Maintenance Team Member">
             <layout>
  id[ID]
  teamId[团队ID]
@@ -89,7 +89,8 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-维护团队成员" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-维护团队成员"
+              i18n-en:title="Update Maintenance Team Member"/>
     </forms>
 
     <pages>

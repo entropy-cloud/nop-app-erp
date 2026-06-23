@@ -68,7 +68,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-会计核算表(账套)" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-会计核算表(账套)" i18n-en:title="View Accounting Schema">
             <layout>
  id[ID] code[账套编码]
  name[账套名称] orgId[核算组织]
@@ -80,7 +80,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-会计核算表(账套)" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-会计核算表(账套)" i18n-en:title="Add Accounting Schema">
             <layout>
  id[ID] code[账套编码]
  name[账套名称] orgId[核算组织]
@@ -89,7 +89,7 @@
  isPropagate[是否自动复制分录到其它账套] status[状态]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-会计核算表(账套)" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-会计核算表(账套)" i18n-en:title="Edit Accounting Schema">
             <layout>
  id[ID] code[账套编码]
  name[账套名称] orgId[核算组织]
@@ -101,7 +101,8 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-会计核算表(账套)" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-会计核算表(账套)"
+              i18n-en:title="Update Accounting Schema"/>
     </forms>
 
     <pages>

@@ -95,7 +95,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-在建工程" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-在建工程" i18n-en:title="View CIP">
             <layout>
  id[ID] code[工程编码]
  name[工程名称] orgId[所属组织]
@@ -111,7 +111,7 @@
  amountSource[源币种金额] amountFunctional[本位币金额]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-在建工程" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-在建工程" i18n-en:title="Add CIP">
             <layout>
  id[ID] code[工程编码]
  name[工程名称] orgId[所属组织]
@@ -125,7 +125,7 @@
  amountFunctional[本位币金额] 
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-在建工程" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-在建工程" i18n-en:title="Edit CIP">
             <layout>
  id[ID] code[工程编码]
  name[工程名称] orgId[所属组织]
@@ -141,7 +141,7 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-在建工程" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-在建工程" i18n-en:title="Update CIP"/>
     </forms>
 
     <pages>

@@ -1,18 +1,18 @@
 entity:
   label:
-    ErpPrjActivityType: null
-    ErpPrjBilling: null
-    ErpPrjBillingLine: null
-    ErpPrjBudget: null
-    ErpPrjBudgetLine: null
-    ErpPrjCostCollection: null
-    ErpPrjCostCollectionLine: null
-    ErpPrjMilestone: null
-    ErpPrjProject: null
-    ErpPrjProjectType: null
-    ErpPrjProjectUser: null
-    ErpPrjTask: null
-    ErpPrjTimesheet: null
+    ErpPrjActivityType: Activity Type
+    ErpPrjBilling: Project Billing
+    ErpPrjBillingLine: Project Billing Line
+    ErpPrjBudget: Project Budget
+    ErpPrjBudgetLine: Project Budget Line
+    ErpPrjCostCollection: Project Cost Collection
+    ErpPrjCostCollectionLine: Project Cost Collection Line
+    ErpPrjMilestone: Project Milestone
+    ErpPrjProject: Project
+    ErpPrjProjectType: Project Type
+    ErpPrjProjectUser: Project Member
+    ErpPrjTask: Task
+    ErpPrjTimesheet: Timesheet
 prop:
   label:
     ErpPrjActivityType:

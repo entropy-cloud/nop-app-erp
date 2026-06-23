@@ -1,124 +1,124 @@
 site:
   resource:
     ErpMdAcctSchema-main:
-      displayName: ''
+      displayName: Accounting Schema
     ErpMdAcctSchemaCoa-main:
-      displayName: ''
+      displayName: Chart of Accounts
     ErpMdBankAccount-main:
-      displayName: ''
+      displayName: Bank Account
     ErpMdCurrency-main:
-      displayName: ''
+      displayName: Currency
     ErpMdEmployee-main:
-      displayName: ''
+      displayName: Employee
     ErpMdExchangeRate-main:
-      displayName: ''
+      displayName: Exchange Rate
     ErpMdLocation-main:
-      displayName: ''
+      displayName: Location
     ErpMdMaterial-main:
-      displayName: ''
+      displayName: Material
     ErpMdMaterialCategory-main:
-      displayName: ''
+      displayName: Material Category
     ErpMdMaterialSku-main:
-      displayName: ''
+      displayName: Material SKU
     ErpMdOrganization-main:
-      displayName: ''
+      displayName: Organization
     ErpMdPartner-main:
-      displayName: ''
+      displayName: Business Partner
     ErpMdPartnerAddress-main:
-      displayName: ''
+      displayName: Partner Address
     ErpMdPartnerContact-main:
-      displayName: ''
+      displayName: Partner Contact
     ErpMdSettlementMethod-main:
-      displayName: ''
+      displayName: Settlement Method
     ErpMdSubject-main:
-      displayName: ''
+      displayName: Accounting Subject
     ErpMdTaxRate-main:
-      displayName: ''
+      displayName: Tax Rate
     ErpMdUoM-main:
-      displayName: ''
+      displayName: Unit of Measure
     ErpMdUoMConversion-main:
-      displayName: ''
+      displayName: UoM Conversion
     ErpMdWarehouse-main:
-      displayName: ''
+      displayName: Warehouse
     FNPT:ErpMdAcctSchema:mutation:
-      displayName: ''
+      displayName: Modify Accounting Schema
     FNPT:ErpMdAcctSchema:query:
-      displayName: ''
+      displayName: Query Accounting Schema
     FNPT:ErpMdAcctSchemaCoa:mutation:
-      displayName: ''
+      displayName: Modify Chart of Accounts
     FNPT:ErpMdAcctSchemaCoa:query:
-      displayName: ''
+      displayName: Query Chart of Accounts
     FNPT:ErpMdBankAccount:mutation:
-      displayName: ''
+      displayName: Modify Bank Account
     FNPT:ErpMdBankAccount:query:
-      displayName: ''
+      displayName: Query Bank Account
     FNPT:ErpMdCurrency:mutation:
-      displayName: ''
+      displayName: Modify Currency
     FNPT:ErpMdCurrency:query:
-      displayName: ''
+      displayName: Query Currency
     FNPT:ErpMdEmployee:mutation:
-      displayName: ''
+      displayName: Modify Employee
     FNPT:ErpMdEmployee:query:
-      displayName: ''
+      displayName: Query Employee
     FNPT:ErpMdExchangeRate:mutation:
-      displayName: ''
+      displayName: Modify Exchange Rate
     FNPT:ErpMdExchangeRate:query:
-      displayName: ''
+      displayName: Query Exchange Rate
     FNPT:ErpMdLocation:mutation:
-      displayName: ''
+      displayName: Modify Location
     FNPT:ErpMdLocation:query:
-      displayName: ''
+      displayName: Query Location
     FNPT:ErpMdMaterial:mutation:
-      displayName: ''
+      displayName: Modify Material
     FNPT:ErpMdMaterial:query:
-      displayName: ''
+      displayName: Query Material
     FNPT:ErpMdMaterialCategory:mutation:
-      displayName: ''
+      displayName: Modify Material Category
     FNPT:ErpMdMaterialCategory:query:
-      displayName: ''
+      displayName: Query Material Category
     FNPT:ErpMdMaterialSku:mutation:
-      displayName: ''
+      displayName: Modify Material SKU
     FNPT:ErpMdMaterialSku:query:
-      displayName: ''
+      displayName: Query Material SKU
     FNPT:ErpMdOrganization:mutation:
-      displayName: ''
+      displayName: Modify Organization
     FNPT:ErpMdOrganization:query:
-      displayName: ''
+      displayName: Query Organization
     FNPT:ErpMdPartner:mutation:
-      displayName: ''
+      displayName: Modify Business Partner
     FNPT:ErpMdPartner:query:
-      displayName: ''
+      displayName: Query Business Partner
     FNPT:ErpMdPartnerAddress:mutation:
-      displayName: ''
+      displayName: Modify Partner Address
     FNPT:ErpMdPartnerAddress:query:
-      displayName: ''
+      displayName: Query Partner Address
     FNPT:ErpMdPartnerContact:mutation:
-      displayName: ''
+      displayName: Modify Partner Contact
     FNPT:ErpMdPartnerContact:query:
-      displayName: ''
+      displayName: Query Partner Contact
     FNPT:ErpMdSettlementMethod:mutation:
-      displayName: ''
+      displayName: Modify Settlement Method
     FNPT:ErpMdSettlementMethod:query:
-      displayName: ''
+      displayName: Query Settlement Method
     FNPT:ErpMdSubject:mutation:
-      displayName: ''
+      displayName: Modify Accounting Subject
     FNPT:ErpMdSubject:query:
-      displayName: ''
+      displayName: Query Accounting Subject
     FNPT:ErpMdTaxRate:mutation:
-      displayName: ''
+      displayName: Modify Tax Rate
     FNPT:ErpMdTaxRate:query:
-      displayName: ''
+      displayName: Query Tax Rate
     FNPT:ErpMdUoM:mutation:
-      displayName: ''
+      displayName: Modify Unit of Measure
     FNPT:ErpMdUoM:query:
-      displayName: ''
+      displayName: Query Unit of Measure
     FNPT:ErpMdUoMConversion:mutation:
-      displayName: ''
+      displayName: Modify UoM Conversion
     FNPT:ErpMdUoMConversion:query:
-      displayName: ''
+      displayName: Query UoM Conversion
     FNPT:ErpMdWarehouse:mutation:
-      displayName: ''
+      displayName: Modify Warehouse
     FNPT:ErpMdWarehouse:query:
-      displayName: ''
+      displayName: Query Warehouse
     test-orm-erp-md:
       displayName: Test erp-md

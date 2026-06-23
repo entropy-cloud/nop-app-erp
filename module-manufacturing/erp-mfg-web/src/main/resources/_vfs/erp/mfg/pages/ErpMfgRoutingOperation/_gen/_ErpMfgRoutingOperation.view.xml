@@ -71,7 +71,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-工艺路线工序" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-工艺路线工序" i18n-en:title="View Routing Operation">
             <layout>
  id[ID] routingId[工艺路线ID]
  lineNo[行号] operationCode[工序编码]
@@ -83,7 +83,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-工艺路线工序" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-工艺路线工序" i18n-en:title="Add Routing Operation">
             <layout>
  id[ID] routingId[工艺路线ID]
  lineNo[行号] operationCode[工序编码]
@@ -93,7 +93,7 @@
  remark[备注] 
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-工艺路线工序" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-工艺路线工序" i18n-en:title="Edit Routing Operation">
             <layout>
  id[ID] routingId[工艺路线ID]
  lineNo[行号] operationCode[工序编码]
@@ -105,7 +105,8 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-工艺路线工序" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-工艺路线工序"
+              i18n-en:title="Update Routing Operation"/>
     </forms>
 
     <pages>

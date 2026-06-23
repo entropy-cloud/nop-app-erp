@@ -1,18 +1,18 @@
 entity:
   label:
-    ErpSalContract: null
-    ErpSalDelivery: null
-    ErpSalDeliveryLine: null
-    ErpSalInvoice: null
-    ErpSalInvoiceLine: null
-    ErpSalOrder: null
-    ErpSalOrderLine: null
-    ErpSalQuotation: null
-    ErpSalQuotationLine: null
-    ErpSalReceipt: null
-    ErpSalReceiptLine: null
-    ErpSalReturn: null
-    ErpSalReturnLine: null
+    ErpSalContract: Sales Contract
+    ErpSalDelivery: Sales Delivery
+    ErpSalDeliveryLine: Sales Delivery Line
+    ErpSalInvoice: Sales Invoice
+    ErpSalInvoiceLine: Sales Invoice Line
+    ErpSalOrder: Sales Order
+    ErpSalOrderLine: Sales Order Line
+    ErpSalQuotation: Sales Quotation
+    ErpSalQuotationLine: Sales Quotation Line
+    ErpSalReceipt: Receipt
+    ErpSalReceiptLine: Receipt Settlement Line
+    ErpSalReturn: Sales Return
+    ErpSalReturnLine: Sales Return Line
 prop:
   label:
     ErpSalContract:

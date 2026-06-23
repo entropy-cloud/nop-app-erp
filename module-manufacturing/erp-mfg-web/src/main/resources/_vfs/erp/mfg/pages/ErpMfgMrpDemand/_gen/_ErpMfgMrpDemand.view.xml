@@ -68,7 +68,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-MRP独立需求" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-MRP独立需求" i18n-en:title="View MRP Demand">
             <layout>
  id[ID] mrpPlanId[MRP计划ID]
  lineNo[行号] materialId[物料]
@@ -80,7 +80,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-MRP独立需求" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-MRP独立需求" i18n-en:title="Add MRP Demand">
             <layout>
  id[ID] mrpPlanId[MRP计划ID]
  lineNo[行号] materialId[物料]
@@ -89,7 +89,7 @@
  quantity[需求数量] requirementDate[需求日期]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-MRP独立需求" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-MRP独立需求" i18n-en:title="Edit MRP Demand">
             <layout>
  id[ID] mrpPlanId[MRP计划ID]
  lineNo[行号] materialId[物料]
@@ -101,7 +101,7 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-MRP独立需求" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-MRP独立需求" i18n-en:title="Update MRP Demand"/>
     </forms>
 
     <pages>

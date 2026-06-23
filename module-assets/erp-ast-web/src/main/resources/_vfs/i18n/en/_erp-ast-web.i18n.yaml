@@ -1,64 +1,64 @@
 site:
   resource:
     ErpAstAsset-main:
-      displayName: ''
+      displayName: Fixed Asset
     ErpAstAssetCapitalization-main:
-      displayName: ''
+      displayName: Asset Capitalization
     ErpAstAssetCategory-main:
-      displayName: ''
+      displayName: Asset Category
     ErpAstCip-main:
-      displayName: ''
+      displayName: CIP
     ErpAstDepreciationSchedule-main:
-      displayName: ''
+      displayName: Depreciation Schedule
     ErpAstDisposal-main:
-      displayName: ''
+      displayName: Asset Disposal
     ErpAstMerge-main:
-      displayName: ''
+      displayName: Asset Merge
     ErpAstMovement-main:
-      displayName: ''
+      displayName: Asset Movement
     ErpAstSplit-main:
-      displayName: ''
+      displayName: Asset Split
     ErpAstValueAdjustment-main:
-      displayName: ''
+      displayName: Asset Value Adjustment
     FNPT:ErpAstAsset:mutation:
-      displayName: ''
+      displayName: Modify Fixed Asset
     FNPT:ErpAstAsset:query:
-      displayName: ''
+      displayName: Query Fixed Asset
     FNPT:ErpAstAssetCapitalization:mutation:
-      displayName: ''
+      displayName: Modify Asset Capitalization
     FNPT:ErpAstAssetCapitalization:query:
-      displayName: ''
+      displayName: Query Asset Capitalization
     FNPT:ErpAstAssetCategory:mutation:
-      displayName: ''
+      displayName: Modify Asset Category
     FNPT:ErpAstAssetCategory:query:
-      displayName: ''
+      displayName: Query Asset Category
     FNPT:ErpAstCip:mutation:
-      displayName: ''
+      displayName: Modify CIP
     FNPT:ErpAstCip:query:
-      displayName: ''
+      displayName: Query CIP
     FNPT:ErpAstDepreciationSchedule:mutation:
-      displayName: ''
+      displayName: Modify Depreciation Schedule
     FNPT:ErpAstDepreciationSchedule:query:
-      displayName: ''
+      displayName: Query Depreciation Schedule
     FNPT:ErpAstDisposal:mutation:
-      displayName: ''
+      displayName: Modify Asset Disposal
     FNPT:ErpAstDisposal:query:
-      displayName: ''
+      displayName: Query Asset Disposal
     FNPT:ErpAstMerge:mutation:
-      displayName: ''
+      displayName: Modify Asset Merge
     FNPT:ErpAstMerge:query:
-      displayName: ''
+      displayName: Query Asset Merge
     FNPT:ErpAstMovement:mutation:
-      displayName: ''
+      displayName: Modify Asset Movement
     FNPT:ErpAstMovement:query:
-      displayName: ''
+      displayName: Query Asset Movement
     FNPT:ErpAstSplit:mutation:
-      displayName: ''
+      displayName: Modify Asset Split
     FNPT:ErpAstSplit:query:
-      displayName: ''
+      displayName: Query Asset Split
     FNPT:ErpAstValueAdjustment:mutation:
-      displayName: ''
+      displayName: Modify Asset Value Adjustment
     FNPT:ErpAstValueAdjustment:query:
-      displayName: ''
+      displayName: Query Asset Value Adjustment
     test-orm-erp-ast:
       displayName: Test erp-ast

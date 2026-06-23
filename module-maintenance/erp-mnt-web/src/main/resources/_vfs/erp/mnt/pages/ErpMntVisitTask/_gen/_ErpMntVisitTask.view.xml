@@ -62,7 +62,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-维护任务" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-维护任务" i18n-en:title="View Maintenance Task">
             <layout>
  id[ID] visitId[维护访问ID]
  lineNo[行号] taskDescription[任务描述]
@@ -73,7 +73,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-维护任务" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-维护任务" i18n-en:title="Add Maintenance Task">
             <layout>
  id[ID]
  visitId[维护访问ID]
@@ -85,7 +85,7 @@
  remark[备注]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-维护任务" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-维护任务" i18n-en:title="Edit Maintenance Task">
             <layout>
  id[ID]
  visitId[维护访问ID]
@@ -100,7 +100,7 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-维护任务" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-维护任务" i18n-en:title="Update Maintenance Task"/>
     </forms>
 
     <pages>

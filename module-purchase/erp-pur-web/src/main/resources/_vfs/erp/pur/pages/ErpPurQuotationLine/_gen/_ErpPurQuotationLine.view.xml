@@ -68,7 +68,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-供应商报价单行" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-供应商报价单行" i18n-en:title="View Supplier Quotation Line">
             <layout>
  id[ID] quotationId[报价单ID]
  lineNo[行号] materialId[物料]
@@ -80,7 +80,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-供应商报价单行" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-供应商报价单行" i18n-en:title="Add Supplier Quotation Line">
             <layout>
  id[ID] quotationId[报价单ID]
  lineNo[行号] materialId[物料]
@@ -89,7 +89,7 @@
  leadTimeDays[交货周期(天)] remark[备注]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-供应商报价单行" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-供应商报价单行" i18n-en:title="Edit Supplier Quotation Line">
             <layout>
  id[ID] quotationId[报价单ID]
  lineNo[行号] materialId[物料]
@@ -101,7 +101,8 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-供应商报价单行" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-供应商报价单行"
+              i18n-en:title="Update Supplier Quotation Line"/>
     </forms>
 
     <pages>

@@ -107,7 +107,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-质检单" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-质检单" i18n-en:title="View Inspection">
             <layout>
  id[ID] code[单号]
  orgId[业务组织] inspectionType[检验类型]
@@ -125,7 +125,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-质检单" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-质检单" i18n-en:title="Add Inspection">
             <layout>
  id[ID] code[单号]
  orgId[业务组织] inspectionType[检验类型]
@@ -141,7 +141,7 @@
  remark[备注] 
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-质检单" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-质检单" i18n-en:title="Edit Inspection">
             <layout>
  id[ID] code[单号]
  orgId[业务组织] inspectionType[检验类型]
@@ -159,7 +159,7 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-质检单" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-质检单" i18n-en:title="Update Inspection"/>
     </forms>
 
     <pages>

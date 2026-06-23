@@ -89,7 +89,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-领料单" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-领料单" i18n-en:title="View Material Issue">
             <layout>
  id[ID] code[单号]
  orgId[业务组织] workOrderId[工单]
@@ -104,7 +104,7 @@
  amountSource[源币种金额] amountFunctional[本位币金额]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-领料单" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-领料单" i18n-en:title="Add Material Issue">
             <layout>
  id[ID] code[单号]
  orgId[业务组织] workOrderId[工单]
@@ -117,7 +117,7 @@
  amountFunctional[本位币金额] 
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-领料单" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-领料单" i18n-en:title="Edit Material Issue">
             <layout>
  id[ID] code[单号]
  orgId[业务组织] workOrderId[工单]
@@ -132,7 +132,7 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-领料单" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-领料单" i18n-en:title="Update Material Issue"/>
     </forms>
 
     <pages>

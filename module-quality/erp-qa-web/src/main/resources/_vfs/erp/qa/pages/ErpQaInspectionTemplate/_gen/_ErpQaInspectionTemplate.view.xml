@@ -59,7 +59,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-质检模板" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-质检模板" i18n-en:title="View Inspection Template">
             <layout>
  id[ID] code[编码]
  name[名称] inspectionType[检验类型]
@@ -69,7 +69,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-质检模板" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-质检模板" i18n-en:title="Add Inspection Template">
             <layout>
  id[ID]
  code[编码]
@@ -80,7 +80,7 @@
  remark[备注]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-质检模板" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-质检模板" i18n-en:title="Edit Inspection Template">
             <layout>
  id[ID]
  code[编码]
@@ -94,7 +94,8 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-质检模板" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-质检模板"
+              i18n-en:title="Update Inspection Template"/>
     </forms>
 
     <pages>

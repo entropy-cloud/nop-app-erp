@@ -59,7 +59,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-结算方式" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-结算方式" i18n-en:title="View Settlement Method">
             <layout>
  id[ID] code[编码]
  name[名称] settlementType[结算类型]
@@ -69,7 +69,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-结算方式" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-结算方式" i18n-en:title="Add Settlement Method">
             <layout>
  id[ID]
  code[编码]
@@ -80,7 +80,7 @@
  status[状态]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-结算方式" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-结算方式" i18n-en:title="Edit Settlement Method">
             <layout>
  id[ID]
  code[编码]
@@ -94,7 +94,8 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-结算方式" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-结算方式"
+              i18n-en:title="Update Settlement Method"/>
     </forms>
 
     <pages>

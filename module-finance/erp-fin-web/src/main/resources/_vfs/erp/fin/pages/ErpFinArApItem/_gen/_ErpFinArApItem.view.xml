@@ -101,7 +101,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-应收应付明细账" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-应收应付明细账" i18n-en:title="View AR/AP Subledger">
             <layout>
  id[ID] code[单号]
  orgId[组织] acctSchemaId[账套]
@@ -118,7 +118,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-应收应付明细账" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-应收应付明细账" i18n-en:title="Add AR/AP Subledger">
             <layout>
  id[ID] code[单号]
  orgId[组织] acctSchemaId[账套]
@@ -133,7 +133,7 @@
  remark[备注] 
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-应收应付明细账" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-应收应付明细账" i18n-en:title="Edit AR/AP Subledger">
             <layout>
  id[ID] code[单号]
  orgId[组织] acctSchemaId[账套]
@@ -150,7 +150,8 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-应收应付明细账" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-应收应付明细账"
+              i18n-en:title="Update AR/AP Subledger"/>
     </forms>
 
     <pages>

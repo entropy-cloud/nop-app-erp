@@ -92,7 +92,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-销售订单行" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-销售订单行" i18n-en:title="View Sales Order Line">
             <layout>
  id[ID] orderId[订单ID]
  lineNo[行号] materialId[物料]
@@ -108,7 +108,7 @@
  remark[备注] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-销售订单行" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-销售订单行" i18n-en:title="Add Sales Order Line">
             <layout>
  id[ID] orderId[订单ID]
  lineNo[行号] materialId[物料]
@@ -121,7 +121,7 @@
  projectId[项目] remark[备注]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-销售订单行" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-销售订单行" i18n-en:title="Edit Sales Order Line">
             <layout>
  id[ID] orderId[订单ID]
  lineNo[行号] materialId[物料]
@@ -137,7 +137,8 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-销售订单行" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-销售订单行"
+              i18n-en:title="Update Sales Order Line"/>
     </forms>
 
     <pages>

@@ -92,7 +92,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-总账余额" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-总账余额" i18n-en:title="View GL Balance">
             <layout>
  id[ID] orgId[组织]
  acctSchemaId[账套] periodId[期间]
@@ -108,7 +108,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-总账余额" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-总账余额" i18n-en:title="Add GL Balance">
             <layout>
  id[ID] orgId[组织]
  acctSchemaId[账套] periodId[期间]
@@ -121,7 +121,7 @@
  projectId[辅助-项目] warehouseId[辅助-仓库]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-总账余额" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-总账余额" i18n-en:title="Edit GL Balance">
             <layout>
  id[ID] orgId[组织]
  acctSchemaId[账套] periodId[期间]
@@ -137,7 +137,7 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-总账余额" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-总账余额" i18n-en:title="Update GL Balance"/>
     </forms>
 
     <pages>

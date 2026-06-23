@@ -1,17 +1,17 @@
 entity:
   label:
-    ErpMntCalibration: null
-    ErpMntDowntimeEntry: null
-    ErpMntEquipment: null
-    ErpMntEquipmentCategory: null
-    ErpMntMaintenanceTeam: null
-    ErpMntMaintenanceTeamMember: null
-    ErpMntRequest: null
-    ErpMntSchedule: null
-    ErpMntSparePartUsage: null
-    ErpMntSparePartUsageLine: null
-    ErpMntVisit: null
-    ErpMntVisitTask: null
+    ErpMntCalibration: Calibration
+    ErpMntDowntimeEntry: Downtime Entry
+    ErpMntEquipment: Equipment
+    ErpMntEquipmentCategory: Equipment Category
+    ErpMntMaintenanceTeam: Maintenance Team
+    ErpMntMaintenanceTeamMember: Maintenance Team Member
+    ErpMntRequest: Maintenance Request
+    ErpMntSchedule: Maintenance Schedule
+    ErpMntSparePartUsage: Spare Part Usage
+    ErpMntSparePartUsageLine: Spare Part Usage Line
+    ErpMntVisit: Maintenance Visit
+    ErpMntVisitTask: Maintenance Task
 prop:
   label:
     ErpMntCalibration:

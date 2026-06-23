@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
-      xmlns:xpl="xpl" ext:model="orm" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen" xmlns:biz="biz"
-      displayName="应收应付明细账" tagSet="gid,erp.finance" xmlns:ui="ui" xmlns:orm="orm">
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="arrow-left-right" xmlns:c="c" xmlns:graphql="graphql"
+      xmlns:meta-gen="meta-gen" xmlns:biz="biz" displayName="应收应付明细账" i18n-en:displayName="AR/AP Subledger"
+      tagSet="gid,erp.finance" xmlns:ui="ui" xmlns:orm="orm">
 
     <entityName>app.erp.fin.dao.entity.ErpFinArApItem</entityName>
 

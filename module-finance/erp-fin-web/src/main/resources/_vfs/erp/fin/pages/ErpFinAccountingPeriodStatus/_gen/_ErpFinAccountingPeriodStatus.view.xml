@@ -71,7 +71,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-期间结账状态" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-期间结账状态" i18n-en:title="View Period Close Status">
             <layout>
  id[ID] periodId[期间ID]
  acctSchemaId[账套] totalVouchers[凭证总数]
@@ -83,7 +83,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-期间结账状态" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-期间结账状态" i18n-en:title="Add Period Close Status">
             <layout>
  id[ID] periodId[期间ID]
  acctSchemaId[账套] totalVouchers[凭证总数]
@@ -93,7 +93,7 @@
  assetStatus[资产模块状态] 
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-期间结账状态" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-期间结账状态" i18n-en:title="Edit Period Close Status">
             <layout>
  id[ID] periodId[期间ID]
  acctSchemaId[账套] totalVouchers[凭证总数]
@@ -105,7 +105,8 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-期间结账状态" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-期间结账状态"
+              i18n-en:title="Update Period Close Status"/>
     </forms>
 
     <pages>

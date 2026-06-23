@@ -1,70 +1,70 @@
 site:
   resource:
     ErpQaAction-main:
-      displayName: ''
+      displayName: Corrective Action
     ErpQaCalibration-main:
-      displayName: ''
+      displayName: Gauge Calibration
     ErpQaInspection-main:
-      displayName: ''
+      displayName: Inspection
     ErpQaInspectionLine-main:
-      displayName: ''
+      displayName: Inspection Line
     ErpQaInspectionTemplate-main:
-      displayName: ''
+      displayName: Inspection Template
     ErpQaInspectionTemplateLine-main:
-      displayName: ''
+      displayName: Inspection Template Line
     ErpQaNonConformance-main:
-      displayName: ''
+      displayName: Non-Conformance Report
     ErpQaQualityGoal-main:
-      displayName: ''
+      displayName: Quality Goal
     ErpQaReview-main:
-      displayName: ''
+      displayName: Quality Review
     ErpQaRiskRegister-main:
-      displayName: ''
+      displayName: Risk Register
     ErpQaSamplingPlan-main:
-      displayName: ''
+      displayName: Sampling Plan
     FNPT:ErpQaAction:mutation:
-      displayName: ''
+      displayName: Modify Corrective Action
     FNPT:ErpQaAction:query:
-      displayName: ''
+      displayName: Query Corrective Action
     FNPT:ErpQaCalibration:mutation:
-      displayName: ''
+      displayName: Modify Gauge Calibration
     FNPT:ErpQaCalibration:query:
-      displayName: ''
+      displayName: Query Gauge Calibration
     FNPT:ErpQaInspection:mutation:
-      displayName: ''
+      displayName: Modify Inspection
     FNPT:ErpQaInspection:query:
-      displayName: ''
+      displayName: Query Inspection
     FNPT:ErpQaInspectionLine:mutation:
-      displayName: ''
+      displayName: Modify Inspection Line
     FNPT:ErpQaInspectionLine:query:
-      displayName: ''
+      displayName: Query Inspection Line
     FNPT:ErpQaInspectionTemplate:mutation:
-      displayName: ''
+      displayName: Modify Inspection Template
     FNPT:ErpQaInspectionTemplate:query:
-      displayName: ''
+      displayName: Query Inspection Template
     FNPT:ErpQaInspectionTemplateLine:mutation:
-      displayName: ''
+      displayName: Modify Inspection Template Line
     FNPT:ErpQaInspectionTemplateLine:query:
-      displayName: ''
+      displayName: Query Inspection Template Line
     FNPT:ErpQaNonConformance:mutation:
-      displayName: ''
+      displayName: Modify Non-Conformance Report
     FNPT:ErpQaNonConformance:query:
-      displayName: ''
+      displayName: Query Non-Conformance Report
     FNPT:ErpQaQualityGoal:mutation:
-      displayName: ''
+      displayName: Modify Quality Goal
     FNPT:ErpQaQualityGoal:query:
-      displayName: ''
+      displayName: Query Quality Goal
     FNPT:ErpQaReview:mutation:
-      displayName: ''
+      displayName: Modify Quality Review
     FNPT:ErpQaReview:query:
-      displayName: ''
+      displayName: Query Quality Review
     FNPT:ErpQaRiskRegister:mutation:
-      displayName: ''
+      displayName: Modify Risk Register
     FNPT:ErpQaRiskRegister:query:
-      displayName: ''
+      displayName: Query Risk Register
     FNPT:ErpQaSamplingPlan:mutation:
-      displayName: ''
+      displayName: Modify Sampling Plan
     FNPT:ErpQaSamplingPlan:query:
-      displayName: ''
+      displayName: Query Sampling Plan
     test-orm-erp-qa:
       displayName: Test erp-qa

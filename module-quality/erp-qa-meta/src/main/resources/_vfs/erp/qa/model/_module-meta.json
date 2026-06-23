@@ -2,5 +2,5 @@
   "moduleId": "erp/qa",
   "moduleName": "erp-qa",
   "appName": "erp-qa",
-  "icon": null
+  "icon": "shield-check"
 }

@@ -31,7 +31,7 @@
 <orm ext:registerShortName="true" ext:appName="erp-inv" ext:entityPackageName="app.erp.inv.dao.entity"
      ext:basePackageName="app.erp.inv" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-inventory"
      ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
-     ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+     ext:allowIdAsColName="true" ext:icon="warehouse" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
 
     <dicts>
         <dict label="库存移动状态" name="erp-inv/move-status" valueType="int">
@@ -110,7 +110,7 @@
     <entities>
         <!-- 库存移动单头 -->
         <entity className="app.erp.inv.dao.entity.ErpInvStockMove"
-                displayName="库存移动单" name="app.erp.inv.dao.entity.ErpInvStockMove"
+                displayName="库存移动单" ext:icon="arrow-left-right" i18n-en:displayName="Stock Move" name="app.erp.inv.dao.entity.ErpInvStockMove"
                 tableName="erp_inv_stock_move" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -146,7 +146,7 @@
 
         <!-- 库存移动单行 -->
         <entity className="app.erp.inv.dao.entity.ErpInvStockMoveLine"
-                displayName="库存移动单行" name="app.erp.inv.dao.entity.ErpInvStockMoveLine"
+                displayName="库存移动单行" ext:icon="list" i18n-en:displayName="Stock Move Line" name="app.erp.inv.dao.entity.ErpInvStockMoveLine"
                 tableName="erp_inv_stock_move_line" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -182,7 +182,7 @@
 
         <!-- 库存流水（不可变） -->
         <entity className="app.erp.inv.dao.entity.ErpInvStockLedger"
-                displayName="库存流水" name="app.erp.inv.dao.entity.ErpInvStockLedger"
+                displayName="库存流水" ext:icon="trending-up" i18n-en:displayName="Stock Ledger" name="app.erp.inv.dao.entity.ErpInvStockLedger"
                 tableName="erp_inv_stock_ledger" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -227,7 +227,7 @@
 
         <!-- 库存余额快照 -->
         <entity className="app.erp.inv.dao.entity.ErpInvStockBalance"
-                displayName="库存余额" name="app.erp.inv.dao.entity.ErpInvStockBalance"
+                displayName="库存余额" ext:icon="scale" i18n-en:displayName="Stock Balance" name="app.erp.inv.dao.entity.ErpInvStockBalance"
                 tableName="erp_inv_stock_balance" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -264,7 +264,7 @@
 
         <!-- 库存预留单头（记录级预留，支撑可用量校验与按订单/工单预留） -->
         <entity className="app.erp.inv.dao.entity.ErpInvReservation"
-                displayName="库存预留单" name="app.erp.inv.dao.entity.ErpInvReservation"
+                displayName="库存预留单" ext:icon="bookmark" i18n-en:displayName="Stock Reservation" name="app.erp.inv.dao.entity.ErpInvReservation"
                 tableName="erp_inv_reservation" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -291,7 +291,7 @@
 
         <!-- 库存预留单行 -->
         <entity className="app.erp.inv.dao.entity.ErpInvReservationLine"
-                displayName="库存预留单行" name="app.erp.inv.dao.entity.ErpInvReservationLine"
+                displayName="库存预留单行" ext:icon="list" i18n-en:displayName="Stock Reservation Line" name="app.erp.inv.dao.entity.ErpInvReservationLine"
                 tableName="erp_inv_reservation_line" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -323,7 +323,7 @@
 
         <!-- 成本层（支撑 FIFO/批次/具体辨认的多层成本核算） -->
         <entity className="app.erp.inv.dao.entity.ErpInvCostLayer"
-                displayName="成本层" name="app.erp.inv.dao.entity.ErpInvCostLayer"
+                displayName="成本层" ext:icon="layers" i18n-en:displayName="Cost Layer" name="app.erp.inv.dao.entity.ErpInvCostLayer"
                 tableName="erp_inv_cost_layer" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -358,7 +358,7 @@
 
         <!-- 调拨单 -->
         <entity className="app.erp.inv.dao.entity.ErpInvTransferOrder"
-                displayName="调拨单" name="app.erp.inv.dao.entity.ErpInvTransferOrder"
+                displayName="调拨单" ext:icon="arrow-right-left" i18n-en:displayName="Transfer Order" name="app.erp.inv.dao.entity.ErpInvTransferOrder"
                 tableName="erp_inv_transfer_order" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -393,7 +393,7 @@
 
         <!-- 调拨单行 -->
         <entity className="app.erp.inv.dao.entity.ErpInvTransferOrderLine"
-                displayName="调拨单行" name="app.erp.inv.dao.entity.ErpInvTransferOrderLine"
+                displayName="调拨单行" ext:icon="list" i18n-en:displayName="Transfer Order Line" name="app.erp.inv.dao.entity.ErpInvTransferOrderLine"
                 tableName="erp_inv_transfer_order_line" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -422,7 +422,7 @@
 
         <!-- 盘点单 -->
         <entity className="app.erp.inv.dao.entity.ErpInvStockTake"
-                displayName="盘点单" name="app.erp.inv.dao.entity.ErpInvStockTake"
+                displayName="盘点单" ext:icon="clipboard-list" i18n-en:displayName="Stock Take" name="app.erp.inv.dao.entity.ErpInvStockTake"
                 tableName="erp_inv_stock_take" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -452,7 +452,7 @@
 
         <!-- 盘点单行 -->
         <entity className="app.erp.inv.dao.entity.ErpInvStockTakeLine"
-                displayName="盘点单行" name="app.erp.inv.dao.entity.ErpInvStockTakeLine"
+                displayName="盘点单行" ext:icon="list" i18n-en:displayName="Stock Take Line" name="app.erp.inv.dao.entity.ErpInvStockTakeLine"
                 tableName="erp_inv_stock_take_line" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -486,7 +486,7 @@
 
         <!-- 拣货单头 -->
         <entity className="app.erp.inv.dao.entity.ErpInvPickingOrder"
-                displayName="拣货单" name="app.erp.inv.dao.entity.ErpInvPickingOrder"
+                displayName="拣货单" ext:icon="package-search" i18n-en:displayName="Picking Order" name="app.erp.inv.dao.entity.ErpInvPickingOrder"
                 tableName="erp_inv_picking_order" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -514,7 +514,7 @@
 
         <!-- 拣货单行 -->
         <entity className="app.erp.inv.dao.entity.ErpInvPickingOrderLine"
-                displayName="拣货单行" name="app.erp.inv.dao.entity.ErpInvPickingOrderLine"
+                displayName="拣货单行" ext:icon="list" i18n-en:displayName="Picking Order Line" name="app.erp.inv.dao.entity.ErpInvPickingOrderLine"
                 tableName="erp_inv_picking_order_line" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -545,7 +545,7 @@
 
         <!-- 批次台账 -->
         <entity className="app.erp.inv.dao.entity.ErpInvBatch"
-                displayName="批次台账" name="app.erp.inv.dao.entity.ErpInvBatch"
+                displayName="批次台账" ext:icon="boxes" i18n-en:displayName="Batch Ledger" name="app.erp.inv.dao.entity.ErpInvBatch"
                 tableName="erp_inv_batch" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -577,7 +577,7 @@
 
         <!-- 序列号台账 -->
         <entity className="app.erp.inv.dao.entity.ErpInvSerialNumber"
-                displayName="序列号台账" name="app.erp.inv.dao.entity.ErpInvSerialNumber"
+                displayName="序列号台账" ext:icon="hash" i18n-en:displayName="Serial Number Ledger" name="app.erp.inv.dao.entity.ErpInvSerialNumber"
                 tableName="erp_inv_serial_number" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>

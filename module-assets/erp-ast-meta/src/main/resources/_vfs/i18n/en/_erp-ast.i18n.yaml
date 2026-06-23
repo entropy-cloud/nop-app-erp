@@ -1,15 +1,15 @@
 entity:
   label:
-    ErpAstAsset: null
-    ErpAstAssetCapitalization: null
-    ErpAstAssetCategory: null
-    ErpAstCip: null
-    ErpAstDepreciationSchedule: null
-    ErpAstDisposal: null
-    ErpAstMerge: null
-    ErpAstMovement: null
-    ErpAstSplit: null
-    ErpAstValueAdjustment: null
+    ErpAstAsset: Fixed Asset
+    ErpAstAssetCapitalization: Asset Capitalization
+    ErpAstAssetCategory: Asset Category
+    ErpAstCip: CIP
+    ErpAstDepreciationSchedule: Depreciation Schedule
+    ErpAstDisposal: Asset Disposal
+    ErpAstMerge: Asset Merge
+    ErpAstMovement: Asset Movement
+    ErpAstSplit: Asset Split
+    ErpAstValueAdjustment: Asset Value Adjustment
 prop:
   label:
     ErpAstAsset:

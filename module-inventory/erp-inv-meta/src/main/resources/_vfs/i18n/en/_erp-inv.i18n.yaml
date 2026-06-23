@@ -1,20 +1,20 @@
 entity:
   label:
-    ErpInvBatch: null
-    ErpInvCostLayer: null
-    ErpInvPickingOrder: null
-    ErpInvPickingOrderLine: null
-    ErpInvReservation: null
-    ErpInvReservationLine: null
-    ErpInvSerialNumber: null
-    ErpInvStockBalance: null
-    ErpInvStockLedger: null
-    ErpInvStockMove: null
-    ErpInvStockMoveLine: null
-    ErpInvStockTake: null
-    ErpInvStockTakeLine: null
-    ErpInvTransferOrder: null
-    ErpInvTransferOrderLine: null
+    ErpInvBatch: Batch Ledger
+    ErpInvCostLayer: Cost Layer
+    ErpInvPickingOrder: Picking Order
+    ErpInvPickingOrderLine: Picking Order Line
+    ErpInvReservation: Stock Reservation
+    ErpInvReservationLine: Stock Reservation Line
+    ErpInvSerialNumber: Serial Number Ledger
+    ErpInvStockBalance: Stock Balance
+    ErpInvStockLedger: Stock Ledger
+    ErpInvStockMove: Stock Move
+    ErpInvStockMoveLine: Stock Move Line
+    ErpInvStockTake: Stock Take
+    ErpInvStockTakeLine: Stock Take Line
+    ErpInvTransferOrder: Transfer Order
+    ErpInvTransferOrderLine: Transfer Order Line
 prop:
   label:
     ErpInvBatch:

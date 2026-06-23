@@ -26,7 +26,7 @@
 <orm ext:registerShortName="true" ext:appName="erp-pur" ext:entityPackageName="app.erp.pur.dao.entity"
      ext:basePackageName="app.erp.pur" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-purchase"
      ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
-     ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+     ext:allowIdAsColName="true" ext:icon="shopping-cart" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
 
     <dicts>
         <dict label="单据状态" name="erp-pur/doc-status" valueType="int">
@@ -90,7 +90,7 @@
     <entities>
         <!-- 请购单头 -->
         <entity className="app.erp.pur.dao.entity.ErpPurRequisition"
-                displayName="采购请购单" name="app.erp.pur.dao.entity.ErpPurRequisition"
+                displayName="采购请购单" ext:icon="file-text" i18n-en:displayName="Purchase Requisition" name="app.erp.pur.dao.entity.ErpPurRequisition"
                 tableName="erp_pur_requisition" tagSet="gid,erp.purchase" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -119,7 +119,7 @@
 
         <!-- 请购单行 -->
         <entity className="app.erp.pur.dao.entity.ErpPurRequisitionLine"
-                displayName="采购请购单行" name="app.erp.pur.dao.entity.ErpPurRequisitionLine"
+                displayName="采购请购单行" ext:icon="list" i18n-en:displayName="Purchase Requisition Line" name="app.erp.pur.dao.entity.ErpPurRequisitionLine"
                 tableName="erp_pur_requisition_line" tagSet="gid,erp.purchase" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -148,7 +148,7 @@
 
         <!-- 询价单头 -->
         <entity className="app.erp.pur.dao.entity.ErpPurRfq"
-                displayName="采购询价单" name="app.erp.pur.dao.entity.ErpPurRfq"
+                displayName="采购询价单" ext:icon="message-circle-question" i18n-en:displayName="Purchase RFQ" name="app.erp.pur.dao.entity.ErpPurRfq"
                 tableName="erp_pur_rfq" tagSet="gid,erp.purchase" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -176,7 +176,7 @@
 
         <!-- 询价单行 -->
         <entity className="app.erp.pur.dao.entity.ErpPurRfqLine"
-                displayName="采购询价单行" name="app.erp.pur.dao.entity.ErpPurRfqLine"
+                displayName="采购询价单行" ext:icon="list" i18n-en:displayName="Purchase RFQ Line" name="app.erp.pur.dao.entity.ErpPurRfqLine"
                 tableName="erp_pur_rfq_line" tagSet="gid,erp.purchase" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -202,7 +202,7 @@
 
         <!-- 供应商报价单头 -->
         <entity className="app.erp.pur.dao.entity.ErpPurQuotation"
-                displayName="供应商报价单" name="app.erp.pur.dao.entity.ErpPurQuotation"
+                displayName="供应商报价单" ext:icon="file-sign" i18n-en:displayName="Supplier Quotation" name="app.erp.pur.dao.entity.ErpPurQuotation"
                 tableName="erp_pur_quotation" tagSet="gid,erp.purchase" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -236,7 +236,7 @@
 
         <!-- 供应商报价单行 -->
         <entity className="app.erp.pur.dao.entity.ErpPurQuotationLine"
-                displayName="供应商报价单行" name="app.erp.pur.dao.entity.ErpPurQuotationLine"
+                displayName="供应商报价单行" ext:icon="list" i18n-en:displayName="Supplier Quotation Line" name="app.erp.pur.dao.entity.ErpPurQuotationLine"
                 tableName="erp_pur_quotation_line" tagSet="gid,erp.purchase" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -265,7 +265,7 @@
 
         <!-- 供应商价格清单（中标报价沉淀为价格主数据） -->
         <entity className="app.erp.pur.dao.entity.ErpPurSupplierPriceList"
-                displayName="供应商价格清单" name="app.erp.pur.dao.entity.ErpPurSupplierPriceList"
+                displayName="供应商价格清单" ext:icon="list-checks" i18n-en:displayName="Supplier Price List" name="app.erp.pur.dao.entity.ErpPurSupplierPriceList"
                 tableName="erp_pur_supplier_price_list" tagSet="gid,erp.purchase" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -298,7 +298,7 @@
 
         <!-- 采购订单头 -->
         <entity className="app.erp.pur.dao.entity.ErpPurOrder"
-                displayName="采购订单" name="app.erp.pur.dao.entity.ErpPurOrder"
+                displayName="采购订单" ext:icon="shopping-cart" i18n-en:displayName="Purchase Order" name="app.erp.pur.dao.entity.ErpPurOrder"
                 tableName="erp_pur_order" tagSet="gid,erp.purchase" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -350,7 +350,7 @@
 
         <!-- 采购订单行 -->
         <entity className="app.erp.pur.dao.entity.ErpPurOrderLine"
-                displayName="采购订单行" name="app.erp.pur.dao.entity.ErpPurOrderLine"
+                displayName="采购订单行" ext:icon="list" i18n-en:displayName="Purchase Order Line" name="app.erp.pur.dao.entity.ErpPurOrderLine"
                 tableName="erp_pur_order_line" tagSet="gid,erp.purchase" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -390,7 +390,7 @@
 
         <!-- 采购入库单头 -->
         <entity className="app.erp.pur.dao.entity.ErpPurReceive"
-                displayName="采购入库单" name="app.erp.pur.dao.entity.ErpPurReceive"
+                displayName="采购入库单" ext:icon="package-plus" i18n-en:displayName="Purchase Receipt" name="app.erp.pur.dao.entity.ErpPurReceive"
                 tableName="erp_pur_receive" tagSet="gid,erp.purchase" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -433,7 +433,7 @@
 
         <!-- 采购入库单行 -->
         <entity className="app.erp.pur.dao.entity.ErpPurReceiveLine"
-                displayName="采购入库单行" name="app.erp.pur.dao.entity.ErpPurReceiveLine"
+                displayName="采购入库单行" ext:icon="list" i18n-en:displayName="Purchase Receipt Line" name="app.erp.pur.dao.entity.ErpPurReceiveLine"
                 tableName="erp_pur_receive_line" tagSet="gid,erp.purchase" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -469,7 +469,7 @@
 
         <!-- 采购发票头 -->
         <entity className="app.erp.pur.dao.entity.ErpPurInvoice"
-                displayName="采购发票" name="app.erp.pur.dao.entity.ErpPurInvoice"
+                displayName="采购发票" ext:icon="receipt" i18n-en:displayName="Purchase Invoice" name="app.erp.pur.dao.entity.ErpPurInvoice"
                 tableName="erp_pur_invoice" tagSet="gid,erp.purchase" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -511,7 +511,7 @@
 
         <!-- 采购发票行 -->
         <entity className="app.erp.pur.dao.entity.ErpPurInvoiceLine"
-                displayName="采购发票行" name="app.erp.pur.dao.entity.ErpPurInvoiceLine"
+                displayName="采购发票行" ext:icon="list" i18n-en:displayName="Purchase Invoice Line" name="app.erp.pur.dao.entity.ErpPurInvoiceLine"
                 tableName="erp_pur_invoice_line" tagSet="gid,erp.purchase" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -541,7 +541,7 @@
 
         <!-- 付款单头 -->
         <entity className="app.erp.pur.dao.entity.ErpPurPayment"
-                displayName="付款单" name="app.erp.pur.dao.entity.ErpPurPayment"
+                displayName="付款单" ext:icon="banknote" i18n-en:displayName="Payment" name="app.erp.pur.dao.entity.ErpPurPayment"
                 tableName="erp_pur_payment" tagSet="gid,erp.purchase" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -584,7 +584,7 @@
 
         <!-- 付款核销行（付款与发票多对多） -->
         <entity className="app.erp.pur.dao.entity.ErpPurPaymentLine"
-                displayName="付款核销行" name="app.erp.pur.dao.entity.ErpPurPaymentLine"
+                displayName="付款核销行" ext:icon="list" i18n-en:displayName="Payment Settlement Line" name="app.erp.pur.dao.entity.ErpPurPaymentLine"
                 tableName="erp_pur_payment_line" tagSet="gid,erp.purchase" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -607,7 +607,7 @@
 
         <!-- 采购退货单头 -->
         <entity className="app.erp.pur.dao.entity.ErpPurReturn"
-                displayName="采购退货单" name="app.erp.pur.dao.entity.ErpPurReturn"
+                displayName="采购退货单" ext:icon="undo-2" i18n-en:displayName="Purchase Return" name="app.erp.pur.dao.entity.ErpPurReturn"
                 tableName="erp_pur_return" tagSet="gid,erp.purchase" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -649,7 +649,7 @@
 
         <!-- 采购退货单行 -->
         <entity className="app.erp.pur.dao.entity.ErpPurReturnLine"
-                displayName="采购退货单行" name="app.erp.pur.dao.entity.ErpPurReturnLine"
+                displayName="采购退货单行" ext:icon="list" i18n-en:displayName="Purchase Return Line" name="app.erp.pur.dao.entity.ErpPurReturnLine"
                 tableName="erp_pur_return_line" tagSet="gid,erp.purchase" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>

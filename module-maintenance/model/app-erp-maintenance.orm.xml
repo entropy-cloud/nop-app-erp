@@ -27,7 +27,7 @@
 <orm ext:registerShortName="true" ext:appName="erp-mnt" ext:entityPackageName="app.erp.mnt.dao.entity"
      ext:basePackageName="app.erp.mnt" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-maintenance"
      ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
-     ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+     ext:allowIdAsColName="true" ext:icon="wrench" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
 
     <dicts>
         <dict label="维护计划类型" name="erp-mnt/schedule-type" valueType="int">
@@ -119,7 +119,7 @@
     <entities>
         <!-- 设备 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntEquipment"
-                displayName="设备" name="app.erp.mnt.dao.entity.ErpMntEquipment"
+                displayName="设备" ext:icon="cog" i18n-en:displayName="Equipment" name="app.erp.mnt.dao.entity.ErpMntEquipment"
                 tableName="erp_mnt_equipment" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -153,7 +153,7 @@
 
         <!-- 设备分类 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntEquipmentCategory"
-                displayName="设备分类" name="app.erp.mnt.dao.entity.ErpMntEquipmentCategory"
+                displayName="设备分类" ext:icon="folder-tree" i18n-en:displayName="Equipment Category" name="app.erp.mnt.dao.entity.ErpMntEquipmentCategory"
                 tableName="erp_mnt_equipment_category" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -175,7 +175,7 @@
 
         <!-- 维护计划 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntSchedule"
-                displayName="维护计划" name="app.erp.mnt.dao.entity.ErpMntSchedule"
+                displayName="维护计划" ext:icon="calendar-clock" i18n-en:displayName="Maintenance Schedule" name="app.erp.mnt.dao.entity.ErpMntSchedule"
                 tableName="erp_mnt_schedule" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -205,7 +205,7 @@
 
         <!-- 维护访问 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntVisit"
-                displayName="维护访问" name="app.erp.mnt.dao.entity.ErpMntVisit"
+                displayName="维护访问" ext:icon="clipboard-check" i18n-en:displayName="Maintenance Visit" name="app.erp.mnt.dao.entity.ErpMntVisit"
                 tableName="erp_mnt_visit" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -242,7 +242,7 @@
 
         <!-- 维护任务 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntVisitTask"
-                displayName="维护任务" name="app.erp.mnt.dao.entity.ErpMntVisitTask"
+                displayName="维护任务" ext:icon="list-checks" i18n-en:displayName="Maintenance Task" name="app.erp.mnt.dao.entity.ErpMntVisitTask"
                 tableName="erp_mnt_visit_task" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -267,7 +267,7 @@
 
         <!-- 维护请求 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntRequest"
-                displayName="维护请求" name="app.erp.mnt.dao.entity.ErpMntRequest"
+                displayName="维护请求" ext:icon="life-buoy" i18n-en:displayName="Maintenance Request" name="app.erp.mnt.dao.entity.ErpMntRequest"
                 tableName="erp_mnt_request" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -297,7 +297,7 @@
 
         <!-- 停机记录 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntDowntimeEntry"
-                displayName="停机记录" name="app.erp.mnt.dao.entity.ErpMntDowntimeEntry"
+                displayName="停机记录" ext:icon="timer-off" i18n-en:displayName="Downtime Entry" name="app.erp.mnt.dao.entity.ErpMntDowntimeEntry"
                 tableName="erp_mnt_downtime_entry" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -322,7 +322,7 @@
 
         <!-- 维护团队 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntMaintenanceTeam"
-                displayName="维护团队" name="app.erp.mnt.dao.entity.ErpMntMaintenanceTeam"
+                displayName="维护团队" ext:icon="users" i18n-en:displayName="Maintenance Team" name="app.erp.mnt.dao.entity.ErpMntMaintenanceTeam"
                 tableName="erp_mnt_maintenance_team" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -347,7 +347,7 @@
 
         <!-- 维护团队成员 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntMaintenanceTeamMember"
-                displayName="维护团队成员" name="app.erp.mnt.dao.entity.ErpMntMaintenanceTeamMember"
+                displayName="维护团队成员" ext:icon="user-round" i18n-en:displayName="Maintenance Team Member" name="app.erp.mnt.dao.entity.ErpMntMaintenanceTeamMember"
                 tableName="erp_mnt_maintenance_team_member" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -371,7 +371,7 @@
 
         <!-- 备件消耗行（维修消耗备件触发 inventory 出库） -->
         <entity className="app.erp.mnt.dao.entity.ErpMntSparePartUsage"
-                displayName="备件消耗" name="app.erp.mnt.dao.entity.ErpMntSparePartUsage"
+                displayName="备件消耗" ext:icon="package-minus" i18n-en:displayName="Spare Part Usage" name="app.erp.mnt.dao.entity.ErpMntSparePartUsage"
                 tableName="erp_mnt_spare_part_usage" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -406,7 +406,7 @@
 
         <!-- 备件消耗行 -->
         <entity className="app.erp.mnt.dao.entity.ErpMntSparePartUsageLine"
-                displayName="备件消耗行" name="app.erp.mnt.dao.entity.ErpMntSparePartUsageLine"
+                displayName="备件消耗行" ext:icon="list" i18n-en:displayName="Spare Part Usage Line" name="app.erp.mnt.dao.entity.ErpMntSparePartUsageLine"
                 tableName="erp_mnt_spare_part_usage_line" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -435,7 +435,7 @@
 
         <!-- 校准记录（量具/设备校准） -->
         <entity className="app.erp.mnt.dao.entity.ErpMntCalibration"
-                displayName="校准记录" name="app.erp.mnt.dao.entity.ErpMntCalibration"
+                displayName="校准记录" ext:icon="gauge" i18n-en:displayName="Calibration" name="app.erp.mnt.dao.entity.ErpMntCalibration"
                 tableName="erp_mnt_calibration" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>

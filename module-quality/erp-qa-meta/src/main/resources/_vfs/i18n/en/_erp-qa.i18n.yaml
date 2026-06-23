@@ -1,16 +1,16 @@
 entity:
   label:
-    ErpQaAction: null
-    ErpQaCalibration: null
-    ErpQaInspection: null
-    ErpQaInspectionLine: null
-    ErpQaInspectionTemplate: null
-    ErpQaInspectionTemplateLine: null
-    ErpQaNonConformance: null
-    ErpQaQualityGoal: null
-    ErpQaReview: null
-    ErpQaRiskRegister: null
-    ErpQaSamplingPlan: null
+    ErpQaAction: Corrective Action
+    ErpQaCalibration: Gauge Calibration
+    ErpQaInspection: Inspection
+    ErpQaInspectionLine: Inspection Line
+    ErpQaInspectionTemplate: Inspection Template
+    ErpQaInspectionTemplateLine: Inspection Template Line
+    ErpQaNonConformance: Non-Conformance Report
+    ErpQaQualityGoal: Quality Goal
+    ErpQaReview: Quality Review
+    ErpQaRiskRegister: Risk Register
+    ErpQaSamplingPlan: Sampling Plan
 prop:
   label:
     ErpQaAction:

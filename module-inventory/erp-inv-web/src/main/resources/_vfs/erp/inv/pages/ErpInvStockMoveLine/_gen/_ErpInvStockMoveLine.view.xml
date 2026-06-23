@@ -83,7 +83,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-库存移动单行" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-库存移动单行" i18n-en:title="View Stock Move Line">
             <layout>
  id[ID] moveId[移动单ID]
  lineNo[行号] materialId[物料]
@@ -97,7 +97,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-库存移动单行" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-库存移动单行" i18n-en:title="Add Stock Move Line">
             <layout>
  id[ID] moveId[移动单ID]
  lineNo[行号] materialId[物料]
@@ -109,7 +109,7 @@
  remark[备注] 
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-库存移动单行" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-库存移动单行" i18n-en:title="Edit Stock Move Line">
             <layout>
  id[ID] moveId[移动单ID]
  lineNo[行号] materialId[物料]
@@ -123,7 +123,8 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-库存移动单行" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-库存移动单行"
+              i18n-en:title="Update Stock Move Line"/>
     </forms>
 
     <pages>

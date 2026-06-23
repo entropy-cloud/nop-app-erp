@@ -53,7 +53,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-收款核销行" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-收款核销行" i18n-en:title="View Receipt Settlement Line">
             <layout>
  id[ID] receiptId[收款单ID]
  invoiceId[发票ID] amount[核销金额]
@@ -62,7 +62,7 @@
  updateTime[修改时间] remark[备注]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-收款核销行" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-收款核销行" i18n-en:title="Add Receipt Settlement Line">
             <layout>
  id[ID]
  receiptId[收款单ID]
@@ -71,7 +71,7 @@
  remark[备注]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-收款核销行" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-收款核销行" i18n-en:title="Edit Receipt Settlement Line">
             <layout>
  id[ID]
  receiptId[收款单ID]
@@ -83,7 +83,8 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-收款核销行" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-收款核销行"
+              i18n-en:title="Update Receipt Settlement Line"/>
     </forms>
 
     <pages>

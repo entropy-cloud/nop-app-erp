@@ -86,7 +86,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-项目" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-项目" i18n-en:title="View Project">
             <layout>
  id[ID] code[项目编码]
  name[项目名称] orgId[业务组织]
@@ -101,7 +101,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-项目" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-项目" i18n-en:title="Add Project">
             <layout>
  id[ID] code[项目编码]
  name[项目名称] orgId[业务组织]
@@ -113,7 +113,7 @@
  managerId[项目经理(职员)] remark[备注]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-项目" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-项目" i18n-en:title="Edit Project">
             <layout>
  id[ID] code[项目编码]
  name[项目名称] orgId[业务组织]
@@ -128,7 +128,7 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-项目" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-项目" i18n-en:title="Update Project"/>
     </forms>
 
     <pages>

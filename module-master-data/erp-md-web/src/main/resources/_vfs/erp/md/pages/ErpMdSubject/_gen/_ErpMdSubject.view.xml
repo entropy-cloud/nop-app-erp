@@ -86,7 +86,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-会计科目" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-会计科目" i18n-en:title="View Accounting Subject">
             <layout>
  id[ID] code[科目编码]
  name[科目名称] parentId[父级科目]
@@ -101,7 +101,7 @@
  remark[备注] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-会计科目" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-会计科目" i18n-en:title="Add Accounting Subject">
             <layout>
  id[ID] code[科目编码]
  name[科目名称] parentId[父级科目]
@@ -113,7 +113,7 @@
  status[状态] remark[备注]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-会计科目" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-会计科目" i18n-en:title="Edit Accounting Subject">
             <layout>
  id[ID] code[科目编码]
  name[科目名称] parentId[父级科目]
@@ -128,7 +128,8 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-会计科目" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-会计科目"
+              i18n-en:title="Update Accounting Subject"/>
     </forms>
 
     <pages>

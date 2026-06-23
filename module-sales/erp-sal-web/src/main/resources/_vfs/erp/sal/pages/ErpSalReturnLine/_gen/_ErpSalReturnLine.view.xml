@@ -80,7 +80,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-销售退货单行" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-销售退货单行" i18n-en:title="View Sales Return Line">
             <layout>
  id[ID] returnId[退货单ID]
  deliveryLineId[出库行ID] lineNo[行号]
@@ -94,7 +94,7 @@
  remark[备注] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-销售退货单行" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-销售退货单行" i18n-en:title="Add Sales Return Line">
             <layout>
  id[ID] returnId[退货单ID]
  deliveryLineId[出库行ID] lineNo[行号]
@@ -105,7 +105,7 @@
  reason[退货原因] remark[备注]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-销售退货单行" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-销售退货单行" i18n-en:title="Edit Sales Return Line">
             <layout>
  id[ID] returnId[退货单ID]
  deliveryLineId[出库行ID] lineNo[行号]
@@ -119,7 +119,8 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-销售退货单行" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-销售退货单行"
+              i18n-en:title="Update Sales Return Line"/>
     </forms>
 
     <pages>

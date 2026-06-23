@@ -68,7 +68,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-税率" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-税率" i18n-en:title="View Tax Rate">
             <layout>
  id[ID] code[税率编码]
  name[税率名称] taxType[税种]
@@ -80,7 +80,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-税率" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-税率" i18n-en:title="Add Tax Rate">
             <layout>
  id[ID] code[税率编码]
  name[税率名称] taxType[税种]
@@ -89,7 +89,7 @@
  validTo[失效日期] status[状态]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-税率" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-税率" i18n-en:title="Edit Tax Rate">
             <layout>
  id[ID] code[税率编码]
  name[税率名称] taxType[税种]
@@ -101,7 +101,7 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-税率" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-税率" i18n-en:title="Update Tax Rate"/>
     </forms>
 
     <pages>

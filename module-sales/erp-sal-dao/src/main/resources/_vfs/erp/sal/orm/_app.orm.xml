@@ -2,9 +2,9 @@
 <orm ext:registerShortName="true" ext:appName="erp-sal" ext:entityPackageName="app.erp.sal.dao.entity"
      ext:basePackageName="app.erp.sal" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-sales"
      ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
-     ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef"
-     xmlns:i18n-en="i18n-en" xmlns:ref-i18n-en="ref-i18n-en" xmlns:ext="ext" xmlns:orm-gen="orm-gen" xmlns:xpl="xpl"
-     xmlns:ui="ui">
+     ext:allowIdAsColName="true" ext:icon="receipt" xmlns:i18n-en="i18n-en" x:schema="/nop/schema/orm/orm.xdef"
+     xmlns:x="/nop/schema/xdsl.xdef" xmlns:ref-i18n-en="ref-i18n-en" xmlns:ext="ext" xmlns:orm-gen="orm-gen"
+     xmlns:xpl="xpl" xmlns:ui="ui">
 
     <x:post-extends x:override="replace">
         <orm-gen:DefaultPostExtends xpl:lib="/nop/orm/xlib/orm-gen.xlib"/>
@@ -73,7 +73,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售报价单"
                 name="app.erp.sal.dao.entity.ErpSalQuotation" registerShortName="true" tableName="erp_sal_quotation"
                 tagSet="gid,erp.sales" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                versionProp="version" ext:icon="file-sign" i18n-en:displayName="Sales Quotation">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -144,7 +144,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售报价单行"
                 name="app.erp.sal.dao.entity.ErpSalQuotationLine" registerShortName="true"
                 tableName="erp_sal_quotation_line" tagSet="gid,erp.sales" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list"
+                i18n-en:displayName="Sales Quotation Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -205,7 +206,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售合同"
                 name="app.erp.sal.dao.entity.ErpSalContract" registerShortName="true" tableName="erp_sal_contract"
                 tagSet="gid,erp.sales" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                versionProp="version" ext:icon="file-text" i18n-en:displayName="Sales Contract">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -272,7 +273,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售订单"
                 name="app.erp.sal.dao.entity.ErpSalOrder" registerShortName="true" tableName="erp_sal_order"
                 tagSet="gid,erp.sales" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                versionProp="version" ext:icon="receipt" i18n-en:displayName="Sales Order">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -388,7 +389,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售订单行"
                 name="app.erp.sal.dao.entity.ErpSalOrderLine" registerShortName="true" tableName="erp_sal_order_line"
                 tagSet="gid,erp.sales" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                versionProp="version" ext:icon="list" i18n-en:displayName="Sales Order Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -477,7 +478,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售出库单"
                 name="app.erp.sal.dao.entity.ErpSalDelivery" registerShortName="true" tableName="erp_sal_delivery"
                 tagSet="gid,erp.sales" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                versionProp="version" ext:icon="package-minus" i18n-en:displayName="Sales Delivery">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -566,7 +567,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售出库单行"
                 name="app.erp.sal.dao.entity.ErpSalDeliveryLine" registerShortName="true"
                 tableName="erp_sal_delivery_line" tagSet="gid,erp.sales" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list"
+                i18n-en:displayName="Sales Delivery Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -637,7 +639,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售发票"
                 name="app.erp.sal.dao.entity.ErpSalInvoice" registerShortName="true" tableName="erp_sal_invoice"
                 tagSet="gid,erp.sales" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                versionProp="version" ext:icon="receipt" i18n-en:displayName="Sales Invoice">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -723,7 +725,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售发票行"
                 name="app.erp.sal.dao.entity.ErpSalInvoiceLine" registerShortName="true"
                 tableName="erp_sal_invoice_line" tagSet="gid,erp.sales" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list"
+                i18n-en:displayName="Sales Invoice Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -779,7 +782,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="收款单"
                 name="app.erp.sal.dao.entity.ErpSalReceipt" registerShortName="true" tableName="erp_sal_receipt"
                 tagSet="gid,erp.sales" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                versionProp="version" ext:icon="banknote" i18n-en:displayName="Receipt">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -868,7 +871,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="收款核销行"
                 name="app.erp.sal.dao.entity.ErpSalReceiptLine" registerShortName="true"
                 tableName="erp_sal_receipt_line" tagSet="gid,erp.sales" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list"
+                i18n-en:displayName="Receipt Settlement Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -910,7 +914,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售退货单"
                 name="app.erp.sal.dao.entity.ErpSalReturn" registerShortName="true" tableName="erp_sal_return"
                 tagSet="gid,erp.sales" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                versionProp="version" ext:icon="undo-2" i18n-en:displayName="Sales Return">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -999,7 +1003,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售退货单行"
                 name="app.erp.sal.dao.entity.ErpSalReturnLine" registerShortName="true" tableName="erp_sal_return_line"
                 tagSet="gid,erp.sales" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version">
+                versionProp="version" ext:icon="list" i18n-en:displayName="Sales Return Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default"/>

@@ -53,7 +53,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-计量单位" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-计量单位" i18n-en:title="View Unit of Measure">
             <layout>
  id[ID] code[编码]
  name[名称] uoMGroup[单位组]
@@ -62,7 +62,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-计量单位" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-计量单位" i18n-en:title="Add Unit of Measure">
             <layout>
  id[ID]
  code[编码]
@@ -71,7 +71,7 @@
  isBase[是否基本单位]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-计量单位" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-计量单位" i18n-en:title="Edit Unit of Measure">
             <layout>
  id[ID]
  code[编码]
@@ -83,7 +83,7 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-计量单位" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-计量单位" i18n-en:title="Update Unit of Measure"/>
     </forms>
 
     <pages>

@@ -1,130 +1,130 @@
 site:
   resource:
     ErpMfgBom-main:
-      displayName: ''
+      displayName: BOM
     ErpMfgBomByproduct-main:
-      displayName: ''
+      displayName: BOM By-product
     ErpMfgBomLine-main:
-      displayName: ''
+      displayName: BOM Line
     ErpMfgBomOperation-main:
-      displayName: ''
+      displayName: BOM Operation
     ErpMfgCostRollup-main:
-      displayName: ''
+      displayName: Cost Rollup
     ErpMfgCostRollupLine-main:
-      displayName: ''
+      displayName: Cost Rollup Line
     ErpMfgJobCard-main:
-      displayName: ''
+      displayName: Job Card
     ErpMfgJobCardTimeLog-main:
-      displayName: ''
+      displayName: Job Card Time Log
     ErpMfgMaterialIssue-main:
-      displayName: ''
+      displayName: Material Issue
     ErpMfgMaterialIssueLine-main:
-      displayName: ''
+      displayName: Material Issue Line
     ErpMfgMrpDemand-main:
-      displayName: ''
+      displayName: MRP Demand
     ErpMfgMrpPlan-main:
-      displayName: ''
+      displayName: MRP Plan
     ErpMfgMrpPlanLine-main:
-      displayName: ''
+      displayName: MRP Plan Line
     ErpMfgProductionVersion-main:
-      displayName: ''
+      displayName: Production Version
     ErpMfgRouting-main:
-      displayName: ''
+      displayName: Routing
     ErpMfgRoutingOperation-main:
-      displayName: ''
+      displayName: Routing Operation
     ErpMfgSubcontractOrder-main:
-      displayName: ''
+      displayName: Subcontract Order
     ErpMfgSubcontractOrderLine-main:
-      displayName: ''
+      displayName: Subcontract Order Line
     ErpMfgWorkOrder-main:
-      displayName: ''
+      displayName: Work Order
     ErpMfgWorkOrderLine-main:
-      displayName: ''
+      displayName: Work Order Line
     ErpMfgWorkcenter-main:
-      displayName: ''
+      displayName: Work Center
     FNPT:ErpMfgBom:mutation:
-      displayName: ''
+      displayName: Modify BOM
     FNPT:ErpMfgBom:query:
-      displayName: ''
+      displayName: Query BOM
     FNPT:ErpMfgBomByproduct:mutation:
-      displayName: ''
+      displayName: Modify BOM By-product
     FNPT:ErpMfgBomByproduct:query:
-      displayName: ''
+      displayName: Query BOM By-product
     FNPT:ErpMfgBomLine:mutation:
-      displayName: ''
+      displayName: Modify BOM Line
     FNPT:ErpMfgBomLine:query:
-      displayName: ''
+      displayName: Query BOM Line
     FNPT:ErpMfgBomOperation:mutation:
-      displayName: ''
+      displayName: Modify BOM Operation
     FNPT:ErpMfgBomOperation:query:
-      displayName: ''
+      displayName: Query BOM Operation
     FNPT:ErpMfgCostRollup:mutation:
-      displayName: ''
+      displayName: Modify Cost Rollup
     FNPT:ErpMfgCostRollup:query:
-      displayName: ''
+      displayName: Query Cost Rollup
     FNPT:ErpMfgCostRollupLine:mutation:
-      displayName: ''
+      displayName: Modify Cost Rollup Line
     FNPT:ErpMfgCostRollupLine:query:
-      displayName: ''
+      displayName: Query Cost Rollup Line
     FNPT:ErpMfgJobCard:mutation:
-      displayName: ''
+      displayName: Modify Job Card
     FNPT:ErpMfgJobCard:query:
-      displayName: ''
+      displayName: Query Job Card
     FNPT:ErpMfgJobCardTimeLog:mutation:
-      displayName: ''
+      displayName: Modify Job Card Time Log
     FNPT:ErpMfgJobCardTimeLog:query:
-      displayName: ''
+      displayName: Query Job Card Time Log
     FNPT:ErpMfgMaterialIssue:mutation:
-      displayName: ''
+      displayName: Modify Material Issue
     FNPT:ErpMfgMaterialIssue:query:
-      displayName: ''
+      displayName: Query Material Issue
     FNPT:ErpMfgMaterialIssueLine:mutation:
-      displayName: ''
+      displayName: Modify Material Issue Line
     FNPT:ErpMfgMaterialIssueLine:query:
-      displayName: ''
+      displayName: Query Material Issue Line
     FNPT:ErpMfgMrpDemand:mutation:
-      displayName: ''
+      displayName: Modify MRP Demand
     FNPT:ErpMfgMrpDemand:query:
-      displayName: ''
+      displayName: Query MRP Demand
     FNPT:ErpMfgMrpPlan:mutation:
-      displayName: ''
+      displayName: Modify MRP Plan
     FNPT:ErpMfgMrpPlan:query:
-      displayName: ''
+      displayName: Query MRP Plan
     FNPT:ErpMfgMrpPlanLine:mutation:
-      displayName: ''
+      displayName: Modify MRP Plan Line
     FNPT:ErpMfgMrpPlanLine:query:
-      displayName: ''
+      displayName: Query MRP Plan Line
     FNPT:ErpMfgProductionVersion:mutation:
-      displayName: ''
+      displayName: Modify Production Version
     FNPT:ErpMfgProductionVersion:query:
-      displayName: ''
+      displayName: Query Production Version
     FNPT:ErpMfgRouting:mutation:
-      displayName: ''
+      displayName: Modify Routing
     FNPT:ErpMfgRouting:query:
-      displayName: ''
+      displayName: Query Routing
     FNPT:ErpMfgRoutingOperation:mutation:
-      displayName: ''
+      displayName: Modify Routing Operation
     FNPT:ErpMfgRoutingOperation:query:
-      displayName: ''
+      displayName: Query Routing Operation
     FNPT:ErpMfgSubcontractOrder:mutation:
-      displayName: ''
+      displayName: Modify Subcontract Order
     FNPT:ErpMfgSubcontractOrder:query:
-      displayName: ''
+      displayName: Query Subcontract Order
     FNPT:ErpMfgSubcontractOrderLine:mutation:
-      displayName: ''
+      displayName: Modify Subcontract Order Line
     FNPT:ErpMfgSubcontractOrderLine:query:
-      displayName: ''
+      displayName: Query Subcontract Order Line
     FNPT:ErpMfgWorkOrder:mutation:
-      displayName: ''
+      displayName: Modify Work Order
     FNPT:ErpMfgWorkOrder:query:
-      displayName: ''
+      displayName: Query Work Order
     FNPT:ErpMfgWorkOrderLine:mutation:
-      displayName: ''
+      displayName: Modify Work Order Line
     FNPT:ErpMfgWorkOrderLine:query:
-      displayName: ''
+      displayName: Query Work Order Line
     FNPT:ErpMfgWorkcenter:mutation:
-      displayName: ''
+      displayName: Modify Work Center
     FNPT:ErpMfgWorkcenter:query:
-      displayName: ''
+      displayName: Query Work Center
     test-orm-erp-mfg:
       displayName: Test erp-mfg

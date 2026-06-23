@@ -59,7 +59,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-往来单位地址" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-往来单位地址" i18n-en:title="View Partner Address">
             <layout>
  id[ID] partnerId[往来单位]
  addressType[地址类型] contactPerson[联系人]
@@ -69,7 +69,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-往来单位地址" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-往来单位地址" i18n-en:title="Add Partner Address">
             <layout>
  id[ID]
  partnerId[往来单位]
@@ -80,7 +80,7 @@
  isDefault[是否默认]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-往来单位地址" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-往来单位地址" i18n-en:title="Edit Partner Address">
             <layout>
  id[ID]
  partnerId[往来单位]
@@ -94,7 +94,8 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-往来单位地址" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-往来单位地址"
+              i18n-en:title="Update Partner Address"/>
     </forms>
 
     <pages>

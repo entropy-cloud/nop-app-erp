@@ -25,7 +25,7 @@
 <orm ext:registerShortName="true" ext:appName="erp-prj" ext:entityPackageName="app.erp.prj.dao.entity"
      ext:basePackageName="app.erp.prj" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-projects"
      ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
-     ext:allowIdAsColName="true" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+     ext:allowIdAsColName="true" ext:icon="briefcase" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
 
     <dicts>
         <dict label="项目状态" name="erp-prj/project-status" valueType="int">
@@ -80,7 +80,7 @@
     <entities>
         <!-- 项目 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjProject"
-                displayName="项目" name="app.erp.prj.dao.entity.ErpPrjProject"
+                displayName="项目" ext:icon="briefcase" i18n-en:displayName="Project" name="app.erp.prj.dao.entity.ErpPrjProject"
                 tableName="erp_prj_project" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -120,7 +120,7 @@
 
         <!-- 任务 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjTask"
-                displayName="任务" name="app.erp.prj.dao.entity.ErpPrjTask"
+                displayName="任务" ext:icon="list-checks" i18n-en:displayName="Task" name="app.erp.prj.dao.entity.ErpPrjTask"
                 tableName="erp_prj_task" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -158,7 +158,7 @@
 
         <!-- 工时记录 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjTimesheet"
-                displayName="工时记录" name="app.erp.prj.dao.entity.ErpPrjTimesheet"
+                displayName="工时记录" ext:icon="clock" i18n-en:displayName="Timesheet" name="app.erp.prj.dao.entity.ErpPrjTimesheet"
                 tableName="erp_prj_timesheet" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -198,7 +198,7 @@
 
         <!-- 项目类型 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjProjectType"
-                displayName="项目类型" name="app.erp.prj.dao.entity.ErpPrjProjectType"
+                displayName="项目类型" ext:icon="folder" i18n-en:displayName="Project Type" name="app.erp.prj.dao.entity.ErpPrjProjectType"
                 tableName="erp_prj_project_type" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -220,7 +220,7 @@
 
         <!-- 活动类型 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjActivityType"
-                displayName="活动类型" name="app.erp.prj.dao.entity.ErpPrjActivityType"
+                displayName="活动类型" ext:icon="folder" i18n-en:displayName="Activity Type" name="app.erp.prj.dao.entity.ErpPrjActivityType"
                 tableName="erp_prj_activity_type" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -243,7 +243,7 @@
 
         <!-- 项目成员 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjProjectUser"
-                displayName="项目成员" name="app.erp.prj.dao.entity.ErpPrjProjectUser"
+                displayName="项目成员" ext:icon="users" i18n-en:displayName="Project Member" name="app.erp.prj.dao.entity.ErpPrjProjectUser"
                 tableName="erp_prj_project_user" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -267,7 +267,7 @@
 
         <!-- 项目预算头 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjBudget"
-                displayName="项目预算" name="app.erp.prj.dao.entity.ErpPrjBudget"
+                displayName="项目预算" ext:icon="wallet" i18n-en:displayName="Project Budget" name="app.erp.prj.dao.entity.ErpPrjBudget"
                 tableName="erp_prj_budget" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -295,7 +295,7 @@
 
         <!-- 项目预算行 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjBudgetLine"
-                displayName="项目预算行" name="app.erp.prj.dao.entity.ErpPrjBudgetLine"
+                displayName="项目预算行" ext:icon="list" i18n-en:displayName="Project Budget Line" name="app.erp.prj.dao.entity.ErpPrjBudgetLine"
                 tableName="erp_prj_budget_line" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -323,7 +323,7 @@
 
         <!-- 项目成本归集头（汇总采购/工时/费用到项目） -->
         <entity className="app.erp.prj.dao.entity.ErpPrjCostCollection"
-                displayName="项目成本归集" name="app.erp.prj.dao.entity.ErpPrjCostCollection"
+                displayName="项目成本归集" ext:icon="coins" i18n-en:displayName="Project Cost Collection" name="app.erp.prj.dao.entity.ErpPrjCostCollection"
                 tableName="erp_prj_cost_collection" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -357,7 +357,7 @@
 
         <!-- 项目成本归集行 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjCostCollectionLine"
-                displayName="项目成本归集行" name="app.erp.prj.dao.entity.ErpPrjCostCollectionLine"
+                displayName="项目成本归集行" ext:icon="list" i18n-en:displayName="Project Cost Collection Line" name="app.erp.prj.dao.entity.ErpPrjCostCollectionLine"
                 tableName="erp_prj_cost_collection_line" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -385,7 +385,7 @@
 
         <!-- 项目里程碑 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjMilestone"
-                displayName="项目里程碑" name="app.erp.prj.dao.entity.ErpPrjMilestone"
+                displayName="项目里程碑" ext:icon="flag" i18n-en:displayName="Project Milestone" name="app.erp.prj.dao.entity.ErpPrjMilestone"
                 tableName="erp_prj_milestone" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -412,7 +412,7 @@
 
         <!-- 项目开票头 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjBilling"
-                displayName="项目开票" name="app.erp.prj.dao.entity.ErpPrjBilling"
+                displayName="项目开票" ext:icon="receipt" i18n-en:displayName="Project Billing" name="app.erp.prj.dao.entity.ErpPrjBilling"
                 tableName="erp_prj_billing" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
@@ -450,7 +450,7 @@
 
         <!-- 项目开票行 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjBillingLine"
-                displayName="项目开票行" name="app.erp.prj.dao.entity.ErpPrjBillingLine"
+                displayName="项目开票行" ext:icon="list" i18n-en:displayName="Project Billing Line" name="app.erp.prj.dao.entity.ErpPrjBillingLine"
                 tableName="erp_prj_billing_line" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>

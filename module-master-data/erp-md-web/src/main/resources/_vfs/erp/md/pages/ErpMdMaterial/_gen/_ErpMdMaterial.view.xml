@@ -95,7 +95,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-物料" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-物料" i18n-en:title="View Material">
             <layout>
  id[ID] code[物料编码]
  name[物料名称] materialType[物料类型]
@@ -111,7 +111,7 @@
  updateTime[修改时间] remark[备注]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-物料" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-物料" i18n-en:title="Add Material">
             <layout>
  id[ID] code[物料编码]
  name[物料名称] materialType[物料类型]
@@ -125,7 +125,7 @@
  remark[备注] 
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-物料" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-物料" i18n-en:title="Edit Material">
             <layout>
  id[ID] code[物料编码]
  name[物料名称] materialType[物料类型]
@@ -141,7 +141,7 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-物料" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-物料" i18n-en:title="Update Material"/>
     </forms>
 
     <pages>

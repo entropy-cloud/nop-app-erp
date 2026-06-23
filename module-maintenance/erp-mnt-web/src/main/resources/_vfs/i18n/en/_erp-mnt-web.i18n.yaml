@@ -1,76 +1,76 @@
 site:
   resource:
     ErpMntCalibration-main:
-      displayName: ''
+      displayName: Calibration
     ErpMntDowntimeEntry-main:
-      displayName: ''
+      displayName: Downtime Entry
     ErpMntEquipment-main:
-      displayName: ''
+      displayName: Equipment
     ErpMntEquipmentCategory-main:
-      displayName: ''
+      displayName: Equipment Category
     ErpMntMaintenanceTeam-main:
-      displayName: ''
+      displayName: Maintenance Team
     ErpMntMaintenanceTeamMember-main:
-      displayName: ''
+      displayName: Maintenance Team Member
     ErpMntRequest-main:
-      displayName: ''
+      displayName: Maintenance Request
     ErpMntSchedule-main:
-      displayName: ''
+      displayName: Maintenance Schedule
     ErpMntSparePartUsage-main:
-      displayName: ''
+      displayName: Spare Part Usage
     ErpMntSparePartUsageLine-main:
-      displayName: ''
+      displayName: Spare Part Usage Line
     ErpMntVisit-main:
-      displayName: ''
+      displayName: Maintenance Visit
     ErpMntVisitTask-main:
-      displayName: ''
+      displayName: Maintenance Task
     FNPT:ErpMntCalibration:mutation:
-      displayName: ''
+      displayName: Modify Calibration
     FNPT:ErpMntCalibration:query:
-      displayName: ''
+      displayName: Query Calibration
     FNPT:ErpMntDowntimeEntry:mutation:
-      displayName: ''
+      displayName: Modify Downtime Entry
     FNPT:ErpMntDowntimeEntry:query:
-      displayName: ''
+      displayName: Query Downtime Entry
     FNPT:ErpMntEquipment:mutation:
-      displayName: ''
+      displayName: Modify Equipment
     FNPT:ErpMntEquipment:query:
-      displayName: ''
+      displayName: Query Equipment
     FNPT:ErpMntEquipmentCategory:mutation:
-      displayName: ''
+      displayName: Modify Equipment Category
     FNPT:ErpMntEquipmentCategory:query:
-      displayName: ''
+      displayName: Query Equipment Category
     FNPT:ErpMntMaintenanceTeam:mutation:
-      displayName: ''
+      displayName: Modify Maintenance Team
     FNPT:ErpMntMaintenanceTeam:query:
-      displayName: ''
+      displayName: Query Maintenance Team
     FNPT:ErpMntMaintenanceTeamMember:mutation:
-      displayName: ''
+      displayName: Modify Maintenance Team Member
     FNPT:ErpMntMaintenanceTeamMember:query:
-      displayName: ''
+      displayName: Query Maintenance Team Member
     FNPT:ErpMntRequest:mutation:
-      displayName: ''
+      displayName: Modify Maintenance Request
     FNPT:ErpMntRequest:query:
-      displayName: ''
+      displayName: Query Maintenance Request
     FNPT:ErpMntSchedule:mutation:
-      displayName: ''
+      displayName: Modify Maintenance Schedule
     FNPT:ErpMntSchedule:query:
-      displayName: ''
+      displayName: Query Maintenance Schedule
     FNPT:ErpMntSparePartUsage:mutation:
-      displayName: ''
+      displayName: Modify Spare Part Usage
     FNPT:ErpMntSparePartUsage:query:
-      displayName: ''
+      displayName: Query Spare Part Usage
     FNPT:ErpMntSparePartUsageLine:mutation:
-      displayName: ''
+      displayName: Modify Spare Part Usage Line
     FNPT:ErpMntSparePartUsageLine:query:
-      displayName: ''
+      displayName: Query Spare Part Usage Line
     FNPT:ErpMntVisit:mutation:
-      displayName: ''
+      displayName: Modify Maintenance Visit
     FNPT:ErpMntVisit:query:
-      displayName: ''
+      displayName: Query Maintenance Visit
     FNPT:ErpMntVisitTask:mutation:
-      displayName: ''
+      displayName: Modify Maintenance Task
     FNPT:ErpMntVisitTask:query:
-      displayName: ''
+      displayName: Query Maintenance Task
     test-orm-erp-mnt:
       displayName: Test erp-mnt

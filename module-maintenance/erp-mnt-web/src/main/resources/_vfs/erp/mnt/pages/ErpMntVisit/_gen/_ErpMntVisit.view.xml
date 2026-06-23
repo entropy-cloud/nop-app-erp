@@ -92,7 +92,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-维护访问" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-维护访问" i18n-en:title="View Maintenance Visit">
             <layout>
  id[ID] code[访问编码]
  scheduleId[维护计划ID] equipmentId[设备ID]
@@ -108,7 +108,7 @@
  postedBy[过账人] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-维护访问" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-维护访问" i18n-en:title="Add Maintenance Visit">
             <layout>
  id[ID] code[访问编码]
  scheduleId[维护计划ID] equipmentId[设备ID]
@@ -121,7 +121,7 @@
  postedAt[过账时间] postedBy[过账人]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-维护访问" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-维护访问" i18n-en:title="Edit Maintenance Visit">
             <layout>
  id[ID] code[访问编码]
  scheduleId[维护计划ID] equipmentId[设备ID]
@@ -137,7 +137,8 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-维护访问" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-维护访问"
+              i18n-en:title="Update Maintenance Visit"/>
     </forms>
 
     <pages>

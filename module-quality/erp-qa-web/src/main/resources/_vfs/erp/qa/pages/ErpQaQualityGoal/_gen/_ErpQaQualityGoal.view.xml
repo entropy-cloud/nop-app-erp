@@ -74,7 +74,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-质量目标" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-质量目标" i18n-en:title="View Quality Goal">
             <layout>
  id[ID] code[编码]
  name[名称] description[描述]
@@ -87,7 +87,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-质量目标" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-质量目标" i18n-en:title="Add Quality Goal">
             <layout>
  id[ID] code[编码]
  name[名称] description[描述]
@@ -97,7 +97,7 @@
  status[状态] remark[备注]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-质量目标" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-质量目标" i18n-en:title="Edit Quality Goal">
             <layout>
  id[ID] code[编码]
  name[名称] description[描述]
@@ -110,7 +110,7 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-质量目标" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-质量目标" i18n-en:title="Update Quality Goal"/>
     </forms>
 
     <pages>

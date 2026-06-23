@@ -68,7 +68,7 @@
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-备件消耗行" i18n-en:title="">
+        <form id="view" editMode="view" title="查看-备件消耗行" i18n-en:title="View Spare Part Usage Line">
             <layout>
  id[ID] sparePartUsageId[备件消耗单ID]
  lineNo[行号] materialId[备件(物料)]
@@ -80,7 +80,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-备件消耗行" i18n-en:title="">
+        <form id="add" editMode="add" title="新增-备件消耗行" i18n-en:title="Add Spare Part Usage Line">
             <layout>
  id[ID] sparePartUsageId[备件消耗单ID]
  lineNo[行号] materialId[备件(物料)]
@@ -89,7 +89,7 @@
  batchNo[批号] remark[备注]
 </layout>
         </form>
-        <form id="edit" editMode="edit" title="编辑-备件消耗行" i18n-en:title="">
+        <form id="edit" editMode="edit" title="编辑-备件消耗行" i18n-en:title="Edit Spare Part Usage Line">
             <layout>
  id[ID] sparePartUsageId[备件消耗单ID]
  lineNo[行号] materialId[备件(物料)]
@@ -101,7 +101,8 @@
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-备件消耗行" i18n-en:title=""/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-备件消耗行"
+              i18n-en:title="Update Spare Part Usage Line"/>
     </forms>
 
     <pages>

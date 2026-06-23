@@ -2,158 +2,162 @@
 <auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
 
     <site id="main">
-        <resource id="test-orm-erp-qa" displayName="测试erp-qa" i18n-en:displayName="Test erp-qa" icon="ion:grid-outline"
+        <resource id="test-orm-erp-qa" displayName="测试erp-qa" i18n-en:displayName="Test erp-qa" icon="shield-check"
                   resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-qa" component="layouts/default/index">
             <children>
-                <resource id="ErpQaAction-main" displayName="纠正预防措施" orderNo="10001" i18n-en:displayName=""
-                          icon="blocks" component="AMIS" resourceType="SUBM"
-                          url="/erp/qa/pages/ErpQaAction/main.page.yaml">
+                <resource id="ErpQaAction-main" displayName="纠正预防措施" orderNo="10001"
+                          i18n-en:displayName="Corrective Action" icon="shield-alert" component="AMIS"
+                          resourceType="SUBM" url="/erp/qa/pages/ErpQaAction/main.page.yaml">
                     <children>
-                        <resource id="FNPT:ErpQaAction:query" displayName="查询纠正预防措施" i18n-en:displayName=""
-                                  orderNo="10002" resourceType="FNPT">
+                        <resource id="FNPT:ErpQaAction:query" displayName="查询纠正预防措施"
+                                  i18n-en:displayName="Query Corrective Action" orderNo="10002" resourceType="FNPT">
                             <permissions>ErpQaAction:query</permissions>
                         </resource>
-                        <resource id="FNPT:ErpQaAction:mutation" displayName="修改纠正预防措施" i18n-en:displayName=""
-                                  orderNo="10003" resourceType="FNPT">
+                        <resource id="FNPT:ErpQaAction:mutation" displayName="修改纠正预防措施"
+                                  i18n-en:displayName="Modify Corrective Action" orderNo="10003" resourceType="FNPT">
                             <permissions>ErpQaAction:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpQaCalibration-main" displayName="量具校准" orderNo="10004" i18n-en:displayName=""
-                          icon="blocks" component="AMIS" resourceType="SUBM"
+                <resource id="ErpQaCalibration-main" displayName="量具校准" orderNo="10004"
+                          i18n-en:displayName="Gauge Calibration" icon="gauge" component="AMIS" resourceType="SUBM"
                           url="/erp/qa/pages/ErpQaCalibration/main.page.yaml">
                     <children>
-                        <resource id="FNPT:ErpQaCalibration:query" displayName="查询量具校准" i18n-en:displayName=""
-                                  orderNo="10005" resourceType="FNPT">
+                        <resource id="FNPT:ErpQaCalibration:query" displayName="查询量具校准"
+                                  i18n-en:displayName="Query Gauge Calibration" orderNo="10005" resourceType="FNPT">
                             <permissions>ErpQaCalibration:query</permissions>
                         </resource>
-                        <resource id="FNPT:ErpQaCalibration:mutation" displayName="修改量具校准" i18n-en:displayName=""
-                                  orderNo="10006" resourceType="FNPT">
+                        <resource id="FNPT:ErpQaCalibration:mutation" displayName="修改量具校准"
+                                  i18n-en:displayName="Modify Gauge Calibration" orderNo="10006" resourceType="FNPT">
                             <permissions>ErpQaCalibration:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpQaInspection-main" displayName="质检单" orderNo="10007" i18n-en:displayName=""
-                          icon="blocks" component="AMIS" resourceType="SUBM"
+                <resource id="ErpQaInspection-main" displayName="质检单" orderNo="10007" i18n-en:displayName="Inspection"
+                          icon="clipboard-check" component="AMIS" resourceType="SUBM"
                           url="/erp/qa/pages/ErpQaInspection/main.page.yaml">
                     <children>
-                        <resource id="FNPT:ErpQaInspection:query" displayName="查询质检单" i18n-en:displayName=""
-                                  orderNo="10008" resourceType="FNPT">
+                        <resource id="FNPT:ErpQaInspection:query" displayName="查询质检单"
+                                  i18n-en:displayName="Query Inspection" orderNo="10008" resourceType="FNPT">
                             <permissions>ErpQaInspection:query</permissions>
                         </resource>
-                        <resource id="FNPT:ErpQaInspection:mutation" displayName="修改质检单" i18n-en:displayName=""
-                                  orderNo="10009" resourceType="FNPT">
+                        <resource id="FNPT:ErpQaInspection:mutation" displayName="修改质检单"
+                                  i18n-en:displayName="Modify Inspection" orderNo="10009" resourceType="FNPT">
                             <permissions>ErpQaInspection:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpQaInspectionLine-main" displayName="质检单行" orderNo="10010" i18n-en:displayName=""
-                          icon="blocks" component="AMIS" resourceType="SUBM"
+                <resource id="ErpQaInspectionLine-main" displayName="质检单行" orderNo="10010"
+                          i18n-en:displayName="Inspection Line" icon="list" component="AMIS" resourceType="SUBM"
                           url="/erp/qa/pages/ErpQaInspectionLine/main.page.yaml">
                     <children>
-                        <resource id="FNPT:ErpQaInspectionLine:query" displayName="查询质检单行" i18n-en:displayName=""
-                                  orderNo="10011" resourceType="FNPT">
+                        <resource id="FNPT:ErpQaInspectionLine:query" displayName="查询质检单行"
+                                  i18n-en:displayName="Query Inspection Line" orderNo="10011" resourceType="FNPT">
                             <permissions>ErpQaInspectionLine:query</permissions>
                         </resource>
-                        <resource id="FNPT:ErpQaInspectionLine:mutation" displayName="修改质检单行" i18n-en:displayName=""
-                                  orderNo="10012" resourceType="FNPT">
+                        <resource id="FNPT:ErpQaInspectionLine:mutation" displayName="修改质检单行"
+                                  i18n-en:displayName="Modify Inspection Line" orderNo="10012" resourceType="FNPT">
                             <permissions>ErpQaInspectionLine:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpQaInspectionTemplate-main" displayName="质检模板" orderNo="10013" i18n-en:displayName=""
-                          icon="blocks" component="AMIS" resourceType="SUBM"
-                          url="/erp/qa/pages/ErpQaInspectionTemplate/main.page.yaml">
+                <resource id="ErpQaInspectionTemplate-main" displayName="质检模板" orderNo="10013"
+                          i18n-en:displayName="Inspection Template" icon="file-check-2" component="AMIS"
+                          resourceType="SUBM" url="/erp/qa/pages/ErpQaInspectionTemplate/main.page.yaml">
                     <children>
-                        <resource id="FNPT:ErpQaInspectionTemplate:query" displayName="查询质检模板" i18n-en:displayName=""
-                                  orderNo="10014" resourceType="FNPT">
+                        <resource id="FNPT:ErpQaInspectionTemplate:query" displayName="查询质检模板"
+                                  i18n-en:displayName="Query Inspection Template" orderNo="10014" resourceType="FNPT">
                             <permissions>ErpQaInspectionTemplate:query</permissions>
                         </resource>
-                        <resource id="FNPT:ErpQaInspectionTemplate:mutation" displayName="修改质检模板" i18n-en:displayName=""
-                                  orderNo="10015" resourceType="FNPT">
+                        <resource id="FNPT:ErpQaInspectionTemplate:mutation" displayName="修改质检模板"
+                                  i18n-en:displayName="Modify Inspection Template" orderNo="10015" resourceType="FNPT">
                             <permissions>ErpQaInspectionTemplate:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
                 <resource id="ErpQaInspectionTemplateLine-main" displayName="质检模板行" orderNo="10016"
-                          i18n-en:displayName="" icon="blocks" component="AMIS" resourceType="SUBM"
-                          url="/erp/qa/pages/ErpQaInspectionTemplateLine/main.page.yaml">
+                          i18n-en:displayName="Inspection Template Line" icon="list" component="AMIS"
+                          resourceType="SUBM" url="/erp/qa/pages/ErpQaInspectionTemplateLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpQaInspectionTemplateLine:query" displayName="查询质检模板行"
-                                  i18n-en:displayName="" orderNo="10017" resourceType="FNPT">
+                                  i18n-en:displayName="Query Inspection Template Line" orderNo="10017"
+                                  resourceType="FNPT">
                             <permissions>ErpQaInspectionTemplateLine:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpQaInspectionTemplateLine:mutation" displayName="修改质检模板行"
-                                  i18n-en:displayName="" orderNo="10018" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Inspection Template Line" orderNo="10018"
+                                  resourceType="FNPT">
                             <permissions>ErpQaInspectionTemplateLine:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpQaNonConformance-main" displayName="不合格品报告" orderNo="10019" i18n-en:displayName=""
-                          icon="blocks" component="AMIS" resourceType="SUBM"
-                          url="/erp/qa/pages/ErpQaNonConformance/main.page.yaml">
+                <resource id="ErpQaNonConformance-main" displayName="不合格品报告" orderNo="10019"
+                          i18n-en:displayName="Non-Conformance Report" icon="x-circle" component="AMIS"
+                          resourceType="SUBM" url="/erp/qa/pages/ErpQaNonConformance/main.page.yaml">
                     <children>
-                        <resource id="FNPT:ErpQaNonConformance:query" displayName="查询不合格品报告" i18n-en:displayName=""
-                                  orderNo="10020" resourceType="FNPT">
+                        <resource id="FNPT:ErpQaNonConformance:query" displayName="查询不合格品报告"
+                                  i18n-en:displayName="Query Non-Conformance Report" orderNo="10020" resourceType="FNPT">
                             <permissions>ErpQaNonConformance:query</permissions>
                         </resource>
-                        <resource id="FNPT:ErpQaNonConformance:mutation" displayName="修改不合格品报告" i18n-en:displayName=""
-                                  orderNo="10021" resourceType="FNPT">
+                        <resource id="FNPT:ErpQaNonConformance:mutation" displayName="修改不合格品报告"
+                                  i18n-en:displayName="Modify Non-Conformance Report" orderNo="10021"
+                                  resourceType="FNPT">
                             <permissions>ErpQaNonConformance:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpQaQualityGoal-main" displayName="质量目标" orderNo="10022" i18n-en:displayName=""
-                          icon="blocks" component="AMIS" resourceType="SUBM"
+                <resource id="ErpQaQualityGoal-main" displayName="质量目标" orderNo="10022"
+                          i18n-en:displayName="Quality Goal" icon="target" component="AMIS" resourceType="SUBM"
                           url="/erp/qa/pages/ErpQaQualityGoal/main.page.yaml">
                     <children>
-                        <resource id="FNPT:ErpQaQualityGoal:query" displayName="查询质量目标" i18n-en:displayName=""
-                                  orderNo="10023" resourceType="FNPT">
+                        <resource id="FNPT:ErpQaQualityGoal:query" displayName="查询质量目标"
+                                  i18n-en:displayName="Query Quality Goal" orderNo="10023" resourceType="FNPT">
                             <permissions>ErpQaQualityGoal:query</permissions>
                         </resource>
-                        <resource id="FNPT:ErpQaQualityGoal:mutation" displayName="修改质量目标" i18n-en:displayName=""
-                                  orderNo="10024" resourceType="FNPT">
+                        <resource id="FNPT:ErpQaQualityGoal:mutation" displayName="修改质量目标"
+                                  i18n-en:displayName="Modify Quality Goal" orderNo="10024" resourceType="FNPT">
                             <permissions>ErpQaQualityGoal:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpQaReview-main" displayName="质量评审" orderNo="10025" i18n-en:displayName="" icon="blocks"
-                          component="AMIS" resourceType="SUBM" url="/erp/qa/pages/ErpQaReview/main.page.yaml">
+                <resource id="ErpQaReview-main" displayName="质量评审" orderNo="10025" i18n-en:displayName="Quality Review"
+                          icon="clipboard-list" component="AMIS" resourceType="SUBM"
+                          url="/erp/qa/pages/ErpQaReview/main.page.yaml">
                     <children>
-                        <resource id="FNPT:ErpQaReview:query" displayName="查询质量评审" i18n-en:displayName=""
-                                  orderNo="10026" resourceType="FNPT">
+                        <resource id="FNPT:ErpQaReview:query" displayName="查询质量评审"
+                                  i18n-en:displayName="Query Quality Review" orderNo="10026" resourceType="FNPT">
                             <permissions>ErpQaReview:query</permissions>
                         </resource>
-                        <resource id="FNPT:ErpQaReview:mutation" displayName="修改质量评审" i18n-en:displayName=""
-                                  orderNo="10027" resourceType="FNPT">
+                        <resource id="FNPT:ErpQaReview:mutation" displayName="修改质量评审"
+                                  i18n-en:displayName="Modify Quality Review" orderNo="10027" resourceType="FNPT">
                             <permissions>ErpQaReview:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpQaRiskRegister-main" displayName="风险登记" orderNo="10028" i18n-en:displayName=""
-                          icon="blocks" component="AMIS" resourceType="SUBM"
+                <resource id="ErpQaRiskRegister-main" displayName="风险登记" orderNo="10028"
+                          i18n-en:displayName="Risk Register" icon="alert-triangle" component="AMIS" resourceType="SUBM"
                           url="/erp/qa/pages/ErpQaRiskRegister/main.page.yaml">
                     <children>
-                        <resource id="FNPT:ErpQaRiskRegister:query" displayName="查询风险登记" i18n-en:displayName=""
-                                  orderNo="10029" resourceType="FNPT">
+                        <resource id="FNPT:ErpQaRiskRegister:query" displayName="查询风险登记"
+                                  i18n-en:displayName="Query Risk Register" orderNo="10029" resourceType="FNPT">
                             <permissions>ErpQaRiskRegister:query</permissions>
                         </resource>
-                        <resource id="FNPT:ErpQaRiskRegister:mutation" displayName="修改风险登记" i18n-en:displayName=""
-                                  orderNo="10030" resourceType="FNPT">
+                        <resource id="FNPT:ErpQaRiskRegister:mutation" displayName="修改风险登记"
+                                  i18n-en:displayName="Modify Risk Register" orderNo="10030" resourceType="FNPT">
                             <permissions>ErpQaRiskRegister:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpQaSamplingPlan-main" displayName="抽样方案" orderNo="10031" i18n-en:displayName=""
-                          icon="blocks" component="AMIS" resourceType="SUBM"
+                <resource id="ErpQaSamplingPlan-main" displayName="抽样方案" orderNo="10031"
+                          i18n-en:displayName="Sampling Plan" icon="layers" component="AMIS" resourceType="SUBM"
                           url="/erp/qa/pages/ErpQaSamplingPlan/main.page.yaml">
                     <children>
-                        <resource id="FNPT:ErpQaSamplingPlan:query" displayName="查询抽样方案" i18n-en:displayName=""
-                                  orderNo="10032" resourceType="FNPT">
+                        <resource id="FNPT:ErpQaSamplingPlan:query" displayName="查询抽样方案"
+                                  i18n-en:displayName="Query Sampling Plan" orderNo="10032" resourceType="FNPT">
                             <permissions>ErpQaSamplingPlan:query</permissions>
                         </resource>
-                        <resource id="FNPT:ErpQaSamplingPlan:mutation" displayName="修改抽样方案" i18n-en:displayName=""
-                                  orderNo="10033" resourceType="FNPT">
+                        <resource id="FNPT:ErpQaSamplingPlan:mutation" displayName="修改抽样方案"
+                                  i18n-en:displayName="Modify Sampling Plan" orderNo="10033" resourceType="FNPT">
                             <permissions>ErpQaSamplingPlan:mutation</permissions>
                         </resource>
                     </children>
