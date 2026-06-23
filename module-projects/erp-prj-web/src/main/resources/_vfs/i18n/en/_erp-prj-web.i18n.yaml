@@ -32,7 +32,13 @@ site:
       displayName: Projects Overview
     prj-dashboard-main:
       displayName: Projects Overview
+    prj-profitability:
+      displayName: Profitability
     prj-project:
       displayName: Project
     prj-task:
       displayName: Task & Timesheet
+    project-pnl:
+      displayName: Project P&L
+    project-settlement:
+      displayName: Project Settlement

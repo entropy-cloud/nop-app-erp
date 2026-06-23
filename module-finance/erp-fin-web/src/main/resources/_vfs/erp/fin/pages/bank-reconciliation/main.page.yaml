@@ -1,0 +1,7 @@
+type: page
+title: "Main"
+body:
+  - type: alert
+    body: "Main — 待实现占位页面(设计见 docs/design/...)"
+    level: info
+    className: m-3

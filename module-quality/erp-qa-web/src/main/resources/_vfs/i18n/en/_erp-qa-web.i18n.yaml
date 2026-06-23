@@ -34,5 +34,13 @@ site:
       displayName: Inspection
     qa-ncr:
       displayName: Non-Conformance
+    qa-spc:
+      displayName: SPC
     qa-standard:
       displayName: Standard
+    spc-capability:
+      displayName: SPC Capability
+    spc-chart:
+      displayName: SPC Chart
+    spc-sample:
+      displayName: SPC Sample

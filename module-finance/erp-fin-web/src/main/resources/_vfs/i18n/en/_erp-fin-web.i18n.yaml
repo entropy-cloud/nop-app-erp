@@ -22,6 +22,16 @@ site:
       displayName: Voucher Template
     balance-sheet:
       displayName: Balance Sheet
+    bank-ledger-line:
+      displayName: Bank Ledger Line
+    bank-reconciliation:
+      displayName: Bank Reconciliation
+    bank-statement:
+      displayName: Bank Statement
+    budget-control-log:
+      displayName: Budget Control Log
+    budget-scenario:
+      displayName: Budget Scenario
     cash-flow:
       displayName: Cash Flow Statement
     erp-fin:
@@ -30,6 +40,10 @@ site:
       displayName: Expense Claim
     fin-arap:
       displayName: AR/AP
+    fin-bank-recon:
+      displayName: Bank Reconciliation
+    fin-budget:
+      displayName: Budget
     fin-dashboard:
       displayName: Finance Overview
     fin-dashboard-main:

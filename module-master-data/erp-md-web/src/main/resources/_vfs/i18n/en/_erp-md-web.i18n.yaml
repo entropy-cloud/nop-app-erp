@@ -40,10 +40,14 @@ site:
       displayName: UoM Conversion
     ErpMdWarehouse-main:
       displayName: Warehouse
+    cost-center:
+      displayName: Cost Center
     erp-md:
       displayName: Master Data
     md-account:
       displayName: Accounting Subject
+    md-cost-center:
+      displayName: Cost Center
     md-dashboard:
       displayName: Master Data Overview
     md-dashboard-main:

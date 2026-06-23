@@ -135,6 +135,38 @@
                                   url="/erp/fin/pages/dashboard/main.page.yaml"/>
                     </children>
                 </resource>
+                <!-- 预算管理 -->
+                <resource id="fin-budget" displayName="预算管理" i18n-en:displayName="Budget"
+                          icon="wallet" resourceType="SUBM" orderNo="1000">
+                    <children>
+                        <resource id="budget-scenario" displayName="预算方案"
+                                  i18n-en:displayName="Budget Scenario" icon="wallet"
+                                  component="AMIS" resourceType="SUBM" orderNo="10010"
+                                  url="/erp/fin/pages/budget-scenario/main.page.yaml"/>
+                        <resource id="budget-control-log" displayName="预算控制日志"
+                                  i18n-en:displayName="Budget Control Log" icon="shield-alert"
+                                  component="AMIS" resourceType="SUBM" orderNo="10020"
+                                  url="/erp/fin/pages/budget-control-log/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 银行对账 -->
+                <resource id="fin-bank-recon" displayName="银行对账" i18n-en:displayName="Bank Reconciliation"
+                          icon="landmark" resourceType="SUBM" orderNo="1100">
+                    <children>
+                        <resource id="bank-statement" displayName="银行对账单"
+                                  i18n-en:displayName="Bank Statement" icon="receipt"
+                                  component="AMIS" resourceType="SUBM" orderNo="11010"
+                                  url="/erp/fin/pages/bank-statement/main.page.yaml"/>
+                        <resource id="bank-ledger-line" displayName="账面流水"
+                                  i18n-en:displayName="Bank Ledger Line" icon="list"
+                                  component="AMIS" resourceType="SUBM" orderNo="11020"
+                                  url="/erp/fin/pages/bank-ledger-line/main.page.yaml"/>
+                        <resource id="bank-reconciliation" displayName="余额调节表"
+                                  i18n-en:displayName="Bank Reconciliation" icon="scale"
+                                  component="AMIS" resourceType="SUBM" orderNo="11030"
+                                  url="/erp/fin/pages/bank-reconciliation/main.page.yaml"/>
+                    </children>
+                </resource>
             </children>
         </resource>
     </site>

@@ -168,6 +168,24 @@
 - 删除各系统模块的测试菜单根(test-orm-nop-*)
 - 启动验证:11 个 TOPM(10 业务域 + 系统管理)全部正确,菜单 dump 正常
 
+
+
+### 6.4 minor gap 彻底完成(7 项全部落地)
+
+第二轮对照后剩余的 7 项 minor gap 全部完成设计与菜单落地:
+
+| minor 项 | 设计文档 | 菜单落地 | 关键设计 |
+|---|---|---|---|
+| 预算管理 | `docs/design/finance/budget.md` | finance「预算管理」 | PostingType=BUDGET 影子凭证,复用 GlBalance(iDempiere 范式) |
+| 成本中心维度 | `docs/design/finance/cost-center.md` | md「核算维度」+ finance「科目分摊」 | 凭证行 costCenterId 物理列 + GL Distribution(IErpFinFactsValidator) |
+| 银行对账 | `docs/design/finance/bank-reconciliation.md` | finance「银行对账」 | 银行流水独立表 + 双向勾对 + 未达账项调整凭证(ERPNext) |
+| SPC 统计过程控制 | `docs/design/quality/spc.md` | quality「过程控制 SPC」 | 从 InspectionLine 聚合,控制图/Cp/Cpk/失控预警(WMES 边界) |
+| 项目盈利分析 | `docs/design/projects/profitability.md` | projects「盈利分析」 | 复用 Billing/CostCollection,损益汇总 + 结算转固(Odoo) |
+| nop-job 接入 | (本节) | 系统管理(nop-job-local) | 方案 A:nop-job-local 本地 BeanMethod,绕开 RPC,启动验证通过 |
+| 中国本地化金税 | `docs/design/l10n/cn-golden-tax.md` | 新 TOPM「中国本地化」 | 独立 module-l10n-cn 工程(OCA 模式),凭证指针反查核心域 |
+
+**nop-job 接入**:nop-job-service 的 RpcJobInvoker 强依赖 IRpcServiceInvoker(nop-rpc-cluster),单机缺失。改用 nop-job-local(BeanMethodJobInvoker 本地反射,无 RPC),VFS `/nop/job/conf/scheduler.yaml` 配置任务。当前接入框架(启动验证通过),job bean 实现后启用。
+
 ## 7. 修复后总览
 
 修复后菜单规模:11 个 TOPM(10 业务域 + 系统管理),约 70 分组,约 150 菜单项。覆盖:

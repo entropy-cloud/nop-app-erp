@@ -91,6 +91,20 @@
                                   url="/erp/prj/pages/dashboard/main.page.yaml"/>
                     </children>
                 </resource>
+                <!-- 盈利分析 -->
+                <resource id="prj-profitability" displayName="盈利分析" i18n-en:displayName="Profitability"
+                          icon="trending-up" resourceType="SUBM" orderNo="700">
+                    <children>
+                        <resource id="project-pnl" displayName="项目损益汇总"
+                                  i18n-en:displayName="Project P&amp;L" icon="trending-up"
+                                  component="AMIS" resourceType="SUBM" orderNo="70010"
+                                  url="/erp/prj/pages/project-pnl/main.page.yaml"/>
+                        <resource id="project-settlement" displayName="项目结算单"
+                                  i18n-en:displayName="Project Settlement" icon="file-text"
+                                  component="AMIS" resourceType="SUBM" orderNo="70020"
+                                  url="/erp/prj/pages/project-settlement/main.page.yaml"/>
+                    </children>
+                </resource>
             </children>
         </resource>
     </site>

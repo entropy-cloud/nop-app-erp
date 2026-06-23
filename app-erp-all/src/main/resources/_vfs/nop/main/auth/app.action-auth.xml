@@ -25,6 +25,35 @@
         <resource id="test-orm-nop-wf" x:override="remove"/>
         <resource id="test-orm-nop-report" x:override="remove"/>
 
+        <!-- 中国本地化:金税接口(L10N CN,独立 module-l10n-cn 工程,设计阶段) -->
+        <resource id="erp-l10n-cn" displayName="中国本地化" i18n-en:displayName="L10N CN"
+                  icon="map-pin" resourceType="TOPM" orderNo="3000"
+                  routePath="/erp-l10n-cn" component="layouts/default/index">
+            <children>
+                <resource id="l10n-cn-invoice" displayName="增值税发票" i18n-en:displayName="VAT Invoice"
+                          icon="receipt" resourceType="SUBM" orderNo="100">
+                    <children>
+                        <resource id="l10n-cn-vat-invoice" displayName="增值税发票"
+                                  i18n-en:displayName="VAT Invoice" icon="receipt"
+                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  url="/erp/l10n-cn/pages/ErpL10nCnVatInvoice/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="l10n-cn-config" displayName="金税配置" i18n-en:displayName="Config"
+                          icon="sliders-horizontal" resourceType="SUBM" orderNo="200">
+                    <children>
+                        <resource id="l10n-cn-golden-tax-log" displayName="金税接口日志"
+                                  i18n-en:displayName="Golden Tax Log" icon="list"
+                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  url="/erp/l10n-cn/pages/ErpL10nCnGoldenTaxLog/main.page.yaml"/>
+                        <resource id="l10n-cn-tax-rate" displayName="税率配置"
+                                  i18n-en:displayName="Tax Rate" icon="percent"
+                                  component="AMIS" resourceType="SUBM" orderNo="210"
+                                  url="/erp/l10n-cn/pages/ErpL10nCnTaxRate/main.page.yaml"/>
+                    </children>
+                </resource>
+            </children>
+        </resource>
         <!-- 系统管理:聚合系统级功能的顶层菜单 -->
         <resource id="erp-sys" displayName="系统管理" i18n-en:displayName="System"
                   icon="settings" resourceType="TOPM" orderNo="2000"

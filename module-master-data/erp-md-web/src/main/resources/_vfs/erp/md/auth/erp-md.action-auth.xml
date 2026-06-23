@@ -137,6 +137,16 @@
                                   url="/erp/md/pages/dashboard/main.page.yaml"/>
                     </children>
                 </resource>
+                <!-- 核算维度 -->
+                <resource id="md-cost-center" displayName="核算维度" i18n-en:displayName="Cost Center"
+                          icon="git-branch" resourceType="SUBM" orderNo="700">
+                    <children>
+                        <resource id="cost-center" displayName="成本中心"
+                                  i18n-en:displayName="Cost Center" icon="git-branch"
+                                  component="AMIS" resourceType="SUBM" orderNo="70010"
+                                  url="/erp/md/pages/cost-center/main.page.yaml"/>
+                    </children>
+                </resource>
             </children>
         </resource>
     </site>

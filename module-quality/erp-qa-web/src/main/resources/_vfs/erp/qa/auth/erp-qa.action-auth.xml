@@ -91,6 +91,24 @@
                                   url="/erp/qa/pages/dashboard/main.page.yaml"/>
                     </children>
                 </resource>
+                <!-- 过程控制(SPC) -->
+                <resource id="qa-spc" displayName="过程控制(SPC)" i18n-en:displayName="SPC"
+                          icon="activity" resourceType="SUBM" orderNo="700">
+                    <children>
+                        <resource id="spc-chart" displayName="控制图配置"
+                                  i18n-en:displayName="SPC Chart" icon="activity"
+                                  component="AMIS" resourceType="SUBM" orderNo="70010"
+                                  url="/erp/qa/pages/spc-chart/main.page.yaml"/>
+                        <resource id="spc-sample" displayName="样本数据"
+                                  i18n-en:displayName="SPC Sample" icon="list"
+                                  component="AMIS" resourceType="SUBM" orderNo="70020"
+                                  url="/erp/qa/pages/spc-sample/main.page.yaml"/>
+                        <resource id="spc-capability" displayName="过程能力分析"
+                                  i18n-en:displayName="SPC Capability" icon="bar-chart-3"
+                                  component="AMIS" resourceType="SUBM" orderNo="70030"
+                                  url="/erp/qa/pages/spc-capability/main.page.yaml"/>
+                    </children>
+                </resource>
             </children>
         </resource>
     </site>
