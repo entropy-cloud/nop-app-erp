@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.nop.app</groupId>
-    <artifactId>app-erp-app</artifactId>
+    <artifactId>app-erp-all</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>

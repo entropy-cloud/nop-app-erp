@@ -1,4 +1,4 @@
-package app.erp.app;
+package app.erp.all;
 
 import io.nop.boot.NopApplication;
 import io.nop.core.initialize.CoreInitialization;
