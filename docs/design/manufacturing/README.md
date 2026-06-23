@@ -84,6 +84,7 @@
 | `README.md`（本文件） | 域概览、BOM/工单模型、跨域协作 |
 | `state-machine.md` | 工单与作业卡状态机 |
 | `bom-and-routing.md` | BOM 结构、工艺路线、展开规则、成本计算 |
+| `material-reservation.md` | 工单物料预留设计（预留量计算、齐套校验、预留释放） |
 
 ## 实现落位提示
 
