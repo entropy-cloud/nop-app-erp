@@ -11,6 +11,7 @@
 
 ## 顶层分析报告
 
+- `2026-06-23-0004-configuration-comparison.md` — **配置项对照分析（产品级/用户级/系统级三层）**：对照 erp-survey 中 9 个开源 ERP（Odoo/ERPNext/iDempiere/Metasfresh/管伊佳/赤龙/星云/若依/Dolibarr）的配置机制。结论：nop-app-erp 配置只覆盖系统级+产品级两层（且产品级 42 键代码零落地），用户级完全空白，粒度仅全局。对照 iDempiere/Metasfresh 的 Client+Org 双层粒度、ERPNext 的 doctype 化、星云的按模块审批配置，有 6 项改进（P0 产品级落地 NopSysConfig / P1 粒度租户组织级 / P1 审批按模块配置化 / P2 用户级 / P2 规范化治理 / P2 生产 profile）。
 - `2026-06-23-0003-menu-and-feature-completeness.md` — **菜单设计与功能完整性对照分析**：10 域菜单落地后，对照 erp-survey 中 10+ 开源 ERP（ERPNext/Odoo/赤龙/iDempiere/Atlas 等）逐域核查功能覆盖。结论：功能完整、菜单合理，145 实体 51 分组 105 菜单项覆盖主流 ERP 核心能力，无重大缺口。3 个可增强点（projects 调研深化/Calibration 归属/看板细化）+ 1 个层级取舍（三级 vs 两级）均非阻塞。菜单权威定义在各域 `erp-{short}.action-auth.xml`，本报告不复述。
 - `2026-06-23-0002-design-doc-audit.md` — **设计文档审计（design-doc-audit-prompt 11 维度）**：裁决 fail（1 blocker + 5 major）。blocker：反审核目标态在 guidelines/flow-overview（REJECTED）与 purchase/sales state-machine（UNSUBMITTED）间冲突。major：erp-design-audit-checklist 重复维护点且混入实施状态、专题文档抄写 ORM schema 越界、词汇表状态集滞后 §11、核销 owner 错指、Java 伪代码越界架构层。
 - `2026-06-23-0001-business-flow-coverage-audit.md` — **业务流程覆盖与准确性审计**：发现并补齐 4 类流程缺口（委外加工/生产异常返工报废退料/两步调拨在途/状态命名规范）+ 修正 2 处描述（状态命名三套并存、反审核目标态应为 REJECTED 非 UNSUBMITTED）。补齐前约 85% → 补齐后 100% 核心业务闭环。
