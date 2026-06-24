@@ -129,7 +129,7 @@
                 <resource id="fin-dashboard" displayName="财务概览" i18n-en:displayName="Finance Overview"
                           icon="pie-chart" resourceType="SUBM" orderNo="999">
                     <children>
-                        <resource id="fin-dashboard-main" displayName="财务概览"
+                        <resource id="fin-dashboard-main" app:useCases="UC-FIN-17" displayName="财务概览"
                                   i18n-en:displayName="Finance Overview" icon="pie-chart"
                                   component="AMIS" resourceType="SUBM" orderNo="9990"
                                   url="/erp/fin/pages/dashboard/main.page.yaml"/>

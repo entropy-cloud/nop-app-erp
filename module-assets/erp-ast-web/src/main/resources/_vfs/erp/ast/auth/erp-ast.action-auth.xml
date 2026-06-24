@@ -93,7 +93,7 @@
                 <resource id="ast-dashboard" displayName="资产概览" i18n-en:displayName="Assets Overview"
                           icon="truck" resourceType="SUBM" orderNo="999">
                     <children>
-                        <resource id="ast-dashboard-main" displayName="资产概览"
+                        <resource id="ast-dashboard-main" app:useCases="UC-AST-12" displayName="资产概览"
                                   i18n-en:displayName="Assets Overview" icon="truck"
                                   component="AMIS" resourceType="SUBM" orderNo="9990"
                                   url="/erp/ast/pages/dashboard/main.page.yaml"/>

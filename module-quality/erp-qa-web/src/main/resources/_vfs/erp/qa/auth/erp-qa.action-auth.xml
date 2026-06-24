@@ -85,7 +85,7 @@
                 <resource id="qa-dashboard" displayName="质量概览" i18n-en:displayName="Quality Overview"
                           icon="bar-chart-3" resourceType="SUBM" orderNo="999">
                     <children>
-                        <resource id="qa-dashboard-main" displayName="质量概览"
+                        <resource id="qa-dashboard-main" app:useCases="UC-QA-12" displayName="质量概览"
                                   i18n-en:displayName="Quality Overview" icon="bar-chart-3"
                                   component="AMIS" resourceType="SUBM" orderNo="9990"
                                   url="/erp/qa/pages/dashboard/main.page.yaml"/>

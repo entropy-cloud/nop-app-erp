@@ -97,7 +97,7 @@
                 <resource id="inv-dashboard" displayName="库存概览" i18n-en:displayName="Inventory Overview"
                           icon="boxes" resourceType="SUBM" orderNo="999">
                     <children>
-                        <resource id="inv-dashboard-main" displayName="库存概览"
+                        <resource id="inv-dashboard-main" app:useCases="UC-INV-11" displayName="库存概览"
                                   i18n-en:displayName="Inventory Overview" icon="boxes"
                                   component="AMIS" resourceType="SUBM" orderNo="9990"
                                   url="/erp/inv/pages/dashboard/main.page.yaml"/>

@@ -99,7 +99,7 @@
                 <resource id="sal-dashboard" displayName="销售概览" i18n-en:displayName="Sales Overview"
                           icon="trending-up" resourceType="SUBM" orderNo="999">
                     <children>
-                        <resource id="sal-dashboard-main" displayName="销售概览"
+                        <resource id="sal-dashboard-main" app:useCases="UC-SAL-12" displayName="销售概览"
                                   i18n-en:displayName="Sales Overview" icon="trending-up"
                                   component="AMIS" resourceType="SUBM" orderNo="9990"
                                   url="/erp/sal/pages/dashboard/main.page.yaml"/>

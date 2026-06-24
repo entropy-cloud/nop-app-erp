@@ -131,7 +131,7 @@
                 <resource id="md-dashboard" displayName="主数据概览" i18n-en:displayName="Master Data Overview"
                           icon="layout-dashboard" resourceType="SUBM" orderNo="999">
                     <children>
-                        <resource id="md-dashboard-main" displayName="主数据概览"
+                        <resource id="md-dashboard-main" app:useCases="UC-MD-07" displayName="主数据概览"
                                   i18n-en:displayName="Master Data Overview" icon="layout-dashboard"
                                   component="AMIS" resourceType="SUBM" orderNo="9990"
                                   url="/erp/md/pages/dashboard/main.page.yaml"/>

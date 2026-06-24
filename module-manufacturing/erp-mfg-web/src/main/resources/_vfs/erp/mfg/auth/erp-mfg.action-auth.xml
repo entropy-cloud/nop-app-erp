@@ -89,7 +89,7 @@
                 <resource id="mfg-dashboard" displayName="制造概览" i18n-en:displayName="Manufacturing Overview"
                           icon="activity" resourceType="SUBM" orderNo="999">
                     <children>
-                        <resource id="mfg-dashboard-main" displayName="制造概览"
+                        <resource id="mfg-dashboard-main" app:useCases="UC-MFG-11" displayName="制造概览"
                                   i18n-en:displayName="Manufacturing Overview" icon="activity"
                                   component="AMIS" resourceType="SUBM" orderNo="9990"
                                   url="/erp/mfg/pages/dashboard/main.page.yaml"/>

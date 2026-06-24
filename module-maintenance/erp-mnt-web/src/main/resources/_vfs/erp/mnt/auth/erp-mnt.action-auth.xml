@@ -81,7 +81,7 @@
                 <resource id="mnt-dashboard" displayName="维护概览" i18n-en:displayName="Maintenance Overview"
                           icon="gauge" resourceType="SUBM" orderNo="999">
                     <children>
-                        <resource id="mnt-dashboard-main" displayName="维护概览"
+                        <resource id="mnt-dashboard-main" app:useCases="UC-MAIN-11" displayName="维护概览"
                                   i18n-en:displayName="Maintenance Overview" icon="gauge"
                                   component="AMIS" resourceType="SUBM" orderNo="9990"
                                   url="/erp/mnt/pages/dashboard/main.page.yaml"/>

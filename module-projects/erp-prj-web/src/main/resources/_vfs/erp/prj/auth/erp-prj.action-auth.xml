@@ -85,7 +85,7 @@
                 <resource id="prj-dashboard" displayName="项目概览" i18n-en:displayName="Projects Overview"
                           icon="kanban" resourceType="SUBM" orderNo="999">
                     <children>
-                        <resource id="prj-dashboard-main" displayName="项目概览"
+                        <resource id="prj-dashboard-main" app:useCases="UC-PRJ-10" displayName="项目概览"
                                   i18n-en:displayName="Projects Overview" icon="kanban"
                                   component="AMIS" resourceType="SUBM" orderNo="9990"
                                   url="/erp/prj/pages/dashboard/main.page.yaml"/>
