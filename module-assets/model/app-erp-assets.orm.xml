@@ -103,6 +103,13 @@
             <option code="INVENTORY" label="库存" value="10"/>
             <option code="CIP" label="在建工程" value="20"/>
         </dict>
+        <dict label="处置原因" name="erp-ast/disposal-reason" valueType="int">
+            <option code="OBSOLETE" label="报废" value="10"/>
+            <option code="SOLD" label="出售" value="20"/>
+            <option code="DONATED" label="捐赠" value="30"/>
+            <option code="STOLEN" label="被盗" value="40"/>
+            <option code="OTHER" label="其他" value="50"/>
+        </dict>
     </dicts>
 
     <entities>
@@ -131,8 +138,9 @@
                 <column name="locationId" code="LOCATION_ID" displayName="使用地点" propId="15" stdSqlType="BIGINT" stdDataType="long"/>
                 <column name="employeeId" code="EMPLOYEE_ID" displayName="使用人(职员)" propId="16" stdSqlType="BIGINT" stdDataType="long"/>
                 <column name="staffId" code="STAFF_ID" displayName="使用人(往来单位,旧字段保留)" propId="17" stdSqlType="BIGINT" stdDataType="long"/>
-                <column name="status" code="STATUS" displayName="资产状态" propId="18" stdSqlType="INTEGER" stdDataType="int" mandatory="true" ext:dict="erp-ast/asset-status"/>
-                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="19" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
+                <column name="brandModel" code="BRAND_MODEL" displayName="品牌型号" propId="19" stdSqlType="VARCHAR" precision="200"/>
+                <column name="status" code="STATUS" displayName="资产状态" propId="20" stdSqlType="INTEGER" stdDataType="int" mandatory="true" ext:dict="erp-ast/asset-status"/>
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="21" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="20" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="21" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true"/>
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="22" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
@@ -261,11 +269,12 @@
                 <column name="toStaffId" code="TO_STAFF_ID" displayName="新使用人" propId="11" stdSqlType="BIGINT" stdDataType="long"/>
                 <column name="fromLocationId" code="FROM_LOCATION_ID" displayName="原使用地点" propId="12" stdSqlType="BIGINT" stdDataType="long"/>
                 <column name="toLocationId" code="TO_LOCATION_ID" displayName="新使用地点" propId="13" stdSqlType="BIGINT" stdDataType="long"/>
-                <column name="docStatus" code="DOC_STATUS" displayName="单据状态" propId="14" stdSqlType="INTEGER" stdDataType="int" mandatory="true" ext:dict="erp-ast/doc-status"/>
-                <column name="approveStatus" code="APPROVE_STATUS" displayName="审核状态" propId="15" stdSqlType="INTEGER" stdDataType="int" mandatory="true" ext:dict="erp-ast/approve-status"/>
-                <column name="posted" code="POSTED" displayName="已过账" propId="16" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="false"/>
-                <column name="postedAt" code="POSTED_AT" displayName="过账时间" propId="17" stdSqlType="DATETIME" stdDataType="datetime"/>
-                <column name="postedBy" code="POSTED_BY" displayName="过账人" propId="18" stdSqlType="BIGINT" stdDataType="long"/>
+                <column name="handlerId" code="HANDLER_ID" displayName="经办人" propId="14" stdSqlType="BIGINT" stdDataType="long"/>
+                <column name="docStatus" code="DOC_STATUS" displayName="单据状态" propId="15" stdSqlType="INTEGER" stdDataType="int" mandatory="true" ext:dict="erp-ast/doc-status"/>
+                <column name="approveStatus" code="APPROVE_STATUS" displayName="审核状态" propId="16" stdSqlType="INTEGER" stdDataType="int" mandatory="true" ext:dict="erp-ast/approve-status"/>
+                <column name="posted" code="POSTED" displayName="已过账" propId="17" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="false"/>
+                <column name="postedAt" code="POSTED_AT" displayName="过账时间" propId="18" stdSqlType="DATETIME" stdDataType="datetime"/>
+                <column name="postedBy" code="POSTED_BY" displayName="过账人" propId="19" stdSqlType="BIGINT" stdDataType="long"/>
                                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" stdDataType="long" code="CURRENCY_ID"/>
                 <column name="exchangeRate" displayName="汇率" stdSqlType="DECIMAL" precision="20" scale="8" defaultValue="1" stdDataType="string" code="EXCHANGE_RATE"/>
                 <column name="amountSource" displayName="源币种金额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" stdDataType="string" code="AMOUNT_SOURCE"/>
@@ -345,16 +354,17 @@
                 <column name="exchangeRate" code="EXCHANGE_RATE" displayName="汇率" propId="8" domain="exchangeRate" stdSqlType="DECIMAL" precision="20" scale="8" defaultValue="1"/>
                 <column name="businessDate" code="BUSINESS_DATE" displayName="处置日期" propId="9" stdSqlType="DATE" stdDataType="date" mandatory="true"/>
                 <column name="gainLoss" code="GAIN_LOSS" displayName="损益" propId="10" domain="amount" stdSqlType="DECIMAL" precision="20" scale="4"/>
-                <column name="docStatus" code="DOC_STATUS" displayName="单据状态" propId="11" stdSqlType="INTEGER" stdDataType="int" mandatory="true" ext:dict="erp-ast/doc-status"/>
-                <column name="approveStatus" code="APPROVE_STATUS" displayName="审核状态" propId="12" stdSqlType="INTEGER" stdDataType="int" mandatory="true" ext:dict="erp-ast/approve-status"/>
-                <column name="posted" code="POSTED" displayName="已过账" propId="13" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="false"/>
-                <column name="postedAt" code="POSTED_AT" displayName="过账时间" propId="14" stdSqlType="DATETIME" stdDataType="datetime"/>
-                <column name="postedBy" code="POSTED_BY" displayName="过账人" propId="15" stdSqlType="BIGINT" stdDataType="long"/>
-                <column name="approvedBy" code="APPROVED_BY" displayName="审核人" propId="16" stdSqlType="BIGINT" stdDataType="long"/>
-                <column name="approvedAt" code="APPROVED_AT" displayName="审核时间" propId="17" stdSqlType="DATETIME" stdDataType="datetime"/>
+                <column name="reason" code="REASON" displayName="处置原因" propId="11" stdSqlType="INTEGER" stdDataType="int" ext:dict="erp-ast/disposal-reason"/>
+                <column name="docStatus" code="DOC_STATUS" displayName="单据状态" propId="12" stdSqlType="INTEGER" stdDataType="int" mandatory="true" ext:dict="erp-ast/doc-status"/>
+                <column name="approveStatus" code="APPROVE_STATUS" displayName="审核状态" propId="13" stdSqlType="INTEGER" stdDataType="int" mandatory="true" ext:dict="erp-ast/approve-status"/>
+                <column name="posted" code="POSTED" displayName="已过账" propId="14" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="false"/>
+                <column name="postedAt" code="POSTED_AT" displayName="过账时间" propId="15" stdSqlType="DATETIME" stdDataType="datetime"/>
+                <column name="postedBy" code="POSTED_BY" displayName="过账人" propId="16" stdSqlType="BIGINT" stdDataType="long"/>
+                <column name="approvedBy" code="APPROVED_BY" displayName="审核人" propId="17" stdSqlType="BIGINT" stdDataType="long"/>
+                <column name="approvedAt" code="APPROVED_AT" displayName="审核时间" propId="18" stdSqlType="DATETIME" stdDataType="datetime"/>
                                 <column name="amountSource" displayName="源币种金额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" stdDataType="string" code="AMOUNT_SOURCE"/>
                 <column name="amountFunctional" displayName="本位币金额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" stdDataType="string" code="AMOUNT_FUNCTIONAL"/>
-<column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="18" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
+<column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="19" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="19" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="20" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true"/>
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="21" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>

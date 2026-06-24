@@ -64,6 +64,16 @@
             <option code="INBOUND" label="入库" value="10"/>
             <option code="OUTBOUND" label="出库" value="20"/>
         </dict>
+        <dict label="入库类型" name="erp-pur/receive-type" valueType="int">
+            <option code="NORMAL" label="正常入库" value="10"/>
+            <option code="RETURN" label="退货入库" value="20"/>
+            <option code="GIFT" label="赠品入库" value="30"/>
+        </dict>
+        <dict label="发票类型" name="erp-pur/invoice-type" valueType="int">
+            <option code="VAT_SPECIAL" label="增值税专用" value="10"/>
+            <option code="VAT_NORMAL" label="增值税普通" value="20"/>
+            <option code="RECEIPT" label="收据" value="30"/>
+        </dict>
     </dicts>
 
     <domains>
@@ -408,20 +418,21 @@
                 <column name="totalTaxAmount" displayName="合计税额" domain="taxAmount" defaultValue="0" code="TOTAL_TAX_AMOUNT" propId="13" stdSqlType="VARCHAR" stdDataType="string"/>
                 <column name="totalAmountWithTax" displayName="合计金额(含税)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT_WITH_TAX" propId="14" stdSqlType="VARCHAR" stdDataType="string"/>
                 <column name="receiveStatus" displayName="收货状态" ext:dict="erp-pur/receive-status" code="RECEIVE_STATUS" propId="15" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="docStatus" displayName="单据状态" ext:dict="erp-pur/doc-status" mandatory="true" code="DOC_STATUS" propId="16" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="approveStatus" displayName="审核状态" ext:dict="erp-pur/approve-status" mandatory="true" code="APPROVE_STATUS" propId="17" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="posted" displayName="已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="18" stdDataType="boolean"/>
-                <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="19" stdDataType="datetime"/>
-                <column name="postedBy" displayName="过账人" stdSqlType="BIGINT" code="POSTED_BY" propId="20" stdDataType="long"/>
-                <column name="approvedBy" displayName="审核人" stdSqlType="BIGINT" code="APPROVED_BY" propId="21" stdDataType="long"/>
-                <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="22" stdDataType="datetime"/>
-                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="23" stdSqlType="VARCHAR" stdDataType="string"/>
-                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="24" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
-                <column name="version" code="VERSION" displayName="数据版本" propId="25" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
-                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="26" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="27" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="28" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="29" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="receiveType" displayName="入库类型" ext:dict="erp-pur/receive-type" code="RECEIVE_TYPE" propId="16" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="docStatus" displayName="单据状态" ext:dict="erp-pur/doc-status" mandatory="true" code="DOC_STATUS" propId="17" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="approveStatus" displayName="审核状态" ext:dict="erp-pur/approve-status" mandatory="true" code="APPROVE_STATUS" propId="18" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="posted" displayName="已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="19" stdDataType="boolean"/>
+                <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="20" stdDataType="datetime"/>
+                <column name="postedBy" displayName="过账人" stdSqlType="BIGINT" code="POSTED_BY" propId="21" stdDataType="long"/>
+                <column name="approvedBy" displayName="审核人" stdSqlType="BIGINT" code="APPROVED_BY" propId="22" stdDataType="long"/>
+                <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="23" stdDataType="datetime"/>
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="24" stdSqlType="VARCHAR" stdDataType="string"/>
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="25" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="26" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="27" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="28" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="29" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="30" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
             </columns>
             <relations>
                 <to-one name="order" refEntityName="app.erp.pur.dao.entity.ErpPurOrder" tagSet="pub"><join><on leftProp="orderId" rightProp="id"/></join></to-one>
@@ -430,7 +441,7 @@
                 <to-many name="lines" refEntityName="app.erp.pur.dao.entity.ErpPurReceiveLine" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="receiveId"/></join></to-many>
             </relations>
         </entity>
-
+        
         <!-- 采购入库单行 -->
         <entity className="app.erp.pur.dao.entity.ErpPurReceiveLine"
                 displayName="采购入库单行" ext:icon="list" i18n-en:displayName="Purchase Receipt Line" name="app.erp.pur.dao.entity.ErpPurReceiveLine"
@@ -477,30 +488,31 @@
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long"/>
                 <column name="supplierId" displayName="供应商" stdSqlType="BIGINT" mandatory="true" code="SUPPLIER_ID" propId="4" stdDataType="long"/>
                 <column name="invoiceNo" displayName="发票号码" stdSqlType="VARCHAR" precision="50" code="INVOICE_NO" propId="5" stdDataType="string"/>
-                <column name="businessDate" displayName="发票日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="6" stdDataType="date"/>
-                <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true" code="CURRENCY_ID" propId="7" stdDataType="long"/>
-                <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="8" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="amountSource" displayName="合计金额(源币)" domain="amount" defaultValue="0" code="AMOUNT_SOURCE" propId="9" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="amountFunctional" displayName="合计金额(本位币)" domain="amount" defaultValue="0" code="AMOUNT_FUNCTIONAL" propId="10" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="totalAmount" displayName="合计金额(不含税)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT" propId="11" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="totalTaxAmount" displayName="合计税额" domain="taxAmount" defaultValue="0" code="TOTAL_TAX_AMOUNT" propId="12" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="totalAmountWithTax" displayName="合计金额(含税)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT_WITH_TAX" propId="13" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="paidAmount" displayName="已付金额" domain="amount" defaultValue="0" code="PAID_AMOUNT" propId="14" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="docStatus" displayName="单据状态" ext:dict="erp-pur/doc-status" mandatory="true" code="DOC_STATUS" propId="15" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="approveStatus" displayName="审核状态" ext:dict="erp-pur/approve-status" mandatory="true" code="APPROVE_STATUS" propId="16" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="paidStatus" displayName="付款进度" ext:dict="erp-pur/paid-status" code="PAID_STATUS" propId="17" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="posted" displayName="已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="18" stdDataType="boolean"/>
-                <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="19" stdDataType="datetime"/>
-                <column name="postedBy" displayName="过账人" stdSqlType="BIGINT" code="POSTED_BY" propId="20" stdDataType="long"/>
-                <column name="approvedBy" displayName="审核人" stdSqlType="BIGINT" code="APPROVED_BY" propId="21" stdDataType="long"/>
-                <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="22" stdDataType="datetime"/>
-                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="23" stdSqlType="VARCHAR" stdDataType="string"/>
-                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="24" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
-                <column name="version" code="VERSION" displayName="数据版本" propId="25" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
-                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="26" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="27" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="28" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="29" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="invoiceType" displayName="发票类型" ext:dict="erp-pur/invoice-type" code="INVOICE_TYPE" propId="6" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="businessDate" displayName="发票日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="7" stdDataType="date"/>
+                <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true" code="CURRENCY_ID" propId="8" stdDataType="long"/>
+                <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="9" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="amountSource" displayName="合计金额(源币)" domain="amount" defaultValue="0" code="AMOUNT_SOURCE" propId="10" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="amountFunctional" displayName="合计金额(本位币)" domain="amount" defaultValue="0" code="AMOUNT_FUNCTIONAL" propId="11" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="totalAmount" displayName="合计金额(不含税)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT" propId="12" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="totalTaxAmount" displayName="合计税额" domain="taxAmount" defaultValue="0" code="TOTAL_TAX_AMOUNT" propId="13" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="totalAmountWithTax" displayName="合计金额(含税)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT_WITH_TAX" propId="14" stdSqlType="VARCHAR" stdDataType="string"/>
+                <column name="paidAmount" displayName="已付金额" domain="amount" defaultValue="0" code="PAID_AMOUNT" propId="15" stdDataType="string"/>
+                <column name="docStatus" displayName="单据状态" ext:dict="erp-pur/doc-status" mandatory="true" code="DOC_STATUS" propId="16" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="approveStatus" displayName="审核状态" ext:dict="erp-pur/approve-status" mandatory="true" code="APPROVE_STATUS" propId="17" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="paidStatus" displayName="付款进度" ext:dict="erp-pur/paid-status" code="PAID_STATUS" propId="18" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="posted" displayName="已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="19" stdDataType="boolean"/>
+                <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="20" stdDataType="datetime"/>
+                <column name="postedBy" displayName="过账人" stdSqlType="BIGINT" code="POSTED_BY" propId="21" stdDataType="long"/>
+                <column name="approvedBy" displayName="审核人" stdSqlType="BIGINT" code="APPROVED_BY" propId="22" stdDataType="long"/>
+                <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="23" stdDataType="datetime"/>
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="24" stdSqlType="VARCHAR" stdDataType="string"/>
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="25" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="26" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="27" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="28" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="29" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="30" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
             </columns>
             <relations>
                 <to-one name="supplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"><join><on leftProp="supplierId" rightProp="id"/></join></to-one>
@@ -508,7 +520,7 @@
                 <to-many name="lines" refEntityName="app.erp.pur.dao.entity.ErpPurInvoiceLine" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="invoiceId"/></join></to-many>
             </relations>
         </entity>
-
+        
         <!-- 采购发票行 -->
         <entity className="app.erp.pur.dao.entity.ErpPurInvoiceLine"
                 displayName="采购发票行" ext:icon="list" i18n-en:displayName="Purchase Invoice Line" name="app.erp.pur.dao.entity.ErpPurInvoiceLine"

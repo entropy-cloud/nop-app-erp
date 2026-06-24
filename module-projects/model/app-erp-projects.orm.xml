@@ -137,9 +137,10 @@
                 <column name="dependsOnId" displayName="依赖任务" stdSqlType="BIGINT" code="DEPENDS_ON_ID" propId="12" stdDataType="long"/>
                 <column name="status" displayName="状态" ext:dict="erp-prj/task-status" mandatory="true" code="STATUS" propId="13" stdSqlType="INTEGER" stdDataType="int"/>
                 <column name="priority" displayName="优先级" ext:dict="erp-prj/priority" code="PRIORITY" propId="14" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="sortNum" displayName="排序号" stdSqlType="INTEGER" code="SORT_NUM" propId="15" stdDataType="int"/>
-                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="16" stdSqlType="VARCHAR" stdDataType="string"/>
-                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="17" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
+                <column name="blockReason" displayName="阻塞原因" stdSqlType="VARCHAR" precision="500" code="BLOCK_REASON" propId="15" stdDataType="string"/>
+                <column name="sortNum" displayName="排序号" stdSqlType="INTEGER" code="SORT_NUM" propId="16" stdDataType="int"/>
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="17" stdSqlType="VARCHAR" stdDataType="string"/>
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="18" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="18" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="19" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="20" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
