@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <auth x:extends="_erp-md.action-auth.xml" x:schema="/nop/schema/action-auth.xdef"
-     xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
+     xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:app="app">
 
     <site id="main">
         <!-- 删除自动生成的测试菜单根 -->

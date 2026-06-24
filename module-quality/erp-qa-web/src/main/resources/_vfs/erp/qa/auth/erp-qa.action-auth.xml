@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <auth x:extends="_erp-qa.action-auth.xml" x:schema="/nop/schema/action-auth.xdef"
-     xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
+     xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:app="app">
 
     <site id="main">
         <!-- 删除自动生成的测试菜单根 -->
@@ -15,7 +15,7 @@
                 <resource id="qa-inspection" displayName="检验执行" i18n-en:displayName="Inspection"
                           icon="clipboard-check" resourceType="SUBM" orderNo="100">
                     <children>
-                        <resource id="ErpQaInspection-main" displayName="质检单"
+                        <resource id="ErpQaInspection-main" app:userCase="UC-QA-01,UC-QA-02,UC-QA-03,UC-QA-04,UC-QA-06,UC-QA-08,UC-QA-11" displayName="质检单"
                                   i18n-en:displayName="Inspection" icon="clipboard-check"
                                   component="AMIS" resourceType="SUBM" orderNo="100"
                                   url="/erp/qa/pages/ErpQaInspection/main.page.yaml"/>
@@ -25,11 +25,11 @@
                 <resource id="qa-standard" displayName="检验标准" i18n-en:displayName="Standard"
                           icon="file-check-2" resourceType="SUBM" orderNo="200">
                     <children>
-                        <resource id="ErpQaInspectionTemplate-main" displayName="质检模板"
+                        <resource id="ErpQaInspectionTemplate-main" app:userCase="UC-QA-07" displayName="质检模板"
                                   i18n-en:displayName="Inspection Template" icon="file-check-2"
                                   component="AMIS" resourceType="SUBM" orderNo="200"
                                   url="/erp/qa/pages/ErpQaInspectionTemplate/main.page.yaml"/>
-                        <resource id="ErpQaSamplingPlan-main" displayName="抽样方案"
+                        <resource id="ErpQaSamplingPlan-main" app:userCase="UC-QA-01" displayName="抽样方案"
                                   i18n-en:displayName="Sampling Plan" icon="layers"
                                   component="AMIS" resourceType="SUBM" orderNo="210"
                                   url="/erp/qa/pages/ErpQaSamplingPlan/main.page.yaml"/>
@@ -39,7 +39,7 @@
                 <resource id="qa-ncr" displayName="不合格品" i18n-en:displayName="Non-Conformance"
                           icon="x-circle" resourceType="SUBM" orderNo="300">
                     <children>
-                        <resource id="ErpQaNonConformance-main" displayName="不合格品报告"
+                        <resource id="ErpQaNonConformance-main" app:userCase="UC-QA-02,UC-QA-05,UC-QA-09" displayName="不合格品报告"
                                   i18n-en:displayName="Non-Conformance Report" icon="x-circle"
                                   component="AMIS" resourceType="SUBM" orderNo="300"
                                   url="/erp/qa/pages/ErpQaNonConformance/main.page.yaml"/>
@@ -53,7 +53,7 @@
                 <resource id="qa-capa" displayName="纠正预防" i18n-en:displayName="Corrective Action"
                           icon="shield-alert" resourceType="SUBM" orderNo="400">
                     <children>
-                        <resource id="ErpQaAction-main" displayName="纠正预防措施"
+                        <resource id="ErpQaAction-main" app:userCase="UC-QA-05,UC-QA-09" displayName="纠正预防措施"
                                   i18n-en:displayName="Corrective Action" icon="shield-alert"
                                   component="AMIS" resourceType="SUBM" orderNo="400"
                                   url="/erp/qa/pages/ErpQaAction/main.page.yaml"/>
@@ -67,15 +67,15 @@
                 <resource id="qa-goal" displayName="质量目标" i18n-en:displayName="Quality Goal"
                           icon="target" resourceType="SUBM" orderNo="500">
                     <children>
-                        <resource id="ErpQaQualityGoal-main" displayName="质量目标"
+                        <resource id="ErpQaQualityGoal-main" app:userCase="UC-QA-10" displayName="质量目标"
                                   i18n-en:displayName="Quality Goal" icon="target"
                                   component="AMIS" resourceType="SUBM" orderNo="500"
                                   url="/erp/qa/pages/ErpQaQualityGoal/main.page.yaml"/>
-                        <resource id="ErpQaRiskRegister-main" displayName="风险登记"
+                        <resource id="ErpQaRiskRegister-main" app:userCase="UC-QA-10" displayName="风险登记"
                                   i18n-en:displayName="Risk Register" icon="alert-triangle"
                                   component="AMIS" resourceType="SUBM" orderNo="510"
                                   url="/erp/qa/pages/ErpQaRiskRegister/main.page.yaml"/>
-                        <resource id="ErpQaCalibration-main" displayName="量具校准"
+                        <resource id="ErpQaCalibration-main" app:userCase="UC-QA-01" displayName="量具校准"
                                   i18n-en:displayName="Gauge Calibration" icon="gauge"
                                   component="AMIS" resourceType="SUBM" orderNo="520"
                                   url="/erp/qa/pages/ErpQaCalibration/main.page.yaml"/>

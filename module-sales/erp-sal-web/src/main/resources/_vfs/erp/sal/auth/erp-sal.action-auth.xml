@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <auth x:extends="_erp-sal.action-auth.xml" x:schema="/nop/schema/action-auth.xdef"
-     xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
+     xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:app="app">
 
     <site id="main">
         <!-- 删除自动生成的测试菜单根 -->
@@ -15,7 +15,7 @@
                 <resource id="sal-quotation" displayName="报价" i18n-en:displayName="Quotation"
                           icon="file-sign" resourceType="SUBM" orderNo="100">
                     <children>
-                        <resource id="ErpSalQuotation-main" displayName="销售报价单"
+                        <resource id="ErpSalQuotation-main" app:userCase="UC-SAL-01" displayName="销售报价单"
                                   i18n-en:displayName="Sales Quotation" icon="file-sign"
                                   component="AMIS" resourceType="SUBM" orderNo="100"
                                   url="/erp/sal/pages/ErpSalQuotation/main.page.yaml"/>
@@ -25,7 +25,7 @@
                 <resource id="sal-contract" displayName="合同" i18n-en:displayName="Contract"
                           icon="file-text" resourceType="SUBM" orderNo="200">
                     <children>
-                        <resource id="ErpSalContract-main" displayName="销售合同"
+                        <resource id="ErpSalContract-main" app:userCase="UC-SAL-01" displayName="销售合同"
                                   i18n-en:displayName="Sales Contract" icon="file-text"
                                   component="AMIS" resourceType="SUBM" orderNo="200"
                                   url="/erp/sal/pages/ErpSalContract/main.page.yaml"/>
@@ -35,7 +35,7 @@
                 <resource id="sal-order" displayName="订单" i18n-en:displayName="Order"
                           icon="shopping-cart" resourceType="SUBM" orderNo="300">
                     <children>
-                        <resource id="ErpSalOrder-main" displayName="销售订单"
+                        <resource id="ErpSalOrder-main" app:userCase="UC-SAL-01,UC-SAL-02,UC-SAL-03,UC-SAL-08,UC-SAL-10" displayName="销售订单"
                                   i18n-en:displayName="Sales Order" icon="shopping-cart"
                                   component="AMIS" resourceType="SUBM" orderNo="300"
                                   url="/erp/sal/pages/ErpSalOrder/main.page.yaml"/>
@@ -45,7 +45,7 @@
                 <resource id="sal-delivery" displayName="发货" i18n-en:displayName="Delivery"
                           icon="package-minus" resourceType="SUBM" orderNo="400">
                     <children>
-                        <resource id="ErpSalDelivery-main" displayName="销售出库单"
+                        <resource id="ErpSalDelivery-main" app:userCase="UC-SAL-01,UC-SAL-02,UC-SAL-03,UC-SAL-08,UC-SAL-10" displayName="销售出库单"
                                   i18n-en:displayName="Sales Delivery" icon="package-minus"
                                   component="AMIS" resourceType="SUBM" orderNo="400"
                                   url="/erp/sal/pages/ErpSalDelivery/main.page.yaml"/>
@@ -55,7 +55,7 @@
                 <resource id="sal-invoice" displayName="开票" i18n-en:displayName="Invoice"
                           icon="receipt" resourceType="SUBM" orderNo="500">
                     <children>
-                        <resource id="ErpSalInvoice-main" displayName="销售发票"
+                        <resource id="ErpSalInvoice-main" app:userCase="UC-SAL-01,UC-SAL-03,UC-SAL-04,UC-SAL-05" displayName="销售发票"
                                   i18n-en:displayName="Sales Invoice" icon="receipt"
                                   component="AMIS" resourceType="SUBM" orderNo="500"
                                   url="/erp/sal/pages/ErpSalInvoice/main.page.yaml"/>
@@ -65,7 +65,7 @@
                 <resource id="sal-receipt" displayName="收款结算" i18n-en:displayName="Receipt"
                           icon="banknote" resourceType="SUBM" orderNo="600">
                     <children>
-                        <resource id="ErpSalReceipt-main" displayName="收款单"
+                        <resource id="ErpSalReceipt-main" app:userCase="UC-SAL-01,UC-SAL-03,UC-SAL-04" displayName="收款单"
                                   i18n-en:displayName="Receipt" icon="banknote"
                                   component="AMIS" resourceType="SUBM" orderNo="600"
                                   url="/erp/sal/pages/ErpSalReceipt/main.page.yaml"/>
@@ -75,7 +75,7 @@
                 <resource id="sal-return" displayName="退货" i18n-en:displayName="Return"
                           icon="undo-2" resourceType="SUBM" orderNo="700">
                     <children>
-                        <resource id="ErpSalReturn-main" displayName="销售退货单"
+                        <resource id="ErpSalReturn-main" app:userCase="UC-SAL-04,UC-SAL-05,UC-SAL-06,UC-SAL-07,UC-SAL-09" displayName="销售退货单"
                                   i18n-en:displayName="Sales Return" icon="undo-2"
                                   component="AMIS" resourceType="SUBM" orderNo="700"
                                   url="/erp/sal/pages/ErpSalReturn/main.page.yaml"/>
