@@ -86,6 +86,7 @@ ERP 业务按 10 个独立领域工程组织（见 `docs/architecture/domain-mod
 
 - `state-machine.md`（状态机详解）：仅状态机重的域才有。状态机设计必须按 `docs/skills/state-machine-business-review-prompt.md` 的 10 个审查维度组织，并在文档头部引用该提示词。
 - `cross-domain.md`（跨域协作细则）：仅跨域协作复杂的域才有。
+- `ui-patterns.md`（页面设计要点）：每个域一份，定义该域关键业务页面的结构布局、交互模式与导航流程。聚焦页面结构骨架和交互行为，不重复字段定义（归 `*.orm.xml`）和业务语义（归 `state-machine.md`、`use-cases.md`）。调研引用格式 `[源项目#要点]` 关联 `docs/analysis/erp-survey/`。
 - 其他专属文档（如 `three-way-match.md`、`posting.md`）：按该域独有业务规则按需建立。
 
 详细文档命名使用稳定名（非日期），因为它们是稳定 owner doc 而非时间敏感记录。
