@@ -95,8 +95,13 @@ function collectUseCases() {
 
 // ============ 报告生成 ============
 
-function reportMenuCases(menus) {
+function reportMenuCases(menus, useCases) {
   console.log('\n== 菜单→用例对照 ==');
+  // 建立用例编号→标题映射,用于把编号解析为「编号 + 标题」
+  const codeToTitle = {};
+  for (const uc of useCases) {
+    codeToTitle[uc.code] = uc.title;
+  }
   const byDomain = {};
   for (const m of menus) {
     (byDomain[m.domain] = byDomain[m.domain] || []).push(m);
@@ -104,8 +109,17 @@ function reportMenuCases(menus) {
   for (const dom of Object.keys(byDomain).sort()) {
     console.log(`\n[${dom}]`);
     for (const m of byDomain[dom]) {
-      const cases = m.userCases.length ? m.userCases.join(', ') : '(无关联)';
-      console.log(`  ${m.displayName.padEnd(20)} (${m.resourceId}) → ${cases}`);
+      if (m.userCases.length === 0) {
+        console.log(`  ${m.displayName.padEnd(20)} (${m.resourceId}) → (无关联)`);
+      } else {
+        // 每个用例编号解析为「编号 + 标题」,找不到标题的只显示编号
+        const caseLines = m.userCases.map(c => {
+          const title = codeToTitle[c];
+          return title ? `    • ${c} ${title}` : `    • ${c} (标题未找到)`;
+        });
+        console.log(`  ${m.displayName.padEnd(20)} (${m.resourceId}):`);
+        for (const line of caseLines) console.log(line);
+      }
     }
   }
 }
@@ -207,7 +221,7 @@ function main() {
   const menus = collectMenuCases();
   const useCases = collectUseCases();
 
-  if (!arg || arg === '--menu') reportMenuCases(menus);
+  if (!arg || arg === '--menu') reportMenuCases(menus, useCases);
   if (!arg || arg === '--coverage') reportCoverage(menus, useCases);
   if (!arg || arg === '--overview') reportOverview(menus, useCases);
 
