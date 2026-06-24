@@ -1,5 +1,12 @@
 # 配置项对照分析:产品级 / 用户级 / 系统级三层配置
 
+
+> **勘误声明(2026-06-23,以 0005 配置审计报告为准)**:本报告的"三层配置"对照数据(各系统配置机制横向对比)有效。但本报告对 nop-app-erp 的诊断与改进建议存在两处认知错误,已被 `docs/analysis/2026-06-23-0005-configuration-audit.md` 纠正:
+> 1. **载体错误**:本报告建议"产品级配置落地 NopSysConfig",但 nop-sys **无 NopSysConfig 实体**,正确载体是 **NopSysVariable**(系统变量)+ **NopSysUserVariable**(用户变量)。
+> 2. **归类错误**:本报告把业务配置(成本方法/容差/退货政策等)都当作"应落地全局配置表",但按 configuration-audit-prompt 的四分类,这些应归 **业务表字段**(带组织/产品粒度),与 iDempiere C_AcctSchema 范式一致。项目实际已正确实践(AcctSchema.costingMethod/Bom.consumption 等已是实体字段)。
+>
+> 阅读本报告时,请以 0005 的四分类原则和最终裁决(PASS)为准;本报告的改进建议 1/2(落地 NopSysConfig/粒度)已被 0005 的"业务配置归业务表字段"取代。
+
 **日期**:2026-06-23
 **范围**:对照 erp-survey 中 9 个开源 ERP(Odoo/ERPNext/iDempiere/Metasfresh/管伊佳/赤龙/星云/若依/Dolibarr)的配置机制,诊断 nop-app-erp 配置设计的差距与改进方向
 **结论**:nop-app-erp 当前配置**只覆盖系统级 + 产品级两层(且产品级代码零落地),用户级完全空白,粒度仅全局**。对照 iDempiere/Metasfresh 的 Client+Org 双层粒度、ERPNext 的 doctype 化产品配置、星云的按模块审批配置,nop-app-erp 在配置的可实施性、粒度、落地上有明确差距,需做 6 项改进。
