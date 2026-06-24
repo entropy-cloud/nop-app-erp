@@ -235,6 +235,114 @@ CLOSED_FINAL → OPEN
 
 ---
 
+## UC-FIN-13 预算管理(编制/控制/对比)
+
+**场景**:编制年度预算,采购/付款时按预算控制,期末对比预算 vs 实际。见 budget.md。
+
+**可验证断言**:
+```
+// 预算方案审批即过账(BUDGET 影子凭证)
+预算方案.审核通过 →
+  生成凭证(postingType=BUDGET, businessType=BUDGET_SCENARIO)
+  借贷按 subject.direction 自动取(资产/费用借,负债/收入贷)
+
+// 预算控制(采购订单审核时,强一致校验)
+采购订单.审核 →
+  IErpFinBudgetControlBiz.check(科目, 成本中心, 期间, 金额, 来源单)
+  预算余量 = BUDGET凭证 - COMMITMENT凭证 - ACTUAL凭证(同维度)
+  若 余量 < 0 且 控制级别==HARD: 返回 BLOCKED → 审核抛异常
+  若 == WARN: 写 BudgetControlLog 放行
+
+// 承付款
+采购订单.APPROVED → 生成 COMMITMENT 凭证
+订单 CANCELLED 或发票接收 → 红冲 COMMITMENT
+
+// 预算对比(报表)
+按 (acctSchema, subject, period, costCenter, project, postingType) 分组 VoucherLine
+得到 Budget/Commitment/Actual 三列, 无需独立预算余额表
+```
+
+**涉及机制**:budget.md §PostingType/§业务规则、cost-center.md
+
+---
+
+## UC-FIN-14 银行对账与未达账项
+
+**场景**:月末银行对账,自动勾对 + 未达账项调整。见 bank-reconciliation.md。
+
+**可验证断言**:
+```
+// 导入幂等
+导入银行对账单 → 以 (fundAccount, statementDate, bankTxnCode) 去重, 重复导入报错
+
+// 自动勾对
+按 (金额, 反向方向, valueDate±N天, 对方账号) 模糊匹配
+命中唯一 → MATCHED; 多候选 → UNMATCHED; 金额对户名差 → SUSPENSE
+
+// 余额调节恒等式
+银行余额 + 在途(企已记银未记) == 账面余额 + 未达(银已记企未记)
+差额 == 0 才可 RECONCILED, 否则抛异常
+
+// 未达账项调整
+RECONCILED 时若存在未达 → 生成调整凭证(businessType=BANK_RECON_ADJ)
+下月初自动红冲(跨期还原)
+
+// 与 AR/AP 核销解耦
+银行对账只确认钱到账/已付, 不替代发票核销(ErpFinReconciliation)
+```
+
+**涉及机制**:bank-reconciliation.md §业务规则/§余额调节恒等式、ar-ap-reconciliation.md
+
+---
+
+## UC-FIN-15 科目分摊(GL Distribution)
+
+**场景**:凭证写库前,按成本中心分摊规则把一条凭证行拆成多行。见 cost-center.md。
+
+**可验证断言**:
+```
+原始凭证行(成本中心A, 金额100) →
+  命中 GlDistribution 规则(A→A:60%/B:40%) →
+  拆为两行: 成本中心A 金额60, 成本中心B 金额40
+
+Σ 拆分行金额 == 原行金额(平衡保持)
+若 Σ percent != 100 → 抛异常拒绝过账
+分摊由 ErpFinGlDistributionValidator(IErpFinFactsValidator 实现)执行
+getOrder() 较高, 确保在其他 Validator 之后
+```
+
+**涉及机制**:cost-center.md §ErpFinGlDistribution、posting.md §FactsValidator
+
+---
+
+## UC-FIN-16 财务三大报表
+
+**场景**:基于科目余额生成资产负债表/利润表/现金流量表。
+
+**可验证断言**:
+```
+// 数据来源
+三表基于 ErpFinGlBalance(按 subject×period×维度 聚合的余额)
+
+// 资产负债表(恒等式)
+资产合计 == 负债 + 所有者权益
+
+// 利润表
+收入 - 成本 - 费用 = 净利润
+净利润结转至资产负债表"未分配利润"
+
+// 现金流量表
+按科目现金流分类(经营/投资/筹资)调整
+间接法: 净利润 + 非现金项目 + 营运资金变动
+
+// 期间控制
+报表基于已 CLOSED 期间的 GlBalance(未结账期间数据不完整)
+```
+
+**涉及机制**:ErpFinGlBalance、period-close.md、多账套(每账套独立三表)
+
+---
+
 ## 用例与测试的衔接
 
 - 过账(U01/U02)→ finance 核心:验证凭证生成/冲销/业财回链

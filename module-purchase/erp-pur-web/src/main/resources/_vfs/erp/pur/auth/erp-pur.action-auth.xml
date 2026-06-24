@@ -38,7 +38,7 @@
                                   i18n-en:displayName="Purchase Requisition" icon="file-text"
                                   component="AMIS" resourceType="SUBM" orderNo="200"
                                   url="/erp/pur/pages/ErpPurRequisition/main.page.yaml"/>
-                        <resource id="ErpPurOrder-main" app:useCases="UC-PUR-01,UC-PUR-02,UC-PUR-03,UC-PUR-05,UC-PUR-06,UC-PUR-07,UC-PUR-08" displayName="采购订单"
+                        <resource id="ErpPurOrder-main" app:useCases="UC-PUR-01,UC-PUR-02,UC-PUR-03,UC-PUR-05,UC-PUR-06,UC-PUR-07,UC-PUR-08,UC-MD-01,UC-MD-02,UC-MD-05" displayName="采购订单"
                                   i18n-en:displayName="Purchase Order" icon="shopping-cart"
                                   component="AMIS" resourceType="SUBM" orderNo="210"
                                   url="/erp/pur/pages/ErpPurOrder/main.page.yaml"/>
@@ -75,7 +75,7 @@
                 <resource id="erp-pur-return" displayName="采购退货"
                           i18n-en:displayName="Return" icon="undo-2" resourceType="SUBM" orderNo="500">
                     <children>
-                        <resource id="ErpPurReturn-main" app:useCases="UC-PUR-04" displayName="采购退货单"
+                        <resource id="ErpPurReturn-main" app:useCases="UC-PUR-04,UC-INV-05" displayName="采购退货单"
                                   i18n-en:displayName="Purchase Return" icon="undo-2"
                                   component="AMIS" resourceType="SUBM" orderNo="500"
                                   url="/erp/pur/pages/ErpPurReturn/main.page.yaml"/>

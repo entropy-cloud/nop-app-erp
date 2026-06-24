@@ -37,7 +37,7 @@
                 <resource id="mfg-execution" displayName="工单执行" i18n-en:displayName="Execution"
                           icon="factory" resourceType="SUBM" orderNo="200">
                     <children>
-                        <resource id="ErpMfgWorkOrder-main" app:useCases="UC-MFG-01,UC-MFG-03,UC-MFG-04,UC-MFG-07,UC-MFG-08,UC-MFG-09,UC-MFG-10" displayName="工单"
+                        <resource id="ErpMfgWorkOrder-main" app:useCases="UC-MFG-01,UC-MFG-03,UC-MFG-04,UC-MFG-07,UC-MFG-08,UC-MFG-09,UC-MFG-10,UC-MFG-05" displayName="工单"
                                   i18n-en:displayName="Work Order" icon="factory"
                                   component="AMIS" resourceType="SUBM" orderNo="200"
                                   url="/erp/mfg/pages/ErpMfgWorkOrder/main.page.yaml"/>

@@ -35,7 +35,7 @@
                 <resource id="sal-order" displayName="订单" i18n-en:displayName="Order"
                           icon="shopping-cart" resourceType="SUBM" orderNo="300">
                     <children>
-                        <resource id="ErpSalOrder-main" app:useCases="UC-SAL-01,UC-SAL-02,UC-SAL-03,UC-SAL-08,UC-SAL-10" displayName="销售订单"
+                        <resource id="ErpSalOrder-main" app:useCases="UC-SAL-01,UC-SAL-02,UC-SAL-03,UC-SAL-08,UC-SAL-10,UC-MD-01,UC-MD-02,UC-MD-03,UC-MD-04,UC-MD-05" displayName="销售订单"
                                   i18n-en:displayName="Sales Order" icon="shopping-cart"
                                   component="AMIS" resourceType="SUBM" orderNo="300"
                                   url="/erp/sal/pages/ErpSalOrder/main.page.yaml"/>
@@ -45,7 +45,7 @@
                 <resource id="sal-delivery" displayName="发货" i18n-en:displayName="Delivery"
                           icon="package-minus" resourceType="SUBM" orderNo="400">
                     <children>
-                        <resource id="ErpSalDelivery-main" app:useCases="UC-SAL-01,UC-SAL-02,UC-SAL-03,UC-SAL-08,UC-SAL-10" displayName="销售出库单"
+                        <resource id="ErpSalDelivery-main" app:useCases="UC-SAL-01,UC-SAL-02,UC-SAL-03,UC-SAL-08,UC-SAL-10,UC-INV-08" displayName="销售出库单"
                                   i18n-en:displayName="Sales Delivery" icon="package-minus"
                                   component="AMIS" resourceType="SUBM" orderNo="400"
                                   url="/erp/sal/pages/ErpSalDelivery/main.page.yaml"/>
@@ -75,7 +75,7 @@
                 <resource id="sal-return" displayName="退货" i18n-en:displayName="Return"
                           icon="undo-2" resourceType="SUBM" orderNo="700">
                     <children>
-                        <resource id="ErpSalReturn-main" app:useCases="UC-SAL-04,UC-SAL-05,UC-SAL-06,UC-SAL-07,UC-SAL-09" displayName="销售退货单"
+                        <resource id="ErpSalReturn-main" app:useCases="UC-SAL-04,UC-SAL-05,UC-SAL-06,UC-SAL-07,UC-SAL-09,UC-INV-05" displayName="销售退货单"
                                   i18n-en:displayName="Sales Return" icon="undo-2"
                                   component="AMIS" resourceType="SUBM" orderNo="700"
                                   url="/erp/sal/pages/ErpSalReturn/main.page.yaml"/>
@@ -85,11 +85,11 @@
                 <resource id="sal-pricing" displayName="价格管理" i18n-en:displayName="Pricing"
                           icon="tag" resourceType="SUBM" orderNo="800">
                     <children>
-                        <resource id="sales-price-list" displayName="销售价格清单"
+                        <resource id="sales-price-list" app:useCases="UC-SAL-11" displayName="销售价格清单"
                                   i18n-en:displayName="Sales Price List" icon="tag"
                                   component="AMIS" resourceType="SUBM" orderNo="8010"
                                   url="/erp/sal/pages/sales-price-list/main.page.yaml"/>
-                        <resource id="pricing-rule" displayName="促销规则"
+                        <resource id="pricing-rule" app:useCases="UC-SAL-11" displayName="促销规则"
                                   i18n-en:displayName="Pricing Rule" icon="percent"
                                   component="AMIS" resourceType="SUBM" orderNo="8020"
                                   url="/erp/sal/pages/pricing-rule/main.page.yaml"/>

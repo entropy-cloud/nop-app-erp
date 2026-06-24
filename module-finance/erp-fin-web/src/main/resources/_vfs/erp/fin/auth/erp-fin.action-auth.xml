@@ -15,7 +15,7 @@
                 <resource id="fin-voucher" displayName="凭证" i18n-en:displayName="Voucher"
                           icon="book-up" resourceType="SUBM" orderNo="100">
                     <children>
-                        <resource id="ErpFinVoucher-main" app:useCases="UC-FIN-01,UC-FIN-02,UC-FIN-12" displayName="会计凭证"
+                        <resource id="ErpFinVoucher-main" app:useCases="UC-FIN-01,UC-FIN-02,UC-FIN-12,UC-FIN-03,UC-FIN-04" displayName="会计凭证"
                                   i18n-en:displayName="Accounting Voucher" icon="book-up"
                                   component="AMIS" resourceType="SUBM" orderNo="100"
                                   url="/erp/fin/pages/ErpFinVoucher/main.page.yaml"/>
@@ -91,15 +91,15 @@
                 <resource id="fin-report" displayName="财务报表" i18n-en:displayName="Financial Statements"
                           icon="bar-chart-3" resourceType="SUBM" orderNo="700">
                     <children>
-                        <resource id="balance-sheet" displayName="资产负债表"
+                        <resource id="balance-sheet" app:useCases="UC-FIN-16" displayName="资产负债表"
                                   i18n-en:displayName="Balance Sheet" icon="scale"
                                   component="AMIS" resourceType="SUBM" orderNo="7010"
                                   url="/erp/fin/pages/report/balance-sheet.page.yaml"/>
-                        <resource id="income-statement" displayName="利润表"
+                        <resource id="income-statement" app:useCases="UC-FIN-16" displayName="利润表"
                                   i18n-en:displayName="Income Statement" icon="trending-up"
                                   component="AMIS" resourceType="SUBM" orderNo="7020"
                                   url="/erp/fin/pages/report/income-statement.page.yaml"/>
-                        <resource id="cash-flow" displayName="现金流量表"
+                        <resource id="cash-flow" app:useCases="UC-FIN-16" displayName="现金流量表"
                                   i18n-en:displayName="Cash Flow Statement" icon="banknote"
                                   component="AMIS" resourceType="SUBM" orderNo="7030"
                                   url="/erp/fin/pages/report/cash-flow.page.yaml"/>
@@ -109,7 +109,7 @@
                 <resource id="fin-distribution" displayName="科目分摊" i18n-en:displayName="GL Distribution"
                           icon="split" resourceType="SUBM" orderNo="800">
                     <children>
-                        <resource id="gl-distribution" displayName="分摊规则"
+                        <resource id="gl-distribution" app:useCases="UC-FIN-04,UC-FIN-15" displayName="分摊规则"
                                   i18n-en:displayName="Distribution Rule" icon="split"
                                   component="AMIS" resourceType="SUBM" orderNo="8010"
                                   url="/erp/fin/pages/gl-distribution/main.page.yaml"/>
@@ -119,7 +119,7 @@
                 <resource id="fin-expense" displayName="费用报销" i18n-en:displayName="Expense Claim"
                           icon="wallet-receipt" resourceType="SUBM" orderNo="900">
                     <children>
-                        <resource id="expense-claim" displayName="费用报销单"
+                        <resource id="expense-claim" app:useCases="UC-FIN-16" displayName="费用报销单"
                                   i18n-en:displayName="Expense Claim" icon="wallet-receipt"
                                   component="AMIS" resourceType="SUBM" orderNo="9010"
                                   url="/erp/fin/pages/expense-claim/main.page.yaml"/>
@@ -139,11 +139,11 @@
                 <resource id="fin-budget" displayName="预算管理" i18n-en:displayName="Budget"
                           icon="wallet" resourceType="SUBM" orderNo="1000">
                     <children>
-                        <resource id="budget-scenario" displayName="预算方案"
+                        <resource id="budget-scenario" app:useCases="UC-FIN-13" displayName="预算方案"
                                   i18n-en:displayName="Budget Scenario" icon="wallet"
                                   component="AMIS" resourceType="SUBM" orderNo="10010"
                                   url="/erp/fin/pages/budget-scenario/main.page.yaml"/>
-                        <resource id="budget-control-log" displayName="预算控制日志"
+                        <resource id="budget-control-log" app:useCases="UC-FIN-13" displayName="预算控制日志"
                                   i18n-en:displayName="Budget Control Log" icon="shield-alert"
                                   component="AMIS" resourceType="SUBM" orderNo="10020"
                                   url="/erp/fin/pages/budget-control-log/main.page.yaml"/>
@@ -153,15 +153,15 @@
                 <resource id="fin-bank-recon" displayName="银行对账" i18n-en:displayName="Bank Reconciliation"
                           icon="landmark" resourceType="SUBM" orderNo="1100">
                     <children>
-                        <resource id="bank-statement" displayName="银行对账单"
+                        <resource id="bank-statement" app:useCases="UC-FIN-14" displayName="银行对账单"
                                   i18n-en:displayName="Bank Statement" icon="receipt"
                                   component="AMIS" resourceType="SUBM" orderNo="11010"
                                   url="/erp/fin/pages/bank-statement/main.page.yaml"/>
-                        <resource id="bank-ledger-line" displayName="账面流水"
+                        <resource id="bank-ledger-line" app:useCases="UC-FIN-14" displayName="账面流水"
                                   i18n-en:displayName="Bank Ledger Line" icon="list"
                                   component="AMIS" resourceType="SUBM" orderNo="11020"
                                   url="/erp/fin/pages/bank-ledger-line/main.page.yaml"/>
-                        <resource id="bank-reconciliation" displayName="余额调节表"
+                        <resource id="bank-reconciliation" app:useCases="UC-FIN-14" displayName="余额调节表"
                                   i18n-en:displayName="Bank Reconciliation" icon="scale"
                                   component="AMIS" resourceType="SUBM" orderNo="11030"
                                   url="/erp/fin/pages/bank-reconciliation/main.page.yaml"/>

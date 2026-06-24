@@ -47,16 +47,16 @@
                                   i18n-en:displayName="Asset Value Adjustment" icon="sliders-horizontal"
                                   component="AMIS" resourceType="SUBM" orderNo="310"
                                   url="/erp/ast/pages/ErpAstValueAdjustment/main.page.yaml"/>
-                        <resource id="ErpAstSplit-main" displayName="资产拆分单"
+                        <resource id="ErpAstSplit-main" app:useCases="UC-AST-11" displayName="资产拆分单"
                                   i18n-en:displayName="Asset Split" icon="split"
                                   component="AMIS" resourceType="SUBM" orderNo="320"
                                   url="/erp/ast/pages/ErpAstSplit/main.page.yaml"/>
-                        <resource id="ErpAstMerge-main" displayName="资产合并单"
+                        <resource id="ErpAstMerge-main" app:useCases="UC-AST-11" displayName="资产合并单"
                                   i18n-en:displayName="Asset Merge" icon="git-merge"
                                   component="AMIS" resourceType="SUBM" orderNo="330"
                                   url="/erp/ast/pages/ErpAstMerge/main.page.yaml"/>
                     
-                        <resource id="asset-repair" displayName="资产维修"
+                        <resource id="asset-repair" app:useCases="UC-AST-10" displayName="资产维修"
                                   i18n-en:displayName="Asset Repair" icon="wrench"
                                   component="AMIS" resourceType="SUBM" orderNo="350"
                                   url="/erp/ast/pages/asset-repair/main.page.yaml"/></children>
@@ -83,7 +83,7 @@
                 <resource id="ast-stocktake" displayName="资产盘点" i18n-en:displayName="Asset Stocktake"
                           icon="clipboard-list" resourceType="SUBM" orderNo="600">
                     <children>
-                        <resource id="asset-stocktake" displayName="资产盘点单"
+                        <resource id="asset-stocktake" app:useCases="UC-AST-09" displayName="资产盘点单"
                                   i18n-en:displayName="Asset Stocktake" icon="clipboard-list"
                                   component="AMIS" resourceType="SUBM" orderNo="6010"
                                   url="/erp/ast/pages/asset-stocktake/main.page.yaml"/>

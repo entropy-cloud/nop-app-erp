@@ -15,7 +15,7 @@
                 <resource id="inv-move" displayName="库存作业" i18n-en:displayName="Stock Operation"
                           icon="arrow-left-right" resourceType="SUBM" orderNo="100">
                     <children>
-                        <resource id="ErpInvStockMove-main" app:useCases="UC-INV-01,UC-INV-03,UC-INV-04,UC-INV-10" displayName="库存移动单"
+                        <resource id="ErpInvStockMove-main" app:useCases="UC-INV-01,UC-INV-03,UC-INV-04,UC-INV-10,UC-MD-02,UC-INV-08,UC-INV-09" displayName="库存移动单"
                                   i18n-en:displayName="Stock Move" icon="arrow-left-right"
                                   component="AMIS" resourceType="SUBM" orderNo="100"
                                   url="/erp/inv/pages/ErpInvStockMove/main.page.yaml"/>
@@ -87,7 +87,7 @@
                 <resource id="inv-cost" displayName="成本" i18n-en:displayName="Cost"
                           icon="layers" resourceType="SUBM" orderNo="700">
                     <children>
-                        <resource id="ErpInvCostLayer-main" app:useCases="UC-INV-10" displayName="成本层"
+                        <resource id="ErpInvCostLayer-main" app:useCases="UC-INV-10,UC-FIN-10" displayName="成本层"
                                   i18n-en:displayName="Cost Layer" icon="layers"
                                   component="AMIS" resourceType="SUBM" orderNo="700"
                                   url="/erp/inv/pages/ErpInvCostLayer/main.page.yaml"/>

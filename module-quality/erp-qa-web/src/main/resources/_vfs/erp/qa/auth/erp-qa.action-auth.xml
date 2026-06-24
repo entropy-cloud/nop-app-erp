@@ -44,7 +44,7 @@
                                   component="AMIS" resourceType="SUBM" orderNo="300"
                                   url="/erp/qa/pages/ErpQaNonConformance/main.page.yaml"/>
                     
-                        <resource id="ncr-disposal" displayName="不合格品处置单"
+                        <resource id="ncr-disposal" app:useCases="UC-QA-02,UC-QA-05" displayName="不合格品处置单"
                                   i18n-en:displayName="NCR Disposal" icon="trash-2"
                                   component="AMIS" resourceType="SUBM" orderNo="310"
                                   url="/erp/qa/pages/ncr-disposal/main.page.yaml"/></children>
@@ -57,7 +57,7 @@
                                   i18n-en:displayName="Corrective Action" icon="shield-alert"
                                   component="AMIS" resourceType="SUBM" orderNo="400"
                                   url="/erp/qa/pages/ErpQaAction/main.page.yaml"/>
-                        <resource id="ErpQaReview-main" displayName="质量评审"
+                        <resource id="ErpQaReview-main" app:useCases="UC-QA-05" displayName="质量评审"
                                   i18n-en:displayName="Quality Review" icon="clipboard-list"
                                   component="AMIS" resourceType="SUBM" orderNo="410"
                                   url="/erp/qa/pages/ErpQaReview/main.page.yaml"/>
@@ -95,15 +95,15 @@
                 <resource id="qa-spc" displayName="过程控制(SPC)" i18n-en:displayName="SPC"
                           icon="activity" resourceType="SUBM" orderNo="700">
                     <children>
-                        <resource id="spc-chart" displayName="控制图配置"
+                        <resource id="spc-chart" app:useCases="UC-QA-09,UC-QA-10,UC-QA-11" displayName="控制图配置"
                                   i18n-en:displayName="SPC Chart" icon="activity"
                                   component="AMIS" resourceType="SUBM" orderNo="70010"
                                   url="/erp/qa/pages/spc-chart/main.page.yaml"/>
-                        <resource id="spc-sample" displayName="样本数据"
+                        <resource id="spc-sample" app:useCases="UC-QA-09,UC-QA-11" displayName="样本数据"
                                   i18n-en:displayName="SPC Sample" icon="list"
                                   component="AMIS" resourceType="SUBM" orderNo="70020"
                                   url="/erp/qa/pages/spc-sample/main.page.yaml"/>
-                        <resource id="spc-capability" displayName="过程能力分析"
+                        <resource id="spc-capability" app:useCases="UC-QA-10" displayName="过程能力分析"
                                   i18n-en:displayName="SPC Capability" icon="bar-chart-3"
                                   component="AMIS" resourceType="SUBM" orderNo="70030"
                                   url="/erp/qa/pages/spc-capability/main.page.yaml"/>

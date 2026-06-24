@@ -15,7 +15,7 @@
                 <resource id="md-material" displayName="物料" i18n-en:displayName="Material"
                           icon="package" resourceType="SUBM" orderNo="100">
                     <children>
-                        <resource id="ErpMdMaterial-main" displayName="物料"
+                        <resource id="ErpMdMaterial-main" app:useCases="UC-MD-06" displayName="物料"
                                   i18n-en:displayName="Material" icon="package"
                                   component="AMIS" resourceType="SUBM" orderNo="100"
                                   url="/erp/md/pages/ErpMdMaterial/main.page.yaml"/>
@@ -23,7 +23,7 @@
                                   i18n-en:displayName="Material Category" icon="folder-tree"
                                   component="AMIS" resourceType="SUBM" orderNo="110"
                                   url="/erp/md/pages/ErpMdMaterialCategory/main.page.yaml"/>
-                        <resource id="ErpMdMaterialSku-main" displayName="物料SKU"
+                        <resource id="ErpMdMaterialSku-main" app:useCases="UC-MD-06" displayName="物料SKU"
                                   i18n-en:displayName="Material SKU" icon="package-2"
                                   component="AMIS" resourceType="SUBM" orderNo="120"
                                   url="/erp/md/pages/ErpMdMaterialSku/main.page.yaml"/>

@@ -43,7 +43,7 @@
                 <resource id="mnt-work" displayName="维护工单" i18n-en:displayName="Work Order"
                           icon="life-buoy" resourceType="SUBM" orderNo="300">
                     <children>
-                        <resource id="ErpMntVisit-main" app:useCases="UC-MAIN-03,UC-MAIN-04,UC-MAIN-07" displayName="维护访问"
+                        <resource id="ErpMntVisit-main" app:useCases="UC-MAIN-03,UC-MAIN-04,UC-MAIN-07,UC-MAIN-09" displayName="维护访问"
                                   i18n-en:displayName="Maintenance Visit" icon="clipboard-check"
                                   component="AMIS" resourceType="SUBM" orderNo="300"
                                   url="/erp/mnt/pages/ErpMntVisit/main.page.yaml"/>
