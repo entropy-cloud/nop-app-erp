@@ -1,4 +1,32 @@
-
 "x:extends": _erp-prj.i18n.yaml
+
+dict:
+  label:
+    erp-prj/priority: 'Priority'
+    erp-prj/project-status: 'Project Status'
+    erp-prj/task-status: 'Task Status'
+    erp-prj/timesheet-status: 'Timesheet Status'
+
+dict.option.label:
+  erp-prj/priority:
+    10: 'Low'
+    20: '普通'
+    30: 'High'
+    40: 'Urgent'
+  erp-prj/project-status:
+    10: 'Draft'
+    20: 'In Progress'
+    30: 'Suspended'
+    40: '已完成'
+    50: 'Cancelled'
+  erp-prj/task-status:
+    10: 'Pending Start'
+    20: 'In Progress'
+    30: '已完成'
+    40: '阻塞'
+  erp-prj/timesheet-status:
+    10: 'Draft'
+    20: 'Submitted'
+    30: '已审批'
 
 # key: "value"

@@ -127,46 +127,46 @@
                 displayName="质检单" ext:icon="clipboard-check" i18n-en:displayName="Inspection" name="app.erp.qa.dao.entity.ErpQaInspection"
                 tableName="erp_qa_inspection" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
-                <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long"/>
-                <column name="inspectionType" displayName="检验类型" ext:dict="erp-qa/inspection-type" mandatory="true" code="INSPECTION_TYPE" propId="4" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="relatedBillType" displayName="关联单据类型" stdSqlType="VARCHAR" precision="50" code="RELATED_BILL_TYPE" propId="5" stdDataType="string"/>
-                <column name="relatedBillCode" displayName="关联单据号" stdSqlType="VARCHAR" precision="50" code="RELATED_BILL_CODE" propId="6" stdDataType="string"/>
-                <column name="relatedLineCode" displayName="关联单据行号" stdSqlType="VARCHAR" precision="50" code="RELATED_LINE_CODE" propId="7" stdDataType="string"/>
-                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="8" stdDataType="long"/>
-                <column name="templateId" displayName="质检模板" stdSqlType="BIGINT" code="TEMPLATE_ID" propId="9" stdDataType="long"/>
-                <column name="supplierId" displayName="供应商" stdSqlType="BIGINT" code="SUPPLIER_ID" propId="10" stdDataType="long"/>
-                <column name="warehouseId" displayName="仓库" stdSqlType="BIGINT" code="WAREHOUSE_ID" propId="11" stdDataType="long"/>
-                <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="13" stdDataType="string"/>
-                <column name="inspectionDate" displayName="检验日期" stdSqlType="DATE" mandatory="true" code="INSPECTION_DATE" propId="14" stdDataType="date"/>
-                <column name="lotQuantity" displayName="批量" domain="quantity" code="LOT_QUANTITY" propId="15" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="sampleQuantity" displayName="抽样数量" domain="quantity" code="SAMPLE_QUANTITY" propId="16" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="inspectorId" displayName="检验员(职员)" stdSqlType="BIGINT" code="INSPECTOR_ID" propId="17" stdDataType="long"/>
-                <column name="result" displayName="质检结果" ext:dict="erp-qa/inspection-result" mandatory="true" code="RESULT" propId="18" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="docStatus" displayName="单据状态" ext:dict="erp-qa/doc-status" mandatory="true" code="DOC_STATUS" propId="19" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="approveStatus" displayName="审核状态" ext:dict="erp-qa/approve-status" mandatory="true" code="APPROVE_STATUS" propId="20" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="posted" displayName="已过账(质量结论已回写业务单据)" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="21" stdDataType="boolean"/>
-                <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="22" stdDataType="datetime"/>
-                <column name="postedBy" displayName="过账人" stdSqlType="BIGINT" code="POSTED_BY" propId="23" stdDataType="long"/>
-                <column name="approvedBy" displayName="审核人" stdSqlType="BIGINT" code="APPROVED_BY" propId="24" stdDataType="long"/>
-                <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="25" stdDataType="datetime"/>
-                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="26" stdSqlType="VARCHAR" stdDataType="string"/>
-                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="27" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
-                <column name="version" code="VERSION" displayName="数据版本" propId="28" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
-                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="29" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="30" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="31" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="32" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="inspectionType" displayName="检验类型" ext:dict="erp-qa/inspection-type" mandatory="true" code="INSPECTION_TYPE" propId="4" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Inspection Type' />
+                <column name="relatedBillType" displayName="关联单据类型" stdSqlType="VARCHAR" precision="50" code="RELATED_BILL_TYPE" propId="5" stdDataType="string" i18n-en:displayName='Related Bill Type' />
+                <column name="relatedBillCode" displayName="关联单据号" stdSqlType="VARCHAR" precision="50" code="RELATED_BILL_CODE" propId="6" stdDataType="string" i18n-en:displayName='Related Bill Code' />
+                <column name="relatedLineCode" displayName="关联单据行号" stdSqlType="VARCHAR" precision="50" code="RELATED_LINE_CODE" propId="7" stdDataType="string" i18n-en:displayName='Related Line Code' />
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="8" stdDataType="long" i18n-en:displayName='Material' />
+                <column name="templateId" displayName="质检模板" stdSqlType="BIGINT" code="TEMPLATE_ID" propId="9" stdDataType="long" i18n-en:displayName='Template' />
+                <column name="supplierId" displayName="供应商" stdSqlType="BIGINT" code="SUPPLIER_ID" propId="10" stdDataType="long" i18n-en:displayName='Supplier' />
+                <column name="warehouseId" displayName="仓库" stdSqlType="BIGINT" code="WAREHOUSE_ID" propId="11" stdDataType="long" i18n-en:displayName='Warehouse' />
+                <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="13" stdDataType="string" i18n-en:displayName='Batch No' />
+                <column name="inspectionDate" displayName="检验日期" stdSqlType="DATE" mandatory="true" code="INSPECTION_DATE" propId="14" stdDataType="date" i18n-en:displayName='Inspection Date' />
+                <column name="lotQuantity" displayName="批量" domain="quantity" code="LOT_QUANTITY" propId="15" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Lot Quantity' />
+                <column name="sampleQuantity" displayName="抽样数量" domain="quantity" code="SAMPLE_QUANTITY" propId="16" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Sample Quantity' />
+                <column name="inspectorId" displayName="检验员(职员)" stdSqlType="BIGINT" code="INSPECTOR_ID" propId="17" stdDataType="long" i18n-en:displayName='Inspector' />
+                <column name="result" displayName="质检结果" ext:dict="erp-qa/inspection-result" mandatory="true" code="RESULT" propId="18" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Result' />
+                <column name="docStatus" displayName="单据状态" ext:dict="erp-qa/doc-status" mandatory="true" code="DOC_STATUS" propId="19" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
+                <column name="approveStatus" displayName="审核状态" ext:dict="erp-qa/approve-status" mandatory="true" code="APPROVE_STATUS" propId="20" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Approve Status' />
+                <column name="posted" displayName="已过账(质量结论已回写业务单据)" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="21" stdDataType="boolean" i18n-en:displayName='Posted' />
+                <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="22" stdDataType="datetime" i18n-en:displayName='Posted At' />
+                <column name="postedBy" displayName="过账人" stdSqlType="BIGINT" code="POSTED_BY" propId="23" stdDataType="long" i18n-en:displayName='Posted By' />
+                <column name="approvedBy" displayName="审核人" stdSqlType="BIGINT" code="APPROVED_BY" propId="24" stdDataType="long" i18n-en:displayName='Approved By' />
+                <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="25" stdDataType="datetime" i18n-en:displayName='Approved At' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="26" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="27" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="28" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="29" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="30" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="31" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="32" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"><join><on leftProp="materialId" rightProp="id"/></join></to-one>
-                <to-one name="template" refEntityName="app.erp.qa.dao.entity.ErpQaInspectionTemplate" tagSet="pub"><join><on leftProp="templateId" rightProp="id"/></join></to-one>
-                <to-one name="supplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"><join><on leftProp="supplierId" rightProp="id"/></join></to-one>
-                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
-                <to-one name="inspector" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="inspectorId" rightProp="id"/></join></to-one>
-                <to-many name="lines" refEntityName="app.erp.qa.dao.entity.ErpQaInspectionLine" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="inspectionId"/></join></to-many>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material' ref-i18n-en:displayName='Inspection'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
+                <to-one name="template" refEntityName="app.erp.qa.dao.entity.ErpQaInspectionTemplate" tagSet="pub" i18n-en:displayName='Template' ref-i18n-en:displayName='Inspection'><join><on leftProp="templateId" rightProp="id"/></join></to-one>
+                <to-one name="supplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Supplier' ref-i18n-en:displayName='Inspection'><join><on leftProp="supplierId" rightProp="id"/></join></to-one>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub" i18n-en:displayName='Warehouse' ref-i18n-en:displayName='Inspection'><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
+                <to-one name="inspector" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub" i18n-en:displayName='Inspector' ref-i18n-en:displayName='Inspection'><join><on leftProp="inspectorId" rightProp="id"/></join></to-one>
+                <to-many name="lines" refEntityName="app.erp.qa.dao.entity.ErpQaInspectionLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ref-i18n-en:displayName='Inspection'><join><on leftProp="id" rightProp="inspectionId"/></join></to-many>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='Inspection'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -175,26 +175,26 @@
                 displayName="质检单行" ext:icon="list" i18n-en:displayName="Inspection Line" name="app.erp.qa.dao.entity.ErpQaInspectionLine"
                 tableName="erp_qa_inspection_line" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
-                <column name="inspectionId" displayName="质检单ID" stdSqlType="BIGINT" mandatory="true" code="INSPECTION_ID" propId="2" stdDataType="long"/>
-                <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int"/>
-                <column name="parameterId" displayName="检验参数" stdSqlType="BIGINT" code="PARAMETER_ID" propId="4" stdDataType="long"/>
-                <column name="parameterName" displayName="检验参数名称" stdSqlType="VARCHAR" precision="200" code="PARAMETER_NAME" propId="5" stdDataType="string"/>
-                <column name="specMin" displayName="规格下限" domain="specLimit" code="SPEC_MIN" propId="6" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="specMax" displayName="规格上限" domain="specLimit" code="SPEC_MAX" propId="7" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="measuredValue" displayName="实测值" domain="measuredValue" code="MEASURED_VALUE" propId="8" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="unit" displayName="计量单位" stdSqlType="VARCHAR" precision="50" code="UNIT" propId="9" stdDataType="string"/>
-                <column name="result" displayName="行结果" ext:dict="erp-qa/inspection-result" mandatory="true" code="RESULT" propId="10" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="11" stdSqlType="VARCHAR" stdDataType="string"/>
-                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="12" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
-                <column name="version" code="VERSION" displayName="数据版本" propId="13" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
-                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="14" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="15" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="16" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="inspectionId" displayName="质检单ID" stdSqlType="BIGINT" mandatory="true" code="INSPECTION_ID" propId="2" stdDataType="long" i18n-en:displayName='Inspection' />
+                <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int" i18n-en:displayName='Line No' />
+                <column name="parameterId" displayName="检验参数" stdSqlType="BIGINT" code="PARAMETER_ID" propId="4" stdDataType="long" i18n-en:displayName='Parameter' />
+                <column name="parameterName" displayName="检验参数名称" stdSqlType="VARCHAR" precision="200" code="PARAMETER_NAME" propId="5" stdDataType="string" i18n-en:displayName='Parameter Name' />
+                <column name="specMin" displayName="规格下限" domain="specLimit" code="SPEC_MIN" propId="6" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Spec Min' />
+                <column name="specMax" displayName="规格上限" domain="specLimit" code="SPEC_MAX" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Spec Max' />
+                <column name="measuredValue" displayName="实测值" domain="measuredValue" code="MEASURED_VALUE" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Measured Value' />
+                <column name="unit" displayName="计量单位" stdSqlType="VARCHAR" precision="50" code="UNIT" propId="9" stdDataType="string" i18n-en:displayName='Unit' />
+                <column name="result" displayName="行结果" ext:dict="erp-qa/inspection-result" mandatory="true" code="RESULT" propId="10" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Result' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="12" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="13" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="14" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="15" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="16" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="inspection" refEntityName="app.erp.qa.dao.entity.ErpQaInspection" tagSet="pub"><join><on leftProp="inspectionId" rightProp="id"/></join></to-one>
+                <to-one name="inspection" refEntityName="app.erp.qa.dao.entity.ErpQaInspection" tagSet="pub" i18n-en:displayName='Inspection' ref-i18n-en:displayName='Inspection Line'><join><on leftProp="inspectionId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -203,22 +203,22 @@
                 displayName="质检模板" ext:icon="file-check-2" i18n-en:displayName="Inspection Template" name="app.erp.qa.dao.entity.ErpQaInspectionTemplate"
                 tableName="erp_qa_inspection_template" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
-                <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="name" displayName="名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="NAME" propId="3" stdDataType="string"/>
-                <column name="inspectionType" displayName="检验类型" ext:dict="erp-qa/inspection-type" mandatory="true" code="INSPECTION_TYPE" propId="4" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="materialId" displayName="适用物料" stdSqlType="BIGINT" code="MATERIAL_ID" propId="5" stdDataType="long"/>
-                <column name="isActive" displayName="是否启用" stdSqlType="INTEGER" mandatory="true" defaultValue="1" code="IS_ACTIVE" propId="6" stdDataType="int"/>
-                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="7" stdSqlType="VARCHAR" stdDataType="string"/>
-                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="8" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
-                <column name="version" code="VERSION" displayName="数据版本" propId="9" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
-                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="10" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="11" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="12" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="13" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="name" displayName="名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="NAME" propId="3" stdDataType="string" i18n-en:displayName='Name' />
+                <column name="inspectionType" displayName="检验类型" ext:dict="erp-qa/inspection-type" mandatory="true" code="INSPECTION_TYPE" propId="4" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Inspection Type' />
+                <column name="materialId" displayName="适用物料" stdSqlType="BIGINT" code="MATERIAL_ID" propId="5" stdDataType="long" i18n-en:displayName='Material' />
+                <column name="isActive" displayName="是否启用" stdSqlType="INTEGER" mandatory="true" defaultValue="1" code="IS_ACTIVE" propId="6" stdDataType="int" i18n-en:displayName='Active' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="8" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="9" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="10" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="11" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="12" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="13" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-many name="lines" refEntityName="app.erp.qa.dao.entity.ErpQaInspectionTemplateLine" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="templateId"/></join></to-many>
+                <to-many name="lines" refEntityName="app.erp.qa.dao.entity.ErpQaInspectionTemplateLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ref-i18n-en:displayName='Inspection Template'><join><on leftProp="id" rightProp="templateId"/></join></to-many>
             </relations>
         </entity>
 
@@ -227,25 +227,25 @@
                 displayName="质检模板行" ext:icon="list" i18n-en:displayName="Inspection Template Line" name="app.erp.qa.dao.entity.ErpQaInspectionTemplateLine"
                 tableName="erp_qa_inspection_template_line" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
-                <column name="templateId" displayName="模板ID" stdSqlType="BIGINT" mandatory="true" code="TEMPLATE_ID" propId="2" stdDataType="long"/>
-                <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int"/>
-                <column name="parameterName" displayName="检验参数名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="PARAMETER_NAME" propId="4" stdDataType="string"/>
-                <column name="specMin" displayName="规格下限" domain="specLimit" code="SPEC_MIN" propId="5" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="specMax" displayName="规格上限" domain="specLimit" code="SPEC_MAX" propId="6" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="unit" displayName="计量单位" stdSqlType="VARCHAR" precision="50" code="UNIT" propId="7" stdDataType="string"/>
-                <column name="isRequired" displayName="是否必检" stdSqlType="INTEGER" mandatory="true" defaultValue="1" code="IS_REQUIRED" propId="8" stdDataType="int"/>
-                <column name="inspectionMethod" displayName="检验方法" stdSqlType="VARCHAR" precision="200" code="INSPECTION_METHOD" propId="10" stdDataType="string"/>
-                <column name="sortNum" displayName="排序" stdSqlType="INTEGER" defaultValue="0" code="SORT_NUM" propId="11" stdDataType="int"/>
-                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="12" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
-                <column name="version" code="VERSION" displayName="数据版本" propId="13" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
-                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="14" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="15" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="16" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="templateId" displayName="模板ID" stdSqlType="BIGINT" mandatory="true" code="TEMPLATE_ID" propId="2" stdDataType="long" i18n-en:displayName='Template' />
+                <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int" i18n-en:displayName='Line No' />
+                <column name="parameterName" displayName="检验参数名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="PARAMETER_NAME" propId="4" stdDataType="string" i18n-en:displayName='Parameter Name' />
+                <column name="specMin" displayName="规格下限" domain="specLimit" code="SPEC_MIN" propId="5" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Spec Min' />
+                <column name="specMax" displayName="规格上限" domain="specLimit" code="SPEC_MAX" propId="6" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Spec Max' />
+                <column name="unit" displayName="计量单位" stdSqlType="VARCHAR" precision="50" code="UNIT" propId="7" stdDataType="string" i18n-en:displayName='Unit' />
+                <column name="isRequired" displayName="是否必检" stdSqlType="INTEGER" mandatory="true" defaultValue="1" code="IS_REQUIRED" propId="8" stdDataType="int" i18n-en:displayName='Is Required' />
+                <column name="inspectionMethod" displayName="检验方法" stdSqlType="VARCHAR" precision="200" code="INSPECTION_METHOD" propId="10" stdDataType="string" i18n-en:displayName='Inspection Method' />
+                <column name="sortNum" displayName="排序" stdSqlType="INTEGER" defaultValue="0" code="SORT_NUM" propId="11" stdDataType="int" i18n-en:displayName='Sort Order' />
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="12" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="13" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="14" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="15" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="16" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="template" refEntityName="app.erp.qa.dao.entity.ErpQaInspectionTemplate" tagSet="pub"><join><on leftProp="templateId" rightProp="id"/></join></to-one>
+                <to-one name="template" refEntityName="app.erp.qa.dao.entity.ErpQaInspectionTemplate" tagSet="pub" i18n-en:displayName='Template' ref-i18n-en:displayName='Inspection Template Line'><join><on leftProp="templateId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -254,38 +254,38 @@
                 displayName="不合格品报告" ext:icon="x-circle" i18n-en:displayName="Non-Conformance Report" name="app.erp.qa.dao.entity.ErpQaNonConformance"
                 tableName="erp_qa_non_conformance" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
-                <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="ncrDate" displayName="报告日期" stdSqlType="DATE" mandatory="true" code="NCR_DATE" propId="3" stdDataType="date"/>
-                <column name="sourceType" displayName="来源类型" stdSqlType="VARCHAR" precision="50" code="SOURCE_TYPE" propId="4" stdDataType="string"/>
-                <column name="sourceCode" displayName="来源单号" stdSqlType="VARCHAR" precision="50" code="SOURCE_CODE" propId="5" stdDataType="string"/>
-                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="6" stdDataType="long"/>
-                <column name="inspectionId" displayName="质检单ID" stdSqlType="BIGINT" code="INSPECTION_ID" propId="7" stdDataType="long"/>
-                <column name="quantity" displayName="不合格数量" domain="quantity" code="QUANTITY" propId="8" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="description" displayName="问题描述" stdSqlType="VARCHAR" precision="2000" code="DESCRIPTION" propId="9" stdDataType="string"/>
-                <column name="severity" displayName="严重程度" ext:dict="erp-qa/severity" mandatory="true" code="SEVERITY" propId="10" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="dispositionType" displayName="处理决定" ext:dict="erp-qa/disposition-type" code="DISPOSITION_TYPE" propId="11" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="status" displayName="状态" ext:dict="erp-qa/ncr-status" mandatory="true" code="STATUS" propId="12" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="supplierId" displayName="供应商" stdSqlType="BIGINT" code="SUPPLIER_ID" propId="13" stdDataType="long"/>
-                <column name="parameterName" displayName="不合格参数" stdSqlType="VARCHAR" precision="200" code="PARAMETER_NAME" propId="14" stdDataType="string"/>
-                <column name="measuredValue" displayName="实测值" domain="measuredValue" code="MEASURED_VALUE" propId="15" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="specMin" displayName="规格下限" domain="specLimit" code="SPEC_MIN" propId="16" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="specMax" displayName="规格上限" domain="specLimit" code="SPEC_MAX" propId="17" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="assignedTo" displayName="责任人" stdSqlType="BIGINT" code="ASSIGNED_TO" propId="18" stdDataType="long"/>
-                <column name="resolvedBy" displayName="解决人" stdSqlType="BIGINT" code="RESOLVED_BY" propId="19" stdDataType="long"/>
-                <column name="resolvedAt" displayName="解决时间" stdSqlType="DATETIME" code="RESOLVED_AT" propId="20" stdDataType="datetime"/>
-                <column name="resolution" displayName="解决措施" stdSqlType="VARCHAR" precision="2000" code="RESOLUTION" propId="21" stdDataType="string"/>
-                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="23" stdSqlType="VARCHAR" stdDataType="string"/>
-                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="24" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
-                <column name="version" code="VERSION" displayName="数据版本" propId="25" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
-                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="26" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="27" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="28" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="29" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="ncrDate" displayName="报告日期" stdSqlType="DATE" mandatory="true" code="NCR_DATE" propId="3" stdDataType="date" i18n-en:displayName='Ncr Date' />
+                <column name="sourceType" displayName="来源类型" stdSqlType="VARCHAR" precision="50" code="SOURCE_TYPE" propId="4" stdDataType="string" i18n-en:displayName='Source Type' />
+                <column name="sourceCode" displayName="来源单号" stdSqlType="VARCHAR" precision="50" code="SOURCE_CODE" propId="5" stdDataType="string" i18n-en:displayName='Source Code' />
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="6" stdDataType="long" i18n-en:displayName='Material' />
+                <column name="inspectionId" displayName="质检单ID" stdSqlType="BIGINT" code="INSPECTION_ID" propId="7" stdDataType="long" i18n-en:displayName='Inspection' />
+                <column name="quantity" displayName="不合格数量" domain="quantity" code="QUANTITY" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Quantity' />
+                <column name="description" displayName="问题描述" stdSqlType="VARCHAR" precision="2000" code="DESCRIPTION" propId="9" stdDataType="string" i18n-en:displayName='Description' />
+                <column name="severity" displayName="严重程度" ext:dict="erp-qa/severity" mandatory="true" code="SEVERITY" propId="10" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Severity' />
+                <column name="dispositionType" displayName="处理决定" ext:dict="erp-qa/disposition-type" code="DISPOSITION_TYPE" propId="11" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Disposition Type' />
+                <column name="status" displayName="状态" ext:dict="erp-qa/ncr-status" mandatory="true" code="STATUS" propId="12" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
+                <column name="supplierId" displayName="供应商" stdSqlType="BIGINT" code="SUPPLIER_ID" propId="13" stdDataType="long" i18n-en:displayName='Supplier' />
+                <column name="parameterName" displayName="不合格参数" stdSqlType="VARCHAR" precision="200" code="PARAMETER_NAME" propId="14" stdDataType="string" i18n-en:displayName='Parameter Name' />
+                <column name="measuredValue" displayName="实测值" domain="measuredValue" code="MEASURED_VALUE" propId="15" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Measured Value' />
+                <column name="specMin" displayName="规格下限" domain="specLimit" code="SPEC_MIN" propId="16" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Spec Min' />
+                <column name="specMax" displayName="规格上限" domain="specLimit" code="SPEC_MAX" propId="17" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Spec Max' />
+                <column name="assignedTo" displayName="责任人" stdSqlType="BIGINT" code="ASSIGNED_TO" propId="18" stdDataType="long" i18n-en:displayName='Assigned To' />
+                <column name="resolvedBy" displayName="解决人" stdSqlType="BIGINT" code="RESOLVED_BY" propId="19" stdDataType="long" i18n-en:displayName='Resolved By' />
+                <column name="resolvedAt" displayName="解决时间" stdSqlType="DATETIME" code="RESOLVED_AT" propId="20" stdDataType="datetime" i18n-en:displayName='Resolved At' />
+                <column name="resolution" displayName="解决措施" stdSqlType="VARCHAR" precision="2000" code="RESOLUTION" propId="21" stdDataType="string" i18n-en:displayName='Resolution' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="23" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="24" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="25" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="26" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="27" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="28" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="29" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-many name="actions" refEntityName="app.erp.qa.dao.entity.ErpQaAction" tagSet="pub,cascade-delete,insertable,updatable"><join><on leftProp="id" rightProp="ncrId"/></join></to-many>
-                <to-one name="inspection" refEntityName="app.erp.qa.dao.entity.ErpQaInspection" tagSet="pub"><join><on leftProp="inspectionId" rightProp="id"/></join></to-one>
+                <to-many name="actions" refEntityName="app.erp.qa.dao.entity.ErpQaAction" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Actions' ref-i18n-en:displayName='Non-Conformance Report'><join><on leftProp="id" rightProp="ncrId"/></join></to-many>
+                <to-one name="inspection" refEntityName="app.erp.qa.dao.entity.ErpQaInspection" tagSet="pub" i18n-en:displayName='Inspection' ref-i18n-en:displayName='Non-Conformance Report'><join><on leftProp="inspectionId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
         
@@ -294,27 +294,27 @@
                 displayName="纠正预防措施" ext:icon="shield-alert" i18n-en:displayName="Corrective Action" name="app.erp.qa.dao.entity.ErpQaAction"
                 tableName="erp_qa_action" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
-                <column name="ncrId" displayName="不合格品报告ID" stdSqlType="BIGINT" mandatory="true" code="NCR_ID" propId="2" stdDataType="long"/>
-                <column name="actionType" displayName="措施类型" ext:dict="erp-qa/action-type" mandatory="true" code="ACTION_TYPE" propId="3" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="description" displayName="措施描述" stdSqlType="VARCHAR" precision="2000" code="DESCRIPTION" propId="4" stdDataType="string"/>
-                <column name="responsiblePerson" displayName="负责人" stdSqlType="BIGINT" code="RESPONSIBLE_PERSON" propId="5" stdDataType="long"/>
-                <column name="dueDate" displayName="计划完成日期" stdSqlType="DATE" code="DUE_DATE" propId="6" stdDataType="date"/>
-                <column name="status" displayName="状态" ext:dict="erp-qa/action-status" mandatory="true" code="STATUS" propId="7" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="completedBy" displayName="完成人" stdSqlType="BIGINT" code="COMPLETED_BY" propId="8" stdDataType="long"/>
-                <column name="completedAt" displayName="完成时间" stdSqlType="DATETIME" code="COMPLETED_AT" propId="9" stdDataType="datetime"/>
-                <column name="verificationPerson" displayName="验证人" stdSqlType="BIGINT" code="VERIFICATION_PERSON" propId="10" stdDataType="long"/>
-                <column name="verificationDate" displayName="验证日期" stdSqlType="DATE" code="VERIFICATION_DATE" propId="11" stdDataType="date"/>
-                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="12" stdSqlType="VARCHAR" stdDataType="string"/>
-                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="13" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
-                <column name="version" code="VERSION" displayName="数据版本" propId="14" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
-                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="15" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="16" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="17" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="ncrId" displayName="不合格品报告ID" stdSqlType="BIGINT" mandatory="true" code="NCR_ID" propId="2" stdDataType="long" i18n-en:displayName='Ncr' />
+                <column name="actionType" displayName="措施类型" ext:dict="erp-qa/action-type" mandatory="true" code="ACTION_TYPE" propId="3" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Action Type' />
+                <column name="description" displayName="措施描述" stdSqlType="VARCHAR" precision="2000" code="DESCRIPTION" propId="4" stdDataType="string" i18n-en:displayName='Description' />
+                <column name="responsiblePerson" displayName="负责人" stdSqlType="BIGINT" code="RESPONSIBLE_PERSON" propId="5" stdDataType="long" i18n-en:displayName='Responsible Person' />
+                <column name="dueDate" displayName="计划完成日期" stdSqlType="DATE" code="DUE_DATE" propId="6" stdDataType="date" i18n-en:displayName='Due Date' />
+                <column name="status" displayName="状态" ext:dict="erp-qa/action-status" mandatory="true" code="STATUS" propId="7" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
+                <column name="completedBy" displayName="完成人" stdSqlType="BIGINT" code="COMPLETED_BY" propId="8" stdDataType="long" i18n-en:displayName='Completed By' />
+                <column name="completedAt" displayName="完成时间" stdSqlType="DATETIME" code="COMPLETED_AT" propId="9" stdDataType="datetime" i18n-en:displayName='Completed At' />
+                <column name="verificationPerson" displayName="验证人" stdSqlType="BIGINT" code="VERIFICATION_PERSON" propId="10" stdDataType="long" i18n-en:displayName='Verification Person' />
+                <column name="verificationDate" displayName="验证日期" stdSqlType="DATE" code="VERIFICATION_DATE" propId="11" stdDataType="date" i18n-en:displayName='Verification Date' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="13" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="14" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="15" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="16" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="17" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="ncr" refEntityName="app.erp.qa.dao.entity.ErpQaNonConformance" tagSet="pub"><join><on leftProp="ncrId" rightProp="id"/></join></to-one>
+                <to-one name="ncr" refEntityName="app.erp.qa.dao.entity.ErpQaNonConformance" tagSet="pub" i18n-en:displayName='Ncr' ref-i18n-en:displayName='Corrective Action'><join><on leftProp="ncrId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -323,24 +323,24 @@
                 displayName="风险登记" ext:icon="alert-triangle" i18n-en:displayName="Risk Register" name="app.erp.qa.dao.entity.ErpQaRiskRegister"
                 tableName="erp_qa_risk_register" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
-                <column name="code" displayName="编号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="riskDate" displayName="登记日期" stdSqlType="DATE" mandatory="true" code="RISK_DATE" propId="3" stdDataType="date"/>
-                <column name="description" displayName="风险描述" stdSqlType="VARCHAR" precision="2000" code="DESCRIPTION" propId="4" stdDataType="string"/>
-                <column name="category" displayName="风险类别" stdSqlType="VARCHAR" precision="100" code="CATEGORY" propId="5" stdDataType="string"/>
-                <column name="likelihood" displayName="发生可能性" stdSqlType="INTEGER" mandatory="true" code="LIKELIHOOD" propId="6" stdDataType="int"/>
-                <column name="severity" displayName="影响严重性" stdSqlType="INTEGER" mandatory="true" code="SEVERITY" propId="7" stdDataType="int"/>
-                <column name="riskScore" displayName="风险评分" stdSqlType="INTEGER" code="RISK_SCORE" propId="8" stdDataType="int"/>
-                <column name="mitigation" displayName="缓解措施" stdSqlType="VARCHAR" precision="2000" code="MITIGATION" propId="9" stdDataType="string"/>
-                <column name="ownerId" displayName="责任人" stdSqlType="BIGINT" code="OWNER_ID" propId="10" stdDataType="long"/>
-                <column name="status" displayName="状态" ext:dict="erp-qa/risk-status" mandatory="true" code="STATUS" propId="11" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="12" stdSqlType="VARCHAR" stdDataType="string"/>
-                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="13" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
-                <column name="version" code="VERSION" displayName="数据版本" propId="14" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
-                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="15" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="16" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="17" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" displayName="编号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="riskDate" displayName="登记日期" stdSqlType="DATE" mandatory="true" code="RISK_DATE" propId="3" stdDataType="date" i18n-en:displayName='Risk Date' />
+                <column name="description" displayName="风险描述" stdSqlType="VARCHAR" precision="2000" code="DESCRIPTION" propId="4" stdDataType="string" i18n-en:displayName='Description' />
+                <column name="category" displayName="风险类别" stdSqlType="VARCHAR" precision="100" code="CATEGORY" propId="5" stdDataType="string" i18n-en:displayName='Category' />
+                <column name="likelihood" displayName="发生可能性" stdSqlType="INTEGER" mandatory="true" code="LIKELIHOOD" propId="6" stdDataType="int" i18n-en:displayName='Likelihood' />
+                <column name="severity" displayName="影响严重性" stdSqlType="INTEGER" mandatory="true" code="SEVERITY" propId="7" stdDataType="int" i18n-en:displayName='Severity' />
+                <column name="riskScore" displayName="风险评分" stdSqlType="INTEGER" code="RISK_SCORE" propId="8" stdDataType="int" i18n-en:displayName='Risk Score' />
+                <column name="mitigation" displayName="缓解措施" stdSqlType="VARCHAR" precision="2000" code="MITIGATION" propId="9" stdDataType="string" i18n-en:displayName='Mitigation' />
+                <column name="ownerId" displayName="责任人" stdSqlType="BIGINT" code="OWNER_ID" propId="10" stdDataType="long" i18n-en:displayName='Owner' />
+                <column name="status" displayName="状态" ext:dict="erp-qa/risk-status" mandatory="true" code="STATUS" propId="11" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="13" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="14" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="15" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="16" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="17" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
         </entity>
 
@@ -349,27 +349,27 @@
                 displayName="质量目标" ext:icon="target" i18n-en:displayName="Quality Goal" name="app.erp.qa.dao.entity.ErpQaQualityGoal"
                 tableName="erp_qa_quality_goal" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
-                <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="name" displayName="名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="NAME" propId="3" stdDataType="string"/>
-                <column name="description" displayName="描述" stdSqlType="VARCHAR" precision="2000" code="DESCRIPTION" propId="4" stdDataType="string"/>
-                <column name="targetValue" displayName="目标值" stdSqlType="DECIMAL" precision="20" scale="4" code="TARGET_VALUE" propId="5" stdDataType="decimal"/>
-                <column name="currentValue" displayName="当前值" stdSqlType="DECIMAL" precision="20" scale="4" code="CURRENT_VALUE" propId="6" stdDataType="decimal"/>
-                <column name="unit" displayName="单位" stdSqlType="VARCHAR" precision="50" code="UNIT" propId="7" stdDataType="string"/>
-                <column name="responsiblePersonId" displayName="责任人" stdSqlType="BIGINT" code="RESPONSIBLE_PERSON_ID" propId="8" stdDataType="long"/>
-                <column name="startDate" displayName="开始日期" stdSqlType="DATE" code="START_DATE" propId="9" stdDataType="date"/>
-                <column name="endDate" displayName="结束日期" stdSqlType="DATE" code="END_DATE" propId="10" stdDataType="date"/>
-                <column name="status" displayName="状态" ext:dict="erp-qa/goal-status" mandatory="true" code="STATUS" propId="11" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="12" stdSqlType="VARCHAR" stdDataType="string"/>
-                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="13" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
-                <column name="version" code="VERSION" displayName="数据版本" propId="14" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
-                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="15" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="16" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="17" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="name" displayName="名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="NAME" propId="3" stdDataType="string" i18n-en:displayName='Name' />
+                <column name="description" displayName="描述" stdSqlType="VARCHAR" precision="2000" code="DESCRIPTION" propId="4" stdDataType="string" i18n-en:displayName='Description' />
+                <column name="targetValue" displayName="目标值" stdSqlType="DECIMAL" precision="20" scale="4" code="TARGET_VALUE" propId="5" stdDataType="decimal" i18n-en:displayName='Target Value' />
+                <column name="currentValue" displayName="当前值" stdSqlType="DECIMAL" precision="20" scale="4" code="CURRENT_VALUE" propId="6" stdDataType="decimal" i18n-en:displayName='Current Value' />
+                <column name="unit" displayName="单位" stdSqlType="VARCHAR" precision="50" code="UNIT" propId="7" stdDataType="string" i18n-en:displayName='Unit' />
+                <column name="responsiblePersonId" displayName="责任人" stdSqlType="BIGINT" code="RESPONSIBLE_PERSON_ID" propId="8" stdDataType="long" i18n-en:displayName='Responsible Person' />
+                <column name="startDate" displayName="开始日期" stdSqlType="DATE" code="START_DATE" propId="9" stdDataType="date" i18n-en:displayName='Start Date' />
+                <column name="endDate" displayName="结束日期" stdSqlType="DATE" code="END_DATE" propId="10" stdDataType="date" i18n-en:displayName='End Date' />
+                <column name="status" displayName="状态" ext:dict="erp-qa/goal-status" mandatory="true" code="STATUS" propId="11" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="13" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="14" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="15" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="16" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="17" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="responsiblePerson" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="responsiblePersonId" rightProp="id"/></join></to-one>
+                <to-one name="responsiblePerson" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub" i18n-en:displayName='Responsible Person' ref-i18n-en:displayName='Quality Goal'><join><on leftProp="responsiblePersonId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -378,25 +378,25 @@
                 displayName="质量评审" ext:icon="clipboard-list" i18n-en:displayName="Quality Review" name="app.erp.qa.dao.entity.ErpQaReview"
                 tableName="erp_qa_review" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
-                <column name="code" displayName="编号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long"/>
-                <column name="reviewDate" displayName="评审日期" stdSqlType="DATE" mandatory="true" code="REVIEW_DATE" propId="4" stdDataType="date"/>
-                <column name="reviewType" displayName="评审类型" ext:dict="erp-qa/review-type" mandatory="true" code="REVIEW_TYPE" propId="5" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="relatedBillType" displayName="关联单据类型" stdSqlType="VARCHAR" precision="50" code="RELATED_BILL_TYPE" propId="6" stdDataType="string"/>
-                <column name="relatedBillCode" displayName="关联单据号" stdSqlType="VARCHAR" precision="50" code="RELATED_BILL_CODE" propId="7" stdDataType="string"/>
-                <column name="participants" displayName="参与人员" stdSqlType="VARCHAR" precision="500" code="PARTICIPANTS" propId="8" stdDataType="string"/>
-                <column name="conclusion" displayName="评审结论" stdSqlType="VARCHAR" precision="2000" code="CONCLUSION" propId="9" stdDataType="string"/>
-                <column name="actionRequired" displayName="是否需要措施" stdSqlType="INTEGER" defaultValue="0" code="ACTION_REQUIRED" propId="10" stdDataType="int"/>
-                <column name="docStatus" displayName="单据状态" ext:dict="erp-qa/doc-status" mandatory="true" code="DOC_STATUS" propId="11" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="approveStatus" displayName="审核状态" ext:dict="erp-qa/approve-status" mandatory="true" code="APPROVE_STATUS" propId="12" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="13" stdSqlType="VARCHAR" stdDataType="string"/>
-                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="14" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
-                <column name="version" code="VERSION" displayName="数据版本" propId="15" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
-                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="16" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="17" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="18" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="19" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" displayName="编号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="reviewDate" displayName="评审日期" stdSqlType="DATE" mandatory="true" code="REVIEW_DATE" propId="4" stdDataType="date" i18n-en:displayName='Review Date' />
+                <column name="reviewType" displayName="评审类型" ext:dict="erp-qa/review-type" mandatory="true" code="REVIEW_TYPE" propId="5" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Review Type' />
+                <column name="relatedBillType" displayName="关联单据类型" stdSqlType="VARCHAR" precision="50" code="RELATED_BILL_TYPE" propId="6" stdDataType="string" i18n-en:displayName='Related Bill Type' />
+                <column name="relatedBillCode" displayName="关联单据号" stdSqlType="VARCHAR" precision="50" code="RELATED_BILL_CODE" propId="7" stdDataType="string" i18n-en:displayName='Related Bill Code' />
+                <column name="participants" displayName="参与人员" stdSqlType="VARCHAR" precision="500" code="PARTICIPANTS" propId="8" stdDataType="string" i18n-en:displayName='Participants' />
+                <column name="conclusion" displayName="评审结论" stdSqlType="VARCHAR" precision="2000" code="CONCLUSION" propId="9" stdDataType="string" i18n-en:displayName='Conclusion' />
+                <column name="actionRequired" displayName="是否需要措施" stdSqlType="INTEGER" defaultValue="0" code="ACTION_REQUIRED" propId="10" stdDataType="int" i18n-en:displayName='Action Required' />
+                <column name="docStatus" displayName="单据状态" ext:dict="erp-qa/doc-status" mandatory="true" code="DOC_STATUS" propId="11" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
+                <column name="approveStatus" displayName="审核状态" ext:dict="erp-qa/approve-status" mandatory="true" code="APPROVE_STATUS" propId="12" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Approve Status' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="14" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="15" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="16" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="17" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="18" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="19" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
         </entity>
 
@@ -405,23 +405,23 @@
                 displayName="抽样方案" ext:icon="layers" i18n-en:displayName="Sampling Plan" name="app.erp.qa.dao.entity.ErpQaSamplingPlan"
                 tableName="erp_qa_sampling_plan" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
-                <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="name" displayName="名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="NAME" propId="3" stdDataType="string"/>
-                <column name="aqlLevel" displayName="AQL 检验水平(如 II)" stdSqlType="VARCHAR" precision="20" mandatory="true" code="AQL_LEVEL" propId="4" stdDataType="string"/>
-                <column name="lotSizeFrom" displayName="批量下限" domain="quantity" code="LOT_SIZE_FROM" propId="5" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="lotSizeTo" displayName="批量上限" domain="quantity" code="LOT_SIZE_TO" propId="6" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="sampleSize" displayName="样本量" domain="quantity" mandatory="true" code="SAMPLE_SIZE" propId="7" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="acceptNumber" displayName="合格判定数(Ac)" stdSqlType="INTEGER" mandatory="true" code="ACCEPT_NUMBER" propId="8" stdDataType="int"/>
-                <column name="rejectNumber" displayName="不合格判定数(Re)" stdSqlType="INTEGER" mandatory="true" code="REJECT_NUMBER" propId="9" stdDataType="int"/>
-                <column name="isActive" displayName="是否启用" stdSqlType="BOOLEAN" defaultValue="true" code="IS_ACTIVE" propId="10" stdDataType="boolean"/>
-                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="11" stdSqlType="VARCHAR" stdDataType="string"/>
-                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="12" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
-                <column name="version" code="VERSION" displayName="数据版本" propId="13" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
-                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="14" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="15" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="16" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="name" displayName="名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="NAME" propId="3" stdDataType="string" i18n-en:displayName='Name' />
+                <column name="aqlLevel" displayName="AQL 检验水平(如 II)" stdSqlType="VARCHAR" precision="20" mandatory="true" code="AQL_LEVEL" propId="4" stdDataType="string" i18n-en:displayName='Aql Level' />
+                <column name="lotSizeFrom" displayName="批量下限" domain="quantity" code="LOT_SIZE_FROM" propId="5" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Lot Size From' />
+                <column name="lotSizeTo" displayName="批量上限" domain="quantity" code="LOT_SIZE_TO" propId="6" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Lot Size To' />
+                <column name="sampleSize" displayName="样本量" domain="quantity" mandatory="true" code="SAMPLE_SIZE" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Sample Size' />
+                <column name="acceptNumber" displayName="合格判定数(Ac)" stdSqlType="INTEGER" mandatory="true" code="ACCEPT_NUMBER" propId="8" stdDataType="int" i18n-en:displayName='Accept Number' />
+                <column name="rejectNumber" displayName="不合格判定数(Re)" stdSqlType="INTEGER" mandatory="true" code="REJECT_NUMBER" propId="9" stdDataType="int" i18n-en:displayName='Reject Number' />
+                <column name="isActive" displayName="是否启用" stdSqlType="BOOLEAN" defaultValue="true" code="IS_ACTIVE" propId="10" stdDataType="boolean" i18n-en:displayName='Active' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="12" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="13" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="14" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="15" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="16" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
         </entity>
 
@@ -430,31 +430,31 @@
                 displayName="量具校准" ext:icon="gauge" i18n-en:displayName="Gauge Calibration" name="app.erp.qa.dao.entity.ErpQaCalibration"
                 tableName="erp_qa_calibration" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long"/>
-                <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long"/>
-                <column name="instrumentName" displayName="量具/设备名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="INSTRUMENT_NAME" propId="4" stdDataType="string"/>
-                <column name="instrumentCode" displayName="量具编号" stdSqlType="VARCHAR" precision="100" code="INSTRUMENT_CODE" propId="5" stdDataType="string"/>
-                <column name="businessDate" displayName="校准日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="6" stdDataType="date"/>
-                <column name="standardRef" displayName="参考标准" stdSqlType="VARCHAR" precision="200" code="STANDARD_REF" propId="7" stdDataType="string"/>
-                <column name="measuredValue" displayName="测量值" domain="measuredValue" code="MEASURED_VALUE" propId="8" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="targetValue" displayName="目标值" domain="measuredValue" code="TARGET_VALUE" propId="9" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="tolerance" displayName="允差" domain="measuredValue" code="TOLERANCE" propId="10" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="result" displayName="校准结果" ext:dict="erp-qa/inspection-result" mandatory="true" code="RESULT" propId="11" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="nextCalibrationDate" displayName="下次校准日期" stdSqlType="DATE" code="NEXT_CALIBRATION_DATE" propId="12" stdDataType="date"/>
-                <column name="calibratedBy" displayName="校准人(职员)" stdSqlType="BIGINT" code="CALIBRATED_BY" propId="13" stdDataType="long"/>
-                <column name="docStatus" displayName="单据状态" ext:dict="erp-qa/doc-status" mandatory="true" code="DOC_STATUS" propId="14" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="approveStatus" displayName="审核状态" ext:dict="erp-qa/approve-status" mandatory="true" code="APPROVE_STATUS" propId="15" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="16" stdSqlType="VARCHAR" stdDataType="string"/>
-                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="17" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0"/>
-                <column name="version" code="VERSION" displayName="数据版本" propId="18" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0"/>
-                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="19" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="20" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
-                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="21" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string"/>
-                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="22" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true"/>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="instrumentName" displayName="量具/设备名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="INSTRUMENT_NAME" propId="4" stdDataType="string" i18n-en:displayName='Instrument Name' />
+                <column name="instrumentCode" displayName="量具编号" stdSqlType="VARCHAR" precision="100" code="INSTRUMENT_CODE" propId="5" stdDataType="string" i18n-en:displayName='Instrument Code' />
+                <column name="businessDate" displayName="校准日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="6" stdDataType="date" i18n-en:displayName='Business Date' />
+                <column name="standardRef" displayName="参考标准" stdSqlType="VARCHAR" precision="200" code="STANDARD_REF" propId="7" stdDataType="string" i18n-en:displayName='Standard Ref' />
+                <column name="measuredValue" displayName="测量值" domain="measuredValue" code="MEASURED_VALUE" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Measured Value' />
+                <column name="targetValue" displayName="目标值" domain="measuredValue" code="TARGET_VALUE" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Target Value' />
+                <column name="tolerance" displayName="允差" domain="measuredValue" code="TOLERANCE" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Tolerance' />
+                <column name="result" displayName="校准结果" ext:dict="erp-qa/inspection-result" mandatory="true" code="RESULT" propId="11" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Result' />
+                <column name="nextCalibrationDate" displayName="下次校准日期" stdSqlType="DATE" code="NEXT_CALIBRATION_DATE" propId="12" stdDataType="date" i18n-en:displayName='Next Calibration Date' />
+                <column name="calibratedBy" displayName="校准人(职员)" stdSqlType="BIGINT" code="CALIBRATED_BY" propId="13" stdDataType="long" i18n-en:displayName='Calibrated By' />
+                <column name="docStatus" displayName="单据状态" ext:dict="erp-qa/doc-status" mandatory="true" code="DOC_STATUS" propId="14" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
+                <column name="approveStatus" displayName="审核状态" ext:dict="erp-qa/approve-status" mandatory="true" code="APPROVE_STATUS" propId="15" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Approve Status' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="16" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="17" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="18" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="19" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="20" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="21" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="22" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="calibratedByEmployee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"><join><on leftProp="calibratedBy" rightProp="id"/></join></to-one>
+                <to-one name="calibratedByEmployee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub" i18n-en:displayName='Calibrated By Employee' ref-i18n-en:displayName='Gauge Calibration'><join><on leftProp="calibratedBy" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -466,57 +466,57 @@
         <entity displayName="组织" name="app.erp.md.dao.entity.ErpMdOrganization"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">
             <columns>
-                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
-                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
-                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string"/>
-                <column name="orgType" code="ORG_TYPE" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="parentId" code="PARENT_ID" stdSqlType="BIGINT" stdDataType="long"/>
-                <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name' />
+                <column name="orgType" code="ORG_TYPE" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Org Type' />
+                <column name="parentId" code="PARENT_ID" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Parent' />
+                <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
             </columns>
         </entity>
 
         <entity displayName="物料" name="app.erp.md.dao.entity.ErpMdMaterial"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_material">
             <columns>
-                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
-                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
-                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string"/>
-                <column name="materialType" code="MATERIAL_TYPE" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name' />
+                <column name="materialType" code="MATERIAL_TYPE" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Material Type' />
+                <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
             </columns>
         </entity>
 
         <entity displayName="往来单位" name="app.erp.md.dao.entity.ErpMdPartner"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_partner">
             <columns>
-                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
-                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
-                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string"/>
-                <column name="partnerType" code="PARTNER_TYPE" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="creditLimit" code="CREDIT_LIMIT" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name' />
+                <column name="partnerType" code="PARTNER_TYPE" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Partner Type' />
+                <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
+                <column name="creditLimit" code="CREDIT_LIMIT" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Credit Limit' />
             </columns>
         </entity>
 
         <entity displayName="仓库" name="app.erp.md.dao.entity.ErpMdWarehouse"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_warehouse">
             <columns>
-                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
-                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
-                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string"/>
-                <column name="warehouseType" code="WAREHOUSE_TYPE" stdSqlType="INTEGER" stdDataType="int"/>
-                <column name="orgId" code="ORG_ID" stdSqlType="BIGINT" stdDataType="long"/>
-                <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name' />
+                <column name="warehouseType" code="WAREHOUSE_TYPE" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Warehouse Type' />
+                <column name="orgId" code="ORG_ID" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
             </columns>
         </entity>
         <entity displayName="职员" name="app.erp.md.dao.entity.ErpMdEmployee"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_employee">
             <columns>
-                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
-                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string"/>
-                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string"/>
-                <column name="orgId" code="ORG_ID" stdSqlType="BIGINT" stdDataType="long"/>
-                <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int"/>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name' />
+                <column name="orgId" code="ORG_ID" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
             </columns>
         </entity>
     </entities>

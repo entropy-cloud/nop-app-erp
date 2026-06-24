@@ -1,4 +1,74 @@
-
 "x:extends": _erp-fin.i18n.yaml
+
+dict:
+  label:
+    erp-fin/ar-ap-direction: 'AR/AP Direction'
+    erp-fin/ar-ap-status: 'AR/AP Status'
+    erp-fin/business-type: 'Business Type'
+    erp-fin/dc-direction: 'Debit/Credit Direction'
+    erp-fin/fund-account-status: 'Account Status'
+    erp-fin/fund-account-type: 'Account Type'
+    erp-fin/module-close-status: 'Module Close Status'
+    erp-fin/period-status: 'Period Status'
+    erp-fin/reconciliation-status: 'Reconciliation Status'
+    erp-fin/voucher-status: 'Voucher Status'
+    erp-fin/voucher-type: 'Voucher Type'
+
+dict.option.label:
+  erp-fin/ar-ap-direction:
+    10: '应收 (AR))'
+    20: '应付 (AP))'
+  erp-fin/ar-ap-status:
+    10: 'Unmatched'
+    20: 'Partially Matched'
+    30: 'Matched'
+    40: 'Voided'
+  erp-fin/business-type:
+    10: 'Purchase Receipt'
+    20: 'Sales Issue'
+    30: 'AP Invoice'
+    40: 'AR Invoice'
+    50: '付款'
+    60: '收款'
+    70: 'Depreciation'
+    80: 'Capitalization'
+    90: 'Disposal'
+    100: 'Prod Cost Transfer'
+    110: 'Project Cost Accrual'
+    120: 'Period-End Closing'
+    130: 'FX Gain/Loss'
+  erp-fin/dc-direction:
+    10: 'Debit'
+    20: 'Credit'
+  erp-fin/fund-account-status:
+    10: 'Enabled'
+    20: 'Disabled'
+  erp-fin/fund-account-type:
+    10: 'Bank'
+    20: 'Cash'
+    30: 'Alipay'
+    40: 'WeChat'
+    50: 'Other'
+  erp-fin/module-close-status:
+    10: 'Unsettled'
+    20: 'Closing'
+    30: 'Settled'
+  erp-fin/period-status:
+    10: 'Open'
+    20: 'Closing'
+    30: 'Closed'
+    40: 'Not Open'
+  erp-fin/reconciliation-status:
+    10: 'Draft'
+    20: 'Posted'
+    30: 'Red Offset'
+  erp-fin/voucher-status:
+    10: 'Draft'
+    20: 'Posted'
+    30: 'Voided'
+  erp-fin/voucher-type:
+    10: 'Receive'
+    20: 'Pay'
+    30: 'Transfer'
 
 # key: "value"
