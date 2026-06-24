@@ -37,6 +37,11 @@
             <option code="SPECIFIC" label="具体辨认(个别计价)" value="60"/>
             <option code="BATCH" label="批次" value="70"/>
         </dict>
+        <dict label="价格校验级别" name="erp-md/price-validation" valueType="int">
+            <option code="OFF" label="不校验" value="10"/>
+            <option code="WARN" label="警告放行" value="20"/>
+            <option code="HARD" label="强制拦截" value="30"/>
+        </dict>
         <dict label="往来单位类型" name="erp-md/partner-type" valueType="int">
             <option code="CUSTOMER" label="客户" value="10"/>
             <option code="SUPPLIER" label="供应商" value="20"/>
@@ -234,18 +239,20 @@
                         stdSqlType="BIGINT"/>
                 <column code="SORT_NUM" displayName="排序" name="sortNum" propId="5" stdDataType="int"
                         stdSqlType="INTEGER"/>
+                <column code="PRICE_VALIDATION_LEVEL" defaultValue="20" displayName="价格校验级别" name="priceValidationLevel"
+                        propId="6" stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-md/price-validation"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
-                        name="delVersion" propId="6" stdDataType="long" stdSqlType="BIGINT"/>
+                        name="delVersion" propId="7" stdDataType="long" stdSqlType="BIGINT"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
-                        name="version" propId="7" stdDataType="int" stdSqlType="INTEGER"/>
+                        name="version" propId="8" stdDataType="int" stdSqlType="INTEGER"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
-                        precision="50" propId="8" stdDataType="string" stdSqlType="VARCHAR"/>
+                        precision="50" propId="9" stdDataType="string" stdSqlType="VARCHAR"/>
                 <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
-                        propId="9" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
+                        propId="10" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
                 <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
-                        precision="50" propId="10" stdDataType="string" stdSqlType="VARCHAR"/>
+                        precision="50" propId="11" stdDataType="string" stdSqlType="VARCHAR"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
-                        propId="11" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
+                        propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
             </columns>
             <relations>
                 <to-one name="parent" refEntityName="app.erp.md.dao.entity.ErpMdMaterialCategory" tagSet="pub">

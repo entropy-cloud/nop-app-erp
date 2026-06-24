@@ -59,8 +59,8 @@
 **可验证断言**(见 sku-multi-unit.md §多档价格、§配置项):
 ```
 若 最终售价 < SKU.minPrice:
-  配置 erp-md.sku-price-validation == HARD → 拒绝
-  配置 == WARN → 警告但放行
+  MaterialCategory.priceValidationLevel == HARD → 拒绝
+  == WARN → 警告但放行
   配置 == OFF → 不校验
 ```
 

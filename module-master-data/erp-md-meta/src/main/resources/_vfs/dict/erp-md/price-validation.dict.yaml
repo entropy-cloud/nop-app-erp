@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 价格校验级别
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 不校验
+    value: 10
+    description: 
+  
+  - label: 警告放行
+    value: 20
+    description: 
+  
+  - label: 强制拦截
+    value: 30
+    description: 
+  

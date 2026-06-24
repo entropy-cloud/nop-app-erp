@@ -435,7 +435,7 @@ public List<ErpMfgMaterialReservation> findWorkOrderReservations(Long workOrderI
 |--------|--------|------|
 | `erp-mfg.reservation-enabled` | true | 是否启用物料预留 |
 | `erp-mfg.reservation-on-approve` | true | 审核时是否自动预留 |
-| `erp-mfg.kitting-required` | true | 生产前是否必须齐套 |
+| `ErpMfgBom.consumption` | STRICT | 齐套严格度,按 BOM 配置(见 ORM 字段) |
 | `erp-mfg.over-pick-warning` | true | 超预留领料是否警告 |
 | `erp-mfg.auto-release-on-complete` | true | 完工时是否自动释放未领料预留 |
 

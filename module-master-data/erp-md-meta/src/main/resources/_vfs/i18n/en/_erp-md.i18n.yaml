@@ -178,6 +178,8 @@ prop:
       name: null
       parentId: null
       sortNum: null
+      priceValidationLevel: null
+      priceValidationLevel_label: null
       delVersion: null
       version: null
       createdBy: null

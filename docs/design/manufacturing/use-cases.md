@@ -65,7 +65,7 @@ BOM.is_phantom == true 的组件 →
 齐套校验 = BOM 展开子件需求 vs 可用量(物料×仓库)
 全部满足 → 工单.状态 = STOCK_RESERVED
 部分满足 → 工单.状态 = STOCK_PARTIAL
-齐套状态决定可否生产(配置 kitting-required)
+齐套状态决定可否生产(配置 ErpMfgBom.consumption)
 ```
 
 **涉及机制**:material-reservation.md §齐套、state-machine.md
@@ -78,7 +78,7 @@ BOM.is_phantom == true 的组件 →
 
 **可验证断言**(见 state-machine.md §2/§6):
 ```
-配置 erp-mfg.kitting-required == false 或 主管权限
+ErpMfgBom.consumption != STRICT 或 主管权限
 STOCK_PARTIAL → 可迁移到 IN_PROCESS(强制开工)
 缺件部分后续补料
 ```

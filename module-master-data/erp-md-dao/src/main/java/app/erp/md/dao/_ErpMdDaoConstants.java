@@ -84,6 +84,21 @@ public interface _ErpMdDaoConstants {
     int COST_METHOD_BATCH = 70;
                     
     /**
+     * 价格校验级别: 不校验 
+     */
+    int PRICE_VALIDATION_OFF = 10;
+                    
+    /**
+     * 价格校验级别: 警告放行 
+     */
+    int PRICE_VALIDATION_WARN = 20;
+                    
+    /**
+     * 价格校验级别: 强制拦截 
+     */
+    int PRICE_VALIDATION_HARD = 30;
+                    
+    /**
      * 往来单位类型: 客户 
      */
     int PARTNER_TYPE_CUSTOMER = 10;

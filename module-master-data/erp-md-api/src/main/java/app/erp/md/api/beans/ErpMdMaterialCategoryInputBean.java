@@ -83,10 +83,24 @@
         }
 
 
-        private Long _delVersion;
+        private Integer _priceValidationLevel;
 
     
         @PropMeta(propId=6)
+    
+        public Integer getPriceValidationLevel(){
+            return _priceValidationLevel;
+        }
+
+        public void setPriceValidationLevel(Integer value){
+            this._priceValidationLevel = value;
+        }
+
+
+        private Long _delVersion;
+
+    
+        @PropMeta(propId=7)
     
         public Long getDelVersion(){
             return _delVersion;

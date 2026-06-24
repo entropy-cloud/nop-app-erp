@@ -42,12 +42,12 @@
 成本核算方法在会计科目表层面配置：
 
 ```xml
-<entity name="ErpFinAcctSchema">
-    <column name="costingMethod" dict="erp/costing-method" mandatory="true"/>
+<entity name="ErpMdAcctSchema">
+    <column name="costingMethod" dict="erp-md/cost-method" mandatory="true"/>
     <column name="costType" dict="erp/cost-type" mandatory="true"/>
 </entity>
 
-<dict name="erp/costing-method">
+<dict name="erp-md/cost-method">
     <option value="MOVING_AVERAGE" label="移动加权平均"/>
     <option value="FIFO" label="先进先出"/>
     <option value="BATCH" label="批次成本"/>
@@ -427,7 +427,6 @@ public BigDecimal findIncomingCost(Long moveId) {
 
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
-| `erp-fin.costing-method` | MOVING_AVERAGE | 默认成本核算方法 |
 | `erp-fin.landed-cost-enabled` | true | 是否启用到岸成本 |
 | `erp-fin.cost-adjust-approval` | true | 成本调整是否需要审批 |
 | `erp-fin.fifo-expiry-priority` | true | FIFO 是否优先按效期出库 |

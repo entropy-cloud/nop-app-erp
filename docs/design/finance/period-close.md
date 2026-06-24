@@ -229,8 +229,7 @@
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
 | `erp-fin.auto-post-on-close` | true | 结账时自动触发未过账单据过账 |
-| `erp-fin.allow-negative-stock` | false | 结账时是否允许负库存 |
-| `erp-fin.costing-method` | MOVING_AVERAGE | 默认成本核算方法 |
+| `erp-inv.allow-negative-stock (引用库存域)` | false | 结账时是否允许负库存 |
 | `erp-fin.auto-depreciation` | true | 结账时自动计提折旧 |
 | `erp-fin.closing-reminder-days` | 3 | 结账提醒提前天数 |
 

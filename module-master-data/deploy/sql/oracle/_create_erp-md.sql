@@ -5,6 +5,7 @@ CREATE TABLE erp_md_material_category(
   NAME VARCHAR2(200) NOT NULL ,
   PARENT_ID NUMBER(20)  ,
   SORT_NUM INTEGER  ,
+  PRICE_VALIDATION_LEVEL INTEGER default 20   ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,
   CREATED_BY VARCHAR2(50) NOT NULL ,
@@ -387,6 +388,8 @@ CREATE TABLE erp_md_uom_conversion(
       COMMENT ON COLUMN erp_md_material_category.PARENT_ID IS '父级ID';
                     
       COMMENT ON COLUMN erp_md_material_category.SORT_NUM IS '排序';
+                    
+      COMMENT ON COLUMN erp_md_material_category.PRICE_VALIDATION_LEVEL IS '价格校验级别';
                     
       COMMENT ON COLUMN erp_md_material_category.DEL_VERSION IS '逻辑删除版本';
                     

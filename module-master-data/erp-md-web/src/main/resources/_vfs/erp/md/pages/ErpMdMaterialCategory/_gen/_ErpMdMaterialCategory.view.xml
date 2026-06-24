@@ -33,6 +33,9 @@
                 <!--排序-->
                 <col id="sortNum" ui:number="true" sortable="true"/>
 
+                <!--价格校验级别-->
+                <col id="priceValidationLevel" ui:number="true" sortable="true"/>
+
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
 
@@ -57,9 +60,10 @@
             <layout>
  id[ID] code[编码]
  name[名称] parentId[父级ID]
- sortNum[排序] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ sortNum[排序] priceValidationLevel[价格校验级别]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-物料分类" i18n-en:title="Add Material Category">
@@ -69,6 +73,7 @@
  name[名称]
  parentId[父级ID]
  sortNum[排序]
+ priceValidationLevel[价格校验级别]
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-物料分类" i18n-en:title="Edit Material Category">
@@ -78,6 +83,7 @@
  name[名称]
  parentId[父级ID]
  sortNum[排序]
+ priceValidationLevel[价格校验级别]
  delVersion[逻辑删除版本]
 </layout>
         </form>

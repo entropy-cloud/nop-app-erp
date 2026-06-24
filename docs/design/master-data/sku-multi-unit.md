@@ -417,7 +417,7 @@ public void validateSkuDeactivation(Long skuId) {
 |--------|--------|------|
 | `erp-md.sku-default-required` | true | 是否必须有默认 SKU |
 | `erp-md.sku-barcode-unique` | true | 条码是否全局唯一 |
-| `erp-md.sku-price-validation` | true | 是否校验最低价 |
+| `MaterialCategory.priceValidationLevel` | WARN(20) | 价格校验级别(OFF/WARN/HARD),按物料类别配置,见 ORM 字段 |
 | `erp-md.sku-auto-create-default` | true | 创建物料时是否自动创建默认 SKU |
 
 ## 开源参考

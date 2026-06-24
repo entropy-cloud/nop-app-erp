@@ -40,32 +40,36 @@ public class _ErpMdMaterialCategory extends DynamicOrmEntity{
     public static final String PROP_NAME_sortNum = "sortNum";
     public static final int PROP_ID_sortNum = 5;
     
+    /* 价格校验级别: PRICE_VALIDATION_LEVEL INTEGER */
+    public static final String PROP_NAME_priceValidationLevel = "priceValidationLevel";
+    public static final int PROP_ID_priceValidationLevel = 6;
+    
     /* 逻辑删除版本: DEL_VERSION BIGINT */
     public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 6;
+    public static final int PROP_ID_delVersion = 7;
     
     /* 数据版本: VERSION INTEGER */
     public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 7;
+    public static final int PROP_ID_version = 8;
     
     /* 创建人: CREATED_BY VARCHAR */
     public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 8;
+    public static final int PROP_ID_createdBy = 9;
     
     /* 创建时间: CREATE_TIME TIMESTAMP */
     public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 9;
+    public static final int PROP_ID_createTime = 10;
     
     /* 修改人: UPDATED_BY VARCHAR */
     public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 10;
+    public static final int PROP_ID_updatedBy = 11;
     
     /* 修改时间: UPDATE_TIME TIMESTAMP */
     public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 11;
+    public static final int PROP_ID_updateTime = 12;
     
 
-    private static int _PROP_ID_BOUND = 12;
+    private static int _PROP_ID_BOUND = 13;
 
     
     /* relation:  */
@@ -78,7 +82,7 @@ public class _ErpMdMaterialCategory extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[12];
+    private static final String[] PROP_ID_TO_NAME = new String[13];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -96,6 +100,9 @@ public class _ErpMdMaterialCategory extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_sortNum] = PROP_NAME_sortNum;
           PROP_NAME_TO_ID.put(PROP_NAME_sortNum, PROP_ID_sortNum);
+      
+          PROP_ID_TO_NAME[PROP_ID_priceValidationLevel] = PROP_NAME_priceValidationLevel;
+          PROP_NAME_TO_ID.put(PROP_NAME_priceValidationLevel, PROP_ID_priceValidationLevel);
       
           PROP_ID_TO_NAME[PROP_ID_delVersion] = PROP_NAME_delVersion;
           PROP_NAME_TO_ID.put(PROP_NAME_delVersion, PROP_ID_delVersion);
@@ -132,6 +139,9 @@ public class _ErpMdMaterialCategory extends DynamicOrmEntity{
     
     /* 排序: SORT_NUM */
     private java.lang.Integer _sortNum;
+    
+    /* 价格校验级别: PRICE_VALIDATION_LEVEL */
+    private java.lang.Integer _priceValidationLevel;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -240,6 +250,9 @@ public class _ErpMdMaterialCategory extends DynamicOrmEntity{
             case PROP_ID_sortNum:
                return getSortNum();
         
+            case PROP_ID_priceValidationLevel:
+               return getPriceValidationLevel();
+        
             case PROP_ID_delVersion:
                return getDelVersion();
         
@@ -316,6 +329,16 @@ public class _ErpMdMaterialCategory extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_sortNum));
                }
                setSortNum(typedValue);
+               break;
+            }
+        
+            case PROP_ID_priceValidationLevel:{
+               java.lang.Integer typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toInteger(value,
+                       err-> newTypeConversionError(PROP_NAME_priceValidationLevel));
+               }
+               setPriceValidationLevel(typedValue);
                break;
             }
         
@@ -419,6 +442,13 @@ public class _ErpMdMaterialCategory extends DynamicOrmEntity{
             case PROP_ID_sortNum:{
                onInitProp(propId);
                this._sortNum = (java.lang.Integer)value;
+               
+               break;
+            }
+        
+            case PROP_ID_priceValidationLevel:{
+               onInitProp(propId);
+               this._priceValidationLevel = (java.lang.Integer)value;
                
                break;
             }
@@ -562,6 +592,25 @@ public class _ErpMdMaterialCategory extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_sortNum,value)){
             this._sortNum = value;
             internalClearRefs(PROP_ID_sortNum);
+            
+        }
+    }
+    
+    /**
+     * 价格校验级别: PRICE_VALIDATION_LEVEL
+     */
+    public final java.lang.Integer getPriceValidationLevel(){
+         onPropGet(PROP_ID_priceValidationLevel);
+         return _priceValidationLevel;
+    }
+
+    /**
+     * 价格校验级别: PRICE_VALIDATION_LEVEL
+     */
+    public final void setPriceValidationLevel(java.lang.Integer value){
+        if(onPropSet(PROP_ID_priceValidationLevel,value)){
+            this._priceValidationLevel = value;
+            internalClearRefs(PROP_ID_priceValidationLevel);
             
         }
     }

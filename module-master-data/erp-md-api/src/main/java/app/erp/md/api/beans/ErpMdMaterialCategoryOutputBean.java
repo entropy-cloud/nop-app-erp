@@ -84,10 +84,36 @@
         }
 
 
-        private Long _delVersion;
+        private Integer _priceValidationLevel;
 
     
         @PropMeta(propId=6)
+    
+        public Integer getPriceValidationLevel(){
+            return _priceValidationLevel;
+        }
+
+        public void setPriceValidationLevel(Integer value){
+            this._priceValidationLevel = value;
+        }
+
+
+        private String _priceValidationLevel_label;
+
+    
+        public String getPriceValidationLevel_label(){
+            return _priceValidationLevel_label;
+        }
+
+        public void setPriceValidationLevel_label(String value){
+            this._priceValidationLevel_label = value;
+        }
+
+
+        private Long _delVersion;
+
+    
+        @PropMeta(propId=7)
     
         public Long getDelVersion(){
             return _delVersion;
@@ -101,7 +127,7 @@
         private Integer _version;
 
     
-        @PropMeta(propId=7)
+        @PropMeta(propId=8)
     
         public Integer getVersion(){
             return _version;
@@ -115,7 +141,7 @@
         private String _createdBy;
 
     
-        @PropMeta(propId=8)
+        @PropMeta(propId=9)
     
         public String getCreatedBy(){
             return _createdBy;
@@ -129,7 +155,7 @@
         private java.sql.Timestamp _createTime;
 
     
-        @PropMeta(propId=9)
+        @PropMeta(propId=10)
     
         public java.sql.Timestamp getCreateTime(){
             return _createTime;
@@ -143,7 +169,7 @@
         private String _updatedBy;
 
     
-        @PropMeta(propId=10)
+        @PropMeta(propId=11)
     
         public String getUpdatedBy(){
             return _updatedBy;
@@ -157,7 +183,7 @@
         private java.sql.Timestamp _updateTime;
 
     
-        @PropMeta(propId=11)
+        @PropMeta(propId=12)
     
         public java.sql.Timestamp getUpdateTime(){
             return _updateTime;

@@ -182,6 +182,8 @@ prop:
       name: 名称
       parent: null
       parentId: 父级ID
+      priceValidationLevel: 价格校验级别
+      priceValidationLevel_label: 价格校验级别
       sortNum: 排序
       updateTime: 修改时间
       updatedBy: 修改人
