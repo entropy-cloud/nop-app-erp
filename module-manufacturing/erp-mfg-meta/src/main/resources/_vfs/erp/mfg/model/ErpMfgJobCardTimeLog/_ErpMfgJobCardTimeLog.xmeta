@@ -19,98 +19,98 @@
     <keys/>
 
     <props>
-        <prop name="id" displayName="ID" propId="1" tagSet="seq-default" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="false" graphql:type="String">
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="jobCardId" displayName="作业卡ID" propId="2" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true" ext:relation="jobCard">
+        <prop name="jobCardId" displayName="作业卡ID" propId="2" i18n-en:displayName="Job Card" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="jobCard">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="workOrderId" displayName="工单ID" propId="3" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true" ext:relation="workOrder">
+        <prop name="workOrderId" displayName="工单ID" propId="3" i18n-en:displayName="Work Order" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="workOrder">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="operatorId" displayName="操作员(职员)" propId="4" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true">
+        <prop name="operatorId" displayName="操作员(职员)" propId="4" i18n-en:displayName="Operator" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="workDate" displayName="作业日期" propId="5" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true">
+        <prop name="workDate" displayName="作业日期" propId="5" i18n-en:displayName="Work Date" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.time.LocalDate"/>
         </prop>
-        <prop name="startTime" displayName="开始时间" propId="6" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="startTime" displayName="开始时间" propId="6" i18n-en:displayName="Start Time" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema type="java.time.LocalDateTime"/>
         </prop>
-        <prop name="endTime" displayName="结束时间" propId="7" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="endTime" displayName="结束时间" propId="7" i18n-en:displayName="End Time" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema type="java.time.LocalDateTime"/>
         </prop>
-        <prop name="durationMins" displayName="工时(分钟)" propId="8" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true">
+        <prop name="durationMins" displayName="工时(分钟)" propId="8" i18n-en:displayName="Duration Mins" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="timeInMins" type="java.lang.String" precision="12" scale="2"/>
         </prop>
-        <prop name="setupMins" displayName="准备时间(分钟)" propId="9" queryable="true" sortable="true" insertable="true"
-              updatable="true" defaultValue="0">
+        <prop name="setupMins" displayName="准备时间(分钟)" propId="9" i18n-en:displayName="Setup Mins" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
             <schema domain="timeInMins" type="java.lang.String" precision="12" scale="2"/>
         </prop>
-        <prop name="runMins" displayName="加工时间(分钟)" propId="10" queryable="true" sortable="true" insertable="true"
-              updatable="true" defaultValue="0">
+        <prop name="runMins" displayName="加工时间(分钟)" propId="10" i18n-en:displayName="Run Mins" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
             <schema domain="timeInMins" type="java.lang.String" precision="12" scale="2"/>
         </prop>
-        <prop name="completedQuantity" displayName="本班完工数量" propId="11" queryable="true" sortable="true"
-              insertable="true" updatable="true" defaultValue="0">
+        <prop name="completedQuantity" displayName="本班完工数量" propId="11" i18n-en:displayName="Completed Quantity"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
             <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
         </prop>
-        <prop name="scrappedQuantity" displayName="本班报废数量" propId="12" queryable="true" sortable="true"
-              insertable="true" updatable="true" defaultValue="0">
+        <prop name="scrappedQuantity" displayName="本班报废数量" propId="12" i18n-en:displayName="Scrapped Quantity"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
             <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
         </prop>
-        <prop name="hourlyRate" displayName="小时费率" propId="13" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="hourlyRate" displayName="小时费率" propId="13" i18n-en:displayName="Hourly Rate" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema domain="hourlyRate" type="java.lang.String" precision="16" scale="4"/>
         </prop>
-        <prop name="laborCost" displayName="人工成本" propId="14" queryable="true" sortable="true" insertable="true"
-              updatable="true" defaultValue="0">
+        <prop name="laborCost" displayName="人工成本" propId="14" i18n-en:displayName="Labor Cost" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
             <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
         </prop>
-        <prop name="remark" displayName="备注" propId="15" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="remark" displayName="备注" propId="15" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
-        <prop name="delVersion" displayName="逻辑删除版本" propId="16" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="true" defaultValue="0">
+        <prop name="delVersion" displayName="逻辑删除版本" propId="16" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
             <schema domain="delVersion" type="java.lang.Long"/>
         </prop>
-        <prop name="version" displayName="数据版本" propId="17" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false" internal="true" defaultValue="0">
+        <prop name="version" displayName="数据版本" propId="17" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
             <schema domain="version" type="java.lang.Integer"/>
         </prop>
-        <prop name="createdBy" displayName="创建人" propId="18" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false">
+        <prop name="createdBy" displayName="创建人" propId="18" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="createdBy" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="createTime" displayName="创建时间" propId="19" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false">
+        <prop name="createTime" displayName="创建时间" propId="19" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="createTime" type="java.sql.Timestamp"/>
         </prop>
-        <prop name="updatedBy" displayName="修改人" propId="20" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false">
+        <prop name="updatedBy" displayName="修改人" propId="20" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updatedBy" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="updateTime" displayName="修改时间" propId="21" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false">
+        <prop name="updateTime" displayName="修改时间" propId="21" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
-        <prop name="jobCard" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="jobCardId" ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true"
-              lazy="true">
+        <prop name="jobCard" i18n-en:displayName="Job Card" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="jobCardId" ext:joinRightProp="id" insertable="false" updatable="false"
+              mandatory="true" lazy="true">
             <schema bizObjName="ErpMfgJobCard"/>
         </prop>
-        <prop name="workOrder" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="workOrderId" ext:joinRightProp="id" insertable="false" updatable="false"
-              mandatory="true" lazy="true">
+        <prop name="workOrder" i18n-en:displayName="Work Order" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="workOrderId" ext:joinRightProp="id" insertable="false"
+              updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMfgWorkOrder"/>
         </prop>
     </props>

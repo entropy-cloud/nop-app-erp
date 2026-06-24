@@ -19,98 +19,98 @@
     <keys/>
 
     <props>
-        <prop name="id" displayName="ID" propId="1" tagSet="seq-default" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="false" graphql:type="String">
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="code" displayName="单号" propId="2" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true">
+        <prop name="code" displayName="单号" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema domain="requestCode" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="orgId" displayName="业务组织" propId="3" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="equipmentId" displayName="被校设备/量具" propId="4" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true" ext:relation="equipment">
+        <prop name="equipmentId" displayName="被校设备/量具" propId="4" i18n-en:displayName="Equipment" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="equipment">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="businessDate" displayName="校准日期" propId="5" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true">
+        <prop name="businessDate" displayName="校准日期" propId="5" i18n-en:displayName="Business Date" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.time.LocalDate"/>
         </prop>
-        <prop name="standardRef" displayName="参考标准" propId="6" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="standardRef" displayName="参考标准" propId="6" i18n-en:displayName="Standard Ref" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="200"/>
         </prop>
-        <prop name="measuredValue" displayName="测量值" propId="7" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="measuredValue" displayName="测量值" propId="7" i18n-en:displayName="Measured Value" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema type="java.math.BigDecimal" precision="20" scale="6"/>
         </prop>
-        <prop name="targetValue" displayName="目标值" propId="8" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="targetValue" displayName="目标值" propId="8" i18n-en:displayName="Target Value" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema type="java.math.BigDecimal" precision="20" scale="6"/>
         </prop>
-        <prop name="tolerance" displayName="允差" propId="9" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="tolerance" displayName="允差" propId="9" i18n-en:displayName="Tolerance" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema type="java.math.BigDecimal" precision="20" scale="6"/>
         </prop>
-        <prop name="result" displayName="校准结果" propId="10" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true">
+        <prop name="result" displayName="校准结果" propId="10" i18n-en:displayName="Result" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.Integer" dict="erp-mnt/calibration-result"/>
         </prop>
-        <prop name="nextCalibrationDate" displayName="下次校准日期" propId="11" queryable="true" sortable="true"
-              insertable="true" updatable="true">
+        <prop name="nextCalibrationDate" displayName="下次校准日期" propId="11" i18n-en:displayName="Next Calibration Date"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.time.LocalDate"/>
         </prop>
-        <prop name="calibratedBy" displayName="校准人(职员)" propId="12" queryable="true" sortable="true" insertable="true"
-              updatable="true" ext:relation="calibratedByEmployee">
+        <prop name="calibratedBy" displayName="校准人(职员)" propId="12" i18n-en:displayName="Calibrated By" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="calibratedByEmployee">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="docStatus" displayName="单据状态" propId="13" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true">
+        <prop name="docStatus" displayName="单据状态" propId="13" i18n-en:displayName="Doc Status" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.Integer" dict="erp-mnt/doc-status"/>
         </prop>
-        <prop name="approveStatus" displayName="审核状态" propId="14" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true">
+        <prop name="approveStatus" displayName="审核状态" propId="14" i18n-en:displayName="Approve Status" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.Integer" dict="erp-mnt/approve-status"/>
         </prop>
-        <prop name="remark" displayName="备注" propId="15" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="remark" displayName="备注" propId="15" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
-        <prop name="delVersion" displayName="逻辑删除版本" propId="16" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="true" defaultValue="0">
+        <prop name="delVersion" displayName="逻辑删除版本" propId="16" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
             <schema domain="delVersion" type="java.lang.Long"/>
         </prop>
-        <prop name="version" displayName="数据版本" propId="17" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false" internal="true" defaultValue="0">
+        <prop name="version" displayName="数据版本" propId="17" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
             <schema domain="version" type="java.lang.Integer"/>
         </prop>
-        <prop name="createdBy" displayName="创建人" propId="18" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false">
+        <prop name="createdBy" displayName="创建人" propId="18" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="createdBy" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="createTime" displayName="创建时间" propId="19" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false">
+        <prop name="createTime" displayName="创建时间" propId="19" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="createTime" type="java.sql.Timestamp"/>
         </prop>
-        <prop name="updatedBy" displayName="修改人" propId="20" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false">
+        <prop name="updatedBy" displayName="修改人" propId="20" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updatedBy" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="updateTime" displayName="修改时间" propId="21" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false">
+        <prop name="updateTime" displayName="修改时间" propId="21" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
-        <prop name="equipment" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="equipmentId" ext:joinRightProp="id" insertable="false" updatable="false"
-              mandatory="true" lazy="true">
+        <prop name="equipment" i18n-en:displayName="Equipment" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="equipmentId" ext:joinRightProp="id" insertable="false"
+              updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMntEquipment"/>
         </prop>
-        <prop name="calibratedByEmployee" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="calibratedBy" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
-              updatable="false" lazy="true">
+        <prop name="calibratedByEmployee" i18n-en:displayName="Calibrated By Employee" tagSet="pub" ext:kind="to-one"
+              internal="true" queryable="true" ext:joinLeftProp="calibratedBy" ext:joinRightProp="id"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdEmployee"/>
         </prop>
     </props>

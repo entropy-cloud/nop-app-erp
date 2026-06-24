@@ -19,150 +19,153 @@
     <keys/>
 
     <props>
-        <prop name="id" displayName="ID" propId="1" tagSet="seq-default" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="false" graphql:type="String">
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="code" displayName="流水号" propId="2" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true">
+        <prop name="code" displayName="流水号" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema domain="orderCode" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="orgId" displayName="业务组织" propId="3" queryable="true" sortable="true" insertable="true"
-              updatable="true" ext:relation="org">
+        <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="moveId" displayName="移动单ID" propId="4" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true" ext:relation="move">
+        <prop name="moveId" displayName="移动单ID" propId="4" i18n-en:displayName="Move" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="move">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="moveLineId" displayName="移动单行ID" propId="5" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true" ext:relation="moveLine">
+        <prop name="moveLineId" displayName="移动单行ID" propId="5" i18n-en:displayName="Move Line" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="moveLine">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="materialId" displayName="物料" propId="6" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true" ext:relation="material">
+        <prop name="materialId" displayName="物料" propId="6" i18n-en:displayName="Material" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="material">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="skuId" displayName="SKU" propId="7" queryable="true" sortable="true" insertable="true"
-              updatable="true" ext:relation="sku">
+        <prop name="skuId" displayName="SKU" propId="7" i18n-en:displayName="SKU" queryable="true" sortable="true"
+              insertable="true" updatable="true" ext:relation="sku">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="warehouseId" displayName="仓库" propId="8" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true" ext:relation="warehouse">
+        <prop name="warehouseId" displayName="仓库" propId="8" i18n-en:displayName="Warehouse" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="warehouse">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="locationId" displayName="库位" propId="9" queryable="true" sortable="true" insertable="true"
-              updatable="true" ext:relation="location">
+        <prop name="locationId" displayName="库位" propId="9" i18n-en:displayName="Location" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="location">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="quantity" displayName="数量" propId="10" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true">
+        <prop name="quantity" displayName="数量" propId="10" i18n-en:displayName="Quantity" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
         </prop>
-        <prop name="unitCost" displayName="单位成本" propId="11" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="unitCost" displayName="单位成本" propId="11" i18n-en:displayName="Unit Cost" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema domain="unitPrice" type="java.lang.String" precision="20" scale="4"/>
         </prop>
-        <prop name="totalCost" displayName="总成本" propId="12" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="totalCost" displayName="总成本" propId="12" i18n-en:displayName="Total Cost" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
         </prop>
-        <prop name="balanceQuantity" displayName="结存数量" propId="13" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true">
+        <prop name="balanceQuantity" displayName="结存数量" propId="13" i18n-en:displayName="Balance Quantity"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
         </prop>
-        <prop name="balanceTotalCost" displayName="结存总成本" propId="14" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true">
+        <prop name="balanceTotalCost" displayName="结存总成本" propId="14" i18n-en:displayName="Balance Total Cost"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
         </prop>
-        <prop name="costMethod" displayName="计价方法" propId="15" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="costMethod" displayName="计价方法" propId="15" i18n-en:displayName="Cost Method" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.Integer" dict="erp-md/cost-method"/>
         </prop>
-        <prop name="acctSchemaId" displayName="账套" propId="16" queryable="true" sortable="true" insertable="true"
-              updatable="true" ext:relation="acctSchema">
+        <prop name="acctSchemaId" displayName="账套" propId="16" i18n-en:displayName="Acct Schema" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="acctSchema">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="currencyId" displayName="币种" propId="17" queryable="true" sortable="true" insertable="true"
-              updatable="true" ext:relation="currency">
+        <prop name="currencyId" displayName="币种" propId="17" i18n-en:displayName="Currency" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="currency">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="businessDate" displayName="业务日期" propId="18" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="businessDate" displayName="业务日期" propId="18" i18n-en:displayName="Business Date" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema type="java.time.LocalDate"/>
         </prop>
-        <prop name="batchNo" displayName="批号" propId="19" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="batchNo" displayName="批号" propId="19" i18n-en:displayName="Batch No" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="serialNo" displayName="序列号" propId="20" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="serialNo" displayName="序列号" propId="20" i18n-en:displayName="Serial No" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="delVersion" displayName="逻辑删除版本" propId="21" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="true" defaultValue="0">
+        <prop name="delVersion" displayName="逻辑删除版本" propId="21" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
             <schema domain="delVersion" type="java.lang.Long"/>
         </prop>
-        <prop name="version" displayName="数据版本" propId="22" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false" internal="true" defaultValue="0">
+        <prop name="version" displayName="数据版本" propId="22" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
             <schema domain="version" type="java.lang.Integer"/>
         </prop>
-        <prop name="createdBy" displayName="创建人" propId="23" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false">
+        <prop name="createdBy" displayName="创建人" propId="23" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="createdBy" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="createTime" displayName="创建时间" propId="24" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false">
+        <prop name="createTime" displayName="创建时间" propId="24" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="createTime" type="java.sql.Timestamp"/>
         </prop>
-        <prop name="updatedBy" displayName="修改人" propId="25" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false">
+        <prop name="updatedBy" displayName="修改人" propId="25" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updatedBy" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="updateTime" displayName="修改时间" propId="26" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false">
+        <prop name="updateTime" displayName="修改时间" propId="26" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
-        <prop name="move" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="moveId"
-              ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true" lazy="true">
+        <prop name="move" i18n-en:displayName="Move" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="moveId" ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true"
+              lazy="true">
             <schema bizObjName="ErpInvStockMove"/>
         </prop>
-        <prop name="moveLine" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="moveLineId" ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true"
-              lazy="true">
+        <prop name="moveLine" i18n-en:displayName="Move Line" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="moveLineId" ext:joinRightProp="id" insertable="false" updatable="false"
+              mandatory="true" lazy="true">
             <schema bizObjName="ErpInvStockMoveLine"/>
         </prop>
-        <prop name="material" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="materialId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
-              updatable="false" mandatory="true" lazy="true">
+        <prop name="material" i18n-en:displayName="Material" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="materialId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdMaterial"/>
         </prop>
-        <prop name="sku" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="skuId"
-              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+        <prop name="sku" i18n-en:displayName="Sku" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="skuId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              lazy="true">
             <schema bizObjName="ErpMdMaterialSku"/>
         </prop>
-        <prop name="warehouse" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="warehouseId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
-              updatable="false" mandatory="true" lazy="true">
+        <prop name="warehouse" i18n-en:displayName="Warehouse" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="warehouseId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdWarehouse"/>
         </prop>
-        <prop name="location" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="locationId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
-              updatable="false" lazy="true">
+        <prop name="location" i18n-en:displayName="Location" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="locationId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdLocation"/>
         </prop>
-        <prop name="currency" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="currencyId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
-              updatable="false" lazy="true">
+        <prop name="currency" i18n-en:displayName="Currency" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="currencyId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdCurrency"/>
         </prop>
-        <prop name="org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="orgId"
-              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
         </prop>
-        <prop name="acctSchema" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="acctSchemaId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
-              updatable="false" lazy="true">
+        <prop name="acctSchema" i18n-en:displayName="Acct Schema" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="acctSchemaId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdAcctSchema"/>
         </prop>
     </props>

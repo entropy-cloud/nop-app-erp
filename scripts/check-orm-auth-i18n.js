@@ -205,7 +205,9 @@ function checkDictI18n(moduleDir) {
           if (!trimmed || trimmed.startsWith('#')) continue;
 
           if (trimmed.endsWith(':')) {
-            const key = trimmed.slice(0, -1);
+            let key = trimmed.slice(0, -1);
+            if ((key.startsWith("'") && key.endsWith("'")) || (key.startsWith('"') && key.endsWith('"')))
+              key = key.slice(1, -1);
             // pop stack to correct level
             while (stack.length > 0 && stack[stack.length - 1].indent >= indent) {
               stack.pop();
@@ -214,7 +216,9 @@ function checkDictI18n(moduleDir) {
           } else if (trimmed.includes(':') && !trimmed.endsWith(':')) {
             const colonIdx = trimmed.indexOf(':');
             if (colonIdx > 0) {
-              const key = trimmed.slice(0, colonIdx).trim();
+              let key = trimmed.slice(0, colonIdx).trim();
+              if ((key.startsWith("'") && key.endsWith("'")) || (key.startsWith('"') && key.endsWith('"')))
+                key = key.slice(1, -1);
               // pop stack to correct level
               while (stack.length > 0 && stack[stack.length - 1].indent >= indent) {
                 stack.pop();
@@ -222,7 +226,6 @@ function checkDictI18n(moduleDir) {
               const fullKey = stack.length > 0
                 ? stack.map(s => s.key).join('.') + '.' + key
                 : key;
-              if (fullKey.startsWith("'") && fullKey.endsWith("'")) fullKey = fullKey.slice(1, -1);
               enKeys.add(fullKey);
             }
           }

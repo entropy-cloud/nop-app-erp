@@ -19,76 +19,79 @@
     <keys/>
 
     <props>
-        <prop name="id" displayName="ID" propId="1" tagSet="seq-default" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="false" graphql:type="String">
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="code" displayName="编码" propId="2" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true">
+        <prop name="code" displayName="编码" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema domain="code" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="name" displayName="名称" propId="3" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true">
+        <prop name="name" displayName="名称" propId="3" i18n-en:displayName="Name" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema domain="name" type="java.lang.String" precision="200"/>
         </prop>
-        <prop name="warehouseType" displayName="仓库类型" propId="4" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="warehouseType" displayName="仓库类型" propId="4" i18n-en:displayName="Warehouse Type" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.Integer" dict="erp-md/warehouse-type"/>
         </prop>
-        <prop name="orgId" displayName="所属组织" propId="5" queryable="true" sortable="true" insertable="true"
-              updatable="true" ext:relation="organization">
+        <prop name="orgId" displayName="所属组织" propId="5" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="organization">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="address" displayName="地址" propId="6" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="address" displayName="地址" propId="6" i18n-en:displayName="Address" queryable="true" sortable="true"
+              insertable="true" updatable="true">
             <schema type="java.lang.String" precision="500"/>
         </prop>
-        <prop name="managerId" displayName="负责人(职员)" propId="7" queryable="true" sortable="true" insertable="true"
-              updatable="true" ext:relation="manager">
+        <prop name="managerId" displayName="负责人(职员)" propId="7" i18n-en:displayName="Manager" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="manager">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="status" displayName="状态" propId="8" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true">
+        <prop name="status" displayName="状态" propId="8" i18n-en:displayName="Status" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.Integer" dict="erp-md/active-status"/>
         </prop>
-        <prop name="delVersion" displayName="逻辑删除版本" propId="9" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="true" defaultValue="0">
+        <prop name="delVersion" displayName="逻辑删除版本" propId="9" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
             <schema domain="delVersion" type="java.lang.Long"/>
         </prop>
-        <prop name="version" displayName="数据版本" propId="10" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false" internal="true" defaultValue="0">
+        <prop name="version" displayName="数据版本" propId="10" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
             <schema domain="version" type="java.lang.Integer"/>
         </prop>
-        <prop name="createdBy" displayName="创建人" propId="11" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false">
+        <prop name="createdBy" displayName="创建人" propId="11" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="createdBy" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="createTime" displayName="创建时间" propId="12" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false">
+        <prop name="createTime" displayName="创建时间" propId="12" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="createTime" type="java.sql.Timestamp"/>
         </prop>
-        <prop name="updatedBy" displayName="修改人" propId="13" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false">
+        <prop name="updatedBy" displayName="修改人" propId="13" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updatedBy" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="updateTime" displayName="修改时间" propId="14" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false">
+        <prop name="updateTime" displayName="修改时间" propId="14" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
-        <prop name="remark" displayName="备注" propId="15" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="remark" displayName="备注" propId="15" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
-        <prop name="organization" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="orgId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+        <prop name="organization" i18n-en:displayName="Organization" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="orgId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
         </prop>
-        <prop name="manager" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="managerId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+        <prop name="manager" i18n-en:displayName="Manager" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="managerId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
             <schema bizObjName="ErpMdEmployee"/>
         </prop>
-        <prop name="locations" tagSet="pub,cascade-delete,insertable,updatable" ext:kind="to-many" internal="true"
-              ext:joinLeftProp="id" ext:joinRightProp="warehouseId" insertable="true" updatable="true" lazy="true">
+        <prop name="locations" i18n-en:displayName="Locations" tagSet="pub,cascade-delete,insertable,updatable"
+              ext:kind="to-many" internal="true" ext:joinLeftProp="id" ext:joinRightProp="warehouseId" insertable="true"
+              updatable="true" lazy="true">
             <schema>
                 <item bizObjName="ErpMdLocation"/>
             </schema>

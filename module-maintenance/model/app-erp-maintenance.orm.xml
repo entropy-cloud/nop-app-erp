@@ -30,76 +30,76 @@
      ext:allowIdAsColName="true" ext:icon="wrench" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:biz="biz">
 
     <dicts>
-        <dict label="维护计划类型" name="erp-mnt/schedule-type" valueType="int">
-            <option code="PREVENTIVE" label="预防性维护" value="10"/>
-            <option code="PREDICTIVE" label="预测性维护" value="20"/>
-            <option code="CALIBRATION" label="校准" value="30"/>
+        <dict label="维护计划类型" name="erp-mnt/schedule-type" valueType="int" i18n-en:label='Maintenance Schedule Type'>
+            <option code="PREVENTIVE" label="预防性维护" value="10" i18n-en:label='Preventive Maintenance'/>
+            <option code="PREDICTIVE" label="预测性维护" value="20" i18n-en:label='Predictive Maintenance'/>
+            <option code="CALIBRATION" label="校准" value="30" i18n-en:label='Calibration'/>
         </dict>
-        <dict label="维护访问状态" name="erp-mnt/visit-status" valueType="int">
-            <option code="DRAFT" label="草稿" value="10"/>
-            <option code="SCHEDULED" label="已排程" value="20"/>
-            <option code="IN_PROGRESS" label="执行中" value="30"/>
-            <option code="COMPLETED" label="已完成" value="40"/>
-            <option code="CANCELLED" label="已取消" value="50"/>
+        <dict label="维护访问状态" name="erp-mnt/visit-status" valueType="int" i18n-en:label='Maintenance Visit Status'>
+            <option code="DRAFT" label="草稿" value="10" i18n-en:label='Draft'/>
+            <option code="SCHEDULED" label="已排程" value="20" i18n-en:label='Scheduled'/>
+            <option code="IN_PROGRESS" label="执行中" value="30" i18n-en:label='Executing'/>
+            <option code="COMPLETED" label="已完成" value="40" i18n-en:label='Completed'/>
+            <option code="CANCELLED" label="已取消" value="50" i18n-en:label='Cancelled'/>
         </dict>
-        <dict label="维护请求状态" name="erp-mnt/request-status" valueType="int">
-            <option code="OPEN" label="待受理" value="10"/>
-            <option code="ACCEPTED" label="已受理" value="20"/>
-            <option code="IN_PROGRESS" label="维修中" value="30"/>
-            <option code="COMPLETED" label="已完成" value="40"/>
-            <option code="REJECTED" label="已拒绝" value="50"/>
-            <option code="CANCELLED" label="已取消" value="60"/>
+        <dict label="维护请求状态" name="erp-mnt/request-status" valueType="int" i18n-en:label='Maintenance Request Status'>
+            <option code="OPEN" label="待受理" value="10" i18n-en:label='Pending Accept'/>
+            <option code="ACCEPTED" label="已受理" value="20" i18n-en:label='Accepted'/>
+            <option code="IN_PROGRESS" label="维修中" value="30" i18n-en:label='Under Repair'/>
+            <option code="COMPLETED" label="已完成" value="40" i18n-en:label='Completed'/>
+            <option code="REJECTED" label="已拒绝" value="50" i18n-en:label='Rejected'/>
+            <option code="CANCELLED" label="已取消" value="60" i18n-en:label='Cancelled'/>
         </dict>
-        <dict label="设备状态" name="erp-mnt/equipment-status" valueType="int">
-            <option code="RUNNING" label="运行中" value="10"/>
-            <option code="IDLE" label="闲置" value="20"/>
-            <option code="UNDER_MAINTENANCE" label="维护中" value="30"/>
-            <option code="DOWN" label="故障停机" value="40"/>
-            <option code="DECOMMISSIONED" label="已停用" value="50"/>
+        <dict label="设备状态" name="erp-mnt/equipment-status" valueType="int" i18n-en:label='Equipment Status'>
+            <option code="RUNNING" label="运行中" value="10" i18n-en:label='Running'/>
+            <option code="IDLE" label="闲置" value="20" i18n-en:label='Idle'/>
+            <option code="UNDER_MAINTENANCE" label="维护中" value="30" i18n-en:label='Under Maintenance'/>
+            <option code="DOWN" label="故障停机" value="40" i18n-en:label='Breakdown'/>
+            <option code="DECOMMISSIONED" label="已停用" value="50" i18n-en:label='Disabled'/>
         </dict>
-        <dict label="重复类型" name="erp-mnt/recurrence-type" valueType="int">
-            <option code="DAILY" label="每日" value="10"/>
-            <option code="WEEKLY" label="每周" value="20"/>
-            <option code="MONTHLY" label="每月" value="30"/>
-            <option code="YEARLY" label="每年" value="40"/>
+        <dict label="重复类型" name="erp-mnt/recurrence-type" valueType="int" i18n-en:label='Recurrence Type'>
+            <option code="DAILY" label="每日" value="10" i18n-en:label='Daily'/>
+            <option code="WEEKLY" label="每周" value="20" i18n-en:label='Weekly'/>
+            <option code="MONTHLY" label="每月" value="30" i18n-en:label='Monthly'/>
+            <option code="YEARLY" label="每年" value="40" i18n-en:label='Yearly'/>
         </dict>
-        <dict label="优先级" name="erp-mnt/priority" valueType="int">
-            <option code="LOW" label="低" value="10"/>
-            <option code="NORMAL" label="普通" value="20"/>
-            <option code="HIGH" label="高" value="30"/>
-            <option code="URGENT" label="紧急" value="40"/>
+        <dict label="优先级" name="erp-mnt/priority" valueType="int" i18n-en:label='Priority'>
+            <option code="LOW" label="低" value="10" i18n-en:label='Low'/>
+            <option code="NORMAL" label="普通" value="20" i18n-en:label='General'/>
+            <option code="HIGH" label="高" value="30" i18n-en:label='High'/>
+            <option code="URGENT" label="紧急" value="40" i18n-en:label='Urgent'/>
         </dict>
-        <dict label="维护任务状态" name="erp-mnt/visit-task-status" valueType="int">
-            <option code="PENDING" label="待执行" value="10"/>
-            <option code="IN_PROGRESS" label="执行中" value="20"/>
-            <option code="COMPLETED" label="已完成" value="30"/>
-            <option code="SKIPPED" label="已跳过" value="40"/>
-            <option code="FAILED" label="失败" value="50"/>
+        <dict label="维护任务状态" name="erp-mnt/visit-task-status" valueType="int" i18n-en:label='Maintenance Task Status'>
+            <option code="PENDING" label="待执行" value="10" i18n-en:label='Pending'/>
+            <option code="IN_PROGRESS" label="执行中" value="20" i18n-en:label='Executing'/>
+            <option code="COMPLETED" label="已完成" value="30" i18n-en:label='Completed'/>
+            <option code="SKIPPED" label="已跳过" value="40" i18n-en:label='Skipped'/>
+            <option code="FAILED" label="失败" value="50" i18n-en:label='Failed'/>
         </dict>
-        <dict label="单据状态" name="erp-mnt/doc-status" valueType="int">
-            <option code="DRAFT" label="草稿" value="10"/>
-            <option code="ACTIVE" label="已生效" value="20"/>
-            <option code="CANCELLED" label="已作废" value="30"/>
+        <dict label="单据状态" name="erp-mnt/doc-status" valueType="int" i18n-en:label='Doc Status'>
+            <option code="DRAFT" label="草稿" value="10" i18n-en:label='Draft'/>
+            <option code="ACTIVE" label="已生效" value="20" i18n-en:label='Effective'/>
+            <option code="CANCELLED" label="已作废" value="30" i18n-en:label='Voided'/>
         </dict>
-        <dict label="审核状态" name="erp-mnt/approve-status" valueType="int">
-            <option code="UNSUBMITTED" label="未提交" value="10"/>
-            <option code="SUBMITTED" label="已提交" value="20"/>
-            <option code="APPROVED" label="已审核" value="30"/>
-            <option code="REJECTED" label="已驳回" value="40"/>
+        <dict label="审核状态" name="erp-mnt/approve-status" valueType="int" i18n-en:label='Approve Status'>
+            <option code="UNSUBMITTED" label="未提交" value="10" i18n-en:label='Unsubmitted'/>
+            <option code="SUBMITTED" label="已提交" value="20" i18n-en:label='Submitted'/>
+            <option code="APPROVED" label="已审核" value="30" i18n-en:label='Approved'/>
+            <option code="REJECTED" label="已驳回" value="40" i18n-en:label='Rejected'/>
         </dict>
-        <dict label="校准结果" name="erp-mnt/calibration-result" valueType="int">
-            <option code="PASS" label="合格" value="10"/>
-            <option code="FAIL" label="不合格" value="20"/>
-            <option code="ADJUSTED" label="调整后合格" value="30"/>
+        <dict label="校准结果" name="erp-mnt/calibration-result" valueType="int" i18n-en:label='Calibration Result'>
+            <option code="PASS" label="合格" value="10" i18n-en:label='Conforming'/>
+            <option code="FAIL" label="不合格" value="20" i18n-en:label='Non-conforming'/>
+            <option code="ADJUSTED" label="调整后合格" value="30" i18n-en:label='Adjusted Conforming'/>
         </dict>
-        <dict label="维护类型" name="erp-mnt/visit-type" valueType="int">
-            <option code="PLANNED" label="计划性" value="10"/>
-            <option code="RESPONSIVE" label="响应性" value="20"/>
+        <dict label="维护类型" name="erp-mnt/visit-type" valueType="int" i18n-en:label='Maintenance Type'>
+            <option code="PLANNED" label="计划性" value="10" i18n-en:label='Planned'/>
+            <option code="RESPONSIVE" label="响应性" value="20" i18n-en:label='Responsive'/>
         </dict>
-        <dict label="执行结果" name="erp-mnt/visit-result" valueType="int">
-            <option code="NORMAL" label="正常" value="10"/>
-            <option code="ABNORMAL" label="异常" value="20"/>
-            <option code="PARTIAL" label="部分完成" value="30"/>
+        <dict label="执行结果" name="erp-mnt/visit-result" valueType="int" i18n-en:label='Execution Result'>
+            <option code="NORMAL" label="正常" value="10" i18n-en:label='Normal'/>
+            <option code="ABNORMAL" label="异常" value="20" i18n-en:label='Abnormal'/>
+            <option code="PARTIAL" label="部分完成" value="30" i18n-en:label='Partially Complete'/>
         </dict>
     </dicts>
 

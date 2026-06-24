@@ -31,71 +31,71 @@
      ext:allowIdAsColName="true" ext:icon="landmark" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:biz="biz">
 
     <dicts>
-        <dict label="凭证字" name="erp-fin/voucher-type" valueType="int">
-            <option code="RECEIPT" label="收" value="10"/>
-            <option code="PAYMENT" label="付" value="20"/>
-            <option code="TRANSFER" label="转" value="30"/>
+        <dict label="凭证字" name="erp-fin/voucher-type" valueType="int" i18n-en:label='Voucher Type'>
+            <option code="RECEIPT" label="收" value="10" i18n-en:label='Receive'/>
+            <option code="PAYMENT" label="付" value="20" i18n-en:label='Pay'/>
+            <option code="TRANSFER" label="转" value="30" i18n-en:label='Transfer'/>
         </dict>
-        <dict label="凭证状态" name="erp-fin/voucher-status" valueType="int">
-            <option code="DRAFT" label="草稿" value="10"/>
-            <option code="POSTED" label="已过账" value="20"/>
-            <option code="CANCELLED" label="已作废" value="30"/>
+        <dict label="凭证状态" name="erp-fin/voucher-status" valueType="int" i18n-en:label='Voucher Status'>
+            <option code="DRAFT" label="草稿" value="10" i18n-en:label='Draft'/>
+            <option code="POSTED" label="已过账" value="20" i18n-en:label='Posted'/>
+            <option code="CANCELLED" label="已作废" value="30" i18n-en:label='Voided'/>
         </dict>
-        <dict label="借贷方向" name="erp-fin/dc-direction" valueType="int">
-            <option code="DEBIT" label="借" value="10"/>
-            <option code="CREDIT" label="贷" value="20"/>
+        <dict label="借贷方向" name="erp-fin/dc-direction" valueType="int" i18n-en:label='Debit/Credit Direction'>
+            <option code="DEBIT" label="借" value="10" i18n-en:label='Debit'/>
+            <option code="CREDIT" label="贷" value="20" i18n-en:label='Credit'/>
         </dict>
-        <dict label="业务类型" name="erp-fin/business-type" valueType="int">
-            <option code="PURCHASE_INPUT" label="采购入库" value="10"/>
-            <option code="SALES_OUTPUT" label="销售出库" value="20"/>
-            <option code="AP_INVOICE" label="应付发票" value="30"/>
-            <option code="AR_INVOICE" label="应收发票" value="40"/>
-            <option code="PAYMENT" label="付款" value="50"/>
-            <option code="RECEIPT" label="收款" value="60"/>
-            <option code="DEPRECIATION" label="折旧" value="70"/>
-            <option code="CAPITALIZATION" label="资本化" value="80"/>
-            <option code="DISPOSAL" label="处置" value="90"/>
-            <option code="PRODUCTION_COST" label="生产成本结转" value="100"/>
-            <option code="PROJECT_COST" label="项目成本归集" value="110"/>
-            <option code="PERIOD_CLOSING" label="期末结转" value="120"/>
-            <option code="FX_REVALUATION" label="汇兑损益" value="130"/>
+        <dict label="业务类型" name="erp-fin/business-type" valueType="int" i18n-en:label='Business Type'>
+            <option code="PURCHASE_INPUT" label="采购入库" value="10" i18n-en:label='Purchase Receipt'/>
+            <option code="SALES_OUTPUT" label="销售出库" value="20" i18n-en:label='Sales Issue'/>
+            <option code="AP_INVOICE" label="应付发票" value="30" i18n-en:label='AP Invoice'/>
+            <option code="AR_INVOICE" label="应收发票" value="40" i18n-en:label='AR Invoice'/>
+            <option code="PAYMENT" label="付款" value="50" i18n-en:label='Payment'/>
+            <option code="RECEIPT" label="收款" value="60" i18n-en:label='Receipt'/>
+            <option code="DEPRECIATION" label="折旧" value="70" i18n-en:label='Depreciation'/>
+            <option code="CAPITALIZATION" label="资本化" value="80" i18n-en:label='Capitalization'/>
+            <option code="DISPOSAL" label="处置" value="90" i18n-en:label='Disposal'/>
+            <option code="PRODUCTION_COST" label="生产成本结转" value="100" i18n-en:label='Prod Cost Transfer'/>
+            <option code="PROJECT_COST" label="项目成本归集" value="110" i18n-en:label='Project Cost Accrual'/>
+            <option code="PERIOD_CLOSING" label="期末结转" value="120" i18n-en:label='Period-End Closing'/>
+            <option code="FX_REVALUATION" label="汇兑损益" value="130" i18n-en:label='FX Gain/Loss'/>
         </dict>
-        <dict label="期间状态" name="erp-fin/period-status" valueType="int">
-            <option code="OPEN" label="开启" value="10"/>
-            <option code="CLOSING" label="结账中" value="20"/>
-            <option code="CLOSED" label="已结账" value="30"/>
-            <option code="NEVER_OPENED" label="未开启" value="40"/>
+        <dict label="期间状态" name="erp-fin/period-status" valueType="int" i18n-en:label='Period Status'>
+            <option code="OPEN" label="开启" value="10" i18n-en:label='Open'/>
+            <option code="CLOSING" label="结账中" value="20" i18n-en:label='Closing'/>
+            <option code="CLOSED" label="已结账" value="30" i18n-en:label='Closed'/>
+            <option code="NEVER_OPENED" label="未开启" value="40" i18n-en:label='Not Open'/>
         </dict>
-        <dict label="账户类型" name="erp-fin/fund-account-type" valueType="int">
-            <option code="BANK" label="银行" value="10"/>
-            <option code="CASH" label="现金" value="20"/>
-            <option code="ALIPAY" label="支付宝" value="30"/>
-            <option code="WECHAT" label="微信" value="40"/>
-            <option code="OTHER" label="其他" value="50"/>
+        <dict label="账户类型" name="erp-fin/fund-account-type" valueType="int" i18n-en:label='Account Type'>
+            <option code="BANK" label="银行" value="10" i18n-en:label='Bank'/>
+            <option code="CASH" label="现金" value="20" i18n-en:label='Cash'/>
+            <option code="ALIPAY" label="支付宝" value="30" i18n-en:label='Alipay'/>
+            <option code="WECHAT" label="微信" value="40" i18n-en:label='WeChat'/>
+            <option code="OTHER" label="其他" value="50" i18n-en:label='Other'/>
         </dict>
-        <dict label="账户状态" name="erp-fin/fund-account-status" valueType="int">
-            <option code="ACTIVE" label="启用" value="10"/>
-            <option code="INACTIVE" label="停用" value="20"/>
+        <dict label="账户状态" name="erp-fin/fund-account-status" valueType="int" i18n-en:label='Account Status'>
+            <option code="ACTIVE" label="启用" value="10" i18n-en:label='Enabled'/>
+            <option code="INACTIVE" label="停用" value="20" i18n-en:label='Disabled'/>
         </dict>
-        <dict label="AR/AP 方向" name="erp-fin/ar-ap-direction" valueType="int">
-            <option code="RECEIVABLE" label="应收(AR)" value="10"/>
-            <option code="PAYABLE" label="应付(AP)" value="20"/>
+        <dict label="AR/AP 方向" name="erp-fin/ar-ap-direction" valueType="int" i18n-en:label='AR/AP Direction'>
+            <option code="RECEIVABLE" label="应收(AR)" value="10" i18n-en:label='AR'/>
+            <option code="PAYABLE" label="应付(AP)" value="20" i18n-en:label='AP'/>
         </dict>
-        <dict label="AR/AP 状态" name="erp-fin/ar-ap-status" valueType="int">
-            <option code="OPEN" label="未核销" value="10"/>
-            <option code="PARTIAL" label="部分核销" value="20"/>
-            <option code="SETTLED" label="已核销" value="30"/>
-            <option code="CANCELLED" label="已作废" value="40"/>
+        <dict label="AR/AP 状态" name="erp-fin/ar-ap-status" valueType="int" i18n-en:label='AR/AP Status'>
+            <option code="OPEN" label="未核销" value="10" i18n-en:label='Unmatched'/>
+            <option code="PARTIAL" label="部分核销" value="20" i18n-en:label='Partially Matched'/>
+            <option code="SETTLED" label="已核销" value="30" i18n-en:label='Matched'/>
+            <option code="CANCELLED" label="已作废" value="40" i18n-en:label='Voided'/>
         </dict>
-        <dict label="核销单状态" name="erp-fin/reconciliation-status" valueType="int">
-            <option code="DRAFT" label="草稿" value="10"/>
-            <option code="POSTED" label="已过账" value="20"/>
-            <option code="REVERSED" label="已红冲" value="30"/>
+        <dict label="核销单状态" name="erp-fin/reconciliation-status" valueType="int" i18n-en:label='Reconciliation Status'>
+            <option code="DRAFT" label="草稿" value="10" i18n-en:label='Draft'/>
+            <option code="POSTED" label="已过账" value="20" i18n-en:label='Posted'/>
+            <option code="REVERSED" label="已红冲" value="30" i18n-en:label='Red Offset'/>
         </dict>
-        <dict label="模块结账状态" name="erp-fin/module-close-status" valueType="int">
-            <option code="OPEN" label="未结" value="10"/>
-            <option code="CLOSING" label="结账中" value="20"/>
-            <option code="CLOSED" label="已结" value="30"/>
+        <dict label="模块结账状态" name="erp-fin/module-close-status" valueType="int" i18n-en:label='Module Close Status'>
+            <option code="OPEN" label="未结" value="10" i18n-en:label='Unsettled'/>
+            <option code="CLOSING" label="结账中" value="20" i18n-en:label='Closing'/>
+            <option code="CLOSED" label="已结" value="30" i18n-en:label='Settled'/>
         </dict>
     </dicts>
 

@@ -29,50 +29,50 @@
      ext:allowIdAsColName="true" ext:icon="shopping-cart" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:biz="biz">
 
     <dicts>
-        <dict label="单据状态" name="erp-pur/doc-status" valueType="int">
-            <option code="DRAFT" label="草稿" value="10"/>
-            <option code="ACTIVE" label="已生效" value="20"/>
-            <option code="CANCELLED" label="已作废" value="30"/>
+        <dict label="单据状态" name="erp-pur/doc-status" valueType="int" i18n-en:label='Doc Status'>
+            <option code="DRAFT" label="草稿" value="10" i18n-en:label='Draft'/>
+            <option code="ACTIVE" label="已生效" value="20" i18n-en:label='Effective'/>
+            <option code="CANCELLED" label="已作废" value="30" i18n-en:label='Voided'/>
         </dict>
-        <dict label="审核状态" name="erp-pur/approve-status" valueType="int">
-            <option code="UNSUBMITTED" label="未提交" value="10"/>
-            <option code="SUBMITTED" label="已提交" value="20"/>
-            <option code="APPROVED" label="已审核" value="30"/>
-            <option code="REJECTED" label="已驳回" value="40"/>
+        <dict label="审核状态" name="erp-pur/approve-status" valueType="int" i18n-en:label='Approve Status'>
+            <option code="UNSUBMITTED" label="未提交" value="10" i18n-en:label='Unsubmitted'/>
+            <option code="SUBMITTED" label="已提交" value="20" i18n-en:label='Submitted'/>
+            <option code="APPROVED" label="已审核" value="30" i18n-en:label='Approved'/>
+            <option code="REJECTED" label="已驳回" value="40" i18n-en:label='Rejected'/>
         </dict>
-        <dict label="付款进度" name="erp-pur/paid-status" valueType="int">
-            <option code="UNPAID" label="未付款" value="10"/>
-            <option code="PARTIAL" label="部分付款" value="20"/>
-            <option code="PAID" label="已付清" value="30"/>
+        <dict label="付款进度" name="erp-pur/paid-status" valueType="int" i18n-en:label='Payment Status'>
+            <option code="UNPAID" label="未付款" value="10" i18n-en:label='Unpaid'/>
+            <option code="PARTIAL" label="部分付款" value="20" i18n-en:label='Partially Paid'/>
+            <option code="PAID" label="已付清" value="30" i18n-en:label='Fully Paid'/>
         </dict>
-        <dict label="收货状态" name="erp-pur/receive-status" valueType="int">
-            <option code="UNRECEIVED" label="未收货" value="10"/>
-            <option code="PARTIAL" label="部分收货" value="20"/>
-            <option code="RECEIVED" label="已收清" value="30"/>
+        <dict label="收货状态" name="erp-pur/receive-status" valueType="int" i18n-en:label='Receive Status'>
+            <option code="UNRECEIVED" label="未收货" value="10" i18n-en:label='Unreceived'/>
+            <option code="PARTIAL" label="部分收货" value="20" i18n-en:label='Partially Received'/>
+            <option code="RECEIVED" label="已收清" value="30" i18n-en:label='Fully Received'/>
         </dict>
-        <dict label="采购单据类型" name="erp-pur/biz-type" valueType="int">
-            <option code="REQUISITION" label="请购单" value="10"/>
-            <option code="RFQ" label="询价单" value="20"/>
-            <option code="QUOTATION" label="报价单" value="30"/>
-            <option code="ORDER" label="采购订单" value="40"/>
-            <option code="RECEIVE" label="采购入库" value="50"/>
-            <option code="INVOICE" label="采购发票" value="60"/>
-            <option code="PAYMENT" label="付款单" value="70"/>
-            <option code="RETURN" label="采购退货" value="80"/>
+        <dict label="采购单据类型" name="erp-pur/biz-type" valueType="int" i18n-en:label='Purchase Doc Type'>
+            <option code="REQUISITION" label="请购单" value="10" i18n-en:label='Purchase Requisition'/>
+            <option code="RFQ" label="询价单" value="20" i18n-en:label='RFQ'/>
+            <option code="QUOTATION" label="报价单" value="30" i18n-en:label='Quotation'/>
+            <option code="ORDER" label="采购订单" value="40" i18n-en:label='Purchase Order'/>
+            <option code="RECEIVE" label="采购入库" value="50" i18n-en:label='Purchase Receipt'/>
+            <option code="INVOICE" label="采购发票" value="60" i18n-en:label='Purchase Invoice'/>
+            <option code="PAYMENT" label="付款单" value="70" i18n-en:label='Payment'/>
+            <option code="RETURN" label="采购退货" value="80" i18n-en:label='Purchase Return'/>
         </dict>
-        <dict label="单据方向" name="erp-pur/doc-direction" valueType="int">
-            <option code="INBOUND" label="入库" value="10"/>
-            <option code="OUTBOUND" label="出库" value="20"/>
+        <dict label="单据方向" name="erp-pur/doc-direction" valueType="int" i18n-en:label='Doc Direction'>
+            <option code="INBOUND" label="入库" value="10" i18n-en:label='Receipt'/>
+            <option code="OUTBOUND" label="出库" value="20" i18n-en:label='Issue'/>
         </dict>
-        <dict label="入库类型" name="erp-pur/receive-type" valueType="int">
-            <option code="NORMAL" label="正常入库" value="10"/>
-            <option code="RETURN" label="退货入库" value="20"/>
-            <option code="GIFT" label="赠品入库" value="30"/>
+        <dict label="入库类型" name="erp-pur/receive-type" valueType="int" i18n-en:label='Receipt Type'>
+            <option code="NORMAL" label="正常入库" value="10" i18n-en:label='Normal Receipt'/>
+            <option code="RETURN" label="退货入库" value="20" i18n-en:label='Return Receipt'/>
+            <option code="GIFT" label="赠品入库" value="30" i18n-en:label='Freebie Receipt'/>
         </dict>
-        <dict label="发票类型" name="erp-pur/invoice-type" valueType="int">
-            <option code="VAT_SPECIAL" label="增值税专用" value="10"/>
-            <option code="VAT_NORMAL" label="增值税普通" value="20"/>
-            <option code="RECEIPT" label="收据" value="30"/>
+        <dict label="发票类型" name="erp-pur/invoice-type" valueType="int" i18n-en:label='Invoice Type'>
+            <option code="VAT_SPECIAL" label="增值税专用" value="10" i18n-en:label='VAT Special'/>
+            <option code="VAT_NORMAL" label="增值税普通" value="20" i18n-en:label='VAT General'/>
+            <option code="RECEIPT" label="收据" value="30" i18n-en:label='Receipt Note'/>
         </dict>
     </dicts>
 

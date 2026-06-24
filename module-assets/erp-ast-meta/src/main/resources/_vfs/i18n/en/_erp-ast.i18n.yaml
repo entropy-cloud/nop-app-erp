@@ -13,303 +13,353 @@ entity:
 prop:
   label:
     ErpAstAsset:
-      id: null
-      code: null
-      name: null
-      orgId: null
-      categoryId: null
-      acquisitionDate: null
-      currencyId: null
-      originalValue: null
-      currentValue: null
-      residualValue: null
-      depreciationMethod: null
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      categoryId: Category
+      acquisitionDate: Acquisition Date
+      currencyId: Currency
+      originalValue: Original Value
+      currentValue: Current Value
+      residualValue: Residual Value
+      depreciationMethod: Depreciation Method
       depreciationMethod_label: null
-      depreciationRate: null
-      usefulLifeMonths: null
-      departmentId: null
-      locationId: null
-      employeeId: null
-      staffId: null
-      brandModel: null
-      status: null
+      depreciationRate: Depreciation Rate
+      usefulLifeMonths: Useful Life Months
+      departmentId: Department
+      locationId: Location
+      employeeId: Employee
+      staffId: Staff
+      brandModel: Brand / Model
+      status: Status
       status_label: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      category: null
-      department: null
-      location: null
-      employee: null
-      currency: null
-      org: null
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      category: Category
+      department: Department
+      location: Location
+      employee: Employee
+      currency: Currency
+      org: Org
     ErpAstAssetCapitalization:
-      id: null
-      code: null
-      orgId: null
-      assetCode: null
-      assetName: null
-      categoryId: null
-      currencyId: null
-      capitalizationDate: null
-      originalValue: null
-      sourceType: null
+      id: ID
+      code: Code
+      orgId: Organization
+      assetCode: Asset Code
+      assetName: Asset Name
+      categoryId: Category
+      currencyId: Currency
+      capitalizationDate: Capitalization Date
+      originalValue: Original Value
+      sourceType: Source Type
       sourceType_label: null
-      sourceCode: null
-      docStatus: null
+      sourceCode: Source Code
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      approvedBy: null
-      approvedAt: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      businessDate: null
-      exchangeRate: null
-      amountSource: null
-      amountFunctional: null
-      category: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      approvedBy: Approved By
+      approvedAt: Approved At
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      businessDate: Business Date
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      category: Category
     ErpAstAssetCategory:
-      id: null
-      code: null
-      name: null
-      depreciationMethod: null
+      id: ID
+      code: Code
+      name: Name
+      depreciationMethod: Depreciation Method
       depreciationMethod_label: null
-      usefulLifeMonths: null
-      subjectId: null
-      depreciationSubjectId: null
-      expenseSubjectId: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      subject: null
-      depreciationSubject: null
-      expenseSubject: null
+      usefulLifeMonths: Useful Life Months
+      subjectId: Subject
+      depreciationSubjectId: Depreciation Subject
+      expenseSubjectId: Expense Subject
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      subject: Subject
+      depreciationSubject: Depreciation Subject
+      expenseSubject: Expense Subject
     ErpAstCip:
-      id: null
-      code: null
-      name: null
-      orgId: null
-      categoryId: null
-      currencyId: null
-      businessDate: null
-      estimatedCompletionDate: null
-      accumulatedCost: null
-      isCompleted: null
-      completedAssetId: null
-      status: null
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      categoryId: Category
+      currencyId: Currency
+      businessDate: Business Date
+      estimatedCompletionDate: Estimated Completion Date
+      accumulatedCost: Accumulated Cost
+      isCompleted: Is Completed
+      completedAssetId: Completed Asset
+      status: Status
       status_label: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      exchangeRate: null
-      amountSource: null
-      amountFunctional: null
-      category: null
-      currency: null
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      category: Category
+      currency: Currency
     ErpAstDepreciationSchedule:
-      id: null
-      assetId: null
-      orgId: null
-      period: null
-      plannedAmount: null
-      actualAmount: null
-      accumulatedDepreciation: null
-      netBookValue: null
-      status: null
+      id: ID
+      assetId: Asset
+      orgId: Organization
+      period: Period
+      plannedAmount: Planned Amount
+      actualAmount: Actual Amount
+      accumulatedDepreciation: Accumulated Depreciation
+      netBookValue: Net Book Value
+      status: Status
       status_label: null
-      executedAt: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      voucherId: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      businessDate: null
-      currencyId: null
-      exchangeRate: null
-      amountSource: null
-      amountFunctional: null
-      asset: null
+      executedAt: Executed At
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      voucherId: Voucher
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      businessDate: Business Date
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      asset: Asset
     ErpAstDisposal:
-      id: null
-      code: null
-      orgId: null
-      assetId: null
-      disposalType: null
+      id: ID
+      code: Code
+      orgId: Organization
+      assetId: Asset
+      disposalType: Disposal Type
       disposalType_label: null
-      disposalAmount: null
-      currencyId: null
-      exchangeRate: null
-      businessDate: null
-      gainLoss: null
-      reason: null
+      disposalAmount: Disposal Amount
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      businessDate: Business Date
+      gainLoss: Gain Loss
+      reason: Reason
       reason_label: null
-      docStatus: null
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      approvedBy: null
-      approvedAt: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      amountSource: null
-      amountFunctional: null
-      asset: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      approvedBy: Approved By
+      approvedAt: Approved At
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      asset: Asset
     ErpAstMerge:
-      id: null
-      code: null
-      orgId: null
-      targetAssetId: null
-      businessDate: null
-      currencyId: null
-      mergeReason: null
-      docStatus: null
+      id: ID
+      code: Code
+      orgId: Organization
+      targetAssetId: Target Asset
+      businessDate: Business Date
+      currencyId: Currency
+      mergeReason: Merge Reason
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      approvedBy: null
-      approvedAt: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      exchangeRate: null
-      amountSource: null
-      amountFunctional: null
-      targetAsset: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      approvedBy: Approved By
+      approvedAt: Approved At
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      targetAsset: Target Asset
     ErpAstMovement:
-      id: null
-      code: null
-      orgId: null
-      assetId: null
-      businessDate: null
-      fromDate: null
-      thruDate: null
-      fromDepartmentId: null
-      toDepartmentId: null
-      fromStaffId: null
-      toStaffId: null
-      fromLocationId: null
-      toLocationId: null
-      handlerId: null
-      docStatus: null
+      id: ID
+      code: Code
+      orgId: Organization
+      assetId: Asset
+      businessDate: Business Date
+      fromDate: From Date
+      thruDate: Thru Date
+      fromDepartmentId: From Department
+      toDepartmentId: To Department
+      fromStaffId: From Staff
+      toStaffId: To Staff
+      fromLocationId: From Location
+      toLocationId: To Location
+      handlerId: Handler
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      docVersion: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      currencyId: null
-      exchangeRate: null
-      amountSource: null
-      amountFunctional: null
-      asset: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      docVersion: Doc Version
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      asset: Asset
     ErpAstSplit:
-      id: null
-      code: null
-      orgId: null
-      sourceAssetId: null
-      businessDate: null
-      currencyId: null
-      splitReason: null
-      docStatus: null
+      id: ID
+      code: Code
+      orgId: Organization
+      sourceAssetId: Source Asset
+      businessDate: Business Date
+      currencyId: Currency
+      splitReason: Split Reason
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      approvedBy: null
-      approvedAt: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      exchangeRate: null
-      amountSource: null
-      amountFunctional: null
-      sourceAsset: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      approvedBy: Approved By
+      approvedAt: Approved At
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      sourceAsset: Source Asset
     ErpAstValueAdjustment:
-      id: null
-      code: null
-      orgId: null
-      assetId: null
-      businessDate: null
-      currencyId: null
-      exchangeRate: null
-      adjustmentType: null
+      id: ID
+      code: Code
+      orgId: Organization
+      assetId: Asset
+      businessDate: Business Date
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      adjustmentType: Adjustment Type
       adjustmentType_label: null
-      adjustmentAmount: null
-      reason: null
-      docStatus: null
+      adjustmentAmount: Adjustment Amount
+      reason: Reason
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      approvedBy: null
-      approvedAt: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      amountSource: null
-      amountFunctional: null
-      asset: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      approvedBy: Approved By
+      approvedAt: Approved At
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      asset: Asset
+dict:
+  label:
+    erp-ast/asset-status: Asset Status
+    erp-ast/depreciation-method: Depreciation Method
+    erp-ast/depreciation-schedule-status: Depreciation Schedule Status
+    erp-ast/adjustment-type: Adjustment Type
+    erp-ast/disposal-type: Disposal Type
+    erp-ast/doc-status: Doc Status
+    erp-ast/approve-status: Approve Status
+    erp-ast/capitalization-source-type: Capitalization Source Type
+    erp-ast/disposal-reason: Disposal Reason
+dict.option.label:
+  erp-ast/asset-status:
+    '10': Draft
+    '20': In Use
+    '30': Idle
+    '40': Scrapped
+    '50': Sold
+  erp-ast/depreciation-method:
+    '10': Straight-Line
+    '20': Double Declining Balance
+    '30': Units of Production
+  erp-ast/depreciation-schedule-status:
+    '10': Pending
+    '20': Executed
+    '30': Reversed
+  erp-ast/adjustment-type:
+    '10': Impairment
+    '20': Revaluation
+  erp-ast/disposal-type:
+    '10': Scrap
+    '20': Sale
+  erp-ast/doc-status:
+    '10': Draft
+    '20': Effective
+    '30': Voided
+  erp-ast/approve-status:
+    '10': Unsubmitted
+    '20': Submitted
+    '30': Approved
+    '40': Rejected
+  erp-ast/capitalization-source-type:
+    '10': Inventory
+    '20': CIP
+  erp-ast/disposal-reason:
+    '10': Scrap
+    '20': Sale
+    '30': Donation
+    '40': Stolen
+    '50': Other

@@ -47,104 +47,104 @@
     </domains>
 
     <dicts>
-        <dict label="物料类型" name="erp-md/material-type" valueType="int">
-            <option code="GOODS" label="商品" value="10"/>
-            <option code="RAW_MATERIAL" label="原材料" value="20"/>
-            <option code="SEMI_PRODUCT" label="半成品" value="30"/>
-            <option code="FINISHED_PRODUCT" label="产成品" value="40"/>
-            <option code="SERVICE" label="服务" value="50"/>
-            <option code="PACKAGING" label="包装物" value="60"/>
-            <option code="CONSUMABLE" label="消耗品" value="70"/>
+        <dict label="物料类型" name="erp-md/material-type" valueType="int" i18n-en:label='Material Type'>
+            <option code="GOODS" label="商品" value="10" i18n-en:label='Merchandise'/>
+            <option code="RAW_MATERIAL" label="原材料" value="20" i18n-en:label='Raw Material'/>
+            <option code="SEMI_PRODUCT" label="半成品" value="30" i18n-en:label='Semi-Finished'/>
+            <option code="FINISHED_PRODUCT" label="产成品" value="40" i18n-en:label='Finished Good'/>
+            <option code="SERVICE" label="服务" value="50" i18n-en:label='Service'/>
+            <option code="PACKAGING" label="包装物" value="60" i18n-en:label='Packaging'/>
+            <option code="CONSUMABLE" label="消耗品" value="70" i18n-en:label='Consumable'/>
         </dict>
-        <dict label="启用状态" name="erp-md/active-status" valueType="int">
-            <option code="ACTIVE" label="启用" value="10"/>
-            <option code="INACTIVE" label="停用" value="20"/>
+        <dict label="启用状态" name="erp-md/active-status" valueType="int" i18n-en:label='Enabled Status'>
+            <option code="ACTIVE" label="启用" value="10" i18n-en:label='Enabled'/>
+            <option code="INACTIVE" label="停用" value="20" i18n-en:label='Disabled'/>
         </dict>
-        <dict label="存货计价方法" name="erp-md/cost-method" valueType="int">
-            <option code="MOVING_AVERAGE" label="移动加权平均" value="10"/>
-            <option code="WEIGHTED_AVERAGE" label="全月一次加权平均" value="20"/>
-            <option code="FIFO" label="先进先出" value="30"/>
-            <option code="LIFO" label="后进先出" value="40"/>
-            <option code="STANDARD" label="标准成本" value="50"/>
-            <option code="SPECIFIC" label="具体辨认(个别计价)" value="60"/>
-            <option code="BATCH" label="批次" value="70"/>
+        <dict label="存货计价方法" name="erp-md/cost-method" valueType="int" i18n-en:label='Inventory Valuation Method'>
+            <option code="MOVING_AVERAGE" label="移动加权平均" value="10" i18n-en:label='Moving Weighted Avg'/>
+            <option code="WEIGHTED_AVERAGE" label="全月一次加权平均" value="20" i18n-en:label='Monthly Weighted Avg'/>
+            <option code="FIFO" label="先进先出" value="30" i18n-en:label='FIFO'/>
+            <option code="LIFO" label="后进先出" value="40" i18n-en:label='LIFO'/>
+            <option code="STANDARD" label="标准成本" value="50" i18n-en:label='Standard Cost'/>
+            <option code="SPECIFIC" label="具体辨认(个别计价)" value="60" i18n-en:label='Specific Identification'/>
+            <option code="BATCH" label="批次" value="70" i18n-en:label='Batch'/>
         </dict>
-        <dict label="价格校验级别" name="erp-md/price-validation" valueType="int">
-            <option code="OFF" label="不校验" value="10"/>
-            <option code="WARN" label="警告放行" value="20"/>
-            <option code="HARD" label="强制拦截" value="30"/>
+        <dict label="价格校验级别" name="erp-md/price-validation" valueType="int" i18n-en:label='Price Validation Level'>
+            <option code="OFF" label="不校验" value="10" i18n-en:label='No Check'/>
+            <option code="WARN" label="警告放行" value="20" i18n-en:label='Warning Release'/>
+            <option code="HARD" label="强制拦截" value="30" i18n-en:label='Force Block'/>
         </dict>
-        <dict label="往来单位类型" name="erp-md/partner-type" valueType="int">
-            <option code="CUSTOMER" label="客户" value="10"/>
-            <option code="SUPPLIER" label="供应商" value="20"/>
-            <option code="BOTH" label="客户且供应商" value="30"/>
-            <option code="EMPLOYEE" label="员工(内部往来)" value="40"/>
+        <dict label="往来单位类型" name="erp-md/partner-type" valueType="int" i18n-en:label='Partner Type'>
+            <option code="CUSTOMER" label="客户" value="10" i18n-en:label='Customer'/>
+            <option code="SUPPLIER" label="供应商" value="20" i18n-en:label='Supplier'/>
+            <option code="BOTH" label="客户且供应商" value="30" i18n-en:label='Customer &amp; Supplier'/>
+            <option code="EMPLOYEE" label="员工(内部往来)" value="40" i18n-en:label='Employee (Internal)'/>
         </dict>
-        <dict label="仓库类型" name="erp-md/warehouse-type" valueType="int">
-            <option code="NORMAL" label="普通仓" value="10"/>
-            <option code="IN_TRANSIT" label="在途仓" value="20"/>
-            <option code="SCRAP" label="报废仓" value="30"/>
-            <option code="CONSIGNMENT_IN" label="受托代销仓" value="40"/>
-            <option code="CONSIGNMENT_OUT" label="委托代销仓" value="50"/>
-            <option code="BONDED" label="保税仓" value="60"/>
+        <dict label="仓库类型" name="erp-md/warehouse-type" valueType="int" i18n-en:label='Warehouse Type'>
+            <option code="NORMAL" label="普通仓" value="10" i18n-en:label='Normal Warehouse'/>
+            <option code="IN_TRANSIT" label="在途仓" value="20" i18n-en:label='In Transit'/>
+            <option code="SCRAP" label="报废仓" value="30" i18n-en:label='Scrap Warehouse'/>
+            <option code="CONSIGNMENT_IN" label="受托代销仓" value="40" i18n-en:label='Consignment In'/>
+            <option code="CONSIGNMENT_OUT" label="委托代销仓" value="50" i18n-en:label='Consignment Out'/>
+            <option code="BONDED" label="保税仓" value="60" i18n-en:label='Bonded Warehouse'/>
         </dict>
-        <dict label="科目类别" name="erp-md/subject-class" valueType="int">
-            <option code="ASSET" label="资产" value="10"/>
-            <option code="LIABILITY" label="负债" value="20"/>
-            <option code="EQUITY" label="权益" value="30"/>
-            <option code="INCOME" label="收入" value="40"/>
-            <option code="EXPENSE" label="费用" value="50"/>
-            <option code="COST" label="成本" value="60"/>
+        <dict label="科目类别" name="erp-md/subject-class" valueType="int" i18n-en:label='Subject Class'>
+            <option code="ASSET" label="资产" value="10" i18n-en:label='Asset'/>
+            <option code="LIABILITY" label="负债" value="20" i18n-en:label='Liability'/>
+            <option code="EQUITY" label="权益" value="30" i18n-en:label='Equity'/>
+            <option code="INCOME" label="收入" value="40" i18n-en:label='Revenue'/>
+            <option code="EXPENSE" label="费用" value="50" i18n-en:label='Expense'/>
+            <option code="COST" label="成本" value="60" i18n-en:label='Cost'/>
         </dict>
-        <dict label="科目余额方向" name="erp-md/subject-direction" valueType="int">
-            <option code="DEBIT" label="借方" value="10"/>
-            <option code="CREDIT" label="贷方" value="20"/>
+        <dict label="科目余额方向" name="erp-md/subject-direction" valueType="int" i18n-en:label='Account Balance Direction'>
+            <option code="DEBIT" label="借方" value="10" i18n-en:label='Debit Side'/>
+            <option code="CREDIT" label="贷方" value="20" i18n-en:label='Credit Side'/>
         </dict>
-        <dict label="科目余额类型" name="erp-md/balance-type" valueType="int">
-            <option code="DEBIT" label="借余" value="10"/>
-            <option code="CREDIT" label="贷余" value="20"/>
-            <option code="BOTH" label="借贷双余" value="30"/>
+        <dict label="科目余额类型" name="erp-md/balance-type" valueType="int" i18n-en:label='Account Balance Type'>
+            <option code="DEBIT" label="借余" value="10" i18n-en:label='Debit Balance'/>
+            <option code="CREDIT" label="贷余" value="20" i18n-en:label='Credit Balance'/>
+            <option code="BOTH" label="借贷双余" value="30" i18n-en:label='Debit/Credit Both'/>
         </dict>
-        <dict label="组织类型" name="erp-md/org-type" valueType="int">
-            <option code="GROUP" label="集团" value="10"/>
-            <option code="COMPANY" label="公司" value="20"/>
-            <option code="BRANCH" label="分公司" value="30"/>
-            <option code="DEPARTMENT" label="部门" value="40"/>
-            <option code="WORKSHOP" label="车间" value="50"/>
-            <option code="STORE" label="门店" value="60"/>
+        <dict label="组织类型" name="erp-md/org-type" valueType="int" i18n-en:label='Org Type'>
+            <option code="GROUP" label="集团" value="10" i18n-en:label='Group'/>
+            <option code="COMPANY" label="公司" value="20" i18n-en:label='Company'/>
+            <option code="BRANCH" label="分公司" value="30" i18n-en:label='Branch'/>
+            <option code="DEPARTMENT" label="部门" value="40" i18n-en:label='Department'/>
+            <option code="WORKSHOP" label="车间" value="50" i18n-en:label='Workshop'/>
+            <option code="STORE" label="门店" value="60" i18n-en:label='Store'/>
         </dict>
-        <dict label="核算表性质" name="erp-md/acct-schema-nature" valueType="int">
-            <option code="FINANCIAL" label="财务账(法定账)" value="10"/>
-            <option code="MANAGEMENT" label="管理账(内部账)" value="20"/>
-            <option code="TAX" label="税务账" value="30"/>
-            <option code="CONSOLIDATION" label="合并账" value="40"/>
-            <option code="BUDGET" label="预算账" value="50"/>
+        <dict label="核算表性质" name="erp-md/acct-schema-nature" valueType="int" i18n-en:label='Accounting Schema Nature'>
+            <option code="FINANCIAL" label="财务账(法定账)" value="10" i18n-en:label='Financial Book'/>
+            <option code="MANAGEMENT" label="管理账(内部账)" value="20" i18n-en:label='Management Book'/>
+            <option code="TAX" label="税务账" value="30" i18n-en:label='Tax Book'/>
+            <option code="CONSOLIDATION" label="合并账" value="40" i18n-en:label='Consolidated Book'/>
+            <option code="BUDGET" label="预算账" value="50" i18n-en:label='Budget Book'/>
         </dict>
-        <dict label="税种" name="erp-md/tax-type" valueType="int">
-            <option code="VAT" label="增值税" value="10"/>
-            <option code="SALES_TAX" label="销售税" value="20"/>
-            <option code="WITHHOLDING" label="预提税" value="30"/>
-            <option code="CUSTOMS" label="关税" value="40"/>
-            <option code="OTHER" label="其他" value="50"/>
+        <dict label="税种" name="erp-md/tax-type" valueType="int" i18n-en:label='Tax Category'>
+            <option code="VAT" label="增值税" value="10" i18n-en:label='VAT'/>
+            <option code="SALES_TAX" label="销售税" value="20" i18n-en:label='Sales Tax'/>
+            <option code="WITHHOLDING" label="预提税" value="30" i18n-en:label='Withholding Tax'/>
+            <option code="CUSTOMS" label="关税" value="40" i18n-en:label='Customs Duty'/>
+            <option code="OTHER" label="其他" value="50" i18n-en:label='Other'/>
         </dict>
-        <dict label="结算类型" name="erp-md/settlement-type" valueType="int">
-            <option code="CASH" label="现金" value="10"/>
-            <option code="BANK_TRANSFER" label="银行转账" value="20"/>
-            <option code="NOTE" label="票据" value="30"/>
-            <option code="OFFSET" label="抵扣" value="40"/>
-            <option code="ONLINE" label="在线支付" value="50"/>
+        <dict label="结算类型" name="erp-md/settlement-type" valueType="int" i18n-en:label='Settlement Type'>
+            <option code="CASH" label="现金" value="10" i18n-en:label='Cash'/>
+            <option code="BANK_TRANSFER" label="银行转账" value="20" i18n-en:label='Bank Transfer'/>
+            <option code="NOTE" label="票据" value="30" i18n-en:label='Note'/>
+            <option code="OFFSET" label="抵扣" value="40" i18n-en:label='Deductible'/>
+            <option code="ONLINE" label="在线支付" value="50" i18n-en:label='Online Payment'/>
         </dict>
-        <dict label="银行账户类型" name="erp-md/bank-account-type" valueType="int">
-            <option code="DEMAND" label="活期" value="10"/>
-            <option code="FIXED" label="定期" value="20"/>
-            <option code="CREDIT" label="信用账户" value="30"/>
-            <option code="OTHER" label="其他" value="40"/>
+        <dict label="银行账户类型" name="erp-md/bank-account-type" valueType="int" i18n-en:label='Bank Account Type'>
+            <option code="DEMAND" label="活期" value="10" i18n-en:label='Current Account'/>
+            <option code="FIXED" label="定期" value="20" i18n-en:label='Periodic'/>
+            <option code="CREDIT" label="信用账户" value="30" i18n-en:label='Credit Account'/>
+            <option code="OTHER" label="其他" value="40" i18n-en:label='Other'/>
         </dict>
-        <dict label="地址类型" name="erp-md/address-type" valueType="int">
-            <option code="BILLING" label="账单地址" value="10"/>
-            <option code="SHIPPING" label="发货地址" value="20"/>
-            <option code="REGISTERED" label="注册地址" value="30"/>
-            <option code="OTHER" label="其他" value="40"/>
+        <dict label="地址类型" name="erp-md/address-type" valueType="int" i18n-en:label='Address Type'>
+            <option code="BILLING" label="账单地址" value="10" i18n-en:label='Billing Address'/>
+            <option code="SHIPPING" label="发货地址" value="20" i18n-en:label='Delivery Address'/>
+            <option code="REGISTERED" label="注册地址" value="30" i18n-en:label='Registered Address'/>
+            <option code="OTHER" label="其他" value="40" i18n-en:label='Other'/>
         </dict>
     </dicts>
 

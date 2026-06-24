@@ -15,265 +15,339 @@ entity:
 prop:
   label:
     ErpMntCalibration:
-      id: null
-      code: null
-      orgId: null
-      equipmentId: null
-      businessDate: null
-      standardRef: null
-      measuredValue: null
-      targetValue: null
-      tolerance: null
-      result: null
+      id: ID
+      code: Code
+      orgId: Organization
+      equipmentId: Equipment
+      businessDate: Business Date
+      standardRef: Standard Ref
+      measuredValue: Measured Value
+      targetValue: Target Value
+      tolerance: Tolerance
+      result: Result
       result_label: null
-      nextCalibrationDate: null
-      calibratedBy: null
-      docStatus: null
+      nextCalibrationDate: Next Calibration Date
+      calibratedBy: Calibrated By
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      equipment: null
-      calibratedByEmployee: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      equipment: Equipment
+      calibratedByEmployee: Calibrated By Employee
     ErpMntDowntimeEntry:
-      id: null
-      equipmentId: null
-      startTime: null
-      endTime: null
-      totalMinutes: null
-      reason: null
-      relatedJobOrderId: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      equipment: null
+      id: ID
+      equipmentId: Equipment
+      startTime: Start Time
+      endTime: End Time
+      totalMinutes: Total Minutes
+      reason: Reason
+      relatedJobOrderId: Related Job Order
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      equipment: Equipment
     ErpMntEquipment:
-      id: null
-      code: null
-      name: null
-      orgId: null
-      assetId: null
-      workcenterId: null
-      locationId: null
-      categoryId: null
-      status: null
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      assetId: Asset
+      workcenterId: Workcenter
+      locationId: Location
+      categoryId: Category
+      status: Status
       status_label: null
-      serialNo: null
-      manufacturer: null
-      model: null
-      installDate: null
-      warrantyExpiry: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      location: null
-      category: null
-      org: null
-      visits: null
-      schedules: null
-      requests: null
-      sparePartUsages: null
-      downtimeEntries: null
+      serialNo: Serial No
+      manufacturer: Manufacturer
+      model: Model
+      installDate: Install Date
+      warrantyExpiry: Warranty Expiry
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      location: Location
+      category: Category
+      org: Org
+      visits: Visits
+      schedules: Schedules
+      requests: Requests
+      sparePartUsages: Spare Part Usages
+      downtimeEntries: Downtime Entries
     ErpMntEquipmentCategory:
-      id: null
-      code: null
-      name: null
-      parentId: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      parent: null
+      id: ID
+      code: Code
+      name: Name
+      parentId: Parent
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      parent: Parent
     ErpMntMaintenanceTeam:
-      id: null
-      code: null
-      name: null
-      orgId: null
-      leaderId: null
-      description: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      leader: null
-      members: null
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      leaderId: Leader
+      description: Description
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      leader: Leader
+      members: Members
     ErpMntMaintenanceTeamMember:
-      id: null
-      teamId: null
-      employeeId: null
-      role: null
-      joinedAt: null
-      leftAt: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      team: null
-      employee: null
+      id: ID
+      teamId: Team
+      employeeId: Employee
+      role: Role
+      joinedAt: Joined At
+      leftAt: Left At
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      team: Team
+      employee: Employee
     ErpMntRequest:
-      id: null
-      code: null
-      equipmentId: null
-      requestDate: null
-      description: null
-      priority: null
+      id: ID
+      code: Code
+      equipmentId: Equipment
+      requestDate: Request Date
+      description: Description
+      priority: Priority
       priority_label: null
-      status: null
+      status: Status
       status_label: null
-      requestedBy: null
-      assignedTo: null
-      acceptedBy: null
-      completedBy: null
-      completedAt: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      equipment: null
+      requestedBy: Requested By
+      assignedTo: Assigned To
+      acceptedBy: Accepted By
+      completedBy: Completed By
+      completedAt: Completed At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      equipment: Equipment
     ErpMntSchedule:
-      id: null
-      code: null
-      name: null
-      equipmentId: null
-      scheduleType: null
+      id: ID
+      code: Code
+      name: Name
+      equipmentId: Equipment
+      scheduleType: Schedule Type
       scheduleType_label: null
-      frequency: null
-      recurrenceType: null
+      frequency: Frequency
+      recurrenceType: Recurrence Type
       recurrenceType_label: null
-      daysOfWeek: null
-      startDate: null
-      endDate: null
-      nextDueDate: null
-      isActive: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      equipment: null
+      daysOfWeek: Days Of Week
+      startDate: Start Date
+      endDate: End Date
+      nextDueDate: Next Due Date
+      isActive: Active
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      equipment: Equipment
     ErpMntSparePartUsage:
-      id: null
-      code: null
-      orgId: null
-      visitId: null
-      requestId: null
-      equipmentId: null
-      businessDate: null
-      warehouseId: null
-      totalAmount: null
-      docStatus: null
+      id: ID
+      code: Code
+      orgId: Organization
+      visitId: Visit
+      requestId: Request
+      equipmentId: Equipment
+      businessDate: Business Date
+      warehouseId: Warehouse
+      totalAmount: Total Amt
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      visit: null
-      request: null
-      equipment: null
-      lines: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      visit: Visit
+      request: Request
+      equipment: Equipment
+      lines: Lines
     ErpMntSparePartUsageLine:
-      id: null
-      sparePartUsageId: null
-      lineNo: null
-      materialId: null
-      uoMId: null
-      quantity: null
-      unitCost: null
-      amount: null
-      batchNo: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      sparePartUsage: null
-      material: null
-      uoM: null
+      id: ID
+      sparePartUsageId: Spare Part Usage
+      lineNo: Line No
+      materialId: Material
+      uoMId: UoM
+      quantity: Quantity
+      unitCost: Unit Cost
+      amount: Amount
+      batchNo: Batch No
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      sparePartUsage: Spare Part Usage
+      material: Material
+      uoM: Uo M
     ErpMntVisit:
-      id: null
-      code: null
-      scheduleId: null
-      equipmentId: null
-      visitDate: null
-      status: null
+      id: ID
+      code: Code
+      scheduleId: Schedule
+      equipmentId: Equipment
+      visitDate: Visit Date
+      status: Status
       status_label: null
-      assignedTo: null
-      completedBy: null
-      completedAt: null
-      startTime: null
-      endTime: null
-      totalMinutes: null
-      visitType: null
+      assignedTo: Assigned To
+      completedBy: Completed By
+      completedAt: Completed At
+      startTime: Start Time
+      endTime: End Time
+      totalMinutes: Total Minutes
+      visitType: Visit Type
       visitType_label: null
-      result: null
+      result: Result
       result_label: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      orgId: null
-      businessDate: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      schedule: null
-      equipment: null
-      tasks: null
-      sparePartUsages: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      orgId: Organization
+      businessDate: Business Date
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      schedule: Schedule
+      equipment: Equipment
+      tasks: Tasks
+      sparePartUsages: Spare Part Usages
     ErpMntVisitTask:
-      id: null
-      visitId: null
-      lineNo: null
-      taskDescription: null
-      status: null
+      id: ID
+      visitId: Visit
+      lineNo: Line No
+      taskDescription: Task Description
+      status: Status
       status_label: null
-      completedBy: null
-      completedAt: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      visit: null
+      completedBy: Completed By
+      completedAt: Completed At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      visit: Visit
+dict:
+  label:
+    erp-mnt/schedule-type: Maintenance Schedule Type
+    erp-mnt/visit-status: Maintenance Visit Status
+    erp-mnt/request-status: Maintenance Request Status
+    erp-mnt/equipment-status: Equipment Status
+    erp-mnt/recurrence-type: Recurrence Type
+    erp-mnt/priority: Priority
+    erp-mnt/visit-task-status: Maintenance Task Status
+    erp-mnt/doc-status: Doc Status
+    erp-mnt/approve-status: Approve Status
+    erp-mnt/calibration-result: Calibration Result
+    erp-mnt/visit-type: Maintenance Type
+    erp-mnt/visit-result: Execution Result
+dict.option.label:
+  erp-mnt/schedule-type:
+    '10': Preventive Maintenance
+    '20': Predictive Maintenance
+    '30': Calibration
+  erp-mnt/visit-status:
+    '10': Draft
+    '20': Scheduled
+    '30': Executing
+    '40': Completed
+    '50': Cancelled
+  erp-mnt/request-status:
+    '10': Pending Accept
+    '20': Accepted
+    '30': Under Repair
+    '40': Completed
+    '50': Rejected
+    '60': Cancelled
+  erp-mnt/equipment-status:
+    '10': Running
+    '20': Idle
+    '30': Under Maintenance
+    '40': Breakdown
+    '50': Disabled
+  erp-mnt/recurrence-type:
+    '10': Daily
+    '20': Weekly
+    '30': Monthly
+    '40': Yearly
+  erp-mnt/priority:
+    '10': Low
+    '20': General
+    '30': High
+    '40': Urgent
+  erp-mnt/visit-task-status:
+    '10': Pending
+    '20': Executing
+    '30': Completed
+    '40': Skipped
+    '50': Failed
+  erp-mnt/doc-status:
+    '10': Draft
+    '20': Effective
+    '30': Voided
+  erp-mnt/approve-status:
+    '10': Unsubmitted
+    '20': Submitted
+    '30': Approved
+    '40': Rejected
+  erp-mnt/calibration-result:
+    '10': Conforming
+    '20': Non-conforming
+    '30': Adjusted Conforming
+  erp-mnt/visit-type:
+    '10': Planned
+    '20': Responsive
+  erp-mnt/visit-result:
+    '10': Normal
+    '20': Abnormal
+    '30': Partially Complete

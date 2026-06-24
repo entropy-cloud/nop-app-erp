@@ -63,52 +63,52 @@
     </domains>
 
     <dicts>
-        <dict label="资产状态" name="erp-ast/asset-status" valueType="int">
-            <option code="DRAFT" label="草稿" value="10"/>
-            <option code="IN_SERVICE" label="使用中" value="20"/>
-            <option code="IDLE" label="闲置" value="30"/>
-            <option code="SCRAPPED" label="已报废" value="40"/>
-            <option code="SOLD" label="已出售" value="50"/>
+        <dict label="资产状态" name="erp-ast/asset-status" valueType="int" i18n-en:label='Asset Status'>
+            <option code="DRAFT" label="草稿" value="10" i18n-en:label='Draft'/>
+            <option code="IN_SERVICE" label="使用中" value="20" i18n-en:label='In Use'/>
+            <option code="IDLE" label="闲置" value="30" i18n-en:label='Idle'/>
+            <option code="SCRAPPED" label="已报废" value="40" i18n-en:label='Scrapped'/>
+            <option code="SOLD" label="已出售" value="50" i18n-en:label='Sold'/>
         </dict>
-        <dict label="折旧方法" name="erp-ast/depreciation-method" valueType="int">
-            <option code="STRAIGHT_LINE" label="直线法" value="10"/>
-            <option code="DECLINING" label="双倍余额递减" value="20"/>
-            <option code="UNITS" label="工作量法" value="30"/>
+        <dict label="折旧方法" name="erp-ast/depreciation-method" valueType="int" i18n-en:label='Depreciation Method'>
+            <option code="STRAIGHT_LINE" label="直线法" value="10" i18n-en:label='Straight-Line'/>
+            <option code="DECLINING" label="双倍余额递减" value="20" i18n-en:label='Double Declining Balance'/>
+            <option code="UNITS" label="工作量法" value="30" i18n-en:label='Units of Production'/>
         </dict>
-        <dict label="折旧计划状态" name="erp-ast/depreciation-schedule-status" valueType="int">
-            <option code="PENDING" label="待执行" value="10"/>
-            <option code="EXECUTED" label="已执行" value="20"/>
-            <option code="REVERSED" label="已冲销" value="30"/>
+        <dict label="折旧计划状态" name="erp-ast/depreciation-schedule-status" valueType="int" i18n-en:label='Depreciation Schedule Status'>
+            <option code="PENDING" label="待执行" value="10" i18n-en:label='Pending'/>
+            <option code="EXECUTED" label="已执行" value="20" i18n-en:label='Executed'/>
+            <option code="REVERSED" label="已冲销" value="30" i18n-en:label='Reversed'/>
         </dict>
-        <dict label="价值调整类型" name="erp-ast/adjustment-type" valueType="int">
-            <option code="IMPAIRMENT" label="减值" value="10"/>
-            <option code="REVALUATION" label="重估" value="20"/>
+        <dict label="价值调整类型" name="erp-ast/adjustment-type" valueType="int" i18n-en:label='Adjustment Type'>
+            <option code="IMPAIRMENT" label="减值" value="10" i18n-en:label='Impairment'/>
+            <option code="REVALUATION" label="重估" value="20" i18n-en:label='Revaluation'/>
         </dict>
-        <dict label="处置类型" name="erp-ast/disposal-type" valueType="int">
-            <option code="SCRAPPED" label="报废" value="10"/>
-            <option code="SOLD" label="出售" value="20"/>
+        <dict label="处置类型" name="erp-ast/disposal-type" valueType="int" i18n-en:label='Disposal Type'>
+            <option code="SCRAPPED" label="报废" value="10" i18n-en:label='Scrap'/>
+            <option code="SOLD" label="出售" value="20" i18n-en:label='Sale'/>
         </dict>
-        <dict label="单据状态" name="erp-ast/doc-status" valueType="int">
-            <option code="DRAFT" label="草稿" value="10"/>
-            <option code="ACTIVE" label="已生效" value="20"/>
-            <option code="CANCELLED" label="已作废" value="30"/>
+        <dict label="单据状态" name="erp-ast/doc-status" valueType="int" i18n-en:label='Doc Status'>
+            <option code="DRAFT" label="草稿" value="10" i18n-en:label='Draft'/>
+            <option code="ACTIVE" label="已生效" value="20" i18n-en:label='Effective'/>
+            <option code="CANCELLED" label="已作废" value="30" i18n-en:label='Voided'/>
         </dict>
-        <dict label="审核状态" name="erp-ast/approve-status" valueType="int">
-            <option code="UNSUBMITTED" label="未提交" value="10"/>
-            <option code="SUBMITTED" label="已提交" value="20"/>
-            <option code="APPROVED" label="已审核" value="30"/>
-            <option code="REJECTED" label="已驳回" value="40"/>
+        <dict label="审核状态" name="erp-ast/approve-status" valueType="int" i18n-en:label='Approve Status'>
+            <option code="UNSUBMITTED" label="未提交" value="10" i18n-en:label='Unsubmitted'/>
+            <option code="SUBMITTED" label="已提交" value="20" i18n-en:label='Submitted'/>
+            <option code="APPROVED" label="已审核" value="30" i18n-en:label='Approved'/>
+            <option code="REJECTED" label="已驳回" value="40" i18n-en:label='Rejected'/>
         </dict>
-        <dict label="资本化来源类型" name="erp-ast/capitalization-source-type" valueType="int">
-            <option code="INVENTORY" label="库存" value="10"/>
-            <option code="CIP" label="在建工程" value="20"/>
+        <dict label="资本化来源类型" name="erp-ast/capitalization-source-type" valueType="int" i18n-en:label='Capitalization Source Type'>
+            <option code="INVENTORY" label="库存" value="10" i18n-en:label='Inventory'/>
+            <option code="CIP" label="在建工程" value="20" i18n-en:label='CIP'/>
         </dict>
-        <dict label="处置原因" name="erp-ast/disposal-reason" valueType="int">
-            <option code="OBSOLETE" label="报废" value="10"/>
-            <option code="SOLD" label="出售" value="20"/>
-            <option code="DONATED" label="捐赠" value="30"/>
-            <option code="STOLEN" label="被盗" value="40"/>
-            <option code="OTHER" label="其他" value="50"/>
+        <dict label="处置原因" name="erp-ast/disposal-reason" valueType="int" i18n-en:label='Disposal Reason'>
+            <option code="OBSOLETE" label="报废" value="10" i18n-en:label='Scrap'/>
+            <option code="SOLD" label="出售" value="20" i18n-en:label='Sale'/>
+            <option code="DONATED" label="捐赠" value="30" i18n-en:label='Donation'/>
+            <option code="STOLEN" label="被盗" value="40" i18n-en:label='Stolen'/>
+            <option code="OTHER" label="其他" value="50" i18n-en:label='Other'/>
         </dict>
     </dicts>
 

@@ -19,77 +19,79 @@
     <keys/>
 
     <props>
-        <prop name="id" displayName="ID" propId="1" tagSet="seq-default" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="false" graphql:type="String">
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="code" displayName="单号" propId="2" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true">
+        <prop name="code" displayName="单号" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema domain="orderCode" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="orgId" displayName="业务组织" propId="3" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="businessDate" displayName="业务日期" propId="4" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true">
+        <prop name="businessDate" displayName="业务日期" propId="4" i18n-en:displayName="Business Date" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.time.LocalDate"/>
         </prop>
-        <prop name="warehouseId" displayName="拣货仓库" propId="5" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true" ext:relation="warehouse">
+        <prop name="warehouseId" displayName="拣货仓库" propId="5" i18n-en:displayName="Warehouse" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="warehouse">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="pickerId" displayName="拣货人(职员)" propId="6" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="pickerId" displayName="拣货人(职员)" propId="6" i18n-en:displayName="Picker" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="docStatus" displayName="单据状态" propId="7" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true">
+        <prop name="docStatus" displayName="单据状态" propId="7" i18n-en:displayName="Doc Status" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.Integer" dict="erp-inv/picking-status"/>
         </prop>
-        <prop name="relatedBillType" displayName="关联单据类型(SALES_DELIVERY/WORK_ORDER_ISSUE)" propId="8" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="50"/>
-        </prop>
-        <prop name="relatedBillCode" displayName="关联单据号" propId="9" queryable="true" sortable="true" insertable="true"
+        <prop name="relatedBillType" displayName="关联单据类型(SALES_DELIVERY/WORK_ORDER_ISSUE)" propId="8"
+              i18n-en:displayName="Related Bill Type" queryable="true" sortable="true" insertable="true"
               updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="remark" displayName="备注" propId="10" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="relatedBillCode" displayName="关联单据号" propId="9" i18n-en:displayName="Related Bill Code"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="10" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
-        <prop name="delVersion" displayName="逻辑删除版本" propId="11" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="true" defaultValue="0">
+        <prop name="delVersion" displayName="逻辑删除版本" propId="11" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
             <schema domain="delVersion" type="java.lang.Long"/>
         </prop>
-        <prop name="version" displayName="数据版本" propId="12" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false" internal="true" defaultValue="0">
+        <prop name="version" displayName="数据版本" propId="12" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
             <schema domain="version" type="java.lang.Integer"/>
         </prop>
-        <prop name="createdBy" displayName="创建人" propId="13" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false">
+        <prop name="createdBy" displayName="创建人" propId="13" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="createdBy" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="createTime" displayName="创建时间" propId="14" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false">
+        <prop name="createTime" displayName="创建时间" propId="14" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="createTime" type="java.sql.Timestamp"/>
         </prop>
-        <prop name="updatedBy" displayName="修改人" propId="15" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false">
+        <prop name="updatedBy" displayName="修改人" propId="15" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updatedBy" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="updateTime" displayName="修改时间" propId="16" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false">
+        <prop name="updateTime" displayName="修改时间" propId="16" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
-        <prop name="warehouse" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="warehouseId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
-              updatable="false" mandatory="true" lazy="true">
+        <prop name="warehouse" i18n-en:displayName="Warehouse" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="warehouseId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdWarehouse"/>
         </prop>
-        <prop name="lines" tagSet="pub,cascade-delete,insertable,updatable" ext:kind="to-many" internal="true"
-              ext:joinLeftProp="id" ext:joinRightProp="pickingId" insertable="true" updatable="true" lazy="true">
+        <prop name="lines" i18n-en:displayName="Lines" tagSet="pub,cascade-delete,insertable,updatable"
+              ext:kind="to-many" internal="true" ext:joinLeftProp="id" ext:joinRightProp="pickingId" insertable="true"
+              updatable="true" lazy="true">
             <schema>
                 <item bizObjName="ErpInvPickingOrderLine"/>
             </schema>

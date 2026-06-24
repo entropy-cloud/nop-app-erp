@@ -20,467 +20,515 @@ entity:
 prop:
   label:
     ErpPurInvoice:
-      id: null
-      code: null
-      orgId: null
-      supplierId: null
-      invoiceNo: null
-      invoiceType: null
+      id: ID
+      code: Code
+      orgId: Organization
+      supplierId: Supplier
+      invoiceNo: Invoice No
+      invoiceType: Invoice Type
       invoiceType_label: null
-      businessDate: null
-      currencyId: null
-      exchangeRate: null
-      amountSource: null
-      amountFunctional: null
-      totalAmount: null
-      totalTaxAmount: null
-      totalAmountWithTax: null
-      paidAmount: null
-      docStatus: null
+      businessDate: Business Date
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      totalAmount: Total Amt
+      totalTaxAmount: Total Tax
+      totalAmountWithTax: Total (Inc. Tax)
+      paidAmount: Paid Amount
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      paidStatus: null
+      paidStatus: Paid Status
       paidStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      approvedBy: null
-      approvedAt: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      supplier: null
-      currency: null
-      lines: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      approvedBy: Approved By
+      approvedAt: Approved At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      supplier: Supplier
+      currency: Currency
+      lines: Lines
     ErpPurInvoiceLine:
-      id: null
-      invoiceId: null
-      receiveLineId: null
-      lineNo: null
-      materialId: null
-      uoMId: null
-      quantity: null
-      unitPrice: null
-      taxRate: null
-      taxAmount: null
-      amount: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      invoice: null
-      material: null
+      id: ID
+      invoiceId: Invoice
+      receiveLineId: Receive Line
+      lineNo: Line No
+      materialId: Material
+      uoMId: UoM
+      quantity: Quantity
+      unitPrice: Unit Price
+      taxRate: Tax Rate
+      taxAmount: Tax Amount
+      amount: Amount
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      invoice: Invoice
+      material: Material
     ErpPurOrder:
-      id: null
-      code: null
-      orgId: null
-      requisitionId: null
-      quotationId: null
-      supplierId: null
-      warehouseId: null
-      businessDate: null
-      deliveryDate: null
-      currencyId: null
-      exchangeRate: null
-      amountSource: null
-      amountFunctional: null
-      totalAmount: null
-      totalTaxAmount: null
-      totalAmountWithTax: null
-      discountRate: null
-      discountAmount: null
-      paidAmount: null
-      settlementMethodId: null
-      docStatus: null
+      id: ID
+      code: Code
+      orgId: Organization
+      requisitionId: Requisition
+      quotationId: Quotation
+      supplierId: Supplier
+      warehouseId: Warehouse
+      businessDate: Business Date
+      deliveryDate: Delivery Date
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      totalAmount: Total Amt
+      totalTaxAmount: Total Tax
+      totalAmountWithTax: Total (Inc. Tax)
+      discountRate: Discount %
+      discountAmount: Discount Amt
+      paidAmount: Paid Amount
+      settlementMethodId: Settlement Method
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      paidStatus: null
+      paidStatus: Paid Status
       paidStatus_label: null
-      receiveStatus: null
+      receiveStatus: Receive Status
       receiveStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      approvedBy: null
-      approvedAt: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      supplier: null
-      warehouse: null
-      currency: null
-      settlementMethod: null
-      lines: null
-      org: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      approvedBy: Approved By
+      approvedAt: Approved At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      supplier: Supplier
+      warehouse: Warehouse
+      currency: Currency
+      settlementMethod: Settlement Method
+      lines: Lines
+      org: Org
     ErpPurOrderLine:
-      id: null
-      orderId: null
-      lineNo: null
-      materialId: null
-      skuId: null
-      uoMId: null
-      quantity: null
-      unitPrice: null
-      taxRate: null
-      taxRateId: null
-      taxAmount: null
-      amount: null
-      amountWithTax: null
-      receivedQuantity: null
-      invoicedQuantity: null
-      warehouseId: null
-      projectId: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      order: null
-      material: null
-      sku: null
-      uoM: null
-      taxRateMd: null
-      warehouse: null
+      id: ID
+      orderId: Order
+      lineNo: Line No
+      materialId: Material
+      skuId: SKU
+      uoMId: UoM
+      quantity: Quantity
+      unitPrice: Unit Price
+      taxRate: Tax Rate
+      taxRateId: Tax Rate
+      taxAmount: Tax Amount
+      amount: Amount
+      amountWithTax: Amount With Tax
+      receivedQuantity: Received Quantity
+      invoicedQuantity: Invoiced Quantity
+      warehouseId: Warehouse
+      projectId: Project
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      order: Order
+      material: Material
+      sku: Sku
+      uoM: Uo M
+      taxRateMd: Tax Rate Md
+      warehouse: Warehouse
     ErpPurPayment:
-      id: null
-      code: null
-      orgId: null
-      supplierId: null
-      businessDate: null
-      currencyId: null
-      exchangeRate: null
-      amountSource: null
-      amountFunctional: null
-      totalAmount: null
-      settlementMethodId: null
-      paymentMethod: null
-      bankAccountId: null
-      partnerBankAccountId: null
-      docStatus: null
+      id: ID
+      code: Code
+      orgId: Organization
+      supplierId: Supplier
+      businessDate: Business Date
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      totalAmount: Total Amt
+      settlementMethodId: Settlement Method
+      paymentMethod: Payment Method
+      bankAccountId: Bank Account
+      partnerBankAccountId: Partner Bank Account
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      writtenOffStatus: null
+      writtenOffStatus: Written Off Status
       writtenOffStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      approvedBy: null
-      approvedAt: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      supplier: null
-      currency: null
-      settlementMethod: null
-      lines: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      approvedBy: Approved By
+      approvedAt: Approved At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      supplier: Supplier
+      currency: Currency
+      settlementMethod: Settlement Method
+      lines: Lines
     ErpPurPaymentLine:
-      id: null
-      paymentId: null
-      invoiceId: null
-      amount: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      payment: null
-      invoice: null
+      id: ID
+      paymentId: Payment
+      invoiceId: Invoice
+      amount: Amount
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      payment: Payment
+      invoice: Invoice
     ErpPurQuotation:
-      id: null
-      code: null
-      orgId: null
-      rfqId: null
-      supplierId: null
-      currencyId: null
-      exchangeRate: null
-      businessDate: null
-      validFrom: null
-      validTo: null
-      isAccepted: null
-      docStatus: null
+      id: ID
+      code: Code
+      orgId: Organization
+      rfqId: Rfq
+      supplierId: Supplier
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      businessDate: Business Date
+      validFrom: Valid From
+      validTo: Valid To
+      isAccepted: Is Accepted
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      rfq: null
-      supplier: null
-      currency: null
-      lines: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      rfq: Rfq
+      supplier: Supplier
+      currency: Currency
+      lines: Lines
     ErpPurQuotationLine:
-      id: null
-      quotationId: null
-      lineNo: null
-      materialId: null
-      uoMId: null
-      quantity: null
-      unitPrice: null
-      taxRate: null
-      leadTimeDays: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      quotation: null
-      material: null
-      uoM: null
+      id: ID
+      quotationId: Quotation
+      lineNo: Line No
+      materialId: Material
+      uoMId: UoM
+      quantity: Quantity
+      unitPrice: Unit Price
+      taxRate: Tax Rate
+      leadTimeDays: Lead Time Days
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      quotation: Quotation
+      material: Material
+      uoM: Uo M
     ErpPurReceive:
-      id: null
-      code: null
-      orgId: null
-      orderId: null
-      supplierId: null
-      warehouseId: null
-      businessDate: null
-      currencyId: null
-      exchangeRate: null
-      amountSource: null
-      amountFunctional: null
-      totalAmount: null
-      totalTaxAmount: null
-      totalAmountWithTax: null
-      receiveStatus: null
+      id: ID
+      code: Code
+      orgId: Organization
+      orderId: Order
+      supplierId: Supplier
+      warehouseId: Warehouse
+      businessDate: Business Date
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      totalAmount: Total Amt
+      totalTaxAmount: Total Tax
+      totalAmountWithTax: Total (Inc. Tax)
+      receiveStatus: Receive Status
       receiveStatus_label: null
-      receiveType: null
+      receiveType: Receive Type
       receiveType_label: null
-      docStatus: null
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      approvedBy: null
-      approvedAt: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      order: null
-      supplier: null
-      warehouse: null
-      lines: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      approvedBy: Approved By
+      approvedAt: Approved At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      order: Order
+      supplier: Supplier
+      warehouse: Warehouse
+      lines: Lines
     ErpPurReceiveLine:
-      id: null
-      receiveId: null
-      orderLineId: null
-      lineNo: null
-      materialId: null
-      skuId: null
-      uoMId: null
-      quantity: null
-      rejectedQuantity: null
-      unitPrice: null
-      taxRate: null
-      taxAmount: null
-      amount: null
-      warehouseId: null
-      batchNo: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      receive: null
-      material: null
-      sku: null
-      uoM: null
+      id: ID
+      receiveId: Receive
+      orderLineId: Order Line
+      lineNo: Line No
+      materialId: Material
+      skuId: SKU
+      uoMId: UoM
+      quantity: Quantity
+      rejectedQuantity: Rejected Quantity
+      unitPrice: Unit Price
+      taxRate: Tax Rate
+      taxAmount: Tax Amount
+      amount: Amount
+      warehouseId: Warehouse
+      batchNo: Batch No
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      receive: Receive
+      material: Material
+      sku: Sku
+      uoM: Uo M
     ErpPurRequisition:
-      id: null
-      code: null
-      orgId: null
-      requesterId: null
-      departmentId: null
-      businessDate: null
-      requiredDate: null
-      docStatus: null
+      id: ID
+      code: Code
+      orgId: Organization
+      requesterId: Requester
+      departmentId: Department
+      businessDate: Business Date
+      requiredDate: Required Date
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      approvedBy: null
-      approvedAt: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      lines: null
+      approvedBy: Approved By
+      approvedAt: Approved At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      lines: Lines
     ErpPurRequisitionLine:
-      id: null
-      requisitionId: null
-      lineNo: null
-      materialId: null
-      uoMId: null
-      quantity: null
-      requiredDate: null
-      suggestedSupplierId: null
-      projectId: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      requisition: null
-      material: null
-      uoM: null
+      id: ID
+      requisitionId: Requisition
+      lineNo: Line No
+      materialId: Material
+      uoMId: UoM
+      quantity: Quantity
+      requiredDate: Required Date
+      suggestedSupplierId: Suggested Supplier
+      projectId: Project
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      requisition: Requisition
+      material: Material
+      uoM: Uo M
     ErpPurReturn:
-      id: null
-      code: null
-      orgId: null
-      receiveId: null
-      supplierId: null
-      warehouseId: null
-      businessDate: null
-      currencyId: null
-      exchangeRate: null
-      amountSource: null
-      amountFunctional: null
-      totalAmount: null
-      totalTaxAmount: null
-      totalAmountWithTax: null
-      docStatus: null
+      id: ID
+      code: Code
+      orgId: Organization
+      receiveId: Receive
+      supplierId: Supplier
+      warehouseId: Warehouse
+      businessDate: Business Date
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      totalAmount: Total Amt
+      totalTaxAmount: Total Tax
+      totalAmountWithTax: Total (Inc. Tax)
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      approvedBy: null
-      approvedAt: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      receive: null
-      supplier: null
-      warehouse: null
-      lines: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      approvedBy: Approved By
+      approvedAt: Approved At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      receive: Receive
+      supplier: Supplier
+      warehouse: Warehouse
+      lines: Lines
     ErpPurReturnLine:
-      id: null
-      returnId: null
-      receiveLineId: null
-      lineNo: null
-      materialId: null
-      skuId: null
-      uoMId: null
-      quantity: null
-      unitPrice: null
-      taxRate: null
-      taxAmount: null
-      amount: null
-      reason: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      return: null
-      material: null
-      sku: null
-      uoM: null
+      id: ID
+      returnId: Return
+      receiveLineId: Receive Line
+      lineNo: Line No
+      materialId: Material
+      skuId: SKU
+      uoMId: UoM
+      quantity: Quantity
+      unitPrice: Unit Price
+      taxRate: Tax Rate
+      taxAmount: Tax Amount
+      amount: Amount
+      reason: Reason
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      return: Return
+      material: Material
+      sku: Sku
+      uoM: Uo M
     ErpPurRfq:
-      id: null
-      code: null
-      orgId: null
-      requisitionId: null
-      businessDate: null
-      validUntil: null
-      docStatus: null
+      id: ID
+      code: Code
+      orgId: Organization
+      requisitionId: Requisition
+      businessDate: Business Date
+      validUntil: Valid Until
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      requisition: null
-      lines: null
-      quotations: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      requisition: Requisition
+      lines: Lines
+      quotations: Quotations
     ErpPurRfqLine:
-      id: null
-      rfqId: null
-      lineNo: null
-      materialId: null
-      uoMId: null
-      quantity: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      rfq: null
-      material: null
-      uoM: null
+      id: ID
+      rfqId: Rfq
+      lineNo: Line No
+      materialId: Material
+      uoMId: UoM
+      quantity: Quantity
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      rfq: Rfq
+      material: Material
+      uoM: Uo M
     ErpPurSupplierPriceList:
-      id: null
-      supplierId: null
-      materialId: null
-      uoMId: null
-      currencyId: null
-      unitPrice: null
-      taxRate: null
-      minOrderQuantity: null
-      leadTimeDays: null
-      validFrom: null
-      validTo: null
-      priority: null
-      isActive: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      supplier: null
-      material: null
-      uoM: null
-      currency: null
+      id: ID
+      supplierId: Supplier
+      materialId: Material
+      uoMId: UoM
+      currencyId: Currency
+      unitPrice: Unit Price
+      taxRate: Tax Rate
+      minOrderQuantity: Min Order Quantity
+      leadTimeDays: Lead Time Days
+      validFrom: Valid From
+      validTo: Valid To
+      priority: Priority
+      isActive: Active
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      supplier: Supplier
+      material: Material
+      uoM: Uo M
+      currency: Currency
+dict:
+  label:
+    erp-pur/doc-status: Doc Status
+    erp-pur/approve-status: Approve Status
+    erp-pur/paid-status: Payment Status
+    erp-pur/receive-status: Receive Status
+    erp-pur/biz-type: Purchase Doc Type
+    erp-pur/doc-direction: Doc Direction
+    erp-pur/receive-type: Receipt Type
+    erp-pur/invoice-type: Invoice Type
+dict.option.label:
+  erp-pur/doc-status:
+    '10': Draft
+    '20': Effective
+    '30': Voided
+  erp-pur/approve-status:
+    '10': Unsubmitted
+    '20': Submitted
+    '30': Approved
+    '40': Rejected
+  erp-pur/paid-status:
+    '10': Unpaid
+    '20': Partially Paid
+    '30': Fully Paid
+  erp-pur/receive-status:
+    '10': Unreceived
+    '20': Partially Received
+    '30': Fully Received
+  erp-pur/biz-type:
+    '10': Purchase Requisition
+    '20': RFQ
+    '30': Quotation
+    '40': Purchase Order
+    '50': Purchase Receipt
+    '60': Purchase Invoice
+    '70': Payment
+    '80': Purchase Return
+  erp-pur/doc-direction:
+    '10': Receipt
+    '20': Issue
+  erp-pur/receive-type:
+    '10': Normal Receipt
+    '20': Return Receipt
+    '30': Freebie Receipt
+  erp-pur/invoice-type:
+    '10': VAT Special
+    '20': VAT General
+    '30': Receipt Note

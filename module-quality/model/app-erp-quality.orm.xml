@@ -31,73 +31,73 @@
      ext:allowIdAsColName="true" ext:icon="shield-check" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:biz="biz">
 
     <dicts>
-        <dict label="检验类型" name="erp-qa/inspection-type" valueType="int">
-            <option code="INCOMING" label="来料检验" value="10"/>
-            <option code="IN_PROCESS" label="制程检验" value="20"/>
-            <option code="FINAL" label="完工检验" value="30"/>
-            <option code="OUTGOING" label="出货检验" value="40"/>
+        <dict label="检验类型" name="erp-qa/inspection-type" valueType="int" i18n-en:label='Inspection Type'>
+            <option code="INCOMING" label="来料检验" value="10" i18n-en:label='Incoming Inspection'/>
+            <option code="IN_PROCESS" label="制程检验" value="20" i18n-en:label='In-Process Inspection'/>
+            <option code="FINAL" label="完工检验" value="30" i18n-en:label='Final Inspection'/>
+            <option code="OUTGOING" label="出货检验" value="40" i18n-en:label='Outgoing Inspection'/>
         </dict>
-        <dict label="质检结果" name="erp-qa/inspection-result" valueType="int">
-            <option code="PENDING" label="待检" value="10"/>
-            <option code="ACCEPTED" label="合格" value="20"/>
-            <option code="CONDITIONAL" label="让步接收" value="30"/>
-            <option code="REJECTED" label="不合格" value="40"/>
+        <dict label="质检结果" name="erp-qa/inspection-result" valueType="int" i18n-en:label='Inspection Result'>
+            <option code="PENDING" label="待检" value="10" i18n-en:label='Pending Inspection'/>
+            <option code="ACCEPTED" label="合格" value="20" i18n-en:label='Conforming'/>
+            <option code="CONDITIONAL" label="让步接收" value="30" i18n-en:label='Waiver Accept'/>
+            <option code="REJECTED" label="不合格" value="40" i18n-en:label='Non-conforming'/>
         </dict>
-        <dict label="不符合项状态" name="erp-qa/ncr-status" valueType="int">
-            <option code="OPEN" label="待处理" value="10"/>
-            <option code="IN_REVIEW" label="评审中" value="20"/>
-            <option code="RESOLVED" label="已解决" value="30"/>
-            <option code="CANCELLED" label="已取消" value="40"/>
+        <dict label="不符合项状态" name="erp-qa/ncr-status" valueType="int" i18n-en:label='NCR Status'>
+            <option code="OPEN" label="待处理" value="10" i18n-en:label='Pending'/>
+            <option code="IN_REVIEW" label="评审中" value="20" i18n-en:label='Reviewing'/>
+            <option code="RESOLVED" label="已解决" value="30" i18n-en:label='Resolved'/>
+            <option code="CANCELLED" label="已取消" value="40" i18n-en:label='Cancelled'/>
         </dict>
-        <dict label="纠正措施类型" name="erp-qa/action-type" valueType="int">
-            <option code="CORRECTIVE" label="纠正" value="10"/>
-            <option code="PREVENTIVE" label="预防" value="20"/>
-            <option code="CAPA" label="纠正预防" value="30"/>
+        <dict label="纠正措施类型" name="erp-qa/action-type" valueType="int" i18n-en:label='Corrective Action Type'>
+            <option code="CORRECTIVE" label="纠正" value="10" i18n-en:label='Correction'/>
+            <option code="PREVENTIVE" label="预防" value="20" i18n-en:label='Preventive'/>
+            <option code="CAPA" label="纠正预防" value="30" i18n-en:label='Corrective &amp; Preventive'/>
         </dict>
-        <dict label="单据状态" name="erp-qa/doc-status" valueType="int">
-            <option code="DRAFT" label="草稿" value="10"/>
-            <option code="ACTIVE" label="已生效" value="20"/>
-            <option code="CANCELLED" label="已作废" value="30"/>
+        <dict label="单据状态" name="erp-qa/doc-status" valueType="int" i18n-en:label='Doc Status'>
+            <option code="DRAFT" label="草稿" value="10" i18n-en:label='Draft'/>
+            <option code="ACTIVE" label="已生效" value="20" i18n-en:label='Effective'/>
+            <option code="CANCELLED" label="已作废" value="30" i18n-en:label='Voided'/>
         </dict>
-        <dict label="审核状态" name="erp-qa/approve-status" valueType="int">
-            <option code="UNSUBMITTED" label="未提交" value="10"/>
-            <option code="SUBMITTED" label="已提交" value="20"/>
-            <option code="APPROVED" label="已审核" value="30"/>
-            <option code="REJECTED" label="已驳回" value="40"/>
+        <dict label="审核状态" name="erp-qa/approve-status" valueType="int" i18n-en:label='Approve Status'>
+            <option code="UNSUBMITTED" label="未提交" value="10" i18n-en:label='Unsubmitted'/>
+            <option code="SUBMITTED" label="已提交" value="20" i18n-en:label='Submitted'/>
+            <option code="APPROVED" label="已审核" value="30" i18n-en:label='Approved'/>
+            <option code="REJECTED" label="已驳回" value="40" i18n-en:label='Rejected'/>
         </dict>
-        <dict label="不合格严重程度" name="erp-qa/severity" valueType="int">
-            <option code="LOW" label="低" value="10"/>
-            <option code="NORMAL" label="一般" value="20"/>
-            <option code="HIGH" label="高" value="30"/>
-            <option code="CRITICAL" label="严重" value="40"/>
+        <dict label="不合格严重程度" name="erp-qa/severity" valueType="int" i18n-en:label='Non-conformance Severity'>
+            <option code="LOW" label="低" value="10" i18n-en:label='Low'/>
+            <option code="NORMAL" label="一般" value="20" i18n-en:label='General'/>
+            <option code="HIGH" label="高" value="30" i18n-en:label='High'/>
+            <option code="CRITICAL" label="严重" value="40" i18n-en:label='Critical'/>
         </dict>
-        <dict label="纠正措施状态" name="erp-qa/action-status" valueType="int">
-            <option code="PENDING" label="待执行" value="10"/>
-            <option code="IN_PROGRESS" label="执行中" value="20"/>
-            <option code="COMPLETED" label="已完成" value="30"/>
-            <option code="OVERDUE" label="已逾期" value="40"/>
+        <dict label="纠正措施状态" name="erp-qa/action-status" valueType="int" i18n-en:label='Corrective Action Status'>
+            <option code="PENDING" label="待执行" value="10" i18n-en:label='Pending'/>
+            <option code="IN_PROGRESS" label="执行中" value="20" i18n-en:label='Executing'/>
+            <option code="COMPLETED" label="已完成" value="30" i18n-en:label='Completed'/>
+            <option code="OVERDUE" label="已逾期" value="40" i18n-en:label='Overdue'/>
         </dict>
-        <dict label="风险状态" name="erp-qa/risk-status" valueType="int">
-            <option code="OPEN" label="待处理" value="10"/>
-            <option code="MITIGATED" label="已缓解" value="20"/>
-            <option code="CLOSED" label="已关闭" value="30"/>
+        <dict label="风险状态" name="erp-qa/risk-status" valueType="int" i18n-en:label='Risk Status'>
+            <option code="OPEN" label="待处理" value="10" i18n-en:label='Pending'/>
+            <option code="MITIGATED" label="已缓解" value="20" i18n-en:label='Mitigated'/>
+            <option code="CLOSED" label="已关闭" value="30" i18n-en:label='Closed'/>
         </dict>
-        <dict label="质量目标状态" name="erp-qa/goal-status" valueType="int">
-            <option code="ACTIVE" label="进行中" value="10"/>
-            <option code="ACHIEVED" label="已达成" value="20"/>
-            <option code="FAILED" label="未达成" value="30"/>
-            <option code="CANCELLED" label="已取消" value="40"/>
+        <dict label="质量目标状态" name="erp-qa/goal-status" valueType="int" i18n-en:label='Quality Goal Status'>
+            <option code="ACTIVE" label="进行中" value="10" i18n-en:label='In Progress'/>
+            <option code="ACHIEVED" label="已达成" value="20" i18n-en:label='Achieved'/>
+            <option code="FAILED" label="未达成" value="30" i18n-en:label='Not Achieved'/>
+            <option code="CANCELLED" label="已取消" value="40" i18n-en:label='Cancelled'/>
         </dict>
-        <dict label="评审类型" name="erp-qa/review-type" valueType="int">
-            <option code="INTERNAL" label="内部评审" value="10"/>
-            <option code="EXTERNAL" label="外部评审" value="20"/>
-            <option code="SUPPLIER" label="供应商评审" value="30"/>
+        <dict label="评审类型" name="erp-qa/review-type" valueType="int" i18n-en:label='Review Type'>
+            <option code="INTERNAL" label="内部评审" value="10" i18n-en:label='Internal Review'/>
+            <option code="EXTERNAL" label="外部评审" value="20" i18n-en:label='External Review'/>
+            <option code="SUPPLIER" label="供应商评审" value="30" i18n-en:label='Supplier Review'/>
         </dict>
-        <dict label="处理决定" name="erp-qa/disposition-type" valueType="int">
-            <option code="SCRAP" label="报废" value="10"/>
-            <option code="RETURN" label="退货" value="20"/>
-            <option code="CONCESSION" label="让步接收" value="30"/>
-            <option code="DOWNGRADE" label="降级使用" value="40"/>
+        <dict label="处理决定" name="erp-qa/disposition-type" valueType="int" i18n-en:label='Disposition Type'>
+            <option code="SCRAP" label="报废" value="10" i18n-en:label='Scrap'/>
+            <option code="RETURN" label="退货" value="20" i18n-en:label='Return'/>
+            <option code="CONCESSION" label="让步接收" value="30" i18n-en:label='Waiver Accept'/>
+            <option code="DOWNGRADE" label="降级使用" value="40" i18n-en:label='Downgrade Use'/>
         </dict>
     </dicts>
 

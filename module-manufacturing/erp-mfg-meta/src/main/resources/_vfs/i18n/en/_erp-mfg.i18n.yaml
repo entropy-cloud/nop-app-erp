@@ -24,495 +24,581 @@ entity:
 prop:
   label:
     ErpMfgBom:
-      id: null
-      code: null
-      productId: null
-      bomType: null
+      id: ID
+      code: Code
+      productId: Product
+      bomType: Bom Type
       bomType_label: null
-      consumption: null
+      consumption: Consumption
       consumption_label: null
-      isActive: null
-      isDefault: null
-      useMultiLevelBom: null
-      inspectionRequired: null
-      remark: null
-      versionLabel: null
-      qty: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      product: null
-      lines: null
-      operations: null
-      byproducts: null
+      isActive: Active
+      isDefault: Is Default
+      useMultiLevelBom: Use Multi Level Bom
+      inspectionRequired: Inspection Required
+      remark: Remark
+      versionLabel: Version Label
+      qty: Qty
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      product: Product
+      lines: Lines
+      operations: Operations
+      byproducts: Byproducts
     ErpMfgBomByproduct:
-      id: null
-      bomId: null
-      lineNo: null
-      materialId: null
-      skuId: null
-      uoMId: null
-      quantity: null
-      remark: null
-      byproductType: null
+      id: ID
+      bomId: Bom
+      lineNo: Line No
+      materialId: Material
+      skuId: SKU
+      uoMId: UoM
+      quantity: Quantity
+      remark: Remark
+      byproductType: Byproduct Type
       byproductType_label: null
-      yieldRate: null
-      costAllocationPercent: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      bom: null
-      material: null
-      sku: null
-      uoM: null
+      yieldRate: Yield Rate
+      costAllocationPercent: Cost Allocation Percent
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      bom: Bom
+      material: Material
+      sku: Sku
+      uoM: Uo M
     ErpMfgBomLine:
-      id: null
-      bomId: null
-      lineNo: null
-      materialId: null
-      skuId: null
-      uoMId: null
-      quantity: null
-      operationId: null
-      remark: null
-      scrapRate: null
-      warehouseId: null
-      alternativeMaterialId: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      bom: null
-      material: null
-      sku: null
-      uoM: null
+      id: ID
+      bomId: Bom
+      lineNo: Line No
+      materialId: Material
+      skuId: SKU
+      uoMId: UoM
+      quantity: Quantity
+      operationId: Operation
+      remark: Remark
+      scrapRate: Scrap Rate
+      warehouseId: Warehouse
+      alternativeMaterialId: Alternative Material
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      bom: Bom
+      material: Material
+      sku: Sku
+      uoM: Uo M
     ErpMfgBomOperation:
-      id: null
-      bomId: null
-      lineNo: null
-      operationId: null
-      workcenterId: null
-      standardTime: null
-      timeUnit: null
-      rate: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      bom: null
-      workcenter: null
+      id: ID
+      bomId: Bom
+      lineNo: Line No
+      operationId: Operation
+      workcenterId: Workcenter
+      standardTime: Standard Time
+      timeUnit: Time Unit
+      rate: Rate
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      bom: Bom
+      workcenter: Workcenter
     ErpMfgCostRollup:
-      id: null
-      code: null
-      orgId: null
-      businessDate: null
-      costingVersion: null
-      status: null
+      id: ID
+      code: Code
+      orgId: Organization
+      businessDate: Business Date
+      costingVersion: Costing Version
+      status: Status
       status_label: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      lines: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      lines: Lines
     ErpMfgCostRollupLine:
-      id: null
-      costRollupId: null
-      lineNo: null
-      materialId: null
-      uoMId: null
-      materialCost: null
-      laborCost: null
-      overheadCost: null
-      subcontractCost: null
-      totalCost: null
-      unitCost: null
-      currencyId: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      costRollup: null
-      material: null
-      uoM: null
+      id: ID
+      costRollupId: Cost Rollup
+      lineNo: Line No
+      materialId: Material
+      uoMId: UoM
+      materialCost: Material Cost
+      laborCost: Labor Cost
+      overheadCost: Overhead Cost
+      subcontractCost: Subcontract Cost
+      totalCost: Total Cost
+      unitCost: Unit Cost
+      currencyId: Currency
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      costRollup: Cost Rollup
+      material: Material
+      uoM: Uo M
     ErpMfgJobCard:
-      id: null
-      workOrderId: null
-      operationId: null
-      lineNo: null
-      plannedQuantity: null
-      completedQuantity: null
-      scrappedQuantity: null
-      status: null
+      id: ID
+      workOrderId: Work Order
+      operationId: Operation
+      lineNo: Line No
+      plannedQuantity: Planned Quantity
+      completedQuantity: Completed Quantity
+      scrappedQuantity: Scrapped Quantity
+      status: Status
       status_label: null
-      workcenterId: null
-      actualStartTime: null
-      actualEndTime: null
-      remark: null
-      code: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      workOrder: null
-      workcenter: null
+      workcenterId: Workcenter
+      actualStartTime: Actual Start Time
+      actualEndTime: Actual End Time
+      remark: Remark
+      code: Code
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      workOrder: Work Order
+      workcenter: Workcenter
     ErpMfgJobCardTimeLog:
-      id: null
-      jobCardId: null
-      workOrderId: null
-      operatorId: null
-      workDate: null
-      startTime: null
-      endTime: null
-      durationMins: null
-      setupMins: null
-      runMins: null
-      completedQuantity: null
-      scrappedQuantity: null
-      hourlyRate: null
-      laborCost: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      jobCard: null
-      workOrder: null
+      id: ID
+      jobCardId: Job Card
+      workOrderId: Work Order
+      operatorId: Operator
+      workDate: Work Date
+      startTime: Start Time
+      endTime: End Time
+      durationMins: Duration Mins
+      setupMins: Setup Mins
+      runMins: Run Mins
+      completedQuantity: Completed Quantity
+      scrappedQuantity: Scrapped Quantity
+      hourlyRate: Hourly Rate
+      laborCost: Labor Cost
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      jobCard: Job Card
+      workOrder: Work Order
     ErpMfgMaterialIssue:
-      id: null
-      code: null
-      orgId: null
-      workOrderId: null
-      jobCardId: null
-      warehouseId: null
-      businessDate: null
-      docStatus: null
+      id: ID
+      code: Code
+      orgId: Organization
+      workOrderId: Work Order
+      jobCardId: Job Card
+      warehouseId: Warehouse
+      businessDate: Business Date
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      currencyId: null
-      exchangeRate: null
-      amountSource: null
-      amountFunctional: null
-      workOrder: null
-      jobCard: null
-      warehouse: null
-      lines: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      workOrder: Work Order
+      jobCard: Job Card
+      warehouse: Warehouse
+      lines: Lines
     ErpMfgMaterialIssueLine:
-      id: null
-      issueId: null
-      lineNo: null
-      materialId: null
-      skuId: null
-      uoMId: null
-      workOrderLineId: null
-      requiredQuantity: null
-      issuedQuantity: null
-      unitCost: null
-      totalCost: null
-      batchNo: null
-      locationId: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      issue: null
-      material: null
-      sku: null
-      uoM: null
+      id: ID
+      issueId: Issue
+      lineNo: Line No
+      materialId: Material
+      skuId: SKU
+      uoMId: UoM
+      workOrderLineId: Work Order Line
+      requiredQuantity: Required Quantity
+      issuedQuantity: Issued Quantity
+      unitCost: Unit Cost
+      totalCost: Total Cost
+      batchNo: Batch No
+      locationId: Location
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      issue: Issue
+      material: Material
+      sku: Sku
+      uoM: Uo M
     ErpMfgMrpDemand:
-      id: null
-      mrpPlanId: null
-      lineNo: null
-      materialId: null
-      uoMId: null
-      demandSource: null
+      id: ID
+      mrpPlanId: Mrp Plan
+      lineNo: Line No
+      materialId: Material
+      uoMId: UoM
+      demandSource: Demand Source
       demandSource_label: null
-      sourceBillType: null
-      sourceBillCode: null
-      quantity: null
-      requirementDate: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      mrpPlan: null
-      material: null
-      uoM: null
+      sourceBillType: Source Bill Type
+      sourceBillCode: Source Bill Code
+      quantity: Quantity
+      requirementDate: Requirement Date
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      mrpPlan: Mrp Plan
+      material: Material
+      uoM: Uo M
     ErpMfgMrpPlan:
-      id: null
-      code: null
-      orgId: null
-      businessDate: null
-      planningHorizonDays: null
-      status: null
+      id: ID
+      code: Code
+      orgId: Organization
+      businessDate: Business Date
+      planningHorizonDays: Planning Horizon Days
+      status: Status
       status_label: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      lines: null
-      demands: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      lines: Lines
+      demands: Demands
     ErpMfgMrpPlanLine:
-      id: null
-      mrpPlanId: null
-      lineNo: null
-      materialId: null
-      uoMId: null
-      orderType: null
+      id: ID
+      mrpPlanId: Mrp Plan
+      lineNo: Line No
+      materialId: Material
+      uoMId: UoM
+      orderType: Order Type
       orderType_label: null
-      grossRequirement: null
-      scheduledReceipt: null
-      onHand: null
-      netRequirement: null
-      plannedQuantity: null
-      plannedDate: null
-      parentLineId: null
-      isFirmed: null
-      convertedBillCode: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      mrpPlan: null
-      material: null
-      uoM: null
+      grossRequirement: Gross Requirement
+      scheduledReceipt: Scheduled Receipt
+      onHand: On Hand
+      netRequirement: Net Requirement
+      plannedQuantity: Planned Quantity
+      plannedDate: Planned Date
+      parentLineId: Parent Line
+      isFirmed: Is Firmed
+      convertedBillCode: Converted Bill Code
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      mrpPlan: Mrp Plan
+      material: Material
+      uoM: Uo M
     ErpMfgProductionVersion:
-      id: null
-      code: null
-      productId: null
-      bomId: null
-      routingId: null
-      validFrom: null
-      validTo: null
-      lotSizeFrom: null
-      lotSizeTo: null
-      isDefault: null
-      isActive: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      product: null
-      bom: null
-      routing: null
+      id: ID
+      code: Code
+      productId: Product
+      bomId: Bom
+      routingId: Routing
+      validFrom: Valid From
+      validTo: Valid To
+      lotSizeFrom: Lot Size From
+      lotSizeTo: Lot Size To
+      isDefault: Is Default
+      isActive: Active
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      product: Product
+      bom: Bom
+      routing: Routing
     ErpMfgRouting:
-      id: null
-      code: null
-      name: null
-      isActive: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      operations: null
+      id: ID
+      code: Code
+      name: Name
+      isActive: Active
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      operations: Operations
     ErpMfgRoutingOperation:
-      id: null
-      routingId: null
-      lineNo: null
-      operationCode: null
-      operationName: null
-      workcenterId: null
-      standardTime: null
-      timeUnit: null
-      setupTime: null
-      runTime: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      routing: null
-      workcenter: null
+      id: ID
+      routingId: Routing
+      lineNo: Line No
+      operationCode: Operation Code
+      operationName: Operation Name
+      workcenterId: Workcenter
+      standardTime: Standard Time
+      timeUnit: Time Unit
+      setupTime: Setup Time
+      runTime: Run Time
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      routing: Routing
+      workcenter: Workcenter
     ErpMfgSubcontractOrder:
-      id: null
-      code: null
-      orgId: null
-      workOrderId: null
-      supplierId: null
-      workcenterId: null
-      businessDate: null
-      currencyId: null
-      exchangeRate: null
-      processingFee: null
-      totalAmount: null
-      docStatus: null
+      id: ID
+      code: Code
+      orgId: Organization
+      workOrderId: Work Order
+      supplierId: Supplier
+      workcenterId: Workcenter
+      businessDate: Business Date
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      processingFee: Processing Fee
+      totalAmount: Total Amt
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      amountSource: null
-      amountFunctional: null
-      workOrder: null
-      supplier: null
-      workcenter: null
-      currency: null
-      lines: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      workOrder: Work Order
+      supplier: Supplier
+      workcenter: Workcenter
+      currency: Currency
+      lines: Lines
     ErpMfgSubcontractOrderLine:
-      id: null
-      subcontractOrderId: null
-      lineNo: null
-      materialId: null
-      uoMId: null
-      quantity: null
-      unitProcessingFee: null
-      amount: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      subcontractOrder: null
-      material: null
-      uoM: null
+      id: ID
+      subcontractOrderId: Subcontract Order
+      lineNo: Line No
+      materialId: Material
+      uoMId: UoM
+      quantity: Quantity
+      unitProcessingFee: Unit Processing Fee
+      amount: Amount
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      subcontractOrder: Subcontract Order
+      material: Material
+      uoM: Uo M
     ErpMfgWorkOrder:
-      id: null
-      code: null
-      orgId: null
-      bomId: null
-      routingId: null
-      productionVersionId: null
-      sourceMrpPlanId: null
-      sourceOrderType: null
-      sourceOrderCode: null
-      productId: null
-      plannedQuantity: null
-      completedQuantity: null
-      scrappedQuantity: null
-      businessDate: null
-      plannedStartDate: null
-      plannedEndDate: null
-      actualStartDate: null
-      actualEndDate: null
-      currencyId: null
-      materialCost: null
-      laborCost: null
-      overheadCost: null
-      subcontractCost: null
-      totalCost: null
-      unitCost: null
-      docStatus: null
+      id: ID
+      code: Code
+      orgId: Organization
+      bomId: Bom
+      routingId: Routing
+      productionVersionId: Production Version
+      sourceMrpPlanId: Source Mrp Plan
+      sourceOrderType: Source Order Type
+      sourceOrderCode: Source Order Code
+      productId: Product
+      plannedQuantity: Planned Quantity
+      completedQuantity: Completed Quantity
+      scrappedQuantity: Scrapped Quantity
+      businessDate: Business Date
+      plannedStartDate: Planned Start Date
+      plannedEndDate: Planned End Date
+      actualStartDate: Actual Start Date
+      actualEndDate: Actual End Date
+      currencyId: Currency
+      materialCost: Material Cost
+      laborCost: Labor Cost
+      overheadCost: Overhead Cost
+      subcontractCost: Subcontract Cost
+      totalCost: Total Cost
+      unitCost: Unit Cost
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      priority: null
+      priority: Priority
       priority_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      exchangeRate: null
-      amountSource: null
-      amountFunctional: null
-      bom: null
-      routing: null
-      productionVersion: null
-      product: null
-      currency: null
-      lines: null
-      jobCards: null
-      org: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      bom: Bom
+      routing: Routing
+      productionVersion: Production Version
+      product: Product
+      currency: Currency
+      lines: Lines
+      jobCards: Job Cards
+      org: Org
     ErpMfgWorkOrderLine:
-      id: null
-      workOrderId: null
-      lineNo: null
-      lineType: null
-      materialId: null
-      skuId: null
-      uoMId: null
-      plannedQuantity: null
-      actualQuantity: null
-      scrappedQuantity: null
-      sourceWarehouseId: null
-      destWarehouseId: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      workOrder: null
-      material: null
-      sku: null
-      uoM: null
+      id: ID
+      workOrderId: Work Order
+      lineNo: Line No
+      lineType: Line Type
+      materialId: Material
+      skuId: SKU
+      uoMId: UoM
+      plannedQuantity: Planned Quantity
+      actualQuantity: Actual Quantity
+      scrappedQuantity: Scrapped Quantity
+      sourceWarehouseId: Source Warehouse
+      destWarehouseId: Dest Warehouse
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      workOrder: Work Order
+      material: Material
+      sku: Sku
+      uoM: Uo M
     ErpMfgWorkcenter:
-      id: null
-      code: null
-      name: null
-      capacity: null
-      capacityUnit: null
-      hourlyRate: null
-      workHoursPerDay: null
-      isExternal: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
+      id: ID
+      code: Code
+      name: Name
+      capacity: Capacity
+      capacityUnit: Capacity Unit
+      hourlyRate: Hourly Rate
+      workHoursPerDay: Work Hours Per Day
+      isExternal: Is External
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+dict:
+  label:
+    erp-mfg/work-order-status: Work Order Status
+    erp-mfg/job-card-status: Job Card Status
+    erp-mfg/bom-type: BOM Type
+    erp-mfg/consumption: Consumption Control
+    erp-mfg/approve-status: Approve Status
+    erp-mfg/priority: Work Order Priority
+    erp-mfg/mrp-status: MRP Plan Status
+    erp-mfg/mrp-order-type: MRP Plan Order Type
+    erp-mfg/mrp-demand-source: MRP Demand Source
+    erp-mfg/issue-status: Pick Status
+    erp-mfg/subcontract-status: Subcontract Order Status
+    erp-mfg/cost-rollup-status: Cost Rollup Status
+    erp-mfg/byproduct-type: Co/By-Product Type
+dict.option.label:
+  erp-mfg/work-order-status:
+    '10': Draft
+    '20': Submitted
+    '30': Not Started
+    '40': In Production
+    '50': Kitted
+    '60': Partially Kitted
+    '70': Completed
+    '80': Stopped
+    '90': Closed
+    '100': Cancelled
+  erp-mfg/job-card-status:
+    '10': Pending Start
+    '20': Working
+    '30': Partially Transferred
+    '40': Transferred
+    '50': Suspended
+    '60': Submitted
+    '70': Completed
+    '80': Cancelled
+  erp-mfg/bom-type:
+    '10': Manufactured
+    '20': Phantom/Kit
+  erp-mfg/consumption:
+    '10': Allow Overconsumption
+    '20': Overconsumption Warning
+    '30': Strict BOM
+  erp-mfg/approve-status:
+    '10': Unsubmitted
+    '20': Submitted
+    '30': Approved
+    '40': Rejected
+  erp-mfg/priority:
+    '10': Low
+    '20': General
+    '30': High
+    '40': Urgent
+  erp-mfg/mrp-status:
+    '10': Draft
+    '20': Computing
+    '30': Computed
+    '40': Confirmed (To W/O)
+    '50': Cancelled
+  erp-mfg/mrp-order-type:
+    '10': Planned Order
+    '20': Purchase Req Suggestion
+    '30': Work Order Suggestion
+    '40': Outsource Suggestion
+  erp-mfg/mrp-demand-source:
+    '10': Sales Order
+    '20': Forecast
+    '30': Safety Stock
+    '40': Manual Entry
+  erp-mfg/issue-status:
+    '10': Draft
+    '20': Confirmed
+    '30': Delivered
+    '40': Cancelled
+  erp-mfg/subcontract-status:
+    '10': Draft
+    '20': Effective
+    '30': Voided
+  erp-mfg/cost-rollup-status:
+    '10': Draft
+    '20': Calculated
+    '30': Published
+    '40': Voided
+  erp-mfg/byproduct-type:
+    '10': Co-product
+    '20': Byproduct

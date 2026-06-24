@@ -16,293 +16,320 @@ entity:
 prop:
   label:
     ErpPrjActivityType:
-      id: null
-      code: null
-      name: null
-      costRate: null
-      subjectId: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      subject: null
+      id: ID
+      code: Code
+      name: Name
+      costRate: Cost Rate
+      subjectId: Subject
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      subject: Subject
     ErpPrjBilling:
-      id: null
-      code: null
-      projectId: null
-      orgId: null
-      customerId: null
-      milestoneId: null
-      businessDate: null
-      currencyId: null
-      exchangeRate: null
-      totalAmount: null
-      docStatus: null
+      id: ID
+      code: Code
+      projectId: Project
+      orgId: Organization
+      customerId: Customer
+      milestoneId: Milestone
+      businessDate: Business Date
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      totalAmount: Total Amt
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      amountSource: null
-      amountFunctional: null
-      project: null
-      customer: null
-      milestone: null
-      lines: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      project: Project
+      customer: Customer
+      milestone: Milestone
+      lines: Lines
     ErpPrjBillingLine:
-      id: null
-      billingId: null
-      lineNo: null
-      costCategory: null
-      taskId: null
-      subjectId: null
-      amount: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      billing: null
-      subject: null
+      id: ID
+      billingId: Billing
+      lineNo: Line No
+      costCategory: Cost Category
+      taskId: Task
+      subjectId: Subject
+      amount: Amount
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      billing: Billing
+      subject: Subject
     ErpPrjBudget:
-      id: null
-      code: null
-      projectId: null
-      orgId: null
-      businessDate: null
-      currencyId: null
-      totalAmount: null
-      docStatus: null
+      id: ID
+      code: Code
+      projectId: Project
+      orgId: Organization
+      businessDate: Business Date
+      currencyId: Currency
+      totalAmount: Total Amt
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      project: null
-      lines: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      project: Project
+      lines: Lines
     ErpPrjBudgetLine:
-      id: null
-      budgetId: null
-      lineNo: null
-      costCategory: null
-      subjectId: null
-      taskId: null
-      plannedAmount: null
-      committedAmount: null
-      actualAmount: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      budget: null
-      subject: null
+      id: ID
+      budgetId: Budget
+      lineNo: Line No
+      costCategory: Cost Category
+      subjectId: Subject
+      taskId: Task
+      plannedAmount: Planned Amount
+      committedAmount: Committed Amount
+      actualAmount: Actual Amount
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      budget: Budget
+      subject: Subject
     ErpPrjCostCollection:
-      id: null
-      code: null
-      projectId: null
-      orgId: null
-      businessDate: null
-      currencyId: null
-      totalAmount: null
-      docStatus: null
+      id: ID
+      code: Code
+      projectId: Project
+      orgId: Organization
+      businessDate: Business Date
+      currencyId: Currency
+      totalAmount: Total Amt
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      exchangeRate: null
-      amountSource: null
-      amountFunctional: null
-      project: null
-      lines: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      project: Project
+      lines: Lines
     ErpPrjCostCollectionLine:
-      id: null
-      costCollectionId: null
-      lineNo: null
-      costCategory: null
-      sourceBillType: null
-      sourceBillCode: null
-      subjectId: null
-      taskId: null
-      amount: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      costCollection: null
-      subject: null
+      id: ID
+      costCollectionId: Cost Collection
+      lineNo: Line No
+      costCategory: Cost Category
+      sourceBillType: Source Bill Type
+      sourceBillCode: Source Bill Code
+      subjectId: Subject
+      taskId: Task
+      amount: Amount
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      costCollection: Cost Collection
+      subject: Subject
     ErpPrjMilestone:
-      id: null
-      projectId: null
-      code: null
-      name: null
-      plannedDate: null
-      actualDate: null
-      billingAmount: null
-      isBillingTrigger: null
-      status: null
+      id: ID
+      projectId: Project
+      code: Code
+      name: Name
+      plannedDate: Planned Date
+      actualDate: Actual Date
+      billingAmount: Billing Amount
+      isBillingTrigger: Is Billing Trigger
+      status: Status
       status_label: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      project: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      project: Project
     ErpPrjProject:
-      id: null
-      code: null
-      name: null
-      orgId: null
-      projectTypeId: null
-      customerId: null
-      currencyId: null
-      startDate: null
-      endDate: null
-      budget: null
-      committedCost: null
-      actualCost: null
-      billedAmount: null
-      status: null
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      projectTypeId: Project Type
+      customerId: Customer
+      currencyId: Currency
+      startDate: Start Date
+      endDate: End Date
+      budget: Budget
+      committedCost: Committed Cost
+      actualCost: Actual Cost
+      billedAmount: Billed Amount
+      status: Status
       status_label: null
-      managerId: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      projectType: null
-      manager: null
-      currency: null
-      tasks: null
-      timesheets: null
-      members: null
-      budgets: null
-      milestones: null
+      managerId: Manager
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      projectType: Project Type
+      manager: Manager
+      currency: Currency
+      tasks: Tasks
+      timesheets: Timesheets
+      members: Members
+      budgets: Budgets
+      milestones: Milestones
     ErpPrjProjectType:
-      id: null
-      code: null
-      name: null
-      defaultSubjectId: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      defaultSubject: null
+      id: ID
+      code: Code
+      name: Name
+      defaultSubjectId: Default Subject
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      defaultSubject: Default Subject
     ErpPrjProjectUser:
-      id: null
-      projectId: null
-      userId: null
-      role: null
-      startDate: null
-      endDate: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      project: null
-      user: null
+      id: ID
+      projectId: Project
+      userId: User
+      role: Role
+      startDate: Start Date
+      endDate: End Date
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      project: Project
+      user: User
     ErpPrjTask:
-      id: null
-      projectId: null
-      parentTaskId: null
-      title: null
-      assigneeId: null
-      plannedStartDate: null
-      plannedEndDate: null
-      actualStartDate: null
-      actualEndDate: null
-      estimatedHours: null
-      actualHours: null
-      dependsOnId: null
-      status: null
+      id: ID
+      projectId: Project
+      parentTaskId: Parent Task
+      title: Title
+      assigneeId: Assignee
+      plannedStartDate: Planned Start Date
+      plannedEndDate: Planned End Date
+      actualStartDate: Actual Start Date
+      actualEndDate: Actual End Date
+      estimatedHours: Estimated Hours
+      actualHours: Actual Hours
+      dependsOnId: Depends On
+      status: Status
       status_label: null
-      priority: null
+      priority: Priority
       priority_label: null
-      blockReason: null
-      sortNum: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      project: null
-      parentTask: null
-      assignee: null
-      dependsOn: null
-      childTasks: null
-      timesheets: null
+      blockReason: Block Reason
+      sortNum: Sort Order
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      project: Project
+      parentTask: Parent Task
+      assignee: Assignee
+      dependsOn: Depends On
+      childTasks: Child Tasks
+      timesheets: Timesheets
     ErpPrjTimesheet:
-      id: null
-      code: null
-      orgId: null
-      projectId: null
-      taskId: null
-      userId: null
-      workDate: null
-      hours: null
-      activityTypeId: null
-      currencyId: null
-      costRate: null
-      costAmount: null
-      status: null
+      id: ID
+      code: Code
+      orgId: Organization
+      projectId: Project
+      taskId: Task
+      userId: User
+      workDate: Work Date
+      hours: Hours
+      activityTypeId: Activity Type
+      currencyId: Currency
+      costRate: Cost Rate
+      costAmount: Cost Amount
+      status: Status
       status_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      approvedBy: null
-      approvedAt: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      project: null
-      task: null
-      user: null
-      activityType: null
-      currency: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      approvedBy: Approved By
+      approvedAt: Approved At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      project: Project
+      task: Task
+      user: User
+      activityType: Activity Type
+      currency: Currency
+dict:
+  label:
+    erp-prj/project-status: Project Status
+    erp-prj/task-status: Task Status
+    erp-prj/timesheet-status: Timesheet Status
+    erp-prj/priority: Priority
+dict.option.label:
+  erp-prj/project-status:
+    '10': Draft
+    '20': In Progress
+    '30': Suspended
+    '40': Completed
+    '50': Cancelled
+  erp-prj/task-status:
+    '10': Pending Start
+    '20': In Progress
+    '30': Completed
+    '40': Blocked
+  erp-prj/timesheet-status:
+    '10': Draft
+    '20': Submitted
+    '30': Approved
+  erp-prj/priority:
+    '10': Low
+    '20': General
+    '30': High
+    '40': Urgent

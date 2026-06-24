@@ -19,90 +19,91 @@
     <keys/>
 
     <props>
-        <prop name="id" displayName="ID" propId="1" tagSet="seq-default" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="false" graphql:type="String">
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="code" displayName="版本编码" propId="2" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true">
+        <prop name="code" displayName="版本编码" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema domain="workOrderCode" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="productId" displayName="产品" propId="3" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true" ext:relation="product">
+        <prop name="productId" displayName="产品" propId="3" i18n-en:displayName="Product" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="product">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="bomId" displayName="BOM" propId="4" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true" ext:relation="bom">
+        <prop name="bomId" displayName="BOM" propId="4" i18n-en:displayName="Bom" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="bom">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="routingId" displayName="工艺路线" propId="5" mandatory="true" queryable="true" sortable="true"
-              insertable="true" updatable="true" ext:relation="routing">
+        <prop name="routingId" displayName="工艺路线" propId="5" i18n-en:displayName="Routing" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="routing">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="validFrom" displayName="生效日期" propId="6" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="validFrom" displayName="生效日期" propId="6" i18n-en:displayName="Valid From" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema type="java.time.LocalDate"/>
         </prop>
-        <prop name="validTo" displayName="失效日期" propId="7" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="validTo" displayName="失效日期" propId="7" i18n-en:displayName="Valid To" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema type="java.time.LocalDate"/>
         </prop>
-        <prop name="lotSizeFrom" displayName="批量下限" propId="8" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="lotSizeFrom" displayName="批量下限" propId="8" i18n-en:displayName="Lot Size From" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
         </prop>
-        <prop name="lotSizeTo" displayName="批量上限" propId="9" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="lotSizeTo" displayName="批量上限" propId="9" i18n-en:displayName="Lot Size To" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
         </prop>
-        <prop name="isDefault" displayName="是否默认版本" propId="10" queryable="true" sortable="true" insertable="true"
-              updatable="true" defaultValue="false">
+        <prop name="isDefault" displayName="是否默认版本" propId="10" i18n-en:displayName="Is Default" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="false">
             <schema type="java.lang.Boolean"/>
         </prop>
-        <prop name="isActive" displayName="是否有效" propId="11" queryable="true" sortable="true" insertable="true"
-              updatable="true" defaultValue="true">
+        <prop name="isActive" displayName="是否有效" propId="11" i18n-en:displayName="Active" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="true">
             <schema type="java.lang.Boolean"/>
         </prop>
-        <prop name="remark" displayName="备注" propId="12" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+        <prop name="remark" displayName="备注" propId="12" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
-        <prop name="delVersion" displayName="逻辑删除版本" propId="13" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="true" defaultValue="0">
+        <prop name="delVersion" displayName="逻辑删除版本" propId="13" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
             <schema domain="delVersion" type="java.lang.Long"/>
         </prop>
-        <prop name="version" displayName="数据版本" propId="14" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false" internal="true" defaultValue="0">
+        <prop name="version" displayName="数据版本" propId="14" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
             <schema domain="version" type="java.lang.Integer"/>
         </prop>
-        <prop name="createdBy" displayName="创建人" propId="15" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false">
+        <prop name="createdBy" displayName="创建人" propId="15" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="createdBy" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="createTime" displayName="创建时间" propId="16" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false">
+        <prop name="createTime" displayName="创建时间" propId="16" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="createTime" type="java.sql.Timestamp"/>
         </prop>
-        <prop name="updatedBy" displayName="修改人" propId="17" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false">
+        <prop name="updatedBy" displayName="修改人" propId="17" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updatedBy" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="updateTime" displayName="修改时间" propId="18" mandatory="true" queryable="true" sortable="true"
-              insertable="false" updatable="false">
+        <prop name="updateTime" displayName="修改时间" propId="18" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
-        <prop name="product" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="productId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
-              updatable="false" mandatory="true" lazy="true">
+        <prop name="product" i18n-en:displayName="Product" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="productId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdMaterial"/>
         </prop>
-        <prop name="bom" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="bomId"
-              ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true" lazy="true">
+        <prop name="bom" i18n-en:displayName="Bom" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="bomId" ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true"
+              lazy="true">
             <schema bizObjName="ErpMfgBom"/>
         </prop>
-        <prop name="routing" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="routingId" ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true"
-              lazy="true">
+        <prop name="routing" i18n-en:displayName="Routing" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="routingId" ext:joinRightProp="id" insertable="false" updatable="false"
+              mandatory="true" lazy="true">
             <schema bizObjName="ErpMfgRouting"/>
         </prop>
     </props>

@@ -1,43 +1,4 @@
+
 "x:extends": _erp-sal.i18n.yaml
-
-dict:
-  label:
-    erp-sal/approve-status: 'Approve Status'
-    erp-sal/biz-type: '销售单据类型'
-    erp-sal/delivery-status: '发货状态'
-    erp-sal/doc-status: 'Doc Status'
-    erp-sal/invoice-type: '发票类型'
-    erp-sal/received-status: 'Received Status'
-
-dict.option.label:
-  erp-sal/approve-status:
-    10: 'Unsubmitted'
-    20: 'Submitted'
-    30: 'Approved'
-    40: 'Rejected'
-  erp-sal/biz-type:
-    10: 'Sales Quotation'
-    20: 'Sales Contract'
-    30: 'Sales Order'
-    40: 'Sales Issue'
-    50: 'Sales Invoice'
-    60: 'Receipt'
-    70: 'Sales Return'
-  erp-sal/delivery-status:
-    10: 'Unshipped'
-    20: 'Partially Shipped'
-    30: 'Fully Shipped'
-  erp-sal/doc-status:
-    10: 'Draft'
-    20: 'Effective'
-    30: 'Voided'
-  erp-sal/invoice-type:
-    10: 'VAT Special'
-    20: 'VAT General'
-    30: 'Receipt Note'
-  erp-sal/received-status:
-    10: 'Unreceived'
-    20: 'Partially Received'
-    30: 'Fully Received'
 
 # key: "value"

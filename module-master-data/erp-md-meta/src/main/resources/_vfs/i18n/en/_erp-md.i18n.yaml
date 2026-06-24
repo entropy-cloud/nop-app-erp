@@ -23,381 +23,483 @@ entity:
 prop:
   label:
     ErpMdAcctSchema:
-      id: null
-      code: null
-      name: null
-      orgId: null
-      nature: null
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      nature: Nature
       nature_label: null
-      functionalCurrencyId: null
-      costingMethod: null
+      functionalCurrencyId: Functional Currency
+      costingMethod: Costing Method
       costingMethod_label: null
-      isAdjustCurrency: null
-      isPropagate: null
-      status: null
+      isAdjustCurrency: Is Adjust Currency
+      isPropagate: Is Propagate
+      status: Status
       status_label: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      organization: null
-      functionalCurrency: null
-      coaMappings: null
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      organization: Organization
+      functionalCurrency: Functional Currency
+      coaMappings: Coa Mappings
     ErpMdAcctSchemaCoa:
-      id: null
-      acctSchemaId: null
-      name: null
-      isPrimary: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      acctSchema: null
+      id: ID
+      acctSchemaId: Acct Schema
+      name: Name
+      isPrimary: Is Primary
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      acctSchema: Acct Schema
     ErpMdBankAccount:
-      id: null
-      partnerId: null
-      bankName: null
-      bankBranch: null
-      bankAccount: null
-      accountType: null
+      id: ID
+      partnerId: Partner
+      bankName: Bank Name
+      bankBranch: Bank Branch
+      bankAccount: Bank Account
+      accountType: Account Type
       accountType_label: null
-      accountHolder: null
-      isDefault: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      partner: null
+      accountHolder: Account Holder
+      isDefault: Is Default
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      partner: Partner
     ErpMdCurrency:
-      id: null
-      code: null
-      name: null
-      symbol: null
-      decimalPlaces: null
-      isFunctional: null
-      isActive: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
+      id: ID
+      code: Code
+      name: Name
+      symbol: Symbol
+      decimalPlaces: Decimal Places
+      isFunctional: Is Functional
+      isActive: Active
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
     ErpMdEmployee:
-      id: null
-      code: null
-      name: null
-      orgId: null
-      position: null
-      phone: null
-      email: null
-      partnerId: null
-      status: null
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      position: Position
+      phone: Phone
+      email: Email
+      partnerId: Partner
+      status: Status
       status_label: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      organization: null
-      partner: null
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      organization: Organization
+      partner: Partner
     ErpMdExchangeRate:
-      id: null
-      fromCurrencyId: null
-      toCurrencyId: null
-      rateType: null
-      rate: null
-      validFrom: null
-      validTo: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      fromCurrency: null
-      toCurrency: null
+      id: ID
+      fromCurrencyId: From Currency
+      toCurrencyId: To Currency
+      rateType: Rate Type
+      rate: Rate
+      validFrom: Valid From
+      validTo: Valid To
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      fromCurrency: From Currency
+      toCurrency: To Currency
     ErpMdLocation:
-      id: null
-      warehouseId: null
-      code: null
-      name: null
-      parentId: null
-      isActive: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      warehouse: null
-      parent: null
+      id: ID
+      warehouseId: Warehouse
+      code: Code
+      name: Name
+      parentId: Parent
+      isActive: Active
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      warehouse: Warehouse
+      parent: Parent
     ErpMdMaterial:
-      id: null
-      code: null
-      name: null
-      materialType: null
+      id: ID
+      code: Code
+      name: Name
+      materialType: Material Type
       materialType_label: null
-      categoryId: null
-      uoMId: null
-      status: null
+      categoryId: Category
+      uoMId: UoM
+      status: Status
       status_label: null
-      costMethod: null
+      costMethod: Cost Method
       costMethod_label: null
-      isBatchManaged: null
-      isSerialManaged: null
-      defaultWarehouseId: null
-      minStock: null
-      maxStock: null
-      safetyStock: null
-      leadTimeDays: null
-      weight: null
-      volume: null
-      defaultTaxRateId: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      category: null
-      uoM: null
-      defaultWarehouse: null
-      defaultTaxRate: null
-      skus: null
+      isBatchManaged: Is Batch Managed
+      isSerialManaged: Is Serial Managed
+      defaultWarehouseId: Default Warehouse
+      minStock: Min Stock
+      maxStock: Max Stock
+      safetyStock: Safety Stock
+      leadTimeDays: Lead Time Days
+      weight: Weight
+      volume: Volume
+      defaultTaxRateId: Default Tax Rate
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      category: Category
+      uoM: Uo M
+      defaultWarehouse: Default Warehouse
+      defaultTaxRate: Default Tax Rate
+      skus: Skus
     ErpMdMaterialCategory:
-      id: null
-      code: null
-      name: null
-      parentId: null
-      sortNum: null
-      priceValidationLevel: null
+      id: ID
+      code: Code
+      name: Name
+      parentId: Parent
+      sortNum: Sort Order
+      priceValidationLevel: Price Validation Level
       priceValidationLevel_label: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      parent: null
-      children: null
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      parent: Parent
+      children: Children
     ErpMdMaterialSku:
-      id: null
-      materialId: null
-      skuCode: null
-      barcode: null
-      uoMId: null
-      conversionRate: null
-      purchasePrice: null
-      salePrice: null
-      wholesalePrice: null
-      retailPrice: null
-      taxRateId: null
-      isDefault: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      material: null
-      uoM: null
-      taxRate: null
+      id: ID
+      materialId: Material
+      skuCode: Sku Code
+      barcode: Barcode
+      uoMId: UoM
+      conversionRate: Conversion Rate
+      purchasePrice: Purchase Price
+      salePrice: Sale Price
+      wholesalePrice: Wholesale Price
+      retailPrice: Retail Price
+      taxRateId: Tax Rate
+      isDefault: Is Default
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      material: Material
+      uoM: Uo M
+      taxRate: Tax Rate
     ErpMdOrganization:
-      id: null
-      code: null
-      name: null
-      parentId: null
-      orgType: null
+      id: ID
+      code: Code
+      name: Name
+      parentId: Parent
+      orgType: Org Type
       orgType_label: null
-      functionalCurrencyId: null
-      status: null
+      functionalCurrencyId: Functional Currency
+      status: Status
       status_label: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      parent: null
-      functionalCurrency: null
-      children: null
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      parent: Parent
+      functionalCurrency: Functional Currency
+      children: Children
     ErpMdPartner:
-      id: null
-      code: null
-      name: null
-      partnerType: null
+      id: ID
+      code: Code
+      name: Name
+      partnerType: Partner Type
       partnerType_label: null
-      status: null
+      status: Status
       status_label: null
-      contactPerson: null
-      phone: null
-      email: null
-      address: null
-      taxNo: null
-      creditLimit: null
-      creditPeriodDays: null
-      receivableBalance: null
-      payableBalance: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      addresses: null
-      contacts: null
-      bankAccounts: null
+      contactPerson: Contact Person
+      phone: Phone
+      email: Email
+      address: Address
+      taxNo: Tax No
+      creditLimit: Credit Limit
+      creditPeriodDays: Credit Period Days
+      receivableBalance: Receivable Balance
+      payableBalance: Payable Balance
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      addresses: Addresses
+      contacts: Contacts
+      bankAccounts: Bank Accounts
     ErpMdPartnerAddress:
-      id: null
-      partnerId: null
-      addressType: null
+      id: ID
+      partnerId: Partner
+      addressType: Address Type
       addressType_label: null
-      contactPerson: null
-      phone: null
-      address: null
-      isDefault: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      partner: null
+      contactPerson: Contact Person
+      phone: Phone
+      address: Address
+      isDefault: Is Default
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      partner: Partner
     ErpMdPartnerContact:
-      id: null
-      partnerId: null
-      contactPerson: null
-      position: null
-      phone: null
-      email: null
-      isDefault: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      partner: null
+      id: ID
+      partnerId: Partner
+      contactPerson: Contact Person
+      position: Position
+      phone: Phone
+      email: Email
+      isDefault: Is Default
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      partner: Partner
     ErpMdSettlementMethod:
-      id: null
-      code: null
-      name: null
-      settlementType: null
+      id: ID
+      code: Code
+      name: Name
+      settlementType: Settlement Type
       settlementType_label: null
-      defaultFundAccountId: null
-      defaultDays: null
-      status: null
+      defaultFundAccountId: Default Fund Account
+      defaultDays: Default Days
+      status: Status
       status_label: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
     ErpMdSubject:
-      id: null
-      code: null
-      name: null
-      parentId: null
-      subjectClass: null
+      id: ID
+      code: Code
+      name: Name
+      parentId: Parent
+      subjectClass: Subject Class
       subjectClass_label: null
-      direction: null
+      direction: Direction
       direction_label: null
-      balanceType: null
+      balanceType: Balance Type
       balanceType_label: null
-      currencyId: null
-      isAuxiliaryPartner: null
-      isAuxiliaryDepartment: null
-      isAuxiliaryProject: null
-      isAuxiliaryWarehouse: null
-      isAuxiliaryProduct: null
-      isLeaf: null
-      status: null
+      currencyId: Currency
+      isAuxiliaryPartner: Is Auxiliary Partner
+      isAuxiliaryDepartment: Is Auxiliary Department
+      isAuxiliaryProject: Is Auxiliary Project
+      isAuxiliaryWarehouse: Is Auxiliary Warehouse
+      isAuxiliaryProduct: Is Auxiliary Product
+      isLeaf: Is Leaf
+      status: Status
       status_label: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      parent: null
-      currency: null
-      children: null
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      parent: Parent
+      currency: Currency
+      children: Children
     ErpMdTaxRate:
-      id: null
-      code: null
-      name: null
-      taxType: null
+      id: ID
+      code: Code
+      name: Name
+      taxType: Tax Type
       taxType_label: null
-      rate: null
-      isZeroRated: null
-      isExempt: null
-      validFrom: null
-      validTo: null
-      status: null
+      rate: Rate
+      isZeroRated: Is Zero Rated
+      isExempt: Is Exempt
+      validFrom: Valid From
+      validTo: Valid To
+      status: Status
       status_label: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
     ErpMdUoM:
-      id: null
-      code: null
-      name: null
-      uoMGroup: null
-      isBase: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
+      id: ID
+      code: Code
+      name: Name
+      uoMGroup: Uo M Group
+      isBase: Is Base
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
     ErpMdUoMConversion:
-      id: null
-      materialId: null
-      fromUoMId: null
-      toUoMId: null
-      conversionRate: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      material: null
-      fromUoM: null
-      toUoM: null
+      id: ID
+      materialId: Material
+      fromUoMId: From Uo M
+      toUoMId: To Uo M
+      conversionRate: Conversion Rate
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      material: Material
+      fromUoM: From Uo M
+      toUoM: To Uo M
     ErpMdWarehouse:
-      id: null
-      code: null
-      name: null
-      warehouseType: null
+      id: ID
+      code: Code
+      name: Name
+      warehouseType: Warehouse Type
       warehouseType_label: null
-      orgId: null
-      address: null
-      managerId: null
-      status: null
+      orgId: Organization
+      address: Address
+      managerId: Manager
+      status: Status
       status_label: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      organization: null
-      manager: null
-      locations: null
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      organization: Organization
+      manager: Manager
+      locations: Locations
+dict:
+  label:
+    erp-md/material-type: Material Type
+    erp-md/active-status: Enabled Status
+    erp-md/cost-method: Inventory Valuation Method
+    erp-md/price-validation: Price Validation Level
+    erp-md/partner-type: Partner Type
+    erp-md/warehouse-type: Warehouse Type
+    erp-md/subject-class: Subject Class
+    erp-md/subject-direction: Account Balance Direction
+    erp-md/balance-type: Account Balance Type
+    erp-md/org-type: Org Type
+    erp-md/acct-schema-nature: Accounting Schema Nature
+    erp-md/tax-type: Tax Category
+    erp-md/settlement-type: Settlement Type
+    erp-md/bank-account-type: Bank Account Type
+    erp-md/address-type: Address Type
+dict.option.label:
+  erp-md/material-type:
+    '10': Merchandise
+    '20': Raw Material
+    '30': Semi-Finished
+    '40': Finished Good
+    '50': Service
+    '60': Packaging
+    '70': Consumable
+  erp-md/active-status:
+    '10': Enabled
+    '20': Disabled
+  erp-md/cost-method:
+    '10': Moving Weighted Avg
+    '20': Monthly Weighted Avg
+    '30': FIFO
+    '40': LIFO
+    '50': Standard Cost
+    '60': Specific Identification
+    '70': Batch
+  erp-md/price-validation:
+    '10': No Check
+    '20': Warning Release
+    '30': Force Block
+  erp-md/partner-type:
+    '10': Customer
+    '20': Supplier
+    '30': Customer & Supplier
+    '40': Employee (Internal)
+  erp-md/warehouse-type:
+    '10': Normal Warehouse
+    '20': In Transit
+    '30': Scrap Warehouse
+    '40': Consignment In
+    '50': Consignment Out
+    '60': Bonded Warehouse
+  erp-md/subject-class:
+    '10': Asset
+    '20': Liability
+    '30': Equity
+    '40': Revenue
+    '50': Expense
+    '60': Cost
+  erp-md/subject-direction:
+    '10': Debit Side
+    '20': Credit Side
+  erp-md/balance-type:
+    '10': Debit Balance
+    '20': Credit Balance
+    '30': Debit/Credit Both
+  erp-md/org-type:
+    '10': Group
+    '20': Company
+    '30': Branch
+    '40': Department
+    '50': Workshop
+    '60': Store
+  erp-md/acct-schema-nature:
+    '10': Financial Book
+    '20': Management Book
+    '30': Tax Book
+    '40': Consolidated Book
+    '50': Budget Book
+  erp-md/tax-type:
+    '10': VAT
+    '20': Sales Tax
+    '30': Withholding Tax
+    '40': Customs Duty
+    '50': Other
+  erp-md/settlement-type:
+    '10': Cash
+    '20': Bank Transfer
+    '30': Note
+    '40': Deductible
+    '50': Online Payment
+  erp-md/bank-account-type:
+    '10': Current Account
+    '20': Periodic
+    '30': Credit Account
+    '40': Other
+  erp-md/address-type:
+    '10': Billing Address
+    '20': Delivery Address
+    '30': Registered Address
+    '40': Other

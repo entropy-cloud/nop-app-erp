@@ -32,88 +32,88 @@
      ext:allowIdAsColName="true" ext:icon="factory" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:biz="biz">
 
     <dicts>
-        <dict label="工单状态" name="erp-mfg/work-order-status" valueType="int">
-            <option code="DRAFT" label="草稿" value="10"/>
-            <option code="SUBMITTED" label="已提交" value="20"/>
-            <option code="NOT_STARTED" label="未开始" value="30"/>
-            <option code="IN_PROCESS" label="生产中" value="40"/>
-            <option code="STOCK_RESERVED" label="已齐套" value="50"/>
-            <option code="STOCK_PARTIAL" label="部分齐套" value="60"/>
-            <option code="COMPLETED" label="已完工" value="70"/>
-            <option code="STOPPED" label="已停工" value="80"/>
-            <option code="CLOSED" label="已关闭" value="90"/>
-            <option code="CANCELLED" label="已取消" value="100"/>
+        <dict label="工单状态" name="erp-mfg/work-order-status" valueType="int" i18n-en:label='Work Order Status'>
+            <option code="DRAFT" label="草稿" value="10" i18n-en:label='Draft'/>
+            <option code="SUBMITTED" label="已提交" value="20" i18n-en:label='Submitted'/>
+            <option code="NOT_STARTED" label="未开始" value="30" i18n-en:label='Not Started'/>
+            <option code="IN_PROCESS" label="生产中" value="40" i18n-en:label='In Production'/>
+            <option code="STOCK_RESERVED" label="已齐套" value="50" i18n-en:label='Kitted'/>
+            <option code="STOCK_PARTIAL" label="部分齐套" value="60" i18n-en:label='Partially Kitted'/>
+            <option code="COMPLETED" label="已完工" value="70" i18n-en:label='Completed'/>
+            <option code="STOPPED" label="已停工" value="80" i18n-en:label='Stopped'/>
+            <option code="CLOSED" label="已关闭" value="90" i18n-en:label='Closed'/>
+            <option code="CANCELLED" label="已取消" value="100" i18n-en:label='Cancelled'/>
         </dict>
-        <dict label="作业卡状态" name="erp-mfg/job-card-status" valueType="int">
-            <option code="OPEN" label="待开始" value="10"/>
-            <option code="WORK_IN_PROGRESS" label="作业中" value="20"/>
-            <option code="PARTIALLY_TRANSFERRED" label="部分转序" value="30"/>
-            <option code="MATERIAL_TRANSFERRED" label="已转序" value="40"/>
-            <option code="ON_HOLD" label="暂停" value="50"/>
-            <option code="SUBMITTED" label="已提交" value="60"/>
-            <option code="COMPLETED" label="已完成" value="70"/>
-            <option code="CANCELLED" label="已取消" value="80"/>
+        <dict label="作业卡状态" name="erp-mfg/job-card-status" valueType="int" i18n-en:label='Job Card Status'>
+            <option code="OPEN" label="待开始" value="10" i18n-en:label='Pending Start'/>
+            <option code="WORK_IN_PROGRESS" label="作业中" value="20" i18n-en:label='Working'/>
+            <option code="PARTIALLY_TRANSFERRED" label="部分转序" value="30" i18n-en:label='Partially Transferred'/>
+            <option code="MATERIAL_TRANSFERRED" label="已转序" value="40" i18n-en:label='Transferred'/>
+            <option code="ON_HOLD" label="暂停" value="50" i18n-en:label='Suspended'/>
+            <option code="SUBMITTED" label="已提交" value="60" i18n-en:label='Submitted'/>
+            <option code="COMPLETED" label="已完成" value="70" i18n-en:label='Completed'/>
+            <option code="CANCELLED" label="已取消" value="80" i18n-en:label='Cancelled'/>
         </dict>
-        <dict label="BOM 类型" name="erp-mfg/bom-type" valueType="int">
-            <option code="NORMAL" label="制造" value="10"/>
-            <option code="PHANTOM" label="虚拟件/Kit" value="20"/>
+        <dict label="BOM 类型" name="erp-mfg/bom-type" valueType="int" i18n-en:label='BOM Type'>
+            <option code="NORMAL" label="制造" value="10" i18n-en:label='Manufactured'/>
+            <option code="PHANTOM" label="虚拟件/Kit" value="20" i18n-en:label='Phantom/Kit'/>
         </dict>
-        <dict label="消耗控制" name="erp-mfg/consumption" valueType="int">
-            <option code="FLEXIBLE" label="允许超耗" value="10"/>
-            <option code="WARNING" label="超耗警告" value="20"/>
-            <option code="STRICT" label="严格按 BOM" value="30"/>
+        <dict label="消耗控制" name="erp-mfg/consumption" valueType="int" i18n-en:label='Consumption Control'>
+            <option code="FLEXIBLE" label="允许超耗" value="10" i18n-en:label='Allow Overconsumption'/>
+            <option code="WARNING" label="超耗警告" value="20" i18n-en:label='Overconsumption Warning'/>
+            <option code="STRICT" label="严格按 BOM" value="30" i18n-en:label='Strict BOM'/>
         </dict>
-        <dict label="审核状态" name="erp-mfg/approve-status" valueType="int">
-            <option code="UNSUBMITTED" label="未提交" value="10"/>
-            <option code="SUBMITTED" label="已提交" value="20"/>
-            <option code="APPROVED" label="已审核" value="30"/>
-            <option code="REJECTED" label="已驳回" value="40"/>
+        <dict label="审核状态" name="erp-mfg/approve-status" valueType="int" i18n-en:label='Approve Status'>
+            <option code="UNSUBMITTED" label="未提交" value="10" i18n-en:label='Unsubmitted'/>
+            <option code="SUBMITTED" label="已提交" value="20" i18n-en:label='Submitted'/>
+            <option code="APPROVED" label="已审核" value="30" i18n-en:label='Approved'/>
+            <option code="REJECTED" label="已驳回" value="40" i18n-en:label='Rejected'/>
         </dict>
-        <dict label="工单优先级" name="erp-mfg/priority" valueType="int">
-            <option code="LOW" label="低" value="10"/>
-            <option code="NORMAL" label="普通" value="20"/>
-            <option code="HIGH" label="高" value="30"/>
-            <option code="URGENT" label="紧急" value="40"/>
+        <dict label="工单优先级" name="erp-mfg/priority" valueType="int" i18n-en:label='Work Order Priority'>
+            <option code="LOW" label="低" value="10" i18n-en:label='Low'/>
+            <option code="NORMAL" label="普通" value="20" i18n-en:label='General'/>
+            <option code="HIGH" label="高" value="30" i18n-en:label='High'/>
+            <option code="URGENT" label="紧急" value="40" i18n-en:label='Urgent'/>
         </dict>
-        <dict label="MRP 计划状态" name="erp-mfg/mrp-status" valueType="int">
-            <option code="DRAFT" label="草稿" value="10"/>
-            <option code="RUNNING" label="运算中" value="20"/>
-            <option code="COMPLETED" label="运算完成" value="30"/>
-            <option code="FIRMED" label="已确认(转工单)" value="40"/>
-            <option code="CANCELLED" label="已取消" value="50"/>
+        <dict label="MRP 计划状态" name="erp-mfg/mrp-status" valueType="int" i18n-en:label='MRP Plan Status'>
+            <option code="DRAFT" label="草稿" value="10" i18n-en:label='Draft'/>
+            <option code="RUNNING" label="运算中" value="20" i18n-en:label='Computing'/>
+            <option code="COMPLETED" label="运算完成" value="30" i18n-en:label='Computed'/>
+            <option code="FIRMED" label="已确认(转工单)" value="40" i18n-en:label='Confirmed (To W/O)'/>
+            <option code="CANCELLED" label="已取消" value="50" i18n-en:label='Cancelled'/>
         </dict>
-        <dict label="MRP 计划订单类型" name="erp-mfg/mrp-order-type" valueType="int">
-            <option code="PLANNED_ORDER" label="计划订单" value="10"/>
-            <option code="PURCHASE_REQUEST" label="请购建议" value="20"/>
-            <option code="WORK_ORDER_REQUEST" label="工单建议" value="30"/>
-            <option code="SUBCONTRACT_REQUEST" label="委外建议" value="40"/>
+        <dict label="MRP 计划订单类型" name="erp-mfg/mrp-order-type" valueType="int" i18n-en:label='MRP Plan Order Type'>
+            <option code="PLANNED_ORDER" label="计划订单" value="10" i18n-en:label='Planned Order'/>
+            <option code="PURCHASE_REQUEST" label="请购建议" value="20" i18n-en:label='Purchase Req Suggestion'/>
+            <option code="WORK_ORDER_REQUEST" label="工单建议" value="30" i18n-en:label='Work Order Suggestion'/>
+            <option code="SUBCONTRACT_REQUEST" label="委外建议" value="40" i18n-en:label='Outsource Suggestion'/>
         </dict>
-        <dict label="MRP 需求来源" name="erp-mfg/mrp-demand-source" valueType="int">
-            <option code="SALES_ORDER" label="销售订单" value="10"/>
-            <option code="FORECAST" label="预测" value="20"/>
-            <option code="SAFETY_STOCK" label="安全库存" value="30"/>
-            <option code="MANUAL" label="手工录入" value="40"/>
+        <dict label="MRP 需求来源" name="erp-mfg/mrp-demand-source" valueType="int" i18n-en:label='MRP Demand Source'>
+            <option code="SALES_ORDER" label="销售订单" value="10" i18n-en:label='Sales Order'/>
+            <option code="FORECAST" label="预测" value="20" i18n-en:label='Forecast'/>
+            <option code="SAFETY_STOCK" label="安全库存" value="30" i18n-en:label='Safety Stock'/>
+            <option code="MANUAL" label="手工录入" value="40" i18n-en:label='Manual Entry'/>
         </dict>
-        <dict label="领料状态" name="erp-mfg/issue-status" valueType="int">
-            <option code="DRAFT" label="草稿" value="10"/>
-            <option code="CONFIRMED" label="已确认" value="20"/>
-            <option code="DONE" label="已出库" value="30"/>
-            <option code="CANCELLED" label="已取消" value="40"/>
+        <dict label="领料状态" name="erp-mfg/issue-status" valueType="int" i18n-en:label='Pick Status'>
+            <option code="DRAFT" label="草稿" value="10" i18n-en:label='Draft'/>
+            <option code="CONFIRMED" label="已确认" value="20" i18n-en:label='Confirmed'/>
+            <option code="DONE" label="已出库" value="30" i18n-en:label='Delivered'/>
+            <option code="CANCELLED" label="已取消" value="40" i18n-en:label='Cancelled'/>
         </dict>
-        <dict label="委外单状态" name="erp-mfg/subcontract-status" valueType="int">
-            <option code="DRAFT" label="草稿" value="10"/>
-            <option code="ACTIVE" label="已生效" value="20"/>
-            <option code="CANCELLED" label="已作废" value="30"/>
+        <dict label="委外单状态" name="erp-mfg/subcontract-status" valueType="int" i18n-en:label='Subcontract Order Status'>
+            <option code="DRAFT" label="草稿" value="10" i18n-en:label='Draft'/>
+            <option code="ACTIVE" label="已生效" value="20" i18n-en:label='Effective'/>
+            <option code="CANCELLED" label="已作废" value="30" i18n-en:label='Voided'/>
         </dict>
-        <dict label="成本滚算状态" name="erp-mfg/cost-rollup-status" valueType="int">
-            <option code="DRAFT" label="草稿" value="10"/>
-            <option code="CALCULATED" label="已计算" value="20"/>
-            <option code="FIRMED" label="已发布" value="30"/>
-            <option code="CANCELLED" label="已作废" value="40"/>
+        <dict label="成本滚算状态" name="erp-mfg/cost-rollup-status" valueType="int" i18n-en:label='Cost Rollup Status'>
+            <option code="DRAFT" label="草稿" value="10" i18n-en:label='Draft'/>
+            <option code="CALCULATED" label="已计算" value="20" i18n-en:label='Calculated'/>
+            <option code="FIRMED" label="已发布" value="30" i18n-en:label='Published'/>
+            <option code="CANCELLED" label="已作废" value="40" i18n-en:label='Voided'/>
         </dict>
-        <dict label="联副产品类型" name="erp-mfg/byproduct-type" valueType="int">
-            <option code="CO_PRODUCT" label="联产品" value="10"/>
-            <option code="BY_PRODUCT" label="副产品" value="20"/>
+        <dict label="联副产品类型" name="erp-mfg/byproduct-type" valueType="int" i18n-en:label='Co/By-Product Type'>
+            <option code="CO_PRODUCT" label="联产品" value="10" i18n-en:label='Co-product'/>
+            <option code="BY_PRODUCT" label="副产品" value="20" i18n-en:label='Byproduct'/>
         </dict>
     </dicts>
 

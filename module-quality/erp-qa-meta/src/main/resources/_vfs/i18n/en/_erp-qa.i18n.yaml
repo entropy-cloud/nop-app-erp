@@ -14,264 +14,335 @@ entity:
 prop:
   label:
     ErpQaAction:
-      id: null
-      ncrId: null
-      actionType: null
+      id: ID
+      ncrId: Ncr
+      actionType: Action Type
       actionType_label: null
-      description: null
-      responsiblePerson: null
-      dueDate: null
-      status: null
+      description: Description
+      responsiblePerson: Responsible Person
+      dueDate: Due Date
+      status: Status
       status_label: null
-      completedBy: null
-      completedAt: null
-      verificationPerson: null
-      verificationDate: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      ncr: null
+      completedBy: Completed By
+      completedAt: Completed At
+      verificationPerson: Verification Person
+      verificationDate: Verification Date
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      ncr: Ncr
     ErpQaCalibration:
-      id: null
-      code: null
-      orgId: null
-      instrumentName: null
-      instrumentCode: null
-      businessDate: null
-      standardRef: null
-      measuredValue: null
-      targetValue: null
-      tolerance: null
-      result: null
+      id: ID
+      code: Code
+      orgId: Organization
+      instrumentName: Instrument Name
+      instrumentCode: Instrument Code
+      businessDate: Business Date
+      standardRef: Standard Ref
+      measuredValue: Measured Value
+      targetValue: Target Value
+      tolerance: Tolerance
+      result: Result
       result_label: null
-      nextCalibrationDate: null
-      calibratedBy: null
-      docStatus: null
+      nextCalibrationDate: Next Calibration Date
+      calibratedBy: Calibrated By
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      calibratedByEmployee: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      calibratedByEmployee: Calibrated By Employee
     ErpQaInspection:
-      id: null
-      code: null
-      orgId: null
-      inspectionType: null
+      id: ID
+      code: Code
+      orgId: Organization
+      inspectionType: Inspection Type
       inspectionType_label: null
-      relatedBillType: null
-      relatedBillCode: null
-      relatedLineCode: null
-      materialId: null
-      templateId: null
-      supplierId: null
-      warehouseId: null
-      batchNo: null
-      inspectionDate: null
-      lotQuantity: null
-      sampleQuantity: null
-      inspectorId: null
-      result: null
+      relatedBillType: Related Bill Type
+      relatedBillCode: Related Bill Code
+      relatedLineCode: Related Line Code
+      materialId: Material
+      templateId: Template
+      supplierId: Supplier
+      warehouseId: Warehouse
+      batchNo: Batch No
+      inspectionDate: Inspection Date
+      lotQuantity: Lot Quantity
+      sampleQuantity: Sample Quantity
+      inspectorId: Inspector
+      result: Result
       result_label: null
-      docStatus: null
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      approvedBy: null
-      approvedAt: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      material: null
-      template: null
-      supplier: null
-      warehouse: null
-      inspector: null
-      lines: null
-      org: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      approvedBy: Approved By
+      approvedAt: Approved At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      material: Material
+      template: Template
+      supplier: Supplier
+      warehouse: Warehouse
+      inspector: Inspector
+      lines: Lines
+      org: Org
     ErpQaInspectionLine:
-      id: null
-      inspectionId: null
-      lineNo: null
-      parameterId: null
-      parameterName: null
-      specMin: null
-      specMax: null
-      measuredValue: null
-      unit: null
-      result: null
+      id: ID
+      inspectionId: Inspection
+      lineNo: Line No
+      parameterId: Parameter
+      parameterName: Parameter Name
+      specMin: Spec Min
+      specMax: Spec Max
+      measuredValue: Measured Value
+      unit: Unit
+      result: Result
       result_label: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      inspection: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      inspection: Inspection
     ErpQaInspectionTemplate:
-      id: null
-      code: null
-      name: null
-      inspectionType: null
+      id: ID
+      code: Code
+      name: Name
+      inspectionType: Inspection Type
       inspectionType_label: null
-      materialId: null
-      isActive: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      lines: null
+      materialId: Material
+      isActive: Active
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      lines: Lines
     ErpQaInspectionTemplateLine:
-      id: null
-      templateId: null
-      lineNo: null
-      parameterName: null
-      specMin: null
-      specMax: null
-      unit: null
-      isRequired: null
-      inspectionMethod: null
-      sortNum: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      template: null
+      id: ID
+      templateId: Template
+      lineNo: Line No
+      parameterName: Parameter Name
+      specMin: Spec Min
+      specMax: Spec Max
+      unit: Unit
+      isRequired: Is Required
+      inspectionMethod: Inspection Method
+      sortNum: Sort Order
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      template: Template
     ErpQaNonConformance:
-      id: null
-      code: null
-      ncrDate: null
-      sourceType: null
-      sourceCode: null
-      materialId: null
-      inspectionId: null
-      quantity: null
-      description: null
-      severity: null
+      id: ID
+      code: Code
+      ncrDate: Ncr Date
+      sourceType: Source Type
+      sourceCode: Source Code
+      materialId: Material
+      inspectionId: Inspection
+      quantity: Quantity
+      description: Description
+      severity: Severity
       severity_label: null
-      dispositionType: null
+      dispositionType: Disposition Type
       dispositionType_label: null
-      status: null
+      status: Status
       status_label: null
-      supplierId: null
-      parameterName: null
-      measuredValue: null
-      specMin: null
-      specMax: null
-      assignedTo: null
-      resolvedBy: null
-      resolvedAt: null
-      resolution: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      actions: null
-      inspection: null
+      supplierId: Supplier
+      parameterName: Parameter Name
+      measuredValue: Measured Value
+      specMin: Spec Min
+      specMax: Spec Max
+      assignedTo: Assigned To
+      resolvedBy: Resolved By
+      resolvedAt: Resolved At
+      resolution: Resolution
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      actions: Actions
+      inspection: Inspection
     ErpQaQualityGoal:
-      id: null
-      code: null
-      name: null
-      description: null
-      targetValue: null
-      currentValue: null
-      unit: null
-      responsiblePersonId: null
-      startDate: null
-      endDate: null
-      status: null
+      id: ID
+      code: Code
+      name: Name
+      description: Description
+      targetValue: Target Value
+      currentValue: Current Value
+      unit: Unit
+      responsiblePersonId: Responsible Person
+      startDate: Start Date
+      endDate: End Date
+      status: Status
       status_label: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      responsiblePerson: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      responsiblePerson: Responsible Person
     ErpQaReview:
-      id: null
-      code: null
-      orgId: null
-      reviewDate: null
-      reviewType: null
+      id: ID
+      code: Code
+      orgId: Organization
+      reviewDate: Review Date
+      reviewType: Review Type
       reviewType_label: null
-      relatedBillType: null
-      relatedBillCode: null
-      participants: null
-      conclusion: null
-      actionRequired: null
-      docStatus: null
+      relatedBillType: Related Bill Type
+      relatedBillCode: Related Bill Code
+      participants: Participants
+      conclusion: Conclusion
+      actionRequired: Action Required
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
     ErpQaRiskRegister:
-      id: null
-      code: null
-      riskDate: null
-      description: null
-      category: null
-      likelihood: null
-      severity: null
-      riskScore: null
-      mitigation: null
-      ownerId: null
-      status: null
+      id: ID
+      code: Code
+      riskDate: Risk Date
+      description: Description
+      category: Category
+      likelihood: Likelihood
+      severity: Severity
+      riskScore: Risk Score
+      mitigation: Mitigation
+      ownerId: Owner
+      status: Status
       status_label: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
     ErpQaSamplingPlan:
-      id: null
-      code: null
-      name: null
-      aqlLevel: null
-      lotSizeFrom: null
-      lotSizeTo: null
-      sampleSize: null
-      acceptNumber: null
-      rejectNumber: null
-      isActive: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
+      id: ID
+      code: Code
+      name: Name
+      aqlLevel: Aql Level
+      lotSizeFrom: Lot Size From
+      lotSizeTo: Lot Size To
+      sampleSize: Sample Size
+      acceptNumber: Accept Number
+      rejectNumber: Reject Number
+      isActive: Active
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+dict:
+  label:
+    erp-qa/inspection-type: Inspection Type
+    erp-qa/inspection-result: Inspection Result
+    erp-qa/ncr-status: NCR Status
+    erp-qa/action-type: Corrective Action Type
+    erp-qa/doc-status: Doc Status
+    erp-qa/approve-status: Approve Status
+    erp-qa/severity: Non-conformance Severity
+    erp-qa/action-status: Corrective Action Status
+    erp-qa/risk-status: Risk Status
+    erp-qa/goal-status: Quality Goal Status
+    erp-qa/review-type: Review Type
+    erp-qa/disposition-type: Disposition Type
+dict.option.label:
+  erp-qa/inspection-type:
+    '10': Incoming Inspection
+    '20': In-Process Inspection
+    '30': Final Inspection
+    '40': Outgoing Inspection
+  erp-qa/inspection-result:
+    '10': Pending Inspection
+    '20': Conforming
+    '30': Waiver Accept
+    '40': Non-conforming
+  erp-qa/ncr-status:
+    '10': Pending
+    '20': Reviewing
+    '30': Resolved
+    '40': Cancelled
+  erp-qa/action-type:
+    '10': Correction
+    '20': Preventive
+    '30': Corrective & Preventive
+  erp-qa/doc-status:
+    '10': Draft
+    '20': Effective
+    '30': Voided
+  erp-qa/approve-status:
+    '10': Unsubmitted
+    '20': Submitted
+    '30': Approved
+    '40': Rejected
+  erp-qa/severity:
+    '10': Low
+    '20': General
+    '30': High
+    '40': Critical
+  erp-qa/action-status:
+    '10': Pending
+    '20': Executing
+    '30': Completed
+    '40': Overdue
+  erp-qa/risk-status:
+    '10': Pending
+    '20': Mitigated
+    '30': Closed
+  erp-qa/goal-status:
+    '10': In Progress
+    '20': Achieved
+    '30': Not Achieved
+    '40': Cancelled
+  erp-qa/review-type:
+    '10': Internal Review
+    '20': External Review
+    '30': Supplier Review
+  erp-qa/disposition-type:
+    '10': Scrap
+    '20': Return
+    '30': Waiver Accept
+    '40': Downgrade Use

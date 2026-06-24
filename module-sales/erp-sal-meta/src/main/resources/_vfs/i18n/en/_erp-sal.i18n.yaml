@@ -16,389 +16,427 @@ entity:
 prop:
   label:
     ErpSalContract:
-      id: null
-      code: null
-      orgId: null
-      customerId: null
-      contractName: null
-      businessDate: null
-      validFrom: null
-      validTo: null
-      currencyId: null
-      exchangeRate: null
-      totalAmount: null
-      totalTaxAmount: null
-      totalAmountWithTax: null
-      signedBy: null
-      docStatus: null
+      id: ID
+      code: Code
+      orgId: Organization
+      customerId: Customer
+      contractName: Contract Name
+      businessDate: Business Date
+      validFrom: Valid From
+      validTo: Valid To
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      totalAmount: Total Amt
+      totalTaxAmount: Total Tax
+      totalAmountWithTax: Total (Inc. Tax)
+      signedBy: Signed By
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      customer: null
-      currency: null
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      customer: Customer
+      currency: Currency
     ErpSalDelivery:
-      id: null
-      code: null
-      orgId: null
-      orderId: null
-      customerId: null
-      warehouseId: null
-      businessDate: null
-      currencyId: null
-      exchangeRate: null
-      amountSource: null
-      amountFunctional: null
-      totalAmount: null
-      totalTaxAmount: null
-      totalAmountWithTax: null
-      docStatus: null
+      id: ID
+      code: Code
+      orgId: Organization
+      orderId: Order
+      customerId: Customer
+      warehouseId: Warehouse
+      businessDate: Business Date
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      totalAmount: Total Amt
+      totalTaxAmount: Total Tax
+      totalAmountWithTax: Total (Inc. Tax)
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      approvedBy: null
-      approvedAt: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      order: null
-      customer: null
-      warehouse: null
-      lines: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      approvedBy: Approved By
+      approvedAt: Approved At
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      order: Order
+      customer: Customer
+      warehouse: Warehouse
+      lines: Lines
     ErpSalDeliveryLine:
-      id: null
-      deliveryId: null
-      orderLineId: null
-      lineNo: null
-      materialId: null
-      skuId: null
-      uoMId: null
-      quantity: null
-      unitPrice: null
-      taxRate: null
-      taxAmount: null
-      amount: null
-      warehouseId: null
-      batchNo: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      delivery: null
-      material: null
-      sku: null
-      uoM: null
+      id: ID
+      deliveryId: Delivery
+      orderLineId: Order Line
+      lineNo: Line No
+      materialId: Material
+      skuId: SKU
+      uoMId: UoM
+      quantity: Quantity
+      unitPrice: Unit Price
+      taxRate: Tax Rate
+      taxAmount: Tax Amount
+      amount: Amount
+      warehouseId: Warehouse
+      batchNo: Batch No
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      delivery: Delivery
+      material: Material
+      sku: Sku
+      uoM: Uo M
     ErpSalInvoice:
-      id: null
-      code: null
-      orgId: null
-      customerId: null
-      invoiceNo: null
-      invoiceType: null
+      id: ID
+      code: Code
+      orgId: Organization
+      customerId: Customer
+      invoiceNo: Invoice No
+      invoiceType: Invoice Type
       invoiceType_label: null
-      businessDate: null
-      currencyId: null
-      exchangeRate: null
-      amountSource: null
-      amountFunctional: null
-      totalAmount: null
-      totalTaxAmount: null
-      totalAmountWithTax: null
-      receivedAmount: null
-      docStatus: null
+      businessDate: Business Date
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      totalAmount: Total Amt
+      totalTaxAmount: Total Tax
+      totalAmountWithTax: Total (Inc. Tax)
+      receivedAmount: Received Amount
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      receivedStatus: null
+      receivedStatus: Received Status
       receivedStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      approvedBy: null
-      approvedAt: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      customer: null
-      currency: null
-      lines: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      approvedBy: Approved By
+      approvedAt: Approved At
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      customer: Customer
+      currency: Currency
+      lines: Lines
     ErpSalInvoiceLine:
-      id: null
-      invoiceId: null
-      deliveryLineId: null
-      lineNo: null
-      materialId: null
-      uoMId: null
-      quantity: null
-      unitPrice: null
-      taxRate: null
-      taxAmount: null
-      amount: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      invoice: null
-      material: null
+      id: ID
+      invoiceId: Invoice
+      deliveryLineId: Delivery Line
+      lineNo: Line No
+      materialId: Material
+      uoMId: UoM
+      quantity: Quantity
+      unitPrice: Unit Price
+      taxRate: Tax Rate
+      taxAmount: Tax Amount
+      amount: Amount
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      invoice: Invoice
+      material: Material
     ErpSalOrder:
-      id: null
-      code: null
-      orgId: null
-      quotationId: null
-      contractId: null
-      customerId: null
-      warehouseId: null
-      businessDate: null
-      deliveryDate: null
-      currencyId: null
-      exchangeRate: null
-      amountSource: null
-      amountFunctional: null
-      totalAmount: null
-      totalTaxAmount: null
-      totalAmountWithTax: null
-      discountRate: null
-      discountAmount: null
-      receivedAmount: null
-      settlementMethodId: null
-      docStatus: null
+      id: ID
+      code: Code
+      orgId: Organization
+      quotationId: Quotation
+      contractId: Contract
+      customerId: Customer
+      warehouseId: Warehouse
+      businessDate: Business Date
+      deliveryDate: Delivery Date
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      totalAmount: Total Amt
+      totalTaxAmount: Total Tax
+      totalAmountWithTax: Total (Inc. Tax)
+      discountRate: Discount %
+      discountAmount: Discount Amt
+      receivedAmount: Received Amount
+      settlementMethodId: Settlement Method
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      receivedStatus: null
+      receivedStatus: Received Status
       receivedStatus_label: null
-      deliveryStatus: null
+      deliveryStatus: Delivery Status
       deliveryStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      approvedBy: null
-      approvedAt: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      customer: null
-      warehouse: null
-      currency: null
-      settlementMethod: null
-      lines: null
-      org: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      approvedBy: Approved By
+      approvedAt: Approved At
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      customer: Customer
+      warehouse: Warehouse
+      currency: Currency
+      settlementMethod: Settlement Method
+      lines: Lines
+      org: Org
     ErpSalOrderLine:
-      id: null
-      orderId: null
-      lineNo: null
-      materialId: null
-      skuId: null
-      uoMId: null
-      quantity: null
-      unitPrice: null
-      taxRate: null
-      taxRateId: null
-      taxAmount: null
-      amount: null
-      amountWithTax: null
-      deliveredQuantity: null
-      invoicedQuantity: null
-      warehouseId: null
-      projectId: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      order: null
-      material: null
-      sku: null
-      uoM: null
-      taxRateMd: null
-      warehouse: null
+      id: ID
+      orderId: Order
+      lineNo: Line No
+      materialId: Material
+      skuId: SKU
+      uoMId: UoM
+      quantity: Quantity
+      unitPrice: Unit Price
+      taxRate: Tax Rate
+      taxRateId: Tax Rate
+      taxAmount: Tax Amount
+      amount: Amount
+      amountWithTax: Amount With Tax
+      deliveredQuantity: Delivered Quantity
+      invoicedQuantity: Invoiced Quantity
+      warehouseId: Warehouse
+      projectId: Project
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      order: Order
+      material: Material
+      sku: Sku
+      uoM: Uo M
+      taxRateMd: Tax Rate Md
+      warehouse: Warehouse
     ErpSalQuotation:
-      id: null
-      code: null
-      orgId: null
-      customerId: null
-      businessDate: null
-      validFrom: null
-      validTo: null
-      currencyId: null
-      exchangeRate: null
-      totalAmount: null
-      totalTaxAmount: null
-      totalAmountWithTax: null
-      isAccepted: null
-      docStatus: null
+      id: ID
+      code: Code
+      orgId: Organization
+      customerId: Customer
+      businessDate: Business Date
+      validFrom: Valid From
+      validTo: Valid To
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      totalAmount: Total Amt
+      totalTaxAmount: Total Tax
+      totalAmountWithTax: Total (Inc. Tax)
+      isAccepted: Is Accepted
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      customer: null
-      currency: null
-      lines: null
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      customer: Customer
+      currency: Currency
+      lines: Lines
     ErpSalQuotationLine:
-      id: null
-      quotationId: null
-      lineNo: null
-      materialId: null
-      uoMId: null
-      quantity: null
-      unitPrice: null
-      taxRate: null
-      taxAmount: null
-      amount: null
-      amountWithTax: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      quotation: null
-      material: null
-      uoM: null
+      id: ID
+      quotationId: Quotation
+      lineNo: Line No
+      materialId: Material
+      uoMId: UoM
+      quantity: Quantity
+      unitPrice: Unit Price
+      taxRate: Tax Rate
+      taxAmount: Tax Amount
+      amount: Amount
+      amountWithTax: Amount With Tax
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      quotation: Quotation
+      material: Material
+      uoM: Uo M
     ErpSalReceipt:
-      id: null
-      code: null
-      orgId: null
-      customerId: null
-      businessDate: null
-      currencyId: null
-      exchangeRate: null
-      amountSource: null
-      amountFunctional: null
-      totalAmount: null
-      settlementMethodId: null
-      receiptMethod: null
-      bankAccountId: null
-      partnerBankAccountId: null
-      docStatus: null
+      id: ID
+      code: Code
+      orgId: Organization
+      customerId: Customer
+      businessDate: Business Date
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      totalAmount: Total Amt
+      settlementMethodId: Settlement Method
+      receiptMethod: Receipt Method
+      bankAccountId: Bank Account
+      partnerBankAccountId: Partner Bank Account
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      writtenOffStatus: null
+      writtenOffStatus: Written Off Status
       writtenOffStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      approvedBy: null
-      approvedAt: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      customer: null
-      currency: null
-      settlementMethod: null
-      lines: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      approvedBy: Approved By
+      approvedAt: Approved At
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      customer: Customer
+      currency: Currency
+      settlementMethod: Settlement Method
+      lines: Lines
     ErpSalReceiptLine:
-      id: null
-      receiptId: null
-      invoiceId: null
-      amount: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      receipt: null
-      invoice: null
+      id: ID
+      receiptId: Receipt
+      invoiceId: Invoice
+      amount: Amount
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      receipt: Receipt
+      invoice: Invoice
     ErpSalReturn:
-      id: null
-      code: null
-      orgId: null
-      deliveryId: null
-      customerId: null
-      warehouseId: null
-      businessDate: null
-      currencyId: null
-      exchangeRate: null
-      amountSource: null
-      amountFunctional: null
-      totalAmount: null
-      totalTaxAmount: null
-      totalAmountWithTax: null
-      docStatus: null
+      id: ID
+      code: Code
+      orgId: Organization
+      deliveryId: Delivery
+      customerId: Customer
+      warehouseId: Warehouse
+      businessDate: Business Date
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      totalAmount: Total Amt
+      totalTaxAmount: Total Tax
+      totalAmountWithTax: Total (Inc. Tax)
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      approvedBy: null
-      approvedAt: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      delivery: null
-      customer: null
-      warehouse: null
-      lines: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      approvedBy: Approved By
+      approvedAt: Approved At
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      delivery: Delivery
+      customer: Customer
+      warehouse: Warehouse
+      lines: Lines
     ErpSalReturnLine:
-      id: null
-      returnId: null
-      deliveryLineId: null
-      lineNo: null
-      materialId: null
-      skuId: null
-      uoMId: null
-      quantity: null
-      unitPrice: null
-      taxRate: null
-      taxAmount: null
-      amount: null
-      reason: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      remark: null
-      return: null
-      material: null
-      sku: null
-      uoM: null
+      id: ID
+      returnId: Return
+      deliveryLineId: Delivery Line
+      lineNo: Line No
+      materialId: Material
+      skuId: SKU
+      uoMId: UoM
+      quantity: Quantity
+      unitPrice: Unit Price
+      taxRate: Tax Rate
+      taxAmount: Tax Amount
+      amount: Amount
+      reason: Reason
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      return: Return
+      material: Material
+      sku: Sku
+      uoM: Uo M
+dict:
+  label:
+    erp-sal/doc-status: Doc Status
+    erp-sal/approve-status: Approve Status
+    erp-sal/received-status: Received Status
+    erp-sal/delivery-status: Delivery Status
+    erp-sal/biz-type: Sales Doc Type
+    erp-sal/invoice-type: Invoice Type
+dict.option.label:
+  erp-sal/doc-status:
+    '10': Draft
+    '20': Effective
+    '30': Voided
+  erp-sal/approve-status:
+    '10': Unsubmitted
+    '20': Submitted
+    '30': Approved
+    '40': Rejected
+  erp-sal/received-status:
+    '10': Unreceived
+    '20': Partially Received
+    '30': Fully Received
+  erp-sal/delivery-status:
+    '10': Unshipped
+    '20': Partially Shipped
+    '30': Fully Shipped
+  erp-sal/biz-type:
+    '10': Sales Quotation
+    '20': Sales Contract
+    '30': Sales Order
+    '40': Sales Issue
+    '50': Sales Invoice
+    '60': Receipt
+    '70': Sales Return
+  erp-sal/invoice-type:
+    '10': VAT Special
+    '20': VAT General
+    '30': Receipt Note

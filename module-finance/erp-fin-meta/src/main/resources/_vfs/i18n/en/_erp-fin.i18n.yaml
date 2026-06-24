@@ -16,328 +16,397 @@ entity:
 prop:
   label:
     ErpFinAccountingPeriod:
-      id: null
-      code: null
-      name: null
-      orgId: null
-      year: null
-      month: null
-      startDate: null
-      endDate: null
-      quarter: null
-      isAdjustment: null
-      status: null
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      year: Year
+      month: Month
+      startDate: Start Date
+      endDate: End Date
+      quarter: Quarter
+      isAdjustment: Is Adjustment
+      status: Status
       status_label: null
-      closedBy: null
-      closedAt: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      statusRecords: null
+      closedBy: Closed By
+      closedAt: Closed At
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      statusRecords: Status Records
     ErpFinAccountingPeriodStatus:
-      id: null
-      periodId: null
-      acctSchemaId: null
-      totalVouchers: null
-      postedVouchers: null
-      unpostedVouchers: null
-      arStatus: null
+      id: ID
+      periodId: Period
+      acctSchemaId: Acct Schema
+      totalVouchers: Total Vouchers
+      postedVouchers: Posted Vouchers
+      unpostedVouchers: Unposted Vouchers
+      arStatus: Ar Status
       arStatus_label: null
-      apStatus: null
+      apStatus: Ap Status
       apStatus_label: null
-      invStatus: null
+      invStatus: Inv Status
       invStatus_label: null
-      glStatus: null
+      glStatus: Gl Status
       glStatus_label: null
-      assetStatus: null
+      assetStatus: Asset Status
       assetStatus_label: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      period: null
-      acctSchema: null
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      period: Period
+      acctSchema: Acct Schema
     ErpFinArApItem:
-      id: null
-      code: null
-      orgId: null
-      acctSchemaId: null
-      direction: null
+      id: ID
+      code: Code
+      orgId: Organization
+      acctSchemaId: Acct Schema
+      direction: Direction
       direction_label: null
-      partnerId: null
-      sourceBillType: null
-      sourceBillCode: null
-      businessDate: null
-      dueDate: null
-      currencyId: null
-      exchangeRate: null
-      amountSource: null
-      amountFunctional: null
-      settledAmountSource: null
-      settledAmountFunctional: null
-      openAmountSource: null
-      openAmountFunctional: null
-      status: null
+      partnerId: Partner
+      sourceBillType: Source Bill Type
+      sourceBillCode: Source Bill Code
+      businessDate: Business Date
+      dueDate: Due Date
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      settledAmountSource: Settled Amount Source
+      settledAmountFunctional: Settled Amount Functional
+      openAmountSource: Open Amount Source
+      openAmountFunctional: Open Amount Functional
+      status: Status
       status_label: null
-      periodId: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      partner: null
-      acctSchema: null
-      currency: null
+      periodId: Period
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      partner: Partner
+      acctSchema: Acct Schema
+      currency: Currency
     ErpFinFundAccount:
-      id: null
-      code: null
-      name: null
-      orgId: null
-      accountType: null
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      accountType: Account Type
       accountType_label: null
-      subjectId: null
-      bankName: null
-      bankAccount: null
-      currencyId: null
-      openingBalance: null
-      currentBalance: null
-      status: null
+      subjectId: Subject
+      bankName: Bank Name
+      bankAccount: Bank Account
+      currencyId: Currency
+      openingBalance: Opening Balance
+      currentBalance: Current Balance
+      status: Status
       status_label: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      currency: null
-      subject: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      currency: Currency
+      subject: Subject
     ErpFinGlBalance:
-      id: null
-      orgId: null
-      acctSchemaId: null
-      periodId: null
-      subjectId: null
-      currencyId: null
-      openingDebit: null
-      openingCredit: null
-      periodDebit: null
-      periodCredit: null
-      closingDebit: null
-      closingCredit: null
-      yearOpeningDebit: null
-      yearOpeningCredit: null
-      partnerId: null
-      departmentId: null
-      projectId: null
-      warehouseId: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      acctSchema: null
-      period: null
-      subject: null
-      currency: null
+      id: ID
+      orgId: Organization
+      acctSchemaId: Acct Schema
+      periodId: Period
+      subjectId: Subject
+      currencyId: Currency
+      openingDebit: Opening Debit
+      openingCredit: Opening Credit
+      periodDebit: Period Debit
+      periodCredit: Period Credit
+      closingDebit: Closing Debit
+      closingCredit: Closing Credit
+      yearOpeningDebit: Year Opening Debit
+      yearOpeningCredit: Year Opening Credit
+      partnerId: Partner
+      departmentId: Department
+      projectId: Project
+      warehouseId: Warehouse
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      acctSchema: Acct Schema
+      period: Period
+      subject: Subject
+      currency: Currency
     ErpFinReconciliation:
-      id: null
-      code: null
-      orgId: null
-      acctSchemaId: null
-      direction: null
+      id: ID
+      code: Code
+      orgId: Organization
+      acctSchemaId: Acct Schema
+      direction: Direction
       direction_label: null
-      partnerId: null
-      businessDate: null
-      currencyId: null
-      exchangeRate: null
-      totalAmountSource: null
-      totalAmountFunctional: null
-      fxGainLoss: null
-      docStatus: null
+      partnerId: Partner
+      businessDate: Business Date
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      totalAmountSource: Total Amount Source
+      totalAmountFunctional: Total Amount Functional
+      fxGainLoss: Fx Gain Loss
+      docStatus: Doc Status
       docStatus_label: null
-      postedBy: null
-      postedAt: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      partner: null
-      acctSchema: null
-      currency: null
-      lines: null
+      postedBy: Posted By
+      postedAt: Posted At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      partner: Partner
+      acctSchema: Acct Schema
+      currency: Currency
+      lines: Lines
     ErpFinReconciliationLine:
-      id: null
-      reconciliationId: null
-      lineNo: null
-      paymentItemId: null
-      invoiceItemId: null
-      settledAmountSource: null
-      settledAmountFunctional: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      reconciliation: null
+      id: ID
+      reconciliationId: Reconciliation
+      lineNo: Line No
+      paymentItemId: Payment Item
+      invoiceItemId: Invoice Item
+      settledAmountSource: Settled Amount Source
+      settledAmountFunctional: Settled Amount Functional
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      reconciliation: Reconciliation
     ErpFinTrialBalance:
-      id: null
-      orgId: null
-      acctSchemaId: null
-      periodId: null
-      subjectId: null
-      subjectCode: null
-      subjectName: null
-      openingDebit: null
-      openingCredit: null
-      periodDebit: null
-      periodCredit: null
-      closingDebit: null
-      closingCredit: null
-      generatedAt: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      acctSchema: null
-      period: null
-      subject: null
+      id: ID
+      orgId: Organization
+      acctSchemaId: Acct Schema
+      periodId: Period
+      subjectId: Subject
+      subjectCode: Subject Code
+      subjectName: Subject Name
+      openingDebit: Opening Debit
+      openingCredit: Opening Credit
+      periodDebit: Period Debit
+      periodCredit: Period Credit
+      closingDebit: Closing Debit
+      closingCredit: Closing Credit
+      generatedAt: Generated At
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      acctSchema: Acct Schema
+      period: Period
+      subject: Subject
     ErpFinVoucher:
-      id: null
-      code: null
-      voucherType: null
+      id: ID
+      code: Code
+      voucherType: Voucher Type
       voucherType_label: null
-      voucherDate: null
-      voucherNo: null
-      orgId: null
-      acctSchemaId: null
-      periodId: null
-      totalDebit: null
-      totalCredit: null
-      isReversed: null
-      reversalOfVoucherId: null
-      docStatus: null
+      voucherDate: Voucher Date
+      voucherNo: Voucher No
+      orgId: Organization
+      acctSchemaId: Acct Schema
+      periodId: Period
+      totalDebit: Total Debit
+      totalCredit: Total Credit
+      isReversed: Is Reversed
+      reversalOfVoucherId: Reversal Of Voucher
+      docStatus: Doc Status
       docStatus_label: null
-      postedBy: null
-      postedAt: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      period: null
-      acctSchema: null
-      lines: null
-      billLinks: null
+      postedBy: Posted By
+      postedAt: Posted At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      period: Period
+      acctSchema: Acct Schema
+      lines: Lines
+      billLinks: Bill Links
     ErpFinVoucherBillR:
-      id: null
-      voucherId: null
-      billType: null
-      billCode: null
-      billLineCode: null
-      businessType: null
+      id: ID
+      voucherId: Voucher
+      billType: Bill Type
+      billCode: Bill Code
+      billLineCode: Bill Line Code
+      businessType: Business Type
       businessType_label: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      voucher: null
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      voucher: Voucher
     ErpFinVoucherLine:
-      id: null
-      voucherId: null
-      lineNo: null
-      subjectId: null
-      subjectCode: null
-      subjectName: null
-      dcDirection: null
+      id: ID
+      voucherId: Voucher
+      lineNo: Line No
+      subjectId: Subject
+      subjectCode: Subject Code
+      subjectName: Subject Name
+      dcDirection: Dc Direction
       dcDirection_label: null
-      debitAmount: null
-      creditAmount: null
-      currencyId: null
-      exchangeRate: null
-      amountSource: null
-      amountFunctional: null
-      acctSchemaId: null
-      orgId: null
-      memo: null
-      partnerId: null
-      departmentId: null
-      projectId: null
-      warehouseId: null
-      materialId: null
-      businessType: null
+      debitAmount: Debit Amount
+      creditAmount: Credit Amount
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      acctSchemaId: Acct Schema
+      orgId: Organization
+      memo: Memo
+      partnerId: Partner
+      departmentId: Department
+      projectId: Project
+      warehouseId: Warehouse
+      materialId: Material
+      businessType: Business Type
       businessType_label: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      voucher: null
-      subject: null
-      acctSchema: null
-      currency: null
-      partner: null
-      department: null
-      warehouse: null
-      org: null
-      material: null
-      project: null
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      voucher: Voucher
+      subject: Subject
+      acctSchema: Acct Schema
+      currency: Currency
+      partner: Partner
+      department: Department
+      warehouse: Warehouse
+      org: Org
+      material: Material
+      project: Project
     ErpFinVoucherTemplate:
-      id: null
-      code: null
-      name: null
-      acctSchemaId: null
-      businessType: null
+      id: ID
+      code: Code
+      name: Name
+      acctSchemaId: Acct Schema
+      businessType: Business Type
       businessType_label: null
-      voucherType: null
+      voucherType: Voucher Type
       voucherType_label: null
-      templateType: null
-      isActive: null
-      validFrom: null
-      validTo: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      acctSchema: null
-      lines: null
+      templateType: Template Type
+      isActive: Active
+      validFrom: Valid From
+      validTo: Valid To
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      acctSchema: Acct Schema
+      lines: Lines
     ErpFinVoucherTemplateLine:
-      id: null
-      templateId: null
-      lineNo: null
-      subjectCode: null
-      dcDirection: null
+      id: ID
+      templateId: Template
+      lineNo: Line No
+      subjectCode: Subject Code
+      dcDirection: Dc Direction
       dcDirection_label: null
-      amountExpression: null
-      accountKey: null
-      amountKey: null
-      memoTemplate: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      template: null
+      amountExpression: Amount Expression
+      accountKey: Account Key
+      amountKey: Amount Key
+      memoTemplate: Memo Template
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      template: Template
+dict:
+  label:
+    erp-fin/voucher-type: Voucher Type
+    erp-fin/voucher-status: Voucher Status
+    erp-fin/dc-direction: Debit/Credit Direction
+    erp-fin/business-type: Business Type
+    erp-fin/period-status: Period Status
+    erp-fin/fund-account-type: Account Type
+    erp-fin/fund-account-status: Account Status
+    erp-fin/ar-ap-direction: AR/AP Direction
+    erp-fin/ar-ap-status: AR/AP Status
+    erp-fin/reconciliation-status: Reconciliation Status
+    erp-fin/module-close-status: Module Close Status
+dict.option.label:
+  erp-fin/voucher-type:
+    '10': Receive
+    '20': Pay
+    '30': Transfer
+  erp-fin/voucher-status:
+    '10': Draft
+    '20': Posted
+    '30': Voided
+  erp-fin/dc-direction:
+    '10': Debit
+    '20': Credit
+  erp-fin/business-type:
+    '10': Purchase Receipt
+    '20': Sales Issue
+    '30': AP Invoice
+    '40': AR Invoice
+    '50': Payment
+    '60': Receipt
+    '70': Depreciation
+    '80': Capitalization
+    '90': Disposal
+    '100': Prod Cost Transfer
+    '110': Project Cost Accrual
+    '120': Period-End Closing
+    '130': FX Gain/Loss
+  erp-fin/period-status:
+    '10': Open
+    '20': Closing
+    '30': Closed
+    '40': Not Open
+  erp-fin/fund-account-type:
+    '10': Bank
+    '20': Cash
+    '30': Alipay
+    '40': WeChat
+    '50': Other
+  erp-fin/fund-account-status:
+    '10': Enabled
+    '20': Disabled
+  erp-fin/ar-ap-direction:
+    '10': AR
+    '20': AP
+  erp-fin/ar-ap-status:
+    '10': Unmatched
+    '20': Partially Matched
+    '30': Matched
+    '40': Voided
+  erp-fin/reconciliation-status:
+    '10': Draft
+    '20': Posted
+    '30': Red Offset
+  erp-fin/module-close-status:
+    '10': Unsettled
+    '20': Closing
+    '30': Settled

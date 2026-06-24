@@ -18,380 +18,436 @@ entity:
 prop:
   label:
     ErpInvBatch:
-      id: null
-      orgId: null
-      batchNo: null
-      materialId: null
-      skuId: null
-      warehouseId: null
-      totalQuantity: null
-      availableQuantity: null
-      productionDate: null
-      expiryDate: null
-      shelfLifeDays: null
-      status: null
+      id: ID
+      orgId: Organization
+      batchNo: Batch No
+      materialId: Material
+      skuId: SKU
+      warehouseId: Warehouse
+      totalQuantity: Total Quantity
+      availableQuantity: Available Quantity
+      productionDate: Production Date
+      expiryDate: Expiry Date
+      shelfLifeDays: Shelf Life Days
+      status: Status
       status_label: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      material: null
-      sku: null
-      warehouse: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      material: Material
+      sku: Sku
+      warehouse: Warehouse
     ErpInvCostLayer:
-      id: null
-      orgId: null
-      materialId: null
-      skuId: null
-      warehouseId: null
-      batchNo: null
-      costMethod: null
+      id: ID
+      orgId: Organization
+      materialId: Material
+      skuId: SKU
+      warehouseId: Warehouse
+      batchNo: Batch No
+      costMethod: Cost Method
       costMethod_label: null
-      incomingQuantity: null
-      remainingQuantity: null
-      unitCost: null
-      totalCost: null
-      currencyId: null
-      incomingDate: null
-      incomingMoveId: null
-      acctSchemaId: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      material: null
-      sku: null
-      warehouse: null
-      currency: null
+      incomingQuantity: Incoming Quantity
+      remainingQuantity: Remaining Quantity
+      unitCost: Unit Cost
+      totalCost: Total Cost
+      currencyId: Currency
+      incomingDate: Incoming Date
+      incomingMoveId: Incoming Move
+      acctSchemaId: Acct Schema
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      material: Material
+      sku: Sku
+      warehouse: Warehouse
+      currency: Currency
     ErpInvPickingOrder:
-      id: null
-      code: null
-      orgId: null
-      businessDate: null
-      warehouseId: null
-      pickerId: null
-      docStatus: null
+      id: ID
+      code: Code
+      orgId: Organization
+      businessDate: Business Date
+      warehouseId: Warehouse
+      pickerId: Picker
+      docStatus: Doc Status
       docStatus_label: null
-      relatedBillType: null
-      relatedBillCode: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      warehouse: null
-      lines: null
+      relatedBillType: Related Bill Type
+      relatedBillCode: Related Bill Code
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      warehouse: Warehouse
+      lines: Lines
     ErpInvPickingOrderLine:
-      id: null
-      pickingId: null
-      lineNo: null
-      materialId: null
-      skuId: null
-      uoMId: null
-      sourceLocationId: null
-      quantity: null
-      pickedQuantity: null
-      batchNo: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      picking: null
-      material: null
-      sku: null
-      uoM: null
+      id: ID
+      pickingId: Picking
+      lineNo: Line No
+      materialId: Material
+      skuId: SKU
+      uoMId: UoM
+      sourceLocationId: Source Location
+      quantity: Quantity
+      pickedQuantity: Picked Quantity
+      batchNo: Batch No
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      picking: Picking
+      material: Material
+      sku: Sku
+      uoM: Uo M
     ErpInvReservation:
-      id: null
-      code: null
-      orgId: null
-      businessDate: null
-      sourceBillType: null
-      sourceBillCode: null
-      reservedForPartnerId: null
-      status: null
+      id: ID
+      code: Code
+      orgId: Organization
+      businessDate: Business Date
+      sourceBillType: Source Bill Type
+      sourceBillCode: Source Bill Code
+      reservedForPartnerId: Reserved For Partner
+      status: Status
       status_label: null
-      validUntil: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      lines: null
+      validUntil: Valid Until
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      lines: Lines
     ErpInvReservationLine:
-      id: null
-      reservationId: null
-      lineNo: null
-      materialId: null
-      skuId: null
-      warehouseId: null
-      locationId: null
-      batchNo: null
-      reservedQuantity: null
-      consumedQuantity: null
-      uomId: null
-      sourceLineCode: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      reservation: null
-      material: null
-      sku: null
-      warehouse: null
+      id: ID
+      reservationId: Reservation
+      lineNo: Line No
+      materialId: Material
+      skuId: SKU
+      warehouseId: Warehouse
+      locationId: Location
+      batchNo: Batch No
+      reservedQuantity: Reserved Quantity
+      consumedQuantity: Consumed Quantity
+      uomId: Uom
+      sourceLineCode: Source Line Code
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      reservation: Reservation
+      material: Material
+      sku: Sku
+      warehouse: Warehouse
     ErpInvSerialNumber:
-      id: null
-      orgId: null
-      serialNo: null
-      materialId: null
-      skuId: null
-      warehouseId: null
-      locationId: null
-      status: null
+      id: ID
+      orgId: Organization
+      serialNo: Serial No
+      materialId: Material
+      skuId: SKU
+      warehouseId: Warehouse
+      locationId: Location
+      status: Status
       status_label: null
-      inBillType: null
-      inBillCode: null
-      outBillType: null
-      outBillCode: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      material: null
-      sku: null
+      inBillType: In Bill Type
+      inBillCode: In Bill Code
+      outBillType: Out Bill Type
+      outBillCode: Out Bill Code
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      material: Material
+      sku: Sku
     ErpInvStockBalance:
-      id: null
-      orgId: null
-      materialId: null
-      skuId: null
-      warehouseId: null
-      locationId: null
-      batchNo: null
-      totalQuantity: null
-      reservedQuantity: null
-      lockedQuantity: null
-      availableQuantity: null
-      costMethod: null
+      id: ID
+      orgId: Organization
+      materialId: Material
+      skuId: SKU
+      warehouseId: Warehouse
+      locationId: Location
+      batchNo: Batch No
+      totalQuantity: Total Quantity
+      reservedQuantity: Reserved Quantity
+      lockedQuantity: Locked Quantity
+      availableQuantity: Available Quantity
+      costMethod: Cost Method
       costMethod_label: null
-      avgCost: null
-      totalCost: null
-      currencyId: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      material: null
-      sku: null
-      warehouse: null
-      currency: null
-      location: null
-      org: null
+      avgCost: Avg Cost
+      totalCost: Total Cost
+      currencyId: Currency
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      material: Material
+      sku: Sku
+      warehouse: Warehouse
+      currency: Currency
+      location: Location
+      org: Org
     ErpInvStockLedger:
-      id: null
-      code: null
-      orgId: null
-      moveId: null
-      moveLineId: null
-      materialId: null
-      skuId: null
-      warehouseId: null
-      locationId: null
-      quantity: null
-      unitCost: null
-      totalCost: null
-      balanceQuantity: null
-      balanceTotalCost: null
-      costMethod: null
+      id: ID
+      code: Code
+      orgId: Organization
+      moveId: Move
+      moveLineId: Move Line
+      materialId: Material
+      skuId: SKU
+      warehouseId: Warehouse
+      locationId: Location
+      quantity: Quantity
+      unitCost: Unit Cost
+      totalCost: Total Cost
+      balanceQuantity: Balance Quantity
+      balanceTotalCost: Balance Total Cost
+      costMethod: Cost Method
       costMethod_label: null
-      acctSchemaId: null
-      currencyId: null
-      businessDate: null
-      batchNo: null
-      serialNo: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      move: null
-      moveLine: null
-      material: null
-      sku: null
-      warehouse: null
-      location: null
-      currency: null
-      org: null
-      acctSchema: null
+      acctSchemaId: Acct Schema
+      currencyId: Currency
+      businessDate: Business Date
+      batchNo: Batch No
+      serialNo: Serial No
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      move: Move
+      moveLine: Move Line
+      material: Material
+      sku: Sku
+      warehouse: Warehouse
+      location: Location
+      currency: Currency
+      org: Org
+      acctSchema: Acct Schema
     ErpInvStockMove:
-      id: null
-      code: null
-      moveType: null
+      id: ID
+      code: Code
+      moveType: Move Type
       moveType_label: null
-      orgId: null
-      businessDate: null
-      sourceWarehouseId: null
-      sourceLocationId: null
-      destWarehouseId: null
-      destLocationId: null
-      docStatus: null
+      orgId: Organization
+      businessDate: Business Date
+      sourceWarehouseId: Source Warehouse
+      sourceLocationId: Source Location
+      destWarehouseId: Dest Warehouse
+      destLocationId: Dest Location
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      relatedBillType: null
-      relatedBillCode: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      sourceWarehouse: null
-      destWarehouse: null
-      lines: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      relatedBillType: Related Bill Type
+      relatedBillCode: Related Bill Code
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      sourceWarehouse: Source Warehouse
+      destWarehouse: Dest Warehouse
+      lines: Lines
     ErpInvStockMoveLine:
-      id: null
-      moveId: null
-      lineNo: null
-      materialId: null
-      skuId: null
-      uoMId: null
-      quantity: null
-      unitCost: null
-      totalCost: null
-      currencyId: null
-      batchNo: null
-      serialNo: null
-      sourceLocationId: null
-      destLocationId: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      move: null
-      material: null
-      sku: null
-      uoM: null
-      currency: null
+      id: ID
+      moveId: Move
+      lineNo: Line No
+      materialId: Material
+      skuId: SKU
+      uoMId: UoM
+      quantity: Quantity
+      unitCost: Unit Cost
+      totalCost: Total Cost
+      currencyId: Currency
+      batchNo: Batch No
+      serialNo: Serial No
+      sourceLocationId: Source Location
+      destLocationId: Dest Location
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      move: Move
+      material: Material
+      sku: Sku
+      uoM: Uo M
+      currency: Currency
     ErpInvStockTake:
-      id: null
-      code: null
-      orgId: null
-      businessDate: null
-      takeType: null
+      id: ID
+      code: Code
+      orgId: Organization
+      businessDate: Business Date
+      takeType: Take Type
       takeType_label: null
-      warehouseId: null
-      docStatus: null
+      warehouseId: Warehouse
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      warehouse: null
-      lines: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      warehouse: Warehouse
+      lines: Lines
     ErpInvStockTakeLine:
-      id: null
-      takeId: null
-      lineNo: null
-      materialId: null
-      skuId: null
-      uoMId: null
-      locationId: null
-      batchNo: null
-      bookQuantity: null
-      actualQuantity: null
-      differenceQuantity: null
-      unitCost: null
-      differenceAmount: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      take: null
-      material: null
-      sku: null
-      uoM: null
+      id: ID
+      takeId: Take
+      lineNo: Line No
+      materialId: Material
+      skuId: SKU
+      uoMId: UoM
+      locationId: Location
+      batchNo: Batch No
+      bookQuantity: Book Quantity
+      actualQuantity: Actual Quantity
+      differenceQuantity: Difference Quantity
+      unitCost: Unit Cost
+      differenceAmount: Difference Amount
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      take: Take
+      material: Material
+      sku: Sku
+      uoM: Uo M
     ErpInvTransferOrder:
-      id: null
-      code: null
-      orgId: null
-      businessDate: null
-      fromWarehouseId: null
-      toWarehouseId: null
-      inTransitWarehouseId: null
-      docStatus: null
+      id: ID
+      code: Code
+      orgId: Organization
+      businessDate: Business Date
+      fromWarehouseId: From Warehouse
+      toWarehouseId: To Warehouse
+      inTransitWarehouseId: In Transit Warehouse
+      docStatus: Doc Status
       docStatus_label: null
-      approveStatus: null
+      approveStatus: Approve Status
       approveStatus_label: null
-      posted: null
-      postedAt: null
-      postedBy: null
-      approvedBy: null
-      approvedAt: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      fromWarehouse: null
-      toWarehouse: null
-      inTransitWarehouse: null
-      lines: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      approvedBy: Approved By
+      approvedAt: Approved At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      fromWarehouse: From Warehouse
+      toWarehouse: To Warehouse
+      inTransitWarehouse: In Transit Warehouse
+      lines: Lines
     ErpInvTransferOrderLine:
-      id: null
-      transferId: null
-      lineNo: null
-      materialId: null
-      skuId: null
-      uoMId: null
-      quantity: null
-      batchNo: null
-      remark: null
-      delVersion: null
-      version: null
-      createdBy: null
-      createTime: null
-      updatedBy: null
-      updateTime: null
-      transfer: null
-      material: null
-      sku: null
-      uoM: null
+      id: ID
+      transferId: Transfer
+      lineNo: Line No
+      materialId: Material
+      skuId: SKU
+      uoMId: UoM
+      quantity: Quantity
+      batchNo: Batch No
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      transfer: Transfer
+      material: Material
+      sku: Sku
+      uoM: Uo M
+dict:
+  label:
+    erp-inv/move-status: Inventory Move Status
+    erp-inv/operation-type: Inventory Operation Type
+    erp-inv/move-direction: Move Direction
+    erp-inv/approve-status: Approve Status
+    erp-inv/batch-status: Batch Status
+    erp-inv/serial-status: Serial Status
+    erp-inv/reservation-status: Reservation Status
+    erp-inv/picking-status: Picking Status
+    erp-inv/take-type: Take Type
+dict.option.label:
+  erp-inv/move-status:
+    '10': Draft
+    '20': Confirmed
+    '30': Completed
+    '40': Cancelled
+  erp-inv/operation-type:
+    '10': Receipt
+    '20': Issue
+    '30': Internal Transfer
+    '40': Manufactured
+  erp-inv/move-direction:
+    '10': Receipt
+    '20': Issue
+  erp-inv/approve-status:
+    '10': Unsubmitted
+    '20': Submitted
+    '30': Approved
+    '40': Rejected
+  erp-inv/batch-status:
+    '10': In Use
+    '20': Locked
+    '30': Expired
+    '40': Depleted
+    '50': Quality Frozen
+  erp-inv/serial-status:
+    '10': In Stock
+    '20': Delivered
+    '30': Reserved
+    '40': Frozen
+  erp-inv/reservation-status:
+    '10': Active
+    '20': Partially Consumed
+    '30': Fully Consumed
+    '40': Cancelled
+    '50': Expired
+  erp-inv/picking-status:
+    '10': Pending Pick
+    '20': Picking
+    '30': Picked
+    '40': Cancelled
+  erp-inv/take-type:
+    '10': Full Count
+    '20': Sample Count
+    '30': Cycle Count
