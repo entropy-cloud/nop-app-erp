@@ -60,6 +60,9 @@
                 <!--优先级-->
                 <col id="priority" ui:number="true" sortable="true"/>
 
+                <!--阻塞原因-->
+                <col id="blockReason" sortable="true"/>
+
                 <!--排序号-->
                 <col id="sortNum" ui:number="true" sortable="true"/>
 
@@ -95,10 +98,10 @@
  actualEndDate[实际结束日期] estimatedHours[预估工时]
  actualHours[实际工时] dependsOnId[依赖任务]
  status[状态] priority[优先级]
- sortNum[排序号] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ blockReason[阻塞原因] sortNum[排序号]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-任务" i18n-en:title="Add Task">
@@ -110,7 +113,8 @@
  actualEndDate[实际结束日期] estimatedHours[预估工时]
  actualHours[实际工时] dependsOnId[依赖任务]
  status[状态] priority[优先级]
- sortNum[排序号] remark[备注]
+ blockReason[阻塞原因] sortNum[排序号]
+ remark[备注] 
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-任务" i18n-en:title="Edit Task">
@@ -122,8 +126,8 @@
  actualEndDate[实际结束日期] estimatedHours[预估工时]
  actualHours[实际工时] dependsOnId[依赖任务]
  status[状态] priority[优先级]
- sortNum[排序号] remark[备注]
- delVersion[逻辑删除版本] 
+ blockReason[阻塞原因] sortNum[排序号]
+ remark[备注] delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

@@ -8,6 +8,23 @@ CREATE TABLE erp_md_material(
   constraint PK_erp_md_material primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_qa_inspection_template(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '编码',
+  NAME VARCHAR(200) NOT NULL    COMMENT '名称',
+  INSPECTION_TYPE INTEGER NOT NULL    COMMENT '检验类型',
+  MATERIAL_ID BIGINT NULL    COMMENT '适用物料',
+  IS_ACTIVE INTEGER default 1  NOT NULL    COMMENT '是否启用',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_qa_inspection_template primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_md_partner(
   ID BIGINT NULL    COMMENT 'null',
   CODE VARCHAR(50) NULL    COMMENT 'null',
@@ -45,48 +62,6 @@ CREATE TABLE erp_md_organization(
   PARENT_ID BIGINT NULL    COMMENT 'null',
   STATUS INTEGER NULL    COMMENT 'null',
   constraint PK_erp_md_organization primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_qa_inspection_template(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  CODE VARCHAR(50) NOT NULL    COMMENT '编码',
-  NAME VARCHAR(200) NOT NULL    COMMENT '名称',
-  INSPECTION_TYPE INTEGER NOT NULL    COMMENT '检验类型',
-  MATERIAL_ID BIGINT NULL    COMMENT '适用物料',
-  IS_ACTIVE INTEGER default 1  NOT NULL    COMMENT '是否启用',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_qa_inspection_template primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_qa_non_conformance(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  CODE VARCHAR(50) NOT NULL    COMMENT '单号',
-  NCR_DATE DATE NOT NULL    COMMENT '报告日期',
-  SOURCE_TYPE VARCHAR(50) NULL    COMMENT '来源类型',
-  SOURCE_CODE VARCHAR(50) NULL    COMMENT '来源单号',
-  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
-  QUANTITY DECIMAL(20,4) NULL    COMMENT '不合格数量',
-  DESCRIPTION VARCHAR(2000) NULL    COMMENT '问题描述',
-  SEVERITY INTEGER NOT NULL    COMMENT '严重程度',
-  STATUS INTEGER NOT NULL    COMMENT '状态',
-  ASSIGNED_TO BIGINT NULL    COMMENT '责任人',
-  RESOLVED_BY BIGINT NULL    COMMENT '解决人',
-  RESOLVED_AT DATETIME NULL    COMMENT '解决时间',
-  RESOLUTION VARCHAR(2000) NULL    COMMENT '解决措施',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_qa_non_conformance primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_qa_risk_register(
@@ -155,6 +130,26 @@ CREATE TABLE erp_qa_sampling_plan(
   constraint PK_erp_qa_sampling_plan primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_qa_inspection_template_line(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  TEMPLATE_ID BIGINT NOT NULL    COMMENT '模板ID',
+  LINE_NO INTEGER NOT NULL    COMMENT '行号',
+  PARAMETER_NAME VARCHAR(200) NOT NULL    COMMENT '检验参数名称',
+  SPEC_MIN DECIMAL(20,6) NULL    COMMENT '规格下限',
+  SPEC_MAX DECIMAL(20,6) NULL    COMMENT '规格上限',
+  UNIT VARCHAR(50) NULL    COMMENT '计量单位',
+  IS_REQUIRED INTEGER default 1  NOT NULL    COMMENT '是否必检',
+  INSPECTION_METHOD VARCHAR(200) NULL    COMMENT '检验方法',
+  SORT_NUM INTEGER default 0  NULL    COMMENT '排序',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_qa_inspection_template_line primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_qa_quality_goal(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '编码',
@@ -212,8 +207,10 @@ CREATE TABLE erp_qa_inspection(
   RELATED_BILL_CODE VARCHAR(50) NULL    COMMENT '关联单据号',
   RELATED_LINE_CODE VARCHAR(50) NULL    COMMENT '关联单据行号',
   MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
+  TEMPLATE_ID BIGINT NULL    COMMENT '质检模板',
   SUPPLIER_ID BIGINT NULL    COMMENT '供应商',
   WAREHOUSE_ID BIGINT NULL    COMMENT '仓库',
+  BATCH_NO VARCHAR(50) NULL    COMMENT '批号',
   INSPECTION_DATE DATE NOT NULL    COMMENT '检验日期',
   LOT_QUANTITY DECIMAL(20,4) NULL    COMMENT '批量',
   SAMPLE_QUANTITY DECIMAL(20,4) NULL    COMMENT '抽样数量',
@@ -236,23 +233,57 @@ CREATE TABLE erp_qa_inspection(
   constraint PK_erp_qa_inspection primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_qa_inspection_template_line(
+CREATE TABLE erp_qa_inspection_line(
   ID BIGINT NOT NULL    COMMENT 'ID',
-  TEMPLATE_ID BIGINT NOT NULL    COMMENT '模板ID',
+  INSPECTION_ID BIGINT NOT NULL    COMMENT '质检单ID',
   LINE_NO INTEGER NOT NULL    COMMENT '行号',
-  PARAMETER_NAME VARCHAR(200) NOT NULL    COMMENT '检验参数名称',
+  PARAMETER_ID BIGINT NULL    COMMENT '检验参数',
+  PARAMETER_NAME VARCHAR(200) NULL    COMMENT '检验参数名称',
   SPEC_MIN DECIMAL(20,6) NULL    COMMENT '规格下限',
   SPEC_MAX DECIMAL(20,6) NULL    COMMENT '规格上限',
+  MEASURED_VALUE DECIMAL(20,6) NULL    COMMENT '实测值',
   UNIT VARCHAR(50) NULL    COMMENT '计量单位',
-  IS_REQUIRED INTEGER default 1  NOT NULL    COMMENT '是否必检',
-  SORT_NUM INTEGER default 0  NULL    COMMENT '排序',
+  RESULT INTEGER NOT NULL    COMMENT '行结果',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
   CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
   CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_qa_inspection_template_line primary key (ID)
+  constraint PK_erp_qa_inspection_line primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_qa_non_conformance(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '单号',
+  NCR_DATE DATE NOT NULL    COMMENT '报告日期',
+  SOURCE_TYPE VARCHAR(50) NULL    COMMENT '来源类型',
+  SOURCE_CODE VARCHAR(50) NULL    COMMENT '来源单号',
+  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
+  INSPECTION_ID BIGINT NULL    COMMENT '质检单ID',
+  QUANTITY DECIMAL(20,4) NULL    COMMENT '不合格数量',
+  DESCRIPTION VARCHAR(2000) NULL    COMMENT '问题描述',
+  SEVERITY INTEGER NOT NULL    COMMENT '严重程度',
+  DISPOSITION_TYPE INTEGER NULL    COMMENT '处理决定',
+  STATUS INTEGER NOT NULL    COMMENT '状态',
+  SUPPLIER_ID BIGINT NULL    COMMENT '供应商',
+  PARAMETER_NAME VARCHAR(200) NULL    COMMENT '不合格参数',
+  MEASURED_VALUE DECIMAL(20,6) NULL    COMMENT '实测值',
+  SPEC_MIN DECIMAL(20,6) NULL    COMMENT '规格下限',
+  SPEC_MAX DECIMAL(20,6) NULL    COMMENT '规格上限',
+  ASSIGNED_TO BIGINT NULL    COMMENT '责任人',
+  RESOLVED_BY BIGINT NULL    COMMENT '解决人',
+  RESOLVED_AT DATETIME NULL    COMMENT '解决时间',
+  RESOLUTION VARCHAR(2000) NULL    COMMENT '解决措施',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_qa_non_conformance primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_qa_action(
@@ -277,29 +308,10 @@ CREATE TABLE erp_qa_action(
   constraint PK_erp_qa_action primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_qa_inspection_line(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  INSPECTION_ID BIGINT NOT NULL    COMMENT '质检单ID',
-  LINE_NO INTEGER NOT NULL    COMMENT '行号',
-  PARAMETER_ID BIGINT NULL    COMMENT '检验参数',
-  PARAMETER_NAME VARCHAR(200) NULL    COMMENT '检验参数名称',
-  SPEC_MIN DECIMAL(20,6) NULL    COMMENT '规格下限',
-  SPEC_MAX DECIMAL(20,6) NULL    COMMENT '规格上限',
-  MEASURED_VALUE DECIMAL(20,6) NULL    COMMENT '实测值',
-  UNIT VARCHAR(50) NULL    COMMENT '计量单位',
-  RESULT INTEGER NOT NULL    COMMENT '行结果',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_qa_inspection_line primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
 
    ALTER TABLE erp_md_material COMMENT '物料';
+                
+   ALTER TABLE erp_qa_inspection_template COMMENT '质检模板';
                 
    ALTER TABLE erp_md_partner COMMENT '往来单位';
                 
@@ -309,15 +321,13 @@ CREATE TABLE erp_qa_inspection_line(
                 
    ALTER TABLE erp_md_organization COMMENT '组织';
                 
-   ALTER TABLE erp_qa_inspection_template COMMENT '质检模板';
-                
-   ALTER TABLE erp_qa_non_conformance COMMENT '不合格品报告';
-                
    ALTER TABLE erp_qa_risk_register COMMENT '风险登记';
                 
    ALTER TABLE erp_qa_review COMMENT '质量评审';
                 
    ALTER TABLE erp_qa_sampling_plan COMMENT '抽样方案';
+                
+   ALTER TABLE erp_qa_inspection_template_line COMMENT '质检模板行';
                 
    ALTER TABLE erp_qa_quality_goal COMMENT '质量目标';
                 
@@ -325,9 +335,9 @@ CREATE TABLE erp_qa_inspection_line(
                 
    ALTER TABLE erp_qa_inspection COMMENT '质检单';
                 
-   ALTER TABLE erp_qa_inspection_template_line COMMENT '质检模板行';
+   ALTER TABLE erp_qa_inspection_line COMMENT '质检单行';
+                
+   ALTER TABLE erp_qa_non_conformance COMMENT '不合格品报告';
                 
    ALTER TABLE erp_qa_action COMMENT '纠正预防措施';
-                
-   ALTER TABLE erp_qa_inspection_line COMMENT '质检单行';
                 

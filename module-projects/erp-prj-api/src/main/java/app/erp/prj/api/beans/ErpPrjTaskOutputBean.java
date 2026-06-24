@@ -234,10 +234,24 @@
         }
 
 
-        private Integer _sortNum;
+        private String _blockReason;
 
     
         @PropMeta(propId=15)
+    
+        public String getBlockReason(){
+            return _blockReason;
+        }
+
+        public void setBlockReason(String value){
+            this._blockReason = value;
+        }
+
+
+        private Integer _sortNum;
+
+    
+        @PropMeta(propId=16)
     
         public Integer getSortNum(){
             return _sortNum;
@@ -251,7 +265,7 @@
         private String _remark;
 
     
-        @PropMeta(propId=16)
+        @PropMeta(propId=17)
     
         public String getRemark(){
             return _remark;
@@ -265,7 +279,7 @@
         private Long _delVersion;
 
     
-        @PropMeta(propId=17)
+        @PropMeta(propId=18)
     
         public Long getDelVersion(){
             return _delVersion;
@@ -279,7 +293,7 @@
         private Integer _version;
 
     
-        @PropMeta(propId=18)
+        @PropMeta(propId=19)
     
         public Integer getVersion(){
             return _version;
@@ -293,7 +307,7 @@
         private String _createdBy;
 
     
-        @PropMeta(propId=19)
+        @PropMeta(propId=20)
     
         public String getCreatedBy(){
             return _createdBy;
@@ -307,7 +321,7 @@
         private java.sql.Timestamp _createTime;
 
     
-        @PropMeta(propId=20)
+        @PropMeta(propId=21)
     
         public java.sql.Timestamp getCreateTime(){
             return _createTime;
@@ -321,7 +335,7 @@
         private String _updatedBy;
 
     
-        @PropMeta(propId=21)
+        @PropMeta(propId=22)
     
         public String getUpdatedBy(){
             return _updatedBy;
@@ -335,7 +349,7 @@
         private java.sql.Timestamp _updateTime;
 
     
-        @PropMeta(propId=22)
+        @PropMeta(propId=23)
     
         public java.sql.Timestamp getUpdateTime(){
             return _updateTime;

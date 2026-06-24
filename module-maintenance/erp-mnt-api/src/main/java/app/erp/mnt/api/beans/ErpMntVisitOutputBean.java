@@ -194,10 +194,62 @@
         }
 
 
-        private String _remark;
+        private Integer _visitType;
 
     
         @PropMeta(propId=13)
+    
+        public Integer getVisitType(){
+            return _visitType;
+        }
+
+        public void setVisitType(Integer value){
+            this._visitType = value;
+        }
+
+
+        private String _visitType_label;
+
+    
+        public String getVisitType_label(){
+            return _visitType_label;
+        }
+
+        public void setVisitType_label(String value){
+            this._visitType_label = value;
+        }
+
+
+        private Integer _result;
+
+    
+        @PropMeta(propId=14)
+    
+        public Integer getResult(){
+            return _result;
+        }
+
+        public void setResult(Integer value){
+            this._result = value;
+        }
+
+
+        private String _result_label;
+
+    
+        public String getResult_label(){
+            return _result_label;
+        }
+
+        public void setResult_label(String value){
+            this._result_label = value;
+        }
+
+
+        private String _remark;
+
+    
+        @PropMeta(propId=15)
     
         public String getRemark(){
             return _remark;
@@ -211,7 +263,7 @@
         private Long _delVersion;
 
     
-        @PropMeta(propId=14)
+        @PropMeta(propId=16)
     
         public Long getDelVersion(){
             return _delVersion;
@@ -225,7 +277,7 @@
         private Integer _version;
 
     
-        @PropMeta(propId=15)
+        @PropMeta(propId=17)
     
         public Integer getVersion(){
             return _version;
@@ -239,7 +291,7 @@
         private String _createdBy;
 
     
-        @PropMeta(propId=16)
+        @PropMeta(propId=18)
     
         public String getCreatedBy(){
             return _createdBy;
@@ -253,7 +305,7 @@
         private java.sql.Timestamp _createTime;
 
     
-        @PropMeta(propId=17)
+        @PropMeta(propId=19)
     
         public java.sql.Timestamp getCreateTime(){
             return _createTime;
@@ -267,7 +319,7 @@
         private String _updatedBy;
 
     
-        @PropMeta(propId=18)
+        @PropMeta(propId=20)
     
         public String getUpdatedBy(){
             return _updatedBy;
@@ -281,7 +333,7 @@
         private java.sql.Timestamp _updateTime;
 
     
-        @PropMeta(propId=19)
+        @PropMeta(propId=21)
     
         public java.sql.Timestamp getUpdateTime(){
             return _updateTime;
@@ -295,7 +347,7 @@
         private Long _orgId;
 
     
-        @PropMeta(propId=20)
+        @PropMeta(propId=22)
     
         public Long getOrgId(){
             return _orgId;
@@ -309,7 +361,7 @@
         private java.time.LocalDate _businessDate;
 
     
-        @PropMeta(propId=21)
+        @PropMeta(propId=23)
     
         public java.time.LocalDate getBusinessDate(){
             return _businessDate;
@@ -323,7 +375,7 @@
         private Boolean _posted;
 
     
-        @PropMeta(propId=22)
+        @PropMeta(propId=24)
     
         public Boolean getPosted(){
             return _posted;
@@ -337,7 +389,7 @@
         private java.sql.Timestamp _postedAt;
 
     
-        @PropMeta(propId=23)
+        @PropMeta(propId=25)
     
         public java.sql.Timestamp getPostedAt(){
             return _postedAt;
@@ -351,7 +403,7 @@
         private String _postedBy;
 
     
-        @PropMeta(propId=24)
+        @PropMeta(propId=26)
     
         public String getPostedBy(){
             return _postedBy;
@@ -392,6 +444,17 @@
 
         public void setTasks(List<Map<String,Object>> value){
             this._tasks = value;
+        }
+
+
+        private List<Map<String,Object>> _sparePartUsages;
+
+        public List<Map<String,Object>> getSparePartUsages(){
+            return _sparePartUsages;
+        }
+
+        public void setSparePartUsages(List<Map<String,Object>> value){
+            this._sparePartUsages = value;
         }
 
 

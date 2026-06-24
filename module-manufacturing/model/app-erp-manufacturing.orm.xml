@@ -119,6 +119,7 @@
 
     <domains>
     <domain name="boolFlag" stdSqlType="TINYINT"/>
+    <domain name="orderCode" precision="50" stdSqlType="VARCHAR"/>
     <domain name="delVersion" stdSqlType="BIGINT"/>
     <domain name="version" stdSqlType="INTEGER"/>
     <domain name="createTime" stdSqlType="TIMESTAMP"/>

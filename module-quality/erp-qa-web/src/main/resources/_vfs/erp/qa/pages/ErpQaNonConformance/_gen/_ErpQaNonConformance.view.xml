@@ -36,6 +36,9 @@
                 <!--物料-->
                 <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
 
+                <!--质检单ID-->
+                <col id="inspectionId" ui:number="true" sortable="true"/>
+
                 <!--不合格数量-->
                 <col id="quantity" sortable="true"/>
 
@@ -45,8 +48,26 @@
                 <!--严重程度-->
                 <col id="severity" mandatory="true" ui:number="true" sortable="true"/>
 
+                <!--处理决定-->
+                <col id="dispositionType" ui:number="true" sortable="true"/>
+
                 <!--状态-->
                 <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--供应商-->
+                <col id="supplierId" ui:number="true" sortable="true"/>
+
+                <!--不合格参数-->
+                <col id="parameterName" sortable="true"/>
+
+                <!--实测值-->
+                <col id="measuredValue" sortable="true"/>
+
+                <!--规格下限-->
+                <col id="specMin" sortable="true"/>
+
+                <!--规格上限-->
+                <col id="specMax" sortable="true"/>
 
                 <!--责任人-->
                 <col id="assignedTo" ui:number="true" sortable="true"/>
@@ -88,13 +109,17 @@
  id[ID] code[单号]
  ncrDate[报告日期] sourceType[来源类型]
  sourceCode[来源单号] materialId[物料]
- quantity[不合格数量] description[问题描述]
- severity[严重程度] status[状态]
- assignedTo[责任人] resolvedBy[解决人]
- resolvedAt[解决时间] resolution[解决措施]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ inspectionId[质检单ID] quantity[不合格数量]
+ description[问题描述] severity[严重程度]
+ dispositionType[处理决定] status[状态]
+ supplierId[供应商] parameterName[不合格参数]
+ measuredValue[实测值] specMin[规格下限]
+ specMax[规格上限] assignedTo[责任人]
+ resolvedBy[解决人] resolvedAt[解决时间]
+ resolution[解决措施] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-不合格品报告" i18n-en:title="Add Non-Conformance Report">
@@ -102,11 +127,14 @@
  id[ID] code[单号]
  ncrDate[报告日期] sourceType[来源类型]
  sourceCode[来源单号] materialId[物料]
- quantity[不合格数量] description[问题描述]
- severity[严重程度] status[状态]
- assignedTo[责任人] resolvedBy[解决人]
- resolvedAt[解决时间] resolution[解决措施]
- remark[备注] 
+ inspectionId[质检单ID] quantity[不合格数量]
+ description[问题描述] severity[严重程度]
+ dispositionType[处理决定] status[状态]
+ supplierId[供应商] parameterName[不合格参数]
+ measuredValue[实测值] specMin[规格下限]
+ specMax[规格上限] assignedTo[责任人]
+ resolvedBy[解决人] resolvedAt[解决时间]
+ resolution[解决措施] remark[备注]
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-不合格品报告" i18n-en:title="Edit Non-Conformance Report">
@@ -114,11 +142,15 @@
  id[ID] code[单号]
  ncrDate[报告日期] sourceType[来源类型]
  sourceCode[来源单号] materialId[物料]
- quantity[不合格数量] description[问题描述]
- severity[严重程度] status[状态]
- assignedTo[责任人] resolvedBy[解决人]
- resolvedAt[解决时间] resolution[解决措施]
- remark[备注] delVersion[逻辑删除版本]
+ inspectionId[质检单ID] quantity[不合格数量]
+ description[问题描述] severity[严重程度]
+ dispositionType[处理决定] status[状态]
+ supplierId[供应商] parameterName[不合格参数]
+ measuredValue[实测值] specMin[规格下限]
+ specMax[规格上限] assignedTo[责任人]
+ resolvedBy[解决人] resolvedAt[解决时间]
+ resolution[解决措施] remark[备注]
+ delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

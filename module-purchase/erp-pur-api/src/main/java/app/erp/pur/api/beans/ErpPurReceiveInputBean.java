@@ -223,10 +223,24 @@
         }
 
 
-        private Integer _docStatus;
+        private Integer _receiveType;
 
     
         @PropMeta(propId=16)
+    
+        public Integer getReceiveType(){
+            return _receiveType;
+        }
+
+        public void setReceiveType(Integer value){
+            this._receiveType = value;
+        }
+
+
+        private Integer _docStatus;
+
+    
+        @PropMeta(propId=17)
     
         public Integer getDocStatus(){
             return _docStatus;
@@ -240,7 +254,7 @@
         private Integer _approveStatus;
 
     
-        @PropMeta(propId=17)
+        @PropMeta(propId=18)
     
         public Integer getApproveStatus(){
             return _approveStatus;
@@ -254,7 +268,7 @@
         private Boolean _posted;
 
     
-        @PropMeta(propId=18)
+        @PropMeta(propId=19)
     
         public Boolean getPosted(){
             return _posted;
@@ -268,7 +282,7 @@
         private java.time.LocalDateTime _postedAt;
 
     
-        @PropMeta(propId=19)
+        @PropMeta(propId=20)
     
         public java.time.LocalDateTime getPostedAt(){
             return _postedAt;
@@ -282,7 +296,7 @@
         private Long _postedBy;
 
     
-        @PropMeta(propId=20)
+        @PropMeta(propId=21)
     
         public Long getPostedBy(){
             return _postedBy;
@@ -296,7 +310,7 @@
         private Long _approvedBy;
 
     
-        @PropMeta(propId=21)
+        @PropMeta(propId=22)
     
         public Long getApprovedBy(){
             return _approvedBy;
@@ -310,7 +324,7 @@
         private java.time.LocalDateTime _approvedAt;
 
     
-        @PropMeta(propId=22)
+        @PropMeta(propId=23)
     
         public java.time.LocalDateTime getApprovedAt(){
             return _approvedAt;
@@ -324,7 +338,7 @@
         private String _remark;
 
     
-        @PropMeta(propId=23)
+        @PropMeta(propId=24)
     
         public String getRemark(){
             return _remark;
@@ -338,7 +352,7 @@
         private Long _delVersion;
 
     
-        @PropMeta(propId=24)
+        @PropMeta(propId=25)
     
         public Long getDelVersion(){
             return _delVersion;

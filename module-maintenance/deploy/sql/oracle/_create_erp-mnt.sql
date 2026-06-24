@@ -238,6 +238,8 @@ CREATE TABLE erp_mnt_visit(
   START_TIME DATE  ,
   END_TIME DATE  ,
   TOTAL_MINUTES NUMBER(12,2)  ,
+  VISIT_TYPE INTEGER  ,
+  RESULT INTEGER  ,
   REMARK VARCHAR2(1000)  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,
@@ -632,6 +634,10 @@ CREATE TABLE erp_mnt_spare_part_usage_line(
       COMMENT ON COLUMN erp_mnt_visit.END_TIME IS '结束时间';
                     
       COMMENT ON COLUMN erp_mnt_visit.TOTAL_MINUTES IS '总分钟数';
+                    
+      COMMENT ON COLUMN erp_mnt_visit.VISIT_TYPE IS '维护类型';
+                    
+      COMMENT ON COLUMN erp_mnt_visit.RESULT IS '执行结果';
                     
       COMMENT ON COLUMN erp_mnt_visit.REMARK IS '备注';
                     

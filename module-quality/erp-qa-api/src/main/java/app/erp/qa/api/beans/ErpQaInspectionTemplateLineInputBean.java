@@ -124,10 +124,24 @@
         }
 
 
+        private String _inspectionMethod;
+
+    
+        @PropMeta(propId=10)
+    
+        public String getInspectionMethod(){
+            return _inspectionMethod;
+        }
+
+        public void setInspectionMethod(String value){
+            this._inspectionMethod = value;
+        }
+
+
         private Integer _sortNum;
 
     
-        @PropMeta(propId=9)
+        @PropMeta(propId=11)
     
         public Integer getSortNum(){
             return _sortNum;
@@ -141,7 +155,7 @@
         private Long _delVersion;
 
     
-        @PropMeta(propId=10)
+        @PropMeta(propId=12)
     
         public Long getDelVersion(){
             return _delVersion;

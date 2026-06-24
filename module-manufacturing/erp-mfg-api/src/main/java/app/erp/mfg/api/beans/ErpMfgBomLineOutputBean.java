@@ -139,10 +139,52 @@
         }
 
 
-        private Long _delVersion;
+        private String _scrapRate;
 
     
         @PropMeta(propId=10)
+    
+        public String getScrapRate(){
+            return _scrapRate;
+        }
+
+        public void setScrapRate(String value){
+            this._scrapRate = value;
+        }
+
+
+        private Long _warehouseId;
+
+    
+        @PropMeta(propId=11)
+    
+        public Long getWarehouseId(){
+            return _warehouseId;
+        }
+
+        public void setWarehouseId(Long value){
+            this._warehouseId = value;
+        }
+
+
+        private Long _alternativeMaterialId;
+
+    
+        @PropMeta(propId=12)
+    
+        public Long getAlternativeMaterialId(){
+            return _alternativeMaterialId;
+        }
+
+        public void setAlternativeMaterialId(Long value){
+            this._alternativeMaterialId = value;
+        }
+
+
+        private Long _delVersion;
+
+    
+        @PropMeta(propId=13)
     
         public Long getDelVersion(){
             return _delVersion;
@@ -156,7 +198,7 @@
         private Integer _version;
 
     
-        @PropMeta(propId=11)
+        @PropMeta(propId=14)
     
         public Integer getVersion(){
             return _version;
@@ -170,7 +212,7 @@
         private String _createdBy;
 
     
-        @PropMeta(propId=12)
+        @PropMeta(propId=15)
     
         public String getCreatedBy(){
             return _createdBy;
@@ -184,7 +226,7 @@
         private java.sql.Timestamp _createTime;
 
     
-        @PropMeta(propId=13)
+        @PropMeta(propId=16)
     
         public java.sql.Timestamp getCreateTime(){
             return _createTime;
@@ -198,7 +240,7 @@
         private String _updatedBy;
 
     
-        @PropMeta(propId=14)
+        @PropMeta(propId=17)
     
         public String getUpdatedBy(){
             return _updatedBy;
@@ -212,7 +254,7 @@
         private java.sql.Timestamp _updateTime;
 
     
-        @PropMeta(propId=15)
+        @PropMeta(propId=18)
     
         public java.sql.Timestamp getUpdateTime(){
             return _updateTime;

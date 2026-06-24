@@ -36,6 +36,8 @@ prop:
       useMultiLevelBom: null
       inspectionRequired: null
       remark: null
+      versionLabel: null
+      qty: null
       delVersion: null
       version: null
       createdBy: null
@@ -55,6 +57,10 @@ prop:
       uoMId: null
       quantity: null
       remark: null
+      byproductType: null
+      byproductType_label: null
+      yieldRate: null
+      costAllocationPercent: null
       delVersion: null
       version: null
       createdBy: null
@@ -75,6 +81,9 @@ prop:
       quantity: null
       operationId: null
       remark: null
+      scrapRate: null
+      warehouseId: null
+      alternativeMaterialId: null
       delVersion: null
       version: null
       createdBy: null
@@ -155,6 +164,7 @@ prop:
       actualStartTime: null
       actualEndTime: null
       remark: null
+      code: null
       delVersion: null
       version: null
       createdBy: null

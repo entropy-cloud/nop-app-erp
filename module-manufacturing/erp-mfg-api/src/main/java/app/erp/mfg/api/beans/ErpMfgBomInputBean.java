@@ -153,10 +153,38 @@
         }
 
 
-        private Long _delVersion;
+        private String _versionLabel;
 
     
         @PropMeta(propId=11)
+    
+        public String getVersionLabel(){
+            return _versionLabel;
+        }
+
+        public void setVersionLabel(String value){
+            this._versionLabel = value;
+        }
+
+
+        private String _qty;
+
+    
+        @PropMeta(propId=12)
+    
+        public String getQty(){
+            return _qty;
+        }
+
+        public void setQty(String value){
+            this._qty = value;
+        }
+
+
+        private Long _delVersion;
+
+    
+        @PropMeta(propId=13)
     
         public Long getDelVersion(){
             return _delVersion;

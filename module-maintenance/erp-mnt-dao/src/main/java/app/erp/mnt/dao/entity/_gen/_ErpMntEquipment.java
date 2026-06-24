@@ -117,6 +117,21 @@ public class _ErpMntEquipment extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_org = "org";
     
+    /* relation:  */
+    public static final String PROP_NAME_visits = "visits";
+    
+    /* relation:  */
+    public static final String PROP_NAME_schedules = "schedules";
+    
+    /* relation:  */
+    public static final String PROP_NAME_requests = "requests";
+    
+    /* relation:  */
+    public static final String PROP_NAME_sparePartUsages = "sparePartUsages";
+    
+    /* relation:  */
+    public static final String PROP_NAME_downtimeEntries = "downtimeEntries";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1240,6 +1255,56 @@ public class _ErpMntEquipment extends DynamicOrmEntity{
            });
            }
        
+    }
+       
+    private final OrmEntitySet<app.erp.mnt.dao.entity.ErpMntVisit> _visits = new OrmEntitySet<>(this, PROP_NAME_visits,
+        null, null,app.erp.mnt.dao.entity.ErpMntVisit.class);
+
+    /**
+     * 。 refPropName: , keyProp: {rel.keyProp}
+     */
+    public final IOrmEntitySet<app.erp.mnt.dao.entity.ErpMntVisit> getVisits(){
+       return _visits;
+    }
+       
+    private final OrmEntitySet<app.erp.mnt.dao.entity.ErpMntSchedule> _schedules = new OrmEntitySet<>(this, PROP_NAME_schedules,
+        null, null,app.erp.mnt.dao.entity.ErpMntSchedule.class);
+
+    /**
+     * 。 refPropName: , keyProp: {rel.keyProp}
+     */
+    public final IOrmEntitySet<app.erp.mnt.dao.entity.ErpMntSchedule> getSchedules(){
+       return _schedules;
+    }
+       
+    private final OrmEntitySet<app.erp.mnt.dao.entity.ErpMntRequest> _requests = new OrmEntitySet<>(this, PROP_NAME_requests,
+        null, null,app.erp.mnt.dao.entity.ErpMntRequest.class);
+
+    /**
+     * 。 refPropName: , keyProp: {rel.keyProp}
+     */
+    public final IOrmEntitySet<app.erp.mnt.dao.entity.ErpMntRequest> getRequests(){
+       return _requests;
+    }
+       
+    private final OrmEntitySet<app.erp.mnt.dao.entity.ErpMntSparePartUsage> _sparePartUsages = new OrmEntitySet<>(this, PROP_NAME_sparePartUsages,
+        null, null,app.erp.mnt.dao.entity.ErpMntSparePartUsage.class);
+
+    /**
+     * 。 refPropName: , keyProp: {rel.keyProp}
+     */
+    public final IOrmEntitySet<app.erp.mnt.dao.entity.ErpMntSparePartUsage> getSparePartUsages(){
+       return _sparePartUsages;
+    }
+       
+    private final OrmEntitySet<app.erp.mnt.dao.entity.ErpMntDowntimeEntry> _downtimeEntries = new OrmEntitySet<>(this, PROP_NAME_downtimeEntries,
+        null, null,app.erp.mnt.dao.entity.ErpMntDowntimeEntry.class);
+
+    /**
+     * 。 refPropName: , keyProp: {rel.keyProp}
+     */
+    public final IOrmEntitySet<app.erp.mnt.dao.entity.ErpMntDowntimeEntry> getDowntimeEntries(){
+       return _downtimeEntries;
     }
        
 }

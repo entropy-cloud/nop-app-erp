@@ -125,10 +125,64 @@
         }
 
 
-        private Long _delVersion;
+        private Integer _byproductType;
 
     
         @PropMeta(propId=9)
+    
+        public Integer getByproductType(){
+            return _byproductType;
+        }
+
+        public void setByproductType(Integer value){
+            this._byproductType = value;
+        }
+
+
+        private String _byproductType_label;
+
+    
+        public String getByproductType_label(){
+            return _byproductType_label;
+        }
+
+        public void setByproductType_label(String value){
+            this._byproductType_label = value;
+        }
+
+
+        private String _yieldRate;
+
+    
+        @PropMeta(propId=10)
+    
+        public String getYieldRate(){
+            return _yieldRate;
+        }
+
+        public void setYieldRate(String value){
+            this._yieldRate = value;
+        }
+
+
+        private String _costAllocationPercent;
+
+    
+        @PropMeta(propId=11)
+    
+        public String getCostAllocationPercent(){
+            return _costAllocationPercent;
+        }
+
+        public void setCostAllocationPercent(String value){
+            this._costAllocationPercent = value;
+        }
+
+
+        private Long _delVersion;
+
+    
+        @PropMeta(propId=12)
     
         public Long getDelVersion(){
             return _delVersion;
@@ -142,7 +196,7 @@
         private Integer _version;
 
     
-        @PropMeta(propId=10)
+        @PropMeta(propId=13)
     
         public Integer getVersion(){
             return _version;
@@ -156,7 +210,7 @@
         private String _createdBy;
 
     
-        @PropMeta(propId=11)
+        @PropMeta(propId=14)
     
         public String getCreatedBy(){
             return _createdBy;
@@ -170,7 +224,7 @@
         private java.sql.Timestamp _createTime;
 
     
-        @PropMeta(propId=12)
+        @PropMeta(propId=15)
     
         public java.sql.Timestamp getCreateTime(){
             return _createTime;
@@ -184,7 +238,7 @@
         private String _updatedBy;
 
     
-        @PropMeta(propId=13)
+        @PropMeta(propId=16)
     
         public String getUpdatedBy(){
             return _updatedBy;
@@ -198,7 +252,7 @@
         private java.sql.Timestamp _updateTime;
 
     
-        @PropMeta(propId=14)
+        @PropMeta(propId=17)
     
         public java.sql.Timestamp getUpdateTime(){
             return _updateTime;

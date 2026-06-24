@@ -60,72 +60,76 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
     public static final String PROP_NAME_gainLoss = "gainLoss";
     public static final int PROP_ID_gainLoss = 10;
     
+    /* 处置原因: REASON INTEGER */
+    public static final String PROP_NAME_reason = "reason";
+    public static final int PROP_ID_reason = 11;
+    
     /* 单据状态: DOC_STATUS INTEGER */
     public static final String PROP_NAME_docStatus = "docStatus";
-    public static final int PROP_ID_docStatus = 11;
+    public static final int PROP_ID_docStatus = 12;
     
     /* 审核状态: APPROVE_STATUS INTEGER */
     public static final String PROP_NAME_approveStatus = "approveStatus";
-    public static final int PROP_ID_approveStatus = 12;
+    public static final int PROP_ID_approveStatus = 13;
     
     /* 已过账: POSTED BOOLEAN */
     public static final String PROP_NAME_posted = "posted";
-    public static final int PROP_ID_posted = 13;
+    public static final int PROP_ID_posted = 14;
     
     /* 过账时间: POSTED_AT DATETIME */
     public static final String PROP_NAME_postedAt = "postedAt";
-    public static final int PROP_ID_postedAt = 14;
+    public static final int PROP_ID_postedAt = 15;
     
     /* 过账人: POSTED_BY BIGINT */
     public static final String PROP_NAME_postedBy = "postedBy";
-    public static final int PROP_ID_postedBy = 15;
+    public static final int PROP_ID_postedBy = 16;
     
     /* 审核人: APPROVED_BY BIGINT */
     public static final String PROP_NAME_approvedBy = "approvedBy";
-    public static final int PROP_ID_approvedBy = 16;
+    public static final int PROP_ID_approvedBy = 17;
     
     /* 审核时间: APPROVED_AT DATETIME */
     public static final String PROP_NAME_approvedAt = "approvedAt";
-    public static final int PROP_ID_approvedAt = 17;
+    public static final int PROP_ID_approvedAt = 18;
     
     /* 逻辑删除版本: DEL_VERSION BIGINT */
     public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 18;
+    public static final int PROP_ID_delVersion = 20;
     
     /* 数据版本: VERSION INTEGER */
     public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 19;
+    public static final int PROP_ID_version = 21;
     
     /* 创建人: CREATED_BY VARCHAR */
     public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 20;
+    public static final int PROP_ID_createdBy = 22;
     
     /* 创建时间: CREATE_TIME TIMESTAMP */
     public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 21;
+    public static final int PROP_ID_createTime = 23;
     
     /* 修改人: UPDATED_BY VARCHAR */
     public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 22;
+    public static final int PROP_ID_updatedBy = 24;
     
     /* 修改时间: UPDATE_TIME TIMESTAMP */
     public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 23;
+    public static final int PROP_ID_updateTime = 25;
     
     /* 备注: REMARK VARCHAR */
     public static final String PROP_NAME_remark = "remark";
-    public static final int PROP_ID_remark = 24;
+    public static final int PROP_ID_remark = 26;
     
     /* 源币种金额: AMOUNT_SOURCE DECIMAL */
     public static final String PROP_NAME_amountSource = "amountSource";
-    public static final int PROP_ID_amountSource = 25;
+    public static final int PROP_ID_amountSource = 27;
     
     /* 本位币金额: AMOUNT_FUNCTIONAL DECIMAL */
     public static final String PROP_NAME_amountFunctional = "amountFunctional";
-    public static final int PROP_ID_amountFunctional = 26;
+    public static final int PROP_ID_amountFunctional = 28;
     
 
-    private static int _PROP_ID_BOUND = 27;
+    private static int _PROP_ID_BOUND = 29;
 
     
     /* relation:  */
@@ -135,7 +139,7 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[27];
+    private static final String[] PROP_ID_TO_NAME = new String[29];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -168,6 +172,9 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_gainLoss] = PROP_NAME_gainLoss;
           PROP_NAME_TO_ID.put(PROP_NAME_gainLoss, PROP_ID_gainLoss);
+      
+          PROP_ID_TO_NAME[PROP_ID_reason] = PROP_NAME_reason;
+          PROP_NAME_TO_ID.put(PROP_NAME_reason, PROP_ID_reason);
       
           PROP_ID_TO_NAME[PROP_ID_docStatus] = PROP_NAME_docStatus;
           PROP_NAME_TO_ID.put(PROP_NAME_docStatus, PROP_ID_docStatus);
@@ -249,6 +256,9 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
     
     /* 损益: GAIN_LOSS */
     private java.math.BigDecimal _gainLoss;
+    
+    /* 处置原因: REASON */
+    private java.lang.Integer _reason;
     
     /* 单据状态: DOC_STATUS */
     private java.lang.Integer _docStatus;
@@ -401,6 +411,9 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
         
             case PROP_ID_gainLoss:
                return getGainLoss();
+        
+            case PROP_ID_reason:
+               return getReason();
         
             case PROP_ID_docStatus:
                return getDocStatus();
@@ -558,6 +571,16 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_gainLoss));
                }
                setGainLoss(typedValue);
+               break;
+            }
+        
+            case PROP_ID_reason:{
+               java.lang.Integer typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toInteger(value,
+                       err-> newTypeConversionError(PROP_NAME_reason));
+               }
+               setReason(typedValue);
                break;
             }
         
@@ -796,6 +819,13 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
             case PROP_ID_gainLoss:{
                onInitProp(propId);
                this._gainLoss = (java.math.BigDecimal)value;
+               
+               break;
+            }
+        
+            case PROP_ID_reason:{
+               onInitProp(propId);
+               this._reason = (java.lang.Integer)value;
                
                break;
             }
@@ -1104,6 +1134,25 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_gainLoss,value)){
             this._gainLoss = value;
             internalClearRefs(PROP_ID_gainLoss);
+            
+        }
+    }
+    
+    /**
+     * 处置原因: REASON
+     */
+    public final java.lang.Integer getReason(){
+         onPropGet(PROP_ID_reason);
+         return _reason;
+    }
+
+    /**
+     * 处置原因: REASON
+     */
+    public final void setReason(java.lang.Integer value){
+        if(onPropSet(PROP_ID_reason,value)){
+            this._reason = value;
+            internalClearRefs(PROP_ID_reason);
             
         }
     }

@@ -72,8 +72,10 @@ prop:
       relatedBillCode: null
       relatedLineCode: null
       materialId: null
+      templateId: null
       supplierId: null
       warehouseId: null
+      batchNo: null
       inspectionDate: null
       lotQuantity: null
       sampleQuantity: null
@@ -97,6 +99,7 @@ prop:
       updatedBy: null
       updateTime: null
       material: null
+      template: null
       supplier: null
       warehouse: null
       inspector: null
@@ -147,6 +150,7 @@ prop:
       specMax: null
       unit: null
       isRequired: null
+      inspectionMethod: null
       sortNum: null
       delVersion: null
       version: null
@@ -162,12 +166,20 @@ prop:
       sourceType: null
       sourceCode: null
       materialId: null
+      inspectionId: null
       quantity: null
       description: null
       severity: null
       severity_label: null
+      dispositionType: null
+      dispositionType_label: null
       status: null
       status_label: null
+      supplierId: null
+      parameterName: null
+      measuredValue: null
+      specMin: null
+      specMax: null
       assignedTo: null
       resolvedBy: null
       resolvedAt: null
@@ -180,6 +192,7 @@ prop:
       updatedBy: null
       updateTime: null
       actions: null
+      inspection: null
     ErpQaQualityGoal:
       id: null
       code: null

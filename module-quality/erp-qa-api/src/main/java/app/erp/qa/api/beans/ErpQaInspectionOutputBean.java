@@ -138,10 +138,24 @@
         }
 
 
-        private Long _supplierId;
+        private Long _templateId;
 
     
         @PropMeta(propId=9)
+    
+        public Long getTemplateId(){
+            return _templateId;
+        }
+
+        public void setTemplateId(Long value){
+            this._templateId = value;
+        }
+
+
+        private Long _supplierId;
+
+    
+        @PropMeta(propId=10)
     
         public Long getSupplierId(){
             return _supplierId;
@@ -155,7 +169,7 @@
         private Long _warehouseId;
 
     
-        @PropMeta(propId=10)
+        @PropMeta(propId=11)
     
         public Long getWarehouseId(){
             return _warehouseId;
@@ -166,10 +180,24 @@
         }
 
 
+        private String _batchNo;
+
+    
+        @PropMeta(propId=13)
+    
+        public String getBatchNo(){
+            return _batchNo;
+        }
+
+        public void setBatchNo(String value){
+            this._batchNo = value;
+        }
+
+
         private java.time.LocalDate _inspectionDate;
 
     
-        @PropMeta(propId=11)
+        @PropMeta(propId=14)
     
         public java.time.LocalDate getInspectionDate(){
             return _inspectionDate;
@@ -183,7 +211,7 @@
         private String _lotQuantity;
 
     
-        @PropMeta(propId=12)
+        @PropMeta(propId=15)
     
         public String getLotQuantity(){
             return _lotQuantity;
@@ -197,7 +225,7 @@
         private String _sampleQuantity;
 
     
-        @PropMeta(propId=13)
+        @PropMeta(propId=16)
     
         public String getSampleQuantity(){
             return _sampleQuantity;
@@ -211,7 +239,7 @@
         private Long _inspectorId;
 
     
-        @PropMeta(propId=14)
+        @PropMeta(propId=17)
     
         public Long getInspectorId(){
             return _inspectorId;
@@ -225,7 +253,7 @@
         private Integer _result;
 
     
-        @PropMeta(propId=15)
+        @PropMeta(propId=18)
     
         public Integer getResult(){
             return _result;
@@ -251,7 +279,7 @@
         private Integer _docStatus;
 
     
-        @PropMeta(propId=16)
+        @PropMeta(propId=19)
     
         public Integer getDocStatus(){
             return _docStatus;
@@ -277,7 +305,7 @@
         private Integer _approveStatus;
 
     
-        @PropMeta(propId=17)
+        @PropMeta(propId=20)
     
         public Integer getApproveStatus(){
             return _approveStatus;
@@ -303,7 +331,7 @@
         private Boolean _posted;
 
     
-        @PropMeta(propId=18)
+        @PropMeta(propId=21)
     
         public Boolean getPosted(){
             return _posted;
@@ -317,7 +345,7 @@
         private java.time.LocalDateTime _postedAt;
 
     
-        @PropMeta(propId=19)
+        @PropMeta(propId=22)
     
         public java.time.LocalDateTime getPostedAt(){
             return _postedAt;
@@ -331,7 +359,7 @@
         private Long _postedBy;
 
     
-        @PropMeta(propId=20)
+        @PropMeta(propId=23)
     
         public Long getPostedBy(){
             return _postedBy;
@@ -345,7 +373,7 @@
         private Long _approvedBy;
 
     
-        @PropMeta(propId=21)
+        @PropMeta(propId=24)
     
         public Long getApprovedBy(){
             return _approvedBy;
@@ -359,7 +387,7 @@
         private java.time.LocalDateTime _approvedAt;
 
     
-        @PropMeta(propId=22)
+        @PropMeta(propId=25)
     
         public java.time.LocalDateTime getApprovedAt(){
             return _approvedAt;
@@ -373,7 +401,7 @@
         private String _remark;
 
     
-        @PropMeta(propId=23)
+        @PropMeta(propId=26)
     
         public String getRemark(){
             return _remark;
@@ -387,7 +415,7 @@
         private Long _delVersion;
 
     
-        @PropMeta(propId=24)
+        @PropMeta(propId=27)
     
         public Long getDelVersion(){
             return _delVersion;
@@ -401,7 +429,7 @@
         private Integer _version;
 
     
-        @PropMeta(propId=25)
+        @PropMeta(propId=28)
     
         public Integer getVersion(){
             return _version;
@@ -415,7 +443,7 @@
         private String _createdBy;
 
     
-        @PropMeta(propId=26)
+        @PropMeta(propId=29)
     
         public String getCreatedBy(){
             return _createdBy;
@@ -429,7 +457,7 @@
         private java.sql.Timestamp _createTime;
 
     
-        @PropMeta(propId=27)
+        @PropMeta(propId=30)
     
         public java.sql.Timestamp getCreateTime(){
             return _createTime;
@@ -443,7 +471,7 @@
         private String _updatedBy;
 
     
-        @PropMeta(propId=28)
+        @PropMeta(propId=31)
     
         public String getUpdatedBy(){
             return _updatedBy;
@@ -457,7 +485,7 @@
         private java.sql.Timestamp _updateTime;
 
     
-        @PropMeta(propId=29)
+        @PropMeta(propId=32)
     
         public java.sql.Timestamp getUpdateTime(){
             return _updateTime;
@@ -476,6 +504,17 @@
 
         public void setMaterial(Map<String,Object> value){
             this._material = value;
+        }
+
+
+        private Map<String,Object> _template;
+
+        public Map<String,Object> getTemplate(){
+            return _template;
+        }
+
+        public void setTemplate(Map<String,Object> value){
+            this._template = value;
         }
 
 

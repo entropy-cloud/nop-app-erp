@@ -38,6 +38,8 @@ prop:
       exchangeRate: 汇率
       id: ID
       invoiceNo: 发票号码
+      invoiceType: 发票类型
+      invoiceType_label: 发票类型
       lines: null
       orgId: 业务组织
       paidAmount: 已付金额
@@ -278,6 +280,8 @@ prop:
       postedBy: 过账人
       receiveStatus: 收货状态
       receiveStatus_label: 收货状态
+      receiveType: 入库类型
+      receiveType_label: 入库类型
       remark: 备注
       supplier: null
       supplierId: 供应商

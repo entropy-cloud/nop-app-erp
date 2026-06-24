@@ -45,6 +45,11 @@
             <option code="RECEIPT" label="收款单" value="60"/>
             <option code="RETURN" label="销售退货" value="70"/>
         </dict>
+        <dict label="发票类型" name="erp-sal/invoice-type" valueType="int">
+            <option code="VAT_SPECIAL" label="增值税专用" value="10"/>
+            <option code="VAT_NORMAL" label="增值税普通" value="20"/>
+            <option code="RECEIPT" label="收据" value="30"/>
+        </dict>
     </dicts>
 
     <domains>
@@ -650,56 +655,58 @@
                         stdDataType="long" stdSqlType="BIGINT"/>
                 <column code="INVOICE_NO" displayName="发票号码" name="invoiceNo" precision="50" propId="5"
                         stdDataType="string" stdSqlType="VARCHAR"/>
-                <column code="BUSINESS_DATE" displayName="发票日期" mandatory="true" name="businessDate" propId="6"
+                <column code="INVOICE_TYPE" displayName="发票类型" name="invoiceType" propId="6" stdDataType="int"
+                        stdSqlType="INTEGER" ext:dict="erp-sal/invoice-type"/>
+                <column code="BUSINESS_DATE" displayName="发票日期" mandatory="true" name="businessDate" propId="7"
                         stdDataType="date" stdSqlType="DATE"/>
-                <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="7"
+                <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="8"
                         stdDataType="long" stdSqlType="BIGINT"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
-                        precision="20" propId="8" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"/>
+                        precision="20" propId="9" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"/>
                 <column code="AMOUNT_SOURCE" defaultValue="0" displayName="合计金额(源币)" domain="amount" name="amountSource"
-                        precision="20" propId="9" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"/>
+                        precision="20" propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"/>
                 <column code="AMOUNT_FUNCTIONAL" defaultValue="0" displayName="合计金额(本位币)" domain="amount"
-                        name="amountFunctional" precision="20" propId="10" scale="4" stdDataType="decimal"
+                        name="amountFunctional" precision="20" propId="11" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL"/>
                 <column code="TOTAL_AMOUNT" defaultValue="0" displayName="合计金额(不含税)" domain="amount" name="totalAmount"
-                        precision="20" propId="11" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"/>
+                        precision="20" propId="12" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"/>
                 <column code="TOTAL_TAX_AMOUNT" defaultValue="0" displayName="合计税额" domain="taxAmount"
-                        name="totalTaxAmount" precision="20" propId="12" scale="4" stdDataType="decimal"
+                        name="totalTaxAmount" precision="20" propId="13" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL"/>
                 <column code="TOTAL_AMOUNT_WITH_TAX" defaultValue="0" displayName="合计金额(含税)" domain="amount"
-                        name="totalAmountWithTax" precision="20" propId="13" scale="4" stdDataType="decimal"
+                        name="totalAmountWithTax" precision="20" propId="14" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL"/>
                 <column code="RECEIVED_AMOUNT" defaultValue="0" displayName="已收金额" domain="amount" name="receivedAmount"
-                        precision="20" propId="14" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="15"
+                        precision="20" propId="15" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"/>
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="16"
                         stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-sal/doc-status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="16"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="17"
                         stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-sal/approve-status"/>
-                <column code="RECEIVED_STATUS" displayName="收款进度" name="receivedStatus" propId="17" stdDataType="int"
+                <column code="RECEIVED_STATUS" displayName="收款进度" name="receivedStatus" propId="18" stdDataType="int"
                         stdSqlType="INTEGER" ext:dict="erp-sal/received-status"/>
-                <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="18"
+                <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="19"
                         stdDataType="boolean" stdSqlType="BOOLEAN"/>
-                <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="19" stdDataType="datetime"
+                <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="20" stdDataType="datetime"
                         stdSqlType="DATETIME"/>
-                <column code="POSTED_BY" displayName="过账人" name="postedBy" propId="20" stdDataType="long"
+                <column code="POSTED_BY" displayName="过账人" name="postedBy" propId="21" stdDataType="long"
                         stdSqlType="BIGINT"/>
-                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" propId="21" stdDataType="long"
+                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" propId="22" stdDataType="long"
                         stdSqlType="BIGINT"/>
-                <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="22" stdDataType="datetime"
+                <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="23" stdDataType="datetime"
                         stdSqlType="DATETIME"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
-                        name="delVersion" propId="23" stdDataType="long" stdSqlType="BIGINT"/>
+                        name="delVersion" propId="24" stdDataType="long" stdSqlType="BIGINT"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
-                        name="version" propId="24" stdDataType="int" stdSqlType="INTEGER"/>
+                        name="version" propId="25" stdDataType="int" stdSqlType="INTEGER"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
-                        precision="50" propId="25" stdDataType="string" stdSqlType="VARCHAR"/>
+                        precision="50" propId="26" stdDataType="string" stdSqlType="VARCHAR"/>
                 <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
-                        propId="26" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
+                        propId="27" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
                 <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
-                        precision="50" propId="27" stdDataType="string" stdSqlType="VARCHAR"/>
+                        precision="50" propId="28" stdDataType="string" stdSqlType="VARCHAR"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
-                        propId="28" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
-                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="29"
+                        propId="29" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="30"
                         stdDataType="string" stdSqlType="VARCHAR"/>
             </columns>
             <relations>

@@ -75,35 +75,39 @@
               updatable="true">
             <schema type="java.lang.Integer" dict="erp-prj/priority"/>
         </prop>
-        <prop name="sortNum" displayName="排序号" propId="15" queryable="true" sortable="true" insertable="true"
+        <prop name="blockReason" displayName="阻塞原因" propId="15" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.lang.String" precision="500"/>
+        </prop>
+        <prop name="sortNum" displayName="排序号" propId="16" queryable="true" sortable="true" insertable="true"
               updatable="true">
             <schema type="java.lang.Integer"/>
         </prop>
-        <prop name="remark" displayName="备注" propId="16" queryable="true" sortable="true" insertable="true"
+        <prop name="remark" displayName="备注" propId="17" queryable="true" sortable="true" insertable="true"
               updatable="true">
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
-        <prop name="delVersion" displayName="逻辑删除版本" propId="17" mandatory="true" queryable="true" sortable="true"
+        <prop name="delVersion" displayName="逻辑删除版本" propId="18" mandatory="true" queryable="true" sortable="true"
               insertable="false" updatable="true" defaultValue="0">
             <schema domain="delVersion" type="java.lang.Long"/>
         </prop>
-        <prop name="version" displayName="数据版本" propId="18" mandatory="true" queryable="true" sortable="true"
+        <prop name="version" displayName="数据版本" propId="19" mandatory="true" queryable="true" sortable="true"
               insertable="false" updatable="false" internal="true" defaultValue="0">
             <schema domain="version" type="java.lang.Integer"/>
         </prop>
-        <prop name="createdBy" displayName="创建人" propId="19" mandatory="true" queryable="true" sortable="true"
+        <prop name="createdBy" displayName="创建人" propId="20" mandatory="true" queryable="true" sortable="true"
               insertable="false" updatable="false">
             <schema domain="createdBy" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="createTime" displayName="创建时间" propId="20" mandatory="true" queryable="true" sortable="true"
+        <prop name="createTime" displayName="创建时间" propId="21" mandatory="true" queryable="true" sortable="true"
               insertable="false" updatable="false">
             <schema domain="createTime" type="java.sql.Timestamp"/>
         </prop>
-        <prop name="updatedBy" displayName="修改人" propId="21" mandatory="true" queryable="true" sortable="true"
+        <prop name="updatedBy" displayName="修改人" propId="22" mandatory="true" queryable="true" sortable="true"
               insertable="false" updatable="false">
             <schema domain="updatedBy" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="updateTime" displayName="修改时间" propId="22" mandatory="true" queryable="true" sortable="true"
+        <prop name="updateTime" displayName="修改时间" propId="23" mandatory="true" queryable="true" sortable="true"
               insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>

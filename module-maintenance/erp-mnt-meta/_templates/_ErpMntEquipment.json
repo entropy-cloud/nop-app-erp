@@ -23,5 +23,10 @@
   "updateTime": "2000-01-01 14:00:00",
   "location": null,
   "category": null,
-  "org": null
+  "org": null,
+  "visits": null,
+  "schedules": null,
+  "requests": null,
+  "sparePartUsages": null,
+  "downtimeEntries": null
 }

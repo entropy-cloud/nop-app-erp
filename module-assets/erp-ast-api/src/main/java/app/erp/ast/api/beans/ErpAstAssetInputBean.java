@@ -250,10 +250,24 @@
         }
 
 
-        private Integer _status;
+        private String _brandModel;
 
     
         @PropMeta(propId=18)
+    
+        public String getBrandModel(){
+            return _brandModel;
+        }
+
+        public void setBrandModel(String value){
+            this._brandModel = value;
+        }
+
+
+        private Integer _status;
+
+    
+        @PropMeta(propId=19)
     
         public Integer getStatus(){
             return _status;
@@ -267,7 +281,7 @@
         private Long _delVersion;
 
     
-        @PropMeta(propId=19)
+        @PropMeta(propId=20)
     
         public Long getDelVersion(){
             return _delVersion;
@@ -281,7 +295,7 @@
         private String _remark;
 
     
-        @PropMeta(propId=25)
+        @PropMeta(propId=26)
     
         public String getRemark(){
             return _remark;

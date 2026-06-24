@@ -123,4 +123,29 @@ public interface _ErpAstDaoConstants {
      */
     int CAPITALIZATION_SOURCE_TYPE_CIP = 20;
                     
+    /**
+     * 处置原因: 报废 
+     */
+    int DISPOSAL_REASON_OBSOLETE = 10;
+                    
+    /**
+     * 处置原因: 出售 
+     */
+    int DISPOSAL_REASON_SOLD = 20;
+                    
+    /**
+     * 处置原因: 捐赠 
+     */
+    int DISPOSAL_REASON_DONATED = 30;
+                    
+    /**
+     * 处置原因: 被盗 
+     */
+    int DISPOSAL_REASON_STOLEN = 40;
+                    
+    /**
+     * 处置原因: 其他 
+     */
+    int DISPOSAL_REASON_OTHER = 50;
+                    
 }

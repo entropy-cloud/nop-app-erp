@@ -213,4 +213,29 @@ public interface _ErpMntDaoConstants {
      */
     int CALIBRATION_RESULT_ADJUSTED = 30;
                     
+    /**
+     * 维护类型: 计划性 
+     */
+    int VISIT_TYPE_PLANNED = 10;
+                    
+    /**
+     * 维护类型: 响应性 
+     */
+    int VISIT_TYPE_RESPONSIVE = 20;
+                    
+    /**
+     * 执行结果: 正常 
+     */
+    int VISIT_RESULT_NORMAL = 10;
+                    
+    /**
+     * 执行结果: 异常 
+     */
+    int VISIT_RESULT_ABNORMAL = 20;
+                    
+    /**
+     * 执行结果: 部分完成 
+     */
+    int VISIT_RESULT_PARTIAL = 30;
+                    
 }

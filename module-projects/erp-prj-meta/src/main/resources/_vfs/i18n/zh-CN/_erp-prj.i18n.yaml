@@ -248,6 +248,7 @@ prop:
       actualStartDate: 实际开始日期
       assignee: null
       assigneeId: 负责人
+      blockReason: 阻塞原因
       childTasks: null
       createTime: 创建时间
       createdBy: 创建人

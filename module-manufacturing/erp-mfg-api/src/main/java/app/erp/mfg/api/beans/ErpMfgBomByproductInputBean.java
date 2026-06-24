@@ -124,10 +124,52 @@
         }
 
 
-        private Long _delVersion;
+        private Integer _byproductType;
 
     
         @PropMeta(propId=9)
+    
+        public Integer getByproductType(){
+            return _byproductType;
+        }
+
+        public void setByproductType(Integer value){
+            this._byproductType = value;
+        }
+
+
+        private String _yieldRate;
+
+    
+        @PropMeta(propId=10)
+    
+        public String getYieldRate(){
+            return _yieldRate;
+        }
+
+        public void setYieldRate(String value){
+            this._yieldRate = value;
+        }
+
+
+        private String _costAllocationPercent;
+
+    
+        @PropMeta(propId=11)
+    
+        public String getCostAllocationPercent(){
+            return _costAllocationPercent;
+        }
+
+        public void setCostAllocationPercent(String value){
+            this._costAllocationPercent = value;
+        }
+
+
+        private Long _delVersion;
+
+    
+        @PropMeta(propId=12)
     
         public Long getDelVersion(){
             return _delVersion;

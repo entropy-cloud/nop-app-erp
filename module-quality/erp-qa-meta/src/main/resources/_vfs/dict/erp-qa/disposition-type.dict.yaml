@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 处理决定
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 报废
+    value: 10
+    description: 
+  
+  - label: 退货
+    value: 20
+    description: 
+  
+  - label: 让步接收
+    value: 30
+    description: 
+  
+  - label: 降级使用
+    value: 40
+    description: 
+  

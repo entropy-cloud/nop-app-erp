@@ -5,6 +5,7 @@
     import io.nop.api.core.annotations.data.DataBean;
     import io.nop.api.core.annotations.meta.PropMeta;
     import io.nop.api.core.api.CrudInputBase;
+    import java.util.List;
     
     @DataBean
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -233,6 +234,61 @@
 
         public void setDelVersion(Long value){
             this._delVersion = value;
+        }
+
+
+        private List<ErpMntVisitInputBean> _visits;
+
+        public List<ErpMntVisitInputBean> getVisits(){
+            return _visits;
+        }
+
+        public void setVisits(List<ErpMntVisitInputBean> value){
+            this._visits = value;
+        }
+
+
+        private List<ErpMntScheduleInputBean> _schedules;
+
+        public List<ErpMntScheduleInputBean> getSchedules(){
+            return _schedules;
+        }
+
+        public void setSchedules(List<ErpMntScheduleInputBean> value){
+            this._schedules = value;
+        }
+
+
+        private List<ErpMntRequestInputBean> _requests;
+
+        public List<ErpMntRequestInputBean> getRequests(){
+            return _requests;
+        }
+
+        public void setRequests(List<ErpMntRequestInputBean> value){
+            this._requests = value;
+        }
+
+
+        private List<ErpMntSparePartUsageInputBean> _sparePartUsages;
+
+        public List<ErpMntSparePartUsageInputBean> getSparePartUsages(){
+            return _sparePartUsages;
+        }
+
+        public void setSparePartUsages(List<ErpMntSparePartUsageInputBean> value){
+            this._sparePartUsages = value;
+        }
+
+
+        private List<ErpMntDowntimeEntryInputBean> _downtimeEntries;
+
+        public List<ErpMntDowntimeEntryInputBean> getDowntimeEntries(){
+            return _downtimeEntries;
+        }
+
+        public void setDowntimeEntries(List<ErpMntDowntimeEntryInputBean> value){
+            this._downtimeEntries = value;
         }
 
 

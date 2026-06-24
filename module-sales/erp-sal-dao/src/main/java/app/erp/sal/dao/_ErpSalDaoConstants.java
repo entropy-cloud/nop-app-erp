@@ -103,4 +103,19 @@ public interface _ErpSalDaoConstants {
      */
     int BIZ_TYPE_RETURN = 70;
                     
+    /**
+     * 发票类型: 增值税专用 
+     */
+    int INVOICE_TYPE_VAT_SPECIAL = 10;
+                    
+    /**
+     * 发票类型: 增值税普通 
+     */
+    int INVOICE_TYPE_VAT_NORMAL = 20;
+                    
+    /**
+     * 发票类型: 收据 
+     */
+    int INVOICE_TYPE_RECEIPT = 30;
+                    
 }

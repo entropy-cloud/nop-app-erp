@@ -72,72 +72,80 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     public static final String PROP_NAME_toLocationId = "toLocationId";
     public static final int PROP_ID_toLocationId = 13;
     
+    /* 经办人: HANDLER_ID BIGINT */
+    public static final String PROP_NAME_handlerId = "handlerId";
+    public static final int PROP_ID_handlerId = 14;
+    
     /* 单据状态: DOC_STATUS INTEGER */
     public static final String PROP_NAME_docStatus = "docStatus";
-    public static final int PROP_ID_docStatus = 14;
+    public static final int PROP_ID_docStatus = 15;
     
     /* 审核状态: APPROVE_STATUS INTEGER */
     public static final String PROP_NAME_approveStatus = "approveStatus";
-    public static final int PROP_ID_approveStatus = 15;
+    public static final int PROP_ID_approveStatus = 16;
     
     /* 已过账: POSTED BOOLEAN */
     public static final String PROP_NAME_posted = "posted";
-    public static final int PROP_ID_posted = 16;
+    public static final int PROP_ID_posted = 17;
     
     /* 过账时间: POSTED_AT DATETIME */
     public static final String PROP_NAME_postedAt = "postedAt";
-    public static final int PROP_ID_postedAt = 17;
+    public static final int PROP_ID_postedAt = 18;
     
     /* 过账人: POSTED_BY BIGINT */
     public static final String PROP_NAME_postedBy = "postedBy";
-    public static final int PROP_ID_postedBy = 18;
+    public static final int PROP_ID_postedBy = 19;
+    
+    /* 单据版本: DOC_VERSION INTEGER */
+    public static final String PROP_NAME_docVersion = "docVersion";
+    public static final int PROP_ID_docVersion = 20;
     
     /* 逻辑删除版本: DEL_VERSION BIGINT */
     public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 19;
+    public static final int PROP_ID_delVersion = 21;
     
     /* 数据版本: VERSION INTEGER */
     public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 20;
+    public static final int PROP_ID_version = 22;
     
     /* 创建人: CREATED_BY VARCHAR */
     public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 21;
+    public static final int PROP_ID_createdBy = 23;
     
     /* 创建时间: CREATE_TIME TIMESTAMP */
     public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 22;
+    public static final int PROP_ID_createTime = 24;
     
     /* 修改人: UPDATED_BY VARCHAR */
     public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 23;
+    public static final int PROP_ID_updatedBy = 25;
     
     /* 修改时间: UPDATE_TIME TIMESTAMP */
     public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 24;
+    public static final int PROP_ID_updateTime = 26;
     
     /* 备注: REMARK VARCHAR */
     public static final String PROP_NAME_remark = "remark";
-    public static final int PROP_ID_remark = 25;
+    public static final int PROP_ID_remark = 27;
     
     /* 币种: CURRENCY_ID BIGINT */
     public static final String PROP_NAME_currencyId = "currencyId";
-    public static final int PROP_ID_currencyId = 26;
+    public static final int PROP_ID_currencyId = 28;
     
     /* 汇率: EXCHANGE_RATE DECIMAL */
     public static final String PROP_NAME_exchangeRate = "exchangeRate";
-    public static final int PROP_ID_exchangeRate = 27;
+    public static final int PROP_ID_exchangeRate = 29;
     
     /* 源币种金额: AMOUNT_SOURCE DECIMAL */
     public static final String PROP_NAME_amountSource = "amountSource";
-    public static final int PROP_ID_amountSource = 28;
+    public static final int PROP_ID_amountSource = 30;
     
     /* 本位币金额: AMOUNT_FUNCTIONAL DECIMAL */
     public static final String PROP_NAME_amountFunctional = "amountFunctional";
-    public static final int PROP_ID_amountFunctional = 29;
+    public static final int PROP_ID_amountFunctional = 31;
     
 
-    private static int _PROP_ID_BOUND = 30;
+    private static int _PROP_ID_BOUND = 32;
 
     
     /* relation:  */
@@ -147,7 +155,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[30];
+    private static final String[] PROP_ID_TO_NAME = new String[32];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -190,6 +198,9 @@ public class _ErpAstMovement extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_toLocationId] = PROP_NAME_toLocationId;
           PROP_NAME_TO_ID.put(PROP_NAME_toLocationId, PROP_ID_toLocationId);
       
+          PROP_ID_TO_NAME[PROP_ID_handlerId] = PROP_NAME_handlerId;
+          PROP_NAME_TO_ID.put(PROP_NAME_handlerId, PROP_ID_handlerId);
+      
           PROP_ID_TO_NAME[PROP_ID_docStatus] = PROP_NAME_docStatus;
           PROP_NAME_TO_ID.put(PROP_NAME_docStatus, PROP_ID_docStatus);
       
@@ -204,6 +215,9 @@ public class _ErpAstMovement extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_postedBy] = PROP_NAME_postedBy;
           PROP_NAME_TO_ID.put(PROP_NAME_postedBy, PROP_ID_postedBy);
+      
+          PROP_ID_TO_NAME[PROP_ID_docVersion] = PROP_NAME_docVersion;
+          PROP_NAME_TO_ID.put(PROP_NAME_docVersion, PROP_ID_docVersion);
       
           PROP_ID_TO_NAME[PROP_ID_delVersion] = PROP_NAME_delVersion;
           PROP_NAME_TO_ID.put(PROP_NAME_delVersion, PROP_ID_delVersion);
@@ -280,6 +294,9 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /* 新使用地点: TO_LOCATION_ID */
     private java.lang.Long _toLocationId;
     
+    /* 经办人: HANDLER_ID */
+    private java.lang.Long _handlerId;
+    
     /* 单据状态: DOC_STATUS */
     private java.lang.Integer _docStatus;
     
@@ -294,6 +311,9 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     
     /* 过账人: POSTED_BY */
     private java.lang.Long _postedBy;
+    
+    /* 单据版本: DOC_VERSION */
+    private java.lang.Integer _docVersion;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -441,6 +461,9 @@ public class _ErpAstMovement extends DynamicOrmEntity{
             case PROP_ID_toLocationId:
                return getToLocationId();
         
+            case PROP_ID_handlerId:
+               return getHandlerId();
+        
             case PROP_ID_docStatus:
                return getDocStatus();
         
@@ -455,6 +478,9 @@ public class _ErpAstMovement extends DynamicOrmEntity{
         
             case PROP_ID_postedBy:
                return getPostedBy();
+        
+            case PROP_ID_docVersion:
+               return getDocVersion();
         
             case PROP_ID_delVersion:
                return getDelVersion();
@@ -630,6 +656,16 @@ public class _ErpAstMovement extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_handlerId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_handlerId));
+               }
+               setHandlerId(typedValue);
+               break;
+            }
+        
             case PROP_ID_docStatus:{
                java.lang.Integer typedValue = null;
                if(value != null){
@@ -677,6 +713,16 @@ public class _ErpAstMovement extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_postedBy));
                }
                setPostedBy(typedValue);
+               break;
+            }
+        
+            case PROP_ID_docVersion:{
+               java.lang.Integer typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toInteger(value,
+                       err-> newTypeConversionError(PROP_NAME_docVersion));
+               }
+               setDocVersion(typedValue);
                break;
             }
         
@@ -890,6 +936,13 @@ public class _ErpAstMovement extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_handlerId:{
+               onInitProp(propId);
+               this._handlerId = (java.lang.Long)value;
+               
+               break;
+            }
+        
             case PROP_ID_docStatus:{
                onInitProp(propId);
                this._docStatus = (java.lang.Integer)value;
@@ -921,6 +974,13 @@ public class _ErpAstMovement extends DynamicOrmEntity{
             case PROP_ID_postedBy:{
                onInitProp(propId);
                this._postedBy = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_docVersion:{
+               onInitProp(propId);
+               this._docVersion = (java.lang.Integer)value;
                
                break;
             }
@@ -1256,6 +1316,25 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     }
     
     /**
+     * 经办人: HANDLER_ID
+     */
+    public final java.lang.Long getHandlerId(){
+         onPropGet(PROP_ID_handlerId);
+         return _handlerId;
+    }
+
+    /**
+     * 经办人: HANDLER_ID
+     */
+    public final void setHandlerId(java.lang.Long value){
+        if(onPropSet(PROP_ID_handlerId,value)){
+            this._handlerId = value;
+            internalClearRefs(PROP_ID_handlerId);
+            
+        }
+    }
+    
+    /**
      * 单据状态: DOC_STATUS
      */
     public final java.lang.Integer getDocStatus(){
@@ -1346,6 +1425,25 @@ public class _ErpAstMovement extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_postedBy,value)){
             this._postedBy = value;
             internalClearRefs(PROP_ID_postedBy);
+            
+        }
+    }
+    
+    /**
+     * 单据版本: DOC_VERSION
+     */
+    public final java.lang.Integer getDocVersion(){
+         onPropGet(PROP_ID_docVersion);
+         return _docVersion;
+    }
+
+    /**
+     * 单据版本: DOC_VERSION
+     */
+    public final void setDocVersion(java.lang.Integer value){
+        if(onPropSet(PROP_ID_docVersion,value)){
+            this._docVersion = value;
+            internalClearRefs(PROP_ID_docVersion);
             
         }
     }

@@ -48,6 +48,12 @@
                 <!--备注-->
                 <col id="remark" sortable="true"/>
 
+                <!--版本号-->
+                <col id="versionLabel" sortable="true"/>
+
+                <!--BOM数量-->
+                <col id="qty" sortable="true"/>
+
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
 
@@ -75,6 +81,7 @@
  consumption[消耗控制] isActive[是否有效]
  isDefault[是否默认] useMultiLevelBom[展开多层BOM]
  inspectionRequired[需要质检] remark[备注]
+ versionLabel[版本号] qty[BOM数量]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
  updateTime[修改时间] 
@@ -87,6 +94,7 @@
  consumption[消耗控制] isActive[是否有效]
  isDefault[是否默认] useMultiLevelBom[展开多层BOM]
  inspectionRequired[需要质检] remark[备注]
+ versionLabel[版本号] qty[BOM数量]
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-BOM" i18n-en:title="Edit BOM">
@@ -96,6 +104,7 @@
  consumption[消耗控制] isActive[是否有效]
  isDefault[是否默认] useMultiLevelBom[展开多层BOM]
  inspectionRequired[需要质检] remark[备注]
+ versionLabel[版本号] qty[BOM数量]
  delVersion[逻辑删除版本] 
 </layout>
         </form>

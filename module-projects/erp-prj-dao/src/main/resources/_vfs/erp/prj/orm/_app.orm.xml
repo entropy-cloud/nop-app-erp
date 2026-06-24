@@ -197,22 +197,24 @@
                         stdSqlType="INTEGER" ext:dict="erp-prj/task-status"/>
                 <column code="PRIORITY" displayName="优先级" name="priority" propId="14" stdDataType="int"
                         stdSqlType="INTEGER" ext:dict="erp-prj/priority"/>
-                <column code="SORT_NUM" displayName="排序号" name="sortNum" propId="15" stdDataType="int"
+                <column code="BLOCK_REASON" displayName="阻塞原因" name="blockReason" precision="500" propId="15"
+                        stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="SORT_NUM" displayName="排序号" name="sortNum" propId="16" stdDataType="int"
                         stdSqlType="INTEGER"/>
-                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="16"
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="17"
                         stdDataType="string" stdSqlType="VARCHAR"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
-                        name="delVersion" propId="17" stdDataType="long" stdSqlType="BIGINT"/>
+                        name="delVersion" propId="18" stdDataType="long" stdSqlType="BIGINT"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
-                        name="version" propId="18" stdDataType="int" stdSqlType="INTEGER"/>
+                        name="version" propId="19" stdDataType="int" stdSqlType="INTEGER"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
-                        precision="50" propId="19" stdDataType="string" stdSqlType="VARCHAR"/>
+                        precision="50" propId="20" stdDataType="string" stdSqlType="VARCHAR"/>
                 <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
-                        propId="20" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
+                        propId="21" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
                 <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
-                        precision="50" propId="21" stdDataType="string" stdSqlType="VARCHAR"/>
+                        precision="50" propId="22" stdDataType="string" stdSqlType="VARCHAR"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
-                        propId="22" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
+                        propId="23" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
             </columns>
             <relations>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub">

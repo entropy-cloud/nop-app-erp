@@ -92,6 +92,7 @@ CREATE TABLE erp_ast_asset(
   location_id INT8  ,
   employee_id INT8  ,
   staff_id INT8  ,
+  brand_model VARCHAR(200)  ,
   status INT4 NOT NULL ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
@@ -208,11 +209,13 @@ CREATE TABLE erp_ast_movement(
   to_staff_id INT8  ,
   from_location_id INT8  ,
   to_location_id INT8  ,
+  handler_id INT8  ,
   doc_status INT4 NOT NULL ,
   approve_status INT4 NOT NULL ,
   posted BOOLEAN default false   ,
   posted_at TIMESTAMP  ,
   posted_by INT8  ,
+  doc_version INT4 default 1  NOT NULL ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
   created_by VARCHAR(50) NOT NULL ,
@@ -268,6 +271,7 @@ CREATE TABLE erp_ast_disposal(
   exchange_rate NUMERIC(20,8) default 1   ,
   business_date DATE NOT NULL ,
   gain_loss NUMERIC(20,4)  ,
+  reason INT4  ,
   doc_status INT4 NOT NULL ,
   approve_status INT4 NOT NULL ,
   posted BOOLEAN default false   ,
@@ -423,6 +427,8 @@ CREATE TABLE erp_ast_merge(
       COMMENT ON COLUMN erp_ast_asset.employee_id IS '使用人(职员)';
                     
       COMMENT ON COLUMN erp_ast_asset.staff_id IS '使用人(往来单位,旧字段保留)';
+                    
+      COMMENT ON COLUMN erp_ast_asset.brand_model IS '品牌型号';
                     
       COMMENT ON COLUMN erp_ast_asset.status IS '资产状态';
                     
@@ -632,6 +638,8 @@ CREATE TABLE erp_ast_merge(
                     
       COMMENT ON COLUMN erp_ast_movement.to_location_id IS '新使用地点';
                     
+      COMMENT ON COLUMN erp_ast_movement.handler_id IS '经办人';
+                    
       COMMENT ON COLUMN erp_ast_movement.doc_status IS '单据状态';
                     
       COMMENT ON COLUMN erp_ast_movement.approve_status IS '审核状态';
@@ -641,6 +649,8 @@ CREATE TABLE erp_ast_merge(
       COMMENT ON COLUMN erp_ast_movement.posted_at IS '过账时间';
                     
       COMMENT ON COLUMN erp_ast_movement.posted_by IS '过账人';
+                    
+      COMMENT ON COLUMN erp_ast_movement.doc_version IS '单据版本';
                     
       COMMENT ON COLUMN erp_ast_movement.del_version IS '逻辑删除版本';
                     
@@ -739,6 +749,8 @@ CREATE TABLE erp_ast_merge(
       COMMENT ON COLUMN erp_ast_disposal.business_date IS '处置日期';
                     
       COMMENT ON COLUMN erp_ast_disposal.gain_loss IS '损益';
+                    
+      COMMENT ON COLUMN erp_ast_disposal.reason IS '处置原因';
                     
       COMMENT ON COLUMN erp_ast_disposal.doc_status IS '单据状态';
                     

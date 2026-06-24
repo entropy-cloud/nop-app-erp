@@ -25,6 +25,8 @@ prop:
       orgId: null
       supplierId: null
       invoiceNo: null
+      invoiceType: null
+      invoiceType_label: null
       businessDate: null
       currencyId: null
       exchangeRate: null
@@ -269,6 +271,8 @@ prop:
       totalAmountWithTax: null
       receiveStatus: null
       receiveStatus_label: null
+      receiveType: null
+      receiveType_label: null
       docStatus: null
       docStatus_label: null
       approveStatus: null

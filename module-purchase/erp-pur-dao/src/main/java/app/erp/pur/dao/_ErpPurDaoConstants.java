@@ -118,4 +118,34 @@ public interface _ErpPurDaoConstants {
      */
     int DOC_DIRECTION_OUTBOUND = 20;
                     
+    /**
+     * 入库类型: 正常入库 
+     */
+    int RECEIVE_TYPE_NORMAL = 10;
+                    
+    /**
+     * 入库类型: 退货入库 
+     */
+    int RECEIVE_TYPE_RETURN = 20;
+                    
+    /**
+     * 入库类型: 赠品入库 
+     */
+    int RECEIVE_TYPE_GIFT = 30;
+                    
+    /**
+     * 发票类型: 增值税专用 
+     */
+    int INVOICE_TYPE_VAT_SPECIAL = 10;
+                    
+    /**
+     * 发票类型: 增值税普通 
+     */
+    int INVOICE_TYPE_VAT_NORMAL = 20;
+                    
+    /**
+     * 发票类型: 收据 
+     */
+    int INVOICE_TYPE_RECEIPT = 30;
+                    
 }

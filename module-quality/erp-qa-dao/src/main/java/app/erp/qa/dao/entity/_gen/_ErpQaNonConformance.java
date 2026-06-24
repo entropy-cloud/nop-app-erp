@@ -44,78 +44,109 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     public static final String PROP_NAME_materialId = "materialId";
     public static final int PROP_ID_materialId = 6;
     
+    /* 质检单ID: INSPECTION_ID BIGINT */
+    public static final String PROP_NAME_inspectionId = "inspectionId";
+    public static final int PROP_ID_inspectionId = 7;
+    
     /* 不合格数量: QUANTITY DECIMAL */
     public static final String PROP_NAME_quantity = "quantity";
-    public static final int PROP_ID_quantity = 7;
+    public static final int PROP_ID_quantity = 8;
     
     /* 问题描述: DESCRIPTION VARCHAR */
     public static final String PROP_NAME_description = "description";
-    public static final int PROP_ID_description = 8;
+    public static final int PROP_ID_description = 9;
     
     /* 严重程度: SEVERITY INTEGER */
     public static final String PROP_NAME_severity = "severity";
-    public static final int PROP_ID_severity = 9;
+    public static final int PROP_ID_severity = 10;
+    
+    /* 处理决定: DISPOSITION_TYPE INTEGER */
+    public static final String PROP_NAME_dispositionType = "dispositionType";
+    public static final int PROP_ID_dispositionType = 11;
     
     /* 状态: STATUS INTEGER */
     public static final String PROP_NAME_status = "status";
-    public static final int PROP_ID_status = 10;
+    public static final int PROP_ID_status = 12;
+    
+    /* 供应商: SUPPLIER_ID BIGINT */
+    public static final String PROP_NAME_supplierId = "supplierId";
+    public static final int PROP_ID_supplierId = 13;
+    
+    /* 不合格参数: PARAMETER_NAME VARCHAR */
+    public static final String PROP_NAME_parameterName = "parameterName";
+    public static final int PROP_ID_parameterName = 14;
+    
+    /* 实测值: MEASURED_VALUE DECIMAL */
+    public static final String PROP_NAME_measuredValue = "measuredValue";
+    public static final int PROP_ID_measuredValue = 15;
+    
+    /* 规格下限: SPEC_MIN DECIMAL */
+    public static final String PROP_NAME_specMin = "specMin";
+    public static final int PROP_ID_specMin = 16;
+    
+    /* 规格上限: SPEC_MAX DECIMAL */
+    public static final String PROP_NAME_specMax = "specMax";
+    public static final int PROP_ID_specMax = 17;
     
     /* 责任人: ASSIGNED_TO BIGINT */
     public static final String PROP_NAME_assignedTo = "assignedTo";
-    public static final int PROP_ID_assignedTo = 11;
+    public static final int PROP_ID_assignedTo = 18;
     
     /* 解决人: RESOLVED_BY BIGINT */
     public static final String PROP_NAME_resolvedBy = "resolvedBy";
-    public static final int PROP_ID_resolvedBy = 12;
+    public static final int PROP_ID_resolvedBy = 19;
     
     /* 解决时间: RESOLVED_AT DATETIME */
     public static final String PROP_NAME_resolvedAt = "resolvedAt";
-    public static final int PROP_ID_resolvedAt = 13;
+    public static final int PROP_ID_resolvedAt = 20;
     
     /* 解决措施: RESOLUTION VARCHAR */
     public static final String PROP_NAME_resolution = "resolution";
-    public static final int PROP_ID_resolution = 14;
+    public static final int PROP_ID_resolution = 21;
     
     /* 备注: REMARK VARCHAR */
     public static final String PROP_NAME_remark = "remark";
-    public static final int PROP_ID_remark = 15;
+    public static final int PROP_ID_remark = 23;
     
     /* 逻辑删除版本: DEL_VERSION BIGINT */
     public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 16;
+    public static final int PROP_ID_delVersion = 24;
     
     /* 数据版本: VERSION INTEGER */
     public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 17;
+    public static final int PROP_ID_version = 25;
     
     /* 创建人: CREATED_BY VARCHAR */
     public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 18;
+    public static final int PROP_ID_createdBy = 26;
     
     /* 创建时间: CREATE_TIME TIMESTAMP */
     public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 19;
+    public static final int PROP_ID_createTime = 27;
     
     /* 修改人: UPDATED_BY VARCHAR */
     public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 20;
+    public static final int PROP_ID_updatedBy = 28;
     
     /* 修改时间: UPDATE_TIME TIMESTAMP */
     public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 21;
+    public static final int PROP_ID_updateTime = 29;
     
 
-    private static int _PROP_ID_BOUND = 22;
+    private static int _PROP_ID_BOUND = 30;
 
     
     /* relation:  */
     public static final String PROP_NAME_actions = "actions";
     
+    /* relation:  */
+    public static final String PROP_NAME_inspection = "inspection";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[22];
+    private static final String[] PROP_ID_TO_NAME = new String[30];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -137,6 +168,9 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_materialId] = PROP_NAME_materialId;
           PROP_NAME_TO_ID.put(PROP_NAME_materialId, PROP_ID_materialId);
       
+          PROP_ID_TO_NAME[PROP_ID_inspectionId] = PROP_NAME_inspectionId;
+          PROP_NAME_TO_ID.put(PROP_NAME_inspectionId, PROP_ID_inspectionId);
+      
           PROP_ID_TO_NAME[PROP_ID_quantity] = PROP_NAME_quantity;
           PROP_NAME_TO_ID.put(PROP_NAME_quantity, PROP_ID_quantity);
       
@@ -146,8 +180,26 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_severity] = PROP_NAME_severity;
           PROP_NAME_TO_ID.put(PROP_NAME_severity, PROP_ID_severity);
       
+          PROP_ID_TO_NAME[PROP_ID_dispositionType] = PROP_NAME_dispositionType;
+          PROP_NAME_TO_ID.put(PROP_NAME_dispositionType, PROP_ID_dispositionType);
+      
           PROP_ID_TO_NAME[PROP_ID_status] = PROP_NAME_status;
           PROP_NAME_TO_ID.put(PROP_NAME_status, PROP_ID_status);
+      
+          PROP_ID_TO_NAME[PROP_ID_supplierId] = PROP_NAME_supplierId;
+          PROP_NAME_TO_ID.put(PROP_NAME_supplierId, PROP_ID_supplierId);
+      
+          PROP_ID_TO_NAME[PROP_ID_parameterName] = PROP_NAME_parameterName;
+          PROP_NAME_TO_ID.put(PROP_NAME_parameterName, PROP_ID_parameterName);
+      
+          PROP_ID_TO_NAME[PROP_ID_measuredValue] = PROP_NAME_measuredValue;
+          PROP_NAME_TO_ID.put(PROP_NAME_measuredValue, PROP_ID_measuredValue);
+      
+          PROP_ID_TO_NAME[PROP_ID_specMin] = PROP_NAME_specMin;
+          PROP_NAME_TO_ID.put(PROP_NAME_specMin, PROP_ID_specMin);
+      
+          PROP_ID_TO_NAME[PROP_ID_specMax] = PROP_NAME_specMax;
+          PROP_NAME_TO_ID.put(PROP_NAME_specMax, PROP_ID_specMax);
       
           PROP_ID_TO_NAME[PROP_ID_assignedTo] = PROP_NAME_assignedTo;
           PROP_NAME_TO_ID.put(PROP_NAME_assignedTo, PROP_ID_assignedTo);
@@ -203,6 +255,9 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /* 物料: MATERIAL_ID */
     private java.lang.Long _materialId;
     
+    /* 质检单ID: INSPECTION_ID */
+    private java.lang.Long _inspectionId;
+    
     /* 不合格数量: QUANTITY */
     private java.lang.String _quantity;
     
@@ -212,8 +267,26 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /* 严重程度: SEVERITY */
     private java.lang.Integer _severity;
     
+    /* 处理决定: DISPOSITION_TYPE */
+    private java.lang.Integer _dispositionType;
+    
     /* 状态: STATUS */
     private java.lang.Integer _status;
+    
+    /* 供应商: SUPPLIER_ID */
+    private java.lang.Long _supplierId;
+    
+    /* 不合格参数: PARAMETER_NAME */
+    private java.lang.String _parameterName;
+    
+    /* 实测值: MEASURED_VALUE */
+    private java.lang.String _measuredValue;
+    
+    /* 规格下限: SPEC_MIN */
+    private java.lang.String _specMin;
+    
+    /* 规格上限: SPEC_MAX */
+    private java.lang.String _specMax;
     
     /* 责任人: ASSIGNED_TO */
     private java.lang.Long _assignedTo;
@@ -340,6 +413,9 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
             case PROP_ID_materialId:
                return getMaterialId();
         
+            case PROP_ID_inspectionId:
+               return getInspectionId();
+        
             case PROP_ID_quantity:
                return getQuantity();
         
@@ -349,8 +425,26 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
             case PROP_ID_severity:
                return getSeverity();
         
+            case PROP_ID_dispositionType:
+               return getDispositionType();
+        
             case PROP_ID_status:
                return getStatus();
+        
+            case PROP_ID_supplierId:
+               return getSupplierId();
+        
+            case PROP_ID_parameterName:
+               return getParameterName();
+        
+            case PROP_ID_measuredValue:
+               return getMeasuredValue();
+        
+            case PROP_ID_specMin:
+               return getSpecMin();
+        
+            case PROP_ID_specMax:
+               return getSpecMax();
         
             case PROP_ID_assignedTo:
                return getAssignedTo();
@@ -456,6 +550,16 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_inspectionId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_inspectionId));
+               }
+               setInspectionId(typedValue);
+               break;
+            }
+        
             case PROP_ID_quantity:{
                java.lang.String typedValue = null;
                if(value != null){
@@ -486,6 +590,16 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_dispositionType:{
+               java.lang.Integer typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toInteger(value,
+                       err-> newTypeConversionError(PROP_NAME_dispositionType));
+               }
+               setDispositionType(typedValue);
+               break;
+            }
+        
             case PROP_ID_status:{
                java.lang.Integer typedValue = null;
                if(value != null){
@@ -493,6 +607,56 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
+               break;
+            }
+        
+            case PROP_ID_supplierId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_supplierId));
+               }
+               setSupplierId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_parameterName:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_parameterName));
+               }
+               setParameterName(typedValue);
+               break;
+            }
+        
+            case PROP_ID_measuredValue:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_measuredValue));
+               }
+               setMeasuredValue(typedValue);
+               break;
+            }
+        
+            case PROP_ID_specMin:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_specMin));
+               }
+               setSpecMin(typedValue);
+               break;
+            }
+        
+            case PROP_ID_specMax:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_specMax));
+               }
+               setSpecMax(typedValue);
                break;
             }
         
@@ -657,6 +821,13 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_inspectionId:{
+               onInitProp(propId);
+               this._inspectionId = (java.lang.Long)value;
+               
+               break;
+            }
+        
             case PROP_ID_quantity:{
                onInitProp(propId);
                this._quantity = (java.lang.String)value;
@@ -678,9 +849,51 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_dispositionType:{
+               onInitProp(propId);
+               this._dispositionType = (java.lang.Integer)value;
+               
+               break;
+            }
+        
             case PROP_ID_status:{
                onInitProp(propId);
                this._status = (java.lang.Integer)value;
+               
+               break;
+            }
+        
+            case PROP_ID_supplierId:{
+               onInitProp(propId);
+               this._supplierId = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_parameterName:{
+               onInitProp(propId);
+               this._parameterName = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_measuredValue:{
+               onInitProp(propId);
+               this._measuredValue = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_specMin:{
+               onInitProp(propId);
+               this._specMin = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_specMax:{
+               onInitProp(propId);
+               this._specMax = (java.lang.String)value;
                
                break;
             }
@@ -883,6 +1096,25 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     }
     
     /**
+     * 质检单ID: INSPECTION_ID
+     */
+    public final java.lang.Long getInspectionId(){
+         onPropGet(PROP_ID_inspectionId);
+         return _inspectionId;
+    }
+
+    /**
+     * 质检单ID: INSPECTION_ID
+     */
+    public final void setInspectionId(java.lang.Long value){
+        if(onPropSet(PROP_ID_inspectionId,value)){
+            this._inspectionId = value;
+            internalClearRefs(PROP_ID_inspectionId);
+            
+        }
+    }
+    
+    /**
      * 不合格数量: QUANTITY
      */
     public final java.lang.String getQuantity(){
@@ -940,6 +1172,25 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     }
     
     /**
+     * 处理决定: DISPOSITION_TYPE
+     */
+    public final java.lang.Integer getDispositionType(){
+         onPropGet(PROP_ID_dispositionType);
+         return _dispositionType;
+    }
+
+    /**
+     * 处理决定: DISPOSITION_TYPE
+     */
+    public final void setDispositionType(java.lang.Integer value){
+        if(onPropSet(PROP_ID_dispositionType,value)){
+            this._dispositionType = value;
+            internalClearRefs(PROP_ID_dispositionType);
+            
+        }
+    }
+    
+    /**
      * 状态: STATUS
      */
     public final java.lang.Integer getStatus(){
@@ -954,6 +1205,101 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);
+            
+        }
+    }
+    
+    /**
+     * 供应商: SUPPLIER_ID
+     */
+    public final java.lang.Long getSupplierId(){
+         onPropGet(PROP_ID_supplierId);
+         return _supplierId;
+    }
+
+    /**
+     * 供应商: SUPPLIER_ID
+     */
+    public final void setSupplierId(java.lang.Long value){
+        if(onPropSet(PROP_ID_supplierId,value)){
+            this._supplierId = value;
+            internalClearRefs(PROP_ID_supplierId);
+            
+        }
+    }
+    
+    /**
+     * 不合格参数: PARAMETER_NAME
+     */
+    public final java.lang.String getParameterName(){
+         onPropGet(PROP_ID_parameterName);
+         return _parameterName;
+    }
+
+    /**
+     * 不合格参数: PARAMETER_NAME
+     */
+    public final void setParameterName(java.lang.String value){
+        if(onPropSet(PROP_ID_parameterName,value)){
+            this._parameterName = value;
+            internalClearRefs(PROP_ID_parameterName);
+            
+        }
+    }
+    
+    /**
+     * 实测值: MEASURED_VALUE
+     */
+    public final java.lang.String getMeasuredValue(){
+         onPropGet(PROP_ID_measuredValue);
+         return _measuredValue;
+    }
+
+    /**
+     * 实测值: MEASURED_VALUE
+     */
+    public final void setMeasuredValue(java.lang.String value){
+        if(onPropSet(PROP_ID_measuredValue,value)){
+            this._measuredValue = value;
+            internalClearRefs(PROP_ID_measuredValue);
+            
+        }
+    }
+    
+    /**
+     * 规格下限: SPEC_MIN
+     */
+    public final java.lang.String getSpecMin(){
+         onPropGet(PROP_ID_specMin);
+         return _specMin;
+    }
+
+    /**
+     * 规格下限: SPEC_MIN
+     */
+    public final void setSpecMin(java.lang.String value){
+        if(onPropSet(PROP_ID_specMin,value)){
+            this._specMin = value;
+            internalClearRefs(PROP_ID_specMin);
+            
+        }
+    }
+    
+    /**
+     * 规格上限: SPEC_MAX
+     */
+    public final java.lang.String getSpecMax(){
+         onPropGet(PROP_ID_specMax);
+         return _specMax;
+    }
+
+    /**
+     * 规格上限: SPEC_MAX
+     */
+    public final void setSpecMax(java.lang.String value){
+        if(onPropSet(PROP_ID_specMax,value)){
+            this._specMax = value;
+            internalClearRefs(PROP_ID_specMax);
             
         }
     }
@@ -1175,6 +1521,29 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
      */
     public final IOrmEntitySet<app.erp.qa.dao.entity.ErpQaAction> getActions(){
        return _actions;
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.qa.dao.entity.ErpQaInspection getInspection(){
+       return (app.erp.qa.dao.entity.ErpQaInspection)internalGetRefEntity(PROP_NAME_inspection);
+    }
+
+    public final void setInspection(app.erp.qa.dao.entity.ErpQaInspection refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setInspectionId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_inspection, refEntity,()->{
+           
+                           this.setInspectionId(refEntity.getId());
+                       
+           });
+           }
+       
     }
        
 }

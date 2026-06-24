@@ -180,10 +180,24 @@
         }
 
 
-        private Long _delVersion;
+        private String _code;
 
     
         @PropMeta(propId=13)
+    
+        public String getCode(){
+            return _code;
+        }
+
+        public void setCode(String value){
+            this._code = value;
+        }
+
+
+        private Long _delVersion;
+
+    
+        @PropMeta(propId=14)
     
         public Long getDelVersion(){
             return _delVersion;

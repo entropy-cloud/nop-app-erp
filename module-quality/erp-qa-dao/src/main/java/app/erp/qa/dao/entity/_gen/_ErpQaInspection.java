@@ -52,96 +52,107 @@ public class _ErpQaInspection extends DynamicOrmEntity{
     public static final String PROP_NAME_materialId = "materialId";
     public static final int PROP_ID_materialId = 8;
     
+    /* 质检模板: TEMPLATE_ID BIGINT */
+    public static final String PROP_NAME_templateId = "templateId";
+    public static final int PROP_ID_templateId = 9;
+    
     /* 供应商: SUPPLIER_ID BIGINT */
     public static final String PROP_NAME_supplierId = "supplierId";
-    public static final int PROP_ID_supplierId = 9;
+    public static final int PROP_ID_supplierId = 10;
     
     /* 仓库: WAREHOUSE_ID BIGINT */
     public static final String PROP_NAME_warehouseId = "warehouseId";
-    public static final int PROP_ID_warehouseId = 10;
+    public static final int PROP_ID_warehouseId = 11;
+    
+    /* 批号: BATCH_NO VARCHAR */
+    public static final String PROP_NAME_batchNo = "batchNo";
+    public static final int PROP_ID_batchNo = 13;
     
     /* 检验日期: INSPECTION_DATE DATE */
     public static final String PROP_NAME_inspectionDate = "inspectionDate";
-    public static final int PROP_ID_inspectionDate = 11;
+    public static final int PROP_ID_inspectionDate = 14;
     
     /* 批量: LOT_QUANTITY DECIMAL */
     public static final String PROP_NAME_lotQuantity = "lotQuantity";
-    public static final int PROP_ID_lotQuantity = 12;
+    public static final int PROP_ID_lotQuantity = 15;
     
     /* 抽样数量: SAMPLE_QUANTITY DECIMAL */
     public static final String PROP_NAME_sampleQuantity = "sampleQuantity";
-    public static final int PROP_ID_sampleQuantity = 13;
+    public static final int PROP_ID_sampleQuantity = 16;
     
     /* 检验员(职员): INSPECTOR_ID BIGINT */
     public static final String PROP_NAME_inspectorId = "inspectorId";
-    public static final int PROP_ID_inspectorId = 14;
+    public static final int PROP_ID_inspectorId = 17;
     
     /* 质检结果: RESULT INTEGER */
     public static final String PROP_NAME_result = "result";
-    public static final int PROP_ID_result = 15;
+    public static final int PROP_ID_result = 18;
     
     /* 单据状态: DOC_STATUS INTEGER */
     public static final String PROP_NAME_docStatus = "docStatus";
-    public static final int PROP_ID_docStatus = 16;
+    public static final int PROP_ID_docStatus = 19;
     
     /* 审核状态: APPROVE_STATUS INTEGER */
     public static final String PROP_NAME_approveStatus = "approveStatus";
-    public static final int PROP_ID_approveStatus = 17;
+    public static final int PROP_ID_approveStatus = 20;
     
     /* 已过账(质量结论已回写业务单据): POSTED BOOLEAN */
     public static final String PROP_NAME_posted = "posted";
-    public static final int PROP_ID_posted = 18;
+    public static final int PROP_ID_posted = 21;
     
     /* 过账时间: POSTED_AT DATETIME */
     public static final String PROP_NAME_postedAt = "postedAt";
-    public static final int PROP_ID_postedAt = 19;
+    public static final int PROP_ID_postedAt = 22;
     
     /* 过账人: POSTED_BY BIGINT */
     public static final String PROP_NAME_postedBy = "postedBy";
-    public static final int PROP_ID_postedBy = 20;
+    public static final int PROP_ID_postedBy = 23;
     
     /* 审核人: APPROVED_BY BIGINT */
     public static final String PROP_NAME_approvedBy = "approvedBy";
-    public static final int PROP_ID_approvedBy = 21;
+    public static final int PROP_ID_approvedBy = 24;
     
     /* 审核时间: APPROVED_AT DATETIME */
     public static final String PROP_NAME_approvedAt = "approvedAt";
-    public static final int PROP_ID_approvedAt = 22;
+    public static final int PROP_ID_approvedAt = 25;
     
     /* 备注: REMARK VARCHAR */
     public static final String PROP_NAME_remark = "remark";
-    public static final int PROP_ID_remark = 23;
+    public static final int PROP_ID_remark = 26;
     
     /* 逻辑删除版本: DEL_VERSION BIGINT */
     public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 24;
+    public static final int PROP_ID_delVersion = 27;
     
     /* 数据版本: VERSION INTEGER */
     public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 25;
+    public static final int PROP_ID_version = 28;
     
     /* 创建人: CREATED_BY VARCHAR */
     public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 26;
+    public static final int PROP_ID_createdBy = 29;
     
     /* 创建时间: CREATE_TIME TIMESTAMP */
     public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 27;
+    public static final int PROP_ID_createTime = 30;
     
     /* 修改人: UPDATED_BY VARCHAR */
     public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 28;
+    public static final int PROP_ID_updatedBy = 31;
     
     /* 修改时间: UPDATE_TIME TIMESTAMP */
     public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 29;
+    public static final int PROP_ID_updateTime = 32;
     
 
-    private static int _PROP_ID_BOUND = 30;
+    private static int _PROP_ID_BOUND = 33;
 
     
     /* relation:  */
     public static final String PROP_NAME_material = "material";
+    
+    /* relation:  */
+    public static final String PROP_NAME_template = "template";
     
     /* relation:  */
     public static final String PROP_NAME_supplier = "supplier";
@@ -162,7 +173,7 @@ public class _ErpQaInspection extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[30];
+    private static final String[] PROP_ID_TO_NAME = new String[33];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -190,11 +201,17 @@ public class _ErpQaInspection extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_materialId] = PROP_NAME_materialId;
           PROP_NAME_TO_ID.put(PROP_NAME_materialId, PROP_ID_materialId);
       
+          PROP_ID_TO_NAME[PROP_ID_templateId] = PROP_NAME_templateId;
+          PROP_NAME_TO_ID.put(PROP_NAME_templateId, PROP_ID_templateId);
+      
           PROP_ID_TO_NAME[PROP_ID_supplierId] = PROP_NAME_supplierId;
           PROP_NAME_TO_ID.put(PROP_NAME_supplierId, PROP_ID_supplierId);
       
           PROP_ID_TO_NAME[PROP_ID_warehouseId] = PROP_NAME_warehouseId;
           PROP_NAME_TO_ID.put(PROP_NAME_warehouseId, PROP_ID_warehouseId);
+      
+          PROP_ID_TO_NAME[PROP_ID_batchNo] = PROP_NAME_batchNo;
+          PROP_NAME_TO_ID.put(PROP_NAME_batchNo, PROP_ID_batchNo);
       
           PROP_ID_TO_NAME[PROP_ID_inspectionDate] = PROP_NAME_inspectionDate;
           PROP_NAME_TO_ID.put(PROP_NAME_inspectionDate, PROP_ID_inspectionDate);
@@ -280,11 +297,17 @@ public class _ErpQaInspection extends DynamicOrmEntity{
     /* 物料: MATERIAL_ID */
     private java.lang.Long _materialId;
     
+    /* 质检模板: TEMPLATE_ID */
+    private java.lang.Long _templateId;
+    
     /* 供应商: SUPPLIER_ID */
     private java.lang.Long _supplierId;
     
     /* 仓库: WAREHOUSE_ID */
     private java.lang.Long _warehouseId;
+    
+    /* 批号: BATCH_NO */
+    private java.lang.String _batchNo;
     
     /* 检验日期: INSPECTION_DATE */
     private java.time.LocalDate _inspectionDate;
@@ -441,11 +464,17 @@ public class _ErpQaInspection extends DynamicOrmEntity{
             case PROP_ID_materialId:
                return getMaterialId();
         
+            case PROP_ID_templateId:
+               return getTemplateId();
+        
             case PROP_ID_supplierId:
                return getSupplierId();
         
             case PROP_ID_warehouseId:
                return getWarehouseId();
+        
+            case PROP_ID_batchNo:
+               return getBatchNo();
         
             case PROP_ID_inspectionDate:
                return getInspectionDate();
@@ -595,6 +624,16 @@ public class _ErpQaInspection extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_templateId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_templateId));
+               }
+               setTemplateId(typedValue);
+               break;
+            }
+        
             case PROP_ID_supplierId:{
                java.lang.Long typedValue = null;
                if(value != null){
@@ -612,6 +651,16 @@ public class _ErpQaInspection extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_warehouseId));
                }
                setWarehouseId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_batchNo:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_batchNo));
+               }
+               setBatchNo(typedValue);
                break;
             }
         
@@ -870,6 +919,13 @@ public class _ErpQaInspection extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_templateId:{
+               onInitProp(propId);
+               this._templateId = (java.lang.Long)value;
+               
+               break;
+            }
+        
             case PROP_ID_supplierId:{
                onInitProp(propId);
                this._supplierId = (java.lang.Long)value;
@@ -880,6 +936,13 @@ public class _ErpQaInspection extends DynamicOrmEntity{
             case PROP_ID_warehouseId:{
                onInitProp(propId);
                this._warehouseId = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_batchNo:{
+               onInitProp(propId);
+               this._batchNo = (java.lang.String)value;
                
                break;
             }
@@ -1176,6 +1239,25 @@ public class _ErpQaInspection extends DynamicOrmEntity{
     }
     
     /**
+     * 质检模板: TEMPLATE_ID
+     */
+    public final java.lang.Long getTemplateId(){
+         onPropGet(PROP_ID_templateId);
+         return _templateId;
+    }
+
+    /**
+     * 质检模板: TEMPLATE_ID
+     */
+    public final void setTemplateId(java.lang.Long value){
+        if(onPropSet(PROP_ID_templateId,value)){
+            this._templateId = value;
+            internalClearRefs(PROP_ID_templateId);
+            
+        }
+    }
+    
+    /**
      * 供应商: SUPPLIER_ID
      */
     public final java.lang.Long getSupplierId(){
@@ -1209,6 +1291,25 @@ public class _ErpQaInspection extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_warehouseId,value)){
             this._warehouseId = value;
             internalClearRefs(PROP_ID_warehouseId);
+            
+        }
+    }
+    
+    /**
+     * 批号: BATCH_NO
+     */
+    public final java.lang.String getBatchNo(){
+         onPropGet(PROP_ID_batchNo);
+         return _batchNo;
+    }
+
+    /**
+     * 批号: BATCH_NO
+     */
+    public final void setBatchNo(java.lang.String value){
+        if(onPropSet(PROP_ID_batchNo,value)){
+            this._batchNo = value;
+            internalClearRefs(PROP_ID_batchNo);
             
         }
     }
@@ -1591,6 +1692,29 @@ public class _ErpQaInspection extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_material, refEntity,()->{
            
                            this.setMaterialId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.qa.dao.entity.ErpQaInspectionTemplate getTemplate(){
+       return (app.erp.qa.dao.entity.ErpQaInspectionTemplate)internalGetRefEntity(PROP_NAME_template);
+    }
+
+    public final void setTemplate(app.erp.qa.dao.entity.ErpQaInspectionTemplate refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setTemplateId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_template, refEntity,()->{
+           
+                           this.setTemplateId(refEntity.getId());
                        
            });
            }

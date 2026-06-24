@@ -138,10 +138,52 @@
         }
 
 
-        private Long _delVersion;
+        private String _scrapRate;
 
     
         @PropMeta(propId=10)
+    
+        public String getScrapRate(){
+            return _scrapRate;
+        }
+
+        public void setScrapRate(String value){
+            this._scrapRate = value;
+        }
+
+
+        private Long _warehouseId;
+
+    
+        @PropMeta(propId=11)
+    
+        public Long getWarehouseId(){
+            return _warehouseId;
+        }
+
+        public void setWarehouseId(Long value){
+            this._warehouseId = value;
+        }
+
+
+        private Long _alternativeMaterialId;
+
+    
+        @PropMeta(propId=12)
+    
+        public Long getAlternativeMaterialId(){
+            return _alternativeMaterialId;
+        }
+
+        public void setAlternativeMaterialId(Long value){
+            this._alternativeMaterialId = value;
+        }
+
+
+        private Long _delVersion;
+
+    
+        @PropMeta(propId=13)
     
         public Long getDelVersion(){
             return _delVersion;

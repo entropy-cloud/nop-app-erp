@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 发票类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 增值税专用
+    value: 10
+    description: 
+  
+  - label: 增值税普通
+    value: 20
+    description: 
+  
+  - label: 收据
+    value: 30
+    description: 
+  

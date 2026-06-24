@@ -52,32 +52,44 @@ public class _ErpMfgBomByproduct extends DynamicOrmEntity{
     public static final String PROP_NAME_remark = "remark";
     public static final int PROP_ID_remark = 8;
     
+    /* 联副产品类型: BYPRODUCT_TYPE INTEGER */
+    public static final String PROP_NAME_byproductType = "byproductType";
+    public static final int PROP_ID_byproductType = 9;
+    
+    /* 产出率(%): YIELD_RATE DECIMAL */
+    public static final String PROP_NAME_yieldRate = "yieldRate";
+    public static final int PROP_ID_yieldRate = 10;
+    
+    /* 成本分摊比例(%): COST_ALLOCATION_PERCENT DECIMAL */
+    public static final String PROP_NAME_costAllocationPercent = "costAllocationPercent";
+    public static final int PROP_ID_costAllocationPercent = 11;
+    
     /* 逻辑删除版本: DEL_VERSION BIGINT */
     public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 9;
+    public static final int PROP_ID_delVersion = 12;
     
     /* 数据版本: VERSION INTEGER */
     public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 10;
+    public static final int PROP_ID_version = 13;
     
     /* 创建人: CREATED_BY VARCHAR */
     public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 11;
+    public static final int PROP_ID_createdBy = 14;
     
     /* 创建时间: CREATE_TIME TIMESTAMP */
     public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 12;
+    public static final int PROP_ID_createTime = 15;
     
     /* 修改人: UPDATED_BY VARCHAR */
     public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 13;
+    public static final int PROP_ID_updatedBy = 16;
     
     /* 修改时间: UPDATE_TIME TIMESTAMP */
     public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 14;
+    public static final int PROP_ID_updateTime = 17;
     
 
-    private static int _PROP_ID_BOUND = 15;
+    private static int _PROP_ID_BOUND = 18;
 
     
     /* relation:  */
@@ -96,7 +108,7 @@ public class _ErpMfgBomByproduct extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[15];
+    private static final String[] PROP_ID_TO_NAME = new String[18];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -123,6 +135,15 @@ public class _ErpMfgBomByproduct extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
           PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
+      
+          PROP_ID_TO_NAME[PROP_ID_byproductType] = PROP_NAME_byproductType;
+          PROP_NAME_TO_ID.put(PROP_NAME_byproductType, PROP_ID_byproductType);
+      
+          PROP_ID_TO_NAME[PROP_ID_yieldRate] = PROP_NAME_yieldRate;
+          PROP_NAME_TO_ID.put(PROP_NAME_yieldRate, PROP_ID_yieldRate);
+      
+          PROP_ID_TO_NAME[PROP_ID_costAllocationPercent] = PROP_NAME_costAllocationPercent;
+          PROP_NAME_TO_ID.put(PROP_NAME_costAllocationPercent, PROP_ID_costAllocationPercent);
       
           PROP_ID_TO_NAME[PROP_ID_delVersion] = PROP_NAME_delVersion;
           PROP_NAME_TO_ID.put(PROP_NAME_delVersion, PROP_ID_delVersion);
@@ -168,6 +189,15 @@ public class _ErpMfgBomByproduct extends DynamicOrmEntity{
     
     /* 备注: REMARK */
     private java.lang.String _remark;
+    
+    /* 联副产品类型: BYPRODUCT_TYPE */
+    private java.lang.Integer _byproductType;
+    
+    /* 产出率(%): YIELD_RATE */
+    private java.lang.String _yieldRate;
+    
+    /* 成本分摊比例(%): COST_ALLOCATION_PERCENT */
+    private java.lang.String _costAllocationPercent;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -285,6 +315,15 @@ public class _ErpMfgBomByproduct extends DynamicOrmEntity{
             case PROP_ID_remark:
                return getRemark();
         
+            case PROP_ID_byproductType:
+               return getByproductType();
+        
+            case PROP_ID_yieldRate:
+               return getYieldRate();
+        
+            case PROP_ID_costAllocationPercent:
+               return getCostAllocationPercent();
+        
             case PROP_ID_delVersion:
                return getDelVersion();
         
@@ -391,6 +430,36 @@ public class _ErpMfgBomByproduct extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_remark));
                }
                setRemark(typedValue);
+               break;
+            }
+        
+            case PROP_ID_byproductType:{
+               java.lang.Integer typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toInteger(value,
+                       err-> newTypeConversionError(PROP_NAME_byproductType));
+               }
+               setByproductType(typedValue);
+               break;
+            }
+        
+            case PROP_ID_yieldRate:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_yieldRate));
+               }
+               setYieldRate(typedValue);
+               break;
+            }
+        
+            case PROP_ID_costAllocationPercent:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_costAllocationPercent));
+               }
+               setCostAllocationPercent(typedValue);
                break;
             }
         
@@ -515,6 +584,27 @@ public class _ErpMfgBomByproduct extends DynamicOrmEntity{
             case PROP_ID_remark:{
                onInitProp(propId);
                this._remark = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_byproductType:{
+               onInitProp(propId);
+               this._byproductType = (java.lang.Integer)value;
+               
+               break;
+            }
+        
+            case PROP_ID_yieldRate:{
+               onInitProp(propId);
+               this._yieldRate = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_costAllocationPercent:{
+               onInitProp(propId);
+               this._costAllocationPercent = (java.lang.String)value;
                
                break;
             }
@@ -715,6 +805,63 @@ public class _ErpMfgBomByproduct extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_remark,value)){
             this._remark = value;
             internalClearRefs(PROP_ID_remark);
+            
+        }
+    }
+    
+    /**
+     * 联副产品类型: BYPRODUCT_TYPE
+     */
+    public final java.lang.Integer getByproductType(){
+         onPropGet(PROP_ID_byproductType);
+         return _byproductType;
+    }
+
+    /**
+     * 联副产品类型: BYPRODUCT_TYPE
+     */
+    public final void setByproductType(java.lang.Integer value){
+        if(onPropSet(PROP_ID_byproductType,value)){
+            this._byproductType = value;
+            internalClearRefs(PROP_ID_byproductType);
+            
+        }
+    }
+    
+    /**
+     * 产出率(%): YIELD_RATE
+     */
+    public final java.lang.String getYieldRate(){
+         onPropGet(PROP_ID_yieldRate);
+         return _yieldRate;
+    }
+
+    /**
+     * 产出率(%): YIELD_RATE
+     */
+    public final void setYieldRate(java.lang.String value){
+        if(onPropSet(PROP_ID_yieldRate,value)){
+            this._yieldRate = value;
+            internalClearRefs(PROP_ID_yieldRate);
+            
+        }
+    }
+    
+    /**
+     * 成本分摊比例(%): COST_ALLOCATION_PERCENT
+     */
+    public final java.lang.String getCostAllocationPercent(){
+         onPropGet(PROP_ID_costAllocationPercent);
+         return _costAllocationPercent;
+    }
+
+    /**
+     * 成本分摊比例(%): COST_ALLOCATION_PERCENT
+     */
+    public final void setCostAllocationPercent(java.lang.String value){
+        if(onPropSet(PROP_ID_costAllocationPercent,value)){
+            this._costAllocationPercent = value;
+            internalClearRefs(PROP_ID_costAllocationPercent);
             
         }
     }

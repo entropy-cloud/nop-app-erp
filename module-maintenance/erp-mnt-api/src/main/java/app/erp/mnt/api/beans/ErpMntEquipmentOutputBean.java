@@ -4,6 +4,7 @@
     import com.fasterxml.jackson.annotation.JsonInclude;
     import io.nop.api.core.annotations.data.DataBean;
     import io.nop.api.core.annotations.meta.PropMeta;
+    import java.util.List;
     
     import java.util.Map;
 
@@ -349,6 +350,61 @@
 
         public void setOrg(Map<String,Object> value){
             this._org = value;
+        }
+
+
+        private List<Map<String,Object>> _visits;
+
+        public List<Map<String,Object>> getVisits(){
+            return _visits;
+        }
+
+        public void setVisits(List<Map<String,Object>> value){
+            this._visits = value;
+        }
+
+
+        private List<Map<String,Object>> _schedules;
+
+        public List<Map<String,Object>> getSchedules(){
+            return _schedules;
+        }
+
+        public void setSchedules(List<Map<String,Object>> value){
+            this._schedules = value;
+        }
+
+
+        private List<Map<String,Object>> _requests;
+
+        public List<Map<String,Object>> getRequests(){
+            return _requests;
+        }
+
+        public void setRequests(List<Map<String,Object>> value){
+            this._requests = value;
+        }
+
+
+        private List<Map<String,Object>> _sparePartUsages;
+
+        public List<Map<String,Object>> getSparePartUsages(){
+            return _sparePartUsages;
+        }
+
+        public void setSparePartUsages(List<Map<String,Object>> value){
+            this._sparePartUsages = value;
+        }
+
+
+        private List<Map<String,Object>> _downtimeEntries;
+
+        public List<Map<String,Object>> getDowntimeEntries(){
+            return _downtimeEntries;
+        }
+
+        public void setDowntimeEntries(List<Map<String,Object>> value){
+            this._downtimeEntries = value;
         }
 
 

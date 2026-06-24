@@ -45,6 +45,15 @@
                 <!--备注-->
                 <col id="remark" sortable="true"/>
 
+                <!--损耗率(%)-->
+                <col id="scrapRate" sortable="true"/>
+
+                <!--发货仓库-->
+                <col id="warehouseId" ui:number="true" sortable="true"/>
+
+                <!--替代物料-->
+                <col id="alternativeMaterialId" ui:number="true" sortable="true"/>
+
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
 
@@ -71,22 +80,21 @@
  lineNo[行号] materialId[物料]
  skuId[SKU] uoMId[计量单位]
  quantity[数量] operationId[工序ID]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ remark[备注] scrapRate[损耗率(%)]
+ warehouseId[发货仓库] alternativeMaterialId[替代物料]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-BOM行" i18n-en:title="Add BOM Line">
             <layout>
- id[ID]
- bomId[BOM ID]
- lineNo[行号]
- materialId[物料]
- skuId[SKU]
- uoMId[计量单位]
- quantity[数量]
- operationId[工序ID]
- remark[备注]
+ id[ID] bomId[BOM ID]
+ lineNo[行号] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ quantity[数量] operationId[工序ID]
+ remark[备注] scrapRate[损耗率(%)]
+ warehouseId[发货仓库] alternativeMaterialId[替代物料]
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-BOM行" i18n-en:title="Edit BOM Line">
@@ -95,7 +103,9 @@
  lineNo[行号] materialId[物料]
  skuId[SKU] uoMId[计量单位]
  quantity[数量] operationId[工序ID]
- remark[备注] delVersion[逻辑删除版本]
+ remark[备注] scrapRate[损耗率(%)]
+ warehouseId[发货仓库] alternativeMaterialId[替代物料]
+ delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

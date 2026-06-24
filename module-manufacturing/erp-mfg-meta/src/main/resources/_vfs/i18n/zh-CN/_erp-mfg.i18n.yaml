@@ -41,14 +41,19 @@ prop:
       operations: null
       product: null
       productId: 产品
+      qty: BOM数量
       remark: 备注
       updateTime: 修改时间
       updatedBy: 修改人
       useMultiLevelBom: 展开多层BOM
       version: 数据版本
+      versionLabel: 版本号
     ErpMfgBomByproduct:
       bom: null
       bomId: BOM ID
+      byproductType: 联副产品类型
+      byproductType_label: 联副产品类型
+      costAllocationPercent: 成本分摊比例(%)
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
@@ -65,7 +70,9 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+      yieldRate: 产出率(%)
     ErpMfgBomLine:
+      alternativeMaterialId: 替代物料
       bom: null
       bomId: BOM ID
       createTime: 创建时间
@@ -78,6 +85,7 @@ prop:
       operationId: 工序ID
       quantity: 数量
       remark: 备注
+      scrapRate: 损耗率(%)
       sku: null
       skuId: SKU
       uoM: null
@@ -85,6 +93,7 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+      warehouseId: 发货仓库
     ErpMfgBomOperation:
       bom: null
       bomId: BOM ID
@@ -144,6 +153,7 @@ prop:
     ErpMfgJobCard:
       actualEndTime: 实际结束时间
       actualStartTime: 实际开始时间
+      code: 作业卡编号
       completedQuantity: 完工数量
       createTime: 创建时间
       createdBy: 创建人

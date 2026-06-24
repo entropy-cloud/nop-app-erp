@@ -182,6 +182,7 @@ CREATE TABLE erp_pur_invoice(
   org_id INT8  ,
   supplier_id INT8 NOT NULL ,
   invoice_no VARCHAR(50)  ,
+  invoice_type INT4  ,
   business_date DATE NOT NULL ,
   currency_id INT8 NOT NULL ,
   exchange_rate NUMERIC(20,8) default 1   ,
@@ -404,6 +405,7 @@ CREATE TABLE erp_pur_receive(
   total_tax_amount NUMERIC(20,4) default 0   ,
   total_amount_with_tax NUMERIC(20,4) default 0   ,
   receive_status INT4  ,
+  receive_type INT4  ,
   doc_status INT4 NOT NULL ,
   approve_status INT4 NOT NULL ,
   posted BOOLEAN default false   ,
@@ -699,6 +701,8 @@ CREATE TABLE erp_pur_return_line(
       COMMENT ON COLUMN erp_pur_invoice.supplier_id IS '供应商';
                     
       COMMENT ON COLUMN erp_pur_invoice.invoice_no IS '发票号码';
+                    
+      COMMENT ON COLUMN erp_pur_invoice.invoice_type IS '发票类型';
                     
       COMMENT ON COLUMN erp_pur_invoice.business_date IS '发票日期';
                     
@@ -1095,6 +1099,8 @@ CREATE TABLE erp_pur_return_line(
       COMMENT ON COLUMN erp_pur_receive.total_amount_with_tax IS '合计金额(含税)';
                     
       COMMENT ON COLUMN erp_pur_receive.receive_status IS '收货状态';
+                    
+      COMMENT ON COLUMN erp_pur_receive.receive_type IS '入库类型';
                     
       COMMENT ON COLUMN erp_pur_receive.doc_status IS '单据状态';
                     

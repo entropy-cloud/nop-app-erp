@@ -77,6 +77,12 @@
             <option code="EXTERNAL" label="外部评审" value="20"/>
             <option code="SUPPLIER" label="供应商评审" value="30"/>
         </dict>
+        <dict label="处理决定" name="erp-qa/disposition-type" valueType="int">
+            <option code="SCRAP" label="报废" value="10"/>
+            <option code="RETURN" label="退货" value="20"/>
+            <option code="CONCESSION" label="让步接收" value="30"/>
+            <option code="DOWNGRADE" label="降级使用" value="40"/>
+        </dict>
     </dicts>
 
     <domains>
@@ -121,53 +127,62 @@
                         stdDataType="string" stdSqlType="VARCHAR"/>
                 <column code="MATERIAL_ID" displayName="物料" mandatory="true" name="materialId" propId="8"
                         stdDataType="long" stdSqlType="BIGINT"/>
-                <column code="SUPPLIER_ID" displayName="供应商" name="supplierId" propId="9" stdDataType="long"
+                <column code="TEMPLATE_ID" displayName="质检模板" name="templateId" propId="9" stdDataType="long"
                         stdSqlType="BIGINT"/>
-                <column code="WAREHOUSE_ID" displayName="仓库" name="warehouseId" propId="10" stdDataType="long"
+                <column code="SUPPLIER_ID" displayName="供应商" name="supplierId" propId="10" stdDataType="long"
                         stdSqlType="BIGINT"/>
-                <column code="INSPECTION_DATE" displayName="检验日期" mandatory="true" name="inspectionDate" propId="11"
+                <column code="WAREHOUSE_ID" displayName="仓库" name="warehouseId" propId="11" stdDataType="long"
+                        stdSqlType="BIGINT"/>
+                <column code="BATCH_NO" displayName="批号" name="batchNo" precision="50" propId="13" stdDataType="string"
+                        stdSqlType="VARCHAR"/>
+                <column code="INSPECTION_DATE" displayName="检验日期" mandatory="true" name="inspectionDate" propId="14"
                         stdDataType="date" stdSqlType="DATE"/>
                 <column code="LOT_QUANTITY" displayName="批量" domain="quantity" name="lotQuantity" precision="20"
-                        propId="12" scale="4" stdDataType="string" stdSqlType="DECIMAL"/>
+                        propId="15" scale="4" stdDataType="string" stdSqlType="DECIMAL"/>
                 <column code="SAMPLE_QUANTITY" displayName="抽样数量" domain="quantity" name="sampleQuantity" precision="20"
-                        propId="13" scale="4" stdDataType="string" stdSqlType="DECIMAL"/>
-                <column code="INSPECTOR_ID" displayName="检验员(职员)" name="inspectorId" propId="14" stdDataType="long"
+                        propId="16" scale="4" stdDataType="string" stdSqlType="DECIMAL"/>
+                <column code="INSPECTOR_ID" displayName="检验员(职员)" name="inspectorId" propId="17" stdDataType="long"
                         stdSqlType="BIGINT"/>
-                <column code="RESULT" displayName="质检结果" mandatory="true" name="result" propId="15" stdDataType="int"
+                <column code="RESULT" displayName="质检结果" mandatory="true" name="result" propId="18" stdDataType="int"
                         stdSqlType="INTEGER" ext:dict="erp-qa/inspection-result"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="16"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="19"
                         stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-qa/doc-status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="17"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="20"
                         stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-qa/approve-status"/>
-                <column code="POSTED" defaultValue="false" displayName="已过账(质量结论已回写业务单据)" name="posted" propId="18"
+                <column code="POSTED" defaultValue="false" displayName="已过账(质量结论已回写业务单据)" name="posted" propId="21"
                         stdDataType="boolean" stdSqlType="BOOLEAN"/>
-                <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="19" stdDataType="datetime"
+                <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="22" stdDataType="datetime"
                         stdSqlType="DATETIME"/>
-                <column code="POSTED_BY" displayName="过账人" name="postedBy" propId="20" stdDataType="long"
+                <column code="POSTED_BY" displayName="过账人" name="postedBy" propId="23" stdDataType="long"
                         stdSqlType="BIGINT"/>
-                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" propId="21" stdDataType="long"
+                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" propId="24" stdDataType="long"
                         stdSqlType="BIGINT"/>
-                <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="22" stdDataType="datetime"
+                <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="25" stdDataType="datetime"
                         stdSqlType="DATETIME"/>
-                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="23"
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="26"
                         stdDataType="string" stdSqlType="VARCHAR"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
-                        name="delVersion" propId="24" stdDataType="long" stdSqlType="BIGINT"/>
+                        name="delVersion" propId="27" stdDataType="long" stdSqlType="BIGINT"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
-                        name="version" propId="25" stdDataType="int" stdSqlType="INTEGER"/>
+                        name="version" propId="28" stdDataType="int" stdSqlType="INTEGER"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
-                        precision="50" propId="26" stdDataType="string" stdSqlType="VARCHAR"/>
+                        precision="50" propId="29" stdDataType="string" stdSqlType="VARCHAR"/>
                 <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
-                        propId="27" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
+                        propId="30" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
                 <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
-                        precision="50" propId="28" stdDataType="string" stdSqlType="VARCHAR"/>
+                        precision="50" propId="31" stdDataType="string" stdSqlType="VARCHAR"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
-                        propId="29" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
+                        propId="32" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
             </columns>
             <relations>
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
                     <join>
                         <on leftProp="materialId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="template" refEntityName="app.erp.qa.dao.entity.ErpQaInspectionTemplate" tagSet="pub">
+                    <join>
+                        <on leftProp="templateId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="supplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub">
@@ -315,20 +330,22 @@
                         stdSqlType="VARCHAR"/>
                 <column code="IS_REQUIRED" defaultValue="1" displayName="是否必检" mandatory="true" name="isRequired"
                         propId="8" stdDataType="int" stdSqlType="INTEGER"/>
-                <column code="SORT_NUM" defaultValue="0" displayName="排序" name="sortNum" propId="9" stdDataType="int"
+                <column code="INSPECTION_METHOD" displayName="检验方法" name="inspectionMethod" precision="200" propId="10"
+                        stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="SORT_NUM" defaultValue="0" displayName="排序" name="sortNum" propId="11" stdDataType="int"
                         stdSqlType="INTEGER"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
-                        name="delVersion" propId="10" stdDataType="long" stdSqlType="BIGINT"/>
+                        name="delVersion" propId="12" stdDataType="long" stdSqlType="BIGINT"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
-                        name="version" propId="11" stdDataType="int" stdSqlType="INTEGER"/>
+                        name="version" propId="13" stdDataType="int" stdSqlType="INTEGER"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
-                        precision="50" propId="12" stdDataType="string" stdSqlType="VARCHAR"/>
-                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
-                        propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
-                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
                         precision="50" propId="14" stdDataType="string" stdSqlType="VARCHAR"/>
-                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
                         propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="16" stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
             </columns>
             <relations>
                 <to-one name="template" refEntityName="app.erp.qa.dao.entity.ErpQaInspectionTemplate" tagSet="pub">
@@ -357,36 +374,50 @@
                         stdDataType="string" stdSqlType="VARCHAR"/>
                 <column code="MATERIAL_ID" displayName="物料" mandatory="true" name="materialId" propId="6"
                         stdDataType="long" stdSqlType="BIGINT"/>
-                <column code="QUANTITY" displayName="不合格数量" domain="quantity" name="quantity" precision="20" propId="7"
+                <column code="INSPECTION_ID" displayName="质检单ID" name="inspectionId" propId="7" stdDataType="long"
+                        stdSqlType="BIGINT"/>
+                <column code="QUANTITY" displayName="不合格数量" domain="quantity" name="quantity" precision="20" propId="8"
                         scale="4" stdDataType="string" stdSqlType="DECIMAL"/>
-                <column code="DESCRIPTION" displayName="问题描述" name="description" precision="2000" propId="8"
+                <column code="DESCRIPTION" displayName="问题描述" name="description" precision="2000" propId="9"
                         stdDataType="string" stdSqlType="VARCHAR"/>
-                <column code="SEVERITY" displayName="严重程度" mandatory="true" name="severity" propId="9" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-qa/severity"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="10" stdDataType="int"
+                <column code="SEVERITY" displayName="严重程度" mandatory="true" name="severity" propId="10"
+                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-qa/severity"/>
+                <column code="DISPOSITION_TYPE" displayName="处理决定" name="dispositionType" propId="11" stdDataType="int"
+                        stdSqlType="INTEGER" ext:dict="erp-qa/disposition-type"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="12" stdDataType="int"
                         stdSqlType="INTEGER" ext:dict="erp-qa/ncr-status"/>
-                <column code="ASSIGNED_TO" displayName="责任人" name="assignedTo" propId="11" stdDataType="long"
+                <column code="SUPPLIER_ID" displayName="供应商" name="supplierId" propId="13" stdDataType="long"
                         stdSqlType="BIGINT"/>
-                <column code="RESOLVED_BY" displayName="解决人" name="resolvedBy" propId="12" stdDataType="long"
-                        stdSqlType="BIGINT"/>
-                <column code="RESOLVED_AT" displayName="解决时间" name="resolvedAt" propId="13" stdDataType="datetime"
-                        stdSqlType="DATETIME"/>
-                <column code="RESOLUTION" displayName="解决措施" name="resolution" precision="2000" propId="14"
+                <column code="PARAMETER_NAME" displayName="不合格参数" name="parameterName" precision="200" propId="14"
                         stdDataType="string" stdSqlType="VARCHAR"/>
-                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="15"
+                <column code="MEASURED_VALUE" displayName="实测值" domain="measuredValue" name="measuredValue"
+                        precision="20" propId="15" scale="6" stdDataType="string" stdSqlType="DECIMAL"/>
+                <column code="SPEC_MIN" displayName="规格下限" domain="specLimit" name="specMin" precision="20" propId="16"
+                        scale="6" stdDataType="string" stdSqlType="DECIMAL"/>
+                <column code="SPEC_MAX" displayName="规格上限" domain="specLimit" name="specMax" precision="20" propId="17"
+                        scale="6" stdDataType="string" stdSqlType="DECIMAL"/>
+                <column code="ASSIGNED_TO" displayName="责任人" name="assignedTo" propId="18" stdDataType="long"
+                        stdSqlType="BIGINT"/>
+                <column code="RESOLVED_BY" displayName="解决人" name="resolvedBy" propId="19" stdDataType="long"
+                        stdSqlType="BIGINT"/>
+                <column code="RESOLVED_AT" displayName="解决时间" name="resolvedAt" propId="20" stdDataType="datetime"
+                        stdSqlType="DATETIME"/>
+                <column code="RESOLUTION" displayName="解决措施" name="resolution" precision="2000" propId="21"
+                        stdDataType="string" stdSqlType="VARCHAR"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="23"
                         stdDataType="string" stdSqlType="VARCHAR"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
-                        name="delVersion" propId="16" stdDataType="long" stdSqlType="BIGINT"/>
+                        name="delVersion" propId="24" stdDataType="long" stdSqlType="BIGINT"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
-                        name="version" propId="17" stdDataType="int" stdSqlType="INTEGER"/>
+                        name="version" propId="25" stdDataType="int" stdSqlType="INTEGER"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
-                        precision="50" propId="18" stdDataType="string" stdSqlType="VARCHAR"/>
+                        precision="50" propId="26" stdDataType="string" stdSqlType="VARCHAR"/>
                 <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
-                        propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
+                        propId="27" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
                 <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
-                        precision="50" propId="20" stdDataType="string" stdSqlType="VARCHAR"/>
+                        precision="50" propId="28" stdDataType="string" stdSqlType="VARCHAR"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
-                        propId="21" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
+                        propId="29" stdDataType="timestamp" stdSqlType="TIMESTAMP"/>
             </columns>
             <relations>
                 <to-many cascadeDelete="true" name="actions" refEntityName="app.erp.qa.dao.entity.ErpQaAction"
@@ -395,6 +426,11 @@
                         <on leftProp="id" rightProp="ncrId"/>
                     </join>
                 </to-many>
+                <to-one name="inspection" refEntityName="app.erp.qa.dao.entity.ErpQaInspection" tagSet="pub">
+                    <join>
+                        <on leftProp="inspectionId" rightProp="id"/>
+                    </join>
+                </to-one>
             </relations>
         </entity>
         <entity className="app.erp.qa.dao.entity.ErpQaAction" createTimeProp="createTime" createrProp="createdBy"

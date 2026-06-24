@@ -181,10 +181,38 @@
         }
 
 
-        private String _remark;
+        private Integer _visitType;
 
     
         @PropMeta(propId=13)
+    
+        public Integer getVisitType(){
+            return _visitType;
+        }
+
+        public void setVisitType(Integer value){
+            this._visitType = value;
+        }
+
+
+        private Integer _result;
+
+    
+        @PropMeta(propId=14)
+    
+        public Integer getResult(){
+            return _result;
+        }
+
+        public void setResult(Integer value){
+            this._result = value;
+        }
+
+
+        private String _remark;
+
+    
+        @PropMeta(propId=15)
     
         public String getRemark(){
             return _remark;
@@ -198,7 +226,7 @@
         private Long _delVersion;
 
     
-        @PropMeta(propId=14)
+        @PropMeta(propId=16)
     
         public Long getDelVersion(){
             return _delVersion;
@@ -212,7 +240,7 @@
         private Long _orgId;
 
     
-        @PropMeta(propId=20)
+        @PropMeta(propId=22)
     
         public Long getOrgId(){
             return _orgId;
@@ -226,7 +254,7 @@
         private java.time.LocalDate _businessDate;
 
     
-        @PropMeta(propId=21)
+        @PropMeta(propId=23)
     
         public java.time.LocalDate getBusinessDate(){
             return _businessDate;
@@ -240,7 +268,7 @@
         private Boolean _posted;
 
     
-        @PropMeta(propId=22)
+        @PropMeta(propId=24)
     
         public Boolean getPosted(){
             return _posted;
@@ -254,7 +282,7 @@
         private java.sql.Timestamp _postedAt;
 
     
-        @PropMeta(propId=23)
+        @PropMeta(propId=25)
     
         public java.sql.Timestamp getPostedAt(){
             return _postedAt;
@@ -268,7 +296,7 @@
         private String _postedBy;
 
     
-        @PropMeta(propId=24)
+        @PropMeta(propId=26)
     
         public String getPostedBy(){
             return _postedBy;
@@ -287,6 +315,17 @@
 
         public void setTasks(List<ErpMntVisitTaskInputBean> value){
             this._tasks = value;
+        }
+
+
+        private List<ErpMntSparePartUsageInputBean> _sparePartUsages;
+
+        public List<ErpMntSparePartUsageInputBean> getSparePartUsages(){
+            return _sparePartUsages;
+        }
+
+        public void setSparePartUsages(List<ErpMntSparePartUsageInputBean> value){
+            this._sparePartUsages = value;
         }
 
 

@@ -65,6 +65,7 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
+      downtimeEntries: null
       id: ID
       installDate: 安装日期
       location: null
@@ -75,12 +76,16 @@ prop:
       org: null
       orgId: 所属组织
       remark: 备注
+      requests: null
+      schedules: null
       serialNo: 序列号
+      sparePartUsages: null
       status: 状态
       status_label: 状态
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+      visits: null
       warrantyExpiry: 保修到期
       workcenterId: 关联工作中心(关联 mfg 域)
     ErpMntEquipmentCategory:
@@ -239,8 +244,11 @@ prop:
       postedAt: 过账时间
       postedBy: 过账人
       remark: 备注
+      result: 执行结果
+      result_label: 执行结果
       schedule: null
       scheduleId: 维护计划ID
+      sparePartUsages: null
       startTime: 开始时间
       status: 状态
       status_label: 状态
@@ -250,6 +258,8 @@ prop:
       updatedBy: 修改人
       version: 数据版本
       visitDate: 访问日期
+      visitType: 维护类型
+      visitType_label: 维护类型
     ErpMntVisitTask:
       completedAt: 完成时间
       completedBy: 完成人

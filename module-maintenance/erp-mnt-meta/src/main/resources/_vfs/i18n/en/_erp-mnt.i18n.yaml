@@ -83,6 +83,11 @@ prop:
       location: null
       category: null
       org: null
+      visits: null
+      schedules: null
+      requests: null
+      sparePartUsages: null
+      downtimeEntries: null
     ErpMntEquipmentCategory:
       id: null
       code: null
@@ -235,6 +240,10 @@ prop:
       startTime: null
       endTime: null
       totalMinutes: null
+      visitType: null
+      visitType_label: null
+      result: null
+      result_label: null
       remark: null
       delVersion: null
       version: null
@@ -250,6 +259,7 @@ prop:
       schedule: null
       equipment: null
       tasks: null
+      sparePartUsages: null
     ErpMntVisitTask:
       id: null
       visitId: null

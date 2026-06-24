@@ -12,6 +12,10 @@
   "startTime": "2000-01-01 14:00:00",
   "endTime": "2000-01-01 14:00:00",
   "totalMinutes": "",
+  "visitType": 0,
+  "visitType_label": "",
+  "result": 0,
+  "result_label": "",
   "remark": "",
   "delVersion": 0,
   "version": 0,
@@ -26,5 +30,6 @@
   "postedBy": "",
   "schedule": null,
   "equipment": null,
-  "tasks": null
+  "tasks": null,
+  "sparePartUsages": null
 }

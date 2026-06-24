@@ -5,12 +5,20 @@
   "sourceType": "",
   "sourceCode": "",
   "materialId": 0,
+  "inspectionId": 0,
   "quantity": "",
   "description": "",
   "severity": 0,
   "severity_label": "",
+  "dispositionType": 0,
+  "dispositionType_label": "",
   "status": 0,
   "status_label": "",
+  "supplierId": 0,
+  "parameterName": "",
+  "measuredValue": "",
+  "specMin": "",
+  "specMax": "",
   "assignedTo": 0,
   "resolvedBy": 0,
   "resolvedAt": "2000-01-01 14:00:00",
@@ -22,5 +30,6 @@
   "createTime": "2000-01-01 14:00:00",
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
-  "actions": null
+  "actions": null,
+  "inspection": null
 }

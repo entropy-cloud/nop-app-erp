@@ -15,6 +15,8 @@
   "totalAmountWithTax": "",
   "receiveStatus": 0,
   "receiveStatus_label": "",
+  "receiveType": 0,
+  "receiveType_label": "",
   "docStatus": 0,
   "docStatus_label": "",
   "approveStatus": 0,

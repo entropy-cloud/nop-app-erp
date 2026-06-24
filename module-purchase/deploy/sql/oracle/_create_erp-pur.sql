@@ -182,6 +182,7 @@ CREATE TABLE erp_pur_invoice(
   ORG_ID NUMBER(20)  ,
   SUPPLIER_ID NUMBER(20) NOT NULL ,
   INVOICE_NO VARCHAR2(50)  ,
+  INVOICE_TYPE INTEGER  ,
   BUSINESS_DATE DATE NOT NULL ,
   CURRENCY_ID NUMBER(20) NOT NULL ,
   EXCHANGE_RATE NUMBER(20,8) default 1   ,
@@ -404,6 +405,7 @@ CREATE TABLE erp_pur_receive(
   TOTAL_TAX_AMOUNT NUMBER(20,4) default 0   ,
   TOTAL_AMOUNT_WITH_TAX NUMBER(20,4) default 0   ,
   RECEIVE_STATUS INTEGER  ,
+  RECEIVE_TYPE INTEGER  ,
   DOC_STATUS INTEGER NOT NULL ,
   APPROVE_STATUS INTEGER NOT NULL ,
   POSTED CHAR(1) default 0   ,
@@ -699,6 +701,8 @@ CREATE TABLE erp_pur_return_line(
       COMMENT ON COLUMN erp_pur_invoice.SUPPLIER_ID IS '供应商';
                     
       COMMENT ON COLUMN erp_pur_invoice.INVOICE_NO IS '发票号码';
+                    
+      COMMENT ON COLUMN erp_pur_invoice.INVOICE_TYPE IS '发票类型';
                     
       COMMENT ON COLUMN erp_pur_invoice.BUSINESS_DATE IS '发票日期';
                     
@@ -1095,6 +1099,8 @@ CREATE TABLE erp_pur_return_line(
       COMMENT ON COLUMN erp_pur_receive.TOTAL_AMOUNT_WITH_TAX IS '合计金额(含税)';
                     
       COMMENT ON COLUMN erp_pur_receive.RECEIVE_STATUS IS '收货状态';
+                    
+      COMMENT ON COLUMN erp_pur_receive.RECEIVE_TYPE IS '入库类型';
                     
       COMMENT ON COLUMN erp_pur_receive.DOC_STATUS IS '单据状态';
                     

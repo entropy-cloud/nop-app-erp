@@ -263,10 +263,24 @@
         }
 
 
-        private Integer _status;
+        private String _brandModel;
 
     
         @PropMeta(propId=18)
+    
+        public String getBrandModel(){
+            return _brandModel;
+        }
+
+        public void setBrandModel(String value){
+            this._brandModel = value;
+        }
+
+
+        private Integer _status;
+
+    
+        @PropMeta(propId=19)
     
         public Integer getStatus(){
             return _status;
@@ -292,7 +306,7 @@
         private Long _delVersion;
 
     
-        @PropMeta(propId=19)
+        @PropMeta(propId=20)
     
         public Long getDelVersion(){
             return _delVersion;
@@ -306,7 +320,7 @@
         private Integer _version;
 
     
-        @PropMeta(propId=20)
+        @PropMeta(propId=21)
     
         public Integer getVersion(){
             return _version;
@@ -320,7 +334,7 @@
         private String _createdBy;
 
     
-        @PropMeta(propId=21)
+        @PropMeta(propId=22)
     
         public String getCreatedBy(){
             return _createdBy;
@@ -334,7 +348,7 @@
         private java.sql.Timestamp _createTime;
 
     
-        @PropMeta(propId=22)
+        @PropMeta(propId=23)
     
         public java.sql.Timestamp getCreateTime(){
             return _createTime;
@@ -348,7 +362,7 @@
         private String _updatedBy;
 
     
-        @PropMeta(propId=23)
+        @PropMeta(propId=24)
     
         public String getUpdatedBy(){
             return _updatedBy;
@@ -362,7 +376,7 @@
         private java.sql.Timestamp _updateTime;
 
     
-        @PropMeta(propId=24)
+        @PropMeta(propId=25)
     
         public java.sql.Timestamp getUpdateTime(){
             return _updateTime;
@@ -376,7 +390,7 @@
         private String _remark;
 
     
-        @PropMeta(propId=25)
+        @PropMeta(propId=26)
     
         public String getRemark(){
             return _remark;

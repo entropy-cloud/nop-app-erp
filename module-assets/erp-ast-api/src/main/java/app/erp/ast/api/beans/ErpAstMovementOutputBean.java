@@ -195,10 +195,24 @@
         }
 
 
-        private Integer _docStatus;
+        private Long _handlerId;
 
     
         @PropMeta(propId=14)
+    
+        public Long getHandlerId(){
+            return _handlerId;
+        }
+
+        public void setHandlerId(Long value){
+            this._handlerId = value;
+        }
+
+
+        private Integer _docStatus;
+
+    
+        @PropMeta(propId=15)
     
         public Integer getDocStatus(){
             return _docStatus;
@@ -224,7 +238,7 @@
         private Integer _approveStatus;
 
     
-        @PropMeta(propId=15)
+        @PropMeta(propId=16)
     
         public Integer getApproveStatus(){
             return _approveStatus;
@@ -250,7 +264,7 @@
         private Boolean _posted;
 
     
-        @PropMeta(propId=16)
+        @PropMeta(propId=17)
     
         public Boolean getPosted(){
             return _posted;
@@ -264,7 +278,7 @@
         private java.time.LocalDateTime _postedAt;
 
     
-        @PropMeta(propId=17)
+        @PropMeta(propId=18)
     
         public java.time.LocalDateTime getPostedAt(){
             return _postedAt;
@@ -278,7 +292,7 @@
         private Long _postedBy;
 
     
-        @PropMeta(propId=18)
+        @PropMeta(propId=19)
     
         public Long getPostedBy(){
             return _postedBy;
@@ -289,10 +303,24 @@
         }
 
 
+        private Integer _docVersion;
+
+    
+        @PropMeta(propId=20)
+    
+        public Integer getDocVersion(){
+            return _docVersion;
+        }
+
+        public void setDocVersion(Integer value){
+            this._docVersion = value;
+        }
+
+
         private Long _delVersion;
 
     
-        @PropMeta(propId=19)
+        @PropMeta(propId=21)
     
         public Long getDelVersion(){
             return _delVersion;
@@ -306,7 +334,7 @@
         private Integer _version;
 
     
-        @PropMeta(propId=20)
+        @PropMeta(propId=22)
     
         public Integer getVersion(){
             return _version;
@@ -320,7 +348,7 @@
         private String _createdBy;
 
     
-        @PropMeta(propId=21)
+        @PropMeta(propId=23)
     
         public String getCreatedBy(){
             return _createdBy;
@@ -334,7 +362,7 @@
         private java.sql.Timestamp _createTime;
 
     
-        @PropMeta(propId=22)
+        @PropMeta(propId=24)
     
         public java.sql.Timestamp getCreateTime(){
             return _createTime;
@@ -348,7 +376,7 @@
         private String _updatedBy;
 
     
-        @PropMeta(propId=23)
+        @PropMeta(propId=25)
     
         public String getUpdatedBy(){
             return _updatedBy;
@@ -362,7 +390,7 @@
         private java.sql.Timestamp _updateTime;
 
     
-        @PropMeta(propId=24)
+        @PropMeta(propId=26)
     
         public java.sql.Timestamp getUpdateTime(){
             return _updateTime;
@@ -376,7 +404,7 @@
         private String _remark;
 
     
-        @PropMeta(propId=25)
+        @PropMeta(propId=27)
     
         public String getRemark(){
             return _remark;
@@ -390,7 +418,7 @@
         private Long _currencyId;
 
     
-        @PropMeta(propId=26)
+        @PropMeta(propId=28)
     
         public Long getCurrencyId(){
             return _currencyId;
@@ -404,7 +432,7 @@
         private String _exchangeRate;
 
     
-        @PropMeta(propId=27)
+        @PropMeta(propId=29)
     
         public String getExchangeRate(){
             return _exchangeRate;
@@ -418,7 +446,7 @@
         private String _amountSource;
 
     
-        @PropMeta(propId=28)
+        @PropMeta(propId=30)
     
         public String getAmountSource(){
             return _amountSource;
@@ -432,7 +460,7 @@
         private String _amountFunctional;
 
     
-        @PropMeta(propId=29)
+        @PropMeta(propId=31)
     
         public String getAmountFunctional(){
             return _amountFunctional;

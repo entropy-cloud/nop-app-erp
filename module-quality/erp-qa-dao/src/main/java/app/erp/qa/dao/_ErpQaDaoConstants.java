@@ -203,4 +203,24 @@ public interface _ErpQaDaoConstants {
      */
     int REVIEW_TYPE_SUPPLIER = 30;
                     
+    /**
+     * 处理决定: 报废 
+     */
+    int DISPOSITION_TYPE_SCRAP = 10;
+                    
+    /**
+     * 处理决定: 退货 
+     */
+    int DISPOSITION_TYPE_RETURN = 20;
+                    
+    /**
+     * 处理决定: 让步接收 
+     */
+    int DISPOSITION_TYPE_CONCESSION = 30;
+                    
+    /**
+     * 处理决定: 降级使用 
+     */
+    int DISPOSITION_TYPE_DOWNGRADE = 40;
+                    
 }

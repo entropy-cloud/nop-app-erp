@@ -68,56 +68,64 @@ public class _ErpMntVisit extends DynamicOrmEntity{
     public static final String PROP_NAME_totalMinutes = "totalMinutes";
     public static final int PROP_ID_totalMinutes = 12;
     
+    /* 维护类型: VISIT_TYPE INTEGER */
+    public static final String PROP_NAME_visitType = "visitType";
+    public static final int PROP_ID_visitType = 13;
+    
+    /* 执行结果: RESULT INTEGER */
+    public static final String PROP_NAME_result = "result";
+    public static final int PROP_ID_result = 14;
+    
     /* 备注: REMARK VARCHAR */
     public static final String PROP_NAME_remark = "remark";
-    public static final int PROP_ID_remark = 13;
+    public static final int PROP_ID_remark = 15;
     
     /* 逻辑删除版本: DEL_VERSION BIGINT */
     public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 14;
+    public static final int PROP_ID_delVersion = 16;
     
     /* 数据版本: VERSION INTEGER */
     public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 15;
+    public static final int PROP_ID_version = 17;
     
     /* 创建人: CREATED_BY VARCHAR */
     public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 16;
+    public static final int PROP_ID_createdBy = 18;
     
     /* 创建时间: CREATE_TIME TIMESTAMP */
     public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 17;
+    public static final int PROP_ID_createTime = 19;
     
     /* 修改人: UPDATED_BY VARCHAR */
     public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 18;
+    public static final int PROP_ID_updatedBy = 20;
     
     /* 修改时间: UPDATE_TIME TIMESTAMP */
     public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 19;
+    public static final int PROP_ID_updateTime = 21;
     
     /* 业务组织: ORG_ID BIGINT */
     public static final String PROP_NAME_orgId = "orgId";
-    public static final int PROP_ID_orgId = 20;
+    public static final int PROP_ID_orgId = 22;
     
     /* 业务日期: BUSINESS_DATE DATE */
     public static final String PROP_NAME_businessDate = "businessDate";
-    public static final int PROP_ID_businessDate = 21;
+    public static final int PROP_ID_businessDate = 23;
     
     /* 是否已过账: POSTED BOOLEAN */
     public static final String PROP_NAME_posted = "posted";
-    public static final int PROP_ID_posted = 22;
+    public static final int PROP_ID_posted = 24;
     
     /* 过账时间: POSTED_AT TIMESTAMP */
     public static final String PROP_NAME_postedAt = "postedAt";
-    public static final int PROP_ID_postedAt = 23;
+    public static final int PROP_ID_postedAt = 25;
     
     /* 过账人: POSTED_BY VARCHAR */
     public static final String PROP_NAME_postedBy = "postedBy";
-    public static final int PROP_ID_postedBy = 24;
+    public static final int PROP_ID_postedBy = 26;
     
 
-    private static int _PROP_ID_BOUND = 25;
+    private static int _PROP_ID_BOUND = 27;
 
     
     /* relation:  */
@@ -129,11 +137,14 @@ public class _ErpMntVisit extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_tasks = "tasks";
     
+    /* relation:  */
+    public static final String PROP_NAME_sparePartUsages = "sparePartUsages";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[25];
+    private static final String[] PROP_ID_TO_NAME = new String[27];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -172,6 +183,12 @@ public class _ErpMntVisit extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_totalMinutes] = PROP_NAME_totalMinutes;
           PROP_NAME_TO_ID.put(PROP_NAME_totalMinutes, PROP_ID_totalMinutes);
+      
+          PROP_ID_TO_NAME[PROP_ID_visitType] = PROP_NAME_visitType;
+          PROP_NAME_TO_ID.put(PROP_NAME_visitType, PROP_ID_visitType);
+      
+          PROP_ID_TO_NAME[PROP_ID_result] = PROP_NAME_result;
+          PROP_NAME_TO_ID.put(PROP_NAME_result, PROP_ID_result);
       
           PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
           PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
@@ -247,6 +264,12 @@ public class _ErpMntVisit extends DynamicOrmEntity{
     
     /* 总分钟数: TOTAL_MINUTES */
     private java.lang.String _totalMinutes;
+    
+    /* 维护类型: VISIT_TYPE */
+    private java.lang.Integer _visitType;
+    
+    /* 执行结果: RESULT */
+    private java.lang.Integer _result;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -393,6 +416,12 @@ public class _ErpMntVisit extends DynamicOrmEntity{
         
             case PROP_ID_totalMinutes:
                return getTotalMinutes();
+        
+            case PROP_ID_visitType:
+               return getVisitType();
+        
+            case PROP_ID_result:
+               return getResult();
         
             case PROP_ID_remark:
                return getRemark();
@@ -558,6 +587,26 @@ public class _ErpMntVisit extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_totalMinutes));
                }
                setTotalMinutes(typedValue);
+               break;
+            }
+        
+            case PROP_ID_visitType:{
+               java.lang.Integer typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toInteger(value,
+                       err-> newTypeConversionError(PROP_NAME_visitType));
+               }
+               setVisitType(typedValue);
+               break;
+            }
+        
+            case PROP_ID_result:{
+               java.lang.Integer typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toInteger(value,
+                       err-> newTypeConversionError(PROP_NAME_result));
+               }
+               setResult(typedValue);
                break;
             }
         
@@ -770,6 +819,20 @@ public class _ErpMntVisit extends DynamicOrmEntity{
             case PROP_ID_totalMinutes:{
                onInitProp(propId);
                this._totalMinutes = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_visitType:{
+               onInitProp(propId);
+               this._visitType = (java.lang.Integer)value;
+               
+               break;
+            }
+        
+            case PROP_ID_result:{
+               onInitProp(propId);
+               this._result = (java.lang.Integer)value;
                
                break;
             }
@@ -1093,6 +1156,44 @@ public class _ErpMntVisit extends DynamicOrmEntity{
     }
     
     /**
+     * 维护类型: VISIT_TYPE
+     */
+    public final java.lang.Integer getVisitType(){
+         onPropGet(PROP_ID_visitType);
+         return _visitType;
+    }
+
+    /**
+     * 维护类型: VISIT_TYPE
+     */
+    public final void setVisitType(java.lang.Integer value){
+        if(onPropSet(PROP_ID_visitType,value)){
+            this._visitType = value;
+            internalClearRefs(PROP_ID_visitType);
+            
+        }
+    }
+    
+    /**
+     * 执行结果: RESULT
+     */
+    public final java.lang.Integer getResult(){
+         onPropGet(PROP_ID_result);
+         return _result;
+    }
+
+    /**
+     * 执行结果: RESULT
+     */
+    public final void setResult(java.lang.Integer value){
+        if(onPropSet(PROP_ID_result,value)){
+            this._result = value;
+            internalClearRefs(PROP_ID_result);
+            
+        }
+    }
+    
+    /**
      * 备注: REMARK
      */
     public final java.lang.String getRemark(){
@@ -1374,6 +1475,16 @@ public class _ErpMntVisit extends DynamicOrmEntity{
      */
     public final IOrmEntitySet<app.erp.mnt.dao.entity.ErpMntVisitTask> getTasks(){
        return _tasks;
+    }
+       
+    private final OrmEntitySet<app.erp.mnt.dao.entity.ErpMntSparePartUsage> _sparePartUsages = new OrmEntitySet<>(this, PROP_NAME_sparePartUsages,
+        null, null,app.erp.mnt.dao.entity.ErpMntSparePartUsage.class);
+
+    /**
+     * 。 refPropName: , keyProp: {rel.keyProp}
+     */
+    public final IOrmEntitySet<app.erp.mnt.dao.entity.ErpMntSparePartUsage> getSparePartUsages(){
+       return _sparePartUsages;
     }
        
 }

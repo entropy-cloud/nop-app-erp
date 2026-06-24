@@ -110,6 +110,8 @@ prop:
       orgId: null
       customerId: null
       invoiceNo: null
+      invoiceType: null
+      invoiceType_label: null
       businessDate: null
       currencyId: null
       exchangeRate: null

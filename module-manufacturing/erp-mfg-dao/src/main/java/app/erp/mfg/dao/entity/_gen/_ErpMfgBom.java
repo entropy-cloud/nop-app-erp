@@ -60,32 +60,40 @@ public class _ErpMfgBom extends DynamicOrmEntity{
     public static final String PROP_NAME_remark = "remark";
     public static final int PROP_ID_remark = 10;
     
+    /* 版本号: VERSION_LABEL VARCHAR */
+    public static final String PROP_NAME_versionLabel = "versionLabel";
+    public static final int PROP_ID_versionLabel = 11;
+    
+    /* BOM数量: QTY DECIMAL */
+    public static final String PROP_NAME_qty = "qty";
+    public static final int PROP_ID_qty = 12;
+    
     /* 逻辑删除版本: DEL_VERSION BIGINT */
     public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 11;
+    public static final int PROP_ID_delVersion = 13;
     
     /* 数据版本: VERSION INTEGER */
     public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 12;
+    public static final int PROP_ID_version = 14;
     
     /* 创建人: CREATED_BY VARCHAR */
     public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 13;
+    public static final int PROP_ID_createdBy = 15;
     
     /* 创建时间: CREATE_TIME TIMESTAMP */
     public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 14;
+    public static final int PROP_ID_createTime = 16;
     
     /* 修改人: UPDATED_BY VARCHAR */
     public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 15;
+    public static final int PROP_ID_updatedBy = 17;
     
     /* 修改时间: UPDATE_TIME TIMESTAMP */
     public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 16;
+    public static final int PROP_ID_updateTime = 18;
     
 
-    private static int _PROP_ID_BOUND = 17;
+    private static int _PROP_ID_BOUND = 19;
 
     
     /* relation:  */
@@ -104,7 +112,7 @@ public class _ErpMfgBom extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[17];
+    private static final String[] PROP_ID_TO_NAME = new String[19];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -137,6 +145,12 @@ public class _ErpMfgBom extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
           PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
+      
+          PROP_ID_TO_NAME[PROP_ID_versionLabel] = PROP_NAME_versionLabel;
+          PROP_NAME_TO_ID.put(PROP_NAME_versionLabel, PROP_ID_versionLabel);
+      
+          PROP_ID_TO_NAME[PROP_ID_qty] = PROP_NAME_qty;
+          PROP_NAME_TO_ID.put(PROP_NAME_qty, PROP_ID_qty);
       
           PROP_ID_TO_NAME[PROP_ID_delVersion] = PROP_NAME_delVersion;
           PROP_NAME_TO_ID.put(PROP_NAME_delVersion, PROP_ID_delVersion);
@@ -188,6 +202,12 @@ public class _ErpMfgBom extends DynamicOrmEntity{
     
     /* 备注: REMARK */
     private java.lang.String _remark;
+    
+    /* 版本号: VERSION_LABEL */
+    private java.lang.String _versionLabel;
+    
+    /* BOM数量: QTY */
+    private java.lang.String _qty;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -310,6 +330,12 @@ public class _ErpMfgBom extends DynamicOrmEntity{
         
             case PROP_ID_remark:
                return getRemark();
+        
+            case PROP_ID_versionLabel:
+               return getVersionLabel();
+        
+            case PROP_ID_qty:
+               return getQty();
         
             case PROP_ID_delVersion:
                return getDelVersion();
@@ -437,6 +463,26 @@ public class _ErpMfgBom extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_remark));
                }
                setRemark(typedValue);
+               break;
+            }
+        
+            case PROP_ID_versionLabel:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_versionLabel));
+               }
+               setVersionLabel(typedValue);
+               break;
+            }
+        
+            case PROP_ID_qty:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_qty));
+               }
+               setQty(typedValue);
                break;
             }
         
@@ -575,6 +621,20 @@ public class _ErpMfgBom extends DynamicOrmEntity{
             case PROP_ID_remark:{
                onInitProp(propId);
                this._remark = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_versionLabel:{
+               onInitProp(propId);
+               this._versionLabel = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_qty:{
+               onInitProp(propId);
+               this._qty = (java.lang.String)value;
                
                break;
             }
@@ -813,6 +873,44 @@ public class _ErpMfgBom extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_remark,value)){
             this._remark = value;
             internalClearRefs(PROP_ID_remark);
+            
+        }
+    }
+    
+    /**
+     * 版本号: VERSION_LABEL
+     */
+    public final java.lang.String getVersionLabel(){
+         onPropGet(PROP_ID_versionLabel);
+         return _versionLabel;
+    }
+
+    /**
+     * 版本号: VERSION_LABEL
+     */
+    public final void setVersionLabel(java.lang.String value){
+        if(onPropSet(PROP_ID_versionLabel,value)){
+            this._versionLabel = value;
+            internalClearRefs(PROP_ID_versionLabel);
+            
+        }
+    }
+    
+    /**
+     * BOM数量: QTY
+     */
+    public final java.lang.String getQty(){
+         onPropGet(PROP_ID_qty);
+         return _qty;
+    }
+
+    /**
+     * BOM数量: QTY
+     */
+    public final void setQty(java.lang.String value){
+        if(onPropSet(PROP_ID_qty,value)){
+            this._qty = value;
+            internalClearRefs(PROP_ID_qty);
             
         }
     }

@@ -40,104 +40,108 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
     public static final String PROP_NAME_invoiceNo = "invoiceNo";
     public static final int PROP_ID_invoiceNo = 5;
     
+    /* 发票类型: INVOICE_TYPE INTEGER */
+    public static final String PROP_NAME_invoiceType = "invoiceType";
+    public static final int PROP_ID_invoiceType = 6;
+    
     /* 发票日期: BUSINESS_DATE DATE */
     public static final String PROP_NAME_businessDate = "businessDate";
-    public static final int PROP_ID_businessDate = 6;
+    public static final int PROP_ID_businessDate = 7;
     
     /* 币种: CURRENCY_ID BIGINT */
     public static final String PROP_NAME_currencyId = "currencyId";
-    public static final int PROP_ID_currencyId = 7;
+    public static final int PROP_ID_currencyId = 8;
     
     /* 汇率: EXCHANGE_RATE DECIMAL */
     public static final String PROP_NAME_exchangeRate = "exchangeRate";
-    public static final int PROP_ID_exchangeRate = 8;
+    public static final int PROP_ID_exchangeRate = 9;
     
     /* 合计金额(源币): AMOUNT_SOURCE DECIMAL */
     public static final String PROP_NAME_amountSource = "amountSource";
-    public static final int PROP_ID_amountSource = 9;
+    public static final int PROP_ID_amountSource = 10;
     
     /* 合计金额(本位币): AMOUNT_FUNCTIONAL DECIMAL */
     public static final String PROP_NAME_amountFunctional = "amountFunctional";
-    public static final int PROP_ID_amountFunctional = 10;
+    public static final int PROP_ID_amountFunctional = 11;
     
     /* 合计金额(不含税): TOTAL_AMOUNT DECIMAL */
     public static final String PROP_NAME_totalAmount = "totalAmount";
-    public static final int PROP_ID_totalAmount = 11;
+    public static final int PROP_ID_totalAmount = 12;
     
     /* 合计税额: TOTAL_TAX_AMOUNT DECIMAL */
     public static final String PROP_NAME_totalTaxAmount = "totalTaxAmount";
-    public static final int PROP_ID_totalTaxAmount = 12;
+    public static final int PROP_ID_totalTaxAmount = 13;
     
     /* 合计金额(含税): TOTAL_AMOUNT_WITH_TAX DECIMAL */
     public static final String PROP_NAME_totalAmountWithTax = "totalAmountWithTax";
-    public static final int PROP_ID_totalAmountWithTax = 13;
+    public static final int PROP_ID_totalAmountWithTax = 14;
     
     /* 已付金额: PAID_AMOUNT DECIMAL */
     public static final String PROP_NAME_paidAmount = "paidAmount";
-    public static final int PROP_ID_paidAmount = 14;
+    public static final int PROP_ID_paidAmount = 15;
     
     /* 单据状态: DOC_STATUS INTEGER */
     public static final String PROP_NAME_docStatus = "docStatus";
-    public static final int PROP_ID_docStatus = 15;
+    public static final int PROP_ID_docStatus = 16;
     
     /* 审核状态: APPROVE_STATUS INTEGER */
     public static final String PROP_NAME_approveStatus = "approveStatus";
-    public static final int PROP_ID_approveStatus = 16;
+    public static final int PROP_ID_approveStatus = 17;
     
     /* 付款进度: PAID_STATUS INTEGER */
     public static final String PROP_NAME_paidStatus = "paidStatus";
-    public static final int PROP_ID_paidStatus = 17;
+    public static final int PROP_ID_paidStatus = 18;
     
     /* 已过账: POSTED BOOLEAN */
     public static final String PROP_NAME_posted = "posted";
-    public static final int PROP_ID_posted = 18;
+    public static final int PROP_ID_posted = 19;
     
     /* 过账时间: POSTED_AT DATETIME */
     public static final String PROP_NAME_postedAt = "postedAt";
-    public static final int PROP_ID_postedAt = 19;
+    public static final int PROP_ID_postedAt = 20;
     
     /* 过账人: POSTED_BY BIGINT */
     public static final String PROP_NAME_postedBy = "postedBy";
-    public static final int PROP_ID_postedBy = 20;
+    public static final int PROP_ID_postedBy = 21;
     
     /* 审核人: APPROVED_BY BIGINT */
     public static final String PROP_NAME_approvedBy = "approvedBy";
-    public static final int PROP_ID_approvedBy = 21;
+    public static final int PROP_ID_approvedBy = 22;
     
     /* 审核时间: APPROVED_AT DATETIME */
     public static final String PROP_NAME_approvedAt = "approvedAt";
-    public static final int PROP_ID_approvedAt = 22;
+    public static final int PROP_ID_approvedAt = 23;
     
     /* 备注: REMARK VARCHAR */
     public static final String PROP_NAME_remark = "remark";
-    public static final int PROP_ID_remark = 23;
+    public static final int PROP_ID_remark = 24;
     
     /* 逻辑删除版本: DEL_VERSION BIGINT */
     public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 24;
+    public static final int PROP_ID_delVersion = 25;
     
     /* 数据版本: VERSION INTEGER */
     public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 25;
+    public static final int PROP_ID_version = 26;
     
     /* 创建人: CREATED_BY VARCHAR */
     public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 26;
+    public static final int PROP_ID_createdBy = 27;
     
     /* 创建时间: CREATE_TIME TIMESTAMP */
     public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 27;
+    public static final int PROP_ID_createTime = 28;
     
     /* 修改人: UPDATED_BY VARCHAR */
     public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 28;
+    public static final int PROP_ID_updatedBy = 29;
     
     /* 修改时间: UPDATE_TIME TIMESTAMP */
     public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 29;
+    public static final int PROP_ID_updateTime = 30;
     
 
-    private static int _PROP_ID_BOUND = 30;
+    private static int _PROP_ID_BOUND = 31;
 
     
     /* relation:  */
@@ -153,7 +157,7 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[30];
+    private static final String[] PROP_ID_TO_NAME = new String[31];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -171,6 +175,9 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_invoiceNo] = PROP_NAME_invoiceNo;
           PROP_NAME_TO_ID.put(PROP_NAME_invoiceNo, PROP_ID_invoiceNo);
+      
+          PROP_ID_TO_NAME[PROP_ID_invoiceType] = PROP_NAME_invoiceType;
+          PROP_NAME_TO_ID.put(PROP_NAME_invoiceType, PROP_ID_invoiceType);
       
           PROP_ID_TO_NAME[PROP_ID_businessDate] = PROP_NAME_businessDate;
           PROP_NAME_TO_ID.put(PROP_NAME_businessDate, PROP_ID_businessDate);
@@ -261,6 +268,9 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
     
     /* 发票号码: INVOICE_NO */
     private java.lang.String _invoiceNo;
+    
+    /* 发票类型: INVOICE_TYPE */
+    private java.lang.Integer _invoiceType;
     
     /* 发票日期: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
@@ -423,6 +433,9 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
             case PROP_ID_invoiceNo:
                return getInvoiceNo();
         
+            case PROP_ID_invoiceType:
+               return getInvoiceType();
+        
             case PROP_ID_businessDate:
                return getBusinessDate();
         
@@ -553,6 +566,16 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_invoiceNo));
                }
                setInvoiceNo(typedValue);
+               break;
+            }
+        
+            case PROP_ID_invoiceType:{
+               java.lang.Integer typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toInteger(value,
+                       err-> newTypeConversionError(PROP_NAME_invoiceType));
+               }
+               setInvoiceType(typedValue);
                break;
             }
         
@@ -840,6 +863,13 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_invoiceType:{
+               onInitProp(propId);
+               this._invoiceType = (java.lang.Integer)value;
+               
+               break;
+            }
+        
             case PROP_ID_businessDate:{
                onInitProp(propId);
                this._businessDate = (java.time.LocalDate)value;
@@ -1105,6 +1135,25 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_invoiceNo,value)){
             this._invoiceNo = value;
             internalClearRefs(PROP_ID_invoiceNo);
+            
+        }
+    }
+    
+    /**
+     * 发票类型: INVOICE_TYPE
+     */
+    public final java.lang.Integer getInvoiceType(){
+         onPropGet(PROP_ID_invoiceType);
+         return _invoiceType;
+    }
+
+    /**
+     * 发票类型: INVOICE_TYPE
+     */
+    public final void setInvoiceType(java.lang.Integer value){
+        if(onPropSet(PROP_ID_invoiceType,value)){
+            this._invoiceType = value;
+            internalClearRefs(PROP_ID_invoiceType);
             
         }
     }

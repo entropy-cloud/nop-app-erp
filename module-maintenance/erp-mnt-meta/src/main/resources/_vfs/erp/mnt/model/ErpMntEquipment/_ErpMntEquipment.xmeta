@@ -116,5 +116,35 @@
               ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
         </prop>
+        <prop name="visits" tagSet="pub,cascade-delete,insertable,updatable" ext:kind="to-many" internal="true"
+              ext:joinLeftProp="id" ext:joinRightProp="equipmentId" insertable="true" updatable="true" lazy="true">
+            <schema>
+                <item bizObjName="ErpMntVisit"/>
+            </schema>
+        </prop>
+        <prop name="schedules" tagSet="pub,cascade-delete,insertable,updatable" ext:kind="to-many" internal="true"
+              ext:joinLeftProp="id" ext:joinRightProp="equipmentId" insertable="true" updatable="true" lazy="true">
+            <schema>
+                <item bizObjName="ErpMntSchedule"/>
+            </schema>
+        </prop>
+        <prop name="requests" tagSet="pub,cascade-delete,insertable,updatable" ext:kind="to-many" internal="true"
+              ext:joinLeftProp="id" ext:joinRightProp="equipmentId" insertable="true" updatable="true" lazy="true">
+            <schema>
+                <item bizObjName="ErpMntRequest"/>
+            </schema>
+        </prop>
+        <prop name="sparePartUsages" tagSet="pub,cascade-delete,insertable,updatable" ext:kind="to-many" internal="true"
+              ext:joinLeftProp="id" ext:joinRightProp="equipmentId" insertable="true" updatable="true" lazy="true">
+            <schema>
+                <item bizObjName="ErpMntSparePartUsage"/>
+            </schema>
+        </prop>
+        <prop name="downtimeEntries" tagSet="pub,cascade-delete,insertable,updatable" ext:kind="to-many" internal="true"
+              ext:joinLeftProp="id" ext:joinRightProp="equipmentId" insertable="true" updatable="true" lazy="true">
+            <schema>
+                <item bizObjName="ErpMntDowntimeEntry"/>
+            </schema>
+        </prop>
     </props>
 </meta>

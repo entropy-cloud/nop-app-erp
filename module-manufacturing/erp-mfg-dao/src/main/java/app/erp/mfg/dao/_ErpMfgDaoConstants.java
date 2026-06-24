@@ -278,4 +278,14 @@ public interface _ErpMfgDaoConstants {
      */
     int COST_ROLLUP_STATUS_CANCELLED = 40;
                     
+    /**
+     * 联副产品类型: 联产品 
+     */
+    int BYPRODUCT_TYPE_CO_PRODUCT = 10;
+                    
+    /**
+     * 联副产品类型: 副产品 
+     */
+    int BYPRODUCT_TYPE_BY_PRODUCT = 20;
+                    
 }

@@ -52,36 +52,40 @@ public class _ErpQaInspectionTemplateLine extends DynamicOrmEntity{
     public static final String PROP_NAME_isRequired = "isRequired";
     public static final int PROP_ID_isRequired = 8;
     
+    /* 检验方法: INSPECTION_METHOD VARCHAR */
+    public static final String PROP_NAME_inspectionMethod = "inspectionMethod";
+    public static final int PROP_ID_inspectionMethod = 10;
+    
     /* 排序: SORT_NUM INTEGER */
     public static final String PROP_NAME_sortNum = "sortNum";
-    public static final int PROP_ID_sortNum = 9;
+    public static final int PROP_ID_sortNum = 11;
     
     /* 逻辑删除版本: DEL_VERSION BIGINT */
     public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 10;
+    public static final int PROP_ID_delVersion = 12;
     
     /* 数据版本: VERSION INTEGER */
     public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 11;
+    public static final int PROP_ID_version = 13;
     
     /* 创建人: CREATED_BY VARCHAR */
     public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 12;
+    public static final int PROP_ID_createdBy = 14;
     
     /* 创建时间: CREATE_TIME TIMESTAMP */
     public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 13;
+    public static final int PROP_ID_createTime = 15;
     
     /* 修改人: UPDATED_BY VARCHAR */
     public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 14;
+    public static final int PROP_ID_updatedBy = 16;
     
     /* 修改时间: UPDATE_TIME TIMESTAMP */
     public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 15;
+    public static final int PROP_ID_updateTime = 17;
     
 
-    private static int _PROP_ID_BOUND = 16;
+    private static int _PROP_ID_BOUND = 18;
 
     
     /* relation:  */
@@ -91,7 +95,7 @@ public class _ErpQaInspectionTemplateLine extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[16];
+    private static final String[] PROP_ID_TO_NAME = new String[18];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -118,6 +122,9 @@ public class _ErpQaInspectionTemplateLine extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_isRequired] = PROP_NAME_isRequired;
           PROP_NAME_TO_ID.put(PROP_NAME_isRequired, PROP_ID_isRequired);
+      
+          PROP_ID_TO_NAME[PROP_ID_inspectionMethod] = PROP_NAME_inspectionMethod;
+          PROP_NAME_TO_ID.put(PROP_NAME_inspectionMethod, PROP_ID_inspectionMethod);
       
           PROP_ID_TO_NAME[PROP_ID_sortNum] = PROP_NAME_sortNum;
           PROP_NAME_TO_ID.put(PROP_NAME_sortNum, PROP_ID_sortNum);
@@ -166,6 +173,9 @@ public class _ErpQaInspectionTemplateLine extends DynamicOrmEntity{
     
     /* 是否必检: IS_REQUIRED */
     private java.lang.Integer _isRequired;
+    
+    /* 检验方法: INSPECTION_METHOD */
+    private java.lang.String _inspectionMethod;
     
     /* 排序: SORT_NUM */
     private java.lang.Integer _sortNum;
@@ -286,6 +296,9 @@ public class _ErpQaInspectionTemplateLine extends DynamicOrmEntity{
             case PROP_ID_isRequired:
                return getIsRequired();
         
+            case PROP_ID_inspectionMethod:
+               return getInspectionMethod();
+        
             case PROP_ID_sortNum:
                return getSortNum();
         
@@ -395,6 +408,16 @@ public class _ErpQaInspectionTemplateLine extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_isRequired));
                }
                setIsRequired(typedValue);
+               break;
+            }
+        
+            case PROP_ID_inspectionMethod:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_inspectionMethod));
+               }
+               setInspectionMethod(typedValue);
                break;
             }
         
@@ -529,6 +552,13 @@ public class _ErpQaInspectionTemplateLine extends DynamicOrmEntity{
             case PROP_ID_isRequired:{
                onInitProp(propId);
                this._isRequired = (java.lang.Integer)value;
+               
+               break;
+            }
+        
+            case PROP_ID_inspectionMethod:{
+               onInitProp(propId);
+               this._inspectionMethod = (java.lang.String)value;
                
                break;
             }
@@ -736,6 +766,25 @@ public class _ErpQaInspectionTemplateLine extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_isRequired,value)){
             this._isRequired = value;
             internalClearRefs(PROP_ID_isRequired);
+            
+        }
+    }
+    
+    /**
+     * 检验方法: INSPECTION_METHOD
+     */
+    public final java.lang.String getInspectionMethod(){
+         onPropGet(PROP_ID_inspectionMethod);
+         return _inspectionMethod;
+    }
+
+    /**
+     * 检验方法: INSPECTION_METHOD
+     */
+    public final void setInspectionMethod(java.lang.String value){
+        if(onPropSet(PROP_ID_inspectionMethod,value)){
+            this._inspectionMethod = value;
+            internalClearRefs(PROP_ID_inspectionMethod);
             
         }
     }

@@ -497,7 +497,7 @@
                 <column name="totalAmount" displayName="合计金额(不含税)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT" propId="12" stdSqlType="VARCHAR" stdDataType="string"/>
                 <column name="totalTaxAmount" displayName="合计税额" domain="taxAmount" defaultValue="0" code="TOTAL_TAX_AMOUNT" propId="13" stdSqlType="VARCHAR" stdDataType="string"/>
                 <column name="totalAmountWithTax" displayName="合计金额(含税)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT_WITH_TAX" propId="14" stdSqlType="VARCHAR" stdDataType="string"/>
-                <column name="paidAmount" displayName="已付金额" domain="amount" defaultValue="0" code="PAID_AMOUNT" propId="15" stdDataType="string"/>
+                <column name="paidAmount" displayName="已付金额" domain="amount" defaultValue="0" code="PAID_AMOUNT" propId="15" stdSqlType="VARCHAR" stdDataType="string"/>
                 <column name="docStatus" displayName="单据状态" ext:dict="erp-pur/doc-status" mandatory="true" code="DOC_STATUS" propId="16" stdSqlType="INTEGER" stdDataType="int"/>
                 <column name="approveStatus" displayName="审核状态" ext:dict="erp-pur/approve-status" mandatory="true" code="APPROVE_STATUS" propId="17" stdSqlType="INTEGER" stdDataType="int"/>
                 <column name="paidStatus" displayName="付款进度" ext:dict="erp-pur/paid-status" code="PAID_STATUS" propId="18" stdSqlType="INTEGER" stdDataType="int"/>

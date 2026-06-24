@@ -57,6 +57,9 @@
                 <!--新使用地点-->
                 <col id="toLocationId" ui:number="true" sortable="true"/>
 
+                <!--经办人-->
+                <col id="handlerId" ui:number="true" sortable="true"/>
+
                 <!--单据状态-->
                 <col id="docStatus" mandatory="true" ui:number="true" sortable="true"/>
 
@@ -71,6 +74,9 @@
 
                 <!--过账人-->
                 <col id="postedBy" ui:number="true" sortable="true"/>
+
+                <!--单据版本-->
+                <col id="docVersion" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
@@ -115,9 +121,10 @@
  thruDate[截止日期] fromDepartmentId[原使用部门]
  toDepartmentId[新使用部门] fromStaffId[原使用人]
  toStaffId[新使用人] fromLocationId[原使用地点]
- toLocationId[新使用地点] docStatus[单据状态]
- approveStatus[审核状态] posted[已过账]
- postedAt[过账时间] postedBy[过账人]
+ toLocationId[新使用地点] handlerId[经办人]
+ docStatus[单据状态] approveStatus[审核状态]
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人] docVersion[单据版本]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
  updateTime[修改时间] remark[备注]
@@ -133,9 +140,10 @@
  thruDate[截止日期] fromDepartmentId[原使用部门]
  toDepartmentId[新使用部门] fromStaffId[原使用人]
  toStaffId[新使用人] fromLocationId[原使用地点]
- toLocationId[新使用地点] docStatus[单据状态]
- approveStatus[审核状态] posted[已过账]
- postedAt[过账时间] postedBy[过账人]
+ toLocationId[新使用地点] handlerId[经办人]
+ docStatus[单据状态] approveStatus[审核状态]
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人] docVersion[单据版本]
  remark[备注] currencyId[币种]
  exchangeRate[汇率] amountSource[源币种金额]
  amountFunctional[本位币金额] 
@@ -149,9 +157,10 @@
  thruDate[截止日期] fromDepartmentId[原使用部门]
  toDepartmentId[新使用部门] fromStaffId[原使用人]
  toStaffId[新使用人] fromLocationId[原使用地点]
- toLocationId[新使用地点] docStatus[单据状态]
- approveStatus[审核状态] posted[已过账]
- postedAt[过账时间] postedBy[过账人]
+ toLocationId[新使用地点] handlerId[经办人]
+ docStatus[单据状态] approveStatus[审核状态]
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人] docVersion[单据版本]
  delVersion[逻辑删除版本] remark[备注]
  currencyId[币种] exchangeRate[汇率]
  amountSource[源币种金额] amountFunctional[本位币金额]

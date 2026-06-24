@@ -80,64 +80,68 @@ public class _ErpPurReceive extends DynamicOrmEntity{
     public static final String PROP_NAME_receiveStatus = "receiveStatus";
     public static final int PROP_ID_receiveStatus = 15;
     
+    /* 入库类型: RECEIVE_TYPE INTEGER */
+    public static final String PROP_NAME_receiveType = "receiveType";
+    public static final int PROP_ID_receiveType = 16;
+    
     /* 单据状态: DOC_STATUS INTEGER */
     public static final String PROP_NAME_docStatus = "docStatus";
-    public static final int PROP_ID_docStatus = 16;
+    public static final int PROP_ID_docStatus = 17;
     
     /* 审核状态: APPROVE_STATUS INTEGER */
     public static final String PROP_NAME_approveStatus = "approveStatus";
-    public static final int PROP_ID_approveStatus = 17;
+    public static final int PROP_ID_approveStatus = 18;
     
     /* 已过账: POSTED BOOLEAN */
     public static final String PROP_NAME_posted = "posted";
-    public static final int PROP_ID_posted = 18;
+    public static final int PROP_ID_posted = 19;
     
     /* 过账时间: POSTED_AT DATETIME */
     public static final String PROP_NAME_postedAt = "postedAt";
-    public static final int PROP_ID_postedAt = 19;
+    public static final int PROP_ID_postedAt = 20;
     
     /* 过账人: POSTED_BY BIGINT */
     public static final String PROP_NAME_postedBy = "postedBy";
-    public static final int PROP_ID_postedBy = 20;
+    public static final int PROP_ID_postedBy = 21;
     
     /* 审核人: APPROVED_BY BIGINT */
     public static final String PROP_NAME_approvedBy = "approvedBy";
-    public static final int PROP_ID_approvedBy = 21;
+    public static final int PROP_ID_approvedBy = 22;
     
     /* 审核时间: APPROVED_AT DATETIME */
     public static final String PROP_NAME_approvedAt = "approvedAt";
-    public static final int PROP_ID_approvedAt = 22;
+    public static final int PROP_ID_approvedAt = 23;
     
     /* 备注: REMARK VARCHAR */
     public static final String PROP_NAME_remark = "remark";
-    public static final int PROP_ID_remark = 23;
+    public static final int PROP_ID_remark = 24;
     
     /* 逻辑删除版本: DEL_VERSION BIGINT */
     public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 24;
+    public static final int PROP_ID_delVersion = 25;
     
     /* 数据版本: VERSION INTEGER */
     public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 25;
+    public static final int PROP_ID_version = 26;
     
     /* 创建人: CREATED_BY VARCHAR */
     public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 26;
+    public static final int PROP_ID_createdBy = 27;
     
     /* 创建时间: CREATE_TIME TIMESTAMP */
     public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 27;
+    public static final int PROP_ID_createTime = 28;
     
     /* 修改人: UPDATED_BY VARCHAR */
     public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 28;
+    public static final int PROP_ID_updatedBy = 29;
     
     /* 修改时间: UPDATE_TIME TIMESTAMP */
     public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 29;
+    public static final int PROP_ID_updateTime = 30;
     
 
-    private static int _PROP_ID_BOUND = 30;
+    private static int _PROP_ID_BOUND = 31;
 
     
     /* relation:  */
@@ -156,7 +160,7 @@ public class _ErpPurReceive extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[30];
+    private static final String[] PROP_ID_TO_NAME = new String[31];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -204,6 +208,9 @@ public class _ErpPurReceive extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_receiveStatus] = PROP_NAME_receiveStatus;
           PROP_NAME_TO_ID.put(PROP_NAME_receiveStatus, PROP_ID_receiveStatus);
+      
+          PROP_ID_TO_NAME[PROP_ID_receiveType] = PROP_NAME_receiveType;
+          PROP_NAME_TO_ID.put(PROP_NAME_receiveType, PROP_ID_receiveType);
       
           PROP_ID_TO_NAME[PROP_ID_docStatus] = PROP_NAME_docStatus;
           PROP_NAME_TO_ID.put(PROP_NAME_docStatus, PROP_ID_docStatus);
@@ -294,6 +301,9 @@ public class _ErpPurReceive extends DynamicOrmEntity{
     
     /* 收货状态: RECEIVE_STATUS */
     private java.lang.Integer _receiveStatus;
+    
+    /* 入库类型: RECEIVE_TYPE */
+    private java.lang.Integer _receiveType;
     
     /* 单据状态: DOC_STATUS */
     private java.lang.Integer _docStatus;
@@ -455,6 +465,9 @@ public class _ErpPurReceive extends DynamicOrmEntity{
         
             case PROP_ID_receiveStatus:
                return getReceiveStatus();
+        
+            case PROP_ID_receiveType:
+               return getReceiveType();
         
             case PROP_ID_docStatus:
                return getDocStatus();
@@ -656,6 +669,16 @@ public class _ErpPurReceive extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_receiveStatus));
                }
                setReceiveStatus(typedValue);
+               break;
+            }
+        
+            case PROP_ID_receiveType:{
+               java.lang.Integer typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toInteger(value,
+                       err-> newTypeConversionError(PROP_NAME_receiveType));
+               }
+               setReceiveType(typedValue);
                break;
             }
         
@@ -909,6 +932,13 @@ public class _ErpPurReceive extends DynamicOrmEntity{
             case PROP_ID_receiveStatus:{
                onInitProp(propId);
                this._receiveStatus = (java.lang.Integer)value;
+               
+               break;
+            }
+        
+            case PROP_ID_receiveType:{
+               onInitProp(propId);
+               this._receiveType = (java.lang.Integer)value;
                
                break;
             }
@@ -1298,6 +1328,25 @@ public class _ErpPurReceive extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_receiveStatus,value)){
             this._receiveStatus = value;
             internalClearRefs(PROP_ID_receiveStatus);
+            
+        }
+    }
+    
+    /**
+     * 入库类型: RECEIVE_TYPE
+     */
+    public final java.lang.Integer getReceiveType(){
+         onPropGet(PROP_ID_receiveType);
+         return _receiveType;
+    }
+
+    /**
+     * 入库类型: RECEIVE_TYPE
+     */
+    public final void setReceiveType(java.lang.Integer value){
+        if(onPropSet(PROP_ID_receiveType,value)){
+            this._receiveType = value;
+            internalClearRefs(PROP_ID_receiveType);
             
         }
     }

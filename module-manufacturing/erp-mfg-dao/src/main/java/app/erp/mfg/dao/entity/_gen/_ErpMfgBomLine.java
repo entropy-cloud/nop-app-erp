@@ -56,32 +56,44 @@ public class _ErpMfgBomLine extends DynamicOrmEntity{
     public static final String PROP_NAME_remark = "remark";
     public static final int PROP_ID_remark = 9;
     
+    /* 损耗率(%): SCRAP_RATE DECIMAL */
+    public static final String PROP_NAME_scrapRate = "scrapRate";
+    public static final int PROP_ID_scrapRate = 10;
+    
+    /* 发货仓库: WAREHOUSE_ID BIGINT */
+    public static final String PROP_NAME_warehouseId = "warehouseId";
+    public static final int PROP_ID_warehouseId = 11;
+    
+    /* 替代物料: ALTERNATIVE_MATERIAL_ID BIGINT */
+    public static final String PROP_NAME_alternativeMaterialId = "alternativeMaterialId";
+    public static final int PROP_ID_alternativeMaterialId = 12;
+    
     /* 逻辑删除版本: DEL_VERSION BIGINT */
     public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 10;
+    public static final int PROP_ID_delVersion = 13;
     
     /* 数据版本: VERSION INTEGER */
     public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 11;
+    public static final int PROP_ID_version = 14;
     
     /* 创建人: CREATED_BY VARCHAR */
     public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 12;
+    public static final int PROP_ID_createdBy = 15;
     
     /* 创建时间: CREATE_TIME TIMESTAMP */
     public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 13;
+    public static final int PROP_ID_createTime = 16;
     
     /* 修改人: UPDATED_BY VARCHAR */
     public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 14;
+    public static final int PROP_ID_updatedBy = 17;
     
     /* 修改时间: UPDATE_TIME TIMESTAMP */
     public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 15;
+    public static final int PROP_ID_updateTime = 18;
     
 
-    private static int _PROP_ID_BOUND = 16;
+    private static int _PROP_ID_BOUND = 19;
 
     
     /* relation:  */
@@ -100,7 +112,7 @@ public class _ErpMfgBomLine extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[16];
+    private static final String[] PROP_ID_TO_NAME = new String[19];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -130,6 +142,15 @@ public class _ErpMfgBomLine extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
           PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
+      
+          PROP_ID_TO_NAME[PROP_ID_scrapRate] = PROP_NAME_scrapRate;
+          PROP_NAME_TO_ID.put(PROP_NAME_scrapRate, PROP_ID_scrapRate);
+      
+          PROP_ID_TO_NAME[PROP_ID_warehouseId] = PROP_NAME_warehouseId;
+          PROP_NAME_TO_ID.put(PROP_NAME_warehouseId, PROP_ID_warehouseId);
+      
+          PROP_ID_TO_NAME[PROP_ID_alternativeMaterialId] = PROP_NAME_alternativeMaterialId;
+          PROP_NAME_TO_ID.put(PROP_NAME_alternativeMaterialId, PROP_ID_alternativeMaterialId);
       
           PROP_ID_TO_NAME[PROP_ID_delVersion] = PROP_NAME_delVersion;
           PROP_NAME_TO_ID.put(PROP_NAME_delVersion, PROP_ID_delVersion);
@@ -178,6 +199,15 @@ public class _ErpMfgBomLine extends DynamicOrmEntity{
     
     /* 备注: REMARK */
     private java.lang.String _remark;
+    
+    /* 损耗率(%): SCRAP_RATE */
+    private java.lang.String _scrapRate;
+    
+    /* 发货仓库: WAREHOUSE_ID */
+    private java.lang.Long _warehouseId;
+    
+    /* 替代物料: ALTERNATIVE_MATERIAL_ID */
+    private java.lang.Long _alternativeMaterialId;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -298,6 +328,15 @@ public class _ErpMfgBomLine extends DynamicOrmEntity{
             case PROP_ID_remark:
                return getRemark();
         
+            case PROP_ID_scrapRate:
+               return getScrapRate();
+        
+            case PROP_ID_warehouseId:
+               return getWarehouseId();
+        
+            case PROP_ID_alternativeMaterialId:
+               return getAlternativeMaterialId();
+        
             case PROP_ID_delVersion:
                return getDelVersion();
         
@@ -414,6 +453,36 @@ public class _ErpMfgBomLine extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_remark));
                }
                setRemark(typedValue);
+               break;
+            }
+        
+            case PROP_ID_scrapRate:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_scrapRate));
+               }
+               setScrapRate(typedValue);
+               break;
+            }
+        
+            case PROP_ID_warehouseId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_warehouseId));
+               }
+               setWarehouseId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_alternativeMaterialId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_alternativeMaterialId));
+               }
+               setAlternativeMaterialId(typedValue);
                break;
             }
         
@@ -545,6 +614,27 @@ public class _ErpMfgBomLine extends DynamicOrmEntity{
             case PROP_ID_remark:{
                onInitProp(propId);
                this._remark = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_scrapRate:{
+               onInitProp(propId);
+               this._scrapRate = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_warehouseId:{
+               onInitProp(propId);
+               this._warehouseId = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_alternativeMaterialId:{
+               onInitProp(propId);
+               this._alternativeMaterialId = (java.lang.Long)value;
                
                break;
             }
@@ -764,6 +854,63 @@ public class _ErpMfgBomLine extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_remark,value)){
             this._remark = value;
             internalClearRefs(PROP_ID_remark);
+            
+        }
+    }
+    
+    /**
+     * 损耗率(%): SCRAP_RATE
+     */
+    public final java.lang.String getScrapRate(){
+         onPropGet(PROP_ID_scrapRate);
+         return _scrapRate;
+    }
+
+    /**
+     * 损耗率(%): SCRAP_RATE
+     */
+    public final void setScrapRate(java.lang.String value){
+        if(onPropSet(PROP_ID_scrapRate,value)){
+            this._scrapRate = value;
+            internalClearRefs(PROP_ID_scrapRate);
+            
+        }
+    }
+    
+    /**
+     * 发货仓库: WAREHOUSE_ID
+     */
+    public final java.lang.Long getWarehouseId(){
+         onPropGet(PROP_ID_warehouseId);
+         return _warehouseId;
+    }
+
+    /**
+     * 发货仓库: WAREHOUSE_ID
+     */
+    public final void setWarehouseId(java.lang.Long value){
+        if(onPropSet(PROP_ID_warehouseId,value)){
+            this._warehouseId = value;
+            internalClearRefs(PROP_ID_warehouseId);
+            
+        }
+    }
+    
+    /**
+     * 替代物料: ALTERNATIVE_MATERIAL_ID
+     */
+    public final java.lang.Long getAlternativeMaterialId(){
+         onPropGet(PROP_ID_alternativeMaterialId);
+         return _alternativeMaterialId;
+    }
+
+    /**
+     * 替代物料: ALTERNATIVE_MATERIAL_ID
+     */
+    public final void setAlternativeMaterialId(java.lang.Long value){
+        if(onPropSet(PROP_ID_alternativeMaterialId,value)){
+            this._alternativeMaterialId = value;
+            internalClearRefs(PROP_ID_alternativeMaterialId);
             
         }
     }

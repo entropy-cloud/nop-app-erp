@@ -178,10 +178,38 @@
         }
 
 
-        private Long _delVersion;
+        private String _versionLabel;
 
     
         @PropMeta(propId=11)
+    
+        public String getVersionLabel(){
+            return _versionLabel;
+        }
+
+        public void setVersionLabel(String value){
+            this._versionLabel = value;
+        }
+
+
+        private String _qty;
+
+    
+        @PropMeta(propId=12)
+    
+        public String getQty(){
+            return _qty;
+        }
+
+        public void setQty(String value){
+            this._qty = value;
+        }
+
+
+        private Long _delVersion;
+
+    
+        @PropMeta(propId=13)
     
         public Long getDelVersion(){
             return _delVersion;
@@ -195,7 +223,7 @@
         private Integer _version;
 
     
-        @PropMeta(propId=12)
+        @PropMeta(propId=14)
     
         public Integer getVersion(){
             return _version;
@@ -209,7 +237,7 @@
         private String _createdBy;
 
     
-        @PropMeta(propId=13)
+        @PropMeta(propId=15)
     
         public String getCreatedBy(){
             return _createdBy;
@@ -223,7 +251,7 @@
         private java.sql.Timestamp _createTime;
 
     
-        @PropMeta(propId=14)
+        @PropMeta(propId=16)
     
         public java.sql.Timestamp getCreateTime(){
             return _createTime;
@@ -237,7 +265,7 @@
         private String _updatedBy;
 
     
-        @PropMeta(propId=15)
+        @PropMeta(propId=17)
     
         public String getUpdatedBy(){
             return _updatedBy;
@@ -251,7 +279,7 @@
         private java.sql.Timestamp _updateTime;
 
     
-        @PropMeta(propId=16)
+        @PropMeta(propId=18)
     
         public java.sql.Timestamp getUpdateTime(){
             return _updateTime;

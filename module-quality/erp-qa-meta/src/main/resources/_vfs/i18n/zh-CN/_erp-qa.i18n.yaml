@@ -67,6 +67,7 @@ prop:
       approveStatus_label: 审核状态
       approvedAt: 审核时间
       approvedBy: 审核人
+      batchNo: 批号
       code: 单号
       createTime: 创建时间
       createdBy: 创建人
@@ -97,6 +98,8 @@ prop:
       sampleQuantity: 抽样数量
       supplier: null
       supplierId: 供应商
+      template: null
+      templateId: 质检模板
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -143,6 +146,7 @@ prop:
       createdBy: 创建人
       delVersion: 逻辑删除版本
       id: ID
+      inspectionMethod: 检验方法
       isRequired: 是否必检
       lineNo: 行号
       parameterName: 检验参数名称
@@ -163,9 +167,15 @@ prop:
       createdBy: 创建人
       delVersion: 逻辑删除版本
       description: 问题描述
+      dispositionType: 处理决定
+      dispositionType_label: 处理决定
       id: ID
+      inspection: null
+      inspectionId: 质检单ID
       materialId: 物料
+      measuredValue: 实测值
       ncrDate: 报告日期
+      parameterName: 不合格参数
       quantity: 不合格数量
       remark: 备注
       resolution: 解决措施
@@ -175,8 +185,11 @@ prop:
       severity_label: 严重程度
       sourceCode: 来源单号
       sourceType: 来源类型
+      specMax: 规格上限
+      specMin: 规格下限
       status: 状态
       status_label: 状态
+      supplierId: 供应商
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本

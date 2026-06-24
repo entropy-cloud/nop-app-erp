@@ -63,6 +63,9 @@
                 <!--收货状态-->
                 <col id="receiveStatus" ui:number="true" sortable="true"/>
 
+                <!--入库类型-->
+                <col id="receiveType" ui:number="true" sortable="true"/>
+
                 <!--单据状态-->
                 <col id="docStatus" mandatory="true" ui:number="true" sortable="true"/>
 
@@ -116,13 +119,14 @@
  exchangeRate[汇率] amountSource[合计金额(源币)]
  amountFunctional[合计金额(本位币)] totalAmount[合计金额(不含税)]
  totalTaxAmount[合计税额] totalAmountWithTax[合计金额(含税)]
- receiveStatus[收货状态] docStatus[单据状态]
- approveStatus[审核状态] posted[已过账]
- postedAt[过账时间] postedBy[过账人]
- approvedBy[审核人] approvedAt[审核时间]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ receiveStatus[收货状态] receiveType[入库类型]
+ docStatus[单据状态] approveStatus[审核状态]
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人] approvedBy[审核人]
+ approvedAt[审核时间] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-采购入库单" i18n-en:title="Add Purchase Receipt">
@@ -134,11 +138,11 @@
  exchangeRate[汇率] amountSource[合计金额(源币)]
  amountFunctional[合计金额(本位币)] totalAmount[合计金额(不含税)]
  totalTaxAmount[合计税额] totalAmountWithTax[合计金额(含税)]
- receiveStatus[收货状态] docStatus[单据状态]
- approveStatus[审核状态] posted[已过账]
- postedAt[过账时间] postedBy[过账人]
- approvedBy[审核人] approvedAt[审核时间]
- remark[备注] 
+ receiveStatus[收货状态] receiveType[入库类型]
+ docStatus[单据状态] approveStatus[审核状态]
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人] approvedBy[审核人]
+ approvedAt[审核时间] remark[备注]
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-采购入库单" i18n-en:title="Edit Purchase Receipt">
@@ -150,11 +154,12 @@
  exchangeRate[汇率] amountSource[合计金额(源币)]
  amountFunctional[合计金额(本位币)] totalAmount[合计金额(不含税)]
  totalTaxAmount[合计税额] totalAmountWithTax[合计金额(含税)]
- receiveStatus[收货状态] docStatus[单据状态]
- approveStatus[审核状态] posted[已过账]
- postedAt[过账时间] postedBy[过账人]
- approvedBy[审核人] approvedAt[审核时间]
- remark[备注] delVersion[逻辑删除版本]
+ receiveStatus[收货状态] receiveType[入库类型]
+ docStatus[单据状态] approveStatus[审核状态]
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人] approvedBy[审核人]
+ approvedAt[审核时间] remark[备注]
+ delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

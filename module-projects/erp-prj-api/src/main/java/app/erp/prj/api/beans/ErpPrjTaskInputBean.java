@@ -209,10 +209,24 @@
         }
 
 
-        private Integer _sortNum;
+        private String _blockReason;
 
     
         @PropMeta(propId=15)
+    
+        public String getBlockReason(){
+            return _blockReason;
+        }
+
+        public void setBlockReason(String value){
+            this._blockReason = value;
+        }
+
+
+        private Integer _sortNum;
+
+    
+        @PropMeta(propId=16)
     
         public Integer getSortNum(){
             return _sortNum;
@@ -226,7 +240,7 @@
         private String _remark;
 
     
-        @PropMeta(propId=16)
+        @PropMeta(propId=17)
     
         public String getRemark(){
             return _remark;
@@ -240,7 +254,7 @@
         private Long _delVersion;
 
     
-        @PropMeta(propId=17)
+        @PropMeta(propId=18)
     
         public Long getDelVersion(){
             return _delVersion;

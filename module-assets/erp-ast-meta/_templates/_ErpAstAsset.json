@@ -17,6 +17,7 @@
   "locationId": 0,
   "employeeId": 0,
   "staffId": 0,
+  "brandModel": "",
   "status": 0,
   "status_label": "",
   "delVersion": 0,

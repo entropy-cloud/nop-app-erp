@@ -83,10 +83,24 @@
         }
 
 
-        private java.time.LocalDate _businessDate;
+        private Integer _invoiceType;
 
     
         @PropMeta(propId=6)
+    
+        public Integer getInvoiceType(){
+            return _invoiceType;
+        }
+
+        public void setInvoiceType(Integer value){
+            this._invoiceType = value;
+        }
+
+
+        private java.time.LocalDate _businessDate;
+
+    
+        @PropMeta(propId=7)
     
         public java.time.LocalDate getBusinessDate(){
             return _businessDate;
@@ -100,7 +114,7 @@
         private Long _currencyId;
 
     
-        @PropMeta(propId=7)
+        @PropMeta(propId=8)
     
         public Long getCurrencyId(){
             return _currencyId;
@@ -114,7 +128,7 @@
         private String _exchangeRate;
 
     
-        @PropMeta(propId=8)
+        @PropMeta(propId=9)
     
         public String getExchangeRate(){
             return _exchangeRate;
@@ -128,7 +142,7 @@
         private String _amountSource;
 
     
-        @PropMeta(propId=9)
+        @PropMeta(propId=10)
     
         public String getAmountSource(){
             return _amountSource;
@@ -142,7 +156,7 @@
         private String _amountFunctional;
 
     
-        @PropMeta(propId=10)
+        @PropMeta(propId=11)
     
         public String getAmountFunctional(){
             return _amountFunctional;
@@ -156,7 +170,7 @@
         private String _totalAmount;
 
     
-        @PropMeta(propId=11)
+        @PropMeta(propId=12)
     
         public String getTotalAmount(){
             return _totalAmount;
@@ -170,7 +184,7 @@
         private String _totalTaxAmount;
 
     
-        @PropMeta(propId=12)
+        @PropMeta(propId=13)
     
         public String getTotalTaxAmount(){
             return _totalTaxAmount;
@@ -184,7 +198,7 @@
         private String _totalAmountWithTax;
 
     
-        @PropMeta(propId=13)
+        @PropMeta(propId=14)
     
         public String getTotalAmountWithTax(){
             return _totalAmountWithTax;
@@ -198,7 +212,7 @@
         private String _paidAmount;
 
     
-        @PropMeta(propId=14)
+        @PropMeta(propId=15)
     
         public String getPaidAmount(){
             return _paidAmount;
@@ -212,7 +226,7 @@
         private Integer _docStatus;
 
     
-        @PropMeta(propId=15)
+        @PropMeta(propId=16)
     
         public Integer getDocStatus(){
             return _docStatus;
@@ -226,7 +240,7 @@
         private Integer _approveStatus;
 
     
-        @PropMeta(propId=16)
+        @PropMeta(propId=17)
     
         public Integer getApproveStatus(){
             return _approveStatus;
@@ -240,7 +254,7 @@
         private Integer _paidStatus;
 
     
-        @PropMeta(propId=17)
+        @PropMeta(propId=18)
     
         public Integer getPaidStatus(){
             return _paidStatus;
@@ -254,7 +268,7 @@
         private Boolean _posted;
 
     
-        @PropMeta(propId=18)
+        @PropMeta(propId=19)
     
         public Boolean getPosted(){
             return _posted;
@@ -268,7 +282,7 @@
         private java.time.LocalDateTime _postedAt;
 
     
-        @PropMeta(propId=19)
+        @PropMeta(propId=20)
     
         public java.time.LocalDateTime getPostedAt(){
             return _postedAt;
@@ -282,7 +296,7 @@
         private Long _postedBy;
 
     
-        @PropMeta(propId=20)
+        @PropMeta(propId=21)
     
         public Long getPostedBy(){
             return _postedBy;
@@ -296,7 +310,7 @@
         private Long _approvedBy;
 
     
-        @PropMeta(propId=21)
+        @PropMeta(propId=22)
     
         public Long getApprovedBy(){
             return _approvedBy;
@@ -310,7 +324,7 @@
         private java.time.LocalDateTime _approvedAt;
 
     
-        @PropMeta(propId=22)
+        @PropMeta(propId=23)
     
         public java.time.LocalDateTime getApprovedAt(){
             return _approvedAt;
@@ -324,7 +338,7 @@
         private String _remark;
 
     
-        @PropMeta(propId=23)
+        @PropMeta(propId=24)
     
         public String getRemark(){
             return _remark;
@@ -338,7 +352,7 @@
         private Long _delVersion;
 
     
-        @PropMeta(propId=24)
+        @PropMeta(propId=25)
     
         public Long getDelVersion(){
             return _delVersion;

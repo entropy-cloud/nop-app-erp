@@ -76,40 +76,44 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     public static final String PROP_NAME_priority = "priority";
     public static final int PROP_ID_priority = 14;
     
+    /* 阻塞原因: BLOCK_REASON VARCHAR */
+    public static final String PROP_NAME_blockReason = "blockReason";
+    public static final int PROP_ID_blockReason = 15;
+    
     /* 排序号: SORT_NUM INTEGER */
     public static final String PROP_NAME_sortNum = "sortNum";
-    public static final int PROP_ID_sortNum = 15;
+    public static final int PROP_ID_sortNum = 16;
     
     /* 备注: REMARK VARCHAR */
     public static final String PROP_NAME_remark = "remark";
-    public static final int PROP_ID_remark = 16;
+    public static final int PROP_ID_remark = 17;
     
     /* 逻辑删除版本: DEL_VERSION BIGINT */
     public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 17;
+    public static final int PROP_ID_delVersion = 18;
     
     /* 数据版本: VERSION INTEGER */
     public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 18;
+    public static final int PROP_ID_version = 19;
     
     /* 创建人: CREATED_BY VARCHAR */
     public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 19;
+    public static final int PROP_ID_createdBy = 20;
     
     /* 创建时间: CREATE_TIME TIMESTAMP */
     public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 20;
+    public static final int PROP_ID_createTime = 21;
     
     /* 修改人: UPDATED_BY VARCHAR */
     public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 21;
+    public static final int PROP_ID_updatedBy = 22;
     
     /* 修改时间: UPDATE_TIME TIMESTAMP */
     public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 22;
+    public static final int PROP_ID_updateTime = 23;
     
 
-    private static int _PROP_ID_BOUND = 23;
+    private static int _PROP_ID_BOUND = 24;
 
     
     /* relation:  */
@@ -134,7 +138,7 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[23];
+    private static final String[] PROP_ID_TO_NAME = new String[24];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -179,6 +183,9 @@ public class _ErpPrjTask extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_priority] = PROP_NAME_priority;
           PROP_NAME_TO_ID.put(PROP_NAME_priority, PROP_ID_priority);
+      
+          PROP_ID_TO_NAME[PROP_ID_blockReason] = PROP_NAME_blockReason;
+          PROP_NAME_TO_ID.put(PROP_NAME_blockReason, PROP_ID_blockReason);
       
           PROP_ID_TO_NAME[PROP_ID_sortNum] = PROP_NAME_sortNum;
           PROP_NAME_TO_ID.put(PROP_NAME_sortNum, PROP_ID_sortNum);
@@ -248,6 +255,9 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     
     /* 优先级: PRIORITY */
     private java.lang.Integer _priority;
+    
+    /* 阻塞原因: BLOCK_REASON */
+    private java.lang.String _blockReason;
     
     /* 排序号: SORT_NUM */
     private java.lang.Integer _sortNum;
@@ -388,6 +398,9 @@ public class _ErpPrjTask extends DynamicOrmEntity{
         
             case PROP_ID_priority:
                return getPriority();
+        
+            case PROP_ID_blockReason:
+               return getBlockReason();
         
             case PROP_ID_sortNum:
                return getSortNum();
@@ -561,6 +574,16 @@ public class _ErpPrjTask extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_priority));
                }
                setPriority(typedValue);
+               break;
+            }
+        
+            case PROP_ID_blockReason:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_blockReason));
+               }
+               setBlockReason(typedValue);
                break;
             }
         
@@ -747,6 +770,13 @@ public class _ErpPrjTask extends DynamicOrmEntity{
             case PROP_ID_priority:{
                onInitProp(propId);
                this._priority = (java.lang.Integer)value;
+               
+               break;
+            }
+        
+            case PROP_ID_blockReason:{
+               onInitProp(propId);
+               this._blockReason = (java.lang.String)value;
                
                break;
             }
@@ -1075,6 +1105,25 @@ public class _ErpPrjTask extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_priority,value)){
             this._priority = value;
             internalClearRefs(PROP_ID_priority);
+            
+        }
+    }
+    
+    /**
+     * 阻塞原因: BLOCK_REASON
+     */
+    public final java.lang.String getBlockReason(){
+         onPropGet(PROP_ID_blockReason);
+         return _blockReason;
+    }
+
+    /**
+     * 阻塞原因: BLOCK_REASON
+     */
+    public final void setBlockReason(java.lang.String value){
+        if(onPropSet(PROP_ID_blockReason,value)){
+            this._blockReason = value;
+            internalClearRefs(PROP_ID_blockReason);
             
         }
     }

@@ -14,6 +14,7 @@ prop:
   label:
     ErpAstAsset:
       acquisitionDate: 取得日期
+      brandModel: 品牌型号
       category: null
       categoryId: 资产类别
       code: 资产编码
@@ -184,6 +185,8 @@ prop:
       posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人
+      reason: 处置原因
+      reason_label: 处置原因
       remark: 备注
       updateTime: 修改时间
       updatedBy: 修改人
@@ -231,11 +234,13 @@ prop:
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
+      docVersion: 单据版本
       exchangeRate: 汇率
       fromDate: 开始日期
       fromDepartmentId: 原使用部门
       fromLocationId: 原使用地点
       fromStaffId: 原使用人
+      handlerId: 经办人
       id: ID
       orgId: 业务组织
       posted: 已过账

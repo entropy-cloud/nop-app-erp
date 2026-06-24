@@ -153,6 +153,8 @@ CREATE TABLE erp_mfg_bom(
   USE_MULTI_LEVEL_BOM CHAR(1) default 0   ,
   INSPECTION_REQUIRED CHAR(1) default 0   ,
   REMARK VARCHAR2(1000)  ,
+  VERSION_LABEL VARCHAR2(50)  ,
+  QTY NUMBER(20,4) default 1   ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,
   CREATED_BY VARCHAR2(50) NOT NULL ,
@@ -260,6 +262,9 @@ CREATE TABLE erp_mfg_bom_line(
   QUANTITY NUMBER(20,4) NOT NULL ,
   OPERATION_ID NUMBER(20)  ,
   REMARK VARCHAR2(1000)  ,
+  SCRAP_RATE NUMBER(10,4) default 0   ,
+  WAREHOUSE_ID NUMBER(20)  ,
+  ALTERNATIVE_MATERIAL_ID NUMBER(20)  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,
   CREATED_BY VARCHAR2(50) NOT NULL ,
@@ -297,6 +302,9 @@ CREATE TABLE erp_mfg_bom_byproduct(
   UO_M_ID NUMBER(20) NOT NULL ,
   QUANTITY NUMBER(20,4) NOT NULL ,
   REMARK VARCHAR2(1000)  ,
+  BYPRODUCT_TYPE INTEGER  ,
+  YIELD_RATE NUMBER(10,4) default 100   ,
+  COST_ALLOCATION_PERCENT NUMBER(10,4) default 0   ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,
   CREATED_BY VARCHAR2(50) NOT NULL ,
@@ -438,6 +446,7 @@ CREATE TABLE erp_mfg_job_card(
   ACTUAL_START_TIME DATE  ,
   ACTUAL_END_TIME DATE  ,
   REMARK VARCHAR2(1000)  ,
+  CODE VARCHAR2(50)  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,
   CREATED_BY VARCHAR2(50) NOT NULL ,
@@ -693,6 +702,10 @@ CREATE TABLE erp_mfg_material_issue_line(
                     
       COMMENT ON COLUMN erp_mfg_bom.REMARK IS '备注';
                     
+      COMMENT ON COLUMN erp_mfg_bom.VERSION_LABEL IS '版本号';
+                    
+      COMMENT ON COLUMN erp_mfg_bom.QTY IS 'BOM数量';
+                    
       COMMENT ON COLUMN erp_mfg_bom.DEL_VERSION IS '逻辑删除版本';
                     
       COMMENT ON COLUMN erp_mfg_bom.VERSION IS '数据版本';
@@ -877,6 +890,12 @@ CREATE TABLE erp_mfg_material_issue_line(
                     
       COMMENT ON COLUMN erp_mfg_bom_line.REMARK IS '备注';
                     
+      COMMENT ON COLUMN erp_mfg_bom_line.SCRAP_RATE IS '损耗率(%)';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_line.WAREHOUSE_ID IS '发货仓库';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_line.ALTERNATIVE_MATERIAL_ID IS '替代物料';
+                    
       COMMENT ON COLUMN erp_mfg_bom_line.DEL_VERSION IS '逻辑删除版本';
                     
       COMMENT ON COLUMN erp_mfg_bom_line.VERSION IS '数据版本';
@@ -938,6 +957,12 @@ CREATE TABLE erp_mfg_material_issue_line(
       COMMENT ON COLUMN erp_mfg_bom_byproduct.QUANTITY IS '数量';
                     
       COMMENT ON COLUMN erp_mfg_bom_byproduct.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_byproduct.BYPRODUCT_TYPE IS '联副产品类型';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_byproduct.YIELD_RATE IS '产出率(%)';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_byproduct.COST_ALLOCATION_PERCENT IS '成本分摊比例(%)';
                     
       COMMENT ON COLUMN erp_mfg_bom_byproduct.DEL_VERSION IS '逻辑删除版本';
                     
@@ -1190,6 +1215,8 @@ CREATE TABLE erp_mfg_material_issue_line(
       COMMENT ON COLUMN erp_mfg_job_card.ACTUAL_END_TIME IS '实际结束时间';
                     
       COMMENT ON COLUMN erp_mfg_job_card.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_mfg_job_card.CODE IS '作业卡编号';
                     
       COMMENT ON COLUMN erp_mfg_job_card.DEL_VERSION IS '逻辑删除版本';
                     

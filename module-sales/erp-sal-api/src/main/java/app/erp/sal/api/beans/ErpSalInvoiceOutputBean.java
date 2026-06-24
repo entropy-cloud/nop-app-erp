@@ -84,10 +84,36 @@
         }
 
 
-        private java.time.LocalDate _businessDate;
+        private Integer _invoiceType;
 
     
         @PropMeta(propId=6)
+    
+        public Integer getInvoiceType(){
+            return _invoiceType;
+        }
+
+        public void setInvoiceType(Integer value){
+            this._invoiceType = value;
+        }
+
+
+        private String _invoiceType_label;
+
+    
+        public String getInvoiceType_label(){
+            return _invoiceType_label;
+        }
+
+        public void setInvoiceType_label(String value){
+            this._invoiceType_label = value;
+        }
+
+
+        private java.time.LocalDate _businessDate;
+
+    
+        @PropMeta(propId=7)
     
         public java.time.LocalDate getBusinessDate(){
             return _businessDate;
@@ -101,7 +127,7 @@
         private Long _currencyId;
 
     
-        @PropMeta(propId=7)
+        @PropMeta(propId=8)
     
         public Long getCurrencyId(){
             return _currencyId;
@@ -115,7 +141,7 @@
         private java.math.BigDecimal _exchangeRate;
 
     
-        @PropMeta(propId=8)
+        @PropMeta(propId=9)
     
         public java.math.BigDecimal getExchangeRate(){
             return _exchangeRate;
@@ -129,7 +155,7 @@
         private java.math.BigDecimal _amountSource;
 
     
-        @PropMeta(propId=9)
+        @PropMeta(propId=10)
     
         public java.math.BigDecimal getAmountSource(){
             return _amountSource;
@@ -143,7 +169,7 @@
         private java.math.BigDecimal _amountFunctional;
 
     
-        @PropMeta(propId=10)
+        @PropMeta(propId=11)
     
         public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;
@@ -157,7 +183,7 @@
         private java.math.BigDecimal _totalAmount;
 
     
-        @PropMeta(propId=11)
+        @PropMeta(propId=12)
     
         public java.math.BigDecimal getTotalAmount(){
             return _totalAmount;
@@ -171,7 +197,7 @@
         private java.math.BigDecimal _totalTaxAmount;
 
     
-        @PropMeta(propId=12)
+        @PropMeta(propId=13)
     
         public java.math.BigDecimal getTotalTaxAmount(){
             return _totalTaxAmount;
@@ -185,7 +211,7 @@
         private java.math.BigDecimal _totalAmountWithTax;
 
     
-        @PropMeta(propId=13)
+        @PropMeta(propId=14)
     
         public java.math.BigDecimal getTotalAmountWithTax(){
             return _totalAmountWithTax;
@@ -199,7 +225,7 @@
         private java.math.BigDecimal _receivedAmount;
 
     
-        @PropMeta(propId=14)
+        @PropMeta(propId=15)
     
         public java.math.BigDecimal getReceivedAmount(){
             return _receivedAmount;
@@ -213,7 +239,7 @@
         private Integer _docStatus;
 
     
-        @PropMeta(propId=15)
+        @PropMeta(propId=16)
     
         public Integer getDocStatus(){
             return _docStatus;
@@ -239,7 +265,7 @@
         private Integer _approveStatus;
 
     
-        @PropMeta(propId=16)
+        @PropMeta(propId=17)
     
         public Integer getApproveStatus(){
             return _approveStatus;
@@ -265,7 +291,7 @@
         private Integer _receivedStatus;
 
     
-        @PropMeta(propId=17)
+        @PropMeta(propId=18)
     
         public Integer getReceivedStatus(){
             return _receivedStatus;
@@ -291,7 +317,7 @@
         private Boolean _posted;
 
     
-        @PropMeta(propId=18)
+        @PropMeta(propId=19)
     
         public Boolean getPosted(){
             return _posted;
@@ -305,7 +331,7 @@
         private java.time.LocalDateTime _postedAt;
 
     
-        @PropMeta(propId=19)
+        @PropMeta(propId=20)
     
         public java.time.LocalDateTime getPostedAt(){
             return _postedAt;
@@ -319,7 +345,7 @@
         private Long _postedBy;
 
     
-        @PropMeta(propId=20)
+        @PropMeta(propId=21)
     
         public Long getPostedBy(){
             return _postedBy;
@@ -333,7 +359,7 @@
         private Long _approvedBy;
 
     
-        @PropMeta(propId=21)
+        @PropMeta(propId=22)
     
         public Long getApprovedBy(){
             return _approvedBy;
@@ -347,7 +373,7 @@
         private java.time.LocalDateTime _approvedAt;
 
     
-        @PropMeta(propId=22)
+        @PropMeta(propId=23)
     
         public java.time.LocalDateTime getApprovedAt(){
             return _approvedAt;
@@ -361,7 +387,7 @@
         private Long _delVersion;
 
     
-        @PropMeta(propId=23)
+        @PropMeta(propId=24)
     
         public Long getDelVersion(){
             return _delVersion;
@@ -375,7 +401,7 @@
         private Integer _version;
 
     
-        @PropMeta(propId=24)
+        @PropMeta(propId=25)
     
         public Integer getVersion(){
             return _version;
@@ -389,7 +415,7 @@
         private String _createdBy;
 
     
-        @PropMeta(propId=25)
+        @PropMeta(propId=26)
     
         public String getCreatedBy(){
             return _createdBy;
@@ -403,7 +429,7 @@
         private java.sql.Timestamp _createTime;
 
     
-        @PropMeta(propId=26)
+        @PropMeta(propId=27)
     
         public java.sql.Timestamp getCreateTime(){
             return _createTime;
@@ -417,7 +443,7 @@
         private String _updatedBy;
 
     
-        @PropMeta(propId=27)
+        @PropMeta(propId=28)
     
         public String getUpdatedBy(){
             return _updatedBy;
@@ -431,7 +457,7 @@
         private java.sql.Timestamp _updateTime;
 
     
-        @PropMeta(propId=28)
+        @PropMeta(propId=29)
     
         public java.sql.Timestamp getUpdateTime(){
             return _updateTime;
@@ -445,7 +471,7 @@
         private String _remark;
 
     
-        @PropMeta(propId=29)
+        @PropMeta(propId=30)
     
         public String getRemark(){
             return _remark;

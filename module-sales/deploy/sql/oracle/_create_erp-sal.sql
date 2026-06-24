@@ -151,6 +151,7 @@ CREATE TABLE erp_sal_invoice(
   ORG_ID NUMBER(20)  ,
   CUSTOMER_ID NUMBER(20) NOT NULL ,
   INVOICE_NO VARCHAR2(50)  ,
+  INVOICE_TYPE INTEGER  ,
   BUSINESS_DATE DATE NOT NULL ,
   CURRENCY_ID NUMBER(20) NOT NULL ,
   EXCHANGE_RATE NUMBER(20,8) default 1   ,
@@ -577,6 +578,8 @@ CREATE TABLE erp_sal_return_line(
       COMMENT ON COLUMN erp_sal_invoice.CUSTOMER_ID IS '客户';
                     
       COMMENT ON COLUMN erp_sal_invoice.INVOICE_NO IS '发票号码';
+                    
+      COMMENT ON COLUMN erp_sal_invoice.INVOICE_TYPE IS '发票类型';
                     
       COMMENT ON COLUMN erp_sal_invoice.BUSINESS_DATE IS '发票日期';
                     

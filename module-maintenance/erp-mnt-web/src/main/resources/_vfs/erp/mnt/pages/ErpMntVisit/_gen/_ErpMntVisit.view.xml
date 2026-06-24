@@ -54,6 +54,12 @@
                 <!--总分钟数-->
                 <col id="totalMinutes" sortable="true"/>
 
+                <!--维护类型-->
+                <col id="visitType" ui:number="true" sortable="true"/>
+
+                <!--执行结果-->
+                <col id="result" ui:number="true" sortable="true"/>
+
                 <!--备注-->
                 <col id="remark" sortable="true"/>
 
@@ -100,6 +106,7 @@
  assignedTo[指派人] completedBy[完成人]
  completedAt[完成时间] startTime[开始时间]
  endTime[结束时间] totalMinutes[总分钟数]
+ visitType[维护类型] result[执行结果]
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
@@ -116,6 +123,7 @@
  assignedTo[指派人] completedBy[完成人]
  completedAt[完成时间] startTime[开始时间]
  endTime[结束时间] totalMinutes[总分钟数]
+ visitType[维护类型] result[执行结果]
  remark[备注] orgId[业务组织]
  businessDate[业务日期] posted[是否已过账]
  postedAt[过账时间] postedBy[过账人]
@@ -129,6 +137,7 @@
  assignedTo[指派人] completedBy[完成人]
  completedAt[完成时间] startTime[开始时间]
  endTime[结束时间] totalMinutes[总分钟数]
+ visitType[维护类型] result[执行结果]
  remark[备注] delVersion[逻辑删除版本]
  orgId[业务组织] businessDate[业务日期]
  posted[是否已过账] postedAt[过账时间]

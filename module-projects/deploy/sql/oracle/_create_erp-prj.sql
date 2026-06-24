@@ -120,6 +120,7 @@ CREATE TABLE erp_prj_task(
   DEPENDS_ON_ID NUMBER(20)  ,
   STATUS INTEGER NOT NULL ,
   PRIORITY INTEGER  ,
+  BLOCK_REASON VARCHAR2(500)  ,
   SORT_NUM INTEGER  ,
   REMARK VARCHAR2(1000)  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
@@ -464,6 +465,8 @@ CREATE TABLE erp_prj_billing_line(
       COMMENT ON COLUMN erp_prj_task.STATUS IS '状态';
                     
       COMMENT ON COLUMN erp_prj_task.PRIORITY IS '优先级';
+                    
+      COMMENT ON COLUMN erp_prj_task.BLOCK_REASON IS '阻塞原因';
                     
       COMMENT ON COLUMN erp_prj_task.SORT_NUM IS '排序号';
                     

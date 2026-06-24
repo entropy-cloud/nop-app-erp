@@ -125,6 +125,8 @@ prop:
       exchangeRate: 汇率
       id: ID
       invoiceNo: 发票号码
+      invoiceType: 发票类型
+      invoiceType_label: 发票类型
       lines: null
       orgId: 业务组织
       posted: 已过账

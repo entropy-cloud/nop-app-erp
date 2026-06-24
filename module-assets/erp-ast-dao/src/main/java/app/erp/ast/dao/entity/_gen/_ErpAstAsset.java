@@ -88,40 +88,44 @@ public class _ErpAstAsset extends DynamicOrmEntity{
     public static final String PROP_NAME_staffId = "staffId";
     public static final int PROP_ID_staffId = 17;
     
+    /* 品牌型号: BRAND_MODEL VARCHAR */
+    public static final String PROP_NAME_brandModel = "brandModel";
+    public static final int PROP_ID_brandModel = 18;
+    
     /* 资产状态: STATUS INTEGER */
     public static final String PROP_NAME_status = "status";
-    public static final int PROP_ID_status = 18;
+    public static final int PROP_ID_status = 19;
     
     /* 逻辑删除版本: DEL_VERSION BIGINT */
     public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 19;
+    public static final int PROP_ID_delVersion = 20;
     
     /* 数据版本: VERSION INTEGER */
     public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 20;
+    public static final int PROP_ID_version = 21;
     
     /* 创建人: CREATED_BY VARCHAR */
     public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 21;
+    public static final int PROP_ID_createdBy = 22;
     
     /* 创建时间: CREATE_TIME TIMESTAMP */
     public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 22;
+    public static final int PROP_ID_createTime = 23;
     
     /* 修改人: UPDATED_BY VARCHAR */
     public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 23;
+    public static final int PROP_ID_updatedBy = 24;
     
     /* 修改时间: UPDATE_TIME TIMESTAMP */
     public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 24;
+    public static final int PROP_ID_updateTime = 25;
     
     /* 备注: REMARK VARCHAR */
     public static final String PROP_NAME_remark = "remark";
-    public static final int PROP_ID_remark = 25;
+    public static final int PROP_ID_remark = 26;
     
 
-    private static int _PROP_ID_BOUND = 26;
+    private static int _PROP_ID_BOUND = 27;
 
     
     /* relation:  */
@@ -146,7 +150,7 @@ public class _ErpAstAsset extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[26];
+    private static final String[] PROP_ID_TO_NAME = new String[27];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -200,6 +204,9 @@ public class _ErpAstAsset extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_staffId] = PROP_NAME_staffId;
           PROP_NAME_TO_ID.put(PROP_NAME_staffId, PROP_ID_staffId);
+      
+          PROP_ID_TO_NAME[PROP_ID_brandModel] = PROP_NAME_brandModel;
+          PROP_NAME_TO_ID.put(PROP_NAME_brandModel, PROP_ID_brandModel);
       
           PROP_ID_TO_NAME[PROP_ID_status] = PROP_NAME_status;
           PROP_NAME_TO_ID.put(PROP_NAME_status, PROP_ID_status);
@@ -278,6 +285,9 @@ public class _ErpAstAsset extends DynamicOrmEntity{
     
     /* 使用人(往来单位,旧字段保留): STAFF_ID */
     private java.lang.Long _staffId;
+    
+    /* 品牌型号: BRAND_MODEL */
+    private java.lang.String _brandModel;
     
     /* 资产状态: STATUS */
     private java.lang.Integer _status;
@@ -427,6 +437,9 @@ public class _ErpAstAsset extends DynamicOrmEntity{
         
             case PROP_ID_staffId:
                return getStaffId();
+        
+            case PROP_ID_brandModel:
+               return getBrandModel();
         
             case PROP_ID_status:
                return getStatus();
@@ -630,6 +643,16 @@ public class _ErpAstAsset extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_staffId));
                }
                setStaffId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_brandModel:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_brandModel));
+               }
+               setBrandModel(typedValue);
                break;
             }
         
@@ -837,6 +860,13 @@ public class _ErpAstAsset extends DynamicOrmEntity{
             case PROP_ID_staffId:{
                onInitProp(propId);
                this._staffId = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_brandModel:{
+               onInitProp(propId);
+               this._brandModel = (java.lang.String)value;
                
                break;
             }
@@ -1222,6 +1252,25 @@ public class _ErpAstAsset extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_staffId,value)){
             this._staffId = value;
             internalClearRefs(PROP_ID_staffId);
+            
+        }
+    }
+    
+    /**
+     * 品牌型号: BRAND_MODEL
+     */
+    public final java.lang.String getBrandModel(){
+         onPropGet(PROP_ID_brandModel);
+         return _brandModel;
+    }
+
+    /**
+     * 品牌型号: BRAND_MODEL
+     */
+    public final void setBrandModel(java.lang.String value){
+        if(onPropSet(PROP_ID_brandModel,value)){
+            this._brandModel = value;
+            internalClearRefs(PROP_ID_brandModel);
             
         }
     }

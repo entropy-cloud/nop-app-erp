@@ -259,6 +259,7 @@ prop:
       status_label: null
       priority: null
       priority_label: null
+      blockReason: null
       sortNum: null
       remark: null
       delVersion: null

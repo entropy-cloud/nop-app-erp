@@ -31,6 +31,7 @@ prop:
       locationId: null
       employeeId: null
       staffId: null
+      brandModel: null
       status: null
       status_label: null
       delVersion: null
@@ -169,6 +170,8 @@ prop:
       exchangeRate: null
       businessDate: null
       gainLoss: null
+      reason: null
+      reason_label: null
       docStatus: null
       docStatus_label: null
       approveStatus: null
@@ -230,6 +233,7 @@ prop:
       toStaffId: null
       fromLocationId: null
       toLocationId: null
+      handlerId: null
       docStatus: null
       docStatus_label: null
       approveStatus: null
@@ -237,6 +241,7 @@ prop:
       posted: null
       postedAt: null
       postedBy: null
+      docVersion: null
       delVersion: null
       version: null
       createdBy: null
