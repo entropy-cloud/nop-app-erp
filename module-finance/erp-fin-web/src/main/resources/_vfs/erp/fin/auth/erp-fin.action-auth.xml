@@ -15,15 +15,15 @@
                 <resource id="fin-voucher" displayName="凭证" i18n-en:displayName="Voucher"
                           icon="book-up" resourceType="SUBM" orderNo="100">
                     <children>
-                        <resource id="ErpFinVoucher-main" app:userCase="UC-FIN-01,UC-FIN-02,UC-FIN-12" displayName="会计凭证"
+                        <resource id="ErpFinVoucher-main" app:useCases="UC-FIN-01,UC-FIN-02,UC-FIN-12" displayName="会计凭证"
                                   i18n-en:displayName="Accounting Voucher" icon="book-up"
                                   component="AMIS" resourceType="SUBM" orderNo="100"
                                   url="/erp/fin/pages/ErpFinVoucher/main.page.yaml"/>
-                        <resource id="ErpFinVoucherTemplate-main" app:userCase="UC-FIN-01" displayName="凭证模板"
+                        <resource id="ErpFinVoucherTemplate-main" app:useCases="UC-FIN-01" displayName="凭证模板"
                                   i18n-en:displayName="Voucher Template" icon="book-template"
                                   component="AMIS" resourceType="SUBM" orderNo="110"
                                   url="/erp/fin/pages/ErpFinVoucherTemplate/main.page.yaml"/>
-                        <resource id="ErpFinVoucherBillR-main" app:userCase="UC-FIN-01,UC-FIN-02" displayName="业财回链"
+                        <resource id="ErpFinVoucherBillR-main" app:useCases="UC-FIN-01,UC-FIN-02" displayName="业财回链"
                                   i18n-en:displayName="Voucher Business Link" icon="link"
                                   component="AMIS" resourceType="SUBM" orderNo="120"
                                   url="/erp/fin/pages/ErpFinVoucherBillR/main.page.yaml"/>
@@ -33,11 +33,11 @@
                 <resource id="fin-period" displayName="会计期间" i18n-en:displayName="Accounting Period"
                           icon="calendar" resourceType="SUBM" orderNo="200">
                     <children>
-                        <resource id="ErpFinAccountingPeriod-main" app:userCase="UC-FIN-06,UC-FIN-07" displayName="会计期间"
+                        <resource id="ErpFinAccountingPeriod-main" app:useCases="UC-FIN-06,UC-FIN-07" displayName="会计期间"
                                   i18n-en:displayName="Accounting Period" icon="calendar"
                                   component="AMIS" resourceType="SUBM" orderNo="200"
                                   url="/erp/fin/pages/ErpFinAccountingPeriod/main.page.yaml"/>
-                        <resource id="ErpFinAccountingPeriodStatus-main" app:userCase="UC-FIN-06,UC-FIN-07" displayName="期间结账状态"
+                        <resource id="ErpFinAccountingPeriodStatus-main" app:useCases="UC-FIN-06,UC-FIN-07" displayName="期间结账状态"
                                   i18n-en:displayName="Period Close Status" icon="calendar-check"
                                   component="AMIS" resourceType="SUBM" orderNo="210"
                                   url="/erp/fin/pages/ErpFinAccountingPeriodStatus/main.page.yaml"/>
@@ -47,7 +47,7 @@
                 <resource id="fin-arap" displayName="应收应付" i18n-en:displayName="AR/AP"
                           icon="arrow-left-right" resourceType="SUBM" orderNo="300">
                     <children>
-                        <resource id="ErpFinArApItem-main" app:userCase="UC-FIN-08" displayName="应收应付明细账"
+                        <resource id="ErpFinArApItem-main" app:useCases="UC-FIN-08" displayName="应收应付明细账"
                                   i18n-en:displayName="AR/AP Subledger" icon="arrow-left-right"
                                   component="AMIS" resourceType="SUBM" orderNo="300"
                                   url="/erp/fin/pages/ErpFinArApItem/main.page.yaml"/>
@@ -57,7 +57,7 @@
                 <resource id="fin-recon" displayName="核销" i18n-en:displayName="Reconciliation"
                           icon="check-check" resourceType="SUBM" orderNo="400">
                     <children>
-                        <resource id="ErpFinReconciliation-main" app:userCase="UC-FIN-08" displayName="核销单"
+                        <resource id="ErpFinReconciliation-main" app:useCases="UC-FIN-08" displayName="核销单"
                                   i18n-en:displayName="Reconciliation" icon="check-check"
                                   component="AMIS" resourceType="SUBM" orderNo="400"
                                   url="/erp/fin/pages/ErpFinReconciliation/main.page.yaml"/>
@@ -67,11 +67,11 @@
                 <resource id="fin-gl" displayName="总账" i18n-en:displayName="General Ledger"
                           icon="scale" resourceType="SUBM" orderNo="500">
                     <children>
-                        <resource id="ErpFinGlBalance-main" app:userCase="UC-FIN-05,UC-FIN-11" displayName="总账余额"
+                        <resource id="ErpFinGlBalance-main" app:useCases="UC-FIN-05,UC-FIN-11" displayName="总账余额"
                                   i18n-en:displayName="GL Balance" icon="scale"
                                   component="AMIS" resourceType="SUBM" orderNo="500"
                                   url="/erp/fin/pages/ErpFinGlBalance/main.page.yaml"/>
-                        <resource id="ErpFinTrialBalance-main" app:userCase="UC-FIN-01" displayName="试算平衡表"
+                        <resource id="ErpFinTrialBalance-main" app:useCases="UC-FIN-01" displayName="试算平衡表"
                                   i18n-en:displayName="Trial Balance" icon="git-compare"
                                   component="AMIS" resourceType="SUBM" orderNo="510"
                                   url="/erp/fin/pages/ErpFinTrialBalance/main.page.yaml"/>
@@ -81,7 +81,7 @@
                 <resource id="fin-fund" displayName="资金" i18n-en:displayName="Fund"
                           icon="wallet" resourceType="SUBM" orderNo="600">
                     <children>
-                        <resource id="ErpFinFundAccount-main" app:userCase="UC-FIN-09" displayName="资金账户"
+                        <resource id="ErpFinFundAccount-main" app:useCases="UC-FIN-09" displayName="资金账户"
                                   i18n-en:displayName="Fund Account" icon="wallet"
                                   component="AMIS" resourceType="SUBM" orderNo="600"
                                   url="/erp/fin/pages/ErpFinFundAccount/main.page.yaml"/>

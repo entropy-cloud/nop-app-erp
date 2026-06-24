@@ -15,11 +15,11 @@
                 <resource id="mnt-equipment" displayName="设备主数据" i18n-en:displayName="Equipment"
                           icon="cog" resourceType="SUBM" orderNo="100">
                     <children>
-                        <resource id="ErpMntEquipment-main" app:userCase="UC-MAIN-03,UC-MAIN-06,UC-MAIN-08,UC-MAIN-10" displayName="设备"
+                        <resource id="ErpMntEquipment-main" app:useCases="UC-MAIN-03,UC-MAIN-06,UC-MAIN-08,UC-MAIN-10" displayName="设备"
                                   i18n-en:displayName="Equipment" icon="cog"
                                   component="AMIS" resourceType="SUBM" orderNo="100"
                                   url="/erp/mnt/pages/ErpMntEquipment/main.page.yaml"/>
-                        <resource id="ErpMntEquipmentCategory-main" app:userCase="UC-MAIN-08" displayName="设备分类"
+                        <resource id="ErpMntEquipmentCategory-main" app:useCases="UC-MAIN-08" displayName="设备分类"
                                   i18n-en:displayName="Equipment Category" icon="folder-tree"
                                   component="AMIS" resourceType="SUBM" orderNo="110"
                                   url="/erp/mnt/pages/ErpMntEquipmentCategory/main.page.yaml"/>
@@ -29,11 +29,11 @@
                 <resource id="mnt-schedule" displayName="维护计划" i18n-en:displayName="Schedule"
                           icon="calendar-clock" resourceType="SUBM" orderNo="200">
                     <children>
-                        <resource id="ErpMntSchedule-main" app:userCase="UC-MAIN-01,UC-MAIN-02" displayName="维护计划"
+                        <resource id="ErpMntSchedule-main" app:useCases="UC-MAIN-01,UC-MAIN-02" displayName="维护计划"
                                   i18n-en:displayName="Maintenance Schedule" icon="calendar-clock"
                                   component="AMIS" resourceType="SUBM" orderNo="200"
                                   url="/erp/mnt/pages/ErpMntSchedule/main.page.yaml"/>
-                        <resource id="ErpMntCalibration-main" app:userCase="UC-MAIN-01" displayName="校准记录"
+                        <resource id="ErpMntCalibration-main" app:useCases="UC-MAIN-01" displayName="校准记录"
                                   i18n-en:displayName="Calibration" icon="gauge"
                                   component="AMIS" resourceType="SUBM" orderNo="210"
                                   url="/erp/mnt/pages/ErpMntCalibration/main.page.yaml"/>
@@ -43,15 +43,15 @@
                 <resource id="mnt-work" displayName="维护工单" i18n-en:displayName="Work Order"
                           icon="life-buoy" resourceType="SUBM" orderNo="300">
                     <children>
-                        <resource id="ErpMntVisit-main" app:userCase="UC-MAIN-03,UC-MAIN-04,UC-MAIN-07" displayName="维护访问"
+                        <resource id="ErpMntVisit-main" app:useCases="UC-MAIN-03,UC-MAIN-04,UC-MAIN-07" displayName="维护访问"
                                   i18n-en:displayName="Maintenance Visit" icon="clipboard-check"
                                   component="AMIS" resourceType="SUBM" orderNo="300"
                                   url="/erp/mnt/pages/ErpMntVisit/main.page.yaml"/>
-                        <resource id="ErpMntRequest-main" app:userCase="UC-MAIN-05" displayName="维护请求"
+                        <resource id="ErpMntRequest-main" app:useCases="UC-MAIN-05" displayName="维护请求"
                                   i18n-en:displayName="Maintenance Request" icon="life-buoy"
                                   component="AMIS" resourceType="SUBM" orderNo="310"
                                   url="/erp/mnt/pages/ErpMntRequest/main.page.yaml"/>
-                        <resource id="ErpMntDowntimeEntry-main" app:userCase="UC-MAIN-06,UC-MAIN-10" displayName="停机记录"
+                        <resource id="ErpMntDowntimeEntry-main" app:useCases="UC-MAIN-06,UC-MAIN-10" displayName="停机记录"
                                   i18n-en:displayName="Downtime Entry" icon="timer-off"
                                   component="AMIS" resourceType="SUBM" orderNo="320"
                                   url="/erp/mnt/pages/ErpMntDowntimeEntry/main.page.yaml"/>
@@ -71,7 +71,7 @@
                 <resource id="mnt-spare" displayName="备件" i18n-en:displayName="Spare Part"
                           icon="package-minus" resourceType="SUBM" orderNo="500">
                     <children>
-                        <resource id="ErpMntSparePartUsage-main" app:userCase="UC-MAIN-04" displayName="备件消耗"
+                        <resource id="ErpMntSparePartUsage-main" app:useCases="UC-MAIN-04" displayName="备件消耗"
                                   i18n-en:displayName="Spare Part Usage" icon="package-minus"
                                   component="AMIS" resourceType="SUBM" orderNo="500"
                                   url="/erp/mnt/pages/ErpMntSparePartUsage/main.page.yaml"/>

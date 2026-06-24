@@ -3,7 +3,7 @@
  * 用例-菜单对照与完备性检查工具
  *
  * 作用(详见 docs/design/use-case-authoring-guide.md §4):
- *   1. 菜单→用例对照:解析 action-auth.xml 的 app:userCase,列举每个菜单关联的用例
+ *   1. 菜单→用例对照:解析 action-auth.xml 的 app:useCases,列举每个菜单关联的用例
  *   2. 完备性检查:识别"无用例关联的功能菜单"(遗漏场景设计)与"无菜单引用的孤儿用例"
  *   3. 用例统计/概览:按域统计用例数、菜单覆盖率
  *
@@ -23,7 +23,7 @@ const ROOT = path.resolve(__dirname, '..');
 
 // ============ 数据收集 ============
 
-/** 收集所有业务域 action-auth.xml 的菜单与 app:userCase 关联 */
+/** 收集所有业务域 action-auth.xml 的菜单与 app:useCases 关联 */
 function collectMenuCases() {
   const results = []; // { domain, moduleId, resourceId, displayName, url, userCases:[] }
   const domains = ['md','pur','sal','inv','fin','ast','prj','mfg','mnt','qa'];
@@ -33,7 +33,7 @@ function collectMenuCases() {
     const dir = findAuthDir(short);
     if (!dir) continue;
     const content = fs.readFileSync(dir, 'utf-8');
-    // 匹配所有 <resource ...>(跨行),提取 id/displayName/url/app:userCase
+    // 匹配所有 <resource ...>(跨行),提取 id/displayName/url/app:useCases
     const re = /<resource\b([^>]*?)>/gs;
     let m;
     while ((m = re.exec(content)) !== null) {
@@ -41,9 +41,9 @@ function collectMenuCases() {
       const idMatch = attrs.match(/id="([^"]+)"/);
       if (!idMatch) continue;
       const rid = idMatch[1];
-      // 只看叶子菜单(有 url 或 app:userCase 的),跳过纯分组(无 url 无 userCase)
+      // 只看叶子菜单(有 url 或 app:useCases 的),跳过纯分组(无 url 无 userCase)
       const urlMatch = attrs.match(/\surl="([^"]+)"/);
-      const ucMatch = attrs.match(/app:userCase="([^"]+)"/);
+      const ucMatch = attrs.match(/app:useCases="([^"]+)"/);
       const dnMatch = attrs.match(/displayName="([^"]+)"/);
       if (!urlMatch && !ucMatch) continue; // 纯分组菜单,跳过
       const userCases = ucMatch ? ucMatch[1].split(',').map(s => s.trim()).filter(Boolean) : [];
@@ -128,7 +128,7 @@ function reportCoverage(menus, useCases) {
   console.log('\n== 完备性检查 ==');
   let hasFinding = false;
 
-  // 1. 无用例关联的功能菜单(有 url 但无 app:userCase)
+  // 1. 无用例关联的功能菜单(有 url 但无 app:useCases)
   const noCaseMenus = menus.filter(m => m.url && m.userCases.length === 0);
   if (noCaseMenus.length) {
     hasFinding = true;

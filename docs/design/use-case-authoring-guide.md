@@ -23,7 +23,7 @@ UC-{DOMAIN}-{NN}
 **编号约束**:
 - 编号一旦分配并写入 `use-cases.md`,**不可复用、不可重排**(避免引用断裂)。删除用例时编号作废,不补位。
 - 一个用例编号对应一个 `## UC-xxx-NN {标题}` 二级标题。
-- 编号在 `use-cases.md` 标题、action-auth.xml 的 `app:userCase`、测试用例注释三处保持一致引用。
+- 编号在 `use-cases.md` 标题、action-auth.xml 的 `app:useCases`、测试用例注释三处保持一致引用。
 
 ## 2. 用例文档结构
 
@@ -50,19 +50,19 @@ UC-{DOMAIN}-{NN}
 5. **聚焦域特有机制**:不写通用 CRUD(创建/查询/删除),写该域特有的业务机制(三单匹配/过账/批次追溯/齐套校验等)。
 6. **粒度**:每域 5-15 个核心路径用例,覆盖主路径 + 关键分支 + 易错边缘场景。
 
-## 3. 用例与菜单的关联(app:userCase)
+## 3. 用例与菜单的关联(app:useCases)
 
-菜单(action-auth.xml 的 `<resource>`)通过 `app:userCase` 属性标记它支撑哪些用例。
+菜单(action-auth.xml 的 `<resource>`)通过 `app:useCases` 属性标记它支撑哪些用例。
 
 ### 机制
 
-`app:userCase` 是 XDSL 扩展属性(`app:` 命名空间),写在 `<resource>` 上,值为用例编号。一个菜单可关联多个用例(逗号分隔),一个用例也可被多个菜单关联。
+`app:useCases` 是 XDSL 扩展属性(`app:` 命名空间),写在 `<resource>` 上,值为用例编号。一个菜单可关联多个用例(逗号分隔),一个用例也可被多个菜单关联。
 
 ```xml
 <auth ... xmlns:app="app">
   <site id="main">
     <resource id="ErpPurOrder-main" displayName="采购订单" ...
-              app:userCase="UC-PUR-01,UC-PUR-03,UC-PUR-08">
+              app:useCases="UC-PUR-01,UC-PUR-03,UC-PUR-08">
       ...
     </resource>
   </site>
@@ -71,7 +71,7 @@ UC-{DOMAIN}-{NN}
 
 ### 命名空间声明
 
-使用 `app:userCase` 的 action-auth.xml 根节点必须声明 `xmlns:app="app"`(类似 `xmlns:i18n-en="i18n-en"`)。
+使用 `app:useCases` 的 action-auth.xml 根节点必须声明 `xmlns:app="app"`(类似 `xmlns:i18n-en="i18n-en"`)。
 
 ### 关联原则
 
@@ -86,7 +86,7 @@ UC-{DOMAIN}-{NN}
 
 ### 作用
 
-1. **菜单→用例对照**:解析所有 action-auth.xml 的 `app:userCase`,列举每个菜单关联的用例编号与标题。
+1. **菜单→用例对照**:解析所有 action-auth.xml 的 `app:useCases`,列举每个菜单关联的用例编号与标题。
 2. **完备性检查**:识别"无用例关联的功能菜单"(可能遗漏场景设计)和"无菜单引用的用例"(孤儿用例)。
 3. **用例统计/概览**:按域统计用例数、菜单覆盖率,输出总览表。
 
@@ -133,7 +133,7 @@ finance       12      8          67%
 
 ## 6. 维护规则
 
-- 新增功能时:先写用例(分配编号)→ 建/关联菜单(app:userCase)→ 实现并写测试(引用编号)。
+- 新增功能时:先写用例(分配编号)→ 建/关联菜单(app:useCases)→ 实现并写测试(引用编号)。
 - 用例编号不可复用;废弃用例标记 DEPRECATED 但保留编号。
 - 用例与机制文档同步:机制变更时,检查引用该机制的用例断言是否需更新。
 - 定期运行 JS 工具检查完备性(无用例菜单/孤儿用例)。

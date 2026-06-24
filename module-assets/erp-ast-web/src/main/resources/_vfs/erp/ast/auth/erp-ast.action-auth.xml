@@ -15,11 +15,11 @@
                 <resource id="ast-ledger" displayName="资产台账" i18n-en:displayName="Asset Ledger"
                           icon="truck" resourceType="SUBM" orderNo="100">
                     <children>
-                        <resource id="ErpAstAsset-main" app:userCase="UC-AST-01,UC-AST-02,UC-AST-03,UC-AST-04,UC-AST-05" displayName="固定资产"
+                        <resource id="ErpAstAsset-main" app:useCases="UC-AST-01,UC-AST-02,UC-AST-03,UC-AST-04,UC-AST-05" displayName="固定资产"
                                   i18n-en:displayName="Fixed Asset" icon="truck"
                                   component="AMIS" resourceType="SUBM" orderNo="100"
                                   url="/erp/ast/pages/ErpAstAsset/main.page.yaml"/>
-                        <resource id="ErpAstAssetCategory-main" app:userCase="UC-AST-01" displayName="资产类别"
+                        <resource id="ErpAstAssetCategory-main" app:useCases="UC-AST-01" displayName="资产类别"
                                   i18n-en:displayName="Asset Category" icon="folder-tree"
                                   component="AMIS" resourceType="SUBM" orderNo="110"
                                   url="/erp/ast/pages/ErpAstAssetCategory/main.page.yaml"/>
@@ -29,7 +29,7 @@
                 <resource id="ast-depreciation" displayName="折旧" i18n-en:displayName="Depreciation"
                           icon="trending-down" resourceType="SUBM" orderNo="200">
                     <children>
-                        <resource id="ErpAstDepreciationSchedule-main" app:userCase="UC-AST-02,UC-AST-07,UC-AST-08" displayName="折旧计划"
+                        <resource id="ErpAstDepreciationSchedule-main" app:useCases="UC-AST-02,UC-AST-07,UC-AST-08" displayName="折旧计划"
                                   i18n-en:displayName="Depreciation Schedule" icon="trending-down"
                                   component="AMIS" resourceType="SUBM" orderNo="200"
                                   url="/erp/ast/pages/ErpAstDepreciationSchedule/main.page.yaml"/>
@@ -39,11 +39,11 @@
                 <resource id="ast-movement" displayName="资产变动" i18n-en:displayName="Asset Movement"
                           icon="move" resourceType="SUBM" orderNo="300">
                     <children>
-                        <resource id="ErpAstMovement-main" app:userCase="UC-AST-03" displayName="资产移动"
+                        <resource id="ErpAstMovement-main" app:useCases="UC-AST-03" displayName="资产移动"
                                   i18n-en:displayName="Asset Movement" icon="move"
                                   component="AMIS" resourceType="SUBM" orderNo="300"
                                   url="/erp/ast/pages/ErpAstMovement/main.page.yaml"/>
-                        <resource id="ErpAstValueAdjustment-main" app:userCase="UC-AST-02" displayName="资产价值调整"
+                        <resource id="ErpAstValueAdjustment-main" app:useCases="UC-AST-02" displayName="资产价值调整"
                                   i18n-en:displayName="Asset Value Adjustment" icon="sliders-horizontal"
                                   component="AMIS" resourceType="SUBM" orderNo="310"
                                   url="/erp/ast/pages/ErpAstValueAdjustment/main.page.yaml"/>
@@ -65,15 +65,15 @@
                 <resource id="ast-disposal" displayName="处置资本化" i18n-en:displayName="Disposal &amp; Capitalization"
                           icon="trash-2" resourceType="SUBM" orderNo="400">
                     <children>
-                        <resource id="ErpAstDisposal-main" app:userCase="UC-AST-04,UC-AST-05" displayName="资产处置"
+                        <resource id="ErpAstDisposal-main" app:useCases="UC-AST-04,UC-AST-05" displayName="资产处置"
                                   i18n-en:displayName="Asset Disposal" icon="trash-2"
                                   component="AMIS" resourceType="SUBM" orderNo="400"
                                   url="/erp/ast/pages/ErpAstDisposal/main.page.yaml"/>
-                        <resource id="ErpAstAssetCapitalization-main" app:userCase="UC-AST-01,UC-AST-06" displayName="资产资本化"
+                        <resource id="ErpAstAssetCapitalization-main" app:useCases="UC-AST-01,UC-AST-06" displayName="资产资本化"
                                   i18n-en:displayName="Asset Capitalization" icon="badge-plus"
                                   component="AMIS" resourceType="SUBM" orderNo="410"
                                   url="/erp/ast/pages/ErpAstAssetCapitalization/main.page.yaml"/>
-                        <resource id="ErpAstCip-main" app:userCase="UC-AST-06" displayName="在建工程"
+                        <resource id="ErpAstCip-main" app:useCases="UC-AST-06" displayName="在建工程"
                                   i18n-en:displayName="CIP" icon="hard-hat"
                                   component="AMIS" resourceType="SUBM" orderNo="420"
                                   url="/erp/ast/pages/ErpAstCip/main.page.yaml"/>

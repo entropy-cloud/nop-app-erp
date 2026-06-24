@@ -15,15 +15,15 @@
                 <resource id="erp-pur-sourcing" displayName="采购寻源"
                           i18n-en:displayName="Sourcing" icon="search" resourceType="SUBM" orderNo="100">
                     <children>
-                        <resource id="ErpPurRfq-main" app:userCase="UC-PUR-01" displayName="采购询价单"
+                        <resource id="ErpPurRfq-main" app:useCases="UC-PUR-01" displayName="采购询价单"
                                   i18n-en:displayName="Purchase RFQ" icon="message-circle-question"
                                   component="AMIS" resourceType="SUBM" orderNo="100"
                                   url="/erp/pur/pages/ErpPurRfq/main.page.yaml"/>
-                        <resource id="ErpPurQuotation-main" app:userCase="UC-PUR-01" displayName="供应商报价单"
+                        <resource id="ErpPurQuotation-main" app:useCases="UC-PUR-01" displayName="供应商报价单"
                                   i18n-en:displayName="Supplier Quotation" icon="file-sign"
                                   component="AMIS" resourceType="SUBM" orderNo="110"
                                   url="/erp/pur/pages/ErpPurQuotation/main.page.yaml"/>
-                        <resource id="ErpPurSupplierPriceList-main" app:userCase="UC-PUR-05" displayName="供应商价格清单"
+                        <resource id="ErpPurSupplierPriceList-main" app:useCases="UC-PUR-05" displayName="供应商价格清单"
                                   i18n-en:displayName="Supplier Price List" icon="list-checks"
                                   component="AMIS" resourceType="SUBM" orderNo="120"
                                   url="/erp/pur/pages/ErpPurSupplierPriceList/main.page.yaml"/>
@@ -34,11 +34,11 @@
                 <resource id="erp-pur-order" displayName="采购订单"
                           i18n-en:displayName="Purchase Order" icon="shopping-cart" resourceType="SUBM" orderNo="200">
                     <children>
-                        <resource id="ErpPurRequisition-main" app:userCase="UC-PUR-01,UC-PUR-08" displayName="采购请购单"
+                        <resource id="ErpPurRequisition-main" app:useCases="UC-PUR-01,UC-PUR-08" displayName="采购请购单"
                                   i18n-en:displayName="Purchase Requisition" icon="file-text"
                                   component="AMIS" resourceType="SUBM" orderNo="200"
                                   url="/erp/pur/pages/ErpPurRequisition/main.page.yaml"/>
-                        <resource id="ErpPurOrder-main" app:userCase="UC-PUR-01,UC-PUR-02,UC-PUR-03,UC-PUR-05,UC-PUR-06,UC-PUR-07,UC-PUR-08" displayName="采购订单"
+                        <resource id="ErpPurOrder-main" app:useCases="UC-PUR-01,UC-PUR-02,UC-PUR-03,UC-PUR-05,UC-PUR-06,UC-PUR-07,UC-PUR-08" displayName="采购订单"
                                   i18n-en:displayName="Purchase Order" icon="shopping-cart"
                                   component="AMIS" resourceType="SUBM" orderNo="210"
                                   url="/erp/pur/pages/ErpPurOrder/main.page.yaml"/>
@@ -49,7 +49,7 @@
                 <resource id="erp-pur-receipt" displayName="采购入库"
                           i18n-en:displayName="Goods Receipt" icon="package-plus" resourceType="SUBM" orderNo="300">
                     <children>
-                        <resource id="ErpPurReceive-main" app:userCase="UC-PUR-01,UC-PUR-02,UC-PUR-03,UC-PUR-07" displayName="采购入库单"
+                        <resource id="ErpPurReceive-main" app:useCases="UC-PUR-01,UC-PUR-02,UC-PUR-03,UC-PUR-07" displayName="采购入库单"
                                   i18n-en:displayName="Purchase Receipt" icon="package-plus"
                                   component="AMIS" resourceType="SUBM" orderNo="300"
                                   url="/erp/pur/pages/ErpPurReceive/main.page.yaml"/>
@@ -60,11 +60,11 @@
                 <resource id="erp-pur-billing" displayName="采购结算"
                           i18n-en:displayName="Billing" icon="receipt" resourceType="SUBM" orderNo="400">
                     <children>
-                        <resource id="ErpPurInvoice-main" app:userCase="UC-PUR-01,UC-PUR-02,UC-PUR-05,UC-PUR-07" displayName="采购发票"
+                        <resource id="ErpPurInvoice-main" app:useCases="UC-PUR-01,UC-PUR-02,UC-PUR-05,UC-PUR-07" displayName="采购发票"
                                   i18n-en:displayName="Purchase Invoice" icon="receipt"
                                   component="AMIS" resourceType="SUBM" orderNo="400"
                                   url="/erp/pur/pages/ErpPurInvoice/main.page.yaml"/>
-                        <resource id="ErpPurPayment-main" app:userCase="UC-PUR-01" displayName="付款单"
+                        <resource id="ErpPurPayment-main" app:useCases="UC-PUR-01" displayName="付款单"
                                   i18n-en:displayName="Payment" icon="banknote"
                                   component="AMIS" resourceType="SUBM" orderNo="410"
                                   url="/erp/pur/pages/ErpPurPayment/main.page.yaml"/>
@@ -75,7 +75,7 @@
                 <resource id="erp-pur-return" displayName="采购退货"
                           i18n-en:displayName="Return" icon="undo-2" resourceType="SUBM" orderNo="500">
                     <children>
-                        <resource id="ErpPurReturn-main" app:userCase="UC-PUR-04" displayName="采购退货单"
+                        <resource id="ErpPurReturn-main" app:useCases="UC-PUR-04" displayName="采购退货单"
                                   i18n-en:displayName="Purchase Return" icon="undo-2"
                                   component="AMIS" resourceType="SUBM" orderNo="500"
                                   url="/erp/pur/pages/ErpPurReturn/main.page.yaml"/>
