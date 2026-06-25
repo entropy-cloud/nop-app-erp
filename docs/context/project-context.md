@@ -11,7 +11,7 @@
 - 项目名称：nop-app-erp
 - 产品类型：基于 Nop Platform 构建的企业资源规划（ERP）应用骨架
 - 主要用户：ERP 系统操作员/管理员以及从现实业务领域应用学习 Nop Platform 的开发人员
-- 文档新鲜度：`fresh`（bootstrap 文档刚刚初始化；ORM 模型尚未设计）
+- 文档新鲜度：`fresh`（10 域 ORM 模型已设计完成，145 实体；设计文档经多次审计验证）
 
 **新鲜度控制：**
 
@@ -27,28 +27,26 @@
 
 ## 当前项目阶段
 
-`nop-app-erp` 处于 **bootstrap 阶段**。只有 AGE 文档结构和空的 ORM 模型骨架存在。Maven 多模块项目（api/codegen/dao/service/web/app/delta/meta）和 Java 源将在 ORM 模型设计完成后由 `nop-cli` 生成。请参阅 `AGENTS.md` 中的"当前项目阶段"。
+`nop-app-erp` 处于 **codegen 已完成、待 BizModel 业务逻辑深化阶段**。10 域 ORM 模型（145 实体）已设计完成并经审计验证。所有域的 `nop-cli gen` 骨架已生成（1096 个 Java 文件），包含实体类、DAO、I*Biz 接口、BizModel 空壳、XMeta、view.xml 骨架。`app-erp-all` 聚合 app 已构建通过（82 模块）。
 
-在 ORM 模型和生成模块存在之前：
-
-- 不要假设 Java 模块路径、包名或视图路径已存在
-- 设计和讨论工作应集中在 `module-<domain>/model/` 以及 `docs/design/`、`docs/architecture/`、`docs/requirements/`
-- 下面的验证命令尚不可执行；仅在首次代码生成通过后才生效
+- codegen 产物是标准 CRUD 空壳（`CrudBizModel<T>` + 空 `I*Biz`），需深化业务逻辑
+- 后续模型变更用 `mvn clean install` 增量重新生成，**不要**重跑 `nop-cli gen`
+- 当前重点：按 roadmap 依次深化 BizModel → ErrorCode → 页面定制 → 端到端验证
+- 详见 `docs/analysis/2026-06-25-1649-ai-automation-roadmap.md`
 
 ## 验证命令
 
-> **Bootstrap 阶段说明：** 下面的命令针对未来生成的多模块项目。由于 `mvn` 模块和 Java 源不存在，它们**尚不可执行**。仅在首次 `nop-cli` 代码生成通过完成后才生效。在模块存在且针对它们运行这些命令之前，不要报告验证成功。
+> **当前状态**：根 pom 和 `app-erp-all` 已可构建（`mvn clean install -DskipTests` 全绿 82 模块）。所有域 codegen 骨架已就绪。
 
 | 目的 | 命令 |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| 安装依赖 | `mvn dependency:resolve -DskipTests`（需要先构建 nop-entropy 父项目；代码生成后可用） |
-| 本地运行应用 | `mvn clean package -DskipTests && java -Dfile.encoding=UTF8 -Dquarkus.profile=dev -jar app-erp-app/target/app-erp-app-1.0-SNAPSHOT-runner.jar` |
+|------|------|
+| 构建全项目 | `mvn clean install -DskipTests` |
+| 本地运行应用 | `java -Dfile.encoding=UTF8 -Dquarkus.profile=dev -jar app-erp-all/target/app-erp-all-1.0-SNAPSHOT-runner.jar` |
 | 类型检查/编译检查 | `mvn compile -DskipTests` |
-| 构建 | `mvn clean package -DskipTests` |
-| 静态检查 | `none` |
-| 单元测试 | `mvn test` |
-| 端到端/集成测试 | `none` |
-| 生成项目（一次） | `java -jar nop-cli.jar gen -t=/nop/templates/orm model/app-erp.orm.xlsx`（ORM 设计后从项目根目录运行） |
+| 单元测试 | `mvn test`（随 BizModel 实现逐步补充） |
+| 首次生成单域模块骨架（仅首次） | `nop-cli gen module-<domain>/model/app-erp-<domain>.orm.xml -t=/nop/templates/orm` |
+| 增量重新生成（模型变更后） | `mvn clean install -DskipTests`（触发 gen-orm.xgen 增量链） |
+| XML well-formed 校验 | `xmllint --noout module-<domain>/model/app-erp-<domain>.orm.xml` |
 
 ## 当前使用的可选层
 
@@ -66,10 +64,9 @@
 
 AI 必须在继续之前停止并等待人工输入，当：
 
-- 验证命令都是占位符，无法从项目推断
-- 任何更改触及数据删除、会计/财务或其他 ERP 保护区域，且没有现有测试覆盖且没有描述预期行为的 owner doc
+- 任何更改触及数据删除、会计/财务或其他 ERP 保护区域，且没有描述预期行为的 owner doc
 - 任何更改在没有明确人工批准的情况下修改 XML 模型（`model/*.orm.xml`、`model/*.api.xml`）— 这些驱动代码生成
-- 没有需求或 owner doc 描述更改的预期行为 — 不要在真空中实现（是否存在需求/owner doc 是根据 `docs/requirements/` 和 `docs/design/` 检查的，而非此处的字段）
+- 没有 owner doc 描述更改的预期行为 — 不要在真空中实现
 
 这些是除 `AGENTS.md`、`docs/context/ai-autonomy-policy.md`、真相源冲突规则以及所需计划/结束审计规则之外的项目特定硬停止。
 
@@ -77,10 +74,9 @@ AI 必须在继续之前停止并等待人工输入，当：
 
 ## AI 代理注意事项
 
-- 如果此文件为空或陈旧，在进行大规模实现工作之前请求或创建上下文更新。
-- **当前进行中的工作**：检查 `docs/plans/` 中的未完成计划，而非此文件。
-- AI 自主权默认为 `implement`；它由新鲜度（上文）和保护区域（`ai-autonomy-policy.md`）控制。此处不维护每个切片的自主权值 — 自主权标签位于待办事项/路线图工作项上，而非此文件中。
+- **当前进行中的工作**：检查 `docs/backlog/README.md` 和 `docs/plans/` 中的未完成计划。
+- AI 自主权默认为 `implement`；它由保护区域（`ai-autonomy-policy.md`）控制。
 - AI 可以根据实时仓库证据纠正事实上下文，但在无人确认的情况下不得将陈旧文档标记为新鲜或降级保护区域。
-- 当命令仍包含 `<fill real command>` 占位符或针对不存在的模块时，不要报告验证成功。
 - 构建需要 `nop-entropy` 父 POM 首先在本地 Maven 仓库中可用。
-- 当前重点是 `module-<domain>/model/` 中的 ORM 模型设计；在代码生成运行之前不要假设 Java 模块/包/视图路径。
+- 跨域端到端循环（如采购→入库→凭证）需先编写计划（`plan-first`）。
+- 每个业务功能实现时，AI 自行根据 owner doc 和用例文档拟制对应测试。

@@ -6,60 +6,66 @@
 
 保持足够新以路由常见工作。不要将其变成完整的架构文档。
 
+## 当前结构
+
+根 pom.xml 列出 11 个模块：10 个 `module-<domain>` + 1 个 `app-erp-all`。
+
+所有域 codegen 骨架已生成（1096 个 Java 文件），含实体类、DAO、I*Biz 接口、BizModel 空壳、XMeta、view.xml 骨架。后续模型变更用 `mvn clean install` 增量重新生成，**不要**重跑 `nop-cli gen`。
+
 ## 入口点
 
-> **Bootstrap 阶段：** Java 模块尚不存在。实时真相源是 5 个 `model/app-erp-<domain>.orm.xml` 文件和 `docs/` 树。标记为"codegen 后"的行描述未来结构。模块拆分决策见 `docs/architecture/domain-module-split-analysis.md`。
-
 | 区域 | 路径 | 说明 | 最后验证 | 置信度 |
-| ------------------- | ------------------------------------- | ----------------------------------------------------------- | ------------- | ---------- |
-| ORM 模型（真相） | `module-master-data/model/app-erp-master-data.orm.xml` | 主数据域权威模型（物料/SKU/往来单位/仓库/科目表） | 2026-06-22 | high |
-| ORM 模型（真相） | `module-inventory/model/app-erp-inventory.orm.xml` | 库存域权威模型（移动单/流水/余额/调拨/盘点） | 2026-06-22 | high |
-| ORM 模型（真相） | `module-purchase/model/app-erp-purchase.orm.xml` | 采购域权威模型（订单/入库/发票/付款/退货） | 2026-06-22 | high |
-| ORM 模型（真相） | `module-sales/model/app-erp-sales.orm.xml` | 销售域权威模型（订单/出库/发票/收款/退货） | 2026-06-22 | high |
-| ORM 模型（真相） | `module-finance/model/app-erp-finance.orm.xml` | 财务域权威模型（凭证/科目/核销/期末结账） | 2026-06-22 | high |
-| ORM 模型（真相） | `module-assets/model/app-erp-assets.orm.xml` | 固定资产域权威模型（资产卡片/折旧/资本化/处置） | 2026-06-22 | high |
-| ORM 模型（真相） | `module-projects/model/app-erp-projects.orm.xml` | 项目管理域权威模型（项目/任务/工时） | 2026-06-22 | high |
-| ORM 模型（真相） | `module-manufacturing/model/app-erp-manufacturing.orm.xml` | 制造域权威模型（BOM/工单/作业卡/工艺路线） | 2026-06-22 | high |
-| ORM 模型（真相） | `module-quality/model/app-erp-quality.orm.xml` | 质量管理域权威模型（质检/NCR/CAPA） | 2026-06-22 | high |
-| ORM 模型（真相） | `module-maintenance/model/app-erp-maintenance.orm.xml` | 设备维护域权威模型（设备/维护计划/访问/请求） | 2026-06-22 | high |
-| ~~ORM 模型（已废弃）~~ | ~~`model/app-erp.orm.xml`~~ | 已删除。ORM 模型已拆分到各 `module-<domain>/model/` | 2026-06-22 | — |
-| API 模型 | `<domain>/model/app-erp-<domain>.api.xml` | 代码生成期间/之后生成；尚未存在 | — | high |
-| 文档路由器 | `docs/index.md` | 顶层导航 | 2026-06-22 | high |
-| 领域工程（10 个） | `app-erp-<domain>/` | 每域独立 Maven 工程，由 nop-cli gen 生成 — codegen 后 | — | medium |
-| 聚合启动工程 | `app-erp-app/` | Quarkus main + 聚合所有领域工程依赖 — codegen 后 | — | medium |
+|------|------|------|----------|--------|
+| ORM 模型（真相）×10 | `module-<domain>/model/app-erp-<domain>.orm.xml` | 10 域权威模型，共 145 实体 | 2026-06-22 | high |
+| 聚合启动工程 | `app-erp-all/` | Quarkus main + 聚合所有域依赖；`app.action-auth.xml` 合并 10 域 + 系统管理菜单 | 2026-06-23 | high |
+| 根 POM | `pom.xml` | 聚合 11 个模块（10 module-* + app-erp-all） | 2026-06-23 | high |
+| 设计文档（全局） | `docs/design/*.md` | 7 份全局 owner doc（app-overview/flow-overview/domain-design-guidelines 等） | 2026-06-23 | high |
+| 设计文档（域） | `docs/design/<domain>/` | 10 域目录，含 README + state-machine + use-cases + ui-patterns 等 | 2026-06-23 | high |
+| 架构文档 | `docs/architecture/*.md` | 9 份技术基线文档 | 2026-06-23 | high |
+| 文档路由器 | `docs/index.md` | 顶层导航 | 2026-06-25 | high |
+| 待办事项 | `docs/backlog/README.md` | 工作项选择 | 2026-06-25 | high |
+
+## ORM 模型清单（10 域 × 145 实体）
+
+| 域 | 路径 | 实体数 | 字典命名空间 | 最后验证 |
+|----|------|--------|-------------|----------|
+| master-data | `module-master-data/model/app-erp-master-data.orm.xml` | 20 | `erp-md/*` | 2026-06-22 |
+| inventory | `module-inventory/model/app-erp-inventory.orm.xml` | 15 | `erp-inv/*` | 2026-06-22 |
+| purchase | `module-purchase/model/app-erp-purchase.orm.xml` | 17 | `erp-pur/*` | 2026-06-22 |
+| sales | `module-sales/model/app-erp-sales.orm.xml` | 13 | `erp-sal/*` | 2026-06-22 |
+| finance | `module-finance/model/app-erp-finance.orm.xml` | 13 | `erp-fin/*` | 2026-06-22 |
+| assets | `module-assets/model/app-erp-assets.orm.xml` | 10 | `erp-ast/*` | 2026-06-22 |
+| projects | `module-projects/model/app-erp-projects.orm.xml` | 13 | `erp-prj/*` | 2026-06-22 |
+| manufacturing | `module-manufacturing/model/app-erp-manufacturing.orm.xml` | 21 | `erp-mfg/*` | 2026-06-22 |
+| quality | `module-quality/model/app-erp-quality.orm.xml` | 11 | `erp-qa/*` | 2026-06-22 |
+| maintenance | `module-maintenance/model/app-erp-maintenance.orm.xml` | 12 | `erp-mnt/*` | 2026-06-22 |
 
 ## 常见变更路由
 
-| 任务类型 | 从这里开始 | 然后检查 | 验证 | 最后验证 | 置信度 |
-| ------------------------- | -------------------------------- | --------------------------------------------------- | ----------------------- | ------------- | ---------- |
-| 设计实体/字典 | `module-<domain>/model/app-erp-<domain>.orm.xml` | `docs/design/`、`../nop-entropy/docs-for-ai/02-core-guides/model-first-development.md` | schema review | 2026-06-22 | high |
-| 更改模型/模式 | `module-<domain>/model/app-erp-<domain>.orm.xml` | owner doc + plan（保护区域：`ask first`） | regenerate + build | 2026-06-22 | high |
-| 生成模块 | `module-<domain>/model/app-erp-<domain>.orm.xml` | `codegen.sh`、`../nop-entropy/docs-for-ai/03-runbooks/` | `mvn compile` | — | medium |
-| 添加页面/屏幕（后期） | `app-erp-web/_vfs/.../*.view.xml` | 相关设计文档 | `mvn test` / manual | — | medium |
-| 添加 API/处理器（后期） | `app-erp-service/` BizModel | `../nop-entropy/docs-for-ai/03-runbooks/write-bizmodel-method.md` | `mvn test` | — | medium |
-| 更改权限（后期） | `app-erp-app/_vfs/app/erp/auth/` | `docs/design/roles-and-permissions.md` | manual / e2e | — | medium |
+| 任务类型 | 从这里开始 | 然后检查 | 验证 |
+|----------|-----------|----------|------|
+| 设计实体/字典 | `module-<domain>/model/app-erp-<domain>.orm.xml` | `docs/design/<domain>/`、`../nop-entropy/docs-for-ai/02-core-guides/model-first-development.md` | XML well-formed |
+| 更改模型/模式 | `module-<domain>/model/app-erp-<domain>.orm.xml` | owner doc + plan（保护区域：`ask first`） | regenerate + `mvn clean install -DskipTests` |
+| 生成单域模块（仅首次） | `module-<domain>/model/app-erp-<domain>.orm.xml` | `../nop-entropy/docs-for-ai/03-runbooks/`（codegen runbooks） | `mvn clean install -DskipTests` |
+| 增量重新生成（模型变更后） | `module-<domain>/model/app-erp-<domain>.orm.xml` | `mvn clean install -DskipTests`（触发 gen-orm.xgen 增量链） | 编译通过 |
+| 编写 BizModel | `docs/design/<domain>/state-machine.md` + `README.md` | `../nop-entropy/docs-for-ai/03-runbooks/write-bizmodel-method.md` | `mvn test` |
+| 添加页面 | `docs/design/<domain>/ui-patterns.md` | AMIS `.view.xml` 规范 | 启动应用验证 |
+| 更改权限 | `app-erp-all/_vfs/app/erp/auth/` | `docs/design/roles-and-permissions.md` | 启动应用验证 |
 
 ## 大型或脆弱文件
 
-列出代理应谨慎处理的文件，因为它们很大、是核心文件、是生成的或容易编辑错误。
-
 | 路径 | 风险 | 首选方法 |
-| ------------------------------- | ---------------------------------------------- | ---------------------------------------------------------- |
+|------|------|----------|
 | `module-<domain>/model/app-erp-<domain>.orm.xml` | 核心文件；驱动各域代码生成；保护区域 | 直接编辑；模式更改需要计划/设计文档 |
-| `model/app-erp.api.xml` | 生成的契约（代码生成后） | 切勿手动编辑；从 ORM 模型重新生成 |
-| `*/_gen/`、`_` 前缀文件 | 自动生成；手动编辑会静默丢失 | 切勿手动编辑；更改源模型并重新生成 |
-| `app-erp-app/_vfs/_delta/` | Delta 覆盖 nop core | 通过 delta 机制编辑，切勿修补 nop core |
+| `app-erp-all/_vfs/_delta/` | Delta 覆盖 nop core | 通过 delta 机制编辑，切勿修补 nop core |
+| `app-erp-all/_vfs/app/erp/auth/app.action-auth.xml` | 应用聚合菜单入口 | 通过 x:extends 继承各域手写层，不直接修改 |
 
 ## 项目特定搜索提示
 
-- 使用文件模式：`model/*.orm.xml`、`model/*.api.xml`、`docs/design/*.md`、`app-erp-*/src/**/*.java`（代码生成后）
-- 使用内容锚点：实体类名使用 `Erp` 前缀（例如 `ErpMaterial`），字典命名空间 `erp/<name>`
+- 使用文件模式：`module-*/model/*.orm.xml`、`docs/design/**/*.md`、`app-erp-all/src/**/*.java`
+- 使用内容锚点：实体类名使用 `Erp` 前缀（例如 `ErpMdMaterial`），字典命名空间 `erp-<domain-short>/<dict>`
 - 避免编辑生成文件：任何 `_gen/` 目录、任何带 `_` 前缀的文件、`_app.orm.xml`、`_service.beans.xml`
 
 ## 更新规则
 
-当更改创建新的主要入口点、移动公共代码、添加新测试位置或反复导致代理重新发现相同路径时，更新此文件。
-
-如果列出的路径缺失、占位符仍然存在或实时导入与此映射冲突，请不要将映射视为权威。使用实时仓库验证，然后在实现之前更新映射或标记该行置信度低。
-
-如果"最后验证"对于项目的节奏来说已经过时、早于重大结构更改或任务触及列出路由的边界，请在依赖该行之前验证实时仓库。低置信度行在实时验证后不阻止低风险工作，但保护区域、迁移或跨模块工作应在实现之前更新该行。
+当更改创建新的主要入口点、移动公共代码或反复导致代理重新发现相同路径时，更新此文件。
