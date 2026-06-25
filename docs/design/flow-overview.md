@@ -55,7 +55,7 @@
     发布过账事件 (post-commit)
         │
         ▼
-ErpFinAcctDocRegistry 查找 Provider
+IErpFinAcctDocProvider 查找 Provider
         │
         ▼
 IErpFinAcctDocProvider.createFacts()
@@ -339,7 +339,7 @@ IErpFinAcctDocProvider.createFacts()
         └─► 返回审核成功（不等待凭证生成）
                 │
                 ▼ (post-commit 异步)
-        ErpFinAcctDocRegistry.getProvider(businessType)
+        IErpFinAcctDocProvider.getProvider(businessType)
                 │
                 ▼
         provider.createFacts(billData, acctSchema)

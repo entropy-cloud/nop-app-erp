@@ -65,6 +65,17 @@ app-erp-maintenance（依赖 master-data + inventory + assets；被 manufacturin
 
 > **表级数据依赖明细**（哪些模块只读 R / 同步写 S / 弱指针 P 哪些表、跨域字段目录、`billType` 枚举）：见 `data-dependency-matrix.md`。本文只规定模块级依赖方向，数据层细化由该文档承载。
 
+## 跨模块引用准则 (Cross-Module Reference Rules)
+
+- Finance may reference master-data, projects, assets
+- Purchase/Sales/Inventory may reference master-data
+- Manufacturing may reference master-data, inventory, quality
+- Quality may reference master-data, manufacturing, inventory
+- Maintenance may reference master-data, assets
+- Projects may reference master-data, finance
+- Cross-domain I*Biz references are preferred over ORM hard references
+- No circular module dependencies allowed
+
 ## 业财打通跨工程协作
 
 财务域定义 `IErpFinAcctDocProvider` 接口 + `ErpFinAcctDocRegistry`（注入 `List<IErpFinAcctDocProvider>`）；各业务域（purchase/sales/inventory）实现自己的凭证生成 Provider（`@Component`）。新增单据类型 = 新增 Provider Bean，零改动财务核心。详见 `docs/design/finance/posting.md`。

@@ -167,93 +167,21 @@
 
 ### 正向追溯查询
 
-```java
-/**
- * 正向追溯：查询移动单触发的所有下游移动单
- */
-public List<ErpInvStockMove> findDownstreamMoves(Long moveId) {
-    ErpInvStockMove move = stockMoveDao.findById(moveId);
-    if (move.getDestMoveIds() == null || move.getDestMoveIds().isEmpty()) {
-        return Collections.emptyList();
-    }
-    return stockMoveDao.findByIds(move.getDestMoveIds());
-}
-
-/**
- * 递归正向追溯：查询完整下游链路
- */
-public List<ErpInvStockMove> findDownstreamChain(Long moveId) {
-    List<ErpInvStockMove> chain = new ArrayList<>();
-    collectDownstreamMoves(moveId, chain);
-    return chain;
-}
-
-private void collectDownstreamMoves(Long moveId, List<ErpInvStockMove> chain) {
-    List<ErpInvStockMove> downstream = findDownstreamMoves(moveId);
-    for (ErpInvStockMove move : downstream) {
-        chain.add(move);
-        collectDownstreamMoves(move.getId(), chain); // 递归
-    }
-}
-```
+- 正向追溯：通过移动单的 destMoveIds 查询所有下游移动单
+- 递归正向追溯：逐层遍历下游移动单，构建完整下游链路（最大深度由配置项 erp-inv.trace-chain-max-depth 控制）
+- 应用场景：从采购入库追溯至最终销售出库
 
 ### 反向追溯查询
 
-```java
-/**
- * 反向追溯：查询移动单的上游移动单
- */
-public ErpInvStockMove findUpstreamMove(Long moveId) {
-    ErpInvStockMove move = stockMoveDao.findById(moveId);
-    if (move.getOriginMoveId() == null) {
-        return null;
-    }
-    return stockMoveDao.findById(move.getOriginMoveId());
-}
-
-/**
- * 递归反向追溯：查询完整上游链路
- */
-public List<ErpInvStockMove> findUpstreamChain(Long moveId) {
-    List<ErpInvStockMove> chain = new ArrayList<>();
-    collectUpstreamMoves(moveId, chain);
-    return chain;
-}
-
-private void collectUpstreamMoves(Long moveId, List<ErpInvStockMove> chain) {
-    ErpInvStockMove upstream = findUpstreamMove(moveId);
-    if (upstream != null) {
-        chain.add(upstream);
-        collectUpstreamMoves(upstream.getId(), chain); // 递归
-    }
-}
-```
+- 反向追溯：通过移动单的 originMoveId 查询上游移动单
+- 递归反向追溯：逐层遍历上游移动单，构建完整上游链路
+- 应用场景：从销售出库追溯至原始采购入库
 
 ### 退货追溯查询
 
-```java
-/**
- * 退货追溯：查询退货移动单的原出库/入库移动单
- */
-public ErpInvStockMove findOriginReturnMove(Long moveId) {
-    ErpInvStockMove move = stockMoveDao.findById(moveId);
-    if (move.getOriginReturnedMoveId() == null) {
-        return null;
-    }
-    return stockMoveDao.findById(move.getOriginReturnedMoveId());
-}
-
-/**
- * 查询移动单关联的所有退货移动单
- */
-public List<ErpInvStockMove> findReturnedMoves(Long moveId) {
-    ErpInvStockMove move = stockMoveDao.findById(moveId);
-    if (move.getReturnedMoveIds() == null || move.getReturnedMoveIds().isEmpty()) {
-        return Collections.emptyList();
-    }
-    return stockMoveDao.findByIds(move.getReturnedMoveIds());
-}
-```
+- 退货追溯：通过 originReturnedMoveId 查询退货移动单的原出库/入库移动单
+- 反向退货追溯：通过 returnedMoveIds 查询原移动单关联的所有退货移动单
+- 应用场景：从采购退货追溯至原采购入库，从销售退货追溯至原销售出库
 
 ## 追溯链与批次
 
@@ -329,103 +257,29 @@ public List<ErpInvStockMove> findReturnedMoves(Long moveId) {
 
 ### 成本追溯查询
 
-```java
-/**
- * 从凭证追溯到移动单
- */
-public ErpInvStockMove findMoveByVoucher(Long voucherId) {
-    FinVoucherBillR billR = voucherBillRDao.findByVoucherId(voucherId);
-    if (billR.getBillType().equals("STOCK_MOVE")) {
-        return stockMoveDao.findById(billR.getBillId());
-    }
-    return null;
-}
-
-/**
- * 计算移动单成本
- */
-public BigDecimal calculateMoveCost(Long moveId) {
-    // 追溯凭证获取成本
-    FinVoucherLine line = voucherLineDao.findBySourceBill("STOCK_MOVE", moveId);
-    return line.getDrAmount(); // 或 crAmount
-}
-```
+- 凭证→移动单追溯：通过业财回链表（FinVoucherBillR）按 billType=STOCK_MOVE 反查移动单
+- 移动单→成本追溯：通过凭证行查询移动单存货成本（借方或贷方金额）
 
 ## 追溯链维护
 
 ### 创建移动单时建立追溯链
 
-```java
-/**
- * 创建移动单时建立追溯链
- */
-public void createMoveWithTrace(ErpInvStockMove move, Long originMoveId) {
-    // 设置上游移动单
-    move.setOriginMoveId(originMoveId);
-    
-    // 更新上游移动单的下游列表
-    if (originMoveId != null) {
-        ErpInvStockMove originMove = stockMoveDao.findById(originMoveId);
-        originMove.addDestMoveId(move.getId());
-        stockMoveDao.save(originMove);
-    }
-    
-    stockMoveDao.save(move);
-}
-```
+- 创建移动单时传入 originMoveId 建立上游关联
+- 同时更新上游移动单的 destMoveIds 列表（双向关联）
+- 正向链路：originMoveId → destMoveIds 双向维护
 
 ### 创建退货移动单时建立追溯链
 
-```java
-/**
- * 创建退货移动单时建立追溯链
- */
-public void createReturnMoveWithTrace(ErpInvStockMove returnMove, Long originReturnedMoveId) {
-    // 设置原出库/入库移动单
-    returnMove.setOriginReturnedMoveId(originReturnedMoveId);
-    
-    // 更新原移动单的退货列表
-    ErpInvStockMove originMove = stockMoveDao.findById(originReturnedMoveId);
-    originMove.addReturnedMoveId(returnMove.getId());
-    stockMoveDao.save(originMove);
-    
-    stockMoveDao.save(returnMove);
-}
-```
+- 创建退货移动单时设置 originReturnedMoveId 建立与原移动单的关联
+- 同时更新原移动单的 returnedMoveIds 列表（双向关联）
+- 退货链路：originReturnedMoveId ↔ returnedMoveIds 双向维护
 
 ### 取消移动单时清理追溯链
 
-```java
-/**
- * 取消移动单时清理追溯链
- */
-public void cancelMoveWithTrace(Long moveId) {
-    ErpInvStockMove move = stockMoveDao.findById(moveId);
-    
-    // 清理上游移动单的下游列表
-    if (move.getOriginMoveId() != null) {
-        ErpInvStockMove originMove = stockMoveDao.findById(move.getOriginMoveId());
-        originMove.removeDestMoveId(moveId);
-        stockMoveDao.save(originMove);
-    }
-    
-    // 清理原移动单的退货列表
-    if (move.getOriginReturnedMoveId() != null) {
-        ErpInvStockMove originMove = stockMoveDao.findById(move.getOriginReturnedMoveId());
-        originMove.removeReturnedMoveId(moveId);
-        stockMoveDao.save(originMove);
-    }
-    
-    // 清理下游移动单的上游引用
-    if (move.getDestMoveIds() != null) {
-        for (Long destId : move.getDestMoveIds()) {
-            ErpInvStockMove destMove = stockMoveDao.findById(destId);
-            destMove.setOriginMoveId(null);
-            stockMoveDao.save(destMove);
-        }
-    }
-}
-```
+- 取消移动单时从其上游移动单的 destMoveIds 中移除本移动单引用
+- 从其原移动单的 returnedMoveIds 中移除本移动单引用
+- 清空下游移动单的 originMoveId 引用
+- 保证追溯链在单据取消后保持一致性
 
 ## 追溯链可视化
 

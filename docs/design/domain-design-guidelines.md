@@ -350,7 +350,7 @@
 | finance | 凭证 | `DRAFT` / `POSTED` / `CANCELLED` | 凭证特殊：无 SUBMITTED，DRAFT 直接过账到 POSTED |
 | finance | 会计期间 | `CLOSED` / `OPEN` / `CLOSING` / `CLOSED_FINAL` | 时间窗口状态机 |
 | assets | 资产卡片 | `DRAFT` / `IN_SERVICE` / `IDLE` / `SCRAPPED` / `SOLD` | 资产生命周期 |
-| manufacturing | 工单 | `DRAFT` / `SUBMITTED` / `NOT_STARTED` / `RELEASED` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 制造执行链 |
+| manufacturing | 工单 | `DRAFT` / `SUBMITTED` / `APPROVED` / `RELEASED` / `IN_PROGRESS` / `COMPLETED` / `INSPECTING` / `REJECTED` / `CANCELLED` / `CLOSED` | 制造执行链 |
 | projects | 项目/任务 | `DRAFT` / `PLANNED` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 项目生命周期 |
 | quality | 质检/NCR/CAPA | `DRAFT` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 质量流程 |
 | maintenance | 工单/请求 | `DRAFT` / `SCHEDULED` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 维护执行 |

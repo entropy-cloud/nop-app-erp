@@ -30,27 +30,29 @@ nop-app-erp 是基于 Nop 平台架构的**产品化通用 ERP 产品**，可快
 
 **模块组装**：交付时可按需裁剪——纯商贸客户只组装核心 5 域，制造客户组装全部 10 域。详见 `customization-capabilities.md` 的"模块化组装"。
 
-## 当前里程碑（ORM 模型设计 + 定制能力规划）
+## 当前里程碑（代码生成已完成 - Post-Codegen 阶段）
 
-- 产品摘要：10 域 ORM 模型已填充（共 145 实体），目录式设计文档已建立，定制能力文档已就位，准备进入 codegen 与端到端验证阶段。
-- 用户：实施方（基于基线定制各领域 ERP）、开发人员（完善模型与生成链路）
+- 产品摘要：10 域已全部通过 nop-cli 完成代码生成，共生成 1096 Java 文件、82 模块、145 实体，项目进入 post-codegen 阶段。
+- 用户：实施方（基于基线定制各领域 ERP）、开发人员（完善模型与生成链路、编写 BizModel 与 xbiz）
 - 当前已完成：
   - 10 份 `<domain>/model/app-erp-<domain>.orm.xml` 权威源模型（145 实体）
+  - 10 域完整的代码生成工程骨架（model → codegen → dao → service → web → app）
   - 10 域目录式设计文档（README + state-machine + 跨域协作等）
   - 全局设计文档（app-overview/flow-overview/domain-glossary/roles-and-permissions/feature-inventory）
   - 架构文档（system-baseline/module-boundaries/domain-module-split-analysis/customization-capabilities）
   - 多租户策略明确（按平台标准，不在 orm.xml 预置 tenantId）
 - 下一步范围：
-  - 首域（建议 master-data）通过 `nop-cli gen` 生成工程骨架，验证生成链路
   - 端到端业务循环验证（采购→入库→应付→凭证）
+  - 编写核心 BizModel 与 xbiz 业务逻辑
   - 定制能力落地样例（Delta 定制 + 扩展字段各一个）
+  - 页面与视图开发（AMIS view.xml）
 - 延迟范围：
   - SaaS 多租户启用（待业务确认）
   - 垂直行业扩展工程（待具体客户需求）
   - 外部集成（税控/银行/物流/电商）
 - 成功指标：
-  - 10 份 orm.xml 的 appName/entityPackageName/maven 坐标互不冲突
-  - 首域 codegen 成功生成可构建的工程
+  - 所有 82 模块可独立编译通过
+  - 首域端到端 CRUD 流程测试通过
   - 第一个业务循环端到端测试通过
 - 约束：
   - `model/*.orm.xml` 是 ask-first 保护区域

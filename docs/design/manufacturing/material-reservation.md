@@ -32,22 +32,17 @@
 
 ### 预留记录
 
-工单审核后为每个子件创建预留记录：
+工单审核后为每个子件创建预留记录，每行包含以下信息：
 
-```xml
-<entity name="ErpMfgMaterialReservation">
-    <column name="workOrderId" type="Long" mandatory="true"/>
-    <column name="workOrderLineId" type="Long"/>
-    <column name="materialId" type="Long" mandatory="true"/>
-    <column name="skuId" type="Long" mandatory="true"/>
-    <column name="warehouseId" type="Long" mandatory="true"/>
-    <column name="requiredQty" type="Decimal" mandatory="true"/> <!-- 需求数量 -->
-    <column name="reservedQty" type="Decimal" mandatory="true"/> <!-- 已预留数量 -->
-    <column name="pickedQty" type="Decimal" mandatory="true"/> <!-- 已领料数量 -->
-    <column name="releasedQty" type="Decimal" mandatory="true"/> <!-- 已释放数量 -->
-    <column name="reservationStatus" dict="erp-mfg/reservation-status"/>
-</entity>
-```
+- workOrderId：关联工单
+- workOrderLineId：关联工单行（BOM 子件行）
+- materialId / skuId：物料与 SKU
+- warehouseId：仓库
+- requiredQty：需求数量（BOM 展开量）
+- reservedQty：已预留数量
+- pickedQty：已领料数量
+- releasedQty：已释放数量
+- reservationStatus：预留状态（UNRESERVED / PARTIAL_RESERVED / RESERVED / PARTIAL_PICKED / PICKED / RELEASED）
 
 ### 预留状态
 
@@ -62,15 +57,7 @@
 
 ### 工单预留状态维度
 
-工单增加独立的预留状态维度：
-
-```xml
-<entity name="ErpMfgWorkOrder">
-    <column name="docStatus" dict="erp/doc-status"/>
-    <column name="approveStatus" dict="erp/approve-status"/>
-    <column name="reservationStatus" dict="erp-mfg/reservation-status"/>
-</entity>
-```
+工单增加独立的预留状态维度 reservationStatus，与 docStatus（业务生命周期）、approveStatus（审批状态）组成三轴状态：
 
 ## 预留流程
 
@@ -111,67 +98,15 @@
 
 ### 预留量计算
 
-```java
-/**
- * 计算子件预留量
- */
-public BigDecimal calculateReservedQty(Long materialId, Long warehouseId, BigDecimal requiredQty) {
-    // 查询库存余额
-    ErpInvStockBalance balance = balanceDao.findByMaterialAndWarehouse(materialId, warehouseId);
-    
-    if (balance == null) {
-        return BigDecimal.ZERO; // 无库存
-    }
-    
-    // 可用量 = 现有量 - 已预留量
-    BigDecimal availableQty = balance.getOnHandQty().subtract(balance.getReservedQty());
-    
-    // 预留量 = min(需求量, 可用量)
-    return requiredQty.min(availableQty);
-}
-
-/**
- * 执行预留
- */
-public void executeReservation(Long workOrderId) {
-    List<ErpMfgMaterialReservation> reservations = reservationDao.findByWorkOrder(workOrderId);
-    
-    for (ErpMfgMaterialReservation reservation : reservations) {
-        BigDecimal reservedQty = calculateReservedQty(
-            reservation.getMaterialId(),
-            reservation.getWarehouseId(),
-            reservation.getRequiredQty()
-        );
-        
-        // 更新预留记录
-        reservation.setReservedQty(reservedQty);
-        reservationDao.save(reservation);
-        
-        // 更新库存预留量
-        updateStockReservedQty(reservation.getMaterialId(), reservation.getWarehouseId(), reservedQty);
-    }
-    
-    // 更新工单预留状态
-    updateWorkOrderReservationStatus(workOrderId);
-}
-```
+- 预留量 = min(需求量, 可用量)，可用量 = 现有量 - 已预留量（从 ErpInvStockBalance 读取）
+- 无库存时预留量为 0
+- 每个子件预留完成后更新工单整体预留状态
 
 ### 库存预留量更新
 
-```java
-/**
- * 更新库存预留量
- */
-public void updateStockReservedQty(Long materialId, Long warehouseId, BigDecimal delta) {
-    ErpInvStockBalance balance = balanceDao.findByMaterialAndWarehouse(materialId, warehouseId);
-    
-    if (balance != null) {
-        balance.setReservedQty(balance.getReservedQty().add(delta));
-        balance.setAvailableQty(balance.getOnHandQty().subtract(balance.getReservedQty()));
-        balanceDao.save(balance);
-    }
-}
-```
+- 预留/释放/领料时同步更新 ErpInvStockBalance 的 reservedQty 与 availableQty
+- reservedQty 增加对应预留，减少对应释放或领料
+- availableQty = onHandQty - reservedQty（自动计算）
 
 ## 齐套校验
 
@@ -221,52 +156,13 @@ public void updateStockReservedQty(Long materialId, Long warehouseId, BigDecimal
                └─ 全部不齐套：齐套状态 = 不齐套
 ```
 
-### 齐套校验代码
+### 齐套校验规则
 
-```java
-/**
- * 齐套校验
- */
-public KittingResult checkKitting(Long workOrderId) {
-    List<ErpMfgMaterialReservation> reservations = reservationDao.findByWorkOrder(workOrderId);
-    
-    KittingResult result = new KittingResult();
-    int kittedCount = 0;
-    int partialKittedCount = 0;
-    
-    for (ErpMfgMaterialReservation reservation : reservations) {
-        BigDecimal availableQty = getAvailableQty(
-            reservation.getMaterialId(),
-            reservation.getWarehouseId()
-        );
-        
-        BigDecimal shortageQty = reservation.getRequiredQty().subtract(availableQty);
-        
-        if (shortageQty.compareTo(BigDecimal.ZERO) <= 0) {
-            // 齐套
-            result.addKittedItem(reservation, BigDecimal.ZERO);
-            kittedCount++;
-        } else {
-            // 不齐套
-            result.addShortageItem(reservation, shortageQty);
-            if (availableQty.compareTo(BigDecimal.ZERO) > 0) {
-                partialKittedCount++;
-            }
-        }
-    }
-    
-    // 设置齐套状态
-    if (kittedCount == reservations.size()) {
-        result.setKittingStatus("KITTED");
-    } else if (partialKittedCount > 0) {
-        result.setKittingStatus("PARTIAL_KITTED");
-    } else {
-        result.setKittingStatus("NOT_KITTED");
-    }
-    
-    return result;
-}
-```
+- 遍历所有预留记录，对比每项的可用量（onHandQty - reservedQty）与需求量（requiredQty）
+- 所有子件可用量 ≥ 需求量 → 齐套（KITTED）
+- 部分子件可用量 ≥ 需求量 → 部分齐套（PARTIAL_KITTED）
+- 所有子件可用量 < 需求量 → 不齐套（NOT_KITTED）
+- 记录缺口数量（shortageQty）用于补料建议
 
 ### 齐套状态与生产
 
@@ -310,38 +206,12 @@ public KittingResult checkKitting(Long workOrderId) {
                └─ 部分释放：更新为相应状态
 ```
 
-### 预留释放代码
+### 预留释放处理
 
-```java
-/**
- * 释放工单预留
- */
-public void releaseReservation(Long workOrderId, BigDecimal releaseQty) {
-    List<ErpMfgMaterialReservation> reservations = reservationDao.findByWorkOrder(workOrderId);
-    
-    for (ErpMfgMaterialReservation reservation : reservations) {
-        // 计算释放数量（按比例）
-        BigDecimal itemReleaseQty = reservation.getReservedQty()
-            .multiply(releaseQty)
-            .divide(reservation.getRequiredQty(), 4, RoundingMode.HALF_UP);
-        
-        // 更新预留记录
-        reservation.setReleasedQty(reservation.getReleasedQty().add(itemReleaseQty));
-        reservation.setReservedQty(reservation.getReservedQty().subtract(itemReleaseQty));
-        reservationDao.save(reservation);
-        
-        // 更新库存预留量（减少）
-        updateStockReservedQty(
-            reservation.getMaterialId(),
-            reservation.getWarehouseId(),
-            itemReleaseQty.negate()
-        );
-    }
-    
-    // 更新工单预留状态
-    updateWorkOrderReservationStatus(workOrderId);
-}
-```
+- 工单取消：释放所有子件的全部预留量
+- 工单完成：释放未领料部分的预留量，已领料部分消耗
+- 工单减量：按比例释放多余预留（reservedQty = reservedQty × 新量/原量）
+- 每次释放同步更新库存预留量（减少）并重算工单预留状态
 
 ## 领料与预留
 
@@ -374,31 +244,12 @@ public void releaseReservation(Long workOrderId, BigDecimal releaseQty) {
                └─ 部分领料：reservationStatus = PARTIAL_PICKED
 ```
 
-### 领料代码
+### 领料处理
 
-```java
-/**
- * 领料扣减预留
- */
-public void pickMaterial(Long workOrderId, Long materialId, BigDecimal pickQty) {
-    ErpMfgMaterialReservation reservation = reservationDao.findByWorkOrderAndMaterial(workOrderId, materialId);
-    
-    if (reservation != null) {
-        // 校验领料数量
-        if (pickQty.compareTo(reservation.getReservedQty()) > 0) {
-            throw new NopException("领料数量超过预留数量");
-        }
-        
-        // 更新预留记录
-        reservation.setPickedQty(reservation.getPickedQty().add(pickQty));
-        reservation.setReservedQty(reservation.getReservedQty().subtract(pickQty));
-        reservationDao.save(reservation);
-        
-        // 更新库存预留量（减少）
-        updateStockReservedQty(materialId, reservation.getWarehouseId(), pickQty.negate());
-    }
-}
-```
+- 领料时校验领料数量 ≤ 预留数量（超过预留时拒绝或按配置告警）
+- 领料成功后更新预留记录：pickedQty += 领料量，reservedQty -= 领料量
+- 同步更新库存预留量（减少）和可用量
+- 全部领料完成时工单预留状态变为 PICKED
 
 ## 预留报表
 
@@ -413,21 +264,9 @@ public void pickMaterial(Long workOrderId, Long materialId, BigDecimal pickQty) 
 
 ### 预留查询
 
-```java
-/**
- * 查询物料预留情况
- */
-public List<ErpMfgMaterialReservation> findMaterialReservations(Long materialId) {
-    return reservationDao.findByMaterial(materialId);
-}
-
-/**
- * 查询工单预留情况
- */
-public List<ErpMfgMaterialReservation> findWorkOrderReservations(Long workOrderId) {
-    return reservationDao.findByWorkOrder(workOrderId);
-}
-```
+- 按物料查询：查询某物料的所有预留记录（物料预留汇总）
+- 按工单查询：查询某工单的所有预留明细（工单预留明细）
+- 预留缺口查询：筛选 availableQty < requiredQty 的记录（补料建议）
 
 ## 配置项
 

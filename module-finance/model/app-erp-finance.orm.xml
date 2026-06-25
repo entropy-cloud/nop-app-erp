@@ -36,6 +36,13 @@
             <option code="PAYMENT" label="付" value="20" i18n-en:label='Pay'/>
             <option code="TRANSFER" label="转" value="30" i18n-en:label='Transfer'/>
         </dict>
+        <dict label="过账类型" name="erp-fin/posting-type" valueType="int" i18n-en:label='Posting Type'>
+            <option code="NORMAL" label="正常过账" value="10" i18n-en:label='Normal'/>
+            <option code="OPENING_BALANCE" label="期初余额录入" value="20" i18n-en:label='Opening Balance'/>
+            <option code="ADJUSTMENT" label="调整" value="30" i18n-en:label='Adjustment'/>
+            <option code="CLOSING" label="期末结转" value="40" i18n-en:label='Period Closing'/>
+            <option code="REVERSAL" label="红字冲销" value="50" i18n-en:label='Reversal'/>
+        </dict>
         <dict label="凭证状态" name="erp-fin/voucher-status" valueType="int" i18n-en:label='Voucher Status'>
             <option code="DRAFT" label="草稿" value="10" i18n-en:label='Draft'/>
             <option code="POSTED" label="已过账" value="20" i18n-en:label='Posted'/>
@@ -132,25 +139,26 @@
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="凭证号" domain="voucherCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
                 <column name="voucherType" displayName="凭证字" ext:dict="erp-fin/voucher-type" mandatory="true" code="VOUCHER_TYPE" propId="3" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Voucher Type' />
-                <column name="voucherDate" displayName="凭证日期" stdSqlType="DATE" mandatory="true" code="VOUCHER_DATE" propId="4" stdDataType="date" i18n-en:displayName='Voucher Date' />
-                <column name="voucherNo" displayName="凭证编号" domain="voucherNo" code="VOUCHER_NO" propId="5" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Voucher No' />
-                <column name="orgId" displayName="核算组织" stdSqlType="BIGINT" mandatory="true" code="ORG_ID" propId="6" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="acctSchemaId" displayName="账套" stdSqlType="BIGINT" mandatory="true" code="ACCT_SCHEMA_ID" propId="7" stdDataType="long" i18n-en:displayName='Acct Schema' />
-                <column name="periodId" displayName="会计期间" stdSqlType="BIGINT" mandatory="true" code="PERIOD_ID" propId="8" stdDataType="long" i18n-en:displayName='Period' />
-                <column name="totalDebit" displayName="借方合计(本位币)" domain="amount" defaultValue="0" code="TOTAL_DEBIT" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Debit' />
-                <column name="totalCredit" displayName="贷方合计(本位币)" domain="amount" defaultValue="0" code="TOTAL_CREDIT" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Credit' />
-                <column name="isReversed" displayName="是否红字冲销凭证" stdSqlType="BOOLEAN" defaultValue="false" code="IS_REVERSED" propId="11" stdDataType="boolean" i18n-en:displayName='Is Reversed' />
-                <column name="reversalOfVoucherId" displayName="原冲销凭证ID" stdSqlType="BIGINT" code="REVERSAL_OF_VOUCHER_ID" propId="12" stdDataType="long" i18n-en:displayName='Reversal Of Voucher' />
-                <column name="docStatus" displayName="凭证状态" ext:dict="erp-fin/voucher-status" mandatory="true" code="DOC_STATUS" propId="13" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
-                <column name="postedBy" displayName="过账人" stdSqlType="BIGINT" code="POSTED_BY" propId="14" stdDataType="long" i18n-en:displayName='Posted By' />
-                <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="15" stdDataType="datetime" i18n-en:displayName='Posted At' />
-                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="16" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
-                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="17" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
-                <column name="version" code="VERSION" displayName="数据版本" propId="18" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
-                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="19" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
-                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="20" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
-                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="21" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
-                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="22" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+                <column name="postingType" displayName="过账类型" ext:dict="erp-fin/posting-type" code="POSTING_TYPE" propId="4" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Posting Type' />
+                <column name="voucherDate" displayName="凭证日期" stdSqlType="DATE" mandatory="true" code="VOUCHER_DATE" propId="5" stdDataType="date" i18n-en:displayName='Voucher Date' />
+                <column name="voucherNo" displayName="凭证编号" domain="voucherNo" code="VOUCHER_NO" propId="6" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Voucher No' />
+                <column name="orgId" displayName="核算组织" stdSqlType="BIGINT" mandatory="true" code="ORG_ID" propId="7" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="acctSchemaId" displayName="账套" stdSqlType="BIGINT" mandatory="true" code="ACCT_SCHEMA_ID" propId="8" stdDataType="long" i18n-en:displayName='Acct Schema' />
+                <column name="periodId" displayName="会计期间" stdSqlType="BIGINT" mandatory="true" code="PERIOD_ID" propId="9" stdDataType="long" i18n-en:displayName='Period' />
+                <column name="totalDebit" displayName="借方合计(本位币)" domain="amount" defaultValue="0" code="TOTAL_DEBIT" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Debit' />
+                <column name="totalCredit" displayName="贷方合计(本位币)" domain="amount" defaultValue="0" code="TOTAL_CREDIT" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Credit' />
+                <column name="isReversed" displayName="是否红字冲销凭证" stdSqlType="BOOLEAN" defaultValue="false" code="IS_REVERSED" propId="12" stdDataType="boolean" i18n-en:displayName='Is Reversed' />
+                <column name="reversalOfVoucherId" displayName="原冲销凭证ID" stdSqlType="BIGINT" code="REVERSAL_OF_VOUCHER_ID" propId="13" stdDataType="long" i18n-en:displayName='Reversal Of Voucher' />
+                <column name="docStatus" displayName="凭证状态" ext:dict="erp-fin/voucher-status" mandatory="true" code="DOC_STATUS" propId="14" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
+                <column name="postedBy" displayName="过账人" stdSqlType="BIGINT" code="POSTED_BY" propId="15" stdDataType="long" i18n-en:displayName='Posted By' />
+                <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="16" stdDataType="datetime" i18n-en:displayName='Posted At' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="17" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="18" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="19" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="20" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="21" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="22" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="23" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
                 <to-one name="period" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriod" tagSet="pub" i18n-en:displayName='Period' ref-i18n-en:displayName='Accounting Voucher'><join><on leftProp="periodId" rightProp="id"/></join></to-one>
@@ -188,12 +196,13 @@
                 <column name="warehouseId" displayName="辅助-仓库" stdSqlType="BIGINT" code="WAREHOUSE_ID" propId="20" stdDataType="long" i18n-en:displayName='Warehouse' />
                 <column name="materialId" displayName="辅助-物料" stdSqlType="BIGINT" code="MATERIAL_ID" propId="21" stdDataType="long" i18n-en:displayName='Material' />
                 <column name="businessType" displayName="业务类型" ext:dict="erp-fin/business-type" code="BUSINESS_TYPE" propId="22" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Business Type' />
-                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="23" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
-                <column name="version" code="VERSION" displayName="数据版本" propId="24" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
-                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="25" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
-                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="26" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
-                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="27" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
-                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="28" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+                <column name="costCenterId" displayName="成本中心" stdSqlType="BIGINT" code="COST_CENTER_ID" propId="23" stdDataType="long" i18n-en:displayName='Cost Center' />
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="24" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="25" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="26" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="27" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="28" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="29" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
                 <to-one name="voucher" refEntityName="app.erp.fin.dao.entity.ErpFinVoucher" tagSet="pub" i18n-en:displayName='Voucher' ref-i18n-en:displayName='Voucher Line'><join><on leftProp="voucherId" rightProp="id"/></join></to-one>
@@ -206,6 +215,7 @@
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='Voucher Line'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material' ref-i18n-en:displayName='Voucher Line'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub" i18n-en:displayName='Project' ref-i18n-en:displayName='Voucher Line'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
+                <to-one name="costCenter" refEntityName="app.erp.md.dao.entity.ErpMdCostCenter" tagSet="pub" i18n-en:displayName='Cost Center' ref-i18n-en:displayName='Voucher Line'><join><on leftProp="costCenterId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -549,6 +559,126 @@
             </relations>
         </entity>
 
+        <!-- 银行对账单 -->
+        <entity className="app.erp.fin.dao.entity.ErpFinBankStatement"
+                displayName="银行对账单" ext:icon="file-text" i18n-en:displayName="Bank Statement" name="app.erp.fin.dao.entity.ErpFinBankStatement"
+                tableName="erp_fin_bank_statement" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" displayName="单号" domain="voucherCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="orgId" displayName="组织" stdSqlType="BIGINT" mandatory="true" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="fundAccountId" displayName="资金账户" stdSqlType="BIGINT" mandatory="true" code="FUND_ACCOUNT_ID" propId="4" stdDataType="long" i18n-en:displayName='Fund Account' />
+                <column name="statementDate" displayName="对账日期" stdSqlType="DATE" mandatory="true" code="STATEMENT_DATE" propId="5" stdDataType="date" i18n-en:displayName='Statement Date' />
+                <column name="beginningBalance" displayName="期初余额" domain="amount" defaultValue="0" code="BEGINNING_BALANCE" propId="6" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Opening Balance' />
+                <column name="endingBalance" displayName="期末余额" domain="amount" defaultValue="0" code="ENDING_BALANCE" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Closing Balance' />
+                <column name="totalDebit" displayName="借方发生额" domain="amount" defaultValue="0" code="TOTAL_DEBIT" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Debit' />
+                <column name="totalCredit" displayName="贷方发生额" domain="amount" defaultValue="0" code="TOTAL_CREDIT" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Credit' />
+                <column name="importTime" displayName="导入时间" stdSqlType="DATETIME" code="IMPORT_TIME" propId="10" stdDataType="datetime" i18n-en:displayName='Import Time' />
+                <column name="docStatus" displayName="状态" ext:dict="erp-fin/voucher-status" mandatory="true" code="DOC_STATUS" propId="11" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="13" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="14" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="15" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="16" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="17" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-one name="fundAccount" refEntityName="app.erp.fin.dao.entity.ErpFinFundAccount" tagSet="pub" i18n-en:displayName='Fund Account' ref-i18n-en:displayName='Bank Statement'><join><on leftProp="fundAccountId" rightProp="id"/></join></to-one>
+            </relations>
+        </entity>
+
+        <!-- 银行对账单行 -->
+        <entity className="app.erp.fin.dao.entity.ErpFinBankStatementLine"
+                displayName="银行对账单行" ext:icon="list" i18n-en:displayName="Bank Statement Line" name="app.erp.fin.dao.entity.ErpFinBankStatementLine"
+                tableName="erp_fin_bank_statement_line" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="statementId" displayName="对账单ID" stdSqlType="BIGINT" mandatory="true" code="STATEMENT_ID" propId="2" stdDataType="long" i18n-en:displayName='Statement' />
+                <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int" i18n-en:displayName='Line No' />
+                <column name="transactionDate" displayName="交易日期" stdSqlType="DATE" mandatory="true" code="TRANSACTION_DATE" propId="4" stdDataType="date" i18n-en:displayName='Transaction Date' />
+                <column name="description" displayName="摘要(银行)" domain="memo" code="DESCRIPTION" propId="5" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Description' />
+                <column name="refNo" displayName="银行参考号" stdSqlType="VARCHAR" precision="50" code="REF_NO" propId="6" stdDataType="string" i18n-en:displayName='Reference No' />
+                <column name="dcDirection" displayName="借贷方向" ext:dict="erp-fin/dc-direction" mandatory="true" code="DC_DIRECTION" propId="7" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Dc Direction' />
+                <column name="amount" displayName="金额" domain="amount" mandatory="true" code="AMOUNT" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Amount' />
+                <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true" code="CURRENCY_ID" propId="9" stdDataType="long" i18n-en:displayName='Currency' />
+                <column name="balanceAfter" displayName="交易后余额" domain="amount" code="BALANCE_AFTER" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Balance After' />
+                <column name="matchStatus" displayName="匹配状态" ext:dict="erp-fin/ar-ap-status" mandatory="true" code="MATCH_STATUS" propId="11" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Match Status' />
+                <column name="matchedLineId" displayName="匹配凭证行ID" stdSqlType="BIGINT" code="MATCHED_LINE_ID" propId="12" stdDataType="long" i18n-en:displayName='Matched Line' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="14" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="15" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="16" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="17" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="18" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="19" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-one name="statement" refEntityName="app.erp.fin.dao.entity.ErpFinBankStatement" tagSet="pub" i18n-en:displayName='Statement' ref-i18n-en:displayName='Bank Statement Line'><join><on leftProp="statementId" rightProp="id"/></join></to-one>
+                <to-one name="matchedLine" refEntityName="app.erp.fin.dao.entity.ErpFinVoucherLine" tagSet="pub" i18n-en:displayName='Matched Voucher Line' ref-i18n-en:displayName='Bank Statement Line'><join><on leftProp="matchedLineId" rightProp="id"/></join></to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency' ref-i18n-en:displayName='Bank Statement Line'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+            </relations>
+        </entity>
+
+        <!-- 银行对账记录（余额调节表） -->
+        <entity className="app.erp.fin.dao.entity.ErpFinBankReconciliation"
+                displayName="银行对账(余额调节表)" ext:icon="check-check" i18n-en:displayName="Bank Reconciliation" name="app.erp.fin.dao.entity.ErpFinBankReconciliation"
+                tableName="erp_fin_bank_reconciliation" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" displayName="单号" domain="voucherCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="orgId" displayName="组织" stdSqlType="BIGINT" mandatory="true" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="fundAccountId" displayName="资金账户" stdSqlType="BIGINT" mandatory="true" code="FUND_ACCOUNT_ID" propId="4" stdDataType="long" i18n-en:displayName='Fund Account' />
+                <column name="statementId" displayName="银行对账单" stdSqlType="BIGINT" code="STATEMENT_ID" propId="5" stdDataType="long" i18n-en:displayName='Bank Statement' />
+                <column name="reconciliationDate" displayName="对账日期" stdSqlType="DATE" mandatory="true" code="RECONCILIATION_DATE" propId="6" stdDataType="date" i18n-en:displayName='Reconciliation Date' />
+                <column name="bookBalance" displayName="账面余额" domain="amount" mandatory="true" code="BOOK_BALANCE" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Book Balance' />
+                <column name="statementBalance" displayName="对账单余额" domain="amount" mandatory="true" code="STATEMENT_BALANCE" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Statement Balance' />
+                <column name="unreconciledDiff" displayName="未达差异" domain="amount" defaultValue="0" code="UNRECONCILED_DIFF" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Unreconciled Difference' />
+                <column name="isBalanced" displayName="是否平衡" stdSqlType="BOOLEAN" defaultValue="false" code="IS_BALANCED" propId="10" stdDataType="boolean" i18n-en:displayName='Is Balanced' />
+                <column name="reconciledAt" displayName="对账完成时间" stdSqlType="DATETIME" code="RECONCILED_AT" propId="11" stdDataType="datetime" i18n-en:displayName='Reconciled At' />
+                <column name="reconciledBy" displayName="对账人" stdSqlType="BIGINT" code="RECONCILED_BY" propId="12" stdDataType="long" i18n-en:displayName='Reconciled By' />
+                <column name="docStatus" displayName="状态" ext:dict="erp-fin/voucher-status" mandatory="true" code="DOC_STATUS" propId="13" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="14" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="15" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="16" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="17" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="18" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="19" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="20" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-one name="fundAccount" refEntityName="app.erp.fin.dao.entity.ErpFinFundAccount" tagSet="pub" i18n-en:displayName='Fund Account' ref-i18n-en:displayName='Bank Reconciliation'><join><on leftProp="fundAccountId" rightProp="id"/></join></to-one>
+                <to-one name="statement" refEntityName="app.erp.fin.dao.entity.ErpFinBankStatement" tagSet="pub" i18n-en:displayName='Bank Statement' ref-i18n-en:displayName='Bank Reconciliation'><join><on leftProp="statementId" rightProp="id"/></join></to-one>
+                <to-many name="adjustmentLines" refEntityName="app.erp.fin.dao.entity.ErpFinBankReconciliationLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Adjustment Lines' ref-i18n-en:displayName='Bank Reconciliation'><join><on leftProp="id" rightProp="reconciliationId"/></join></to-many>
+            </relations>
+        </entity>
+
+        <!-- 银行对账调整行（未达账项） -->
+        <entity className="app.erp.fin.dao.entity.ErpFinBankReconciliationLine"
+                displayName="银行对账调整行" ext:icon="list" i18n-en:displayName="Bank Reconciliation Line" name="app.erp.fin.dao.entity.ErpFinBankReconciliationLine"
+                tableName="erp_fin_bank_reconciliation_line" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="reconciliationId" displayName="对账记录ID" stdSqlType="BIGINT" mandatory="true" code="RECONCILIATION_ID" propId="2" stdDataType="long" i18n-en:displayName='Reconciliation' />
+                <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int" i18n-en:displayName='Line No' />
+                <column name="adjustmentType" displayName="调整类型" stdSqlType="VARCHAR" precision="50" mandatory="true" code="ADJUSTMENT_TYPE" propId="4" stdDataType="string" i18n-en:displayName='Adjustment Type' />
+                <column name="description" displayName="说明" domain="memo" code="DESCRIPTION" propId="5" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Description' />
+                <column name="dcDirection" displayName="借贷方向" ext:dict="erp-fin/dc-direction" mandatory="true" code="DC_DIRECTION" propId="6" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Dc Direction' />
+                <column name="amount" displayName="金额" domain="amount" mandatory="true" code="AMOUNT" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Amount' />
+                <column name="side" displayName="调整方" stdSqlType="VARCHAR" precision="20" mandatory="true" code="SIDE" propId="8" stdDataType="string" i18n-en:displayName='Side' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="10" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="11" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="12" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="13" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="14" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="15" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-one name="reconciliation" refEntityName="app.erp.fin.dao.entity.ErpFinBankReconciliation" tagSet="pub" i18n-en:displayName='Reconciliation' ref-i18n-en:displayName='Reconciliation Line'><join><on leftProp="reconciliationId" rightProp="id"/></join></to-one>
+            </relations>
+        </entity>
+
         <!-- ============================ 外部实体引用（机制 B：notGenCode，不生成本模块 Entity 类） ============================
              设计依据：docs/architecture/data-dependency-matrix.md §5.6
              平台依据：nop/schema/orm/entity.xdef @notGenCode + nop/orm/xlib/orm-gen.xlib:228
@@ -598,6 +728,16 @@
                 <column name="partnerType" code="PARTNER_TYPE" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Partner Type' />
                 <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
                 <column name="creditLimit" code="CREDIT_LIMIT" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Credit Limit' />
+            </columns>
+        </entity>
+
+        <entity displayName="成本中心" name="app.erp.md.dao.entity.ErpMdCostCenter"
+                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_cost_center">
+            <columns>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name' />
+                <column name="orgId" code="ORG_ID" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Organization' />
             </columns>
         </entity>
 
