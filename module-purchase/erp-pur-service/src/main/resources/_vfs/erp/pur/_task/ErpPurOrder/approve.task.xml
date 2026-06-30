@@ -1,0 +1,56 @@
+<task version="1" x:schema="/nop/schema/task/task.xdef"
+      xmlns:x="/nop/schema/xdsl.xdef"
+      xmlns:rule="rule" xmlns:c="c">
+
+    <steps>
+        <!-- 校验单据状态 -->
+        <step name="validate">
+            <input name="order"/>
+            <source>
+                <c:if test="${order.status != 'SUBMITTED'}">
+                    <c:throw errorCode="erp.purchase.order-not-submitted"
+                             params="${{orderId: order.id}}"/>
+                </c:if>
+            </source>
+        </step>
+
+        <!-- 调规则做审批路由决策 -->
+        <step name="checkApprovalRoute" customType="rule:Execute"
+              rule:ruleName="pur-order-approval"
+              rule:inputs="${{amount: order.totalAmount, dept: order.dept}}">
+            <input name="order"/>
+            <output name="route"/>
+        </step>
+
+        <!-- 根据路由结果走自动审批或挂起待人工 -->
+        <if name="routeByApproval">
+            <condition>route.route == 'auto'</condition>
+            <then>
+                <invoke name="doAutoApprove" bean="erpPurOrderBiz" method="approve">
+                    <input name="orderId" value="${order.id}"/>
+                    <output name="approveResult"/>
+                </invoke>
+            </then>
+            <else>
+                <suspend name="waitManual">
+                    <input name="orderId" value="${order.id}"/>
+                    <resume-when>stepRt.getContext().getUserId() == route.approverId</resume-when>
+                </suspend>
+            </else>
+        </if>
+
+        <!-- 后处理：通知、日志 -->
+        <step name="postProcess">
+            <source>
+                <c:script>
+                    notifyService.notify('order.approved',
+                        route.approverId, {orderNo: order.orderNo});
+                </c:script>
+            </source>
+        </step>
+    </steps>
+
+    <output name="finalStatus">
+        <source>route.route == 'auto' ? 'APPROVED' : 'PENDING_APPROVAL'</source>
+    </output>
+</task>
