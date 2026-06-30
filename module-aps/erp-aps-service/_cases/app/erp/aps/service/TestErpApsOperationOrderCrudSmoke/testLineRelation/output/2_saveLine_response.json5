@@ -1,0 +1,25 @@
+{
+  "data": {
+    "id": "2",
+    "orgId": null,
+    "operationId": 1,
+    "machineId": 1,
+    "priority": 1,
+    "setupTimeDelta": null,
+    "runtimePerUnitDelta": null,
+    "isDefault": false,
+    "isEnabled": true,
+    "effectiveFrom": null,
+    "effectiveTo": null,
+    "minBatchQty": null,
+    "maxBatchQty": null,
+    "remark": null,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpApsOpRouting@createTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpApsOpRouting@createTime"
+  },
+  "status": 0
+}

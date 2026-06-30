@@ -1,0 +1,30 @@
+{
+  "data": {
+    "id": "2",
+    "projectId": 1,
+    "parentTaskId": null,
+    "title": "冒烟任务",
+    "assigneeId": null,
+    "plannedStartDate": null,
+    "plannedEndDate": null,
+    "actualStartDate": null,
+    "actualEndDate": null,
+    "estimatedHours": null,
+    "actualHours": null,
+    "dependsOnId": null,
+    "status": 10,
+    "status_label": "10-待开始",
+    "priority": null,
+    "priority_label": null,
+    "blockReason": null,
+    "sortNum": null,
+    "remark": null,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpPrjTask@updateTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpPrjTask@updateTime"
+  },
+  "status": 0
+}

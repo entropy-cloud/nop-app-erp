@@ -1,0 +1,47 @@
+{
+  "data": {
+    "extData": null,
+    "hasNext": null,
+    "hasPrev": null,
+    "items": [
+      {
+        "id": "5",
+        "planId": 4,
+        "lineNo": 1,
+        "materialId": 2,
+        "warehouseId": 3,
+        "sourceWarehouseId": null,
+        "replenishmentType": 10,
+        "replenishmentType_label": "10-仓间调拨",
+        "currentStock": null,
+        "allocatedQty": null,
+        "onOrderQty": null,
+        "forecastDemand": null,
+        "safetyStock": null,
+        "netRequirement": null,
+        "suggestedQty": null,
+        "approvedQty": null,
+        "orderBillType": null,
+        "orderBillCode": null,
+        "status": 10,
+        "status_label": "10-建议",
+        "orgId": null,
+        "remark": null,
+        "delVersion": 0,
+        "version": 0,
+        "createdBy": "autotest-ref",
+        "createTime": "@var:ErpDrpLine@createTime",
+        "updatedBy": "autotest-ref",
+        "updateTime": "@var:ErpDrpLine@createTime"
+      }
+    ],
+    "limit": 10,
+    "nextCursor": null,
+    "offset": 0,
+    "page": 1,
+    "pageCount": 1,
+    "prevCursor": null,
+    "total": 1
+  },
+  "status": 0
+}

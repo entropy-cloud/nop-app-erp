@@ -1,0 +1,22 @@
+{
+  "data": {
+    "id": "2",
+    "code": "SMOKE-PUR-RFQ",
+    "orgId": null,
+    "requisitionId": 1,
+    "businessDate": "2026-07-01",
+    "validUntil": null,
+    "docStatus": 10,
+    "docStatus_label": "10-草稿",
+    "approveStatus": 10,
+    "approveStatus_label": "10-未提交",
+    "remark": null,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpPurRfq@updateTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpPurRfq@updateTime"
+  },
+  "status": 0
+}

@@ -1,0 +1,23 @@
+{
+  "data": {
+    "id": "6",
+    "quotationId": 5,
+    "lineNo": 1,
+    "materialId": 4,
+    "uoMId": 3,
+    "quantity": null,
+    "unitPrice": 100,
+    "taxRate": null,
+    "taxAmount": null,
+    "amount": null,
+    "amountWithTax": null,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpSalQuotationLine@updateTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpSalQuotationLine@updateTime",
+    "remark": null
+  },
+  "status": 0
+}

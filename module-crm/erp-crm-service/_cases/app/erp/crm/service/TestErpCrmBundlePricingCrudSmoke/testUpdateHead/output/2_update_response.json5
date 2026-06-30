@@ -1,0 +1,25 @@
+{
+  "data": {
+    "id": "1",
+    "code": "SMOKE-CRM",
+    "name": "冒烟-已修改套餐",
+    "orgId": null,
+    "bundleName": "冒烟套餐",
+    "description": null,
+    "discountType": null,
+    "discountType_label": null,
+    "discountValue": null,
+    "bundleAmount": null,
+    "effectiveFrom": null,
+    "effectiveTo": null,
+    "isActive": true,
+    "remark": null,
+    "delVersion": 0,
+    "version": 1,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpCrmBundlePricing@updateTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpCrmBundlePricing@updateTime_1"
+  },
+  "status": 0
+}

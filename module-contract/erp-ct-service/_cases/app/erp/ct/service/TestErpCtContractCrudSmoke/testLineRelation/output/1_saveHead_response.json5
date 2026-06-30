@@ -1,0 +1,32 @@
+{
+  "data": {
+    "id": "2",
+    "code": "SMOKE-CT",
+    "orgId": null,
+    "contractName": "冒烟合同",
+    "contractType": 10,
+    "contractType_label": "10-采购合同",
+    "contractDirection": 10,
+    "contractDirection_label": "10-进向(我方付款)",
+    "partnerId": 1,
+    "currencyId": null,
+    "totalAmount": null,
+    "startDate": "2026-07-01",
+    "endDate": "2027-07-01",
+    "signDate": null,
+    "status": 10,
+    "status_label": "10-草稿",
+    "templateId": null,
+    "parentContractId": null,
+    "description": null,
+    "attachmentId": null,
+    "remark": null,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpCtContract@updateTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpCtContract@updateTime"
+  },
+  "status": 0
+}

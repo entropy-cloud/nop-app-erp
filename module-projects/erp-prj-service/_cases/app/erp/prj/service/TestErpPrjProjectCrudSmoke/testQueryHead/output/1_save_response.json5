@@ -1,0 +1,28 @@
+{
+  "data": {
+    "id": "1",
+    "code": "SMOKE-PRJ",
+    "name": "冒烟项目",
+    "orgId": null,
+    "projectTypeId": null,
+    "customerId": null,
+    "currencyId": null,
+    "startDate": null,
+    "endDate": null,
+    "budget": "0",
+    "committedCost": "0",
+    "actualCost": "0",
+    "billedAmount": "0",
+    "status": 10,
+    "status_label": "10-草稿",
+    "managerId": null,
+    "remark": null,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpPrjProject@createTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpPrjProject@createTime"
+  },
+  "status": 0
+}

@@ -1,0 +1,16 @@
+{
+  "data": {
+    "extData": null,
+    "hasNext": null,
+    "hasPrev": null,
+    "items": [],
+    "limit": 10,
+    "nextCursor": null,
+    "offset": 0,
+    "page": 1,
+    "pageCount": 1,
+    "prevCursor": null,
+    "total": 0
+  },
+  "status": 0
+}

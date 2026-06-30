@@ -1,0 +1,47 @@
+{
+  "data": {
+    "extData": null,
+    "hasNext": null,
+    "hasPrev": null,
+    "items": [
+      {
+        "id": "1",
+        "code": "SMOKE-HR",
+        "title": "冒烟调查",
+        "description": null,
+        "surveyType": 10,
+        "surveyType_label": "10-年度敬业度调研",
+        "isAnonymous": true,
+        "status": 10,
+        "status_label": "10-草稿",
+        "startDate": null,
+        "endDate": null,
+        "targetDepartmentId": null,
+        "includeENps": false,
+        "eNpsQuestion": null,
+        "reminderDays": 3,
+        "totalQuestions": 0,
+        "totalResponses": 0,
+        "completionRate": null,
+        "avgScore": null,
+        "eNpsScore": null,
+        "orgId": null,
+        "remark": null,
+        "delVersion": 0,
+        "version": 0,
+        "createdBy": "autotest-ref",
+        "createTime": "@var:ErpHrSurvey@updateTime",
+        "updatedBy": "autotest-ref",
+        "updateTime": "@var:ErpHrSurvey@updateTime"
+      }
+    ],
+    "limit": 10,
+    "nextCursor": null,
+    "offset": 0,
+    "page": 1,
+    "pageCount": 1,
+    "prevCursor": null,
+    "total": 1
+  },
+  "status": 0
+}

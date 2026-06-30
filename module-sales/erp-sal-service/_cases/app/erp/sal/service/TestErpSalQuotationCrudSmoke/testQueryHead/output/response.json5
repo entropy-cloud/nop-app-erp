@@ -1,0 +1,43 @@
+{
+  "data": {
+    "extData": null,
+    "hasNext": null,
+    "hasPrev": null,
+    "items": [
+      {
+        "id": "5",
+        "code": "SMOKE-SAL",
+        "orgId": null,
+        "customerId": 2,
+        "businessDate": "2026-07-01",
+        "validFrom": null,
+        "validTo": null,
+        "currencyId": 1,
+        "exchangeRate": 1.00000000,
+        "totalAmount": 0.0000,
+        "totalTaxAmount": 0.0000,
+        "totalAmountWithTax": 0.0000,
+        "isAccepted": false,
+        "docStatus": 10,
+        "docStatus_label": "10-草稿",
+        "approveStatus": 10,
+        "approveStatus_label": "10-未提交",
+        "delVersion": 0,
+        "version": 0,
+        "createdBy": "autotest-ref",
+        "createTime": "@var:ErpSalQuotation@createTime",
+        "updatedBy": "autotest-ref",
+        "updateTime": "@var:ErpSalQuotation@createTime",
+        "remark": null
+      }
+    ],
+    "limit": 10,
+    "nextCursor": null,
+    "offset": 0,
+    "page": 1,
+    "pageCount": 1,
+    "prevCursor": null,
+    "total": 1
+  },
+  "status": 0
+}

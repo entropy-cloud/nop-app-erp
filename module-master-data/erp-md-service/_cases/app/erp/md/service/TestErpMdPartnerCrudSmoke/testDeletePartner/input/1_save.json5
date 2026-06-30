@@ -1,0 +1,10 @@
+{
+  data: {
+    data: {
+      code: "P-SMOKE-DELETE",
+      name: "冒烟测试-删除往来单位",
+      partnerType: 10,
+      status: 10
+    }
+  }
+}

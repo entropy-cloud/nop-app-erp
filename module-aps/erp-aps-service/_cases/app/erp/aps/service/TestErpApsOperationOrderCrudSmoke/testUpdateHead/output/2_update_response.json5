@@ -1,0 +1,32 @@
+{
+  "data": {
+    "id": "1",
+    "code": "SMOKE-APS",
+    "workOrderId": 1,
+    "operationName": "冒烟工序",
+    "sequence": 10,
+    "machineId": 1,
+    "priority": 50,
+    "plannedStartDateT": null,
+    "plannedEndDateT": null,
+    "realStartDateT": null,
+    "realEndDateT": null,
+    "setupTime": null,
+    "runtimePerUnit": null,
+    "qty": 100.0000,
+    "totalDuration": null,
+    "assignedToId": null,
+    "isOutsourced": false,
+    "status": 10,
+    "status_label": "10-草稿",
+    "orgId": null,
+    "remark": "冒烟-已修改",
+    "delVersion": 0,
+    "version": 1,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpApsOperationOrder@createTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpApsOperationOrder@updateTime_1"
+  },
+  "status": 0
+}

@@ -1,0 +1,21 @@
+{
+  "data": {
+    "id": "2",
+    "templateId": 1,
+    "lineNo": 1,
+    "subjectCode": "1001",
+    "dcDirection": 10,
+    "dcDirection_label": "10-借",
+    "amountExpression": null,
+    "accountKey": null,
+    "amountKey": null,
+    "memoTemplate": null,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpFinVoucherTemplateLine@updateTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpFinVoucherTemplateLine@updateTime"
+  },
+  "status": 0
+}

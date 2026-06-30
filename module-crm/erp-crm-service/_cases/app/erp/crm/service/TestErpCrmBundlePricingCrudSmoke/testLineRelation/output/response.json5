@@ -1,0 +1,33 @@
+{
+  "data": {
+    "extData": null,
+    "hasNext": null,
+    "hasPrev": null,
+    "items": [
+      {
+        "id": "2",
+        "bundleId": 1,
+        "orgId": null,
+        "productId": null,
+        "quantity": null,
+        "unitPrice": null,
+        "sequence": 0,
+        "remark": null,
+        "delVersion": 0,
+        "version": 0,
+        "createdBy": "autotest-ref",
+        "createTime": "@var:ErpCrmBundlePricingLine@createTime",
+        "updatedBy": "autotest-ref",
+        "updateTime": "@var:ErpCrmBundlePricingLine@createTime"
+      }
+    ],
+    "limit": 10,
+    "nextCursor": null,
+    "offset": 0,
+    "page": 1,
+    "pageCount": 1,
+    "prevCursor": null,
+    "total": 1
+  },
+  "status": 0
+}

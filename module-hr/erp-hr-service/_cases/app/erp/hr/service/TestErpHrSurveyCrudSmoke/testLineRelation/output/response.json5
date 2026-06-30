@@ -1,0 +1,39 @@
+{
+  "data": {
+    "extData": null,
+    "hasNext": null,
+    "hasPrev": null,
+    "items": [
+      {
+        "id": "2",
+        "surveyId": 1,
+        "sortOrder": null,
+        "questionText": "冒烟问题",
+        "questionType": 10,
+        "questionType_label": "10-评分题",
+        "ratingScaleMin": 1,
+        "ratingScaleMax": 5,
+        "ratingLabelMin": null,
+        "ratingLabelMax": null,
+        "options": null,
+        "driverCategory": null,
+        "driverCategory_label": null,
+        "isRequired": true,
+        "delVersion": 0,
+        "version": 0,
+        "createdBy": "autotest-ref",
+        "createTime": "@var:ErpHrSurveyQuestion@updateTime",
+        "updatedBy": "autotest-ref",
+        "updateTime": "@var:ErpHrSurveyQuestion@updateTime"
+      }
+    ],
+    "limit": 10,
+    "nextCursor": null,
+    "offset": 0,
+    "page": 1,
+    "pageCount": 1,
+    "prevCursor": null,
+    "total": 1
+  },
+  "status": 0
+}

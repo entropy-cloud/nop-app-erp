@@ -1,0 +1,20 @@
+{
+  "data": {
+    "id": "3",
+    "contractId": 2,
+    "lineNo": 1,
+    "materialId": null,
+    "description": null,
+    "quantity": null,
+    "unitPrice": null,
+    "amount": null,
+    "remark": null,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpCtContractLine@createTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpCtContractLine@createTime"
+  },
+  "status": 0
+}

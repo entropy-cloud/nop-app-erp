@@ -1,0 +1,40 @@
+{
+  "data": {
+    "extData": null,
+    "hasNext": null,
+    "hasPrev": null,
+    "items": [
+      {
+        "id": "4",
+        "moveId": 3,
+        "lineNo": 1,
+        "materialId": 2,
+        "skuId": null,
+        "uoMId": 1,
+        "quantity": "10.0000",
+        "unitCost": null,
+        "totalCost": null,
+        "currencyId": null,
+        "batchNo": null,
+        "serialNo": null,
+        "sourceLocationId": null,
+        "destLocationId": null,
+        "remark": null,
+        "delVersion": 0,
+        "version": 0,
+        "createdBy": "autotest-ref",
+        "createTime": "@var:ErpInvStockMoveLine@createTime",
+        "updatedBy": "autotest-ref",
+        "updateTime": "@var:ErpInvStockMoveLine@createTime"
+      }
+    ],
+    "limit": 10,
+    "nextCursor": null,
+    "offset": 0,
+    "page": 1,
+    "pageCount": 1,
+    "prevCursor": null,
+    "total": 1
+  },
+  "status": 0
+}

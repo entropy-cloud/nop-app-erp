@@ -1,0 +1,20 @@
+{
+  "data": {
+    "id": "3",
+    "visitId": 2,
+    "lineNo": 1,
+    "taskDescription": "冒烟任务",
+    "status": 10,
+    "status_label": "10-待执行",
+    "completedBy": null,
+    "completedAt": null,
+    "remark": null,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpMntVisitTask@createTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpMntVisitTask@createTime"
+  },
+  "status": 0
+}

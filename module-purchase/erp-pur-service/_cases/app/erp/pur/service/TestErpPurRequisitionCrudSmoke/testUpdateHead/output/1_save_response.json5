@@ -1,0 +1,25 @@
+{
+  "data": {
+    "id": "1",
+    "code": "SMOKE-PUR",
+    "orgId": null,
+    "requesterId": 1,
+    "departmentId": null,
+    "businessDate": "2026-07-01",
+    "requiredDate": null,
+    "docStatus": 10,
+    "docStatus_label": "10-草稿",
+    "approveStatus": 10,
+    "approveStatus_label": "10-未提交",
+    "approvedBy": null,
+    "approvedAt": null,
+    "remark": null,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpPurRequisition@updateTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpPurRequisition@updateTime"
+  },
+  "status": 0
+}

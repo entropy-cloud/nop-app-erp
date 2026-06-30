@@ -29,6 +29,11 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- test-only: finance ORM declares cross-domain entities (ErpMd*, ErpAstAsset, ErpPrjProject);
+             引入对应 dao/master-data 使单域测试的 ORM 模型可加载 -->
+        <dependency><artifactId>app-erp-master-data-service</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version><scope>test</scope></dependency>
+        <dependency><artifactId>app-erp-assets-dao</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version><scope>test</scope></dependency>
+        <dependency><artifactId>app-erp-projects-dao</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version><scope>test</scope></dependency>
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-biz</artifactId>

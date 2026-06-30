@@ -1,0 +1,24 @@
+{
+  "data": {
+    "id": "1",
+    "code": "SMOKE-B2B",
+    "orgId": null,
+    "sourceEdiDocId": null,
+    "partnerId": null,
+    "shipmentDate": null,
+    "estimatedArrivalDate": null,
+    "trackingNo": null,
+    "relatedBillType": null,
+    "relatedBillCode": null,
+    "status": 10,
+    "status_label": "10-已接收",
+    "remark": null,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpB2bAsn@updateTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpB2bAsn@updateTime"
+  },
+  "status": 0
+}

@@ -1,0 +1,33 @@
+{
+  "data": {
+    "id": "1",
+    "code": "SMOKE-AST",
+    "name": "冒烟资产",
+    "orgId": null,
+    "categoryId": null,
+    "acquisitionDate": "2026-07-01",
+    "currencyId": null,
+    "originalValue": 10000.0000,
+    "currentValue": null,
+    "residualValue": 0.0000,
+    "depreciationMethod": null,
+    "depreciationMethod_label": null,
+    "depreciationRate": null,
+    "usefulLifeMonths": null,
+    "departmentId": null,
+    "locationId": null,
+    "employeeId": null,
+    "staffId": null,
+    "brandModel": null,
+    "status": 10,
+    "status_label": "10-草稿",
+    "delVersion": 0,
+    "version": 1,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpAstAsset@createTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpAstAsset@updateTime_1",
+    "remark": "冒烟-已修改"
+  },
+  "status": 0
+}

@@ -1,0 +1,28 @@
+{
+  "data": {
+    "id": "1",
+    "code": "P-SMOKE-UPDATE",
+    "name": "冒烟-原始名称",
+    "partnerType": 10,
+    "partnerType_label": "10-客户",
+    "status": 10,
+    "status_label": "10-启用",
+    "contactPerson": null,
+    "phone": null,
+    "email": null,
+    "address": null,
+    "taxNo": null,
+    "creditLimit": null,
+    "creditPeriodDays": null,
+    "receivableBalance": 0,
+    "payableBalance": 0,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpMdPartner@createTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpMdPartner@createTime",
+    "remark": null
+  },
+  "status": 0
+}

@@ -1,0 +1,21 @@
+{
+  "data": {
+    "id": "2",
+    "templateId": 1,
+    "lineNo": 1,
+    "parameterName": "冒烟参数",
+    "specMin": null,
+    "specMax": null,
+    "unit": null,
+    "isRequired": 1,
+    "inspectionMethod": null,
+    "sortNum": 0,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpQaInspectionTemplateLine@createTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpQaInspectionTemplateLine@createTime"
+  },
+  "status": 0
+}
