@@ -54,6 +54,8 @@ CRUD 完成后，业务逻辑深化在此基础上进行。
 
 ### Phase 4 — CRUD 冒烟测试
 
+> 状态：`done`（16/18 域通过；manufacturing、customer-service 因前置模型缺陷阻塞，见下方说明）。执行计划：`docs/plans/2026-06-30-2328-2-phase4-crud-smoke-tests.md`。
+
 所有 18 域的基本操作验证。框架：`JunitAutoTestCase` + GraphQL mutation/query 快照。
 
 | 测试 | 覆盖 | 方法 | 通过标准 |
@@ -65,6 +67,31 @@ CRUD 完成后，业务逻辑深化在此基础上进行。
 | 关系导航 | 主子表级联 | 新建头→添加行→查询行 | 外键正确引用 |
 
 执行：`mvn test -pl module-{xx} -am`，按 Phase 1→2→3 顺序推进。
+
+#### 逐域通过状态（每域 5 类操作 × `JunitAutoTestCase` 快照，CHECKING 模式）
+
+| 域 | 抽样主实体 | 头-行对 | 状态 |
+|---|---|---|---|
+| master-data | ErpMdPartner | ErpMdPartner→ErpMdPartnerAddress | ✅ |
+| purchase | ErpPurRequisition | ErpPurRequisition→ErpPurRfq | ✅ |
+| sales | ErpSalQuotation | ErpSalQuotation→ErpSalQuotationLine | ✅ |
+| inventory | ErpInvStockMove | ErpInvStockMove→ErpInvStockMoveLine | ✅ |
+| finance | ErpFinVoucherTemplate | ErpFinVoucherTemplate→ErpFinVoucherTemplateLine | ✅ |
+| assets | ErpAstAsset | ErpAstAsset→ErpAstDepreciationSchedule | ✅ |
+| projects | ErpPrjProject | ErpPrjProject→ErpPrjTask | ✅ |
+| quality | ErpQaInspectionTemplate | ErpQaInspectionTemplate→ErpQaInspectionTemplateLine | ✅ |
+| maintenance | ErpMntVisit | ErpMntVisit→ErpMntVisitTask | ✅ |
+| crm | ErpCrmBundlePricing | ErpCrmBundlePricing→ErpCrmBundlePricingLine | ✅ |
+| human-resource | ErpHrSurvey | ErpHrSurvey→ErpHrSurveyQuestion | ✅ |
+| aps | ErpApsOperationOrder | ErpApsOperationOrder→ErpApsOpRouting | ✅ |
+| contract | ErpCtContract | ErpCtContract→ErpCtContractLine | ✅ |
+| drp | ErpDrpPlan | ErpDrpPlan→ErpDrpLine | ✅ |
+| logistics | ErpLogShipment | ErpLogShipment→ErpLogShipmentLine | ✅ |
+| b2b | ErpB2bAsn | ErpB2bAsn→ErpB2bAsnLine | ✅ |
+| manufacturing | — | — | ⏸ 阻塞：mfg xmeta 引用不存在的字典 `erp-md/posted-status`（模型缺陷，保护区域） |
+| customer-service | — | — | ⏸ 阻塞：cs ORM 声明了不存在的实体 `app.erp.pro.*`（模型缺陷，保护区域） |
+
+> `mvn test`（根目录）BUILD SUCCESS：16 域冒烟测试全绿；manufacturing/customer-service 测试类 `@Disabled` 并在计划 `Deferred But Adjudicated` 记录阻塞原因，待对应模型缺陷修复后补测。
 
 ## 验证命令
 
