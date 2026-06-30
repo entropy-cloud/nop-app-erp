@@ -20,11 +20,49 @@
         <property name="bizObjName" value="ErpCsKnowledgeBase"/>
     </bean>
 
+    <bean id="app.erp.cs.service.entity.ErpCsCannedCategoryBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCsCannedCategory" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.cs.biz.IErpCsCannedCategoryBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCsCannedCategory"/>
+    </bean>
+
+    <bean id="app.erp.cs.service.entity.ErpCsCatalogCategoryBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCsCatalogCategory" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.cs.biz.IErpCsCatalogCategoryBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCsCatalogCategory"/>
+    </bean>
+
+    <bean id="app.erp.cs.service.entity.ErpCsContractBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCsContract" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.cs.biz.IErpCsContractBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCsContract"/>
+    </bean>
+
     <bean id="app.erp.cs.service.entity.ErpCsTeamBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpCsTeam" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.cs.biz.IErpCsTeamBiz"
           ioc:force-lazy-property="true" lazy-init="true" primary="true">
         <property name="bizObjName" value="ErpCsTeam"/>
+    </bean>
+
+    <bean id="app.erp.cs.service.entity.ErpCsAgentRateBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCsAgentRate" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.cs.biz.IErpCsAgentRateBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCsAgentRate"/>
+    </bean>
+
+    <bean id="app.erp.cs.service.entity.ErpCsCannedResponseBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCsCannedResponse" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.cs.biz.IErpCsCannedResponseBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCsCannedResponse"/>
     </bean>
 
     <bean id="app.erp.cs.service.entity.ErpCsSlaPolicyBizModel" ioc:type="@bean:id" ioc:default="true"/>
@@ -34,6 +72,21 @@
         <property name="bizObjName" value="ErpCsSlaPolicy"/>
     </bean>
 
+    <bean id="app.erp.cs.service.entity.ErpCsEntitlementBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCsEntitlement" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.cs.biz.IErpCsEntitlementBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCsEntitlement"/>
+    </bean>
+
+    <bean id="app.erp.cs.service.entity.ErpCsServiceCatalogItemBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCsServiceCatalogItem" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.cs.biz.IErpCsServiceCatalogItemBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCsServiceCatalogItem"/>
+    </bean>
+
     <bean id="app.erp.cs.service.entity.ErpCsTicketBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpCsTicket" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.cs.biz.IErpCsTicketBiz"
@@ -41,10 +94,32 @@
         <property name="bizObjName" value="ErpCsTicket"/>
     </bean>
 
+    <bean id="app.erp.cs.service.entity.ErpCsCatalogFulfillmentBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCsCatalogFulfillment" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.cs.biz.IErpCsCatalogFulfillmentBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCsCatalogFulfillment"/>
+    </bean>
+
     <bean id="app.erp.cs.service.entity.ErpCsTicketActionBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpCsTicketAction" class="io.nop.biz.proxy.BizProxyFactoryBean"
           ioc:type="app.erp.cs.biz.IErpCsTicketActionBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
         <property name="bizObjName" value="ErpCsTicketAction"/>
+    </bean>
+
+    <bean id="app.erp.cs.service.entity.ErpCsSurveyBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCsSurvey" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.cs.biz.IErpCsSurveyBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCsSurvey"/>
+    </bean>
+
+    <bean id="app.erp.cs.service.entity.ErpCsTimeEntryBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCsTimeEntry" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.cs.biz.IErpCsTimeEntryBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCsTimeEntry"/>
     </bean>
 </beans>

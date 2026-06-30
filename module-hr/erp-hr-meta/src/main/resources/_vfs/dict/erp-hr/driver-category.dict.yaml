@@ -1,0 +1,27 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 驱动因子分类
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 成长发展
+    value: 10
+    description: 
+  
+  - label: 认可激励
+    value: 20
+    description: 
+  
+  - label: 管理支持
+    value: 30
+    description: 
+  
+  - label: 健康福祉
+    value: 40
+    description: 
+  
+  - label: 文化认同
+    value: 50
+    description: 
+  

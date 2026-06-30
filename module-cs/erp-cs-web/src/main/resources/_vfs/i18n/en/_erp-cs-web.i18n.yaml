@@ -1,0 +1,50 @@
+site:
+  resource:
+    ErpCsAgentRate-main:
+      displayName: Agent Rate
+    ErpCsCannedCategory-main:
+      displayName: Canned Category
+    ErpCsCannedResponse-main:
+      displayName: Canned Response
+    ErpCsCatalogCategory-main:
+      displayName: Catalog Category
+    ErpCsCatalogFulfillment-main:
+      displayName: Fulfillment
+    ErpCsContract-main:
+      displayName: Support Contract
+    ErpCsEntitlement-main:
+      displayName: Entitlement
+    ErpCsKnowledgeBase-main:
+      displayName: Knowledge Base
+    ErpCsServiceCatalogItem-main:
+      displayName: Catalog Item
+    ErpCsSlaPolicy-main:
+      displayName: SLA Policy
+    ErpCsSurvey-main:
+      displayName: CSAT Survey
+    ErpCsTeam-main:
+      displayName: Service Team
+    ErpCsTicket-main:
+      displayName: Ticket
+    ErpCsTicketAction-main:
+      displayName: Ticket Action Log
+    ErpCsTicketType-main:
+      displayName: Ticket Type
+    ErpCsTimeEntry-main:
+      displayName: Time Entry
+    cs-canned-response:
+      displayName: Canned Responses
+    cs-config:
+      displayName: Configuration
+    cs-entitlement:
+      displayName: Entitlements
+    cs-service-catalog:
+      displayName: Service Catalog
+    cs-survey:
+      displayName: CSAT Surveys
+    cs-ticket:
+      displayName: Tickets
+    cs-time-tracking:
+      displayName: Time Tracking
+    erp-cs:
+      displayName: Customer Service

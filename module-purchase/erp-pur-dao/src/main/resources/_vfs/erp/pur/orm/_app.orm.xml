@@ -160,7 +160,7 @@
                 <column code="UO_M_ID" displayName="计量单位" mandatory="true" name="uoMId" propId="5" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="UoM"/>
                 <column code="QUANTITY" displayName="请购数量" domain="quantity" mandatory="true" name="quantity"
-                        precision="20" propId="6" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="6" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Quantity"/>
                 <column code="REQUIRED_DATE" displayName="需求日期" name="requiredDate" propId="7" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Required Date"/>
@@ -289,7 +289,7 @@
                 <column code="UO_M_ID" displayName="计量单位" mandatory="true" name="uoMId" propId="5" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="UoM"/>
                 <column code="QUANTITY" displayName="询价数量" domain="quantity" mandatory="true" name="quantity"
-                        precision="20" propId="6" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="6" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Quantity"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="7"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
@@ -429,7 +429,7 @@
                 <column code="UO_M_ID" displayName="计量单位" mandatory="true" name="uoMId" propId="5" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="UoM"/>
                 <column code="QUANTITY" displayName="数量" domain="quantity" name="quantity" precision="20" propId="6"
-                        scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Quantity"/>
+                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Quantity"/>
                 <column code="UNIT_PRICE" displayName="报价单价(不含税)" domain="unitPrice" mandatory="true" name="unitPrice"
                         precision="20" propId="7" scale="4" stdDataType="string" stdSqlType="DECIMAL"
                         i18n-en:displayName="Unit Price"/>
@@ -499,7 +499,7 @@
                 <column code="TAX_RATE" displayName="税率(%)" domain="taxRate" name="taxRate" precision="10" propId="7"
                         scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Tax Rate"/>
                 <column code="MIN_ORDER_QUANTITY" displayName="最小起订量" domain="quantity" name="minOrderQuantity"
-                        precision="20" propId="8" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="8" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Min Order Quantity"/>
                 <column code="LEAD_TIME_DAYS" displayName="交货周期(天)" name="leadTimeDays" propId="9" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Lead Time Days"/>
@@ -706,7 +706,7 @@
                 <column code="UO_M_ID" displayName="计量单位" mandatory="true" name="uoMId" propId="6" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="UoM"/>
                 <column code="QUANTITY" displayName="数量" domain="quantity" mandatory="true" name="quantity"
-                        precision="20" propId="7" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="7" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Quantity"/>
                 <column code="UNIT_PRICE" displayName="单价(不含税)" domain="unitPrice" mandatory="true" name="unitPrice"
                         precision="20" propId="8" scale="4" stdDataType="string" stdSqlType="DECIMAL"
@@ -725,10 +725,10 @@
                         propId="13" scale="4" stdDataType="string" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amount With Tax"/>
                 <column code="RECEIVED_QUANTITY" defaultValue="0" displayName="已收货数量" domain="quantity"
-                        name="receivedQuantity" precision="20" propId="14" scale="4" stdDataType="string"
+                        name="receivedQuantity" precision="20" propId="14" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Received Quantity"/>
                 <column code="INVOICED_QUANTITY" defaultValue="0" displayName="已开票数量" domain="quantity"
-                        name="invoicedQuantity" precision="20" propId="15" scale="4" stdDataType="string"
+                        name="invoicedQuantity" precision="20" propId="15" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Invoiced Quantity"/>
                 <column code="WAREHOUSE_ID" displayName="收货仓库" name="warehouseId" propId="16" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
@@ -919,10 +919,10 @@
                 <column code="UO_M_ID" displayName="计量单位" mandatory="true" name="uoMId" propId="7" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="UoM"/>
                 <column code="QUANTITY" displayName="实收数量" domain="quantity" mandatory="true" name="quantity"
-                        precision="20" propId="8" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="8" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Quantity"/>
                 <column code="REJECTED_QUANTITY" defaultValue="0" displayName="拒收数量" domain="quantity"
-                        name="rejectedQuantity" precision="20" propId="9" scale="4" stdDataType="string"
+                        name="rejectedQuantity" precision="20" propId="9" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Rejected Quantity"/>
                 <column code="UNIT_PRICE" displayName="单价(不含税)" domain="unitPrice" name="unitPrice" precision="20"
                         propId="10" scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Unit Price"/>
@@ -1102,7 +1102,7 @@
                 <column code="UO_M_ID" displayName="计量单位" mandatory="true" name="uoMId" propId="6" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="UoM"/>
                 <column code="QUANTITY" displayName="数量" domain="quantity" mandatory="true" name="quantity"
-                        precision="20" propId="7" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="7" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Quantity"/>
                 <column code="UNIT_PRICE" displayName="单价(不含税)" domain="unitPrice" name="unitPrice" precision="20"
                         propId="8" scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Unit Price"/>
@@ -1419,7 +1419,7 @@
                 <column code="UO_M_ID" displayName="计量单位" mandatory="true" name="uoMId" propId="7" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="UoM"/>
                 <column code="QUANTITY" displayName="退货数量" domain="quantity" mandatory="true" name="quantity"
-                        precision="20" propId="8" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="8" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Quantity"/>
                 <column code="UNIT_PRICE" displayName="单价(不含税)" domain="unitPrice" name="unitPrice" precision="20"
                         propId="9" scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Unit Price"/>

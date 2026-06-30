@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="file-signature" xmlns:c="c" xmlns:graphql="graphql"
+      xmlns:meta-gen="meta-gen" xmlns:biz="biz" displayName="签章请求" i18n-en:displayName="Signature Request"
+      tagSet="gid,erp.contract" xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.contract.dao.entity.ErpCtSignatureRequest</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="orgId" displayName="业务组织" propId="2" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="contractVersionId" displayName="合同版本" propId="3" i18n-en:displayName="Contract Version"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true"
+              ext:relation="contractVersion">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="provider" displayName="签名提供商" propId="4" i18n-en:displayName="Provider" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="providerRequestId" displayName="提供商请求ID" propId="5" i18n-en:displayName="Provider Request ID"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="status" displayName="签章状态" propId="6" i18n-en:displayName="Status" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="signers" displayName="签署人(JSON)" propId="7" i18n-en:displayName="Signers" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="2000"/>
+        </prop>
+        <prop name="signingDeadline" displayName="签署截止日期" propId="8" i18n-en:displayName="Signing Deadline"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="completedAt" displayName="签署完成时间" propId="9" i18n-en:displayName="Completed At" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDateTime"/>
+        </prop>
+        <prop name="certificateUrl" displayName="完成证书URL" propId="10" i18n-en:displayName="Certificate URL"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="evidenceNo" displayName="存证编号" propId="11" i18n-en:displayName="Evidence No" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="attachmentId" displayName="已签署文件" propId="12" i18n-en:displayName="Signed Attachment"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="errorMsg" displayName="错误信息" propId="13" i18n-en:displayName="Error Message" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="14" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="15" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="16" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="17" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="18" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="19" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="20" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="contractVersion" i18n-en:displayName="Contract Version" tagSet="pub" ext:kind="to-one"
+              internal="true" queryable="true" ext:joinLeftProp="contractVersionId" ext:joinRightProp="id"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
+            <schema bizObjName="ErpCtContractVersion"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+    </props>
+</meta>

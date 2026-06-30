@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 分配方法
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 轮流分配
+    value: ROUND_ROBIN
+    description: 
+  
+  - label: 按负载
+    value: LOAD_BALANCED
+    description: 
+  
+  - label: 手动
+    value: MANUAL
+    description: 
+  

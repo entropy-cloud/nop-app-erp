@@ -690,7 +690,7 @@
                 <to-one name="period" refEntityName="app.erp.crm.dao.entity.ErpCrmForecastPeriod" tagSet="pub" i18n-en:displayName='Period' ref-i18n-en:displayName='Forecast'><join><on leftProp="periodId" rightProp="id"/></join></to-one>
                 <to-one name="territory" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub" i18n-en:displayName='Territory' ref-i18n-en:displayName='Forecast'><join><on leftProp="territoryId" rightProp="id"/></join></to-one>
                 <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub" i18n-en:displayName='Team' ref-i18n-en:displayName='Forecast'><join><on leftProp="teamId" rightProp="id"/></join></to-one>
-                <to-one name="owner" refEntityName="io.nop.auth.dao.entity.NopAuthUser" tagSet="pub" i18n-en:displayName='Owner' ref-i18n-en:displayName='Forecast'><join><on leftProp="ownerId" rightProp="id"/></join></to-one>
+                <to-one name="owner" refEntityName="io.nop.auth.dao.entity.NopAuthUser" tagSet="pub" notGenCode="true" biz:moduleId="nop/auth" i18n-en:displayName='Owner' ref-i18n-en:displayName='Forecast'><join><on leftProp="ownerId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='Forecast'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
@@ -786,7 +786,7 @@
             </columns>
             <relations>
                 <to-one name="parent" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub" i18n-en:displayName='Parent' ref-i18n-en:displayName='Territory'><join><on leftProp="parentId" rightProp="id"/></join></to-one>
-                <to-one name="manager" refEntityName="io.nop.auth.dao.entity.NopAuthUser" tagSet="pub" i18n-en:displayName='Manager' ref-i18n-en:displayName='Territory'><join><on leftProp="managerId" rightProp="id"/></join></to-one>
+                <to-one name="manager" refEntityName="io.nop.auth.dao.entity.NopAuthUser" tagSet="pub" notGenCode="true" biz:moduleId="nop/auth" i18n-en:displayName='Manager' ref-i18n-en:displayName='Territory'><join><on leftProp="managerId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='Territory'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
@@ -849,7 +849,7 @@
             <relations>
                 <to-one name="territory" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub" i18n-en:displayName='Territory' ref-i18n-en:displayName='Quota'><join><on leftProp="territoryId" rightProp="id"/></join></to-one>
                 <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub" i18n-en:displayName='Team' ref-i18n-en:displayName='Quota'><join><on leftProp="teamId" rightProp="id"/></join></to-one>
-                <to-one name="owner" refEntityName="io.nop.auth.dao.entity.NopAuthUser" tagSet="pub" i18n-en:displayName='Owner' ref-i18n-en:displayName='Quota'><join><on leftProp="ownerId" rightProp="id"/></join></to-one>
+                <to-one name="owner" refEntityName="io.nop.auth.dao.entity.NopAuthUser" tagSet="pub" notGenCode="true" biz:moduleId="nop/auth" i18n-en:displayName='Owner' ref-i18n-en:displayName='Quota'><join><on leftProp="ownerId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='Quota'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>

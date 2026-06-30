@@ -1,0 +1,23 @@
+{
+  "id": 0,
+  "code": "",
+  "orgId": 0,
+  "title": "",
+  "content": "",
+  "categoryId": 0,
+  "variableDefs": "",
+  "macroTicketTypeId": 0,
+  "macroPriority": 0,
+  "macroPriority_label": "",
+  "sequence": 0,
+  "isActive": false,
+  "usageCount": 0,
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "category": null,
+  "macroTicketType": null
+}

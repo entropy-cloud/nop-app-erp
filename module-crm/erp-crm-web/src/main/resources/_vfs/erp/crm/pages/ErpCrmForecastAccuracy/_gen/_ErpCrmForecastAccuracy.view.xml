@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:schema="/nop/schema/xui/xview.xdef" bizObjName="ErpCrmForecastAccuracy" xmlns:i18n-en="i18n-en"
+      xmlns:x="/nop/schema/xdsl.xdef" xmlns:j="j" xmlns:c="c" xmlns:gql="gql" xmlns:view-gen="view-gen" xmlns:xpl="xpl">
+
+    <objMeta>/erp/crm/model/ErpCrmForecastAccuracy/ErpCrmForecastAccuracy.xmeta</objMeta>
+
+    <controlLib>/nop/web/xlib/control.xlib</controlLib>
+
+    <x:gen-extends>
+        <view-gen:DefaultViewGenExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <view-gen:DefaultViewPostExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:post-extends>
+
+    <grids>
+        <grid id="list" x:abstract="true">
+            <cols>
+
+                <!--ID-->
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--预测数据-->
+                <col id="forecastId" ui:number="true" sortable="true"/>
+
+                <!--业务组织-->
+                <col id="orgId" ui:number="true" sortable="true"/>
+
+                <!--预测期间-->
+                <col id="periodId" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--销售员-->
+                <col id="ownerId" ui:number="true" sortable="true"/>
+
+                <!--销售团队-->
+                <col id="teamId" ui:number="true" sortable="true"/>
+
+                <!--销售区域-->
+                <col id="territoryId" ui:number="true" sortable="true"/>
+
+                <!--承诺金额-->
+                <col id="commitAmount" sortable="true"/>
+
+                <!--乐观金额-->
+                <col id="upsideAmount" sortable="true"/>
+
+                <!--实际关闭收入-->
+                <col id="actualClosedRevenue" sortable="true"/>
+
+                <!--承诺准确率-->
+                <col id="commitAccuracy" ui:number="true" sortable="true"/>
+
+                <!--乐观准确率-->
+                <col id="upsideAccuracy" ui:number="true" sortable="true"/>
+
+                <!--偏差绝对值-->
+                <col id="deviationAmount" sortable="true"/>
+
+                <!--计算人-->
+                <col id="calculatedBy" sortable="true"/>
+
+                <!--计算时间-->
+                <col id="calculatedAt" sortable="true"/>
+
+                <!--逻辑删除版本-->
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--创建人-->
+                <col id="createdBy" mandatory="true" sortable="true"/>
+
+                <!--创建时间-->
+                <col id="createTime" mandatory="true" sortable="true"/>
+
+                <!--修改人-->
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+
+                <!--修改时间-->
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list" x:prototype="list" x:abstract="true"/>
+    </grids>
+
+    <forms>
+        <form id="view" editMode="view" title="查看-预测准确率" i18n-en:title="View Forecast Accuracy">
+            <layout>
+ id[ID] forecastId[预测数据]
+ orgId[业务组织] periodId[预测期间]
+ ownerId[销售员] teamId[销售团队]
+ territoryId[销售区域] commitAmount[承诺金额]
+ upsideAmount[乐观金额] actualClosedRevenue[实际关闭收入]
+ commitAccuracy[承诺准确率] upsideAccuracy[乐观准确率]
+ deviationAmount[偏差绝对值] calculatedBy[计算人]
+ calculatedAt[计算时间] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+</layout>
+        </form>
+        <form id="add" editMode="add" title="新增-预测准确率" i18n-en:title="Add Forecast Accuracy">
+            <layout>
+ id[ID] forecastId[预测数据]
+ orgId[业务组织] periodId[预测期间]
+ ownerId[销售员] teamId[销售团队]
+ territoryId[销售区域] commitAmount[承诺金额]
+ upsideAmount[乐观金额] actualClosedRevenue[实际关闭收入]
+ commitAccuracy[承诺准确率] upsideAccuracy[乐观准确率]
+ deviationAmount[偏差绝对值] calculatedBy[计算人]
+ calculatedAt[计算时间] 
+</layout>
+        </form>
+        <form id="edit" editMode="edit" title="编辑-预测准确率" i18n-en:title="Edit Forecast Accuracy">
+            <layout>
+ id[ID] forecastId[预测数据]
+ orgId[业务组织] periodId[预测期间]
+ ownerId[销售员] teamId[销售团队]
+ territoryId[销售区域] commitAmount[承诺金额]
+ upsideAmount[乐观金额] actualClosedRevenue[实际关闭收入]
+ commitAccuracy[承诺准确率] upsideAccuracy[乐观准确率]
+ deviationAmount[偏差绝对值] calculatedBy[计算人]
+ calculatedAt[计算时间] delVersion[逻辑删除版本]
+</layout>
+        </form>
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-预测准确率"
+              i18n-en:title="Update Forecast Accuracy"/>
+    </forms>
+
+    <pages>
+        <crud name="view-list" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpCrmForecastAccuracy__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </crud>
+        <crud name="main" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpCrmForecastAccuracy__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+            <listActions>
+                <action id="batch-delete-button" label="@i18n:common.batchDelete" batch="true">
+                    <api url="@mutation:ErpCrmForecastAccuracy__batchDelete?ids=$ids"/>
+                    <confirmText>@i18n:common.confirmBatchDelete</confirmText>
+                </action>
+                <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
+                    <dialog page="add"/>
+                </action>
+            </listActions>
+            <rowActions>
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+                <action id="row-update-button" level="primary" label="@i18n:common.edit" x:abstract="true">
+                    <dialog page="update"/>
+                </action>
+                <action id="row-delete-button" level="danger" label="@i18n:common.delete" x:abstract="true">
+                    <api url="@mutation:ErpCrmForecastAccuracy__delete?id=$id"/>
+                    <confirmText>@i18n:common.confirmDelete</confirmText>
+                </action>
+                <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
+                    <action id="row-update-button" label="@i18n:common.edit">
+                        <dialog page="update"/>
+                    </action>
+                    <action id="row-delete-button" label="@i18n:common.delete">
+                        <api url="@mutation:ErpCrmForecastAccuracy__delete?id=$id"/>
+                        <confirmText>@i18n:common.confirmDelete</confirmText>
+                    </action>
+                </actionGroup>
+            </rowActions>
+        </crud>
+        <picker name="picker" grid="pick-list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table noOperations="true">
+                <api url="@query:ErpCrmForecastAccuracy__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </picker>
+        <simple name="add" form="add">
+            <api url="@mutation:ErpCrmForecastAccuracy__save/id"/>
+        </simple>
+        <simple name="view" form="view">
+            <initApi url="@query:ErpCrmForecastAccuracy__get?id=$id" gql:selection="{@formSelection}"/>
+        </simple>
+        <simple name="update" form="edit">
+            <initApi url="@query:ErpCrmForecastAccuracy__get?id=$id" gql:selection="{@formSelection}"/>
+            <api url="@mutation:ErpCrmForecastAccuracy__update/id?id=$id" withFormData="true"/>
+        </simple>
+    </pages>
+</view>

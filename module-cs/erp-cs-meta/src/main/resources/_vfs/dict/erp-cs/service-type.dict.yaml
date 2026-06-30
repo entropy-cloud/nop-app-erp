@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 服务类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 保修期权益
+    value: 10
+    description: 
+  
+  - label: 付费支持合同
+    value: 20
+    description: 
+  
+  - label: 按次计费
+    value: 30
+    description: 
+  

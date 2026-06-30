@@ -9,6 +9,8 @@ alter table erp_md_md_material add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NU
 
 alter table erp_log_carrier add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
+alter table erp_log_delivery_window add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
 alter table erp_log_carrier_config add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_log_shipment add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
@@ -33,6 +35,9 @@ alter table erp_md_md_material add constraint PK_erp_md_md_material primary key 
 
 alter table erp_log_carrier drop constraint PK_erp_log_carrier;
 alter table erp_log_carrier add constraint PK_erp_log_carrier primary key (NOP_TENANT_ID, ID);
+
+alter table erp_log_delivery_window drop constraint PK_erp_log_delivery_window;
+alter table erp_log_delivery_window add constraint PK_erp_log_delivery_window primary key (NOP_TENANT_ID, ID);
 
 alter table erp_log_carrier_config drop constraint PK_erp_log_carrier_config;
 alter table erp_log_carrier_config add constraint PK_erp_log_carrier_config primary key (NOP_TENANT_ID, ID);

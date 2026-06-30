@@ -1,0 +1,58 @@
+site:
+  resource:
+    ErpCrmActivity-main:
+      displayName: Activity
+    ErpCrmBundlePricing-main:
+      displayName: Bundle Pricing
+    ErpCrmCampaign-main:
+      displayName: Campaign
+    ErpCrmEvent-main:
+      displayName: Event
+    ErpCrmForecast-main:
+      displayName: Sales Forecast
+    ErpCrmLead-main:
+      displayName: Lead / Opportunity
+    ErpCrmLeadConvLog-main:
+      displayName: Stage Transition Log
+    ErpCrmLeadFunnel-main:
+      displayName: Lead Funnel
+    ErpCrmLeadScore-main:
+      displayName: Lead Score
+    ErpCrmLeadStatus-main:
+      displayName: Lead Status
+    ErpCrmLostReason-main:
+      displayName: Lost Reason
+    ErpCrmPriceRule-main:
+      displayName: Price Rule
+    ErpCrmProductConfigurator-main:
+      displayName: Product Configurator
+    ErpCrmQuota-main:
+      displayName: Quota
+    ErpCrmSequence-main:
+      displayName: Sales Sequence
+    ErpCrmSource-main:
+      displayName: Lead Source
+    ErpCrmStage-main:
+      displayName: Stage
+    ErpCrmTeam-main:
+      displayName: Sales Team
+    ErpCrmTerritory-main:
+      displayName: Territory
+    crm-calendar:
+      displayName: Calendar
+    crm-campaign:
+      displayName: Campaigns
+    crm-config:
+      displayName: Configuration
+    crm-cpq:
+      displayName: CPQ Config-Price-Quote
+    crm-forecast:
+      displayName: Sales Forecast
+    crm-funnel:
+      displayName: Lead Analytics
+    crm-lead:
+      displayName: Leads & Opportunities
+    crm-sequence:
+      displayName: Sales Sequence
+    erp-crm:
+      displayName: Customer Relationship

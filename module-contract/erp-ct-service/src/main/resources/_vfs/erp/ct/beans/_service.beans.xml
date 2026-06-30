@@ -19,6 +19,14 @@
         <property name="bizObjName" value="ErpCtContract"/>
     </bean>
 
+    <bean id="app.erp.ct.service.entity.ErpCtApprovalMatrixBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCtApprovalMatrix" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ct.biz.IErpCtApprovalMatrixBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCtApprovalMatrix"/>
+    </bean>
+
     <bean id="app.erp.ct.service.entity.ErpCtContractLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpCtContractLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -34,6 +42,29 @@
         <property name="bizObjName" value="ErpCtContractVersion"/>
     </bean>
 
+    <bean id="app.erp.ct.service.entity.ErpCtApprovalRecordBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCtApprovalRecord" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ct.biz.IErpCtApprovalRecordBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCtApprovalRecord"/>
+    </bean>
+
+    <bean id="app.erp.ct.service.entity.ErpCtRebateAgreementBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCtRebateAgreement" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ct.biz.IErpCtRebateAgreementBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCtRebateAgreement"/>
+    </bean>
+
+    <bean id="app.erp.ct.service.entity.ErpCtDocumentBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCtDocument" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ct.biz.IErpCtDocumentBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCtDocument"/>
+    </bean>
+
     <bean id="app.erp.ct.service.entity.ErpCtInvoicePlanBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpCtInvoicePlan" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -47,5 +78,44 @@
           ioc:type="app.erp.ct.biz.IErpCtConsumptionLineBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
         <property name="bizObjName" value="ErpCtConsumptionLine"/>
+    </bean>
+
+    <bean id="app.erp.ct.service.entity.ErpCtVolumeDiscountBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCtVolumeDiscount" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ct.biz.IErpCtVolumeDiscountBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCtVolumeDiscount"/>
+    </bean>
+
+    <bean id="app.erp.ct.service.entity.ErpCtSignatureRequestBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCtSignatureRequest" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ct.biz.IErpCtSignatureRequestBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCtSignatureRequest"/>
+    </bean>
+
+    <bean id="app.erp.ct.service.entity.ErpCtRebateTierBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCtRebateTier" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ct.biz.IErpCtRebateTierBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCtRebateTier"/>
+    </bean>
+
+    <bean id="app.erp.ct.service.entity.ErpCtRebateAccrualBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCtRebateAccrual" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ct.biz.IErpCtRebateAccrualBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCtRebateAccrual"/>
+    </bean>
+
+    <bean id="app.erp.ct.service.entity.ErpCtRebateSettlementBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCtRebateSettlement" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ct.biz.IErpCtRebateSettlementBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCtRebateSettlement"/>
     </bean>
 </beans>

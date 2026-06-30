@@ -131,7 +131,7 @@ CREATE TABLE erp_ast_asset_capitalization(
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
   business_date DATE  ,
-  exchange_rate NUMERIC(20,8) default 1   ,
+  exchange_rate NUMERIC(20,8) NOT NULL ,
   amount_source NUMERIC(20,4) default 0   ,
   amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_ast_asset_capitalization primary key (id)
@@ -160,7 +160,7 @@ CREATE TABLE erp_ast_cip(
   posted BOOLEAN default false   ,
   posted_at TIMESTAMP  ,
   posted_by VARCHAR(50)  ,
-  exchange_rate NUMERIC(20,8) default 1   ,
+  exchange_rate NUMERIC(20,8) NOT NULL ,
   amount_source NUMERIC(20,4) default 0   ,
   amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_ast_cip primary key (id)
@@ -189,7 +189,7 @@ CREATE TABLE erp_ast_depreciation_schedule(
   update_time TIMESTAMP NOT NULL ,
   business_date DATE  ,
   currency_id INT8  ,
-  exchange_rate NUMERIC(20,8) default 1   ,
+  exchange_rate NUMERIC(20,8) default 1  NOT NULL ,
   amount_source NUMERIC(20,4) default 0   ,
   amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_ast_depreciation_schedule primary key (id)
@@ -215,7 +215,7 @@ CREATE TABLE erp_ast_movement(
   posted BOOLEAN default false   ,
   posted_at TIMESTAMP  ,
   posted_by INT8  ,
-  doc_version INT4 default 1  NOT NULL ,
+  doc_version VARCHAR(20) default '1'  NOT NULL ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
   created_by VARCHAR(50) NOT NULL ,
@@ -224,7 +224,7 @@ CREATE TABLE erp_ast_movement(
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
   currency_id INT8  ,
-  exchange_rate NUMERIC(20,8) default 1   ,
+  exchange_rate NUMERIC(20,8) NOT NULL ,
   amount_source NUMERIC(20,4) default 0   ,
   amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_ast_movement primary key (id)
@@ -313,7 +313,7 @@ CREATE TABLE erp_ast_split(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
-  exchange_rate NUMERIC(20,8) default 1   ,
+  exchange_rate NUMERIC(20,8) NOT NULL ,
   amount_source NUMERIC(20,4) default 0   ,
   amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_ast_split primary key (id)
@@ -341,7 +341,7 @@ CREATE TABLE erp_ast_merge(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
-  exchange_rate NUMERIC(20,8) default 1   ,
+  exchange_rate NUMERIC(20,8) NOT NULL ,
   amount_source NUMERIC(20,4) default 0   ,
   amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_ast_merge primary key (id)

@@ -26,7 +26,7 @@
             <artifactId>nop-quarkus-web-orm-starter</artifactId>
         </dependency>
 
-        <!-- 全部 10 个业务域 app(已传递依赖各自 service/web/dao) -->
+        <!-- 全部 18 个业务域 app(已传递依赖各自 service/web/dao):原 10 域 -->
         <dependency>
             <artifactId>app-erp-master-data-app</artifactId>
             <groupId>io.nop.app</groupId>
@@ -74,6 +74,48 @@
         </dependency>
         <dependency>
             <artifactId>app-erp-maintenance-app</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <!-- 新增 8 业务域 app(2026-06-30):crm/cs/hr/aps/contract/drp/logistics/b2b -->
+        <dependency>
+            <artifactId>app-erp-crm-app</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <artifactId>app-erp-cs-app</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <artifactId>app-erp-hr-app</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <artifactId>app-erp-aps-app</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <artifactId>app-erp-contract-app</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <artifactId>app-erp-drp-app</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <artifactId>app-erp-logistics-app</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <artifactId>app-erp-b2b-app</artifactId>
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
@@ -129,6 +171,13 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-jdbc-h2</artifactId>
+        </dependency>
+
+        <!-- 单元测试:加载 merged action-auth 验证 18 域菜单合并无冲突 -->
+        <dependency>
+            <groupId>io.github.entropy-cloud</groupId>
+            <artifactId>nop-autotest-junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

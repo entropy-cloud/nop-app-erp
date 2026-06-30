@@ -1,0 +1,391 @@
+entity:
+  label:
+    ErpCtApprovalMatrix: Approval Matrix
+    ErpCtApprovalRecord: Approval Record
+    ErpCtConsumptionLine: Consumption Line
+    ErpCtContract: Contract
+    ErpCtContractLine: Contract Line
+    ErpCtContractVersion: Contract Version
+    ErpCtDocument: Contract Document
+    ErpCtInvoicePlan: Invoice Plan
+    ErpCtRebateAccrual: Rebate Accrual
+    ErpCtRebateAgreement: Rebate Agreement
+    ErpCtRebateSettlement: Rebate Settlement
+    ErpCtRebateTier: Rebate Tier
+    ErpCtSignatureRequest: Signature Request
+    ErpCtTemplate: Contract Template
+    ErpCtVolumeDiscount: Volume Discount
+prop:
+  label:
+    ErpCtApprovalMatrix:
+      id: ID
+      code: Code
+      orgId: Organization
+      minAmount: Min Amount
+      maxAmount: Max Amount
+      approverRole: Approver Role
+      approvalOrder: Approval Order
+      contractType: Contract Type
+      allowSkip: Allow Skip
+      isActive: Is Active
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+    ErpCtApprovalRecord:
+      id: ID
+      contractId: Contract
+      orgId: Organization
+      approvalMatrixId: Approval Matrix
+      approvalOrder: Approval Order
+      approverId: Approver
+      approvalStatus: Approval Status
+      approvalStatus_label: null
+      comment: Comment
+      approvedAt: Approved At
+      rejectedAt: Rejected At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      contract: Contract
+      org: Org
+    ErpCtConsumptionLine:
+      id: ID
+      contractLineId: Contract Line
+      consumptionDate: Consumption Date
+      quantity: Quantity
+      unitPrice: Unit Price
+      amount: Amount
+      sourceBillType: Source Bill Type
+      sourceBillCode: Source Bill Code
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      contractLine: Contract Line
+    ErpCtContract:
+      id: ID
+      code: Code
+      orgId: Organization
+      contractName: Contract Name
+      contractType: Contract Type
+      contractType_label: null
+      contractDirection: Direction
+      contractDirection_label: null
+      partnerId: Partner
+      currencyId: Currency
+      totalAmount: Total Amount
+      startDate: Start Date
+      endDate: End Date
+      signDate: Sign Date
+      status: Status
+      status_label: null
+      templateId: Template
+      parentContractId: Parent Contract
+      description: Description
+      attachmentId: Attachment
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      partner: Partner
+      template: Template
+      parentContract: Parent Contract
+      org: Org
+      lines: Lines
+      versions: Versions
+    ErpCtContractLine:
+      id: ID
+      contractId: Contract
+      lineNo: Line No
+      materialId: Material
+      description: Description
+      quantity: Quantity
+      unitPrice: Unit Price
+      amount: Amount
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      contract: Contract
+      invoicePlans: Invoice Plans
+      consumptionLines: Consumption Lines
+    ErpCtContractVersion:
+      id: ID
+      contractId: Contract
+      versionNo: Version No
+      versionDate: Version Date
+      content: Content
+      attachmentId: Attachment
+      isCurrent: Is Current
+      status: Status
+      status_label: null
+      approvedBy: Approved By
+      approvedAt: Approved At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      contract: Contract
+    ErpCtDocument:
+      id: ID
+      orgId: Organization
+      contractId: Contract
+      code: Code
+      docName: Document Name
+      docType: Document Type
+      attachmentId: Attachment
+      fileSize: File Size
+      fileHash: File Hash
+      mimeType: MIME Type
+      ocrText: OCR Text
+      ocrStatus: OCR Status
+      fullTextSearch: Full Text Search
+      metadataTags: Metadata Tags
+      retentionDate: Retention Date
+      archiveDate: Archive Date
+      purgeDate: Purge Date
+      isArchived: Is Archived
+      versionNo: Version No
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      contract: Contract
+      org: Org
+    ErpCtInvoicePlan:
+      id: ID
+      contractLineId: Contract Line
+      planDate: Plan Date
+      amount: Amount
+      isInvoiced: Is Invoiced
+      invoiceBillCode: Invoice Bill Code
+      invoiceDate: Invoice Date
+      invoiceTerm: Invoice Term
+      invoiceTerm_label: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      contractLine: Contract Line
+    ErpCtRebateAccrual:
+      id: ID
+      rebateAgreementId: Rebate Agreement
+      orgId: Organization
+      sourceBillType: Source Bill Type
+      sourceBillCode: Source Bill Code
+      billAmountSource: Bill Amount Source
+      accruedRebate: Accrued Rebate
+      accrualDate: Accrual Date
+      isSettled: Is Settled
+      settledDate: Settled Date
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      rebateAgreement: Rebate Agreement
+      org: Org
+    ErpCtRebateAgreement:
+      id: ID
+      code: Code
+      orgId: Organization
+      contractId: Contract
+      partnerId: Partner
+      rebateType: Rebate Type
+      rebateType_label: null
+      agreementDate: Agreement Date
+      startDate: Start Date
+      endDate: End Date
+      accrualMethod: Accrual Method
+      accrualMethod_label: null
+      status: Status
+      status_label: null
+      totalAccumulatedAmount: Total Accumulated Amount
+      estimatedRebateAmount: Estimated Rebate Amount
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      contract: Contract
+      org: Org
+    ErpCtRebateSettlement:
+      id: ID
+      rebateAgreementId: Rebate Agreement
+      orgId: Organization
+      settlementDate: Settlement Date
+      totalRebateAmount: Total Rebate Amount
+      creditMemoBillType: Credit Memo Bill Type
+      creditMemoBillCode: Credit Memo Bill Code
+      status: Status
+      status_label: null
+      postedAt: Posted At
+      postedBy: Posted By
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      rebateAgreement: Rebate Agreement
+      org: Org
+    ErpCtRebateTier:
+      id: ID
+      rebateAgreementId: Rebate Agreement
+      fromAmount: From Amount
+      toAmount: To Amount
+      rebatePercent: Rebate Percent
+      rebateAmount: Rebate Amount
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      rebateAgreement: Rebate Agreement
+    ErpCtSignatureRequest:
+      id: ID
+      orgId: Organization
+      contractVersionId: Contract Version
+      provider: Provider
+      providerRequestId: Provider Request ID
+      status: Status
+      signers: Signers
+      signingDeadline: Signing Deadline
+      completedAt: Completed At
+      certificateUrl: Certificate URL
+      evidenceNo: Evidence No
+      attachmentId: Signed Attachment
+      errorMsg: Error Message
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      contractVersion: Contract Version
+      org: Org
+    ErpCtTemplate:
+      id: ID
+      code: Code
+      name: Name
+      contractType: Contract Type
+      contractType_label: null
+      contentTemplate: Content Template
+      isActive: Active
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+    ErpCtVolumeDiscount:
+      id: ID
+      contractLineId: Contract Line
+      orgId: Organization
+      fromQty: From Qty
+      toQty: To Qty
+      discountPercent: Discount Percent
+      unitPrice: Unit Price
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      contractLine: Contract Line
+      org: Org
+dict:
+  label:
+    erp-ct/contract-status: Contract Status
+    erp-ct/contract-type: Contract Type
+    erp-ct/contract-direction: Contract Direction
+    erp-ct/invoice-term: Invoice Term
+    erp-ct/version-status: Version Status
+    erp-ct/approval-status: Approval Status
+    erp-ct/rebate-type: Rebate Type
+    erp-ct/rebate-agreement-status: Rebate Agreement Status
+    erp-ct/settlement-status: Settlement Status
+    erp-ct/accrual-method: Accrual Method
+dict.option.label:
+  erp-ct/contract-status:
+    '10': Draft
+    '20': Negotiation
+    '30': Active
+    '40': Suspended
+    '50': Expired
+    '60': Terminated
+  erp-ct/contract-type:
+    '10': Purchase
+    '20': Sales
+    '30': Employment
+    '40': Service
+  erp-ct/contract-direction:
+    '10': Inbound (Pay)
+    '20': Outbound (Receive)
+  erp-ct/invoice-term:
+    '10': Advance
+    '20': Milestone
+    '30': Monthly
+    '40': Completion
+  erp-ct/version-status:
+    '10': Draft
+    '20': Finalized
+    '30': Signed
+  erp-ct/approval-status:
+    '10': Waiting
+    '20': Pending
+    '30': Approved
+    '40': Rejected
+    '50': Skipped
+  erp-ct/rebate-type:
+    '10': Purchase
+    '20': Sales
+  erp-ct/rebate-agreement-status:
+    '10': Draft
+    '20': Active
+    '30': Expired
+    '40': Settled
+  erp-ct/settlement-status:
+    '10': Draft
+    '20': Posted
+    '30': Cancelled
+  erp-ct/accrual-method:
+    '10': Period End
+    '20': Progressive

@@ -109,32 +109,36 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     public static final String PROP_NAME_remark = "remark";
     public static final int PROP_ID_remark = 22;
     
+    /* 服务目录项: CATALOG_ITEM_ID BIGINT */
+    public static final String PROP_NAME_catalogItemId = "catalogItemId";
+    public static final int PROP_ID_catalogItemId = 23;
+    
     /* 逻辑删除版本: DEL_VERSION BIGINT */
     public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 23;
+    public static final int PROP_ID_delVersion = 24;
     
     /* 数据版本: VERSION INTEGER */
     public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 24;
+    public static final int PROP_ID_version = 25;
     
     /* 创建人: CREATED_BY VARCHAR */
     public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 25;
+    public static final int PROP_ID_createdBy = 26;
     
     /* 创建时间: CREATE_TIME TIMESTAMP */
     public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 26;
+    public static final int PROP_ID_createTime = 27;
     
     /* 修改人: UPDATED_BY VARCHAR */
     public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 27;
+    public static final int PROP_ID_updatedBy = 28;
     
     /* 修改时间: UPDATE_TIME TIMESTAMP */
     public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 28;
+    public static final int PROP_ID_updateTime = 29;
     
 
-    private static int _PROP_ID_BOUND = 29;
+    private static int _PROP_ID_BOUND = 30;
 
     
     /* relation:  */
@@ -144,13 +148,16 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     public static final String PROP_NAME_slaPolicy = "slaPolicy";
     
     /* relation:  */
+    public static final String PROP_NAME_catalogItem = "catalogItem";
+    
+    /* relation:  */
     public static final String PROP_NAME_actions = "actions";
     
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[29];
+    private static final String[] PROP_ID_TO_NAME = new String[30];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -219,6 +226,9 @@ public class _ErpCsTicket extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
           PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
+      
+          PROP_ID_TO_NAME[PROP_ID_catalogItemId] = PROP_NAME_catalogItemId;
+          PROP_NAME_TO_ID.put(PROP_NAME_catalogItemId, PROP_ID_catalogItemId);
       
           PROP_ID_TO_NAME[PROP_ID_delVersion] = PROP_NAME_delVersion;
           PROP_NAME_TO_ID.put(PROP_NAME_delVersion, PROP_ID_delVersion);
@@ -306,6 +316,9 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     
     /* 备注: REMARK */
     private java.lang.String _remark;
+    
+    /* 服务目录项: CATALOG_ITEM_ID */
+    private java.lang.Long _catalogItemId;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -464,6 +477,9 @@ public class _ErpCsTicket extends DynamicOrmEntity{
         
             case PROP_ID_remark:
                return getRemark();
+        
+            case PROP_ID_catalogItemId:
+               return getCatalogItemId();
         
             case PROP_ID_delVersion:
                return getDelVersion();
@@ -714,6 +730,16 @@ public class _ErpCsTicket extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_catalogItemId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_catalogItemId));
+               }
+               setCatalogItemId(typedValue);
+               break;
+            }
+        
             case PROP_ID_delVersion:{
                java.lang.Long typedValue = null;
                if(value != null){
@@ -933,6 +959,13 @@ public class _ErpCsTicket extends DynamicOrmEntity{
             case PROP_ID_remark:{
                onInitProp(propId);
                this._remark = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_catalogItemId:{
+               onInitProp(propId);
+               this._catalogItemId = (java.lang.Long)value;
                
                break;
             }
@@ -1404,6 +1437,25 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     }
     
     /**
+     * 服务目录项: CATALOG_ITEM_ID
+     */
+    public final java.lang.Long getCatalogItemId(){
+         onPropGet(PROP_ID_catalogItemId);
+         return _catalogItemId;
+    }
+
+    /**
+     * 服务目录项: CATALOG_ITEM_ID
+     */
+    public final void setCatalogItemId(java.lang.Long value){
+        if(onPropSet(PROP_ID_catalogItemId,value)){
+            this._catalogItemId = value;
+            internalClearRefs(PROP_ID_catalogItemId);
+            
+        }
+    }
+    
+    /**
      * 逻辑删除版本: DEL_VERSION
      */
     public final java.lang.Long getDelVersion(){
@@ -1557,6 +1609,29 @@ public class _ErpCsTicket extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_slaPolicy, refEntity,()->{
            
                            this.setSlaPolicyId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.cs.dao.entity.ErpCsServiceCatalogItem getCatalogItem(){
+       return (app.erp.cs.dao.entity.ErpCsServiceCatalogItem)internalGetRefEntity(PROP_NAME_catalogItem);
+    }
+
+    public final void setCatalogItem(app.erp.cs.dao.entity.ErpCsServiceCatalogItem refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCatalogItemId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_catalogItem, refEntity,()->{
+           
+                           this.setCatalogItemId(refEntity.getId());
                        
            });
            }

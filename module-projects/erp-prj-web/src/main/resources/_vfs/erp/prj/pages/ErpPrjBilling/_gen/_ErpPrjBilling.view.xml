@@ -82,10 +82,10 @@
                 <col id="updateTime" mandatory="true" sortable="true"/>
 
                 <!--源币种金额-->
-                <col id="amountSource" sortable="true"/>
+                <col id="amountSource" ui:number="true" sortable="true"/>
 
                 <!--本位币金额-->
-                <col id="amountFunctional" sortable="true"/>
+                <col id="amountFunctional" ui:number="true" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>

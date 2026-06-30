@@ -1,11 +1,13 @@
 entity:
   label:
+    ErpMfgBatchGenealogy: Batch Genealogy
     ErpMfgBom: BOM
     ErpMfgBomByproduct: BOM By-product
     ErpMfgBomLine: BOM Line
     ErpMfgBomOperation: BOM Operation
     ErpMfgCostRollup: Cost Rollup
     ErpMfgCostRollupLine: Cost Rollup Line
+    ErpMfgCostVariance: Cost Variance
     ErpMfgJobCard: Job Card
     ErpMfgJobCardTimeLog: Job Card Time Log
     ErpMfgMaterialIssue: Material Issue
@@ -23,6 +25,35 @@ entity:
     ErpMfgWorkcenter: Work Center
 prop:
   label:
+    ErpMfgBatchGenealogy:
+      id: ID
+      workOrderId: Work Order
+      jobCardId: Job Card
+      operationId: Operation
+      inputLotId: Input Lot
+      inputMaterialId: Input Material
+      inputQty: Input Qty
+      inputUoMId: Input UoM
+      outputLotId: Output Lot
+      outputMaterialId: Output Material
+      outputQty: Output Qty
+      outputUoMId: Output UoM
+      productionDate: Production Date
+      productionTime: Production Time
+      lineNo: Line No
+      lotStatus: Lot Status
+      isInputConsumed: Input Consumed
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      workOrder: Work Order
+      jobCard: Job Card
+      inputMaterial: Input Material
+      outputMaterial: Output Material
     ErpMfgBom:
       id: ID
       code: Code
@@ -150,6 +181,35 @@ prop:
       costRollup: Cost Rollup
       material: Material
       uoM: Uo M
+    ErpMfgCostVariance:
+      id: ID
+      workOrderId: Work Order
+      lineNo: Line No
+      varianceType: Variance Type
+      costElement: Cost Element
+      materialId: Material
+      operationId: Operation
+      standardAmount: Standard Amount
+      actualAmount: Actual Amount
+      varianceAmount: Variance Amount
+      variancePercent: Variance Percent
+      standardQty: Standard Qty
+      actualQty: Actual Qty
+      standardPrice: Standard Price
+      actualPrice: Actual Price
+      workcenterId: Workcenter
+      businessDate: Business Date
+      posted: Posted
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      workOrder: Work Order
+      material: Material
+      workcenter: Workcenter
     ErpMfgJobCard:
       id: ID
       workOrderId: Work Order
@@ -378,6 +438,9 @@ prop:
       workOrderId: Work Order
       supplierId: Supplier
       workcenterId: Workcenter
+      routingId: Routing
+      productionVersionId: Production Version
+      productId: Product
       businessDate: Business Date
       currencyId: Currency
       exchangeRate: Exchange Rate
@@ -388,17 +451,19 @@ prop:
       approveStatus: Approve Status
       approveStatus_label: null
       posted: Posted
+      postedStatus: Posted Status
+      postedStatus_label: null
       postedAt: Posted At
       postedBy: Posted By
       remark: Remark
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
       delVersion: Del Flag
       version: Version
       createdBy: Created By
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
-      amountSource: Amt (Source)
-      amountFunctional: Amt (Functional)
       workOrder: Work Order
       supplier: Supplier
       workcenter: Workcenter

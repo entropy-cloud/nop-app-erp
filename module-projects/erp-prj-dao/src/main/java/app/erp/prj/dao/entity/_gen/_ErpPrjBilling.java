@@ -283,10 +283,10 @@ public class _ErpPrjBilling extends DynamicOrmEntity{
     private java.sql.Timestamp _updateTime;
     
     /* 源币种金额: AMOUNT_SOURCE */
-    private java.lang.String _amountSource;
+    private java.math.BigDecimal _amountSource;
     
     /* 本位币金额: AMOUNT_FUNCTIONAL */
-    private java.lang.String _amountFunctional;
+    private java.math.BigDecimal _amountFunctional;
     
 
     public _ErpPrjBilling(){
@@ -666,9 +666,9 @@ public class _ErpPrjBilling extends DynamicOrmEntity{
             }
         
             case PROP_ID_amountSource:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_amountSource));
                }
                setAmountSource(typedValue);
@@ -676,9 +676,9 @@ public class _ErpPrjBilling extends DynamicOrmEntity{
             }
         
             case PROP_ID_amountFunctional:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_amountFunctional));
                }
                setAmountFunctional(typedValue);
@@ -850,14 +850,14 @@ public class _ErpPrjBilling extends DynamicOrmEntity{
         
             case PROP_ID_amountSource:{
                onInitProp(propId);
-               this._amountSource = (java.lang.String)value;
+               this._amountSource = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_amountFunctional:{
                onInitProp(propId);
-               this._amountFunctional = (java.lang.String)value;
+               this._amountFunctional = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1289,7 +1289,7 @@ public class _ErpPrjBilling extends DynamicOrmEntity{
     /**
      * 源币种金额: AMOUNT_SOURCE
      */
-    public final java.lang.String getAmountSource(){
+    public final java.math.BigDecimal getAmountSource(){
          onPropGet(PROP_ID_amountSource);
          return _amountSource;
     }
@@ -1297,7 +1297,7 @@ public class _ErpPrjBilling extends DynamicOrmEntity{
     /**
      * 源币种金额: AMOUNT_SOURCE
      */
-    public final void setAmountSource(java.lang.String value){
+    public final void setAmountSource(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_amountSource,value)){
             this._amountSource = value;
             internalClearRefs(PROP_ID_amountSource);
@@ -1308,7 +1308,7 @@ public class _ErpPrjBilling extends DynamicOrmEntity{
     /**
      * 本位币金额: AMOUNT_FUNCTIONAL
      */
-    public final java.lang.String getAmountFunctional(){
+    public final java.math.BigDecimal getAmountFunctional(){
          onPropGet(PROP_ID_amountFunctional);
          return _amountFunctional;
     }
@@ -1316,7 +1316,7 @@ public class _ErpPrjBilling extends DynamicOrmEntity{
     /**
      * 本位币金额: AMOUNT_FUNCTIONAL
      */
-    public final void setAmountFunctional(java.lang.String value){
+    public final void setAmountFunctional(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_amountFunctional,value)){
             this._amountFunctional = value;
             internalClearRefs(PROP_ID_amountFunctional);

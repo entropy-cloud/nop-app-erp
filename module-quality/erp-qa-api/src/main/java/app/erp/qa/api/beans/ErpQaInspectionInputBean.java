@@ -377,6 +377,20 @@
         }
 
 
+        private java.time.LocalDate _businessDate;
+
+    
+        @PropMeta(propId=33)
+    
+        public java.time.LocalDate getBusinessDate(){
+            return _businessDate;
+        }
+
+        public void setBusinessDate(java.time.LocalDate value){
+            this._businessDate = value;
+        }
+
+
         private List<ErpQaInspectionLineInputBean> _lines;
 
         public List<ErpQaInspectionLineInputBean> getLines(){

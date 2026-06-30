@@ -1,0 +1,19 @@
+{
+  "id": 0,
+  "contractLineId": 0,
+  "planDate": "2000-01-01",
+  "amount": "",
+  "isInvoiced": false,
+  "invoiceBillCode": "",
+  "invoiceDate": "2000-01-01",
+  "invoiceTerm": 0,
+  "invoiceTerm_label": "",
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "contractLine": null
+}

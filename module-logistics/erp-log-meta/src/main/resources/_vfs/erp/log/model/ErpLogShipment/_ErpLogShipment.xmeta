@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="package" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen"
+      xmlns:biz="biz" displayName="发运单" i18n-en:displayName="Shipment" tagSet="gid,erp.logistics" xmlns:ui="ui"
+      xmlns:orm="orm">
+
+    <entityName>app.erp.log.dao.entity.ErpLogShipment</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="code" displayName="单号" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="orderCode" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="carrierId" displayName="承运商ID" propId="4" i18n-en:displayName="Carrier" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="carrier">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="carrierConfigId" displayName="承运商配置ID" propId="5" i18n-en:displayName="Carrier Config"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="carrierConfig">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="relatedBillType" displayName="关联单据类型" propId="6" i18n-en:displayName="Related Bill Type"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="relatedBillCode" displayName="关联单据号" propId="7" i18n-en:displayName="Related Bill Code"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="shipmentDate" displayName="发运日期" propId="8" i18n-en:displayName="Shipment Date" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="trackingNo" displayName="运单号" propId="9" i18n-en:displayName="Tracking No" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="labelUrl" displayName="面单URL" propId="10" i18n-en:displayName="Label URL" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="500"/>
+        </prop>
+        <prop name="freightAmount" displayName="运费" propId="11" i18n-en:displayName="Freight Amount" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="freightCurrencyId" displayName="运费币种" propId="12" i18n-en:displayName="Currency" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="freightTerms" displayName="运费条款" propId="13" i18n-en:displayName="Freight Terms" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer" dict="erp-log/freight-terms"/>
+        </prop>
+        <prop name="freightSettlementStatus" displayName="运费结算状态" propId="14" i18n-en:displayName="Settlement Status"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer" dict="erp-log/settlement-status"/>
+        </prop>
+        <prop name="totalWeight" displayName="总重量(kg)" propId="15" i18n-en:displayName="Total Weight" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="weight" type="java.lang.String" precision="12" scale="3"/>
+        </prop>
+        <prop name="totalVolume" displayName="总体积(m³)" propId="16" i18n-en:displayName="Total Volume" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="volume" type="java.lang.String" precision="12" scale="6"/>
+        </prop>
+        <prop name="totalParcels" displayName="总包裹数" propId="17" i18n-en:displayName="Total Parcels" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="1">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="receiverName" displayName="收货人" propId="18" i18n-en:displayName="Receiver Name" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="receiverPhone" displayName="收货人电话" propId="19" i18n-en:displayName="Receiver Phone" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="phone" type="java.lang.String" precision="30"/>
+        </prop>
+        <prop name="receiverAddress" displayName="收货地址" propId="20" i18n-en:displayName="Receiver Address"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema domain="address" type="java.lang.String" precision="500"/>
+        </prop>
+        <prop name="receiverCountry" displayName="国家" propId="21" i18n-en:displayName="Country" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="receiverProvince" displayName="省份" propId="22" i18n-en:displayName="Province" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="receiverCity" displayName="城市" propId="23" i18n-en:displayName="City" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="receiverDistrict" displayName="区县" propId="24" i18n-en:displayName="District" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="senderName" displayName="发货人" propId="25" i18n-en:displayName="Sender Name" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="senderPhone" displayName="发货人电话" propId="26" i18n-en:displayName="Sender Phone" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="phone" type="java.lang.String" precision="30"/>
+        </prop>
+        <prop name="senderAddress" displayName="发货地址" propId="27" i18n-en:displayName="Sender Address" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="address" type="java.lang.String" precision="500"/>
+        </prop>
+        <prop name="estimatedDeliveryDate" displayName="预计送达日期" propId="28"
+              i18n-en:displayName="Estimated Delivery Date" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="actualDeliveryDate" displayName="实际送达日期" propId="29" i18n-en:displayName="Actual Delivery Date"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="signedBy" displayName="签收人" propId="30" i18n-en:displayName="Signed By" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="shipperId" displayName="发货员(职员)" propId="31" i18n-en:displayName="Shipper" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="shipper">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="status" displayName="状态" propId="32" i18n-en:displayName="Status" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer" dict="erp-log/shipment-status"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="33" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="34" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="35" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="36" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="37" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="38" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="39" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="carrier" i18n-en:displayName="Carrier" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="carrierId" ext:joinRightProp="id" insertable="false" updatable="false"
+              mandatory="true" lazy="true">
+            <schema bizObjName="ErpLogCarrier"/>
+        </prop>
+        <prop name="carrierConfig" i18n-en:displayName="Carrier Config" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="carrierConfigId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpLogCarrierConfig"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="shipper" i18n-en:displayName="Shipper" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="shipperId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdEmployee"/>
+        </prop>
+        <prop name="lines" i18n-en:displayName="Lines" tagSet="pub,cascade-delete,insertable,updatable"
+              ext:kind="to-many" internal="true" ext:joinLeftProp="id" ext:joinRightProp="shipmentId" insertable="true"
+              updatable="true" lazy="true">
+            <schema>
+                <item bizObjName="ErpLogShipmentLine"/>
+            </schema>
+        </prop>
+        <prop name="parcels" i18n-en:displayName="Parcels" tagSet="pub,cascade-delete,insertable,updatable"
+              ext:kind="to-many" internal="true" ext:joinLeftProp="id" ext:joinRightProp="shipmentId" insertable="true"
+              updatable="true" lazy="true">
+            <schema>
+                <item bizObjName="ErpLogShipmentParcel"/>
+            </schema>
+        </prop>
+        <prop name="logs" i18n-en:displayName="Logs" tagSet="pub,cascade-delete,insertable,updatable" ext:kind="to-many"
+              internal="true" ext:joinLeftProp="id" ext:joinRightProp="shipmentId" insertable="true" updatable="true"
+              lazy="true">
+            <schema>
+                <item bizObjName="ErpLogShipmentLog"/>
+            </schema>
+        </prop>
+    </props>
+</meta>

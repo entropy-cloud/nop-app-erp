@@ -97,16 +97,16 @@
         }
 
 
-        private String _quantity;
+        private java.math.BigDecimal _quantity;
 
     
         @PropMeta(propId=7)
     
-        public String getQuantity(){
+        public java.math.BigDecimal getQuantity(){
             return _quantity;
         }
 
-        public void setQuantity(String value){
+        public void setQuantity(java.math.BigDecimal value){
             this._quantity = value;
         }
 
@@ -195,30 +195,30 @@
         }
 
 
-        private String _receivedQuantity;
+        private java.math.BigDecimal _receivedQuantity;
 
     
         @PropMeta(propId=14)
     
-        public String getReceivedQuantity(){
+        public java.math.BigDecimal getReceivedQuantity(){
             return _receivedQuantity;
         }
 
-        public void setReceivedQuantity(String value){
+        public void setReceivedQuantity(java.math.BigDecimal value){
             this._receivedQuantity = value;
         }
 
 
-        private String _invoicedQuantity;
+        private java.math.BigDecimal _invoicedQuantity;
 
     
         @PropMeta(propId=15)
     
-        public String getInvoicedQuantity(){
+        public java.math.BigDecimal getInvoicedQuantity(){
             return _invoicedQuantity;
         }
 
-        public void setInvoicedQuantity(String value){
+        public void setInvoicedQuantity(java.math.BigDecimal value){
             this._invoicedQuantity = value;
         }
 

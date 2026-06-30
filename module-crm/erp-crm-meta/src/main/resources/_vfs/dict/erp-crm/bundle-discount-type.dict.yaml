@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 捆绑折扣类型
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 百分比折扣
+    value: PERCENTAGE
+    description: 
+  
+  - label: 固定金额折扣
+    value: FIXED
+    description: 
+  

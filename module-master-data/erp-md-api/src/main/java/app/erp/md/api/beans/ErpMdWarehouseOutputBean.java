@@ -248,6 +248,32 @@
         }
 
 
+        private String _batchSelectionStrategy;
+
+    
+        @PropMeta(propId=16)
+    
+        public String getBatchSelectionStrategy(){
+            return _batchSelectionStrategy;
+        }
+
+        public void setBatchSelectionStrategy(String value){
+            this._batchSelectionStrategy = value;
+        }
+
+
+        private String _batchSelectionStrategy_label;
+
+    
+        public String getBatchSelectionStrategy_label(){
+            return _batchSelectionStrategy_label;
+        }
+
+        public void setBatchSelectionStrategy_label(String value){
+            this._batchSelectionStrategy_label = value;
+        }
+
+
         private Map<String,Object> _organization;
 
         public Map<String,Object> getOrganization(){

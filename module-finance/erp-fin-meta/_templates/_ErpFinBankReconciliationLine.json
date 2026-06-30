@@ -1,0 +1,19 @@
+{
+  "id": 0,
+  "reconciliationId": 0,
+  "lineNo": 0,
+  "adjustmentType": "",
+  "description": "",
+  "dcDirection": 0,
+  "dcDirection_label": "",
+  "amount": "",
+  "side": "",
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "reconciliation": null
+}

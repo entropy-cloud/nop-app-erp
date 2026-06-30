@@ -1,0 +1,905 @@
+entity:
+  label:
+    ErpCrmActivity: Activity
+    ErpCrmBundlePricing: Bundle Pricing
+    ErpCrmBundlePricingLine: Bundle Pricing Line
+    ErpCrmCampaign: Campaign
+    ErpCrmConfigRule: Config Rule
+    ErpCrmEvent: Event
+    ErpCrmEventCategory: Event Category
+    ErpCrmForecast: Forecast
+    ErpCrmForecastAccuracy: Forecast Accuracy
+    ErpCrmForecastLine: Forecast Line
+    ErpCrmForecastPeriod: Forecast Period
+    ErpCrmFunnelStageMetrics: Funnel Stage Metrics
+    ErpCrmLead: Lead / Opportunity
+    ErpCrmLeadConvLog: Lead Conversion Log
+    ErpCrmLeadFunnel: Lead Funnel
+    ErpCrmLeadScore: Lead Score
+    ErpCrmLeadScoreConfig: Lead Score Config
+    ErpCrmLeadScoreConfigLine: Lead Score Config Line
+    ErpCrmLeadScoreLine: Lead Score Line
+    ErpCrmLeadSequenceProgress: Lead Sequence Progress
+    ErpCrmLeadStatus: Lead Status
+    ErpCrmLostReason: Lost Reason
+    ErpCrmPriceRule: Price Rule
+    ErpCrmProductConfigurator: Product Configurator
+    ErpCrmQuota: Quota
+    ErpCrmQuoteTemplate: Quote Template
+    ErpCrmSequence: Sales Sequence
+    ErpCrmSequenceAssignment: Sequence Assignment
+    ErpCrmSequenceStep: Sequence Step
+    ErpCrmSource: Lead Source
+    ErpCrmStage: Funnel Stage
+    ErpCrmTeam: Sales Team
+    ErpCrmTerritory: Territory
+    ErpCrmTerritoryAssignmentRule: Territory Assignment Rule
+prop:
+  label:
+    ErpCrmActivity:
+      id: ID
+      leadId: Lead
+      orgId: Organization
+      activityType: Activity Type
+      activityType_label: null
+      activityDate: Activity Date
+      summary: Summary
+      ownerId: Owner
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      lead: Lead
+      org: Org
+    ErpCrmBundlePricing:
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      bundleName: Bundle Name
+      description: Description
+      discountType: Discount Type
+      discountType_label: null
+      discountValue: Discount Value
+      bundleAmount: Bundle Amount
+      effectiveFrom: Effective From
+      effectiveTo: Effective To
+      isActive: Is Active
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+    ErpCrmBundlePricingLine:
+      id: ID
+      bundleId: Bundle
+      orgId: Organization
+      productId: Product
+      quantity: Quantity
+      unitPrice: Unit Price
+      sequence: Sequence
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      bundle: Bundle
+      org: Org
+    ErpCrmCampaign:
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      campaignName: Campaign Name
+      medium: UTM Medium
+      source: UTM Source
+      startDate: Start Date
+      endDate: End Date
+      budgetAmount: Budget Amount
+      actualCost: Actual Cost
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+    ErpCrmConfigRule:
+      id: ID
+      configuratorId: Configurator
+      orgId: Organization
+      ruleType: Rule Type
+      ruleType_label: null
+      sourceFeatureCode: Source Feature
+      sourceFeatureValue: Source Feature Value
+      targetFeatureCode: Target Feature
+      targetFeatureValue: Target Feature Value
+      conditionExpression: Condition Expression
+      sequence: Sequence
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      configurator: Configurator
+      org: Org
+    ErpCrmEvent:
+      id: ID
+      code: Code
+      orgId: Organization
+      eventType: Event Type
+      eventType_label: null
+      eventCategoryId: Event Category
+      subject: Subject
+      description: Description
+      startDateTime: Start DateTime
+      endDateTime: End DateTime
+      duration: Duration
+      relatedLeadId: Related Lead
+      relatedBillType: Related Bill Type
+      relatedBillCode: Related Bill Code
+      partnerId: Partner
+      contactId: Contact
+      ownerId: Owner
+      status: Status
+      status_label: null
+      priority: Priority
+      priority_label: null
+      isRecurrent: Is Recurrent
+      parentEventId: Parent Event
+      reminderMinutesBefore: Reminder Minutes
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      relatedLead: Related Lead
+      partner: Partner
+      parentEvent: Parent Event
+      org: Org
+      eventCategory: Event Category
+    ErpCrmEventCategory:
+      id: ID
+      code: Code
+      name: Name
+      color: Color
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+    ErpCrmForecast:
+      id: ID
+      orgId: Organization
+      periodId: Period
+      territoryId: Territory
+      teamId: Team
+      ownerId: Owner
+      currencyId: Currency
+      commitAmount: Commit Amount
+      upsideAmount: Upside Amount
+      weightedAmount: Weighted Amount
+      bestCaseAmount: Best Case Amount
+      opportunityCount: Opportunity Count
+      commitOpportunityCount: Commit Opportunity Count
+      expectedClosedRevenue: Expected Closed Revenue
+      lastCalculatedAt: Last Calculated At
+      notes: Notes
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      period: Period
+      territory: Territory
+      team: Team
+      owner: Owner
+      org: Org
+    ErpCrmForecastAccuracy:
+      id: ID
+      forecastId: Forecast
+      orgId: Organization
+      periodId: Period
+      ownerId: Owner
+      teamId: Team
+      territoryId: Territory
+      commitAmount: Commit Amount
+      upsideAmount: Upside Amount
+      actualClosedRevenue: Actual Closed Revenue
+      commitAccuracy: Commit Accuracy
+      upsideAccuracy: Upside Accuracy
+      deviationAmount: Deviation Amount
+      calculatedBy: Calculated By
+      calculatedAt: Calculated At
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      forecast: Forecast
+      period: Period
+      org: Org
+    ErpCrmForecastLine:
+      id: ID
+      forecastId: Forecast
+      orgId: Organization
+      leadId: Lead
+      probability: Probability
+      expectedRevenue: Expected Revenue
+      weightedRevenue: Weighted Revenue
+      forecastCategory: Forecast Category
+      forecastCategory_label: null
+      includedInCommit: Included In Commit
+      stageName: Stage Name
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      forecast: Forecast
+      lead: Lead
+      org: Org
+    ErpCrmForecastPeriod:
+      id: ID
+      code: Code
+      orgId: Organization
+      periodType: Period Type
+      periodType_label: null
+      periodStart: Period Start
+      periodEnd: Period End
+      label: Label
+      status: Status
+      status_label: null
+      isCurrent: Is Current
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+    ErpCrmFunnelStageMetrics:
+      id: ID
+      funnelId: Funnel
+      orgId: Organization
+      stageId: Stage
+      stageOrder: Stage Order
+      stageName: Stage Name
+      leadCountIn: Lead Count In
+      leadCountOut: Lead Count Out
+      leadCountRemaining: Lead Count Remaining
+      conversionRate: Conversion Rate
+      dropOffRate: Drop Off Rate
+      avgDaysInStage: Avg Days In Stage
+      lostCount: Lost Count
+      lostAmount: Lost Amount
+      lostReasonTop: Lost Reason Top
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      funnel: Funnel
+      stage: Stage
+      org: Org
+    ErpCrmLead:
+      id: ID
+      code: Code
+      orgId: Organization
+      leadType: Lead Type
+      leadType_label: null
+      partnerId: Partner
+      contactName: Contact Name
+      contactPhone: Contact Phone
+      contactEmail: Contact Email
+      companyName: Company Name
+      jobTitle: Job Title
+      department: Department
+      sourceId: Source
+      leadStatusId: Lead Status
+      stageId: Stage
+      expectedRevenue: Expected Revenue
+      bestCaseAmount: Best Case Amount
+      worstCaseAmount: Worst Case Amount
+      recurringRevenue: Recurring Revenue
+      recurringPlan: Recurring Plan
+      expectedCloseDate: Expected Close Date
+      probability: Probability
+      campaignId: Campaign
+      utmMedium: UTM Medium
+      utmSource: UTM Source
+      ownerId: Owner
+      teamId: Team
+      lostReasonId: Lost Reason
+      lostReasonDesc: Lost Reason Description
+      lastContactDate: Last Contact Date
+      nextActivityDate: Next Activity Date
+      relatedBillType: Related Bill Type
+      relatedBillCode: Related Bill Code
+      docStatus: Doc Status
+      docStatus_label: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      partner: Partner
+      source: Source
+      leadStatus: Lead Status
+      stage: Stage
+      campaign: Campaign
+      team: Team
+      lostReason: Lost Reason
+      org: Org
+      events: Events
+      activities: Activities
+      convLogs: Conv Logs
+    ErpCrmLeadConvLog:
+      id: ID
+      leadId: Lead
+      orgId: Organization
+      fromStageId: From Stage
+      toStageId: To Stage
+      changedAt: Changed At
+      changedBy: Changed By
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      lead: Lead
+      fromStage: From Stage
+      toStage: To Stage
+      org: Org
+    ErpCrmLeadFunnel:
+      id: ID
+      orgId: Organization
+      funnelName: Funnel Name
+      periodStart: Period Start
+      periodEnd: Period End
+      territoryId: Territory
+      teamId: Team
+      sourceId: Source
+      totalLeadsAtTop: Total Leads At Top
+      totalOpportunities: Total Opportunities
+      totalWon: Total Won
+      totalLost: Total Lost
+      totalRevenue: Total Revenue
+      lostRevenue: Lost Revenue
+      weightedRevenue: Weighted Revenue
+      avgDealSize: Avg Deal Size
+      avgSalesCycleDays: Avg Sales Cycle Days
+      calculatedAt: Calculated At
+      calculatedBy: Calculated By
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+      territory: Territory
+      team: Team
+      source: Source
+    ErpCrmLeadScore:
+      id: ID
+      leadId: Lead
+      orgId: Organization
+      configId: Config
+      totalScore: Total Score
+      scoreBreakdown: Score Breakdown
+      autoQualified: Auto Qualified
+      triggeredAction: Triggered Action
+      triggeredAction_label: null
+      calculatedAt: Calculated At
+      triggerEvent: Trigger Event
+      triggerEvent_label: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      lead: Lead
+      config: Config
+      org: Org
+    ErpCrmLeadScoreConfig:
+      id: ID
+      code: Code
+      orgId: Organization
+      configName: Config Name
+      isActive: Is Active
+      effectiveFrom: Effective From
+      effectiveTo: Effective To
+      autoQualifyThreshold: Auto Qualify Threshold
+      minScoreForFollowUp: Min Score For Follow Up
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+    ErpCrmLeadScoreConfigLine:
+      id: ID
+      configId: Config
+      orgId: Organization
+      criterionCode: Criterion Code
+      criterionName: Criterion Name
+      weight: Weight
+      scoringMethod: Scoring Method
+      scoringMethod_label: null
+      lookupTable: Lookup Table
+      formula: Formula
+      maxScore: Max Score
+      sequence: Sequence
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      config: Config
+      org: Org
+    ErpCrmLeadScoreLine:
+      id: ID
+      scoreId: Score
+      orgId: Organization
+      configLineId: Config Line
+      criterionCode: Criterion Code
+      criterionName: Criterion Name
+      rawValue: Raw Value
+      lookupValue: Lookup Value
+      rawScore: Raw Score
+      weightedScore: Weighted Score
+      sequence: Sequence
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      score: Score
+      configLine: Config Line
+      org: Org
+    ErpCrmLeadSequenceProgress:
+      id: ID
+      leadId: Lead
+      sequenceId: Sequence
+      orgId: Organization
+      currentStepIndex: Current Step Index
+      status: Status
+      status_label: null
+      startedAt: Started At
+      completedAt: Completed At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      lead: Lead
+      sequence: Sequence
+      org: Org
+    ErpCrmLeadStatus:
+      id: ID
+      code: Code
+      name: Name
+      sequence: Sequence
+      isDefault: Is Default
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+    ErpCrmLostReason:
+      id: ID
+      code: Code
+      name: Name
+      sequence: Sequence
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+    ErpCrmPriceRule:
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      ruleType: Rule Type
+      ruleType_label: null
+      priority: Priority
+      productId: Product
+      productCategory: Product Category
+      customerId: Customer
+      customerCategory: Customer Category
+      minQuantity: Min Quantity
+      maxQuantity: Max Quantity
+      priceOverride: Price Override
+      discountPercent: Discount Percent
+      discountAmount: Discount Amount
+      currencyId: Currency
+      effectiveFrom: Effective From
+      effectiveTo: Effective To
+      isActive: Is Active
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+    ErpCrmProductConfigurator:
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      productType: Product Type
+      configName: Config Name
+      wizardLayout: Wizard Layout
+      isActive: Is Active
+      effectiveFrom: Effective From
+      effectiveTo: Effective To
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+    ErpCrmQuota:
+      id: ID
+      orgId: Organization
+      territoryId: Territory
+      teamId: Team
+      ownerId: Owner
+      periodType: Period Type
+      periodType_label: null
+      fiscalYear: Fiscal Year
+      periodLabel: Period Label
+      quotaAmount: Quota Amount
+      currencyId: Currency
+      isFinalized: Is Finalized
+      notes: Notes
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      territory: Territory
+      team: Team
+      owner: Owner
+      org: Org
+    ErpCrmQuoteTemplate:
+      id: ID
+      code: Code
+      name: Name
+      templateContent: Template Content
+      isDefault: Is Default
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+    ErpCrmSequence:
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      templateType: Template Type
+      templateType_label: null
+      description: Description
+      expectedDuration: Expected Duration
+      isActive: Is Active
+      isDefault: Is Default
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+    ErpCrmSequenceAssignment:
+      id: ID
+      orgId: Organization
+      sequenceId: Sequence
+      priority: Priority
+      conditionType: Condition Type
+      conditionType_label: null
+      conditionValue: Condition Value
+      isActive: Is Active
+      isDefault: Is Default
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      sequence: Sequence
+      org: Org
+    ErpCrmSequenceStep:
+      id: ID
+      sequenceId: Sequence
+      orgId: Organization
+      stepName: Step Name
+      stepOrder: Step Order
+      dueDays: Due Days
+      activityType: Activity Type
+      activityType_label: null
+      stepDescription: Step Description
+      completionCondition: Completion Condition
+      completionCondition_label: null
+      isMandatory: Is Mandatory
+      autoCreateEvent: Auto Create Event
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      sequence: Sequence
+      org: Org
+    ErpCrmSource:
+      id: ID
+      code: Code
+      name: Name
+      sequence: Sequence
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+    ErpCrmStage:
+      id: ID
+      code: Code
+      orgId: Organization
+      stageName: Stage Name
+      sequence: Sequence
+      teamId: Team
+      defaultProbability: Default Probability
+      isWonStage: Is Won Stage
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      team: Team
+      org: Org
+    ErpCrmTeam:
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      teamLeaderId: Team Leader
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+    ErpCrmTerritory:
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      parentId: Parent
+      territoryType: Territory Type
+      territoryType_label: null
+      managerId: Manager
+      description: Description
+      fullPath: Full Path
+      level: Level
+      isActive: Is Active
+      isLeaf: Is Leaf
+      sortOrder: Sort Order
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      parent: Parent
+      manager: Manager
+      org: Org
+    ErpCrmTerritoryAssignmentRule:
+      id: ID
+      orgId: Organization
+      ruleName: Rule Name
+      priority: Priority
+      territoryId: Territory
+      conditionType: Condition Type
+      conditionType_label: null
+      conditionValue: Condition Value
+      assignmentMethod: Assignment Method
+      assignmentMethod_label: null
+      groupId: Team
+      isDefault: Is Default
+      isActive: Is Active
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      territory: Territory
+      team: Team
+      org: Org
+dict:
+  label:
+    erp-crm/lead-type: Lead/Opportunity Type
+    erp-crm/lead-doc-status: Lead Document Status
+    erp-crm/event-status: Event Status
+    erp-crm/event-priority: Event Priority
+    erp-crm/activity-type: Activity Type
+    erp-crm/event-type: Event Type
+    erp-crm/scoring-method: Scoring Method
+    erp-crm/scoring-trigger-event: Scoring Trigger Event
+    erp-crm/scoring-triggered-action: Scoring Triggered Action
+    erp-crm/forecast-period-type: Forecast Period Type
+    erp-crm/forecast-period-status: Forecast Period Status
+    erp-crm/forecast-category: Forecast Category
+    erp-crm/territory-type: Territory Type
+    erp-crm/assignment-condition-type: Assignment Condition Type
+    erp-crm/assignment-method: Assignment Method
+    erp-crm/quota-period-type: Quota Period Type
+    erp-crm/config-rule-type: Config Rule Type
+    erp-crm/price-rule-type: Price Rule Type
+    erp-crm/bundle-discount-type: Bundle Discount Type
+    erp-crm/sequence-template-type: Sequence Template Type
+    erp-crm/step-completion-condition: Step Completion Condition
+    erp-crm/sequence-progress-status: Sequence Progress Status
+    erp-crm/seq-assignment-condition-type: Seq Assignment Condition Type
+dict.option.label:
+  erp-crm/lead-type:
+    LEAD: Lead
+    OPPORTUNITY: Opportunity
+  erp-crm/lead-doc-status:
+    NEW: New
+    QUALIFIED: Qualified
+    CONVERTED: Converted
+    LOST: Lost
+    CANCELLED: Cancelled
+  erp-crm/event-status:
+    PLANNED: Planned
+    COMPLETED: Completed
+    CANCELLED: Cancelled
+  erp-crm/event-priority:
+    LOW: Low
+    NORMAL: Normal
+    HIGH: High
+    URGENT: Urgent
+  erp-crm/activity-type:
+    NOTE: Note
+    CALL: Call
+    EMAIL: Email
+    MEETING: Meeting
+  erp-crm/event-type:
+    CALL: Call
+    EMAIL: Email
+    MEETING: Meeting
+    TASK: Task
+  erp-crm/scoring-method:
+    LOOKUP: Lookup
+    FORMULA: Formula
+    BOOLEAN: Boolean
+  erp-crm/scoring-trigger-event:
+    MANUAL: Manual
+    LEAD_UPDATE: Lead Update
+    SCHEDULED: Scheduled
+  erp-crm/scoring-triggered-action:
+    NONE: None
+    AUTO_QUALIFY: Auto Qualify
+    NOTIFY_OWNER: Notify Owner
+  erp-crm/forecast-period-type:
+    MONTHLY: Monthly
+    QUARTERLY: Quarterly
+    ANNUAL: Annual
+  erp-crm/forecast-period-status:
+    OPEN: Open
+    CLOSED: Closed
+    FROZEN: Frozen
+  erp-crm/forecast-category:
+    COMMIT: Commit
+    UPSIDE: Upside
+    BEST_CASE: Best Case
+  erp-crm/territory-type:
+    REGION: Region
+    AREA: Area
+    BRANCH: Branch
+    TEAM: Team
+  erp-crm/assignment-condition-type:
+    GEOGRAPHY: Geography
+    INDUSTRY: Industry
+    CUSTOMER_SIZE: Customer Size
+    CUSTOM_FIELD: Custom Field
+  erp-crm/assignment-method:
+    ROUND_ROBIN: Round Robin
+    LOAD_BALANCED: Load Balanced
+    MANUAL: Manual
+  erp-crm/quota-period-type:
+    ANNUAL: Annual
+    QUARTERLY: Quarterly
+    MONTHLY: Monthly
+  erp-crm/config-rule-type:
+    REQUIRED: Required
+    OPTIONAL: Optional
+    EXCLUDED: Excluded
+    RECOMMENDED: Recommended
+  erp-crm/price-rule-type:
+    VOLUME: Volume Discount
+    PROMOTIONAL: Promotional Pricing
+    CUSTOMER_SPECIFIC: Customer Specific
+  erp-crm/bundle-discount-type:
+    PERCENTAGE: Percentage
+    FIXED: Fixed Amount
+  erp-crm/sequence-template-type:
+    NEW_LEAD: New Lead
+    QUALIFICATION: Qualification
+    NEGOTIATION: Negotiation
+    RE_ENGAGEMENT: Re-engagement
+  erp-crm/step-completion-condition:
+    CALL_COMPLETED: Call Completed
+    EMAIL_OPENED: Email Opened
+    EMAIL_REPLIED: Email Replied
+    MEETING_HELD: Meeting Held
+    TASK_DONE: Task Done
+  erp-crm/sequence-progress-status:
+    IN_PROGRESS: In Progress
+    COMPLETED: Completed
+    SKIPPED: Skipped
+  erp-crm/seq-assignment-condition-type:
+    LEAD_SOURCE: By Lead Source
+    TERRITORY: By Territory
+    PRODUCT_LINE: By Product Line
+    CUSTOM_FIELD: By Custom Field

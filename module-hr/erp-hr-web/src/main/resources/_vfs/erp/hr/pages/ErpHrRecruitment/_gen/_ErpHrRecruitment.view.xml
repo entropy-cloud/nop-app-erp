@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:schema="/nop/schema/xui/xview.xdef" bizObjName="ErpHrRecruitment" xmlns:i18n-en="i18n-en"
+      xmlns:x="/nop/schema/xdsl.xdef" xmlns:j="j" xmlns:c="c" xmlns:gql="gql" xmlns:view-gen="view-gen" xmlns:xpl="xpl">
+
+    <objMeta>/erp/hr/model/ErpHrRecruitment/ErpHrRecruitment.xmeta</objMeta>
+
+    <controlLib>/nop/web/xlib/control.xlib</controlLib>
+
+    <x:gen-extends>
+        <view-gen:DefaultViewGenExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <view-gen:DefaultViewPostExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:post-extends>
+
+    <grids>
+        <grid id="list" x:abstract="true">
+            <cols>
+
+                <!--ID-->
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--编号-->
+                <col id="code" mandatory="true" sortable="true"/>
+
+                <!--招聘职位-->
+                <col id="positionId" ui:number="true" sortable="true"/>
+
+                <!--招聘部门-->
+                <col id="departmentId" ui:number="true" sortable="true"/>
+
+                <!--招聘人数-->
+                <col id="headcount" ui:number="true" sortable="true"/>
+
+                <!--应聘者姓名-->
+                <col id="candidateName" mandatory="true" sortable="true"/>
+
+                <!--联系电话-->
+                <col id="candidatePhone" sortable="true"/>
+
+                <!--电子邮箱-->
+                <col id="candidateEmail" sortable="true"/>
+
+                <!--来源-->
+                <col id="source" ui:number="true" sortable="true"/>
+
+                <!--简历附件-->
+                <col id="resumeAttachmentId" ui:number="true" sortable="true"/>
+
+                <!--状态-->
+                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--面试官-->
+                <col id="interviewerId" ui:number="true" sortable="true"/>
+
+                <!--面试日期-->
+                <col id="interviewDate" sortable="true"/>
+
+                <!--Offer薪资-->
+                <col id="offerSalary" ui:number="true" sortable="true"/>
+
+                <!--入职日期-->
+                <col id="hiredDate" sortable="true"/>
+
+                <!--关联员工-->
+                <col id="employeeId" ui:number="true" sortable="true"/>
+
+                <!--业务组织-->
+                <col id="orgId" ui:number="true" sortable="true"/>
+
+                <!--备注-->
+                <col id="remark" sortable="true"/>
+
+                <!--逻辑删除版本-->
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--创建人-->
+                <col id="createdBy" mandatory="true" sortable="true"/>
+
+                <!--创建时间-->
+                <col id="createTime" mandatory="true" sortable="true"/>
+
+                <!--修改人-->
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+
+                <!--修改时间-->
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list" x:prototype="list" x:abstract="true"/>
+    </grids>
+
+    <forms>
+        <form id="view" editMode="view" title="查看-招聘记录" i18n-en:title="View Recruitment">
+            <layout>
+ id[ID] code[编号]
+ positionId[招聘职位] departmentId[招聘部门]
+ headcount[招聘人数] candidateName[应聘者姓名]
+ candidatePhone[联系电话] candidateEmail[电子邮箱]
+ source[来源] resumeAttachmentId[简历附件]
+ status[状态] interviewerId[面试官]
+ interviewDate[面试日期] offerSalary[Offer薪资]
+ hiredDate[入职日期] employeeId[关联员工]
+ orgId[业务组织] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
+</layout>
+        </form>
+        <form id="add" editMode="add" title="新增-招聘记录" i18n-en:title="Add Recruitment">
+            <layout>
+ id[ID] code[编号]
+ positionId[招聘职位] departmentId[招聘部门]
+ headcount[招聘人数] candidateName[应聘者姓名]
+ candidatePhone[联系电话] candidateEmail[电子邮箱]
+ source[来源] resumeAttachmentId[简历附件]
+ status[状态] interviewerId[面试官]
+ interviewDate[面试日期] offerSalary[Offer薪资]
+ hiredDate[入职日期] employeeId[关联员工]
+ orgId[业务组织] remark[备注]
+</layout>
+        </form>
+        <form id="edit" editMode="edit" title="编辑-招聘记录" i18n-en:title="Edit Recruitment">
+            <layout>
+ id[ID] code[编号]
+ positionId[招聘职位] departmentId[招聘部门]
+ headcount[招聘人数] candidateName[应聘者姓名]
+ candidatePhone[联系电话] candidateEmail[电子邮箱]
+ source[来源] resumeAttachmentId[简历附件]
+ status[状态] interviewerId[面试官]
+ interviewDate[面试日期] offerSalary[Offer薪资]
+ hiredDate[入职日期] employeeId[关联员工]
+ orgId[业务组织] remark[备注]
+ delVersion[逻辑删除版本] 
+</layout>
+        </form>
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-招聘记录" i18n-en:title="Update Recruitment"/>
+    </forms>
+
+    <pages>
+        <crud name="view-list" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpHrRecruitment__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </crud>
+        <crud name="main" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpHrRecruitment__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+            <listActions>
+                <action id="batch-delete-button" label="@i18n:common.batchDelete" batch="true">
+                    <api url="@mutation:ErpHrRecruitment__batchDelete?ids=$ids"/>
+                    <confirmText>@i18n:common.confirmBatchDelete</confirmText>
+                </action>
+                <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
+                    <dialog page="add"/>
+                </action>
+            </listActions>
+            <rowActions>
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+                <action id="row-update-button" level="primary" label="@i18n:common.edit" x:abstract="true">
+                    <dialog page="update"/>
+                </action>
+                <action id="row-delete-button" level="danger" label="@i18n:common.delete" x:abstract="true">
+                    <api url="@mutation:ErpHrRecruitment__delete?id=$id"/>
+                    <confirmText>@i18n:common.confirmDelete</confirmText>
+                </action>
+                <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
+                    <action id="row-update-button" label="@i18n:common.edit">
+                        <dialog page="update"/>
+                    </action>
+                    <action id="row-delete-button" label="@i18n:common.delete">
+                        <api url="@mutation:ErpHrRecruitment__delete?id=$id"/>
+                        <confirmText>@i18n:common.confirmDelete</confirmText>
+                    </action>
+                </actionGroup>
+            </rowActions>
+        </crud>
+        <picker name="picker" grid="pick-list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table noOperations="true">
+                <api url="@query:ErpHrRecruitment__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </picker>
+        <simple name="add" form="add">
+            <api url="@mutation:ErpHrRecruitment__save/id"/>
+        </simple>
+        <simple name="view" form="view">
+            <initApi url="@query:ErpHrRecruitment__get?id=$id" gql:selection="{@formSelection}"/>
+        </simple>
+        <simple name="update" form="edit">
+            <initApi url="@query:ErpHrRecruitment__get?id=$id" gql:selection="{@formSelection}"/>
+            <api url="@mutation:ErpHrRecruitment__update/id?id=$id" withFormData="true"/>
+        </simple>
+    </pages>
+</view>

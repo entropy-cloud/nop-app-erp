@@ -1,0 +1,27 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 审批状态
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 等待中
+    value: 10
+    description: 
+  
+  - label: 待审批
+    value: 20
+    description: 
+  
+  - label: 已通过
+    value: 30
+    description: 
+  
+  - label: 已驳回
+    value: 40
+    description: 
+  
+  - label: 已跳过
+    value: 50
+    description: 
+  

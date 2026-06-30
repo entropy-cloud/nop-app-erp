@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
+
+    <site id="main">
+        <resource id="test-orm-erp-log" displayName="测试erp-log" i18n-en:displayName="Test erp-log" icon="truck"
+                  resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-log" component="layouts/default/index">
+            <children>
+                <resource id="ErpLogCarrier-main" displayName="承运商" orderNo="10001" i18n-en:displayName="Carrier"
+                          icon="truck" component="AMIS" resourceType="SUBM"
+                          url="/erp/log/pages/ErpLogCarrier/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpLogCarrier:query" displayName="查询承运商" i18n-en:displayName="Query Carrier"
+                                  orderNo="10002" resourceType="FNPT">
+                            <permissions>ErpLogCarrier:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpLogCarrier:mutation" displayName="修改承运商"
+                                  i18n-en:displayName="Modify Carrier" orderNo="10003" resourceType="FNPT">
+                            <permissions>ErpLogCarrier:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpLogCarrierConfig-main" displayName="承运商配置" orderNo="10004"
+                          i18n-en:displayName="Carrier Config" icon="settings" component="AMIS" resourceType="SUBM"
+                          url="/erp/log/pages/ErpLogCarrierConfig/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpLogCarrierConfig:query" displayName="查询承运商配置"
+                                  i18n-en:displayName="Query Carrier Config" orderNo="10005" resourceType="FNPT">
+                            <permissions>ErpLogCarrierConfig:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpLogCarrierConfig:mutation" displayName="修改承运商配置"
+                                  i18n-en:displayName="Modify Carrier Config" orderNo="10006" resourceType="FNPT">
+                            <permissions>ErpLogCarrierConfig:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpLogDeliveryWindow-main" displayName="配送时间窗口" orderNo="10007"
+                          i18n-en:displayName="Delivery Window" icon="clock" component="AMIS" resourceType="SUBM"
+                          url="/erp/log/pages/ErpLogDeliveryWindow/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpLogDeliveryWindow:query" displayName="查询配送时间窗口"
+                                  i18n-en:displayName="Query Delivery Window" orderNo="10008" resourceType="FNPT">
+                            <permissions>ErpLogDeliveryWindow:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpLogDeliveryWindow:mutation" displayName="修改配送时间窗口"
+                                  i18n-en:displayName="Modify Delivery Window" orderNo="10009" resourceType="FNPT">
+                            <permissions>ErpLogDeliveryWindow:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpLogShipment-main" displayName="发运单" orderNo="10010" i18n-en:displayName="Shipment"
+                          icon="package" component="AMIS" resourceType="SUBM"
+                          url="/erp/log/pages/ErpLogShipment/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpLogShipment:query" displayName="查询发运单"
+                                  i18n-en:displayName="Query Shipment" orderNo="10011" resourceType="FNPT">
+                            <permissions>ErpLogShipment:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpLogShipment:mutation" displayName="修改发运单"
+                                  i18n-en:displayName="Modify Shipment" orderNo="10012" resourceType="FNPT">
+                            <permissions>ErpLogShipment:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpLogShipmentLine-main" displayName="发运明细" orderNo="10013"
+                          i18n-en:displayName="Shipment Line" icon="list" component="AMIS" resourceType="SUBM"
+                          url="/erp/log/pages/ErpLogShipmentLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpLogShipmentLine:query" displayName="查询发运明细"
+                                  i18n-en:displayName="Query Shipment Line" orderNo="10014" resourceType="FNPT">
+                            <permissions>ErpLogShipmentLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpLogShipmentLine:mutation" displayName="修改发运明细"
+                                  i18n-en:displayName="Modify Shipment Line" orderNo="10015" resourceType="FNPT">
+                            <permissions>ErpLogShipmentLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpLogShipmentLog-main" displayName="网关交互日志" orderNo="10016"
+                          i18n-en:displayName="Shipment Log" icon="file-text" component="AMIS" resourceType="SUBM"
+                          url="/erp/log/pages/ErpLogShipmentLog/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpLogShipmentLog:query" displayName="查询网关交互日志"
+                                  i18n-en:displayName="Query Shipment Log" orderNo="10017" resourceType="FNPT">
+                            <permissions>ErpLogShipmentLog:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpLogShipmentLog:mutation" displayName="修改网关交互日志"
+                                  i18n-en:displayName="Modify Shipment Log" orderNo="10018" resourceType="FNPT">
+                            <permissions>ErpLogShipmentLog:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpLogShipmentParcel-main" displayName="包裹" orderNo="10019"
+                          i18n-en:displayName="Shipment Parcel" icon="package" component="AMIS" resourceType="SUBM"
+                          url="/erp/log/pages/ErpLogShipmentParcel/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpLogShipmentParcel:query" displayName="查询包裹"
+                                  i18n-en:displayName="Query Shipment Parcel" orderNo="10020" resourceType="FNPT">
+                            <permissions>ErpLogShipmentParcel:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpLogShipmentParcel:mutation" displayName="修改包裹"
+                                  i18n-en:displayName="Modify Shipment Parcel" orderNo="10021" resourceType="FNPT">
+                            <permissions>ErpLogShipmentParcel:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
+</auth>

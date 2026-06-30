@@ -193,6 +193,8 @@ CREATE TABLE erp_md_subject(
   IS_AUXILIARY_PROJECT BOOLEAN default 0  NULL    COMMENT '辅助-项目',
   IS_AUXILIARY_WAREHOUSE BOOLEAN default 0  NULL    COMMENT '辅助-仓库',
   IS_AUXILIARY_PRODUCT BOOLEAN default 0  NULL    COMMENT '辅助-物料',
+  IS_AUXILIARY_COST_CENTER BOOLEAN default 0  NULL    COMMENT '辅助-成本中心',
+  IS_BUDGETABLE BOOLEAN default 0  NULL    COMMENT '是否预算控制',
   IS_LEAF BOOLEAN default 1  NULL    COMMENT '是否明细科目',
   STATUS INTEGER NOT NULL    COMMENT '状态',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
@@ -261,6 +263,21 @@ CREATE TABLE erp_md_acct_schema(
   constraint PK_erp_md_acct_schema primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_sys_config(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CONFIG_KEY VARCHAR(200) NOT NULL    COMMENT '配置键',
+  CONFIG_VALUE VARCHAR(2000) NOT NULL    COMMENT '配置值',
+  ORG_ID BIGINT NULL    COMMENT '所属组织',
+  DESCRIPTION VARCHAR(500) NULL    COMMENT '说明',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_sys_config primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_md_warehouse(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '编码',
@@ -277,7 +294,27 @@ CREATE TABLE erp_md_warehouse(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  BATCH_SELECTION_STRATEGY VARCHAR(20) NULL    COMMENT '批次选择策略',
   constraint PK_erp_md_warehouse primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_cost_center(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '编码',
+  NAME VARCHAR(200) NOT NULL    COMMENT '名称',
+  ORG_ID BIGINT NOT NULL    COMMENT '所属组织',
+  MANAGER_ID BIGINT NULL    COMMENT '负责人',
+  PARENT_ID BIGINT NULL    COMMENT '上级成本中心',
+  IS_BUDGETABLE BOOLEAN default 0  NULL    COMMENT '是否预算管控',
+  STATUS INTEGER NOT NULL    COMMENT '状态',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  constraint PK_erp_md_cost_center primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_md_acct_schema_coa(
@@ -405,7 +442,11 @@ CREATE TABLE erp_md_uom_conversion(
                 
    ALTER TABLE erp_md_acct_schema COMMENT '会计核算表(账套)';
                 
+   ALTER TABLE erp_sys_config COMMENT '系统配置';
+                
    ALTER TABLE erp_md_warehouse COMMENT '仓库';
+                
+   ALTER TABLE erp_md_cost_center COMMENT '成本中心';
                 
    ALTER TABLE erp_md_acct_schema_coa COMMENT '账套科目表';
                 

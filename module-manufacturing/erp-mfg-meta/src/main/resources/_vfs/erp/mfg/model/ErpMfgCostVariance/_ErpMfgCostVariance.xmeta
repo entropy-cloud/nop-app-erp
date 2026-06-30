@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="bar-chart-2" xmlns:c="c" xmlns:graphql="graphql"
+      xmlns:meta-gen="meta-gen" xmlns:biz="biz" displayName="成本差异记录" i18n-en:displayName="Cost Variance"
+      tagSet="gid,erp.manufacturing" xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.mfg.dao.entity.ErpMfgCostVariance</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="workOrderId" displayName="工单" propId="2" i18n-en:displayName="Work Order" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="workOrder">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="lineNo" displayName="行号" propId="3" i18n-en:displayName="Line No" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="varianceType" displayName="差异类型" propId="4" i18n-en:displayName="Variance Type" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="costElement" displayName="成本要素" propId="5" i18n-en:displayName="Cost Element" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="materialId" displayName="物料" propId="6" i18n-en:displayName="Material" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="material">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="operationId" displayName="工序" propId="7" i18n-en:displayName="Operation" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="standardAmount" displayName="标准金额" propId="8" i18n-en:displayName="Standard Amount" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="actualAmount" displayName="实际金额" propId="9" i18n-en:displayName="Actual Amount" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="varianceAmount" displayName="差异金额" propId="10" i18n-en:displayName="Variance Amount"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="variancePercent" displayName="差异百分比" propId="11" i18n-en:displayName="Variance Percent"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="rate" type="java.lang.String" precision="10" scale="4"/>
+        </prop>
+        <prop name="standardQty" displayName="标准数量" propId="12" i18n-en:displayName="Standard Qty" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="actualQty" displayName="实际数量" propId="13" i18n-en:displayName="Actual Qty" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="standardPrice" displayName="标准单价" propId="14" i18n-en:displayName="Standard Price" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="unitPrice" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="actualPrice" displayName="实际单价" propId="15" i18n-en:displayName="Actual Price" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="unitPrice" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="workcenterId" displayName="工作中心" propId="16" i18n-en:displayName="Workcenter" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="workcenter">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="businessDate" displayName="业务日期" propId="17" i18n-en:displayName="Business Date" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="posted" displayName="已过账" propId="18" i18n-en:displayName="Posted" queryable="true" sortable="true"
+              insertable="true" updatable="true" defaultValue="false">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="19" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="20" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="21" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="22" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="23" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="24" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="25" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="workOrder" i18n-en:displayName="Work Order" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="workOrderId" ext:joinRightProp="id" insertable="false"
+              updatable="false" mandatory="true" lazy="true">
+            <schema bizObjName="ErpMfgWorkOrder"/>
+        </prop>
+        <prop name="material" i18n-en:displayName="Material" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="materialId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdMaterial"/>
+        </prop>
+        <prop name="workcenter" i18n-en:displayName="Workcenter" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="workcenterId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpMfgWorkcenter"/>
+        </prop>
+    </props>
+</meta>

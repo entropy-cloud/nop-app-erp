@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 预测分类
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 承诺
+    value: COMMIT
+    description: 
+  
+  - label: 乐观
+    value: UPSIDE
+    description: 
+  
+  - label: 最佳
+    value: BEST_CASE
+    description: 
+  

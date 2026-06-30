@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 调换状态
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 待审批
+    value: 10
+    description: 
+  
+  - label: 已批准
+    value: 20
+    description: 
+  
+  - label: 已驳回
+    value: 30
+    description: 
+  
+  - label: 已取消
+    value: 40
+    description: 
+  

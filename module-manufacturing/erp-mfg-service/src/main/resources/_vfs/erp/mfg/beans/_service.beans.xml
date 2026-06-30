@@ -132,6 +132,14 @@
         <property name="bizObjName" value="ErpMfgJobCard"/>
     </bean>
 
+    <bean id="app.erp.mfg.service.entity.ErpMfgCostVarianceBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgCostVariance" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgCostVarianceBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMfgCostVariance"/>
+    </bean>
+
     <bean id="app.erp.mfg.service.entity.ErpMfgSubcontractOrderLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpMfgSubcontractOrderLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -154,6 +162,14 @@
           ioc:type="app.erp.mfg.biz.IErpMfgJobCardTimeLogBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
         <property name="bizObjName" value="ErpMfgJobCardTimeLog"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgBatchGenealogyBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgBatchGenealogy" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgBatchGenealogyBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMfgBatchGenealogy"/>
     </bean>
 
     <bean id="app.erp.mfg.service.entity.ErpMfgMaterialIssueLineBizModel" ioc:type="@bean:id" ioc:default="true"/>

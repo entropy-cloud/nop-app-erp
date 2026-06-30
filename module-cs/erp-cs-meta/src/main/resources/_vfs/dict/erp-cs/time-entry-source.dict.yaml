@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 计时来源
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 手动录入
+    value: 10
+    description: 
+  
+  - label: 计时器导入
+    value: 20
+    description: 
+  

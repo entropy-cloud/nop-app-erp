@@ -1,0 +1,34 @@
+site:
+  resource:
+    ErpB2bAsn-main:
+      displayName: Advanced Shipping Notice
+    ErpB2bAsnLine-main:
+      displayName: ASN Line
+    ErpB2bCodeMapping-main:
+      displayName: Code Mapping
+    ErpB2bEdiDoc-main:
+      displayName: EDI Document
+    ErpB2bEdiFormat-main:
+      displayName: EDI Format
+    ErpB2bEdiLog-main:
+      displayName: EDI Log
+    ErpB2bMftCertificate-main:
+      displayName: MFT Certificate
+    ErpB2bMftConfig-main:
+      displayName: MFT Config
+    ErpB2bMftLog-main:
+      displayName: MFT Log
+    ErpB2bPartnerProfile-main:
+      displayName: Partner Profile
+    b2b-asn:
+      displayName: ASN Management
+    b2b-edi:
+      displayName: EDI Management
+    b2b-mapping:
+      displayName: Mappings & Logs
+    b2b-mft:
+      displayName: MFT Configuration
+    b2b-partner:
+      displayName: Partner Management
+    erp-b2b:
+      displayName: B2B Integration

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="upload-cloud" xmlns:c="c" xmlns:graphql="graphql"
+      xmlns:meta-gen="meta-gen" xmlns:biz="biz" displayName="MFT 配置" i18n-en:displayName="MFT Config"
+      tagSet="gid,erp.b2b" xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.b2b.dao.entity.ErpB2bMftConfig</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="orgId" displayName="业务组织" propId="2" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="partnerId" displayName="合作伙伴" propId="3" i18n-en:displayName="Partner" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="partner">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="protocol" displayName="传输协议" propId="4" i18n-en:displayName="Protocol" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="transportEndpoint" displayName="传输端点" propId="5" i18n-en:displayName="Transport Endpoint"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="500"/>
+        </prop>
+        <prop name="localAs2Id" displayName="本地AS2 ID" propId="6" i18n-en:displayName="Local AS2 ID" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="remoteAs2Id" displayName="对方AS2 ID" propId="7" i18n-en:displayName="Remote AS2 ID" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="sftpUsername" displayName="SFTP用户名" propId="8" i18n-en:displayName="SFTP Username" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="sftpPort" displayName="SFTP端口" propId="9" i18n-en:displayName="SFTP Port" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="22">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="ftpsPort" displayName="FTPS端口" propId="10" i18n-en:displayName="FTPS Port" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="990">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="ftpsImplicitTls" displayName="隐式TLS" propId="11" i18n-en:displayName="Implicit TLS" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="true">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="compression" displayName="启用压缩" propId="12" i18n-en:displayName="Compression" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="false">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="encryption" displayName="启用加密" propId="13" i18n-en:displayName="Encryption" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="false">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="encryptionAlgo" displayName="加密算法" propId="14" i18n-en:displayName="Encryption Algorithm"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="signature" displayName="启用签名" propId="15" i18n-en:displayName="Signature" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="false">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="signatureAlgo" displayName="签名算法" propId="16" i18n-en:displayName="Signature Algorithm"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="certId" displayName="关联证书" propId="17" i18n-en:displayName="Certificate" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="active" displayName="启用" propId="18" i18n-en:displayName="Active" queryable="true" sortable="true"
+              insertable="true" updatable="true" defaultValue="true">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="maxRetries" displayName="最大重试次数" propId="19" i18n-en:displayName="Max Retries" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="3">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="retryIntervalMin" displayName="重试间隔(分钟)" propId="20" i18n-en:displayName="Retry Interval Min"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="15">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="deadLetterEnabled" displayName="启用死信队列" propId="21" i18n-en:displayName="Dead Letter Enabled"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="true">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="monitorDirectory" displayName="监控目录" propId="22" i18n-en:displayName="Monitor Directory"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="500"/>
+        </prop>
+        <prop name="monitorIntervalSec" displayName="监控间隔(秒)" propId="23" i18n-en:displayName="Monitor Interval Sec"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="60">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="24" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="25" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="26" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="27" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="28" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="29" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="30" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="partner" i18n-en:displayName="Partner" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="partnerId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
+            <schema bizObjName="ErpMdPartner"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+    </props>
+</meta>

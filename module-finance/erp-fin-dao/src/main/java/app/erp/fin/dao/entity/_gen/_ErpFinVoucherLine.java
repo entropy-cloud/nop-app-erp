@@ -109,32 +109,36 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
     public static final String PROP_NAME_businessType = "businessType";
     public static final int PROP_ID_businessType = 22;
     
+    /* 成本中心: COST_CENTER_ID BIGINT */
+    public static final String PROP_NAME_costCenterId = "costCenterId";
+    public static final int PROP_ID_costCenterId = 23;
+    
     /* 逻辑删除版本: DEL_VERSION BIGINT */
     public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 23;
+    public static final int PROP_ID_delVersion = 24;
     
     /* 数据版本: VERSION INTEGER */
     public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 24;
+    public static final int PROP_ID_version = 25;
     
     /* 创建人: CREATED_BY VARCHAR */
     public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 25;
+    public static final int PROP_ID_createdBy = 26;
     
     /* 创建时间: CREATE_TIME TIMESTAMP */
     public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 26;
+    public static final int PROP_ID_createTime = 27;
     
     /* 修改人: UPDATED_BY VARCHAR */
     public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 27;
+    public static final int PROP_ID_updatedBy = 28;
     
     /* 修改时间: UPDATE_TIME TIMESTAMP */
     public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 28;
+    public static final int PROP_ID_updateTime = 29;
     
 
-    private static int _PROP_ID_BOUND = 29;
+    private static int _PROP_ID_BOUND = 30;
 
     
     /* relation:  */
@@ -167,11 +171,14 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_project = "project";
     
+    /* relation:  */
+    public static final String PROP_NAME_costCenter = "costCenter";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[29];
+    private static final String[] PROP_ID_TO_NAME = new String[30];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -240,6 +247,9 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_businessType] = PROP_NAME_businessType;
           PROP_NAME_TO_ID.put(PROP_NAME_businessType, PROP_ID_businessType);
+      
+          PROP_ID_TO_NAME[PROP_ID_costCenterId] = PROP_NAME_costCenterId;
+          PROP_NAME_TO_ID.put(PROP_NAME_costCenterId, PROP_ID_costCenterId);
       
           PROP_ID_TO_NAME[PROP_ID_delVersion] = PROP_NAME_delVersion;
           PROP_NAME_TO_ID.put(PROP_NAME_delVersion, PROP_ID_delVersion);
@@ -327,6 +337,9 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
     
     /* 业务类型: BUSINESS_TYPE */
     private java.lang.Integer _businessType;
+    
+    /* 成本中心: COST_CENTER_ID */
+    private java.lang.Long _costCenterId;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -485,6 +498,9 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
         
             case PROP_ID_businessType:
                return getBusinessType();
+        
+            case PROP_ID_costCenterId:
+               return getCostCenterId();
         
             case PROP_ID_delVersion:
                return getDelVersion();
@@ -735,6 +751,16 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_costCenterId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_costCenterId));
+               }
+               setCostCenterId(typedValue);
+               break;
+            }
+        
             case PROP_ID_delVersion:{
                java.lang.Long typedValue = null;
                if(value != null){
@@ -954,6 +980,13 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
             case PROP_ID_businessType:{
                onInitProp(propId);
                this._businessType = (java.lang.Integer)value;
+               
+               break;
+            }
+        
+            case PROP_ID_costCenterId:{
+               onInitProp(propId);
+               this._costCenterId = (java.lang.Long)value;
                
                break;
             }
@@ -1425,6 +1458,25 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
     }
     
     /**
+     * 成本中心: COST_CENTER_ID
+     */
+    public final java.lang.Long getCostCenterId(){
+         onPropGet(PROP_ID_costCenterId);
+         return _costCenterId;
+    }
+
+    /**
+     * 成本中心: COST_CENTER_ID
+     */
+    public final void setCostCenterId(java.lang.Long value){
+        if(onPropSet(PROP_ID_costCenterId,value)){
+            this._costCenterId = value;
+            internalClearRefs(PROP_ID_costCenterId);
+            
+        }
+    }
+    
+    /**
      * 逻辑删除版本: DEL_VERSION
      */
     public final java.lang.Long getDelVersion(){
@@ -1762,6 +1814,29 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_project, refEntity,()->{
            
                            this.setProjectId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdCostCenter getCostCenter(){
+       return (app.erp.md.dao.entity.ErpMdCostCenter)internalGetRefEntity(PROP_NAME_costCenter);
+    }
+
+    public final void setCostCenter(app.erp.md.dao.entity.ErpMdCostCenter refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCostCenterId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_costCenter, refEntity,()->{
+           
+                           this.setCostCenterId(refEntity.getId());
                        
            });
            }

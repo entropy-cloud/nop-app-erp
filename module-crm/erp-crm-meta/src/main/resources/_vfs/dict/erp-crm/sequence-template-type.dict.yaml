@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 序列模板类型
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 新线索跟进
+    value: NEW_LEAD
+    description: 
+  
+  - label: 验证跟进
+    value: QUALIFICATION
+    description: 
+  
+  - label: 谈判跟进
+    value: NEGOTIATION
+    description: 
+  
+  - label: 重新激活
+    value: RE_ENGAGEMENT
+    description: 
+  

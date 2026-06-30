@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 序列分配条件类型
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 按线索来源
+    value: LEAD_SOURCE
+    description: 
+  
+  - label: 按区域
+    value: TERRITORY
+    description: 
+  
+  - label: 按产品线
+    value: PRODUCT_LINE
+    description: 
+  
+  - label: 按自定义字段
+    value: CUSTOM_FIELD
+    description: 
+  

@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 预测期间类型
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 月度
+    value: MONTHLY
+    description: 
+  
+  - label: 季度
+    value: QUARTERLY
+    description: 
+  
+  - label: 年度
+    value: ANNUAL
+    description: 
+  

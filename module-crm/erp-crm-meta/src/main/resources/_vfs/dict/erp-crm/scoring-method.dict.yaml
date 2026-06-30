@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 评分方法
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 查表映射
+    value: LOOKUP
+    description: 
+  
+  - label: 公式计算
+    value: FORMULA
+    description: 
+  
+  - label: 是否匹配
+    value: BOOLEAN
+    description: 
+  

@@ -98,6 +98,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      businessDate: Business Date
       material: Material
       template: Template
       supplier: Supplier
@@ -304,6 +305,7 @@ dict.option.label:
     '10': Pending
     '20': Reviewing
     '30': Resolved
+    '35': Escalated to Recall
     '40': Cancelled
   erp-qa/action-type:
     '10': Correction

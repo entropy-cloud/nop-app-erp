@@ -19,6 +19,38 @@
         <property name="bizObjName" value="ErpDrpParameter"/>
     </bean>
 
+    <bean id="app.erp.drp.service.entity.ErpInvDrpSafetyStockCalcBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpInvDrpSafetyStockCalc" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.drp.biz.IErpInvDrpSafetyStockCalcBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpInvDrpSafetyStockCalc"/>
+    </bean>
+
+    <bean id="app.erp.drp.service.entity.ErpInvDrpCrossDockBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpInvDrpCrossDock" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.drp.biz.IErpInvDrpCrossDockBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpInvDrpCrossDock"/>
+    </bean>
+
+    <bean id="app.erp.drp.service.entity.ErpInvDrpDockAppointmentBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpInvDrpDockAppointment" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.drp.biz.IErpInvDrpDockAppointmentBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpInvDrpDockAppointment"/>
+    </bean>
+
+    <bean id="app.erp.drp.service.entity.ErpInvDrpLeadTimeRecordBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpInvDrpLeadTimeRecord" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.drp.biz.IErpInvDrpLeadTimeRecordBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpInvDrpLeadTimeRecord"/>
+    </bean>
+
     <bean id="app.erp.drp.service.entity.ErpDrpLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpDrpLine" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.drp.biz.IErpDrpLineBiz"

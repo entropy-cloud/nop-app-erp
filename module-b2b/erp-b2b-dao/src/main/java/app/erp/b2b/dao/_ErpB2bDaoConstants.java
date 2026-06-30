@@ -128,4 +128,109 @@ public interface _ErpB2bDaoConstants {
      */
     int MAPPING_TYPE_UOM = 30;
                     
+    /**
+     * 伙伴上线状态: 已注册 
+     */
+    int PARTNER_STATUS_REGISTERED = 10;
+                    
+    /**
+     * 伙伴上线状态: 测试中 
+     */
+    int PARTNER_STATUS_TESTING = 20;
+                    
+    /**
+     * 伙伴上线状态: 已认证 
+     */
+    int PARTNER_STATUS_CERTIFIED = 30;
+                    
+    /**
+     * 伙伴上线状态: 生产中 
+     */
+    int PARTNER_STATUS_PRODUCTION = 40;
+                    
+    /**
+     * 伙伴上线状态: 已暂停 
+     */
+    int PARTNER_STATUS_SUSPENDED = 50;
+                    
+    /**
+     * 伙伴上线状态: 已终止 
+     */
+    int PARTNER_STATUS_TERMINATED = 60;
+                    
+    /**
+     * 传输协议: AS2 
+     */
+    int PROTOCOL_AS2 = 10;
+                    
+    /**
+     * 传输协议: SFTP 
+     */
+    int PROTOCOL_SFTP = 20;
+                    
+    /**
+     * 传输协议: HTTP 
+     */
+    int PROTOCOL_HTTP = 30;
+                    
+    /**
+     * 传输协议: HTTPS 
+     */
+    int PROTOCOL_HTTPS = 40;
+                    
+    /**
+     * 传输协议: OFTP2 
+     */
+    int PROTOCOL_OFTP2 = 50;
+                    
+    /**
+     * 认证方式: HMAC 
+     */
+    int AUTH_METHOD_HMAC = 10;
+                    
+    /**
+     * 认证方式: Basic Auth 
+     */
+    int AUTH_METHOD_BASIC_AUTH = 20;
+                    
+    /**
+     * 认证方式: 证书 
+     */
+    int AUTH_METHOD_CERTIFICATE = 30;
+                    
+    /**
+     * 认证方式: OAuth2 
+     */
+    int AUTH_METHOD_OAUTH2 = 40;
+                    
+    /**
+     * 凭证类型: API Key 
+     */
+    int CREDENTIAL_TYPE_API_KEY = 10;
+                    
+    /**
+     * 凭证类型: 用户名密码 
+     */
+    int CREDENTIAL_TYPE_USERNAME_PASSWORD = 20;
+                    
+    /**
+     * 凭证类型: 证书 
+     */
+    int CREDENTIAL_TYPE_CERTIFICATE = 30;
+                    
+    /**
+     * 凭证类型: SSH Key 
+     */
+    int CREDENTIAL_TYPE_SSH_KEY = 40;
+                    
+    /**
+     * 测试方向: 出站 
+     */
+    int EXCHANGE_DIRECTION_OUTBOUND = 10;
+                    
+    /**
+     * 测试方向: 入站 
+     */
+    int EXCHANGE_DIRECTION_INBOUND = 20;
+                    
 }

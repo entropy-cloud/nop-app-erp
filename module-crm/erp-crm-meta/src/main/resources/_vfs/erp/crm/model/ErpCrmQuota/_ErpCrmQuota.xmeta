@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="target" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen"
+      xmlns:biz="biz" displayName="销售配额" i18n-en:displayName="Quota" tagSet="gid,erp.crm" xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.crm.dao.entity.ErpCrmQuota</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="orgId" displayName="业务组织" propId="2" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="territoryId" displayName="区域" propId="3" i18n-en:displayName="Territory" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="territory">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="teamId" displayName="团队" propId="4" i18n-en:displayName="Team" queryable="true" sortable="true"
+              insertable="true" updatable="true" ext:relation="team">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="ownerId" displayName="销售员" propId="5" i18n-en:displayName="Owner" queryable="true" sortable="true"
+              insertable="true" updatable="true" ext:relation="owner">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="periodType" displayName="配额期间类型" propId="6" i18n-en:displayName="Period Type" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-crm/quota-period-type"/>
+        </prop>
+        <prop name="fiscalYear" displayName="财年" propId="7" i18n-en:displayName="Fiscal Year" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="periodLabel" displayName="期间标签" propId="8" i18n-en:displayName="Period Label" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="quotaAmount" displayName="配额金额" propId="9" i18n-en:displayName="Quota Amount" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="currencyId" displayName="币种" propId="10" i18n-en:displayName="Currency" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="isFinalized" displayName="是否已定稿" propId="11" i18n-en:displayName="Is Finalized" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="false">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="notes" displayName="备注" propId="12" i18n-en:displayName="Notes" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="13" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="14" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="15" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="16" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="17" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="18" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="territory" i18n-en:displayName="Territory" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="territoryId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpCrmTerritory"/>
+        </prop>
+        <prop name="team" i18n-en:displayName="Team" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="teamId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpCrmTeam"/>
+        </prop>
+        <prop name="owner" i18n-en:displayName="Owner" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="ownerId" ext:joinRightProp="id" biz:moduleId="nop/auth" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="NopAuthUser"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+    </props>
+</meta>

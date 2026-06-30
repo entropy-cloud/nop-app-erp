@@ -68,4 +68,69 @@ public interface _ErpDrpDaoConstants {
      */
     int DRP_REPLENISHMENT_METHOD_LOT_FOR_LOT = 30;
                     
+    /**
+     * 安全库存计算方法: 标准差法 
+     */
+    int DRP_SS_METHOD_STATISTICAL = 10;
+                    
+    /**
+     * 安全库存计算方法: 简易法 
+     */
+    int DRP_SS_METHOD_SIMPLE = 20;
+                    
+    /**
+     * 安全库存计算方法: 需求驱动法 
+     */
+    int DRP_SS_METHOD_DDMRP = 30;
+                    
+    /**
+     * 服务水平: 95% 
+     */
+    int DRP_SERVICE_LEVEL_PCT95 = 10;
+                    
+    /**
+     * 服务水平: 97.5% 
+     */
+    int DRP_SERVICE_LEVEL_PCT97_5 = 20;
+                    
+    /**
+     * 服务水平: 99% 
+     */
+    int DRP_SERVICE_LEVEL_PCT99 = 30;
+                    
+    /**
+     * 服务水平: 99.5% 
+     */
+    int DRP_SERVICE_LEVEL_PCT99_5 = 40;
+                    
+    /**
+     * 越库状态: 待匹配 
+     */
+    int DRP_XDOCK_STATUS_PENDING = 10;
+                    
+    /**
+     * 越库状态: 已匹配 
+     */
+    int DRP_XDOCK_STATUS_MATCHED = 20;
+                    
+    /**
+     * 越库状态: 暂存中 
+     */
+    int DRP_XDOCK_STATUS_STAGING = 30;
+                    
+    /**
+     * 越库状态: 已装车 
+     */
+    int DRP_XDOCK_STATUS_LOADED = 40;
+                    
+    /**
+     * 越库状态: 已完成 
+     */
+    int DRP_XDOCK_STATUS_COMPLETED = 50;
+                    
+    /**
+     * 越库状态: 已取消 
+     */
+    int DRP_XDOCK_STATUS_CANCELLED = 60;
+                    
 }

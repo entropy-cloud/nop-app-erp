@@ -1,0 +1,318 @@
+entity:
+  label:
+    ErpB2bAsn: 提前发货通知
+    ErpB2bAsnLine: ASN 明细行
+    ErpB2bCertificationChecklist: 认证检查清单
+    ErpB2bCodeMapping: 内外代码映射
+    ErpB2bEdiDoc: EDI 事务
+    ErpB2bEdiFormat: EDI 格式配置
+    ErpB2bEdiLog: EDI 交互日志
+    ErpB2bMftCertificate: MFT 证书
+    ErpB2bMftConfig: MFT 配置
+    ErpB2bMftLog: MFT 传输日志
+    ErpB2bPartnerCredential: 伙伴凭证
+    ErpB2bPartnerProfile: 合作伙伴档案
+    ErpB2bTestExchange: 测试消息交换
+prop:
+  label:
+    ErpB2bAsn:
+      code: ASN 编码
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      estimatedArrivalDate: 预计到货日期
+      id: ID
+      lines: null
+      org: null
+      orgId: 业务组织
+      partner: null
+      partnerId: 发货方（供应商）
+      relatedBillCode: 关联采购订单号
+      relatedBillType: 关联采购订单类型
+      remark: 备注
+      shipmentDate: 发货日期
+      sourceEdiDoc: null
+      sourceEdiDocId: 来源 EDI 文档
+      status: 状态
+      status_label: 状态
+      trackingNo: 物流单号
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpB2bAsnLine:
+      asn: null
+      asnId: ASN ID
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      lineNo: 行号
+      material: null
+      materialId: 物料
+      quantity: 订单数量
+      remark: 备注
+      shippedQty: 发货数量
+      supplierPartNo: 供应商料号
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpB2bCertificationChecklist:
+      checkedAt: 检查时间
+      checkedBy: 检查人
+      checklistItem: 检查项
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      evidence: 检查证据
+      id: ID
+      isMandatory: 必检
+      isPassed: 通过
+      partnerProfile: null
+      partnerProfileId: 伙伴档案
+      remark: 备注
+      requiredDocType: 对应文档类型
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpB2bCodeMapping:
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      externalCode: 外部代码
+      id: ID
+      internalCode: 内部代码
+      mappingType: 映射类型
+      mappingType_label: 映射类型
+      org: null
+      orgId: 业务组织
+      partner: null
+      partnerId: Trading Partner
+      remark: 备注
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpB2bEdiDoc:
+      acknowledgedAt: 确认时间
+      attachmentId: 附件（EDI 报文文件）
+      blockingLevel: 阻断级别
+      blockingLevel_label: 阻断级别
+      code: 事务编码
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      error: 错误信息
+      format: null
+      formatId: EDI 格式
+      id: ID
+      org: null
+      orgId: 业务组织
+      relatedBillCode: 关联单据号
+      relatedBillType: 关联单据类型
+      remark: 备注
+      retryCount: 重试次数
+      sentAt: 发送时间
+      state: 状态
+      state_label: 状态
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpB2bEdiFormat:
+      code: 编码
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      direction: 方向
+      direction_label: 方向
+      formatName: 格式名称
+      formatStandard: EDI 标准
+      formatStandard_label: EDI 标准
+      id: ID
+      isActive: 是否启用
+      needsWebService: 需要 WebService
+      org: null
+      orgId: 业务组织
+      remark: 备注
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpB2bEdiLog:
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      direction: 方向
+      direction_label: 方向
+      ediDoc: null
+      ediDocId: EDI 事务 ID
+      id: ID
+      logTime: 日志时间
+      org: null
+      orgId: 业务组织
+      remark: 备注
+      requestPayload: 请求报文
+      responsePayload: 响应报文
+      resultCode: 结果码
+      resultMsg: 结果消息
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpB2bMftCertificate:
+      algorithm: 算法
+      certName: 证书名称
+      certType: 证书类型
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      expiresAt: 过期日期
+      fingerprintSha256: SHA-256指纹
+      id: ID
+      isActive: 启用
+      issuedAt: 颁发日期
+      issuerName: 颁发者
+      keySize: 密钥长度
+      org: null
+      orgId: 业务组织
+      partner: null
+      partnerId: 合作伙伴
+      remark: 备注
+      serialNo: 序列号
+      subjectName: 主题
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpB2bMftConfig:
+      active: 启用
+      certId: 关联证书
+      compression: 启用压缩
+      createTime: 创建时间
+      createdBy: 创建人
+      deadLetterEnabled: 启用死信队列
+      delVersion: 逻辑删除版本
+      encryption: 启用加密
+      encryptionAlgo: 加密算法
+      ftpsImplicitTls: 隐式TLS
+      ftpsPort: FTPS端口
+      id: ID
+      localAs2Id: 本地AS2 ID
+      maxRetries: 最大重试次数
+      monitorDirectory: 监控目录
+      monitorIntervalSec: 监控间隔(秒)
+      org: null
+      orgId: 业务组织
+      partner: null
+      partnerId: 合作伙伴
+      protocol: 传输协议
+      remark: 备注
+      remoteAs2Id: 对方AS2 ID
+      retryIntervalMin: 重试间隔(分钟)
+      sftpPort: SFTP端口
+      sftpUsername: SFTP用户名
+      signature: 启用签名
+      signatureAlgo: 签名算法
+      transportEndpoint: 传输端点
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpB2bMftLog:
+      config: null
+      configId: MFT配置
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      direction: 方向
+      durationMs: 耗时(毫秒)
+      endTime: 结束时间
+      errorCode: 错误码
+      errorMsg: 错误消息
+      fileHash: 文件哈希
+      fileName: 文件名
+      fileSize: 文件大小(字节)
+      id: ID
+      isCompressed: 压缩
+      isEncrypted: 加密
+      isSigned: 签名
+      mdnStatus: MDN状态
+      messageId: AS2 Message-ID
+      org: null
+      orgId: 业务组织
+      protocol: 传输协议
+      relatedBillCode: 关联单据号
+      relatedBillType: 关联单据类型
+      remark: 备注
+      retryCount: 重试次数
+      startTime: 开始时间
+      status: 传输状态
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpB2bPartnerCredential:
+      createTime: 创建时间
+      createdBy: 创建人
+      credentialKey: 凭证标识
+      credentialType: 凭证类型
+      credentialType_label: 凭证类型
+      credentialValue: 凭证值
+      delVersion: 逻辑删除版本
+      expiresAt: 过期日期
+      id: ID
+      isActive: 启用
+      issuedAt: 颁发日期
+      partnerProfile: null
+      partnerProfileId: 伙伴档案
+      remark: 备注
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpB2bPartnerProfile:
+      allowedFormats: 支持格式(JSON)
+      archivedAt: 归档日期
+      authMethod: 认证方式
+      authMethod_label: 认证方式
+      certExpiry: 证书过期日期
+      certFingerprint: 证书指纹
+      code: 编码
+      contactEmail: 联系邮箱
+      contactName: 联系人姓名
+      contactPhone: 联系电话
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      goLiveDate: 上线日期
+      id: ID
+      notes: 备注
+      org: null
+      orgId: 业务组织
+      partner: null
+      partnerId: 关联伙伴
+      partnerName: 伙伴名称
+      protocol: 传输协议
+      protocol_label: 传输协议
+      status: 状态
+      status_label: 状态
+      timezone: 时区
+      transportEndpoint: 传输端点
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      webhookSecret: Webhook密钥
+    ErpB2bTestExchange:
+      actualResult: 实际结果
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      direction: 方向
+      direction_label: 方向
+      expectedResult: 预期结果
+      formatCode: EDI格式
+      id: ID
+      notes: 备注
+      partnerProfile: null
+      partnerProfileId: 伙伴档案
+      passed: 测试通过
+      receivedPayload: 接收报文
+      sentPayload: 发送报文
+      testCaseCode: 测试用例编号
+      testedAt: 测试时间
+      testedBy: 测试人
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本

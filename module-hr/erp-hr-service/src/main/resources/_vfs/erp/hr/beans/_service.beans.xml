@@ -12,6 +12,43 @@
         <property name="bizObjName" value="ErpHrDepartment"/>
     </bean>
 
+    <bean id="app.erp.hr.service.entity.ErpHrSalarySimulationBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrSalarySimulation" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrSalarySimulationBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpHrSalarySimulation"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrShiftBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrShift" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.hr.biz.IErpHrShiftBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpHrShift"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrShiftRotationPatternBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrShiftRotationPattern" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrShiftRotationPatternBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpHrShiftRotationPattern"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrSurveyBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrSurvey" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.hr.biz.IErpHrSurveyBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpHrSurvey"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrCompetencyBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrCompetency" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrCompetencyBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpHrCompetency"/>
+    </bean>
+
     <bean id="app.erp.hr.service.entity.ErpHrPositionBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpHrPosition" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -19,11 +56,42 @@
         <property name="bizObjName" value="ErpHrPosition"/>
     </bean>
 
+    <bean id="app.erp.hr.service.entity.ErpHrSurveyQuestionBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrSurveyQuestion" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrSurveyQuestionBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpHrSurveyQuestion"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrSurveyResultBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrSurveyResult" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrSurveyResultBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpHrSurveyResult"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrCompetencyLevelBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrCompetencyLevel" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrCompetencyLevelBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpHrCompetencyLevel"/>
+    </bean>
+
     <bean id="app.erp.hr.service.entity.ErpHrEmployeeBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpHrEmployee" class="io.nop.biz.proxy.BizProxyFactoryBean"
           ioc:type="app.erp.hr.biz.IErpHrEmployeeBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
         <property name="bizObjName" value="ErpHrEmployee"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrRoleCompetencyBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrRoleCompetency" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrRoleCompetencyBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpHrRoleCompetency"/>
     </bean>
 
     <bean id="app.erp.hr.service.entity.ErpHrEmploymentContractBizModel" ioc:type="@bean:id" ioc:default="true"/>
@@ -62,6 +130,53 @@
         <property name="bizObjName" value="ErpHrRecruitment"/>
     </bean>
 
+    <bean id="app.erp.hr.service.entity.ErpHrShiftAssignmentBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrShiftAssignment" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrShiftAssignmentBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpHrShiftAssignment"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrShiftSwapRequestBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrShiftSwapRequest" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrShiftSwapRequestBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpHrShiftSwapRequest"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrSurveyResponseBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrSurveyResponse" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrSurveyResponseBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpHrSurveyResponse"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrEmployeeAssessmentBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrEmployeeAssessment" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrEmployeeAssessmentBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpHrEmployeeAssessment"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrGapAnalysisBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrGapAnalysis" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrGapAnalysisBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpHrGapAnalysis"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrDevelopmentPlanBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrDevelopmentPlan" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrDevelopmentPlanBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpHrDevelopmentPlan"/>
+    </bean>
+
     <bean id="app.erp.hr.service.entity.ErpHrAttendanceBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpHrAttendance" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -75,5 +190,28 @@
           ioc:type="app.erp.hr.biz.IErpHrTimesheetLineBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
         <property name="bizObjName" value="ErpHrTimesheetLine"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrSurveyAnswerBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrSurveyAnswer" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrSurveyAnswerBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpHrSurveyAnswer"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrAssessmentDetailBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrAssessmentDetail" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrAssessmentDetailBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpHrAssessmentDetail"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrDevelopmentPlanItemBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrDevelopmentPlanItem" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrDevelopmentPlanItemBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpHrDevelopmentPlanItem"/>
     </bean>
 </beans>

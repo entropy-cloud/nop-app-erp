@@ -55,10 +55,24 @@
         }
 
 
-        private java.time.LocalDate _voucherDate;
+        private Integer _postingType;
 
     
         @PropMeta(propId=4)
+    
+        public Integer getPostingType(){
+            return _postingType;
+        }
+
+        public void setPostingType(Integer value){
+            this._postingType = value;
+        }
+
+
+        private java.time.LocalDate _voucherDate;
+
+    
+        @PropMeta(propId=5)
     
         public java.time.LocalDate getVoucherDate(){
             return _voucherDate;
@@ -72,7 +86,7 @@
         private String _voucherNo;
 
     
-        @PropMeta(propId=5)
+        @PropMeta(propId=6)
     
         public String getVoucherNo(){
             return _voucherNo;
@@ -86,7 +100,7 @@
         private Long _orgId;
 
     
-        @PropMeta(propId=6)
+        @PropMeta(propId=7)
     
         public Long getOrgId(){
             return _orgId;
@@ -100,7 +114,7 @@
         private Long _acctSchemaId;
 
     
-        @PropMeta(propId=7)
+        @PropMeta(propId=8)
     
         public Long getAcctSchemaId(){
             return _acctSchemaId;
@@ -114,7 +128,7 @@
         private Long _periodId;
 
     
-        @PropMeta(propId=8)
+        @PropMeta(propId=9)
     
         public Long getPeriodId(){
             return _periodId;
@@ -128,7 +142,7 @@
         private String _totalDebit;
 
     
-        @PropMeta(propId=9)
+        @PropMeta(propId=10)
     
         public String getTotalDebit(){
             return _totalDebit;
@@ -142,7 +156,7 @@
         private String _totalCredit;
 
     
-        @PropMeta(propId=10)
+        @PropMeta(propId=11)
     
         public String getTotalCredit(){
             return _totalCredit;
@@ -156,7 +170,7 @@
         private Boolean _isReversed;
 
     
-        @PropMeta(propId=11)
+        @PropMeta(propId=12)
     
         public Boolean getIsReversed(){
             return _isReversed;
@@ -170,7 +184,7 @@
         private Long _reversalOfVoucherId;
 
     
-        @PropMeta(propId=12)
+        @PropMeta(propId=13)
     
         public Long getReversalOfVoucherId(){
             return _reversalOfVoucherId;
@@ -184,7 +198,7 @@
         private Integer _docStatus;
 
     
-        @PropMeta(propId=13)
+        @PropMeta(propId=14)
     
         public Integer getDocStatus(){
             return _docStatus;
@@ -198,7 +212,7 @@
         private Long _postedBy;
 
     
-        @PropMeta(propId=14)
+        @PropMeta(propId=15)
     
         public Long getPostedBy(){
             return _postedBy;
@@ -212,7 +226,7 @@
         private java.time.LocalDateTime _postedAt;
 
     
-        @PropMeta(propId=15)
+        @PropMeta(propId=16)
     
         public java.time.LocalDateTime getPostedAt(){
             return _postedAt;
@@ -226,7 +240,7 @@
         private String _remark;
 
     
-        @PropMeta(propId=16)
+        @PropMeta(propId=17)
     
         public String getRemark(){
             return _remark;
@@ -240,7 +254,7 @@
         private Long _delVersion;
 
     
-        @PropMeta(propId=17)
+        @PropMeta(propId=18)
     
         public Long getDelVersion(){
             return _delVersion;

@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 认证方式
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: HMAC
+    value: 10
+    description: 
+  
+  - label: Basic Auth
+    value: 20
+    description: 
+  
+  - label: 证书
+    value: 30
+    description: 
+  
+  - label: OAuth2
+    value: 40
+    description: 
+  

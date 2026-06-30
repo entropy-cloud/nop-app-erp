@@ -49,11 +49,15 @@ alter table erp_mfg_subcontract_order add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' 
 
 alter table erp_mfg_job_card add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_mfg_cost_variance add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_mfg_subcontract_order_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_material_issue add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_job_card_time_log add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_mfg_batch_genealogy add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_material_issue_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -132,6 +136,9 @@ alter table erp_mfg_subcontract_order add primary key (NOP_TENANT_ID, ID);
 alter table erp_mfg_job_card drop primary key;
 alter table erp_mfg_job_card add primary key (NOP_TENANT_ID, ID);
 
+alter table erp_mfg_cost_variance drop primary key;
+alter table erp_mfg_cost_variance add primary key (NOP_TENANT_ID, ID);
+
 alter table erp_mfg_subcontract_order_line drop primary key;
 alter table erp_mfg_subcontract_order_line add primary key (NOP_TENANT_ID, ID);
 
@@ -140,6 +147,9 @@ alter table erp_mfg_material_issue add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_mfg_job_card_time_log drop primary key;
 alter table erp_mfg_job_card_time_log add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_mfg_batch_genealogy drop primary key;
+alter table erp_mfg_batch_genealogy add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_mfg_material_issue_line drop primary key;
 alter table erp_mfg_material_issue_line add primary key (NOP_TENANT_ID, ID);

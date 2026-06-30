@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:schema="/nop/schema/xui/xview.xdef" bizObjName="ErpB2bPartnerProfile" xmlns:i18n-en="i18n-en"
+      xmlns:x="/nop/schema/xdsl.xdef" xmlns:j="j" xmlns:c="c" xmlns:gql="gql" xmlns:view-gen="view-gen" xmlns:xpl="xpl">
+
+    <objMeta>/erp/b2b/model/ErpB2bPartnerProfile/ErpB2bPartnerProfile.xmeta</objMeta>
+
+    <controlLib>/nop/web/xlib/control.xlib</controlLib>
+
+    <x:gen-extends>
+        <view-gen:DefaultViewGenExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <view-gen:DefaultViewPostExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:post-extends>
+
+    <grids>
+        <grid id="list" x:abstract="true">
+            <cols>
+
+                <!--ID-->
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--编码-->
+                <col id="code" mandatory="true" sortable="true"/>
+
+                <!--业务组织-->
+                <col id="orgId" ui:number="true" sortable="true"/>
+
+                <!--关联伙伴-->
+                <col id="partnerId" ui:number="true" sortable="true"/>
+
+                <!--伙伴名称-->
+                <col id="partnerName" mandatory="true" sortable="true"/>
+
+                <!--状态-->
+                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--传输协议-->
+                <col id="protocol" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--传输端点-->
+                <col id="transportEndpoint" sortable="true"/>
+
+                <!--认证方式-->
+                <col id="authMethod" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--Webhook密钥-->
+                <col id="webhookSecret" sortable="true"/>
+
+                <!--证书过期日期-->
+                <col id="certExpiry" sortable="true"/>
+
+                <!--证书指纹-->
+                <col id="certFingerprint" sortable="true"/>
+
+                <!--支持格式(JSON)-->
+                <col id="allowedFormats" sortable="true"/>
+
+                <!--时区-->
+                <col id="timezone" sortable="true"/>
+
+                <!--联系人姓名-->
+                <col id="contactName" sortable="true"/>
+
+                <!--联系邮箱-->
+                <col id="contactEmail" sortable="true"/>
+
+                <!--联系电话-->
+                <col id="contactPhone" sortable="true"/>
+
+                <!--备注-->
+                <col id="notes" sortable="true"/>
+
+                <!--上线日期-->
+                <col id="goLiveDate" sortable="true"/>
+
+                <!--归档日期-->
+                <col id="archivedAt" sortable="true"/>
+
+                <!--逻辑删除版本-->
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--创建人-->
+                <col id="createdBy" mandatory="true" sortable="true"/>
+
+                <!--创建时间-->
+                <col id="createTime" mandatory="true" sortable="true"/>
+
+                <!--修改人-->
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+
+                <!--修改时间-->
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list" x:prototype="list" x:abstract="true"/>
+    </grids>
+
+    <forms>
+        <form id="view" editMode="view" title="查看-合作伙伴档案" i18n-en:title="View Partner Profile">
+            <layout>
+ id[ID] code[编码]
+ orgId[业务组织] partnerId[关联伙伴]
+ partnerName[伙伴名称] status[状态]
+ protocol[传输协议] transportEndpoint[传输端点]
+ authMethod[认证方式] webhookSecret[Webhook密钥]
+ certExpiry[证书过期日期] certFingerprint[证书指纹]
+ allowedFormats[支持格式(JSON)] timezone[时区]
+ contactName[联系人姓名] contactEmail[联系邮箱]
+ contactPhone[联系电话] notes[备注]
+ goLiveDate[上线日期] archivedAt[归档日期]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
+</layout>
+        </form>
+        <form id="add" editMode="add" title="新增-合作伙伴档案" i18n-en:title="Add Partner Profile">
+            <layout>
+ id[ID] code[编码]
+ orgId[业务组织] partnerId[关联伙伴]
+ partnerName[伙伴名称] status[状态]
+ protocol[传输协议] transportEndpoint[传输端点]
+ authMethod[认证方式] webhookSecret[Webhook密钥]
+ certExpiry[证书过期日期] certFingerprint[证书指纹]
+ allowedFormats[支持格式(JSON)] timezone[时区]
+ contactName[联系人姓名] contactEmail[联系邮箱]
+ contactPhone[联系电话] notes[备注]
+ goLiveDate[上线日期] archivedAt[归档日期]
+</layout>
+        </form>
+        <form id="edit" editMode="edit" title="编辑-合作伙伴档案" i18n-en:title="Edit Partner Profile">
+            <layout>
+ id[ID] code[编码]
+ orgId[业务组织] partnerId[关联伙伴]
+ partnerName[伙伴名称] status[状态]
+ protocol[传输协议] transportEndpoint[传输端点]
+ authMethod[认证方式] webhookSecret[Webhook密钥]
+ certExpiry[证书过期日期] certFingerprint[证书指纹]
+ allowedFormats[支持格式(JSON)] timezone[时区]
+ contactName[联系人姓名] contactEmail[联系邮箱]
+ contactPhone[联系电话] notes[备注]
+ goLiveDate[上线日期] archivedAt[归档日期]
+ delVersion[逻辑删除版本] 
+</layout>
+        </form>
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-合作伙伴档案"
+              i18n-en:title="Update Partner Profile"/>
+    </forms>
+
+    <pages>
+        <crud name="view-list" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpB2bPartnerProfile__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </crud>
+        <crud name="main" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpB2bPartnerProfile__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+            <listActions>
+                <action id="batch-delete-button" label="@i18n:common.batchDelete" batch="true">
+                    <api url="@mutation:ErpB2bPartnerProfile__batchDelete?ids=$ids"/>
+                    <confirmText>@i18n:common.confirmBatchDelete</confirmText>
+                </action>
+                <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
+                    <dialog page="add"/>
+                </action>
+            </listActions>
+            <rowActions>
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+                <action id="row-update-button" level="primary" label="@i18n:common.edit" x:abstract="true">
+                    <dialog page="update"/>
+                </action>
+                <action id="row-delete-button" level="danger" label="@i18n:common.delete" x:abstract="true">
+                    <api url="@mutation:ErpB2bPartnerProfile__delete?id=$id"/>
+                    <confirmText>@i18n:common.confirmDelete</confirmText>
+                </action>
+                <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
+                    <action id="row-update-button" label="@i18n:common.edit">
+                        <dialog page="update"/>
+                    </action>
+                    <action id="row-delete-button" label="@i18n:common.delete">
+                        <api url="@mutation:ErpB2bPartnerProfile__delete?id=$id"/>
+                        <confirmText>@i18n:common.confirmDelete</confirmText>
+                    </action>
+                </actionGroup>
+            </rowActions>
+        </crud>
+        <picker name="picker" grid="pick-list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table noOperations="true">
+                <api url="@query:ErpB2bPartnerProfile__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </picker>
+        <simple name="add" form="add">
+            <api url="@mutation:ErpB2bPartnerProfile__save/id"/>
+        </simple>
+        <simple name="view" form="view">
+            <initApi url="@query:ErpB2bPartnerProfile__get?id=$id" gql:selection="{@formSelection}"/>
+        </simple>
+        <simple name="update" form="edit">
+            <initApi url="@query:ErpB2bPartnerProfile__get?id=$id" gql:selection="{@formSelection}"/>
+            <api url="@mutation:ErpB2bPartnerProfile__update/id?id=$id" withFormData="true"/>
+        </simple>
+    </pages>
+</view>

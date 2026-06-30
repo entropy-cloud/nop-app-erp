@@ -7,6 +7,12 @@ alter table erp_aps_schedule add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_aps_constraint add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_aps_op_routing add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_aps_dispatch_rule add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_aps_dispatch_log add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_md_md_organization drop constraint PK_erp_md_md_organization;
 alter table erp_md_md_organization add constraint PK_erp_md_md_organization primary key (NOP_TENANT_ID, id);
 
@@ -18,5 +24,14 @@ alter table erp_aps_schedule add constraint PK_erp_aps_schedule primary key (NOP
 
 alter table erp_aps_constraint drop constraint PK_erp_aps_constraint;
 alter table erp_aps_constraint add constraint PK_erp_aps_constraint primary key (NOP_TENANT_ID, id);
+
+alter table erp_aps_op_routing drop constraint PK_erp_aps_op_routing;
+alter table erp_aps_op_routing add constraint PK_erp_aps_op_routing primary key (NOP_TENANT_ID, id);
+
+alter table erp_aps_dispatch_rule drop constraint PK_erp_aps_dispatch_rule;
+alter table erp_aps_dispatch_rule add constraint PK_erp_aps_dispatch_rule primary key (NOP_TENANT_ID, id);
+
+alter table erp_aps_dispatch_log drop constraint PK_erp_aps_dispatch_log;
+alter table erp_aps_dispatch_log add constraint PK_erp_aps_dispatch_log primary key (NOP_TENANT_ID, id);
 
 

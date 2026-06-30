@@ -1,0 +1,176 @@
+entity:
+  label:
+    ErpApsConstraint: Constraint
+    ErpApsDispatchLog: Dispatch Log
+    ErpApsDispatchRule: Dispatch Rule
+    ErpApsOpRouting: OP Routing
+    ErpApsOperationOrder: Operation Order
+    ErpApsSchedule: Schedule
+prop:
+  label:
+    ErpApsConstraint:
+      id: ID
+      machineId: Machine
+      constraintType: Constraint Type
+      constraintType_label: null
+      startTime: Start Time
+      endTime: End Time
+      description: Description
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+    ErpApsDispatchLog:
+      id: ID
+      orgId: Organization
+      operationOrderId: Operation Order
+      workcenterId: Workcenter
+      dispatchType: Dispatch Type
+      dispatchType_label: null
+      previousStatus: Previous Status
+      newStatus: New Status
+      conditionCheckResult: Condition Check Result
+      dispatchedBy: Dispatched By
+      dispatchedAt: Dispatched At
+      materialAvailable: Material Available
+      operatorAvailable: Operator Available
+      toolingAvailable: Tooling Available
+      note: Note
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+    ErpApsDispatchRule:
+      id: ID
+      orgId: Organization
+      workcenterId: Workcenter
+      ruleName: Rule Name
+      enableAuto: Enable Auto
+      requireMaterial: Require Material
+      requireOperator: Require Operator
+      requireTooling: Require Tooling
+      maxLookaheadMinutes: Max Lookahead Minutes
+      dispatchAheadMinutes: Dispatch Ahead Minutes
+      autoConfirmMaterial: Auto Confirm Material
+      maxConcurrentOps: Max Concurrent Ops
+      priorityThreshold: Priority Threshold
+      enabledHours: Enabled Hours
+      holdUntil: Hold Until
+      holdReason: Hold Reason
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+    ErpApsOpRouting:
+      id: ID
+      orgId: Organization
+      operationId: Operation
+      machineId: Machine
+      priority: Priority
+      setupTimeDelta: Setup Time Delta
+      runtimePerUnitDelta: Runtime Per Unit Delta
+      isDefault: Is Default
+      isEnabled: Is Enabled
+      effectiveFrom: Effective From
+      effectiveTo: Effective To
+      minBatchQty: Min Batch Qty
+      maxBatchQty: Max Batch Qty
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+    ErpApsOperationOrder:
+      id: ID
+      code: Code
+      workOrderId: Work Order
+      operationName: Operation Name
+      sequence: Sequence
+      machineId: Machine
+      priority: Priority
+      plannedStartDateT: Planned Start Date
+      plannedEndDateT: Planned End Date
+      realStartDateT: Real Start Date
+      realEndDateT: Real End Date
+      setupTime: Setup Time
+      runtimePerUnit: Runtime Per Unit
+      qty: Quantity
+      totalDuration: Total Duration
+      assignedToId: Assigned To
+      isOutsourced: Is Outsourced
+      status: Status
+      status_label: null
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+    ErpApsSchedule:
+      id: ID
+      code: Code
+      name: Name
+      scheduleDate: Schedule Date
+      schedulingMode: Scheduling Mode
+      schedulingMode_label: null
+      horizonStart: Horizon Start
+      horizonEnd: Horizon End
+      status: Status
+      status_label: null
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+dict:
+  label:
+    erp-aps/operation-order-status: Operation Order Status
+    erp-aps/schedule-status: Schedule Status
+    erp-aps/constraint-type: Constraint Type
+    erp-aps/scheduling-mode: Scheduling Mode
+    erp-aps/dispatch-type: Dispatch Type
+dict.option.label:
+  erp-aps/operation-order-status:
+    '10': Draft
+    '20': Planned
+    '30': In Progress
+    '40': Finished
+    '50': Cancelled
+  erp-aps/schedule-status:
+    '10': Draft
+    '20': Published
+    '30': Archived
+  erp-aps/constraint-type:
+    '10': Maintenance
+    '20': Tool Life
+    '30': Personnel
+  erp-aps/scheduling-mode:
+    '10': Forward
+    '20': Backward
+  erp-aps/dispatch-type:
+    '10': Auto
+    '20': Manual
+    '30': Hold
+    '40': Unhold

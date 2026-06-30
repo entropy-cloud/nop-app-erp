@@ -1,0 +1,21 @@
+{
+  "id": 0,
+  "rebateAgreementId": 0,
+  "orgId": 0,
+  "sourceBillType": "",
+  "sourceBillCode": "",
+  "billAmountSource": 0.0,
+  "accruedRebate": 0.0,
+  "accrualDate": "2000-01-01",
+  "isSettled": false,
+  "settledDate": "2000-01-01",
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "rebateAgreement": null,
+  "org": null
+}

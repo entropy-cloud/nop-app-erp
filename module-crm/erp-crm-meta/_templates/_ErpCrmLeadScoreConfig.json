@@ -1,0 +1,19 @@
+{
+  "id": 0,
+  "code": "",
+  "orgId": 0,
+  "configName": "",
+  "isActive": false,
+  "effectiveFrom": "2000-01-01",
+  "effectiveTo": "2000-01-01",
+  "autoQualifyThreshold": 0,
+  "minScoreForFollowUp": 0,
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "org": null
+}

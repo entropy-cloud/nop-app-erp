@@ -1,0 +1,23 @@
+{
+  "id": 0,
+  "employeeId": 0,
+  "assessmentType": 0,
+  "assessmentType_label": "",
+  "assessorId": 0,
+  "assessmentDate": "2000-01-01",
+  "status": 0,
+  "status_label": "",
+  "overallScore": 0.0,
+  "orgId": 0,
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "employee": null,
+  "assessor": null,
+  "details": null,
+  "org": null
+}

@@ -496,6 +496,20 @@
         }
 
 
+        private java.time.LocalDate _businessDate;
+
+    
+        @PropMeta(propId=33)
+    
+        public java.time.LocalDate getBusinessDate(){
+            return _businessDate;
+        }
+
+        public void setBusinessDate(java.time.LocalDate value){
+            this._businessDate = value;
+        }
+
+
         private Map<String,Object> _material;
 
         public Map<String,Object> getMaterial(){

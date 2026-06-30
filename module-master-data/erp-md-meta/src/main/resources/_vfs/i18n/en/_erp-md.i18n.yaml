@@ -3,6 +3,7 @@ entity:
     ErpMdAcctSchema: Accounting Schema
     ErpMdAcctSchemaCoa: Chart of Accounts
     ErpMdBankAccount: Bank Account
+    ErpMdCostCenter: Cost Center
     ErpMdCurrency: Currency
     ErpMdEmployee: Employee
     ErpMdExchangeRate: Exchange Rate
@@ -20,6 +21,7 @@ entity:
     ErpMdUoM: Unit of Measure
     ErpMdUoMConversion: UoM Conversion
     ErpMdWarehouse: Warehouse
+    ErpSysConfig: System Config
 prop:
   label:
     ErpMdAcctSchema:
@@ -74,6 +76,27 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       partner: Partner
+    ErpMdCostCenter:
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      managerId: Manager
+      parentId: Parent
+      isBudgetable: Is Budgetable
+      status: Status
+      status_label: null
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      organization: Organization
+      manager: Manager
+      parent: Parent
+      children: Children
     ErpMdCurrency:
       id: ID
       code: Code
@@ -321,6 +344,8 @@ prop:
       isAuxiliaryProject: Is Auxiliary Project
       isAuxiliaryWarehouse: Is Auxiliary Warehouse
       isAuxiliaryProduct: Is Auxiliary Product
+      isAuxiliaryCostCenter: Is Auxiliary Cost Center
+      isBudgetable: Is Budgetable
       isLeaf: Is Leaf
       status: Status
       status_label: null
@@ -398,9 +423,24 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       remark: Remark
+      batchSelectionStrategy: Batch Selection Strategy
+      batchSelectionStrategy_label: null
       organization: Organization
       manager: Manager
       locations: Locations
+    ErpSysConfig:
+      id: ID
+      configKey: Config Key
+      configValue: Config Value
+      orgId: Organization
+      description: Description
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      organization: Organization
 dict:
   label:
     erp-md/material-type: Material Type
@@ -418,6 +458,7 @@ dict:
     erp-md/settlement-type: Settlement Type
     erp-md/bank-account-type: Bank Account Type
     erp-md/address-type: Address Type
+    erp-md/batch-strategy: Batch Selection Strategy
 dict.option.label:
   erp-md/material-type:
     '10': Merchandise
@@ -503,3 +544,7 @@ dict.option.label:
     '20': Delivery Address
     '30': Registered Address
     '40': Other
+  erp-md/batch-strategy:
+    FIFO: FIFO
+    FEFO: FEFO
+    MANUAL: Manual

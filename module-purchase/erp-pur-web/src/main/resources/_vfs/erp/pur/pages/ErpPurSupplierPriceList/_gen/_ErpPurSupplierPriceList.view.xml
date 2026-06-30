@@ -40,7 +40,7 @@
                 <col id="taxRate" sortable="true"/>
 
                 <!--最小起订量-->
-                <col id="minOrderQuantity" sortable="true"/>
+                <col id="minOrderQuantity" ui:number="true" sortable="true"/>
 
                 <!--交货周期(天)-->
                 <col id="leadTimeDays" ui:number="true" sortable="true"/>

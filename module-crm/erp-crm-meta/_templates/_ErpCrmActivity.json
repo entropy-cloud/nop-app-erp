@@ -1,0 +1,19 @@
+{
+  "id": 0,
+  "leadId": 0,
+  "orgId": 0,
+  "activityType": "",
+  "activityType_label": "",
+  "activityDate": "2000-01-01 14:00:00",
+  "summary": "",
+  "ownerId": 0,
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "lead": null,
+  "org": null
+}

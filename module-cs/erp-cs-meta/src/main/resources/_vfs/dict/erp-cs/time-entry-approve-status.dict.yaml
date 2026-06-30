@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 计时审批状态
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 待审批
+    value: 10
+    description: 
+  
+  - label: 已审批
+    value: 20
+    description: 
+  
+  - label: 已驳回
+    value: 30
+    description: 
+  

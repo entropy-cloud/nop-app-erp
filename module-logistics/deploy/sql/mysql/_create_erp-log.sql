@@ -41,6 +41,29 @@ CREATE TABLE erp_log_carrier(
   constraint PK_erp_log_carrier primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_log_delivery_window(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  PARTNER_ID BIGINT NOT NULL    COMMENT '客户',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  WEEKDAY INTEGER NOT NULL    COMMENT '星期',
+  START_TIME VARCHAR(8) NOT NULL    COMMENT '开始时间',
+  END_TIME VARCHAR(8) NOT NULL    COMMENT '结束时间',
+  MAX_CAPACITY INTEGER default 10  NOT NULL    COMMENT '最大预约数',
+  CURRENT_BOOKED INTEGER default 0  NOT NULL    COMMENT '当前已预约',
+  IS_ACTIVE BOOLEAN default 1  NULL    COMMENT '是否启用',
+  EFFECTIVE_FROM DATE NULL    COMMENT '生效日期',
+  EFFECTIVE_TO DATE NULL    COMMENT '失效日期',
+  ALLOWED_SHIPMENT_TYPES VARCHAR(200) NULL    COMMENT '允许发运类型',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_log_delivery_window primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_log_carrier_config(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CARRIER_ID BIGINT NOT NULL    COMMENT '承运商ID',
@@ -181,6 +204,8 @@ CREATE TABLE erp_log_shipment_log(
    ALTER TABLE erp_md_md_material COMMENT 'ErpMdMaterial';
                 
    ALTER TABLE erp_log_carrier COMMENT '承运商';
+                
+   ALTER TABLE erp_log_delivery_window COMMENT '配送时间窗口';
                 
    ALTER TABLE erp_log_carrier_config COMMENT '承运商配置';
                 

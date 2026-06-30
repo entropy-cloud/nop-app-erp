@@ -22,9 +22,9 @@
   "posted": false,
   "postedAt": "2000-01-01 14:00:00",
   "postedBy": "",
-  "exchangeRate": "",
-  "amountSource": "",
-  "amountFunctional": "",
+  "exchangeRate": 0.0,
+  "amountSource": 0.0,
+  "amountFunctional": 0.0,
   "category": null,
   "currency": null
 }

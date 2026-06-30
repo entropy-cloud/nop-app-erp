@@ -36,6 +36,15 @@
                 <!--外协工作中心-->
                 <col id="workcenterId" ui:number="true" sortable="true"/>
 
+                <!--工艺路线-->
+                <col id="routingId" ui:number="true" sortable="true"/>
+
+                <!--生产版本-->
+                <col id="productionVersionId" ui:number="true" sortable="true"/>
+
+                <!--产品-->
+                <col id="productId" mandatory="true" ui:number="true" sortable="true"/>
+
                 <!--委外日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>
 
@@ -43,7 +52,7 @@
                 <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--汇率-->
-                <col id="exchangeRate" sortable="true"/>
+                <col id="exchangeRate" mandatory="true" sortable="true"/>
 
                 <!--加工费-->
                 <col id="processingFee" sortable="true"/>
@@ -60,6 +69,9 @@
                 <!--已过账-->
                 <col id="posted" sortable="true"/>
 
+                <!--过账状态-->
+                <col id="postedStatus" mandatory="true" sortable="true"/>
+
                 <!--过账时间-->
                 <col id="postedAt" sortable="true"/>
 
@@ -68,6 +80,12 @@
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>
+
+                <!--源币种金额-->
+                <col id="amountSource" sortable="true"/>
+
+                <!--本位币金额-->
+                <col id="amountFunctional" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
@@ -83,12 +101,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--源币种金额-->
-                <col id="amountSource" sortable="true"/>
-
-                <!--本位币金额-->
-                <col id="amountFunctional" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -100,15 +112,17 @@
  id[ID] code[单号]
  orgId[业务组织] workOrderId[来源工单]
  supplierId[委外供应商] workcenterId[外协工作中心]
- businessDate[委外日期] currencyId[币种]
- exchangeRate[汇率] processingFee[加工费]
- totalAmount[合计金额] docStatus[单据状态]
- approveStatus[审核状态] posted[已过账]
+ routingId[工艺路线] productionVersionId[生产版本]
+ productId[产品] businessDate[委外日期]
+ currencyId[币种] exchangeRate[汇率]
+ processingFee[加工费] totalAmount[合计金额]
+ docStatus[单据状态] approveStatus[审核状态]
+ posted[已过账] postedStatus[过账状态]
  postedAt[过账时间] postedBy[过账人]
- remark[备注] delVersion[逻辑删除版本]
+ remark[备注] amountSource[源币种金额]
+ amountFunctional[本位币金额] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- amountSource[源币种金额] amountFunctional[本位币金额]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-委外加工单" i18n-en:title="Add Subcontract Order">
@@ -116,10 +130,12 @@
  id[ID] code[单号]
  orgId[业务组织] workOrderId[来源工单]
  supplierId[委外供应商] workcenterId[外协工作中心]
- businessDate[委外日期] currencyId[币种]
- exchangeRate[汇率] processingFee[加工费]
- totalAmount[合计金额] docStatus[单据状态]
- approveStatus[审核状态] posted[已过账]
+ routingId[工艺路线] productionVersionId[生产版本]
+ productId[产品] businessDate[委外日期]
+ currencyId[币种] exchangeRate[汇率]
+ processingFee[加工费] totalAmount[合计金额]
+ docStatus[单据状态] approveStatus[审核状态]
+ posted[已过账] postedStatus[过账状态]
  postedAt[过账时间] postedBy[过账人]
  remark[备注] amountSource[源币种金额]
  amountFunctional[本位币金额] 
@@ -130,13 +146,15 @@
  id[ID] code[单号]
  orgId[业务组织] workOrderId[来源工单]
  supplierId[委外供应商] workcenterId[外协工作中心]
- businessDate[委外日期] currencyId[币种]
- exchangeRate[汇率] processingFee[加工费]
- totalAmount[合计金额] docStatus[单据状态]
- approveStatus[审核状态] posted[已过账]
+ routingId[工艺路线] productionVersionId[生产版本]
+ productId[产品] businessDate[委外日期]
+ currencyId[币种] exchangeRate[汇率]
+ processingFee[加工费] totalAmount[合计金额]
+ docStatus[单据状态] approveStatus[审核状态]
+ posted[已过账] postedStatus[过账状态]
  postedAt[过账时间] postedBy[过账人]
- remark[备注] delVersion[逻辑删除版本]
- amountSource[源币种金额] amountFunctional[本位币金额]
+ remark[备注] amountSource[源币种金额]
+ amountFunctional[本位币金额] delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

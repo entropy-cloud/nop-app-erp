@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="play-circle" xmlns:c="c" xmlns:graphql="graphql"
+      xmlns:meta-gen="meta-gen" xmlns:biz="biz" displayName="自动派工规则" i18n-en:displayName="Dispatch Rule"
+      tagSet="gid,erp.aps" xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.aps.dao.entity.ErpApsDispatchRule</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="orgId" displayName="业务组织" propId="2" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="workcenterId" displayName="工作中心" propId="3" i18n-en:displayName="Workcenter" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="ruleName" displayName="规则名称" propId="4" i18n-en:displayName="Rule Name" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema domain="name" type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="enableAuto" displayName="自动派工启用" propId="5" i18n-en:displayName="Enable Auto" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="true">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="requireMaterial" displayName="物料齐套检查" propId="6" i18n-en:displayName="Require Material"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="true">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="requireOperator" displayName="操作工检查" propId="7" i18n-en:displayName="Require Operator"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="true">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="requireTooling" displayName="工装检查" propId="8" i18n-en:displayName="Require Tooling" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="false">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="maxLookaheadMinutes" displayName="前瞻窗口(分钟)" propId="9" i18n-en:displayName="Max Lookahead Minutes"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="120">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="dispatchAheadMinutes" displayName="提前派工(分钟)" propId="10"
+              i18n-en:displayName="Dispatch Ahead Minutes" queryable="true" sortable="true" insertable="true"
+              updatable="true" defaultValue="15">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="autoConfirmMaterial" displayName="自动确认物料" propId="11" i18n-en:displayName="Auto Confirm Material"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="true">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="maxConcurrentOps" displayName="最大并行工序数" propId="12" i18n-en:displayName="Max Concurrent Ops"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="priorityThreshold" displayName="优先级阈值" propId="13" i18n-en:displayName="Priority Threshold"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="enabledHours" displayName="允许时段(JSON)" propId="14" i18n-en:displayName="Enabled Hours"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="500"/>
+        </prop>
+        <prop name="holdUntil" displayName="暂停到" propId="15" i18n-en:displayName="Hold Until" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDateTime"/>
+        </prop>
+        <prop name="holdReason" displayName="暂停原因" propId="16" i18n-en:displayName="Hold Reason" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="500"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="17" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="18" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="19" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="20" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="21" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="22" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="23" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+    </props>
+</meta>

@@ -345,10 +345,24 @@
         }
 
 
-        private Long _delVersion;
+        private Long _costCenterId;
 
     
         @PropMeta(propId=23)
+    
+        public Long getCostCenterId(){
+            return _costCenterId;
+        }
+
+        public void setCostCenterId(Long value){
+            this._costCenterId = value;
+        }
+
+
+        private Long _delVersion;
+
+    
+        @PropMeta(propId=24)
     
         public Long getDelVersion(){
             return _delVersion;
@@ -362,7 +376,7 @@
         private Integer _version;
 
     
-        @PropMeta(propId=24)
+        @PropMeta(propId=25)
     
         public Integer getVersion(){
             return _version;
@@ -376,7 +390,7 @@
         private String _createdBy;
 
     
-        @PropMeta(propId=25)
+        @PropMeta(propId=26)
     
         public String getCreatedBy(){
             return _createdBy;
@@ -390,7 +404,7 @@
         private java.sql.Timestamp _createTime;
 
     
-        @PropMeta(propId=26)
+        @PropMeta(propId=27)
     
         public java.sql.Timestamp getCreateTime(){
             return _createTime;
@@ -404,7 +418,7 @@
         private String _updatedBy;
 
     
-        @PropMeta(propId=27)
+        @PropMeta(propId=28)
     
         public String getUpdatedBy(){
             return _updatedBy;
@@ -418,7 +432,7 @@
         private java.sql.Timestamp _updateTime;
 
     
-        @PropMeta(propId=28)
+        @PropMeta(propId=29)
     
         public java.sql.Timestamp getUpdateTime(){
             return _updateTime;
@@ -536,6 +550,17 @@
 
         public void setProject(Map<String,Object> value){
             this._project = value;
+        }
+
+
+        private Map<String,Object> _costCenter;
+
+        public Map<String,Object> getCostCenter(){
+            return _costCenter;
+        }
+
+        public void setCostCenter(Map<String,Object> value){
+            this._costCenter = value;
         }
 
 

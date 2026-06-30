@@ -1,0 +1,27 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 模拟状态
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 草稿
+    value: 10
+    description: 
+  
+  - label: 审核中
+    value: 20
+    description: 
+  
+  - label: 已审批
+    value: 30
+    description: 
+  
+  - label: 已驳回
+    value: 40
+    description: 
+  
+  - label: 已转正式
+    value: 50
+    description: 
+  

@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 评分触发动作
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 无
+    value: NONE
+    description: 
+  
+  - label: 自动转商机
+    value: AUTO_QUALIFY
+    description: 
+  
+  - label: 通知负责人
+    value: NOTIFY_OWNER
+    description: 
+  

@@ -1,0 +1,23 @@
+{
+  "id": 0,
+  "surveyId": 0,
+  "sortOrder": 0,
+  "questionText": "",
+  "questionType": 0,
+  "questionType_label": "",
+  "ratingScaleMin": 0,
+  "ratingScaleMax": 0,
+  "ratingLabelMin": "",
+  "ratingLabelMax": "",
+  "options": "",
+  "driverCategory": 0,
+  "driverCategory_label": "",
+  "isRequired": false,
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "survey": null
+}

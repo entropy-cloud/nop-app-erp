@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="users" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen"
+      xmlns:biz="biz" displayName="线索/商机" i18n-en:displayName="Lead / Opportunity" tagSet="gid,erp.crm" xmlns:ui="ui"
+      xmlns:orm="orm">
+
+    <entityName>app.erp.crm.dao.entity.ErpCrmLead</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="code" displayName="编码" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="orderCode" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="leadType" displayName="线索/商机类型" propId="4" i18n-en:displayName="Lead Type" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-crm/lead-type"/>
+        </prop>
+        <prop name="partnerId" displayName="客户" propId="5" i18n-en:displayName="Partner" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="partner">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="contactName" displayName="联系人姓名" propId="6" i18n-en:displayName="Contact Name" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="contactPhone" displayName="联系电话" propId="7" i18n-en:displayName="Contact Phone" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="contactEmail" displayName="联系邮箱" propId="8" i18n-en:displayName="Contact Email" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="companyName" displayName="公司名称" propId="9" i18n-en:displayName="Company Name" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="jobTitle" displayName="职位" propId="10" i18n-en:displayName="Job Title" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="department" displayName="部门" propId="11" i18n-en:displayName="Department" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="sourceId" displayName="线索来源" propId="12" i18n-en:displayName="Source" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="source">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="leadStatusId" displayName="线索状态" propId="13" i18n-en:displayName="Lead Status" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="leadStatus">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="stageId" displayName="漏斗阶段" propId="14" i18n-en:displayName="Stage" queryable="true" sortable="true"
+              insertable="true" updatable="true" ext:relation="stage">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="expectedRevenue" displayName="预期收入" propId="15" i18n-en:displayName="Expected Revenue"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="bestCaseAmount" displayName="乐观预期" propId="16" i18n-en:displayName="Best Case Amount"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="worstCaseAmount" displayName="悲观预期" propId="17" i18n-en:displayName="Worst Case Amount"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="recurringRevenue" displayName="周期性收入" propId="18" i18n-en:displayName="Recurring Revenue"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="recurringPlan" displayName="周期性计划" propId="19" i18n-en:displayName="Recurring Plan" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="expectedCloseDate" displayName="预期签单日" propId="20" i18n-en:displayName="Expected Close Date"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="probability" displayName="成交概率" propId="21" i18n-en:displayName="Probability" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="probability" type="java.lang.Integer"/>
+        </prop>
+        <prop name="campaignId" displayName="营销活动" propId="22" i18n-en:displayName="Campaign" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="campaign">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="utmMedium" displayName="UTM Medium" propId="23" i18n-en:displayName="UTM Medium" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="utmSource" displayName="UTM Source" propId="24" i18n-en:displayName="UTM Source" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="ownerId" displayName="负责人" propId="25" i18n-en:displayName="Owner" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="teamId" displayName="销售团队" propId="26" i18n-en:displayName="Team" queryable="true" sortable="true"
+              insertable="true" updatable="true" ext:relation="team">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="lostReasonId" displayName="丢单原因" propId="27" i18n-en:displayName="Lost Reason" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="lostReason">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="lostReasonDesc" displayName="丢单描述" propId="28" i18n-en:displayName="Lost Reason Description"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="500"/>
+        </prop>
+        <prop name="lastContactDate" displayName="最后联系日期" propId="29" i18n-en:displayName="Last Contact Date"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDateTime"/>
+        </prop>
+        <prop name="nextActivityDate" displayName="下次活动日期" propId="30" i18n-en:displayName="Next Activity Date"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDateTime"/>
+        </prop>
+        <prop name="relatedBillType" displayName="转化结果单据类型" propId="31" i18n-en:displayName="Related Bill Type"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="relatedBillCode" displayName="转化结果单据号" propId="32" i18n-en:displayName="Related Bill Code"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="docStatus" displayName="单据状态" propId="33" i18n-en:displayName="Doc Status" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-crm/lead-doc-status"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="34" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="35" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="36" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="37" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="38" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="39" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="40" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="partner" i18n-en:displayName="Partner" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="partnerId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdPartner"/>
+        </prop>
+        <prop name="source" i18n-en:displayName="Source" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="sourceId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpCrmSource"/>
+        </prop>
+        <prop name="leadStatus" i18n-en:displayName="Lead Status" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="leadStatusId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpCrmLeadStatus"/>
+        </prop>
+        <prop name="stage" i18n-en:displayName="Stage" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="stageId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpCrmStage"/>
+        </prop>
+        <prop name="campaign" i18n-en:displayName="Campaign" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="campaignId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpCrmCampaign"/>
+        </prop>
+        <prop name="team" i18n-en:displayName="Team" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="teamId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpCrmTeam"/>
+        </prop>
+        <prop name="lostReason" i18n-en:displayName="Lost Reason" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="lostReasonId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpCrmLostReason"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="events" i18n-en:displayName="Events" tagSet="pub" ext:kind="to-many" internal="true"
+              ext:joinLeftProp="id" ext:joinRightProp="relatedLeadId" insertable="false" updatable="false" lazy="true">
+            <schema>
+                <item bizObjName="ErpCrmEvent"/>
+            </schema>
+        </prop>
+        <prop name="activities" i18n-en:displayName="Activities" tagSet="pub" ext:kind="to-many" internal="true"
+              ext:joinLeftProp="id" ext:joinRightProp="leadId" insertable="false" updatable="false" lazy="true">
+            <schema>
+                <item bizObjName="ErpCrmActivity"/>
+            </schema>
+        </prop>
+        <prop name="convLogs" i18n-en:displayName="Conv Logs" tagSet="pub" ext:kind="to-many" internal="true"
+              ext:joinLeftProp="id" ext:joinRightProp="leadId" insertable="false" updatable="false" lazy="true">
+            <schema>
+                <item bizObjName="ErpCrmLeadConvLog"/>
+            </schema>
+        </prop>
+    </props>
+</meta>

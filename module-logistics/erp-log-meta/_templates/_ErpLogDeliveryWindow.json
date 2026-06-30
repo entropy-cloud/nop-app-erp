@@ -1,0 +1,23 @@
+{
+  "id": 0,
+  "partnerId": 0,
+  "orgId": 0,
+  "weekday": 0,
+  "startTime": "",
+  "endTime": "",
+  "maxCapacity": 0,
+  "currentBooked": 0,
+  "isActive": false,
+  "effectiveFrom": "2000-01-01",
+  "effectiveTo": "2000-01-01",
+  "allowedShipmentTypes": "",
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "partner": null,
+  "org": null
+}

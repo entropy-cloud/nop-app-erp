@@ -153,6 +153,20 @@
         }
 
 
+        private String _batchSelectionStrategy;
+
+    
+        @PropMeta(propId=16)
+    
+        public String getBatchSelectionStrategy(){
+            return _batchSelectionStrategy;
+        }
+
+        public void setBatchSelectionStrategy(String value){
+            this._batchSelectionStrategy = value;
+        }
+
+
         private List<ErpMdLocationInputBean> _locations;
 
         public List<ErpMdLocationInputBean> getLocations(){

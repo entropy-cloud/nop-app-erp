@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <c:script>
 // 根据ORM模型生成dao/entity/xbiz
-codeGenerator.withTargetDir("../").renderModel('../../model/erp-aps.orm.xml','/nop/templates/orm', '/',$scope);
+codeGenerator.withTargetDir("../").renderModel('../../model/app-erp-aps.orm.xml','/nop/templates/orm', '/',$scope);
 codeGenerator.withTargetDir("../erp-aps-dao/src/main/java").renderModel('../../erp-aps-dao/src/main/resources/_vfs/erp/aps/orm/app.orm.xml',
     '/nop/templates/orm-entity','/',$scope);
 </c:script>

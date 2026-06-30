@@ -348,4 +348,19 @@ public interface _ErpMdDaoConstants {
      */
     int ADDRESS_TYPE_OTHER = 40;
                     
+    /**
+     * 批次选择策略: 先进先出 
+     */
+    String BATCH_STRATEGY_FIFO = "FIFO";
+                    
+    /**
+     * 批次选择策略: 先到期先出 
+     */
+    String BATCH_STRATEGY_FEFO = "FEFO";
+                    
+    /**
+     * 批次选择策略: 手工指定 
+     */
+    String BATCH_STRATEGY_MANUAL = "MANUAL";
+                    
 }

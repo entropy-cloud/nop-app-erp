@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:schema="/nop/schema/xui/xview.xdef" bizObjName="ErpHrSalary" xmlns:i18n-en="i18n-en"
+      xmlns:x="/nop/schema/xdsl.xdef" xmlns:j="j" xmlns:c="c" xmlns:gql="gql" xmlns:view-gen="view-gen" xmlns:xpl="xpl">
+
+    <objMeta>/erp/hr/model/ErpHrSalary/ErpHrSalary.xmeta</objMeta>
+
+    <controlLib>/nop/web/xlib/control.xlib</controlLib>
+
+    <x:gen-extends>
+        <view-gen:DefaultViewGenExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <view-gen:DefaultViewPostExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:post-extends>
+
+    <grids>
+        <grid id="list" x:abstract="true">
+            <cols>
+
+                <!--ID-->
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--员工-->
+                <col id="employeeId" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--年份-->
+                <col id="year" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--月份-->
+                <col id="month" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--基本工资-->
+                <col id="basicSalary" ui:number="true" sortable="true"/>
+
+                <!--岗位津贴-->
+                <col id="positionAllowance" ui:number="true" sortable="true"/>
+
+                <!--绩效奖金-->
+                <col id="performanceBonus" ui:number="true" sortable="true"/>
+
+                <!--加班费-->
+                <col id="overtimePay" ui:number="true" sortable="true"/>
+
+                <!--餐补-->
+                <col id="mealAllowance" ui:number="true" sortable="true"/>
+
+                <!--交通补贴-->
+                <col id="transportAllowance" ui:number="true" sortable="true"/>
+
+                <!--其他补贴-->
+                <col id="otherAllowance" ui:number="true" sortable="true"/>
+
+                <!--应发合计-->
+                <col id="grossSalary" ui:number="true" sortable="true"/>
+
+                <!--社保个人部分-->
+                <col id="socialInsurance" ui:number="true" sortable="true"/>
+
+                <!--公积金个人部分-->
+                <col id="housingFund" ui:number="true" sortable="true"/>
+
+                <!--个税-->
+                <col id="taxAmount" ui:number="true" sortable="true"/>
+
+                <!--其他扣款-->
+                <col id="otherDeductions" ui:number="true" sortable="true"/>
+
+                <!--实发合计-->
+                <col id="netSalary" ui:number="true" sortable="true"/>
+
+                <!--支付状态-->
+                <col id="paymentStatus" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--实发日期-->
+                <col id="paymentDate" sortable="true"/>
+
+                <!--业务组织-->
+                <col id="orgId" ui:number="true" sortable="true"/>
+
+                <!--备注-->
+                <col id="remark" sortable="true"/>
+
+                <!--逻辑删除版本-->
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--创建人-->
+                <col id="createdBy" mandatory="true" sortable="true"/>
+
+                <!--创建时间-->
+                <col id="createTime" mandatory="true" sortable="true"/>
+
+                <!--修改人-->
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+
+                <!--修改时间-->
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list" x:prototype="list" x:abstract="true"/>
+    </grids>
+
+    <forms>
+        <form id="view" editMode="view" title="查看-薪酬记录" i18n-en:title="View Salary Record">
+            <layout>
+ id[ID] employeeId[员工]
+ year[年份] month[月份]
+ basicSalary[基本工资] positionAllowance[岗位津贴]
+ performanceBonus[绩效奖金] overtimePay[加班费]
+ mealAllowance[餐补] transportAllowance[交通补贴]
+ otherAllowance[其他补贴] grossSalary[应发合计]
+ socialInsurance[社保个人部分] housingFund[公积金个人部分]
+ taxAmount[个税] otherDeductions[其他扣款]
+ netSalary[实发合计] paymentStatus[支付状态]
+ paymentDate[实发日期] orgId[业务组织]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+</layout>
+        </form>
+        <form id="add" editMode="add" title="新增-薪酬记录" i18n-en:title="Add Salary Record">
+            <layout>
+ id[ID] employeeId[员工]
+ year[年份] month[月份]
+ basicSalary[基本工资] positionAllowance[岗位津贴]
+ performanceBonus[绩效奖金] overtimePay[加班费]
+ mealAllowance[餐补] transportAllowance[交通补贴]
+ otherAllowance[其他补贴] grossSalary[应发合计]
+ socialInsurance[社保个人部分] housingFund[公积金个人部分]
+ taxAmount[个税] otherDeductions[其他扣款]
+ netSalary[实发合计] paymentStatus[支付状态]
+ paymentDate[实发日期] orgId[业务组织]
+ remark[备注] 
+</layout>
+        </form>
+        <form id="edit" editMode="edit" title="编辑-薪酬记录" i18n-en:title="Edit Salary Record">
+            <layout>
+ id[ID] employeeId[员工]
+ year[年份] month[月份]
+ basicSalary[基本工资] positionAllowance[岗位津贴]
+ performanceBonus[绩效奖金] overtimePay[加班费]
+ mealAllowance[餐补] transportAllowance[交通补贴]
+ otherAllowance[其他补贴] grossSalary[应发合计]
+ socialInsurance[社保个人部分] housingFund[公积金个人部分]
+ taxAmount[个税] otherDeductions[其他扣款]
+ netSalary[实发合计] paymentStatus[支付状态]
+ paymentDate[实发日期] orgId[业务组织]
+ remark[备注] delVersion[逻辑删除版本]
+</layout>
+        </form>
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-薪酬记录" i18n-en:title="Update Salary Record"/>
+    </forms>
+
+    <pages>
+        <crud name="view-list" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpHrSalary__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </crud>
+        <crud name="main" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpHrSalary__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+            <listActions>
+                <action id="batch-delete-button" label="@i18n:common.batchDelete" batch="true">
+                    <api url="@mutation:ErpHrSalary__batchDelete?ids=$ids"/>
+                    <confirmText>@i18n:common.confirmBatchDelete</confirmText>
+                </action>
+                <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
+                    <dialog page="add"/>
+                </action>
+            </listActions>
+            <rowActions>
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+                <action id="row-update-button" level="primary" label="@i18n:common.edit" x:abstract="true">
+                    <dialog page="update"/>
+                </action>
+                <action id="row-delete-button" level="danger" label="@i18n:common.delete" x:abstract="true">
+                    <api url="@mutation:ErpHrSalary__delete?id=$id"/>
+                    <confirmText>@i18n:common.confirmDelete</confirmText>
+                </action>
+                <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
+                    <action id="row-update-button" label="@i18n:common.edit">
+                        <dialog page="update"/>
+                    </action>
+                    <action id="row-delete-button" label="@i18n:common.delete">
+                        <api url="@mutation:ErpHrSalary__delete?id=$id"/>
+                        <confirmText>@i18n:common.confirmDelete</confirmText>
+                    </action>
+                </actionGroup>
+            </rowActions>
+        </crud>
+        <picker name="picker" grid="pick-list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table noOperations="true">
+                <api url="@query:ErpHrSalary__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </picker>
+        <simple name="add" form="add">
+            <api url="@mutation:ErpHrSalary__save/id"/>
+        </simple>
+        <simple name="view" form="view">
+            <initApi url="@query:ErpHrSalary__get?id=$id" gql:selection="{@formSelection}"/>
+        </simple>
+        <simple name="update" form="edit">
+            <initApi url="@query:ErpHrSalary__get?id=$id" gql:selection="{@formSelection}"/>
+            <api url="@mutation:ErpHrSalary__update/id?id=$id" withFormData="true"/>
+        </simple>
+    </pages>
+</view>

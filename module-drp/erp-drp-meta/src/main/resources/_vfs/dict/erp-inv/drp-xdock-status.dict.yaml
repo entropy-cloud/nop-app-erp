@@ -1,0 +1,31 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 越库状态
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 待匹配
+    value: 10
+    description: 
+  
+  - label: 已匹配
+    value: 20
+    description: 
+  
+  - label: 暂存中
+    value: 30
+    description: 
+  
+  - label: 已装车
+    value: 40
+    description: 
+  
+  - label: 已完成
+    value: 50
+    description: 
+  
+  - label: 已取消
+    value: 60
+    description: 
+  

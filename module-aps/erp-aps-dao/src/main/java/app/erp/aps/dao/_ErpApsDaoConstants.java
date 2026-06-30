@@ -68,4 +68,24 @@ public interface _ErpApsDaoConstants {
      */
     int SCHEDULING_MODE_BACKWARD = 20;
                     
+    /**
+     * 派工类型: 自动派工 
+     */
+    int DISPATCH_TYPE_AUTO = 10;
+                    
+    /**
+     * 派工类型: 手动派工 
+     */
+    int DISPATCH_TYPE_MANUAL = 20;
+                    
+    /**
+     * 派工类型: 保持 
+     */
+    int DISPATCH_TYPE_HOLD = 30;
+                    
+    /**
+     * 派工类型: 解除保持 
+     */
+    int DISPATCH_TYPE_UNHOLD = 40;
+                    
 }

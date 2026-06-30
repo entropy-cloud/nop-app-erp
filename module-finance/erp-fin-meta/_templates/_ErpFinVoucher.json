@@ -3,6 +3,8 @@
   "code": "",
   "voucherType": 0,
   "voucherType_label": "",
+  "postingType": 0,
+  "postingType_label": "",
   "voucherDate": "2000-01-01",
   "voucherNo": "",
   "orgId": 0,

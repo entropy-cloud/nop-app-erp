@@ -1,0 +1,27 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 步骤完成条件
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 通话完成
+    value: CALL_COMPLETED
+    description: 
+  
+  - label: 邮件打开
+    value: EMAIL_OPENED
+    description: 
+  
+  - label: 邮件回复
+    value: EMAIL_REPLIED
+    description: 
+  
+  - label: 会议举行
+    value: MEETING_HELD
+    description: 
+  
+  - label: 任务完成
+    value: TASK_DONE
+    description: 
+  

@@ -20,7 +20,7 @@
   "posted": false,
   "postedAt": "2000-01-01 14:00:00",
   "postedBy": 0,
-  "docVersion": 0,
+  "docVersion": "",
   "delVersion": 0,
   "version": 0,
   "createdBy": "",
@@ -29,8 +29,8 @@
   "updateTime": "2000-01-01 14:00:00",
   "remark": "",
   "currencyId": 0,
-  "exchangeRate": "",
-  "amountSource": "",
-  "amountFunctional": "",
+  "exchangeRate": 0.0,
+  "amountSource": 0.0,
+  "amountFunctional": 0.0,
   "asset": null
 }

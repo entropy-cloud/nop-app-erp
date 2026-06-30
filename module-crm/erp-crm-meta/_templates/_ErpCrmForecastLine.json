@@ -1,0 +1,22 @@
+{
+  "id": 0,
+  "forecastId": 0,
+  "orgId": 0,
+  "leadId": 0,
+  "probability": 0,
+  "expectedRevenue": "",
+  "weightedRevenue": "",
+  "forecastCategory": "",
+  "forecastCategory_label": "",
+  "includedInCommit": false,
+  "stageName": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "forecast": null,
+  "lead": null,
+  "org": null
+}

@@ -1,0 +1,42 @@
+site:
+  resource:
+    ErpCtApprovalMatrix-main:
+      displayName: Approval Matrix
+    ErpCtApprovalRecord-main:
+      displayName: Approval Record
+    ErpCtConsumptionLine-main:
+      displayName: Consumption Log
+    ErpCtContract-main:
+      displayName: Contract
+    ErpCtContractLine-main:
+      displayName: Contract Line
+    ErpCtDocument-main:
+      displayName: Contract Document
+    ErpCtInvoicePlan-main:
+      displayName: Invoice Plan
+    ErpCtRebateAgreement-main:
+      displayName: Rebate Agreement
+    ErpCtRebateSettlement-main:
+      displayName: Rebate Settlement
+    ErpCtSignatureRequest-main:
+      displayName: Signature Request
+    ErpCtTemplate-main:
+      displayName: Contract Template
+    ErpCtVolumeDiscount-main:
+      displayName: Volume Discount
+    ct-approval:
+      displayName: Approval
+    ct-billing:
+      displayName: Billing & Consumption
+    ct-contract:
+      displayName: Contracts
+    ct-rebate:
+      displayName: Discount & Rebate
+    ct-repository:
+      displayName: Repository & Search
+    ct-signature:
+      displayName: Signature Management
+    ct-template:
+      displayName: Templates
+    erp-ct:
+      displayName: Contract Management

@@ -3,6 +3,10 @@ entity:
     ErpFinAccountingPeriod: 会计期间
     ErpFinAccountingPeriodStatus: 期间结账状态
     ErpFinArApItem: 应收应付明细账
+    ErpFinBankReconciliation: 银行对账(余额调节表)
+    ErpFinBankReconciliationLine: 银行对账调整行
+    ErpFinBankStatement: 银行对账单
+    ErpFinBankStatementLine: 银行对账单行
     ErpFinFundAccount: 资金账户
     ErpFinGlBalance: 总账余额
     ErpFinReconciliation: 核销单
@@ -92,6 +96,95 @@ prop:
       sourceBillType: 来源单据类型(AP_INVOICE/AR_INVOICE/PAYMENT/RECEIPT)
       status: 状态
       status_label: 状态
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpFinBankReconciliation:
+      adjustmentLines: null
+      bookBalance: 账面余额
+      code: 单号
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      docStatus: 状态
+      docStatus_label: 状态
+      fundAccount: null
+      fundAccountId: 资金账户
+      id: ID
+      isBalanced: 是否平衡
+      orgId: 组织
+      reconciledAt: 对账完成时间
+      reconciledBy: 对账人
+      reconciliationDate: 对账日期
+      remark: 备注
+      statement: null
+      statementBalance: 对账单余额
+      statementId: 银行对账单
+      unreconciledDiff: 未达差异
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpFinBankReconciliationLine:
+      adjustmentType: 调整类型
+      amount: 金额
+      createTime: 创建时间
+      createdBy: 创建人
+      dcDirection: 借贷方向
+      dcDirection_label: 借贷方向
+      delVersion: 逻辑删除版本
+      description: 说明
+      id: ID
+      lineNo: 行号
+      reconciliation: null
+      reconciliationId: 对账记录ID
+      remark: 备注
+      side: 调整方
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpFinBankStatement:
+      beginningBalance: 期初余额
+      code: 单号
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      docStatus: 状态
+      docStatus_label: 状态
+      endingBalance: 期末余额
+      fundAccount: null
+      fundAccountId: 资金账户
+      id: ID
+      importTime: 导入时间
+      orgId: 组织
+      remark: 备注
+      statementDate: 对账日期
+      totalCredit: 贷方发生额
+      totalDebit: 借方发生额
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpFinBankStatementLine:
+      amount: 金额
+      balanceAfter: 交易后余额
+      createTime: 创建时间
+      createdBy: 创建人
+      currency: null
+      currencyId: 币种
+      dcDirection: 借贷方向
+      dcDirection_label: 借贷方向
+      delVersion: 逻辑删除版本
+      description: 摘要(银行)
+      id: ID
+      lineNo: 行号
+      matchStatus: 匹配状态
+      matchStatus_label: 匹配状态
+      matchedLine: null
+      matchedLineId: 匹配凭证行ID
+      refNo: 银行参考号
+      remark: 备注
+      statement: null
+      statementId: 对账单ID
+      transactionDate: 交易日期
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -235,6 +328,8 @@ prop:
       periodId: 会计期间
       postedAt: 过账时间
       postedBy: 过账人
+      postingType: 过账类型
+      postingType_label: 过账类型
       remark: 备注
       reversalOfVoucherId: 原冲销凭证ID
       totalCredit: 贷方合计(本位币)
@@ -268,6 +363,8 @@ prop:
       amountSource: 源币种金额
       businessType: 业务类型
       businessType_label: 业务类型
+      costCenter: null
+      costCenterId: 成本中心
       createTime: 创建时间
       createdBy: 创建人
       creditAmount: 贷方金额(本位币)

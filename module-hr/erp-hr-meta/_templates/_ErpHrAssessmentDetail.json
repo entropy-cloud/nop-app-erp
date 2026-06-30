@@ -1,0 +1,17 @@
+{
+  "id": 0,
+  "assessmentId": 0,
+  "competencyId": 0,
+  "actualLevel": 0,
+  "comment": "",
+  "sourceType": 0,
+  "sourceType_label": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "assessment": null,
+  "competency": null
+}

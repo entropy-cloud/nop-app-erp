@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 评分触发事件
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 手动
+    value: MANUAL
+    description: 
+  
+  - label: 线索变更
+    value: LEAD_UPDATE
+    description: 
+  
+  - label: 定时批量
+    value: SCHEDULED
+    description: 
+  

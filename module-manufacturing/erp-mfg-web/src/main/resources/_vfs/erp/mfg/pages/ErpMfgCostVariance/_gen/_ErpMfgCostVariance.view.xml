@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:schema="/nop/schema/xui/xview.xdef" bizObjName="ErpMfgCostVariance" xmlns:i18n-en="i18n-en"
+      xmlns:x="/nop/schema/xdsl.xdef" xmlns:j="j" xmlns:c="c" xmlns:gql="gql" xmlns:view-gen="view-gen" xmlns:xpl="xpl">
+
+    <objMeta>/erp/mfg/model/ErpMfgCostVariance/ErpMfgCostVariance.xmeta</objMeta>
+
+    <controlLib>/nop/web/xlib/control.xlib</controlLib>
+
+    <x:gen-extends>
+        <view-gen:DefaultViewGenExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <view-gen:DefaultViewPostExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:post-extends>
+
+    <grids>
+        <grid id="list" x:abstract="true">
+            <cols>
+
+                <!--ID-->
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--工单-->
+                <col id="workOrderId" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--行号-->
+                <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--差异类型-->
+                <col id="varianceType" mandatory="true" sortable="true"/>
+
+                <!--成本要素-->
+                <col id="costElement" mandatory="true" sortable="true"/>
+
+                <!--物料-->
+                <col id="materialId" ui:number="true" sortable="true"/>
+
+                <!--工序-->
+                <col id="operationId" ui:number="true" sortable="true"/>
+
+                <!--标准金额-->
+                <col id="standardAmount" sortable="true"/>
+
+                <!--实际金额-->
+                <col id="actualAmount" sortable="true"/>
+
+                <!--差异金额-->
+                <col id="varianceAmount" sortable="true"/>
+
+                <!--差异百分比-->
+                <col id="variancePercent" sortable="true"/>
+
+                <!--标准数量-->
+                <col id="standardQty" sortable="true"/>
+
+                <!--实际数量-->
+                <col id="actualQty" sortable="true"/>
+
+                <!--标准单价-->
+                <col id="standardPrice" sortable="true"/>
+
+                <!--实际单价-->
+                <col id="actualPrice" sortable="true"/>
+
+                <!--工作中心-->
+                <col id="workcenterId" ui:number="true" sortable="true"/>
+
+                <!--业务日期-->
+                <col id="businessDate" mandatory="true" sortable="true"/>
+
+                <!--已过账-->
+                <col id="posted" sortable="true"/>
+
+                <!--备注-->
+                <col id="remark" sortable="true"/>
+
+                <!--逻辑删除版本-->
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--创建人-->
+                <col id="createdBy" mandatory="true" sortable="true"/>
+
+                <!--创建时间-->
+                <col id="createTime" mandatory="true" sortable="true"/>
+
+                <!--修改人-->
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+
+                <!--修改时间-->
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list" x:prototype="list" x:abstract="true"/>
+    </grids>
+
+    <forms>
+        <form id="view" editMode="view" title="查看-成本差异记录" i18n-en:title="View Cost Variance">
+            <layout>
+ id[ID] workOrderId[工单]
+ lineNo[行号] varianceType[差异类型]
+ costElement[成本要素] materialId[物料]
+ operationId[工序] standardAmount[标准金额]
+ actualAmount[实际金额] varianceAmount[差异金额]
+ variancePercent[差异百分比] standardQty[标准数量]
+ actualQty[实际数量] standardPrice[标准单价]
+ actualPrice[实际单价] workcenterId[工作中心]
+ businessDate[业务日期] posted[已过账]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+</layout>
+        </form>
+        <form id="add" editMode="add" title="新增-成本差异记录" i18n-en:title="Add Cost Variance">
+            <layout>
+ id[ID] workOrderId[工单]
+ lineNo[行号] varianceType[差异类型]
+ costElement[成本要素] materialId[物料]
+ operationId[工序] standardAmount[标准金额]
+ actualAmount[实际金额] varianceAmount[差异金额]
+ variancePercent[差异百分比] standardQty[标准数量]
+ actualQty[实际数量] standardPrice[标准单价]
+ actualPrice[实际单价] workcenterId[工作中心]
+ businessDate[业务日期] posted[已过账]
+ remark[备注] 
+</layout>
+        </form>
+        <form id="edit" editMode="edit" title="编辑-成本差异记录" i18n-en:title="Edit Cost Variance">
+            <layout>
+ id[ID] workOrderId[工单]
+ lineNo[行号] varianceType[差异类型]
+ costElement[成本要素] materialId[物料]
+ operationId[工序] standardAmount[标准金额]
+ actualAmount[实际金额] varianceAmount[差异金额]
+ variancePercent[差异百分比] standardQty[标准数量]
+ actualQty[实际数量] standardPrice[标准单价]
+ actualPrice[实际单价] workcenterId[工作中心]
+ businessDate[业务日期] posted[已过账]
+ remark[备注] delVersion[逻辑删除版本]
+</layout>
+        </form>
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-成本差异记录" i18n-en:title="Update Cost Variance"/>
+    </forms>
+
+    <pages>
+        <crud name="view-list" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpMfgCostVariance__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </crud>
+        <crud name="main" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpMfgCostVariance__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+            <listActions>
+                <action id="batch-delete-button" label="@i18n:common.batchDelete" batch="true">
+                    <api url="@mutation:ErpMfgCostVariance__batchDelete?ids=$ids"/>
+                    <confirmText>@i18n:common.confirmBatchDelete</confirmText>
+                </action>
+                <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
+                    <dialog page="add"/>
+                </action>
+            </listActions>
+            <rowActions>
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+                <action id="row-update-button" level="primary" label="@i18n:common.edit" x:abstract="true">
+                    <dialog page="update"/>
+                </action>
+                <action id="row-delete-button" level="danger" label="@i18n:common.delete" x:abstract="true">
+                    <api url="@mutation:ErpMfgCostVariance__delete?id=$id"/>
+                    <confirmText>@i18n:common.confirmDelete</confirmText>
+                </action>
+                <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
+                    <action id="row-update-button" label="@i18n:common.edit">
+                        <dialog page="update"/>
+                    </action>
+                    <action id="row-delete-button" label="@i18n:common.delete">
+                        <api url="@mutation:ErpMfgCostVariance__delete?id=$id"/>
+                        <confirmText>@i18n:common.confirmDelete</confirmText>
+                    </action>
+                </actionGroup>
+            </rowActions>
+        </crud>
+        <picker name="picker" grid="pick-list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table noOperations="true">
+                <api url="@query:ErpMfgCostVariance__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </picker>
+        <simple name="add" form="add">
+            <api url="@mutation:ErpMfgCostVariance__save/id"/>
+        </simple>
+        <simple name="view" form="view">
+            <initApi url="@query:ErpMfgCostVariance__get?id=$id" gql:selection="{@formSelection}"/>
+        </simple>
+        <simple name="update" form="edit">
+            <initApi url="@query:ErpMfgCostVariance__get?id=$id" gql:selection="{@formSelection}"/>
+            <api url="@mutation:ErpMfgCostVariance__update/id?id=$id" withFormData="true"/>
+        </simple>
+    </pages>
+</view>

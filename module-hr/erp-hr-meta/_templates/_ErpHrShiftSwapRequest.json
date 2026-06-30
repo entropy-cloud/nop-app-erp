@@ -1,0 +1,23 @@
+{
+  "id": 0,
+  "code": "",
+  "orgId": 0,
+  "requesterId": 0,
+  "targetEmployeeId": 0,
+  "sourceAssignmentId": 0,
+  "targetAssignmentId": 0,
+  "swapDate": "2000-01-01",
+  "reason": "",
+  "status": 0,
+  "status_label": "",
+  "approvedById": 0,
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "requester": null,
+  "targetEmployee": null,
+  "org": null
+}

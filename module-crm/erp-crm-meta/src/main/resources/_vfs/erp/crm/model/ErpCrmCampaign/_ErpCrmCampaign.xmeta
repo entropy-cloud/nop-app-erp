@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="megaphone" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen"
+      xmlns:biz="biz" displayName="营销活动" i18n-en:displayName="Campaign" tagSet="gid,erp.crm" xmlns:ui="ui"
+      xmlns:orm="orm">
+
+    <entityName>app.erp.crm.dao.entity.ErpCrmCampaign</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="code" displayName="编码" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="code" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="name" displayName="名称" propId="3" i18n-en:displayName="Name" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="name" type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="orgId" displayName="业务组织" propId="4" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="campaignName" displayName="活动名称" propId="5" i18n-en:displayName="Campaign Name" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema domain="name" type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="medium" displayName="UTM Medium" propId="6" i18n-en:displayName="UTM Medium" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="source" displayName="UTM Source" propId="7" i18n-en:displayName="UTM Source" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="startDate" displayName="开始日期" propId="8" i18n-en:displayName="Start Date" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="endDate" displayName="结束日期" propId="9" i18n-en:displayName="End Date" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="budgetAmount" displayName="预算金额" propId="10" i18n-en:displayName="Budget Amount" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="actualCost" displayName="实际成本" propId="11" i18n-en:displayName="Actual Cost" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="12" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="13" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="14" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="15" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="16" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="17" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="18" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+    </props>
+</meta>

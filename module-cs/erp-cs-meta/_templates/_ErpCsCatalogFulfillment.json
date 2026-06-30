@@ -1,0 +1,20 @@
+{
+  "id": 0,
+  "code": "",
+  "orgId": 0,
+  "catalogItemId": 0,
+  "sequence": 0,
+  "actionType": 0,
+  "actionType_label": "",
+  "actionConfig": "",
+  "assignToRole": "",
+  "estimatedDuration": 0,
+  "isMandatory": false,
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "catalogItem": null
+}

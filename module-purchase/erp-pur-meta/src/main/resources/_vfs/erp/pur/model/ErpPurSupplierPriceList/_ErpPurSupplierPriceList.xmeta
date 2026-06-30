@@ -49,7 +49,7 @@
         </prop>
         <prop name="minOrderQuantity" displayName="最小起订量" propId="8" i18n-en:displayName="Min Order Quantity"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="leadTimeDays" displayName="交货周期(天)" propId="9" i18n-en:displayName="Lead Time Days" queryable="true"
               sortable="true" insertable="true" updatable="true">

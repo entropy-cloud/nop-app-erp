@@ -1,0 +1,23 @@
+{
+  "id": 0,
+  "code": "",
+  "name": "",
+  "ticketTypeId": 0,
+  "minPriority": 0,
+  "minPriority_label": "",
+  "teamId": 0,
+  "resolveHours": 0,
+  "resolveDays": 0,
+  "isWorkingDays": false,
+  "escalationUserId": 0,
+  "description": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "ticketType": null,
+  "team": null,
+  "escalationUser": null
+}

@@ -538,6 +538,72 @@
                 </to-one>
             </relations>
         </entity>
+        <entity className="app.erp.log.dao.entity.ErpLogDeliveryWindow" createTimeProp="createTime"
+                createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="配送时间窗口"
+                name="app.erp.log.dao.entity.ErpLogDeliveryWindow" registerShortName="true"
+                tableName="erp_log_delivery_window" tagSet="gid,erp.logistics" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="clock"
+                i18n-en:displayName="Delivery Window">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="PARTNER_ID" displayName="客户" mandatory="true" name="partnerId" propId="2"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="WEEKDAY" displayName="星期" mandatory="true" name="weekday" propId="4" stdDataType="int"
+                        stdSqlType="INTEGER" i18n-en:displayName="Weekday"/>
+                <column code="START_TIME" displayName="开始时间" mandatory="true" name="startTime" precision="8" propId="5"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Start Time"/>
+                <column code="END_TIME" displayName="结束时间" mandatory="true" name="endTime" precision="8" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="End Time"/>
+                <column code="MAX_CAPACITY" defaultValue="10" displayName="最大预约数" mandatory="true" name="maxCapacity"
+                        propId="7" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Max Capacity"/>
+                <column code="CURRENT_BOOKED" defaultValue="0" displayName="当前已预约" mandatory="true" name="currentBooked"
+                        propId="8" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Current Booked"/>
+                <column code="IS_ACTIVE" defaultValue="true" displayName="是否启用" name="isActive" propId="9"
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Active"/>
+                <column code="EFFECTIVE_FROM" displayName="生效日期" name="effectiveFrom" propId="10" stdDataType="date"
+                        stdSqlType="DATE" i18n-en:displayName="Effective From"/>
+                <column code="EFFECTIVE_TO" displayName="失效日期" name="effectiveTo" propId="11" stdDataType="date"
+                        stdSqlType="DATE" i18n-en:displayName="Effective To"/>
+                <column code="ALLOWED_SHIPMENT_TYPES" displayName="允许发运类型" name="allowedShipmentTypes" precision="200"
+                        propId="12" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Allowed Shipment Types"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="13"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="14" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="15" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="16" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="18" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="partner" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
+                        biz:moduleId="erp/md" i18n-en:displayName="Partner" ref-i18n-en:displayName="Delivery Window">
+                    <join>
+                        <on leftProp="partnerId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
+                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
+                        ref-i18n-en:displayName="Delivery Window">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
         <entity className="app.erp.md.dao.entity.ErpMdPartner" displayName="ErpMdPartner"
                 name="app.erp.md.dao.entity.ErpMdPartner" notGenCode="true" tableName="erp_md_md_partner"
                 biz:moduleId="erp/md">

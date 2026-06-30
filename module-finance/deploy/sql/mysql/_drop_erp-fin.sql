@@ -8,6 +8,7 @@ drop table  if exists  erp_md_organization;
 drop table  if exists  erp_md_warehouse;
 drop table  if exists  erp_md_material;
 drop table  if exists  erp_prj_project;
+drop table  if exists  erp_md_cost_center;
 drop table  if exists  erp_ast_asset;
 drop table  if exists  erp_fin_voucher;
 drop table  if exists  erp_fin_voucher_template;
@@ -20,5 +21,9 @@ drop table  if exists  erp_fin_reconciliation;
 drop table  if exists  erp_fin_voucher_line;
 drop table  if exists  erp_fin_voucher_bill_r;
 drop table  if exists  erp_fin_voucher_template_line;
+drop table  if exists  erp_fin_bank_statement;
 drop table  if exists  erp_fin_reconciliation_line;
+drop table  if exists  erp_fin_bank_statement_line;
+drop table  if exists  erp_fin_bank_reconciliation;
+drop table  if exists  erp_fin_bank_reconciliation_line;
 

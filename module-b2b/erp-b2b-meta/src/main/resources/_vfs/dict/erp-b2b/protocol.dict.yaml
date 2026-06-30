@@ -1,0 +1,27 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 传输协议
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: AS2
+    value: 10
+    description: 
+  
+  - label: SFTP
+    value: 20
+    description: 
+  
+  - label: HTTP
+    value: 30
+    description: 
+  
+  - label: HTTPS
+    value: 40
+    description: 
+  
+  - label: OFTP2
+    value: 50
+    description: 
+  

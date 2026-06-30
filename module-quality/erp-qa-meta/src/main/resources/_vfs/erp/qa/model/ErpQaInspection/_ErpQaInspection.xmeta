@@ -143,6 +143,10 @@
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
+        <prop name="businessDate" displayName="业务日期" propId="33" i18n-en:displayName="Business Date" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
         <prop name="material" i18n-en:displayName="Material" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="materialId" ext:joinRightProp="id" biz:moduleId="erp/md"
               insertable="false" updatable="false" mandatory="true" lazy="true">

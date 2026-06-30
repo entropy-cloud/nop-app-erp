@@ -111,16 +111,16 @@
         }
 
 
-        private String _minOrderQuantity;
+        private java.math.BigDecimal _minOrderQuantity;
 
     
         @PropMeta(propId=8)
     
-        public String getMinOrderQuantity(){
+        public java.math.BigDecimal getMinOrderQuantity(){
             return _minOrderQuantity;
         }
 
-        public void setMinOrderQuantity(String value){
+        public void setMinOrderQuantity(java.math.BigDecimal value){
             this._minOrderQuantity = value;
         }
 

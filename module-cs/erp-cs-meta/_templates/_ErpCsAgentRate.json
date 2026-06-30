@@ -1,0 +1,17 @@
+{
+  "id": 0,
+  "orgId": 0,
+  "agentId": 0,
+  "serviceType": 0,
+  "serviceType_label": "",
+  "rate": 0.0,
+  "effectiveDate": "2000-01-01",
+  "isActive": false,
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "agent": null
+}

@@ -54,6 +54,27 @@ CREATE TABLE erp_ct_contract(
   constraint PK_erp_ct_contract primary key (ID)
 );
 
+CREATE TABLE erp_ct_approval_matrix(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  MIN_AMOUNT NUMBER(20,4)  ,
+  MAX_AMOUNT NUMBER(20,4)  ,
+  APPROVER_ROLE VARCHAR2(50) NOT NULL ,
+  APPROVAL_ORDER INTEGER NOT NULL ,
+  CONTRACT_TYPE VARCHAR2(50)  ,
+  ALLOW_SKIP CHAR(1) default 0   ,
+  IS_ACTIVE CHAR(1) default 1   ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_ct_approval_matrix primary key (ID)
+);
+
 CREATE TABLE erp_ct_contract_line(
   ID NUMBER(20) NOT NULL ,
   CONTRACT_ID NUMBER(20) NOT NULL ,
@@ -94,6 +115,81 @@ CREATE TABLE erp_ct_contract_version(
   constraint PK_erp_ct_contract_version primary key (ID)
 );
 
+CREATE TABLE erp_ct_approval_record(
+  ID NUMBER(20) NOT NULL ,
+  CONTRACT_ID NUMBER(20) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  APPROVAL_MATRIX_ID NUMBER(20)  ,
+  APPROVAL_ORDER INTEGER  ,
+  APPROVER_ID NUMBER(20)  ,
+  APPROVAL_STATUS INTEGER NOT NULL ,
+  "COMMENT" VARCHAR2(1000)  ,
+  APPROVED_AT DATE  ,
+  REJECTED_AT DATE  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_ct_approval_record primary key (ID)
+);
+
+CREATE TABLE erp_ct_rebate_agreement(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  CONTRACT_ID NUMBER(20)  ,
+  PARTNER_ID NUMBER(20) NOT NULL ,
+  REBATE_TYPE INTEGER NOT NULL ,
+  AGREEMENT_DATE DATE  ,
+  START_DATE DATE NOT NULL ,
+  END_DATE DATE NOT NULL ,
+  ACCRUAL_METHOD INTEGER NOT NULL ,
+  STATUS INTEGER NOT NULL ,
+  TOTAL_ACCUMULATED_AMOUNT NUMBER(20,4)  ,
+  ESTIMATED_REBATE_AMOUNT NUMBER(20,4)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_ct_rebate_agreement primary key (ID)
+);
+
+CREATE TABLE erp_ct_document(
+  ID NUMBER(20) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  CONTRACT_ID NUMBER(20)  ,
+  CODE VARCHAR2(50) NOT NULL ,
+  DOC_NAME VARCHAR2(200) NOT NULL ,
+  DOC_TYPE VARCHAR2(50) NOT NULL ,
+  ATTACHMENT_ID NUMBER(20)  ,
+  FILE_SIZE NUMBER(20)  ,
+  FILE_HASH VARCHAR2(100)  ,
+  MIME_TYPE VARCHAR2(100)  ,
+  OCR_TEXT VARCHAR2(4000)  ,
+  OCR_STATUS VARCHAR2(50)  ,
+  FULL_TEXT_SEARCH VARCHAR2(4000)  ,
+  METADATA_TAGS VARCHAR2(2000)  ,
+  RETENTION_DATE DATE  ,
+  ARCHIVE_DATE DATE  ,
+  PURGE_DATE DATE  ,
+  IS_ARCHIVED CHAR(1) default 0   ,
+  VERSION_NO INTEGER default 1   ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_ct_document primary key (ID)
+);
+
 CREATE TABLE erp_ct_invoice_plan(
   ID NUMBER(20) NOT NULL ,
   CONTRACT_LINE_ID NUMBER(20) NOT NULL ,
@@ -130,6 +226,107 @@ CREATE TABLE erp_ct_consumption_line(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   constraint PK_erp_ct_consumption_line primary key (ID)
+);
+
+CREATE TABLE erp_ct_volume_discount(
+  ID NUMBER(20) NOT NULL ,
+  CONTRACT_LINE_ID NUMBER(20) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  FROM_QTY NUMBER(20,4) NOT NULL ,
+  TO_QTY NUMBER(20,4)  ,
+  DISCOUNT_PERCENT NUMBER(10,2) NOT NULL ,
+  UNIT_PRICE NUMBER(20,4)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_ct_volume_discount primary key (ID)
+);
+
+CREATE TABLE erp_ct_signature_request(
+  ID NUMBER(20) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  CONTRACT_VERSION_ID NUMBER(20) NOT NULL ,
+  PROVIDER VARCHAR2(50) NOT NULL ,
+  PROVIDER_REQUEST_ID VARCHAR2(200)  ,
+  STATUS VARCHAR2(50) NOT NULL ,
+  SIGNERS VARCHAR2(2000)  ,
+  SIGNING_DEADLINE DATE  ,
+  COMPLETED_AT DATE  ,
+  CERTIFICATE_URL VARCHAR2(1000)  ,
+  EVIDENCE_NO VARCHAR2(200)  ,
+  ATTACHMENT_ID NUMBER(20)  ,
+  ERROR_MSG VARCHAR2(1000)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_ct_signature_request primary key (ID)
+);
+
+CREATE TABLE erp_ct_rebate_tier(
+  ID NUMBER(20) NOT NULL ,
+  REBATE_AGREEMENT_ID NUMBER(20) NOT NULL ,
+  FROM_AMOUNT NUMBER(20,4) NOT NULL ,
+  TO_AMOUNT NUMBER(20,4)  ,
+  REBATE_PERCENT NUMBER(10,2)  ,
+  REBATE_AMOUNT NUMBER(20,4)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_ct_rebate_tier primary key (ID)
+);
+
+CREATE TABLE erp_ct_rebate_accrual(
+  ID NUMBER(20) NOT NULL ,
+  REBATE_AGREEMENT_ID NUMBER(20) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  SOURCE_BILL_TYPE VARCHAR2(50)  ,
+  SOURCE_BILL_CODE VARCHAR2(50)  ,
+  BILL_AMOUNT_SOURCE NUMBER(20,4)  ,
+  ACCRUED_REBATE NUMBER(20,4)  ,
+  ACCRUAL_DATE DATE  ,
+  IS_SETTLED CHAR(1) default 0   ,
+  SETTLED_DATE DATE  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_ct_rebate_accrual primary key (ID)
+);
+
+CREATE TABLE erp_ct_rebate_settlement(
+  ID NUMBER(20) NOT NULL ,
+  REBATE_AGREEMENT_ID NUMBER(20) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  SETTLEMENT_DATE DATE NOT NULL ,
+  TOTAL_REBATE_AMOUNT NUMBER(20,4)  ,
+  CREDIT_MEMO_BILL_TYPE VARCHAR2(50)  ,
+  CREDIT_MEMO_BILL_CODE VARCHAR2(50)  ,
+  STATUS INTEGER NOT NULL ,
+  POSTED_AT DATE  ,
+  POSTED_BY VARCHAR2(50)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_ct_rebate_settlement primary key (ID)
 );
 
 
@@ -215,6 +412,42 @@ CREATE TABLE erp_ct_consumption_line(
                     
       COMMENT ON COLUMN erp_ct_contract.UPDATE_TIME IS '修改时间';
                     
+      COMMENT ON TABLE erp_ct_approval_matrix IS '审批矩阵';
+                
+      COMMENT ON COLUMN erp_ct_approval_matrix.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_ct_approval_matrix.CODE IS '编码';
+                    
+      COMMENT ON COLUMN erp_ct_approval_matrix.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_ct_approval_matrix.MIN_AMOUNT IS '最小金额';
+                    
+      COMMENT ON COLUMN erp_ct_approval_matrix.MAX_AMOUNT IS '最大金额';
+                    
+      COMMENT ON COLUMN erp_ct_approval_matrix.APPROVER_ROLE IS '审批角色';
+                    
+      COMMENT ON COLUMN erp_ct_approval_matrix.APPROVAL_ORDER IS '审批顺序';
+                    
+      COMMENT ON COLUMN erp_ct_approval_matrix.CONTRACT_TYPE IS '适用合同类型';
+                    
+      COMMENT ON COLUMN erp_ct_approval_matrix.ALLOW_SKIP IS '可跳过';
+                    
+      COMMENT ON COLUMN erp_ct_approval_matrix.IS_ACTIVE IS '启用';
+                    
+      COMMENT ON COLUMN erp_ct_approval_matrix.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_ct_approval_matrix.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_ct_approval_matrix.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_ct_approval_matrix.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_ct_approval_matrix.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_ct_approval_matrix.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_ct_approval_matrix.UPDATE_TIME IS '修改时间';
+                    
       COMMENT ON TABLE erp_ct_contract_line IS '合同行';
                 
       COMMENT ON COLUMN erp_ct_contract_line.ID IS 'ID';
@@ -283,6 +516,138 @@ CREATE TABLE erp_ct_consumption_line(
                     
       COMMENT ON COLUMN erp_ct_contract_version.UPDATE_TIME IS '修改时间';
                     
+      COMMENT ON TABLE erp_ct_approval_record IS '审批记录';
+                
+      COMMENT ON COLUMN erp_ct_approval_record.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_ct_approval_record.CONTRACT_ID IS '合同';
+                    
+      COMMENT ON COLUMN erp_ct_approval_record.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_ct_approval_record.APPROVAL_MATRIX_ID IS '审批矩阵';
+                    
+      COMMENT ON COLUMN erp_ct_approval_record.APPROVAL_ORDER IS '顺序号';
+                    
+      COMMENT ON COLUMN erp_ct_approval_record.APPROVER_ID IS '审批人';
+                    
+      COMMENT ON COLUMN erp_ct_approval_record.APPROVAL_STATUS IS '审批状态';
+                    
+      COMMENT ON COLUMN erp_ct_approval_record."COMMENT" IS '审批意见';
+                    
+      COMMENT ON COLUMN erp_ct_approval_record.APPROVED_AT IS '通过时间';
+                    
+      COMMENT ON COLUMN erp_ct_approval_record.REJECTED_AT IS '驳回时间';
+                    
+      COMMENT ON COLUMN erp_ct_approval_record.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_ct_approval_record.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_ct_approval_record.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_ct_approval_record.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_ct_approval_record.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_ct_approval_record.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_ct_approval_record.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_ct_rebate_agreement IS '返利协议';
+                
+      COMMENT ON COLUMN erp_ct_rebate_agreement.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_agreement.CODE IS '协议编号';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_agreement.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_agreement.CONTRACT_ID IS '关联合同';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_agreement.PARTNER_ID IS '对方伙伴';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_agreement.REBATE_TYPE IS '返利类型';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_agreement.AGREEMENT_DATE IS '签订日期';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_agreement.START_DATE IS '有效期开始';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_agreement.END_DATE IS '有效期结束';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_agreement.ACCRUAL_METHOD IS '计提方法';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_agreement.STATUS IS '状态';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_agreement.TOTAL_ACCUMULATED_AMOUNT IS '当前累计金额';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_agreement.ESTIMATED_REBATE_AMOUNT IS '预估返利金额';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_agreement.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_agreement.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_agreement.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_agreement.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_agreement.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_agreement.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_agreement.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_ct_document IS '合同文档';
+                
+      COMMENT ON COLUMN erp_ct_document.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_ct_document.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_ct_document.CONTRACT_ID IS '关联合同';
+                    
+      COMMENT ON COLUMN erp_ct_document.CODE IS '文档编码';
+                    
+      COMMENT ON COLUMN erp_ct_document.DOC_NAME IS '文档名称';
+                    
+      COMMENT ON COLUMN erp_ct_document.DOC_TYPE IS '文档类型';
+                    
+      COMMENT ON COLUMN erp_ct_document.ATTACHMENT_ID IS '附件';
+                    
+      COMMENT ON COLUMN erp_ct_document.FILE_SIZE IS '文件大小(字节)';
+                    
+      COMMENT ON COLUMN erp_ct_document.FILE_HASH IS '文件哈希';
+                    
+      COMMENT ON COLUMN erp_ct_document.MIME_TYPE IS 'MIME类型';
+                    
+      COMMENT ON COLUMN erp_ct_document.OCR_TEXT IS 'OCR文本';
+                    
+      COMMENT ON COLUMN erp_ct_document.OCR_STATUS IS 'OCR状态';
+                    
+      COMMENT ON COLUMN erp_ct_document.FULL_TEXT_SEARCH IS '全文检索';
+                    
+      COMMENT ON COLUMN erp_ct_document.METADATA_TAGS IS '元数据标签(JSON)';
+                    
+      COMMENT ON COLUMN erp_ct_document.RETENTION_DATE IS '保留截止日期';
+                    
+      COMMENT ON COLUMN erp_ct_document.ARCHIVE_DATE IS '归档日期';
+                    
+      COMMENT ON COLUMN erp_ct_document.PURGE_DATE IS '销毁日期';
+                    
+      COMMENT ON COLUMN erp_ct_document.IS_ARCHIVED IS '已归档';
+                    
+      COMMENT ON COLUMN erp_ct_document.VERSION_NO IS '文档版本';
+                    
+      COMMENT ON COLUMN erp_ct_document.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_ct_document.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_ct_document.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_ct_document.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_ct_document.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_ct_document.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_ct_document.UPDATE_TIME IS '修改时间';
+                    
       COMMENT ON TABLE erp_ct_invoice_plan IS '开票计划';
                 
       COMMENT ON COLUMN erp_ct_invoice_plan.ID IS 'ID';
@@ -346,4 +711,176 @@ CREATE TABLE erp_ct_consumption_line(
       COMMENT ON COLUMN erp_ct_consumption_line.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_ct_consumption_line.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_ct_volume_discount IS '批量折扣';
+                
+      COMMENT ON COLUMN erp_ct_volume_discount.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_ct_volume_discount.CONTRACT_LINE_ID IS '合同行';
+                    
+      COMMENT ON COLUMN erp_ct_volume_discount.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_ct_volume_discount.FROM_QTY IS '起始数量';
+                    
+      COMMENT ON COLUMN erp_ct_volume_discount.TO_QTY IS '截止数量';
+                    
+      COMMENT ON COLUMN erp_ct_volume_discount.DISCOUNT_PERCENT IS '折扣百分比';
+                    
+      COMMENT ON COLUMN erp_ct_volume_discount.UNIT_PRICE IS '覆盖单价';
+                    
+      COMMENT ON COLUMN erp_ct_volume_discount.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_ct_volume_discount.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_ct_volume_discount.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_ct_volume_discount.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_ct_volume_discount.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_ct_volume_discount.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_ct_volume_discount.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_ct_signature_request IS '签章请求';
+                
+      COMMENT ON COLUMN erp_ct_signature_request.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_ct_signature_request.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_ct_signature_request.CONTRACT_VERSION_ID IS '合同版本';
+                    
+      COMMENT ON COLUMN erp_ct_signature_request.PROVIDER IS '签名提供商';
+                    
+      COMMENT ON COLUMN erp_ct_signature_request.PROVIDER_REQUEST_ID IS '提供商请求ID';
+                    
+      COMMENT ON COLUMN erp_ct_signature_request.STATUS IS '签章状态';
+                    
+      COMMENT ON COLUMN erp_ct_signature_request.SIGNERS IS '签署人(JSON)';
+                    
+      COMMENT ON COLUMN erp_ct_signature_request.SIGNING_DEADLINE IS '签署截止日期';
+                    
+      COMMENT ON COLUMN erp_ct_signature_request.COMPLETED_AT IS '签署完成时间';
+                    
+      COMMENT ON COLUMN erp_ct_signature_request.CERTIFICATE_URL IS '完成证书URL';
+                    
+      COMMENT ON COLUMN erp_ct_signature_request.EVIDENCE_NO IS '存证编号';
+                    
+      COMMENT ON COLUMN erp_ct_signature_request.ATTACHMENT_ID IS '已签署文件';
+                    
+      COMMENT ON COLUMN erp_ct_signature_request.ERROR_MSG IS '错误信息';
+                    
+      COMMENT ON COLUMN erp_ct_signature_request.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_ct_signature_request.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_ct_signature_request.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_ct_signature_request.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_ct_signature_request.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_ct_signature_request.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_ct_signature_request.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_ct_rebate_tier IS '返利阶梯';
+                
+      COMMENT ON COLUMN erp_ct_rebate_tier.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_tier.REBATE_AGREEMENT_ID IS '返利协议';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_tier.FROM_AMOUNT IS '起始金额';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_tier.TO_AMOUNT IS '截止金额';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_tier.REBATE_PERCENT IS '返利比例';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_tier.REBATE_AMOUNT IS '固定返利金额';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_tier.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_tier.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_tier.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_tier.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_tier.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_tier.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_tier.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_ct_rebate_accrual IS '返利计提明细';
+                
+      COMMENT ON COLUMN erp_ct_rebate_accrual.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_accrual.REBATE_AGREEMENT_ID IS '返利协议';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_accrual.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_accrual.SOURCE_BILL_TYPE IS '来源单据类型';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_accrual.SOURCE_BILL_CODE IS '来源单据号';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_accrual.BILL_AMOUNT_SOURCE IS '单据金额(源币种)';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_accrual.ACCRUED_REBATE IS '计提返利金额';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_accrual.ACCRUAL_DATE IS '计提日期';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_accrual.IS_SETTLED IS '已结算';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_accrual.SETTLED_DATE IS '结算日期';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_accrual.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_accrual.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_accrual.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_accrual.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_accrual.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_accrual.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_accrual.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_ct_rebate_settlement IS '返利结算单';
+                
+      COMMENT ON COLUMN erp_ct_rebate_settlement.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_settlement.REBATE_AGREEMENT_ID IS '返利协议';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_settlement.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_settlement.SETTLEMENT_DATE IS '结算日期';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_settlement.TOTAL_REBATE_AMOUNT IS '结算返利总额';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_settlement.CREDIT_MEMO_BILL_TYPE IS '信用单类型';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_settlement.CREDIT_MEMO_BILL_CODE IS '信用单号';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_settlement.STATUS IS '状态';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_settlement.POSTED_AT IS '过账时间';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_settlement.POSTED_BY IS '过账人';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_settlement.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_settlement.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_settlement.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_settlement.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_settlement.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_settlement.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_settlement.UPDATE_TIME IS '修改时间';
                     

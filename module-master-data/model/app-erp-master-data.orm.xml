@@ -403,9 +403,7 @@
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="13" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="14" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
                 <column name="remark" code="REMARK" displayName="备注" propId="15" domain="remark" stdSqlType="VARCHAR" precision="1000" i18n-en:displayName='Remark' />
-                <column name="batchSelectionStrategy" code="BATCH_SELECTION_STRATEGY" displayName="批次选择策略" propId="16" stdSqlType="VARCHAR" precision="20" ext:dict="erp-md/batch-strategy" i18n-en:displayName='Batch Selection Strategy'>
-                    <description>空值表示使用全局配置（erp-md.batch-strategy）</description>
-                </column>
+                <column name="batchSelectionStrategy" code="BATCH_SELECTION_STRATEGY" displayName="批次选择策略" propId="16" stdSqlType="VARCHAR" precision="20" ext:dict="erp-md/batch-strategy" i18n-en:displayName='Batch Selection Strategy' /><!-- 空值表示使用全局配置（erp-md.batch-strategy） -->
             </columns>
             <relations>
                 <to-one name="organization" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Organization' ref-i18n-en:displayName='Warehouse'>
@@ -871,14 +869,10 @@
                 updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default" i18n-en:displayName='ID' />
-                <column name="configKey" code="CONFIG_KEY" displayName="配置键" propId="2" stdSqlType="VARCHAR" precision="200" mandatory="true" i18n-en:displayName='Config Key'>
-                    <description>配置键名，如 erp-fin.posting-mode、erp-inv.batch-selection-strategy</description>
-                </column>
-                <column name="configValue" code="CONFIG_VALUE" displayName="配置值" propId="3" stdSqlType="VARCHAR" precision=2000 mandatory="true" i18n-en:displayName='Config Value' />
-                <column name="orgId" code="ORG_ID" displayName="所属组织" propId="4" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Organization'>
-                    <description>空值表示全局默认；有值表示按组织覆盖</description>
-                </column>
-                <column name="description" code="DESCRIPTION" displayName="说明" propId="5" stdSqlType="VARCHAR" precision=500 i18n-en:displayName='Description' />
+                <column name="configKey" code="CONFIG_KEY" displayName="配置键" propId="2" stdSqlType="VARCHAR" precision="200" mandatory="true" i18n-en:displayName='Config Key' /><!-- 配置键名，如 erp-fin.posting-mode、erp-inv.batch-selection-strategy -->
+                <column name="configValue" code="CONFIG_VALUE" displayName="配置值" propId="3" stdSqlType="VARCHAR" precision="2000" mandatory="true" i18n-en:displayName='Config Value' />
+                <column name="orgId" code="ORG_ID" displayName="所属组织" propId="4" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Organization' /><!-- 空值表示全局默认；有值表示按组织覆盖 -->
+                <column name="description" code="DESCRIPTION" displayName="说明" propId="5" stdSqlType="VARCHAR" precision="500" i18n-en:displayName='Description' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="6" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="7" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="8" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Created By' />
@@ -891,7 +885,9 @@
                     <join><on leftProp="orgId" rightProp="id"/></join>
                 </to-one>
             </relations>
-            <unique-index name="uk_config_org" columns="configKey,orgId" description="同一组织下配置键唯一"/>
+            <unique-keys><!-- 同一组织下配置键唯一 -->
+                <unique-key name="uk_config_org" columns="configKey,orgId"/>
+            </unique-keys>
         </entity>
     </entities>
 </orm>

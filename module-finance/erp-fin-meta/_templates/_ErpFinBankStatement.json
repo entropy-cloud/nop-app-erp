@@ -1,0 +1,22 @@
+{
+  "id": 0,
+  "code": "",
+  "orgId": 0,
+  "fundAccountId": 0,
+  "statementDate": "2000-01-01",
+  "beginningBalance": "",
+  "endingBalance": "",
+  "totalDebit": "",
+  "totalCredit": "",
+  "importTime": "2000-01-01 14:00:00",
+  "docStatus": 0,
+  "docStatus_label": "",
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "fundAccount": null
+}

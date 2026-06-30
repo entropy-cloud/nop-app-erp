@@ -1,0 +1,19 @@
+{
+  "id": 0,
+  "ticketId": 0,
+  "actionType": 0,
+  "actionType_label": "",
+  "fromStatus": 0,
+  "fromStatus_label": "",
+  "toStatus": 0,
+  "toStatus_label": "",
+  "operatorId": 0,
+  "content": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "ticket": null
+}

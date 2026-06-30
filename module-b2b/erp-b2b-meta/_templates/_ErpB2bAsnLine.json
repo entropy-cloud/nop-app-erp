@@ -1,0 +1,18 @@
+{
+  "id": 0,
+  "asnId": 0,
+  "lineNo": 0,
+  "materialId": 0,
+  "supplierPartNo": "",
+  "quantity": 0.0,
+  "shippedQty": 0.0,
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "asn": null,
+  "material": null
+}

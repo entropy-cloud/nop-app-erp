@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="file-text" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen"
+      xmlns:biz="biz" displayName="EDI 事务" i18n-en:displayName="EDI Document" tagSet="gid,erp.b2b" xmlns:ui="ui"
+      xmlns:orm="orm">
+
+    <entityName>app.erp.b2b.dao.entity.ErpB2bEdiDoc</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys>
+        <key name="UK_EDI_DOC_FORMAT_BILL" props="formatId,relatedBillType,relatedBillCode"/>
+    </keys>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="code" displayName="事务编码" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="orderCode" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="formatId" displayName="EDI 格式" propId="4" i18n-en:displayName="Format" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="format">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="relatedBillType" displayName="关联单据类型" propId="5" i18n-en:displayName="Related Bill Type"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="relatedBillCode" displayName="关联单据号" propId="6" i18n-en:displayName="Related Bill Code"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="state" displayName="状态" propId="7" i18n-en:displayName="State" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer" dict="erp-b2b/edi-doc-state"/>
+        </prop>
+        <prop name="blockingLevel" displayName="阻断级别" propId="8" i18n-en:displayName="Blocking Level" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="10">
+            <schema type="java.lang.Integer" dict="erp-b2b/blocking-level"/>
+        </prop>
+        <prop name="error" displayName="错误信息" propId="9" i18n-en:displayName="Error Message" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="2000"/>
+        </prop>
+        <prop name="retryCount" displayName="重试次数" propId="10" i18n-en:displayName="Retry Count" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="attachmentId" displayName="附件（EDI 报文文件）" propId="11" i18n-en:displayName="Attachment"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="sentAt" displayName="发送时间" propId="12" i18n-en:displayName="Sent At" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDateTime"/>
+        </prop>
+        <prop name="acknowledgedAt" displayName="确认时间" propId="13" i18n-en:displayName="Acknowledged At"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDateTime"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="14" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="15" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="16" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="17" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="18" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="19" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="20" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="format" i18n-en:displayName="Format" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="formatId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpB2bEdiFormat"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+    </props>
+</meta>

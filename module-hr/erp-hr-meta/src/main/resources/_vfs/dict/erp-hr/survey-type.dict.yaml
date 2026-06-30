@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 调研类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 年度敬业度调研
+    value: 10
+    description: 
+  
+  - label: 脉搏调研
+    value: 20
+    description: 
+  
+  - label: eNPS调研
+    value: 30
+    description: 
+  
+  - label: 临时调研
+    value: 40
+    description: 
+  

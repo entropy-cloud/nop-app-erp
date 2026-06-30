@@ -23,6 +23,7 @@
   "materialId": 0,
   "businessType": 0,
   "businessType_label": "",
+  "costCenterId": 0,
   "delVersion": 0,
   "version": 0,
   "createdBy": "",
@@ -38,5 +39,6 @@
   "warehouse": null,
   "org": null,
   "material": null,
-  "project": null
+  "project": null,
+  "costCenter": null
 }

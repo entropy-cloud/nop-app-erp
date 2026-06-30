@@ -1,0 +1,22 @@
+{
+  "id": 0,
+  "code": "",
+  "name": "",
+  "orgId": 0,
+  "managerId": 0,
+  "parentId": 0,
+  "isBudgetable": false,
+  "status": 0,
+  "status_label": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "remark": "",
+  "organization": null,
+  "manager": null,
+  "parent": null,
+  "children": null
+}

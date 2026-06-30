@@ -1,0 +1,18 @@
+{
+  "id": 0,
+  "contractLineId": 0,
+  "consumptionDate": "2000-01-01",
+  "quantity": "",
+  "unitPrice": "",
+  "amount": "",
+  "sourceBillType": "",
+  "sourceBillCode": "",
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "contractLine": null
+}

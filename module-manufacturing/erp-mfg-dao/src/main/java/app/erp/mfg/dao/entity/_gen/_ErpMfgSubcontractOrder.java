@@ -45,84 +45,100 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     public static final String PROP_NAME_workcenterId = "workcenterId";
     public static final int PROP_ID_workcenterId = 6;
     
+    /* 工艺路线: ROUTING_ID BIGINT */
+    public static final String PROP_NAME_routingId = "routingId";
+    public static final int PROP_ID_routingId = 7;
+    
+    /* 生产版本: PRODUCTION_VERSION_ID BIGINT */
+    public static final String PROP_NAME_productionVersionId = "productionVersionId";
+    public static final int PROP_ID_productionVersionId = 8;
+    
+    /* 产品: PRODUCT_ID BIGINT */
+    public static final String PROP_NAME_productId = "productId";
+    public static final int PROP_ID_productId = 9;
+    
     /* 委外日期: BUSINESS_DATE DATE */
     public static final String PROP_NAME_businessDate = "businessDate";
-    public static final int PROP_ID_businessDate = 7;
+    public static final int PROP_ID_businessDate = 10;
     
     /* 币种: CURRENCY_ID BIGINT */
     public static final String PROP_NAME_currencyId = "currencyId";
-    public static final int PROP_ID_currencyId = 8;
+    public static final int PROP_ID_currencyId = 11;
     
     /* 汇率: EXCHANGE_RATE DECIMAL */
     public static final String PROP_NAME_exchangeRate = "exchangeRate";
-    public static final int PROP_ID_exchangeRate = 9;
+    public static final int PROP_ID_exchangeRate = 12;
     
     /* 加工费: PROCESSING_FEE DECIMAL */
     public static final String PROP_NAME_processingFee = "processingFee";
-    public static final int PROP_ID_processingFee = 10;
+    public static final int PROP_ID_processingFee = 13;
     
     /* 合计金额: TOTAL_AMOUNT DECIMAL */
     public static final String PROP_NAME_totalAmount = "totalAmount";
-    public static final int PROP_ID_totalAmount = 11;
+    public static final int PROP_ID_totalAmount = 14;
     
     /* 单据状态: DOC_STATUS INTEGER */
     public static final String PROP_NAME_docStatus = "docStatus";
-    public static final int PROP_ID_docStatus = 12;
+    public static final int PROP_ID_docStatus = 15;
     
     /* 审核状态: APPROVE_STATUS INTEGER */
     public static final String PROP_NAME_approveStatus = "approveStatus";
-    public static final int PROP_ID_approveStatus = 13;
+    public static final int PROP_ID_approveStatus = 16;
     
     /* 已过账: POSTED BOOLEAN */
     public static final String PROP_NAME_posted = "posted";
-    public static final int PROP_ID_posted = 14;
+    public static final int PROP_ID_posted = 17;
+    
+    /* 过账状态: POSTED_STATUS VARCHAR */
+    public static final String PROP_NAME_postedStatus = "postedStatus";
+    public static final int PROP_ID_postedStatus = 18;
     
     /* 过账时间: POSTED_AT DATETIME */
     public static final String PROP_NAME_postedAt = "postedAt";
-    public static final int PROP_ID_postedAt = 15;
+    public static final int PROP_ID_postedAt = 19;
     
     /* 过账人: POSTED_BY BIGINT */
     public static final String PROP_NAME_postedBy = "postedBy";
-    public static final int PROP_ID_postedBy = 16;
+    public static final int PROP_ID_postedBy = 20;
     
     /* 备注: REMARK VARCHAR */
     public static final String PROP_NAME_remark = "remark";
-    public static final int PROP_ID_remark = 17;
-    
-    /* 逻辑删除版本: DEL_VERSION BIGINT */
-    public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 18;
-    
-    /* 数据版本: VERSION INTEGER */
-    public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 19;
-    
-    /* 创建人: CREATED_BY VARCHAR */
-    public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 20;
-    
-    /* 创建时间: CREATE_TIME TIMESTAMP */
-    public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 21;
-    
-    /* 修改人: UPDATED_BY VARCHAR */
-    public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 22;
-    
-    /* 修改时间: UPDATE_TIME TIMESTAMP */
-    public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 23;
+    public static final int PROP_ID_remark = 21;
     
     /* 源币种金额: AMOUNT_SOURCE DECIMAL */
     public static final String PROP_NAME_amountSource = "amountSource";
-    public static final int PROP_ID_amountSource = 24;
+    public static final int PROP_ID_amountSource = 22;
     
     /* 本位币金额: AMOUNT_FUNCTIONAL DECIMAL */
     public static final String PROP_NAME_amountFunctional = "amountFunctional";
-    public static final int PROP_ID_amountFunctional = 25;
+    public static final int PROP_ID_amountFunctional = 23;
+    
+    /* 逻辑删除版本: DEL_VERSION BIGINT */
+    public static final String PROP_NAME_delVersion = "delVersion";
+    public static final int PROP_ID_delVersion = 24;
+    
+    /* 数据版本: VERSION INTEGER */
+    public static final String PROP_NAME_version = "version";
+    public static final int PROP_ID_version = 25;
+    
+    /* 创建人: CREATED_BY VARCHAR */
+    public static final String PROP_NAME_createdBy = "createdBy";
+    public static final int PROP_ID_createdBy = 26;
+    
+    /* 创建时间: CREATE_TIME TIMESTAMP */
+    public static final String PROP_NAME_createTime = "createTime";
+    public static final int PROP_ID_createTime = 27;
+    
+    /* 修改人: UPDATED_BY VARCHAR */
+    public static final String PROP_NAME_updatedBy = "updatedBy";
+    public static final int PROP_ID_updatedBy = 28;
+    
+    /* 修改时间: UPDATE_TIME TIMESTAMP */
+    public static final String PROP_NAME_updateTime = "updateTime";
+    public static final int PROP_ID_updateTime = 29;
     
 
-    private static int _PROP_ID_BOUND = 26;
+    private static int _PROP_ID_BOUND = 30;
 
     
     /* relation:  */
@@ -144,7 +160,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[26];
+    private static final String[] PROP_ID_TO_NAME = new String[30];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -165,6 +181,15 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_workcenterId] = PROP_NAME_workcenterId;
           PROP_NAME_TO_ID.put(PROP_NAME_workcenterId, PROP_ID_workcenterId);
+      
+          PROP_ID_TO_NAME[PROP_ID_routingId] = PROP_NAME_routingId;
+          PROP_NAME_TO_ID.put(PROP_NAME_routingId, PROP_ID_routingId);
+      
+          PROP_ID_TO_NAME[PROP_ID_productionVersionId] = PROP_NAME_productionVersionId;
+          PROP_NAME_TO_ID.put(PROP_NAME_productionVersionId, PROP_ID_productionVersionId);
+      
+          PROP_ID_TO_NAME[PROP_ID_productId] = PROP_NAME_productId;
+          PROP_NAME_TO_ID.put(PROP_NAME_productId, PROP_ID_productId);
       
           PROP_ID_TO_NAME[PROP_ID_businessDate] = PROP_NAME_businessDate;
           PROP_NAME_TO_ID.put(PROP_NAME_businessDate, PROP_ID_businessDate);
@@ -190,6 +215,9 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_posted] = PROP_NAME_posted;
           PROP_NAME_TO_ID.put(PROP_NAME_posted, PROP_ID_posted);
       
+          PROP_ID_TO_NAME[PROP_ID_postedStatus] = PROP_NAME_postedStatus;
+          PROP_NAME_TO_ID.put(PROP_NAME_postedStatus, PROP_ID_postedStatus);
+      
           PROP_ID_TO_NAME[PROP_ID_postedAt] = PROP_NAME_postedAt;
           PROP_NAME_TO_ID.put(PROP_NAME_postedAt, PROP_ID_postedAt);
       
@@ -198,6 +226,12 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
           PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
+      
+          PROP_ID_TO_NAME[PROP_ID_amountSource] = PROP_NAME_amountSource;
+          PROP_NAME_TO_ID.put(PROP_NAME_amountSource, PROP_ID_amountSource);
+      
+          PROP_ID_TO_NAME[PROP_ID_amountFunctional] = PROP_NAME_amountFunctional;
+          PROP_NAME_TO_ID.put(PROP_NAME_amountFunctional, PROP_ID_amountFunctional);
       
           PROP_ID_TO_NAME[PROP_ID_delVersion] = PROP_NAME_delVersion;
           PROP_NAME_TO_ID.put(PROP_NAME_delVersion, PROP_ID_delVersion);
@@ -216,12 +250,6 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
-      
-          PROP_ID_TO_NAME[PROP_ID_amountSource] = PROP_NAME_amountSource;
-          PROP_NAME_TO_ID.put(PROP_NAME_amountSource, PROP_ID_amountSource);
-      
-          PROP_ID_TO_NAME[PROP_ID_amountFunctional] = PROP_NAME_amountFunctional;
-          PROP_NAME_TO_ID.put(PROP_NAME_amountFunctional, PROP_ID_amountFunctional);
       
     }
 
@@ -243,6 +271,15 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     
     /* 外协工作中心: WORKCENTER_ID */
     private java.lang.Long _workcenterId;
+    
+    /* 工艺路线: ROUTING_ID */
+    private java.lang.Long _routingId;
+    
+    /* 生产版本: PRODUCTION_VERSION_ID */
+    private java.lang.Long _productionVersionId;
+    
+    /* 产品: PRODUCT_ID */
+    private java.lang.Long _productId;
     
     /* 委外日期: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
@@ -268,6 +305,9 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /* 已过账: POSTED */
     private java.lang.Boolean _posted;
     
+    /* 过账状态: POSTED_STATUS */
+    private java.lang.String _postedStatus;
+    
     /* 过账时间: POSTED_AT */
     private java.time.LocalDateTime _postedAt;
     
@@ -276,6 +316,12 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     
     /* 备注: REMARK */
     private java.lang.String _remark;
+    
+    /* 源币种金额: AMOUNT_SOURCE */
+    private java.lang.String _amountSource;
+    
+    /* 本位币金额: AMOUNT_FUNCTIONAL */
+    private java.lang.String _amountFunctional;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -294,12 +340,6 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
-    
-    /* 源币种金额: AMOUNT_SOURCE */
-    private java.lang.String _amountSource;
-    
-    /* 本位币金额: AMOUNT_FUNCTIONAL */
-    private java.lang.String _amountFunctional;
     
 
     public _ErpMfgSubcontractOrder(){
@@ -393,6 +433,15 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
             case PROP_ID_workcenterId:
                return getWorkcenterId();
         
+            case PROP_ID_routingId:
+               return getRoutingId();
+        
+            case PROP_ID_productionVersionId:
+               return getProductionVersionId();
+        
+            case PROP_ID_productId:
+               return getProductId();
+        
             case PROP_ID_businessDate:
                return getBusinessDate();
         
@@ -417,6 +466,9 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
             case PROP_ID_posted:
                return getPosted();
         
+            case PROP_ID_postedStatus:
+               return getPostedStatus();
+        
             case PROP_ID_postedAt:
                return getPostedAt();
         
@@ -425,6 +477,12 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
         
             case PROP_ID_remark:
                return getRemark();
+        
+            case PROP_ID_amountSource:
+               return getAmountSource();
+        
+            case PROP_ID_amountFunctional:
+               return getAmountFunctional();
         
             case PROP_ID_delVersion:
                return getDelVersion();
@@ -443,12 +501,6 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
-        
-            case PROP_ID_amountSource:
-               return getAmountSource();
-        
-            case PROP_ID_amountFunctional:
-               return getAmountFunctional();
         
            default:
               return super.orm_propValue(propId);
@@ -518,6 +570,36 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_workcenterId));
                }
                setWorkcenterId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_routingId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_routingId));
+               }
+               setRoutingId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_productionVersionId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_productionVersionId));
+               }
+               setProductionVersionId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_productId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_productId));
+               }
+               setProductId(typedValue);
                break;
             }
         
@@ -601,6 +683,16 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_postedStatus:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_postedStatus));
+               }
+               setPostedStatus(typedValue);
+               break;
+            }
+        
             case PROP_ID_postedAt:{
                java.time.LocalDateTime typedValue = null;
                if(value != null){
@@ -628,6 +720,26 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_remark));
                }
                setRemark(typedValue);
+               break;
+            }
+        
+            case PROP_ID_amountSource:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_amountSource));
+               }
+               setAmountSource(typedValue);
+               break;
+            }
+        
+            case PROP_ID_amountFunctional:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_amountFunctional));
+               }
+               setAmountFunctional(typedValue);
                break;
             }
         
@@ -691,26 +803,6 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
                break;
             }
         
-            case PROP_ID_amountSource:{
-               java.lang.String typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toString(value,
-                       err-> newTypeConversionError(PROP_NAME_amountSource));
-               }
-               setAmountSource(typedValue);
-               break;
-            }
-        
-            case PROP_ID_amountFunctional:{
-               java.lang.String typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toString(value,
-                       err-> newTypeConversionError(PROP_NAME_amountFunctional));
-               }
-               setAmountFunctional(typedValue);
-               break;
-            }
-        
            default:
               super.orm_propValue(propId,value);
         }
@@ -758,6 +850,27 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
             case PROP_ID_workcenterId:{
                onInitProp(propId);
                this._workcenterId = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_routingId:{
+               onInitProp(propId);
+               this._routingId = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_productionVersionId:{
+               onInitProp(propId);
+               this._productionVersionId = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_productId:{
+               onInitProp(propId);
+               this._productId = (java.lang.Long)value;
                
                break;
             }
@@ -818,6 +931,13 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_postedStatus:{
+               onInitProp(propId);
+               this._postedStatus = (java.lang.String)value;
+               
+               break;
+            }
+        
             case PROP_ID_postedAt:{
                onInitProp(propId);
                this._postedAt = (java.time.LocalDateTime)value;
@@ -835,6 +955,20 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
             case PROP_ID_remark:{
                onInitProp(propId);
                this._remark = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_amountSource:{
+               onInitProp(propId);
+               this._amountSource = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_amountFunctional:{
+               onInitProp(propId);
+               this._amountFunctional = (java.lang.String)value;
                
                break;
             }
@@ -877,20 +1011,6 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
-               
-               break;
-            }
-        
-            case PROP_ID_amountSource:{
-               onInitProp(propId);
-               this._amountSource = (java.lang.String)value;
-               
-               break;
-            }
-        
-            case PROP_ID_amountFunctional:{
-               onInitProp(propId);
-               this._amountFunctional = (java.lang.String)value;
                
                break;
             }
@@ -1011,6 +1131,63 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_workcenterId,value)){
             this._workcenterId = value;
             internalClearRefs(PROP_ID_workcenterId);
+            
+        }
+    }
+    
+    /**
+     * 工艺路线: ROUTING_ID
+     */
+    public final java.lang.Long getRoutingId(){
+         onPropGet(PROP_ID_routingId);
+         return _routingId;
+    }
+
+    /**
+     * 工艺路线: ROUTING_ID
+     */
+    public final void setRoutingId(java.lang.Long value){
+        if(onPropSet(PROP_ID_routingId,value)){
+            this._routingId = value;
+            internalClearRefs(PROP_ID_routingId);
+            
+        }
+    }
+    
+    /**
+     * 生产版本: PRODUCTION_VERSION_ID
+     */
+    public final java.lang.Long getProductionVersionId(){
+         onPropGet(PROP_ID_productionVersionId);
+         return _productionVersionId;
+    }
+
+    /**
+     * 生产版本: PRODUCTION_VERSION_ID
+     */
+    public final void setProductionVersionId(java.lang.Long value){
+        if(onPropSet(PROP_ID_productionVersionId,value)){
+            this._productionVersionId = value;
+            internalClearRefs(PROP_ID_productionVersionId);
+            
+        }
+    }
+    
+    /**
+     * 产品: PRODUCT_ID
+     */
+    public final java.lang.Long getProductId(){
+         onPropGet(PROP_ID_productId);
+         return _productId;
+    }
+
+    /**
+     * 产品: PRODUCT_ID
+     */
+    public final void setProductId(java.lang.Long value){
+        if(onPropSet(PROP_ID_productId,value)){
+            this._productId = value;
+            internalClearRefs(PROP_ID_productId);
             
         }
     }
@@ -1168,6 +1345,25 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     }
     
     /**
+     * 过账状态: POSTED_STATUS
+     */
+    public final java.lang.String getPostedStatus(){
+         onPropGet(PROP_ID_postedStatus);
+         return _postedStatus;
+    }
+
+    /**
+     * 过账状态: POSTED_STATUS
+     */
+    public final void setPostedStatus(java.lang.String value){
+        if(onPropSet(PROP_ID_postedStatus,value)){
+            this._postedStatus = value;
+            internalClearRefs(PROP_ID_postedStatus);
+            
+        }
+    }
+    
+    /**
      * 过账时间: POSTED_AT
      */
     public final java.time.LocalDateTime getPostedAt(){
@@ -1220,6 +1416,44 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_remark,value)){
             this._remark = value;
             internalClearRefs(PROP_ID_remark);
+            
+        }
+    }
+    
+    /**
+     * 源币种金额: AMOUNT_SOURCE
+     */
+    public final java.lang.String getAmountSource(){
+         onPropGet(PROP_ID_amountSource);
+         return _amountSource;
+    }
+
+    /**
+     * 源币种金额: AMOUNT_SOURCE
+     */
+    public final void setAmountSource(java.lang.String value){
+        if(onPropSet(PROP_ID_amountSource,value)){
+            this._amountSource = value;
+            internalClearRefs(PROP_ID_amountSource);
+            
+        }
+    }
+    
+    /**
+     * 本位币金额: AMOUNT_FUNCTIONAL
+     */
+    public final java.lang.String getAmountFunctional(){
+         onPropGet(PROP_ID_amountFunctional);
+         return _amountFunctional;
+    }
+
+    /**
+     * 本位币金额: AMOUNT_FUNCTIONAL
+     */
+    public final void setAmountFunctional(java.lang.String value){
+        if(onPropSet(PROP_ID_amountFunctional,value)){
+            this._amountFunctional = value;
+            internalClearRefs(PROP_ID_amountFunctional);
             
         }
     }
@@ -1334,44 +1568,6 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_updateTime,value)){
             this._updateTime = value;
             internalClearRefs(PROP_ID_updateTime);
-            
-        }
-    }
-    
-    /**
-     * 源币种金额: AMOUNT_SOURCE
-     */
-    public final java.lang.String getAmountSource(){
-         onPropGet(PROP_ID_amountSource);
-         return _amountSource;
-    }
-
-    /**
-     * 源币种金额: AMOUNT_SOURCE
-     */
-    public final void setAmountSource(java.lang.String value){
-        if(onPropSet(PROP_ID_amountSource,value)){
-            this._amountSource = value;
-            internalClearRefs(PROP_ID_amountSource);
-            
-        }
-    }
-    
-    /**
-     * 本位币金额: AMOUNT_FUNCTIONAL
-     */
-    public final java.lang.String getAmountFunctional(){
-         onPropGet(PROP_ID_amountFunctional);
-         return _amountFunctional;
-    }
-
-    /**
-     * 本位币金额: AMOUNT_FUNCTIONAL
-     */
-    public final void setAmountFunctional(java.lang.String value){
-        if(onPropSet(PROP_ID_amountFunctional,value)){
-            this._amountFunctional = value;
-            internalClearRefs(PROP_ID_amountFunctional);
             
         }
     }

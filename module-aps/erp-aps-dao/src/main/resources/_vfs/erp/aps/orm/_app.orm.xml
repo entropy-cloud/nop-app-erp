@@ -37,6 +37,12 @@
             <option code="FORWARD" label="前向排产" value="10" i18n-en:label="Forward"/>
             <option code="BACKWARD" label="后向排产" value="20" i18n-en:label="Backward"/>
         </dict>
+        <dict label="派工类型" name="erp-aps/dispatch-type" valueType="int" i18n-en:label="Dispatch Type">
+            <option code="AUTO" label="自动派工" value="10" i18n-en:label="Auto"/>
+            <option code="MANUAL" label="手动派工" value="20" i18n-en:label="Manual"/>
+            <option code="HOLD" label="保持" value="30" i18n-en:label="Hold"/>
+            <option code="UNHOLD" label="解除保持" value="40" i18n-en:label="Unhold"/>
+        </dict>
     </dicts>
 
     <domains>
@@ -227,6 +233,204 @@
                 <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
                         tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
                         ref-i18n-en:displayName="Constraint">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.aps.dao.entity.ErpApsOpRouting" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="替代工艺路线"
+                name="app.erp.aps.dao.entity.ErpApsOpRouting" registerShortName="true" tableName="erp_aps_op_routing"
+                tagSet="gid,erp.aps" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="shuffle" i18n-en:displayName="OP Routing">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="2" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="OPERATION_ID" displayName="工序" mandatory="true" name="operationId" propId="3"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Operation"/>
+                <column code="MACHINE_ID" displayName="工作中心" mandatory="true" name="machineId" propId="4"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Machine"/>
+                <column code="PRIORITY" displayName="优先级" mandatory="true" name="priority" propId="5" stdDataType="int"
+                        stdSqlType="INTEGER" i18n-en:displayName="Priority"/>
+                <column code="SETUP_TIME_DELTA" displayName="换模时间差(分钟)" domain="duration" name="setupTimeDelta"
+                        precision="10" propId="6" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Setup Time Delta"/>
+                <column code="RUNTIME_PER_UNIT_DELTA" displayName="单件加工时间差(分钟)" domain="duration"
+                        name="runtimePerUnitDelta" precision="10" propId="7" scale="2" stdDataType="decimal"
+                        stdSqlType="DECIMAL" i18n-en:displayName="Runtime Per Unit Delta"/>
+                <column code="IS_DEFAULT" defaultValue="false" displayName="默认路由" name="isDefault" propId="8"
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Default"/>
+                <column code="IS_ENABLED" defaultValue="true" displayName="启用" name="isEnabled" propId="9"
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Enabled"/>
+                <column code="EFFECTIVE_FROM" displayName="生效日期" name="effectiveFrom" propId="10" stdDataType="date"
+                        stdSqlType="DATE" i18n-en:displayName="Effective From"/>
+                <column code="EFFECTIVE_TO" displayName="失效日期" name="effectiveTo" propId="11" stdDataType="date"
+                        stdSqlType="DATE" i18n-en:displayName="Effective To"/>
+                <column code="MIN_BATCH_QTY" displayName="最小批量" domain="quantity" name="minBatchQty" precision="20"
+                        propId="12" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Min Batch Qty"/>
+                <column code="MAX_BATCH_QTY" displayName="最大批量" domain="quantity" name="maxBatchQty" precision="20"
+                        propId="13" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Max Batch Qty"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="14"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="15" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="16" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="17" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="19" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="20" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
+                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
+                        ref-i18n-en:displayName="OP Routing">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.aps.dao.entity.ErpApsDispatchRule" createTimeProp="createTime"
+                createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="自动派工规则"
+                name="app.erp.aps.dao.entity.ErpApsDispatchRule" registerShortName="true"
+                tableName="erp_aps_dispatch_rule" tagSet="gid,erp.aps" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="play-circle"
+                i18n-en:displayName="Dispatch Rule">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="2" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="WORKCENTER_ID" displayName="工作中心" mandatory="true" name="workcenterId" propId="3"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Workcenter"/>
+                <column code="RULE_NAME" displayName="规则名称" domain="name" mandatory="true" name="ruleName"
+                        precision="200" propId="4" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Rule Name"/>
+                <column code="ENABLE_AUTO" defaultValue="true" displayName="自动派工启用" name="enableAuto" propId="5"
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Enable Auto"/>
+                <column code="REQUIRE_MATERIAL" defaultValue="true" displayName="物料齐套检查" name="requireMaterial"
+                        propId="6" stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Require Material"/>
+                <column code="REQUIRE_OPERATOR" defaultValue="true" displayName="操作工检查" name="requireOperator"
+                        propId="7" stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Require Operator"/>
+                <column code="REQUIRE_TOOLING" defaultValue="false" displayName="工装检查" name="requireTooling" propId="8"
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Require Tooling"/>
+                <column code="MAX_LOOKAHEAD_MINUTES" defaultValue="120" displayName="前瞻窗口(分钟)"
+                        name="maxLookaheadMinutes" propId="9" stdDataType="int" stdSqlType="INTEGER"
+                        i18n-en:displayName="Max Lookahead Minutes"/>
+                <column code="DISPATCH_AHEAD_MINUTES" defaultValue="15" displayName="提前派工(分钟)"
+                        name="dispatchAheadMinutes" propId="10" stdDataType="int" stdSqlType="INTEGER"
+                        i18n-en:displayName="Dispatch Ahead Minutes"/>
+                <column code="AUTO_CONFIRM_MATERIAL" defaultValue="true" displayName="自动确认物料" name="autoConfirmMaterial"
+                        propId="11" stdDataType="boolean" stdSqlType="BOOLEAN"
+                        i18n-en:displayName="Auto Confirm Material"/>
+                <column code="MAX_CONCURRENT_OPS" displayName="最大并行工序数" name="maxConcurrentOps" propId="12"
+                        stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Max Concurrent Ops"/>
+                <column code="PRIORITY_THRESHOLD" displayName="优先级阈值" name="priorityThreshold" propId="13"
+                        stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Priority Threshold"/>
+                <column code="ENABLED_HOURS" displayName="允许时段(JSON)" name="enabledHours" precision="500" propId="14"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Enabled Hours"/>
+                <column code="HOLD_UNTIL" displayName="暂停到" name="holdUntil" propId="15" stdDataType="datetime"
+                        stdSqlType="DATETIME" i18n-en:displayName="Hold Until"/>
+                <column code="HOLD_REASON" displayName="暂停原因" name="holdReason" precision="500" propId="16"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Hold Reason"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="17"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="18" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="19" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="20" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="21" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="22" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="23" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
+                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
+                        ref-i18n-en:displayName="Dispatch Rule">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.aps.dao.entity.ErpApsDispatchLog" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="派工日志"
+                name="app.erp.aps.dao.entity.ErpApsDispatchLog" registerShortName="true"
+                tableName="erp_aps_dispatch_log" tagSet="gid,erp.aps" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="scroll-text"
+                i18n-en:displayName="Dispatch Log">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="2" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="OPERATION_ORDER_ID" displayName="工序工单" mandatory="true" name="operationOrderId" propId="3"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Operation Order"/>
+                <column code="WORKCENTER_ID" displayName="工作中心" name="workcenterId" propId="4" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Workcenter"/>
+                <column code="DISPATCH_TYPE" displayName="派工类型" mandatory="true" name="dispatchType" propId="5"
+                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-aps/dispatch-type"
+                        i18n-en:displayName="Dispatch Type"/>
+                <column code="PREVIOUS_STATUS" displayName="派工前状态" name="previousStatus" precision="50" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Previous Status"/>
+                <column code="NEW_STATUS" displayName="派工后状态" name="newStatus" precision="50" propId="7"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="New Status"/>
+                <column code="CONDITION_CHECK_RESULT" displayName="条件检查结果(JSON)" name="conditionCheckResult"
+                        precision="2000" propId="8" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Condition Check Result"/>
+                <column code="DISPATCHED_BY" displayName="派工人" name="dispatchedBy" precision="50" propId="9"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Dispatched By"/>
+                <column code="DISPATCHED_AT" displayName="派工时间" name="dispatchedAt" propId="10" stdDataType="datetime"
+                        stdSqlType="DATETIME" i18n-en:displayName="Dispatched At"/>
+                <column code="MATERIAL_AVAILABLE" displayName="物料齐套" name="materialAvailable" propId="11"
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Material Available"/>
+                <column code="OPERATOR_AVAILABLE" displayName="操作工可用" name="operatorAvailable" propId="12"
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Operator Available"/>
+                <column code="TOOLING_AVAILABLE" displayName="工装可用" name="toolingAvailable" propId="13"
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Tooling Available"/>
+                <column code="NOTE" displayName="备注" domain="remark" name="note" precision="1000" propId="14"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Note"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="15" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="16" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="17" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="19" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="20" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
+                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
+                        ref-i18n-en:displayName="Dispatch Log">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>

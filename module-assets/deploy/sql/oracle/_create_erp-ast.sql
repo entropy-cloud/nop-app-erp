@@ -131,7 +131,7 @@ CREATE TABLE erp_ast_asset_capitalization(
   UPDATE_TIME TIMESTAMP NOT NULL ,
   REMARK VARCHAR2(1000)  ,
   BUSINESS_DATE DATE  ,
-  EXCHANGE_RATE NUMBER(20,8) default 1   ,
+  EXCHANGE_RATE NUMBER(20,8) NOT NULL ,
   AMOUNT_SOURCE NUMBER(20,4) default 0   ,
   AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
   constraint PK_erp_ast_asset_capitalization primary key (ID)
@@ -160,7 +160,7 @@ CREATE TABLE erp_ast_cip(
   POSTED CHAR(1) default 0   ,
   POSTED_AT TIMESTAMP  ,
   POSTED_BY VARCHAR2(50)  ,
-  EXCHANGE_RATE NUMBER(20,8) default 1   ,
+  EXCHANGE_RATE NUMBER(20,8) NOT NULL ,
   AMOUNT_SOURCE NUMBER(20,4) default 0   ,
   AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
   constraint PK_erp_ast_cip primary key (ID)
@@ -189,7 +189,7 @@ CREATE TABLE erp_ast_depreciation_schedule(
   UPDATE_TIME TIMESTAMP NOT NULL ,
   BUSINESS_DATE DATE  ,
   CURRENCY_ID NUMBER(20)  ,
-  EXCHANGE_RATE NUMBER(20,8) default 1   ,
+  EXCHANGE_RATE NUMBER(20,8) default 1  NOT NULL ,
   AMOUNT_SOURCE NUMBER(20,4) default 0   ,
   AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
   constraint PK_erp_ast_depreciation_schedule primary key (ID)
@@ -215,7 +215,7 @@ CREATE TABLE erp_ast_movement(
   POSTED CHAR(1) default 0   ,
   POSTED_AT DATE  ,
   POSTED_BY NUMBER(20)  ,
-  DOC_VERSION INTEGER default 1  NOT NULL ,
+  DOC_VERSION VARCHAR2(20) default '1'  NOT NULL ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,
   CREATED_BY VARCHAR2(50) NOT NULL ,
@@ -224,7 +224,7 @@ CREATE TABLE erp_ast_movement(
   UPDATE_TIME TIMESTAMP NOT NULL ,
   REMARK VARCHAR2(1000)  ,
   CURRENCY_ID NUMBER(20)  ,
-  EXCHANGE_RATE NUMBER(20,8) default 1   ,
+  EXCHANGE_RATE NUMBER(20,8) NOT NULL ,
   AMOUNT_SOURCE NUMBER(20,4) default 0   ,
   AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
   constraint PK_erp_ast_movement primary key (ID)
@@ -313,7 +313,7 @@ CREATE TABLE erp_ast_split(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   REMARK VARCHAR2(1000)  ,
-  EXCHANGE_RATE NUMBER(20,8) default 1   ,
+  EXCHANGE_RATE NUMBER(20,8) NOT NULL ,
   AMOUNT_SOURCE NUMBER(20,4) default 0   ,
   AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
   constraint PK_erp_ast_split primary key (ID)
@@ -341,7 +341,7 @@ CREATE TABLE erp_ast_merge(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   REMARK VARCHAR2(1000)  ,
-  EXCHANGE_RATE NUMBER(20,8) default 1   ,
+  EXCHANGE_RATE NUMBER(20,8) NOT NULL ,
   AMOUNT_SOURCE NUMBER(20,4) default 0   ,
   AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
   constraint PK_erp_ast_merge primary key (ID)

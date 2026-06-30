@@ -1,0 +1,221 @@
+entity:
+  label:
+    ErpDrpLine: DRP Line
+    ErpDrpParameter: DRP Parameter
+    ErpDrpPlan: DRP Plan
+    ErpInvDrpCrossDock: Cross Dock
+    ErpInvDrpDockAppointment: Dock Appointment
+    ErpInvDrpLeadTimeRecord: Lead Time Record
+    ErpInvDrpSafetyStockCalc: Safety Stock Calc
+prop:
+  label:
+    ErpDrpLine:
+      id: ID
+      planId: Plan
+      lineNo: Line No
+      materialId: Material
+      warehouseId: Warehouse
+      sourceWarehouseId: Source Warehouse
+      replenishmentType: Replenishment Type
+      replenishmentType_label: null
+      currentStock: Current Stock
+      allocatedQty: Allocated Qty
+      onOrderQty: On Order Qty
+      forecastDemand: Forecast Demand
+      safetyStock: Safety Stock
+      netRequirement: Net Requirement
+      suggestedQty: Suggested Qty
+      approvedQty: Approved Qty
+      orderBillType: Order Bill Type
+      orderBillCode: Order Bill Code
+      status: Status
+      status_label: null
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      plan: Plan
+      org: Org
+    ErpDrpParameter:
+      id: ID
+      warehouseId: Warehouse
+      materialId: Material
+      safetyStock: Safety Stock
+      replenishmentLeadTime: Replenishment Lead Time
+      orderMultiple: Order Multiple
+      preferredSourceWarehouseId: Preferred Source Warehouse
+      preferredSupplierId: Preferred Supplier
+      replenishmentMethod: Replenishment Method
+      replenishmentMethod_label: null
+      minStockLevel: Min Stock Level
+      maxStockLevel: Max Stock Level
+      reviewPeriodDays: Review Period Days
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+    ErpDrpPlan:
+      id: ID
+      code: Code
+      planName: Plan Name
+      periodFrom: Period From
+      periodTo: Period To
+      status: Status
+      status_label: null
+      totalReplenishmentQty: Total Replenishment Qty
+      runAt: Run At
+      runBy: Run By
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      lines: Lines
+      org: Org
+    ErpInvDrpCrossDock:
+      id: ID
+      code: Code
+      orgId: Organization
+      drpLineId: DRP Line
+      inboundMoveId: Inbound Move
+      outboundMoveId: Outbound Move
+      sourceBillType: Source Bill Type
+      sourceBillCode: Source Bill Code
+      targetBillType: Target Bill Type
+      targetBillCode: Target Bill Code
+      materialId: Material
+      quantity: Quantity
+      stagingLocationId: Staging Location
+      dockSlotTime: Dock Slot Time
+      status: Status
+      status_label: null
+      matchedAt: Matched At
+      loadedAt: Loaded At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+    ErpInvDrpDockAppointment:
+      id: ID
+      warehouseId: Warehouse
+      dockId: Dock
+      appointmentDate: Appointment Date
+      slotStart: Slot Start
+      slotEnd: Slot End
+      crossDockId: Cross Dock
+      carrierInfo: Carrier Info
+      status: Status
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      orgId: Organization
+      org: Org
+    ErpInvDrpLeadTimeRecord:
+      id: ID
+      orgId: Organization
+      supplierId: Supplier
+      materialId: Material
+      orderDate: Order Date
+      receiptDate: Receipt Date
+      actualLeadTime: Actual Lead Time
+      expectedLeadTime: Expected Lead Time
+      varianceDays: Variance Days
+      purchaseOrderCode: Purchase Order Code
+      isOnTime: Is On Time
+      earlyLateFlag: Early/Late Flag
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+    ErpInvDrpSafetyStockCalc:
+      id: ID
+      code: Code
+      orgId: Organization
+      materialId: Material
+      warehouseId: Warehouse
+      method: Method
+      method_label: null
+      serviceLevel: Service Level
+      serviceLevel_label: null
+      historyMonths: History Months
+      leadTimeDays: Lead Time Days
+      calculatedSafetyStock: Calculated Safety Stock
+      calculatedRop: Calculated ROP
+      overrideSafetyStock: Override Safety Stock
+      lastCalculatedAt: Last Calculated At
+      overwrittenBy: Overwritten By
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+dict:
+  label:
+    erp-drp/drp-plan-status: DRP Plan Status
+    erp-drp/drp-line-status: DRP Line Status
+    erp-drp/drp-replenishment-type: Replenishment Type
+    erp-drp/drp-replenishment-method: Replenishment Method
+    erp-inv/drp-ss-method: Safety Stock Method
+    erp-inv/drp-service-level: Service Level
+    erp-inv/drp-xdock-status: Cross Dock Status
+dict.option.label:
+  erp-drp/drp-plan-status:
+    '10': Draft
+    '20': Computed
+    '30': Approved
+    '40': Executed
+  erp-drp/drp-line-status:
+    '10': Suggested
+    '20': Approved
+    '30': Ordered
+    '40': Cancelled
+  erp-drp/drp-replenishment-type:
+    '10': Transfer
+    '20': Purchase
+  erp-drp/drp-replenishment-method:
+    '10': Min-Max
+    '20': Periodic
+    '30': Lot-for-Lot
+  erp-inv/drp-ss-method:
+    '10': Statistical
+    '20': Simple
+    '30': DDMRP
+  erp-inv/drp-service-level:
+    '10': 95%
+    '20': 97.5%
+    '30': 99%
+    '40': 99.5%
+  erp-inv/drp-xdock-status:
+    '10': Pending
+    '20': Matched
+    '30': Staging
+    '40': Loaded
+    '50': Completed
+    '60': Cancelled

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="clock" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen"
+      xmlns:biz="biz" displayName="工单计时条目" i18n-en:displayName="Time Entry" tagSet="gid,erp.cs" xmlns:ui="ui"
+      xmlns:orm="orm">
+
+    <entityName>app.erp.cs.dao.entity.ErpCsTimeEntry</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="orgId" displayName="业务组织" propId="2" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="ticketId" displayName="关联工单" propId="3" i18n-en:displayName="Ticket" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="ticket">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="agentId" displayName="处理人" propId="4" i18n-en:displayName="Agent" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="agent">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="startTime" displayName="开始时间" propId="5" i18n-en:displayName="Start Time" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDateTime"/>
+        </prop>
+        <prop name="endTime" displayName="结束时间" propId="6" i18n-en:displayName="End Time" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDateTime"/>
+        </prop>
+        <prop name="duration" displayName="时长(分钟)" propId="7" i18n-en:displayName="Duration" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="isBillable" displayName="是否可计费" propId="8" i18n-en:displayName="Billable" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="true">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="billingRate" displayName="计费费率" propId="9" i18n-en:displayName="Billing Rate" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="billableAmount" displayName="计费金额" propId="10" i18n-en:displayName="Billable Amount"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="description" displayName="工作内容描述" propId="11" i18n-en:displayName="Description" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="approvalStatus" displayName="审批状态" propId="12" i18n-en:displayName="Approval Status"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer" dict="erp-cs/time-entry-approve-status"/>
+        </prop>
+        <prop name="approvedById" displayName="审批人" propId="13" i18n-en:displayName="Approved By" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="approvedBy">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="approvedAt" displayName="审批时间" propId="14" i18n-en:displayName="Approved At" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDateTime"/>
+        </prop>
+        <prop name="projectId" displayName="关联项目" propId="15" i18n-en:displayName="Project" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="taskId" displayName="关联任务" propId="16" i18n-en:displayName="Task" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="source" displayName="来源" propId="17" i18n-en:displayName="Source" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.lang.Integer" dict="erp-cs/time-entry-source"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="18" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="19" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="20" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="21" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="22" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="23" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="ticket" i18n-en:displayName="Ticket" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="ticketId" ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true"
+              lazy="true">
+            <schema bizObjName="ErpCsTicket"/>
+        </prop>
+        <prop name="agent" i18n-en:displayName="Agent" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="agentId" ext:joinRightProp="id" biz:moduleId="nop/auth" insertable="false"
+              updatable="false" mandatory="true" lazy="true">
+            <schema bizObjName="NopAuthUser"/>
+        </prop>
+        <prop name="approvedBy" i18n-en:displayName="Approved By" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="approvedById" ext:joinRightProp="id" biz:moduleId="nop/auth"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="NopAuthUser"/>
+        </prop>
+    </props>
+</meta>

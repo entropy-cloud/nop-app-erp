@@ -1,0 +1,18 @@
+site:
+  resource:
+    ErpApsConstraint-main:
+      displayName: Scheduling Constraint
+    ErpApsDispatchRule-main:
+      displayName: Dispatch Rule
+    ErpApsOperationOrder-main:
+      displayName: Operation Order
+    ErpApsSchedule-main:
+      displayName: Schedule Plan
+    aps-constraint:
+      displayName: Constraints
+    aps-dispatch:
+      displayName: Dispatch
+    aps-schedule:
+      displayName: Scheduling
+    erp-aps:
+      displayName: Advanced Planning & Scheduling

@@ -108,8 +108,8 @@
               sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="exchangeRate" displayName="汇率" propId="23" i18n-en:displayName="Exchange Rate" queryable="true"
-              sortable="true" insertable="true" updatable="true" defaultValue="1">
+        <prop name="exchangeRate" displayName="汇率" propId="23" i18n-en:displayName="Exchange Rate" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="1">
             <schema type="java.lang.String" precision="20" scale="8"/>
         </prop>
         <prop name="amountSource" displayName="源币种金额" propId="24" i18n-en:displayName="Amt (Source)" queryable="true"

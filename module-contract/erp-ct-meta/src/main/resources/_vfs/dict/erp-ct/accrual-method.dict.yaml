@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 计提方法
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 期末一次性
+    value: 10
+    description: 
+  
+  - label: 逐笔累计
+    value: 20
+    description: 
+  

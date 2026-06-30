@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:schema="/nop/schema/xui/xview.xdef" bizObjName="ErpHrSurvey" xmlns:i18n-en="i18n-en"
+      xmlns:x="/nop/schema/xdsl.xdef" xmlns:j="j" xmlns:c="c" xmlns:gql="gql" xmlns:view-gen="view-gen" xmlns:xpl="xpl">
+
+    <objMeta>/erp/hr/model/ErpHrSurvey/ErpHrSurvey.xmeta</objMeta>
+
+    <controlLib>/nop/web/xlib/control.xlib</controlLib>
+
+    <x:gen-extends>
+        <view-gen:DefaultViewGenExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <view-gen:DefaultViewPostExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:post-extends>
+
+    <grids>
+        <grid id="list" x:abstract="true">
+            <cols>
+
+                <!--ID-->
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--编号-->
+                <col id="code" mandatory="true" sortable="true"/>
+
+                <!--问卷标题-->
+                <col id="title" mandatory="true" sortable="true"/>
+
+                <!--问卷说明-->
+                <col id="description" sortable="true"/>
+
+                <!--调研类型-->
+                <col id="surveyType" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--是否匿名-->
+                <col id="isAnonymous" sortable="true"/>
+
+                <!--状态-->
+                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--开始日期-->
+                <col id="startDate" sortable="true"/>
+
+                <!--截止日期-->
+                <col id="endDate" sortable="true"/>
+
+                <!--目标部门-->
+                <col id="targetDepartmentId" ui:number="true" sortable="true"/>
+
+                <!--包含eNPS-->
+                <col id="includeENps" sortable="true"/>
+
+                <!--eNPS题面-->
+                <col id="eNpsQuestion" sortable="true"/>
+
+                <!--催填间隔天数-->
+                <col id="reminderDays" ui:number="true" sortable="true"/>
+
+                <!--总题数-->
+                <col id="totalQuestions" ui:number="true" sortable="true"/>
+
+                <!--总答卷数-->
+                <col id="totalResponses" ui:number="true" sortable="true"/>
+
+                <!--完成率-->
+                <col id="completionRate" ui:number="true" sortable="true"/>
+
+                <!--平均分-->
+                <col id="avgScore" ui:number="true" sortable="true"/>
+
+                <!--eNPS得分-->
+                <col id="eNpsScore" ui:number="true" sortable="true"/>
+
+                <!--业务组织-->
+                <col id="orgId" ui:number="true" sortable="true"/>
+
+                <!--备注-->
+                <col id="remark" sortable="true"/>
+
+                <!--逻辑删除版本-->
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--创建人-->
+                <col id="createdBy" mandatory="true" sortable="true"/>
+
+                <!--创建时间-->
+                <col id="createTime" mandatory="true" sortable="true"/>
+
+                <!--修改人-->
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+
+                <!--修改时间-->
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list" x:prototype="list" x:abstract="true"/>
+    </grids>
+
+    <forms>
+        <form id="view" editMode="view" title="查看-问卷模板" i18n-en:title="View Survey">
+            <layout>
+ id[ID] code[编号]
+ title[问卷标题] description[问卷说明]
+ surveyType[调研类型] isAnonymous[是否匿名]
+ status[状态] startDate[开始日期]
+ endDate[截止日期] targetDepartmentId[目标部门]
+ includeENps[包含eNPS] eNpsQuestion[eNPS题面]
+ reminderDays[催填间隔天数] totalQuestions[总题数]
+ totalResponses[总答卷数] completionRate[完成率]
+ avgScore[平均分] eNpsScore[eNPS得分]
+ orgId[业务组织] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
+</layout>
+        </form>
+        <form id="add" editMode="add" title="新增-问卷模板" i18n-en:title="Add Survey">
+            <layout>
+ id[ID] code[编号]
+ title[问卷标题] description[问卷说明]
+ surveyType[调研类型] isAnonymous[是否匿名]
+ status[状态] startDate[开始日期]
+ endDate[截止日期] targetDepartmentId[目标部门]
+ includeENps[包含eNPS] eNpsQuestion[eNPS题面]
+ reminderDays[催填间隔天数] totalQuestions[总题数]
+ totalResponses[总答卷数] completionRate[完成率]
+ avgScore[平均分] eNpsScore[eNPS得分]
+ orgId[业务组织] remark[备注]
+</layout>
+        </form>
+        <form id="edit" editMode="edit" title="编辑-问卷模板" i18n-en:title="Edit Survey">
+            <layout>
+ id[ID] code[编号]
+ title[问卷标题] description[问卷说明]
+ surveyType[调研类型] isAnonymous[是否匿名]
+ status[状态] startDate[开始日期]
+ endDate[截止日期] targetDepartmentId[目标部门]
+ includeENps[包含eNPS] eNpsQuestion[eNPS题面]
+ reminderDays[催填间隔天数] totalQuestions[总题数]
+ totalResponses[总答卷数] completionRate[完成率]
+ avgScore[平均分] eNpsScore[eNPS得分]
+ orgId[业务组织] remark[备注]
+ delVersion[逻辑删除版本] 
+</layout>
+        </form>
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-问卷模板" i18n-en:title="Update Survey"/>
+    </forms>
+
+    <pages>
+        <crud name="view-list" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpHrSurvey__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </crud>
+        <crud name="main" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpHrSurvey__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+            <listActions>
+                <action id="batch-delete-button" label="@i18n:common.batchDelete" batch="true">
+                    <api url="@mutation:ErpHrSurvey__batchDelete?ids=$ids"/>
+                    <confirmText>@i18n:common.confirmBatchDelete</confirmText>
+                </action>
+                <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
+                    <dialog page="add"/>
+                </action>
+            </listActions>
+            <rowActions>
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+                <action id="row-update-button" level="primary" label="@i18n:common.edit" x:abstract="true">
+                    <dialog page="update"/>
+                </action>
+                <action id="row-delete-button" level="danger" label="@i18n:common.delete" x:abstract="true">
+                    <api url="@mutation:ErpHrSurvey__delete?id=$id"/>
+                    <confirmText>@i18n:common.confirmDelete</confirmText>
+                </action>
+                <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
+                    <action id="row-update-button" label="@i18n:common.edit">
+                        <dialog page="update"/>
+                    </action>
+                    <action id="row-delete-button" label="@i18n:common.delete">
+                        <api url="@mutation:ErpHrSurvey__delete?id=$id"/>
+                        <confirmText>@i18n:common.confirmDelete</confirmText>
+                    </action>
+                </actionGroup>
+            </rowActions>
+        </crud>
+        <picker name="picker" grid="pick-list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table noOperations="true">
+                <api url="@query:ErpHrSurvey__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </picker>
+        <simple name="add" form="add">
+            <api url="@mutation:ErpHrSurvey__save/id"/>
+        </simple>
+        <simple name="view" form="view">
+            <initApi url="@query:ErpHrSurvey__get?id=$id" gql:selection="{@formSelection}"/>
+        </simple>
+        <simple name="update" form="edit">
+            <initApi url="@query:ErpHrSurvey__get?id=$id" gql:selection="{@formSelection}"/>
+            <api url="@mutation:ErpHrSurvey__update/id?id=$id" withFormData="true"/>
+        </simple>
+    </pages>
+</view>

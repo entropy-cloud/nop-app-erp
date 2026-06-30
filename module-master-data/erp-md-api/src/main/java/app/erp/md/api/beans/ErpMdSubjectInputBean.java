@@ -195,10 +195,38 @@
         }
 
 
-        private Boolean _isLeaf;
+        private Boolean _isAuxiliaryCostCenter;
 
     
         @PropMeta(propId=14)
+    
+        public Boolean getIsAuxiliaryCostCenter(){
+            return _isAuxiliaryCostCenter;
+        }
+
+        public void setIsAuxiliaryCostCenter(Boolean value){
+            this._isAuxiliaryCostCenter = value;
+        }
+
+
+        private Boolean _isBudgetable;
+
+    
+        @PropMeta(propId=15)
+    
+        public Boolean getIsBudgetable(){
+            return _isBudgetable;
+        }
+
+        public void setIsBudgetable(Boolean value){
+            this._isBudgetable = value;
+        }
+
+
+        private Boolean _isLeaf;
+
+    
+        @PropMeta(propId=16)
     
         public Boolean getIsLeaf(){
             return _isLeaf;
@@ -212,7 +240,7 @@
         private Integer _status;
 
     
-        @PropMeta(propId=15)
+        @PropMeta(propId=17)
     
         public Integer getStatus(){
             return _status;
@@ -226,7 +254,7 @@
         private Long _delVersion;
 
     
-        @PropMeta(propId=16)
+        @PropMeta(propId=18)
     
         public Long getDelVersion(){
             return _delVersion;
@@ -240,7 +268,7 @@
         private String _remark;
 
     
-        @PropMeta(propId=22)
+        @PropMeta(propId=24)
     
         public String getRemark(){
             return _remark;

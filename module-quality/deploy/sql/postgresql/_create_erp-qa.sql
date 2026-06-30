@@ -230,6 +230,7 @@ CREATE TABLE erp_qa_inspection(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  business_date DATE NOT NULL ,
   constraint PK_erp_qa_inspection primary key (id)
 );
 
@@ -642,6 +643,8 @@ CREATE TABLE erp_qa_action(
       COMMENT ON COLUMN erp_qa_inspection.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_qa_inspection.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_qa_inspection.business_date IS '业务日期';
                     
       COMMENT ON TABLE erp_qa_inspection_line IS '质检单行';
                 

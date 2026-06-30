@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 价格规则类型
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 数量阶梯折扣
+    value: VOLUME
+    description: 
+  
+  - label: 促销定价
+    value: PROMOTIONAL
+    description: 
+  
+  - label: 客户特定价格
+    value: CUSTOMER_SPECIFIC
+    description: 
+  

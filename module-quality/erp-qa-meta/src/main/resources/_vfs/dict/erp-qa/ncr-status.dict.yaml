@@ -17,6 +17,10 @@ options:
     value: 30
     description: 
   
+  - label: 已升级为召回
+    value: 35
+    description: 
+  
   - label: 已取消
     value: 40
     description: 

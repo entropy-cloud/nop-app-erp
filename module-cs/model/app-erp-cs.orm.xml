@@ -406,7 +406,7 @@
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="agentId" displayName="客服" stdSqlType="BIGINT" mandatory="true" code="AGENT_ID" propId="3" stdDataType="long" i18n-en:displayName='Agent' />
                 <column name="serviceType" displayName="服务类型" ext:dict="erp-cs/service-type" code="SERVICE_TYPE" propId="4" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Service Type' />
-                <column name="rate" displayName="费率(元/小时)" domain="amount" code="RATE" propId="5" stdSqlType="DECIMAL" stdDataType="bigdecimal" i18n-en:displayName='Rate' />
+                <column name="rate" displayName="费率(元/小时)" domain="amount" code="RATE" propId="5" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Rate' />
                 <column name="effectiveDate" displayName="生效日期" stdSqlType="DATE" code="EFFECTIVE_DATE" propId="6" stdDataType="date" i18n-en:displayName='Effective Date' />
                 <column name="isActive" displayName="是否启用" stdSqlType="BOOLEAN" defaultValue="true" code="IS_ACTIVE" propId="7" stdDataType="boolean" i18n-en:displayName='Active' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="8" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
@@ -434,7 +434,7 @@
                 <column name="contractType" displayName="合同类型" ext:dict="erp-cs/contract-type" code="CONTRACT_TYPE" propId="6" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Contract Type' />
                 <column name="startDate" displayName="生效日期" stdSqlType="DATE" code="START_DATE" propId="7" stdDataType="date" i18n-en:displayName='Start Date' />
                 <column name="endDate" displayName="到期日期" stdSqlType="DATE" code="END_DATE" propId="8" stdDataType="date" i18n-en:displayName='End Date' />
-                <column name="totalAmount" displayName="合同总金额" domain="amount" code="TOTAL_AMOUNT" propId="9" stdSqlType="DECIMAL" stdDataType="bigdecimal" i18n-en:displayName='Total Amount' />
+                <column name="totalAmount" displayName="合同总金额" domain="amount" code="TOTAL_AMOUNT" propId="9" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Total Amount' />
                 <column name="billingCycle" displayName="计费周期" ext:dict="erp-cs/billing-cycle" code="BILLING_CYCLE" propId="10" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Billing Cycle' />
                 <column name="status" displayName="合同状态" ext:dict="erp-cs/contract-status" code="STATUS" propId="11" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
                 <column name="attachmentId" displayName="合同附件" stdSqlType="BIGINT" code="ATTACHMENT_ID" propId="12" stdDataType="long" i18n-en:displayName='Attachment' />
@@ -585,8 +585,8 @@
                 <column name="endTime" displayName="结束时间" stdSqlType="DATETIME" code="END_TIME" propId="6" stdDataType="datetime" i18n-en:displayName='End Time' />
                 <column name="duration" displayName="时长(分钟)" stdSqlType="INTEGER" code="DURATION" propId="7" stdDataType="int" i18n-en:displayName='Duration' />
                 <column name="isBillable" displayName="是否可计费" stdSqlType="BOOLEAN" defaultValue="true" code="IS_BILLABLE" propId="8" stdDataType="boolean" i18n-en:displayName='Billable' />
-                <column name="billingRate" displayName="计费费率" domain="amount" code="BILLING_RATE" propId="9" stdSqlType="DECIMAL" stdDataType="bigdecimal" i18n-en:displayName='Billing Rate' />
-                <column name="billableAmount" displayName="计费金额" domain="amount" code="BILLABLE_AMOUNT" propId="10" stdSqlType="DECIMAL" stdDataType="bigdecimal" i18n-en:displayName='Billable Amount' />
+                <column name="billingRate" displayName="计费费率" domain="amount" code="BILLING_RATE" propId="9" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Billing Rate' />
+                <column name="billableAmount" displayName="计费金额" domain="amount" code="BILLABLE_AMOUNT" propId="10" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Billable Amount' />
                 <column name="description" displayName="工作内容描述" stdSqlType="VARCHAR" precision="1000" code="DESCRIPTION" propId="11" stdDataType="string" i18n-en:displayName='Description' />
                 <column name="approvalStatus" displayName="审批状态" ext:dict="erp-cs/time-entry-approve-status" code="APPROVAL_STATUS" propId="12" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Approval Status' />
                 <column name="approvedById" displayName="审批人" stdSqlType="BIGINT" code="APPROVED_BY_ID" propId="13" stdDataType="long" i18n-en:displayName='Approved By' />

@@ -99,6 +99,14 @@ CREATE TABLE erp_prj_project(
   constraint PK_erp_prj_project primary key (ID)
 );
 
+CREATE TABLE erp_md_cost_center(
+  ID NUMBER(20)  ,
+  CODE VARCHAR2(50)  ,
+  NAME VARCHAR2(200)  ,
+  ORG_ID NUMBER(20)  ,
+  constraint PK_erp_md_cost_center primary key (ID)
+);
+
 CREATE TABLE erp_ast_asset(
   ID NUMBER(20)  ,
   CODE VARCHAR2(50)  ,
@@ -112,6 +120,7 @@ CREATE TABLE erp_fin_voucher(
   ID NUMBER(20) NOT NULL ,
   CODE VARCHAR2(50) NOT NULL ,
   VOUCHER_TYPE INTEGER NOT NULL ,
+  POSTING_TYPE INTEGER  ,
   VOUCHER_DATE DATE NOT NULL ,
   VOUCHER_NO VARCHAR2(50)  ,
   ORG_ID NUMBER(20) NOT NULL ,
@@ -330,6 +339,7 @@ CREATE TABLE erp_fin_voucher_line(
   WAREHOUSE_ID NUMBER(20)  ,
   MATERIAL_ID NUMBER(20)  ,
   BUSINESS_TYPE INTEGER  ,
+  COST_CENTER_ID NUMBER(20)  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,
   CREATED_BY VARCHAR2(50) NOT NULL ,
@@ -374,6 +384,28 @@ CREATE TABLE erp_fin_voucher_template_line(
   constraint PK_erp_fin_voucher_template_line primary key (ID)
 );
 
+CREATE TABLE erp_fin_bank_statement(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  ORG_ID NUMBER(20) NOT NULL ,
+  FUND_ACCOUNT_ID NUMBER(20) NOT NULL ,
+  STATEMENT_DATE DATE NOT NULL ,
+  BEGINNING_BALANCE NUMBER(20,4) default 0   ,
+  ENDING_BALANCE NUMBER(20,4) default 0   ,
+  TOTAL_DEBIT NUMBER(20,4) default 0   ,
+  TOTAL_CREDIT NUMBER(20,4) default 0   ,
+  IMPORT_TIME DATE  ,
+  DOC_STATUS INTEGER NOT NULL ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_fin_bank_statement primary key (ID)
+);
+
 CREATE TABLE erp_fin_reconciliation_line(
   ID NUMBER(20) NOT NULL ,
   RECONCILIATION_ID NUMBER(20) NOT NULL ,
@@ -390,6 +422,72 @@ CREATE TABLE erp_fin_reconciliation_line(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   constraint PK_erp_fin_reconciliation_line primary key (ID)
+);
+
+CREATE TABLE erp_fin_bank_statement_line(
+  ID NUMBER(20) NOT NULL ,
+  STATEMENT_ID NUMBER(20) NOT NULL ,
+  LINE_NO INTEGER NOT NULL ,
+  TRANSACTION_DATE DATE NOT NULL ,
+  DESCRIPTION VARCHAR2(1000)  ,
+  REF_NO VARCHAR2(50)  ,
+  DC_DIRECTION INTEGER NOT NULL ,
+  AMOUNT NUMBER(20,4) NOT NULL ,
+  CURRENCY_ID NUMBER(20) NOT NULL ,
+  BALANCE_AFTER NUMBER(20,4)  ,
+  MATCH_STATUS INTEGER NOT NULL ,
+  MATCHED_LINE_ID NUMBER(20)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_fin_bank_statement_line primary key (ID)
+);
+
+CREATE TABLE erp_fin_bank_reconciliation(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  ORG_ID NUMBER(20) NOT NULL ,
+  FUND_ACCOUNT_ID NUMBER(20) NOT NULL ,
+  STATEMENT_ID NUMBER(20)  ,
+  RECONCILIATION_DATE DATE NOT NULL ,
+  BOOK_BALANCE NUMBER(20,4) NOT NULL ,
+  STATEMENT_BALANCE NUMBER(20,4) NOT NULL ,
+  UNRECONCILED_DIFF NUMBER(20,4) default 0   ,
+  IS_BALANCED CHAR(1) default 0   ,
+  RECONCILED_AT DATE  ,
+  RECONCILED_BY NUMBER(20)  ,
+  DOC_STATUS INTEGER NOT NULL ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_fin_bank_reconciliation primary key (ID)
+);
+
+CREATE TABLE erp_fin_bank_reconciliation_line(
+  ID NUMBER(20) NOT NULL ,
+  RECONCILIATION_ID NUMBER(20) NOT NULL ,
+  LINE_NO INTEGER NOT NULL ,
+  ADJUSTMENT_TYPE VARCHAR2(50) NOT NULL ,
+  DESCRIPTION VARCHAR2(1000)  ,
+  DC_DIRECTION INTEGER NOT NULL ,
+  AMOUNT NUMBER(20,4) NOT NULL ,
+  SIDE VARCHAR2(20) NOT NULL ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_fin_bank_reconciliation_line primary key (ID)
 );
 
 
@@ -449,6 +547,8 @@ CREATE TABLE erp_fin_reconciliation_line(
                 
       COMMENT ON TABLE erp_prj_project IS '项目';
                 
+      COMMENT ON TABLE erp_md_cost_center IS '成本中心';
+                
       COMMENT ON TABLE erp_ast_asset IS '固定资产';
                 
       COMMENT ON TABLE erp_fin_voucher IS '会计凭证';
@@ -458,6 +558,8 @@ CREATE TABLE erp_fin_reconciliation_line(
       COMMENT ON COLUMN erp_fin_voucher.CODE IS '凭证号';
                     
       COMMENT ON COLUMN erp_fin_voucher.VOUCHER_TYPE IS '凭证字';
+                    
+      COMMENT ON COLUMN erp_fin_voucher.POSTING_TYPE IS '过账类型';
                     
       COMMENT ON COLUMN erp_fin_voucher.VOUCHER_DATE IS '凭证日期';
                     
@@ -847,6 +949,8 @@ CREATE TABLE erp_fin_reconciliation_line(
                     
       COMMENT ON COLUMN erp_fin_voucher_line.BUSINESS_TYPE IS '业务类型';
                     
+      COMMENT ON COLUMN erp_fin_voucher_line.COST_CENTER_ID IS '成本中心';
+                    
       COMMENT ON COLUMN erp_fin_voucher_line.DEL_VERSION IS '逻辑删除版本';
                     
       COMMENT ON COLUMN erp_fin_voucher_line.VERSION IS '数据版本';
@@ -917,6 +1021,44 @@ CREATE TABLE erp_fin_reconciliation_line(
                     
       COMMENT ON COLUMN erp_fin_voucher_template_line.UPDATE_TIME IS '修改时间';
                     
+      COMMENT ON TABLE erp_fin_bank_statement IS '银行对账单';
+                
+      COMMENT ON COLUMN erp_fin_bank_statement.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement.CODE IS '单号';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement.ORG_ID IS '组织';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement.FUND_ACCOUNT_ID IS '资金账户';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement.STATEMENT_DATE IS '对账日期';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement.BEGINNING_BALANCE IS '期初余额';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement.ENDING_BALANCE IS '期末余额';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement.TOTAL_DEBIT IS '借方发生额';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement.TOTAL_CREDIT IS '贷方发生额';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement.IMPORT_TIME IS '导入时间';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement.DOC_STATUS IS '状态';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement.UPDATE_TIME IS '修改时间';
+                    
       COMMENT ON TABLE erp_fin_reconciliation_line IS '核销单行';
                 
       COMMENT ON COLUMN erp_fin_reconciliation_line.ID IS 'ID';
@@ -946,4 +1088,118 @@ CREATE TABLE erp_fin_reconciliation_line(
       COMMENT ON COLUMN erp_fin_reconciliation_line.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_fin_reconciliation_line.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_fin_bank_statement_line IS '银行对账单行';
+                
+      COMMENT ON COLUMN erp_fin_bank_statement_line.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement_line.STATEMENT_ID IS '对账单ID';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement_line.LINE_NO IS '行号';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement_line.TRANSACTION_DATE IS '交易日期';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement_line.DESCRIPTION IS '摘要(银行)';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement_line.REF_NO IS '银行参考号';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement_line.DC_DIRECTION IS '借贷方向';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement_line.AMOUNT IS '金额';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement_line.CURRENCY_ID IS '币种';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement_line.BALANCE_AFTER IS '交易后余额';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement_line.MATCH_STATUS IS '匹配状态';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement_line.MATCHED_LINE_ID IS '匹配凭证行ID';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement_line.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement_line.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement_line.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement_line.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement_line.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement_line.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement_line.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_fin_bank_reconciliation IS '银行对账(余额调节表)';
+                
+      COMMENT ON COLUMN erp_fin_bank_reconciliation.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation.CODE IS '单号';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation.ORG_ID IS '组织';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation.FUND_ACCOUNT_ID IS '资金账户';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation.STATEMENT_ID IS '银行对账单';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation.RECONCILIATION_DATE IS '对账日期';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation.BOOK_BALANCE IS '账面余额';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation.STATEMENT_BALANCE IS '对账单余额';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation.UNRECONCILED_DIFF IS '未达差异';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation.IS_BALANCED IS '是否平衡';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation.RECONCILED_AT IS '对账完成时间';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation.RECONCILED_BY IS '对账人';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation.DOC_STATUS IS '状态';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_fin_bank_reconciliation_line IS '银行对账调整行';
+                
+      COMMENT ON COLUMN erp_fin_bank_reconciliation_line.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation_line.RECONCILIATION_ID IS '对账记录ID';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation_line.LINE_NO IS '行号';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation_line.ADJUSTMENT_TYPE IS '调整类型';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation_line.DESCRIPTION IS '说明';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation_line.DC_DIRECTION IS '借贷方向';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation_line.AMOUNT IS '金额';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation_line.SIDE IS '调整方';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation_line.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation_line.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation_line.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation_line.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation_line.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation_line.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_bank_reconciliation_line.UPDATE_TIME IS '修改时间';
                     

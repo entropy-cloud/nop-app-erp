@@ -98,10 +98,52 @@
         }
 
 
-        private java.time.LocalDate _businessDate;
+        private Long _routingId;
 
     
         @PropMeta(propId=7)
+    
+        public Long getRoutingId(){
+            return _routingId;
+        }
+
+        public void setRoutingId(Long value){
+            this._routingId = value;
+        }
+
+
+        private Long _productionVersionId;
+
+    
+        @PropMeta(propId=8)
+    
+        public Long getProductionVersionId(){
+            return _productionVersionId;
+        }
+
+        public void setProductionVersionId(Long value){
+            this._productionVersionId = value;
+        }
+
+
+        private Long _productId;
+
+    
+        @PropMeta(propId=9)
+    
+        public Long getProductId(){
+            return _productId;
+        }
+
+        public void setProductId(Long value){
+            this._productId = value;
+        }
+
+
+        private java.time.LocalDate _businessDate;
+
+    
+        @PropMeta(propId=10)
     
         public java.time.LocalDate getBusinessDate(){
             return _businessDate;
@@ -115,7 +157,7 @@
         private Long _currencyId;
 
     
-        @PropMeta(propId=8)
+        @PropMeta(propId=11)
     
         public Long getCurrencyId(){
             return _currencyId;
@@ -129,7 +171,7 @@
         private String _exchangeRate;
 
     
-        @PropMeta(propId=9)
+        @PropMeta(propId=12)
     
         public String getExchangeRate(){
             return _exchangeRate;
@@ -143,7 +185,7 @@
         private String _processingFee;
 
     
-        @PropMeta(propId=10)
+        @PropMeta(propId=13)
     
         public String getProcessingFee(){
             return _processingFee;
@@ -157,7 +199,7 @@
         private String _totalAmount;
 
     
-        @PropMeta(propId=11)
+        @PropMeta(propId=14)
     
         public String getTotalAmount(){
             return _totalAmount;
@@ -171,7 +213,7 @@
         private Integer _docStatus;
 
     
-        @PropMeta(propId=12)
+        @PropMeta(propId=15)
     
         public Integer getDocStatus(){
             return _docStatus;
@@ -197,7 +239,7 @@
         private Integer _approveStatus;
 
     
-        @PropMeta(propId=13)
+        @PropMeta(propId=16)
     
         public Integer getApproveStatus(){
             return _approveStatus;
@@ -223,7 +265,7 @@
         private Boolean _posted;
 
     
-        @PropMeta(propId=14)
+        @PropMeta(propId=17)
     
         public Boolean getPosted(){
             return _posted;
@@ -234,10 +276,36 @@
         }
 
 
+        private String _postedStatus;
+
+    
+        @PropMeta(propId=18)
+    
+        public String getPostedStatus(){
+            return _postedStatus;
+        }
+
+        public void setPostedStatus(String value){
+            this._postedStatus = value;
+        }
+
+
+        private String _postedStatus_label;
+
+    
+        public String getPostedStatus_label(){
+            return _postedStatus_label;
+        }
+
+        public void setPostedStatus_label(String value){
+            this._postedStatus_label = value;
+        }
+
+
         private java.time.LocalDateTime _postedAt;
 
     
-        @PropMeta(propId=15)
+        @PropMeta(propId=19)
     
         public java.time.LocalDateTime getPostedAt(){
             return _postedAt;
@@ -251,7 +319,7 @@
         private Long _postedBy;
 
     
-        @PropMeta(propId=16)
+        @PropMeta(propId=20)
     
         public Long getPostedBy(){
             return _postedBy;
@@ -265,7 +333,7 @@
         private String _remark;
 
     
-        @PropMeta(propId=17)
+        @PropMeta(propId=21)
     
         public String getRemark(){
             return _remark;
@@ -276,94 +344,10 @@
         }
 
 
-        private Long _delVersion;
-
-    
-        @PropMeta(propId=18)
-    
-        public Long getDelVersion(){
-            return _delVersion;
-        }
-
-        public void setDelVersion(Long value){
-            this._delVersion = value;
-        }
-
-
-        private Integer _version;
-
-    
-        @PropMeta(propId=19)
-    
-        public Integer getVersion(){
-            return _version;
-        }
-
-        public void setVersion(Integer value){
-            this._version = value;
-        }
-
-
-        private String _createdBy;
-
-    
-        @PropMeta(propId=20)
-    
-        public String getCreatedBy(){
-            return _createdBy;
-        }
-
-        public void setCreatedBy(String value){
-            this._createdBy = value;
-        }
-
-
-        private java.sql.Timestamp _createTime;
-
-    
-        @PropMeta(propId=21)
-    
-        public java.sql.Timestamp getCreateTime(){
-            return _createTime;
-        }
-
-        public void setCreateTime(java.sql.Timestamp value){
-            this._createTime = value;
-        }
-
-
-        private String _updatedBy;
-
-    
-        @PropMeta(propId=22)
-    
-        public String getUpdatedBy(){
-            return _updatedBy;
-        }
-
-        public void setUpdatedBy(String value){
-            this._updatedBy = value;
-        }
-
-
-        private java.sql.Timestamp _updateTime;
-
-    
-        @PropMeta(propId=23)
-    
-        public java.sql.Timestamp getUpdateTime(){
-            return _updateTime;
-        }
-
-        public void setUpdateTime(java.sql.Timestamp value){
-            this._updateTime = value;
-        }
-
-
         private String _amountSource;
 
     
-        @PropMeta(propId=24)
+        @PropMeta(propId=22)
     
         public String getAmountSource(){
             return _amountSource;
@@ -377,7 +361,7 @@
         private String _amountFunctional;
 
     
-        @PropMeta(propId=25)
+        @PropMeta(propId=23)
     
         public String getAmountFunctional(){
             return _amountFunctional;
@@ -385,6 +369,90 @@
 
         public void setAmountFunctional(String value){
             this._amountFunctional = value;
+        }
+
+
+        private Long _delVersion;
+
+    
+        @PropMeta(propId=24)
+    
+        public Long getDelVersion(){
+            return _delVersion;
+        }
+
+        public void setDelVersion(Long value){
+            this._delVersion = value;
+        }
+
+
+        private Integer _version;
+
+    
+        @PropMeta(propId=25)
+    
+        public Integer getVersion(){
+            return _version;
+        }
+
+        public void setVersion(Integer value){
+            this._version = value;
+        }
+
+
+        private String _createdBy;
+
+    
+        @PropMeta(propId=26)
+    
+        public String getCreatedBy(){
+            return _createdBy;
+        }
+
+        public void setCreatedBy(String value){
+            this._createdBy = value;
+        }
+
+
+        private java.sql.Timestamp _createTime;
+
+    
+        @PropMeta(propId=27)
+    
+        public java.sql.Timestamp getCreateTime(){
+            return _createTime;
+        }
+
+        public void setCreateTime(java.sql.Timestamp value){
+            this._createTime = value;
+        }
+
+
+        private String _updatedBy;
+
+    
+        @PropMeta(propId=28)
+    
+        public String getUpdatedBy(){
+            return _updatedBy;
+        }
+
+        public void setUpdatedBy(String value){
+            this._updatedBy = value;
+        }
+
+
+        private java.sql.Timestamp _updateTime;
+
+    
+        @PropMeta(propId=29)
+    
+        public java.sql.Timestamp getUpdateTime(){
+            return _updateTime;
+        }
+
+        public void setUpdateTime(java.sql.Timestamp value){
+            this._updateTime = value;
         }
 
 

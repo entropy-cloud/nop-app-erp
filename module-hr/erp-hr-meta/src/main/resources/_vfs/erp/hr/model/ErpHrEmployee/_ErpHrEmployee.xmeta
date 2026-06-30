@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="user" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen"
+      xmlns:biz="biz" displayName="员工" i18n-en:displayName="Employee" tagSet="gid,erp.hr" xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.hr.dao.entity.ErpHrEmployee</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="code" displayName="工号" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="code" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="firstName" displayName="姓" propId="3" i18n-en:displayName="First Name" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="lastName" displayName="名" propId="4" i18n-en:displayName="Last Name" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="fullName" displayName="全名" propId="5" i18n-en:displayName="Full Name" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="gender" displayName="性别" propId="6" i18n-en:displayName="Gender" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer" dict="erp-hr/gender"/>
+        </prop>
+        <prop name="birthDate" displayName="出生日期" propId="7" i18n-en:displayName="Birth Date" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="idCardType" displayName="证件类型" propId="8" i18n-en:displayName="ID Card Type" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="idCardNo" displayName="证件号码" propId="9" i18n-en:displayName="ID Card No" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="idCardNo" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="email" displayName="电子邮箱" propId="10" i18n-en:displayName="Email" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="email" type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="mobilePhone" displayName="手机号" propId="11" i18n-en:displayName="Mobile Phone" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="phone" type="java.lang.String" precision="20"/>
+        </prop>
+        <prop name="maritalStatus" displayName="婚姻状况" propId="12" i18n-en:displayName="Marital Status" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer" dict="erp-hr/marital-status"/>
+        </prop>
+        <prop name="nationality" displayName="国籍" propId="13" i18n-en:displayName="Nationality" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="emergencyContact" displayName="紧急联系人" propId="14" i18n-en:displayName="Emergency Contact"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="emergencyPhone" displayName="紧急联系电话" propId="15" i18n-en:displayName="Emergency Phone"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema domain="phone" type="java.lang.String" precision="20"/>
+        </prop>
+        <prop name="departmentId" displayName="部门" propId="16" i18n-en:displayName="Department" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="department">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="positionId" displayName="职位" propId="17" i18n-en:displayName="Position" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="position">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="jobTitle" displayName="岗位名称" propId="18" i18n-en:displayName="Job Title" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="superiorId" displayName="直接上级" propId="19" i18n-en:displayName="Superior" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="costCenterId" displayName="默认成本中心" propId="20" i18n-en:displayName="Cost Center" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="hireDate" displayName="入职日期" propId="21" i18n-en:displayName="Hire Date" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="probationEndDate" displayName="试用期截止" propId="22" i18n-en:displayName="Probation End Date"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="regularDate" displayName="转正日期" propId="23" i18n-en:displayName="Regular Date" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="resignationDate" displayName="离职日期" propId="24" i18n-en:displayName="Resignation Date"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="resignationReason" displayName="离职原因" propId="25" i18n-en:displayName="Resignation Reason"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="500"/>
+        </prop>
+        <prop name="employmentStatus" displayName="雇佣状态" propId="26" i18n-en:displayName="Employment Status"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer" dict="erp-hr/employment-status"/>
+        </prop>
+        <prop name="employeeType" displayName="员工类型" propId="27" i18n-en:displayName="Employee Type" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer" dict="erp-hr/employee-type"/>
+        </prop>
+        <prop name="bankAccountId" displayName="工资卡账户" propId="28" i18n-en:displayName="Bank Account" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="socialSecurityNo" displayName="社保号" propId="29" i18n-en:displayName="Social Security No"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema domain="socialSecurityNo" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="taxFileNo" displayName="个税档案号" propId="30" i18n-en:displayName="Tax File No" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="taxFileNo" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="userAccountId" displayName="系统用户ID" propId="31" i18n-en:displayName="User Account" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="orgId" displayName="业务组织" propId="32" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="33" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="34" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="35" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="36" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="37" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="38" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="39" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="department" i18n-en:displayName="Department" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="departmentId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpHrDepartment"/>
+        </prop>
+        <prop name="position" i18n-en:displayName="Position" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="positionId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpHrPosition"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+    </props>
+</meta>

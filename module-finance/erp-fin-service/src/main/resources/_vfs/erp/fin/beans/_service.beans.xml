@@ -98,11 +98,43 @@
         <property name="bizObjName" value="ErpFinVoucherTemplateLine"/>
     </bean>
 
+    <bean id="app.erp.fin.service.entity.ErpFinBankStatementBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinBankStatement" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinBankStatementBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinBankStatement"/>
+    </bean>
+
     <bean id="app.erp.fin.service.entity.ErpFinReconciliationLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpFinReconciliationLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
           ioc:type="app.erp.fin.biz.IErpFinReconciliationLineBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
         <property name="bizObjName" value="ErpFinReconciliationLine"/>
+    </bean>
+
+    <bean id="app.erp.fin.service.entity.ErpFinBankStatementLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinBankStatementLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinBankStatementLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinBankStatementLine"/>
+    </bean>
+
+    <bean id="app.erp.fin.service.entity.ErpFinBankReconciliationBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinBankReconciliation" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinBankReconciliationBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinBankReconciliation"/>
+    </bean>
+
+    <bean id="app.erp.fin.service.entity.ErpFinBankReconciliationLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinBankReconciliationLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinBankReconciliationLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinBankReconciliationLine"/>
     </bean>
 </beans>

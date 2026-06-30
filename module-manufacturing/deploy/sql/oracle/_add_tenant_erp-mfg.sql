@@ -49,11 +49,15 @@ alter table erp_mfg_subcontract_order add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0'
 
 alter table erp_mfg_job_card add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
+alter table erp_mfg_cost_variance add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
 alter table erp_mfg_subcontract_order_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_material_issue add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_job_card_time_log add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
+alter table erp_mfg_batch_genealogy add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_material_issue_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
@@ -132,6 +136,9 @@ alter table erp_mfg_subcontract_order add constraint PK_erp_mfg_subcontract_orde
 alter table erp_mfg_job_card drop constraint PK_erp_mfg_job_card;
 alter table erp_mfg_job_card add constraint PK_erp_mfg_job_card primary key (NOP_TENANT_ID, ID);
 
+alter table erp_mfg_cost_variance drop constraint PK_erp_mfg_cost_variance;
+alter table erp_mfg_cost_variance add constraint PK_erp_mfg_cost_variance primary key (NOP_TENANT_ID, ID);
+
 alter table erp_mfg_subcontract_order_line drop constraint PK_erp_mfg_subcontract_order_line;
 alter table erp_mfg_subcontract_order_line add constraint PK_erp_mfg_subcontract_order_line primary key (NOP_TENANT_ID, ID);
 
@@ -140,6 +147,9 @@ alter table erp_mfg_material_issue add constraint PK_erp_mfg_material_issue prim
 
 alter table erp_mfg_job_card_time_log drop constraint PK_erp_mfg_job_card_time_log;
 alter table erp_mfg_job_card_time_log add constraint PK_erp_mfg_job_card_time_log primary key (NOP_TENANT_ID, ID);
+
+alter table erp_mfg_batch_genealogy drop constraint PK_erp_mfg_batch_genealogy;
+alter table erp_mfg_batch_genealogy add constraint PK_erp_mfg_batch_genealogy primary key (NOP_TENANT_ID, ID);
 
 alter table erp_mfg_material_issue_line drop constraint PK_erp_mfg_material_issue_line;
 alter table erp_mfg_material_issue_line add constraint PK_erp_mfg_material_issue_line primary key (NOP_TENANT_ID, ID);

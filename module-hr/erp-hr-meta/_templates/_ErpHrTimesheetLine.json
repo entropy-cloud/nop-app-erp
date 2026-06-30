@@ -1,0 +1,19 @@
+{
+  "id": 0,
+  "timesheetId": 0,
+  "employeeId": 0,
+  "workDate": "2000-01-01",
+  "projectId": 0,
+  "taskId": 0,
+  "activityType": "",
+  "hours": 0.0,
+  "description": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "timesheet": null,
+  "employee": null
+}

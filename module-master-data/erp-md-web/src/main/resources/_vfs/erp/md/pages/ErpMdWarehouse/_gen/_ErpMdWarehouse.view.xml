@@ -59,6 +59,9 @@
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>
+
+                <!--批次选择策略-->
+                <col id="batchSelectionStrategy" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -74,19 +77,16 @@
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
  updateTime[修改时间] remark[备注]
+ batchSelectionStrategy[批次选择策略] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-仓库" i18n-en:title="Add Warehouse">
             <layout>
- id[ID]
- code[编码]
- name[名称]
- warehouseType[仓库类型]
- orgId[所属组织]
- address[地址]
- managerId[负责人(职员)]
- status[状态]
- remark[备注]
+ id[ID] code[编码]
+ name[名称] warehouseType[仓库类型]
+ orgId[所属组织] address[地址]
+ managerId[负责人(职员)] status[状态]
+ remark[备注] batchSelectionStrategy[批次选择策略]
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-仓库" i18n-en:title="Edit Warehouse">
@@ -96,6 +96,7 @@
  orgId[所属组织] address[地址]
  managerId[负责人(职员)] status[状态]
  delVersion[逻辑删除版本] remark[备注]
+ batchSelectionStrategy[批次选择策略] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

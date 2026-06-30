@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 配置规则类型
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 必选
+    value: REQUIRED
+    description: 
+  
+  - label: 可选
+    value: OPTIONAL
+    description: 
+  
+  - label: 互斥
+    value: EXCLUDED
+    description: 
+  
+  - label: 推荐
+    value: RECOMMENDED
+    description: 
+  

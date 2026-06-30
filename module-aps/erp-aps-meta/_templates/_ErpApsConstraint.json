@@ -1,0 +1,18 @@
+{
+  "id": 0,
+  "machineId": 0,
+  "constraintType": 0,
+  "constraintType_label": "",
+  "startTime": "2000-01-01 14:00:00",
+  "endTime": "2000-01-01 14:00:00",
+  "description": "",
+  "orgId": 0,
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "org": null
+}

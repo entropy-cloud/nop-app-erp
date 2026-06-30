@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
+
+    <site id="main">
+        <resource id="test-orm-erp-aps" displayName="测试erp-aps" i18n-en:displayName="Test erp-aps" icon="cpu"
+                  resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-aps" component="layouts/default/index">
+            <children>
+                <resource id="ErpApsConstraint-main" displayName="排产约束" orderNo="10001" i18n-en:displayName="Constraint"
+                          icon="ban" component="AMIS" resourceType="SUBM"
+                          url="/erp/aps/pages/ErpApsConstraint/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpApsConstraint:query" displayName="查询排产约束"
+                                  i18n-en:displayName="Query Constraint" orderNo="10002" resourceType="FNPT">
+                            <permissions>ErpApsConstraint:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpApsConstraint:mutation" displayName="修改排产约束"
+                                  i18n-en:displayName="Modify Constraint" orderNo="10003" resourceType="FNPT">
+                            <permissions>ErpApsConstraint:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpApsDispatchLog-main" displayName="派工日志" orderNo="10004"
+                          i18n-en:displayName="Dispatch Log" icon="scroll-text" component="AMIS" resourceType="SUBM"
+                          url="/erp/aps/pages/ErpApsDispatchLog/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpApsDispatchLog:query" displayName="查询派工日志"
+                                  i18n-en:displayName="Query Dispatch Log" orderNo="10005" resourceType="FNPT">
+                            <permissions>ErpApsDispatchLog:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpApsDispatchLog:mutation" displayName="修改派工日志"
+                                  i18n-en:displayName="Modify Dispatch Log" orderNo="10006" resourceType="FNPT">
+                            <permissions>ErpApsDispatchLog:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpApsDispatchRule-main" displayName="自动派工规则" orderNo="10007"
+                          i18n-en:displayName="Dispatch Rule" icon="play-circle" component="AMIS" resourceType="SUBM"
+                          url="/erp/aps/pages/ErpApsDispatchRule/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpApsDispatchRule:query" displayName="查询自动派工规则"
+                                  i18n-en:displayName="Query Dispatch Rule" orderNo="10008" resourceType="FNPT">
+                            <permissions>ErpApsDispatchRule:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpApsDispatchRule:mutation" displayName="修改自动派工规则"
+                                  i18n-en:displayName="Modify Dispatch Rule" orderNo="10009" resourceType="FNPT">
+                            <permissions>ErpApsDispatchRule:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpApsOpRouting-main" displayName="替代工艺路线" orderNo="10010"
+                          i18n-en:displayName="OP Routing" icon="shuffle" component="AMIS" resourceType="SUBM"
+                          url="/erp/aps/pages/ErpApsOpRouting/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpApsOpRouting:query" displayName="查询替代工艺路线"
+                                  i18n-en:displayName="Query OP Routing" orderNo="10011" resourceType="FNPT">
+                            <permissions>ErpApsOpRouting:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpApsOpRouting:mutation" displayName="修改替代工艺路线"
+                                  i18n-en:displayName="Modify OP Routing" orderNo="10012" resourceType="FNPT">
+                            <permissions>ErpApsOpRouting:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpApsOperationOrder-main" displayName="工序工单" orderNo="10013"
+                          i18n-en:displayName="Operation Order" icon="cpu" component="AMIS" resourceType="SUBM"
+                          url="/erp/aps/pages/ErpApsOperationOrder/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpApsOperationOrder:query" displayName="查询工序工单"
+                                  i18n-en:displayName="Query Operation Order" orderNo="10014" resourceType="FNPT">
+                            <permissions>ErpApsOperationOrder:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpApsOperationOrder:mutation" displayName="修改工序工单"
+                                  i18n-en:displayName="Modify Operation Order" orderNo="10015" resourceType="FNPT">
+                            <permissions>ErpApsOperationOrder:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpApsSchedule-main" displayName="排产方案" orderNo="10016" i18n-en:displayName="Schedule"
+                          icon="calendar-check" component="AMIS" resourceType="SUBM"
+                          url="/erp/aps/pages/ErpApsSchedule/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpApsSchedule:query" displayName="查询排产方案"
+                                  i18n-en:displayName="Query Schedule" orderNo="10017" resourceType="FNPT">
+                            <permissions>ErpApsSchedule:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpApsSchedule:mutation" displayName="修改排产方案"
+                                  i18n-en:displayName="Modify Schedule" orderNo="10018" resourceType="FNPT">
+                            <permissions>ErpApsSchedule:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
+</auth>

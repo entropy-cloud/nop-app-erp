@@ -19,6 +19,31 @@ public interface _ErpFinDaoConstants {
     int VOUCHER_TYPE_TRANSFER = 30;
                     
     /**
+     * 过账类型: 正常过账 
+     */
+    int POSTING_TYPE_NORMAL = 10;
+                    
+    /**
+     * 过账类型: 期初余额录入 
+     */
+    int POSTING_TYPE_OPENING_BALANCE = 20;
+                    
+    /**
+     * 过账类型: 调整 
+     */
+    int POSTING_TYPE_ADJUSTMENT = 30;
+                    
+    /**
+     * 过账类型: 期末结转 
+     */
+    int POSTING_TYPE_CLOSING = 40;
+                    
+    /**
+     * 过账类型: 红字冲销 
+     */
+    int POSTING_TYPE_REVERSAL = 50;
+                    
+    /**
      * 凭证状态: 草稿 
      */
     int VOUCHER_STATUS_DRAFT = 10;

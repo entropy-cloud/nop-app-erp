@@ -1,0 +1,23 @@
+{
+  "id": 0,
+  "configId": 0,
+  "orgId": 0,
+  "criterionCode": "",
+  "criterionName": "",
+  "weight": 0,
+  "scoringMethod": "",
+  "scoringMethod_label": "",
+  "lookupTable": "",
+  "formula": "",
+  "maxScore": 0,
+  "sequence": 0,
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "config": null,
+  "org": null
+}

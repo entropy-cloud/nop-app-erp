@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 测试方向
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 出站
+    value: 10
+    description: 
+  
+  - label: 入站
+    value: 20
+    description: 
+  

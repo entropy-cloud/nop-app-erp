@@ -1,0 +1,17 @@
+{
+  "id": 0,
+  "code": "",
+  "name": "",
+  "orgId": 0,
+  "parentId": 0,
+  "icon": "",
+  "sequence": 0,
+  "isActive": false,
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "parent": null
+}

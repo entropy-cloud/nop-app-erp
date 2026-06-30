@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 结算单状态
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 草稿
+    value: 10
+    description: 
+  
+  - label: 已过账
+    value: 20
+    description: 
+  
+  - label: 已取消
+    value: 30
+    description: 
+  

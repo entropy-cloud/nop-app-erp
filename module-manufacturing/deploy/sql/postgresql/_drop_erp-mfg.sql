@@ -24,8 +24,10 @@ drop table  if exists  erp_mfg_work_order;
 drop table  if exists  erp_mfg_work_order_line;
 drop table  if exists  erp_mfg_subcontract_order;
 drop table  if exists  erp_mfg_job_card;
+drop table  if exists  erp_mfg_cost_variance;
 drop table  if exists  erp_mfg_subcontract_order_line;
 drop table  if exists  erp_mfg_material_issue;
 drop table  if exists  erp_mfg_job_card_time_log;
+drop table  if exists  erp_mfg_batch_genealogy;
 drop table  if exists  erp_mfg_material_issue_line;
 

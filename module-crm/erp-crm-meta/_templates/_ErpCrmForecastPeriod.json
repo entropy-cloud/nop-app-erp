@@ -1,0 +1,21 @@
+{
+  "id": 0,
+  "code": "",
+  "orgId": 0,
+  "periodType": "",
+  "periodType_label": "",
+  "periodStart": "2000-01-01",
+  "periodEnd": "2000-01-01",
+  "label": "",
+  "status": "",
+  "status_label": "",
+  "isCurrent": false,
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "org": null
+}

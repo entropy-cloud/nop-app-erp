@@ -1,0 +1,227 @@
+entity:
+  label:
+    ErpLogCarrier: Carrier
+    ErpLogCarrierConfig: Carrier Config
+    ErpLogDeliveryWindow: Delivery Window
+    ErpLogShipment: Shipment
+    ErpLogShipmentLine: Shipment Line
+    ErpLogShipmentLog: Shipment Log
+    ErpLogShipmentParcel: Shipment Parcel
+prop:
+  label:
+    ErpLogCarrier:
+      id: ID
+      code: Code
+      orgId: Organization
+      carrierName: Carrier Name
+      carrierType: Carrier Type
+      carrierType_label: null
+      gatewayId: Gateway ID
+      partnerId: Partner
+      isActive: Active
+      trackingUrlTemplate: Tracking URL Template
+      maxParcelWeight: Max Parcel Weight
+      supportedServiceTypes: Supported Service Types
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      partner: Partner
+      org: Org
+      configs: Configs
+    ErpLogCarrierConfig:
+      id: ID
+      carrierId: Carrier
+      orgId: Organization
+      configCode: Config Code
+      serviceType: Service Type
+      apiEndpoint: API Endpoint
+      apiKey: API Key
+      apiSecret: API Secret
+      credentials: Credentials
+      trackingUrlTemplate: Tracking URL Template
+      printFormat: Print Format
+      additionalProperties: Additional Properties
+      isActive: Active
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      carrier: Carrier
+      org: Org
+    ErpLogDeliveryWindow:
+      id: ID
+      partnerId: Partner
+      orgId: Organization
+      weekday: Weekday
+      startTime: Start Time
+      endTime: End Time
+      maxCapacity: Max Capacity
+      currentBooked: Current Booked
+      isActive: Active
+      effectiveFrom: Effective From
+      effectiveTo: Effective To
+      allowedShipmentTypes: Allowed Shipment Types
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      partner: Partner
+      org: Org
+    ErpLogShipment:
+      id: ID
+      code: Code
+      orgId: Organization
+      carrierId: Carrier
+      carrierConfigId: Carrier Config
+      relatedBillType: Related Bill Type
+      relatedBillCode: Related Bill Code
+      shipmentDate: Shipment Date
+      trackingNo: Tracking No
+      labelUrl: Label URL
+      freightAmount: Freight Amount
+      freightCurrencyId: Currency
+      freightTerms: Freight Terms
+      freightTerms_label: null
+      freightSettlementStatus: Settlement Status
+      freightSettlementStatus_label: null
+      totalWeight: Total Weight
+      totalVolume: Total Volume
+      totalParcels: Total Parcels
+      receiverName: Receiver Name
+      receiverPhone: Receiver Phone
+      receiverAddress: Receiver Address
+      receiverCountry: Country
+      receiverProvince: Province
+      receiverCity: City
+      receiverDistrict: District
+      senderName: Sender Name
+      senderPhone: Sender Phone
+      senderAddress: Sender Address
+      estimatedDeliveryDate: Estimated Delivery Date
+      actualDeliveryDate: Actual Delivery Date
+      signedBy: Signed By
+      shipperId: Shipper
+      status: Status
+      status_label: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      carrier: Carrier
+      carrierConfig: Carrier Config
+      org: Org
+      shipper: Shipper
+      lines: Lines
+      parcels: Parcels
+      logs: Logs
+    ErpLogShipmentLine:
+      id: ID
+      shipmentId: Shipment
+      lineNo: Line No
+      materialId: Material
+      quantity: Quantity
+      unit: Unit
+      packageDescription: Package Description
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      shipment: Shipment
+      material: Material
+    ErpLogShipmentLog:
+      id: ID
+      shipmentId: Shipment
+      orgId: Organization
+      gatewayId: Gateway ID
+      actionType: Action Type
+      actionType_label: null
+      requestBody: Request Body
+      responseBody: Response Body
+      httpStatus: HTTP Status
+      errorCode: Error Code
+      errorMessage: Error Message
+      isSuccess: Is Success
+      executedAt: Executed At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      shipment: Shipment
+      org: Org
+    ErpLogShipmentParcel:
+      id: ID
+      shipmentId: Shipment
+      parcelNo: Parcel No
+      trackingNo: Tracking No
+      labelUrl: Label URL
+      weight: Weight
+      length: Length
+      width: Width
+      height: Height
+      declaredValue: Declared Value
+      isActive: Active
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      shipment: Shipment
+dict:
+  label:
+    erp-log/carrier-type: Carrier Type
+    erp-log/freight-terms: Freight Terms
+    erp-log/shipment-status: Shipment Status
+    erp-log/settlement-status: Settlement Status
+    erp-log/gateway-action: Gateway Action
+    erp-log/doc-status: Doc Status
+dict.option.label:
+  erp-log/carrier-type:
+    '10': Express
+    '20': Freight
+    '30': Air Freight
+    '40': Sea Freight
+    '50': Rail Freight
+  erp-log/freight-terms:
+    '10': Prepaid
+    '20': Collect
+  erp-log/shipment-status:
+    '10': Draft
+    '20': Advised
+    '30': Dispatched
+    '40': In Transit
+    '50': Delivered
+    '60': Cancelled
+  erp-log/settlement-status:
+    '10': Pending
+    '20': Settled
+  erp-log/gateway-action:
+    '10': Create Shipment
+    '20': Get Label
+    '30': Advise Pickup
+    '40': Track
+    '50': Cancel
+  erp-log/doc-status:
+    '10': Draft
+    '20': Effective
+    '30': Voided

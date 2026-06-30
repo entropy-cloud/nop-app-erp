@@ -114,6 +114,11 @@
             <option code="REGISTERED" label="注册地址" value="30" i18n-en:label="Registered Address"/>
             <option code="OTHER" label="其他" value="40" i18n-en:label="Other"/>
         </dict>
+        <dict label="批次选择策略" name="erp-md/batch-strategy" valueType="string" i18n-en:label="Batch Selection Strategy">
+            <option code="FIFO" label="先进先出" value="FIFO" i18n-en:label="FIFO"/>
+            <option code="FEFO" label="先到期先出" value="FEFO" i18n-en:label="FEFO"/>
+            <option code="MANUAL" label="手工指定" value="MANUAL" i18n-en:label="Manual"/>
+        </dict>
     </dicts>
 
     <domains>
@@ -565,6 +570,9 @@
                         propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="15"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="BATCH_SELECTION_STRATEGY" displayName="批次选择策略" name="batchSelectionStrategy"
+                        precision="20" propId="16" stdDataType="string" stdSqlType="VARCHAR"
+                        ext:dict="erp-md/batch-strategy" i18n-en:displayName="Batch Selection Strategy"/>
             </columns>
             <relations>
                 <to-one name="organization" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
@@ -1035,26 +1043,31 @@
                 <column code="IS_AUXILIARY_PRODUCT" defaultValue="false" displayName="辅助-物料" name="isAuxiliaryProduct"
                         propId="13" stdDataType="boolean" stdSqlType="BOOLEAN"
                         i18n-en:displayName="Is Auxiliary Product"/>
-                <column code="IS_LEAF" defaultValue="true" displayName="是否明细科目" name="isLeaf" propId="14"
+                <column code="IS_AUXILIARY_COST_CENTER" defaultValue="false" displayName="辅助-成本中心"
+                        name="isAuxiliaryCostCenter" propId="14" stdDataType="boolean" stdSqlType="BOOLEAN"
+                        i18n-en:displayName="Is Auxiliary Cost Center"/>
+                <column code="IS_BUDGETABLE" defaultValue="false" displayName="是否预算控制" name="isBudgetable" propId="15"
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Budgetable"/>
+                <column code="IS_LEAF" defaultValue="true" displayName="是否明细科目" name="isLeaf" propId="16"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Leaf"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="15" stdDataType="int"
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="17" stdDataType="int"
                         stdSqlType="INTEGER" ext:dict="erp-md/active-status" i18n-en:displayName="Status"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
-                        name="delVersion" propId="16" stdDataType="long" stdSqlType="BIGINT"
+                        name="delVersion" propId="18" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Del Flag"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
-                        name="version" propId="17" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                        name="version" propId="19" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
-                        precision="50" propId="18" stdDataType="string" stdSqlType="VARCHAR"
+                        precision="50" propId="20" stdDataType="string" stdSqlType="VARCHAR"
                         i18n-en:displayName="Created By"/>
                 <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
-                        propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                        propId="21" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
                 <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
-                        precision="50" propId="20" stdDataType="string" stdSqlType="VARCHAR"
+                        precision="50" propId="22" stdDataType="string" stdSqlType="VARCHAR"
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
-                        propId="21" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
-                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="22"
+                        propId="23" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="24"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
             </columns>
             <relations>
@@ -1241,6 +1254,118 @@
                     </join>
                 </to-many>
             </relations>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdCostCenter" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="成本中心"
+                name="app.erp.md.dao.entity.ErpMdCostCenter" registerShortName="true" tableName="erp_md_cost_center"
+                tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="chart-pie" i18n-en:displayName="Cost Center">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="编码" domain="code" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
+                <column code="NAME" displayName="名称" domain="name" mandatory="true" name="name" precision="200"
+                        propId="3" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
+                <column code="ORG_ID" displayName="所属组织" mandatory="true" name="orgId" propId="4" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
+                <column code="MANAGER_ID" displayName="负责人" name="managerId" propId="5" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Manager"/>
+                <column code="PARENT_ID" displayName="上级成本中心" name="parentId" propId="6" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Parent"/>
+                <column code="IS_BUDGETABLE" defaultValue="false" displayName="是否预算管控" name="isBudgetable" propId="7"
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Budgetable"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="8" stdDataType="int"
+                        stdSqlType="INTEGER" ext:dict="erp-md/active-status" i18n-en:displayName="Status"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="9" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="10" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="11" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="13" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="15"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+            </columns>
+            <relations>
+                <to-one name="organization" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Organization" ref-i18n-en:displayName="Cost Center">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="manager" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"
+                        i18n-en:displayName="Manager" ref-i18n-en:displayName="Cost Center">
+                    <join>
+                        <on leftProp="managerId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="parent" refEntityName="app.erp.md.dao.entity.ErpMdCostCenter" tagSet="pub"
+                        i18n-en:displayName="Parent" ref-i18n-en:displayName="Cost Center">
+                    <join>
+                        <on leftProp="parentId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-many name="children" refEntityName="app.erp.md.dao.entity.ErpMdCostCenter"
+                         tagSet="pub,insertable,updatable" i18n-en:displayName="Children"
+                         ref-i18n-en:displayName="Cost Center">
+                    <join>
+                        <on leftProp="id" rightProp="parentId"/>
+                    </join>
+                </to-many>
+            </relations>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpSysConfig" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="系统配置"
+                name="app.erp.md.dao.entity.ErpSysConfig" registerShortName="true" tableName="erp_sys_config"
+                tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="settings" i18n-en:displayName="System Config">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CONFIG_KEY" displayName="配置键" mandatory="true" name="configKey" precision="200" propId="2"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Config Key"/>
+                <column code="CONFIG_VALUE" displayName="配置值" mandatory="true" name="configValue" precision="2000"
+                        propId="3" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Config Value"/>
+                <column code="ORG_ID" displayName="所属组织" name="orgId" propId="4" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="DESCRIPTION" displayName="说明" name="description" precision="500" propId="5"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Description"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="6" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="7" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="8" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="9" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="10" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="11" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="organization" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Organization" ref-i18n-en:displayName="System Config">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+            <unique-keys>
+                <unique-key columns="configKey,orgId" name="uk_config_org"/>
+            </unique-keys>
         </entity>
     </entities>
 </orm>

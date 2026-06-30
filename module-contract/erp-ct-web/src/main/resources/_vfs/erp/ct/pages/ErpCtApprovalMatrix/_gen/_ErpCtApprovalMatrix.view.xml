@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:schema="/nop/schema/xui/xview.xdef" bizObjName="ErpCtApprovalMatrix" xmlns:i18n-en="i18n-en"
+      xmlns:x="/nop/schema/xdsl.xdef" xmlns:j="j" xmlns:c="c" xmlns:gql="gql" xmlns:view-gen="view-gen" xmlns:xpl="xpl">
+
+    <objMeta>/erp/ct/model/ErpCtApprovalMatrix/ErpCtApprovalMatrix.xmeta</objMeta>
+
+    <controlLib>/nop/web/xlib/control.xlib</controlLib>
+
+    <x:gen-extends>
+        <view-gen:DefaultViewGenExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <view-gen:DefaultViewPostExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:post-extends>
+
+    <grids>
+        <grid id="list" x:abstract="true">
+            <cols>
+
+                <!--ID-->
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--编码-->
+                <col id="code" mandatory="true" sortable="true"/>
+
+                <!--业务组织-->
+                <col id="orgId" ui:number="true" sortable="true"/>
+
+                <!--最小金额-->
+                <col id="minAmount" ui:number="true" sortable="true"/>
+
+                <!--最大金额-->
+                <col id="maxAmount" ui:number="true" sortable="true"/>
+
+                <!--审批角色-->
+                <col id="approverRole" mandatory="true" sortable="true"/>
+
+                <!--审批顺序-->
+                <col id="approvalOrder" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--适用合同类型-->
+                <col id="contractType" sortable="true"/>
+
+                <!--可跳过-->
+                <col id="allowSkip" sortable="true"/>
+
+                <!--启用-->
+                <col id="isActive" sortable="true"/>
+
+                <!--备注-->
+                <col id="remark" sortable="true"/>
+
+                <!--逻辑删除版本-->
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--创建人-->
+                <col id="createdBy" mandatory="true" sortable="true"/>
+
+                <!--创建时间-->
+                <col id="createTime" mandatory="true" sortable="true"/>
+
+                <!--修改人-->
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+
+                <!--修改时间-->
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list" x:prototype="list" x:abstract="true"/>
+    </grids>
+
+    <forms>
+        <form id="view" editMode="view" title="查看-审批矩阵" i18n-en:title="View Approval Matrix">
+            <layout>
+ id[ID] code[编码]
+ orgId[业务组织] minAmount[最小金额]
+ maxAmount[最大金额] approverRole[审批角色]
+ approvalOrder[审批顺序] contractType[适用合同类型]
+ allowSkip[可跳过] isActive[启用]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+</layout>
+        </form>
+        <form id="add" editMode="add" title="新增-审批矩阵" i18n-en:title="Add Approval Matrix">
+            <layout>
+ id[ID] code[编码]
+ orgId[业务组织] minAmount[最小金额]
+ maxAmount[最大金额] approverRole[审批角色]
+ approvalOrder[审批顺序] contractType[适用合同类型]
+ allowSkip[可跳过] isActive[启用]
+ remark[备注] 
+</layout>
+        </form>
+        <form id="edit" editMode="edit" title="编辑-审批矩阵" i18n-en:title="Edit Approval Matrix">
+            <layout>
+ id[ID] code[编码]
+ orgId[业务组织] minAmount[最小金额]
+ maxAmount[最大金额] approverRole[审批角色]
+ approvalOrder[审批顺序] contractType[适用合同类型]
+ allowSkip[可跳过] isActive[启用]
+ remark[备注] delVersion[逻辑删除版本]
+</layout>
+        </form>
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-审批矩阵" i18n-en:title="Update Approval Matrix"/>
+    </forms>
+
+    <pages>
+        <crud name="view-list" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpCtApprovalMatrix__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </crud>
+        <crud name="main" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpCtApprovalMatrix__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+            <listActions>
+                <action id="batch-delete-button" label="@i18n:common.batchDelete" batch="true">
+                    <api url="@mutation:ErpCtApprovalMatrix__batchDelete?ids=$ids"/>
+                    <confirmText>@i18n:common.confirmBatchDelete</confirmText>
+                </action>
+                <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
+                    <dialog page="add"/>
+                </action>
+            </listActions>
+            <rowActions>
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+                <action id="row-update-button" level="primary" label="@i18n:common.edit" x:abstract="true">
+                    <dialog page="update"/>
+                </action>
+                <action id="row-delete-button" level="danger" label="@i18n:common.delete" x:abstract="true">
+                    <api url="@mutation:ErpCtApprovalMatrix__delete?id=$id"/>
+                    <confirmText>@i18n:common.confirmDelete</confirmText>
+                </action>
+                <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
+                    <action id="row-update-button" label="@i18n:common.edit">
+                        <dialog page="update"/>
+                    </action>
+                    <action id="row-delete-button" label="@i18n:common.delete">
+                        <api url="@mutation:ErpCtApprovalMatrix__delete?id=$id"/>
+                        <confirmText>@i18n:common.confirmDelete</confirmText>
+                    </action>
+                </actionGroup>
+            </rowActions>
+        </crud>
+        <picker name="picker" grid="pick-list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table noOperations="true">
+                <api url="@query:ErpCtApprovalMatrix__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </picker>
+        <simple name="add" form="add">
+            <api url="@mutation:ErpCtApprovalMatrix__save/id"/>
+        </simple>
+        <simple name="view" form="view">
+            <initApi url="@query:ErpCtApprovalMatrix__get?id=$id" gql:selection="{@formSelection}"/>
+        </simple>
+        <simple name="update" form="edit">
+            <initApi url="@query:ErpCtApprovalMatrix__get?id=$id" gql:selection="{@formSelection}"/>
+            <api url="@mutation:ErpCtApprovalMatrix__update/id?id=$id" withFormData="true"/>
+        </simple>
+    </pages>
+</view>

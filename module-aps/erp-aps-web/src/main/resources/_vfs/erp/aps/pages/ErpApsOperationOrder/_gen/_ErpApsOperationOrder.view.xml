@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:schema="/nop/schema/xui/xview.xdef" bizObjName="ErpApsOperationOrder" xmlns:i18n-en="i18n-en"
+      xmlns:x="/nop/schema/xdsl.xdef" xmlns:j="j" xmlns:c="c" xmlns:gql="gql" xmlns:view-gen="view-gen" xmlns:xpl="xpl">
+
+    <objMeta>/erp/aps/model/ErpApsOperationOrder/ErpApsOperationOrder.xmeta</objMeta>
+
+    <controlLib>/nop/web/xlib/control.xlib</controlLib>
+
+    <x:gen-extends>
+        <view-gen:DefaultViewGenExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <view-gen:DefaultViewPostExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:post-extends>
+
+    <grids>
+        <grid id="list" x:abstract="true">
+            <cols>
+
+                <!--ID-->
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--编号-->
+                <col id="code" mandatory="true" sortable="true"/>
+
+                <!--主工单-->
+                <col id="workOrderId" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--工序名称-->
+                <col id="operationName" mandatory="true" sortable="true"/>
+
+                <!--工序顺序-->
+                <col id="sequence" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--工作中心/设备-->
+                <col id="machineId" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--优先级-->
+                <col id="priority" ui:number="true" sortable="true"/>
+
+                <!--计划开工时间-->
+                <col id="plannedStartDateT" sortable="true"/>
+
+                <!--计划完工时间-->
+                <col id="plannedEndDateT" sortable="true"/>
+
+                <!--实际开工时间-->
+                <col id="realStartDateT" sortable="true"/>
+
+                <!--实际完工时间-->
+                <col id="realEndDateT" sortable="true"/>
+
+                <!--准备时间(分钟)-->
+                <col id="setupTime" ui:number="true" sortable="true"/>
+
+                <!--每件加工时间(分钟)-->
+                <col id="runtimePerUnit" ui:number="true" sortable="true"/>
+
+                <!--加工数量-->
+                <col id="qty" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--总耗时(分钟)-->
+                <col id="totalDuration" ui:number="true" sortable="true"/>
+
+                <!--操作工-->
+                <col id="assignedToId" ui:number="true" sortable="true"/>
+
+                <!--是否外协-->
+                <col id="isOutsourced" sortable="true"/>
+
+                <!--状态-->
+                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--业务组织-->
+                <col id="orgId" ui:number="true" sortable="true"/>
+
+                <!--备注-->
+                <col id="remark" sortable="true"/>
+
+                <!--逻辑删除版本-->
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--创建人-->
+                <col id="createdBy" mandatory="true" sortable="true"/>
+
+                <!--创建时间-->
+                <col id="createTime" mandatory="true" sortable="true"/>
+
+                <!--修改人-->
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+
+                <!--修改时间-->
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list" x:prototype="list" x:abstract="true"/>
+    </grids>
+
+    <forms>
+        <form id="view" editMode="view" title="查看-工序工单" i18n-en:title="View Operation Order">
+            <layout>
+ id[ID] code[编号]
+ workOrderId[主工单] operationName[工序名称]
+ sequence[工序顺序] machineId[工作中心/设备]
+ priority[优先级] plannedStartDateT[计划开工时间]
+ plannedEndDateT[计划完工时间] realStartDateT[实际开工时间]
+ realEndDateT[实际完工时间] setupTime[准备时间(分钟)]
+ runtimePerUnit[每件加工时间(分钟)] qty[加工数量]
+ totalDuration[总耗时(分钟)] assignedToId[操作工]
+ isOutsourced[是否外协] status[状态]
+ orgId[业务组织] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
+</layout>
+        </form>
+        <form id="add" editMode="add" title="新增-工序工单" i18n-en:title="Add Operation Order">
+            <layout>
+ id[ID] code[编号]
+ workOrderId[主工单] operationName[工序名称]
+ sequence[工序顺序] machineId[工作中心/设备]
+ priority[优先级] plannedStartDateT[计划开工时间]
+ plannedEndDateT[计划完工时间] realStartDateT[实际开工时间]
+ realEndDateT[实际完工时间] setupTime[准备时间(分钟)]
+ runtimePerUnit[每件加工时间(分钟)] qty[加工数量]
+ totalDuration[总耗时(分钟)] assignedToId[操作工]
+ isOutsourced[是否外协] status[状态]
+ orgId[业务组织] remark[备注]
+</layout>
+        </form>
+        <form id="edit" editMode="edit" title="编辑-工序工单" i18n-en:title="Edit Operation Order">
+            <layout>
+ id[ID] code[编号]
+ workOrderId[主工单] operationName[工序名称]
+ sequence[工序顺序] machineId[工作中心/设备]
+ priority[优先级] plannedStartDateT[计划开工时间]
+ plannedEndDateT[计划完工时间] realStartDateT[实际开工时间]
+ realEndDateT[实际完工时间] setupTime[准备时间(分钟)]
+ runtimePerUnit[每件加工时间(分钟)] qty[加工数量]
+ totalDuration[总耗时(分钟)] assignedToId[操作工]
+ isOutsourced[是否外协] status[状态]
+ orgId[业务组织] remark[备注]
+ delVersion[逻辑删除版本] 
+</layout>
+        </form>
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-工序工单" i18n-en:title="Update Operation Order"/>
+    </forms>
+
+    <pages>
+        <crud name="view-list" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpApsOperationOrder__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </crud>
+        <crud name="main" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpApsOperationOrder__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+            <listActions>
+                <action id="batch-delete-button" label="@i18n:common.batchDelete" batch="true">
+                    <api url="@mutation:ErpApsOperationOrder__batchDelete?ids=$ids"/>
+                    <confirmText>@i18n:common.confirmBatchDelete</confirmText>
+                </action>
+                <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
+                    <dialog page="add"/>
+                </action>
+            </listActions>
+            <rowActions>
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+                <action id="row-update-button" level="primary" label="@i18n:common.edit" x:abstract="true">
+                    <dialog page="update"/>
+                </action>
+                <action id="row-delete-button" level="danger" label="@i18n:common.delete" x:abstract="true">
+                    <api url="@mutation:ErpApsOperationOrder__delete?id=$id"/>
+                    <confirmText>@i18n:common.confirmDelete</confirmText>
+                </action>
+                <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
+                    <action id="row-update-button" label="@i18n:common.edit">
+                        <dialog page="update"/>
+                    </action>
+                    <action id="row-delete-button" label="@i18n:common.delete">
+                        <api url="@mutation:ErpApsOperationOrder__delete?id=$id"/>
+                        <confirmText>@i18n:common.confirmDelete</confirmText>
+                    </action>
+                </actionGroup>
+            </rowActions>
+        </crud>
+        <picker name="picker" grid="pick-list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table noOperations="true">
+                <api url="@query:ErpApsOperationOrder__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </picker>
+        <simple name="add" form="add">
+            <api url="@mutation:ErpApsOperationOrder__save/id"/>
+        </simple>
+        <simple name="view" form="view">
+            <initApi url="@query:ErpApsOperationOrder__get?id=$id" gql:selection="{@formSelection}"/>
+        </simple>
+        <simple name="update" form="edit">
+            <initApi url="@query:ErpApsOperationOrder__get?id=$id" gql:selection="{@formSelection}"/>
+            <api url="@mutation:ErpApsOperationOrder__update/id?id=$id" withFormData="true"/>
+        </simple>
+    </pages>
+</view>

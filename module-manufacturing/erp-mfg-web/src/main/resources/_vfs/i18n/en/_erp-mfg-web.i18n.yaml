@@ -1,9 +1,13 @@
 site:
   resource:
+    ErpMfgBatchGenealogy-main:
+      displayName: Batch Genealogy
     ErpMfgBom-main:
       displayName: BOM
     ErpMfgCostRollup-main:
       displayName: Cost Rollup
+    ErpMfgCostVariance-main:
+      displayName: Cost Variance Analysis
     ErpMfgJobCard-main:
       displayName: Job Card
     ErpMfgMaterialIssue-main:
@@ -38,3 +42,5 @@ site:
       displayName: MRP
     mfg-subcontract:
       displayName: Subcontract
+    mfg-trace:
+      displayName: Traceability

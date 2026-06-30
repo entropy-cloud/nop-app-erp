@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 调查发送渠道
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 邮件
+    value: 10
+    description: 
+  
+  - label: 电话
+    value: 20
+    description: 
+  
+  - label: 门户
+    value: 30
+    description: 
+  
+  - label: 在线聊天
+    value: 40
+    description: 
+  

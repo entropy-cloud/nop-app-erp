@@ -569,14 +569,14 @@
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="name" displayName="班次名称" domain="name" mandatory="true" code="NAME" propId="4" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Name' />
                 <column name="shiftType" displayName="班次类型" ext:dict="erp-hr/shift-type" mandatory="true" code="SHIFT_TYPE" propId="5" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Shift Type' />
-                <column name="startTime" displayName="上班时间" stdSqlType="TIME" mandatory="true" code="START_TIME" propId="6" stdDataType="time" i18n-en:displayName='Start Time' />
-                <column name="endTime" displayName="下班时间" stdSqlType="TIME" mandatory="true" code="END_TIME" propId="7" stdDataType="time" i18n-en:displayName='End Time' />
+                <column name="startTime" displayName="上班时间" stdSqlType="VARCHAR" precision="8" mandatory="true" code="START_TIME" propId="6" stdDataType="string" i18n-en:displayName='Start Time' />
+                <column name="endTime" displayName="下班时间" stdSqlType="VARCHAR" precision="8" mandatory="true" code="END_TIME" propId="7" stdDataType="string" i18n-en:displayName='End Time' />
                 <column name="graceLateMinutes" displayName="迟到宽容分钟数" stdSqlType="INTEGER" defaultValue="15" code="GRACE_LATE_MINUTES" propId="8" stdDataType="int" i18n-en:displayName='Grace Late Minutes' />
                 <column name="graceEarlyLeaveMinutes" displayName="早退宽容分钟数" stdSqlType="INTEGER" defaultValue="15" code="GRACE_EARLY_LEAVE_MINUTES" propId="9" stdDataType="int" i18n-en:displayName='Grace Early Leave Minutes' />
                 <column name="requireClockIn" displayName="需签到" stdSqlType="BOOLEAN" defaultValue="true" code="REQUIRE_CLOCK_IN" propId="10" stdDataType="boolean" i18n-en:displayName='Require Clock In' />
                 <column name="requireClockOut" displayName="需签退" stdSqlType="BOOLEAN" defaultValue="true" code="REQUIRE_CLOCK_OUT" propId="11" stdDataType="boolean" i18n-en:displayName='Require Clock Out' />
-                <column name="restStartTime" displayName="休息开始" stdSqlType="TIME" code="REST_START_TIME" propId="12" stdDataType="time" i18n-en:displayName='Rest Start Time' />
-                <column name="restEndTime" displayName="休息结束" stdSqlType="TIME" code="REST_END_TIME" propId="13" stdDataType="time" i18n-en:displayName='Rest End Time' />
+                <column name="restStartTime" displayName="休息开始" stdSqlType="VARCHAR" precision="8" code="REST_START_TIME" propId="12" stdDataType="string" i18n-en:displayName='Rest Start Time' />
+                <column name="restEndTime" displayName="休息结束" stdSqlType="VARCHAR" precision="8" code="REST_END_TIME" propId="13" stdDataType="string" i18n-en:displayName='Rest End Time' />
                 <column name="totalWorkMinutes" displayName="标准工时(分钟)" stdSqlType="INTEGER" code="TOTAL_WORK_MINUTES" propId="14" stdDataType="int" i18n-en:displayName='Total Work Minutes' />
                 <column name="allowOvertime" displayName="允许加班" stdSqlType="BOOLEAN" defaultValue="true" code="ALLOW_OVERTIME" propId="15" stdDataType="boolean" i18n-en:displayName='Allow Overtime' />
                 <column name="colorHex" displayName="显示颜色" stdSqlType="VARCHAR" precision="10" code="COLOR_HEX" propId="16" stdDataType="string" i18n-en:displayName='Color Hex' />

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
+
+    <site id="main">
+        <resource id="test-orm-erp-cs" displayName="测试erp-cs" i18n-en:displayName="Test erp-cs" icon="headset"
+                  resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-cs" component="layouts/default/index">
+            <children>
+                <resource id="ErpCsAgentRate-main" displayName="客服费率" orderNo="10001" i18n-en:displayName="Agent Rate"
+                          icon="dollar-sign" component="AMIS" resourceType="SUBM"
+                          url="/erp/cs/pages/ErpCsAgentRate/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCsAgentRate:query" displayName="查询客服费率"
+                                  i18n-en:displayName="Query Agent Rate" orderNo="10002" resourceType="FNPT">
+                            <permissions>ErpCsAgentRate:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCsAgentRate:mutation" displayName="修改客服费率"
+                                  i18n-en:displayName="Modify Agent Rate" orderNo="10003" resourceType="FNPT">
+                            <permissions>ErpCsAgentRate:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCsCannedCategory-main" displayName="预设应答分类" orderNo="10004"
+                          i18n-en:displayName="Canned Category" icon="folder" component="AMIS" resourceType="SUBM"
+                          url="/erp/cs/pages/ErpCsCannedCategory/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCsCannedCategory:query" displayName="查询预设应答分类"
+                                  i18n-en:displayName="Query Canned Category" orderNo="10005" resourceType="FNPT">
+                            <permissions>ErpCsCannedCategory:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCsCannedCategory:mutation" displayName="修改预设应答分类"
+                                  i18n-en:displayName="Modify Canned Category" orderNo="10006" resourceType="FNPT">
+                            <permissions>ErpCsCannedCategory:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCsCannedResponse-main" displayName="预设应答模板" orderNo="10007"
+                          i18n-en:displayName="Canned Response" icon="message-square" component="AMIS"
+                          resourceType="SUBM" url="/erp/cs/pages/ErpCsCannedResponse/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCsCannedResponse:query" displayName="查询预设应答模板"
+                                  i18n-en:displayName="Query Canned Response" orderNo="10008" resourceType="FNPT">
+                            <permissions>ErpCsCannedResponse:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCsCannedResponse:mutation" displayName="修改预设应答模板"
+                                  i18n-en:displayName="Modify Canned Response" orderNo="10009" resourceType="FNPT">
+                            <permissions>ErpCsCannedResponse:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCsCatalogCategory-main" displayName="目录分类" orderNo="10010"
+                          i18n-en:displayName="Catalog Category" icon="folder" component="AMIS" resourceType="SUBM"
+                          url="/erp/cs/pages/ErpCsCatalogCategory/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCsCatalogCategory:query" displayName="查询目录分类"
+                                  i18n-en:displayName="Query Catalog Category" orderNo="10011" resourceType="FNPT">
+                            <permissions>ErpCsCatalogCategory:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCsCatalogCategory:mutation" displayName="修改目录分类"
+                                  i18n-en:displayName="Modify Catalog Category" orderNo="10012" resourceType="FNPT">
+                            <permissions>ErpCsCatalogCategory:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCsCatalogFulfillment-main" displayName="目录项履行映射" orderNo="10013"
+                          i18n-en:displayName="Catalog Fulfillment" icon="git-branch" component="AMIS"
+                          resourceType="SUBM" url="/erp/cs/pages/ErpCsCatalogFulfillment/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCsCatalogFulfillment:query" displayName="查询目录项履行映射"
+                                  i18n-en:displayName="Query Catalog Fulfillment" orderNo="10014" resourceType="FNPT">
+                            <permissions>ErpCsCatalogFulfillment:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCsCatalogFulfillment:mutation" displayName="修改目录项履行映射"
+                                  i18n-en:displayName="Modify Catalog Fulfillment" orderNo="10015" resourceType="FNPT">
+                            <permissions>ErpCsCatalogFulfillment:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCsContract-main" displayName="支持合同" orderNo="10016"
+                          i18n-en:displayName="Support Contract" icon="file-text" component="AMIS" resourceType="SUBM"
+                          url="/erp/cs/pages/ErpCsContract/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCsContract:query" displayName="查询支持合同"
+                                  i18n-en:displayName="Query Support Contract" orderNo="10017" resourceType="FNPT">
+                            <permissions>ErpCsContract:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCsContract:mutation" displayName="修改支持合同"
+                                  i18n-en:displayName="Modify Support Contract" orderNo="10018" resourceType="FNPT">
+                            <permissions>ErpCsContract:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCsEntitlement-main" displayName="服务权益" orderNo="10019"
+                          i18n-en:displayName="Entitlement" icon="shield" component="AMIS" resourceType="SUBM"
+                          url="/erp/cs/pages/ErpCsEntitlement/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCsEntitlement:query" displayName="查询服务权益"
+                                  i18n-en:displayName="Query Entitlement" orderNo="10020" resourceType="FNPT">
+                            <permissions>ErpCsEntitlement:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCsEntitlement:mutation" displayName="修改服务权益"
+                                  i18n-en:displayName="Modify Entitlement" orderNo="10021" resourceType="FNPT">
+                            <permissions>ErpCsEntitlement:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCsKnowledgeBase-main" displayName="知识库" orderNo="10022"
+                          i18n-en:displayName="Knowledge Base" icon="book-open" component="AMIS" resourceType="SUBM"
+                          url="/erp/cs/pages/ErpCsKnowledgeBase/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCsKnowledgeBase:query" displayName="查询知识库"
+                                  i18n-en:displayName="Query Knowledge Base" orderNo="10023" resourceType="FNPT">
+                            <permissions>ErpCsKnowledgeBase:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCsKnowledgeBase:mutation" displayName="修改知识库"
+                                  i18n-en:displayName="Modify Knowledge Base" orderNo="10024" resourceType="FNPT">
+                            <permissions>ErpCsKnowledgeBase:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCsServiceCatalogItem-main" displayName="服务目录项" orderNo="10025"
+                          i18n-en:displayName="Service Catalog Item" icon="book" component="AMIS" resourceType="SUBM"
+                          url="/erp/cs/pages/ErpCsServiceCatalogItem/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCsServiceCatalogItem:query" displayName="查询服务目录项"
+                                  i18n-en:displayName="Query Service Catalog Item" orderNo="10026" resourceType="FNPT">
+                            <permissions>ErpCsServiceCatalogItem:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCsServiceCatalogItem:mutation" displayName="修改服务目录项"
+                                  i18n-en:displayName="Modify Service Catalog Item" orderNo="10027" resourceType="FNPT">
+                            <permissions>ErpCsServiceCatalogItem:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCsSlaPolicy-main" displayName="SLA 策略" orderNo="10028" i18n-en:displayName="SLA Policy"
+                          icon="clock" component="AMIS" resourceType="SUBM"
+                          url="/erp/cs/pages/ErpCsSlaPolicy/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCsSlaPolicy:query" displayName="查询SLA 策略"
+                                  i18n-en:displayName="Query SLA Policy" orderNo="10029" resourceType="FNPT">
+                            <permissions>ErpCsSlaPolicy:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCsSlaPolicy:mutation" displayName="修改SLA 策略"
+                                  i18n-en:displayName="Modify SLA Policy" orderNo="10030" resourceType="FNPT">
+                            <permissions>ErpCsSlaPolicy:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCsSurvey-main" displayName="满意度调查" orderNo="10031" i18n-en:displayName="CSAT Survey"
+                          icon="star" component="AMIS" resourceType="SUBM"
+                          url="/erp/cs/pages/ErpCsSurvey/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCsSurvey:query" displayName="查询满意度调查"
+                                  i18n-en:displayName="Query CSAT Survey" orderNo="10032" resourceType="FNPT">
+                            <permissions>ErpCsSurvey:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCsSurvey:mutation" displayName="修改满意度调查"
+                                  i18n-en:displayName="Modify CSAT Survey" orderNo="10033" resourceType="FNPT">
+                            <permissions>ErpCsSurvey:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCsTeam-main" displayName="客服团队" orderNo="10034" i18n-en:displayName="CS Team"
+                          icon="users" component="AMIS" resourceType="SUBM" url="/erp/cs/pages/ErpCsTeam/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCsTeam:query" displayName="查询客服团队" i18n-en:displayName="Query CS Team"
+                                  orderNo="10035" resourceType="FNPT">
+                            <permissions>ErpCsTeam:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCsTeam:mutation" displayName="修改客服团队" i18n-en:displayName="Modify CS Team"
+                                  orderNo="10036" resourceType="FNPT">
+                            <permissions>ErpCsTeam:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCsTicket-main" displayName="客服工单" orderNo="10037" i18n-en:displayName="Ticket"
+                          icon="headset" component="AMIS" resourceType="SUBM"
+                          url="/erp/cs/pages/ErpCsTicket/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCsTicket:query" displayName="查询客服工单" i18n-en:displayName="Query Ticket"
+                                  orderNo="10038" resourceType="FNPT">
+                            <permissions>ErpCsTicket:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCsTicket:mutation" displayName="修改客服工单"
+                                  i18n-en:displayName="Modify Ticket" orderNo="10039" resourceType="FNPT">
+                            <permissions>ErpCsTicket:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCsTicketAction-main" displayName="工单操作日志" orderNo="10040"
+                          i18n-en:displayName="Ticket Action" icon="list" component="AMIS" resourceType="SUBM"
+                          url="/erp/cs/pages/ErpCsTicketAction/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCsTicketAction:query" displayName="查询工单操作日志"
+                                  i18n-en:displayName="Query Ticket Action" orderNo="10041" resourceType="FNPT">
+                            <permissions>ErpCsTicketAction:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCsTicketAction:mutation" displayName="修改工单操作日志"
+                                  i18n-en:displayName="Modify Ticket Action" orderNo="10042" resourceType="FNPT">
+                            <permissions>ErpCsTicketAction:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCsTicketType-main" displayName="工单类型" orderNo="10043" i18n-en:displayName="Ticket Type"
+                          icon="tag" component="AMIS" resourceType="SUBM"
+                          url="/erp/cs/pages/ErpCsTicketType/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCsTicketType:query" displayName="查询工单类型"
+                                  i18n-en:displayName="Query Ticket Type" orderNo="10044" resourceType="FNPT">
+                            <permissions>ErpCsTicketType:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCsTicketType:mutation" displayName="修改工单类型"
+                                  i18n-en:displayName="Modify Ticket Type" orderNo="10045" resourceType="FNPT">
+                            <permissions>ErpCsTicketType:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCsTimeEntry-main" displayName="工单计时条目" orderNo="10046" i18n-en:displayName="Time Entry"
+                          icon="clock" component="AMIS" resourceType="SUBM"
+                          url="/erp/cs/pages/ErpCsTimeEntry/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCsTimeEntry:query" displayName="查询工单计时条目"
+                                  i18n-en:displayName="Query Time Entry" orderNo="10047" resourceType="FNPT">
+                            <permissions>ErpCsTimeEntry:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCsTimeEntry:mutation" displayName="修改工单计时条目"
+                                  i18n-en:displayName="Modify Time Entry" orderNo="10048" resourceType="FNPT">
+                            <permissions>ErpCsTimeEntry:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
+</auth>

@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 差距严重程度
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 无差距
+    value: 10
+    description: 
+  
+  - label: 轻微
+    value: 20
+    description: 
+  
+  - label: 明显
+    value: 30
+    description: 
+  
+  - label: 严重
+    value: 40
+    description: 
+  

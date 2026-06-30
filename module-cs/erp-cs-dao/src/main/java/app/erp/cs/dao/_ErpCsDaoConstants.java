@@ -188,4 +188,159 @@ public interface _ErpCsDaoConstants {
      */
     int APPROVE_STATUS_REJECTED = 40;
                     
+    /**
+     * 调查发送渠道: 邮件 
+     */
+    int SURVEY_CHANNEL_EMAIL = 10;
+                    
+    /**
+     * 调查发送渠道: 电话 
+     */
+    int SURVEY_CHANNEL_PHONE = 20;
+                    
+    /**
+     * 调查发送渠道: 门户 
+     */
+    int SURVEY_CHANNEL_PORTAL = 30;
+                    
+    /**
+     * 调查发送渠道: 在线聊天 
+     */
+    int SURVEY_CHANNEL_CHAT = 40;
+                    
+    /**
+     * 服务类型: 保修期权益 
+     */
+    int SERVICE_TYPE_WARRANTY = 10;
+                    
+    /**
+     * 服务类型: 付费支持合同 
+     */
+    int SERVICE_TYPE_SUPPORT_CONTRACT = 20;
+                    
+    /**
+     * 服务类型: 按次计费 
+     */
+    int SERVICE_TYPE_PAY_PER_TICKET = 30;
+                    
+    /**
+     * 合同类型: 年度 
+     */
+    int CONTRACT_TYPE_ANNUAL = 10;
+                    
+    /**
+     * 合同类型: 季度 
+     */
+    int CONTRACT_TYPE_QUARTERLY = 20;
+                    
+    /**
+     * 合同类型: 一次性 
+     */
+    int CONTRACT_TYPE_ONE_TIME = 30;
+                    
+    /**
+     * 计费周期: 按月 
+     */
+    int BILLING_CYCLE_MONTHLY = 10;
+                    
+    /**
+     * 计费周期: 按季度 
+     */
+    int BILLING_CYCLE_QUARTERLY = 20;
+                    
+    /**
+     * 计费周期: 按年 
+     */
+    int BILLING_CYCLE_YEARLY = 30;
+                    
+    /**
+     * 合同状态: 草稿 
+     */
+    int CONTRACT_STATUS_DRAFT = 10;
+                    
+    /**
+     * 合同状态: 生效中 
+     */
+    int CONTRACT_STATUS_ACTIVE = 20;
+                    
+    /**
+     * 合同状态: 已过期 
+     */
+    int CONTRACT_STATUS_EXPIRED = 30;
+                    
+    /**
+     * 合同状态: 已取消 
+     */
+    int CONTRACT_STATUS_CANCELLED = 40;
+                    
+    /**
+     * 履行动作类型: 创建工单 
+     */
+    int FULFILLMENT_ACTION_TYPE_CREATE_TICKET = 10;
+                    
+    /**
+     * 履行动作类型: 分配处理团队 
+     */
+    int FULFILLMENT_ACTION_TYPE_ASSIGN_TEAM = 20;
+                    
+    /**
+     * 履行动作类型: 分配处理人 
+     */
+    int FULFILLMENT_ACTION_TYPE_ASSIGN_AGENT = 30;
+                    
+    /**
+     * 履行动作类型: 审批流程 
+     */
+    int FULFILLMENT_ACTION_TYPE_REQUEST_APPROVAL = 40;
+                    
+    /**
+     * 履行动作类型: 通知客户 
+     */
+    int FULFILLMENT_ACTION_TYPE_NOTIFY_CUSTOMER = 50;
+                    
+    /**
+     * 履行动作类型: 更新工单状态 
+     */
+    int FULFILLMENT_ACTION_TYPE_UPDATE_STATUS = 60;
+                    
+    /**
+     * 履行动作类型: 创建子工单 
+     */
+    int FULFILLMENT_ACTION_TYPE_CREATE_CHILD_TICKET = 70;
+                    
+    /**
+     * 履行动作类型: 触发外部工作流 
+     */
+    int FULFILLMENT_ACTION_TYPE_INVOKE_WORKFLOW = 80;
+                    
+    /**
+     * 履行动作类型: 自动关闭 
+     */
+    int FULFILLMENT_ACTION_TYPE_CLOSE_TICKET = 90;
+                    
+    /**
+     * 计时审批状态: 待审批 
+     */
+    int TIME_ENTRY_APPROVE_STATUS_PENDING = 10;
+                    
+    /**
+     * 计时审批状态: 已审批 
+     */
+    int TIME_ENTRY_APPROVE_STATUS_APPROVED = 20;
+                    
+    /**
+     * 计时审批状态: 已驳回 
+     */
+    int TIME_ENTRY_APPROVE_STATUS_REJECTED = 30;
+                    
+    /**
+     * 计时来源: 手动录入 
+     */
+    int TIME_ENTRY_SOURCE_MANUAL = 10;
+                    
+    /**
+     * 计时来源: 计时器导入 
+     */
+    int TIME_ENTRY_SOURCE_TIMER_IMPORT = 20;
+                    
 }

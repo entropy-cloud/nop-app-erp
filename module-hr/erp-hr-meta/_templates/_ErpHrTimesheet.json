@@ -1,0 +1,21 @@
+{
+  "id": 0,
+  "code": "",
+  "employeeId": 0,
+  "periodFrom": "2000-01-01",
+  "periodTo": "2000-01-01",
+  "totalHours": 0.0,
+  "status": 0,
+  "status_label": "",
+  "orgId": 0,
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "employee": null,
+  "lines": null,
+  "org": null
+}

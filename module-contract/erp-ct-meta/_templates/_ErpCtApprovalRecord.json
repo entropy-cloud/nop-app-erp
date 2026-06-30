@@ -1,0 +1,22 @@
+{
+  "id": 0,
+  "contractId": 0,
+  "orgId": 0,
+  "approvalMatrixId": 0,
+  "approvalOrder": 0,
+  "approverId": 0,
+  "approvalStatus": 0,
+  "approvalStatus_label": "",
+  "comment": "",
+  "approvedAt": "2000-01-01 14:00:00",
+  "rejectedAt": "2000-01-01 14:00:00",
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "contract": null,
+  "org": null
+}

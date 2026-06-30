@@ -57,6 +57,12 @@
                 <!--辅助-物料-->
                 <col id="isAuxiliaryProduct" sortable="true"/>
 
+                <!--辅助-成本中心-->
+                <col id="isAuxiliaryCostCenter" sortable="true"/>
+
+                <!--是否预算控制-->
+                <col id="isBudgetable" sortable="true"/>
+
                 <!--是否明细科目-->
                 <col id="isLeaf" sortable="true"/>
 
@@ -94,7 +100,8 @@
  balanceType[余额类型] currencyId[核算币种]
  isAuxiliaryPartner[辅助-往来单位] isAuxiliaryDepartment[辅助-部门]
  isAuxiliaryProject[辅助-项目] isAuxiliaryWarehouse[辅助-仓库]
- isAuxiliaryProduct[辅助-物料] isLeaf[是否明细科目]
+ isAuxiliaryProduct[辅助-物料] isAuxiliaryCostCenter[辅助-成本中心]
+ isBudgetable[是否预算控制] isLeaf[是否明细科目]
  status[状态] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
@@ -109,7 +116,8 @@
  balanceType[余额类型] currencyId[核算币种]
  isAuxiliaryPartner[辅助-往来单位] isAuxiliaryDepartment[辅助-部门]
  isAuxiliaryProject[辅助-项目] isAuxiliaryWarehouse[辅助-仓库]
- isAuxiliaryProduct[辅助-物料] isLeaf[是否明细科目]
+ isAuxiliaryProduct[辅助-物料] isAuxiliaryCostCenter[辅助-成本中心]
+ isBudgetable[是否预算控制] isLeaf[是否明细科目]
  status[状态] remark[备注]
 </layout>
         </form>
@@ -121,7 +129,8 @@
  balanceType[余额类型] currencyId[核算币种]
  isAuxiliaryPartner[辅助-往来单位] isAuxiliaryDepartment[辅助-部门]
  isAuxiliaryProject[辅助-项目] isAuxiliaryWarehouse[辅助-仓库]
- isAuxiliaryProduct[辅助-物料] isLeaf[是否明细科目]
+ isAuxiliaryProduct[辅助-物料] isAuxiliaryCostCenter[辅助-成本中心]
+ isBudgetable[是否预算控制] isLeaf[是否明细科目]
  status[状态] delVersion[逻辑删除版本]
  remark[备注] 
 </layout>

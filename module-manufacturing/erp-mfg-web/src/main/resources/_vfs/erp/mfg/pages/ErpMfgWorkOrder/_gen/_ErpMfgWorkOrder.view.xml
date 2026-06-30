@@ -130,7 +130,7 @@
                 <col id="updateTime" mandatory="true" sortable="true"/>
 
                 <!--汇率-->
-                <col id="exchangeRate" sortable="true"/>
+                <col id="exchangeRate" mandatory="true" sortable="true"/>
 
                 <!--源币种金额-->
                 <col id="amountSource" sortable="true"/>

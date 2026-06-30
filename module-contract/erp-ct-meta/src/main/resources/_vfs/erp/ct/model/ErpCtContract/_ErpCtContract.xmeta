@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="file-text" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen"
+      xmlns:biz="biz" displayName="合同" i18n-en:displayName="Contract" tagSet="gid,erp.contract" xmlns:ui="ui"
+      xmlns:orm="orm">
+
+    <entityName>app.erp.contract.dao.entity.ErpCtContract</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="code" displayName="合同编号" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="orderCode" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="contractName" displayName="合同名称" propId="4" i18n-en:displayName="Contract Name" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="contractType" displayName="合同类型" propId="5" i18n-en:displayName="Contract Type" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer" dict="erp-ct/contract-type"/>
+        </prop>
+        <prop name="contractDirection" displayName="合同方向" propId="6" i18n-en:displayName="Direction" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer" dict="erp-ct/contract-direction"/>
+        </prop>
+        <prop name="partnerId" displayName="合作方" propId="7" i18n-en:displayName="Partner" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="partner">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="currencyId" displayName="币种" propId="8" i18n-en:displayName="Currency" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="totalAmount" displayName="合同总额" propId="9" i18n-en:displayName="Total Amount" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+        </prop>
+        <prop name="startDate" displayName="生效日期" propId="10" i18n-en:displayName="Start Date" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="endDate" displayName="到期日期" propId="11" i18n-en:displayName="End Date" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="signDate" displayName="签署日期" propId="12" i18n-en:displayName="Sign Date" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="status" displayName="合同状态" propId="13" i18n-en:displayName="Status" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer" dict="erp-ct/contract-status"/>
+        </prop>
+        <prop name="templateId" displayName="合同模板" propId="14" i18n-en:displayName="Template" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="template">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="parentContractId" displayName="父合同" propId="15" i18n-en:displayName="Parent Contract"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="parentContract">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="description" displayName="描述" propId="16" i18n-en:displayName="Description" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="content" type="java.lang.String" precision="4000"/>
+        </prop>
+        <prop name="attachmentId" displayName="合同附件" propId="17" i18n-en:displayName="Attachment" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="18" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="19" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="20" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="21" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="22" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="23" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="24" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="partner" i18n-en:displayName="Partner" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="partnerId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
+            <schema bizObjName="ErpMdPartner"/>
+        </prop>
+        <prop name="template" i18n-en:displayName="Template" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="templateId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpCtTemplate"/>
+        </prop>
+        <prop name="parentContract" i18n-en:displayName="Parent Contract" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="parentContractId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpCtContract"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="lines" i18n-en:displayName="Lines" tagSet="pub,cascade-delete,insertable,updatable"
+              ext:kind="to-many" internal="true" ext:joinLeftProp="id" ext:joinRightProp="contractId" insertable="true"
+              updatable="true" lazy="true">
+            <schema>
+                <item bizObjName="ErpCtContractLine"/>
+            </schema>
+        </prop>
+        <prop name="versions" i18n-en:displayName="Versions" tagSet="pub,cascade-delete,insertable,updatable"
+              ext:kind="to-many" internal="true" ext:joinLeftProp="id" ext:joinRightProp="contractId" insertable="true"
+              updatable="true" lazy="true">
+            <schema>
+                <item bizObjName="ErpCtContractVersion"/>
+            </schema>
+        </prop>
+    </props>
+</meta>

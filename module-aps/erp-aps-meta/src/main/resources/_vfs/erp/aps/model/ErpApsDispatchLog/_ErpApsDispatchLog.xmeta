@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="scroll-text" xmlns:c="c" xmlns:graphql="graphql"
+      xmlns:meta-gen="meta-gen" xmlns:biz="biz" displayName="派工日志" i18n-en:displayName="Dispatch Log"
+      tagSet="gid,erp.aps" xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.aps.dao.entity.ErpApsDispatchLog</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="orgId" displayName="业务组织" propId="2" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="operationOrderId" displayName="工序工单" propId="3" i18n-en:displayName="Operation Order"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="workcenterId" displayName="工作中心" propId="4" i18n-en:displayName="Workcenter" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="dispatchType" displayName="派工类型" propId="5" i18n-en:displayName="Dispatch Type" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer" dict="erp-aps/dispatch-type"/>
+        </prop>
+        <prop name="previousStatus" displayName="派工前状态" propId="6" i18n-en:displayName="Previous Status"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="newStatus" displayName="派工后状态" propId="7" i18n-en:displayName="New Status" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="conditionCheckResult" displayName="条件检查结果(JSON)" propId="8"
+              i18n-en:displayName="Condition Check Result" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.lang.String" precision="2000"/>
+        </prop>
+        <prop name="dispatchedBy" displayName="派工人" propId="9" i18n-en:displayName="Dispatched By" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="dispatchedAt" displayName="派工时间" propId="10" i18n-en:displayName="Dispatched At" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDateTime"/>
+        </prop>
+        <prop name="materialAvailable" displayName="物料齐套" propId="11" i18n-en:displayName="Material Available"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="operatorAvailable" displayName="操作工可用" propId="12" i18n-en:displayName="Operator Available"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="toolingAvailable" displayName="工装可用" propId="13" i18n-en:displayName="Tooling Available"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="note" displayName="备注" propId="14" i18n-en:displayName="Note" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="15" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="16" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="17" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="18" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="19" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="20" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+    </props>
+</meta>

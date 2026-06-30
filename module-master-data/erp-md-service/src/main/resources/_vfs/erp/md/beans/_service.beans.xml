@@ -107,11 +107,25 @@
         <property name="bizObjName" value="ErpMdAcctSchema"/>
     </bean>
 
+    <bean id="app.erp.md.service.entity.ErpSysConfigBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpSysConfig" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.md.biz.IErpSysConfigBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpSysConfig"/>
+    </bean>
+
     <bean id="app.erp.md.service.entity.ErpMdWarehouseBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpMdWarehouse" class="io.nop.biz.proxy.BizProxyFactoryBean"
           ioc:type="app.erp.md.biz.IErpMdWarehouseBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
         <property name="bizObjName" value="ErpMdWarehouse"/>
+    </bean>
+
+    <bean id="app.erp.md.service.entity.ErpMdCostCenterBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMdCostCenter" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.md.biz.IErpMdCostCenterBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMdCostCenter"/>
     </bean>
 
     <bean id="app.erp.md.service.entity.ErpMdAcctSchemaCoaBizModel" ioc:type="@bean:id" ioc:default="true"/>

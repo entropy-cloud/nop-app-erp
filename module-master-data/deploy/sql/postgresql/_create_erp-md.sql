@@ -193,6 +193,8 @@ CREATE TABLE erp_md_subject(
   is_auxiliary_project BOOLEAN default false   ,
   is_auxiliary_warehouse BOOLEAN default false   ,
   is_auxiliary_product BOOLEAN default false   ,
+  is_auxiliary_cost_center BOOLEAN default false   ,
+  is_budgetable BOOLEAN default false   ,
   is_leaf BOOLEAN default true   ,
   status INT4 NOT NULL ,
   del_version INT8 default 0  NOT NULL ,
@@ -261,6 +263,21 @@ CREATE TABLE erp_md_acct_schema(
   constraint PK_erp_md_acct_schema primary key (id)
 );
 
+CREATE TABLE erp_sys_config(
+  id INT8 NOT NULL ,
+  config_key VARCHAR(200) NOT NULL ,
+  config_value VARCHAR(2000) NOT NULL ,
+  org_id INT8  ,
+  description VARCHAR(500)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_sys_config primary key (id)
+);
+
 CREATE TABLE erp_md_warehouse(
   id INT8 NOT NULL ,
   code VARCHAR(50) NOT NULL ,
@@ -277,7 +294,27 @@ CREATE TABLE erp_md_warehouse(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
+  batch_selection_strategy VARCHAR(20)  ,
   constraint PK_erp_md_warehouse primary key (id)
+);
+
+CREATE TABLE erp_md_cost_center(
+  id INT8 NOT NULL ,
+  code VARCHAR(50) NOT NULL ,
+  name VARCHAR(200) NOT NULL ,
+  org_id INT8 NOT NULL ,
+  manager_id INT8  ,
+  parent_id INT8  ,
+  is_budgetable BOOLEAN default false   ,
+  status INT4 NOT NULL ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  remark VARCHAR(1000)  ,
+  constraint PK_erp_md_cost_center primary key (id)
 );
 
 CREATE TABLE erp_md_acct_schema_coa(
@@ -705,6 +742,10 @@ CREATE TABLE erp_md_uom_conversion(
                     
       COMMENT ON COLUMN erp_md_subject.is_auxiliary_product IS '辅助-物料';
                     
+      COMMENT ON COLUMN erp_md_subject.is_auxiliary_cost_center IS '辅助-成本中心';
+                    
+      COMMENT ON COLUMN erp_md_subject.is_budgetable IS '是否预算控制';
+                    
       COMMENT ON COLUMN erp_md_subject.is_leaf IS '是否明细科目';
                     
       COMMENT ON COLUMN erp_md_subject.status IS '状态';
@@ -817,6 +858,30 @@ CREATE TABLE erp_md_uom_conversion(
                     
       COMMENT ON COLUMN erp_md_acct_schema.update_time IS '修改时间';
                     
+      COMMENT ON TABLE erp_sys_config IS '系统配置';
+                
+      COMMENT ON COLUMN erp_sys_config.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_sys_config.config_key IS '配置键';
+                    
+      COMMENT ON COLUMN erp_sys_config.config_value IS '配置值';
+                    
+      COMMENT ON COLUMN erp_sys_config.org_id IS '所属组织';
+                    
+      COMMENT ON COLUMN erp_sys_config.description IS '说明';
+                    
+      COMMENT ON COLUMN erp_sys_config.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_sys_config.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_sys_config.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_sys_config.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_sys_config.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_sys_config.update_time IS '修改时间';
+                    
       COMMENT ON TABLE erp_md_warehouse IS '仓库';
                 
       COMMENT ON COLUMN erp_md_warehouse.id IS 'ID';
@@ -848,6 +913,40 @@ CREATE TABLE erp_md_uom_conversion(
       COMMENT ON COLUMN erp_md_warehouse.update_time IS '修改时间';
                     
       COMMENT ON COLUMN erp_md_warehouse.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_md_warehouse.batch_selection_strategy IS '批次选择策略';
+                    
+      COMMENT ON TABLE erp_md_cost_center IS '成本中心';
+                
+      COMMENT ON COLUMN erp_md_cost_center.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_md_cost_center.code IS '编码';
+                    
+      COMMENT ON COLUMN erp_md_cost_center.name IS '名称';
+                    
+      COMMENT ON COLUMN erp_md_cost_center.org_id IS '所属组织';
+                    
+      COMMENT ON COLUMN erp_md_cost_center.manager_id IS '负责人';
+                    
+      COMMENT ON COLUMN erp_md_cost_center.parent_id IS '上级成本中心';
+                    
+      COMMENT ON COLUMN erp_md_cost_center.is_budgetable IS '是否预算管控';
+                    
+      COMMENT ON COLUMN erp_md_cost_center.status IS '状态';
+                    
+      COMMENT ON COLUMN erp_md_cost_center.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_md_cost_center.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_md_cost_center.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_md_cost_center.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_md_cost_center.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_md_cost_center.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_md_cost_center.remark IS '备注';
                     
       COMMENT ON TABLE erp_md_acct_schema_coa IS '账套科目表';
                 

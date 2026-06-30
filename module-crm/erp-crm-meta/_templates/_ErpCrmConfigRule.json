@@ -1,0 +1,22 @@
+{
+  "id": 0,
+  "configuratorId": 0,
+  "orgId": 0,
+  "ruleType": "",
+  "ruleType_label": "",
+  "sourceFeatureCode": "",
+  "sourceFeatureValue": "",
+  "targetFeatureCode": "",
+  "targetFeatureValue": "",
+  "conditionExpression": "",
+  "sequence": 0,
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "configurator": null,
+  "org": null
+}

@@ -301,8 +301,8 @@
                 <column name="partnerId" displayName="客户" stdSqlType="BIGINT" mandatory="true" code="PARTNER_ID" propId="2" stdDataType="long" i18n-en:displayName='Partner' />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="weekday" displayName="星期" stdSqlType="INTEGER" mandatory="true" code="WEEKDAY" propId="4" stdDataType="int" i18n-en:displayName='Weekday' />
-                <column name="startTime" displayName="开始时间" stdSqlType="TIME" mandatory="true" code="START_TIME" propId="5" stdDataType="time" i18n-en:displayName='Start Time' />
-                <column name="endTime" displayName="结束时间" stdSqlType="TIME" mandatory="true" code="END_TIME" propId="6" stdDataType="time" i18n-en:displayName='End Time' />
+                <column name="startTime" displayName="开始时间" stdSqlType="VARCHAR" precision="8" mandatory="true" code="START_TIME" propId="5" stdDataType="string" i18n-en:displayName='Start Time' />
+                <column name="endTime" displayName="结束时间" stdSqlType="VARCHAR" precision="8" mandatory="true" code="END_TIME" propId="6" stdDataType="string" i18n-en:displayName='End Time' />
                 <column name="maxCapacity" displayName="最大预约数" stdSqlType="INTEGER" mandatory="true" defaultValue="10" code="MAX_CAPACITY" propId="7" stdDataType="int" i18n-en:displayName='Max Capacity' />
                 <column name="currentBooked" displayName="当前已预约" stdSqlType="INTEGER" mandatory="true" defaultValue="0" code="CURRENT_BOOKED" propId="8" stdDataType="int" i18n-en:displayName='Current Booked' />
                 <column name="isActive" displayName="是否启用" stdSqlType="BOOLEAN" defaultValue="true" code="IS_ACTIVE" propId="9" stdDataType="boolean" i18n-en:displayName='Active' />

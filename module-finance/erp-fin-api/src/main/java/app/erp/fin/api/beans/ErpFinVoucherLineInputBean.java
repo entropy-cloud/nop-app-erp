@@ -320,10 +320,24 @@
         }
 
 
-        private Long _delVersion;
+        private Long _costCenterId;
 
     
         @PropMeta(propId=23)
+    
+        public Long getCostCenterId(){
+            return _costCenterId;
+        }
+
+        public void setCostCenterId(Long value){
+            this._costCenterId = value;
+        }
+
+
+        private Long _delVersion;
+
+    
+        @PropMeta(propId=24)
     
         public Long getDelVersion(){
             return _delVersion;

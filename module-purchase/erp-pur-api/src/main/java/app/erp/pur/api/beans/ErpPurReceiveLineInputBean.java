@@ -110,30 +110,30 @@
         }
 
 
-        private String _quantity;
+        private java.math.BigDecimal _quantity;
 
     
         @PropMeta(propId=8)
     
-        public String getQuantity(){
+        public java.math.BigDecimal getQuantity(){
             return _quantity;
         }
 
-        public void setQuantity(String value){
+        public void setQuantity(java.math.BigDecimal value){
             this._quantity = value;
         }
 
 
-        private String _rejectedQuantity;
+        private java.math.BigDecimal _rejectedQuantity;
 
     
         @PropMeta(propId=9)
     
-        public String getRejectedQuantity(){
+        public java.math.BigDecimal getRejectedQuantity(){
             return _rejectedQuantity;
         }
 
-        public void setRejectedQuantity(String value){
+        public void setRejectedQuantity(java.math.BigDecimal value){
             this._rejectedQuantity = value;
         }
 

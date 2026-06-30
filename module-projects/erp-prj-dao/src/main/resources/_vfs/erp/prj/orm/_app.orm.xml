@@ -680,8 +680,8 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
-                <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" name="exchangeRate" precision="20"
-                        propId="20" scale="8" stdDataType="string" stdSqlType="DECIMAL"
+                <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" mandatory="true" name="exchangeRate"
+                        precision="20" propId="20" scale="8" stdDataType="string" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
                 <column code="AMOUNT_SOURCE" defaultValue="0" displayName="源币种金额" name="amountSource" precision="20"
                         propId="21" scale="4" stdDataType="string" stdSqlType="DECIMAL"
@@ -877,10 +877,10 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="22" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
                 <column code="AMOUNT_SOURCE" defaultValue="0" displayName="源币种金额" name="amountSource" precision="20"
-                        propId="23" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="23" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Source)"/>
                 <column code="AMOUNT_FUNCTIONAL" defaultValue="0" displayName="本位币金额" name="amountFunctional"
-                        precision="20" propId="24" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="24" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
             </columns>
             <relations>

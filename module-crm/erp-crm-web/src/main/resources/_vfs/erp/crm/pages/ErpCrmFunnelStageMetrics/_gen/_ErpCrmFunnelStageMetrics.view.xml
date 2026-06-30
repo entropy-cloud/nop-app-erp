@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:schema="/nop/schema/xui/xview.xdef" bizObjName="ErpCrmFunnelStageMetrics" xmlns:i18n-en="i18n-en"
+      xmlns:x="/nop/schema/xdsl.xdef" xmlns:j="j" xmlns:c="c" xmlns:gql="gql" xmlns:view-gen="view-gen" xmlns:xpl="xpl">
+
+    <objMeta>/erp/crm/model/ErpCrmFunnelStageMetrics/ErpCrmFunnelStageMetrics.xmeta</objMeta>
+
+    <controlLib>/nop/web/xlib/control.xlib</controlLib>
+
+    <x:gen-extends>
+        <view-gen:DefaultViewGenExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <view-gen:DefaultViewPostExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:post-extends>
+
+    <grids>
+        <grid id="list" x:abstract="true">
+            <cols>
+
+                <!--ID-->
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--所属漏斗-->
+                <col id="funnelId" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--业务组织-->
+                <col id="orgId" ui:number="true" sortable="true"/>
+
+                <!--阶段-->
+                <col id="stageId" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--阶段排序-->
+                <col id="stageOrder" ui:number="true" sortable="true"/>
+
+                <!--阶段名称(快照)-->
+                <col id="stageName" sortable="true"/>
+
+                <!--进入本阶段线索数-->
+                <col id="leadCountIn" ui:number="true" sortable="true"/>
+
+                <!--流出本阶段线索数-->
+                <col id="leadCountOut" ui:number="true" sortable="true"/>
+
+                <!--期末仍在本阶段数-->
+                <col id="leadCountRemaining" ui:number="true" sortable="true"/>
+
+                <!--转化率-->
+                <col id="conversionRate" ui:number="true" sortable="true"/>
+
+                <!--流失率-->
+                <col id="dropOffRate" ui:number="true" sortable="true"/>
+
+                <!--平均停留天数-->
+                <col id="avgDaysInStage" ui:number="true" sortable="true"/>
+
+                <!--本阶段丢失数-->
+                <col id="lostCount" ui:number="true" sortable="true"/>
+
+                <!--本阶段丢失金额-->
+                <col id="lostAmount" sortable="true"/>
+
+                <!--TOP丢失原因(JSON)-->
+                <col id="lostReasonTop" sortable="true"/>
+
+                <!--备注-->
+                <col id="remark" sortable="true"/>
+
+                <!--逻辑删除版本-->
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--创建人-->
+                <col id="createdBy" mandatory="true" sortable="true"/>
+
+                <!--创建时间-->
+                <col id="createTime" mandatory="true" sortable="true"/>
+
+                <!--修改人-->
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+
+                <!--修改时间-->
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list" x:prototype="list" x:abstract="true"/>
+    </grids>
+
+    <forms>
+        <form id="view" editMode="view" title="查看-漏斗阶段度量" i18n-en:title="View Funnel Stage Metrics">
+            <layout>
+ id[ID] funnelId[所属漏斗]
+ orgId[业务组织] stageId[阶段]
+ stageOrder[阶段排序] stageName[阶段名称(快照)]
+ leadCountIn[进入本阶段线索数] leadCountOut[流出本阶段线索数]
+ leadCountRemaining[期末仍在本阶段数] conversionRate[转化率]
+ dropOffRate[流失率] avgDaysInStage[平均停留天数]
+ lostCount[本阶段丢失数] lostAmount[本阶段丢失金额]
+ lostReasonTop[TOP丢失原因(JSON)] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
+</layout>
+        </form>
+        <form id="add" editMode="add" title="新增-漏斗阶段度量" i18n-en:title="Add Funnel Stage Metrics">
+            <layout>
+ id[ID] funnelId[所属漏斗]
+ orgId[业务组织] stageId[阶段]
+ stageOrder[阶段排序] stageName[阶段名称(快照)]
+ leadCountIn[进入本阶段线索数] leadCountOut[流出本阶段线索数]
+ leadCountRemaining[期末仍在本阶段数] conversionRate[转化率]
+ dropOffRate[流失率] avgDaysInStage[平均停留天数]
+ lostCount[本阶段丢失数] lostAmount[本阶段丢失金额]
+ lostReasonTop[TOP丢失原因(JSON)] remark[备注]
+</layout>
+        </form>
+        <form id="edit" editMode="edit" title="编辑-漏斗阶段度量" i18n-en:title="Edit Funnel Stage Metrics">
+            <layout>
+ id[ID] funnelId[所属漏斗]
+ orgId[业务组织] stageId[阶段]
+ stageOrder[阶段排序] stageName[阶段名称(快照)]
+ leadCountIn[进入本阶段线索数] leadCountOut[流出本阶段线索数]
+ leadCountRemaining[期末仍在本阶段数] conversionRate[转化率]
+ dropOffRate[流失率] avgDaysInStage[平均停留天数]
+ lostCount[本阶段丢失数] lostAmount[本阶段丢失金额]
+ lostReasonTop[TOP丢失原因(JSON)] remark[备注]
+ delVersion[逻辑删除版本] 
+</layout>
+        </form>
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-漏斗阶段度量"
+              i18n-en:title="Update Funnel Stage Metrics"/>
+    </forms>
+
+    <pages>
+        <crud name="view-list" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpCrmFunnelStageMetrics__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </crud>
+        <crud name="main" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpCrmFunnelStageMetrics__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+            <listActions>
+                <action id="batch-delete-button" label="@i18n:common.batchDelete" batch="true">
+                    <api url="@mutation:ErpCrmFunnelStageMetrics__batchDelete?ids=$ids"/>
+                    <confirmText>@i18n:common.confirmBatchDelete</confirmText>
+                </action>
+                <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
+                    <dialog page="add"/>
+                </action>
+            </listActions>
+            <rowActions>
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+                <action id="row-update-button" level="primary" label="@i18n:common.edit" x:abstract="true">
+                    <dialog page="update"/>
+                </action>
+                <action id="row-delete-button" level="danger" label="@i18n:common.delete" x:abstract="true">
+                    <api url="@mutation:ErpCrmFunnelStageMetrics__delete?id=$id"/>
+                    <confirmText>@i18n:common.confirmDelete</confirmText>
+                </action>
+                <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
+                    <action id="row-update-button" label="@i18n:common.edit">
+                        <dialog page="update"/>
+                    </action>
+                    <action id="row-delete-button" label="@i18n:common.delete">
+                        <api url="@mutation:ErpCrmFunnelStageMetrics__delete?id=$id"/>
+                        <confirmText>@i18n:common.confirmDelete</confirmText>
+                    </action>
+                </actionGroup>
+            </rowActions>
+        </crud>
+        <picker name="picker" grid="pick-list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table noOperations="true">
+                <api url="@query:ErpCrmFunnelStageMetrics__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </picker>
+        <simple name="add" form="add">
+            <api url="@mutation:ErpCrmFunnelStageMetrics__save/id"/>
+        </simple>
+        <simple name="view" form="view">
+            <initApi url="@query:ErpCrmFunnelStageMetrics__get?id=$id" gql:selection="{@formSelection}"/>
+        </simple>
+        <simple name="update" form="edit">
+            <initApi url="@query:ErpCrmFunnelStageMetrics__get?id=$id" gql:selection="{@formSelection}"/>
+            <api url="@mutation:ErpCrmFunnelStageMetrics__update/id?id=$id" withFormData="true"/>
+        </simple>
+    </pages>
+</view>

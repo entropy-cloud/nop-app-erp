@@ -20,11 +20,65 @@
         <property name="bizObjName" value="ErpB2bCodeMapping"/>
     </bean>
 
+    <bean id="app.erp.b2b.service.entity.ErpB2bPartnerProfileBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpB2bPartnerProfile" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.b2b.biz.IErpB2bPartnerProfileBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpB2bPartnerProfile"/>
+    </bean>
+
+    <bean id="app.erp.b2b.service.entity.ErpB2bMftConfigBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpB2bMftConfig" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.b2b.biz.IErpB2bMftConfigBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpB2bMftConfig"/>
+    </bean>
+
+    <bean id="app.erp.b2b.service.entity.ErpB2bMftCertificateBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpB2bMftCertificate" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.b2b.biz.IErpB2bMftCertificateBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpB2bMftCertificate"/>
+    </bean>
+
     <bean id="app.erp.b2b.service.entity.ErpB2bEdiDocBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpB2bEdiDoc" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.b2b.biz.IErpB2bEdiDocBiz"
           ioc:force-lazy-property="true" lazy-init="true" primary="true">
         <property name="bizObjName" value="ErpB2bEdiDoc"/>
+    </bean>
+
+    <bean id="app.erp.b2b.service.entity.ErpB2bPartnerCredentialBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpB2bPartnerCredential" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.b2b.biz.IErpB2bPartnerCredentialBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpB2bPartnerCredential"/>
+    </bean>
+
+    <bean id="app.erp.b2b.service.entity.ErpB2bTestExchangeBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpB2bTestExchange" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.b2b.biz.IErpB2bTestExchangeBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpB2bTestExchange"/>
+    </bean>
+
+    <bean id="app.erp.b2b.service.entity.ErpB2bCertificationChecklistBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpB2bCertificationChecklist" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.b2b.biz.IErpB2bCertificationChecklistBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpB2bCertificationChecklist"/>
+    </bean>
+
+    <bean id="app.erp.b2b.service.entity.ErpB2bMftLogBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpB2bMftLog" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.b2b.biz.IErpB2bMftLogBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpB2bMftLog"/>
     </bean>
 
     <bean id="app.erp.b2b.service.entity.ErpB2bAsnBizModel" ioc:type="@bean:id" ioc:default="true"/>

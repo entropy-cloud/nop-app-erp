@@ -1,0 +1,64 @@
+site:
+  resource:
+    ErpHrAttendance-main:
+      displayName: Attendance
+    ErpHrCompetency-main:
+      displayName: Competency
+    ErpHrDepartment-main:
+      displayName: Department
+    ErpHrDevelopmentPlan-main:
+      displayName: Development Plan
+    ErpHrEmployee-main:
+      displayName: Employee
+    ErpHrEmployeeAssessment-main:
+      displayName: Employee Assessment
+    ErpHrEmploymentContract-main:
+      displayName: Employment Contract
+    ErpHrGapAnalysis-main:
+      displayName: Gap Analysis
+    ErpHrLeaveRequest-main:
+      displayName: Leave Request
+    ErpHrPosition-main:
+      displayName: Position
+    ErpHrRecruitment-main:
+      displayName: Recruitment
+    ErpHrRoleCompetency-main:
+      displayName: Role Competency
+    ErpHrSalary-main:
+      displayName: Salary Record
+    ErpHrSalarySimulation-main:
+      displayName: Salary Simulation
+    ErpHrShift-main:
+      displayName: Shift
+    ErpHrShiftAssignment-main:
+      displayName: Shift Assignment
+    ErpHrSurvey-main:
+      displayName: Survey Template
+    ErpHrSurveyResponse-main:
+      displayName: Survey Response
+    ErpHrSurveyResult-main:
+      displayName: Survey Result
+    ErpHrTimesheet-main:
+      displayName: Timesheet
+    ErpHrTimesheetLine-main:
+      displayName: Timesheet Line
+    erp-hr:
+      displayName: Human Resources
+    hr-attendance:
+      displayName: Attendance & Timesheet
+    hr-competency:
+      displayName: Competency Management
+    hr-employee:
+      displayName: Employees
+    hr-leave:
+      displayName: Leave Management
+    hr-org:
+      displayName: Organization
+    hr-recruit:
+      displayName: Recruitment
+    hr-salary:
+      displayName: Payroll
+    hr-shift-scheduling:
+      displayName: Shift Scheduling
+    hr-survey:
+      displayName: Employee Survey

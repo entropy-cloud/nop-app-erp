@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 合同类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 年度
+    value: 10
+    description: 
+  
+  - label: 季度
+    value: 20
+    description: 
+  
+  - label: 一次性
+    value: 30
+    description: 
+  

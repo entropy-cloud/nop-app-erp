@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
+
+    <site id="main">
+        <resource id="test-orm-erp-b2b" displayName="测试erp-b2b" i18n-en:displayName="Test erp-b2b" icon="refresh-cw"
+                  resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-b2b" component="layouts/default/index">
+            <children>
+                <resource id="ErpB2bAsn-main" displayName="提前发货通知" orderNo="10001"
+                          i18n-en:displayName="Advanced Shipping Notice" icon="truck" component="AMIS"
+                          resourceType="SUBM" url="/erp/b2b/pages/ErpB2bAsn/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpB2bAsn:query" displayName="查询提前发货通知"
+                                  i18n-en:displayName="Query Advanced Shipping Notice" orderNo="10002"
+                                  resourceType="FNPT">
+                            <permissions>ErpB2bAsn:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpB2bAsn:mutation" displayName="修改提前发货通知"
+                                  i18n-en:displayName="Modify Advanced Shipping Notice" orderNo="10003"
+                                  resourceType="FNPT">
+                            <permissions>ErpB2bAsn:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpB2bAsnLine-main" displayName="ASN 明细行" orderNo="10004" i18n-en:displayName="ASN Line"
+                          icon="list" component="AMIS" resourceType="SUBM"
+                          url="/erp/b2b/pages/ErpB2bAsnLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpB2bAsnLine:query" displayName="查询ASN 明细行"
+                                  i18n-en:displayName="Query ASN Line" orderNo="10005" resourceType="FNPT">
+                            <permissions>ErpB2bAsnLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpB2bAsnLine:mutation" displayName="修改ASN 明细行"
+                                  i18n-en:displayName="Modify ASN Line" orderNo="10006" resourceType="FNPT">
+                            <permissions>ErpB2bAsnLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpB2bCertificationChecklist-main" displayName="认证检查清单" orderNo="10007"
+                          i18n-en:displayName="Certification Checklist" icon="clipboard-list" component="AMIS"
+                          resourceType="SUBM" url="/erp/b2b/pages/ErpB2bCertificationChecklist/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpB2bCertificationChecklist:query" displayName="查询认证检查清单"
+                                  i18n-en:displayName="Query Certification Checklist" orderNo="10008"
+                                  resourceType="FNPT">
+                            <permissions>ErpB2bCertificationChecklist:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpB2bCertificationChecklist:mutation" displayName="修改认证检查清单"
+                                  i18n-en:displayName="Modify Certification Checklist" orderNo="10009"
+                                  resourceType="FNPT">
+                            <permissions>ErpB2bCertificationChecklist:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpB2bCodeMapping-main" displayName="内外代码映射" orderNo="10010"
+                          i18n-en:displayName="Code Mapping" icon="shuffle" component="AMIS" resourceType="SUBM"
+                          url="/erp/b2b/pages/ErpB2bCodeMapping/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpB2bCodeMapping:query" displayName="查询内外代码映射"
+                                  i18n-en:displayName="Query Code Mapping" orderNo="10011" resourceType="FNPT">
+                            <permissions>ErpB2bCodeMapping:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpB2bCodeMapping:mutation" displayName="修改内外代码映射"
+                                  i18n-en:displayName="Modify Code Mapping" orderNo="10012" resourceType="FNPT">
+                            <permissions>ErpB2bCodeMapping:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpB2bEdiDoc-main" displayName="EDI 事务" orderNo="10013" i18n-en:displayName="EDI Document"
+                          icon="file-text" component="AMIS" resourceType="SUBM"
+                          url="/erp/b2b/pages/ErpB2bEdiDoc/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpB2bEdiDoc:query" displayName="查询EDI 事务"
+                                  i18n-en:displayName="Query EDI Document" orderNo="10014" resourceType="FNPT">
+                            <permissions>ErpB2bEdiDoc:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpB2bEdiDoc:mutation" displayName="修改EDI 事务"
+                                  i18n-en:displayName="Modify EDI Document" orderNo="10015" resourceType="FNPT">
+                            <permissions>ErpB2bEdiDoc:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpB2bEdiFormat-main" displayName="EDI 格式配置" orderNo="10016"
+                          i18n-en:displayName="EDI Format" icon="file-type" component="AMIS" resourceType="SUBM"
+                          url="/erp/b2b/pages/ErpB2bEdiFormat/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpB2bEdiFormat:query" displayName="查询EDI 格式配置"
+                                  i18n-en:displayName="Query EDI Format" orderNo="10017" resourceType="FNPT">
+                            <permissions>ErpB2bEdiFormat:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpB2bEdiFormat:mutation" displayName="修改EDI 格式配置"
+                                  i18n-en:displayName="Modify EDI Format" orderNo="10018" resourceType="FNPT">
+                            <permissions>ErpB2bEdiFormat:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpB2bEdiLog-main" displayName="EDI 交互日志" orderNo="10019" i18n-en:displayName="EDI Log"
+                          icon="scroll-text" component="AMIS" resourceType="SUBM"
+                          url="/erp/b2b/pages/ErpB2bEdiLog/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpB2bEdiLog:query" displayName="查询EDI 交互日志"
+                                  i18n-en:displayName="Query EDI Log" orderNo="10020" resourceType="FNPT">
+                            <permissions>ErpB2bEdiLog:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpB2bEdiLog:mutation" displayName="修改EDI 交互日志"
+                                  i18n-en:displayName="Modify EDI Log" orderNo="10021" resourceType="FNPT">
+                            <permissions>ErpB2bEdiLog:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpB2bMftCertificate-main" displayName="MFT 证书" orderNo="10022"
+                          i18n-en:displayName="MFT Certificate" icon="shield" component="AMIS" resourceType="SUBM"
+                          url="/erp/b2b/pages/ErpB2bMftCertificate/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpB2bMftCertificate:query" displayName="查询MFT 证书"
+                                  i18n-en:displayName="Query MFT Certificate" orderNo="10023" resourceType="FNPT">
+                            <permissions>ErpB2bMftCertificate:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpB2bMftCertificate:mutation" displayName="修改MFT 证书"
+                                  i18n-en:displayName="Modify MFT Certificate" orderNo="10024" resourceType="FNPT">
+                            <permissions>ErpB2bMftCertificate:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpB2bMftConfig-main" displayName="MFT 配置" orderNo="10025"
+                          i18n-en:displayName="MFT Config" icon="upload-cloud" component="AMIS" resourceType="SUBM"
+                          url="/erp/b2b/pages/ErpB2bMftConfig/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpB2bMftConfig:query" displayName="查询MFT 配置"
+                                  i18n-en:displayName="Query MFT Config" orderNo="10026" resourceType="FNPT">
+                            <permissions>ErpB2bMftConfig:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpB2bMftConfig:mutation" displayName="修改MFT 配置"
+                                  i18n-en:displayName="Modify MFT Config" orderNo="10027" resourceType="FNPT">
+                            <permissions>ErpB2bMftConfig:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpB2bMftLog-main" displayName="MFT 传输日志" orderNo="10028" i18n-en:displayName="MFT Log"
+                          icon="activity" component="AMIS" resourceType="SUBM"
+                          url="/erp/b2b/pages/ErpB2bMftLog/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpB2bMftLog:query" displayName="查询MFT 传输日志"
+                                  i18n-en:displayName="Query MFT Log" orderNo="10029" resourceType="FNPT">
+                            <permissions>ErpB2bMftLog:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpB2bMftLog:mutation" displayName="修改MFT 传输日志"
+                                  i18n-en:displayName="Modify MFT Log" orderNo="10030" resourceType="FNPT">
+                            <permissions>ErpB2bMftLog:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpB2bPartnerCredential-main" displayName="伙伴凭证" orderNo="10031"
+                          i18n-en:displayName="Partner Credential" icon="key" component="AMIS" resourceType="SUBM"
+                          url="/erp/b2b/pages/ErpB2bPartnerCredential/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpB2bPartnerCredential:query" displayName="查询伙伴凭证"
+                                  i18n-en:displayName="Query Partner Credential" orderNo="10032" resourceType="FNPT">
+                            <permissions>ErpB2bPartnerCredential:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpB2bPartnerCredential:mutation" displayName="修改伙伴凭证"
+                                  i18n-en:displayName="Modify Partner Credential" orderNo="10033" resourceType="FNPT">
+                            <permissions>ErpB2bPartnerCredential:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpB2bPartnerProfile-main" displayName="合作伙伴档案" orderNo="10034"
+                          i18n-en:displayName="Partner Profile" icon="building" component="AMIS" resourceType="SUBM"
+                          url="/erp/b2b/pages/ErpB2bPartnerProfile/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpB2bPartnerProfile:query" displayName="查询合作伙伴档案"
+                                  i18n-en:displayName="Query Partner Profile" orderNo="10035" resourceType="FNPT">
+                            <permissions>ErpB2bPartnerProfile:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpB2bPartnerProfile:mutation" displayName="修改合作伙伴档案"
+                                  i18n-en:displayName="Modify Partner Profile" orderNo="10036" resourceType="FNPT">
+                            <permissions>ErpB2bPartnerProfile:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpB2bTestExchange-main" displayName="测试消息交换" orderNo="10037"
+                          i18n-en:displayName="Test Exchange" icon="test-tube" component="AMIS" resourceType="SUBM"
+                          url="/erp/b2b/pages/ErpB2bTestExchange/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpB2bTestExchange:query" displayName="查询测试消息交换"
+                                  i18n-en:displayName="Query Test Exchange" orderNo="10038" resourceType="FNPT">
+                            <permissions>ErpB2bTestExchange:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpB2bTestExchange:mutation" displayName="修改测试消息交换"
+                                  i18n-en:displayName="Modify Test Exchange" orderNo="10039" resourceType="FNPT">
+                            <permissions>ErpB2bTestExchange:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
+</auth>

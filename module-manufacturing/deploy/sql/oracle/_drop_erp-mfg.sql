@@ -24,8 +24,10 @@ drop table erp_mfg_work_order;
 drop table erp_mfg_work_order_line;
 drop table erp_mfg_subcontract_order;
 drop table erp_mfg_job_card;
+drop table erp_mfg_cost_variance;
 drop table erp_mfg_subcontract_order_line;
 drop table erp_mfg_material_issue;
 drop table erp_mfg_job_card_time_log;
+drop table erp_mfg_batch_genealogy;
 drop table erp_mfg_material_issue_line;
 

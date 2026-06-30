@@ -59,6 +59,11 @@ public interface _ErpQaDaoConstants {
     int NCR_STATUS_RESOLVED = 30;
                     
     /**
+     * 不符合项状态: 已升级为召回 
+     */
+    int NCR_STATUS_ESCALATED_TO_RECALL = 35;
+                    
+    /**
      * 不符合项状态: 已取消 
      */
     int NCR_STATUS_CANCELLED = 40;

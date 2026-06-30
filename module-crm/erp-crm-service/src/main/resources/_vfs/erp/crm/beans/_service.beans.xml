@@ -56,6 +56,59 @@
         <property name="bizObjName" value="ErpCrmCampaign"/>
     </bean>
 
+    <bean id="app.erp.crm.service.entity.ErpCrmLeadScoreConfigBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmLeadScoreConfig" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmLeadScoreConfigBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCrmLeadScoreConfig"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmForecastPeriodBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmForecastPeriod" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmForecastPeriodBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCrmForecastPeriod"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmProductConfiguratorBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmProductConfigurator" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmProductConfiguratorBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCrmProductConfigurator"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmBundlePricingBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmBundlePricing" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmBundlePricingBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCrmBundlePricing"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmPriceRuleBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmPriceRule" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmPriceRuleBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCrmPriceRule"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmSequenceBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmSequence" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmSequenceBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCrmSequence"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmTerritoryBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmTerritory" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmTerritoryBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCrmTerritory"/>
+    </bean>
+
     <bean id="app.erp.crm.service.entity.ErpCrmStageBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpCrmStage" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.crm.biz.IErpCrmStageBiz"
@@ -63,11 +116,95 @@
         <property name="bizObjName" value="ErpCrmStage"/>
     </bean>
 
+    <bean id="app.erp.crm.service.entity.ErpCrmLeadScoreConfigLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmLeadScoreConfigLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmLeadScoreConfigLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCrmLeadScoreConfigLine"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmConfigRuleBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmConfigRule" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmConfigRuleBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCrmConfigRule"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmBundlePricingLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmBundlePricingLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmBundlePricingLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCrmBundlePricingLine"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmSequenceStepBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmSequenceStep" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmSequenceStepBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCrmSequenceStep"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmSequenceAssignmentBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmSequenceAssignment" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmSequenceAssignmentBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCrmSequenceAssignment"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmForecastBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmForecast" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmForecastBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCrmForecast"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmTerritoryAssignmentRuleBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmTerritoryAssignmentRule" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmTerritoryAssignmentRuleBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCrmTerritoryAssignmentRule"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmQuotaBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmQuota" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.crm.biz.IErpCrmQuotaBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCrmQuota"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmLeadFunnelBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmLeadFunnel" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmLeadFunnelBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCrmLeadFunnel"/>
+    </bean>
+
     <bean id="app.erp.crm.service.entity.ErpCrmLeadBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpCrmLead" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.crm.biz.IErpCrmLeadBiz"
           ioc:force-lazy-property="true" lazy-init="true" primary="true">
         <property name="bizObjName" value="ErpCrmLead"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmForecastAccuracyBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmForecastAccuracy" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmForecastAccuracyBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCrmForecastAccuracy"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmFunnelStageMetricsBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmFunnelStageMetrics" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmFunnelStageMetricsBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCrmFunnelStageMetrics"/>
     </bean>
 
     <bean id="app.erp.crm.service.entity.ErpCrmEventBizModel" ioc:type="@bean:id" ioc:default="true"/>
@@ -90,5 +227,36 @@
           ioc:type="app.erp.crm.biz.IErpCrmLeadConvLogBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
         <property name="bizObjName" value="ErpCrmLeadConvLog"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmLeadScoreBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmLeadScore" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmLeadScoreBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCrmLeadScore"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmForecastLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmForecastLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmForecastLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCrmForecastLine"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmLeadSequenceProgressBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmLeadSequenceProgress" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmLeadSequenceProgressBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCrmLeadSequenceProgress"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmLeadScoreLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmLeadScoreLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmLeadScoreLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCrmLeadScoreLine"/>
     </bean>
 </beans>

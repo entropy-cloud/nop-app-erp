@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:schema="/nop/schema/xui/xview.xdef" bizObjName="ErpApsDispatchRule" xmlns:i18n-en="i18n-en"
+      xmlns:x="/nop/schema/xdsl.xdef" xmlns:j="j" xmlns:c="c" xmlns:gql="gql" xmlns:view-gen="view-gen" xmlns:xpl="xpl">
+
+    <objMeta>/erp/aps/model/ErpApsDispatchRule/ErpApsDispatchRule.xmeta</objMeta>
+
+    <controlLib>/nop/web/xlib/control.xlib</controlLib>
+
+    <x:gen-extends>
+        <view-gen:DefaultViewGenExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <view-gen:DefaultViewPostExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:post-extends>
+
+    <grids>
+        <grid id="list" x:abstract="true">
+            <cols>
+
+                <!--ID-->
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--业务组织-->
+                <col id="orgId" ui:number="true" sortable="true"/>
+
+                <!--工作中心-->
+                <col id="workcenterId" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--规则名称-->
+                <col id="ruleName" mandatory="true" sortable="true"/>
+
+                <!--自动派工启用-->
+                <col id="enableAuto" sortable="true"/>
+
+                <!--物料齐套检查-->
+                <col id="requireMaterial" sortable="true"/>
+
+                <!--操作工检查-->
+                <col id="requireOperator" sortable="true"/>
+
+                <!--工装检查-->
+                <col id="requireTooling" sortable="true"/>
+
+                <!--前瞻窗口(分钟)-->
+                <col id="maxLookaheadMinutes" ui:number="true" sortable="true"/>
+
+                <!--提前派工(分钟)-->
+                <col id="dispatchAheadMinutes" ui:number="true" sortable="true"/>
+
+                <!--自动确认物料-->
+                <col id="autoConfirmMaterial" sortable="true"/>
+
+                <!--最大并行工序数-->
+                <col id="maxConcurrentOps" ui:number="true" sortable="true"/>
+
+                <!--优先级阈值-->
+                <col id="priorityThreshold" ui:number="true" sortable="true"/>
+
+                <!--允许时段(JSON)-->
+                <col id="enabledHours" sortable="true"/>
+
+                <!--暂停到-->
+                <col id="holdUntil" sortable="true"/>
+
+                <!--暂停原因-->
+                <col id="holdReason" sortable="true"/>
+
+                <!--备注-->
+                <col id="remark" sortable="true"/>
+
+                <!--逻辑删除版本-->
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--创建人-->
+                <col id="createdBy" mandatory="true" sortable="true"/>
+
+                <!--创建时间-->
+                <col id="createTime" mandatory="true" sortable="true"/>
+
+                <!--修改人-->
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+
+                <!--修改时间-->
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list" x:prototype="list" x:abstract="true"/>
+    </grids>
+
+    <forms>
+        <form id="view" editMode="view" title="查看-自动派工规则" i18n-en:title="View Dispatch Rule">
+            <layout>
+ id[ID] orgId[业务组织]
+ workcenterId[工作中心] ruleName[规则名称]
+ enableAuto[自动派工启用] requireMaterial[物料齐套检查]
+ requireOperator[操作工检查] requireTooling[工装检查]
+ maxLookaheadMinutes[前瞻窗口(分钟)] dispatchAheadMinutes[提前派工(分钟)]
+ autoConfirmMaterial[自动确认物料] maxConcurrentOps[最大并行工序数]
+ priorityThreshold[优先级阈值] enabledHours[允许时段(JSON)]
+ holdUntil[暂停到] holdReason[暂停原因]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+</layout>
+        </form>
+        <form id="add" editMode="add" title="新增-自动派工规则" i18n-en:title="Add Dispatch Rule">
+            <layout>
+ id[ID] orgId[业务组织]
+ workcenterId[工作中心] ruleName[规则名称]
+ enableAuto[自动派工启用] requireMaterial[物料齐套检查]
+ requireOperator[操作工检查] requireTooling[工装检查]
+ maxLookaheadMinutes[前瞻窗口(分钟)] dispatchAheadMinutes[提前派工(分钟)]
+ autoConfirmMaterial[自动确认物料] maxConcurrentOps[最大并行工序数]
+ priorityThreshold[优先级阈值] enabledHours[允许时段(JSON)]
+ holdUntil[暂停到] holdReason[暂停原因]
+ remark[备注] 
+</layout>
+        </form>
+        <form id="edit" editMode="edit" title="编辑-自动派工规则" i18n-en:title="Edit Dispatch Rule">
+            <layout>
+ id[ID] orgId[业务组织]
+ workcenterId[工作中心] ruleName[规则名称]
+ enableAuto[自动派工启用] requireMaterial[物料齐套检查]
+ requireOperator[操作工检查] requireTooling[工装检查]
+ maxLookaheadMinutes[前瞻窗口(分钟)] dispatchAheadMinutes[提前派工(分钟)]
+ autoConfirmMaterial[自动确认物料] maxConcurrentOps[最大并行工序数]
+ priorityThreshold[优先级阈值] enabledHours[允许时段(JSON)]
+ holdUntil[暂停到] holdReason[暂停原因]
+ remark[备注] delVersion[逻辑删除版本]
+</layout>
+        </form>
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-自动派工规则" i18n-en:title="Update Dispatch Rule"/>
+    </forms>
+
+    <pages>
+        <crud name="view-list" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpApsDispatchRule__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </crud>
+        <crud name="main" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpApsDispatchRule__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+            <listActions>
+                <action id="batch-delete-button" label="@i18n:common.batchDelete" batch="true">
+                    <api url="@mutation:ErpApsDispatchRule__batchDelete?ids=$ids"/>
+                    <confirmText>@i18n:common.confirmBatchDelete</confirmText>
+                </action>
+                <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
+                    <dialog page="add"/>
+                </action>
+            </listActions>
+            <rowActions>
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+                <action id="row-update-button" level="primary" label="@i18n:common.edit" x:abstract="true">
+                    <dialog page="update"/>
+                </action>
+                <action id="row-delete-button" level="danger" label="@i18n:common.delete" x:abstract="true">
+                    <api url="@mutation:ErpApsDispatchRule__delete?id=$id"/>
+                    <confirmText>@i18n:common.confirmDelete</confirmText>
+                </action>
+                <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
+                    <action id="row-update-button" label="@i18n:common.edit">
+                        <dialog page="update"/>
+                    </action>
+                    <action id="row-delete-button" label="@i18n:common.delete">
+                        <api url="@mutation:ErpApsDispatchRule__delete?id=$id"/>
+                        <confirmText>@i18n:common.confirmDelete</confirmText>
+                    </action>
+                </actionGroup>
+            </rowActions>
+        </crud>
+        <picker name="picker" grid="pick-list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table noOperations="true">
+                <api url="@query:ErpApsDispatchRule__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </picker>
+        <simple name="add" form="add">
+            <api url="@mutation:ErpApsDispatchRule__save/id"/>
+        </simple>
+        <simple name="view" form="view">
+            <initApi url="@query:ErpApsDispatchRule__get?id=$id" gql:selection="{@formSelection}"/>
+        </simple>
+        <simple name="update" form="edit">
+            <initApi url="@query:ErpApsDispatchRule__get?id=$id" gql:selection="{@formSelection}"/>
+            <api url="@mutation:ErpApsDispatchRule__update/id?id=$id" withFormData="true"/>
+        </simple>
+    </pages>
+</view>

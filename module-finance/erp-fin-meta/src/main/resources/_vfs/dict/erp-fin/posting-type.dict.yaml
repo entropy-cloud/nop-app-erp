@@ -1,0 +1,27 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 过账类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 正常过账
+    value: 10
+    description: 
+  
+  - label: 期初余额录入
+    value: 20
+    description: 
+  
+  - label: 调整
+    value: 30
+    description: 
+  
+  - label: 期末结转
+    value: 40
+    description: 
+  
+  - label: 红字冲销
+    value: 50
+    description: 
+  

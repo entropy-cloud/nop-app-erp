@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
+
+    <site id="main">
+        <resource id="test-orm-erp-crm" displayName="测试erp-crm" i18n-en:displayName="Test erp-crm" icon="users"
+                  resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-crm" component="layouts/default/index">
+            <children>
+                <resource id="ErpCrmActivity-main" displayName="活动记录" orderNo="10001" i18n-en:displayName="Activity"
+                          icon="activity" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmActivity/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmActivity:query" displayName="查询活动记录"
+                                  i18n-en:displayName="Query Activity" orderNo="10002" resourceType="FNPT">
+                            <permissions>ErpCrmActivity:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmActivity:mutation" displayName="修改活动记录"
+                                  i18n-en:displayName="Modify Activity" orderNo="10003" resourceType="FNPT">
+                            <permissions>ErpCrmActivity:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmBundlePricing-main" displayName="捆绑定价" orderNo="10004"
+                          i18n-en:displayName="Bundle Pricing" icon="package" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmBundlePricing/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmBundlePricing:query" displayName="查询捆绑定价"
+                                  i18n-en:displayName="Query Bundle Pricing" orderNo="10005" resourceType="FNPT">
+                            <permissions>ErpCrmBundlePricing:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmBundlePricing:mutation" displayName="修改捆绑定价"
+                                  i18n-en:displayName="Modify Bundle Pricing" orderNo="10006" resourceType="FNPT">
+                            <permissions>ErpCrmBundlePricing:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmBundlePricingLine-main" displayName="捆绑包明细" orderNo="10007"
+                          i18n-en:displayName="Bundle Pricing Line" icon="list" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmBundlePricingLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmBundlePricingLine:query" displayName="查询捆绑包明细"
+                                  i18n-en:displayName="Query Bundle Pricing Line" orderNo="10008" resourceType="FNPT">
+                            <permissions>ErpCrmBundlePricingLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmBundlePricingLine:mutation" displayName="修改捆绑包明细"
+                                  i18n-en:displayName="Modify Bundle Pricing Line" orderNo="10009" resourceType="FNPT">
+                            <permissions>ErpCrmBundlePricingLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmCampaign-main" displayName="营销活动" orderNo="10010" i18n-en:displayName="Campaign"
+                          icon="megaphone" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmCampaign/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmCampaign:query" displayName="查询营销活动"
+                                  i18n-en:displayName="Query Campaign" orderNo="10011" resourceType="FNPT">
+                            <permissions>ErpCrmCampaign:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmCampaign:mutation" displayName="修改营销活动"
+                                  i18n-en:displayName="Modify Campaign" orderNo="10012" resourceType="FNPT">
+                            <permissions>ErpCrmCampaign:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmConfigRule-main" displayName="配置规则" orderNo="10013"
+                          i18n-en:displayName="Config Rule" icon="git-merge" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmConfigRule/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmConfigRule:query" displayName="查询配置规则"
+                                  i18n-en:displayName="Query Config Rule" orderNo="10014" resourceType="FNPT">
+                            <permissions>ErpCrmConfigRule:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmConfigRule:mutation" displayName="修改配置规则"
+                                  i18n-en:displayName="Modify Config Rule" orderNo="10015" resourceType="FNPT">
+                            <permissions>ErpCrmConfigRule:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmEvent-main" displayName="活动/事件" orderNo="10016" i18n-en:displayName="Event"
+                          icon="calendar" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmEvent/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmEvent:query" displayName="查询活动/事件" i18n-en:displayName="Query Event"
+                                  orderNo="10017" resourceType="FNPT">
+                            <permissions>ErpCrmEvent:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmEvent:mutation" displayName="修改活动/事件"
+                                  i18n-en:displayName="Modify Event" orderNo="10018" resourceType="FNPT">
+                            <permissions>ErpCrmEvent:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmEventCategory-main" displayName="活动类别" orderNo="10019"
+                          i18n-en:displayName="Event Category" icon="tag" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmEventCategory/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmEventCategory:query" displayName="查询活动类别"
+                                  i18n-en:displayName="Query Event Category" orderNo="10020" resourceType="FNPT">
+                            <permissions>ErpCrmEventCategory:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmEventCategory:mutation" displayName="修改活动类别"
+                                  i18n-en:displayName="Modify Event Category" orderNo="10021" resourceType="FNPT">
+                            <permissions>ErpCrmEventCategory:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmForecast-main" displayName="预测数据" orderNo="10022" i18n-en:displayName="Forecast"
+                          icon="trending-up" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmForecast/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmForecast:query" displayName="查询预测数据"
+                                  i18n-en:displayName="Query Forecast" orderNo="10023" resourceType="FNPT">
+                            <permissions>ErpCrmForecast:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmForecast:mutation" displayName="修改预测数据"
+                                  i18n-en:displayName="Modify Forecast" orderNo="10024" resourceType="FNPT">
+                            <permissions>ErpCrmForecast:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmForecastAccuracy-main" displayName="预测准确率" orderNo="10025"
+                          i18n-en:displayName="Forecast Accuracy" icon="check-circle" component="AMIS"
+                          resourceType="SUBM" url="/erp/crm/pages/ErpCrmForecastAccuracy/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmForecastAccuracy:query" displayName="查询预测准确率"
+                                  i18n-en:displayName="Query Forecast Accuracy" orderNo="10026" resourceType="FNPT">
+                            <permissions>ErpCrmForecastAccuracy:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmForecastAccuracy:mutation" displayName="修改预测准确率"
+                                  i18n-en:displayName="Modify Forecast Accuracy" orderNo="10027" resourceType="FNPT">
+                            <permissions>ErpCrmForecastAccuracy:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmForecastLine-main" displayName="预测明细" orderNo="10028"
+                          i18n-en:displayName="Forecast Line" icon="list" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmForecastLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmForecastLine:query" displayName="查询预测明细"
+                                  i18n-en:displayName="Query Forecast Line" orderNo="10029" resourceType="FNPT">
+                            <permissions>ErpCrmForecastLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmForecastLine:mutation" displayName="修改预测明细"
+                                  i18n-en:displayName="Modify Forecast Line" orderNo="10030" resourceType="FNPT">
+                            <permissions>ErpCrmForecastLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmForecastPeriod-main" displayName="预测期间" orderNo="10031"
+                          i18n-en:displayName="Forecast Period" icon="calendar-range" component="AMIS"
+                          resourceType="SUBM" url="/erp/crm/pages/ErpCrmForecastPeriod/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmForecastPeriod:query" displayName="查询预测期间"
+                                  i18n-en:displayName="Query Forecast Period" orderNo="10032" resourceType="FNPT">
+                            <permissions>ErpCrmForecastPeriod:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmForecastPeriod:mutation" displayName="修改预测期间"
+                                  i18n-en:displayName="Modify Forecast Period" orderNo="10033" resourceType="FNPT">
+                            <permissions>ErpCrmForecastPeriod:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmFunnelStageMetrics-main" displayName="漏斗阶段度量" orderNo="10034"
+                          i18n-en:displayName="Funnel Stage Metrics" icon="bar-chart-2" component="AMIS"
+                          resourceType="SUBM" url="/erp/crm/pages/ErpCrmFunnelStageMetrics/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmFunnelStageMetrics:query" displayName="查询漏斗阶段度量"
+                                  i18n-en:displayName="Query Funnel Stage Metrics" orderNo="10035" resourceType="FNPT">
+                            <permissions>ErpCrmFunnelStageMetrics:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmFunnelStageMetrics:mutation" displayName="修改漏斗阶段度量"
+                                  i18n-en:displayName="Modify Funnel Stage Metrics" orderNo="10036" resourceType="FNPT">
+                            <permissions>ErpCrmFunnelStageMetrics:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmLead-main" displayName="线索/商机" orderNo="10037"
+                          i18n-en:displayName="Lead / Opportunity" icon="users" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmLead/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmLead:query" displayName="查询线索/商机"
+                                  i18n-en:displayName="Query Lead / Opportunity" orderNo="10038" resourceType="FNPT">
+                            <permissions>ErpCrmLead:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmLead:mutation" displayName="修改线索/商机"
+                                  i18n-en:displayName="Modify Lead / Opportunity" orderNo="10039" resourceType="FNPT">
+                            <permissions>ErpCrmLead:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmLeadConvLog-main" displayName="阶段流转日志" orderNo="10040"
+                          i18n-en:displayName="Lead Conversion Log" icon="history" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmLeadConvLog/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmLeadConvLog:query" displayName="查询阶段流转日志"
+                                  i18n-en:displayName="Query Lead Conversion Log" orderNo="10041" resourceType="FNPT">
+                            <permissions>ErpCrmLeadConvLog:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmLeadConvLog:mutation" displayName="修改阶段流转日志"
+                                  i18n-en:displayName="Modify Lead Conversion Log" orderNo="10042" resourceType="FNPT">
+                            <permissions>ErpCrmLeadConvLog:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmLeadFunnel-main" displayName="线索漏斗" orderNo="10043"
+                          i18n-en:displayName="Lead Funnel" icon="chart-bar" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmLeadFunnel/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmLeadFunnel:query" displayName="查询线索漏斗"
+                                  i18n-en:displayName="Query Lead Funnel" orderNo="10044" resourceType="FNPT">
+                            <permissions>ErpCrmLeadFunnel:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmLeadFunnel:mutation" displayName="修改线索漏斗"
+                                  i18n-en:displayName="Modify Lead Funnel" orderNo="10045" resourceType="FNPT">
+                            <permissions>ErpCrmLeadFunnel:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmLeadScore-main" displayName="线索评分记录" orderNo="10046"
+                          i18n-en:displayName="Lead Score" icon="award" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmLeadScore/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmLeadScore:query" displayName="查询线索评分记录"
+                                  i18n-en:displayName="Query Lead Score" orderNo="10047" resourceType="FNPT">
+                            <permissions>ErpCrmLeadScore:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmLeadScore:mutation" displayName="修改线索评分记录"
+                                  i18n-en:displayName="Modify Lead Score" orderNo="10048" resourceType="FNPT">
+                            <permissions>ErpCrmLeadScore:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmLeadScoreConfig-main" displayName="评分规则配置" orderNo="10049"
+                          i18n-en:displayName="Lead Score Config" icon="sliders" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmLeadScoreConfig/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmLeadScoreConfig:query" displayName="查询评分规则配置"
+                                  i18n-en:displayName="Query Lead Score Config" orderNo="10050" resourceType="FNPT">
+                            <permissions>ErpCrmLeadScoreConfig:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmLeadScoreConfig:mutation" displayName="修改评分规则配置"
+                                  i18n-en:displayName="Modify Lead Score Config" orderNo="10051" resourceType="FNPT">
+                            <permissions>ErpCrmLeadScoreConfig:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmLeadScoreConfigLine-main" displayName="评分准则明细" orderNo="10052"
+                          i18n-en:displayName="Lead Score Config Line" icon="list" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmLeadScoreConfigLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmLeadScoreConfigLine:query" displayName="查询评分准则明细"
+                                  i18n-en:displayName="Query Lead Score Config Line" orderNo="10053" resourceType="FNPT">
+                            <permissions>ErpCrmLeadScoreConfigLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmLeadScoreConfigLine:mutation" displayName="修改评分准则明细"
+                                  i18n-en:displayName="Modify Lead Score Config Line" orderNo="10054"
+                                  resourceType="FNPT">
+                            <permissions>ErpCrmLeadScoreConfigLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmLeadScoreLine-main" displayName="评分记录明细" orderNo="10055"
+                          i18n-en:displayName="Lead Score Line" icon="list" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmLeadScoreLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmLeadScoreLine:query" displayName="查询评分记录明细"
+                                  i18n-en:displayName="Query Lead Score Line" orderNo="10056" resourceType="FNPT">
+                            <permissions>ErpCrmLeadScoreLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmLeadScoreLine:mutation" displayName="修改评分记录明细"
+                                  i18n-en:displayName="Modify Lead Score Line" orderNo="10057" resourceType="FNPT">
+                            <permissions>ErpCrmLeadScoreLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmLeadSequenceProgress-main" displayName="线索序列进度" orderNo="10058"
+                          i18n-en:displayName="Lead Sequence Progress" icon="clock" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmLeadSequenceProgress/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmLeadSequenceProgress:query" displayName="查询线索序列进度"
+                                  i18n-en:displayName="Query Lead Sequence Progress" orderNo="10059" resourceType="FNPT">
+                            <permissions>ErpCrmLeadSequenceProgress:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmLeadSequenceProgress:mutation" displayName="修改线索序列进度"
+                                  i18n-en:displayName="Modify Lead Sequence Progress" orderNo="10060"
+                                  resourceType="FNPT">
+                            <permissions>ErpCrmLeadSequenceProgress:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmLeadStatus-main" displayName="线索状态" orderNo="10061"
+                          i18n-en:displayName="Lead Status" icon="circle" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmLeadStatus/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmLeadStatus:query" displayName="查询线索状态"
+                                  i18n-en:displayName="Query Lead Status" orderNo="10062" resourceType="FNPT">
+                            <permissions>ErpCrmLeadStatus:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmLeadStatus:mutation" displayName="修改线索状态"
+                                  i18n-en:displayName="Modify Lead Status" orderNo="10063" resourceType="FNPT">
+                            <permissions>ErpCrmLeadStatus:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmLostReason-main" displayName="丢单原因" orderNo="10064"
+                          i18n-en:displayName="Lost Reason" icon="x-circle" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmLostReason/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmLostReason:query" displayName="查询丢单原因"
+                                  i18n-en:displayName="Query Lost Reason" orderNo="10065" resourceType="FNPT">
+                            <permissions>ErpCrmLostReason:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmLostReason:mutation" displayName="修改丢单原因"
+                                  i18n-en:displayName="Modify Lost Reason" orderNo="10066" resourceType="FNPT">
+                            <permissions>ErpCrmLostReason:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmPriceRule-main" displayName="价格规则" orderNo="10067" i18n-en:displayName="Price Rule"
+                          icon="dollar-sign" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmPriceRule/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmPriceRule:query" displayName="查询价格规则"
+                                  i18n-en:displayName="Query Price Rule" orderNo="10068" resourceType="FNPT">
+                            <permissions>ErpCrmPriceRule:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmPriceRule:mutation" displayName="修改价格规则"
+                                  i18n-en:displayName="Modify Price Rule" orderNo="10069" resourceType="FNPT">
+                            <permissions>ErpCrmPriceRule:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmProductConfigurator-main" displayName="产品配置器" orderNo="10070"
+                          i18n-en:displayName="Product Configurator" icon="settings-2" component="AMIS"
+                          resourceType="SUBM" url="/erp/crm/pages/ErpCrmProductConfigurator/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmProductConfigurator:query" displayName="查询产品配置器"
+                                  i18n-en:displayName="Query Product Configurator" orderNo="10071" resourceType="FNPT">
+                            <permissions>ErpCrmProductConfigurator:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmProductConfigurator:mutation" displayName="修改产品配置器"
+                                  i18n-en:displayName="Modify Product Configurator" orderNo="10072" resourceType="FNPT">
+                            <permissions>ErpCrmProductConfigurator:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmQuota-main" displayName="销售配额" orderNo="10073" i18n-en:displayName="Quota"
+                          icon="target" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmQuota/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmQuota:query" displayName="查询销售配额" i18n-en:displayName="Query Quota"
+                                  orderNo="10074" resourceType="FNPT">
+                            <permissions>ErpCrmQuota:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmQuota:mutation" displayName="修改销售配额" i18n-en:displayName="Modify Quota"
+                                  orderNo="10075" resourceType="FNPT">
+                            <permissions>ErpCrmQuota:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmQuoteTemplate-main" displayName="报价模板" orderNo="10076"
+                          i18n-en:displayName="Quote Template" icon="file-text" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmQuoteTemplate/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmQuoteTemplate:query" displayName="查询报价模板"
+                                  i18n-en:displayName="Query Quote Template" orderNo="10077" resourceType="FNPT">
+                            <permissions>ErpCrmQuoteTemplate:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmQuoteTemplate:mutation" displayName="修改报价模板"
+                                  i18n-en:displayName="Modify Quote Template" orderNo="10078" resourceType="FNPT">
+                            <permissions>ErpCrmQuoteTemplate:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmSequence-main" displayName="销售序列" orderNo="10079"
+                          i18n-en:displayName="Sales Sequence" icon="list-ordered" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmSequence/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmSequence:query" displayName="查询销售序列"
+                                  i18n-en:displayName="Query Sales Sequence" orderNo="10080" resourceType="FNPT">
+                            <permissions>ErpCrmSequence:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmSequence:mutation" displayName="修改销售序列"
+                                  i18n-en:displayName="Modify Sales Sequence" orderNo="10081" resourceType="FNPT">
+                            <permissions>ErpCrmSequence:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmSequenceAssignment-main" displayName="序列分配规则" orderNo="10082"
+                          i18n-en:displayName="Sequence Assignment" icon="git-branch" component="AMIS"
+                          resourceType="SUBM" url="/erp/crm/pages/ErpCrmSequenceAssignment/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmSequenceAssignment:query" displayName="查询序列分配规则"
+                                  i18n-en:displayName="Query Sequence Assignment" orderNo="10083" resourceType="FNPT">
+                            <permissions>ErpCrmSequenceAssignment:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmSequenceAssignment:mutation" displayName="修改序列分配规则"
+                                  i18n-en:displayName="Modify Sequence Assignment" orderNo="10084" resourceType="FNPT">
+                            <permissions>ErpCrmSequenceAssignment:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmSequenceStep-main" displayName="序列步骤" orderNo="10085"
+                          i18n-en:displayName="Sequence Step" icon="list" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmSequenceStep/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmSequenceStep:query" displayName="查询序列步骤"
+                                  i18n-en:displayName="Query Sequence Step" orderNo="10086" resourceType="FNPT">
+                            <permissions>ErpCrmSequenceStep:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmSequenceStep:mutation" displayName="修改序列步骤"
+                                  i18n-en:displayName="Modify Sequence Step" orderNo="10087" resourceType="FNPT">
+                            <permissions>ErpCrmSequenceStep:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmSource-main" displayName="线索来源" orderNo="10088" i18n-en:displayName="Lead Source"
+                          icon="arrow-up-from-line" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmSource/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmSource:query" displayName="查询线索来源"
+                                  i18n-en:displayName="Query Lead Source" orderNo="10089" resourceType="FNPT">
+                            <permissions>ErpCrmSource:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmSource:mutation" displayName="修改线索来源"
+                                  i18n-en:displayName="Modify Lead Source" orderNo="10090" resourceType="FNPT">
+                            <permissions>ErpCrmSource:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmStage-main" displayName="漏斗阶段" orderNo="10091" i18n-en:displayName="Funnel Stage"
+                          icon="layers" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmStage/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmStage:query" displayName="查询漏斗阶段"
+                                  i18n-en:displayName="Query Funnel Stage" orderNo="10092" resourceType="FNPT">
+                            <permissions>ErpCrmStage:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmStage:mutation" displayName="修改漏斗阶段"
+                                  i18n-en:displayName="Modify Funnel Stage" orderNo="10093" resourceType="FNPT">
+                            <permissions>ErpCrmStage:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmTeam-main" displayName="销售团队" orderNo="10094" i18n-en:displayName="Sales Team"
+                          icon="group" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmTeam/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmTeam:query" displayName="查询销售团队" i18n-en:displayName="Query Sales Team"
+                                  orderNo="10095" resourceType="FNPT">
+                            <permissions>ErpCrmTeam:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmTeam:mutation" displayName="修改销售团队"
+                                  i18n-en:displayName="Modify Sales Team" orderNo="10096" resourceType="FNPT">
+                            <permissions>ErpCrmTeam:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmTerritory-main" displayName="销售区域" orderNo="10097" i18n-en:displayName="Territory"
+                          icon="map" component="AMIS" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmTerritory/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmTerritory:query" displayName="查询销售区域"
+                                  i18n-en:displayName="Query Territory" orderNo="10098" resourceType="FNPT">
+                            <permissions>ErpCrmTerritory:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmTerritory:mutation" displayName="修改销售区域"
+                                  i18n-en:displayName="Modify Territory" orderNo="10099" resourceType="FNPT">
+                            <permissions>ErpCrmTerritory:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmTerritoryAssignmentRule-main" displayName="区域分配规则" orderNo="10100"
+                          i18n-en:displayName="Territory Assignment Rule" icon="git-branch" component="AMIS"
+                          resourceType="SUBM" url="/erp/crm/pages/ErpCrmTerritoryAssignmentRule/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmTerritoryAssignmentRule:query" displayName="查询区域分配规则"
+                                  i18n-en:displayName="Query Territory Assignment Rule" orderNo="10101"
+                                  resourceType="FNPT">
+                            <permissions>ErpCrmTerritoryAssignmentRule:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmTerritoryAssignmentRule:mutation" displayName="修改区域分配规则"
+                                  i18n-en:displayName="Modify Territory Assignment Rule" orderNo="10102"
+                                  resourceType="FNPT">
+                            <permissions>ErpCrmTerritoryAssignmentRule:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
+</auth>

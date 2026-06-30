@@ -1,0 +1,461 @@
+entity:
+  label:
+    ErpCsAgentRate: Agent Rate
+    ErpCsCannedCategory: Canned Category
+    ErpCsCannedResponse: Canned Response
+    ErpCsCatalogCategory: Catalog Category
+    ErpCsCatalogFulfillment: Catalog Fulfillment
+    ErpCsContract: Support Contract
+    ErpCsEntitlement: Entitlement
+    ErpCsKnowledgeBase: Knowledge Base
+    ErpCsServiceCatalogItem: Service Catalog Item
+    ErpCsSlaPolicy: SLA Policy
+    ErpCsSurvey: CSAT Survey
+    ErpCsTeam: CS Team
+    ErpCsTicket: Ticket
+    ErpCsTicketAction: Ticket Action
+    ErpCsTicketType: Ticket Type
+    ErpCsTimeEntry: Time Entry
+prop:
+  label:
+    ErpCsAgentRate:
+      id: ID
+      orgId: Organization
+      agentId: Agent
+      serviceType: Service Type
+      serviceType_label: null
+      rate: Rate
+      effectiveDate: Effective Date
+      isActive: Active
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      agent: Agent
+    ErpCsCannedCategory:
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      parentId: Parent Category
+      icon: Icon
+      sequence: Sequence
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      parent: Parent Category
+    ErpCsCannedResponse:
+      id: ID
+      code: Code
+      orgId: Organization
+      title: Title
+      content: Content
+      categoryId: Category
+      variableDefs: Variable Defs
+      macroTicketTypeId: Macro Ticket Type
+      macroPriority: Macro Priority
+      macroPriority_label: null
+      sequence: Sequence
+      isActive: Active
+      usageCount: Usage Count
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      category: Category
+      macroTicketType: Macro Ticket Type
+    ErpCsCatalogCategory:
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      parentId: Parent Category
+      icon: Icon
+      sequence: Sequence
+      isActive: Active
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      parent: Parent Category
+    ErpCsCatalogFulfillment:
+      id: ID
+      code: Code
+      orgId: Organization
+      catalogItemId: Catalog Item
+      sequence: Sequence
+      actionType: Action Type
+      actionType_label: null
+      actionConfig: Action Config
+      assignToRole: Assign To Role
+      estimatedDuration: Estimated Duration
+      isMandatory: Mandatory
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      catalogItem: Catalog Item
+    ErpCsContract:
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      partnerId: Partner
+      contractType: Contract Type
+      contractType_label: null
+      startDate: Start Date
+      endDate: End Date
+      totalAmount: Total Amount
+      billingCycle: Billing Cycle
+      billingCycle_label: null
+      status: Status
+      status_label: null
+      attachmentId: Attachment
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      partner: Partner
+    ErpCsEntitlement:
+      id: ID
+      code: Code
+      orgId: Organization
+      partnerId: Partner
+      contractId: Contract
+      slaPolicyId: SLA Policy
+      serviceType: Service Type
+      serviceType_label: null
+      startDate: Start Date
+      endDate: End Date
+      maxTickets: Max Tickets
+      usedTickets: Used Tickets
+      maxResponseTime: Max Response Time
+      maxResolutionTime: Max Resolution Time
+      isActive: Active
+      notes: Notes
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      partner: Partner
+      contract: Contract
+      slaPolicy: SLA Policy
+    ErpCsKnowledgeBase:
+      id: ID
+      code: Code
+      title: Title
+      content: Content
+      categoryId: Category
+      isPublished: Published
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+    ErpCsServiceCatalogItem:
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      categoryId: Category
+      parentId: Parent Item
+      shortDescription: Short Description
+      fullDescription: Full Description
+      ticketTypeId: Ticket Type
+      slaPolicyId: SLA Policy
+      fulfillmentProcessId: Fulfillment Process
+      requestFormConfig: Request Form Config
+      isActive: Active
+      isPublic: Public
+      sequence: Sequence
+      estimatedResolution: Estimated Resolution
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      category: Category
+      parent: Parent Item
+      ticketType: Ticket Type
+      slaPolicy: SLA Policy
+    ErpCsSlaPolicy:
+      id: ID
+      code: Code
+      name: Name
+      ticketTypeId: Ticket Type
+      minPriority: Min Priority
+      minPriority_label: null
+      teamId: Team
+      resolveHours: Resolve Hours
+      resolveDays: Resolve Days
+      isWorkingDays: Working Days Only
+      escalationUserId: Escalation User
+      description: Description
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      ticketType: Ticket Type
+      team: Team
+      escalationUser: Escalation User
+    ErpCsSurvey:
+      id: ID
+      orgId: Organization
+      ticketId: Ticket
+      surveyToken: Survey Token
+      csatScore: CSAT Score
+      npsScore: NPS Score
+      cesScore: CES Score
+      comment: Comment
+      respondedAt: Responded At
+      surveySentAt: Survey Sent At
+      surveyChannel: Survey Channel
+      surveyChannel_label: null
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      ticket: Ticket
+    ErpCsTeam:
+      id: ID
+      code: Code
+      name: Name
+      teamLeaderId: Team Leader
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      teamLeader: Team Leader
+    ErpCsTicket:
+      id: ID
+      code: Code
+      orgId: Organization
+      subject: Subject
+      description: Description
+      customerId: Customer
+      contactId: Contact
+      ticketTypeId: Ticket Type
+      priority: Priority
+      priority_label: null
+      source: Source
+      source_label: null
+      assignedToId: Assigned To
+      slaPolicyId: SLA Policy
+      deadlineDateTime: SLA Deadline
+      isSlaCompleted: SLA Completed
+      startDateTime: Start Time
+      endDateTime: End Time
+      duration: Duration(min)
+      progress: Progress
+      status: Status
+      status_label: null
+      docStatus: Doc Status
+      docStatus_label: null
+      approveStatus: Approve Status
+      approveStatus_label: null
+      remark: Remark
+      catalogItemId: Catalog Item
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      customer: Customer
+      contact: Contact
+      ticketType: Ticket Type
+      slaPolicy: SLA Policy
+      assignedTo: Assigned To
+      org: Org
+      catalogItem: Catalog Item
+      actions: Actions
+    ErpCsTicketAction:
+      id: ID
+      ticketId: Ticket
+      actionType: Action Type
+      actionType_label: null
+      fromStatus: From Status
+      fromStatus_label: null
+      toStatus: To Status
+      toStatus_label: null
+      operatorId: Operator
+      content: Content
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      ticket: Ticket
+    ErpCsTicketType:
+      id: ID
+      code: Code
+      name: Name
+      defaultPriority: Default Priority
+      defaultPriority_label: null
+      defaultSlaPolicyId: Default SLA Policy
+      sequence: Sequence
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+    ErpCsTimeEntry:
+      id: ID
+      orgId: Organization
+      ticketId: Ticket
+      agentId: Agent
+      startTime: Start Time
+      endTime: End Time
+      duration: Duration
+      isBillable: Billable
+      billingRate: Billing Rate
+      billableAmount: Billable Amount
+      description: Description
+      approvalStatus: Approval Status
+      approvalStatus_label: null
+      approvedById: Approved By
+      approvedAt: Approved At
+      projectId: Project
+      taskId: Task
+      source: Source
+      source_label: null
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      ticket: Ticket
+      agent: Agent
+      approvedBy: Approved By
+dict:
+  label:
+    erp-cs/ticket-status: Ticket Status
+    erp-cs/ticket-priority: Ticket Priority
+    erp-cs/ticket-source: Ticket Source
+    erp-cs/ticket-type: Ticket Type
+    erp-cs/sla-policy: SLA Policy
+    erp-cs/action-type: Action Type
+    erp-cs/doc-status: Doc Status
+    erp-cs/approve-status: Approve Status
+    erp-cs/survey-channel: Survey Channel
+    erp-cs/service-type: Service Type
+    erp-cs/contract-type: Contract Type
+    erp-cs/billing-cycle: Billing Cycle
+    erp-cs/contract-status: Contract Status
+    erp-cs/fulfillment-action-type: Fulfillment Action Type
+    erp-cs/time-entry-approve-status: Time Entry Approve Status
+    erp-cs/time-entry-source: Time Entry Source
+dict.option.label:
+  erp-cs/ticket-status:
+    '10': New
+    '20': Assigned
+    '30': In Progress
+    '40': Resolved
+    '50': Closed
+    '60': Cancelled
+  erp-cs/ticket-priority:
+    '10': Low
+    '20': Normal
+    '30': High
+    '40': Urgent
+  erp-cs/ticket-source:
+    '10': Phone
+    '20': Email
+    '30': Portal
+    '40': Chat
+    '50': Social Media
+  erp-cs/ticket-type:
+    '10': Complaint
+    '20': Inquiry
+    '30': Repair
+    '40': Return/Exchange
+    '99': Other
+  erp-cs/sla-policy:
+    '10': Urgent 4H
+    '20': High 8H
+    '30': Normal 24H
+    '40': Low 48H
+  erp-cs/action-type:
+    '10': Assign
+    '20': Note
+    '30': Attachment
+    '40': Escalate
+    '50': Close
+    '60': Cancel
+  erp-cs/doc-status:
+    '10': Draft
+    '20': Effective
+    '30': Voided
+  erp-cs/approve-status:
+    '10': Unsubmitted
+    '20': Submitted
+    '30': Approved
+    '40': Rejected
+  erp-cs/survey-channel:
+    '10': Email
+    '20': Phone
+    '30': Portal
+    '40': Chat
+  erp-cs/service-type:
+    '10': Warranty
+    '20': Support Contract
+    '30': Pay Per Ticket
+  erp-cs/contract-type:
+    '10': Annual
+    '20': Quarterly
+    '30': One Time
+  erp-cs/billing-cycle:
+    '10': Monthly
+    '20': Quarterly
+    '30': Yearly
+  erp-cs/contract-status:
+    '10': Draft
+    '20': Active
+    '30': Expired
+    '40': Cancelled
+  erp-cs/fulfillment-action-type:
+    '10': Create Ticket
+    '20': Assign Team
+    '30': Assign Agent
+    '40': Request Approval
+    '50': Notify Customer
+    '60': Update Status
+    '70': Create Child Ticket
+    '80': Invoke Workflow
+    '90': Close Ticket
+  erp-cs/time-entry-approve-status:
+    '10': Pending
+    '20': Approved
+    '30': Rejected
+  erp-cs/time-entry-source:
+    '10': Manual
+    '20': Timer Import

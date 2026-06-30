@@ -1,0 +1,3 @@
+
+x:gen-extends: |
+    <web:GenPage view="ErpHrAttendance.view.xml" page="main" xpl:lib="/nop/web/xlib/web.xlib" />

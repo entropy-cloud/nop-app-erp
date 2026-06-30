@@ -81,8 +81,12 @@ public class _ErpMdWarehouse extends DynamicOrmEntity{
     public static final String PROP_NAME_remark = "remark";
     public static final int PROP_ID_remark = 15;
     
+    /* 批次选择策略: BATCH_SELECTION_STRATEGY VARCHAR */
+    public static final String PROP_NAME_batchSelectionStrategy = "batchSelectionStrategy";
+    public static final int PROP_ID_batchSelectionStrategy = 16;
+    
 
-    private static int _PROP_ID_BOUND = 16;
+    private static int _PROP_ID_BOUND = 17;
 
     
     /* relation:  */
@@ -98,7 +102,7 @@ public class _ErpMdWarehouse extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[16];
+    private static final String[] PROP_ID_TO_NAME = new String[17];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -147,6 +151,9 @@ public class _ErpMdWarehouse extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
           PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
       
+          PROP_ID_TO_NAME[PROP_ID_batchSelectionStrategy] = PROP_NAME_batchSelectionStrategy;
+          PROP_NAME_TO_ID.put(PROP_NAME_batchSelectionStrategy, PROP_ID_batchSelectionStrategy);
+      
     }
 
     
@@ -194,6 +201,9 @@ public class _ErpMdWarehouse extends DynamicOrmEntity{
     
     /* 备注: REMARK */
     private java.lang.String _remark;
+    
+    /* 批次选择策略: BATCH_SELECTION_STRATEGY */
+    private java.lang.String _batchSelectionStrategy;
     
 
     public _ErpMdWarehouse(){
@@ -313,6 +323,9 @@ public class _ErpMdWarehouse extends DynamicOrmEntity{
         
             case PROP_ID_remark:
                return getRemark();
+        
+            case PROP_ID_batchSelectionStrategy:
+               return getBatchSelectionStrategy();
         
            default:
               return super.orm_propValue(propId);
@@ -475,6 +488,16 @@ public class _ErpMdWarehouse extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_batchSelectionStrategy:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_batchSelectionStrategy));
+               }
+               setBatchSelectionStrategy(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -585,6 +608,13 @@ public class _ErpMdWarehouse extends DynamicOrmEntity{
             case PROP_ID_remark:{
                onInitProp(propId);
                this._remark = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_batchSelectionStrategy:{
+               onInitProp(propId);
+               this._batchSelectionStrategy = (java.lang.String)value;
                
                break;
             }
@@ -876,6 +906,25 @@ public class _ErpMdWarehouse extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_remark,value)){
             this._remark = value;
             internalClearRefs(PROP_ID_remark);
+            
+        }
+    }
+    
+    /**
+     * 批次选择策略: BATCH_SELECTION_STRATEGY
+     */
+    public final java.lang.String getBatchSelectionStrategy(){
+         onPropGet(PROP_ID_batchSelectionStrategy);
+         return _batchSelectionStrategy;
+    }
+
+    /**
+     * 批次选择策略: BATCH_SELECTION_STRATEGY
+     */
+    public final void setBatchSelectionStrategy(java.lang.String value){
+        if(onPropSet(PROP_ID_batchSelectionStrategy,value)){
+            this._batchSelectionStrategy = value;
+            internalClearRefs(PROP_ID_batchSelectionStrategy);
             
         }
     }

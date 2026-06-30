@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 批次选择策略
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 先进先出
+    value: FIFO
+    description: 
+  
+  - label: 先到期先出
+    value: FEFO
+    description: 
+  
+  - label: 手工指定
+    value: MANUAL
+    description: 
+  

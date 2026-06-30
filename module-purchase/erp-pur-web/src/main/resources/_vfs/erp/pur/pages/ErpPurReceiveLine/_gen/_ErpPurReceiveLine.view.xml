@@ -40,10 +40,10 @@
                 <col id="uoMId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--实收数量-->
-                <col id="quantity" mandatory="true" sortable="true"/>
+                <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--拒收数量-->
-                <col id="rejectedQuantity" sortable="true"/>
+                <col id="rejectedQuantity" ui:number="true" sortable="true"/>
 
                 <!--单价(不含税)-->
                 <col id="unitPrice" sortable="true"/>

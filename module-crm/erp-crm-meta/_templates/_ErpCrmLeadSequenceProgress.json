@@ -1,0 +1,21 @@
+{
+  "id": 0,
+  "leadId": 0,
+  "sequenceId": 0,
+  "orgId": 0,
+  "currentStepIndex": 0,
+  "status": "",
+  "status_label": "",
+  "startedAt": "2000-01-01 14:00:00",
+  "completedAt": "2000-01-01 14:00:00",
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "lead": null,
+  "sequence": null,
+  "org": null
+}

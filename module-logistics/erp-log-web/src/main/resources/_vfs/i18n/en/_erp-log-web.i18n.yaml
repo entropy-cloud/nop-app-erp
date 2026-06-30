@@ -1,0 +1,20 @@
+site:
+  resource:
+    ErpLogCarrier-main:
+      displayName: Carrier
+    ErpLogCarrierConfig-main:
+      displayName: Carrier Config
+    ErpLogDeliveryWindow-main:
+      displayName: Delivery Window
+    ErpLogShipment-main:
+      displayName: Shipment
+    ErpLogShipmentLine-main:
+      displayName: Shipment Line
+    erp-log:
+      displayName: Transportation
+    log-carrier:
+      displayName: Carriers
+    log-delivery:
+      displayName: Delivery
+    log-shipment:
+      displayName: Shipments

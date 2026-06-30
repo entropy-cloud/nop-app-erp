@@ -3,6 +3,10 @@ entity:
     ErpFinAccountingPeriod: Accounting Period
     ErpFinAccountingPeriodStatus: Period Close Status
     ErpFinArApItem: AR/AP Subledger
+    ErpFinBankReconciliation: Bank Reconciliation
+    ErpFinBankReconciliationLine: Bank Reconciliation Line
+    ErpFinBankStatement: Bank Statement
+    ErpFinBankStatementLine: Bank Statement Line
     ErpFinFundAccount: Fund Account
     ErpFinGlBalance: GL Balance
     ErpFinReconciliation: Reconciliation
@@ -94,6 +98,95 @@ prop:
       updateTime: Update Time
       partner: Partner
       acctSchema: Acct Schema
+      currency: Currency
+    ErpFinBankReconciliation:
+      id: ID
+      code: Code
+      orgId: Organization
+      fundAccountId: Fund Account
+      statementId: Bank Statement
+      reconciliationDate: Reconciliation Date
+      bookBalance: Book Balance
+      statementBalance: Statement Balance
+      unreconciledDiff: Unreconciled Difference
+      isBalanced: Is Balanced
+      reconciledAt: Reconciled At
+      reconciledBy: Reconciled By
+      docStatus: Doc Status
+      docStatus_label: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      fundAccount: Fund Account
+      statement: Bank Statement
+      adjustmentLines: Adjustment Lines
+    ErpFinBankReconciliationLine:
+      id: ID
+      reconciliationId: Reconciliation
+      lineNo: Line No
+      adjustmentType: Adjustment Type
+      description: Description
+      dcDirection: Dc Direction
+      dcDirection_label: null
+      amount: Amount
+      side: Side
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      reconciliation: Reconciliation
+    ErpFinBankStatement:
+      id: ID
+      code: Code
+      orgId: Organization
+      fundAccountId: Fund Account
+      statementDate: Statement Date
+      beginningBalance: Opening Balance
+      endingBalance: Closing Balance
+      totalDebit: Total Debit
+      totalCredit: Total Credit
+      importTime: Import Time
+      docStatus: Doc Status
+      docStatus_label: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      fundAccount: Fund Account
+    ErpFinBankStatementLine:
+      id: ID
+      statementId: Statement
+      lineNo: Line No
+      transactionDate: Transaction Date
+      description: Description
+      refNo: Reference No
+      dcDirection: Dc Direction
+      dcDirection_label: null
+      amount: Amount
+      currencyId: Currency
+      balanceAfter: Balance After
+      matchStatus: Match Status
+      matchStatus_label: null
+      matchedLineId: Matched Line
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      statement: Statement
+      matchedLine: Matched Voucher Line
       currency: Currency
     ErpFinFundAccount:
       id: ID
@@ -222,6 +315,8 @@ prop:
       code: Code
       voucherType: Voucher Type
       voucherType_label: null
+      postingType: Posting Type
+      postingType_label: null
       voucherDate: Voucher Date
       voucherNo: Voucher No
       orgId: Organization
@@ -286,6 +381,7 @@ prop:
       materialId: Material
       businessType: Business Type
       businessType_label: null
+      costCenterId: Cost Center
       delVersion: Del Flag
       version: Version
       createdBy: Created By
@@ -302,6 +398,7 @@ prop:
       org: Org
       material: Material
       project: Project
+      costCenter: Cost Center
     ErpFinVoucherTemplate:
       id: ID
       code: Code
@@ -344,6 +441,7 @@ prop:
 dict:
   label:
     erp-fin/voucher-type: Voucher Type
+    erp-fin/posting-type: Posting Type
     erp-fin/voucher-status: Voucher Status
     erp-fin/dc-direction: Debit/Credit Direction
     erp-fin/business-type: Business Type
@@ -359,6 +457,12 @@ dict.option.label:
     '10': Receive
     '20': Pay
     '30': Transfer
+  erp-fin/posting-type:
+    '10': Normal
+    '20': Opening Balance
+    '30': Adjustment
+    '40': Period Closing
+    '50': Reversal
   erp-fin/voucher-status:
     '10': Draft
     '20': Posted

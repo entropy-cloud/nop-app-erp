@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 安全库存计算方法
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 标准差法
+    value: 10
+    description: 
+  
+  - label: 简易法
+    value: 20
+    description: 
+  
+  - label: 需求驱动法
+    value: 30
+    description: 
+  

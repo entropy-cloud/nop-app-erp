@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 返利类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 采购返利
+    value: 10
+    description: 
+  
+  - label: 销售返利
+    value: 20
+    description: 
+  

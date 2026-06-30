@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 区域类型
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 大区
+    value: REGION
+    description: 
+  
+  - label: 地区
+    value: AREA
+    description: 
+  
+  - label: 分公司
+    value: BRANCH
+    description: 
+  
+  - label: 团队
+    value: TEAM
+    description: 
+  

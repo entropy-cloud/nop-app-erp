@@ -3,6 +3,7 @@ entity:
     ErpMdAcctSchema: 会计核算表(账套)
     ErpMdAcctSchemaCoa: 账套科目表
     ErpMdBankAccount: 银行账户
+    ErpMdCostCenter: 成本中心
     ErpMdCurrency: 币种
     ErpMdEmployee: 职员
     ErpMdExchangeRate: 汇率
@@ -20,6 +21,7 @@ entity:
     ErpMdUoM: 计量单位
     ErpMdUoMConversion: 单位换算
     ErpMdWarehouse: 仓库
+    ErpSysConfig: 系统配置
 prop:
   label:
     ErpMdAcctSchema:
@@ -71,6 +73,27 @@ prop:
       isDefault: 是否默认
       partner: null
       partnerId: 往来单位
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpMdCostCenter:
+      children: null
+      code: 编码
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      isBudgetable: 是否预算管控
+      manager: null
+      managerId: 负责人
+      name: 名称
+      orgId: 所属组织
+      organization: null
+      parent: null
+      parentId: 上级成本中心
+      remark: 备注
+      status: 状态
+      status_label: 状态
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -317,11 +340,13 @@ prop:
       direction: 余额方向
       direction_label: 余额方向
       id: ID
+      isAuxiliaryCostCenter: 辅助-成本中心
       isAuxiliaryDepartment: 辅助-部门
       isAuxiliaryPartner: 辅助-往来单位
       isAuxiliaryProduct: 辅助-物料
       isAuxiliaryProject: 辅助-项目
       isAuxiliaryWarehouse: 辅助-仓库
+      isBudgetable: 是否预算控制
       isLeaf: 是否明细科目
       name: 科目名称
       parent: null
@@ -382,6 +407,8 @@ prop:
       version: 数据版本
     ErpMdWarehouse:
       address: 地址
+      batchSelectionStrategy: 批次选择策略
+      batchSelectionStrategy_label: 批次选择策略
       code: 编码
       createTime: 创建时间
       createdBy: 创建人
@@ -401,3 +428,16 @@ prop:
       version: 数据版本
       warehouseType: 仓库类型
       warehouseType_label: 仓库类型
+    ErpSysConfig:
+      configKey: 配置键
+      configValue: 配置值
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      description: 说明
+      id: ID
+      orgId: 所属组织
+      organization: null
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本

@@ -375,7 +375,7 @@ CREATE TABLE erp_mfg_work_order(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
-  exchange_rate NUMERIC(20,8) default 1   ,
+  exchange_rate NUMERIC(20,8) default 1  NOT NULL ,
   amount_source NUMERIC(20,4) default 0   ,
   amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_mfg_work_order primary key (id)
@@ -411,25 +411,29 @@ CREATE TABLE erp_mfg_subcontract_order(
   work_order_id INT8  ,
   supplier_id INT8 NOT NULL ,
   workcenter_id INT8  ,
+  routing_id INT8  ,
+  production_version_id INT8  ,
+  product_id INT8 NOT NULL ,
   business_date DATE NOT NULL ,
   currency_id INT8 NOT NULL ,
-  exchange_rate NUMERIC(20,8) default 1   ,
+  exchange_rate NUMERIC(20,8) default 1  NOT NULL ,
   processing_fee NUMERIC(20,4) default 0   ,
   total_amount NUMERIC(20,4) default 0   ,
   doc_status INT4 NOT NULL ,
   approve_status INT4 NOT NULL ,
   posted BOOLEAN default false   ,
+  posted_status VARCHAR(20) NOT NULL ,
   posted_at TIMESTAMP  ,
   posted_by INT8  ,
   remark VARCHAR(1000)  ,
+  amount_source NUMERIC(20,4) default 0   ,
+  amount_functional NUMERIC(20,4) default 0   ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
   created_by VARCHAR(50) NOT NULL ,
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
-  amount_source NUMERIC(20,4) default 0   ,
-  amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_mfg_subcontract_order primary key (id)
 );
 
@@ -454,6 +458,35 @@ CREATE TABLE erp_mfg_job_card(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   constraint PK_erp_mfg_job_card primary key (id)
+);
+
+CREATE TABLE erp_mfg_cost_variance(
+  id INT8 NOT NULL ,
+  work_order_id INT8 NOT NULL ,
+  line_no INT4 NOT NULL ,
+  variance_type VARCHAR(50) NOT NULL ,
+  cost_element VARCHAR(50) NOT NULL ,
+  material_id INT8  ,
+  operation_id INT8  ,
+  standard_amount NUMERIC(20,4) default 0   ,
+  actual_amount NUMERIC(20,4) default 0   ,
+  variance_amount NUMERIC(20,4) default 0   ,
+  variance_percent NUMERIC(10,4) default 0   ,
+  standard_qty NUMERIC(20,4) default 0   ,
+  actual_qty NUMERIC(20,4) default 0   ,
+  standard_price NUMERIC(20,4) default 0   ,
+  actual_price NUMERIC(20,4) default 0   ,
+  workcenter_id INT8  ,
+  business_date DATE NOT NULL ,
+  posted BOOLEAN default false   ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_mfg_cost_variance primary key (id)
 );
 
 CREATE TABLE erp_mfg_subcontract_order_line(
@@ -496,7 +529,7 @@ CREATE TABLE erp_mfg_material_issue(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   currency_id INT8  ,
-  exchange_rate NUMERIC(20,8) default 1   ,
+  exchange_rate NUMERIC(20,8) default 1  NOT NULL ,
   amount_source NUMERIC(20,4) default 0   ,
   amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_mfg_material_issue primary key (id)
@@ -525,6 +558,34 @@ CREATE TABLE erp_mfg_job_card_time_log(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   constraint PK_erp_mfg_job_card_time_log primary key (id)
+);
+
+CREATE TABLE erp_mfg_batch_genealogy(
+  id INT8 NOT NULL ,
+  work_order_id INT8 NOT NULL ,
+  job_card_id INT8  ,
+  operation_id INT8  ,
+  input_lot_id INT8 NOT NULL ,
+  input_material_id INT8 NOT NULL ,
+  input_qty NUMERIC(20,4) NOT NULL ,
+  input_uo_m_id INT8 NOT NULL ,
+  output_lot_id INT8 NOT NULL ,
+  output_material_id INT8 NOT NULL ,
+  output_qty NUMERIC(20,4) NOT NULL ,
+  output_uo_m_id INT8 NOT NULL ,
+  production_date DATE NOT NULL ,
+  production_time TIMESTAMP  ,
+  line_no INT4 NOT NULL ,
+  lot_status VARCHAR(50)  ,
+  is_input_consumed BOOLEAN default false   ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_mfg_batch_genealogy primary key (id)
 );
 
 CREATE TABLE erp_mfg_material_issue_line(
@@ -1152,6 +1213,12 @@ CREATE TABLE erp_mfg_material_issue_line(
                     
       COMMENT ON COLUMN erp_mfg_subcontract_order.workcenter_id IS '外协工作中心';
                     
+      COMMENT ON COLUMN erp_mfg_subcontract_order.routing_id IS '工艺路线';
+                    
+      COMMENT ON COLUMN erp_mfg_subcontract_order.production_version_id IS '生产版本';
+                    
+      COMMENT ON COLUMN erp_mfg_subcontract_order.product_id IS '产品';
+                    
       COMMENT ON COLUMN erp_mfg_subcontract_order.business_date IS '委外日期';
                     
       COMMENT ON COLUMN erp_mfg_subcontract_order.currency_id IS '币种';
@@ -1168,11 +1235,17 @@ CREATE TABLE erp_mfg_material_issue_line(
                     
       COMMENT ON COLUMN erp_mfg_subcontract_order.posted IS '已过账';
                     
+      COMMENT ON COLUMN erp_mfg_subcontract_order.posted_status IS '过账状态';
+                    
       COMMENT ON COLUMN erp_mfg_subcontract_order.posted_at IS '过账时间';
                     
       COMMENT ON COLUMN erp_mfg_subcontract_order.posted_by IS '过账人';
                     
       COMMENT ON COLUMN erp_mfg_subcontract_order.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_mfg_subcontract_order.amount_source IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_mfg_subcontract_order.amount_functional IS '本位币金额';
                     
       COMMENT ON COLUMN erp_mfg_subcontract_order.del_version IS '逻辑删除版本';
                     
@@ -1185,10 +1258,6 @@ CREATE TABLE erp_mfg_material_issue_line(
       COMMENT ON COLUMN erp_mfg_subcontract_order.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_mfg_subcontract_order.update_time IS '修改时间';
-                    
-      COMMENT ON COLUMN erp_mfg_subcontract_order.amount_source IS '源币种金额';
-                    
-      COMMENT ON COLUMN erp_mfg_subcontract_order.amount_functional IS '本位币金额';
                     
       COMMENT ON TABLE erp_mfg_job_card IS '作业卡';
                 
@@ -1229,6 +1298,58 @@ CREATE TABLE erp_mfg_material_issue_line(
       COMMENT ON COLUMN erp_mfg_job_card.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_mfg_job_card.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_mfg_cost_variance IS '成本差异记录';
+                
+      COMMENT ON COLUMN erp_mfg_cost_variance.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_variance.work_order_id IS '工单';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_variance.line_no IS '行号';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_variance.variance_type IS '差异类型';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_variance.cost_element IS '成本要素';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_variance.material_id IS '物料';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_variance.operation_id IS '工序';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_variance.standard_amount IS '标准金额';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_variance.actual_amount IS '实际金额';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_variance.variance_amount IS '差异金额';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_variance.variance_percent IS '差异百分比';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_variance.standard_qty IS '标准数量';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_variance.actual_qty IS '实际数量';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_variance.standard_price IS '标准单价';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_variance.actual_price IS '实际单价';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_variance.workcenter_id IS '工作中心';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_variance.business_date IS '业务日期';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_variance.posted IS '已过账';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_variance.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_variance.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_variance.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_variance.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_variance.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_variance.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_variance.update_time IS '修改时间';
                     
       COMMENT ON TABLE erp_mfg_subcontract_order_line IS '委外加工单行';
                 
@@ -1353,6 +1474,56 @@ CREATE TABLE erp_mfg_material_issue_line(
       COMMENT ON COLUMN erp_mfg_job_card_time_log.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_mfg_job_card_time_log.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_mfg_batch_genealogy IS '批次追溯';
+                
+      COMMENT ON COLUMN erp_mfg_batch_genealogy.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_mfg_batch_genealogy.work_order_id IS '工单';
+                    
+      COMMENT ON COLUMN erp_mfg_batch_genealogy.job_card_id IS '作业卡';
+                    
+      COMMENT ON COLUMN erp_mfg_batch_genealogy.operation_id IS '工序';
+                    
+      COMMENT ON COLUMN erp_mfg_batch_genealogy.input_lot_id IS '输入批次';
+                    
+      COMMENT ON COLUMN erp_mfg_batch_genealogy.input_material_id IS '输入物料';
+                    
+      COMMENT ON COLUMN erp_mfg_batch_genealogy.input_qty IS '投入数量';
+                    
+      COMMENT ON COLUMN erp_mfg_batch_genealogy.input_uo_m_id IS '投入计量单位';
+                    
+      COMMENT ON COLUMN erp_mfg_batch_genealogy.output_lot_id IS '产出批次';
+                    
+      COMMENT ON COLUMN erp_mfg_batch_genealogy.output_material_id IS '产出物料';
+                    
+      COMMENT ON COLUMN erp_mfg_batch_genealogy.output_qty IS '产出数量';
+                    
+      COMMENT ON COLUMN erp_mfg_batch_genealogy.output_uo_m_id IS '产出计量单位';
+                    
+      COMMENT ON COLUMN erp_mfg_batch_genealogy.production_date IS '生产日期';
+                    
+      COMMENT ON COLUMN erp_mfg_batch_genealogy.production_time IS '生产时间';
+                    
+      COMMENT ON COLUMN erp_mfg_batch_genealogy.line_no IS '行号';
+                    
+      COMMENT ON COLUMN erp_mfg_batch_genealogy.lot_status IS '批次状态';
+                    
+      COMMENT ON COLUMN erp_mfg_batch_genealogy.is_input_consumed IS '输入是否已消耗';
+                    
+      COMMENT ON COLUMN erp_mfg_batch_genealogy.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_mfg_batch_genealogy.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_mfg_batch_genealogy.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_mfg_batch_genealogy.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_mfg_batch_genealogy.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_mfg_batch_genealogy.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_mfg_batch_genealogy.update_time IS '修改时间';
                     
       COMMENT ON TABLE erp_mfg_material_issue_line IS '领料单行';
                 

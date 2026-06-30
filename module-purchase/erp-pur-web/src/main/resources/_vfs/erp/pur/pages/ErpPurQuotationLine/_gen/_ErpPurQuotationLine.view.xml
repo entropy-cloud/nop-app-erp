@@ -34,7 +34,7 @@
                 <col id="uoMId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--数量-->
-                <col id="quantity" sortable="true"/>
+                <col id="quantity" ui:number="true" sortable="true"/>
 
                 <!--报价单价(不含税)-->
                 <col id="unitPrice" mandatory="true" sortable="true"/>

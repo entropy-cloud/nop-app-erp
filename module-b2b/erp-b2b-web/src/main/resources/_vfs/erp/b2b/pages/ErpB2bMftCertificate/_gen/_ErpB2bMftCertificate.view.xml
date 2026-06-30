@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:schema="/nop/schema/xui/xview.xdef" bizObjName="ErpB2bMftCertificate" xmlns:i18n-en="i18n-en"
+      xmlns:x="/nop/schema/xdsl.xdef" xmlns:j="j" xmlns:c="c" xmlns:gql="gql" xmlns:view-gen="view-gen" xmlns:xpl="xpl">
+
+    <objMeta>/erp/b2b/model/ErpB2bMftCertificate/ErpB2bMftCertificate.xmeta</objMeta>
+
+    <controlLib>/nop/web/xlib/control.xlib</controlLib>
+
+    <x:gen-extends>
+        <view-gen:DefaultViewGenExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <view-gen:DefaultViewPostExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:post-extends>
+
+    <grids>
+        <grid id="list" x:abstract="true">
+            <cols>
+
+                <!--ID-->
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--业务组织-->
+                <col id="orgId" ui:number="true" sortable="true"/>
+
+                <!--合作伙伴-->
+                <col id="partnerId" ui:number="true" sortable="true"/>
+
+                <!--证书名称-->
+                <col id="certName" mandatory="true" sortable="true"/>
+
+                <!--证书类型-->
+                <col id="certType" mandatory="true" sortable="true"/>
+
+                <!--算法-->
+                <col id="algorithm" mandatory="true" sortable="true"/>
+
+                <!--密钥长度-->
+                <col id="keySize" ui:number="true" sortable="true"/>
+
+                <!--颁发者-->
+                <col id="issuerName" sortable="true"/>
+
+                <!--主题-->
+                <col id="subjectName" sortable="true"/>
+
+                <!--序列号-->
+                <col id="serialNo" sortable="true"/>
+
+                <!--SHA-256指纹-->
+                <col id="fingerprintSha256" sortable="true"/>
+
+                <!--颁发日期-->
+                <col id="issuedAt" sortable="true"/>
+
+                <!--过期日期-->
+                <col id="expiresAt" mandatory="true" sortable="true"/>
+
+                <!--启用-->
+                <col id="isActive" sortable="true"/>
+
+                <!--备注-->
+                <col id="remark" sortable="true"/>
+
+                <!--逻辑删除版本-->
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--创建人-->
+                <col id="createdBy" mandatory="true" sortable="true"/>
+
+                <!--创建时间-->
+                <col id="createTime" mandatory="true" sortable="true"/>
+
+                <!--修改人-->
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+
+                <!--修改时间-->
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list" x:prototype="list" x:abstract="true"/>
+    </grids>
+
+    <forms>
+        <form id="view" editMode="view" title="查看-MFT 证书" i18n-en:title="View MFT Certificate">
+            <layout>
+ id[ID] orgId[业务组织]
+ partnerId[合作伙伴] certName[证书名称]
+ certType[证书类型] algorithm[算法]
+ keySize[密钥长度] issuerName[颁发者]
+ subjectName[主题] serialNo[序列号]
+ fingerprintSha256[SHA-256指纹] issuedAt[颁发日期]
+ expiresAt[过期日期] isActive[启用]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+</layout>
+        </form>
+        <form id="add" editMode="add" title="新增-MFT 证书" i18n-en:title="Add MFT Certificate">
+            <layout>
+ id[ID] orgId[业务组织]
+ partnerId[合作伙伴] certName[证书名称]
+ certType[证书类型] algorithm[算法]
+ keySize[密钥长度] issuerName[颁发者]
+ subjectName[主题] serialNo[序列号]
+ fingerprintSha256[SHA-256指纹] issuedAt[颁发日期]
+ expiresAt[过期日期] isActive[启用]
+ remark[备注] 
+</layout>
+        </form>
+        <form id="edit" editMode="edit" title="编辑-MFT 证书" i18n-en:title="Edit MFT Certificate">
+            <layout>
+ id[ID] orgId[业务组织]
+ partnerId[合作伙伴] certName[证书名称]
+ certType[证书类型] algorithm[算法]
+ keySize[密钥长度] issuerName[颁发者]
+ subjectName[主题] serialNo[序列号]
+ fingerprintSha256[SHA-256指纹] issuedAt[颁发日期]
+ expiresAt[过期日期] isActive[启用]
+ remark[备注] delVersion[逻辑删除版本]
+</layout>
+        </form>
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-MFT 证书"
+              i18n-en:title="Update MFT Certificate"/>
+    </forms>
+
+    <pages>
+        <crud name="view-list" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpB2bMftCertificate__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </crud>
+        <crud name="main" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpB2bMftCertificate__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+            <listActions>
+                <action id="batch-delete-button" label="@i18n:common.batchDelete" batch="true">
+                    <api url="@mutation:ErpB2bMftCertificate__batchDelete?ids=$ids"/>
+                    <confirmText>@i18n:common.confirmBatchDelete</confirmText>
+                </action>
+                <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
+                    <dialog page="add"/>
+                </action>
+            </listActions>
+            <rowActions>
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+                <action id="row-update-button" level="primary" label="@i18n:common.edit" x:abstract="true">
+                    <dialog page="update"/>
+                </action>
+                <action id="row-delete-button" level="danger" label="@i18n:common.delete" x:abstract="true">
+                    <api url="@mutation:ErpB2bMftCertificate__delete?id=$id"/>
+                    <confirmText>@i18n:common.confirmDelete</confirmText>
+                </action>
+                <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
+                    <action id="row-update-button" label="@i18n:common.edit">
+                        <dialog page="update"/>
+                    </action>
+                    <action id="row-delete-button" label="@i18n:common.delete">
+                        <api url="@mutation:ErpB2bMftCertificate__delete?id=$id"/>
+                        <confirmText>@i18n:common.confirmDelete</confirmText>
+                    </action>
+                </actionGroup>
+            </rowActions>
+        </crud>
+        <picker name="picker" grid="pick-list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table noOperations="true">
+                <api url="@query:ErpB2bMftCertificate__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </picker>
+        <simple name="add" form="add">
+            <api url="@mutation:ErpB2bMftCertificate__save/id"/>
+        </simple>
+        <simple name="view" form="view">
+            <initApi url="@query:ErpB2bMftCertificate__get?id=$id" gql:selection="{@formSelection}"/>
+        </simple>
+        <simple name="update" form="edit">
+            <initApi url="@query:ErpB2bMftCertificate__get?id=$id" gql:selection="{@formSelection}"/>
+            <api url="@mutation:ErpB2bMftCertificate__update/id?id=$id" withFormData="true"/>
+        </simple>
+    </pages>
+</view>

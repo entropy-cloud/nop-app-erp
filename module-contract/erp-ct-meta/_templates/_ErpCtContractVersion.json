@@ -1,0 +1,21 @@
+{
+  "id": 0,
+  "contractId": 0,
+  "versionNo": 0,
+  "versionDate": "2000-01-01",
+  "content": "",
+  "attachmentId": 0,
+  "isCurrent": false,
+  "status": 0,
+  "status_label": "",
+  "approvedBy": 0,
+  "approvedAt": "2000-01-01 14:00:00",
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "contract": null
+}

@@ -224,10 +224,10 @@ public class _ErpPurReceiveLine extends DynamicOrmEntity{
     private java.lang.Long _uoMId;
     
     /* 实收数量: QUANTITY */
-    private java.lang.String _quantity;
+    private java.math.BigDecimal _quantity;
     
     /* 拒收数量: REJECTED_QUANTITY */
-    private java.lang.String _rejectedQuantity;
+    private java.math.BigDecimal _rejectedQuantity;
     
     /* 单价(不含税): UNIT_PRICE */
     private java.lang.String _unitPrice;
@@ -490,9 +490,9 @@ public class _ErpPurReceiveLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_quantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_quantity));
                }
                setQuantity(typedValue);
@@ -500,9 +500,9 @@ public class _ErpPurReceiveLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_rejectedQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_rejectedQuantity));
                }
                setRejectedQuantity(typedValue);
@@ -699,14 +699,14 @@ public class _ErpPurReceiveLine extends DynamicOrmEntity{
         
             case PROP_ID_quantity:{
                onInitProp(propId);
-               this._quantity = (java.lang.String)value;
+               this._quantity = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_rejectedQuantity:{
                onInitProp(propId);
-               this._rejectedQuantity = (java.lang.String)value;
+               this._rejectedQuantity = (java.math.BigDecimal)value;
                
                break;
             }
@@ -944,7 +944,7 @@ public class _ErpPurReceiveLine extends DynamicOrmEntity{
     /**
      * 实收数量: QUANTITY
      */
-    public final java.lang.String getQuantity(){
+    public final java.math.BigDecimal getQuantity(){
          onPropGet(PROP_ID_quantity);
          return _quantity;
     }
@@ -952,7 +952,7 @@ public class _ErpPurReceiveLine extends DynamicOrmEntity{
     /**
      * 实收数量: QUANTITY
      */
-    public final void setQuantity(java.lang.String value){
+    public final void setQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_quantity,value)){
             this._quantity = value;
             internalClearRefs(PROP_ID_quantity);
@@ -963,7 +963,7 @@ public class _ErpPurReceiveLine extends DynamicOrmEntity{
     /**
      * 拒收数量: REJECTED_QUANTITY
      */
-    public final java.lang.String getRejectedQuantity(){
+    public final java.math.BigDecimal getRejectedQuantity(){
          onPropGet(PROP_ID_rejectedQuantity);
          return _rejectedQuantity;
     }
@@ -971,7 +971,7 @@ public class _ErpPurReceiveLine extends DynamicOrmEntity{
     /**
      * 拒收数量: REJECTED_QUANTITY
      */
-    public final void setRejectedQuantity(java.lang.String value){
+    public final void setRejectedQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_rejectedQuantity,value)){
             this._rejectedQuantity = value;
             internalClearRefs(PROP_ID_rejectedQuantity);

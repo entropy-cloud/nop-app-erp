@@ -33,84 +33,88 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
     public static final String PROP_NAME_voucherType = "voucherType";
     public static final int PROP_ID_voucherType = 3;
     
+    /* 过账类型: POSTING_TYPE INTEGER */
+    public static final String PROP_NAME_postingType = "postingType";
+    public static final int PROP_ID_postingType = 4;
+    
     /* 凭证日期: VOUCHER_DATE DATE */
     public static final String PROP_NAME_voucherDate = "voucherDate";
-    public static final int PROP_ID_voucherDate = 4;
+    public static final int PROP_ID_voucherDate = 5;
     
     /* 凭证编号: VOUCHER_NO VARCHAR */
     public static final String PROP_NAME_voucherNo = "voucherNo";
-    public static final int PROP_ID_voucherNo = 5;
+    public static final int PROP_ID_voucherNo = 6;
     
     /* 核算组织: ORG_ID BIGINT */
     public static final String PROP_NAME_orgId = "orgId";
-    public static final int PROP_ID_orgId = 6;
+    public static final int PROP_ID_orgId = 7;
     
     /* 账套: ACCT_SCHEMA_ID BIGINT */
     public static final String PROP_NAME_acctSchemaId = "acctSchemaId";
-    public static final int PROP_ID_acctSchemaId = 7;
+    public static final int PROP_ID_acctSchemaId = 8;
     
     /* 会计期间: PERIOD_ID BIGINT */
     public static final String PROP_NAME_periodId = "periodId";
-    public static final int PROP_ID_periodId = 8;
+    public static final int PROP_ID_periodId = 9;
     
     /* 借方合计(本位币): TOTAL_DEBIT DECIMAL */
     public static final String PROP_NAME_totalDebit = "totalDebit";
-    public static final int PROP_ID_totalDebit = 9;
+    public static final int PROP_ID_totalDebit = 10;
     
     /* 贷方合计(本位币): TOTAL_CREDIT DECIMAL */
     public static final String PROP_NAME_totalCredit = "totalCredit";
-    public static final int PROP_ID_totalCredit = 10;
+    public static final int PROP_ID_totalCredit = 11;
     
     /* 是否红字冲销凭证: IS_REVERSED BOOLEAN */
     public static final String PROP_NAME_isReversed = "isReversed";
-    public static final int PROP_ID_isReversed = 11;
+    public static final int PROP_ID_isReversed = 12;
     
     /* 原冲销凭证ID: REVERSAL_OF_VOUCHER_ID BIGINT */
     public static final String PROP_NAME_reversalOfVoucherId = "reversalOfVoucherId";
-    public static final int PROP_ID_reversalOfVoucherId = 12;
+    public static final int PROP_ID_reversalOfVoucherId = 13;
     
     /* 凭证状态: DOC_STATUS INTEGER */
     public static final String PROP_NAME_docStatus = "docStatus";
-    public static final int PROP_ID_docStatus = 13;
+    public static final int PROP_ID_docStatus = 14;
     
     /* 过账人: POSTED_BY BIGINT */
     public static final String PROP_NAME_postedBy = "postedBy";
-    public static final int PROP_ID_postedBy = 14;
+    public static final int PROP_ID_postedBy = 15;
     
     /* 过账时间: POSTED_AT DATETIME */
     public static final String PROP_NAME_postedAt = "postedAt";
-    public static final int PROP_ID_postedAt = 15;
+    public static final int PROP_ID_postedAt = 16;
     
     /* 备注: REMARK VARCHAR */
     public static final String PROP_NAME_remark = "remark";
-    public static final int PROP_ID_remark = 16;
+    public static final int PROP_ID_remark = 17;
     
     /* 逻辑删除版本: DEL_VERSION BIGINT */
     public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 17;
+    public static final int PROP_ID_delVersion = 18;
     
     /* 数据版本: VERSION INTEGER */
     public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 18;
+    public static final int PROP_ID_version = 19;
     
     /* 创建人: CREATED_BY VARCHAR */
     public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 19;
+    public static final int PROP_ID_createdBy = 20;
     
     /* 创建时间: CREATE_TIME TIMESTAMP */
     public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 20;
+    public static final int PROP_ID_createTime = 21;
     
     /* 修改人: UPDATED_BY VARCHAR */
     public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 21;
+    public static final int PROP_ID_updatedBy = 22;
     
     /* 修改时间: UPDATE_TIME TIMESTAMP */
     public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 22;
+    public static final int PROP_ID_updateTime = 23;
     
 
-    private static int _PROP_ID_BOUND = 23;
+    private static int _PROP_ID_BOUND = 24;
 
     
     /* relation:  */
@@ -129,7 +133,7 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[23];
+    private static final String[] PROP_ID_TO_NAME = new String[24];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -141,6 +145,9 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_voucherType] = PROP_NAME_voucherType;
           PROP_NAME_TO_ID.put(PROP_NAME_voucherType, PROP_ID_voucherType);
+      
+          PROP_ID_TO_NAME[PROP_ID_postingType] = PROP_NAME_postingType;
+          PROP_NAME_TO_ID.put(PROP_NAME_postingType, PROP_ID_postingType);
       
           PROP_ID_TO_NAME[PROP_ID_voucherDate] = PROP_NAME_voucherDate;
           PROP_NAME_TO_ID.put(PROP_NAME_voucherDate, PROP_ID_voucherDate);
@@ -210,6 +217,9 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
     
     /* 凭证字: VOUCHER_TYPE */
     private java.lang.Integer _voucherType;
+    
+    /* 过账类型: POSTING_TYPE */
+    private java.lang.Integer _postingType;
     
     /* 凭证日期: VOUCHER_DATE */
     private java.time.LocalDate _voucherDate;
@@ -351,6 +361,9 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
             case PROP_ID_voucherType:
                return getVoucherType();
         
+            case PROP_ID_postingType:
+               return getPostingType();
+        
             case PROP_ID_voucherDate:
                return getVoucherDate();
         
@@ -446,6 +459,16 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_voucherType));
                }
                setVoucherType(typedValue);
+               break;
+            }
+        
+            case PROP_ID_postingType:{
+               java.lang.Integer typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toInteger(value,
+                       err-> newTypeConversionError(PROP_NAME_postingType));
+               }
+               setPostingType(typedValue);
                break;
             }
         
@@ -669,6 +692,13 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_postingType:{
+               onInitProp(propId);
+               this._postingType = (java.lang.Integer)value;
+               
+               break;
+            }
+        
             case PROP_ID_voucherDate:{
                onInitProp(propId);
                this._voucherDate = (java.time.LocalDate)value;
@@ -861,6 +891,25 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_voucherType,value)){
             this._voucherType = value;
             internalClearRefs(PROP_ID_voucherType);
+            
+        }
+    }
+    
+    /**
+     * 过账类型: POSTING_TYPE
+     */
+    public final java.lang.Integer getPostingType(){
+         onPropGet(PROP_ID_postingType);
+         return _postingType;
+    }
+
+    /**
+     * 过账类型: POSTING_TYPE
+     */
+    public final void setPostingType(java.lang.Integer value){
+        if(onPropSet(PROP_ID_postingType,value)){
+            this._postingType = value;
+            internalClearRefs(PROP_ID_postingType);
             
         }
     }

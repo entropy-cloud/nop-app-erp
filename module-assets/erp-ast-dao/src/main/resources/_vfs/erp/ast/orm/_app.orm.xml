@@ -312,8 +312,8 @@
                         stdSqlType="DATE" i18n-en:displayName="Business Date"/>
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="22" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
-                <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" name="exchangeRate" precision="20"
-                        propId="23" scale="8" stdDataType="string" stdSqlType="DECIMAL"
+                <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" mandatory="true" name="exchangeRate"
+                        precision="20" propId="23" scale="8" stdDataType="string" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
                 <column code="AMOUNT_SOURCE" defaultValue="0" displayName="源币种金额" name="amountSource" precision="20"
                         propId="24" scale="4" stdDataType="string" stdSqlType="DECIMAL"
@@ -378,7 +378,8 @@
                 <column code="POSTED_BY" displayName="过账人" name="postedBy" propId="19" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Posted By"/>
                 <column code="DOC_VERSION" defaultValue="1" displayName="单据版本" mandatory="true" name="docVersion"
-                        propId="20" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Doc Version"/>
+                        precision="20" propId="20" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Doc Version"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="21" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Del Flag"/>
@@ -398,14 +399,14 @@
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="28" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
-                <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" name="exchangeRate" precision="20"
-                        propId="29" scale="8" stdDataType="string" stdSqlType="DECIMAL"
+                <column code="EXCHANGE_RATE" displayName="汇率" mandatory="true" name="exchangeRate" precision="20"
+                        propId="29" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
                 <column code="AMOUNT_SOURCE" defaultValue="0" displayName="源币种金额" name="amountSource" precision="20"
-                        propId="30" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="30" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Source)"/>
                 <column code="AMOUNT_FUNCTIONAL" defaultValue="0" displayName="本位币金额" name="amountFunctional"
-                        precision="20" propId="31" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="31" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
             </columns>
             <relations>
@@ -481,10 +482,10 @@
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="24"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="AMOUNT_SOURCE" defaultValue="0" displayName="源币种金额" name="amountSource" precision="20"
-                        propId="25" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="25" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Source)"/>
                 <column code="AMOUNT_FUNCTIONAL" defaultValue="0" displayName="本位币金额" name="amountFunctional"
-                        precision="20" propId="26" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="26" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
             </columns>
             <relations>
@@ -561,10 +562,10 @@
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="26"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="AMOUNT_SOURCE" defaultValue="0" displayName="源币种金额" name="amountSource" precision="20"
-                        propId="27" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="27" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Source)"/>
                 <column code="AMOUNT_FUNCTIONAL" defaultValue="0" displayName="本位币金额" name="amountFunctional"
-                        precision="20" propId="28" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="28" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
             </columns>
             <relations>
@@ -642,14 +643,14 @@
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" name="businessDate" propId="26" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Business Date"/>
-                <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" name="exchangeRate" precision="20"
-                        propId="27" scale="8" stdDataType="string" stdSqlType="DECIMAL"
+                <column code="EXCHANGE_RATE" displayName="汇率" mandatory="true" name="exchangeRate" precision="20"
+                        propId="27" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
                 <column code="AMOUNT_SOURCE" defaultValue="0" displayName="源币种金额" name="amountSource" precision="20"
-                        propId="28" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="28" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Source)"/>
                 <column code="AMOUNT_FUNCTIONAL" defaultValue="0" displayName="本位币金额" name="amountFunctional"
-                        precision="20" propId="29" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="29" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
             </columns>
             <relations>
@@ -715,14 +716,14 @@
                         stdSqlType="TIMESTAMP" i18n-en:displayName="Posted At"/>
                 <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="50" propId="22"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
-                <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" name="exchangeRate" precision="20"
-                        propId="23" scale="8" stdDataType="string" stdSqlType="DECIMAL"
+                <column code="EXCHANGE_RATE" displayName="汇率" mandatory="true" name="exchangeRate" precision="20"
+                        propId="23" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
                 <column code="AMOUNT_SOURCE" defaultValue="0" displayName="源币种金额" name="amountSource" precision="20"
-                        propId="24" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="24" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Source)"/>
                 <column code="AMOUNT_FUNCTIONAL" defaultValue="0" displayName="本位币金额" name="amountFunctional"
-                        precision="20" propId="25" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="25" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
             </columns>
             <relations>
@@ -793,14 +794,14 @@
                         propId="20" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="21"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
-                <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" name="exchangeRate" precision="20"
-                        propId="22" scale="8" stdDataType="string" stdSqlType="DECIMAL"
+                <column code="EXCHANGE_RATE" displayName="汇率" mandatory="true" name="exchangeRate" precision="20"
+                        propId="22" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
                 <column code="AMOUNT_SOURCE" defaultValue="0" displayName="源币种金额" name="amountSource" precision="20"
-                        propId="23" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="23" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Source)"/>
                 <column code="AMOUNT_FUNCTIONAL" defaultValue="0" displayName="本位币金额" name="amountFunctional"
-                        precision="20" propId="24" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="24" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
             </columns>
             <relations>
@@ -865,14 +866,14 @@
                         propId="20" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="21"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
-                <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" name="exchangeRate" precision="20"
-                        propId="22" scale="8" stdDataType="string" stdSqlType="DECIMAL"
+                <column code="EXCHANGE_RATE" displayName="汇率" mandatory="true" name="exchangeRate" precision="20"
+                        propId="22" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
                 <column code="AMOUNT_SOURCE" defaultValue="0" displayName="源币种金额" name="amountSource" precision="20"
-                        propId="23" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="23" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Source)"/>
                 <column code="AMOUNT_FUNCTIONAL" defaultValue="0" displayName="本位币金额" name="amountFunctional"
-                        precision="20" propId="24" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="24" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
             </columns>
             <relations>

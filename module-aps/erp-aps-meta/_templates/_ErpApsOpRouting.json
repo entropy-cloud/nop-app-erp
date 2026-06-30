@@ -1,0 +1,23 @@
+{
+  "id": 0,
+  "orgId": 0,
+  "operationId": 0,
+  "machineId": 0,
+  "priority": 0,
+  "setupTimeDelta": 0.0,
+  "runtimePerUnitDelta": 0.0,
+  "isDefault": false,
+  "isEnabled": false,
+  "effectiveFrom": "2000-01-01",
+  "effectiveTo": "2000-01-01",
+  "minBatchQty": 0.0,
+  "maxBatchQty": 0.0,
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "org": null
+}

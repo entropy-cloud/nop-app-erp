@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
+
+    <site id="main">
+        <resource id="test-orm-erp-drp" displayName="测试erp-drp" i18n-en:displayName="Test erp-drp" icon="git-branch"
+                  resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-drp" component="layouts/default/index">
+            <children>
+                <resource id="ErpDrpLine-main" displayName="DRP明细" orderNo="10001" i18n-en:displayName="DRP Line"
+                          icon="list" component="AMIS" resourceType="SUBM"
+                          url="/erp/drp/pages/ErpDrpLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpDrpLine:query" displayName="查询DRP明细" i18n-en:displayName="Query DRP Line"
+                                  orderNo="10002" resourceType="FNPT">
+                            <permissions>ErpDrpLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpDrpLine:mutation" displayName="修改DRP明细"
+                                  i18n-en:displayName="Modify DRP Line" orderNo="10003" resourceType="FNPT">
+                            <permissions>ErpDrpLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpDrpParameter-main" displayName="仓库补货参数" orderNo="10004"
+                          i18n-en:displayName="DRP Parameter" icon="settings" component="AMIS" resourceType="SUBM"
+                          url="/erp/drp/pages/ErpDrpParameter/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpDrpParameter:query" displayName="查询仓库补货参数"
+                                  i18n-en:displayName="Query DRP Parameter" orderNo="10005" resourceType="FNPT">
+                            <permissions>ErpDrpParameter:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpDrpParameter:mutation" displayName="修改仓库补货参数"
+                                  i18n-en:displayName="Modify DRP Parameter" orderNo="10006" resourceType="FNPT">
+                            <permissions>ErpDrpParameter:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpDrpPlan-main" displayName="DRP计划" orderNo="10007" i18n-en:displayName="DRP Plan"
+                          icon="git-branch" component="AMIS" resourceType="SUBM"
+                          url="/erp/drp/pages/ErpDrpPlan/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpDrpPlan:query" displayName="查询DRP计划" i18n-en:displayName="Query DRP Plan"
+                                  orderNo="10008" resourceType="FNPT">
+                            <permissions>ErpDrpPlan:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpDrpPlan:mutation" displayName="修改DRP计划"
+                                  i18n-en:displayName="Modify DRP Plan" orderNo="10009" resourceType="FNPT">
+                            <permissions>ErpDrpPlan:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpInvDrpCrossDock-main" displayName="越库执行记录" orderNo="10010"
+                          i18n-en:displayName="Cross Dock" icon="arrow-left-right" component="AMIS" resourceType="SUBM"
+                          url="/erp/drp/pages/ErpInvDrpCrossDock/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpInvDrpCrossDock:query" displayName="查询越库执行记录"
+                                  i18n-en:displayName="Query Cross Dock" orderNo="10011" resourceType="FNPT">
+                            <permissions>ErpInvDrpCrossDock:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpInvDrpCrossDock:mutation" displayName="修改越库执行记录"
+                                  i18n-en:displayName="Modify Cross Dock" orderNo="10012" resourceType="FNPT">
+                            <permissions>ErpInvDrpCrossDock:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpInvDrpDockAppointment-main" displayName="月台预约" orderNo="10013"
+                          i18n-en:displayName="Dock Appointment" icon="dock" component="AMIS" resourceType="SUBM"
+                          url="/erp/drp/pages/ErpInvDrpDockAppointment/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpInvDrpDockAppointment:query" displayName="查询月台预约"
+                                  i18n-en:displayName="Query Dock Appointment" orderNo="10014" resourceType="FNPT">
+                            <permissions>ErpInvDrpDockAppointment:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpInvDrpDockAppointment:mutation" displayName="修改月台预约"
+                                  i18n-en:displayName="Modify Dock Appointment" orderNo="10015" resourceType="FNPT">
+                            <permissions>ErpInvDrpDockAppointment:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpInvDrpLeadTimeRecord-main" displayName="提前期记录" orderNo="10016"
+                          i18n-en:displayName="Lead Time Record" icon="clock" component="AMIS" resourceType="SUBM"
+                          url="/erp/drp/pages/ErpInvDrpLeadTimeRecord/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpInvDrpLeadTimeRecord:query" displayName="查询提前期记录"
+                                  i18n-en:displayName="Query Lead Time Record" orderNo="10017" resourceType="FNPT">
+                            <permissions>ErpInvDrpLeadTimeRecord:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpInvDrpLeadTimeRecord:mutation" displayName="修改提前期记录"
+                                  i18n-en:displayName="Modify Lead Time Record" orderNo="10018" resourceType="FNPT">
+                            <permissions>ErpInvDrpLeadTimeRecord:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpInvDrpSafetyStockCalc-main" displayName="安全库存计算" orderNo="10019"
+                          i18n-en:displayName="Safety Stock Calc" icon="shield" component="AMIS" resourceType="SUBM"
+                          url="/erp/drp/pages/ErpInvDrpSafetyStockCalc/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpInvDrpSafetyStockCalc:query" displayName="查询安全库存计算"
+                                  i18n-en:displayName="Query Safety Stock Calc" orderNo="10020" resourceType="FNPT">
+                            <permissions>ErpInvDrpSafetyStockCalc:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpInvDrpSafetyStockCalc:mutation" displayName="修改安全库存计算"
+                                  i18n-en:displayName="Modify Safety Stock Calc" orderNo="10021" resourceType="FNPT">
+                            <permissions>ErpInvDrpSafetyStockCalc:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
+</auth>

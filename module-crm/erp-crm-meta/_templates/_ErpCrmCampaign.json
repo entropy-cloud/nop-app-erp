@@ -1,0 +1,21 @@
+{
+  "id": 0,
+  "code": "",
+  "name": "",
+  "orgId": 0,
+  "campaignName": "",
+  "medium": "",
+  "source": "",
+  "startDate": "2000-01-01",
+  "endDate": "2000-01-01",
+  "budgetAmount": "",
+  "actualCost": "",
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "org": null
+}

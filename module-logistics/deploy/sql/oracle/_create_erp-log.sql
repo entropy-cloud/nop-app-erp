@@ -41,6 +41,29 @@ CREATE TABLE erp_log_carrier(
   constraint PK_erp_log_carrier primary key (ID)
 );
 
+CREATE TABLE erp_log_delivery_window(
+  ID NUMBER(20) NOT NULL ,
+  PARTNER_ID NUMBER(20) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  WEEKDAY INTEGER NOT NULL ,
+  START_TIME VARCHAR2(8) NOT NULL ,
+  END_TIME VARCHAR2(8) NOT NULL ,
+  MAX_CAPACITY INTEGER default 10  NOT NULL ,
+  CURRENT_BOOKED INTEGER default 0  NOT NULL ,
+  IS_ACTIVE CHAR(1) default 1   ,
+  EFFECTIVE_FROM DATE  ,
+  EFFECTIVE_TO DATE  ,
+  ALLOWED_SHIPMENT_TYPES VARCHAR2(200)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_log_delivery_window primary key (ID)
+);
+
 CREATE TABLE erp_log_carrier_config(
   ID NUMBER(20) NOT NULL ,
   CARRIER_ID NUMBER(20) NOT NULL ,
@@ -217,6 +240,46 @@ CREATE TABLE erp_log_shipment_log(
       COMMENT ON COLUMN erp_log_carrier.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_log_carrier.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_log_delivery_window IS '配送时间窗口';
+                
+      COMMENT ON COLUMN erp_log_delivery_window.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_log_delivery_window.PARTNER_ID IS '客户';
+                    
+      COMMENT ON COLUMN erp_log_delivery_window.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_log_delivery_window.WEEKDAY IS '星期';
+                    
+      COMMENT ON COLUMN erp_log_delivery_window.START_TIME IS '开始时间';
+                    
+      COMMENT ON COLUMN erp_log_delivery_window.END_TIME IS '结束时间';
+                    
+      COMMENT ON COLUMN erp_log_delivery_window.MAX_CAPACITY IS '最大预约数';
+                    
+      COMMENT ON COLUMN erp_log_delivery_window.CURRENT_BOOKED IS '当前已预约';
+                    
+      COMMENT ON COLUMN erp_log_delivery_window.IS_ACTIVE IS '是否启用';
+                    
+      COMMENT ON COLUMN erp_log_delivery_window.EFFECTIVE_FROM IS '生效日期';
+                    
+      COMMENT ON COLUMN erp_log_delivery_window.EFFECTIVE_TO IS '失效日期';
+                    
+      COMMENT ON COLUMN erp_log_delivery_window.ALLOWED_SHIPMENT_TYPES IS '允许发运类型';
+                    
+      COMMENT ON COLUMN erp_log_delivery_window.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_log_delivery_window.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_log_delivery_window.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_log_delivery_window.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_log_delivery_window.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_log_delivery_window.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_log_delivery_window.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_log_carrier_config IS '承运商配置';
                 

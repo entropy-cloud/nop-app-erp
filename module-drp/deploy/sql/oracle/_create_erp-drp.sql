@@ -49,6 +49,103 @@ CREATE TABLE erp_drp_parameter(
   constraint PK_erp_drp_parameter primary key (ID)
 );
 
+CREATE TABLE erp_inv_drp_safety_stock_calc(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  MATERIAL_ID NUMBER(20) NOT NULL ,
+  WAREHOUSE_ID NUMBER(20)  ,
+  METHOD INTEGER NOT NULL ,
+  SERVICE_LEVEL INTEGER NOT NULL ,
+  HISTORY_MONTHS INTEGER default 6   ,
+  LEAD_TIME_DAYS INTEGER NOT NULL ,
+  CALCULATED_SAFETY_STOCK NUMBER(20,4)  ,
+  CALCULATED_ROP NUMBER(20,4)  ,
+  OVERRIDE_SAFETY_STOCK NUMBER(20,4)  ,
+  LAST_CALCULATED_AT DATE  ,
+  OVERWRITTEN_BY VARCHAR2(50)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_inv_drp_safety_stock_calc primary key (ID)
+);
+
+CREATE TABLE erp_inv_drp_cross_dock(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  DRP_LINE_ID NUMBER(20)  ,
+  INBOUND_MOVE_ID NUMBER(20)  ,
+  OUTBOUND_MOVE_ID NUMBER(20)  ,
+  SOURCE_BILL_TYPE VARCHAR2(50)  ,
+  SOURCE_BILL_CODE VARCHAR2(50)  ,
+  TARGET_BILL_TYPE VARCHAR2(50)  ,
+  TARGET_BILL_CODE VARCHAR2(50)  ,
+  MATERIAL_ID NUMBER(20) NOT NULL ,
+  QUANTITY NUMBER(20,4) NOT NULL ,
+  STAGING_LOCATION_ID NUMBER(20)  ,
+  DOCK_SLOT_TIME DATE  ,
+  STATUS INTEGER NOT NULL ,
+  MATCHED_AT DATE  ,
+  LOADED_AT DATE  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_inv_drp_cross_dock primary key (ID)
+);
+
+CREATE TABLE erp_inv_drp_dock_appointment(
+  ID NUMBER(20) NOT NULL ,
+  WAREHOUSE_ID NUMBER(20) NOT NULL ,
+  DOCK_ID NUMBER(20) NOT NULL ,
+  APPOINTMENT_DATE DATE NOT NULL ,
+  SLOT_START DATE NOT NULL ,
+  SLOT_END DATE NOT NULL ,
+  CROSS_DOCK_ID NUMBER(20)  ,
+  CARRIER_INFO VARCHAR2(500)  ,
+  STATUS VARCHAR2(50)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  constraint PK_erp_inv_drp_dock_appointment primary key (ID)
+);
+
+CREATE TABLE erp_inv_drp_lead_time_record(
+  ID NUMBER(20) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  SUPPLIER_ID NUMBER(20) NOT NULL ,
+  MATERIAL_ID NUMBER(20) NOT NULL ,
+  ORDER_DATE DATE NOT NULL ,
+  RECEIPT_DATE DATE NOT NULL ,
+  ACTUAL_LEAD_TIME INTEGER NOT NULL ,
+  EXPECTED_LEAD_TIME INTEGER  ,
+  VARIANCE_DAYS INTEGER  ,
+  PURCHASE_ORDER_CODE VARCHAR2(50)  ,
+  IS_ON_TIME CHAR(1) default 1   ,
+  EARLY_LATE_FLAG VARCHAR2(50)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_inv_drp_lead_time_record primary key (ID)
+);
+
 CREATE TABLE erp_drp_line(
   ID NUMBER(20) NOT NULL ,
   PLAN_ID NUMBER(20) NOT NULL ,
@@ -159,6 +256,176 @@ CREATE TABLE erp_drp_line(
       COMMENT ON COLUMN erp_drp_parameter.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_drp_parameter.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_inv_drp_safety_stock_calc IS '安全库存计算';
+                
+      COMMENT ON COLUMN erp_inv_drp_safety_stock_calc.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_inv_drp_safety_stock_calc.CODE IS '编号';
+                    
+      COMMENT ON COLUMN erp_inv_drp_safety_stock_calc.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_inv_drp_safety_stock_calc.MATERIAL_ID IS '物料';
+                    
+      COMMENT ON COLUMN erp_inv_drp_safety_stock_calc.WAREHOUSE_ID IS '仓库';
+                    
+      COMMENT ON COLUMN erp_inv_drp_safety_stock_calc.METHOD IS '计算方法';
+                    
+      COMMENT ON COLUMN erp_inv_drp_safety_stock_calc.SERVICE_LEVEL IS '服务水平';
+                    
+      COMMENT ON COLUMN erp_inv_drp_safety_stock_calc.HISTORY_MONTHS IS '分析月数';
+                    
+      COMMENT ON COLUMN erp_inv_drp_safety_stock_calc.LEAD_TIME_DAYS IS '提前期(天)';
+                    
+      COMMENT ON COLUMN erp_inv_drp_safety_stock_calc.CALCULATED_SAFETY_STOCK IS '建议安全库存';
+                    
+      COMMENT ON COLUMN erp_inv_drp_safety_stock_calc.CALCULATED_ROP IS '建议再订货点';
+                    
+      COMMENT ON COLUMN erp_inv_drp_safety_stock_calc.OVERRIDE_SAFETY_STOCK IS '覆盖安全库存';
+                    
+      COMMENT ON COLUMN erp_inv_drp_safety_stock_calc.LAST_CALCULATED_AT IS '计算时间';
+                    
+      COMMENT ON COLUMN erp_inv_drp_safety_stock_calc.OVERWRITTEN_BY IS '覆盖人';
+                    
+      COMMENT ON COLUMN erp_inv_drp_safety_stock_calc.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_inv_drp_safety_stock_calc.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_inv_drp_safety_stock_calc.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_inv_drp_safety_stock_calc.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_inv_drp_safety_stock_calc.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_inv_drp_safety_stock_calc.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_inv_drp_safety_stock_calc.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_inv_drp_cross_dock IS '越库执行记录';
+                
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.CODE IS '编号';
+                    
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.DRP_LINE_ID IS 'DRP行';
+                    
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.INBOUND_MOVE_ID IS '入站移动单';
+                    
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.OUTBOUND_MOVE_ID IS '出站移动单';
+                    
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.SOURCE_BILL_TYPE IS '来源单据类型';
+                    
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.SOURCE_BILL_CODE IS '来源单据号';
+                    
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.TARGET_BILL_TYPE IS '目标单据类型';
+                    
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.TARGET_BILL_CODE IS '目标单据号';
+                    
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.MATERIAL_ID IS '物料';
+                    
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.QUANTITY IS '越库数量';
+                    
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.STAGING_LOCATION_ID IS '暂存库位';
+                    
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.DOCK_SLOT_TIME IS '月台时间窗口';
+                    
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.STATUS IS '状态';
+                    
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.MATCHED_AT IS '匹配时间';
+                    
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.LOADED_AT IS '装车完成时间';
+                    
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_inv_drp_dock_appointment IS '月台预约';
+                
+      COMMENT ON COLUMN erp_inv_drp_dock_appointment.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_inv_drp_dock_appointment.WAREHOUSE_ID IS '仓库';
+                    
+      COMMENT ON COLUMN erp_inv_drp_dock_appointment.DOCK_ID IS '月台';
+                    
+      COMMENT ON COLUMN erp_inv_drp_dock_appointment.APPOINTMENT_DATE IS '预约日期';
+                    
+      COMMENT ON COLUMN erp_inv_drp_dock_appointment.SLOT_START IS '时间窗口开始';
+                    
+      COMMENT ON COLUMN erp_inv_drp_dock_appointment.SLOT_END IS '时间窗口结束';
+                    
+      COMMENT ON COLUMN erp_inv_drp_dock_appointment.CROSS_DOCK_ID IS '关联越库';
+                    
+      COMMENT ON COLUMN erp_inv_drp_dock_appointment.CARRIER_INFO IS '承运商信息';
+                    
+      COMMENT ON COLUMN erp_inv_drp_dock_appointment.STATUS IS '状态';
+                    
+      COMMENT ON COLUMN erp_inv_drp_dock_appointment.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_inv_drp_dock_appointment.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_inv_drp_dock_appointment.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_inv_drp_dock_appointment.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_inv_drp_dock_appointment.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_inv_drp_dock_appointment.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_inv_drp_dock_appointment.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_inv_drp_dock_appointment.ORG_ID IS '业务组织';
+                    
+      COMMENT ON TABLE erp_inv_drp_lead_time_record IS '提前期记录';
+                
+      COMMENT ON COLUMN erp_inv_drp_lead_time_record.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_inv_drp_lead_time_record.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_inv_drp_lead_time_record.SUPPLIER_ID IS '供应商';
+                    
+      COMMENT ON COLUMN erp_inv_drp_lead_time_record.MATERIAL_ID IS '物料';
+                    
+      COMMENT ON COLUMN erp_inv_drp_lead_time_record.ORDER_DATE IS '订单日期';
+                    
+      COMMENT ON COLUMN erp_inv_drp_lead_time_record.RECEIPT_DATE IS '入库日期';
+                    
+      COMMENT ON COLUMN erp_inv_drp_lead_time_record.ACTUAL_LEAD_TIME IS '实际提前期(天)';
+                    
+      COMMENT ON COLUMN erp_inv_drp_lead_time_record.EXPECTED_LEAD_TIME IS '预期提前期(天)';
+                    
+      COMMENT ON COLUMN erp_inv_drp_lead_time_record.VARIANCE_DAYS IS '偏差天数';
+                    
+      COMMENT ON COLUMN erp_inv_drp_lead_time_record.PURCHASE_ORDER_CODE IS '采购单号';
+                    
+      COMMENT ON COLUMN erp_inv_drp_lead_time_record.IS_ON_TIME IS '是否准时';
+                    
+      COMMENT ON COLUMN erp_inv_drp_lead_time_record.EARLY_LATE_FLAG IS '提前/延迟标记';
+                    
+      COMMENT ON COLUMN erp_inv_drp_lead_time_record.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_inv_drp_lead_time_record.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_inv_drp_lead_time_record.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_inv_drp_lead_time_record.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_inv_drp_lead_time_record.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_inv_drp_lead_time_record.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_inv_drp_lead_time_record.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_drp_line IS 'DRP明细';
                 

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="map" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen"
+      xmlns:biz="biz" displayName="销售区域" i18n-en:displayName="Territory" tagSet="gid,erp.crm" xmlns:ui="ui"
+      xmlns:orm="orm">
+
+    <entityName>app.erp.crm.dao.entity.ErpCrmTerritory</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="code" displayName="编码" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="code" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="name" displayName="名称" propId="3" i18n-en:displayName="Name" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="name" type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="orgId" displayName="业务组织" propId="4" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="parentId" displayName="父区域" propId="5" i18n-en:displayName="Parent" queryable="true" sortable="true"
+              insertable="true" updatable="true" ext:relation="parent">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="territoryType" displayName="区域类型" propId="6" i18n-en:displayName="Territory Type" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-crm/territory-type"/>
+        </prop>
+        <prop name="managerId" displayName="区域负责人" propId="7" i18n-en:displayName="Manager" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="manager">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="description" displayName="区域描述" propId="8" i18n-en:displayName="Description" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="500"/>
+        </prop>
+        <prop name="fullPath" displayName="路径冗余" propId="9" i18n-en:displayName="Full Path" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="territoryFullPath" type="java.lang.String" precision="500"/>
+        </prop>
+        <prop name="level" displayName="层级深度" propId="10" i18n-en:displayName="Level" queryable="true" sortable="true"
+              insertable="true" updatable="true" defaultValue="0">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="isActive" displayName="是否启用" propId="11" i18n-en:displayName="Is Active" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="true">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="isLeaf" displayName="是否叶子节点" propId="12" i18n-en:displayName="Is Leaf" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="false">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="sortOrder" displayName="排序" propId="13" i18n-en:displayName="Sort Order" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="14" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="15" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="16" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="17" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="18" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="19" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="20" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="parent" i18n-en:displayName="Parent" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="parentId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpCrmTerritory"/>
+        </prop>
+        <prop name="manager" i18n-en:displayName="Manager" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="managerId" ext:joinRightProp="id" biz:moduleId="nop/auth"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="NopAuthUser"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+    </props>
+</meta>

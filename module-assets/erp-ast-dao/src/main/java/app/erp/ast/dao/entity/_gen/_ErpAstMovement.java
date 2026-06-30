@@ -97,7 +97,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     public static final String PROP_NAME_postedBy = "postedBy";
     public static final int PROP_ID_postedBy = 19;
     
-    /* 单据版本: DOC_VERSION INTEGER */
+    /* 单据版本: DOC_VERSION VARCHAR */
     public static final String PROP_NAME_docVersion = "docVersion";
     public static final int PROP_ID_docVersion = 20;
     
@@ -314,7 +314,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     private java.lang.Long _postedBy;
     
     /* 单据版本: DOC_VERSION */
-    private java.lang.Integer _docVersion;
+    private java.lang.String _docVersion;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -341,13 +341,13 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     private java.lang.Long _currencyId;
     
     /* 汇率: EXCHANGE_RATE */
-    private java.lang.String _exchangeRate;
+    private java.math.BigDecimal _exchangeRate;
     
     /* 源币种金额: AMOUNT_SOURCE */
-    private java.lang.String _amountSource;
+    private java.math.BigDecimal _amountSource;
     
     /* 本位币金额: AMOUNT_FUNCTIONAL */
-    private java.lang.String _amountFunctional;
+    private java.math.BigDecimal _amountFunctional;
     
 
     public _ErpAstMovement(){
@@ -718,9 +718,9 @@ public class _ErpAstMovement extends DynamicOrmEntity{
             }
         
             case PROP_ID_docVersion:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_docVersion));
                }
                setDocVersion(typedValue);
@@ -808,9 +808,9 @@ public class _ErpAstMovement extends DynamicOrmEntity{
             }
         
             case PROP_ID_exchangeRate:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_exchangeRate));
                }
                setExchangeRate(typedValue);
@@ -818,9 +818,9 @@ public class _ErpAstMovement extends DynamicOrmEntity{
             }
         
             case PROP_ID_amountSource:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_amountSource));
                }
                setAmountSource(typedValue);
@@ -828,9 +828,9 @@ public class _ErpAstMovement extends DynamicOrmEntity{
             }
         
             case PROP_ID_amountFunctional:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_amountFunctional));
                }
                setAmountFunctional(typedValue);
@@ -981,7 +981,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
         
             case PROP_ID_docVersion:{
                onInitProp(propId);
-               this._docVersion = (java.lang.Integer)value;
+               this._docVersion = (java.lang.String)value;
                
                break;
             }
@@ -1044,21 +1044,21 @@ public class _ErpAstMovement extends DynamicOrmEntity{
         
             case PROP_ID_exchangeRate:{
                onInitProp(propId);
-               this._exchangeRate = (java.lang.String)value;
+               this._exchangeRate = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_amountSource:{
                onInitProp(propId);
-               this._amountSource = (java.lang.String)value;
+               this._amountSource = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_amountFunctional:{
                onInitProp(propId);
-               this._amountFunctional = (java.lang.String)value;
+               this._amountFunctional = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1433,7 +1433,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 单据版本: DOC_VERSION
      */
-    public final java.lang.Integer getDocVersion(){
+    public final java.lang.String getDocVersion(){
          onPropGet(PROP_ID_docVersion);
          return _docVersion;
     }
@@ -1441,7 +1441,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 单据版本: DOC_VERSION
      */
-    public final void setDocVersion(java.lang.Integer value){
+    public final void setDocVersion(java.lang.String value){
         if(onPropSet(PROP_ID_docVersion,value)){
             this._docVersion = value;
             internalClearRefs(PROP_ID_docVersion);
@@ -1604,7 +1604,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 汇率: EXCHANGE_RATE
      */
-    public final java.lang.String getExchangeRate(){
+    public final java.math.BigDecimal getExchangeRate(){
          onPropGet(PROP_ID_exchangeRate);
          return _exchangeRate;
     }
@@ -1612,7 +1612,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 汇率: EXCHANGE_RATE
      */
-    public final void setExchangeRate(java.lang.String value){
+    public final void setExchangeRate(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_exchangeRate,value)){
             this._exchangeRate = value;
             internalClearRefs(PROP_ID_exchangeRate);
@@ -1623,7 +1623,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 源币种金额: AMOUNT_SOURCE
      */
-    public final java.lang.String getAmountSource(){
+    public final java.math.BigDecimal getAmountSource(){
          onPropGet(PROP_ID_amountSource);
          return _amountSource;
     }
@@ -1631,7 +1631,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 源币种金额: AMOUNT_SOURCE
      */
-    public final void setAmountSource(java.lang.String value){
+    public final void setAmountSource(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_amountSource,value)){
             this._amountSource = value;
             internalClearRefs(PROP_ID_amountSource);
@@ -1642,7 +1642,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 本位币金额: AMOUNT_FUNCTIONAL
      */
-    public final java.lang.String getAmountFunctional(){
+    public final java.math.BigDecimal getAmountFunctional(){
          onPropGet(PROP_ID_amountFunctional);
          return _amountFunctional;
     }
@@ -1650,7 +1650,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 本位币金额: AMOUNT_FUNCTIONAL
      */
-    public final void setAmountFunctional(java.lang.String value){
+    public final void setAmountFunctional(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_amountFunctional,value)){
             this._amountFunctional = value;
             internalClearRefs(PROP_ID_amountFunctional);

@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 计费周期
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 按月
+    value: 10
+    description: 
+  
+  - label: 按季度
+    value: 20
+    description: 
+  
+  - label: 按年
+    value: 30
+    description: 
+  

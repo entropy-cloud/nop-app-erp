@@ -273,4 +273,269 @@ public interface _ErpHrDaoConstants {
      */
     int RECRUITMENT_SOURCE_CAMPUS = 40;
                     
+    /**
+     * 模拟状态: 草稿 
+     */
+    int SIMULATION_STATUS_DRAFT = 10;
+                    
+    /**
+     * 模拟状态: 审核中 
+     */
+    int SIMULATION_STATUS_IN_REVIEW = 20;
+                    
+    /**
+     * 模拟状态: 已审批 
+     */
+    int SIMULATION_STATUS_APPROVED = 30;
+                    
+    /**
+     * 模拟状态: 已驳回 
+     */
+    int SIMULATION_STATUS_REJECTED = 40;
+                    
+    /**
+     * 模拟状态: 已转正式 
+     */
+    int SIMULATION_STATUS_CONVERTED = 50;
+                    
+    /**
+     * 班次类型: 固定班 
+     */
+    int SHIFT_TYPE_FIXED = 10;
+                    
+    /**
+     * 班次类型: 倒班 
+     */
+    int SHIFT_TYPE_ROTATING = 20;
+                    
+    /**
+     * 班次类型: 弹性班 
+     */
+    int SHIFT_TYPE_FLEXIBLE = 30;
+                    
+    /**
+     * 调换状态: 待审批 
+     */
+    int SWAP_STATUS_PENDING = 10;
+                    
+    /**
+     * 调换状态: 已批准 
+     */
+    int SWAP_STATUS_APPROVED = 20;
+                    
+    /**
+     * 调换状态: 已驳回 
+     */
+    int SWAP_STATUS_REJECTED = 30;
+                    
+    /**
+     * 调换状态: 已取消 
+     */
+    int SWAP_STATUS_CANCELLED = 40;
+                    
+    /**
+     * 调研类型: 年度敬业度调研 
+     */
+    int SURVEY_TYPE_ANNUAL_ENGAGEMENT = 10;
+                    
+    /**
+     * 调研类型: 脉搏调研 
+     */
+    int SURVEY_TYPE_PULSE = 20;
+                    
+    /**
+     * 调研类型: eNPS调研 
+     */
+    int SURVEY_TYPE_ENPS = 30;
+                    
+    /**
+     * 调研类型: 临时调研 
+     */
+    int SURVEY_TYPE_ADHOC = 40;
+                    
+    /**
+     * 调研状态: 草稿 
+     */
+    int SURVEY_STATUS_DRAFT = 10;
+                    
+    /**
+     * 调研状态: 进行中 
+     */
+    int SURVEY_STATUS_OPEN = 20;
+                    
+    /**
+     * 调研状态: 已截止 
+     */
+    int SURVEY_STATUS_CLOSED = 30;
+                    
+    /**
+     * 调研状态: 已归档 
+     */
+    int SURVEY_STATUS_ARCHIVED = 40;
+                    
+    /**
+     * 题目类型: 评分题 
+     */
+    int QUESTION_TYPE_RATING = 10;
+                    
+    /**
+     * 题目类型: 单选题 
+     */
+    int QUESTION_TYPE_SINGLE_CHOICE = 20;
+                    
+    /**
+     * 题目类型: 多选题 
+     */
+    int QUESTION_TYPE_MULTI_CHOICE = 30;
+                    
+    /**
+     * 题目类型: 开放文本 
+     */
+    int QUESTION_TYPE_OPEN_TEXT = 40;
+                    
+    /**
+     * 题目类型: eNPS题 
+     */
+    int QUESTION_TYPE_ENPS = 50;
+                    
+    /**
+     * 驱动因子分类: 成长发展 
+     */
+    int DRIVER_CATEGORY_GROWTH = 10;
+                    
+    /**
+     * 驱动因子分类: 认可激励 
+     */
+    int DRIVER_CATEGORY_RECOGNITION = 20;
+                    
+    /**
+     * 驱动因子分类: 管理支持 
+     */
+    int DRIVER_CATEGORY_MANAGEMENT = 30;
+                    
+    /**
+     * 驱动因子分类: 健康福祉 
+     */
+    int DRIVER_CATEGORY_WELLBEING = 40;
+                    
+    /**
+     * 驱动因子分类: 文化认同 
+     */
+    int DRIVER_CATEGORY_ALIGNMENT = 50;
+                    
+    /**
+     * 胜任力分类: 技能 
+     */
+    int COMPETENCY_CATEGORY_SKILL = 10;
+                    
+    /**
+     * 胜任力分类: 行为 
+     */
+    int COMPETENCY_CATEGORY_BEHAVIOR = 20;
+                    
+    /**
+     * 胜任力分类: 知识 
+     */
+    int COMPETENCY_CATEGORY_KNOWLEDGE = 30;
+                    
+    /**
+     * 评估类型: 自评 
+     */
+    int ASSESSMENT_TYPE_SELF = 10;
+                    
+    /**
+     * 评估类型: 上级评估 
+     */
+    int ASSESSMENT_TYPE_MANAGER = 20;
+                    
+    /**
+     * 评估类型: 同级评估 
+     */
+    int ASSESSMENT_TYPE_PEER = 30;
+                    
+    /**
+     * 评估类型: 下级评估 
+     */
+    int ASSESSMENT_TYPE_SUBORDINATE = 40;
+                    
+    /**
+     * 评估类型: 360评估 
+     */
+    int ASSESSMENT_TYPE_360 = 50;
+                    
+    /**
+     * 评估状态: 草稿 
+     */
+    int ASSESSMENT_STATUS_DRAFT = 10;
+                    
+    /**
+     * 评估状态: 已提交 
+     */
+    int ASSESSMENT_STATUS_SUBMITTED = 20;
+                    
+    /**
+     * 评估状态: 已完成 
+     */
+    int ASSESSMENT_STATUS_COMPLETED = 30;
+                    
+    /**
+     * 差距严重程度: 无差距 
+     */
+    int GAP_SEVERITY_NONE = 10;
+                    
+    /**
+     * 差距严重程度: 轻微 
+     */
+    int GAP_SEVERITY_MINOR = 20;
+                    
+    /**
+     * 差距严重程度: 明显 
+     */
+    int GAP_SEVERITY_MODERATE = 30;
+                    
+    /**
+     * 差距严重程度: 严重 
+     */
+    int GAP_SEVERITY_CRITICAL = 40;
+                    
+    /**
+     * 发展计划状态: 草稿 
+     */
+    int DEVPLAN_STATUS_DRAFT = 10;
+                    
+    /**
+     * 发展计划状态: 进行中 
+     */
+    int DEVPLAN_STATUS_IN_PROGRESS = 20;
+                    
+    /**
+     * 发展计划状态: 已完成 
+     */
+    int DEVPLAN_STATUS_COMPLETED = 30;
+                    
+    /**
+     * 发展计划状态: 已取消 
+     */
+    int DEVPLAN_STATUS_CANCELLED = 40;
+                    
+    /**
+     * 计划项状态: 未开始 
+     */
+    int PLAN_ITEM_STATUS_NOT_STARTED = 10;
+                    
+    /**
+     * 计划项状态: 进行中 
+     */
+    int PLAN_ITEM_STATUS_IN_PROGRESS = 20;
+                    
+    /**
+     * 计划项状态: 已完成 
+     */
+    int PLAN_ITEM_STATUS_ACHIEVED = 30;
+                    
+    /**
+     * 计划项状态: 已逾期 
+     */
+    int PLAN_ITEM_STATUS_OVERDUE = 40;
+                    
 }

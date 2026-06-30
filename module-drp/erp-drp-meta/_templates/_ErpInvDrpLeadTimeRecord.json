@@ -1,0 +1,22 @@
+{
+  "id": 0,
+  "orgId": 0,
+  "supplierId": 0,
+  "materialId": 0,
+  "orderDate": "2000-01-01",
+  "receiptDate": "2000-01-01",
+  "actualLeadTime": 0,
+  "expectedLeadTime": 0,
+  "varianceDays": 0,
+  "purchaseOrderCode": "",
+  "isOnTime": false,
+  "earlyLateFlag": "",
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "org": null
+}

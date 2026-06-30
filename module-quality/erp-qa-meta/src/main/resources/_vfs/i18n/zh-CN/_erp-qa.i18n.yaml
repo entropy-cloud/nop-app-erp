@@ -68,6 +68,7 @@ prop:
       approvedAt: 审核时间
       approvedBy: 审核人
       batchNo: 批号
+      businessDate: 业务日期
       code: 单号
       createTime: 创建时间
       createdBy: 创建人

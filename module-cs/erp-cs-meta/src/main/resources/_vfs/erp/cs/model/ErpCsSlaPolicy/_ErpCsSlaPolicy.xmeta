@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="clock" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen"
+      xmlns:biz="biz" displayName="SLA 策略" i18n-en:displayName="SLA Policy" tagSet="gid,erp.cs" xmlns:ui="ui"
+      xmlns:orm="orm">
+
+    <entityName>app.erp.cs.dao.entity.ErpCsSlaPolicy</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="code" displayName="编码" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="orderCode" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="name" displayName="名称" propId="3" i18n-en:displayName="Name" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="ticketTypeId" displayName="适用工单类型" propId="4" i18n-en:displayName="Ticket Type" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="ticketType">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="minPriority" displayName="最低触发优先级" propId="5" i18n-en:displayName="Min Priority" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer" dict="erp-cs/ticket-priority"/>
+        </prop>
+        <prop name="teamId" displayName="适用团队" propId="6" i18n-en:displayName="Team" queryable="true" sortable="true"
+              insertable="true" updatable="true" ext:relation="team">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="resolveHours" displayName="解决时限(小时)" propId="7" i18n-en:displayName="Resolve Hours" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="resolveDays" displayName="解决时限(天)" propId="8" i18n-en:displayName="Resolve Days" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="isWorkingDays" displayName="仅计算工作日" propId="9" i18n-en:displayName="Working Days Only"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="true">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="escalationUserId" displayName="升级通知人" propId="10" i18n-en:displayName="Escalation User"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="escalationUser">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="description" displayName="说明" propId="11" i18n-en:displayName="Description" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="12" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="13" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="14" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="15" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="16" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="17" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="ticketType" i18n-en:displayName="Ticket Type" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="ticketTypeId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpCsTicketType"/>
+        </prop>
+        <prop name="team" i18n-en:displayName="Team" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="teamId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpCsTeam"/>
+        </prop>
+        <prop name="escalationUser" i18n-en:displayName="Escalation User" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="escalationUserId" ext:joinRightProp="id" biz:moduleId="nop/auth"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="NopAuthUser"/>
+        </prop>
+    </props>
+</meta>

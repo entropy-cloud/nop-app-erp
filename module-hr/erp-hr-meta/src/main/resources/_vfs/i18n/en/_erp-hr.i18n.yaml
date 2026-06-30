@@ -1,0 +1,819 @@
+entity:
+  label:
+    ErpHrAssessmentDetail: Assessment Detail
+    ErpHrAttendance: Attendance
+    ErpHrCompetency: Competency
+    ErpHrCompetencyLevel: Competency Level
+    ErpHrDepartment: Department
+    ErpHrDevelopmentPlan: Development Plan
+    ErpHrDevelopmentPlanItem: Development Plan Item
+    ErpHrEmployee: Employee
+    ErpHrEmployeeAssessment: Employee Assessment
+    ErpHrEmploymentContract: Employment Contract
+    ErpHrGapAnalysis: Gap Analysis
+    ErpHrLeaveRequest: Leave Request
+    ErpHrPosition: Position
+    ErpHrRecruitment: Recruitment
+    ErpHrRoleCompetency: Role Competency
+    ErpHrSalary: Salary Record
+    ErpHrSalarySimulation: Salary Simulation
+    ErpHrShift: Shift
+    ErpHrShiftAssignment: Shift Assignment
+    ErpHrShiftRotationPattern: Shift Rotation Pattern
+    ErpHrShiftSwapRequest: Shift Swap Request
+    ErpHrSurvey: Survey
+    ErpHrSurveyAnswer: Survey Answer
+    ErpHrSurveyQuestion: Survey Question
+    ErpHrSurveyResponse: Survey Response
+    ErpHrSurveyResult: Survey Result
+    ErpHrTimesheet: Timesheet
+    ErpHrTimesheetLine: Timesheet Line
+prop:
+  label:
+    ErpHrAssessmentDetail:
+      id: ID
+      assessmentId: Assessment
+      competencyId: Competency
+      actualLevel: Actual Level
+      comment: Comment
+      sourceType: Source Type
+      sourceType_label: null
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      assessment: Assessment
+      competency: Competency
+    ErpHrAttendance:
+      id: ID
+      employeeId: Employee
+      date: Date
+      clockIn: Clock In
+      clockOut: Clock Out
+      workHours: Work Hours
+      lateMinutes: Late Minutes
+      earlyLeaveMinutes: Early Leave Minutes
+      isAbsent: Is Absent
+      source: Source
+      source_label: null
+      leaveRequestId: Leave Request
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      employee: Employee
+      leaveRequest: Leave Request
+      org: Org
+    ErpHrCompetency:
+      id: ID
+      code: Code
+      name: Name
+      description: Description
+      category: Category
+      category_label: null
+      competencyGroup: Competency Group
+      isTechnical: Is Technical
+      parentId: Parent Competency
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      levels: Levels
+      parent: Parent Competency
+      org: Org
+    ErpHrCompetencyLevel:
+      id: ID
+      competencyId: Competency
+      levelNumber: Level Number
+      levelName: Level Name
+      behavioralAnchor: Behavioral Anchor
+      sortOrder: Sort Order
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      competency: Competency
+    ErpHrDepartment:
+      id: ID
+      code: Code
+      name: Name
+      parentId: Parent Department
+      managerId: Manager
+      costCenterId: Cost Center
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      parent: Parent Department
+      org: Org
+    ErpHrDevelopmentPlan:
+      id: ID
+      employeeId: Employee
+      planName: Plan Name
+      targetDate: Target Date
+      status: Status
+      status_label: null
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      employee: Employee
+      items: Items
+      org: Org
+    ErpHrDevelopmentPlanItem:
+      id: ID
+      planId: Development Plan
+      competencyId: Competency
+      gapId: Gap Analysis
+      targetLevel: Target Level
+      developmentAction: Development Action
+      mentorId: Mentor
+      startDate: Start Date
+      endDate: End Date
+      status: Status
+      status_label: null
+      progressNote: Progress Note
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      plan: Development Plan
+      competency: Competency
+      gap: Gap Analysis
+      mentor: Mentor
+    ErpHrEmployee:
+      id: ID
+      code: Code
+      firstName: First Name
+      lastName: Last Name
+      fullName: Full Name
+      gender: Gender
+      gender_label: null
+      birthDate: Birth Date
+      idCardType: ID Card Type
+      idCardNo: ID Card No
+      email: Email
+      mobilePhone: Mobile Phone
+      maritalStatus: Marital Status
+      maritalStatus_label: null
+      nationality: Nationality
+      emergencyContact: Emergency Contact
+      emergencyPhone: Emergency Phone
+      departmentId: Department
+      positionId: Position
+      jobTitle: Job Title
+      superiorId: Superior
+      costCenterId: Cost Center
+      hireDate: Hire Date
+      probationEndDate: Probation End Date
+      regularDate: Regular Date
+      resignationDate: Resignation Date
+      resignationReason: Resignation Reason
+      employmentStatus: Employment Status
+      employmentStatus_label: null
+      employeeType: Employee Type
+      employeeType_label: null
+      bankAccountId: Bank Account
+      socialSecurityNo: Social Security No
+      taxFileNo: Tax File No
+      userAccountId: User Account
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      department: Department
+      position: Position
+      org: Org
+    ErpHrEmployeeAssessment:
+      id: ID
+      employeeId: Employee
+      assessmentType: Assessment Type
+      assessmentType_label: null
+      assessorId: Assessor
+      assessmentDate: Assessment Date
+      status: Status
+      status_label: null
+      overallScore: Overall Score
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      employee: Employee
+      assessor: Assessor
+      details: Details
+      org: Org
+    ErpHrEmploymentContract:
+      id: ID
+      code: Code
+      employeeId: Employee
+      contractType: Contract Type
+      contractType_label: null
+      signDate: Sign Date
+      startDate: Start Date
+      endDate: End Date
+      probationMonths: Probation Months
+      workingHoursPerWeek: Working Hours Per Week
+      annualSalary: Annual Salary
+      monthlySalary: Monthly Salary
+      salaryCurrencyId: Salary Currency
+      salaryPayMethod: Salary Pay Method
+      socialInsuranceBase: Social Insurance Base
+      housingFundBase: Housing Fund Base
+      status: Status
+      status_label: null
+      attachmentId: Attachment
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      employee: Employee
+      org: Org
+    ErpHrGapAnalysis:
+      id: ID
+      employeeId: Employee
+      competencyId: Competency
+      requiredLevel: Required Level
+      actualLevel: Actual Level
+      gapValue: Gap Value
+      gapSeverity: Gap Severity
+      gapSeverity_label: null
+      assessmentDate: Assessment Date
+      analysisDate: Analysis Date
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      employee: Employee
+      competency: Competency
+    ErpHrLeaveRequest:
+      id: ID
+      code: Code
+      employeeId: Employee
+      leaveType: Leave Type
+      leaveType_label: null
+      startDate: Start Date
+      endDate: End Date
+      durationDays: Duration Days
+      reason: Reason
+      status: Status
+      status_label: null
+      approverId: Approver
+      approvedAt: Approved At
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      employee: Employee
+      approver: Approver
+      org: Org
+    ErpHrPosition:
+      id: ID
+      code: Code
+      name: Name
+      departmentId: Department
+      jobGrade: Job Grade
+      jobCategory: Job Category
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      department: Department
+      org: Org
+    ErpHrRecruitment:
+      id: ID
+      code: Code
+      positionId: Position
+      departmentId: Department
+      headcount: Headcount
+      candidateName: Candidate Name
+      candidatePhone: Candidate Phone
+      candidateEmail: Candidate Email
+      source: Source
+      source_label: null
+      resumeAttachmentId: Resume Attachment
+      status: Status
+      status_label: null
+      interviewerId: Interviewer
+      interviewDate: Interview Date
+      offerSalary: Offer Salary
+      hiredDate: Hired Date
+      employeeId: Employee
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      position: Position
+      department: Department
+      employee: Employee
+      org: Org
+    ErpHrRoleCompetency:
+      id: ID
+      positionId: Position
+      competencyId: Competency
+      requiredLevel: Required Level
+      weight: Weight
+      isCritical: Is Critical
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      position: Position
+      competency: Competency
+    ErpHrSalary:
+      id: ID
+      employeeId: Employee
+      year: Year
+      month: Month
+      basicSalary: Basic Salary
+      positionAllowance: Position Allowance
+      performanceBonus: Performance Bonus
+      overtimePay: Overtime Pay
+      mealAllowance: Meal Allowance
+      transportAllowance: Transport Allowance
+      otherAllowance: Other Allowance
+      grossSalary: Gross Salary
+      socialInsurance: Social Insurance
+      housingFund: Housing Fund
+      taxAmount: Tax Amount
+      otherDeductions: Other Deductions
+      netSalary: Net Salary
+      paymentStatus: Payment Status
+      paymentStatus_label: null
+      paymentDate: Payment Date
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      employee: Employee
+      org: Org
+    ErpHrSalarySimulation:
+      id: ID
+      code: Code
+      orgId: Organization
+      sourceSalaryId: Source Salary
+      simulationPeriodYear: Simulation Period Year
+      simulationPeriodMonth: Simulation Period Month
+      simulationName: Simulation Name
+      status: Status
+      status_label: null
+      reviewerId: Reviewer
+      reviewedAt: Reviewed At
+      convertedAt: Converted At
+      convertedSalaryId: Converted Salary
+      notes: Notes
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+    ErpHrShift:
+      id: ID
+      code: Code
+      orgId: Organization
+      name: Name
+      shiftType: Shift Type
+      shiftType_label: null
+      startTime: Start Time
+      endTime: End Time
+      graceLateMinutes: Grace Late Minutes
+      graceEarlyLeaveMinutes: Grace Early Leave Minutes
+      requireClockIn: Require Clock In
+      requireClockOut: Require Clock Out
+      restStartTime: Rest Start Time
+      restEndTime: Rest End Time
+      totalWorkMinutes: Total Work Minutes
+      allowOvertime: Allow Overtime
+      colorHex: Color Hex
+      description: Description
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+    ErpHrShiftAssignment:
+      id: ID
+      orgId: Organization
+      employeeId: Employee
+      shiftId: Shift
+      assignmentDate: Assignment Date
+      actualStartTime: Actual Start Time
+      actualEndTime: Actual End Time
+      isAbsent: Is Absent
+      absenceReason: Absence Reason
+      leaveRequestId: Leave Request
+      swapRequestId: Swap Request
+      replacedByAssignmentId: Replaced By
+      status: Status
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      employee: Employee
+      shift: Shift
+      org: Org
+    ErpHrShiftRotationPattern:
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      patternType: Pattern Type
+      patternData: Pattern Data
+      rotateInterval: Rotate Interval
+      startDate: Start Date
+      groupId: Group
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+    ErpHrShiftSwapRequest:
+      id: ID
+      code: Code
+      orgId: Organization
+      requesterId: Requester
+      targetEmployeeId: Target Employee
+      sourceAssignmentId: Source Assignment
+      targetAssignmentId: Target Assignment
+      swapDate: Swap Date
+      reason: Reason
+      status: Status
+      status_label: null
+      approvedById: Approved By
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      requester: Requester
+      targetEmployee: Target Employee
+      org: Org
+    ErpHrSurvey:
+      id: ID
+      code: Code
+      title: Title
+      description: Description
+      surveyType: Survey Type
+      surveyType_label: null
+      isAnonymous: Is Anonymous
+      status: Status
+      status_label: null
+      startDate: Start Date
+      endDate: End Date
+      targetDepartmentId: Target Department
+      includeENps: Include eNPS
+      eNpsQuestion: eNPS Question
+      reminderDays: Reminder Days
+      totalQuestions: Total Questions
+      totalResponses: Total Responses
+      completionRate: Completion Rate
+      avgScore: Avg Score
+      eNpsScore: eNPS Score
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      questions: Questions
+      responses: Responses
+      org: Org
+    ErpHrSurveyAnswer:
+      id: ID
+      responseId: Response
+      questionId: Question
+      ratingValue: Rating Value
+      selectedOption: Selected Option
+      openText: Open Text
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      response: Response
+      question: Question
+    ErpHrSurveyQuestion:
+      id: ID
+      surveyId: Survey
+      sortOrder: Sort Order
+      questionText: Question Text
+      questionType: Question Type
+      questionType_label: null
+      ratingScaleMin: Rating Scale Min
+      ratingScaleMax: Rating Scale Max
+      ratingLabelMin: Rating Label Min
+      ratingLabelMax: Rating Label Max
+      options: Options
+      driverCategory: Driver Category
+      driverCategory_label: null
+      isRequired: Is Required
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      survey: Survey
+    ErpHrSurveyResponse:
+      id: ID
+      surveyId: Survey
+      employeeId: Employee
+      respondentHash: Respondent Hash
+      submittedAt: Submitted At
+      timeSpentSeconds: Time Spent Seconds
+      isComplete: Is Complete
+      orgId: Organization
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      survey: Survey
+      employee: Employee
+      answers: Answers
+      org: Org
+    ErpHrSurveyResult:
+      id: ID
+      surveyId: Survey
+      departmentId: Department
+      totalResponses: Total Responses
+      avgScore: Avg Score
+      eNpsScore: eNPS Score
+      driverScores: Driver Scores
+      questionBreakdown: Question Breakdown
+      trendData: Trend Data
+      lastCalculatedAt: Last Calculated At
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      survey: Survey
+      department: Department
+    ErpHrTimesheet:
+      id: ID
+      code: Code
+      employeeId: Employee
+      periodFrom: Period From
+      periodTo: Period To
+      totalHours: Total Hours
+      status: Status
+      status_label: null
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      employee: Employee
+      lines: Lines
+      org: Org
+    ErpHrTimesheetLine:
+      id: ID
+      timesheetId: Timesheet
+      employeeId: Employee
+      workDate: Work Date
+      projectId: Project
+      taskId: Task
+      activityType: Activity Type
+      hours: Hours
+      description: Description
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      timesheet: Timesheet
+      employee: Employee
+dict:
+  label:
+    erp-hr/employment-status: Employment Status
+    erp-hr/employee-type: Employee Type
+    erp-hr/gender: Gender
+    erp-hr/marital-status: Marital Status
+    erp-hr/contract-type: Contract Type
+    erp-hr/contract-status: Contract Status
+    erp-hr/leave-type: Leave Type
+    erp-hr/leave-status: Leave Status
+    erp-hr/timesheet-status: Timesheet Status
+    erp-hr/recruitment-status: Recruitment Status
+    erp-hr/salary-payment-status: Payment Status
+    erp-hr/attendance-source: Attendance Source
+    erp-hr/recruitment-source: Recruitment Source
+    erp-hr/simulation-status: Simulation Status
+    erp-hr/shift-type: Shift Type
+    erp-hr/swap-status: Swap Status
+    erp-hr/survey-type: Survey Type
+    erp-hr/survey-status: Survey Status
+    erp-hr/question-type: Question Type
+    erp-hr/driver-category: Driver Category
+    erp-hr/competency-category: Competency Category
+    erp-hr/assessment-type: Assessment Type
+    erp-hr/assessment-status: Assessment Status
+    erp-hr/gap-severity: Gap Severity
+    erp-hr/devplan-status: Development Plan Status
+    erp-hr/plan-item-status: Plan Item Status
+dict.option.label:
+  erp-hr/employment-status:
+    '10': Active
+    '20': Probation
+    '30': Resigned
+    '40': Terminated
+    '50': Retired
+  erp-hr/employee-type:
+    '10': Full Time
+    '20': Part Time
+    '30': Contractor
+    '40': Intern
+  erp-hr/gender:
+    '10': Male
+    '20': Female
+  erp-hr/marital-status:
+    '10': Single
+    '20': Married
+    '30': Divorced
+  erp-hr/contract-type:
+    '10': Fixed Term
+    '20': Open Ended
+    '30': Project
+  erp-hr/contract-status:
+    '10': Active
+    '20': Expired
+    '30': Terminated
+    '40': Suspended
+  erp-hr/leave-type:
+    '10': Annual Leave
+    '20': Sick Leave
+    '30': Personal Leave
+    '40': Marriage Leave
+    '50': Maternity Leave
+    '60': Funeral Leave
+    '70': Compensatory Leave
+  erp-hr/leave-status:
+    '10': Draft
+    '20': Submitted
+    '30': Approved
+    '40': Rejected
+    '50': Cancelled
+  erp-hr/timesheet-status:
+    '10': Draft
+    '20': Submitted
+    '30': Approved
+    '40': Rejected
+  erp-hr/recruitment-status:
+    '10': Open
+    '20': Screening
+    '30': Interviewing
+    '40': Offered
+    '50': Hired
+    '60': Rejected
+    '70': Closed
+  erp-hr/salary-payment-status:
+    '10': Pending
+    '20': Paid
+    '30': Void
+  erp-hr/attendance-source:
+    '10': Card
+    '20': Biometric
+    '30': Mobile
+  erp-hr/recruitment-source:
+    '10': Recruitment Website
+    '20': Agency
+    '30': Referral
+    '40': Campus
+  erp-hr/simulation-status:
+    '10': Draft
+    '20': In Review
+    '30': Approved
+    '40': Rejected
+    '50': Converted
+  erp-hr/shift-type:
+    '10': Fixed
+    '20': Rotating
+    '30': Flexible
+  erp-hr/swap-status:
+    '10': Pending
+    '20': Approved
+    '30': Rejected
+    '40': Cancelled
+  erp-hr/survey-type:
+    '10': Annual Engagement
+    '20': Pulse Survey
+    '30': eNPS Survey
+    '40': Ad-hoc Survey
+  erp-hr/survey-status:
+    '10': Draft
+    '20': Open
+    '30': Closed
+    '40': Archived
+  erp-hr/question-type:
+    '10': Rating
+    '20': Single Choice
+    '30': Multi Choice
+    '40': Open Text
+    '50': eNPS
+  erp-hr/driver-category:
+    '10': Growth
+    '20': Recognition
+    '30': Management
+    '40': Wellbeing
+    '50': Alignment
+  erp-hr/competency-category:
+    '10': Skill
+    '20': Behavior
+    '30': Knowledge
+  erp-hr/assessment-type:
+    '10': Self
+    '20': Manager
+    '30': Peer
+    '40': Subordinate
+    '50': 360 Assessment
+  erp-hr/assessment-status:
+    '10': Draft
+    '20': Submitted
+    '30': Completed
+  erp-hr/gap-severity:
+    '10': None
+    '20': Minor
+    '30': Moderate
+    '40': Critical
+  erp-hr/devplan-status:
+    '10': Draft
+    '20': In Progress
+    '30': Completed
+    '40': Cancelled
+  erp-hr/plan-item-status:
+    '10': Not Started
+    '20': In Progress
+    '30': Achieved
+    '40': Overdue

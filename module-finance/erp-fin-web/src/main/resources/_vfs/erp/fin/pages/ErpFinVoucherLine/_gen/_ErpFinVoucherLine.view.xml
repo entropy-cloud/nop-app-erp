@@ -84,6 +84,9 @@
                 <!--业务类型-->
                 <col id="businessType" ui:number="true" sortable="true"/>
 
+                <!--成本中心-->
+                <col id="costCenterId" ui:number="true" sortable="true"/>
+
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
 
@@ -117,9 +120,9 @@
  partnerId[辅助-往来单位] departmentId[辅助-部门]
  projectId[辅助-项目] warehouseId[辅助-仓库]
  materialId[辅助-物料] businessType[业务类型]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ costCenterId[成本中心] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-凭证分录行" i18n-en:title="Add Voucher Line">
@@ -135,6 +138,7 @@
  partnerId[辅助-往来单位] departmentId[辅助-部门]
  projectId[辅助-项目] warehouseId[辅助-仓库]
  materialId[辅助-物料] businessType[业务类型]
+ costCenterId[成本中心] 
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-凭证分录行" i18n-en:title="Edit Voucher Line">
@@ -150,7 +154,7 @@
  partnerId[辅助-往来单位] departmentId[辅助-部门]
  projectId[辅助-项目] warehouseId[辅助-仓库]
  materialId[辅助-物料] businessType[业务类型]
- delVersion[逻辑删除版本] 
+ costCenterId[成本中心] delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

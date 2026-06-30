@@ -1,0 +1,22 @@
+site:
+  resource:
+    ErpInvDrpLeadTimeRecord-main:
+      displayName: Lead Time Record
+    ErpInvDrpLine-main:
+      displayName: DRP Line
+    ErpInvDrpParameter-main:
+      displayName: Replenishment Parameter
+    ErpInvDrpPlan-main:
+      displayName: DRP Plan
+    ErpInvDrpSafetyStockCalc-main:
+      displayName: Safety Stock Calc
+    drp-config:
+      displayName: Configuration
+    drp-leadtime:
+      displayName: Lead Time Tracking
+    drp-optimize:
+      displayName: Optimization
+    drp-plan:
+      displayName: Plans
+    erp-drp:
+      displayName: Distribution Planning

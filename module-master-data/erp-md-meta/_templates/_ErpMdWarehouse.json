@@ -16,6 +16,8 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "remark": "",
+  "batchSelectionStrategy": "",
+  "batchSelectionStrategy_label": "",
   "organization": null,
   "manager": null,
   "locations": null

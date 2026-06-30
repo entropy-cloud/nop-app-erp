@@ -26,4 +26,27 @@
           ioc:type="app.erp.aps.biz.IErpApsConstraintBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
         <property name="bizObjName" value="ErpApsConstraint"/>
     </bean>
+
+    <bean id="app.erp.aps.service.entity.ErpApsOpRoutingBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpApsOpRouting" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.aps.biz.IErpApsOpRoutingBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpApsOpRouting"/>
+    </bean>
+
+    <bean id="app.erp.aps.service.entity.ErpApsDispatchRuleBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpApsDispatchRule" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.aps.biz.IErpApsDispatchRuleBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpApsDispatchRule"/>
+    </bean>
+
+    <bean id="app.erp.aps.service.entity.ErpApsDispatchLogBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpApsDispatchLog" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.aps.biz.IErpApsDispatchLogBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpApsDispatchLog"/>
+    </bean>
 </beans>

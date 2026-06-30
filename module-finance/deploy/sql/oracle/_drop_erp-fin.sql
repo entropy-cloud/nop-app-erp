@@ -8,6 +8,7 @@ drop table erp_md_organization;
 drop table erp_md_warehouse;
 drop table erp_md_material;
 drop table erp_prj_project;
+drop table erp_md_cost_center;
 drop table erp_ast_asset;
 drop table erp_fin_voucher;
 drop table erp_fin_voucher_template;
@@ -20,5 +21,9 @@ drop table erp_fin_reconciliation;
 drop table erp_fin_voucher_line;
 drop table erp_fin_voucher_bill_r;
 drop table erp_fin_voucher_template_line;
+drop table erp_fin_bank_statement;
 drop table erp_fin_reconciliation_line;
+drop table erp_fin_bank_statement_line;
+drop table erp_fin_bank_reconciliation;
+drop table erp_fin_bank_reconciliation_line;
 

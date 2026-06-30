@@ -1,0 +1,22 @@
+{
+  "id": 0,
+  "code": "",
+  "planName": "",
+  "periodFrom": "2000-01-01",
+  "periodTo": "2000-01-01",
+  "status": 0,
+  "status_label": "",
+  "totalReplenishmentQty": 0.0,
+  "runAt": "2000-01-01 14:00:00",
+  "runBy": "",
+  "orgId": 0,
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "lines": null,
+  "org": null
+}

@@ -188,7 +188,7 @@ CREATE TABLE erp_prj_cost_collection(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
-  exchange_rate NUMERIC(20,8) default 1   ,
+  exchange_rate NUMERIC(20,8) default 1  NOT NULL ,
   amount_source NUMERIC(20,4) default 0   ,
   amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_prj_cost_collection primary key (id)

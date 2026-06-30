@@ -40,7 +40,7 @@
                 <col id="uoMId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--退货数量-->
-                <col id="quantity" mandatory="true" sortable="true"/>
+                <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--单价(不含税)-->
                 <col id="unitPrice" sortable="true"/>

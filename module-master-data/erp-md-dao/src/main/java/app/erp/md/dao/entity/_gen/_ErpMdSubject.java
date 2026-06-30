@@ -73,44 +73,52 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     public static final String PROP_NAME_isAuxiliaryProduct = "isAuxiliaryProduct";
     public static final int PROP_ID_isAuxiliaryProduct = 13;
     
+    /* 辅助-成本中心: IS_AUXILIARY_COST_CENTER BOOLEAN */
+    public static final String PROP_NAME_isAuxiliaryCostCenter = "isAuxiliaryCostCenter";
+    public static final int PROP_ID_isAuxiliaryCostCenter = 14;
+    
+    /* 是否预算控制: IS_BUDGETABLE BOOLEAN */
+    public static final String PROP_NAME_isBudgetable = "isBudgetable";
+    public static final int PROP_ID_isBudgetable = 15;
+    
     /* 是否明细科目: IS_LEAF BOOLEAN */
     public static final String PROP_NAME_isLeaf = "isLeaf";
-    public static final int PROP_ID_isLeaf = 14;
+    public static final int PROP_ID_isLeaf = 16;
     
     /* 状态: STATUS INTEGER */
     public static final String PROP_NAME_status = "status";
-    public static final int PROP_ID_status = 15;
+    public static final int PROP_ID_status = 17;
     
     /* 逻辑删除版本: DEL_VERSION BIGINT */
     public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 16;
+    public static final int PROP_ID_delVersion = 18;
     
     /* 数据版本: VERSION INTEGER */
     public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 17;
+    public static final int PROP_ID_version = 19;
     
     /* 创建人: CREATED_BY VARCHAR */
     public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 18;
+    public static final int PROP_ID_createdBy = 20;
     
     /* 创建时间: CREATE_TIME TIMESTAMP */
     public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 19;
+    public static final int PROP_ID_createTime = 21;
     
     /* 修改人: UPDATED_BY VARCHAR */
     public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 20;
+    public static final int PROP_ID_updatedBy = 22;
     
     /* 修改时间: UPDATE_TIME TIMESTAMP */
     public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 21;
+    public static final int PROP_ID_updateTime = 23;
     
     /* 备注: REMARK VARCHAR */
     public static final String PROP_NAME_remark = "remark";
-    public static final int PROP_ID_remark = 22;
+    public static final int PROP_ID_remark = 24;
     
 
-    private static int _PROP_ID_BOUND = 23;
+    private static int _PROP_ID_BOUND = 25;
 
     
     /* relation:  */
@@ -126,7 +134,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[23];
+    private static final String[] PROP_ID_TO_NAME = new String[25];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -168,6 +176,12 @@ public class _ErpMdSubject extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_isAuxiliaryProduct] = PROP_NAME_isAuxiliaryProduct;
           PROP_NAME_TO_ID.put(PROP_NAME_isAuxiliaryProduct, PROP_ID_isAuxiliaryProduct);
+      
+          PROP_ID_TO_NAME[PROP_ID_isAuxiliaryCostCenter] = PROP_NAME_isAuxiliaryCostCenter;
+          PROP_NAME_TO_ID.put(PROP_NAME_isAuxiliaryCostCenter, PROP_ID_isAuxiliaryCostCenter);
+      
+          PROP_ID_TO_NAME[PROP_ID_isBudgetable] = PROP_NAME_isBudgetable;
+          PROP_NAME_TO_ID.put(PROP_NAME_isBudgetable, PROP_ID_isBudgetable);
       
           PROP_ID_TO_NAME[PROP_ID_isLeaf] = PROP_NAME_isLeaf;
           PROP_NAME_TO_ID.put(PROP_NAME_isLeaf, PROP_ID_isLeaf);
@@ -237,6 +251,12 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     
     /* 辅助-物料: IS_AUXILIARY_PRODUCT */
     private java.lang.Boolean _isAuxiliaryProduct;
+    
+    /* 辅助-成本中心: IS_AUXILIARY_COST_CENTER */
+    private java.lang.Boolean _isAuxiliaryCostCenter;
+    
+    /* 是否预算控制: IS_BUDGETABLE */
+    private java.lang.Boolean _isBudgetable;
     
     /* 是否明细科目: IS_LEAF */
     private java.lang.Boolean _isLeaf;
@@ -377,6 +397,12 @@ public class _ErpMdSubject extends DynamicOrmEntity{
         
             case PROP_ID_isAuxiliaryProduct:
                return getIsAuxiliaryProduct();
+        
+            case PROP_ID_isAuxiliaryCostCenter:
+               return getIsAuxiliaryCostCenter();
+        
+            case PROP_ID_isBudgetable:
+               return getIsBudgetable();
         
             case PROP_ID_isLeaf:
                return getIsLeaf();
@@ -543,6 +569,26 @@ public class _ErpMdSubject extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_isAuxiliaryProduct));
                }
                setIsAuxiliaryProduct(typedValue);
+               break;
+            }
+        
+            case PROP_ID_isAuxiliaryCostCenter:{
+               java.lang.Boolean typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBoolean(value,
+                       err-> newTypeConversionError(PROP_NAME_isAuxiliaryCostCenter));
+               }
+               setIsAuxiliaryCostCenter(typedValue);
+               break;
+            }
+        
+            case PROP_ID_isBudgetable:{
+               java.lang.Boolean typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBoolean(value,
+                       err-> newTypeConversionError(PROP_NAME_isBudgetable));
+               }
+               setIsBudgetable(typedValue);
                break;
             }
         
@@ -732,6 +778,20 @@ public class _ErpMdSubject extends DynamicOrmEntity{
             case PROP_ID_isAuxiliaryProduct:{
                onInitProp(propId);
                this._isAuxiliaryProduct = (java.lang.Boolean)value;
+               
+               break;
+            }
+        
+            case PROP_ID_isAuxiliaryCostCenter:{
+               onInitProp(propId);
+               this._isAuxiliaryCostCenter = (java.lang.Boolean)value;
+               
+               break;
+            }
+        
+            case PROP_ID_isBudgetable:{
+               onInitProp(propId);
+               this._isBudgetable = (java.lang.Boolean)value;
                
                break;
             }
@@ -1048,6 +1108,44 @@ public class _ErpMdSubject extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_isAuxiliaryProduct,value)){
             this._isAuxiliaryProduct = value;
             internalClearRefs(PROP_ID_isAuxiliaryProduct);
+            
+        }
+    }
+    
+    /**
+     * 辅助-成本中心: IS_AUXILIARY_COST_CENTER
+     */
+    public final java.lang.Boolean getIsAuxiliaryCostCenter(){
+         onPropGet(PROP_ID_isAuxiliaryCostCenter);
+         return _isAuxiliaryCostCenter;
+    }
+
+    /**
+     * 辅助-成本中心: IS_AUXILIARY_COST_CENTER
+     */
+    public final void setIsAuxiliaryCostCenter(java.lang.Boolean value){
+        if(onPropSet(PROP_ID_isAuxiliaryCostCenter,value)){
+            this._isAuxiliaryCostCenter = value;
+            internalClearRefs(PROP_ID_isAuxiliaryCostCenter);
+            
+        }
+    }
+    
+    /**
+     * 是否预算控制: IS_BUDGETABLE
+     */
+    public final java.lang.Boolean getIsBudgetable(){
+         onPropGet(PROP_ID_isBudgetable);
+         return _isBudgetable;
+    }
+
+    /**
+     * 是否预算控制: IS_BUDGETABLE
+     */
+    public final void setIsBudgetable(java.lang.Boolean value){
+        if(onPropSet(PROP_ID_isBudgetable,value)){
+            this._isBudgetable = value;
+            internalClearRefs(PROP_ID_isBudgetable);
             
         }
     }

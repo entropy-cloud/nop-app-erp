@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
+
+    <site id="main">
+        <resource id="test-orm-erp-ct" displayName="测试erp-ct" i18n-en:displayName="Test erp-ct" icon="file-text"
+                  resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-ct" component="layouts/default/index">
+            <children>
+                <resource id="ErpCtApprovalMatrix-main" displayName="审批矩阵" orderNo="10001"
+                          i18n-en:displayName="Approval Matrix" icon="check-square" component="AMIS" resourceType="SUBM"
+                          url="/erp/ct/pages/ErpCtApprovalMatrix/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCtApprovalMatrix:query" displayName="查询审批矩阵"
+                                  i18n-en:displayName="Query Approval Matrix" orderNo="10002" resourceType="FNPT">
+                            <permissions>ErpCtApprovalMatrix:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCtApprovalMatrix:mutation" displayName="修改审批矩阵"
+                                  i18n-en:displayName="Modify Approval Matrix" orderNo="10003" resourceType="FNPT">
+                            <permissions>ErpCtApprovalMatrix:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCtApprovalRecord-main" displayName="审批记录" orderNo="10004"
+                          i18n-en:displayName="Approval Record" icon="clipboard-check" component="AMIS"
+                          resourceType="SUBM" url="/erp/ct/pages/ErpCtApprovalRecord/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCtApprovalRecord:query" displayName="查询审批记录"
+                                  i18n-en:displayName="Query Approval Record" orderNo="10005" resourceType="FNPT">
+                            <permissions>ErpCtApprovalRecord:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCtApprovalRecord:mutation" displayName="修改审批记录"
+                                  i18n-en:displayName="Modify Approval Record" orderNo="10006" resourceType="FNPT">
+                            <permissions>ErpCtApprovalRecord:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCtConsumptionLine-main" displayName="消耗计费行" orderNo="10007"
+                          i18n-en:displayName="Consumption Line" icon="trending-up" component="AMIS" resourceType="SUBM"
+                          url="/erp/ct/pages/ErpCtConsumptionLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCtConsumptionLine:query" displayName="查询消耗计费行"
+                                  i18n-en:displayName="Query Consumption Line" orderNo="10008" resourceType="FNPT">
+                            <permissions>ErpCtConsumptionLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCtConsumptionLine:mutation" displayName="修改消耗计费行"
+                                  i18n-en:displayName="Modify Consumption Line" orderNo="10009" resourceType="FNPT">
+                            <permissions>ErpCtConsumptionLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCtContract-main" displayName="合同" orderNo="10010" i18n-en:displayName="Contract"
+                          icon="file-text" component="AMIS" resourceType="SUBM"
+                          url="/erp/ct/pages/ErpCtContract/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCtContract:query" displayName="查询合同" i18n-en:displayName="Query Contract"
+                                  orderNo="10011" resourceType="FNPT">
+                            <permissions>ErpCtContract:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCtContract:mutation" displayName="修改合同"
+                                  i18n-en:displayName="Modify Contract" orderNo="10012" resourceType="FNPT">
+                            <permissions>ErpCtContract:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCtContractLine-main" displayName="合同行" orderNo="10013"
+                          i18n-en:displayName="Contract Line" icon="list" component="AMIS" resourceType="SUBM"
+                          url="/erp/ct/pages/ErpCtContractLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCtContractLine:query" displayName="查询合同行"
+                                  i18n-en:displayName="Query Contract Line" orderNo="10014" resourceType="FNPT">
+                            <permissions>ErpCtContractLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCtContractLine:mutation" displayName="修改合同行"
+                                  i18n-en:displayName="Modify Contract Line" orderNo="10015" resourceType="FNPT">
+                            <permissions>ErpCtContractLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCtContractVersion-main" displayName="合同版本" orderNo="10016"
+                          i18n-en:displayName="Contract Version" icon="file-stack" component="AMIS" resourceType="SUBM"
+                          url="/erp/ct/pages/ErpCtContractVersion/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCtContractVersion:query" displayName="查询合同版本"
+                                  i18n-en:displayName="Query Contract Version" orderNo="10017" resourceType="FNPT">
+                            <permissions>ErpCtContractVersion:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCtContractVersion:mutation" displayName="修改合同版本"
+                                  i18n-en:displayName="Modify Contract Version" orderNo="10018" resourceType="FNPT">
+                            <permissions>ErpCtContractVersion:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCtDocument-main" displayName="合同文档" orderNo="10019"
+                          i18n-en:displayName="Contract Document" icon="archive" component="AMIS" resourceType="SUBM"
+                          url="/erp/ct/pages/ErpCtDocument/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCtDocument:query" displayName="查询合同文档"
+                                  i18n-en:displayName="Query Contract Document" orderNo="10020" resourceType="FNPT">
+                            <permissions>ErpCtDocument:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCtDocument:mutation" displayName="修改合同文档"
+                                  i18n-en:displayName="Modify Contract Document" orderNo="10021" resourceType="FNPT">
+                            <permissions>ErpCtDocument:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCtInvoicePlan-main" displayName="开票计划" orderNo="10022"
+                          i18n-en:displayName="Invoice Plan" icon="receipt" component="AMIS" resourceType="SUBM"
+                          url="/erp/ct/pages/ErpCtInvoicePlan/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCtInvoicePlan:query" displayName="查询开票计划"
+                                  i18n-en:displayName="Query Invoice Plan" orderNo="10023" resourceType="FNPT">
+                            <permissions>ErpCtInvoicePlan:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCtInvoicePlan:mutation" displayName="修改开票计划"
+                                  i18n-en:displayName="Modify Invoice Plan" orderNo="10024" resourceType="FNPT">
+                            <permissions>ErpCtInvoicePlan:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCtRebateAccrual-main" displayName="返利计提明细" orderNo="10025"
+                          i18n-en:displayName="Rebate Accrual" icon="trending-up" component="AMIS" resourceType="SUBM"
+                          url="/erp/ct/pages/ErpCtRebateAccrual/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCtRebateAccrual:query" displayName="查询返利计提明细"
+                                  i18n-en:displayName="Query Rebate Accrual" orderNo="10026" resourceType="FNPT">
+                            <permissions>ErpCtRebateAccrual:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCtRebateAccrual:mutation" displayName="修改返利计提明细"
+                                  i18n-en:displayName="Modify Rebate Accrual" orderNo="10027" resourceType="FNPT">
+                            <permissions>ErpCtRebateAccrual:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCtRebateAgreement-main" displayName="返利协议" orderNo="10028"
+                          i18n-en:displayName="Rebate Agreement" icon="gift" component="AMIS" resourceType="SUBM"
+                          url="/erp/ct/pages/ErpCtRebateAgreement/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCtRebateAgreement:query" displayName="查询返利协议"
+                                  i18n-en:displayName="Query Rebate Agreement" orderNo="10029" resourceType="FNPT">
+                            <permissions>ErpCtRebateAgreement:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCtRebateAgreement:mutation" displayName="修改返利协议"
+                                  i18n-en:displayName="Modify Rebate Agreement" orderNo="10030" resourceType="FNPT">
+                            <permissions>ErpCtRebateAgreement:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCtRebateSettlement-main" displayName="返利结算单" orderNo="10031"
+                          i18n-en:displayName="Rebate Settlement" icon="file-check" component="AMIS" resourceType="SUBM"
+                          url="/erp/ct/pages/ErpCtRebateSettlement/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCtRebateSettlement:query" displayName="查询返利结算单"
+                                  i18n-en:displayName="Query Rebate Settlement" orderNo="10032" resourceType="FNPT">
+                            <permissions>ErpCtRebateSettlement:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCtRebateSettlement:mutation" displayName="修改返利结算单"
+                                  i18n-en:displayName="Modify Rebate Settlement" orderNo="10033" resourceType="FNPT">
+                            <permissions>ErpCtRebateSettlement:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCtRebateTier-main" displayName="返利阶梯" orderNo="10034" i18n-en:displayName="Rebate Tier"
+                          icon="layers" component="AMIS" resourceType="SUBM"
+                          url="/erp/ct/pages/ErpCtRebateTier/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCtRebateTier:query" displayName="查询返利阶梯"
+                                  i18n-en:displayName="Query Rebate Tier" orderNo="10035" resourceType="FNPT">
+                            <permissions>ErpCtRebateTier:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCtRebateTier:mutation" displayName="修改返利阶梯"
+                                  i18n-en:displayName="Modify Rebate Tier" orderNo="10036" resourceType="FNPT">
+                            <permissions>ErpCtRebateTier:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCtSignatureRequest-main" displayName="签章请求" orderNo="10037"
+                          i18n-en:displayName="Signature Request" icon="file-signature" component="AMIS"
+                          resourceType="SUBM" url="/erp/ct/pages/ErpCtSignatureRequest/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCtSignatureRequest:query" displayName="查询签章请求"
+                                  i18n-en:displayName="Query Signature Request" orderNo="10038" resourceType="FNPT">
+                            <permissions>ErpCtSignatureRequest:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCtSignatureRequest:mutation" displayName="修改签章请求"
+                                  i18n-en:displayName="Modify Signature Request" orderNo="10039" resourceType="FNPT">
+                            <permissions>ErpCtSignatureRequest:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCtTemplate-main" displayName="合同模板" orderNo="10040"
+                          i18n-en:displayName="Contract Template" icon="template" component="AMIS" resourceType="SUBM"
+                          url="/erp/ct/pages/ErpCtTemplate/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCtTemplate:query" displayName="查询合同模板"
+                                  i18n-en:displayName="Query Contract Template" orderNo="10041" resourceType="FNPT">
+                            <permissions>ErpCtTemplate:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCtTemplate:mutation" displayName="修改合同模板"
+                                  i18n-en:displayName="Modify Contract Template" orderNo="10042" resourceType="FNPT">
+                            <permissions>ErpCtTemplate:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCtVolumeDiscount-main" displayName="批量折扣" orderNo="10043"
+                          i18n-en:displayName="Volume Discount" icon="percent" component="AMIS" resourceType="SUBM"
+                          url="/erp/ct/pages/ErpCtVolumeDiscount/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCtVolumeDiscount:query" displayName="查询批量折扣"
+                                  i18n-en:displayName="Query Volume Discount" orderNo="10044" resourceType="FNPT">
+                            <permissions>ErpCtVolumeDiscount:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCtVolumeDiscount:mutation" displayName="修改批量折扣"
+                                  i18n-en:displayName="Modify Volume Discount" orderNo="10045" resourceType="FNPT">
+                            <permissions>ErpCtVolumeDiscount:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
+</auth>

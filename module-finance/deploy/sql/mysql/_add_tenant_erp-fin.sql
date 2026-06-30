@@ -17,6 +17,8 @@ alter table erp_md_material add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_prj_project add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_md_cost_center add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_ast_asset add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_voucher add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -41,7 +43,15 @@ alter table erp_fin_voucher_bill_r add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT
 
 alter table erp_fin_voucher_template_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_fin_bank_statement add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_fin_reconciliation_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_fin_bank_statement_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_fin_bank_reconciliation add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_fin_bank_reconciliation_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_accounting_period drop primary key;
 alter table erp_fin_accounting_period add primary key (NOP_TENANT_ID, ID);
@@ -69,6 +79,9 @@ alter table erp_md_material add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_prj_project drop primary key;
 alter table erp_prj_project add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_cost_center drop primary key;
+alter table erp_md_cost_center add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_ast_asset drop primary key;
 alter table erp_ast_asset add primary key (NOP_TENANT_ID, ID);
@@ -106,7 +119,19 @@ alter table erp_fin_voucher_bill_r add primary key (NOP_TENANT_ID, ID);
 alter table erp_fin_voucher_template_line drop primary key;
 alter table erp_fin_voucher_template_line add primary key (NOP_TENANT_ID, ID);
 
+alter table erp_fin_bank_statement drop primary key;
+alter table erp_fin_bank_statement add primary key (NOP_TENANT_ID, ID);
+
 alter table erp_fin_reconciliation_line drop primary key;
 alter table erp_fin_reconciliation_line add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_fin_bank_statement_line drop primary key;
+alter table erp_fin_bank_statement_line add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_fin_bank_reconciliation drop primary key;
+alter table erp_fin_bank_reconciliation add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_fin_bank_reconciliation_line drop primary key;
+alter table erp_fin_bank_reconciliation_line add primary key (NOP_TENANT_ID, ID);
 
 

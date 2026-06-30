@@ -27,6 +27,125 @@ CREATE TABLE erp_hr_department(
   constraint PK_erp_hr_department primary key (id)
 );
 
+CREATE TABLE erp_hr_salary_simulation(
+  id INT8 NOT NULL ,
+  code VARCHAR(50) NOT NULL ,
+  org_id INT8  ,
+  source_salary_id INT8  ,
+  simulation_period_year INT4 NOT NULL ,
+  simulation_period_month INT4 NOT NULL ,
+  simulation_name VARCHAR(200)  ,
+  status INT4 NOT NULL ,
+  reviewer_id INT8  ,
+  reviewed_at TIMESTAMP  ,
+  converted_at TIMESTAMP  ,
+  converted_salary_id INT8  ,
+  notes VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_salary_simulation primary key (id)
+);
+
+CREATE TABLE erp_hr_shift(
+  id INT8 NOT NULL ,
+  code VARCHAR(50) NOT NULL ,
+  org_id INT8  ,
+  name VARCHAR(200) NOT NULL ,
+  shift_type INT4 NOT NULL ,
+  start_time VARCHAR(8) NOT NULL ,
+  end_time VARCHAR(8) NOT NULL ,
+  grace_late_minutes INT4 default 15   ,
+  grace_early_leave_minutes INT4 default 15   ,
+  require_clock_in BOOLEAN default true   ,
+  require_clock_out BOOLEAN default true   ,
+  rest_start_time VARCHAR(8)  ,
+  rest_end_time VARCHAR(8)  ,
+  total_work_minutes INT4  ,
+  allow_overtime BOOLEAN default true   ,
+  color_hex VARCHAR(10)  ,
+  description VARCHAR(500)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_shift primary key (id)
+);
+
+CREATE TABLE erp_hr_shift_rotation_pattern(
+  id INT8 NOT NULL ,
+  code VARCHAR(50) NOT NULL ,
+  name VARCHAR(200) NOT NULL ,
+  org_id INT8  ,
+  pattern_type VARCHAR(50)  ,
+  pattern_data VARCHAR(2000)  ,
+  rotate_interval INT4  ,
+  start_date DATE  ,
+  group_id INT8  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_shift_rotation_pattern primary key (id)
+);
+
+CREATE TABLE erp_hr_survey(
+  id INT8 NOT NULL ,
+  code VARCHAR(50) NOT NULL ,
+  title VARCHAR(200) NOT NULL ,
+  description VARCHAR(2000)  ,
+  survey_type INT4 NOT NULL ,
+  is_anonymous BOOLEAN default true   ,
+  status INT4 NOT NULL ,
+  start_date DATE  ,
+  end_date DATE  ,
+  target_department_id INT8  ,
+  include_enps BOOLEAN default false   ,
+  enps_question VARCHAR(500)  ,
+  reminder_days INT4 default 3   ,
+  total_questions INT4 default 0   ,
+  total_responses INT4 default 0   ,
+  completion_rate NUMERIC(5,2)  ,
+  avg_score NUMERIC(5,2)  ,
+  enps_score INT4  ,
+  org_id INT8  ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_survey primary key (id)
+);
+
+CREATE TABLE erp_hr_competency(
+  id INT8 NOT NULL ,
+  code VARCHAR(50) NOT NULL ,
+  name VARCHAR(200) NOT NULL ,
+  description VARCHAR(1000)  ,
+  category INT4 NOT NULL ,
+  competency_group VARCHAR(100)  ,
+  is_technical BOOLEAN default false   ,
+  parent_id INT8  ,
+  org_id INT8  ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_competency primary key (id)
+);
+
 CREATE TABLE erp_hr_position(
   id INT8 NOT NULL ,
   code VARCHAR(50) NOT NULL ,
@@ -43,6 +162,64 @@ CREATE TABLE erp_hr_position(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   constraint PK_erp_hr_position primary key (id)
+);
+
+CREATE TABLE erp_hr_survey_question(
+  id INT8 NOT NULL ,
+  survey_id INT8 NOT NULL ,
+  sort_order INT4  ,
+  question_text VARCHAR(2000) NOT NULL ,
+  question_type INT4 NOT NULL ,
+  rating_scale_min INT4 default 1   ,
+  rating_scale_max INT4 default 5   ,
+  rating_label_min VARCHAR(100)  ,
+  rating_label_max VARCHAR(100)  ,
+  options VARCHAR(2000)  ,
+  driver_category INT4  ,
+  is_required BOOLEAN default true   ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_survey_question primary key (id)
+);
+
+CREATE TABLE erp_hr_survey_result(
+  id INT8 NOT NULL ,
+  survey_id INT8 NOT NULL ,
+  department_id INT8  ,
+  total_responses INT4 default 0   ,
+  avg_score NUMERIC(5,2)  ,
+  enps_score INT4  ,
+  driver_scores VARCHAR(2000)  ,
+  question_breakdown VARCHAR(4000)  ,
+  trend_data VARCHAR(4000)  ,
+  last_calculated_at TIMESTAMP  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_survey_result primary key (id)
+);
+
+CREATE TABLE erp_hr_competency_level(
+  id INT8 NOT NULL ,
+  competency_id INT8 NOT NULL ,
+  level_number INT4 NOT NULL ,
+  level_name VARCHAR(100)  ,
+  behavioral_anchor VARCHAR(1000)  ,
+  sort_order INT4  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_competency_level primary key (id)
 );
 
 CREATE TABLE erp_hr_employee(
@@ -86,6 +263,22 @@ CREATE TABLE erp_hr_employee(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   constraint PK_erp_hr_employee primary key (id)
+);
+
+CREATE TABLE erp_hr_role_competency(
+  id INT8 NOT NULL ,
+  position_id INT8 NOT NULL ,
+  competency_id INT8 NOT NULL ,
+  required_level INT4 NOT NULL ,
+  weight NUMERIC(5,2) default 1.0   ,
+  is_critical BOOLEAN default false   ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_role_competency primary key (id)
 );
 
 CREATE TABLE erp_hr_employment_contract(
@@ -218,6 +411,123 @@ CREATE TABLE erp_hr_recruitment(
   constraint PK_erp_hr_recruitment primary key (id)
 );
 
+CREATE TABLE erp_hr_shift_assignment(
+  id INT8 NOT NULL ,
+  org_id INT8  ,
+  employee_id INT8 NOT NULL ,
+  shift_id INT8 NOT NULL ,
+  assignment_date DATE NOT NULL ,
+  actual_start_time TIMESTAMP  ,
+  actual_end_time TIMESTAMP  ,
+  is_absent BOOLEAN default false   ,
+  absence_reason VARCHAR(50)  ,
+  leave_request_id INT8  ,
+  swap_request_id INT8  ,
+  replaced_by_assignment_id INT8  ,
+  status VARCHAR(50)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_shift_assignment primary key (id)
+);
+
+CREATE TABLE erp_hr_shift_swap_request(
+  id INT8 NOT NULL ,
+  code VARCHAR(50) NOT NULL ,
+  org_id INT8  ,
+  requester_id INT8 NOT NULL ,
+  target_employee_id INT8  ,
+  source_assignment_id INT8 NOT NULL ,
+  target_assignment_id INT8  ,
+  swap_date DATE NOT NULL ,
+  reason VARCHAR(500)  ,
+  status INT4 NOT NULL ,
+  approved_by_id INT8  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_shift_swap_request primary key (id)
+);
+
+CREATE TABLE erp_hr_survey_response(
+  id INT8 NOT NULL ,
+  survey_id INT8 NOT NULL ,
+  employee_id INT8  ,
+  respondent_hash VARCHAR(100)  ,
+  submitted_at TIMESTAMP  ,
+  time_spent_seconds INT4  ,
+  is_complete BOOLEAN default false   ,
+  org_id INT8  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_survey_response primary key (id)
+);
+
+CREATE TABLE erp_hr_employee_assessment(
+  id INT8 NOT NULL ,
+  employee_id INT8 NOT NULL ,
+  assessment_type INT4 NOT NULL ,
+  assessor_id INT8  ,
+  assessment_date DATE  ,
+  status INT4 NOT NULL ,
+  overall_score NUMERIC(5,2)  ,
+  org_id INT8  ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_employee_assessment primary key (id)
+);
+
+CREATE TABLE erp_hr_gap_analysis(
+  id INT8 NOT NULL ,
+  employee_id INT8 NOT NULL ,
+  competency_id INT8 NOT NULL ,
+  required_level INT4  ,
+  actual_level INT4  ,
+  gap_value INT4  ,
+  gap_severity INT4  ,
+  assessment_date DATE  ,
+  analysis_date TIMESTAMP  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_gap_analysis primary key (id)
+);
+
+CREATE TABLE erp_hr_development_plan(
+  id INT8 NOT NULL ,
+  employee_id INT8 NOT NULL ,
+  plan_name VARCHAR(200)  ,
+  target_date DATE  ,
+  status INT4 NOT NULL ,
+  org_id INT8  ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_development_plan primary key (id)
+);
+
 CREATE TABLE erp_hr_attendance(
   id INT8 NOT NULL ,
   employee_id INT8 NOT NULL ,
@@ -260,6 +570,59 @@ CREATE TABLE erp_hr_timesheet_line(
   constraint PK_erp_hr_timesheet_line primary key (id)
 );
 
+CREATE TABLE erp_hr_survey_answer(
+  id INT8 NOT NULL ,
+  response_id INT8 NOT NULL ,
+  question_id INT8 NOT NULL ,
+  rating_value INT4  ,
+  selected_option VARCHAR(500)  ,
+  open_text VARCHAR(4000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_survey_answer primary key (id)
+);
+
+CREATE TABLE erp_hr_assessment_detail(
+  id INT8 NOT NULL ,
+  assessment_id INT8 NOT NULL ,
+  competency_id INT8 NOT NULL ,
+  actual_level INT4  ,
+  comment VARCHAR(1000)  ,
+  source_type INT4  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_assessment_detail primary key (id)
+);
+
+CREATE TABLE erp_hr_development_plan_item(
+  id INT8 NOT NULL ,
+  plan_id INT8 NOT NULL ,
+  competency_id INT8 NOT NULL ,
+  gap_id INT8  ,
+  target_level INT4 NOT NULL ,
+  development_action VARCHAR(500)  ,
+  mentor_id INT8  ,
+  start_date DATE  ,
+  end_date DATE  ,
+  status INT4 NOT NULL ,
+  progress_note VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_development_plan_item primary key (id)
+);
+
 
       COMMENT ON TABLE erp_md_md_organization IS 'ErpMdOrganization';
                 
@@ -295,6 +658,214 @@ CREATE TABLE erp_hr_timesheet_line(
                     
       COMMENT ON COLUMN erp_hr_department.update_time IS '修改时间';
                     
+      COMMENT ON TABLE erp_hr_salary_simulation IS '薪酬模拟';
+                
+      COMMENT ON COLUMN erp_hr_salary_simulation.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation.code IS '编号';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation.source_salary_id IS '源薪酬记录';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation.simulation_period_year IS '模拟年份';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation.simulation_period_month IS '模拟月份';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation.simulation_name IS '模拟名称';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation.status IS '状态';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation.reviewer_id IS '审批人';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation.reviewed_at IS '审批时间';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation.converted_at IS '转正式时间';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation.converted_salary_id IS '转正式薪酬ID';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation.notes IS '备注';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_hr_shift IS '班次模板';
+                
+      COMMENT ON COLUMN erp_hr_shift.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_shift.code IS '编码';
+                    
+      COMMENT ON COLUMN erp_hr_shift.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_hr_shift.name IS '班次名称';
+                    
+      COMMENT ON COLUMN erp_hr_shift.shift_type IS '班次类型';
+                    
+      COMMENT ON COLUMN erp_hr_shift.start_time IS '上班时间';
+                    
+      COMMENT ON COLUMN erp_hr_shift.end_time IS '下班时间';
+                    
+      COMMENT ON COLUMN erp_hr_shift.grace_late_minutes IS '迟到宽容分钟数';
+                    
+      COMMENT ON COLUMN erp_hr_shift.grace_early_leave_minutes IS '早退宽容分钟数';
+                    
+      COMMENT ON COLUMN erp_hr_shift.require_clock_in IS '需签到';
+                    
+      COMMENT ON COLUMN erp_hr_shift.require_clock_out IS '需签退';
+                    
+      COMMENT ON COLUMN erp_hr_shift.rest_start_time IS '休息开始';
+                    
+      COMMENT ON COLUMN erp_hr_shift.rest_end_time IS '休息结束';
+                    
+      COMMENT ON COLUMN erp_hr_shift.total_work_minutes IS '标准工时(分钟)';
+                    
+      COMMENT ON COLUMN erp_hr_shift.allow_overtime IS '允许加班';
+                    
+      COMMENT ON COLUMN erp_hr_shift.color_hex IS '显示颜色';
+                    
+      COMMENT ON COLUMN erp_hr_shift.description IS '说明';
+                    
+      COMMENT ON COLUMN erp_hr_shift.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_shift.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_shift.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_shift.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_shift.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_shift.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_hr_shift_rotation_pattern IS '轮换排班模板';
+                
+      COMMENT ON COLUMN erp_hr_shift_rotation_pattern.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_shift_rotation_pattern.code IS '编码';
+                    
+      COMMENT ON COLUMN erp_hr_shift_rotation_pattern.name IS '名称';
+                    
+      COMMENT ON COLUMN erp_hr_shift_rotation_pattern.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_hr_shift_rotation_pattern.pattern_type IS '轮换类型';
+                    
+      COMMENT ON COLUMN erp_hr_shift_rotation_pattern.pattern_data IS '轮换序列';
+                    
+      COMMENT ON COLUMN erp_hr_shift_rotation_pattern.rotate_interval IS '轮换间隔(天)';
+                    
+      COMMENT ON COLUMN erp_hr_shift_rotation_pattern.start_date IS '起始日期';
+                    
+      COMMENT ON COLUMN erp_hr_shift_rotation_pattern.group_id IS '轮换组';
+                    
+      COMMENT ON COLUMN erp_hr_shift_rotation_pattern.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_shift_rotation_pattern.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_shift_rotation_pattern.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_shift_rotation_pattern.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_shift_rotation_pattern.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_shift_rotation_pattern.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_hr_survey IS '问卷模板';
+                
+      COMMENT ON COLUMN erp_hr_survey.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_survey.code IS '编号';
+                    
+      COMMENT ON COLUMN erp_hr_survey.title IS '问卷标题';
+                    
+      COMMENT ON COLUMN erp_hr_survey.description IS '问卷说明';
+                    
+      COMMENT ON COLUMN erp_hr_survey.survey_type IS '调研类型';
+                    
+      COMMENT ON COLUMN erp_hr_survey.is_anonymous IS '是否匿名';
+                    
+      COMMENT ON COLUMN erp_hr_survey.status IS '状态';
+                    
+      COMMENT ON COLUMN erp_hr_survey.start_date IS '开始日期';
+                    
+      COMMENT ON COLUMN erp_hr_survey.end_date IS '截止日期';
+                    
+      COMMENT ON COLUMN erp_hr_survey.target_department_id IS '目标部门';
+                    
+      COMMENT ON COLUMN erp_hr_survey.include_enps IS '包含eNPS';
+                    
+      COMMENT ON COLUMN erp_hr_survey.enps_question IS 'eNPS题面';
+                    
+      COMMENT ON COLUMN erp_hr_survey.reminder_days IS '催填间隔天数';
+                    
+      COMMENT ON COLUMN erp_hr_survey.total_questions IS '总题数';
+                    
+      COMMENT ON COLUMN erp_hr_survey.total_responses IS '总答卷数';
+                    
+      COMMENT ON COLUMN erp_hr_survey.completion_rate IS '完成率';
+                    
+      COMMENT ON COLUMN erp_hr_survey.avg_score IS '平均分';
+                    
+      COMMENT ON COLUMN erp_hr_survey.enps_score IS 'eNPS得分';
+                    
+      COMMENT ON COLUMN erp_hr_survey.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_hr_survey.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_hr_survey.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_survey.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_survey.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_survey.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_survey.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_survey.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_hr_competency IS '胜任力字典';
+                
+      COMMENT ON COLUMN erp_hr_competency.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_competency.code IS '编码';
+                    
+      COMMENT ON COLUMN erp_hr_competency.name IS '名称';
+                    
+      COMMENT ON COLUMN erp_hr_competency.description IS '描述';
+                    
+      COMMENT ON COLUMN erp_hr_competency.category IS '分类';
+                    
+      COMMENT ON COLUMN erp_hr_competency.competency_group IS '能力组';
+                    
+      COMMENT ON COLUMN erp_hr_competency.is_technical IS '是否技术能力';
+                    
+      COMMENT ON COLUMN erp_hr_competency.parent_id IS '上级胜任力';
+                    
+      COMMENT ON COLUMN erp_hr_competency.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_hr_competency.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_hr_competency.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_competency.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_competency.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_competency.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_competency.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_competency.update_time IS '修改时间';
+                    
       COMMENT ON TABLE erp_hr_position IS '职位';
                 
       COMMENT ON COLUMN erp_hr_position.id IS 'ID';
@@ -324,6 +895,104 @@ CREATE TABLE erp_hr_timesheet_line(
       COMMENT ON COLUMN erp_hr_position.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_hr_position.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_hr_survey_question IS '问卷题目';
+                
+      COMMENT ON COLUMN erp_hr_survey_question.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_survey_question.survey_id IS '所属问卷';
+                    
+      COMMENT ON COLUMN erp_hr_survey_question.sort_order IS '排序号';
+                    
+      COMMENT ON COLUMN erp_hr_survey_question.question_text IS '题目内容';
+                    
+      COMMENT ON COLUMN erp_hr_survey_question.question_type IS '题型';
+                    
+      COMMENT ON COLUMN erp_hr_survey_question.rating_scale_min IS '评分最低分';
+                    
+      COMMENT ON COLUMN erp_hr_survey_question.rating_scale_max IS '评分最高分';
+                    
+      COMMENT ON COLUMN erp_hr_survey_question.rating_label_min IS '最低分标签';
+                    
+      COMMENT ON COLUMN erp_hr_survey_question.rating_label_max IS '最高分标签';
+                    
+      COMMENT ON COLUMN erp_hr_survey_question.options IS '选项列表';
+                    
+      COMMENT ON COLUMN erp_hr_survey_question.driver_category IS '驱动因子分类';
+                    
+      COMMENT ON COLUMN erp_hr_survey_question.is_required IS '是否必填';
+                    
+      COMMENT ON COLUMN erp_hr_survey_question.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_survey_question.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_survey_question.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_survey_question.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_survey_question.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_survey_question.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_hr_survey_result IS '调研结果';
+                
+      COMMENT ON COLUMN erp_hr_survey_result.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_survey_result.survey_id IS '所属问卷';
+                    
+      COMMENT ON COLUMN erp_hr_survey_result.department_id IS '部门';
+                    
+      COMMENT ON COLUMN erp_hr_survey_result.total_responses IS '答卷数';
+                    
+      COMMENT ON COLUMN erp_hr_survey_result.avg_score IS '平均分';
+                    
+      COMMENT ON COLUMN erp_hr_survey_result.enps_score IS 'eNPS得分';
+                    
+      COMMENT ON COLUMN erp_hr_survey_result.driver_scores IS '驱动因子得分';
+                    
+      COMMENT ON COLUMN erp_hr_survey_result.question_breakdown IS '每题得分';
+                    
+      COMMENT ON COLUMN erp_hr_survey_result.trend_data IS '历史趋势';
+                    
+      COMMENT ON COLUMN erp_hr_survey_result.last_calculated_at IS '最后计算时间';
+                    
+      COMMENT ON COLUMN erp_hr_survey_result.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_survey_result.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_survey_result.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_survey_result.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_survey_result.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_survey_result.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_hr_competency_level IS '胜任力等级';
+                
+      COMMENT ON COLUMN erp_hr_competency_level.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_competency_level.competency_id IS '胜任力';
+                    
+      COMMENT ON COLUMN erp_hr_competency_level.level_number IS '等级编号';
+                    
+      COMMENT ON COLUMN erp_hr_competency_level.level_name IS '等级名称';
+                    
+      COMMENT ON COLUMN erp_hr_competency_level.behavioral_anchor IS '行为锚定';
+                    
+      COMMENT ON COLUMN erp_hr_competency_level.sort_order IS '排序号';
+                    
+      COMMENT ON COLUMN erp_hr_competency_level.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_competency_level.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_competency_level.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_competency_level.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_competency_level.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_competency_level.update_time IS '修改时间';
                     
       COMMENT ON TABLE erp_hr_employee IS '员工';
                 
@@ -404,6 +1073,32 @@ CREATE TABLE erp_hr_timesheet_line(
       COMMENT ON COLUMN erp_hr_employee.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_hr_employee.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_hr_role_competency IS '岗位胜任力要求';
+                
+      COMMENT ON COLUMN erp_hr_role_competency.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_role_competency.position_id IS '岗位';
+                    
+      COMMENT ON COLUMN erp_hr_role_competency.competency_id IS '胜任力';
+                    
+      COMMENT ON COLUMN erp_hr_role_competency.required_level IS '要求等级';
+                    
+      COMMENT ON COLUMN erp_hr_role_competency.weight IS '权重';
+                    
+      COMMENT ON COLUMN erp_hr_role_competency.is_critical IS '是否关键';
+                    
+      COMMENT ON COLUMN erp_hr_role_competency.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_role_competency.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_role_competency.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_role_competency.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_role_competency.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_role_competency.update_time IS '修改时间';
                     
       COMMENT ON TABLE erp_hr_employment_contract IS '劳动合同';
                 
@@ -635,6 +1330,204 @@ CREATE TABLE erp_hr_timesheet_line(
                     
       COMMENT ON COLUMN erp_hr_recruitment.update_time IS '修改时间';
                     
+      COMMENT ON TABLE erp_hr_shift_assignment IS '排班分配';
+                
+      COMMENT ON COLUMN erp_hr_shift_assignment.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_shift_assignment.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_hr_shift_assignment.employee_id IS '员工';
+                    
+      COMMENT ON COLUMN erp_hr_shift_assignment.shift_id IS '班次';
+                    
+      COMMENT ON COLUMN erp_hr_shift_assignment.assignment_date IS '排班日期';
+                    
+      COMMENT ON COLUMN erp_hr_shift_assignment.actual_start_time IS '实际签到时间';
+                    
+      COMMENT ON COLUMN erp_hr_shift_assignment.actual_end_time IS '实际签退时间';
+                    
+      COMMENT ON COLUMN erp_hr_shift_assignment.is_absent IS '是否缺勤';
+                    
+      COMMENT ON COLUMN erp_hr_shift_assignment.absence_reason IS '缺勤原因';
+                    
+      COMMENT ON COLUMN erp_hr_shift_assignment.leave_request_id IS '关联休假';
+                    
+      COMMENT ON COLUMN erp_hr_shift_assignment.swap_request_id IS '关联调换';
+                    
+      COMMENT ON COLUMN erp_hr_shift_assignment.replaced_by_assignment_id IS '被替换排班';
+                    
+      COMMENT ON COLUMN erp_hr_shift_assignment.status IS '状态';
+                    
+      COMMENT ON COLUMN erp_hr_shift_assignment.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_shift_assignment.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_shift_assignment.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_shift_assignment.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_shift_assignment.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_shift_assignment.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_hr_shift_swap_request IS '排班调换申请';
+                
+      COMMENT ON COLUMN erp_hr_shift_swap_request.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_shift_swap_request.code IS '编号';
+                    
+      COMMENT ON COLUMN erp_hr_shift_swap_request.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_hr_shift_swap_request.requester_id IS '申请人';
+                    
+      COMMENT ON COLUMN erp_hr_shift_swap_request.target_employee_id IS '目标员工';
+                    
+      COMMENT ON COLUMN erp_hr_shift_swap_request.source_assignment_id IS '原排班';
+                    
+      COMMENT ON COLUMN erp_hr_shift_swap_request.target_assignment_id IS '目标排班';
+                    
+      COMMENT ON COLUMN erp_hr_shift_swap_request.swap_date IS '调换日期';
+                    
+      COMMENT ON COLUMN erp_hr_shift_swap_request.reason IS '调换原因';
+                    
+      COMMENT ON COLUMN erp_hr_shift_swap_request.status IS '状态';
+                    
+      COMMENT ON COLUMN erp_hr_shift_swap_request.approved_by_id IS '审批人';
+                    
+      COMMENT ON COLUMN erp_hr_shift_swap_request.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_shift_swap_request.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_shift_swap_request.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_shift_swap_request.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_shift_swap_request.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_shift_swap_request.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_hr_survey_response IS '答卷';
+                
+      COMMENT ON COLUMN erp_hr_survey_response.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_survey_response.survey_id IS '所属问卷';
+                    
+      COMMENT ON COLUMN erp_hr_survey_response.employee_id IS '填写员工';
+                    
+      COMMENT ON COLUMN erp_hr_survey_response.respondent_hash IS '匿名哈希';
+                    
+      COMMENT ON COLUMN erp_hr_survey_response.submitted_at IS '提交时间';
+                    
+      COMMENT ON COLUMN erp_hr_survey_response.time_spent_seconds IS '填写耗时';
+                    
+      COMMENT ON COLUMN erp_hr_survey_response.is_complete IS '是否完整';
+                    
+      COMMENT ON COLUMN erp_hr_survey_response.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_hr_survey_response.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_survey_response.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_survey_response.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_survey_response.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_survey_response.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_survey_response.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_hr_employee_assessment IS '员工评估';
+                
+      COMMENT ON COLUMN erp_hr_employee_assessment.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_employee_assessment.employee_id IS '被评估员工';
+                    
+      COMMENT ON COLUMN erp_hr_employee_assessment.assessment_type IS '评估类型';
+                    
+      COMMENT ON COLUMN erp_hr_employee_assessment.assessor_id IS '评估人';
+                    
+      COMMENT ON COLUMN erp_hr_employee_assessment.assessment_date IS '评估日期';
+                    
+      COMMENT ON COLUMN erp_hr_employee_assessment.status IS '状态';
+                    
+      COMMENT ON COLUMN erp_hr_employee_assessment.overall_score IS '综合评分';
+                    
+      COMMENT ON COLUMN erp_hr_employee_assessment.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_hr_employee_assessment.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_hr_employee_assessment.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_employee_assessment.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_employee_assessment.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_employee_assessment.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_employee_assessment.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_employee_assessment.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_hr_gap_analysis IS '差距分析';
+                
+      COMMENT ON COLUMN erp_hr_gap_analysis.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_gap_analysis.employee_id IS '员工';
+                    
+      COMMENT ON COLUMN erp_hr_gap_analysis.competency_id IS '胜任力';
+                    
+      COMMENT ON COLUMN erp_hr_gap_analysis.required_level IS '要求等级';
+                    
+      COMMENT ON COLUMN erp_hr_gap_analysis.actual_level IS '实际等级';
+                    
+      COMMENT ON COLUMN erp_hr_gap_analysis.gap_value IS '差距值';
+                    
+      COMMENT ON COLUMN erp_hr_gap_analysis.gap_severity IS '差距严重程度';
+                    
+      COMMENT ON COLUMN erp_hr_gap_analysis.assessment_date IS '评估日期';
+                    
+      COMMENT ON COLUMN erp_hr_gap_analysis.analysis_date IS '分析日期';
+                    
+      COMMENT ON COLUMN erp_hr_gap_analysis.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_gap_analysis.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_gap_analysis.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_gap_analysis.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_gap_analysis.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_gap_analysis.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_hr_development_plan IS '发展计划';
+                
+      COMMENT ON COLUMN erp_hr_development_plan.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan.employee_id IS '员工';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan.plan_name IS '计划名称';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan.target_date IS '目标完成日期';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan.status IS '状态';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan.update_time IS '修改时间';
+                    
       COMMENT ON TABLE erp_hr_attendance IS '考勤记录';
                 
       COMMENT ON COLUMN erp_hr_attendance.id IS 'ID';
@@ -706,4 +1599,92 @@ CREATE TABLE erp_hr_timesheet_line(
       COMMENT ON COLUMN erp_hr_timesheet_line.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_hr_timesheet_line.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_hr_survey_answer IS '回答明细';
+                
+      COMMENT ON COLUMN erp_hr_survey_answer.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_survey_answer.response_id IS '答卷';
+                    
+      COMMENT ON COLUMN erp_hr_survey_answer.question_id IS '题目';
+                    
+      COMMENT ON COLUMN erp_hr_survey_answer.rating_value IS '评分值';
+                    
+      COMMENT ON COLUMN erp_hr_survey_answer.selected_option IS '选项';
+                    
+      COMMENT ON COLUMN erp_hr_survey_answer.open_text IS '文本回答';
+                    
+      COMMENT ON COLUMN erp_hr_survey_answer.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_survey_answer.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_survey_answer.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_survey_answer.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_survey_answer.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_survey_answer.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_hr_assessment_detail IS '评估明细';
+                
+      COMMENT ON COLUMN erp_hr_assessment_detail.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_assessment_detail.assessment_id IS '评估';
+                    
+      COMMENT ON COLUMN erp_hr_assessment_detail.competency_id IS '胜任力';
+                    
+      COMMENT ON COLUMN erp_hr_assessment_detail.actual_level IS '实际等级';
+                    
+      COMMENT ON COLUMN erp_hr_assessment_detail.comment IS '评语';
+                    
+      COMMENT ON COLUMN erp_hr_assessment_detail.source_type IS '来源类型';
+                    
+      COMMENT ON COLUMN erp_hr_assessment_detail.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_assessment_detail.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_assessment_detail.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_assessment_detail.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_assessment_detail.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_assessment_detail.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_hr_development_plan_item IS '发展计划项';
+                
+      COMMENT ON COLUMN erp_hr_development_plan_item.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan_item.plan_id IS '发展计划';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan_item.competency_id IS '目标胜任力';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan_item.gap_id IS '关联差距分析';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan_item.target_level IS '目标等级';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan_item.development_action IS '发展行动';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan_item.mentor_id IS '导师';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan_item.start_date IS '开始日期';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan_item.end_date IS '预计完成日期';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan_item.status IS '状态';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan_item.progress_note IS '进度说明';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan_item.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan_item.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan_item.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan_item.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan_item.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_development_plan_item.update_time IS '修改时间';
                     

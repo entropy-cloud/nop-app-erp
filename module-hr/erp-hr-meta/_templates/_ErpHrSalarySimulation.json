@@ -1,0 +1,23 @@
+{
+  "id": 0,
+  "code": "",
+  "orgId": 0,
+  "sourceSalaryId": 0,
+  "simulationPeriodYear": 0,
+  "simulationPeriodMonth": 0,
+  "simulationName": "",
+  "status": 0,
+  "status_label": "",
+  "reviewerId": 0,
+  "reviewedAt": "2000-01-01 14:00:00",
+  "convertedAt": "2000-01-01 14:00:00",
+  "convertedSalaryId": 0,
+  "notes": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "org": null
+}

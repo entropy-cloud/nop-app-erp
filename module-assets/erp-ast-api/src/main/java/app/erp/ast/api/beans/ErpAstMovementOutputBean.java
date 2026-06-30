@@ -303,16 +303,16 @@
         }
 
 
-        private Integer _docVersion;
+        private String _docVersion;
 
     
         @PropMeta(propId=20)
     
-        public Integer getDocVersion(){
+        public String getDocVersion(){
             return _docVersion;
         }
 
-        public void setDocVersion(Integer value){
+        public void setDocVersion(String value){
             this._docVersion = value;
         }
 
@@ -429,44 +429,44 @@
         }
 
 
-        private String _exchangeRate;
+        private java.math.BigDecimal _exchangeRate;
 
     
         @PropMeta(propId=29)
     
-        public String getExchangeRate(){
+        public java.math.BigDecimal getExchangeRate(){
             return _exchangeRate;
         }
 
-        public void setExchangeRate(String value){
+        public void setExchangeRate(java.math.BigDecimal value){
             this._exchangeRate = value;
         }
 
 
-        private String _amountSource;
+        private java.math.BigDecimal _amountSource;
 
     
         @PropMeta(propId=30)
     
-        public String getAmountSource(){
+        public java.math.BigDecimal getAmountSource(){
             return _amountSource;
         }
 
-        public void setAmountSource(String value){
+        public void setAmountSource(java.math.BigDecimal value){
             this._amountSource = value;
         }
 
 
-        private String _amountFunctional;
+        private java.math.BigDecimal _amountFunctional;
 
     
         @PropMeta(propId=31)
     
-        public String getAmountFunctional(){
+        public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;
         }
 
-        public void setAmountFunctional(String value){
+        public void setAmountFunctional(java.math.BigDecimal value){
             this._amountFunctional = value;
         }
 

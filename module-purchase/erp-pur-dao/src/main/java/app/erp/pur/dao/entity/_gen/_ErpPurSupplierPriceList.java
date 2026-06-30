@@ -203,7 +203,7 @@ public class _ErpPurSupplierPriceList extends DynamicOrmEntity{
     private java.lang.String _taxRate;
     
     /* 最小起订量: MIN_ORDER_QUANTITY */
-    private java.lang.String _minOrderQuantity;
+    private java.math.BigDecimal _minOrderQuantity;
     
     /* 交货周期(天): LEAD_TIME_DAYS */
     private java.lang.Integer _leadTimeDays;
@@ -451,9 +451,9 @@ public class _ErpPurSupplierPriceList extends DynamicOrmEntity{
             }
         
             case PROP_ID_minOrderQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_minOrderQuantity));
                }
                setMinOrderQuantity(typedValue);
@@ -630,7 +630,7 @@ public class _ErpPurSupplierPriceList extends DynamicOrmEntity{
         
             case PROP_ID_minOrderQuantity:{
                onInitProp(propId);
-               this._minOrderQuantity = (java.lang.String)value;
+               this._minOrderQuantity = (java.math.BigDecimal)value;
                
                break;
             }
@@ -854,7 +854,7 @@ public class _ErpPurSupplierPriceList extends DynamicOrmEntity{
     /**
      * 最小起订量: MIN_ORDER_QUANTITY
      */
-    public final java.lang.String getMinOrderQuantity(){
+    public final java.math.BigDecimal getMinOrderQuantity(){
          onPropGet(PROP_ID_minOrderQuantity);
          return _minOrderQuantity;
     }
@@ -862,7 +862,7 @@ public class _ErpPurSupplierPriceList extends DynamicOrmEntity{
     /**
      * 最小起订量: MIN_ORDER_QUANTITY
      */
-    public final void setMinOrderQuantity(java.lang.String value){
+    public final void setMinOrderQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_minOrderQuantity,value)){
             this._minOrderQuantity = value;
             internalClearRefs(PROP_ID_minOrderQuantity);

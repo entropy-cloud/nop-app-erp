@@ -1,0 +1,16 @@
+{
+  "id": 0,
+  "rebateAgreementId": 0,
+  "fromAmount": 0.0,
+  "toAmount": 0.0,
+  "rebatePercent": 0.0,
+  "rebateAmount": 0.0,
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "rebateAgreement": null
+}

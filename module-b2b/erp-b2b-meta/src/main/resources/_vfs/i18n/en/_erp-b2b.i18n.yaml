@@ -1,0 +1,389 @@
+entity:
+  label:
+    ErpB2bAsn: Advanced Shipping Notice
+    ErpB2bAsnLine: ASN Line
+    ErpB2bCertificationChecklist: Certification Checklist
+    ErpB2bCodeMapping: Code Mapping
+    ErpB2bEdiDoc: EDI Document
+    ErpB2bEdiFormat: EDI Format
+    ErpB2bEdiLog: EDI Log
+    ErpB2bMftCertificate: MFT Certificate
+    ErpB2bMftConfig: MFT Config
+    ErpB2bMftLog: MFT Log
+    ErpB2bPartnerCredential: Partner Credential
+    ErpB2bPartnerProfile: Partner Profile
+    ErpB2bTestExchange: Test Exchange
+prop:
+  label:
+    ErpB2bAsn:
+      id: ID
+      code: Code
+      orgId: Organization
+      sourceEdiDocId: Source EDI Document
+      partnerId: Partner
+      shipmentDate: Shipment Date
+      estimatedArrivalDate: Estimated Arrival Date
+      trackingNo: Tracking No
+      relatedBillType: Related Bill Type
+      relatedBillCode: Related Bill Code
+      status: Status
+      status_label: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      sourceEdiDoc: Source EDI Document
+      partner: Partner
+      org: Org
+      lines: Lines
+    ErpB2bAsnLine:
+      id: ID
+      asnId: ASN
+      lineNo: Line No
+      materialId: Material
+      supplierPartNo: Supplier Part No
+      quantity: Quantity
+      shippedQty: Shipped Quantity
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      asn: ASN
+      material: Material
+    ErpB2bCertificationChecklist:
+      id: ID
+      partnerProfileId: Partner Profile
+      checklistItem: Checklist Item
+      requiredDocType: Required Doc Type
+      isMandatory: Is Mandatory
+      isPassed: Is Passed
+      checkedBy: Checked By
+      checkedAt: Checked At
+      evidence: Evidence
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      partnerProfile: Partner Profile
+    ErpB2bCodeMapping:
+      id: ID
+      orgId: Organization
+      mappingType: Mapping Type
+      mappingType_label: null
+      internalCode: Internal Code
+      externalCode: External Code
+      partnerId: Partner
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+      partner: Partner
+    ErpB2bEdiDoc:
+      id: ID
+      code: Code
+      orgId: Organization
+      formatId: Format
+      relatedBillType: Related Bill Type
+      relatedBillCode: Related Bill Code
+      state: State
+      state_label: null
+      blockingLevel: Blocking Level
+      blockingLevel_label: null
+      error: Error Message
+      retryCount: Retry Count
+      attachmentId: Attachment
+      sentAt: Sent At
+      acknowledgedAt: Acknowledged At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      format: Format
+      org: Org
+    ErpB2bEdiFormat:
+      id: ID
+      code: Code
+      orgId: Organization
+      formatName: Format Name
+      formatStandard: Format Standard
+      formatStandard_label: null
+      direction: Direction
+      direction_label: null
+      needsWebService: Needs Web Service
+      isActive: Is Active
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+    ErpB2bEdiLog:
+      id: ID
+      ediDocId: EDI Document
+      orgId: Organization
+      direction: Direction
+      direction_label: null
+      requestPayload: Request Payload
+      responsePayload: Response Payload
+      resultCode: Result Code
+      resultMsg: Result Message
+      logTime: Log Time
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      ediDoc: EDI Document
+      org: Org
+    ErpB2bMftCertificate:
+      id: ID
+      orgId: Organization
+      partnerId: Partner
+      certName: Certificate Name
+      certType: Certificate Type
+      algorithm: Algorithm
+      keySize: Key Size
+      issuerName: Issuer
+      subjectName: Subject
+      serialNo: Serial No
+      fingerprintSha256: SHA-256 Fingerprint
+      issuedAt: Issued At
+      expiresAt: Expires At
+      isActive: Is Active
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      partner: Partner
+      org: Org
+    ErpB2bMftConfig:
+      id: ID
+      orgId: Organization
+      partnerId: Partner
+      protocol: Protocol
+      transportEndpoint: Transport Endpoint
+      localAs2Id: Local AS2 ID
+      remoteAs2Id: Remote AS2 ID
+      sftpUsername: SFTP Username
+      sftpPort: SFTP Port
+      ftpsPort: FTPS Port
+      ftpsImplicitTls: Implicit TLS
+      compression: Compression
+      encryption: Encryption
+      encryptionAlgo: Encryption Algorithm
+      signature: Signature
+      signatureAlgo: Signature Algorithm
+      certId: Certificate
+      active: Active
+      maxRetries: Max Retries
+      retryIntervalMin: Retry Interval Min
+      deadLetterEnabled: Dead Letter Enabled
+      monitorDirectory: Monitor Directory
+      monitorIntervalSec: Monitor Interval Sec
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      partner: Partner
+      org: Org
+    ErpB2bMftLog:
+      id: ID
+      orgId: Organization
+      configId: MFT Config
+      relatedBillType: Related Bill Type
+      relatedBillCode: Related Bill Code
+      direction: Direction
+      fileName: File Name
+      fileSize: File Size
+      fileHash: File Hash
+      messageId: Message ID
+      mdnStatus: MDN Status
+      protocol: Protocol
+      status: Status
+      startTime: Start Time
+      endTime: End Time
+      durationMs: Duration Ms
+      errorCode: Error Code
+      errorMsg: Error Message
+      retryCount: Retry Count
+      isCompressed: Is Compressed
+      isEncrypted: Is Encrypted
+      isSigned: Is Signed
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      config: MFT Config
+      org: Org
+    ErpB2bPartnerCredential:
+      id: ID
+      partnerProfileId: Partner Profile
+      credentialType: Credential Type
+      credentialType_label: null
+      credentialKey: Credential Key
+      credentialValue: Credential Value
+      issuedAt: Issued At
+      expiresAt: Expires At
+      isActive: Is Active
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      partnerProfile: Partner Profile
+    ErpB2bPartnerProfile:
+      id: ID
+      code: Code
+      orgId: Organization
+      partnerId: Partner
+      partnerName: Partner Name
+      status: Status
+      status_label: null
+      protocol: Protocol
+      protocol_label: null
+      transportEndpoint: Transport Endpoint
+      authMethod: Auth Method
+      authMethod_label: null
+      webhookSecret: Webhook Secret
+      certExpiry: Cert Expiry
+      certFingerprint: Cert Fingerprint
+      allowedFormats: Allowed Formats
+      timezone: Timezone
+      contactName: Contact Name
+      contactEmail: Contact Email
+      contactPhone: Contact Phone
+      notes: Notes
+      goLiveDate: Go Live Date
+      archivedAt: Archived At
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      partner: Partner
+      org: Org
+    ErpB2bTestExchange:
+      id: ID
+      partnerProfileId: Partner Profile
+      direction: Direction
+      direction_label: null
+      formatCode: Format Code
+      testCaseCode: Test Case Code
+      sentPayload: Sent Payload
+      receivedPayload: Received Payload
+      expectedResult: Expected Result
+      actualResult: Actual Result
+      passed: Passed
+      testedBy: Tested By
+      testedAt: Tested At
+      notes: Notes
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      partnerProfile: Partner Profile
+dict:
+  label:
+    erp-b2b/edi-doc-state: EDI Document State
+    erp-b2b/asn-status: ASN Status
+    erp-b2b/edi-direction: EDI Direction
+    erp-b2b/edi-standard: EDI Standard
+    erp-b2b/blocking-level: Blocking Level
+    erp-b2b/mapping-type: Mapping Type
+    erp-b2b/partner-status: Partner Status
+    erp-b2b/protocol: Protocol
+    erp-b2b/auth-method: Auth Method
+    erp-b2b/credential-type: Credential Type
+    erp-b2b/exchange-direction: Exchange Direction
+dict.option.label:
+  erp-b2b/edi-doc-state:
+    '10': To Send
+    '20': Sent
+    '25': To Cancel
+    '30': Cancelled
+    '40': Error
+    '50': Received
+    '60': Acknowledged
+    '70': Archived
+  erp-b2b/asn-status:
+    '10': Received
+    '20': Matched
+    '30': Received To Stock
+    '40': Cancelled
+  erp-b2b/edi-direction:
+    '10': Outbound
+    '20': Inbound
+    '30': Both
+  erp-b2b/edi-standard:
+    '10': UBL
+    '20': X12
+    '30': EDIFACT
+    '40': Custom
+  erp-b2b/blocking-level:
+    '10': Info
+    '20': Warning
+    '30': Error
+  erp-b2b/mapping-type:
+    '10': Material
+    '20': Partner
+    '30': UOM
+  erp-b2b/partner-status:
+    '10': Registered
+    '20': Testing
+    '30': Certified
+    '40': Production
+    '50': Suspended
+    '60': Terminated
+  erp-b2b/protocol:
+    '10': AS2
+    '20': SFTP
+    '30': HTTP
+    '40': HTTPS
+    '50': OFTP2
+  erp-b2b/auth-method:
+    '10': HMAC
+    '20': Basic Auth
+    '30': Certificate
+    '40': OAuth2
+  erp-b2b/credential-type:
+    '10': API Key
+    '20': Username Password
+    '30': Certificate
+    '40': SSH Key
+  erp-b2b/exchange-direction:
+    '10': Outbound
+    '20': Inbound

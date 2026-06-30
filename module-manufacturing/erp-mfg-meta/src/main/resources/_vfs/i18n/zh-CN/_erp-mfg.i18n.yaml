@@ -1,11 +1,13 @@
 entity:
   label:
+    ErpMfgBatchGenealogy: 批次追溯
     ErpMfgBom: BOM
     ErpMfgBomByproduct: BOM联副产品
     ErpMfgBomLine: BOM行
     ErpMfgBomOperation: BOM工艺
     ErpMfgCostRollup: 标准成本滚算
     ErpMfgCostRollupLine: 标准成本滚算行
+    ErpMfgCostVariance: 成本差异记录
     ErpMfgJobCard: 作业卡
     ErpMfgJobCardTimeLog: 作业工时记录
     ErpMfgMaterialIssue: 领料单
@@ -23,6 +25,35 @@ entity:
     ErpMfgWorkcenter: 工作中心
 prop:
   label:
+    ErpMfgBatchGenealogy:
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      inputLotId: 输入批次
+      inputMaterial: null
+      inputMaterialId: 输入物料
+      inputQty: 投入数量
+      inputUoMId: 投入计量单位
+      isInputConsumed: 输入是否已消耗
+      jobCard: null
+      jobCardId: 作业卡
+      lineNo: 行号
+      lotStatus: 批次状态
+      operationId: 工序
+      outputLotId: 产出批次
+      outputMaterial: null
+      outputMaterialId: 产出物料
+      outputQty: 产出数量
+      outputUoMId: 产出计量单位
+      productionDate: 生产日期
+      productionTime: 生产时间
+      remark: 备注
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      workOrder: null
+      workOrderId: 工单
     ErpMfgBom:
       bomType: BOM类型
       bomType_label: BOM类型
@@ -150,6 +181,35 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+    ErpMfgCostVariance:
+      actualAmount: 实际金额
+      actualPrice: 实际单价
+      actualQty: 实际数量
+      businessDate: 业务日期
+      costElement: 成本要素
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      lineNo: 行号
+      material: null
+      materialId: 物料
+      operationId: 工序
+      posted: 已过账
+      remark: 备注
+      standardAmount: 标准金额
+      standardPrice: 标准单价
+      standardQty: 标准数量
+      updateTime: 修改时间
+      updatedBy: 修改人
+      varianceAmount: 差异金额
+      variancePercent: 差异百分比
+      varianceType: 差异类型
+      version: 数据版本
+      workOrder: null
+      workOrderId: 工单
+      workcenter: null
+      workcenterId: 工作中心
     ErpMfgJobCard:
       actualEndTime: 实际结束时间
       actualStartTime: 实际开始时间
@@ -392,8 +452,13 @@ prop:
       posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人
+      postedStatus: 过账状态
+      postedStatus_label: 过账状态
       processingFee: 加工费
+      productId: 产品
+      productionVersionId: 生产版本
       remark: 备注
+      routingId: 工艺路线
       supplier: null
       supplierId: 委外供应商
       totalAmount: 合计金额

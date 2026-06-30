@@ -34,7 +34,7 @@
                 <col id="uoMId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--请购数量-->
-                <col id="quantity" mandatory="true" sortable="true"/>
+                <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--需求日期-->
                 <col id="requiredDate" sortable="true"/>
