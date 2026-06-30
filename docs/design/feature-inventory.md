@@ -65,6 +65,22 @@
 | 维护访问 | maintenance | `maintenance/state-machine.md` | 实际维护执行、备件消耗 |
 | 维护请求（报修） | maintenance | `maintenance/state-machine.md` | 响应性维护 |
 | 停机记录 | maintenance | `maintenance/README.md` | 设备停机、影响排产 |
+| 费用报销与员工借款 | finance | `finance/expense-claim.md` | 员工费用报销（价税分离、项目归集）、员工借款/备用金 |
+| 资金管理与票据 | finance | `finance/treasury.md` | 中式承兑汇票（应收/应付）、贴现、授信额度、现金预测 |
+| 产能需求计划（CRP） | manufacturing | `manufacturing/crp.md` | 工作中心产能建模（日历/按产品/换模）、负荷报表 |
+| 供应商评分卡 | purchase/master-data | `purchase/supplier-evaluation.md` | 周期评分（维度×公式×权重）、评级→RFQ 联动；AVL 准入归 master-data |
+| VMI/寄售/受托代销 | inventory | `inventory/consignment.md` | owner 库存维度、所有权转移单（物权变更，物理不变） |
+| 批次召回事件 | quality | `quality/recall.md` | 召回事件聚合（复用 trace-chain/NCR/退货）、NCR 升级 ESCALATED_TO_RECALL |
+
+## 可选扩展模块（设计骨架，实施级延迟）
+
+> 以下为 P1 独立扩展模块，不纳入 10 域基线（`product-scope.md:49-52` 延迟范围），作为可选工程按需组装。当前仅有设计骨架 + SPI 契约，深化到实施级延迟到客户需求触发。
+
+| 功能 | 所属域 | Owner Doc | 说明 |
+|------|--------|-----------|------|
+| 客户关系管理（CRM） | crm（可选） | `crm/README.md` | 线索→商机→转化报价单，单实体+阶段表 |
+| 运输管理（TMS） | logistics（可选） | `logistics/README.md` | 发运单 + 承运商网关三层 SPI（Client/Factory/Registry） |
+| B2B 集成（EDI/ASN） | b2b（可选） | `architecture/b2b-integration.md` | EDI 格式 SPI + 信封状态机 + ASN 入站 |
 
 ## 平台复用功能（非 ERP 自建）
 

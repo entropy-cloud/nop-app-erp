@@ -17,8 +17,8 @@
 > 路线图是人机对齐工件：人类设置工作项及其顺序；AI 按顺序获取第一个 `todo` 项，自动起草/执行计划（人类不审查单个计划），并在结束审计时将该项写回 `done`。请参阅 `docs/backlog/00-roadmap-authoring-guide.md`（路线图角色、阶段粒度、闭环）。
 
 - 1. Bootstrap（AGE 初始化 + ORM 骨架）：`done`
-- 2. ERP 域选择 + ORM 模型设计：`todo`
-- 3. 多模块代码生成 + 首次构建：`todo`
+- 2. ERP 域选择 + ORM 模型设计：`done`（10 域 145 实体已设计完成）
+- 3. 多模块代码生成 + 首次构建：`done`（1096 Java 文件，82 模块 `mvn clean install -DskipTests` 全绿）
 - 4. 第一个 ERP 业务循环端到端：`todo`
 
 ## 状态值
@@ -47,12 +47,15 @@
 
 - 为 `nop-app-erp` 应用并定制的 AGE 文档结构
 - `module-<domain>/model/app-erp-<domain>.orm.xml` 骨架，包含 Maven 坐标、空字典/域/实体
+- 10 域 ORM 模型（145 实体）设计完成并审计通过
+- 全域 codegen 骨架已生成（1096 Java 文件：实体/DAO/I*Biz/BizModel 空壳/XMeta/view.xml）
+- `app-erp-all` 聚合 app 构建通过（82 模块）
 
 **主要差距：**
 
-- 特定 ERP 业务域尚未选择（人工决策）
-- ORM 模型中尚无实体
-- 无生成的 Maven 模块；项目尚未构建
+- BizModel 业务逻辑待深化（codegen 产物是标准 CRUD 空壳 `CrudBizModel<T>`）
+- ErrorCode 待补齐
+- 页面定制与端到端验证待开展
 
 ---
 
@@ -147,6 +150,30 @@ graph TD
 | 测试 | JUnit 5 + nop-autotest（代码生成后） |
 | Owner-doc 同步 | 阶段关闭时更新 design/architecture |
 | 开发日志 | 每次实施后更新 `docs/logs/` |
+
+## 高级场景扩展（可选，延迟到客户需求触发）
+
+> 以下为 P1 独立扩展模块与 P2 场景，不纳入 10 域基线（`product-scope.md:49-52` 延迟范围）。设计已就位（骨架 + SPI 契约），实施延迟到客户需求触发。
+
+### P1 独立扩展模块（设计骨架已就位，见计划 03）
+
+| 模块 | Owner Doc | 触发条件 |
+|---|---|---|
+| CRM | `docs/design/crm/README.md` | 客户需要内建线索/商机管理（非仅从报价单起） |
+| 运输/TMS | `docs/design/logistics/README.md` | 客户需要承运商网关对接（顺丰/DHL 等电子面单） |
+| B2B/EDI/ASN | `docs/architecture/b2b-integration.md` | 客户需要与供应商/客户的 EDI 自动交换（X12/EDIFACT/UBL） |
+
+### P2 场景（明确不纳入核心，按需独立扩展）
+
+| 场景 | 触发条件 |
+|---|---|
+| DRP（分销需求计划） | 客户含大型多级分销网络（>5 分仓） |
+| HRMS/薪酬/考勤 | 客户明确需要内建薪酬，或第三方 HR 集成不满足 |
+| POS/门店零售/多渠道电商 | 目标客户群体转向 B2C/零售 |
+| 售后服务/保修/客服工单 | 客户需要独立客服工单系统 |
+| 库存 ABC 分类 | 盘点策略/成本控制需要 ABC 分级 |
+
+详见 `docs/plans/03-advanced-scenario-design-gap-fill.md` 的 Deferred But Adjudicated 节。
 
 ## 规则
 

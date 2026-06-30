@@ -42,6 +42,9 @@
 | Operation Type | 作业类型 | inventory | 参数化的库存作业分类（收/发/内/制） |
 | Reserved Quantity | 预留量 | inventory | 被未完成移动单占用的量 |
 | Available Quantity | 可用量 | inventory | 现有量 − 预留量 |
+| VMI（Vendor-Managed Inventory） | 供应商寄售 | inventory | 货在己方仓但所有权属供应商，消耗时才转移。见 `inventory/consignment.md` |
+| Consignment（寄售/受托代销） | 受托代销 | inventory | 货在代销方仓但所有权属委托方，售出才结算。见 `inventory/consignment.md` |
+| Ownership | 所有权维度 | inventory | 库存正交维度（与产品/批次/库位并列），区分自有/VMI/寄售/客供 |
 
 ## 采购与销售词汇
 
@@ -58,6 +61,7 @@
 | Receipt | 收款单 | sales | 从客户收款的单据 |
 | Sales Return | 销售退货单 | sales | 客户退货 |
 | Three-way Match | 三单匹配 | purchase | 采购订单 → 入库 → 发票 的数量与金额一致性校验 |
+| AVL（Approved Vendor List） | 合格供应商名录 | master-data | 经准入审批可参与的供应商资格清单。见 `purchase/supplier-evaluation.md` |
 | Settlement | 核销 | purchase/sales | 收付款与发票的多对多核销关系 |
 
 ## 财务词汇
@@ -77,6 +81,8 @@
 | GL (General Ledger) | 总账 | finance | 按科目汇总的账簿 |
 | Accounting Period | 会计期间 | finance | 财务结账的时间区间 |
 | Costing Method | 成本核算方法 | finance | 移动加权平均/FIFO/批次等多种方法 |
+| Acceptance（Notes） | 承兑汇票 | finance | 银行承兑（银承）/商业承兑（商承），中式票据。见 `finance/treasury.md` |
+| Notes Discount | 票据贴现 | finance | 未到期票据向银行兑取现金，贴现息走财务费用 |
 
 ## 通用单据状态词汇
 

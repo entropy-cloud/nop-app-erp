@@ -62,6 +62,17 @@ ERP 业务按 10 个独立领域工程组织（见 `docs/architecture/domain-mod
 | `quality/` | `app-erp-quality` | `module-quality/model/app-erp-quality.orm.xml` | README + state-machine（质检+NCR） |
 | `maintenance/` | `app-erp-maintenance` | `module-maintenance/model/app-erp-maintenance.orm.xml` | README + state-machine（维护访问+请求） |
 
+### 可选扩展域（非 10 域基线，设计骨架）
+
+> 以下为 P1 独立扩展模块，不纳入 `product-scope.md` 的 10 域基线（延迟范围），作为可选工程（参考 `l10n/cn-golden-tax.md` 独立工程范式）按需组装。当前仅设计骨架 + SPI 契约，深化到实施级延迟到客户需求触发。
+
+| 域目录 | 工程（规划） | 状态 | 文档 |
+|--------|-------------|------|------|
+| `crm/` | `module-crm`（可选） | 设计骨架 | `crm/README.md`（线索→商机→转化报价单） |
+| `logistics/` | `module-logistics`（可选） | 设计骨架 | `logistics/README.md`（TMS 发运单 + 承运商网关三层 SPI） |
+
+> B2B 集成（EDI/ASN）属集成层，owner doc 在 `docs/architecture/b2b-integration.md`（规划 `module-b2b` 可选工程）。
+
 **结构选择原则**：
 - 状态机重的域（inventory/purchase/sales/finance）才有独立 `state-machine.md`。
 - 主数据是启停二态（非工作流状态机），不单独建状态机文档，规则内嵌 README。

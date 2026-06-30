@@ -58,7 +58,7 @@ DRAFT 状态: 不允许成本归集
 各来源按成本分类(人工/物料/费用/分包)汇总到 ProjectPnl
 ```
 
-**涉及机制**:cost-collection.md §四
+**涉及机制**:cost-collection.md §四、../finance/expense-claim.md（费用报销/员工借款 owner doc）
 
 ---
 

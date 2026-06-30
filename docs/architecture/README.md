@@ -44,4 +44,6 @@ Use `docs/design/` for app-layer feature and business design. Use `docs/architec
 - `l10n-strategy.md` - 本地化策略设计（中国本地化模块、金税接口、增值税发票）
 - `api-response-conventions.md` - API 响应约定
 - `integration-and-transaction-patterns.md` - 集成与事务模式
+- `integration-pattern.md` - 外部 API 集成模式（Webhook 出站/入站）
+- `b2b-integration.md` - B2B 集成 / EDI / ASN（集成层，可选 `module-b2b` 工程；EDI 格式 SPI 适用性派发 + 信封状态机 + ASN 入站）
 - `competitive-comparison.md` - 竞品架构对标（Odoo/ERPNext/metasfresh/iDempiere/Tryton/Openbravo/MixERP），8 个"超越点"杠杆与汇总表、诚实声明
