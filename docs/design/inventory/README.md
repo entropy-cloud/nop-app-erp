@@ -76,6 +76,36 @@
 7. **上下游追溯**：移动单记录上游/下游移动单关联，支持全链路追溯（采购到货→生产领料→销售出库）。
 8. **作业类型参数化**：作业类型绑定默认库位与科目映射，供财务域过账使用。
 
+### 报废出库移动单
+
+报废出库使用专用作业类型 `SCRAP`：
+
+- **operationType**：`SCRAP`（报废出库）
+- **默认库位**：报废库位（`warehouseType=SCRAP`）
+- **科目映射**：借：营业外支出（或制造费用） / 贷：存货
+- **触发场景**：质检不合格报废、盘点盘亏、过期报废
+- **配置**：`erp-inv.scrap-operation-type` 可按物料分类配置默认报废作业类型
+
+### 批次选择策略
+
+出库时的批次自动选择策略：
+
+| 策略 | 规则 | 适用场景 |
+|------|------|----------|
+| FIFO（先进先出） | 按入库日期从早到晚选择 | 默认策略 |
+| FEFO（先到期先出） | 按保质期从近到远选择 | 保质期管理物料 |
+| 手工指定 | 用户手动选择批次 | 高价/定制物料 |
+
+**配置优先级**（从高到低）：
+
+| 优先级 | 配置维度 | 说明 |
+|--------|----------|------|
+| 1 | 按仓库（ORM 字段） | `ErpMdWarehouse.batchSelectionStrategy` — 同一物料在不同仓库可用不同策略 |
+| 2 | 按物料（ErpSysConfig） | `erp-inv.batch-strategy.<materialId>` — 物料级别覆盖 |
+| 3 | 全局默认（ErpSysConfig） | `erp-inv.batch-selection-strategy`（默认 FIFO） |
+
+> 仓库级配置的 ORM 字段定义见 `module-master-data/model/app-erp-master-data.orm.xml` → `ErpMdWarehouse.batchSelectionStrategy`。FEFO 仅对启用保质期管理的物料生效。
+
 ## 本域文档
 
 | 文档 | 职责 |

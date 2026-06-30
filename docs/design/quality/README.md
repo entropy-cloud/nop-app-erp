@@ -58,6 +58,18 @@
 | 制程/完工检验 | manufacturing | 工单报工/完工触发质检；不合格触发返工 |
 | 物料/检验标准 | master-data | 质检模板按物料配置 |
 
+### 质检对制造域的约束声明
+
+质检判定直接影响制造工单状态迁移，双方必须显式声明：
+
+| 质检判定 | 对工单状态的影响 | 约束声明位置 |
+|----------|------------------|------------|
+| ACCEPTED（合格） | 工单可从 INSPECTING → COMPLETED | 本文 + `manufacturing/state-machine.md` |
+| CONDITIONAL（让步接收） | 工单可从 INSPECTING → COMPLETED（附让步记录） | 本文 + `manufacturing/state-machine.md` |
+| REJECTED（不合格） | 工单停留在 INSPECTING，触发返工工单 | 本文 + `manufacturing/state-machine.md` |
+
+> 双方文档都显式声明此约束，确保两个域的读者都能看到质检对工单状态的影响。
+
 ## 关键业务规则
 
 1. **质检模板按物料配置**：每种物料可配置不同的检验项目与规格标准。

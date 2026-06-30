@@ -33,19 +33,25 @@
 | 已审核（APPROVED） | 终态：已审核通过，已触发后续业务 | 否（需红冲/反审核） |
 | 已驳回（REJECTED） | 等待修改后重新提交 | 是 |
 
-## 2. 迁移完整性
+## 2. 迁移完整性（审批轴）
+
+> 本节只讨论 **approveStatus（审批轴）** 迁移。docStatus（业务生命周期轴）独立演化，详见 `../domain-design-guidelines.md` §14.2。新建单据的完整态：`docStatus=DRAFT, approveStatus=UNSUBMITTED`。
 
 ```
 未提交 (UNSUBMITTED)
   ├─ 提交 → 已提交 (SUBMITTED)
   │            ├─ 审核通过 → 已审核 (APPROVED)
   │            │              ├─ [触发后续业务：写库存/生成凭证]
+  │            │              │              └─ posted=true 后物理锁定，纠错需红冲/反审核
   │            │              └─ 反审核 → 已驳回（REJECTED，需先冲销已生成结果）
+  │            ├─ 撤销提交 → 未提交（UNSUBMITTED，仅审核人未处理时允许）
   │            └─ 驳回 → 已驳回 (REJECTED)
   │                          └─ 修改后重新提交 → 已提交
   └─ 作废 → 已作废（docStatus=CANCELLED）
 
-> **反审核目标态说明**：反审核目标态是 `REJECTED`（可重新提交），**不是** `UNSUBMITTED`（初始态）。语义理由见 `../domain-design-guidelines.md` §11.4——反审核的单据已发生过业务（已生成下游单据、已过账），不应回退为"未提交"；`REJECTED` 保留"曾审核过"的历史语义，便于审计追溯。
+> **反审核目标态说明**：反审核目标态是 `REJECTED`（可重新提交），**不是** `UNSUBMITTED`（初始态）。语义理由见 `../domain-design-guidelines.md` §16.4——反审核的单据已发生过业务（已生成下游单据、已过账），不应回退为"未提交"；`REJECTED` 保留"曾审核过"的历史语义，便于审计追溯。
+
+> **撤销提交约束**：仅提交人可操作；审核人一旦开始审核（nop-wf 已激活），提交人不可再撤回。
 ```
 
 每条迁移的触发、前置、结果：
@@ -55,6 +61,7 @@
 | UNSUBMITTED → SUBMITTED | 采购员 | 单据填写完整、行数据有效 | 进入待审核 |
 | SUBMITTED → APPROVED | 审核人/管理员 | 已提交状态；入库单需可用量充足（库存校验）；发票需三单匹配通过 | 触发后续业务（见下文） |
 | SUBMITTED → REJECTED | 审核人/管理员 | 已提交状态 | 退回修改 |
+| SUBMITTED → UNSUBMITTED | 提交人 | 审核人尚未处理（nop-wf 未激活） | 撤回提交，恢复可编辑 |
 | REJECTED → SUBMITTED | 采购员 | 已驳回状态、已修改 | 重新提交 |
 | APPROVED → REJECTED（反审核） | 审核人/管理员 | 已审核、且已冲销所有已生成结果（库存冲销移动单、财务红字凭证） | 回到已驳回（保留曾审核语义） |
 | 任意非终态 → 作废 | 采购员/管理员 | 单据未到终态 | docStatus → CANCELLED |

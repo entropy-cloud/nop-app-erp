@@ -152,6 +152,18 @@
 - 状态码归 `model/app-erp-manufacturing.orm.xml`。
 - 领料/完工的库存协作见 `inventory/cross-domain.md`。
 
+### 质检对工单状态的约束声明
+
+质检判定（quality 域）直接影响工单从 INSPECTING 到终态的迁移，双方必须显式声明：
+
+| 质检判定 | 对工单状态的影响 | 约束声明位置 |
+|----------|------------------|------------|
+| ACCEPTED（合格） | 工单可从 INSPECTING → COMPLETED | 本文 + `quality/README.md` |
+| CONDITIONAL（让步接收） | 工单可从 INSPECTING → COMPLETED（附让步记录） | 本文 + `quality/README.md` |
+| REJECTED（不合格） | 工单停留在 INSPECTING，触发返工工单 | 本文 + `quality/README.md` |
+
+> 质检触发规则见 `quality/README.md` "质检对制造域的约束声明"节。双方文档都显式声明此约束。
+
 ---
 
 ## 适用对象二：作业卡（JobCard）

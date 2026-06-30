@@ -215,19 +215,59 @@
 
 ---
 
-## 七、审计与追溯
+## 七、ErrorCode 错误码约定
 
-### 7.1 操作日志
+所有业务异常必须扩展 `NopException` + `ErrorCode`，描述使用中文（平台 i18n 处理翻译）。
 
-所有业务操作记录：操作人、操作时间、操作类型、变更前/后数据。
+### 7.1 命名空间
 
-### 7.2 数据血缘
+ErrorCode 按域划分命名空间，格式 `erp.<domain>.<code>`：
+
+| 域 | 命名空间 | 示例 |
+|---|---|---|
+| purchase | `erp.purchase.*` | `erp.purchase.order-not-found` |
+| sales | `erp.sales.*` | `erp.sales.insufficient-credit` |
+| inventory | `erp.inventory.*` | `erp.inventory.negative-stock-blocked` |
+| finance | `erp.finance.*` | `erp.finance.period-not-open` |
+| assets | `erp.assets.*` | `erp.assets.asset-not-depreciatable` |
+| manufacturing | `erp.manufacturing.*` | `erp.manufacturing.bom-not-found` |
+| projects | `erp.projects.*` | `erp.projects.task-already-completed` |
+| maintenance | `erp.maintenance.*` | `erp.maintenance.equipment-not-found` |
+| quality | `erp.quality.*` | `erp.quality.ncr-already-resolved` |
+| master-data | `erp.master-data.*` | `erp.master-data.sku-duplicate` |
+
+### 7.2 编码规则
+
+- 使用 4 位数字编码，前两位归域、后两位归具体错误（如 `erp.purchase.0101`）
+- 或使用可读字符串标识（如 `erp.purchase.order-not-found`），推荐字符串形式
+- ErrorCode 枚举文件存放在各域 `-service` 模块的 `error/` 包下
+- 每个域的 ErrorCode 枚举类命名：`Erp<Domain>ErrorCode`（如 `ErpPurchaseErrorCode`）
+
+### 7.3 使用规范
+
+```java
+// 正确：使用 ErrorCode + NopException
+throw new NopException(ErpPurchaseErrorCode.ORDER_NOT_FOUND).param("orderId", orderId);
+
+// 错误：直接抛出 RuntimeException 或自定义异常
+throw new RuntimeException("订单不存在"); // 禁止
+```
+
+---
+
+## 八、审计与追溯
+
+### 8.1 操作日志（复用平台）
+
+所有业务操作的日志**复用 Nop Platform 内置审计日志（nop-sys）**，各域不自建审计日志模块。平台自动记录操作人、操作时间、操作类型、变更前/后数据。
+
+### 8.2 数据血缘
 
 通过回链表追溯数据来源：
 - 凭证 → 业务单据 → 库存移动 → 物料/SKU
 - 发票 → 入库单 → 采购订单 → 供应商
 
-### 7.3 数据对账
+### 8.3 数据对账
 
 定期对账任务：
 - 库存余额 vs 流水汇总
@@ -235,42 +275,119 @@
 - 应付余额 vs 发票汇总
 - 总账 vs 明细凭证
 
----
+### 8.4 危险操作审计
 
-## 八、合规与内控
+除平台内置审计外，以下危险操作需额外定义业务级审计事件（记录操作理由、审批人等业务语义）：
 
-### 8.1 职责分离
-
-- 制单与审核分离
-- 记账与对账分离
-- 审批与执行分离
-
-### 8.2 审计线索
-
-- 所有操作不可篡改（操作日志追加记录）
-- 凭证红冲保留原凭证（不删除）
-- 反结账记录审批痕迹
-
-### 8.3 合规检查
-
-| 检查项 | 频率 | 责任人 |
-|--------|------|--------|
-| 凭证借贷平衡 | 实时 | 系统自动 |
-| 期间结账完整性 | 月末 | 财务员 |
-| 权限合规性 | 定期 | 管理员 |
-| 数据一致性 | 每日 | 系统自动 |
+| 操作 | 额外审计内容 |
+|------|------------|
+| 反审核 | 操作人、时间、原状态、冲销凭证号、操作理由 |
+| 反结账 | 操作人、时间、期间、审批人、操作理由 |
+| 管理员强操作 | 操作人、时间、变更前后数据、操作理由 |
 
 ---
 
-## 九、版本演进策略
+## 九、删除策略
 
-### 9.1 向后兼容
+### 9.1 三档删除策略
+
+| 单据状态 | 删除策略 | 说明 |
+|----------|----------|------|
+| 草稿（DRAFT / UNSUBMITTED） | 允许物理删除 | 草稿单据无业务影响，可物理删除减少数据膨胀 |
+| 已审核未过账（docStatus=APPROVED, posted=false） | 只允许作废（docStatus→CANCELLED） | 已有审计价值，不允许物理删除 |
+| 已过账/已完成（posted=true） | 完全禁止删除 | 纠错只能走红冲/反向单，保证审计轨迹完整 |
+
+### 9.2 实现规则
+
+- 所有 BizModel 的 `deleteById` / `deleteByIdList` 方法需校验单据状态
+- 草稿状态物理删除需记录操作日志（操作人、时间、删除数据摘要）
+- 已审核单据的删除请求返回明确错误码（`erp.<domain>.delete-not-allowed`）
+
+---
+
+## 十、会计期间统一规则
+
+### 10.1 跨域统一复用
+
+所有域**统一使用 finance 域的会计期间**（`ErpFinAccountingPeriod`），各域不维护独立期间。
+
+- `businessDate` 决定期间归属
+- 期间结账后禁止修改该期间内的**所有业务单据**（跨域一致）
+- finance 域暴露 `IErpFinAccountingPeriodBiz` 供其他域校验期间状态
+
+### 10.2 期间状态机
+
+```
+NOT_OPENED → OPEN → CLOSING → CLOSED
+```
+
+| 状态 | 含义 |
+|------|------|
+| `NOT_OPENED` | 预建但未开启的期间（初始态） |
+| `OPEN` | 当前可操作期间 |
+| `CLOSING` | 正在结账中（禁止新单据） |
+| `CLOSED` | 已结账（禁止任何修改） |
+
+### 10.3 期间操作约束
+
+- 同一时刻只能有一个 `OPEN` 期间（当前期间）
+- 开启新期间前必须先结账当前期间
+- 反结账只能从 `CLOSED` 回退到 `OPEN`，需管理员权限
+- 跨域期间校验：任何业务操作前校验 `businessDate` 所属期间是否为 `OPEN`
+
+---
+
+## 十一、负库存容错机制
+
+负库存是**临时容错机制**，允许先出后入的业务场景（如先发货后入库、跨期到货等）。
+
+### 11.1 处理规则
+
+- 出库按移动加权平均成本出库（即使余额为负）
+- 补货入库后成本自然平滑
+- 不触发独立的凭证生成（凭证在业务单据审核时生成，与库存余额正负无关）
+- 不会自动调整负库存余额
+
+### 11.2 配置策略
+
+- 全局开关：`erp-inv.allow-negative-stock`（按仓库可配，默认 false）
+- 负库存持续时间监控：超过配置阈值（如 7 天）自动告警
+- 详见 `docs/design/inventory/README.md`
+
+---
+
+## 十二、外币重估规则
+
+### 12.1 重估范围
+
+仅对**货币性科目**进行期末重估——非货币性科目按历史汇率不动：
+
+| 科目类型 | 是否重估 | 汇率基准 | 差异处理 |
+|----------|----------|----------|----------|
+| 货币性（现金/银行存款/应收/应付） | 是 | 期末最后一天汇率 | 差异进当期汇兑损益 |
+| 非货币性（固定资产/存货/股本） | 否 | 历史汇率 | 不调整 |
+
+### 12.2 重估流程
+
+```
+期末结账 → 重估货币性科目余额 → 按期末汇率重算本位币金额
+    → 差异 = 重估后金额 - 重估前金额
+    → 生成汇兑损益凭证（借/贷：汇兑损益科目）
+```
+
+> 符合《企业会计准则第19号——外币折算》要求。
+
+---
+
+## 十三、版本演进策略
+
+### 12.1 向后兼容
 
 - 新增字段非空时提供默认值
 - 删除字段前标记为 deprecated（保留至少一个版本）
 - API 变更使用版本号控制
 
-### 9.2 数据迁移
+### 12.2 数据迁移
 
 - 使用 nop-db-migration 管理 schema 变更
 - 迁移脚本按版本顺序执行
@@ -278,11 +395,11 @@
 
 ---
 
-## 十、单据标准字段约定
+## 十四、单据标准字段约定
 
 所有业务单据头（采购/销售/库存/资产/项目/维护/质量/制造工单等）必须统一携带以下四组公共字段。这是业财一体、多组织、多币种、多账套并行核算的基线，也是跨域统计与兜底扫描的统一入口。
 
-### 10.1 组织与时间维度
+### 14.1 组织与时间维度
 
 | 字段 | 含义 | 备注 |
 | --- | --- | --- |
@@ -290,7 +407,33 @@
 | `businessDate` | 业务日期 | 区别于 `createdAt`（系统创建时间）；用于期间归集与报表口径 |
 | `createdAt`/`updatedAt` | 审计时间 | 框架自动维护 |
 
-### 10.2 业财过账标志
+### 14.1.1 单据编号作用域
+
+所有单据编号（凭证号、订单号、移动单号等）**在 orgId 内唯一**：
+
+- 同一公司内单据编号连续不重复
+- 不同公司可重复使用相同编号
+- 序列号按 orgId 分组维护
+- 单据编号作为幂等键使用（§1.3 幂等性原则）
+
+### 14.1.2 单据编号模板
+
+单据编号支持可配置模板，格式：`{PREFIX}{DATE}{SEQ}`
+
+| 占位符 | 含义 | 示例 |
+|--------|------|------|
+| `{PREFIX}` | 单据类型前缀 | PO（采购订单）、SI（销售发票） |
+| `{DATE}` | 日期格式 | YYYYMM、YYYYMMDD |
+| `{SEQ}` | 序列号（按 orgId 内唯一） | 4位数字 |
+
+示例模板：
+- 采购订单：`PO{YYYYMM}{SEQ4}` → PO202606-0001
+- 销售发票：`SI{YYYYMMDD}{SEQ4}` → SI20260629-0001
+- 凭证：`V{YYYYMM}{SEQ4}` → V202606-0001
+
+> 模板在数据库配置（`ErpSysDocNumberRule`），按 orgId + billType 维护。断号/跳号在业务号中允许；凭证号过账后分配保证连续（Q83）。
+
+### 14.2 业财过账标志
 
 | 字段 | 含义 | 备注 |
 | --- | --- | --- |
@@ -300,7 +443,18 @@
 
 > 兜底扫描：定时任务扫描 `posted=false` 且满足过账条件（已审核 + 单据生效）的单据，触发 `IErpFinAcctDocProvider` 补过账，保证业财最终一致。详见 `docs/design/finance/posting.md`。
 
-### 10.3 多币种四件套（金额类单据头/行）
+### 14.2.1 posted 物理锁定规则
+
+`posted=true` 的单据**物理锁定为只读**，纠错只能走红冲/反向单：
+
+- 不允许任何直接 UPDATE 单据行数据
+- 不允许修改金额、数量、科目等关键字段
+- 纠错路径：生成红字冲销单据（反向凭证/退货单）
+- 管理员不可绕过此锁定（与 Q7 决议一致）
+
+> 已过账数据影响财务报表，任何直接修改都会破坏审计轨迹。这是 ERP 数据完整性的核心要求。
+
+### 14.3 多币种四件套（金额类单据头/行）
 
 | 字段 | 含义 | 备注 |
 | --- | --- | --- |
@@ -309,28 +463,46 @@
 | `amountSource` | 源币种金额 | 原始业务金额 |
 | `amountFunctional` | 本位币金额 | `amountSource × exchangeRate`，凭证记账依据 |
 
-### 10.4 并发控制
+### 14.4 并发控制
 
 | 字段 | 含义 | 备注 |
 | --- | --- | --- |
 | `version` | 乐观锁版本号 | 框架自动维护 |
 
-### 10.5 多账套维度（财务与存货估值相关）
+### 14.5 多账套维度（财务与存货估值相关）
 
 凭证头/行（`ErpFinVoucher`/`ErpFinVoucherLine`）与存货估值（`ErpInvCostLayer`/`ErpInvStockLedger`/`ErpFinGlBalance`）额外携带 `acctSchemaId`（引用 `ErpMdAcctSchema`），支撑多套账并行核算（财务账/管理账/税务账/合并账/预算账）。
 
-### 10.6 设计决策与反模式
+### 14.6 设计决策与反模式
 
 - **决策**：`orgId`/`posted`/`businessDate`/`currencyId` 等标准维度使用**物理列**而非扩展字段（EAV）。理由：这些维度是所有单据的通用查询过滤、索引、统计口径，物理列的查询性能与索引能力远优于 EAV；EAV 仅用于真正按需扩展的业务属性。
 - **反模式**（禁止）：用扩展字段承载 `orgId`/`posted`；用 `ErpMdPartner` 的余额字段"魔法更新"代替 AR/AP open-item 明细账（已改为 `ErpFinArApItem` + `ErpFinReconciliation`）。
 
 ---
 
-## 十一、状态机命名与跨域映射规范
+## 十五、借贷方向约定
+
+中式复式记账的五大类别借贷方向约定：
+
+| 会计要素 | 增加方 | 减少方 | 典型科目 |
+|----------|--------|--------|----------|
+| **资产** | 借方 | 贷方 | 现金、银行存款、应收账款、存货、固定资产 |
+| **负债** | 贷方 | 借方 | 应付账款、预收账款、应交税费 |
+| **所有者权益** | 贷方 | 借方 | 实收资本、盈余公积、未分配利润 |
+| **收入** | 贷方 | 借方 | 主营业务收入、其他业务收入 |
+| **费用/成本** | 借方 | 贷方 | 主营业务成本、管理费用、销售费用 |
+
+**恒等式**：资产 = 负债 + 所有者权益 + (收入 - 费用)
+
+> 凭证生成逻辑 `createFacts()` 实现时必须遵循以上约定。错误的借贷方向会导致凭证借贷不平衡，触发实时校验拦截。
+
+---
+
+## 十六、状态机命名与跨域映射规范
 
 > 本节统一各域状态命名约定，避免跨域流程串联时出现语义混乱。
 
-### 11.1 双轴状态分离
+### 16.1 双轴状态分离
 
 所有业务单据头使用**双轴状态**：
 
@@ -339,23 +511,23 @@
 
 加上业财一体标志 `posted`（boolean），构成**三轴状态**。三者独立、可组合（如 `docStatus=APPROVED, approveStatus=APPROVED, posted=true` 是稳定终态）。
 
-### 11.2 各域 docStatus 取值约定
+### 16.2 各域 docStatus 取值约定
 
 不同业务性质的单据使用不同的状态值集合，但**初始态都用 DRAFT**，**作废态都用 CANCELLED**：
 
 | 域 | 单据类型 | docStatus 取值 | 说明 |
 |---|---|---|---|
-| purchase/sales | 订单/出入库/发票/收付款 | `DRAFT` / `SUBMITTED` / `APPROVED` / `REJECTED` / `CANCELLED` | 通用业务单据 |
+| purchase/sales | 订单/出入库/发票/收付款 | `DRAFT` / `CANCELLED`（docStatus）+ `UNSUBMITTED` / `PENDING` / `APPROVED` / `REJECTED`（approveStatus） | 通用业务单据，docStatus 与 approveStatus 双轴独立（新建单据 docStatus=DRAFT, approveStatus=UNSUBMITTED） |
 | inventory | 移动单/盘点单/拣货单 | `DRAFT` / `CONFIRMED` / `DONE` / `CANCELLED` | 作业类单据（无审批轴，作业确认即生效） |
 | finance | 凭证 | `DRAFT` / `POSTED` / `CANCELLED` | 凭证特殊：无 SUBMITTED，DRAFT 直接过账到 POSTED |
-| finance | 会计期间 | `CLOSED` / `OPEN` / `CLOSING` / `CLOSED_FINAL` | 时间窗口状态机 |
+| finance | 会计期间 | `NOT_OPENED` / `OPEN` / `CLOSING` / `CLOSED` | 时间窗口状态机（见 §十） |
 | assets | 资产卡片 | `DRAFT` / `IN_SERVICE` / `IDLE` / `SCRAPPED` / `SOLD` | 资产生命周期 |
 | manufacturing | 工单 | `DRAFT` / `SUBMITTED` / `APPROVED` / `RELEASED` / `IN_PROGRESS` / `COMPLETED` / `INSPECTING` / `REJECTED` / `CANCELLED` / `CLOSED` | 制造执行链 |
 | projects | 项目/任务 | `DRAFT` / `PLANNED` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 项目生命周期 |
 | quality | 质检/NCR/CAPA | `DRAFT` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 质量流程 |
 | maintenance | 工单/请求 | `DRAFT` / `SCHEDULED` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 维护执行 |
 
-### 11.3 approveStatus 取值约定（仅带审批的单据）
+### 16.3 approveStatus 取值约定（仅带审批的单据）
 
 | approveStatus | 业务含义 |
 |---|---|
@@ -366,7 +538,7 @@
 
 > inventory 的作业单（移动单/盘点单/拣货单）通常不经过审批流，`approveStatus` 可省略或保持 `UNSUBMITTED`。
 
-### 11.4 反审核目标态
+### 16.4 反审核目标态
 
 反审核（已审核单据撤销审核）的目标态是 `REJECTED`（可重新提交），**不是 `UNSUBMITTED`**（初始态）。语义理由：
 
@@ -374,7 +546,7 @@
 - `REJECTED` 保留"曾审核过"的历史语义，便于审计追溯。
 - 从 `REJECTED` 可重新 `SUBMITTED` 进入审批，或显式作废到 `CANCELLED`。
 
-### 11.5 跨域状态映射
+### 16.5 跨域状态映射
 
 业务域之间串联流程时，状态映射规则：
 
@@ -389,7 +561,63 @@
 
 ---
 
-## 十二、总结
+## 十七、可配置点清单
+
+本节统一列出全部业务可配置项、默认值、可选值和作用域。
+
+### 两套配置机制
+
+| 机制 | 适用场景 | 实现方式 | 参考 |
+|------|----------|----------|------|
+| **实体表字段** | 实体特有的配置（如仓库的批次策略） | 在 ORM 实体表上增加配置字段 | Odoo（`stock.location.removal_strategy_id`） |
+| **独立配置表** | 跨域/全局配置（如过账模式、信用额度级别） | 独立 `ErpSysConfig` 表，按 Name+OrgId 查找 | iDempiere（`AD_SysConfig`） |
+
+### 配置优先级链
+
+所有配置项遵循三级覆盖优先级（从高到低）：
+
+| 优先级 | 配置维度 | 覆盖规则 | 示例 |
+|--------|----------|----------|------|
+| 1（最高） | 按实体（实体表字段） | 实体自身字段值 | 某仓库的批次策略=FIFO |
+| 2 | 按组织（`ErpSysConfig.orgId`） | 该组织下的所有实体使用此配置 | 公司 A 的成本方法=FIFO |
+| 3（最低） | 全局默认（`ErpSysConfig.orgId=NULL`） | 未配置时使用 | 全局批次策略=FIFO |
+
+> 参考 iDempiere `AD_SysConfig` 的 `AD_Client_ID`/`AD_Org_ID` 级联回退：`SELECT Value FROM ErpSysConfig WHERE Name=? AND (orgId IS NULL OR orgId=?) ORDER BY orgId DESC NULLS LAST`。
+
+### ErpSysConfig 表
+
+> ORM 真相：`module-master-data/model/app-erp-master-data.orm.xml` → `ErpSysConfig` 实体（`erp_sys_config` 表）。
+
+配置键查询逻辑：`SELECT configValue FROM erp_sys_config WHERE configKey=? AND (orgId IS NULL OR orgId=?) ORDER BY orgId DESC NULLS LAST`。
+
+### 仓库批次策略字段
+
+> ORM 真相：`module-master-data/model/app-erp-master-data.orm.xml` → `ErpMdWarehouse.batchSelectionStrategy` 字段，引用字典 `erp-md/batch-strategy`（FIFO/FEFO/MANUAL）。空值表示使用全局配置。
+
+### 配置项清单
+
+| 配置项 | 默认值 | 可选值 | 作用域 | 说明 |
+|--------|--------|--------|--------|------|
+| `erp-inv.allow-negative-stock` | false | true/false | 全局/按仓库 | 允许负库存 |
+| `erp-inv.batch-selection-strategy` | FIFO | FIFO/FEFO/MANUAL | 全局/按物料 | 批次选择策略 |
+| `erp-inv.in-transit-timeout-days` | 7 | 整数 | 全局 | 在途超时告警天数 |
+| `erp-inv.negative-stock-alert-days` | 3 | 整数 | 全局 | 负库存告警阈值 |
+| `erp-inv.scrap-operation-type` | SCRAP | 作业类型编码 | 全局/按物料分类 | 报废出库作业类型 |
+| `erp-sal.credit-check-level` | SOFT_WARNING | SOFT_WARNING/SPECIAL_APPROVAL/HARD_BLOCK | 全局/按客户 | 信用额度检查级别 |
+| `erp-fin.auto-post-on-close` | true | true/false | 全局 | 结账时自动过账 |
+| `erp-fin.auto-depreciation` | true | true/false | 全局 | 结账时自动折旧 |
+| `erp-fin.reconcile-precision` | 0.01 | 正数 | 全局 | 核销金额精度 |
+| `erp-fin.allow-over-reconcile` | false | true/false | 全局 | 允许超额核销 |
+| `erp-md.uom-conversion-strict` | true | true/false | 全局/按物料 | 单位换算严格模式 |
+| `erp-md.price-tiers` | 全部启用 | 按物料类别配置 | 按物料类别 | 可用价格档位 |
+| `erp-md.critical-attributes` | 见 §十四 | 可扩展 | 按主数据类型 | 关键属性列表 |
+| `erp-qua.ncr-posting-mode` | AUTO_POST | AUTO_POST/MANUAL_POST | 全局/按NCR类型 | NCR过账模式 |
+| `erp-mfg.bom-snapshot-strategy` | LOCK_AT_CREATION | LOCK_AT_CREATION/AUTO_UPGRADE | 全局/按物料 | BOM快照策略 |
+| `erp-fin.closing-reminder-days` | 3 | 整数 | 全局 | 结账提醒提前天数 |
+
+---
+
+## 十八、总结
 
 本指南定义了 nop-app-erp 的核心设计原则与约束，各域设计时必须遵守：
 

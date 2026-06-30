@@ -124,3 +124,13 @@
 - **finance**：完工触发存货估值与成本结转凭证。
 - **quality**：完工触发质检（若 `inspection_required`）。
 - **master-data**：物料/SKU/仓库/工作中心引用主数据。
+
+## BOM 版本快照规则
+
+工单创建时对 BOM 进行快照，确保生产过程中 BOM 变更不影响已下达工单：
+
+- **快照时机**：工单从 DRAFT → SUBMITTED 时，将当前 BOM 头+子件行+工艺行复制到工单的快照字段
+- **快照内容**：BOM 头（版本号、产出量）、子件行（物料、数量、工序）、工艺行（工序、工作中心、费率）
+- **快照锁定**：工单创建后，即使 BOM 被修改，工单仍使用快照版本
+- **版本追溯**：工单记录 `snapshotBomVersion` 字段，用于追溯生产时使用的 BOM 版本
+- **策略配置**：`erp-mfg.bom-snapshot-strategy`（LOCK_AT_CREATION：创建时锁定 / AUTO_UPGRADE：自动升级到最新版本，按物料可配）

@@ -277,48 +277,41 @@ IErpFinAcctDocProvider.createFacts()
 
 ## 三、状态映射总览
 
-### 3.1 采购域状态映射
+### 3.1 审批状态映射（approveStatus）
+
+> 本表只描述审批轴（approveStatus）。`CANCELLED` 属于 docStatus 独立轴，见 §3.2。
 
 | 单据类型 | 初始状态 | 中间状态 | 终态 |
 |----------|----------|----------|------|
-| 采购订单 | UNSUBMITTED | SUBMITTED | APPROVED / CANCELLED |
-| 采购入库单 | UNSUBMITTED | SUBMITTED | APPROVED / CANCELLED |
-| 采购发票 | UNSUBMITTED | SUBMITTED | APPROVED / CANCELLED |
-| 付款单 | UNSUBMITTED | SUBMITTED | APPROVED / CANCELLED |
+| 采购订单 | UNSUBMITTED | PENDING | APPROVED / REJECTED |
+| 采购入库单 | UNSUBMITTED | PENDING | APPROVED / REJECTED |
+| 采购发票 | UNSUBMITTED | PENDING | APPROVED / REJECTED |
+| 付款单 | UNSUBMITTED | PENDING | APPROVED / REJECTED |
+| 销售订单 | UNSUBMITTED | PENDING | APPROVED / REJECTED |
+| 销售出库单 | UNSUBMITTED | PENDING | APPROVED / REJECTED |
+| 销售发票 | UNSUBMITTED | PENDING | APPROVED / REJECTED |
+| 收款单 | UNSUBMITTED | PENDING | APPROVED / REJECTED |
 
-**付款状态**（派生）：UNPAID → PARTIAL → PAID
+**收付款状态**（派生）：采购侧 UNPAID → PARTIAL → PAID；销售侧 UNRECEIVED → PARTIAL → RECEIVED。
 
-### 3.2 销售域状态映射
+### 3.2 业务生命周期映射（docStatus）
 
 | 单据类型 | 初始状态 | 中间状态 | 终态 |
 |----------|----------|----------|------|
-| 销售订单 | UNSUBMITTED | SUBMITTED | APPROVED / CANCELLED |
-| 销售出库单 | UNSUBMITTED | SUBMITTED | APPROVED / CANCELLED |
-| 销售发票 | UNSUBMITTED | SUBMITTED | APPROVED / CANCELLED |
-| 收款单 | UNSUBMITTED | SUBMITTED | APPROVED / CANCELLED |
-
-**收款状态**（派生）：UNRECEIVED → PARTIAL → RECEIVED
-
-### 3.3 库存域状态映射
-
-| 对象 | 初始状态 | 中间状态 | 终态 |
-|------|----------|----------|------|
+| 采购/销售 订单/出入库/发票/收付款 | DRAFT | — | CANCELLED |
 | 库存移动单 | DRAFT | CONFIRMED | DONE / CANCELLED |
-| 盘点单 | DRAFT | COUNTING | DONE / CANCELLED |
-
-### 3.4 财务域状态映射
-
-| 对象 | 初始状态 | 中间状态 | 终态 |
-|------|----------|----------|------|
+| 库存盘点单 | DRAFT | COUNTING | DONE / CANCELLED |
 | 会计凭证 | DRAFT | — | POSTED / CANCELLED |
-| 会计期间 | CLOSED | OPEN, CLOSING | CLOSED_FINAL |
-
-### 3.5 资产域状态映射
-
-| 对象 | 初始状态 | 中间状态 | 终态 |
-|------|----------|----------|------|
 | 资产卡片 | DRAFT | IN_SERVICE, IDLE | SCRAPPED / SOLD |
 | 折旧计划条目 | PENDING | — | EXECUTED / REVERSED |
+
+### 3.3 制造域状态映射（docStatus）
+
+| 单据类型 | 初始状态 | 中间状态 | 终态 |
+|----------|----------|----------|------|
+| 工单 | DRAFT | SUBMITTED → APPROVED → RELEASED → IN_PROGRESS | COMPLETED / INSPECTING / REJECTED / CANCELLED / CLOSED |
+
+> 质检判定（ACCEPTED/CONDITIONAL/REJECTED）影响工单从 INSPECTING 到 COMPLETED 的迁移，详见 `docs/design/quality/state-machine.md` 和 `docs/design/manufacturing/state-machine.md`。
 
 ---
 
@@ -455,10 +448,28 @@ IErpFinAcctDocProvider.createFacts()
         红字凭证与原凭证双向关联，保留审计轨迹
 ```
 
-### 5.3 反审核流程
+### 5.3 撤销提交与反审核流程
+
+#### 撤销提交（SUBMITTED → UNSUBMITTED）
+
+提交人在审核人尚未处理时可撤回修改：
 
 ```
-已审核单据反审核请求
+已提交单据（approveStatus=SUBMITTED）撤销请求
+        │
+        ├─► 校验前置：审核人是否已开始处理（nop-wf 已激活？）
+        │
+        ├─► nop-wf 未激活：允许撤回
+        │       └─► approveStatus SUBMITTED → UNSUBMITTED
+        │
+        └─► nop-wf 已激活：拒绝撤回，提示联系审核人驳回
+```
+
+> **约束**：仅提交人可操作；审核人一旦开始审核，提交人不可再撤回。
+
+#### 反审核（APPROVED → REJECTED）
+
+已审核单据反审核请求：
         │
         ├─► 校验前置：是否已生成下游单据（如已开发票的订单）
         │

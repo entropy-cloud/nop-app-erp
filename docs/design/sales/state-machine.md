@@ -22,7 +22,9 @@
 
 与采购域相同（UNSUBMITTED/SUBMITTED/APPROVED/REJECTED），每个状态表达"等待什么"。详见 `purchase/state-machine.md` 第 1 节，此处不重复。
 
-## 2. 迁移完整性
+## 2. 迁移完整性（审批轴）
+
+> 本节只讨论 **approveStatus（审批轴）** 迁移。docStatus（业务生命周期轴）独立演化。新建单据的完整态：`docStatus=DRAFT, approveStatus=UNSUBMITTED`。
 
 迁移拓扑与采购域相同：
 
@@ -31,12 +33,16 @@
   ├─ 提交 → 已提交 (SUBMITTED)
   │            ├─ 审核通过 → 已审核 (APPROVED)
   │            │              ├─ [触发后续业务：扣库存/生成应收凭证]
+  │            │              │              └─ posted=true 后物理锁定，纠错需红冲/反审核
   │            │              └─ 反审核 → 已驳回（REJECTED，需先冲销已生成结果）
+  │            ├─ 撤销提交 → 未提交（UNSUBMITTED，仅审核人未处理时允许）
   │            └─ 驳回 → 已驳回 (REJECTED)
   │                          └─ 修改后重新提交 → 已提交
   └─ 作废 → 已作废
 
-> **反审核目标态**：与采购域一致，反审核目标态是 `REJECTED`（可重新提交），**不是** `UNSUBMITTED`（初始态）。理由见 `../domain-design-guidelines.md` §11.4。
+> **反审核目标态**：与采购域一致，反审核目标态是 `REJECTED`（可重新提交），**不是** `UNSUBMITTED`（初始态）。理由见 `../domain-design-guidelines.md` §16.4。
+
+> **撤销提交约束**：仅提交人可操作；审核人一旦开始审核（nop-wf 已激活），提交人不可再撤回。
 ```
 
 **SUBMITTED → APPROVED 触发的后续业务**（与采购域的差异）：

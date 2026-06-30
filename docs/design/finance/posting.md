@@ -12,8 +12,11 @@
 [业务单据审核通过]
       │
       ▼
-[发布过账事件]（含 businessType + 单据数据）
-      │
+[前置校验] posted=true → 直接跳过（幂等保证）
+      │ posted=false
+      ▼
+[发布 PostingEvent]
+      │ fields: businessType, billHeadCode, tenantId, acctSchemaId, billData
       ▼ post-commit 异步
 [ErpFinAcctDocRegistry 查找 Provider]
       │
@@ -26,6 +29,20 @@
       ▼ 校验借贷平衡
 [写入凭证 + 业财回链 + 更新 posted=true]
 ```
+
+### PostingEvent 契约
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `businessType` | String | 业务类型枚举（如 PURCHASE_INPUT、AR_INVOICE） |
+| `billHeadCode` | String | 业务单据编码（幂等键） |
+| `tenantId` | String | 租户 ID |
+| `acctSchemaId` | String | 账套 ID |
+| `billData` | Object | 单据数据（头+行，含金额、科目映射维度） |
+
+### 幂等保证
+
+过账操作前置检查 `posted=true` 时直接跳过，防止重复过账。兜底扫描与事件回调可能同时命中同一单据，posted 检查确保只处理一次。
 
 ## 业务类型映射
 
@@ -91,9 +108,12 @@ IErpFinAcctDocProvider（凭证生成 Provider）
   └─ createFacts(billData, acctSchema) → List<VoucherLine>
 
 ErpFinAcctDocRegistry（注册中心）
-  ├─ @Inject List<IErpFinAcctDocProvider>
-  └─ getProvider(businessType) → IErpFinAcctDocProvider
+  ├─ providerMap: Map<BusinessType, IErpFinAcctDocProvider>  // 编译期类型安全
+  ├─ @Inject List<IErpFinAcctDocProvider>  // 启动时收集所有 Provider Bean
+  └─ getProvider(businessType) → IErpFinAcctDocProvider  // O(1) Map 查找
 ```
+
+> **类型安全注册**：参考 Metasfresh 的 `ImmutableMap<String, AcctDocFactory>` 模式。注册中心启动时遍历所有 Provider Bean，按 `getSupportedBusinessTypes()` 建立 `BusinessType → Provider` 映射。运行时按 `businessType` 直接 Map 查找（O(1)），而非遍历 List（O(n)）。重命名 Provider 类不会导致注册失败（无反射字符串依赖）。
 
 ### 跨域自动聚合
 
@@ -227,13 +247,14 @@ VoucherBillR（业财回链）
 
 ## 多币种处理
 
-- 业务单据引用币种，金额按业务日期汇率转换本位币。
+- 业务单据引用币种，金额按**业务日期汇率**转换本位币（符合 ASC 830 / IAS 21 "交易发生日确认"原则）。
 - 凭证分录行同时记录：
   - 源币种金额（`amountSource`）
   - 本位币金额（`amountFunctional`）
   - 币种编码（`currencyCode`）
-  - 汇率（`exchangeRate`）
+  - 汇率（`exchangeRate`）—— 业务日期当天的汇率
 - 汇率由主数据域提供；缺失汇率时报错而非静默使用默认值。
+- **汇率锁定时机**：本位币金额在业务单据创建时按业务日期汇率锁定，过账时不重新计算。汇率差异在期末汇兑损益调整中统一处理（见 `domain-design-guidelines.md` §十二）。
 
 ## 多套科目表并行
 
