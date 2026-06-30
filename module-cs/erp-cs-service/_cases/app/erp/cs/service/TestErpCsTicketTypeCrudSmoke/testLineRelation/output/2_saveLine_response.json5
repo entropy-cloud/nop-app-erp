@@ -1,0 +1,23 @@
+{
+  "data": {
+    "id": "2",
+    "code": "SMOKE-SLA",
+    "name": "冒烟SLA",
+    "ticketTypeId": 1,
+    "minPriority": null,
+    "minPriority_label": null,
+    "teamId": null,
+    "resolveHours": null,
+    "resolveDays": null,
+    "isWorkingDays": true,
+    "escalationUserId": null,
+    "description": null,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpCsSlaPolicy@updateTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpCsSlaPolicy@updateTime"
+  },
+  "status": 0
+}

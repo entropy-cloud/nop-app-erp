@@ -1,0 +1,36 @@
+{
+  "data": {
+    "extData": null,
+    "hasNext": null,
+    "hasPrev": null,
+    "items": [
+      {
+        "id": "2",
+        "routingId": 1,
+        "lineNo": 1,
+        "operationCode": null,
+        "operationName": null,
+        "workcenterId": null,
+        "standardTime": null,
+        "timeUnit": null,
+        "setupTime": null,
+        "runTime": null,
+        "remark": null,
+        "delVersion": 0,
+        "version": 0,
+        "createdBy": "autotest-ref",
+        "createTime": "@var:ErpMfgRoutingOperation@updateTime",
+        "updatedBy": "autotest-ref",
+        "updateTime": "@var:ErpMfgRoutingOperation@updateTime"
+      }
+    ],
+    "limit": 10,
+    "nextCursor": null,
+    "offset": 0,
+    "page": 1,
+    "pageCount": 1,
+    "prevCursor": null,
+    "total": 1
+  },
+  "status": 0
+}

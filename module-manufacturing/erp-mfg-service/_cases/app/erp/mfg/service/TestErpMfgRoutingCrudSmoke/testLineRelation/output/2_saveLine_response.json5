@@ -1,0 +1,22 @@
+{
+  "data": {
+    "id": "2",
+    "routingId": 1,
+    "lineNo": 1,
+    "operationCode": null,
+    "operationName": null,
+    "workcenterId": null,
+    "standardTime": null,
+    "timeUnit": null,
+    "setupTime": null,
+    "runTime": null,
+    "remark": null,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpMfgRoutingOperation@updateTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpMfgRoutingOperation@updateTime"
+  },
+  "status": 0
+}

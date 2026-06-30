@@ -627,17 +627,5 @@
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
             </columns>
         </entity>
-        <entity displayName="ErpProProject" name="app.erp.pro.dao.entity.ErpProProject"
-                notGenCode="true" biz:moduleId="erp/pro" tableName="erp_pro_project">
-            <columns>
-                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
-            </columns>
-        </entity>
-        <entity displayName="ErpProTask" name="app.erp.pro.dao.entity.ErpProTask"
-                notGenCode="true" biz:moduleId="erp/pro" tableName="erp_pro_task">
-            <columns>
-                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
-            </columns>
-        </entity>
     </entities>
 </orm>

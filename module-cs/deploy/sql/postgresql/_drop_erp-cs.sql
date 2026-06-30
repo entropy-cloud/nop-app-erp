@@ -6,8 +6,6 @@ drop table  if exists  erp_md_md_organization;
 drop table  if exists  erp_cs_knowledge_base;
 drop table  if exists  erp_cs_canned_category;
 drop table  if exists  erp_cs_catalog_category;
-drop table  if exists  erp_pro_project;
-drop table  if exists  erp_pro_task;
 drop table  if exists  erp_cs_contract;
 drop table  if exists  erp_cs_team;
 drop table  if exists  erp_cs_agent_rate;

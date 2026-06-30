@@ -1119,21 +1119,5 @@
                         stdSqlType="BIGINT" tagSet="seq-default"/>
             </columns>
         </entity>
-        <entity className="app.erp.pro.dao.entity.ErpProProject" displayName="ErpProProject"
-                name="app.erp.pro.dao.entity.ErpProProject" notGenCode="true" tableName="erp_pro_project"
-                biz:moduleId="erp/pro">
-            <columns>
-                <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"
-                        stdSqlType="BIGINT" tagSet="seq-default"/>
-            </columns>
-        </entity>
-        <entity className="app.erp.pro.dao.entity.ErpProTask" displayName="ErpProTask"
-                name="app.erp.pro.dao.entity.ErpProTask" notGenCode="true" tableName="erp_pro_task"
-                biz:moduleId="erp/pro">
-            <columns>
-                <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"
-                        stdSqlType="BIGINT" tagSet="seq-default"/>
-            </columns>
-        </entity>
     </entities>
 </orm>

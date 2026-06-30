@@ -13,10 +13,6 @@ alter table erp_cs_canned_category add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT
 
 alter table erp_cs_catalog_category add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
-alter table erp_pro_project add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
-
-alter table erp_pro_task add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
-
 alter table erp_cs_contract add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_cs_team add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -61,12 +57,6 @@ alter table erp_cs_canned_category add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_cs_catalog_category drop primary key;
 alter table erp_cs_catalog_category add primary key (NOP_TENANT_ID, ID);
-
-alter table erp_pro_project drop primary key;
-alter table erp_pro_project add primary key (NOP_TENANT_ID, ID);
-
-alter table erp_pro_task drop primary key;
-alter table erp_pro_task add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_cs_contract drop primary key;
 alter table erp_cs_contract add primary key (NOP_TENANT_ID, ID);

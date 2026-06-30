@@ -6,8 +6,6 @@ drop table erp_md_md_organization;
 drop table erp_cs_knowledge_base;
 drop table erp_cs_canned_category;
 drop table erp_cs_catalog_category;
-drop table erp_pro_project;
-drop table erp_pro_task;
 drop table erp_cs_contract;
 drop table erp_cs_team;
 drop table erp_cs_agent_rate;

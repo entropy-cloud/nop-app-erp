@@ -1,0 +1,19 @@
+{
+  "data": {
+    "id": "1",
+    "code": "SMOKE-CS",
+    "name": "冒烟工单类型",
+    "defaultPriority": null,
+    "defaultPriority_label": null,
+    "defaultSlaPolicyId": null,
+    "sequence": 0,
+    "remark": "冒烟-已修改",
+    "delVersion": 0,
+    "version": 1,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpCsTicketType@createTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpCsTicketType@updateTime_1"
+  },
+  "status": 0
+}

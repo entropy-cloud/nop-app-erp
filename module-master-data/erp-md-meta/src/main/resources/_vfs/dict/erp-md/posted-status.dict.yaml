@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 过账状态
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 未过账
+    value: DRAFT
+    description: 
+   
+  - label: 已过账
+    value: POSTED
+    description: 
+   
+  - label: 已作废
+    value: CANCELLED
+    description: 
+   

@@ -83,16 +83,6 @@ CREATE TABLE erp_cs_catalog_category(
   constraint PK_erp_cs_catalog_category primary key (ID)
 );
 
-CREATE TABLE erp_pro_project(
-  ID NUMBER(20) NOT NULL ,
-  constraint PK_erp_pro_project primary key (ID)
-);
-
-CREATE TABLE erp_pro_task(
-  ID NUMBER(20) NOT NULL ,
-  constraint PK_erp_pro_task primary key (ID)
-);
-
 CREATE TABLE erp_cs_contract(
   ID NUMBER(20) NOT NULL ,
   CODE VARCHAR2(50) NOT NULL ,
@@ -480,10 +470,6 @@ CREATE TABLE erp_cs_time_entry(
                     
       COMMENT ON COLUMN erp_cs_catalog_category.UPDATE_TIME IS '修改时间';
                     
-      COMMENT ON TABLE erp_pro_project IS 'ErpProProject';
-                
-      COMMENT ON TABLE erp_pro_task IS 'ErpProTask';
-                
       COMMENT ON TABLE erp_cs_contract IS '支持合同';
                 
       COMMENT ON COLUMN erp_cs_contract.ID IS 'ID';

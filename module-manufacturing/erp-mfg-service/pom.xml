@@ -29,6 +29,14 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- test-only: 引入 master-data 使 erp-md/posted-status 字典等资源上 mfg-service 测试 classpath，
+             并注册跨域业务对象(ErpMd*)，使单域 GraphQL save 跨域引用校验可通过 -->
+        <dependency>
+            <artifactId>app-erp-master-data-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-biz</artifactId>

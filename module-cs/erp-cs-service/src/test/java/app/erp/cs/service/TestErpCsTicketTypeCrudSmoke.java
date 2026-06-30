@@ -10,7 +10,6 @@ import io.nop.graphql.core.ast.GraphQLOperationType;
 import io.nop.graphql.core.engine.IGraphQLEngine;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Disabled;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -29,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * _cases/ 快照）。多步 ID 在 Java 内传递；删除用例 DEL_VERSION 列以通配符 * 屏蔽时钟型非确定性。
  * 
  */
-@Disabled("blocked by pre-existing model defect (cs: non-existent app.erp.pro.* entities) — see plan Deferred")
 @NopTestConfig(localDb = true,
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)

@@ -83,16 +83,6 @@ CREATE TABLE erp_cs_catalog_category(
   constraint PK_erp_cs_catalog_category primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_pro_project(
-  ID BIGINT NOT NULL    COMMENT 'null',
-  constraint PK_erp_pro_project primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_pro_task(
-  ID BIGINT NOT NULL    COMMENT 'null',
-  constraint PK_erp_pro_task primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
 CREATE TABLE erp_cs_contract(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '编码',
@@ -373,10 +363,6 @@ CREATE TABLE erp_cs_time_entry(
    ALTER TABLE erp_cs_canned_category COMMENT '预设应答分类';
                 
    ALTER TABLE erp_cs_catalog_category COMMENT '目录分类';
-                
-   ALTER TABLE erp_pro_project COMMENT 'ErpProProject';
-                
-   ALTER TABLE erp_pro_task COMMENT 'ErpProTask';
                 
    ALTER TABLE erp_cs_contract COMMENT '支持合同';
                 
