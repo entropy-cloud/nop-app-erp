@@ -54,7 +54,7 @@ CRUD 完成后，业务逻辑深化在此基础上进行。
 
 ### Phase 4 — CRUD 冒烟测试
 
-> 状态：`done`（16/18 域通过；manufacturing、customer-service 因前置模型缺陷阻塞，见下方说明）。执行计划：`docs/plans/2026-06-30-2328-2-phase4-crud-smoke-tests.md`。
+> 状态：`done`（18/18 域通过）。执行计划：`docs/plans/2026-06-30-2328-2-phase4-crud-smoke-tests.md`；manufacturing/customer-service 的前置模型缺陷由 `docs/plans/2026-07-01-0215-1-complete-deferred-crud-smoke-tests.md` 修复并补测。
 
 所有 18 域的基本操作验证。框架：`JunitAutoTestCase` + GraphQL mutation/query 快照。
 
@@ -88,10 +88,10 @@ CRUD 完成后，业务逻辑深化在此基础上进行。
 | drp | ErpDrpPlan | ErpDrpPlan→ErpDrpLine | ✅ |
 | logistics | ErpLogShipment | ErpLogShipment→ErpLogShipmentLine | ✅ |
 | b2b | ErpB2bAsn | ErpB2bAsn→ErpB2bAsnLine | ✅ |
-| manufacturing | — | — | ⏸ 阻塞：mfg xmeta 引用不存在的字典 `erp-md/posted-status`（模型缺陷，保护区域） |
-| customer-service | — | — | ⏸ 阻塞：cs ORM 声明了不存在的实体 `app.erp.pro.*`（模型缺陷，保护区域） |
+| manufacturing | ErpMfgRouting | ErpMfgRouting→ErpMfgRoutingOperation | ✅ |
+| customer-service | ErpCsTicketType | ErpCsTicketType→ErpCsSlaPolicy | ✅ |
 
-> `mvn test`（根目录）BUILD SUCCESS：16 域冒烟测试全绿；manufacturing/customer-service 测试类 `@Disabled` 并在计划 `Deferred But Adjudicated` 记录阻塞原因，待对应模型缺陷修复后补测。
+> `mvn test`（根目录）BUILD SUCCESS：18 域冒烟测试全绿（90 方法，Failures=0/Errors=0/Skipped=0）。manufacturing（补齐 `erp-md/posted-status` 字典）与 customer-service（移除 `app.erp.pro.*` 幽灵实体声明）的两处前置模型缺陷已由 `docs/plans/2026-07-01-0215-1-complete-deferred-crud-smoke-tests.md` 修复。
 
 ## 验证命令
 

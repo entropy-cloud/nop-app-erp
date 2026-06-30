@@ -202,12 +202,14 @@ Exit Criteria:
 - Classification: `blocked by pre-existing model defect (protected area)`
 - Why Not Blocking Closure: 实时核实，`module-manufacturing/erp-mfg-meta/.../ErpMfgSubcontractOrder/_ErpMfgSubcontractOrder.xmeta` 引用字典 `erp-md/posted-status`，但该字典**全仓不存在**（`find module-* -name posted-status.dict.yaml` 无命中；master-data 仅 `active-status`）。这导致单域测试初始化阶段加载 mfg xmeta 即抛 `nop.err.graphql.unknown-dict`，先于任何测试逻辑。字典属 master-data 模型语义，AGENTS.md 禁止在无 owner doc 的情况下擅自编造字典值（保护区域），故不在本测试计划内修复。其余 17 域可用实体（如 ErpMfgRouting/Workcenter 等）的 per-module 加载同样被此 xmeta 拖垮，无法绕过。
 - Successor Required: yes（触发条件：master-data 补齐 `erp-md/posted-status` 字典，或 mfg 模型修正该引用。修复后补 mfg 冒烟测试即可，模式已在 Phase 1/2 沉淀可复制）
+- **已由 `docs/plans/2026-07-01-0215-1-complete-deferred-crud-smoke-tests.md` 解决**（触发条件已满足：master-data 补齐 `posted-status.dict.yaml`（DRAFT/POSTED/CANCELLED 3 态）+ mfg-service 加 master-data-service test 依赖 + 解除 `TestErpMfgRoutingCrudSmoke` 的 `@Disabled`，mfg 冒烟测试转绿，CRUD 路线图收尾至 18/18）。
 
 ### customer-service(cs) 域 CRUD 冒烟测试（模型缺陷阻塞）
 
 - Classification: `blocked by pre-existing model defect (protected area)`
 - Why Not Blocking Closure: 实时核实，`module-cs/model/app-erp-cs.orm.xml` 声明了 `app.erp.pro.dao.entity.ErpProProject` 与 `ErpProTask` 两个实体，但**全仓不存在对应 Java 类**（cs-dao 下 `find ... -path "*app/erp/pro*"` 命中 0；无任何 module 生成 `app.erp.pro` 包）。这导致单域测试加载 cs ORM 模型时抛 `ClassNotFoundException: app.erp.pro.dao.entity.ErpProProject`，先于任何测试逻辑。该引用指向一个不存在的「pro」域（疑似未完成的「专业服务项目」集成），属 cs 模型集成缺陷，AGENTS.md 禁止修改 `model/*.orm.xml`（保护区域），故不在本测试计划内修复。
 - Successor Required: yes（触发条件：cs 模型移除/补齐 `app.erp.pro.*` 实体声明。修复后补 cs 冒烟测试即可，模式已在 Phase 1/3 沉淀可复制）
+- **已由 `docs/plans/2026-07-01-0215-1-complete-deferred-crud-smoke-tests.md` 解决**（触发条件已满足：cs 源 orm 移除 2 个 `app.erp.pro.*` 幽灵实体声明 + regen + 解除 `TestErpCsTicketTypeCrudSmoke` 的 `@Disabled` + 录制快照，cs 冒烟测试转绿，CRUD 路线图收尾至 18/18）。
 
 ### BizModel 业务逻辑/状态机/业财过账测试
 
