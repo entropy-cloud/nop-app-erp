@@ -1,6 +1,6 @@
 # CRUD 实施路线图
 
-> 最后更新：2026-06-30
+> 最后更新：2026-07-01
 > 本路线图独立于业务逻辑实施路线图。CRUD 操作不依赖业务规则，可独立并行实施。
 
 ## 目的
@@ -41,16 +41,16 @@ CRUD 完成后，业务逻辑深化在此基础上进行。
 
 | 域 | 实体数 | codegen | 页面 | 菜单 | action-auth | 状态 |
 |---|--------|---------|------|------|------------|------|
-| crm | 34 | ✅ | ❌ | ❌ | ✅ | `planned` |
-| customer-service | 16 | ✅ | ❌ | ❌ | ✅ | `planned` |
-| human-resource | 28 | ✅ | ❌ | ❌ | ✅ | `planned` |
-| aps | 6 | ✅ | ❌ | ❌ | ✅ | `planned` |
-| contract | 15 | ✅ | ❌ | ❌ | ✅ | `planned` |
-| drp | 7 | ✅ | ❌ | ❌ | ✅ | `planned` |
-| logistics | 7 | ✅ | ❌ | ❌ | ✅ | `planned` |
-| b2b | 13 | ✅ | ❌ | ❌ | ✅ | `planned` |
+| crm | 34 | ✅ | ✅ | ✅ | ✅ | `done` |
+| customer-service | 16 | ✅ | ✅ | ✅ | ✅ | `done` |
+| human-resource | 28 | ✅ | ✅ | ✅ | ✅ | `done` |
+| aps | 6 | ✅ | ✅ | ✅ | ✅ | `done` |
+| contract | 15 | ✅ | ✅ | ✅ | ✅ | `done` |
+| drp | 7 | ✅ | ✅ | ✅ | ✅ | `done` |
+| logistics | 7 | ✅ | ✅ | ✅ | ✅ | `done` |
+| b2b | 13 | ✅ | ✅ | ✅ | ✅ | `done` |
 
-> Phase 3 action-auth 已创建，但页面路径尚不存在。需通过 `mvn compile` 触发 precompile 生成 view.xml/page.yaml。
+> Phase 3 页面已生成（view.xml/page.yaml 在各域 web src 树中）；app-erp-all 聚合 wiring 已完成（18 域 `-app` 依赖 + action-auth `x:extends` 聚合，见 `docs/plans/2026-06-30-2328-1-phase3-new-domains-app-aggregation.md`）。
 
 ### Phase 4 — CRUD 冒烟测试
 
@@ -76,4 +76,4 @@ mvn test -pl module-crm -am   # 示例: 测试单模块
 ## 规则
 
 - 本文件只跟踪 CRUD 状态。业务逻辑归 `implementation-roadmap.md`。
-- Phase 3 页面需通过 `mvn compile` 生成（precompile/gen-page.xgen 从 xmeta 渲染）。
+- Phase 1-3 页面已生成（view.xml/page.yaml）；18 域已聚合到 app-erp-all（Phase 3 完成）。

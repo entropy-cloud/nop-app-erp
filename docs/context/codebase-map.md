@@ -8,37 +8,45 @@
 
 ## 当前结构
 
-根 pom.xml 列出 11 个模块：10 个 `module-<domain>` + 1 个 `app-erp-all`。
+根 pom.xml 列出 19 个 reactor 模块：18 个 `module-<domain>` + 1 个 `app-erp-all`（子模块链合计 146 个 reactor 模块）。
 
-所有域 codegen 骨架已生成（1096 个 Java 文件），含实体类、DAO、I*Biz 接口、BizModel 空壳、XMeta、view.xml 骨架。后续模型变更用 `mvn clean install` 增量重新生成，**不要**重跑 `nop-cli gen`。
+所有域 codegen 骨架已生成（1721 个 Java 文件），含实体类、DAO、I*Biz 接口、BizModel 空壳、XMeta、view.xml 骨架。后续模型变更用 `mvn clean install` 增量重新生成，**不要**重跑 `nop-cli gen`。
 
 ## 入口点
 
 | 区域 | 路径 | 说明 | 最后验证 | 置信度 |
 |------|------|------|----------|--------|
-| ORM 模型（真相）×10 | `module-<domain>/model/app-erp-<domain>.orm.xml` | 10 域权威模型，共 145 实体 | 2026-06-22 | high |
-| 聚合启动工程 | `app-erp-all/` | Quarkus main + 聚合所有域依赖；`app.action-auth.xml` 合并 10 域 + 系统管理菜单 | 2026-06-23 | high |
-| 根 POM | `pom.xml` | 聚合 11 个模块（10 module-* + app-erp-all） | 2026-06-23 | high |
+| ORM 模型（真相）×18 | `module-<domain>/model/app-erp-<domain>.orm.xml` | 18 域权威模型，共 279 实体 | 2026-07-01 | high |
+| 聚合启动工程 | `app-erp-all/` | Quarkus main + 聚合所有域依赖；`app.action-auth.xml` 合并 18 域 + 系统管理菜单 | 2026-07-01 | high |
+| 根 POM | `pom.xml` | 聚合 19 个模块（18 module-* + app-erp-all） | 2026-07-01 | high |
 | 设计文档（全局） | `docs/design/*.md` | 7 份全局 owner doc（app-overview/flow-overview/domain-design-guidelines 等） | 2026-06-23 | high |
-| 设计文档（域） | `docs/design/<domain>/` | 10 域目录，含 README + state-machine + use-cases + ui-patterns 等 | 2026-06-23 | high |
+| 设计文档（域） | `docs/design/<domain>/` | 18 域目录，含 README + state-machine + use-cases + ui-patterns 等 | 2026-07-01 | high |
 | 架构文档 | `docs/architecture/*.md` | 9 份技术基线文档 | 2026-06-23 | high |
 | 文档路由器 | `docs/index.md` | 顶层导航 | 2026-06-25 | high |
 | 待办事项 | `docs/backlog/README.md` | 工作项选择 | 2026-06-25 | high |
 
-## ORM 模型清单（10 域 × 145 实体）
+## ORM 模型清单（18 域 × 279 实体）
 
 | 域 | 路径 | 实体数 | 字典命名空间 | 最后验证 |
 |----|------|--------|-------------|----------|
-| master-data | `module-master-data/model/app-erp-master-data.orm.xml` | 20 | `erp-md/*` | 2026-06-22 |
-| inventory | `module-inventory/model/app-erp-inventory.orm.xml` | 15 | `erp-inv/*` | 2026-06-22 |
-| purchase | `module-purchase/model/app-erp-purchase.orm.xml` | 17 | `erp-pur/*` | 2026-06-22 |
-| sales | `module-sales/model/app-erp-sales.orm.xml` | 13 | `erp-sal/*` | 2026-06-22 |
-| finance | `module-finance/model/app-erp-finance.orm.xml` | 13 | `erp-fin/*` | 2026-06-22 |
-| assets | `module-assets/model/app-erp-assets.orm.xml` | 10 | `erp-ast/*` | 2026-06-22 |
-| projects | `module-projects/model/app-erp-projects.orm.xml` | 13 | `erp-prj/*` | 2026-06-22 |
-| manufacturing | `module-manufacturing/model/app-erp-manufacturing.orm.xml` | 21 | `erp-mfg/*` | 2026-06-22 |
-| quality | `module-quality/model/app-erp-quality.orm.xml` | 11 | `erp-qa/*` | 2026-06-22 |
-| maintenance | `module-maintenance/model/app-erp-maintenance.orm.xml` | 12 | `erp-mnt/*` | 2026-06-22 |
+| master-data | `module-master-data/model/app-erp-master-data.orm.xml` | 22 | `erp-md/*` | 2026-07-01 |
+| inventory | `module-inventory/model/app-erp-inventory.orm.xml` | 15 | `erp-inv/*` | 2026-07-01 |
+| purchase | `module-purchase/model/app-erp-purchase.orm.xml` | 17 | `erp-pur/*` | 2026-07-01 |
+| sales | `module-sales/model/app-erp-sales.orm.xml` | 13 | `erp-sal/*` | 2026-07-01 |
+| finance | `module-finance/model/app-erp-finance.orm.xml` | 17 | `erp-fin/*` | 2026-07-01 |
+| assets | `module-assets/model/app-erp-assets.orm.xml` | 10 | `erp-ast/*` | 2026-07-01 |
+| projects | `module-projects/model/app-erp-projects.orm.xml` | 13 | `erp-prj/*` | 2026-07-01 |
+| manufacturing | `module-manufacturing/model/app-erp-manufacturing.orm.xml` | 23 | `erp-mfg/*` | 2026-07-01 |
+| quality | `module-quality/model/app-erp-quality.orm.xml` | 11 | `erp-qa/*` | 2026-07-01 |
+| maintenance | `module-maintenance/model/app-erp-maintenance.orm.xml` | 12 | `erp-mnt/*` | 2026-07-01 |
+| crm | `module-crm/model/app-erp-crm.orm.xml` | 34 | `erp-crm/*` | 2026-07-01 |
+| customer-service | `module-cs/model/app-erp-cs.orm.xml` | 16 | `erp-cs/*` | 2026-07-01 |
+| human-resource | `module-hr/model/app-erp-hr.orm.xml` | 28 | `erp-hr/*` | 2026-07-01 |
+| aps | `module-aps/model/app-erp-aps.orm.xml` | 6 | `erp-aps/*` | 2026-07-01 |
+| contract | `module-contract/model/app-erp-contract.orm.xml` | 15 | `erp-ct/*` | 2026-07-01 |
+| drp | `module-drp/model/app-erp-drp.orm.xml` | 7 | `erp-drp/*` | 2026-07-01 |
+| logistics | `module-logistics/model/app-erp-logistics.orm.xml` | 7 | `erp-log/*` | 2026-07-01 |
+| b2b | `module-b2b/model/app-erp-b2b.orm.xml` | 13 | `erp-b2b/*` | 2026-07-01 |
 
 ## 常见变更路由
 
