@@ -1,7 +1,7 @@
 {
   "name": "erp",
-  "description": "nop-app-erp 进销存+财务一体化 ERP（Nop platform + Quarkus，Maven 多模块）。10 个业务域独立工程，当前阶段：bootstrap / ORM 模型设计。",
-  "roadmapPath": "docs/backlog/README.md",
+  "description": "nop-app-erp 企业资源计划系统（Nop Platform + Quarkus，Maven 多模块）。18 个业务域独立工程。当前阶段：业务逻辑实施。CRUD 基础由 missions/crud.json 独立管理。",
+  "roadmapPath": "docs/backlog/implementation-roadmap.md",
   "plansDir": "docs/plans",
   "planGuide": "docs/plans/00-plan-authoring-and-execution-guide.md",
   "auditsDir": "docs/audits",

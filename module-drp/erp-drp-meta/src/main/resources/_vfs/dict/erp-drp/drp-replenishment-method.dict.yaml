@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 补货方法
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 最小-最大
+    value: 10
+    description: 
+  
+  - label: 定期
+    value: 20
+    description: 
+  
+  - label: 按需
+    value: 30
+    description: 
+  

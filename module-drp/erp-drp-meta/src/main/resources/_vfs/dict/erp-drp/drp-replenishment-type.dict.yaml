@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 补货类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 仓间调拨
+    value: 10
+    description: 
+  
+  - label: 向供应商采购
+    value: 20
+    description: 
+  

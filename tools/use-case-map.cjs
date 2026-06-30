@@ -26,7 +26,8 @@ const ROOT = path.resolve(__dirname, '..');
 /** 收集所有业务域 action-auth.xml 的菜单与 app:useCases 关联 */
 function collectMenuCases() {
   const results = []; // { domain, moduleId, resourceId, displayName, url, userCases:[] }
-  const domains = ['md','pur','sal','inv','fin','ast','prj','mfg','mnt','qa'];
+  const domains = ['md','pur','sal','inv','fin','ast','prj','mfg','mnt','qa',
+    'crm','cs','hr','aps','ct','drp','log','b2b'];
   for (const short of domains) {
     const pattern = `${ROOT}/module-*/erp-${short}-web/src/main/resources/_vfs/erp/${short}/auth/erp-${short}.action-auth.xml`;
     // glob 简易实现
@@ -71,20 +72,22 @@ function findAuthDir(short) {
 
 function domainName(short) {
   return {md:'master-data',pur:'purchase',sal:'sales',inv:'inventory',fin:'finance',
-    ast:'assets',prj:'projects',mfg:'manufacturing',mnt:'maintenance',qa:'quality'}[short];
+    ast:'assets',prj:'projects',mfg:'manufacturing',mnt:'maintenance',qa:'quality',
+    crm:'crm',cs:'cs',hr:'hr',aps:'aps',ct:'contract',drp:'drp',log:'logistics',b2b:'b2b'}[short];
 }
 
 /** 收集所有 use-cases.md 的用例编号与标题 */
 function collectUseCases() {
   const results = []; // { domain, code, title }
-  const domains = ['master-data','purchase','sales','inventory','finance','assets','projects','manufacturing','maintenance','quality'];
+  const domains = ['master-data','purchase','sales','inventory','finance','assets','projects','manufacturing','maintenance','quality',
+    'crm','customer-service','human-resource','aps','contract','drp','logistics','b2b'];
   for (const dom of domains) {
     const f = `${ROOT}/docs/design/${dom}/use-cases.md`;
     if (!fs.existsSync(f)) continue;
     const content = fs.readFileSync(f, 'utf-8');
     const short = {masterdata:'md'}.masterdata || dom.slice(0,3); // 简化,实际用编号里的域简称
-    // 匹配 ## UC-XXX-NN 标题
-    const re = /^## (UC-[A-Z]+-\d+)\s+(.+)$/gm;
+    // 匹配 ## UC-XXX-NN 标题（支持空格或冒号分隔；XXX 可含数字如 B2B）
+    const re = /^## (UC-[A-Z0-9]+-\d+)[:\uFF1A\s]+(.+)$/gm;
     let m;
     while ((m = re.exec(content)) !== null) {
       results.push({ code: m[1], title: m[2].trim(), domain: dom });
@@ -176,7 +179,8 @@ function reportCoverage(menus, useCases) {
 function reportOverview(menus, useCases) {
   console.log('\n== 域级概览 ==');
   // 用例编号简称 → 工程简称 别名(统一为工程目录简称,小写)
-  const normalizeDomain = d => d.toLowerCase() === 'main' ? 'mnt' : d.toLowerCase();
+  const shortMap = {crm:'crm',cs:'cs',hr:'hr',aps:'aps',ct:'ct',drp:'drp',log:'log',b2b:'b2b',main:'mnt'};
+  const normalizeDomain = d => shortMap[d.toLowerCase()] || d.toLowerCase();
   const byDomain = {};
   // 用例按域简称分组(统一小写做 key,避免大小写分裂)
   for (const uc of useCases) {

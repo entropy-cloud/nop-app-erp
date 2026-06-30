@@ -29,7 +29,7 @@
 | currencyId/exchangeRate/amountSource/amountFunctional | 多币种四件套(预算币种) |
 | controlLevel | 控制级别 dict:NONE/WARN/HARD(仅告警/硬拦截) |
 | docStatus | dict `erp-fin/budget-status`:DRAFT/SUBMITTED/APPROVED/REJECTED/CANCELLED |
-| approveStatus | dict `erp-fin/approve-status`(共用):UNSUBMITTED/PENDING/APPROVED/REJECTED |
+| approveStatus | dict `erp-fin/approve-status`(共用):UNSUBMITTED/SUBMITTED/APPROVED/REJECTED |
 | 标准审计字段 | version/delVersion/createdBy/createTime/updatedBy/updateTime/remark |
 
 **状态机**:`DRAFT → SUBMITTED → APPROVED`(终态,写入 postingType=BUDGET 的初始预算凭证);`SUBMITTED → REJECTED → DRAFT`(修改重提);`APPROVED → CANCELLED`(红冲原预算凭证)。**APPROVED 才生效参与控制**。

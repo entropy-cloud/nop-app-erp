@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:ioc="ioc"
+       xmlns="http://www.springframework.org/schema/beans" x:extends="/nop/biz/defaults/service-base.beans.xml"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="app.erp.aps.service.entity.ErpApsOperationOrderBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpApsOperationOrder" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.aps.biz.IErpApsOperationOrderBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpApsOperationOrder"/>
+    </bean>
+
+    <bean id="app.erp.aps.service.entity.ErpApsScheduleBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpApsSchedule" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.aps.biz.IErpApsScheduleBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpApsSchedule"/>
+    </bean>
+
+    <bean id="app.erp.aps.service.entity.ErpApsConstraintBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpApsConstraint" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.aps.biz.IErpApsConstraintBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpApsConstraint"/>
+    </bean>
+</beans>

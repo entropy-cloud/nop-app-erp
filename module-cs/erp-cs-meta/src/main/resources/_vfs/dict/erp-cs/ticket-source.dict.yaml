@@ -1,0 +1,27 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 工单来源
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 电话
+    value: 10
+    description: 
+  
+  - label: 邮件
+    value: 20
+    description: 
+  
+  - label: 门户
+    value: 30
+    description: 
+  
+  - label: 在线聊天
+    value: 40
+    description: 
+  
+  - label: 社交媒体
+    value: 50
+    description: 
+  

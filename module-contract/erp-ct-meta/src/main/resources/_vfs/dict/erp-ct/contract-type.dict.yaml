@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 合同类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 采购合同
+    value: 10
+    description: 
+  
+  - label: 销售合同
+    value: 20
+    description: 
+  
+  - label: 劳动合同
+    value: 30
+    description: 
+  
+  - label: 服务合同
+    value: 40
+    description: 
+  

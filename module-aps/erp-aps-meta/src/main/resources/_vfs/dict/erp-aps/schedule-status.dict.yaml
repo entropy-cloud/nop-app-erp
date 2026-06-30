@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 排产方案状态
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 草稿
+    value: 10
+    description: 
+  
+  - label: 已发布
+    value: 20
+    description: 
+  
+  - label: 已归档
+    value: 30
+    description: 
+  

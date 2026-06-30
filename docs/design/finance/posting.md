@@ -44,20 +44,73 @@
 
 过账操作前置检查 `posted=true` 时直接跳过，防止重复过账。兜底扫描与事件回调可能同时命中同一单据，posted 检查确保只处理一次。
 
-## 业务类型映射
+## 业务类型映射（唯一权威源）
+
+> **重要**：本表是全部 `businessType` 的唯一权威来源。所有模块的业财过账必须使用本表定义的 businessType，新增业务类型时必须更新本表。
 
 每种业务单据对应一个 `businessType`，决定使用哪个凭证模板：
 
-| 业务单据 | businessType | 借贷方向（典型） | 触发域 |
-|----------|--------------|------------------|--------|
-| 采购入库 | PURCHASE_INPUT | 借：存货 / 贷：暂估应付 | purchase |
-| 销售出库 | SALES_OUTPUT | 借：结转成本 / 贷：存货 | sales |
-| 采购发票 | AP_INVOICE | 借：费用/采购 / 借：进项税 / 贷：应付 | purchase |
-| 销售发票 | AR_INVOICE | 借：应收 / 贷：收入 / 贷：销项税 | sales |
-| 付款 | PAYMENT | 借：应付 / 贷：银行存款 | purchase |
-| 收款 | RECEIPT | 借：银行存款 / 贷：应收 | sales |
+### 核心业务类型（进销存+财务）
 
-> 具体借贷科目取决于科目映射配置（见下文"科目映射"），上表是典型场景。
+| 业务单据 | businessType | 借贷方向（典型） | 触发域 | 设计文档 |
+|----------|--------------|------------------|--------|---------|
+| 采购入库 | PURCHASE_INPUT | 借：存货 / 贷：暂估应付 | purchase | `purchase/README.md` |
+| 销售出库 | SALES_OUTPUT | 借：结转成本 / 贷：存货 | sales | `sales/README.md` |
+| 采购发票 | AP_INVOICE | 借：费用/采购 / 借：进项税 / 贷：应付 | purchase | `purchase/README.md` |
+| 销售发票 | AR_INVOICE | 借：应收 / 贷：收入 / 贷：销项税 | sales | `sales/README.md` |
+| 付款 | PAYMENT | 借：应付 / 贷：银行存款 | purchase | `purchase/README.md` |
+| 收款 | RECEIPT | 借：银行存款 / 贷：应收 | sales | `sales/README.md` |
+
+### 资产业务类型
+
+| 业务单据 | businessType | 借贷方向（典型） | 触发域 | 设计文档 |
+|----------|--------------|------------------|--------|---------|
+| 资产折旧 | DEPRECIATION | 借：折旧费用 / 贷：累计折旧 | assets | `flow-overview.md` / `assets/state-machine.md` |
+| 资产资本化 | CAPITALIZATION | 借：固定资产 / 贷：在建工程或存货 | assets | `flow-overview.md` |
+| 资产处置 | DISPOSAL | 借：累计折旧 / 借：清理损益 / 贷：固定资产 | assets | `flow-overview.md` |
+
+### 费用报销与资金业务类型
+
+| 业务单据 | businessType | 借贷方向（典型） | 触发域 | 设计文档 |
+|----------|--------------|------------------|--------|---------|
+| 费用报销 | EXPENSE_CLAIM | 借：费用科目 / 借：进项税 / 贷：应付-员工或银行存款 | finance | `expense-claim.md` |
+| 员工借款 | EMPLOYEE_ADVANCE | 借：其他应收款-员工预支 / 贷：银行存款 | finance | `expense-claim.md` |
+| 借款核销 | EMPLOYEE_ADVANCE_SETTLE | 借：应付-员工（报销抵扣）或银行存款（现金还款） / 贷：其他应收款-员工预支 | finance | `expense-claim.md` |
+| 应收票据收到 | NOTES_RECEIVABLE_RECEIVED | 借：应收票据 / 贷：应收账款 | finance | `treasury.md` |
+| 票据贴现 | NOTES_RECEIVABLE_DISCOUNTED | 借：银行存款(实得) / 借：财务费用-贴现息 / [借/贷] 汇兑损益 / 贷：应收票据 | finance | `treasury.md` |
+| 背书转让 | NOTES_RECEIVABLE_ENDORSED | 借：应付账款(抵供应商) / 贷：应收票据 | finance | `treasury.md` |
+| 到期托收 | NOTES_RECEIVABLE_COLLECTION | 借：银行存款 / 贷：应收票据 | finance | `treasury.md` |
+| 应付票据开出 | NOTES_PAYABLE_ISSUED | 借：应付账款 / 贷：应付票据 | finance | `treasury.md` |
+| 票据兑付 | NOTES_PAYABLE_HONORED | 借：应付票据 / 贷：银行存款 | finance | `treasury.md` |
+| 授信利息 | CREDIT_FACILITY_INTEREST | 借：财务费用-利息支出 / 贷：银行存款 | finance | `treasury.md` |
+
+### 制造与物流业务类型
+
+| 业务单据 | businessType | 借贷方向（典型） | 触发域 | 设计文档 |
+|----------|--------------|------------------|--------|---------|
+| 制造完工入库 | MANUFACTURING_FINISHED_INPUT | 借：产成品存货 / 贷：生产成本-结转 | manufacturing | `manufacturing/state-machine.md` |
+| 制造成本结转 | MANUFACTURING_COST_CLOSE | 借：主营业务成本 / 贷：产成品存货 | manufacturing | `manufacturing/bom-and-routing.md` |
+| 委外发料 | SUBCONTRACT_ISSUE | 借：委外加工物资 / 贷：原材料 | manufacturing | `manufacturing/subcontracting.md` |
+| 委外收货 | SUBCONTRACT_RECEIPT | 借：半成品/产成品 / 贷：委外加工物资 + 应付加工费 | manufacturing | `manufacturing/subcontracting.md` |
+| 销售运费 | FREIGHT | 借：销售费用-运费 / 贷：应付或银行存款 | logistics | `logistics/state-machine.md` |
+
+### 质量与异常业务类型
+
+| 业务单据 | businessType | 借贷方向（典型） | 触发域 | 设计文档 |
+|----------|--------------|------------------|--------|---------|
+| NCR 报废损失 | NCR_SCRAP | 借：营业外支出 / 贷：存货 | quality | `quality/state-machine.md` |
+| 所有权转移 | OWNERSHIP_TRANSFER | 借：存货(自有) / 贷：应付-供应商 | inventory | `consignment.md` |
+| 内部调拨 | INTER_TRANSFER | 借：存货-调入方 / 贷：存货-调出方（内部交易） | inventory | `inventory/README.md` |
+
+### 人力资源业务类型
+
+| 业务单据 | businessType | 借贷方向（典型） | 触发域 | 设计文档 |
+|----------|--------------|------------------|--------|---------|
+| 薪酬计提 | SALARY | 借：管理费用-工资 / 贷：应付职工薪酬 | hr | `human-resource/README.md` |
+| 薪酬发放 | SALARY_PAYMENT | 借：应付职工薪酬 / 贷：银行存款 | hr | `human-resource/README.md` |
+| 社保缴纳 | SOCIAL_INSURANCE | 借：管理费用-社保 / 贷：银行存款（+个人部分挂其他应收款） | hr | `human-resource/README.md` |
+
+> 具体借贷科目取决于科目映射配置（见下文"科目映射"），上表是典型场景。新增业务类型时，必须在本表追加一行并更新对应设计文档。
 
 ## 凭证模板机制
 

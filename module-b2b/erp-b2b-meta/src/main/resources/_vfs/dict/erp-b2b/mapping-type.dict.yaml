@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 代码映射类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 物料
+    value: 10
+    description: 
+  
+  - label: 伙伴
+    value: 20
+    description: 
+  
+  - label: 计量单位
+    value: 30
+    description: 
+  

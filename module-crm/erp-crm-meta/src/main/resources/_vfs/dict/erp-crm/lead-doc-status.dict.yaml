@@ -1,0 +1,27 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 线索商机状态
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 新建
+    value: NEW
+    description: 
+  
+  - label: 已验证
+    value: QUALIFIED
+    description: 
+  
+  - label: 已转化
+    value: CONVERTED
+    description: 
+  
+  - label: 已丢失
+    value: LOST
+    description: 
+  
+  - label: 已取消
+    value: CANCELLED
+    description: 
+  

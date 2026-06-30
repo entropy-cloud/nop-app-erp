@@ -517,25 +517,27 @@ NOT_OPENED → OPEN → CLOSING → CLOSED
 
 | 域 | 单据类型 | docStatus 取值 | 说明 |
 |---|---|---|---|
-| purchase/sales | 订单/出入库/发票/收付款 | `DRAFT` / `CANCELLED`（docStatus）+ `UNSUBMITTED` / `PENDING` / `APPROVED` / `REJECTED`（approveStatus） | 通用业务单据，docStatus 与 approveStatus 双轴独立（新建单据 docStatus=DRAFT, approveStatus=UNSUBMITTED） |
+| purchase/sales | 订单/出入库/发票/收付款 | `DRAFT` / `CANCELLED`（docStatus）+ `UNSUBMITTED` / `SUBMITTED` / `APPROVED` / `REJECTED`（approveStatus） | 通用业务单据，docStatus 与 approveStatus 双轴独立（新建单据 docStatus=DRAFT, approveStatus=UNSUBMITTED） |
 | inventory | 移动单/盘点单/拣货单 | `DRAFT` / `CONFIRMED` / `DONE` / `CANCELLED` | 作业类单据（无审批轴，作业确认即生效） |
 | finance | 凭证 | `DRAFT` / `POSTED` / `CANCELLED` | 凭证特殊：无 SUBMITTED，DRAFT 直接过账到 POSTED |
 | finance | 会计期间 | `NOT_OPENED` / `OPEN` / `CLOSING` / `CLOSED` | 时间窗口状态机（见 §十） |
 | assets | 资产卡片 | `DRAFT` / `IN_SERVICE` / `IDLE` / `SCRAPPED` / `SOLD` | 资产生命周期 |
 | manufacturing | 工单 | `DRAFT` / `SUBMITTED` / `APPROVED` / `RELEASED` / `IN_PROGRESS` / `COMPLETED` / `INSPECTING` / `REJECTED` / `CANCELLED` / `CLOSED` | 制造执行链 |
-| projects | 项目/任务 | `DRAFT` / `PLANNED` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 项目生命周期 |
+| projects | 项目/任务 | `DRAFT` / `OPEN` / `ON_HOLD` / `COMPLETED` / `CANCELLED` | 项目生命周期。`ON_HOLD` 为项目独有暂停态（可恢复），见 `projects/state-machine.md`。注：旧版指南曾用 `PLANNED`/`IN_PROGRESS`，已统一为 `OPEN`/`ON_HOLD`（与 `projects/state-machine.md` 一致） |
 | quality | 质检/NCR/CAPA | `DRAFT` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 质量流程 |
 | maintenance | 工单/请求 | `DRAFT` / `SCHEDULED` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 维护执行 |
 
 ### 16.3 approveStatus 取值约定（仅带审批的单据）
 
 | approveStatus | 业务含义 |
-|---|---|
+|---|---|---|
 | `UNSUBMITTED` | 未提交审批（初始） |
-| `PENDING` | 审批中 |
+| `SUBMITTED` | 已提交待审批（提交到工作流，等待审核人处理；审核人未处理时可撤回至 UNSUBMITTED） |
 | `APPROVED` | 审批通过 |
 | `REJECTED` | 审批拒绝（可修改后重新提交） |
 
+> 注：旧版指南曾用 `PENDING` 描述"审批中"状态，经审计确认实际文档（purchase/state-machine.md、flow-overview.md 等）均使用 `SUBMITTED`，已统一。
+> 
 > inventory 的作业单（移动单/盘点单/拣货单）通常不经过审批流，`approveStatus` 可省略或保持 `UNSUBMITTED`。
 
 ### 16.4 反审核目标态
@@ -548,16 +550,33 @@ NOT_OPENED → OPEN → CLOSING → CLOSED
 
 ### 16.5 跨域状态映射
 
-业务域之间串联流程时，状态映射规则：
+业务域之间串联流程时，状态映射规则（本表是全部跨域映射的唯一权威源，各域 state-machine.md 的跨域触发以本表为准）：
 
-| 上游域 → 下游域 | 映射规则 |
-|---|---|
-| purchase.`Receive` APPROVED → inventory.`StockMove` | 上游 APPROVED 触发下游 DRAFT → CONFIRMED（同事务） |
-| sales.`Delivery` APPROVED → inventory.`StockMove` | 同上 |
-| 业务单据 APPROVED → finance.`Voucher` | 上游 APPROVED 触发 posted=false，异步生成凭证（凭证走自身 DRAFT → POSTED） |
-| 业务单据 CANCELLED → finance.`Voucher` | 上游作废 → 按业财回链反查 → 生成红字凭证冲销 |
+| # | 上游域 → 下游域 | 触发条件 | 映射规则 | 设计文档 |
+|---|----------------|---------|---------|---------|
+| 1 | purchase.`Receive` APPROVED → inventory.`StockMove` | 入库单审核通过 | 上游 APPROVED 触发下游 DRAFT → CONFIRMED（同事务） | `purchase/state-machine.md` |
+| 2 | sales.`Delivery` APPROVED → inventory.`StockMove` | 出库单审核通过 | 同上 | `sales/state-machine.md` |
+| 3 | purchase.`Return` APPROVED → inventory.`StockMove` | 退货单审核通过 | 生成反向出库移动单（红字冲销原入库） | `purchase/returns.md` |
+| 4 | sales.`Return` APPROVED → inventory.`StockMove` | 退货单审核通过 | 生成反向入库移动单（红字冲销原出库）+ 红字发票 + 退款 | `sales/README.md` |
+| 5 | 业务单据 APPROVED → finance.`Voucher` | 单据审核通过 | 上游 APPROVED → posted=false → 异步生成凭证（凭证走自身 DRAFT → POSTED） | `finance/posting.md` |
+| 6 | 业务单据 CANCELLED → finance.`Voucher` | 单据作废 | 按业财回链反查 → 生成红字凭证冲销 | `finance/posting.md` |
+| 7 | manufacturing.`MaterialIssue` → inventory.`StockMove` | 领料单确认 | 生成出库移动单（扣减原材料库存） | `manufacturing/state-machine.md` |
+| 8 | manufacturing.`FinishedInput` → inventory.`StockMove` | 完工入库确认 | 生成入库移动单（增加产成品库存） | `manufacturing/state-machine.md` |
+| 9 | manufacturing.`CostClose` → finance.`Voucher` | 成本结转 | 生成成本结转凭证（MANUFACTURING_COST_CLOSE） | `manufacturing/bom-and-routing.md` |
+| 10 | logistics.`Shipment` DELIVERED → finance.`Voucher` | 发运单确认送达 | 触发运费凭证（FREIGHT），按双路径：销售→FREIGHT 凭证 / 采购→Landed Cost | `logistics/state-machine.md` |
+| 11 | crm.`Lead` CONVERTED → sales.`Quotation` | 商机转化 | 调用 IErpSalQuotationBiz 创建报价单（弱指针，核心零污染） | `crm/README.md` |
+| 12 | quality.`Inspection` REJECTED → purchase.`Return` / sales.`Return` / manufacturing.`Rework` | 质检不合格 | 按业务类型触发退货/返工/报废 | `quality/README.md` |
+| 13 | maintenance.`Downtime` → manufacturing.`Workcenter` | 设备停机 | 扣减工作中心可用时段（影响 CRP/APS 排产） | `maintenance/README.md` |
+| 14 | contract.`InvoicePlan` → purchase/sales.`Invoice` | 开票计划到期 | 按合同线生成 AP/AR 发票草稿 | `contract/README.md` |
+| 15 | drp.`Line` APPROVED → inventory.`TransferOrder` / purchase.`Order` | 补货单批准 | 仓间调拨→TransferOrder，采购→PurchaseOrder | `drp/README.md` |
+| 16 | aps.`OperationOrder` PLANNED → manufacturing.`JobCard` | 排产完成 | 按 OperationOrder 排程创建执行层 JobCard | `aps/README.md` |
+| 17 | b2b.`Asn` RECEIVED → purchase.`Receive` | ASN 入站 | ASN 通知采购域准备收货（ASN 不直接写库存） | `b2b/README.md` |
+| 18 | hr.`Timesheet` APPROVED → projects.`CostCollection` | 工时审核通过 | 工时成本归集到项目 | `human-resource/README.md` |
+| 19 | hr.`Salary` CONFIRMED → finance.`Voucher` | 薪酬确认 | 生成薪酬凭证（SALARY） | `human-resource/README.md` |
 
 > **跨域状态映射不直接耦合字段值**，而是通过事件/接口触发下游单据的状态迁移。下游单据的状态机独立运转。
+>
+> 跨域通信遵循 `docs/architecture/cross-domain-constraints.md` 的消弧约束（`initiatorDomain` 字段、循环检测、单向传播）。
 
 ---
 
@@ -617,7 +636,62 @@ NOT_OPENED → OPEN → CLOSING → CLOSED
 
 ---
 
-## 十八、总结
+## 十八、BizModel 与 xbiz 决策规则
+
+> 依据 Nop Platform `Model → Delta → Java` 决策框架（`ai-defaults.md`）。
+
+### 业务逻辑分层
+
+| 层 | 技术载体 | 用途 | 修改代价 |
+|---|---------|------|---------|
+| 模型声明 | `orm.xml` 字段/字典/关系、`xmeta` 元数据 | 字段级约束、显示规则、自动计算 | 低（改模型→重新生成） |
+| 声明式逻辑 | `xbiz` 文件（XPL 模板） | CRUD 钩子（beforeSave/afterQuery）、字段级 autoExpr、校验规则 | 低（改 xbiz→热更新） |
+| 编排逻辑 | BizModel Java 类（`@BizMutation/@BizQuery`） | 跨域操作（库存写入/凭证生成）、复杂事务、外部系统调用 | 中（需编译） |
+| 基础服务 | `I*Biz` 接口 + 实现类 | 跨模块调用、业务原子操作 | 中（接口+实现） |
+| SPI 扩展 | `@Inject Map<Code, Provider>` | 插件化业务类型（过账 provider、承运商网关、EDI 格式） | 低（新增 bean） |
+
+### 选型规则
+
+| 场景 | 推荐方式 | 不推荐方式 |
+|------|---------|-----------|
+| 字段默认值/自动计算 | `xmeta` autoExpr / `xbiz` beforeSave | Java setter |
+| 字段级校验（非空/范围/唯一） | `orm.xml` mandatory / unique / `xmeta` 校验 | Java validator |
+| 实体 CRUD 标准操作 | CrudBizModel（codegen 生成） | 手写全部 BizModel |
+| 单一域业务操作（审批/作废） | BizModel `@BizMutation` | xbiz（过于复杂） |
+| 跨域写操作（审核→库存→凭证） | BizModel `@BizMutation` + `I*Biz` 调用 | 手写事务管理 |
+| 报表数据聚合 | `EQL` + `@BizQuery` | 存储过程 |
+| 参数校验/配置读取 | `nop-config` / `xbiz` | 硬编码 |
+| 第三方系统对接（TMS/EDI） | SPI Provider（`@Inject Map`） | 硬编码 switch/case |
+
+### 具体示例
+
+```java
+// ✅ 推荐：BizModel + @BizMutation 做跨域操作
+@BizModel("ErpPurOrder")
+public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> {
+    @BizMutation
+    public ErpPurOrder approve(@Name("id") String id) {
+        ErpPurOrder order = dao().require(id);
+        // 1. 校验
+        // 2. 跨域写入库存
+        invStockMoveBiz.generateIncomingMove(...);
+        // 3. 更新状态
+        order.setApproveStatus(APPROVED);
+        // 4. 发布过账事件（自动）
+        return order;
+    }
+}
+
+// ✅ 推荐：xbiz 做字段级声明式逻辑
+// ErpPurOrder.xbiz
+// <beforeSave>
+//   entity.setTotalAmount(line.amount.sum());
+// </beforeSave>
+
+// ⛔ 不推荐：在 Java 中手写简单的字段计算
+```
+
+## 十九、总结
 
 本指南定义了 nop-app-erp 的核心设计原则与约束，各域设计时必须遵守：
 

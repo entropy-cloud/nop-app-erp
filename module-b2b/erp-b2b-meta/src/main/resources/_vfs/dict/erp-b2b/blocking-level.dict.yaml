@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 阻断级别
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 信息
+    value: 10
+    description: 
+  
+  - label: 警告
+    value: 20
+    description: 
+  
+  - label: 错误
+    value: 30
+    description: 
+  

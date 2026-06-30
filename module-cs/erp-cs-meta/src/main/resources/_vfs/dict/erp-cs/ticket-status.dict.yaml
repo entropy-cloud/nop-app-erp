@@ -1,0 +1,31 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 工单状态
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 新建
+    value: 10
+    description: 
+  
+  - label: 已分配
+    value: 20
+    description: 
+  
+  - label: 处理中
+    value: 30
+    description: 
+  
+  - label: 已解决
+    value: 40
+    description: 
+  
+  - label: 已关闭
+    value: 50
+    description: 
+  
+  - label: 已取消
+    value: 60
+    description: 
+  

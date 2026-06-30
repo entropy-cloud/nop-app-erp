@@ -1,0 +1,828 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<orm ext:registerShortName="true" ext:appName="erp-crm" ext:entityPackageName="app.erp.crm.dao.entity"
+     ext:basePackageName="app.erp.crm" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-crm"
+     ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
+     ext:allowIdAsColName="true" ext:icon="users" xmlns:i18n-en="i18n-en" xmlns:biz="biz"
+     x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:ref-i18n-en="ref-i18n-en" xmlns:ext="ext"
+     xmlns:orm-gen="orm-gen" xmlns:xpl="xpl" xmlns:ui="ui">
+
+    <x:post-extends x:override="replace">
+        <orm-gen:DefaultPostExtends xpl:lib="/nop/orm/xlib/orm-gen.xlib"/>
+    </x:post-extends>
+
+    <x:gen-extends x:override="replace">
+        <orm-gen:DefaultGenExtends xpl:lib="/nop/orm/xlib/orm-gen.xlib"/>
+    </x:gen-extends>
+
+    <dicts>
+        <dict label="线索商机类型" name="erp-crm/lead-type" valueType="string" i18n-en:label="Lead/Opportunity Type">
+            <option code="LEAD" label="线索" value="LEAD" i18n-en:label="Lead"/>
+            <option code="OPPORTUNITY" label="商机" value="OPPORTUNITY" i18n-en:label="Opportunity"/>
+        </dict>
+        <dict label="线索商机状态" name="erp-crm/lead-doc-status" valueType="string" i18n-en:label="Lead Document Status">
+            <option code="NEW" label="新建" value="NEW" i18n-en:label="New"/>
+            <option code="QUALIFIED" label="已验证" value="QUALIFIED" i18n-en:label="Qualified"/>
+            <option code="CONVERTED" label="已转化" value="CONVERTED" i18n-en:label="Converted"/>
+            <option code="LOST" label="已丢失" value="LOST" i18n-en:label="Lost"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
+        </dict>
+        <dict label="活动状态" name="erp-crm/event-status" valueType="string" i18n-en:label="Event Status">
+            <option code="PLANNED" label="已计划" value="PLANNED" i18n-en:label="Planned"/>
+            <option code="COMPLETED" label="已完成" value="COMPLETED" i18n-en:label="Completed"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
+        </dict>
+        <dict label="活动优先级" name="erp-crm/event-priority" valueType="string" i18n-en:label="Event Priority">
+            <option code="LOW" label="低" value="LOW" i18n-en:label="Low"/>
+            <option code="NORMAL" label="普通" value="NORMAL" i18n-en:label="Normal"/>
+            <option code="HIGH" label="高" value="HIGH" i18n-en:label="High"/>
+            <option code="URGENT" label="紧急" value="URGENT" i18n-en:label="Urgent"/>
+        </dict>
+        <dict label="活动类型(Activity)" name="erp-crm/activity-type" valueType="string" i18n-en:label="Activity Type">
+            <option code="NOTE" label="备注" value="NOTE" i18n-en:label="Note"/>
+            <option code="CALL" label="通话" value="CALL" i18n-en:label="Call"/>
+            <option code="EMAIL" label="邮件" value="EMAIL" i18n-en:label="Email"/>
+            <option code="MEETING" label="会议" value="MEETING" i18n-en:label="Meeting"/>
+        </dict>
+        <dict label="事件类型(Event)" name="erp-crm/event-type" valueType="string" i18n-en:label="Event Type">
+            <option code="CALL" label="通话" value="CALL" i18n-en:label="Call"/>
+            <option code="EMAIL" label="邮件" value="EMAIL" i18n-en:label="Email"/>
+            <option code="MEETING" label="会议" value="MEETING" i18n-en:label="Meeting"/>
+            <option code="TASK" label="任务" value="TASK" i18n-en:label="Task"/>
+        </dict>
+    </dicts>
+
+    <domains>
+        <domain name="boolFlag" stdSqlType="TINYINT"/>
+        <domain name="delVersion" stdSqlType="BIGINT"/>
+        <domain name="version" stdSqlType="INTEGER"/>
+        <domain name="createTime" stdSqlType="TIMESTAMP"/>
+        <domain name="createdBy" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="updateTime" stdSqlType="TIMESTAMP"/>
+        <domain name="updatedBy" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
+        <domain name="code" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="name" precision="200" stdSqlType="VARCHAR"/>
+        <domain name="amount" precision="20" scale="4" stdSqlType="DECIMAL"/>
+        <domain name="quantity" precision="20" scale="4" stdSqlType="DECIMAL"/>
+        <domain name="unitPrice" precision="20" scale="4" stdSqlType="DECIMAL"/>
+        <domain name="exchangeRate" precision="20" scale="8" stdSqlType="DECIMAL"/>
+        <domain name="orderCode" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="probability" stdSqlType="INTEGER"/>
+        <domain name="duration" stdSqlType="INTEGER"/>
+    </domains>
+
+    <entities>
+        <entity className="app.erp.crm.dao.entity.ErpCrmLead" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="线索/商机"
+                name="app.erp.crm.dao.entity.ErpCrmLead" registerShortName="true" tableName="erp_crm_lead"
+                tagSet="gid,erp.crm" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="users" i18n-en:displayName="Lead / Opportunity">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="编码" domain="orderCode" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="LEAD_TYPE" displayName="线索/商机类型" mandatory="true" name="leadType" precision="20"
+                        propId="4" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-crm/lead-type"
+                        i18n-en:displayName="Lead Type"/>
+                <column code="PARTNER_ID" displayName="客户" name="partnerId" propId="5" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
+                <column code="CONTACT_NAME" displayName="联系人姓名" name="contactName" precision="100" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Contact Name"/>
+                <column code="CONTACT_PHONE" displayName="联系电话" name="contactPhone" precision="50" propId="7"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Contact Phone"/>
+                <column code="CONTACT_EMAIL" displayName="联系邮箱" name="contactEmail" precision="200" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Contact Email"/>
+                <column code="COMPANY_NAME" displayName="公司名称" name="companyName" precision="200" propId="9"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Company Name"/>
+                <column code="JOB_TITLE" displayName="职位" name="jobTitle" precision="100" propId="10"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Job Title"/>
+                <column code="DEPARTMENT" displayName="部门" name="department" precision="100" propId="11"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Department"/>
+                <column code="SOURCE_ID" displayName="线索来源" name="sourceId" propId="12" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Source"/>
+                <column code="LEAD_STATUS_ID" displayName="线索状态" name="leadStatusId" propId="13" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Lead Status"/>
+                <column code="STAGE_ID" displayName="漏斗阶段" name="stageId" propId="14" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Stage"/>
+                <column code="EXPECTED_REVENUE" displayName="预期收入" domain="amount" name="expectedRevenue" precision="20"
+                        propId="15" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Expected Revenue"/>
+                <column code="BEST_CASE_AMOUNT" displayName="乐观预期" domain="amount" name="bestCaseAmount" precision="20"
+                        propId="16" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Best Case Amount"/>
+                <column code="WORST_CASE_AMOUNT" displayName="悲观预期" domain="amount" name="worstCaseAmount"
+                        precision="20" propId="17" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Worst Case Amount"/>
+                <column code="RECURRING_REVENUE" displayName="周期性收入" domain="amount" name="recurringRevenue"
+                        precision="20" propId="18" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Recurring Revenue"/>
+                <column code="RECURRING_PLAN" displayName="周期性计划" name="recurringPlan" precision="50" propId="19"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Recurring Plan"/>
+                <column code="EXPECTED_CLOSE_DATE" displayName="预期签单日" name="expectedCloseDate" propId="20"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Expected Close Date"/>
+                <column code="PROBABILITY" displayName="成交概率" domain="probability" name="probability" propId="21"
+                        stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Probability"/>
+                <column code="CAMPAIGN_ID" displayName="营销活动" name="campaignId" propId="22" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Campaign"/>
+                <column code="UTM_MEDIUM" displayName="UTM Medium" name="utmMedium" precision="100" propId="23"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="UTM Medium"/>
+                <column code="UTM_SOURCE" displayName="UTM Source" name="utmSource" precision="100" propId="24"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="UTM Source"/>
+                <column code="OWNER_ID" displayName="负责人" name="ownerId" propId="25" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Owner"/>
+                <column code="TEAM_ID" displayName="销售团队" name="teamId" propId="26" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Team"/>
+                <column code="LOST_REASON_ID" displayName="丢单原因" name="lostReasonId" propId="27" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Lost Reason"/>
+                <column code="LOST_REASON_DESC" displayName="丢单描述" name="lostReasonDesc" precision="500" propId="28"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Lost Reason Description"/>
+                <column code="LAST_CONTACT_DATE" displayName="最后联系日期" name="lastContactDate" propId="29"
+                        stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Last Contact Date"/>
+                <column code="NEXT_ACTIVITY_DATE" displayName="下次活动日期" name="nextActivityDate" propId="30"
+                        stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Next Activity Date"/>
+                <column code="RELATED_BILL_TYPE" displayName="转化结果单据类型" name="relatedBillType" precision="50"
+                        propId="31" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Related Bill Type"/>
+                <column code="RELATED_BILL_CODE" displayName="转化结果单据号" name="relatedBillCode" precision="50" propId="32"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Related Bill Code"/>
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
+                        propId="33" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-crm/lead-doc-status"
+                        i18n-en:displayName="Doc Status"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="34"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="35" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="36" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="37" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="38" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="39" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="40" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
+                        i18n-en:displayName="Partner" ref-i18n-en:displayName="Lead">
+                    <join>
+                        <on leftProp="partnerId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="source" refEntityName="app.erp.crm.dao.entity.ErpCrmSource" tagSet="pub"
+                        i18n-en:displayName="Source" ref-i18n-en:displayName="Lead">
+                    <join>
+                        <on leftProp="sourceId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="leadStatus" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadStatus" tagSet="pub"
+                        i18n-en:displayName="Lead Status" ref-i18n-en:displayName="Lead">
+                    <join>
+                        <on leftProp="leadStatusId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="stage" refEntityName="app.erp.crm.dao.entity.ErpCrmStage" tagSet="pub"
+                        i18n-en:displayName="Stage" ref-i18n-en:displayName="Lead">
+                    <join>
+                        <on leftProp="stageId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="campaign" refEntityName="app.erp.crm.dao.entity.ErpCrmCampaign" tagSet="pub"
+                        i18n-en:displayName="Campaign" ref-i18n-en:displayName="Lead">
+                    <join>
+                        <on leftProp="campaignId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub"
+                        i18n-en:displayName="Team" ref-i18n-en:displayName="Lead">
+                    <join>
+                        <on leftProp="teamId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="lostReason" refEntityName="app.erp.crm.dao.entity.ErpCrmLostReason" tagSet="pub"
+                        i18n-en:displayName="Lost Reason" ref-i18n-en:displayName="Lead">
+                    <join>
+                        <on leftProp="lostReasonId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org" ref-i18n-en:displayName="Lead">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-many name="events" refEntityName="app.erp.crm.dao.entity.ErpCrmEvent" tagSet="pub"
+                         i18n-en:displayName="Events" ref-i18n-en:displayName="Lead">
+                    <join>
+                        <on leftProp="id" rightProp="relatedLeadId"/>
+                    </join>
+                </to-many>
+                <to-many name="activities" refEntityName="app.erp.crm.dao.entity.ErpCrmActivity" tagSet="pub"
+                         i18n-en:displayName="Activities" ref-i18n-en:displayName="Lead">
+                    <join>
+                        <on leftProp="id" rightProp="leadId"/>
+                    </join>
+                </to-many>
+                <to-many name="convLogs" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadConvLog" tagSet="pub"
+                         i18n-en:displayName="Conv Logs" ref-i18n-en:displayName="Lead">
+                    <join>
+                        <on leftProp="id" rightProp="leadId"/>
+                    </join>
+                </to-many>
+            </relations>
+        </entity>
+        <entity className="app.erp.crm.dao.entity.ErpCrmLeadStatus" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="线索状态"
+                name="app.erp.crm.dao.entity.ErpCrmLeadStatus" registerShortName="true" tableName="erp_crm_lead_status"
+                tagSet="gid,erp.crm" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="circle" i18n-en:displayName="Lead Status">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="编码" domain="code" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
+                <column code="NAME" displayName="名称" domain="name" mandatory="true" name="name" precision="200"
+                        propId="3" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
+                <column code="SEQUENCE" defaultValue="0" displayName="排序" name="sequence" propId="4" stdDataType="int"
+                        stdSqlType="INTEGER" i18n-en:displayName="Sequence"/>
+                <column code="IS_DEFAULT" defaultValue="false" displayName="是否默认" name="isDefault" propId="5"
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Default"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="7" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="8" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="9" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="10" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="11" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.crm.dao.entity.ErpCrmStage" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="漏斗阶段"
+                name="app.erp.crm.dao.entity.ErpCrmStage" registerShortName="true" tableName="erp_crm_stage"
+                tagSet="gid,erp.crm" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="layers" i18n-en:displayName="Funnel Stage">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="编码" domain="code" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="STAGE_NAME" displayName="阶段名称" domain="name" mandatory="true" name="stageName"
+                        precision="200" propId="4" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Stage Name"/>
+                <column code="SEQUENCE" defaultValue="0" displayName="排序" mandatory="true" name="sequence" propId="5"
+                        stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Sequence"/>
+                <column code="TEAM_ID" displayName="团队作用域" name="teamId" propId="6" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Team"/>
+                <column code="DEFAULT_PROBABILITY" displayName="默认成交概率%" domain="probability" name="defaultProbability"
+                        propId="7" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Default Probability"/>
+                <column code="IS_WON_STAGE" defaultValue="false" displayName="是否赢单阶段" name="isWonStage" propId="8"
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Won Stage"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="9"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="10" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="11" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="12" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="14" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub"
+                        i18n-en:displayName="Team" ref-i18n-en:displayName="Stage">
+                    <join>
+                        <on leftProp="teamId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org" ref-i18n-en:displayName="Stage">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.crm.dao.entity.ErpCrmSource" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="线索来源"
+                name="app.erp.crm.dao.entity.ErpCrmSource" registerShortName="true" tableName="erp_crm_source"
+                tagSet="gid,erp.crm" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="arrow-up-from-line" i18n-en:displayName="Lead Source">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="编码" domain="code" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
+                <column code="NAME" displayName="名称" domain="name" mandatory="true" name="name" precision="200"
+                        propId="3" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
+                <column code="SEQUENCE" defaultValue="0" displayName="排序" name="sequence" propId="4" stdDataType="int"
+                        stdSqlType="INTEGER" i18n-en:displayName="Sequence"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="5"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="6" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="7" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="8" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="9" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="10" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="11" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.crm.dao.entity.ErpCrmLostReason" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="丢单原因"
+                name="app.erp.crm.dao.entity.ErpCrmLostReason" registerShortName="true" tableName="erp_crm_lost_reason"
+                tagSet="gid,erp.crm" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="x-circle" i18n-en:displayName="Lost Reason">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="编码" domain="code" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
+                <column code="NAME" displayName="名称" domain="name" mandatory="true" name="name" precision="200"
+                        propId="3" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
+                <column code="SEQUENCE" defaultValue="0" displayName="排序" name="sequence" propId="4" stdDataType="int"
+                        stdSqlType="INTEGER" i18n-en:displayName="Sequence"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="5"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="6" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="7" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="8" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="9" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="10" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="11" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.crm.dao.entity.ErpCrmTeam" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售团队"
+                name="app.erp.crm.dao.entity.ErpCrmTeam" registerShortName="true" tableName="erp_crm_team"
+                tagSet="gid,erp.crm" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="group" i18n-en:displayName="Sales Team">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="编码" domain="code" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
+                <column code="NAME" displayName="名称" domain="name" mandatory="true" name="name" precision="200"
+                        propId="3" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="4" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="TEAM_LEADER_ID" displayName="团队负责人" name="teamLeaderId" propId="5" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Team Leader"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="7" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="8" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="9" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="10" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="11" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org" ref-i18n-en:displayName="Team">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.crm.dao.entity.ErpCrmCampaign" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="营销活动"
+                name="app.erp.crm.dao.entity.ErpCrmCampaign" registerShortName="true" tableName="erp_crm_campaign"
+                tagSet="gid,erp.crm" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="megaphone" i18n-en:displayName="Campaign">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="编码" domain="code" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
+                <column code="NAME" displayName="名称" domain="name" mandatory="true" name="name" precision="200"
+                        propId="3" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="4" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="CAMPAIGN_NAME" displayName="活动名称" domain="name" mandatory="true" name="campaignName"
+                        precision="200" propId="5" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Campaign Name"/>
+                <column code="MEDIUM" displayName="UTM Medium" name="medium" precision="100" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="UTM Medium"/>
+                <column code="SOURCE" displayName="UTM Source" name="source" precision="100" propId="7"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="UTM Source"/>
+                <column code="START_DATE" displayName="开始日期" name="startDate" propId="8" stdDataType="date"
+                        stdSqlType="DATE" i18n-en:displayName="Start Date"/>
+                <column code="END_DATE" displayName="结束日期" name="endDate" propId="9" stdDataType="date"
+                        stdSqlType="DATE" i18n-en:displayName="End Date"/>
+                <column code="BUDGET_AMOUNT" displayName="预算金额" domain="amount" name="budgetAmount" precision="20"
+                        propId="10" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Budget Amount"/>
+                <column code="ACTUAL_COST" displayName="实际成本" domain="amount" name="actualCost" precision="20"
+                        propId="11" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Actual Cost"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="12"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="13" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="14" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="15" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="16" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="17" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org" ref-i18n-en:displayName="Campaign">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.crm.dao.entity.ErpCrmEvent" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="活动/事件"
+                name="app.erp.crm.dao.entity.ErpCrmEvent" registerShortName="true" tableName="erp_crm_event"
+                tagSet="gid,erp.crm" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="calendar" i18n-en:displayName="Event">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="编码" domain="orderCode" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="EVENT_TYPE" displayName="事件类型" mandatory="true" name="eventType" precision="20" propId="4"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-crm/event-type"
+                        i18n-en:displayName="Event Type"/>
+                <column code="EVENT_CATEGORY_ID" displayName="活动类别" name="eventCategoryId" propId="5" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Event Category"/>
+                <column code="SUBJECT" displayName="主题" mandatory="true" name="subject" precision="200" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Subject"/>
+                <column code="DESCRIPTION" displayName="描述" name="description" precision="2000" propId="7"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Description"/>
+                <column code="START_DATE_TIME" displayName="开始时间" mandatory="true" name="startDateTime" propId="8"
+                        stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Start DateTime"/>
+                <column code="END_DATE_TIME" displayName="结束时间" name="endDateTime" propId="9" stdDataType="datetime"
+                        stdSqlType="DATETIME" i18n-en:displayName="End DateTime"/>
+                <column code="DURATION" displayName="时长(分钟)" domain="duration" name="duration" propId="10"
+                        stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Duration"/>
+                <column code="RELATED_LEAD_ID" displayName="关联线索/商机" name="relatedLeadId" propId="11" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Related Lead"/>
+                <column code="RELATED_BILL_TYPE" displayName="关联单据类型" name="relatedBillType" precision="50" propId="12"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Related Bill Type"/>
+                <column code="RELATED_BILL_CODE" displayName="关联单据号" name="relatedBillCode" precision="50" propId="13"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Related Bill Code"/>
+                <column code="PARTNER_ID" displayName="关联客户" name="partnerId" propId="14" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
+                <column code="CONTACT_ID" displayName="联系人" name="contactId" propId="15" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Contact"/>
+                <column code="OWNER_ID" displayName="负责人" name="ownerId" propId="16" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Owner"/>
+                <column code="STATUS" displayName="活动状态" mandatory="true" name="status" precision="20" propId="17"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-crm/event-status"
+                        i18n-en:displayName="Status"/>
+                <column code="PRIORITY" displayName="优先级" mandatory="true" name="priority" precision="20" propId="18"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-crm/event-priority"
+                        i18n-en:displayName="Priority"/>
+                <column code="IS_RECURRENT" defaultValue="false" displayName="是否重复事件" name="isRecurrent" propId="19"
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Recurrent"/>
+                <column code="PARENT_EVENT_ID" displayName="父事件" name="parentEventId" propId="20" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Parent Event"/>
+                <column code="REMINDER_MINUTES_BEFORE" displayName="提醒提前分钟数" domain="duration"
+                        name="reminderMinutesBefore" propId="21" stdDataType="int" stdSqlType="INTEGER"
+                        i18n-en:displayName="Reminder Minutes"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="22"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="23" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="24" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="25" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="26" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="27" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="28" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="relatedLead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub"
+                        i18n-en:displayName="Related Lead" ref-i18n-en:displayName="Event">
+                    <join>
+                        <on leftProp="relatedLeadId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
+                        i18n-en:displayName="Partner" ref-i18n-en:displayName="Event">
+                    <join>
+                        <on leftProp="partnerId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="parentEvent" refEntityName="app.erp.crm.dao.entity.ErpCrmEvent" tagSet="pub"
+                        i18n-en:displayName="Parent Event" ref-i18n-en:displayName="Event">
+                    <join>
+                        <on leftProp="parentEventId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org" ref-i18n-en:displayName="Event">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="eventCategory" refEntityName="app.erp.crm.dao.entity.ErpCrmEventCategory" tagSet="pub"
+                        i18n-en:displayName="Event Category" ref-i18n-en:displayName="Event">
+                    <join>
+                        <on leftProp="eventCategoryId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.crm.dao.entity.ErpCrmEventCategory" createTimeProp="createTime"
+                createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="活动类别"
+                name="app.erp.crm.dao.entity.ErpCrmEventCategory" registerShortName="true"
+                tableName="erp_crm_event_category" tagSet="gid,erp.crm" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="tag"
+                i18n-en:displayName="Event Category">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="编码" domain="code" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
+                <column code="NAME" displayName="名称" domain="name" mandatory="true" name="name" precision="200"
+                        propId="3" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
+                <column code="COLOR" displayName="日历颜色" name="color" precision="20" propId="4" stdDataType="string"
+                        stdSqlType="VARCHAR" i18n-en:displayName="Color"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="5"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="6" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="7" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="8" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="9" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="10" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="11" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.crm.dao.entity.ErpCrmActivity" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="活动记录"
+                name="app.erp.crm.dao.entity.ErpCrmActivity" registerShortName="true" tableName="erp_crm_activity"
+                tagSet="gid,erp.crm" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="activity" i18n-en:displayName="Activity">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="LEAD_ID" displayName="关联线索/商机" mandatory="true" name="leadId" propId="2"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Lead"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="ACTIVITY_TYPE" displayName="活动类型" mandatory="true" name="activityType" precision="20"
+                        propId="4" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-crm/activity-type"
+                        i18n-en:displayName="Activity Type"/>
+                <column code="ACTIVITY_DATE" displayName="活动日期" mandatory="true" name="activityDate" propId="5"
+                        stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Activity Date"/>
+                <column code="SUMMARY" displayName="内容摘要" name="summary" precision="500" propId="6" stdDataType="string"
+                        stdSqlType="VARCHAR" i18n-en:displayName="Summary"/>
+                <column code="OWNER_ID" displayName="负责人" name="ownerId" propId="7" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Owner"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="9" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="10" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="11" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="13" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="lead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub"
+                        i18n-en:displayName="Lead" ref-i18n-en:displayName="Activity">
+                    <join>
+                        <on leftProp="leadId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org" ref-i18n-en:displayName="Activity">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.crm.dao.entity.ErpCrmLeadConvLog" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="阶段流转日志"
+                name="app.erp.crm.dao.entity.ErpCrmLeadConvLog" registerShortName="true"
+                tableName="erp_crm_lead_conv_log" tagSet="gid,erp.crm" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="history"
+                i18n-en:displayName="Lead Conversion Log">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="LEAD_ID" displayName="线索/商机" mandatory="true" name="leadId" propId="2" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Lead"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="FROM_STAGE_ID" displayName="前阶段" name="fromStageId" propId="4" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="From Stage"/>
+                <column code="TO_STAGE_ID" displayName="后阶段" name="toStageId" propId="5" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="To Stage"/>
+                <column code="CHANGED_AT" displayName="变更时间" mandatory="true" name="changedAt" propId="6"
+                        stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Changed At"/>
+                <column code="CHANGED_BY" displayName="变更人" name="changedBy" propId="7" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Changed By"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="9" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="10" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="11" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="13" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="lead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub"
+                        i18n-en:displayName="Lead" ref-i18n-en:displayName="Conv Log">
+                    <join>
+                        <on leftProp="leadId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="fromStage" refEntityName="app.erp.crm.dao.entity.ErpCrmStage" tagSet="pub"
+                        i18n-en:displayName="From Stage" ref-i18n-en:displayName="Conv Log">
+                    <join>
+                        <on leftProp="fromStageId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="toStage" refEntityName="app.erp.crm.dao.entity.ErpCrmStage" tagSet="pub"
+                        i18n-en:displayName="To Stage" ref-i18n-en:displayName="Conv Log">
+                    <join>
+                        <on leftProp="toStageId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org" ref-i18n-en:displayName="Conv Log">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.crm.dao.entity.ErpCrmQuoteTemplate" createTimeProp="createTime"
+                createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="报价模板"
+                name="app.erp.crm.dao.entity.ErpCrmQuoteTemplate" registerShortName="true"
+                tableName="erp_crm_quote_template" tagSet="gid,erp.crm" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="file-text"
+                i18n-en:displayName="Quote Template">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="编码" domain="code" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
+                <column code="NAME" displayName="名称" domain="name" mandatory="true" name="name" precision="200"
+                        propId="3" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
+                <column code="TEMPLATE_CONTENT" displayName="模板内容" name="templateContent" precision="4000" propId="4"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Template Content"/>
+                <column code="IS_DEFAULT" defaultValue="false" displayName="是否默认" name="isDefault" propId="5"
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Default"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="7" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="8" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="9" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="10" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="11" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdOrganization" displayName="组织"
+                name="app.erp.md.dao.entity.ErpMdOrganization" notGenCode="true" tableName="erp_md_organization"
+                biz:moduleId="erp/md">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="ID"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Code"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Name"/>
+                <column code="ORG_TYPE" name="orgType" propId="4" stdDataType="int" stdSqlType="INTEGER"
+                        i18n-en:displayName="Org Type"/>
+                <column code="PARENT_ID" name="parentId" propId="5" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Parent"/>
+                <column code="STATUS" name="status" propId="6" stdDataType="int" stdSqlType="INTEGER"
+                        i18n-en:displayName="Status"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdPartner" displayName="往来单位"
+                name="app.erp.md.dao.entity.ErpMdPartner" notGenCode="true" tableName="erp_md_partner"
+                biz:moduleId="erp/md">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="ID"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Code"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Name"/>
+                <column code="PARTNER_TYPE" name="partnerType" propId="4" stdDataType="int" stdSqlType="INTEGER"
+                        i18n-en:displayName="Partner Type"/>
+                <column code="STATUS" name="status" propId="5" stdDataType="int" stdSqlType="INTEGER"
+                        i18n-en:displayName="Status"/>
+                <column code="CREDIT_LIMIT" name="creditLimit" precision="50" propId="6" stdDataType="string"
+                        stdSqlType="VARCHAR" i18n-en:displayName="Credit Limit"/>
+            </columns>
+        </entity>
+    </entities>
+</orm>

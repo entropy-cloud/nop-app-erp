@@ -135,18 +135,50 @@ app-erp-maintenance（依赖 master-data + inventory + assets；被 manufacturin
 
 Maven 依赖方向严格单向（DAG），下游工程不能反向依赖上游。`app-erp-app` 聚合所有领域工程的 `-service`/`-web` 模块启动。
 
-### 4.2 跨工程实体关系：走 I*Biz，不做 ORM 强引用
+### 4.2 跨工程实体关系：依赖方向必须无环
 
-**硬规则**（源自 `architecture-principles.md:40-62`）：跨工程实体**不做** ORM 层 `refEntityName` 强引用。平台所有内置模块（nop-auth/nop-sys/nop-wf）的源 orm.xml 中 `refEntityName` 全部指向本模块包内实体，零跨包引用。
+**核心原则**：ORM 层跨模块 `refEntityName` 引用**允许但必须遵循 DAG 方向**，严格禁止循环依赖。
 
-具体做法：
-- 引用方工程用**纯外键列**（如 `erp_pur_order.material_id VARCHAR`），不带 `<to-one>` 关系声明。
-- 在 BizModel/Processor 层通过 `@Inject IErpMdMaterialBiz`（master-data 在 `*-dao` 暴露的 `I*Biz` 接口）做只读查询和跨工程动作编排。
-- 若需 ORM 层导航，在实体里用 `requireBiz(I*Biz.class)` 做只读关联（见 `domain-logic-and-ddd.md:48-69`）。
+#### 允许的跨模块引用
 
-**示例**：finance 凭证要引用 purchase 的采购发票：
-- ❌ `app-erp-finance` 的 orm.xml 不写 `refEntityName="app.erp.pur.dao.entity.ErpPurInvoice"`
-- ✅ finance 凭证行用 `source_bill_type`/`source_head_code`/`source_line_code` 三元组（纯字符串列），BizModel 通过 `@Inject IErpPurInvoiceBiz` 查询源单
+| 引用方向 | 是否允许 | 理由 |
+|---------|---------|------|
+| 所有模块 → master-data（物料/往来单位/组织等） | ✅ **允许** | master-data 是 DAG 根节点，无循环风险；ORM 级关系导航对代码生成的查询效率至关重要 |
+| 下游 → 上游（purchase→inventory, finance→purchase 等） | ⚠️ **谨慎允许** | 仅在业务语义非常明确且 I*Biz 不足以满足时使用；优先使用 `source_bill_type/source_bill_code` 弱指针 |
+| 上游 → 下游（master-data→inventory 等） | ❌ **禁止** | 会产生循环依赖 |
+
+**关于 master-data 引用的特殊说明**：所有模块引用 master-data 实体（ErpMdMaterial、ErpMdPartner、ErpMdOrganization、ErpMdWarehouse、ErpMdCurrency 等）使用 ORM `<to-one>` 是**推荐的**，因为：
+- master-data 处于 DAG 最上游，各模块依赖它是单向的，无循环风险
+- 省去大量 `@Inject I*Biz` 查询模板代码
+- codegen 可自动生成导航属性，提升开发效率
+
+#### 必须使用 I*Biz 的场景
+
+以下情况必须使用 `I*Biz` 接口，不得使用 ORM `refEntityName`：
+
+| 场景 | 方案 |
+|------|------|
+| 两个同层模块间引用（如 purchase ↔ sales） | source_bill_type/source_bill_code 弱指针 + I*Biz |
+| 上游模块引用下游模块（master-data → purchase） | 禁止，属于循环依赖 |
+| 财务跨模块过账查询 | finance 凭证行用 `source_bill_type`/`source_head_code`/`source_line_code` 三元组纯字符串列，BizModel 通过 `@Inject IErpPurInvoiceBiz` 查询源单 |
+
+#### 已批准的跨模块 ORM 引用白名单
+
+| 源模块 | 目标模块 | 引用实体 | 理由 |
+|--------|---------|---------|------|
+| 全部模块 | master-data | ErpMdOrganization | DAG 根，组织/租户维度 |
+| 全部模块 | master-data | ErpMdMaterial/SKU/UoM | DAG 根，物料主数据 |
+| 全部模块 | master-data | ErpMdPartner | DAG 根，往来单位 |
+| purchase/sales/inventory | master-data | ErpMdWarehouse/Location | DAG 根，仓库库位 |
+| purchase/sales | master-data | ErpMdCurrency | DAG 根，币种 |
+| finance | master-data | ErpMdSubject/AcctSchema | DAG 根，科目表 |
+| projects/manufacturing | master-data | ErpMdEmployee | DAG 根，员工主数据 |
+| quality | master-data | ErpMdEmployee | DAG 根 |
+| logistics | master-data | ErpMdMaterial/Partner | DAG 根 |
+| crm/cs/hr/aps/contract/drp/b2b | master-data | ErpMdOrganization/Partner | DAG 根 |
+| hr/maintenance | master-data | ErpMdEmployee/Organization | DAG 根 |
+
+> **注意**：此白名单不是一刀切许可。新增跨模块引用时必须判断依赖方向是否保持 DAG 无环，并在架构审查中记录理由。
 
 ### 4.3 业财打通的跨工程实现
 

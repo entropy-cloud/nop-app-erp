@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:ioc="ioc"
+       xmlns="http://www.springframework.org/schema/beans" x:extends="/nop/biz/defaults/service-base.beans.xml"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="app.erp.hr.service.entity.ErpHrDepartmentBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrDepartment" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrDepartmentBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpHrDepartment"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrPositionBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrPosition" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrPositionBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpHrPosition"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrEmployeeBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrEmployee" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrEmployeeBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpHrEmployee"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrEmploymentContractBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrEmploymentContract" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrEmploymentContractBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpHrEmploymentContract"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrLeaveRequestBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrLeaveRequest" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrLeaveRequestBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpHrLeaveRequest"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrTimesheetBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrTimesheet" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrTimesheetBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpHrTimesheet"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrSalaryBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrSalary" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.hr.biz.IErpHrSalaryBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpHrSalary"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrRecruitmentBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrRecruitment" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrRecruitmentBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpHrRecruitment"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrAttendanceBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrAttendance" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrAttendanceBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpHrAttendance"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrTimesheetLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrTimesheetLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrTimesheetLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpHrTimesheetLine"/>
+    </bean>
+</beans>

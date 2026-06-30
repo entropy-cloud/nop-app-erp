@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+      xmlns:i18n-en="i18n-en" xmlns:app="app">
+    <site id="main">
+        <resource id="erp-log" displayName="运输管理" i18n-en:displayName="Transportation"
+                  icon="truck" resourceType="TOPM" orderNo="1000"
+                  routePath="/erp-log" component="layouts/default/index">
+            <children>
+                <resource id="log-shipment" displayName="发运管理" i18n-en:displayName="Shipments"
+                          icon="truck" resourceType="SUBM" orderNo="100">
+                    <children>
+                        <resource id="ErpLogShipment-main" app:useCases="UC-LOG-01,UC-LOG-02,UC-LOG-03"
+                                  displayName="发运单" i18n-en:displayName="Shipment" icon="truck"
+                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  url="/erp/log/pages/ErpLogShipment/main.page.yaml"/>
+                        <resource id="ErpLogShipmentLine-main" displayName="发运明细"
+                                  i18n-en:displayName="Shipment Line" icon="list"
+                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  url="/erp/log/pages/ErpLogShipmentLine/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="log-delivery" displayName="配送管理" i18n-en:displayName="Delivery"
+                          icon="clock" resourceType="SUBM" orderNo="150">
+                    <children>
+                        <resource id="ErpLogDeliveryWindow-main" app:useCases="UC-LOG-07" displayName="配送时间窗口"
+                                  i18n-en:displayName="Delivery Window" icon="clock"
+                                  component="AMIS" resourceType="SUBM" orderNo="150"
+                                  url="/erp/log/pages/ErpLogDeliveryWindow/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="log-carrier" displayName="承运商管理" i18n-en:displayName="Carriers"
+                          icon="building" resourceType="SUBM" orderNo="200">
+                    <children>
+                        <resource id="ErpLogCarrier-main" displayName="承运商"
+                                  i18n-en:displayName="Carrier" icon="building"
+                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  url="/erp/log/pages/ErpLogCarrier/main.page.yaml"/>
+                        <resource id="ErpLogCarrierConfig-main" displayName="承运商配置"
+                                  i18n-en:displayName="Carrier Config" icon="settings"
+                                  component="AMIS" resourceType="SUBM" orderNo="210"
+                                  url="/erp/log/pages/ErpLogCarrierConfig/main.page.yaml"/>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
+</auth>

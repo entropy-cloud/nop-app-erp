@@ -8,19 +8,13 @@
 
 ## 工作项
 
-| 优先级 | 项目 | Owner Doc | 计划 | 状态 | AI 自主权 | 阻塞项 | 最后检查 |
-|--------|------|-----------|------|------|-----------|--------|----------|
-| P0 | master-data 域 BizModel 深化 + 页面定制 | `docs/design/master-data/README.md` | `docs/analysis/2026-06-25-1649-ai-automation-roadmap.md` Phase 1 | `ready` | `implement` | `none` | 2026-06-25 |
-| P1 | 库存域 BizModel 深化（StockMoveBiz: generateMove/confirm/cancel） | `docs/design/inventory/README.md` | roadmap Phase 2.1 | `ready` | `plan-first` | `none` | 2026-06-25 |
-| P2 | 采购域 BizModel 深化（PurOrderBiz/PurReceiveBiz） | `docs/design/purchase/README.md` | roadmap Phase 2.2 | `ready` | `plan-first` | `none` | 2026-06-25 |
-| P3 | 财务域 BizModel 深化（凭证引擎 AcctDocRegistry + Provider） | `docs/design/finance/README.md` | roadmap Phase 2.3 | `ready` | `plan-first` | `none` | 2026-06-25 |
-| P4 | 采购→入库→凭证 端到端串联验证 | `docs/design/flow-overview.md` | roadmap Phase 2.4 | `ready` | `plan-first` | `none` | 2026-06-25 |
-| P5 | 销售域 BizModel 深化（SalesOrderBiz/DeliveryBiz） | `docs/design/sales/README.md` | roadmap Phase 3 | `ready` | `implement` | `none` | 2026-06-25 |
-| P6 | 制造域 BizModel 深化（WorkOrderBiz/BomBiz） | `docs/design/manufacturing/README.md` | roadmap Phase 3 | `ready` | `implement` | `none` | 2026-06-25 |
-| P7 | 资产域 BizModel 深化（AssetCardBiz/DepreciationBiz） | `docs/design/assets/README.md` | roadmap Phase 3 | `ready` | `implement` | `none` | 2026-06-25 |
-| P8 | 项目域 BizModel 深化（ProjectBiz/TaskBiz） | `docs/design/projects/README.md` | roadmap Phase 3 | `ready` | `implement` | `none` | 2026-06-25 |
-| P9 | 质量域 BizModel 深化（InspectionBiz/NcrBiz） | `docs/design/quality/README.md` | roadmap Phase 3 | `ready` | `implement` | `none` | 2026-06-25 |
-| P10 | 维护域 BizModel 深化（MaintenancePlanBiz/EquipmentBiz） | `docs/design/maintenance/README.md` | roadmap Phase 3 | `ready` | `implement` | `none` | 2026-06-25 |
+| 优先级 | 工作项 | 路线图 | AI 自主权 |
+|--------|--------|--------|-----------|
+| P0 | CRUD Phase 3（8 新增域） | `crud-roadmap.md` Phase 3 | `implement` |
+| P1 | 核心业务循环（进销存+财务） | `core-business-roadmap.md` P1 | `plan-first` |
+| P2 | 扩展 5 域业务逻辑 | `extended-roadmap.md` P2 | `plan-first` |
+| P3 | 新增 8 域业务逻辑 | `extended-roadmap.md` P3 | `plan-first` |
+| P4 | 业财一体端到端 | `core-business-roadmap.md` P4 | `plan-first` |
 
 ## 就绪不变量
 

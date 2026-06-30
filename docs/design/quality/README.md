@@ -8,6 +8,7 @@
 
 - 本域负责：质检单、质检模板与参数、质量目标、不符合项报告（NCR）、纠正预防措施（CAPA）、质量评审。
 - 本域不负责：被检物料/SKU 主数据（master-data）；质检触发的退货/返工执行（purchase/sales/manufacturing 域，本域只反馈结果）。
+- 与客服域边界：NCR 是内部不合格事件，客服工单是客户发起的服务请求。客服工单可升级为 NCR，NCR 不反向生成客服工单。
 - 持久化字段、字典、状态码以 `model/app-erp-quality.orm.xml` 为准。
 
 ## 工程与模型
@@ -56,6 +57,8 @@
 | 来料检验 | purchase | 采购入库审核触发质检；不合格反馈触发采购退货 |
 | 出货检验 | sales | 销售出库审核触发质检；不合格反馈阻止发货或触发销售退货 |
 | 制程/完工检验 | manufacturing | 工单报工/完工触发质检；不合格触发返工 |
+| NCR 升级为召回 | quality（自域） | NCR 状态机 `ESCALATED_TO_RECALL` → 创建召回事件（见 `recall.md`） |
+| 客服工单升级 NCR | customer-service | 客服工单确认是产品质量问题 → 创建 NCR |
 | 物料/检验标准 | master-data | 质检模板按物料配置 |
 
 ### 质检对制造域的约束声明

@@ -279,18 +279,18 @@ IErpFinAcctDocProvider.createFacts()
 
 ### 3.1 审批状态映射（approveStatus）
 
-> 本表只描述审批轴（approveStatus）。`CANCELLED` 属于 docStatus 独立轴，见 §3.2。
+> 本表只描述审批轴（approveStatus）。`CANCELLED` 属于 docStatus 独立轴，见 §3.2。`SUBMITTED` 为"已提交待审批"态（提交到工作流后、审核人处理前），`domain-design-guidelines.md §16.3` 有统一定义。
 
 | 单据类型 | 初始状态 | 中间状态 | 终态 |
 |----------|----------|----------|------|
-| 采购订单 | UNSUBMITTED | PENDING | APPROVED / REJECTED |
-| 采购入库单 | UNSUBMITTED | PENDING | APPROVED / REJECTED |
-| 采购发票 | UNSUBMITTED | PENDING | APPROVED / REJECTED |
-| 付款单 | UNSUBMITTED | PENDING | APPROVED / REJECTED |
-| 销售订单 | UNSUBMITTED | PENDING | APPROVED / REJECTED |
-| 销售出库单 | UNSUBMITTED | PENDING | APPROVED / REJECTED |
-| 销售发票 | UNSUBMITTED | PENDING | APPROVED / REJECTED |
-| 收款单 | UNSUBMITTED | PENDING | APPROVED / REJECTED |
+| 采购订单 | UNSUBMITTED | SUBMITTED | APPROVED / REJECTED |
+| 采购入库单 | UNSUBMITTED | SUBMITTED | APPROVED / REJECTED |
+| 采购发票 | UNSUBMITTED | SUBMITTED | APPROVED / REJECTED |
+| 付款单 | UNSUBMITTED | SUBMITTED | APPROVED / REJECTED |
+| 销售订单 | UNSUBMITTED | SUBMITTED | APPROVED / REJECTED |
+| 销售出库单 | UNSUBMITTED | SUBMITTED | APPROVED / REJECTED |
+| 销售发票 | UNSUBMITTED | SUBMITTED | APPROVED / REJECTED |
+| 收款单 | UNSUBMITTED | SUBMITTED | APPROVED / REJECTED |
 
 **收付款状态**（派生）：采购侧 UNPAID → PARTIAL → PAID；销售侧 UNRECEIVED → PARTIAL → RECEIVED。
 

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+      xmlns:i18n-en="i18n-en" xmlns:app="app">
+    <site id="main">
+        <resource id="erp-hr" displayName="人力资源管理" i18n-en:displayName="Human Resources"
+                  icon="users" resourceType="TOPM" orderNo="1200"
+                  routePath="/erp-hr" component="layouts/default/index">
+            <children>
+                <resource id="hr-org" displayName="组织管理" i18n-en:displayName="Organization"
+                          icon="building-2" resourceType="SUBM" orderNo="100">
+                    <children>
+                        <resource id="ErpHrDepartment-main" app:useCases="UC-HR-08"
+                                  displayName="部门" i18n-en:displayName="Department" icon="building-2"
+                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  url="/erp/hr/pages/ErpHrDepartment/main.page.yaml"/>
+                        <resource id="ErpHrPosition-main" displayName="职位"
+                                  i18n-en:displayName="Position" icon="briefcase"
+                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  url="/erp/hr/pages/ErpHrPosition/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="hr-employee" displayName="员工管理" i18n-en:displayName="Employees"
+                          icon="user-circle" resourceType="SUBM" orderNo="200">
+                    <children>
+                        <resource id="ErpHrEmployee-main" app:useCases="UC-HR-01,UC-HR-08"
+                                  displayName="员工主数据" i18n-en:displayName="Employee" icon="user-circle"
+                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  url="/erp/hr/pages/ErpHrEmployee/main.page.yaml"/>
+                        <resource id="ErpHrEmploymentContract-main" app:useCases="UC-HR-07"
+                                  displayName="劳动合同" i18n-en:displayName="Employment Contract" icon="file-text"
+                                  component="AMIS" resourceType="SUBM" orderNo="210"
+                                  url="/erp/hr/pages/ErpHrEmploymentContract/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="hr-attendance" displayName="考勤工时" i18n-en:displayName="Attendance &amp; Timesheet"
+                          icon="clock" resourceType="SUBM" orderNo="300">
+                    <children>
+                        <resource id="ErpHrAttendance-main" app:useCases="UC-HR-06"
+                                  displayName="考勤记录" i18n-en:displayName="Attendance" icon="clock"
+                                  component="AMIS" resourceType="SUBM" orderNo="300"
+                                  url="/erp/hr/pages/ErpHrAttendance/main.page.yaml"/>
+                        <resource id="ErpHrTimesheet-main" app:useCases="UC-HR-03"
+                                  displayName="工时表" i18n-en:displayName="Timesheet" icon="clipboard-list"
+                                  component="AMIS" resourceType="SUBM" orderNo="310"
+                                  url="/erp/hr/pages/ErpHrTimesheet/main.page.yaml"/>
+                        <resource id="ErpHrTimesheetLine-main" app:useCases="UC-HR-03"
+                                  displayName="工时明细" i18n-en:displayName="Timesheet Line" icon="list"
+                                  component="AMIS" resourceType="SUBM" orderNo="320"
+                                  url="/erp/hr/pages/ErpHrTimesheetLine/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="hr-shift-scheduling" displayName="排班管理" i18n-en:displayName="Shift Scheduling"
+                          icon="calendar-days" resourceType="SUBM" orderNo="350">
+                    <children>
+                        <resource id="ErpHrShift-main" app:useCases="UC-HR-09"
+                                  displayName="班次模板" i18n-en:displayName="Shift" icon="clock"
+                                  component="AMIS" resourceType="SUBM" orderNo="350"
+                                  url="/erp/hr/pages/ErpHrShift/main.page.yaml"/>
+                        <resource id="ErpHrShiftAssignment-main" app:useCases="UC-HR-09"
+                                  displayName="排班分配" i18n-en:displayName="Shift Assignment" icon="calendar-days"
+                                  component="AMIS" resourceType="SUBM" orderNo="360"
+                                  url="/erp/hr/pages/ErpHrShiftAssignment/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="hr-leave" displayName="休假管理" i18n-en:displayName="Leave Management"
+                          icon="calendar-off" resourceType="SUBM" orderNo="400">
+                    <children>
+                        <resource id="ErpHrLeaveRequest-main" app:useCases="UC-HR-02"
+                                  displayName="休假申请" i18n-en:displayName="Leave Request" icon="calendar-off"
+                                  component="AMIS" resourceType="SUBM" orderNo="400"
+                                  url="/erp/hr/pages/ErpHrLeaveRequest/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="hr-salary" displayName="薪酬管理" i18n-en:displayName="Payroll"
+                          icon="dollar-sign" resourceType="SUBM" orderNo="500">
+                    <children>
+                        <resource id="ErpHrSalary-main" app:useCases="UC-HR-04,UC-HR-10"
+                                  displayName="薪酬记录" i18n-en:displayName="Salary Record" icon="dollar-sign"
+                                  component="AMIS" resourceType="SUBM" orderNo="500"
+                                  url="/erp/hr/pages/ErpHrSalary/main.page.yaml"/>
+                        <resource id="ErpHrSalarySimulation-main" app:useCases="UC-HR-10"
+                                  displayName="薪酬模拟" i18n-en:displayName="Salary Simulation" icon="calculator"
+                                  component="AMIS" resourceType="SUBM" orderNo="510"
+                                  url="/erp/hr/pages/ErpHrSalarySimulation/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="hr-survey" displayName="员工调研" i18n-en:displayName="Employee Survey"
+                          icon="file-question" resourceType="SUBM" orderNo="550">
+                    <children>
+                        <resource id="ErpHrSurvey-main" app:useCases="UC-HR-11"
+                                  displayName="问卷模板" i18n-en:displayName="Survey Template" icon="file-question"
+                                  component="AMIS" resourceType="SUBM" orderNo="550"
+                                  url="/erp/hr/pages/ErpHrSurvey/main.page.yaml"/>
+                        <resource id="ErpHrSurveyResponse-main" app:useCases="UC-HR-11"
+                                  displayName="调研答卷" i18n-en:displayName="Survey Response" icon="file-check"
+                                  component="AMIS" resourceType="SUBM" orderNo="560"
+                                  url="/erp/hr/pages/ErpHrSurveyResponse/main.page.yaml"/>
+                        <resource id="ErpHrSurveyResult-main" app:useCases="UC-HR-11"
+                                  displayName="结果分析" i18n-en:displayName="Survey Result" icon="bar-chart"
+                                  component="AMIS" resourceType="SUBM" orderNo="570"
+                                  url="/erp/hr/pages/ErpHrSurveyResult/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="hr-competency" displayName="胜任力管理" i18n-en:displayName="Competency Management"
+                          icon="book-open" resourceType="SUBM" orderNo="650">
+                    <children>
+                        <resource id="ErpHrCompetency-main" app:useCases="UC-HR-12"
+                                  displayName="胜任力字典" i18n-en:displayName="Competency" icon="book-open"
+                                  component="AMIS" resourceType="SUBM" orderNo="650"
+                                  url="/erp/hr/pages/ErpHrCompetency/main.page.yaml"/>
+                        <resource id="ErpHrRoleCompetency-main" app:useCases="UC-HR-12"
+                                  displayName="岗位胜任力要求" i18n-en:displayName="Role Competency" icon="briefcase"
+                                  component="AMIS" resourceType="SUBM" orderNo="660"
+                                  url="/erp/hr/pages/ErpHrRoleCompetency/main.page.yaml"/>
+                        <resource id="ErpHrEmployeeAssessment-main" app:useCases="UC-HR-12"
+                                  displayName="员工评估" i18n-en:displayName="Employee Assessment" icon="clipboard-check"
+                                  component="AMIS" resourceType="SUBM" orderNo="670"
+                                  url="/erp/hr/pages/ErpHrEmployeeAssessment/main.page.yaml"/>
+                        <resource id="ErpHrGapAnalysis-main" app:useCases="UC-HR-12"
+                                  displayName="差距分析" i18n-en:displayName="Gap Analysis" icon="triangle-alert"
+                                  component="AMIS" resourceType="SUBM" orderNo="680"
+                                  url="/erp/hr/pages/ErpHrGapAnalysis/main.page.yaml"/>
+                        <resource id="ErpHrDevelopmentPlan-main" app:useCases="UC-HR-12"
+                                  displayName="发展计划" i18n-en:displayName="Development Plan" icon="target"
+                                  component="AMIS" resourceType="SUBM" orderNo="690"
+                                  url="/erp/hr/pages/ErpHrDevelopmentPlan/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="hr-recruit" displayName="招聘管理" i18n-en:displayName="Recruitment"
+                          icon="user-plus" resourceType="SUBM" orderNo="700">
+                    <children>
+                        <resource id="ErpHrRecruitment-main" app:useCases="UC-HR-05"
+                                  displayName="招聘记录" i18n-en:displayName="Recruitment" icon="user-plus"
+                                  component="AMIS" resourceType="SUBM" orderNo="700"
+                                  url="/erp/hr/pages/ErpHrRecruitment/main.page.yaml"/>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
+</auth>

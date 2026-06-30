@@ -168,6 +168,8 @@
 
 ## 适用对象二：作业卡（JobCard）
 
+> **三层分解关系**：WorkOrder（工单级，产品级生产指令）→ OperationOrder（工序级排产，由 APS 模块创建，见 `aps/README.md`）→ JobCard（执行级，实际作业）。JobCard 可按 OperationOrder 的排程结果创建（若 APS 模块启用），否则按工单工序直接创建。
+
 作业卡状态机 8 态：
 
 ```

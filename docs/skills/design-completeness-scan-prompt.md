@@ -20,8 +20,18 @@
 - `docs/requirements/product-scope.md`
 - `docs/design/` 下的所有现有文件（包括子目录）
 - `docs/backlog/README.md` 和任何路线图
+- **`docs/analysis/erp-survey/` 下的全部调研报告**，特别是 `survey-index.md`（速查导航+对比矩阵+选型建议）和 `business-design-takeaways.md`（9大主题业务设计参考）
+- **`docs/analysis/2026-06-30-1200-feature-coverage-matrix.md`**（此前识别的覆盖率差距清单）
 
 扫描维度：
+
+0. **开源功能对标（新增维度—此前多轮审计遗漏的根本原因）**
+   > 此前多轮审计聚焦于已有文档间的内部一致性，未系统性地对照开源 ERP 功能清单做缺失检测。这导致"多次审计仍有大量遗漏"。本维度强制补上这一环。
+   - 遍历 `erp-survey/survey-index.md` 的速查导航表、对比矩阵和选型决策建议，提取每个开源项目（Odoo/ERPNext/Metasfresh/iDempiere/Axelor 等）的**关键差异化功能**。
+   - 对于提取出的每个功能，检查 `docs/design/` 下是否有对应的 owner doc。
+   - 如果功能在 `feature-coverage-matrix.md` 中已被标记为 ✅ 已覆盖，仅做交叉验证（快速抽查设计文档确实包含此功能）。
+   - 如果功能在矩阵中标记为 ❌ 未覆盖或 🕒 待设计，标记为 blocker/major（取决于该功能在产品定位中的核心程度）。
+   - **特别注意**：不要只查"域存在与否"（如"CRM 域存在"），要查**功能深度**（如"CRM 域是否有 lead scoring 设计"）。开源 ERP 中普遍存在的功能点（Odoo 的 lead scoring、ERPNext 的销售预测、Axelor 的替代工艺路线等）必须逐项核对。
 
 1. 域覆盖
    - 列出目标产品范围隐含的每个业务域（采购、销售、库存、财务、制造、资产、项目、质量、维护、CRM、HR 等）。

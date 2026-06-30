@@ -43,7 +43,7 @@
 | businessDate | 召回发起日期 |
 | notifyCustomer | 是否已通知客户（必备动作，DONE 前必须 true） |
 | status | dict `erp-qa/recall-status`：见状态机 |
-| approveStatus | dict `erp-qa/approve-status`：UNSUBMITTED/PENDING/APPROVED/REJECTED |
+| approveStatus | dict `erp-qa/approve-status`：UNSUBMITTED/SUBMITTED/APPROVED/REJECTED |
 | 标准审计字段 | |
 
 **triggerType（召回触发双入口）**：

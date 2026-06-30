@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+      xmlns:i18n-en="i18n-en" xmlns:app="app">
+    <site id="main">
+        <resource id="erp-drp" displayName="分销计划" i18n-en:displayName="Distribution Planning"
+                  icon="git-branch" resourceType="TOPM" orderNo="1300"
+                  routePath="/erp-drp" component="layouts/default/index">
+            <children>
+                <resource id="drp-plan" displayName="计划管理" i18n-en:displayName="Plans"
+                          icon="git-branch" resourceType="SUBM" orderNo="100">
+                    <children>
+                        <resource id="ErpInvDrpPlan-main" app:useCases="UC-DRP-01,UC-DRP-02"
+                                  displayName="DRP计划" i18n-en:displayName="DRP Plan" icon="git-branch"
+                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  url="/erp/drp/pages/ErpInvDrpPlan/main.page.yaml"/>
+                        <resource id="ErpInvDrpLine-main" app:useCases="UC-DRP-02,UC-DRP-03,UC-DRP-04"
+                                  displayName="计划明细" i18n-en:displayName="DRP Line" icon="list"
+                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  url="/erp/drp/pages/ErpInvDrpLine/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="drp-optimize" displayName="优化分析" i18n-en:displayName="Optimization"
+                          icon="shield" resourceType="SUBM" orderNo="150">
+                    <children>
+                        <resource id="ErpInvDrpSafetyStockCalc-main" app:useCases="UC-DRP-06"
+                                  displayName="安全库存计算" i18n-en:displayName="Safety Stock Calc" icon="shield"
+                                  component="AMIS" resourceType="SUBM" orderNo="150"
+                                  url="/erp/drp/pages/ErpInvDrpSafetyStockCalc/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="drp-leadtime" displayName="提前期跟踪" i18n-en:displayName="Lead Time Tracking"
+                          icon="clock" resourceType="SUBM" orderNo="160">
+                    <children>
+                        <resource id="ErpInvDrpLeadTimeRecord-main" app:useCases="UC-DRP-08"
+                                  displayName="提前期记录" i18n-en:displayName="Lead Time Record" icon="clock"
+                                  component="AMIS" resourceType="SUBM" orderNo="160"
+                                  url="/erp/drp/pages/ErpInvDrpLeadTimeRecord/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="drp-config" displayName="配置管理" i18n-en:displayName="Configuration"
+                          icon="settings" resourceType="SUBM" orderNo="200">
+                    <children>
+                        <resource id="ErpInvDrpParameter-main" app:useCases="UC-DRP-05,UC-DRP-06,UC-DRP-07"
+                                  displayName="仓库补货参数" i18n-en:displayName="Replenishment Parameter" icon="sliders"
+                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  url="/erp/drp/pages/ErpInvDrpParameter/main.page.yaml"/>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
+</auth>

@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 员工类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 全职
+    value: 10
+    description: 
+  
+  - label: 兼职
+    value: 20
+    description: 
+  
+  - label: 劳务
+    value: 30
+    description: 
+  
+  - label: 实习
+    value: 40
+    description: 
+  

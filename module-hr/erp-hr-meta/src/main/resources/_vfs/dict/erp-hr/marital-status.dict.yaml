@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 婚姻状况
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 未婚
+    value: 10
+    description: 
+  
+  - label: 已婚
+    value: 20
+    description: 
+  
+  - label: 离婚
+    value: 30
+    description: 
+  

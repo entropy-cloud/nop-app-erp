@@ -25,7 +25,7 @@
 | closingBalance | 对账单期末余额(银行侧) |
 | businessDate | 业务日期(取 statementDate) |
 | docStatus | dict `erp-fin/bank-stmt-status`:DRAFT/RECONCILING/RECONCILED/CANCELLED |
-| approveStatus | dict `erp-fin/approve-status`:UNSUBMITTED/PENDING/APPROVED/REJECTED |
+| approveStatus | dict `erp-fin/approve-status`:UNSUBMITTED/SUBMITTED/APPROVED/REJECTED |
 | posted/postedBy/postedAt | 业财三件套(已调节完成时 posted=true,触发未达账项调整凭证) |
 | 标准审计字段 | |
 

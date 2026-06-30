@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+      xmlns:i18n-en="i18n-en" xmlns:app="app">
+    <site id="main">
+        <resource id="erp-b2b" displayName="B2B集成" i18n-en:displayName="B2B Integration"
+                  icon="refresh-cw" resourceType="TOPM" orderNo="1400"
+                  routePath="/erp-b2b" component="layouts/default/index">
+            <children>
+                <resource id="b2b-edi" displayName="EDI管理" i18n-en:displayName="EDI Management"
+                          icon="refresh-cw" resourceType="SUBM" orderNo="100">
+                    <children>
+                        <resource id="ErpB2bEdiFormat-main" app:useCases="UC-B2B-001"
+                                  displayName="EDI格式" i18n-en:displayName="EDI Format" icon="file-type"
+                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  url="/erp/b2b/pages/ErpB2bEdiFormat/main.page.yaml"/>
+                        <resource id="ErpB2bEdiDoc-main" app:useCases="UC-B2B-002,UC-B2B-006"
+                                  displayName="EDI事务" i18n-en:displayName="EDI Document" icon="file"
+                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  url="/erp/b2b/pages/ErpB2bEdiDoc/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="b2b-asn" displayName="ASN管理" i18n-en:displayName="ASN Management"
+                          icon="truck" resourceType="SUBM" orderNo="200">
+                    <children>
+                        <resource id="ErpB2bAsn-main" app:useCases="UC-B2B-003"
+                                  displayName="提前发货通知" i18n-en:displayName="Advanced Shipping Notice" icon="truck"
+                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  url="/erp/b2b/pages/ErpB2bAsn/main.page.yaml"/>
+                        <resource id="ErpB2bAsnLine-main" displayName="ASN明细"
+                                  i18n-en:displayName="ASN Line" icon="list"
+                                  component="AMIS" resourceType="SUBM" orderNo="210"
+                                  url="/erp/b2b/pages/ErpB2bAsnLine/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="b2b-partner" displayName="伙伴管理" i18n-en:displayName="Partner Management"
+                          icon="building" resourceType="SUBM" orderNo="50">
+                    <children>
+                        <resource id="ErpB2bPartnerProfile-main" app:useCases="UC-B2B-007"
+                                  displayName="合作伙伴档案" i18n-en:displayName="Partner Profile" icon="building"
+                                  component="AMIS" resourceType="SUBM" orderNo="50"
+                                  url="/erp/b2b/pages/ErpB2bPartnerProfile/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="b2b-mft" displayName="MFT配置" i18n-en:displayName="MFT Configuration"
+                          icon="upload-cloud" resourceType="SUBM" orderNo="250">
+                    <children>
+                        <resource id="ErpB2bMftConfig-main" app:useCases="UC-B2B-008"
+                                  displayName="MFT传输配置" i18n-en:displayName="MFT Config" icon="upload-cloud"
+                                  component="AMIS" resourceType="SUBM" orderNo="250"
+                                  url="/erp/b2b/pages/ErpB2bMftConfig/main.page.yaml"/>
+                        <resource id="ErpB2bMftCertificate-main" app:useCases="UC-B2B-008"
+                                  displayName="MFT证书" i18n-en:displayName="MFT Certificate" icon="shield"
+                                  component="AMIS" resourceType="SUBM" orderNo="260"
+                                  url="/erp/b2b/pages/ErpB2bMftCertificate/main.page.yaml"/>
+                        <resource id="ErpB2bMftLog-main" app:useCases="UC-B2B-008"
+                                  displayName="MFT传输日志" i18n-en:displayName="MFT Log" icon="activity"
+                                  component="AMIS" resourceType="SUBM" orderNo="270"
+                                  url="/erp/b2b/pages/ErpB2bMftLog/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="b2b-mapping" displayName="映射与日志" i18n-en:displayName="Mappings &amp; Logs"
+                          icon="code" resourceType="SUBM" orderNo="300">
+                    <children>
+                        <resource id="ErpB2bCodeMapping-main" app:useCases="UC-B2B-004"
+                                  displayName="代码映射" i18n-en:displayName="Code Mapping" icon="code"
+                                  component="AMIS" resourceType="SUBM" orderNo="300"
+                                  url="/erp/b2b/pages/ErpB2bCodeMapping/main.page.yaml"/>
+                        <resource id="ErpB2bEdiLog-main" app:useCases="UC-B2B-005,UC-B2B-006"
+                                  displayName="EDI日志" i18n-en:displayName="EDI Log" icon="file-text"
+                                  component="AMIS" resourceType="SUBM" orderNo="310"
+                                  url="/erp/b2b/pages/ErpB2bEdiLog/main.page.yaml"/>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
+</auth>

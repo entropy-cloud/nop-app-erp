@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:ioc="ioc"
+       xmlns="http://www.springframework.org/schema/beans" x:extends="/nop/biz/defaults/service-base.beans.xml"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="app.erp.ct.service.entity.ErpCtTemplateBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCtTemplate" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ct.biz.IErpCtTemplateBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCtTemplate"/>
+    </bean>
+
+    <bean id="app.erp.ct.service.entity.ErpCtContractBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCtContract" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ct.biz.IErpCtContractBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCtContract"/>
+    </bean>
+
+    <bean id="app.erp.ct.service.entity.ErpCtContractLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCtContractLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ct.biz.IErpCtContractLineBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCtContractLine"/>
+    </bean>
+
+    <bean id="app.erp.ct.service.entity.ErpCtContractVersionBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCtContractVersion" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ct.biz.IErpCtContractVersionBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCtContractVersion"/>
+    </bean>
+
+    <bean id="app.erp.ct.service.entity.ErpCtInvoicePlanBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCtInvoicePlan" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ct.biz.IErpCtInvoicePlanBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCtInvoicePlan"/>
+    </bean>
+
+    <bean id="app.erp.ct.service.entity.ErpCtConsumptionLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCtConsumptionLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ct.biz.IErpCtConsumptionLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCtConsumptionLine"/>
+    </bean>
+</beans>

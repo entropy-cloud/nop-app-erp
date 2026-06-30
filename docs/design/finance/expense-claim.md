@@ -39,7 +39,7 @@
 | amountWithoutTax/taxAmount/amountWithTax | 价税合计（=Σ行） |
 | settleAdvanceId | 冲销的借款单（可选，报销时抵扣借款） |
 | docStatus | dict `erp-fin/expense-claim-status`：DRAFT/SUBMITTED/APPROVED/REJECTED/CANCELLED |
-| approveStatus | dict `erp-fin/approve-status`（共用）：UNSUBMITTED/PENDING/APPROVED/REJECTED |
+| approveStatus | dict `erp-fin/approve-status`（共用）：UNSUBMITTED/SUBMITTED/APPROVED/REJECTED |
 | posted/postedBy/postedAt | 业财三件套 |
 | 标准审计字段 | version/delVersion/createdBy/createTime/updatedBy/updateTime/remark |
 
@@ -72,7 +72,7 @@
 | outstandingAmount | 未还金额（派生，=amount−settledAmount） |
 | projectId | 关联项目（项目借款） |
 | docStatus | dict `erp-fin/advance-status`：DRAFT/SUBMITTED/APPROVED/REJECTED/CANCELLED |
-| approveStatus | dict `erp-fin/approve-status`：UNSUBMITTED/PENDING/APPROVED/REJECTED |
+| approveStatus | dict `erp-fin/approve-status`：UNSUBMITTED/SUBMITTED/APPROVED/REJECTED |
 | posted/postedBy/postedAt | 业财三件套 |
 | 标准审计字段 | |
 

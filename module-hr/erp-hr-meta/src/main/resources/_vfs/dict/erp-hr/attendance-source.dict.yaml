@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 考勤来源
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 打卡
+    value: 10
+    description: 
+  
+  - label: 指纹
+    value: 20
+    description: 
+  
+  - label: 移动
+    value: 30
+    description: 
+  

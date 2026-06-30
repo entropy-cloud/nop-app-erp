@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:ioc="ioc"
+       xmlns="http://www.springframework.org/schema/beans" x:extends="/nop/biz/defaults/service-base.beans.xml"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="app.erp.b2b.service.entity.ErpB2bEdiFormatBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpB2bEdiFormat" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.b2b.biz.IErpB2bEdiFormatBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpB2bEdiFormat"/>
+    </bean>
+
+    <bean id="app.erp.b2b.service.entity.ErpB2bCodeMappingBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpB2bCodeMapping" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.b2b.biz.IErpB2bCodeMappingBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpB2bCodeMapping"/>
+    </bean>
+
+    <bean id="app.erp.b2b.service.entity.ErpB2bEdiDocBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpB2bEdiDoc" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.b2b.biz.IErpB2bEdiDocBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpB2bEdiDoc"/>
+    </bean>
+
+    <bean id="app.erp.b2b.service.entity.ErpB2bAsnBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpB2bAsn" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.b2b.biz.IErpB2bAsnBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpB2bAsn"/>
+    </bean>
+
+    <bean id="app.erp.b2b.service.entity.ErpB2bEdiLogBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpB2bEdiLog" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.b2b.biz.IErpB2bEdiLogBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpB2bEdiLog"/>
+    </bean>
+
+    <bean id="app.erp.b2b.service.entity.ErpB2bAsnLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpB2bAsnLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.b2b.biz.IErpB2bAsnLineBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpB2bAsnLine"/>
+    </bean>
+</beans>

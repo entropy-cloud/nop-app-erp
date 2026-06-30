@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 活动优先级
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 低
+    value: LOW
+    description: 
+  
+  - label: 普通
+    value: NORMAL
+    description: 
+  
+  - label: 高
+    value: HIGH
+    description: 
+  
+  - label: 紧急
+    value: URGENT
+    description: 
+  

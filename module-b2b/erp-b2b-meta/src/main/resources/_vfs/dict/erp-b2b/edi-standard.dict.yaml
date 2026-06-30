@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: EDI 标准
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: UBL
+    value: 10
+    description: 
+  
+  - label: X12
+    value: 20
+    description: 
+  
+  - label: EDIFACT
+    value: 30
+    description: 
+  
+  - label: 自定义
+    value: 40
+    description: 
+  

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+      xmlns:i18n-en="i18n-en" xmlns:app="app">
+    <site id="main">
+        <resource id="erp-ct" displayName="合同管理" i18n-en:displayName="Contract Management"
+                  icon="file-text" resourceType="TOPM" orderNo="900"
+                  routePath="/erp-ct" component="layouts/default/index">
+            <children>
+                <resource id="ct-contract" displayName="合同列表" i18n-en:displayName="Contracts"
+                          icon="file-text" resourceType="SUBM" orderNo="100">
+                    <children>
+                        <resource id="ErpCtContract-main" app:useCases="UC-CT-01,UC-CT-02,UC-CT-05,UC-CT-06"
+                                  displayName="合同" i18n-en:displayName="Contract" icon="file-text"
+                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  url="/erp/ct/pages/ErpCtContract/main.page.yaml"/>
+                        <resource id="ErpCtContractLine-main" displayName="合同行"
+                                  i18n-en:displayName="Contract Line" icon="list"
+                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  url="/erp/ct/pages/ErpCtContractLine/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="ct-template" displayName="合同模板" i18n-en:displayName="Templates"
+                          icon="file" resourceType="SUBM" orderNo="200">
+                    <children>
+                        <resource id="ErpCtTemplate-main" displayName="合同模板"
+                                  i18n-en:displayName="Contract Template" icon="file"
+                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  url="/erp/ct/pages/ErpCtTemplate/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="ct-approval" displayName="审批管理" i18n-en:displayName="Approval"
+                          icon="check-square" resourceType="SUBM" orderNo="150">
+                    <children>
+                        <resource id="ErpCtApprovalMatrix-main" app:useCases="UC-CT-07"
+                                  displayName="审批矩阵" i18n-en:displayName="Approval Matrix" icon="check-square"
+                                  component="AMIS" resourceType="SUBM" orderNo="150"
+                                  url="/erp/ct/pages/ErpCtApprovalMatrix/main.page.yaml"/>
+                        <resource id="ErpCtApprovalRecord-main" app:useCases="UC-CT-07"
+                                  displayName="审批记录" i18n-en:displayName="Approval Record" icon="clipboard-check"
+                                  component="AMIS" resourceType="SUBM" orderNo="160"
+                                  url="/erp/ct/pages/ErpCtApprovalRecord/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="ct-rebate" displayName="折扣与返利" i18n-en:displayName="Discount &amp; Rebate"
+                          icon="percent" resourceType="SUBM" orderNo="180">
+                    <children>
+                        <resource id="ErpCtVolumeDiscount-main" app:useCases="UC-CT-08"
+                                  displayName="批量折扣" i18n-en:displayName="Volume Discount" icon="percent"
+                                  component="AMIS" resourceType="SUBM" orderNo="180"
+                                  url="/erp/ct/pages/ErpCtVolumeDiscount/main.page.yaml"/>
+                        <resource id="ErpCtRebateAgreement-main" app:useCases="UC-CT-08"
+                                  displayName="返利协议" i18n-en:displayName="Rebate Agreement" icon="gift"
+                                  component="AMIS" resourceType="SUBM" orderNo="190"
+                                  url="/erp/ct/pages/ErpCtRebateAgreement/main.page.yaml"/>
+                        <resource id="ErpCtRebateSettlement-main" app:useCases="UC-CT-08"
+                                  displayName="返利结算单" i18n-en:displayName="Rebate Settlement" icon="file-check"
+                                  component="AMIS" resourceType="SUBM" orderNo="195"
+                                  url="/erp/ct/pages/ErpCtRebateSettlement/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="ct-signature" displayName="签章管理" i18n-en:displayName="Signature Management"
+                          icon="file-signature" resourceType="SUBM" orderNo="170">
+                    <children>
+                        <resource id="ErpCtSignatureRequest-main" app:useCases="UC-CT-09"
+                                  displayName="签章请求" i18n-en:displayName="Signature Request" icon="file-signature"
+                                  component="AMIS" resourceType="SUBM" orderNo="170"
+                                  url="/erp/ct/pages/ErpCtSignatureRequest/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="ct-repository" displayName="仓库搜索" i18n-en:displayName="Repository &amp; Search"
+                          icon="archive" resourceType="SUBM" orderNo="175">
+                    <children>
+                        <resource id="ErpCtDocument-main" app:useCases="UC-CT-10"
+                                  displayName="合同文档" i18n-en:displayName="Contract Document" icon="archive"
+                                  component="AMIS" resourceType="SUBM" orderNo="175"
+                                  url="/erp/ct/pages/ErpCtDocument/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="ct-billing" displayName="开票与消耗" i18n-en:displayName="Billing &amp; Consumption"
+                          icon="credit-card" resourceType="SUBM" orderNo="300">
+                    <children>
+                        <resource id="ErpCtInvoicePlan-main" app:useCases="UC-CT-03"
+                                  displayName="开票计划" i18n-en:displayName="Invoice Plan" icon="calendar"
+                                  component="AMIS" resourceType="SUBM" orderNo="300"
+                                  url="/erp/ct/pages/ErpCtInvoicePlan/main.page.yaml"/>
+                        <resource id="ErpCtConsumptionLine-main" app:useCases="UC-CT-04"
+                                  displayName="消耗记录" i18n-en:displayName="Consumption Log" icon="bar-chart"
+                                  component="AMIS" resourceType="SUBM" orderNo="310"
+                                  url="/erp/ct/pages/ErpCtConsumptionLine/main.page.yaml"/>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
+</auth>

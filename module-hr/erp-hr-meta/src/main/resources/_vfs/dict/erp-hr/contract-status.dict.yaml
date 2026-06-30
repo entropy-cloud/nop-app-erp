@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 合同状态
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 生效中
+    value: 10
+    description: 
+  
+  - label: 已到期
+    value: 20
+    description: 
+  
+  - label: 已解除
+    value: 30
+    description: 
+  
+  - label: 已中止
+    value: 40
+    description: 
+  

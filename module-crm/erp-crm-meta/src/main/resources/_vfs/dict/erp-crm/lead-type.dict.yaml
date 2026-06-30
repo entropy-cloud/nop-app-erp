@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 线索商机类型
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 线索
+    value: LEAD
+    description: 
+  
+  - label: 商机
+    value: OPPORTUNITY
+    description: 
+  

@@ -1,0 +1,15 @@
+{
+  "name": "crud",
+  "description": "nop-app-erp 全部 18 模块的标准 CRUD 操作实施（独立于业务逻辑）。完成标准：实体 DAO、标准页面、菜单接入、CRUD 冒烟测试。",
+  "roadmapPath": "docs/backlog/crud-roadmap.md",
+  "plansDir": "docs/plans",
+  "planGuide": "docs/plans/00-plan-authoring-and-execution-guide.md",
+  "auditsDir": "docs/audits",
+  "contextDir": "docs/context",
+  "moduleDir": ".",
+  "commands": {
+    "test": "mvn test",
+    "build": "mvn clean install -DskipTests"
+  },
+  "commitFormat": "feat(crud): <description>"
+}

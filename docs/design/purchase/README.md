@@ -58,6 +58,10 @@
 | 采购退货出库 | inventory | 退货单审核 → 生成出库移动单 |
 | 采购发票触发应付凭证 | finance | 发票审核 → 财务域生成应付凭证（AP_INVOICE） |
 | 付款触发付款凭证 | finance | 付款单审核 → 财务域生成付款凭证（PAYMENT） |
+| 请购→询价→报价→订单 | 采购域内 | 见 `requisition.md`（请购 APPROVED 可选转询价或直转订单） |
+| 合同开票计划生成发票 | contract | 合同 `InvoicePlan` 到期 → 触发创建 AP 发票草稿 |
+| DRP 补货计划生成采购单 | drp | DRP APPROVED 且补货类型=PURCHASE → 创建采购订单 |
+| B2B/ASN 入站通知收货 | b2b | ASN RECEIVED → 采购域基于 ASN 创建入库单（ASN 不直接写库存） |
 | 物料/供应商/仓库引用 | master-data | 单据引用主数据编码 + `IErpMd*Biz` |
 
 ## 关键业务规则

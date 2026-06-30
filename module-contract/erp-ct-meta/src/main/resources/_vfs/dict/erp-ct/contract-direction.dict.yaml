@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 合同方向
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 进向(我方付款)
+    value: 10
+    description: 
+  
+  - label: 出向(客户付款)
+    value: 20
+    description: 
+  

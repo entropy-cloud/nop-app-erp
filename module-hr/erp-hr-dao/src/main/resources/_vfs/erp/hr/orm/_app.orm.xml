@@ -1,0 +1,882 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<orm ext:registerShortName="true" ext:appName="erp-hr" ext:entityPackageName="app.erp.hr.dao.entity"
+     ext:basePackageName="app.erp.hr" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-hr"
+     ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
+     ext:allowIdAsColName="true" ext:icon="people" xmlns:i18n-en="i18n-en" xmlns:biz="biz"
+     x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:ref-i18n-en="ref-i18n-en" xmlns:ext="ext"
+     xmlns:orm-gen="orm-gen" xmlns:xpl="xpl" xmlns:ui="ui">
+
+    <x:post-extends x:override="replace">
+        <orm-gen:DefaultPostExtends xpl:lib="/nop/orm/xlib/orm-gen.xlib"/>
+    </x:post-extends>
+
+    <x:gen-extends x:override="replace">
+        <orm-gen:DefaultGenExtends xpl:lib="/nop/orm/xlib/orm-gen.xlib"/>
+    </x:gen-extends>
+
+    <dicts>
+        <dict label="雇佣状态" name="erp-hr/employment-status" valueType="int" i18n-en:label="Employment Status">
+            <option code="ACTIVE" label="在职" value="10" i18n-en:label="Active"/>
+            <option code="PROBATION" label="试用" value="20" i18n-en:label="Probation"/>
+            <option code="RESIGNED" label="已离职" value="30" i18n-en:label="Resigned"/>
+            <option code="TERMINATED" label="已解雇" value="40" i18n-en:label="Terminated"/>
+            <option code="RETIRED" label="已退休" value="50" i18n-en:label="Retired"/>
+        </dict>
+        <dict label="员工类型" name="erp-hr/employee-type" valueType="int" i18n-en:label="Employee Type">
+            <option code="FULL_TIME" label="全职" value="10" i18n-en:label="Full Time"/>
+            <option code="PART_TIME" label="兼职" value="20" i18n-en:label="Part Time"/>
+            <option code="CONTRACTOR" label="劳务" value="30" i18n-en:label="Contractor"/>
+            <option code="INTERN" label="实习" value="40" i18n-en:label="Intern"/>
+        </dict>
+        <dict label="性别" name="erp-hr/gender" valueType="int" i18n-en:label="Gender">
+            <option code="MALE" label="男" value="10" i18n-en:label="Male"/>
+            <option code="FEMALE" label="女" value="20" i18n-en:label="Female"/>
+        </dict>
+        <dict label="婚姻状况" name="erp-hr/marital-status" valueType="int" i18n-en:label="Marital Status">
+            <option code="SINGLE" label="未婚" value="10" i18n-en:label="Single"/>
+            <option code="MARRIED" label="已婚" value="20" i18n-en:label="Married"/>
+            <option code="DIVORCED" label="离婚" value="30" i18n-en:label="Divorced"/>
+        </dict>
+        <dict label="合同类型" name="erp-hr/contract-type" valueType="int" i18n-en:label="Contract Type">
+            <option code="FIXED_TERM" label="固定期限" value="10" i18n-en:label="Fixed Term"/>
+            <option code="OPEN_ENDED" label="无固定期限" value="20" i18n-en:label="Open Ended"/>
+            <option code="PROJECT" label="项目制" value="30" i18n-en:label="Project"/>
+        </dict>
+        <dict label="合同状态" name="erp-hr/contract-status" valueType="int" i18n-en:label="Contract Status">
+            <option code="ACTIVE" label="生效中" value="10" i18n-en:label="Active"/>
+            <option code="EXPIRED" label="已到期" value="20" i18n-en:label="Expired"/>
+            <option code="TERMINATED" label="已解除" value="30" i18n-en:label="Terminated"/>
+            <option code="SUSPENDED" label="已中止" value="40" i18n-en:label="Suspended"/>
+        </dict>
+        <dict label="休假类型" name="erp-hr/leave-type" valueType="int" i18n-en:label="Leave Type">
+            <option code="ANNUAL" label="年假" value="10" i18n-en:label="Annual Leave"/>
+            <option code="SICK" label="病假" value="20" i18n-en:label="Sick Leave"/>
+            <option code="PERSONAL" label="事假" value="30" i18n-en:label="Personal Leave"/>
+            <option code="MARRIAGE" label="婚假" value="40" i18n-en:label="Marriage Leave"/>
+            <option code="MATERNITY" label="产假" value="50" i18n-en:label="Maternity Leave"/>
+            <option code="FUNERAL" label="丧假" value="60" i18n-en:label="Funeral Leave"/>
+            <option code="COMPENSATORY" label="调休" value="70" i18n-en:label="Compensatory Leave"/>
+        </dict>
+        <dict label="休假状态" name="erp-hr/leave-status" valueType="int" i18n-en:label="Leave Status">
+            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
+            <option code="SUBMITTED" label="已提交" value="20" i18n-en:label="Submitted"/>
+            <option code="APPROVED" label="已批准" value="30" i18n-en:label="Approved"/>
+            <option code="REJECTED" label="已驳回" value="40" i18n-en:label="Rejected"/>
+            <option code="CANCELLED" label="已取消" value="50" i18n-en:label="Cancelled"/>
+        </dict>
+        <dict label="工时表状态" name="erp-hr/timesheet-status" valueType="int" i18n-en:label="Timesheet Status">
+            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
+            <option code="SUBMITTED" label="已提交" value="20" i18n-en:label="Submitted"/>
+            <option code="APPROVED" label="已批准" value="30" i18n-en:label="Approved"/>
+            <option code="REJECTED" label="已驳回" value="40" i18n-en:label="Rejected"/>
+        </dict>
+        <dict label="招聘状态" name="erp-hr/recruitment-status" valueType="int" i18n-en:label="Recruitment Status">
+            <option code="OPEN" label="待处理" value="10" i18n-en:label="Open"/>
+            <option code="SCREENING" label="简历筛选" value="20" i18n-en:label="Screening"/>
+            <option code="INTERVIEW" label="面试中" value="30" i18n-en:label="Interviewing"/>
+            <option code="OFFERED" label="已发Offer" value="40" i18n-en:label="Offered"/>
+            <option code="HIRED" label="已入职" value="50" i18n-en:label="Hired"/>
+            <option code="REJECTED" label="已拒绝" value="60" i18n-en:label="Rejected"/>
+            <option code="CLOSED" label="已关闭" value="70" i18n-en:label="Closed"/>
+        </dict>
+        <dict label="薪资支付状态" name="erp-hr/salary-payment-status" valueType="int" i18n-en:label="Payment Status">
+            <option code="PENDING" label="待支付" value="10" i18n-en:label="Pending"/>
+            <option code="PAID" label="已支付" value="20" i18n-en:label="Paid"/>
+            <option code="VOID" label="已作废" value="30" i18n-en:label="Void"/>
+        </dict>
+        <dict label="考勤来源" name="erp-hr/attendance-source" valueType="int" i18n-en:label="Attendance Source">
+            <option code="CARD" label="打卡" value="10" i18n-en:label="Card"/>
+            <option code="BIOMETRIC" label="指纹" value="20" i18n-en:label="Biometric"/>
+            <option code="MOBILE" label="移动" value="30" i18n-en:label="Mobile"/>
+        </dict>
+        <dict label="招聘来源" name="erp-hr/recruitment-source" valueType="int" i18n-en:label="Recruitment Source">
+            <option code="RECRUITMENT_WEBSITE" label="招聘网站" value="10" i18n-en:label="Recruitment Website"/>
+            <option code="AGENCY" label="猎头/中介" value="20" i18n-en:label="Agency"/>
+            <option code="REFERRAL" label="员工推荐" value="30" i18n-en:label="Referral"/>
+            <option code="CAMPUS" label="校园招聘" value="40" i18n-en:label="Campus"/>
+        </dict>
+    </dicts>
+
+    <domains>
+        <domain name="boolFlag" stdSqlType="TINYINT"/>
+        <domain name="delVersion" stdSqlType="BIGINT"/>
+        <domain name="version" stdSqlType="INTEGER"/>
+        <domain name="createTime" stdSqlType="TIMESTAMP"/>
+        <domain name="createdBy" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="updateTime" stdSqlType="TIMESTAMP"/>
+        <domain name="updatedBy" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
+        <domain name="code" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="name" precision="200" stdSqlType="VARCHAR"/>
+        <domain name="amount" precision="20" scale="4" stdSqlType="DECIMAL"/>
+        <domain name="quantity" precision="20" scale="4" stdSqlType="DECIMAL"/>
+        <domain name="orderCode" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="phone" precision="20" stdSqlType="VARCHAR"/>
+        <domain name="email" precision="200" stdSqlType="VARCHAR"/>
+        <domain name="idCardNo" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="socialSecurityNo" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="taxFileNo" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="durationDays" precision="10" scale="2" stdSqlType="DECIMAL"/>
+        <domain name="hours" precision="10" scale="2" stdSqlType="DECIMAL"/>
+    </domains>
+
+    <entities>
+        <entity className="app.erp.hr.dao.entity.ErpHrEmployee" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="员工"
+                name="app.erp.hr.dao.entity.ErpHrEmployee" registerShortName="true" tableName="erp_hr_employee"
+                tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="user" i18n-en:displayName="Employee">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="工号" domain="code" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
+                <column code="FIRST_NAME" displayName="姓" mandatory="true" name="firstName" precision="100" propId="3"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="First Name"/>
+                <column code="LAST_NAME" displayName="名" mandatory="true" name="lastName" precision="100" propId="4"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Last Name"/>
+                <column code="FULL_NAME" displayName="全名" name="fullName" precision="200" propId="5"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Full Name"/>
+                <column code="GENDER" displayName="性别" mandatory="true" name="gender" propId="6" stdDataType="int"
+                        stdSqlType="INTEGER" ext:dict="erp-hr/gender" i18n-en:displayName="Gender"/>
+                <column code="BIRTH_DATE" displayName="出生日期" name="birthDate" propId="7" stdDataType="date"
+                        stdSqlType="DATE" i18n-en:displayName="Birth Date"/>
+                <column code="ID_CARD_TYPE" displayName="证件类型" name="idCardType" precision="50" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="ID Card Type"/>
+                <column code="ID_CARD_NO" displayName="证件号码" domain="idCardNo" name="idCardNo" precision="50" propId="9"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="ID Card No"/>
+                <column code="EMAIL" displayName="电子邮箱" domain="email" name="email" precision="200" propId="10"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Email"/>
+                <column code="MOBILE_PHONE" displayName="手机号" domain="phone" name="mobilePhone" precision="20"
+                        propId="11" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Mobile Phone"/>
+                <column code="MARITAL_STATUS" displayName="婚姻状况" name="maritalStatus" propId="12" stdDataType="int"
+                        stdSqlType="INTEGER" ext:dict="erp-hr/marital-status" i18n-en:displayName="Marital Status"/>
+                <column code="NATIONALITY" displayName="国籍" name="nationality" precision="50" propId="13"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Nationality"/>
+                <column code="EMERGENCY_CONTACT" displayName="紧急联系人" name="emergencyContact" precision="100" propId="14"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Emergency Contact"/>
+                <column code="EMERGENCY_PHONE" displayName="紧急联系电话" domain="phone" name="emergencyPhone" precision="20"
+                        propId="15" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Emergency Phone"/>
+                <column code="DEPARTMENT_ID" displayName="部门" name="departmentId" propId="16" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Department"/>
+                <column code="POSITION_ID" displayName="职位" name="positionId" propId="17" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Position"/>
+                <column code="JOB_TITLE" displayName="岗位名称" name="jobTitle" precision="200" propId="18"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Job Title"/>
+                <column code="SUPERIOR_ID" displayName="直接上级" name="superiorId" propId="19" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Superior"/>
+                <column code="COST_CENTER_ID" displayName="默认成本中心" name="costCenterId" propId="20" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Cost Center"/>
+                <column code="HIRE_DATE" displayName="入职日期" mandatory="true" name="hireDate" propId="21"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Hire Date"/>
+                <column code="PROBATION_END_DATE" displayName="试用期截止" name="probationEndDate" propId="22"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Probation End Date"/>
+                <column code="REGULAR_DATE" displayName="转正日期" name="regularDate" propId="23" stdDataType="date"
+                        stdSqlType="DATE" i18n-en:displayName="Regular Date"/>
+                <column code="RESIGNATION_DATE" displayName="离职日期" name="resignationDate" propId="24" stdDataType="date"
+                        stdSqlType="DATE" i18n-en:displayName="Resignation Date"/>
+                <column code="RESIGNATION_REASON" displayName="离职原因" name="resignationReason" precision="500"
+                        propId="25" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Resignation Reason"/>
+                <column code="EMPLOYMENT_STATUS" displayName="雇佣状态" mandatory="true" name="employmentStatus" propId="26"
+                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-hr/employment-status"
+                        i18n-en:displayName="Employment Status"/>
+                <column code="EMPLOYEE_TYPE" displayName="员工类型" mandatory="true" name="employeeType" propId="27"
+                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-hr/employee-type"
+                        i18n-en:displayName="Employee Type"/>
+                <column code="BANK_ACCOUNT_ID" displayName="工资卡账户" name="bankAccountId" propId="28" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Bank Account"/>
+                <column code="SOCIAL_SECURITY_NO" displayName="社保号" domain="socialSecurityNo" name="socialSecurityNo"
+                        precision="50" propId="29" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Social Security No"/>
+                <column code="TAX_FILE_NO" displayName="个税档案号" domain="taxFileNo" name="taxFileNo" precision="50"
+                        propId="30" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Tax File No"/>
+                <column code="USER_ACCOUNT_ID" displayName="系统用户ID" name="userAccountId" propId="31" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="User Account"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="32" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="33"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="34" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="35" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="36" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="37" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="38" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="39" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="department" refEntityName="app.erp.hr.dao.entity.ErpHrDepartment" tagSet="pub"
+                        i18n-en:displayName="Department" ref-i18n-en:displayName="Employee">
+                    <join>
+                        <on leftProp="departmentId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="position" refEntityName="app.erp.hr.dao.entity.ErpHrPosition" tagSet="pub"
+                        i18n-en:displayName="Position" ref-i18n-en:displayName="Employee">
+                    <join>
+                        <on leftProp="positionId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
+                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org" ref-i18n-en:displayName="Employee">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.hr.dao.entity.ErpHrDepartment" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="部门"
+                name="app.erp.hr.dao.entity.ErpHrDepartment" registerShortName="true" tableName="erp_hr_department"
+                tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="building-2" i18n-en:displayName="Department">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="编码" domain="code" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
+                <column code="NAME" displayName="名称" domain="name" mandatory="true" name="name" precision="200"
+                        propId="3" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
+                <column code="PARENT_ID" displayName="上级部门" name="parentId" propId="4" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Parent Department"/>
+                <column code="MANAGER_ID" displayName="部门负责人" name="managerId" propId="5" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Manager"/>
+                <column code="COST_CENTER_ID" displayName="成本中心" name="costCenterId" propId="6" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Cost Center"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="7" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="9" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="10" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="11" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="13" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="parent" refEntityName="app.erp.hr.dao.entity.ErpHrDepartment" tagSet="pub"
+                        i18n-en:displayName="Parent Department" ref-i18n-en:displayName="Child Departments">
+                    <join>
+                        <on leftProp="parentId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
+                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
+                        ref-i18n-en:displayName="Department">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.hr.dao.entity.ErpHrPosition" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="职位"
+                name="app.erp.hr.dao.entity.ErpHrPosition" registerShortName="true" tableName="erp_hr_position"
+                tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="badge" i18n-en:displayName="Position">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="编码" domain="code" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
+                <column code="NAME" displayName="名称" domain="name" mandatory="true" name="name" precision="200"
+                        propId="3" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
+                <column code="DEPARTMENT_ID" displayName="所属部门" name="departmentId" propId="4" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Department"/>
+                <column code="JOB_GRADE" displayName="职级" name="jobGrade" precision="50" propId="5" stdDataType="string"
+                        stdSqlType="VARCHAR" i18n-en:displayName="Job Grade"/>
+                <column code="JOB_CATEGORY" displayName="职位类别" name="jobCategory" precision="100" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Job Category"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="7" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="9" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="10" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="11" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="13" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="department" refEntityName="app.erp.hr.dao.entity.ErpHrDepartment" tagSet="pub"
+                        i18n-en:displayName="Department" ref-i18n-en:displayName="Position">
+                    <join>
+                        <on leftProp="departmentId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
+                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org" ref-i18n-en:displayName="Position">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.hr.dao.entity.ErpHrEmploymentContract" createTimeProp="createTime"
+                createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="劳动合同"
+                name="app.erp.hr.dao.entity.ErpHrEmploymentContract" registerShortName="true"
+                tableName="erp_hr_employment_contract" tagSet="gid,erp.hr" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="file-text"
+                i18n-en:displayName="Employment Contract">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="合同编号" domain="code" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
+                <column code="EMPLOYEE_ID" displayName="员工" mandatory="true" name="employeeId" propId="3"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Employee"/>
+                <column code="CONTRACT_TYPE" displayName="合同类型" mandatory="true" name="contractType" propId="4"
+                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-hr/contract-type"
+                        i18n-en:displayName="Contract Type"/>
+                <column code="SIGN_DATE" displayName="签订日期" mandatory="true" name="signDate" propId="5"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Sign Date"/>
+                <column code="START_DATE" displayName="生效日期" mandatory="true" name="startDate" propId="6"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Start Date"/>
+                <column code="END_DATE" displayName="到期日期" name="endDate" propId="7" stdDataType="date"
+                        stdSqlType="DATE" i18n-en:displayName="End Date"/>
+                <column code="PROBATION_MONTHS" displayName="试用期月数" name="probationMonths" propId="8" stdDataType="int"
+                        stdSqlType="INTEGER" i18n-en:displayName="Probation Months"/>
+                <column code="WORKING_HOURS_PER_WEEK" displayName="每周工时" name="workingHoursPerWeek" precision="5"
+                        propId="9" scale="1" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Working Hours Per Week"/>
+                <column code="ANNUAL_SALARY" displayName="年薪(税前)" domain="amount" name="annualSalary" precision="20"
+                        propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Annual Salary"/>
+                <column code="MONTHLY_SALARY" displayName="月薪(税前)" domain="amount" name="monthlySalary" precision="20"
+                        propId="11" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Monthly Salary"/>
+                <column code="SALARY_CURRENCY_ID" displayName="薪资币种" name="salaryCurrencyId" propId="12"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Salary Currency"/>
+                <column code="SALARY_PAY_METHOD" displayName="发薪方式" name="salaryPayMethod" precision="50" propId="13"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Salary Pay Method"/>
+                <column code="SOCIAL_INSURANCE_BASE" displayName="社保基数" domain="amount" name="socialInsuranceBase"
+                        precision="20" propId="14" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Social Insurance Base"/>
+                <column code="HOUSING_FUND_BASE" displayName="公积金基数" domain="amount" name="housingFundBase"
+                        precision="20" propId="15" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Housing Fund Base"/>
+                <column code="STATUS" displayName="合同状态" mandatory="true" name="status" propId="16" stdDataType="int"
+                        stdSqlType="INTEGER" ext:dict="erp-hr/contract-status" i18n-en:displayName="Status"/>
+                <column code="ATTACHMENT_ID" displayName="合同文件" name="attachmentId" propId="17" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Attachment"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="18" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="19"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="20" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="21" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="22" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="23" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="24" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="25" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub"
+                        i18n-en:displayName="Employee" ref-i18n-en:displayName="Contracts">
+                    <join>
+                        <on leftProp="employeeId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
+                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
+                        ref-i18n-en:displayName="Employment Contract">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.hr.dao.entity.ErpHrLeaveRequest" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="休假申请"
+                name="app.erp.hr.dao.entity.ErpHrLeaveRequest" registerShortName="true" tableName="erp_hr_leave_request"
+                tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="calendar-off" i18n-en:displayName="Leave Request">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="单号" domain="code" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
+                <column code="EMPLOYEE_ID" displayName="员工" mandatory="true" name="employeeId" propId="3"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Employee"/>
+                <column code="LEAVE_TYPE" displayName="休假类型" mandatory="true" name="leaveType" propId="4"
+                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-hr/leave-type"
+                        i18n-en:displayName="Leave Type"/>
+                <column code="START_DATE" displayName="开始日期" mandatory="true" name="startDate" propId="5"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Start Date"/>
+                <column code="END_DATE" displayName="结束日期" mandatory="true" name="endDate" propId="6" stdDataType="date"
+                        stdSqlType="DATE" i18n-en:displayName="End Date"/>
+                <column code="DURATION_DAYS" displayName="天数" domain="durationDays" name="durationDays" precision="10"
+                        propId="7" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Duration Days"/>
+                <column code="REASON" displayName="请假原因" name="reason" precision="500" propId="8" stdDataType="string"
+                        stdSqlType="VARCHAR" i18n-en:displayName="Reason"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="9" stdDataType="int"
+                        stdSqlType="INTEGER" ext:dict="erp-hr/leave-status" i18n-en:displayName="Status"/>
+                <column code="APPROVER_ID" displayName="审批人" name="approverId" propId="10" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Approver"/>
+                <column code="APPROVED_AT" displayName="审批时间" name="approvedAt" propId="11" stdDataType="datetime"
+                        stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="12" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="13"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="14" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="15" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="16" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="18" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub"
+                        i18n-en:displayName="Employee" ref-i18n-en:displayName="Leave Requests">
+                    <join>
+                        <on leftProp="employeeId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="approver" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub"
+                        i18n-en:displayName="Approver" ref-i18n-en:displayName="Leave Requests Approved">
+                    <join>
+                        <on leftProp="approverId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
+                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
+                        ref-i18n-en:displayName="Leave Request">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.hr.dao.entity.ErpHrTimesheet" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工时表"
+                name="app.erp.hr.dao.entity.ErpHrTimesheet" registerShortName="true" tableName="erp_hr_timesheet"
+                tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="clock" i18n-en:displayName="Timesheet">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="单号" domain="code" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
+                <column code="EMPLOYEE_ID" displayName="员工" mandatory="true" name="employeeId" propId="3"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Employee"/>
+                <column code="PERIOD_FROM" displayName="周期开始" mandatory="true" name="periodFrom" propId="4"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Period From"/>
+                <column code="PERIOD_TO" displayName="周期结束" mandatory="true" name="periodTo" propId="5"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Period To"/>
+                <column code="TOTAL_HOURS" displayName="总工时" domain="hours" name="totalHours" precision="10" propId="6"
+                        scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Total Hours"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="7" stdDataType="int"
+                        stdSqlType="INTEGER" ext:dict="erp-hr/timesheet-status" i18n-en:displayName="Status"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="8" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="9"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="10" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="11" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="12" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="14" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub"
+                        i18n-en:displayName="Employee" ref-i18n-en:displayName="Timesheets">
+                    <join>
+                        <on leftProp="employeeId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-many cascadeDelete="true" name="lines" refEntityName="app.erp.hr.dao.entity.ErpHrTimesheetLine"
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines"
+                         ref-i18n-en:displayName="Timesheet">
+                    <join>
+                        <on leftProp="id" rightProp="timesheetId"/>
+                    </join>
+                </to-many>
+                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
+                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org" ref-i18n-en:displayName="Timesheet">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.hr.dao.entity.ErpHrTimesheetLine" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工时表明细"
+                name="app.erp.hr.dao.entity.ErpHrTimesheetLine" registerShortName="true"
+                tableName="erp_hr_timesheet_line" tagSet="gid,erp.hr" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list"
+                i18n-en:displayName="Timesheet Line">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="TIMESHEET_ID" displayName="工时表ID" mandatory="true" name="timesheetId" propId="2"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Timesheet"/>
+                <column code="EMPLOYEE_ID" displayName="员工" mandatory="true" name="employeeId" propId="3"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Employee"/>
+                <column code="WORK_DATE" displayName="工作日期" mandatory="true" name="workDate" propId="4"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Work Date"/>
+                <column code="PROJECT_ID" displayName="项目" name="projectId" propId="5" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Project"/>
+                <column code="TASK_ID" displayName="任务" name="taskId" propId="6" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Task"/>
+                <column code="ACTIVITY_TYPE" displayName="活动类型" name="activityType" precision="100" propId="7"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Activity Type"/>
+                <column code="HOURS" displayName="小时数" domain="hours" mandatory="true" name="hours" precision="10"
+                        propId="8" scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Hours"/>
+                <column code="DESCRIPTION" displayName="工作内容" name="description" precision="500" propId="9"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Description"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="10" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="11" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="12" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="14" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="timesheet" refEntityName="app.erp.hr.dao.entity.ErpHrTimesheet" tagSet="pub"
+                        i18n-en:displayName="Timesheet" ref-i18n-en:displayName="Timesheet Lines">
+                    <join>
+                        <on leftProp="timesheetId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub"
+                        i18n-en:displayName="Employee" ref-i18n-en:displayName="Timesheet Lines">
+                    <join>
+                        <on leftProp="employeeId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.hr.dao.entity.ErpHrAttendance" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="考勤记录"
+                name="app.erp.hr.dao.entity.ErpHrAttendance" registerShortName="true" tableName="erp_hr_attendance"
+                tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="fingerprint" i18n-en:displayName="Attendance">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="EMPLOYEE_ID" displayName="员工" mandatory="true" name="employeeId" propId="2"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Employee"/>
+                <column code="DATE" displayName="考勤日期" mandatory="true" name="date" propId="3" stdDataType="date"
+                        stdSqlType="DATE" i18n-en:displayName="Date"/>
+                <column code="CLOCK_IN" displayName="签到时间" name="clockIn" propId="4" stdDataType="datetime"
+                        stdSqlType="DATETIME" i18n-en:displayName="Clock In"/>
+                <column code="CLOCK_OUT" displayName="签退时间" name="clockOut" propId="5" stdDataType="datetime"
+                        stdSqlType="DATETIME" i18n-en:displayName="Clock Out"/>
+                <column code="WORK_HOURS" displayName="出勤时长" domain="hours" name="workHours" precision="10" propId="6"
+                        scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Work Hours"/>
+                <column code="LATE_MINUTES" defaultValue="0" displayName="迟到分钟数" name="lateMinutes" propId="7"
+                        stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Late Minutes"/>
+                <column code="EARLY_LEAVE_MINUTES" defaultValue="0" displayName="早退分钟数" name="earlyLeaveMinutes"
+                        propId="8" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Early Leave Minutes"/>
+                <column code="IS_ABSENT" defaultValue="false" displayName="是否旷工" name="isAbsent" propId="9"
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Absent"/>
+                <column code="SOURCE" displayName="来源" name="source" propId="10" stdDataType="int" stdSqlType="INTEGER"
+                        ext:dict="erp-hr/attendance-source" i18n-en:displayName="Source"/>
+                <column code="LEAVE_REQUEST_ID" displayName="关联休假" name="leaveRequestId" propId="11" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Leave Request"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="12" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="13"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="14" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="15" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="16" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="18" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub"
+                        i18n-en:displayName="Employee" ref-i18n-en:displayName="Attendance Records">
+                    <join>
+                        <on leftProp="employeeId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="leaveRequest" refEntityName="app.erp.hr.dao.entity.ErpHrLeaveRequest" tagSet="pub"
+                        i18n-en:displayName="Leave Request" ref-i18n-en:displayName="Attendance">
+                    <join>
+                        <on leftProp="leaveRequestId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
+                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
+                        ref-i18n-en:displayName="Attendance">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.hr.dao.entity.ErpHrSalary" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="薪酬记录"
+                name="app.erp.hr.dao.entity.ErpHrSalary" registerShortName="true" tableName="erp_hr_salary"
+                tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="wallet" i18n-en:displayName="Salary Record">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="EMPLOYEE_ID" displayName="员工" mandatory="true" name="employeeId" propId="2"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Employee"/>
+                <column code="YEAR" displayName="年份" mandatory="true" name="year" propId="3" stdDataType="int"
+                        stdSqlType="INTEGER" i18n-en:displayName="Year"/>
+                <column code="MONTH" displayName="月份" mandatory="true" name="month" propId="4" stdDataType="int"
+                        stdSqlType="INTEGER" i18n-en:displayName="Month"/>
+                <column code="BASIC_SALARY" displayName="基本工资" domain="amount" name="basicSalary" precision="20"
+                        propId="5" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Basic Salary"/>
+                <column code="POSITION_ALLOWANCE" displayName="岗位津贴" domain="amount" name="positionAllowance"
+                        precision="20" propId="6" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Position Allowance"/>
+                <column code="PERFORMANCE_BONUS" displayName="绩效奖金" domain="amount" name="performanceBonus"
+                        precision="20" propId="7" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Performance Bonus"/>
+                <column code="OVERTIME_PAY" displayName="加班费" domain="amount" name="overtimePay" precision="20"
+                        propId="8" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Overtime Pay"/>
+                <column code="MEAL_ALLOWANCE" displayName="餐补" domain="amount" name="mealAllowance" precision="20"
+                        propId="9" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Meal Allowance"/>
+                <column code="TRANSPORT_ALLOWANCE" displayName="交通补贴" domain="amount" name="transportAllowance"
+                        precision="20" propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Transport Allowance"/>
+                <column code="OTHER_ALLOWANCE" displayName="其他补贴" domain="amount" name="otherAllowance" precision="20"
+                        propId="11" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Other Allowance"/>
+                <column code="GROSS_SALARY" displayName="应发合计" domain="amount" name="grossSalary" precision="20"
+                        propId="12" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Gross Salary"/>
+                <column code="SOCIAL_INSURANCE" displayName="社保个人部分" domain="amount" name="socialInsurance"
+                        precision="20" propId="13" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Social Insurance"/>
+                <column code="HOUSING_FUND" displayName="公积金个人部分" domain="amount" name="housingFund" precision="20"
+                        propId="14" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Housing Fund"/>
+                <column code="TAX_AMOUNT" displayName="个税" domain="amount" name="taxAmount" precision="20" propId="15"
+                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Tax Amount"/>
+                <column code="OTHER_DEDUCTIONS" displayName="其他扣款" domain="amount" name="otherDeductions" precision="20"
+                        propId="16" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Other Deductions"/>
+                <column code="NET_SALARY" displayName="实发合计" domain="amount" name="netSalary" precision="20" propId="17"
+                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Net Salary"/>
+                <column code="PAYMENT_STATUS" displayName="支付状态" mandatory="true" name="paymentStatus" propId="18"
+                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-hr/salary-payment-status"
+                        i18n-en:displayName="Payment Status"/>
+                <column code="PAYMENT_DATE" displayName="实发日期" name="paymentDate" propId="19" stdDataType="date"
+                        stdSqlType="DATE" i18n-en:displayName="Payment Date"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="20" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="21"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="22" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="23" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="24" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="25" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="26" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="27" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub"
+                        i18n-en:displayName="Employee" ref-i18n-en:displayName="Salary Records">
+                    <join>
+                        <on leftProp="employeeId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
+                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
+                        ref-i18n-en:displayName="Salary Record">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.hr.dao.entity.ErpHrRecruitment" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="招聘记录"
+                name="app.erp.hr.dao.entity.ErpHrRecruitment" registerShortName="true" tableName="erp_hr_recruitment"
+                tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="user-plus" i18n-en:displayName="Recruitment">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="编号" domain="code" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
+                <column code="POSITION_ID" displayName="招聘职位" name="positionId" propId="3" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Position"/>
+                <column code="DEPARTMENT_ID" displayName="招聘部门" name="departmentId" propId="4" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Department"/>
+                <column code="HEADCOUNT" defaultValue="1" displayName="招聘人数" name="headcount" propId="5"
+                        stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Headcount"/>
+                <column code="CANDIDATE_NAME" displayName="应聘者姓名" mandatory="true" name="candidateName" precision="200"
+                        propId="6" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Candidate Name"/>
+                <column code="CANDIDATE_PHONE" displayName="联系电话" domain="phone" name="candidatePhone" precision="20"
+                        propId="7" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Candidate Phone"/>
+                <column code="CANDIDATE_EMAIL" displayName="电子邮箱" domain="email" name="candidateEmail" precision="200"
+                        propId="8" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Candidate Email"/>
+                <column code="SOURCE" displayName="来源" name="source" propId="9" stdDataType="int" stdSqlType="INTEGER"
+                        ext:dict="erp-hr/recruitment-source" i18n-en:displayName="Source"/>
+                <column code="RESUME_ATTACHMENT_ID" displayName="简历附件" name="resumeAttachmentId" propId="10"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Resume Attachment"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="11" stdDataType="int"
+                        stdSqlType="INTEGER" ext:dict="erp-hr/recruitment-status" i18n-en:displayName="Status"/>
+                <column code="INTERVIEWER_ID" displayName="面试官" name="interviewerId" propId="12" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Interviewer"/>
+                <column code="INTERVIEW_DATE" displayName="面试日期" name="interviewDate" propId="13" stdDataType="date"
+                        stdSqlType="DATE" i18n-en:displayName="Interview Date"/>
+                <column code="OFFER_SALARY" displayName="Offer薪资" domain="amount" name="offerSalary" precision="20"
+                        propId="14" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Offer Salary"/>
+                <column code="HIRED_DATE" displayName="入职日期" name="hiredDate" propId="15" stdDataType="date"
+                        stdSqlType="DATE" i18n-en:displayName="Hired Date"/>
+                <column code="EMPLOYEE_ID" displayName="关联员工" name="employeeId" propId="16" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Employee"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="17" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="18"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="19" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="20" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="21" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="22" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="23" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="24" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="position" refEntityName="app.erp.hr.dao.entity.ErpHrPosition" tagSet="pub"
+                        i18n-en:displayName="Position" ref-i18n-en:displayName="Recruitments">
+                    <join>
+                        <on leftProp="positionId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="department" refEntityName="app.erp.hr.dao.entity.ErpHrDepartment" tagSet="pub"
+                        i18n-en:displayName="Department" ref-i18n-en:displayName="Recruitments">
+                    <join>
+                        <on leftProp="departmentId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub"
+                        i18n-en:displayName="Employee" ref-i18n-en:displayName="Recruitment">
+                    <join>
+                        <on leftProp="employeeId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
+                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
+                        ref-i18n-en:displayName="Recruitment">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdOrganization" displayName="ErpMdOrganization"
+                name="app.erp.md.dao.entity.ErpMdOrganization" notGenCode="true" tableName="erp_md_md_organization"
+                biz:moduleId="erp/md">
+            <columns>
+                <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"
+                        stdSqlType="BIGINT" tagSet="seq-default"/>
+            </columns>
+        </entity>
+        <entity className="io.nop.auth.dao.entity.NopAuthUser" displayName="NopAuthUser"
+                name="io.nop.auth.dao.entity.NopAuthUser" notGenCode="true" tableName="erp_md_auth_user"
+                biz:moduleId="nop/auth">
+            <columns>
+                <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"
+                        stdSqlType="BIGINT" tagSet="seq-default"/>
+            </columns>
+        </entity>
+    </entities>
+</orm>

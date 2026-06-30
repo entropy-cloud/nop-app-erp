@@ -1,0 +1,27 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 网关操作类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 下单
+    value: 10
+    description: 
+  
+  - label: 获取面单
+    value: 20
+    description: 
+  
+  - label: 预约取件
+    value: 30
+    description: 
+  
+  - label: 追踪
+    value: 40
+    description: 
+  
+  - label: 取消
+    value: 50
+    description: 
+  

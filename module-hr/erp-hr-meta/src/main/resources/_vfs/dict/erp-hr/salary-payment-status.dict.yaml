@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 薪资支付状态
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 待支付
+    value: 10
+    description: 
+  
+  - label: 已支付
+    value: 20
+    description: 
+  
+  - label: 已作废
+    value: 30
+    description: 
+  

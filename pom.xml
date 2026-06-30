@@ -31,6 +31,15 @@
         <module>module-manufacturing</module>
         <module>module-quality</module>
         <module>module-maintenance</module>
+        <!-- New business domains (2026-06-30) -->
+        <module>module-crm</module>
+        <module>module-cs</module>
+        <module>module-hr</module>
+        <module>module-aps</module>
+        <module>module-contract</module>
+        <module>module-drp</module>
+        <module>module-logistics</module>
+        <module>module-b2b</module>
         <!-- 顶层聚合 app:单体部署入口,聚合全部业务域 + 系统模块 -->
         <module>app-erp-all</module>
     </modules>

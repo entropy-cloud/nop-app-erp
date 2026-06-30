@@ -62,16 +62,21 @@ ERP 业务按 10 个独立领域工程组织（见 `docs/architecture/domain-mod
 | `quality/` | `app-erp-quality` | `module-quality/model/app-erp-quality.orm.xml` | README + state-machine（质检+NCR） |
 | `maintenance/` | `app-erp-maintenance` | `module-maintenance/model/app-erp-maintenance.orm.xml` | README + state-machine（维护访问+请求） |
 
-### 可选扩展域（非 10 域基线，设计骨架）
+### 新增强业务域（独立模块）
 
-> 以下为 P1 独立扩展模块，不纳入 `product-scope.md` 的 10 域基线（延迟范围），作为可选工程（参考 `l10n/cn-golden-tax.md` 独立工程范式）按需组装。当前仅设计骨架 + SPI 契约，深化到实施级延迟到客户需求触发。
+> 以下域此前曾被标记为"骨架/P2/延迟"，经开源调研确认（Axelor/AureusERP/IDURAR）均有成熟实现，现已纳入完整设计并各自独立成模块。
 
-| 域目录 | 工程（规划） | 状态 | 文档 |
-|--------|-------------|------|------|
-| `crm/` | `module-crm`（可选） | 设计骨架 | `crm/README.md`（线索→商机→转化报价单） |
-| `logistics/` | `module-logistics`（可选） | 设计骨架 | `logistics/README.md`（TMS 发运单 + 承运商网关三层 SPI） |
+| 域目录 | 工程 | 状态 | 文档 |
+|--------|------|------|------|
+| `crm/` | `module-crm` | 完整设计 | `crm/README.md`（Lead→Convert→Opportunity→Event/活动历史/日历/查重/团队） |
+| `customer-service/` | `module-cs` | 完整设计 | `customer-service/README.md`（Ticket + SLA + 团队分派 + 知识库） |
+| `human-resource/` | `module-hr` | 完整设计 | `human-resource/README.md`（员工/合同/薪酬/考勤/休假/招聘） |
+| `aps/` | `module-aps` | 完整设计 | `aps/README.md`（OperationOrder 工序工单 + 有限产能排产 + 前向/后向排产） |
+| `contract/` | `module-contract` | 完整设计 | `contract/README.md`（合同版本/开票计划/用量计费/到期提醒） |
+| `drp/` | `module-drp` | 完整设计 | `drp/README.md`（多仓库净需求计算/补货建议/仓间调拨） |
+| `logistics/` | `module-logistics` | 完整设计 | `logistics/README.md`（TMS 发运单 + 三层承运商 SPI） |
 
-> B2B 集成（EDI/ASN）属集成层，owner doc 在 `docs/architecture/b2b-integration.md`（规划 `module-b2b` 可选工程）。
+> B2B 集成（EDI/ASN）属集成层，owner doc 在 `docs/architecture/b2b-integration.md`（规划 `module-b2b`）。
 
 **结构选择原则**：
 - 状态机重的域（inventory/purchase/sales/finance）才有独立 `state-machine.md`。

@@ -83,6 +83,20 @@
                                   i18n-en:displayName="Cost Rollup" icon="calculator"
                                   component="AMIS" resourceType="SUBM" orderNo="500"
                                   url="/erp/mfg/pages/ErpMfgCostRollup/main.page.yaml"/>
+                        <resource id="ErpMfgCostVariance-main" app:useCases="UC-MFG-12" displayName="成本差异分析"
+                                  i18n-en:displayName="Cost Variance Analysis" icon="bar-chart-2"
+                                  component="AMIS" resourceType="SUBM" orderNo="510"
+                                  url="/erp/mfg/pages/ErpMfgCostVariance/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 质量追溯 -->
+                <resource id="mfg-trace" displayName="质量追溯" i18n-en:displayName="Traceability"
+                          icon="git-commit" resourceType="SUBM" orderNo="600">
+                    <children>
+                        <resource id="ErpMfgBatchGenealogy-main" app:useCases="UC-MFG-13" displayName="批次追溯"
+                                  i18n-en:displayName="Batch Genealogy" icon="git-commit"
+                                  component="AMIS" resourceType="SUBM" orderNo="600"
+                                  url="/erp/mfg/pages/ErpMfgBatchGenealogy/main.page.yaml"/>
                     </children>
                 </resource>
                 <!-- 报表看板 -->

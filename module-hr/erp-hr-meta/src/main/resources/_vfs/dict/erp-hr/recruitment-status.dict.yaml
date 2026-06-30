@@ -1,0 +1,35 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 招聘状态
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 待处理
+    value: 10
+    description: 
+  
+  - label: 简历筛选
+    value: 20
+    description: 
+  
+  - label: 面试中
+    value: 30
+    description: 
+  
+  - label: 已发Offer
+    value: 40
+    description: 
+  
+  - label: 已入职
+    value: 50
+    description: 
+  
+  - label: 已拒绝
+    value: 60
+    description: 
+  
+  - label: 已关闭
+    value: 70
+    description: 
+  

@@ -1,0 +1,31 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 发运单状态
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 草稿
+    value: 10
+    description: 
+  
+  - label: 已预约
+    value: 20
+    description: 
+  
+  - label: 已派发
+    value: 30
+    description: 
+  
+  - label: 运输中
+    value: 40
+    description: 
+  
+  - label: 已签收
+    value: 50
+    description: 
+  
+  - label: 已取消
+    value: 60
+    description: 
+  

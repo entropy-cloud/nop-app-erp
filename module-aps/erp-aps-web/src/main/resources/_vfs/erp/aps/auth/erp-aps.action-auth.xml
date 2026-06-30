@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+      xmlns:i18n-en="i18n-en" xmlns:app="app">
+    <site id="main">
+        <resource id="erp-aps" displayName="高级排产" i18n-en:displayName="Advanced Planning &amp; Scheduling"
+                  icon="cpu" resourceType="TOPM" orderNo="800"
+                  routePath="/erp-aps" component="layouts/default/index">
+            <children>
+                <resource id="aps-schedule" displayName="排产执行" i18n-en:displayName="Scheduling"
+                          icon="cpu" resourceType="SUBM" orderNo="100">
+                    <children>
+                        <resource id="ErpApsOperationOrder-main" app:useCases="UC-APS-01,UC-APS-02,UC-APS-03,UC-APS-04,UC-APS-05,UC-APS-06"
+                                  displayName="工序工单" i18n-en:displayName="Operation Order" icon="cpu"
+                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  url="/erp/aps/pages/ErpApsOperationOrder/main.page.yaml"/>
+                        <resource id="ErpApsSchedule-main" app:useCases="UC-APS-02,UC-APS-03,UC-APS-04"
+                                  displayName="排产方案" i18n-en:displayName="Schedule Plan" icon="calendar-check"
+                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  url="/erp/aps/pages/ErpApsSchedule/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="aps-dispatch" displayName="派工管理" i18n-en:displayName="Dispatch"
+                          icon="play-circle" resourceType="SUBM" orderNo="150">
+                    <children>
+                        <resource id="ErpApsDispatchRule-main" app:useCases="UC-APS-07"
+                                  displayName="自动派工规则" i18n-en:displayName="Dispatch Rule" icon="play-circle"
+                                  component="AMIS" resourceType="SUBM" orderNo="150"
+                                  url="/erp/aps/pages/ErpApsDispatchRule/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="aps-constraint" displayName="约束管理" i18n-en:displayName="Constraints"
+                          icon="alert-triangle" resourceType="SUBM" orderNo="200">
+                    <children>
+                        <resource id="ErpApsConstraint-main" displayName="排产约束"
+                                  i18n-en:displayName="Scheduling Constraint" icon="alert-triangle"
+                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  url="/erp/aps/pages/ErpApsConstraint/main.page.yaml"/>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
+</auth>

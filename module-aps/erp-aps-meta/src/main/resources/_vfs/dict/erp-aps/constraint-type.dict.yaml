@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 约束类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 维护停机
+    value: 10
+    description: 
+  
+  - label: 刀具寿命
+    value: 20
+    description: 
+  
+  - label: 人员约束
+    value: 30
+    description: 
+  

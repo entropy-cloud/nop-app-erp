@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 事件类型(Event)
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 通话
+    value: CALL
+    description: 
+  
+  - label: 邮件
+    value: EMAIL
+    description: 
+  
+  - label: 会议
+    value: MEETING
+    description: 
+  
+  - label: 任务
+    value: TASK
+    description: 
+  

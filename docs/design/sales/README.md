@@ -55,6 +55,8 @@
 | 销售退货入库 | inventory | 退货单审核 → 生成入库移动单 |
 | 销售发票触发应收凭证 | finance | 发票审核 → 财务域生成应收凭证（AR_INVOICE） |
 | 收款触发收款凭证 | finance | 收款单审核 → 财务域生成收款凭证（RECEIPT） |
+| 报价单由 CRM 转化创建 | crm | CRM Lead CONVERTED → `IErpSalQuotationBiz` 创建报价单（弱指针反查，核心零污染） |
+| 合同开票计划生成发票 | contract | 合同 `InvoicePlan` 到期 → 触发创建 AR 发票草稿 |
 | 物料/客户/仓库引用 | master-data | 单据引用主数据编码 + `IErpMd*Biz` |
 
 ## 关键业务规则

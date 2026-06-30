@@ -29,8 +29,8 @@
 | ----------------------------------------- | ---------------------------------------------------------------------------------- | --------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------- |
 | `age-practice-gap-audit-prompt.md` | 仓库需要比较实时实践与预期 AGE 工作流 | 任务是本地功能实现 | AGE 基线文档、当前仓库结构、活动文档、采样实时证据 | `docs/analysis/` 下的分析笔记，含优先级差距 |
 | `document-audit-prompt.md` | 需求、设计或架构文档可能不完整或不一致 | 任务琐碎且本地 | 目标文档路径、相关输入或 owner docs | 审计发现和修订目标 |
-| `design-doc-audit-prompt.md` | `docs/design/` 需要重新验证为应用层行为基线 | 需要单一更窄的审计（状态机、计划） | 所有 `docs/design/` 文件、相关需求、存在时的 `domain-design-guidelines.md` | 按严重性排序的发现和处理结果 |
-| `design-completeness-scan-prompt.md` | 主动扫描 `docs/design/` 以查找目标范围内缺失的域/文档/功能 | 验证现有文档（改用 `design-doc-audit-prompt.md`） | `docs/design/` 树、`product-scope.md`、路线图、`flow-overview.md` | 优先级差距列表，驱动下一轮文档添加 |
+| `design-doc-audit-prompt.md` | `docs/design/` 需要重新验证为应用层行为基线 | 需要单一更窄的审计（状态机、计划） | 所有 `docs/design/` 文件、相关需求、存在时的 `domain-design-guidelines.md`、**必须含 `erp-survey/` 覆盖矩阵作为功能对标基准** | 按严重性排序的发现和处理结果 |
+| `design-completeness-scan-prompt.md` | 主动扫描 `docs/design/` 以查找目标范围内缺失的域/文档/功能 | 验证现有文档（改用 `design-doc-audit-prompt.md`） | `docs/design/` 树、`product-scope.md`、路线图、`flow-overview.md`、**必须含 `erp-survey/` 全部报告（否则会遗漏未设计的功能）** | 优先级差距列表，驱动下一轮文档添加 |
 | `state-machine-business-review-prompt.md` | 工作流状态机（订单/审批/争议/生命周期）需要正确性审查 | 更改琐碎或与转换无关 | 定义状态机的 owner doc、相关需求 | P0–P3 发现、裁决、可达性/角色/外部摘要 |
 | `plan-audit-prompt.md` | 非平凡计划在实施前准备好接受挑战 | 尚无计划 | 计划文件、相关需求和 owner docs | 通过/失败审计，含具体问题 |
 | `closure-audit-prompt.md` | 实施声称完成并需要独立结束审查 | 工作仍在进行中 | 计划、验证证据、相关更改文档 | 结束裁决和剩余差距 |

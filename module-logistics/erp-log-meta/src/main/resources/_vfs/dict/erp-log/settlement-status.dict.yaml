@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 运费结算状态
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 待结算
+    value: 10
+    description: 
+  
+  - label: 已结算
+    value: 20
+    description: 
+  

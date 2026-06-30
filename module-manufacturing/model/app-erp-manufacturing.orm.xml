@@ -813,6 +813,82 @@
             </relations>
         </entity>
 
+        <!-- 标准成本差异记录 -->
+        <entity className="app.erp.mfg.dao.entity.ErpMfgCostVariance"
+                displayName="成本差异记录" ext:icon="bar-chart-2" i18n-en:displayName="Cost Variance" name="app.erp.mfg.dao.entity.ErpMfgCostVariance"
+                tableName="erp_mfg_cost_variance" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="workOrderId" displayName="工单" stdSqlType="BIGINT" mandatory="true" code="WORK_ORDER_ID" propId="2" stdDataType="long" i18n-en:displayName='Work Order' />
+                <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int" i18n-en:displayName='Line No' />
+                <column name="varianceType" displayName="差异类型" stdSqlType="VARCHAR" precision="50" mandatory="true" code="VARIANCE_TYPE" propId="4" stdDataType="string" i18n-en:displayName='Variance Type' />
+                <column name="costElement" displayName="成本要素" stdSqlType="VARCHAR" precision="50" mandatory="true" code="COST_ELEMENT" propId="5" stdDataType="string" i18n-en:displayName='Cost Element' />
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" code="MATERIAL_ID" propId="6" stdDataType="long" i18n-en:displayName='Material' />
+                <column name="operationId" displayName="工序" stdSqlType="BIGINT" code="OPERATION_ID" propId="7" stdDataType="long" i18n-en:displayName='Operation' />
+                <column name="standardAmount" displayName="标准金额" domain="amount" defaultValue="0" code="STANDARD_AMOUNT" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Standard Amount' />
+                <column name="actualAmount" displayName="实际金额" domain="amount" defaultValue="0" code="ACTUAL_AMOUNT" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Actual Amount' />
+                <column name="varianceAmount" displayName="差异金额" domain="amount" defaultValue="0" code="VARIANCE_AMOUNT" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Variance Amount' />
+                <column name="variancePercent" displayName="差异百分比" domain="rate" defaultValue="0" code="VARIANCE_PERCENT" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Variance Percent' />
+                <column name="standardQty" displayName="标准数量" domain="quantity" defaultValue="0" code="STANDARD_QTY" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Standard Qty' />
+                <column name="actualQty" displayName="实际数量" domain="quantity" defaultValue="0" code="ACTUAL_QTY" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Actual Qty' />
+                <column name="standardPrice" displayName="标准单价" domain="unitPrice" defaultValue="0" code="STANDARD_PRICE" propId="14" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Standard Price' />
+                <column name="actualPrice" displayName="实际单价" domain="unitPrice" defaultValue="0" code="ACTUAL_PRICE" propId="15" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Actual Price' />
+                <column name="workcenterId" displayName="工作中心" stdSqlType="BIGINT" code="WORKCENTER_ID" propId="16" stdDataType="long" i18n-en:displayName='Workcenter' />
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="17" stdDataType="date" i18n-en:displayName='Business Date' />
+                <column name="posted" displayName="已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="18" stdDataType="boolean" i18n-en:displayName='Posted' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="19" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="20" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="21" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="22" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="23" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="24" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="25" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-one name="workOrder" refEntityName="app.erp.mfg.dao.entity.ErpMfgWorkOrder" tagSet="pub" i18n-en:displayName='Work Order' ref-i18n-en:displayName='Cost Variance'><join><on leftProp="workOrderId" rightProp="id"/></join></to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material' ref-i18n-en:displayName='Cost Variance'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
+                <to-one name="workcenter" refEntityName="app.erp.mfg.dao.entity.ErpMfgWorkcenter" tagSet="pub" i18n-en:displayName='Workcenter' ref-i18n-en:displayName='Cost Variance'><join><on leftProp="workcenterId" rightProp="id"/></join></to-one>
+            </relations>
+        </entity>
+
+        <!-- 批次追溯记录 -->
+        <entity className="app.erp.mfg.dao.entity.ErpMfgBatchGenealogy"
+                displayName="批次追溯" ext:icon="git-commit" i18n-en:displayName="Batch Genealogy" name="app.erp.mfg.dao.entity.ErpMfgBatchGenealogy"
+                tableName="erp_mfg_batch_genealogy" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="workOrderId" displayName="工单" stdSqlType="BIGINT" mandatory="true" code="WORK_ORDER_ID" propId="2" stdDataType="long" i18n-en:displayName='Work Order' />
+                <column name="jobCardId" displayName="作业卡" stdSqlType="BIGINT" code="JOB_CARD_ID" propId="3" stdDataType="long" i18n-en:displayName='Job Card' />
+                <column name="operationId" displayName="工序" stdSqlType="BIGINT" code="OPERATION_ID" propId="4" stdDataType="long" i18n-en:displayName='Operation' />
+                <column name="inputLotId" displayName="输入批次" stdSqlType="BIGINT" mandatory="true" code="INPUT_LOT_ID" propId="5" stdDataType="long" i18n-en:displayName='Input Lot' />
+                <column name="inputMaterialId" displayName="输入物料" stdSqlType="BIGINT" mandatory="true" code="INPUT_MATERIAL_ID" propId="6" stdDataType="long" i18n-en:displayName='Input Material' />
+                <column name="inputQty" displayName="投入数量" domain="quantity" mandatory="true" code="INPUT_QTY" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Input Qty' />
+                <column name="inputUoMId" displayName="投入计量单位" stdSqlType="BIGINT" mandatory="true" code="INPUT_UO_M_ID" propId="8" stdDataType="long" i18n-en:displayName='Input UoM' />
+                <column name="outputLotId" displayName="产出批次" stdSqlType="BIGINT" mandatory="true" code="OUTPUT_LOT_ID" propId="9" stdDataType="long" i18n-en:displayName='Output Lot' />
+                <column name="outputMaterialId" displayName="产出物料" stdSqlType="BIGINT" mandatory="true" code="OUTPUT_MATERIAL_ID" propId="10" stdDataType="long" i18n-en:displayName='Output Material' />
+                <column name="outputQty" displayName="产出数量" domain="quantity" mandatory="true" code="OUTPUT_QTY" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Output Qty' />
+                <column name="outputUoMId" displayName="产出计量单位" stdSqlType="BIGINT" mandatory="true" code="OUTPUT_UO_M_ID" propId="12" stdDataType="long" i18n-en:displayName='Output UoM' />
+                <column name="productionDate" displayName="生产日期" stdSqlType="DATE" mandatory="true" code="PRODUCTION_DATE" propId="13" stdDataType="date" i18n-en:displayName='Production Date' />
+                <column name="productionTime" displayName="生产时间" stdSqlType="DATETIME" code="PRODUCTION_TIME" propId="14" stdDataType="datetime" i18n-en:displayName='Production Time' />
+                <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="15" stdDataType="int" i18n-en:displayName='Line No' />
+                <column name="lotStatus" displayName="批次状态" stdSqlType="VARCHAR" precision="50" code="LOT_STATUS" propId="16" stdDataType="string" i18n-en:displayName='Lot Status' />
+                <column name="isInputConsumed" displayName="输入是否已消耗" stdSqlType="BOOLEAN" defaultValue="false" code="IS_INPUT_CONSUMED" propId="17" stdDataType="boolean" i18n-en:displayName='Input Consumed' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="18" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="19" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="20" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="21" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="22" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="23" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="24" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-one name="workOrder" refEntityName="app.erp.mfg.dao.entity.ErpMfgWorkOrder" tagSet="pub" i18n-en:displayName='Work Order' ref-i18n-en:displayName='Batch Genealogy'><join><on leftProp="workOrderId" rightProp="id"/></join></to-one>
+                <to-one name="jobCard" refEntityName="app.erp.mfg.dao.entity.ErpMfgJobCard" tagSet="pub" i18n-en:displayName='Job Card' ref-i18n-en:displayName='Batch Genealogy'><join><on leftProp="jobCardId" rightProp="id"/></join></to-one>
+                <to-one name="inputMaterial" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Input Material' ref-i18n-en:displayName='Batch Genealogy'><join><on leftProp="inputMaterialId" rightProp="id"/></join></to-one>
+                <to-one name="outputMaterial" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Output Material' ref-i18n-en:displayName='Batch Genealogy'><join><on leftProp="outputMaterialId" rightProp="id"/></join></to-one>
+            </relations>
+        </entity>
+
         <!-- ============================ 外部实体引用（机制 B：notGenCode，不生成本模块 Entity 类） ============================
              设计依据：docs/architecture/data-dependency-matrix.md §5.6
              平台依据：nop/schema/orm/entity.xdef @notGenCode + nop/orm/xlib/orm-gen.xlib:228

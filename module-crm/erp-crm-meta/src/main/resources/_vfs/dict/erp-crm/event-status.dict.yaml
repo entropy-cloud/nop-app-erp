@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 活动状态
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 已计划
+    value: PLANNED
+    description: 
+  
+  - label: 已完成
+    value: COMPLETED
+    description: 
+  
+  - label: 已取消
+    value: CANCELLED
+    description: 
+  

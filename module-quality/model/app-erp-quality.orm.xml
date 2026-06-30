@@ -47,6 +47,7 @@
             <option code="OPEN" label="待处理" value="10" i18n-en:label='Pending'/>
             <option code="IN_REVIEW" label="评审中" value="20" i18n-en:label='Reviewing'/>
             <option code="RESOLVED" label="已解决" value="30" i18n-en:label='Resolved'/>
+            <option code="ESCALATED_TO_RECALL" label="已升级为召回" value="35" i18n-en:label='Escalated to Recall'/>
             <option code="CANCELLED" label="已取消" value="40" i18n-en:label='Cancelled'/>
         </dict>
         <dict label="纠正措施类型" name="erp-qa/action-type" valueType="int" i18n-en:label='Corrective Action Type'>
@@ -139,6 +140,7 @@
                 <column name="supplierId" displayName="供应商" stdSqlType="BIGINT" code="SUPPLIER_ID" propId="10" stdDataType="long" i18n-en:displayName='Supplier' />
                 <column name="warehouseId" displayName="仓库" stdSqlType="BIGINT" code="WAREHOUSE_ID" propId="11" stdDataType="long" i18n-en:displayName='Warehouse' />
                 <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="13" stdDataType="string" i18n-en:displayName='Batch No' />
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" stdDataType="date" i18n-en:displayName='Business Date' />
                 <column name="inspectionDate" displayName="检验日期" stdSqlType="DATE" mandatory="true" code="INSPECTION_DATE" propId="14" stdDataType="date" i18n-en:displayName='Inspection Date' />
                 <column name="lotQuantity" displayName="批量" domain="quantity" code="LOT_QUANTITY" propId="15" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Lot Quantity' />
                 <column name="sampleQuantity" displayName="抽样数量" domain="quantity" code="SAMPLE_QUANTITY" propId="16" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Sample Quantity' />

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:ioc="ioc"
+       xmlns="http://www.springframework.org/schema/beans" x:extends="/nop/biz/defaults/service-base.beans.xml"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="app.erp.log.service.entity.ErpLogCarrierBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpLogCarrier" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.log.biz.IErpLogCarrierBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpLogCarrier"/>
+    </bean>
+
+    <bean id="app.erp.log.service.entity.ErpLogCarrierConfigBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpLogCarrierConfig" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.log.biz.IErpLogCarrierConfigBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpLogCarrierConfig"/>
+    </bean>
+
+    <bean id="app.erp.log.service.entity.ErpLogShipmentBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpLogShipment" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.log.biz.IErpLogShipmentBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpLogShipment"/>
+    </bean>
+
+    <bean id="app.erp.log.service.entity.ErpLogShipmentLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpLogShipmentLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.log.biz.IErpLogShipmentLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpLogShipmentLine"/>
+    </bean>
+
+    <bean id="app.erp.log.service.entity.ErpLogShipmentParcelBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpLogShipmentParcel" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.log.biz.IErpLogShipmentParcelBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpLogShipmentParcel"/>
+    </bean>
+
+    <bean id="app.erp.log.service.entity.ErpLogShipmentLogBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpLogShipmentLog" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.log.biz.IErpLogShipmentLogBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpLogShipmentLog"/>
+    </bean>
+</beans>

@@ -118,12 +118,14 @@
 
 ## 适用对象二：不符合项报告（NonConformance）
 
-NCR 状态机 4 态：
+NCR 状态机 5 态（含召回升级）：
 
 ```
 待处理 (OPEN)
   ├─ 评审 → 评审中 (IN_REVIEW)
   │           ├─ 制定 CAPA 并验证有效 → 已解决 (RESOLVED)
+  │           ├─ 升级为召回事件 → 已升级为召回 (ESCALATED_TO_RECALL)
+  │           │       └─ 召回事件独立处理（ErpQaRecall），见 recall.md
   │           └─ 取消（误开或无效）→ 已取消 (CANCELLED)
   └─ 取消 → 已取消 (CANCELLED)
 ```
@@ -133,6 +135,7 @@ NCR 状态机 4 态：
 | 待处理（OPEN） | NCR 已记录，等待评审 |
 | 评审中（IN_REVIEW） | 正在分析原因、制定纠正预防措施 |
 | 已解决（RESOLVED） | 终态：CAPA 已执行且效果验证通过 |
+| 已升级为召回（ESCALATED_TO_RECALL） | 终态：该 NCR 已升级为召回事件（ErpQaRecall），后续处理走 recall.md。不走 RESOLVED 路线 |
 | 已取消（CANCELLED） | 终态：误开或无效 NCR |
 
 ### NCR 与 CAPA 的关系
@@ -153,6 +156,7 @@ NCR 关闭（RESOLVED）时，根据处置方式触发不同的财务处理：
 | 返工 | 返工成本归集到原工单（直接人工+材料） | 借：制造费用 / 贷：原材料+应付职工薪酬 |
 | 报废 | 报废损失凭证 | 借：营业外支出（或制造费用） / 贷：存货 |
 | 让步接收 | 无额外凭证（降级入库按原价） | — |
+| **升级为召回**（ESCALATED_TO_RECALL） | NCR 升级为召回事件（ErpQaRecall，见 recall.md），触发批量销售退货，过账走 sales 域标准退货流程 | 走标准销售退货过账 |
 
 > NCR 过账模式可按 NCR 类型配置：AUTO_POST（NCR 关闭时自动触发）或 MANUAL_POST（需人工确认后触发）。配置项：`erp-qua.ncr-posting-mode`。
 

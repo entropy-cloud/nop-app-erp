@@ -1,0 +1,27 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 工单类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 投诉
+    value: 10
+    description: 
+  
+  - label: 咨询
+    value: 20
+    description: 
+  
+  - label: 维修
+    value: 30
+    description: 
+  
+  - label: 退换货
+    value: 40
+    description: 
+  
+  - label: 其他
+    value: 99
+    description: 
+  

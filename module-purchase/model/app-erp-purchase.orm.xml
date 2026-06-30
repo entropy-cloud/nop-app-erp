@@ -137,7 +137,7 @@
                 <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int" i18n-en:displayName='Line No' />
                 <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="4" stdDataType="long" i18n-en:displayName='Material' />
                 <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UO_M_ID" propId="5" stdDataType="long" i18n-en:displayName='UoM' />
-                <column name="quantity" displayName="请购数量" domain="quantity" mandatory="true" code="QUANTITY" propId="6" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Quantity' />
+                <column name="quantity" displayName="请购数量" domain="quantity" mandatory="true" code="QUANTITY" propId="6" i18n-en:displayName='Quantity' />
                 <column name="requiredDate" displayName="需求日期" stdSqlType="DATE" code="REQUIRED_DATE" propId="7" stdDataType="date" i18n-en:displayName='Required Date' />
                 <column name="suggestedSupplierId" displayName="建议供应商" stdSqlType="BIGINT" code="SUGGESTED_SUPPLIER_ID" propId="8" stdDataType="long" i18n-en:displayName='Suggested Supplier' />
                 <column name="projectId" displayName="项目" stdSqlType="BIGINT" code="PROJECT_ID" propId="9" stdDataType="long" i18n-en:displayName='Project' />
@@ -194,7 +194,7 @@
                 <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int" i18n-en:displayName='Line No' />
                 <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="4" stdDataType="long" i18n-en:displayName='Material' />
                 <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UO_M_ID" propId="5" stdDataType="long" i18n-en:displayName='UoM' />
-                <column name="quantity" displayName="询价数量" domain="quantity" mandatory="true" code="QUANTITY" propId="6" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Quantity' />
+                <column name="quantity" displayName="询价数量" domain="quantity" mandatory="true" code="QUANTITY" propId="6" i18n-en:displayName='Quantity' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="8" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="9" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -254,7 +254,7 @@
                 <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int" i18n-en:displayName='Line No' />
                 <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="4" stdDataType="long" i18n-en:displayName='Material' />
                 <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UO_M_ID" propId="5" stdDataType="long" i18n-en:displayName='UoM' />
-                <column name="quantity" displayName="数量" domain="quantity" code="QUANTITY" propId="6" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Quantity' />
+                <column name="quantity" displayName="数量" domain="quantity" code="QUANTITY" propId="6" i18n-en:displayName='Quantity' />
                 <column name="unitPrice" displayName="报价单价(不含税)" domain="unitPrice" mandatory="true" code="UNIT_PRICE" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Unit Price' />
                 <column name="taxRate" displayName="税率(%)" domain="taxRate" code="TAX_RATE" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Tax Rate' />
                 <column name="leadTimeDays" displayName="交货周期(天)" stdSqlType="INTEGER" code="LEAD_TIME_DAYS" propId="9" stdDataType="int" i18n-en:displayName='Lead Time Days' />
@@ -285,7 +285,7 @@
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true" code="CURRENCY_ID" propId="5" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="unitPrice" displayName="协议单价(不含税)" domain="unitPrice" mandatory="true" code="UNIT_PRICE" propId="6" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Unit Price' />
                 <column name="taxRate" displayName="税率(%)" domain="taxRate" code="TAX_RATE" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Tax Rate' />
-                <column name="minOrderQuantity" displayName="最小起订量" domain="quantity" code="MIN_ORDER_QUANTITY" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Min Order Quantity' />
+                <column name="minOrderQuantity" displayName="最小起订量" domain="quantity" code="MIN_ORDER_QUANTITY" propId="8" i18n-en:displayName='Min Order Quantity' />
                 <column name="leadTimeDays" displayName="交货周期(天)" stdSqlType="INTEGER" code="LEAD_TIME_DAYS" propId="9" stdDataType="int" i18n-en:displayName='Lead Time Days' />
                 <column name="validFrom" displayName="生效日期" stdSqlType="DATE" code="VALID_FROM" propId="10" stdDataType="date" i18n-en:displayName='Valid From' />
                 <column name="validTo" displayName="失效日期" stdSqlType="DATE" code="VALID_TO" propId="11" stdDataType="date" i18n-en:displayName='Valid To' />
@@ -369,15 +369,15 @@
                 <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="4" stdDataType="long" i18n-en:displayName='Material' />
                 <column name="skuId" displayName="SKU" stdSqlType="BIGINT" code="SKU_ID" propId="5" stdDataType="long" i18n-en:displayName='SKU' />
                 <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UO_M_ID" propId="6" stdDataType="long" i18n-en:displayName='UoM' />
-                <column name="quantity" displayName="数量" domain="quantity" mandatory="true" code="QUANTITY" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Quantity' />
+                <column name="quantity" displayName="数量" domain="quantity" mandatory="true" code="QUANTITY" propId="7" i18n-en:displayName='Quantity' />
                 <column name="unitPrice" displayName="单价(不含税)" domain="unitPrice" mandatory="true" code="UNIT_PRICE" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Unit Price' />
                 <column name="taxRate" displayName="税率(%)" domain="taxRate" code="TAX_RATE" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Tax Rate' />
                 <column name="taxRateId" displayName="税率主数据" stdSqlType="BIGINT" code="TAX_RATE_ID" propId="10" stdDataType="long" i18n-en:displayName='Tax Rate' />
                 <column name="taxAmount" displayName="税额" domain="taxAmount" defaultValue="0" code="TAX_AMOUNT" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Tax Amount' />
                 <column name="amount" displayName="金额(不含税)" domain="amount" mandatory="true" code="AMOUNT" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Amount' />
                 <column name="amountWithTax" displayName="金额(含税)" domain="amount" code="AMOUNT_WITH_TAX" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Amount With Tax' />
-                <column name="receivedQuantity" displayName="已收货数量" domain="quantity" defaultValue="0" code="RECEIVED_QUANTITY" propId="14" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Received Quantity' />
-                <column name="invoicedQuantity" displayName="已开票数量" domain="quantity" defaultValue="0" code="INVOICED_QUANTITY" propId="15" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Invoiced Quantity' />
+                <column name="receivedQuantity" displayName="已收货数量" domain="quantity" defaultValue="0" code="RECEIVED_QUANTITY" propId="14" i18n-en:displayName='Received Quantity' />
+                <column name="invoicedQuantity" displayName="已开票数量" domain="quantity" defaultValue="0" code="INVOICED_QUANTITY" propId="15" i18n-en:displayName='Invoiced Quantity' />
                 <column name="warehouseId" displayName="收货仓库" stdSqlType="BIGINT" code="WAREHOUSE_ID" propId="16" stdDataType="long" i18n-en:displayName='Warehouse' />
                 <column name="projectId" displayName="项目" stdSqlType="BIGINT" code="PROJECT_ID" propId="17" stdDataType="long" i18n-en:displayName='Project' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="18" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
@@ -454,8 +454,8 @@
                 <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="5" stdDataType="long" i18n-en:displayName='Material' />
                 <column name="skuId" displayName="SKU" stdSqlType="BIGINT" code="SKU_ID" propId="6" stdDataType="long" i18n-en:displayName='SKU' />
                 <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UO_M_ID" propId="7" stdDataType="long" i18n-en:displayName='UoM' />
-                <column name="quantity" displayName="实收数量" domain="quantity" mandatory="true" code="QUANTITY" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Quantity' />
-                <column name="rejectedQuantity" displayName="拒收数量" domain="quantity" defaultValue="0" code="REJECTED_QUANTITY" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Rejected Quantity' />
+                <column name="quantity" displayName="实收数量" domain="quantity" mandatory="true" code="QUANTITY" propId="8" i18n-en:displayName='Quantity' />
+                <column name="rejectedQuantity" displayName="拒收数量" domain="quantity" defaultValue="0" code="REJECTED_QUANTITY" propId="9" i18n-en:displayName='Rejected Quantity' />
                 <column name="unitPrice" displayName="单价(不含税)" domain="unitPrice" code="UNIT_PRICE" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Unit Price' />
                 <column name="taxRate" displayName="税率(%)" domain="taxRate" code="TAX_RATE" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Tax Rate' />
                 <column name="taxAmount" displayName="税额" domain="taxAmount" code="TAX_AMOUNT" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Tax Amount' />
@@ -532,7 +532,7 @@
                 <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="4" stdDataType="int" i18n-en:displayName='Line No' />
                 <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="5" stdDataType="long" i18n-en:displayName='Material' />
                 <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UO_M_ID" propId="6" stdDataType="long" i18n-en:displayName='UoM' />
-                <column name="quantity" displayName="数量" domain="quantity" mandatory="true" code="QUANTITY" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Quantity' />
+                <column name="quantity" displayName="数量" domain="quantity" mandatory="true" code="QUANTITY" propId="7" i18n-en:displayName='Quantity' />
                 <column name="unitPrice" displayName="单价(不含税)" domain="unitPrice" code="UNIT_PRICE" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Unit Price' />
                 <column name="taxRate" displayName="税率(%)" domain="taxRate" code="TAX_RATE" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Tax Rate' />
                 <column name="taxAmount" displayName="税额" domain="taxAmount" code="TAX_AMOUNT" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Tax Amount' />
@@ -671,7 +671,7 @@
                 <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="5" stdDataType="long" i18n-en:displayName='Material' />
                 <column name="skuId" displayName="SKU" stdSqlType="BIGINT" code="SKU_ID" propId="6" stdDataType="long" i18n-en:displayName='SKU' />
                 <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UO_M_ID" propId="7" stdDataType="long" i18n-en:displayName='UoM' />
-                <column name="quantity" displayName="退货数量" domain="quantity" mandatory="true" code="QUANTITY" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Quantity' />
+                <column name="quantity" displayName="退货数量" domain="quantity" mandatory="true" code="QUANTITY" propId="8" i18n-en:displayName='Quantity' />
                 <column name="unitPrice" displayName="单价(不含税)" domain="unitPrice" code="UNIT_PRICE" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Unit Price' />
                 <column name="taxRate" displayName="税率(%)" domain="taxRate" code="TAX_RATE" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Tax Rate' />
                 <column name="taxAmount" displayName="税额" domain="taxAmount" code="TAX_AMOUNT" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Tax Amount' />

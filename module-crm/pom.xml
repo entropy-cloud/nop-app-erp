@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <parent>
+        <artifactId>nop-entropy</artifactId>
+        <groupId>io.github.entropy-cloud</groupId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.nop.app</groupId>
+
+    <artifactId>app-erp-crm</artifactId>
+
+    <version>1.0-SNAPSHOT</version>
+
+    <packaging>pom</packaging>
+
+    <description>客户关系管理</description>
+
+    <modules>
+        <module>erp-crm-codegen</module>
+        <module>erp-crm-api</module>
+        <module>erp-crm-dao</module>
+        <module>erp-crm-meta</module>
+        <module>erp-crm-service</module>
+        <module>erp-crm-web</module>
+        <module>erp-crm-app</module>
+    </modules>
+</project>

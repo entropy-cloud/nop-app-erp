@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 活动类型(Activity)
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 备注
+    value: NOTE
+    description: 
+  
+  - label: 通话
+    value: CALL
+    description: 
+  
+  - label: 邮件
+    value: EMAIL
+    description: 
+  
+  - label: 会议
+    value: MEETING
+    description: 
+  

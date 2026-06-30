@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:ioc="ioc"
+       xmlns="http://www.springframework.org/schema/beans" x:extends="/nop/biz/defaults/service-base.beans.xml"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="app.erp.crm.service.entity.ErpCrmSourceBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmSource" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.crm.biz.IErpCrmSourceBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCrmSource"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmLeadStatusBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmLeadStatus" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmLeadStatusBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCrmLeadStatus"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmLostReasonBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmLostReason" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmLostReasonBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCrmLostReason"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmEventCategoryBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmEventCategory" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmEventCategoryBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCrmEventCategory"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmQuoteTemplateBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmQuoteTemplate" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmQuoteTemplateBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCrmQuoteTemplate"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmTeamBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmTeam" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.crm.biz.IErpCrmTeamBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCrmTeam"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmCampaignBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmCampaign" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmCampaignBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCrmCampaign"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmStageBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmStage" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.crm.biz.IErpCrmStageBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCrmStage"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmLeadBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmLead" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.crm.biz.IErpCrmLeadBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCrmLead"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmEventBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmEvent" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.crm.biz.IErpCrmEventBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCrmEvent"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmActivityBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmActivity" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmActivityBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCrmActivity"/>
+    </bean>
+
+    <bean id="app.erp.crm.service.entity.ErpCrmLeadConvLogBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmLeadConvLog" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmLeadConvLogBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCrmLeadConvLog"/>
+    </bean>
+</beans>

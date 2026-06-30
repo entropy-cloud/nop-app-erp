@@ -22,7 +22,8 @@ nop-app-erp 的定制能力按"改动成本从低到高、灵活度从高到低"
 | 配置驱动（字典/参数/编码规则） | 极低 | 低 | 选项值、编号规则、开关 | `03-modules/nop-sys.md` |
 | 扩展字段（EAV） | 低 | 中 | 加字段不改表结构 | `03-modules/nop-sys.md`（NopSysExtField） |
 | nop-dyn 动态实体 | 低 | 高 | 运行时新增实体/页面/SQL，无需 codegen | `03-modules/nop-dyn.md` |
-| Delta 定制 | 中 | 高 | 覆盖基线 ORM/beans/xbiz/view，升级兼容 | `02-core-guides/delta-customization.md` |
+| Delta 定制（含 task.xml） | 中 | 高 | 覆盖基线 ORM/beans/xbiz/view/task，升级兼容 | `02-core-guides/delta-customization.md` |
+| task.xml 编排 | 中 | 高 | 按步骤粒度配编排逻辑，支持 Delta 精确覆写某一步 | `03-modules/nop-task.md` |
 | 非下划线扩展层 | 中 | 中 | 在生成保留层补充业务逻辑/页面 | `02-core-guides/delta-customization.md`、`view-and-page-customization.md` |
 | 模块化组装 | 中 | 高 | 按需引入/裁剪业务域模块 | `01-repo-map/domain-module-pattern.md` |
 | BizModel/Processor 手写 | 高 | 极高 | 复杂业务逻辑，无法用模型表达 | `02-core-guides/domain-logic-and-ddd.md` |
@@ -188,7 +189,7 @@ assets/projects/manufacturing/quality/maintenance（扩展域）
 | 加持久化字段（所有客户都要） | 改 ORM 源模型 + 重新生成 | — |
 | 加客户专属字段（个别客户） | 扩展字段 EAV | Delta ORM 加列 |
 | 改字段属性（标签/必填/显隐） | 改 xmeta 或保留层 view | Delta view |
-| 改业务逻辑（审核流/计算规则） | Delta xbiz/beans | 保留层 BizModel |
+| 改业务逻辑（多步骤编排/审核流） | Delta task.xml覆写步骤 | Delta xbiz/beans 或 保留层 BizModel |
 | 新增业务表（领域独有） | nop-dyn 动态实体 | 新建扩展工程 + ORM |
 | 加计算/派生字段（不入库） | BizLoader | — |
 | 改页面布局/按钮 | 保留层 view | Delta view |

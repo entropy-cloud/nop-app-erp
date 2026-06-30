@@ -211,6 +211,44 @@ KPI 卡片值 == 对应实体的实时聚合(按期间/orgId/权限过滤)
 
 **涉及机制**:../dashboards.md、各域 state-machine.md、roles-and-permissions.md(行级权限)
 
+---
+
+## UC-MFG-12 生产成本差异分析
+
+**场景**:工单完工后，系统自动比较标准成本与实际成本的差异，按差异类型分解。
+
+**可验证断言**:
+```
+工单完工过账 → 触发差异计算
+材料用量差异 = (实际用量 - 标准用量) × 标准单价
+材料价格差异 = (实际单价 - 标准单价) × 实际用量
+人工效率差异 = (实际工时 - 标准工时) × 标准小时费率
+人工费率差异 = (实际小时费率 - 标准小时费率) × 实际工时
+差异记录逐条写入 ErpMfgCostVariance（每差异类型一条）
+差异报表可按工作中心/产品/期间/差异类型分组聚合
+```
+
+**涉及机制**:variance-analysis.md、bom-and-routing.md §成本计算
+
+---
+
+## UC-MFG-13 生产批次追溯
+
+**场景**:建立原料批次→生产批次→成品批次的完整追溯链，支持正反向追溯。
+
+**可验证断言**:
+```
+完工入库时：记录输入批次→输出批次关系到 ErpMfgBatchGenealogy
+前向追溯：给定 outputLotId → 查出所有 inputLotId
+反向追溯：给定 inputLotId → 查出所有 outputLotId
+多级追溯：递归上下游节点展示完整批次链
+召回报告：从问题批次出发识别所有受影响成品批次
+```
+
+**涉及机制**:batch-genealogy.md、inventory/lot-management.md、quality/inspection-integration.md
+
+---
+
 ## 用例与测试的衔接
 
 - 齐套/预留(U03/U05)→ 跨域测试(mfg→inventory 预留量)
