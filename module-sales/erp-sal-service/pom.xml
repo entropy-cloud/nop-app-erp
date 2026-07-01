@@ -42,6 +42,14 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- compile: 销售发票/收款过账接入财务过账引擎（凭证聚合根 Facade IErpFinVoucherBiz 位于 finance-dao；
+             IErpFinAcctDocProvider SPI 位于 finance-service）。sales→finance 单向无环
+             （finance 为 DAG 顶，不依赖 sales）。 -->
+        <dependency>
+            <artifactId>app-erp-finance-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!-- test-only: generateMove Bean 实现使测试可注入运行（app-erp-all 聚合时由 app 层提供）。 -->
         <dependency>
             <artifactId>app-erp-inventory-service</artifactId>

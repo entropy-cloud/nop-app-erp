@@ -24,6 +24,11 @@ public interface ErpSalConstants {
     int DELIVERY_STATUS_PARTIAL = 20;
     int DELIVERY_STATUS_DELIVERED = 30;
 
+    // 收款进度（派生）received-status：销售发票的收款进度，收款单的核销状态复用本字典（对齐采购域 paid-status）
+    int RECEIVED_STATUS_UNRECEIVED = 10;
+    int RECEIVED_STATUS_PARTIAL = 20;
+    int RECEIVED_STATUS_RECEIVED = 30;
+
     // 主数据启用状态 erp-md/active-status
     int PARTNER_STATUS_ACTIVE = 10;
 

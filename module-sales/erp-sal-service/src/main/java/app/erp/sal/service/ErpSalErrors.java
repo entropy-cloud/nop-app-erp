@@ -25,6 +25,17 @@ public interface ErpSalErrors {
     String ARG_VALID_TO = "validTo";
     String ARG_IS_ACCEPTED = "isAccepted";
 
+    // --- 发票作用域参数键（不复用出库单 ARG_DELIVERY_CODE / 「出库单…」文案） ---
+    String ARG_INVOICE_CODE = "invoiceCode";
+    String ARG_INVOICE_ID = "invoiceId";
+
+    // --- 收款作用域参数键 ---
+    String ARG_RECEIPT_CODE = "receiptCode";
+    String ARG_RECEIPT_ID = "receiptId";
+    String ARG_SETTLE_AMOUNT = "settleAmount";
+    String ARG_INVOICE_BALANCE = "invoiceBalance";
+    String ARG_RECEIPT_BALANCE = "receiptBalance";
+
     ErrorCode ERR_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.sal.illegal-status-transition",
             "出库单 {deliveryCode} 当前审核状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
             ARG_DELIVERY_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
@@ -95,4 +106,48 @@ public interface ErpSalErrors {
     ErrorCode ERR_QUOTATION_ALREADY_CONVERTED = ErrorCode.define("erp.err.sal.quotation-already-converted",
             "销售报价单 {quotationCode} 已存在未作废的转化订单，不可重复转化",
             ARG_QUOTATION_CODE);
+
+    // --- 发票作用域错误码（消息文案绑定发票参数，避免复用出库单文案产生误导） ---
+
+    ErrorCode ERR_INVOICE_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.sal.invoice-illegal-status-transition",
+            "销售发票 {invoiceCode} 当前审核状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_INVOICE_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+
+    ErrorCode ERR_INVOICE_ILLEGAL_DOC_STATUS_TRANSITION = ErrorCode.define("erp.err.sal.invoice-illegal-doc-status-transition",
+            "销售发票 {invoiceCode} 当前单据状态={currentDocStatus}，不允许执行该操作（期望状态={expectedDocStatus}）",
+            ARG_INVOICE_CODE, ARG_CURRENT_DOC_STATUS, ARG_EXPECTED_DOC_STATUS);
+
+    ErrorCode ERR_INVOICE_LINES_EMPTY = ErrorCode.define("erp.err.sal.invoice-lines-empty",
+            "销售发票 {invoiceCode} 无行明细，不可提交审核",
+            ARG_INVOICE_CODE);
+
+    // --- 收款作用域错误码 ---
+
+    ErrorCode ERR_RECEIPT_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.sal.receipt-illegal-status-transition",
+            "收款单 {receiptCode} 当前审核状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_RECEIPT_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+
+    ErrorCode ERR_RECEIPT_ILLEGAL_DOC_STATUS_TRANSITION = ErrorCode.define("erp.err.sal.receipt-illegal-doc-status-transition",
+            "收款单 {receiptCode} 当前单据状态={currentDocStatus}，不允许执行该操作（期望状态={expectedDocStatus}）",
+            ARG_RECEIPT_CODE, ARG_CURRENT_DOC_STATUS, ARG_EXPECTED_DOC_STATUS);
+
+    ErrorCode ERR_SETTLE_CUSTOMER_MISMATCH = ErrorCode.define("erp.err.sal.settle-customer-mismatch",
+            "收款单 {receiptCode} 与发票 {invoiceCode} 客户不一致，不可核销",
+            ARG_RECEIPT_CODE, ARG_INVOICE_CODE);
+
+    ErrorCode ERR_SETTLE_INVOICE_NOT_APPROVED = ErrorCode.define("erp.err.sal.settle-invoice-not-approved",
+            "发票 {invoiceCode} 未审核通过，不可核销（当前审核状态={currentStatus}）",
+            ARG_INVOICE_CODE, ARG_CURRENT_STATUS);
+
+    ErrorCode ERR_SETTLE_RECEIPT_NOT_APPROVED = ErrorCode.define("erp.err.sal.settle-receipt-not-approved",
+            "收款单 {receiptCode} 未审核通过，不可核销（当前审核状态={currentStatus}）",
+            ARG_RECEIPT_CODE, ARG_CURRENT_STATUS);
+
+    ErrorCode ERR_SETTLE_OVER_INVOICE_BALANCE = ErrorCode.define("erp.err.sal.settle-over-invoice-balance",
+            "核销金额 {settleAmount} 超过发票 {invoiceCode} 未收余额 {invoiceBalance}",
+            ARG_SETTLE_AMOUNT, ARG_INVOICE_CODE, ARG_INVOICE_BALANCE);
+
+    ErrorCode ERR_SETTLE_OVER_RECEIPT_BALANCE = ErrorCode.define("erp.err.sal.settle-over-receipt-balance",
+            "核销金额 {settleAmount} 超过收款单 {receiptCode} 未核销余额 {receiptBalance}",
+            ARG_SETTLE_AMOUNT, ARG_RECEIPT_CODE, ARG_RECEIPT_BALANCE);
 }

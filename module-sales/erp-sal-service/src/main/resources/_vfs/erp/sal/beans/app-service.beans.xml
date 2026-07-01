@@ -19,4 +19,24 @@
     <!-- 销售域服务（非 BizModel）：报价→订单域内转化组装器 -->
     <bean id="app.erp.sal.service.entity.QuotationToOrderConverter"
           class="app.erp.sal.service.entity.QuotationToOrderConverter"/>
+
+    <!-- 销售业财过账 Provider（注册为 Bean 后由 ErpFinAcctDocRegistry 自动聚合，处理 AR_INVOICE/RECEIPT） -->
+    <bean id="app.erp.sal.service.posting.SalAcctDocProvider"
+          class="app.erp.sal.service.posting.SalAcctDocProvider"/>
+
+    <!-- 销售过账执行器（跨域经 IErpFinVoucherBiz Facade，REQUIRES_NEW 由 Facade 承接，自身无 @Transactional） -->
+    <bean id="app.erp.sal.service.posting.SalPostingExecutor"
+          class="app.erp.sal.service.posting.SalPostingExecutor"/>
+
+    <!-- 销售发票过账派发器（APPROVED→AR_INVOICE 凭证 借应收/贷收入+销项税；失败吞异常保持终态 posted=false） -->
+    <bean id="app.erp.sal.service.posting.SalInvoicePostingDispatcher"
+          class="app.erp.sal.service.posting.SalInvoicePostingDispatcher"/>
+
+    <!-- 收款单过账派发器（APPROVED→RECEIPT 凭证 借银行存款/贷应收；失败吞异常保持终态 posted=false） -->
+    <bean id="app.erp.sal.service.posting.SalReceiptPostingDispatcher"
+          class="app.erp.sal.service.posting.SalReceiptPostingDispatcher"/>
+
+    <!-- 收款→发票域级核销器（ErpSalReceiptLine 多对多，回写 receivedStatus/receivedAmount/writtenOffStatus） -->
+    <bean id="app.erp.sal.service.entity.ReceiptSettler"
+          class="app.erp.sal.service.entity.ReceiptSettler"/>
 </beans>
