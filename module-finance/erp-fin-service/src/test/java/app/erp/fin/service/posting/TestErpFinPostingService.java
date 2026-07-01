@@ -240,6 +240,9 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         event.getBillData().put("AMOUNT", amount);
         event.getBillData().put("TAX", tax);
         event.getBillData().put("TOTAL", total);
+        // AP 发票生成应收应付辅助账（ErpFinArApItem）需要 partnerId 与业务日期
+        event.getBillData().put("partnerId", 1L);
+        event.getBillData().put("businessDate", voucherDate);
         return event;
     }
 

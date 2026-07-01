@@ -27,4 +27,14 @@
 
     <bean id="app.erp.fin.service.posting.ErpFinPostingProcessor"
           class="app.erp.fin.service.posting.ErpFinPostingProcessor"/>
+
+    <!-- 应收应付辅助账生成器（过账成功后同事务生成 ErpFinArApItem，被 ErpFinPostingProcessor 调用）。 -->
+    <bean id="app.erp.fin.service.posting.ErpFinArApItemGenerator"
+          class="app.erp.fin.service.posting.ErpFinArApItemGenerator"/>
+
+    <!-- 核销结算组件（核销单过账/红冲时回写辅助账 + 往来余额缓存，被 ErpFinReconciliationBizModel 调用）。 -->
+    <bean id="app.erp.fin.service.reconciliation.ReconciliationSettler"
+          class="app.erp.fin.service.reconciliation.ReconciliationSettler"/>
+    <bean id="app.erp.fin.service.reconciliation.PartnerBalanceUpdater"
+          class="app.erp.fin.service.reconciliation.PartnerBalanceUpdater"/>
 </beans>

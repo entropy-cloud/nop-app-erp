@@ -75,6 +75,9 @@ public class ErpFinPostingProcessor {
     @Inject
     IBizObjectManager bizObjectManager;
 
+    @Inject
+    ErpFinArApItemGenerator arApItemGenerator;
+
     /**
      * 正向过账编排。幂等命中（源单已过账）返回 {@code null}。
      */
@@ -94,7 +97,10 @@ public class ErpFinPostingProcessor {
         BigDecimal[] totals = balanceTotals(facts, context);
         assertBalanced(totals[0], totals[1], context);
 
-        return persistVoucher(event, ctx, facts, totals[0], totals[1], false, null, POSTING_TYPE_NORMAL, context);
+        Long voucherId = persistVoucher(event, ctx, facts, totals[0], totals[1], false, null, POSTING_TYPE_NORMAL, context);
+        // 凭证落库成功后、同事务内生成应收应付辅助账（强一致：凭证 + 辅助账同生共死）。
+        arApItemGenerator.generate(event, context);
+        return voucherId;
     }
 
     /**
@@ -115,8 +121,11 @@ public class ErpFinPostingProcessor {
 
         ReversalDraft draft = buildReversalDraft(originalLines, businessType, context);
 
-        return persistVoucher(null, ctx, draft.facts, draft.totalDebit, draft.totalCredit, true,
+        Long voucherId = persistVoucher(null, ctx, draft.facts, draft.totalDebit, draft.totalCredit, true,
                 original.getId(), POSTING_TYPE_REVERSAL, billHeadCode, businessType, context);
+        // 红冲凭证落库后、同事务内取消原辅助账项（对齐冲销语义）。
+        arApItemGenerator.cancelOnReverse(billHeadCode, businessType, context);
+        return voucherId;
     }
 
     // ---------- 步骤（protected + IServiceContext 末参，供派生覆盖） ----------
