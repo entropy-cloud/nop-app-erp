@@ -464,4 +464,26 @@
         }
 
 
+        private Map<String,Object> _material;
+
+        public Map<String,Object> getMaterial(){
+            return _material;
+        }
+
+        public void setMaterial(Map<String,Object> value){
+            this._material = value;
+        }
+
+
+        private Map<String,Object> _supplier;
+
+        public Map<String,Object> getSupplier(){
+            return _supplier;
+        }
+
+        public void setSupplier(Map<String,Object> value){
+            this._supplier = value;
+        }
+
+
     }

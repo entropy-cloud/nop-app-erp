@@ -47,5 +47,6 @@
   "shipper": null,
   "lines": null,
   "parcels": null,
-  "logs": null
+  "logs": null,
+  "freightCurrency": null
 }

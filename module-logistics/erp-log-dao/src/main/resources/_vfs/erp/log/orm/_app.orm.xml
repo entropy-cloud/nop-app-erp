@@ -127,21 +127,20 @@
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
             <relations>
-                <to-one name="partner" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
-                        biz:moduleId="erp/md" i18n-en:displayName="Partner" ref-i18n-en:displayName="Carrier">
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
+                        i18n-en:displayName="Partner">
                     <join>
                         <on leftProp="partnerId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org" ref-i18n-en:displayName="Carrier">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-many cascadeDelete="true" name="configs" refEntityName="app.erp.log.dao.entity.ErpLogCarrierConfig"
-                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Configs"
-                         ref-i18n-en:displayName="Carrier">
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Configs" ext:estRows="5">
                     <join>
                         <on leftProp="id" rightProp="carrierId"/>
                     </join>
@@ -204,14 +203,13 @@
             </columns>
             <relations>
                 <to-one name="carrier" refEntityName="app.erp.log.dao.entity.ErpLogCarrier" tagSet="pub"
-                        i18n-en:displayName="Carrier" ref-i18n-en:displayName="Carrier Config">
+                        i18n-en:displayName="Carrier">
                     <join>
                         <on leftProp="carrierId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
-                        ref-i18n-en:displayName="Carrier Config">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -313,51 +311,52 @@
             </columns>
             <relations>
                 <to-one name="carrier" refEntityName="app.erp.log.dao.entity.ErpLogCarrier" tagSet="pub"
-                        i18n-en:displayName="Carrier" ref-i18n-en:displayName="Shipment">
+                        i18n-en:displayName="Carrier">
                     <join>
                         <on leftProp="carrierId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="carrierConfig" refEntityName="app.erp.log.dao.entity.ErpLogCarrierConfig" tagSet="pub"
-                        i18n-en:displayName="Carrier Config" ref-i18n-en:displayName="Shipment">
+                        i18n-en:displayName="Carrier Config">
                     <join>
                         <on leftProp="carrierConfigId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org" ref-i18n-en:displayName="Shipment">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="shipper" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdEmployee"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Shipper"
-                        ref-i18n-en:displayName="Shipment">
+                <to-one name="shipper" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"
+                        i18n-en:displayName="Shipper">
                     <join>
                         <on leftProp="shipperId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-many cascadeDelete="true" name="lines" refEntityName="app.erp.log.dao.entity.ErpLogShipmentLine"
-                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines"
-                         ref-i18n-en:displayName="Shipment">
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines" ext:estRows="20">
                     <join>
                         <on leftProp="id" rightProp="shipmentId"/>
                     </join>
                 </to-many>
                 <to-many cascadeDelete="true" name="parcels" refEntityName="app.erp.log.dao.entity.ErpLogShipmentParcel"
-                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Parcels"
-                         ref-i18n-en:displayName="Shipment">
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Parcels" ext:estRows="5">
                     <join>
                         <on leftProp="id" rightProp="shipmentId"/>
                     </join>
                 </to-many>
                 <to-many cascadeDelete="true" name="logs" refEntityName="app.erp.log.dao.entity.ErpLogShipmentLog"
-                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Logs"
-                         ref-i18n-en:displayName="Shipment">
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Logs" ext:estRows="20">
                     <join>
                         <on leftProp="id" rightProp="shipmentId"/>
                     </join>
                 </to-many>
+                <to-one name="freightCurrency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
+                    <join>
+                        <on leftProp="freightCurrencyId" rightProp="id"/>
+                    </join>
+                </to-one>
             </relations>
         </entity>
         <entity className="app.erp.log.dao.entity.ErpLogShipmentLine" createTimeProp="createTime"
@@ -401,14 +400,13 @@
             </columns>
             <relations>
                 <to-one name="shipment" refEntityName="app.erp.log.dao.entity.ErpLogShipment" tagSet="pub"
-                        i18n-en:displayName="Shipment" ref-i18n-en:displayName="Shipment Line">
+                        i18n-en:displayName="Shipment">
                     <join>
                         <on leftProp="shipmentId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="material" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdMaterial"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Material"
-                        ref-i18n-en:displayName="Shipment Line">
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
+                        i18n-en:displayName="Material">
                     <join>
                         <on leftProp="materialId" rightProp="id"/>
                     </join>
@@ -465,7 +463,7 @@
             </columns>
             <relations>
                 <to-one name="shipment" refEntityName="app.erp.log.dao.entity.ErpLogShipment" tagSet="pub"
-                        i18n-en:displayName="Shipment" ref-i18n-en:displayName="Parcel">
+                        i18n-en:displayName="Shipment">
                     <join>
                         <on leftProp="shipmentId" rightProp="id"/>
                     </join>
@@ -524,14 +522,13 @@
             </columns>
             <relations>
                 <to-one name="shipment" refEntityName="app.erp.log.dao.entity.ErpLogShipment" tagSet="pub"
-                        i18n-en:displayName="Shipment" ref-i18n-en:displayName="Shipment Log">
+                        i18n-en:displayName="Shipment">
                     <join>
                         <on leftProp="shipmentId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
-                        ref-i18n-en:displayName="Shipment Log">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -589,15 +586,14 @@
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
             <relations>
-                <to-one name="partner" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
-                        biz:moduleId="erp/md" i18n-en:displayName="Partner" ref-i18n-en:displayName="Delivery Window">
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
+                        i18n-en:displayName="Partner">
                     <join>
                         <on leftProp="partnerId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
-                        ref-i18n-en:displayName="Delivery Window">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -634,6 +630,18 @@
             <columns>
                 <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"
                         stdSqlType="BIGINT" tagSet="seq-default"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdCurrency" displayName="币种"
+                name="app.erp.md.dao.entity.ErpMdCurrency" notGenCode="true" tableName="erp_md_currency"
+                biz:moduleId="erp/md">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="ID"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Code"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Name"/>
             </columns>
         </entity>
     </entities>

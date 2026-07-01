@@ -46,7 +46,7 @@
                 <col id="mitigation" sortable="true"/>
 
                 <!--责任人-->
-                <col id="ownerId" ui:number="true" sortable="true"/>
+                <col id="ownerId" sortable="true"/>
 
                 <!--状态-->
                 <col id="status" mandatory="true" ui:number="true" sortable="true"/>

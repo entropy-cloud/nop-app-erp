@@ -150,8 +150,8 @@
                 <column name="approveStatus" displayName="审核状态" ext:dict="erp-qa/approve-status" mandatory="true" code="APPROVE_STATUS" propId="20" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Approve Status' />
                 <column name="posted" displayName="已过账(质量结论已回写业务单据)" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="21" stdDataType="boolean" i18n-en:displayName='Posted' />
                 <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="22" stdDataType="datetime" i18n-en:displayName='Posted At' />
-                <column name="postedBy" displayName="过账人" stdSqlType="BIGINT" code="POSTED_BY" propId="23" stdDataType="long" i18n-en:displayName='Posted By' />
-                <column name="approvedBy" displayName="审核人" stdSqlType="BIGINT" code="APPROVED_BY" propId="24" stdDataType="long" i18n-en:displayName='Approved By' />
+                <column name="postedBy" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="23" stdDataType="string" i18n-en:displayName='Posted By' />
+                <column name="approvedBy" displayName="审核人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="24" stdDataType="string" i18n-en:displayName='Approved By' />
                 <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="25" stdDataType="datetime" i18n-en:displayName='Approved At' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="26" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="27" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
@@ -162,13 +162,13 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="32" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material' ref-i18n-en:displayName='Inspection'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
-                <to-one name="template" refEntityName="app.erp.qa.dao.entity.ErpQaInspectionTemplate" tagSet="pub" i18n-en:displayName='Template' ref-i18n-en:displayName='Inspection'><join><on leftProp="templateId" rightProp="id"/></join></to-one>
-                <to-one name="supplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Supplier' ref-i18n-en:displayName='Inspection'><join><on leftProp="supplierId" rightProp="id"/></join></to-one>
-                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub" i18n-en:displayName='Warehouse' ref-i18n-en:displayName='Inspection'><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
-                <to-one name="inspector" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub" i18n-en:displayName='Inspector' ref-i18n-en:displayName='Inspection'><join><on leftProp="inspectorId" rightProp="id"/></join></to-one>
-                <to-many name="lines" refEntityName="app.erp.qa.dao.entity.ErpQaInspectionLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ref-i18n-en:displayName='Inspection'><join><on leftProp="id" rightProp="inspectionId"/></join></to-many>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='Inspection'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
+                <to-one name="template" refEntityName="app.erp.qa.dao.entity.ErpQaInspectionTemplate" tagSet="pub" i18n-en:displayName='Template'><join><on leftProp="templateId" rightProp="id"/></join></to-one>
+                <to-one name="supplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Supplier'><join><on leftProp="supplierId" rightProp="id"/></join></to-one>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub" i18n-en:displayName='Warehouse'><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
+                <to-one name="inspector" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub" i18n-en:displayName='Inspector'><join><on leftProp="inspectorId" rightProp="id"/></join></to-one>
+                <to-many name="lines" refEntityName="app.erp.qa.dao.entity.ErpQaInspectionLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="30"><join><on leftProp="id" rightProp="inspectionId"/></join></to-many>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -196,7 +196,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="inspection" refEntityName="app.erp.qa.dao.entity.ErpQaInspection" tagSet="pub" i18n-en:displayName='Inspection' ref-i18n-en:displayName='Inspection Line'><join><on leftProp="inspectionId" rightProp="id"/></join></to-one>
+                <to-one name="inspection" refEntityName="app.erp.qa.dao.entity.ErpQaInspection" tagSet="pub" i18n-en:displayName='Inspection'><join><on leftProp="inspectionId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -220,7 +220,10 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="13" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-many name="lines" refEntityName="app.erp.qa.dao.entity.ErpQaInspectionTemplateLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ref-i18n-en:displayName='Inspection Template'><join><on leftProp="id" rightProp="templateId"/></join></to-many>
+                <to-many name="lines" refEntityName="app.erp.qa.dao.entity.ErpQaInspectionTemplateLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="30"><join><on leftProp="id" rightProp="templateId"/></join></to-many>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
+                    <join><on leftProp="materialId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -247,7 +250,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="template" refEntityName="app.erp.qa.dao.entity.ErpQaInspectionTemplate" tagSet="pub" i18n-en:displayName='Template' ref-i18n-en:displayName='Inspection Template Line'><join><on leftProp="templateId" rightProp="id"/></join></to-one>
+                <to-one name="template" refEntityName="app.erp.qa.dao.entity.ErpQaInspectionTemplate" tagSet="pub" i18n-en:displayName='Template'><join><on leftProp="templateId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -286,8 +289,14 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="29" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-many name="actions" refEntityName="app.erp.qa.dao.entity.ErpQaAction" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Actions' ref-i18n-en:displayName='Non-Conformance Report'><join><on leftProp="id" rightProp="ncrId"/></join></to-many>
-                <to-one name="inspection" refEntityName="app.erp.qa.dao.entity.ErpQaInspection" tagSet="pub" i18n-en:displayName='Inspection' ref-i18n-en:displayName='Non-Conformance Report'><join><on leftProp="inspectionId" rightProp="id"/></join></to-one>
+                <to-many name="actions" refEntityName="app.erp.qa.dao.entity.ErpQaAction" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Actions' ext:estRows="10"><join><on leftProp="id" rightProp="ncrId"/></join></to-many>
+                <to-one name="inspection" refEntityName="app.erp.qa.dao.entity.ErpQaInspection" tagSet="pub" i18n-en:displayName='Inspection'><join><on leftProp="inspectionId" rightProp="id"/></join></to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
+                    <join><on leftProp="materialId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="supplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub">
+                    <join><on leftProp="supplierId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
         
@@ -316,7 +325,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="ncr" refEntityName="app.erp.qa.dao.entity.ErpQaNonConformance" tagSet="pub" i18n-en:displayName='Ncr' ref-i18n-en:displayName='Corrective Action'><join><on leftProp="ncrId" rightProp="id"/></join></to-one>
+                <to-one name="ncr" refEntityName="app.erp.qa.dao.entity.ErpQaNonConformance" tagSet="pub" i18n-en:displayName='Ncr'><join><on leftProp="ncrId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -334,7 +343,7 @@
                 <column name="severity" displayName="影响严重性" stdSqlType="INTEGER" mandatory="true" code="SEVERITY" propId="7" stdDataType="int" i18n-en:displayName='Severity' />
                 <column name="riskScore" displayName="风险评分" stdSqlType="INTEGER" code="RISK_SCORE" propId="8" stdDataType="int" i18n-en:displayName='Risk Score' />
                 <column name="mitigation" displayName="缓解措施" stdSqlType="VARCHAR" precision="2000" code="MITIGATION" propId="9" stdDataType="string" i18n-en:displayName='Mitigation' />
-                <column name="ownerId" displayName="责任人" stdSqlType="BIGINT" code="OWNER_ID" propId="10" stdDataType="long" i18n-en:displayName='Owner' />
+                <column name="ownerId" stdDomain="userId" displayName="责任人" stdSqlType="VARCHAR" precision="36" code="OWNER_ID" propId="10" stdDataType="string" i18n-en:displayName='Owner' />
                 <column name="status" displayName="状态" ext:dict="erp-qa/risk-status" mandatory="true" code="STATUS" propId="11" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="13" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
@@ -344,6 +353,9 @@
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="17" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
+        
+            <relations>
+            </relations>
         </entity>
 
         <!-- 质量目标 -->
@@ -371,7 +383,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="responsiblePerson" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub" i18n-en:displayName='Responsible Person' ref-i18n-en:displayName='Quality Goal'><join><on leftProp="responsiblePersonId" rightProp="id"/></join></to-one>
+                <to-one name="responsiblePerson" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub" i18n-en:displayName='Responsible Person'><join><on leftProp="responsiblePersonId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -400,6 +412,12 @@
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="18" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="19" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
+        
+            <relations>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join><on leftProp="orgId" rightProp="id"/></join>
+                </to-one>
+            </relations>
         </entity>
 
         <!-- 抽样方案（AQL） -->
@@ -456,7 +474,10 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="22" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="calibratedByEmployee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub" i18n-en:displayName='Calibrated By Employee' ref-i18n-en:displayName='Gauge Calibration'><join><on leftProp="calibratedBy" rightProp="id"/></join></to-one>
+                <to-one name="calibratedByEmployee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub" i18n-en:displayName='Calibrated By Employee'><join><on leftProp="calibratedBy" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join><on leftProp="orgId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 

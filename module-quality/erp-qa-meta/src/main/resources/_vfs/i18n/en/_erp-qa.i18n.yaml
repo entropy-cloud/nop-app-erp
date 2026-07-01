@@ -62,6 +62,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       calibratedByEmployee: Calibrated By Employee
+      org: null
     ErpQaInspection:
       id: ID
       code: Code
@@ -142,6 +143,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       lines: Lines
+      material: null
     ErpQaInspectionTemplateLine:
       id: ID
       templateId: Template
@@ -194,6 +196,8 @@ prop:
       updateTime: Update Time
       actions: Actions
       inspection: Inspection
+      material: null
+      supplier: null
     ErpQaQualityGoal:
       id: ID
       code: Code
@@ -238,6 +242,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      org: null
     ErpQaRiskRegister:
       id: ID
       code: Code

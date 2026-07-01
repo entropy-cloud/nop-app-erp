@@ -143,6 +143,12 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_inspection = "inspection";
     
+    /* relation:  */
+    public static final String PROP_NAME_material = "material";
+    
+    /* relation:  */
+    public static final String PROP_NAME_supplier = "supplier";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1541,6 +1547,52 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_inspection, refEntity,()->{
            
                            this.setInspectionId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdMaterial getMaterial(){
+       return (app.erp.md.dao.entity.ErpMdMaterial)internalGetRefEntity(PROP_NAME_material);
+    }
+
+    public final void setMaterial(app.erp.md.dao.entity.ErpMdMaterial refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setMaterialId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_material, refEntity,()->{
+           
+                           this.setMaterialId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdPartner getSupplier(){
+       return (app.erp.md.dao.entity.ErpMdPartner)internalGetRefEntity(PROP_NAME_supplier);
+    }
+
+    public final void setSupplier(app.erp.md.dao.entity.ErpMdPartner refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setSupplierId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_supplier, refEntity,()->{
+           
+                           this.setSupplierId(refEntity.getId());
                        
            });
            }

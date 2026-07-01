@@ -98,6 +98,12 @@ public class _ErpLogCarrier extends DynamicOrmEntity{
 
     
     /* relation:  */
+    public static final String PROP_NAME_partner = "partner";
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
+    /* relation:  */
     public static final String PROP_NAME_configs = "configs";
     
 
@@ -1021,6 +1027,52 @@ public class _ErpLogCarrier extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdPartner getPartner(){
+       return (app.erp.md.dao.entity.ErpMdPartner)internalGetRefEntity(PROP_NAME_partner);
+    }
+
+    public final void setPartner(app.erp.md.dao.entity.ErpMdPartner refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setPartnerId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_partner, refEntity,()->{
+           
+                           this.setPartnerId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
     private final OrmEntitySet<app.erp.log.dao.entity.ErpLogCarrierConfig> _configs = new OrmEntitySet<>(this, PROP_NAME_configs,
         null, null,app.erp.log.dao.entity.ErpLogCarrierConfig.class);
 

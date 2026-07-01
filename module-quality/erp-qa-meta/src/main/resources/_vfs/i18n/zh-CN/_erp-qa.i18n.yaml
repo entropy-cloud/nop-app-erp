@@ -52,6 +52,7 @@ prop:
       instrumentName: 量具/设备名称
       measuredValue: 测量值
       nextCalibrationDate: 下次校准日期
+      org: null
       orgId: 业务组织
       remark: 备注
       result: 校准结果
@@ -136,6 +137,7 @@ prop:
       inspectionType_label: 检验类型
       isActive: 是否启用
       lines: null
+      material: null
       materialId: 适用物料
       name: 名称
       remark: 备注
@@ -173,6 +175,7 @@ prop:
       id: ID
       inspection: null
       inspectionId: 质检单ID
+      material: null
       materialId: 物料
       measuredValue: 实测值
       ncrDate: 报告日期
@@ -190,6 +193,7 @@ prop:
       specMin: 规格下限
       status: 状态
       status_label: 状态
+      supplier: null
       supplierId: 供应商
       updateTime: 修改时间
       updatedBy: 修改人
@@ -227,6 +231,7 @@ prop:
       docStatus: 单据状态
       docStatus_label: 单据状态
       id: ID
+      org: null
       orgId: 业务组织
       participants: 参与人员
       relatedBillCode: 关联单据号

@@ -139,16 +139,16 @@
         }
 
 
-        private Long _ownerId;
+        private String _ownerId;
 
     
         @PropMeta(propId=10)
     
-        public Long getOwnerId(){
+        public String getOwnerId(){
             return _ownerId;
         }
 
-        public void setOwnerId(Long value){
+        public void setOwnerId(String value){
             this._ownerId = value;
         }
 

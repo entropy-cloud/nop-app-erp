@@ -36,7 +36,7 @@
             <schema type="java.lang.Integer" dict="erp-qa/inspection-type"/>
         </prop>
         <prop name="materialId" displayName="适用物料" propId="5" i18n-en:displayName="Material" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="material">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="isActive" displayName="是否启用" propId="6" i18n-en:displayName="Active" mandatory="true"
@@ -77,6 +77,11 @@
             <schema>
                 <item bizObjName="ErpQaInspectionTemplateLine"/>
             </schema>
+        </prop>
+        <prop name="material" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="materialId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpMdMaterial"/>
         </prop>
     </props>
 </meta>

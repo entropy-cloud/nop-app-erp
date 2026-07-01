@@ -31,5 +31,7 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "actions": null,
-  "inspection": null
+  "inspection": null,
+  "material": null,
+  "supplier": null
 }

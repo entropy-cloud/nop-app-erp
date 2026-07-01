@@ -205,32 +205,31 @@
             </columns>
             <relations>
                 <to-one name="category" refEntityName="app.erp.md.dao.entity.ErpMdMaterialCategory" tagSet="pub"
-                        i18n-en:displayName="Category" ref-i18n-en:displayName="Material">
+                        i18n-en:displayName="Category">
                     <join>
                         <on leftProp="categoryId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"
-                        i18n-en:displayName="Uo M" ref-i18n-en:displayName="Material">
+                        i18n-en:displayName="Uo M">
                     <join>
                         <on leftProp="uoMId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="defaultWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"
-                        i18n-en:displayName="Default Warehouse" ref-i18n-en:displayName="Material">
+                        i18n-en:displayName="Default Warehouse">
                     <join>
                         <on leftProp="defaultWarehouseId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="defaultTaxRate" refEntityName="app.erp.md.dao.entity.ErpMdTaxRate" tagSet="pub"
-                        i18n-en:displayName="Default Tax Rate" ref-i18n-en:displayName="Material">
+                        i18n-en:displayName="Default Tax Rate">
                     <join>
                         <on leftProp="defaultTaxRateId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-many cascadeDelete="true" name="skus" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku"
-                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Skus"
-                         ref-i18n-en:displayName="Material">
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Skus" ext:estRows="10">
                     <join>
                         <on leftProp="id" rightProp="materialId"/>
                     </join>
@@ -275,14 +274,13 @@
             </columns>
             <relations>
                 <to-one name="parent" refEntityName="app.erp.md.dao.entity.ErpMdMaterialCategory" tagSet="pub"
-                        i18n-en:displayName="Parent" ref-i18n-en:displayName="Material Category">
+                        i18n-en:displayName="Parent">
                     <join>
                         <on leftProp="parentId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-many name="children" refEntityName="app.erp.md.dao.entity.ErpMdMaterialCategory"
-                         tagSet="pub,insertable,updatable" i18n-en:displayName="Children"
-                         ref-i18n-en:displayName="Material Category">
+                         tagSet="pub,insertable,updatable" i18n-en:displayName="Children" ext:estRows="10">
                     <join>
                         <on leftProp="id" rightProp="parentId"/>
                     </join>
@@ -338,19 +336,19 @@
             </columns>
             <relations>
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
-                        i18n-en:displayName="Material" ref-i18n-en:displayName="Material SKU">
+                        i18n-en:displayName="Material">
                     <join>
                         <on leftProp="materialId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"
-                        i18n-en:displayName="Uo M" ref-i18n-en:displayName="Material SKU">
+                        i18n-en:displayName="Uo M">
                     <join>
                         <on leftProp="uoMId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="taxRate" refEntityName="app.erp.md.dao.entity.ErpMdTaxRate" tagSet="pub"
-                        i18n-en:displayName="Tax Rate" ref-i18n-en:displayName="Material SKU">
+                        i18n-en:displayName="Tax Rate">
                     <join>
                         <on leftProp="taxRateId" rightProp="id"/>
                     </join>
@@ -415,21 +413,21 @@
             <relations>
                 <to-many cascadeDelete="true" name="addresses" refEntityName="app.erp.md.dao.entity.ErpMdPartnerAddress"
                          tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Addresses"
-                         ref-i18n-en:displayName="Business Partner">
+                         ext:estRows="5">
                     <join>
                         <on leftProp="id" rightProp="partnerId"/>
                     </join>
                 </to-many>
                 <to-many cascadeDelete="true" name="contacts" refEntityName="app.erp.md.dao.entity.ErpMdPartnerContact"
                          tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Contacts"
-                         ref-i18n-en:displayName="Business Partner">
+                         ext:estRows="10">
                     <join>
                         <on leftProp="id" rightProp="partnerId"/>
                     </join>
                 </to-many>
                 <to-many cascadeDelete="true" name="bankAccounts" refEntityName="app.erp.md.dao.entity.ErpMdBankAccount"
                          tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Bank Accounts"
-                         ref-i18n-en:displayName="Business Partner">
+                         ext:estRows="5">
                     <join>
                         <on leftProp="id" rightProp="partnerId"/>
                     </join>
@@ -476,7 +474,7 @@
             </columns>
             <relations>
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
-                        i18n-en:displayName="Partner" ref-i18n-en:displayName="Partner Address">
+                        i18n-en:displayName="Partner">
                     <join>
                         <on leftProp="partnerId" rightProp="id"/>
                     </join>
@@ -524,7 +522,7 @@
             </columns>
             <relations>
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
-                        i18n-en:displayName="Partner" ref-i18n-en:displayName="Partner Contact">
+                        i18n-en:displayName="Partner">
                     <join>
                         <on leftProp="partnerId" rightProp="id"/>
                     </join>
@@ -576,20 +574,20 @@
             </columns>
             <relations>
                 <to-one name="organization" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Organization" ref-i18n-en:displayName="Warehouse">
+                        i18n-en:displayName="Organization">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="manager" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"
-                        i18n-en:displayName="Manager" ref-i18n-en:displayName="Warehouse">
+                        i18n-en:displayName="Manager">
                     <join>
                         <on leftProp="managerId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-many cascadeDelete="true" name="locations" refEntityName="app.erp.md.dao.entity.ErpMdLocation"
                          tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Locations"
-                         ref-i18n-en:displayName="Warehouse">
+                         ext:estRows="100">
                     <join>
                         <on leftProp="id" rightProp="warehouseId"/>
                     </join>
@@ -632,13 +630,13 @@
             </columns>
             <relations>
                 <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"
-                        i18n-en:displayName="Warehouse" ref-i18n-en:displayName="Location">
+                        i18n-en:displayName="Warehouse">
                     <join>
                         <on leftProp="warehouseId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="parent" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub"
-                        i18n-en:displayName="Parent" ref-i18n-en:displayName="Location">
+                        i18n-en:displayName="Parent">
                     <join>
                         <on leftProp="parentId" rightProp="id"/>
                     </join>
@@ -714,19 +712,19 @@
             </columns>
             <relations>
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
-                        i18n-en:displayName="Material" ref-i18n-en:displayName="UoM Conversion">
+                        i18n-en:displayName="Material">
                     <join>
                         <on leftProp="materialId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="fromUoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"
-                        i18n-en:displayName="From Uo M" ref-i18n-en:displayName="UoM Conversion">
+                        i18n-en:displayName="From Uo M">
                     <join>
                         <on leftProp="fromUoMId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="toUoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"
-                        i18n-en:displayName="To Uo M" ref-i18n-en:displayName="UoM Conversion">
+                        i18n-en:displayName="To Uo M">
                     <join>
                         <on leftProp="toUoMId" rightProp="id"/>
                     </join>
@@ -808,13 +806,13 @@
             </columns>
             <relations>
                 <to-one name="fromCurrency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
-                        i18n-en:displayName="From Currency" ref-i18n-en:displayName="Exchange Rate">
+                        i18n-en:displayName="From Currency">
                     <join>
                         <on leftProp="fromCurrencyId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="toCurrency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
-                        i18n-en:displayName="To Currency" ref-i18n-en:displayName="Exchange Rate">
+                        i18n-en:displayName="To Currency">
                     <join>
                         <on leftProp="toCurrencyId" rightProp="id"/>
                     </join>
@@ -943,7 +941,7 @@
             </columns>
             <relations>
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
-                        i18n-en:displayName="Partner" ref-i18n-en:displayName="Bank Account">
+                        i18n-en:displayName="Partner">
                     <join>
                         <on leftProp="partnerId" rightProp="id"/>
                     </join>
@@ -992,13 +990,13 @@
             </columns>
             <relations>
                 <to-one name="organization" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Organization" ref-i18n-en:displayName="Employee">
+                        i18n-en:displayName="Organization">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
-                        i18n-en:displayName="Partner" ref-i18n-en:displayName="Employee">
+                        i18n-en:displayName="Partner">
                     <join>
                         <on leftProp="partnerId" rightProp="id"/>
                     </join>
@@ -1072,20 +1070,19 @@
             </columns>
             <relations>
                 <to-one name="parent" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"
-                        i18n-en:displayName="Parent" ref-i18n-en:displayName="Accounting Subject">
+                        i18n-en:displayName="Parent">
                     <join>
                         <on leftProp="parentId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
-                        i18n-en:displayName="Currency" ref-i18n-en:displayName="Accounting Subject">
+                        i18n-en:displayName="Currency">
                     <join>
                         <on leftProp="currencyId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-many name="children" refEntityName="app.erp.md.dao.entity.ErpMdSubject"
-                         tagSet="pub,insertable,updatable" i18n-en:displayName="Children"
-                         ref-i18n-en:displayName="Accounting Subject">
+                         tagSet="pub,insertable,updatable" i18n-en:displayName="Children" ext:estRows="10">
                     <join>
                         <on leftProp="id" rightProp="parentId"/>
                     </join>
@@ -1136,13 +1133,13 @@
             </columns>
             <relations>
                 <to-one name="organization" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Organization" ref-i18n-en:displayName="Accounting Schema">
+                        i18n-en:displayName="Organization">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="functionalCurrency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
-                        i18n-en:displayName="Functional Currency" ref-i18n-en:displayName="Accounting Schema">
+                        i18n-en:displayName="Functional Currency">
                     <join>
                         <on leftProp="functionalCurrencyId" rightProp="id"/>
                     </join>
@@ -1150,7 +1147,7 @@
                 <to-many cascadeDelete="true" name="coaMappings"
                          refEntityName="app.erp.md.dao.entity.ErpMdAcctSchemaCoa"
                          tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Coa Mappings"
-                         ref-i18n-en:displayName="Accounting Schema">
+                         ext:estRows="300">
                     <join>
                         <on leftProp="id" rightProp="acctSchemaId"/>
                     </join>
@@ -1190,7 +1187,7 @@
             </columns>
             <relations>
                 <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub"
-                        i18n-en:displayName="Acct Schema" ref-i18n-en:displayName="Chart of Accounts">
+                        i18n-en:displayName="Acct Schema">
                     <join>
                         <on leftProp="acctSchemaId" rightProp="id"/>
                     </join>
@@ -1235,20 +1232,19 @@
             </columns>
             <relations>
                 <to-one name="parent" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Parent" ref-i18n-en:displayName="Organization">
+                        i18n-en:displayName="Parent">
                     <join>
                         <on leftProp="parentId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="functionalCurrency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
-                        i18n-en:displayName="Functional Currency" ref-i18n-en:displayName="Organization">
+                        i18n-en:displayName="Functional Currency">
                     <join>
                         <on leftProp="functionalCurrencyId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-many name="children" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                         tagSet="pub,insertable,updatable" i18n-en:displayName="Children"
-                         ref-i18n-en:displayName="Organization">
+                         tagSet="pub,insertable,updatable" i18n-en:displayName="Children" ext:estRows="10">
                     <join>
                         <on leftProp="id" rightProp="parentId"/>
                     </join>
@@ -1297,26 +1293,25 @@
             </columns>
             <relations>
                 <to-one name="organization" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Organization" ref-i18n-en:displayName="Cost Center">
+                        i18n-en:displayName="Organization">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="manager" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"
-                        i18n-en:displayName="Manager" ref-i18n-en:displayName="Cost Center">
+                        i18n-en:displayName="Manager">
                     <join>
                         <on leftProp="managerId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="parent" refEntityName="app.erp.md.dao.entity.ErpMdCostCenter" tagSet="pub"
-                        i18n-en:displayName="Parent" ref-i18n-en:displayName="Cost Center">
+                        i18n-en:displayName="Parent">
                     <join>
                         <on leftProp="parentId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-many name="children" refEntityName="app.erp.md.dao.entity.ErpMdCostCenter"
-                         tagSet="pub,insertable,updatable" i18n-en:displayName="Children"
-                         ref-i18n-en:displayName="Cost Center">
+                         tagSet="pub,insertable,updatable" i18n-en:displayName="Children" ext:estRows="10">
                     <join>
                         <on leftProp="id" rightProp="parentId"/>
                     </join>
@@ -1357,7 +1352,7 @@
             </columns>
             <relations>
                 <to-one name="organization" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Organization" ref-i18n-en:displayName="System Config">
+                        i18n-en:displayName="Organization">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>

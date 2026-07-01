@@ -14,6 +14,13 @@ CREATE TABLE erp_md_md_employee(
   constraint PK_erp_md_md_employee primary key (ID)
 );
 
+CREATE TABLE erp_md_currency(
+  ID NUMBER(20)  ,
+  CODE VARCHAR2(50)  ,
+  NAME VARCHAR2(200)  ,
+  constraint PK_erp_md_currency primary key (ID)
+);
+
 CREATE TABLE erp_md_md_material(
   ID NUMBER(20) NOT NULL ,
   constraint PK_erp_md_md_material primary key (ID)
@@ -200,6 +207,8 @@ CREATE TABLE erp_log_shipment_log(
       COMMENT ON TABLE erp_md_md_organization IS 'ErpMdOrganization';
                 
       COMMENT ON TABLE erp_md_md_employee IS 'ErpMdEmployee';
+                
+      COMMENT ON TABLE erp_md_currency IS '币种';
                 
       COMMENT ON TABLE erp_md_md_material IS 'ErpMdMaterial';
                 

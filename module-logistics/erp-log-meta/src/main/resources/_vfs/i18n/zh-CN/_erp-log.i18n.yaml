@@ -89,6 +89,7 @@ prop:
       delVersion: 逻辑删除版本
       estimatedDeliveryDate: 预计送达日期
       freightAmount: 运费
+      freightCurrency: null
       freightCurrencyId: 运费币种
       freightSettlementStatus: 运费结算状态
       freightSettlementStatus_label: 运费结算状态

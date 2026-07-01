@@ -64,7 +64,7 @@
             <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
         </prop>
         <prop name="freightCurrencyId" displayName="运费币种" propId="12" i18n-en:displayName="Currency" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="freightCurrency">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="freightTerms" displayName="运费条款" propId="13" i18n-en:displayName="Freight Terms" queryable="true"
@@ -216,6 +216,11 @@
             <schema>
                 <item bizObjName="ErpLogShipmentLog"/>
             </schema>
+        </prop>
+        <prop name="freightCurrency" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="freightCurrencyId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpMdCurrency"/>
         </prop>
     </props>
 </meta>

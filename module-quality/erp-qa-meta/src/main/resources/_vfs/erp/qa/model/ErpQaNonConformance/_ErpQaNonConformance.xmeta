@@ -40,7 +40,7 @@
             <schema type="java.lang.String" precision="50"/>
         </prop>
         <prop name="materialId" displayName="物料" propId="6" i18n-en:displayName="Material" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="material">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="inspectionId" displayName="质检单ID" propId="7" i18n-en:displayName="Inspection" queryable="true"
@@ -68,7 +68,7 @@
             <schema type="java.lang.Integer" dict="erp-qa/ncr-status"/>
         </prop>
         <prop name="supplierId" displayName="供应商" propId="13" i18n-en:displayName="Supplier" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="supplier">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="parameterName" displayName="不合格参数" propId="14" i18n-en:displayName="Parameter Name" queryable="true"
@@ -142,6 +142,16 @@
               queryable="true" ext:joinLeftProp="inspectionId" ext:joinRightProp="id" insertable="false"
               updatable="false" lazy="true">
             <schema bizObjName="ErpQaInspection"/>
+        </prop>
+        <prop name="material" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="materialId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" mandatory="true" lazy="true">
+            <schema bizObjName="ErpMdMaterial"/>
+        </prop>
+        <prop name="supplier" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="supplierId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpMdPartner"/>
         </prop>
     </props>
 </meta>

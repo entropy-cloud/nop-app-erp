@@ -112,9 +112,9 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Partner' ref-i18n-en:displayName='Carrier'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Org' ref-i18n-en:displayName='Carrier'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
-                <to-many name="configs" refEntityName="app.erp.log.dao.entity.ErpLogCarrierConfig" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Configs' ref-i18n-en:displayName='Carrier'><join><on leftProp="id" rightProp="carrierId"/></join></to-many>
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Partner'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-many name="configs" refEntityName="app.erp.log.dao.entity.ErpLogCarrierConfig" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Configs' ext:estRows="5"><join><on leftProp="id" rightProp="carrierId"/></join></to-many>
             </relations>
         </entity>
 
@@ -145,8 +145,8 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="20" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="carrier" refEntityName="app.erp.log.dao.entity.ErpLogCarrier" tagSet="pub" i18n-en:displayName='Carrier' ref-i18n-en:displayName='Carrier Config'><join><on leftProp="carrierId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Org' ref-i18n-en:displayName='Carrier Config'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="carrier" refEntityName="app.erp.log.dao.entity.ErpLogCarrier" tagSet="pub" i18n-en:displayName='Carrier'><join><on leftProp="carrierId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -196,13 +196,16 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="39" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="carrier" refEntityName="app.erp.log.dao.entity.ErpLogCarrier" tagSet="pub" i18n-en:displayName='Carrier' ref-i18n-en:displayName='Shipment'><join><on leftProp="carrierId" rightProp="id"/></join></to-one>
-                <to-one name="carrierConfig" refEntityName="app.erp.log.dao.entity.ErpLogCarrierConfig" tagSet="pub" i18n-en:displayName='Carrier Config' ref-i18n-en:displayName='Shipment'><join><on leftProp="carrierConfigId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Org' ref-i18n-en:displayName='Shipment'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
-                <to-one name="shipper" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Shipper' ref-i18n-en:displayName='Shipment'><join><on leftProp="shipperId" rightProp="id"/></join></to-one>
-                <to-many name="lines" refEntityName="app.erp.log.dao.entity.ErpLogShipmentLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ref-i18n-en:displayName='Shipment'><join><on leftProp="id" rightProp="shipmentId"/></join></to-many>
-                <to-many name="parcels" refEntityName="app.erp.log.dao.entity.ErpLogShipmentParcel" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Parcels' ref-i18n-en:displayName='Shipment'><join><on leftProp="id" rightProp="shipmentId"/></join></to-many>
-                <to-many name="logs" refEntityName="app.erp.log.dao.entity.ErpLogShipmentLog" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Logs' ref-i18n-en:displayName='Shipment'><join><on leftProp="id" rightProp="shipmentId"/></join></to-many>
+                <to-one name="carrier" refEntityName="app.erp.log.dao.entity.ErpLogCarrier" tagSet="pub" i18n-en:displayName='Carrier'><join><on leftProp="carrierId" rightProp="id"/></join></to-one>
+                <to-one name="carrierConfig" refEntityName="app.erp.log.dao.entity.ErpLogCarrierConfig" tagSet="pub" i18n-en:displayName='Carrier Config'><join><on leftProp="carrierConfigId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="shipper" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub" i18n-en:displayName='Shipper'><join><on leftProp="shipperId" rightProp="id"/></join></to-one>
+                <to-many name="lines" refEntityName="app.erp.log.dao.entity.ErpLogShipmentLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="20"><join><on leftProp="id" rightProp="shipmentId"/></join></to-many>
+                <to-many name="parcels" refEntityName="app.erp.log.dao.entity.ErpLogShipmentParcel" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Parcels' ext:estRows="5"><join><on leftProp="id" rightProp="shipmentId"/></join></to-many>
+                <to-many name="logs" refEntityName="app.erp.log.dao.entity.ErpLogShipmentLog" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Logs' ext:estRows="20"><join><on leftProp="id" rightProp="shipmentId"/></join></to-many>
+                <to-one name="freightCurrency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
+                    <join><on leftProp="freightCurrencyId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -227,8 +230,8 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="14" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="shipment" refEntityName="app.erp.log.dao.entity.ErpLogShipment" tagSet="pub" i18n-en:displayName='Shipment' ref-i18n-en:displayName='Shipment Line'><join><on leftProp="shipmentId" rightProp="id"/></join></to-one>
-                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Material' ref-i18n-en:displayName='Shipment Line'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
+                <to-one name="shipment" refEntityName="app.erp.log.dao.entity.ErpLogShipment" tagSet="pub" i18n-en:displayName='Shipment'><join><on leftProp="shipmentId" rightProp="id"/></join></to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -257,7 +260,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="shipment" refEntityName="app.erp.log.dao.entity.ErpLogShipment" tagSet="pub" i18n-en:displayName='Shipment' ref-i18n-en:displayName='Parcel'><join><on leftProp="shipmentId" rightProp="id"/></join></to-one>
+                <to-one name="shipment" refEntityName="app.erp.log.dao.entity.ErpLogShipment" tagSet="pub" i18n-en:displayName='Shipment'><join><on leftProp="shipmentId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -287,8 +290,8 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="19" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="shipment" refEntityName="app.erp.log.dao.entity.ErpLogShipment" tagSet="pub" i18n-en:displayName='Shipment' ref-i18n-en:displayName='Shipment Log'><join><on leftProp="shipmentId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Org' ref-i18n-en:displayName='Shipment Log'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="shipment" refEntityName="app.erp.log.dao.entity.ErpLogShipment" tagSet="pub" i18n-en:displayName='Shipment'><join><on leftProp="shipmentId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
     
@@ -318,8 +321,8 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="19" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Partner' ref-i18n-en:displayName='Delivery Window'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Org' ref-i18n-en:displayName='Delivery Window'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Partner'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -346,6 +349,14 @@
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_md_material">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
+            </columns>
+        </entity>
+        <entity displayName="币种" name="app.erp.md.dao.entity.ErpMdCurrency"
+                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_currency">
+            <columns>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name' />
             </columns>
         </entity>
     </entities>

@@ -188,6 +188,12 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     public static final String PROP_NAME_carrierConfig = "carrierConfig";
     
     /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
+    /* relation:  */
+    public static final String PROP_NAME_shipper = "shipper";
+    
+    /* relation:  */
     public static final String PROP_NAME_lines = "lines";
     
     /* relation:  */
@@ -195,6 +201,9 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     
     /* relation:  */
     public static final String PROP_NAME_logs = "logs";
+    
+    /* relation:  */
+    public static final String PROP_NAME_freightCurrency = "freightCurrency";
     
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
@@ -2108,6 +2117,52 @@ public class _ErpLogShipment extends DynamicOrmEntity{
        
     }
        
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdEmployee getShipper(){
+       return (app.erp.md.dao.entity.ErpMdEmployee)internalGetRefEntity(PROP_NAME_shipper);
+    }
+
+    public final void setShipper(app.erp.md.dao.entity.ErpMdEmployee refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setShipperId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_shipper, refEntity,()->{
+           
+                           this.setShipperId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
     private final OrmEntitySet<app.erp.log.dao.entity.ErpLogShipmentLine> _lines = new OrmEntitySet<>(this, PROP_NAME_lines,
         null, null,app.erp.log.dao.entity.ErpLogShipmentLine.class);
 
@@ -2136,6 +2191,29 @@ public class _ErpLogShipment extends DynamicOrmEntity{
      */
     public final IOrmEntitySet<app.erp.log.dao.entity.ErpLogShipmentLog> getLogs(){
        return _logs;
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdCurrency getFreightCurrency(){
+       return (app.erp.md.dao.entity.ErpMdCurrency)internalGetRefEntity(PROP_NAME_freightCurrency);
+    }
+
+    public final void setFreightCurrency(app.erp.md.dao.entity.ErpMdCurrency refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setFreightCurrencyId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_freightCurrency, refEntity,()->{
+           
+                           this.setFreightCurrencyId(refEntity.getId());
+                       
+           });
+           }
+       
     }
        
 }

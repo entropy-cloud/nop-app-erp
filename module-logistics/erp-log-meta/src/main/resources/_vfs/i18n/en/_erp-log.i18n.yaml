@@ -127,6 +127,7 @@ prop:
       lines: Lines
       parcels: Parcels
       logs: Logs
+      freightCurrency: null
     ErpLogShipmentLine:
       id: ID
       shipmentId: Shipment

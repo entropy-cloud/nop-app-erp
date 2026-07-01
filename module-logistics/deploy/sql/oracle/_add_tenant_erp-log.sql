@@ -5,6 +5,8 @@ alter table erp_md_md_organization add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NO
 
 alter table erp_md_md_employee add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
+alter table erp_md_currency add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
 alter table erp_md_md_material add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_log_carrier add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
@@ -29,6 +31,9 @@ alter table erp_md_md_organization add constraint PK_erp_md_md_organization prim
 
 alter table erp_md_md_employee drop constraint PK_erp_md_md_employee;
 alter table erp_md_md_employee add constraint PK_erp_md_md_employee primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_currency drop constraint PK_erp_md_currency;
+alter table erp_md_currency add constraint PK_erp_md_currency primary key (NOP_TENANT_ID, ID);
 
 alter table erp_md_md_material drop constraint PK_erp_md_md_material;
 alter table erp_md_md_material add constraint PK_erp_md_md_material primary key (NOP_TENANT_ID, ID);

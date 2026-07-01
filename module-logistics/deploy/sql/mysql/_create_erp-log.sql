@@ -14,6 +14,13 @@ CREATE TABLE erp_md_md_employee(
   constraint PK_erp_md_md_employee primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_md_currency(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  constraint PK_erp_md_currency primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_md_md_material(
   ID BIGINT NOT NULL    COMMENT 'null',
   constraint PK_erp_md_md_material primary key (ID)
@@ -200,6 +207,8 @@ CREATE TABLE erp_log_shipment_log(
    ALTER TABLE erp_md_md_organization COMMENT 'ErpMdOrganization';
                 
    ALTER TABLE erp_md_md_employee COMMENT 'ErpMdEmployee';
+                
+   ALTER TABLE erp_md_currency COMMENT '币种';
                 
    ALTER TABLE erp_md_md_material COMMENT 'ErpMdMaterial';
                 

@@ -219,4 +219,15 @@
         }
 
 
+        private Map<String,Object> _material;
+
+        public Map<String,Object> getMaterial(){
+            return _material;
+        }
+
+        public void setMaterial(Map<String,Object> value){
+            this._material = value;
+        }
+
+
     }
