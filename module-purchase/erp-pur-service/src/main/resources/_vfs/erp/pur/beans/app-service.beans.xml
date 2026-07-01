@@ -11,4 +11,8 @@
     <!-- 采购域服务（非 BizModel）：入库移动单请求构造器 -->
     <bean id="app.erp.pur.service.entity.ReceiveStockMoveBuilder"
           class="app.erp.pur.service.entity.ReceiveStockMoveBuilder"/>
+
+    <!-- 采购域服务（非 BizModel）：请购→订单转化组装器 -->
+    <bean id="app.erp.pur.service.entity.RequisitionToOrderConverter"
+          class="app.erp.pur.service.entity.RequisitionToOrderConverter"/>
 </beans>
