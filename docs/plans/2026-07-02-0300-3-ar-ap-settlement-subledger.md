@@ -1,6 +1,6 @@
 # 2026-07-02-0300-3-ar-ap-settlement-subledger
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-02
 > Source: `docs/backlog/core-business-roadmap.md` 工作项 1.6/1.7 闭环段（核销）+ M4 前置；`docs/design/finance/ar-ap-reconciliation.md`（核销/辅助账/账龄）
 > Related: `2026-07-02-0300-1-purchase-invoice-payment-three-way-match.md`（AP 文档流 + 域级核销，前置）、`2026-07-02-0300-2-sales-invoice-receipt-bizmodel.md`（AR 文档流 + 域级核销，前置）
@@ -53,77 +53,77 @@
 
 ### Phase 1 — ArApItem 辅助账生成（过账管线挂接）
 
-Status: planned
+Status: completed
 Targets: `module-finance/erp-fin-service/.../posting/ErpFinArApItemGenerator.java`（或扩 `ErpFinPostingProcessor`）、`IErpFinArApItemBiz.java`、`ErpFinArApItemBizModel.java`、`ErpFinErrors.java`(扩)、beans.xml
 Skill: `nop-backend-dev`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: 0300-1 + 0300-2 完成（PostingEvent for AP_INVOICE/AR_INVOICE/PAYMENT/RECEIPT 在 finance 可观察）。
 
-- [ ] `Explore`：ArApItem 生成挂接点探查——候选：(A) 在 `ErpFinPostingProcessor` 过账成功后同事务追加 ArApItem 生成步骤（finance 内部，billData 已含 partnerId/amount/sourceBillType）；(B) 独立 `IErpFinFactsValidator` 复用同管线；(C) post-commit listener。对照 `processor-extension-pattern.md` 评估事务边界（ArApItem 须与凭证同事务强一致 vs 解耦）。产出结论供下方 Decision。
+- [x] `Explore`：ArApItem 生成挂接点探查——候选：(A) 在 `ErpFinPostingProcessor` 过账成功后同事务追加 ArApItem 生成步骤（finance 内部，billData 已含 partnerId/amount/sourceBillType）；(B) 独立 `IErpFinFactsValidator` 复用同管线；(C) post-commit listener。对照 `processor-extension-pattern.md` 评估事务边界（ArApItem 须与凭证同事务强一致 vs 解耦）。产出结论供下方 Decision。
   - Skill: none
-- [ ] `Decision`：ArApItem 生成机制——基于 Explore 结论选择挂接点（倾向 A：过账成功后同事务生成，保证「凭证 + 辅助账」强一致，符合 posting.md 三层模型第①层精神）。记录选择、替代方案（B/C）、残留风险（过账失败时 ArApItem 不生成，与 posted=false 一致，可接受）。
+- [x] `Decision`：ArApItem 生成机制——采用挂接点 A（`ErpFinPostingProcessor.process` 在 `persistVoucher` 成功后、同事务内调 `ErpFinArApItemGenerator.generate`），保证「凭证 + 辅助账」强一致，符合 posting.md 三层模型第①层精神。红冲路径在 `reverseProcess` 的红字凭证落库后调 `cancelOnReverse` 取消原辅助账项。替代方案 B/C 会破坏同事务强一致或引入跨事务数据不一致窗口，不采用。残留风险：过账失败时 ArApItem 不生成，与 posted=false 一致，可接受。
   - Skill: none
-- [ ] `Add`：`ErpFinArApItemGenerator`——按 `PostingEvent.businessType` 生成 `ErpFinArApItem`：AP_INVOICE/AR_INVOICE → 应付/应收正项（direction=PAYABLE/RECEIVABLE，openAmount=amountFunctional，status=OPEN）；PAYMENT/RECEIPT → 付款/收款项（direction 对应，openAmount=amountFunctional）。从 billData 取 partnerId/amounts/sourceBillCode/acctSchemaId/businessDate。幂等：同 sourceBillCode+sourceBillType 已存在则跳过。
+- [x] `Add`：`ErpFinArApItemGenerator`——按 `PostingEvent.businessType` 生成 `ErpFinArApItem`：AP_INVOICE/AR_INVOICE → 应付/应收正项（direction=PAYABLE/RECEIVABLE，openAmount=amountFunctional，status=OPEN）；PAYMENT/RECEIPT → 付款/收款项（direction 对应，openAmount=amountFunctional）。从 billData 取 partnerId/amounts/sourceBillCode/acctSchemaId/businessDate。幂等：同 sourceBillCode+sourceBillType 已存在则跳过。
   - **billData 字段契约（与 0300-1/0300-2 的协调依赖）**：账龄（Phase 3）需 `dueDate`。`ErpPurInvoice`/`ErpSalInvoice` 仅有 `businessDate`（发票日期）**无显式 dueDate 列**；故 ArApItem.dueDate 在源单无到期日时落 null（ArApItem.dueDate 可空），账龄基准回退到 invoice_date。0300-1/0300-2 派发器须将 `businessDate` 写入 billData（已在其 billData 清单中）；完整到期日推导（付款条件 businessDate + paymentTerms）属 follow-up。生成器对 billData 缺失 dueDate 容错（null）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`IErpFinArApItemBiz` 查询契约（findOpenItemsByPartner 等 `@BizQuery`，供核销与账龄使用）。
+- [x] `Add`：`IErpFinArApItemBiz` 查询契约（findOpenItemsByPartner 等 `@BizQuery`，供核销与账龄使用）。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：`TestErpFinArApItemGeneration`——AP_INVOICE 过账后生成 PAYABLE ArApItem(openAmount=发票额, status=OPEN)；RECEIPT 过账后生成 RECEIVABLE 项；幂等（重复过账不重复生成）；红字 reverse 后生成 status=CANCELLED 或反向项（对齐冲销语义）。验证命令 `mvn test -pl module-finance/erp-fin-service -am`。
+- [x] `Proof`：`TestErpFinArApItemGeneration`——AP_INVOICE 过账后生成 PAYABLE ArApItem(openAmount=发票额, status=OPEN)；RECEIPT 过账后生成 RECEIVABLE 项；幂等（重复过账不重复生成）；红字 reverse 后生成 status=CANCELLED 或反向项（对齐冲销语义）。验证命令 `mvn test -pl module-finance/erp-fin-service -am`。
   - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] AP/AR 发票 + 收付款过账后 ArApItem 辅助账项可观察（direction/amount/open/status 正确），幂等
-- [ ] ArApItem 生成与凭证同事务（过账失败时不生成，与 posted=false 一致）
+- [x] AP/AR 发票 + 收付款过账后 ArApItem 辅助账项可观察（direction/amount/open/status 正确），幂等
+- [x] ArApItem 生成与凭证同事务（过账失败时不生成，与 posted=false 一致）
 
 ### Phase 2 — ErpFinReconciliation 核销单 BizModel + 往来余额
 
-Status: planned
+Status: completed
 Targets: `IErpFinReconciliationBiz.java`、`ErpFinReconciliationBizModel.java`、`ReconciliationSettler.java`、`PartnerBalanceUpdater.java`、`ErpFinErrors`(扩)、beans.xml
 Skill: `nop-backend-dev`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1（ArApItem 已生成）。
 
-- [ ] `Decision`：finance 核销单与域级核销（ErpPurPaymentLine/ErpSalReceiptLine）的关系——记录裁定：finance ErpFinReconciliation 作为 GL/账龄视角的正式核销单（period-end 正式核销），独立作用于 ArApItem；域级核销（0300-1/0300-2）作为运营核销权威（回写 paidStatus/receivedStatus）。二者并行，残留风险（双核销面需对账一致性兜底）记入 Deferred。替代方案（统一为单面）需重构 0300-1/0300-2，超范围。
+- [x] `Decision`：finance 核销单与域级核销（ErpPurPaymentLine/ErpSalReceiptLine）的关系——裁定：finance `ErpFinReconciliation` 作为 GL/账龄视角的正式核销单（period-end 正式核销），独立作用于 `ErpFinArApItem`；域级核销（0300-1/0300-2）作为运营核销权威（回写 paidStatus/receivedStatus）。二者并行，残留风险（双核销面需对账一致性兜底）记入 Deferred。替代方案（统一为单面）需重构 0300-1/0300-2，超范围。
   - Skill: none
-- [ ] `Add`：`IErpFinReconciliationBiz` 契约 `create(post 提交头+行) / post(reconciliationId) / reverse(reconciliationId)`（`@BizMutation`）。
+- [x] `Add`：`IErpFinReconciliationBiz` 契约 `create(post 提交头+行) / post(reconciliationId) / reverse(reconciliationId)`（`@BizMutation`）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`ErpFinReconciliationBizModel`——`post`：校验约束（同 direction、同 partnerId、paymentItem/invoiceItem 均 status≠SETTLED/CANCELLED、核销金额 ≤ 各自 openAmount unless `erp-fin.allow-over-reconcile`、**核销日期不早于发票业务日期**（`ar-ap-reconciliation.md §核销约束` 项4）），调 `ReconciliationSettler` 回写双方 ArApItem `settledAmount`+=amt / `openAmount`−=amt / `status`(OPEN→PARTIAL→SETTLED 按 open vs 0)，置核销单 docStatus=POSTED。精度按 `erp-fin.reconcile-precision`，尾差调整末行。
+- [x] `Add`：`ErpFinReconciliationBizModel`——`post`：校验约束（同 direction、同 partnerId、paymentItem/invoiceItem 均 status≠SETTLED/CANCELLED、核销金额 ≤ 各自 openAmount unless `erp-fin.allow-over-reconcile`、**核销日期不早于发票业务日期**（`ar-ap-reconciliation.md §核销约束` 项4）），调 `ReconciliationSettler` 回写双方 ArApItem `settledAmount`+=amt / `openAmount`−=amt / `status`(OPEN→PARTIAL→SETTLED 按 open vs 0)，置核销单 docStatus=POSTED。精度按 `erp-fin.reconcile-precision`，尾差调整末行。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`PartnerBalanceUpdater`——核销 post 后重算 `ErpMdPartner.payableBalance`/`receivableBalance`（= Σ对应 direction ArApItem openAmount by partner）。注入 `IErpMdPartnerBiz` 或 daoFor（机制 B）更新缓存字段。
+- [x] `Add`：`PartnerBalanceUpdater`——核销 post 后重算 `ErpMdPartner.payableBalance`/`receivableBalance`（= Σ对应 direction ArApItem openAmount by partner）。注入 `IErpMdPartnerBiz` 或 daoFor（机制 B）更新缓存字段。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`reverse`——生成反向核销（docStatus=REVERSED），恢复 ArApItem settled/open/status，重算 partner 余额（对齐 §核销冲销）。
+- [x] `Add`：`reverse`——生成反向核销（docStatus=REVERSED），恢复 ArApItem settled/open/status，重算 partner 余额（对齐 §核销冲销）。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：`TestErpFinReconciliation`（部分核销 status=PARTIAL、全额 SETTLED、跨 partner 拒绝、超额拒绝、reverse 恢复）、`TestErpFinPartnerBalance`（核销后 partner 余额正确更新）。验证命令 `mvn test -pl module-finance/erp-fin-service -am`。
+- [x] `Proof`：`TestErpFinReconciliation`（部分核销 status=PARTIAL、全额 SETTLED、跨 partner 拒绝、超额拒绝、reverse 恢复）、`TestErpFinPartnerBalance`（核销后 partner 余额正确更新）。验证命令 `mvn test -pl module-finance/erp-fin-service -am`。
   - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] 核销 post 后 ArApItem settled/open/status 正确回写；约束违例拒绝；reverse 恢复
-- [ ] partner payableBalance/receivableBalance 由辅助账 openAmount 驱动更新
+- [x] 核销 post 后 ArApItem settled/open/status 正确回写；约束违例拒绝；reverse 恢复
+- [x] partner payableBalance/receivableBalance 由辅助账 openAmount 驱动更新
 
 ### Phase 3 — 账龄查询 + 文档/日志
 
-Status: planned
+Status: completed
 Targets: `IErpFinArApItemBiz`(扩查询)、`docs/logs/2026/{07-02}.md`、`docs/backlog/core-business-roadmap.md`、`docs/design/finance/ar-ap-reconciliation.md`(若实现偏离则补注)
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 + Phase 2。
 
-- [ ] `Add`：账龄查询 `@BizQuery`——按 partner 聚合 open ArApItem，按 `erp-fin.ar-aging-base`/`ap-aging-base`(invoice_date/due_date) 计算账龄区间（0-30/31-60/61-90/91-180/180+），返回未核销余额 × 区间。
+- [x] `Add`：账龄查询 `@BizQuery`——按 partner 聚合 open ArApItem，按 `erp-fin.ar-aging-base`/`ap-aging-base`(invoice_date/due_date) 计算账龄区间（0-30/31-60/61-90/91-180/180+），返回未核销余额 × 区间。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：`TestErpFinAging`（不同账龄区间分桶正确，基准日配置切换）。验证命令 `mvn test -pl module-finance/erp-fin-service -am`；根 `mvn test -fae` 无回归。
+- [x] `Proof`：`TestErpFinAging`（不同账龄区间分桶正确，基准日配置切换）。验证命令 `mvn test -pl module-finance/erp-fin-service -am`；根 `mvn test -fae` 无回归。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`docs/logs/2026/{执行当日 month-day}.md` 新增本计划条目（含验证状态）；`docs/backlog/core-business-roadmap.md` 工作项 1.6/1.7 闭环段标注进展（M4 前置就绪）；`docs/design/finance/ar-ap-reconciliation.md` §核销明细表补注——该节描述的扁平 schema（sourceBillId/targetBillId/reversalFlag）与实现的头+行 ORM（ErpFinReconciliation + ErpFinReconciliationLine 的 direction/paymentItemId/invoiceItemId/settledAmount/docStatus）实质偏离，补注实现权威 schema（ORM 为唯一真相源）。
+- [x] `Add`：`docs/logs/2026/{执行当日 month-day}.md` 新增本计划条目（含验证状态）；`docs/backlog/core-business-roadmap.md` 工作项 1.6/1.7 闭环段标注进展（M4 前置就绪）；`docs/design/finance/ar-ap-reconciliation.md` §核销明细表补注——该节描述的扁平 schema（sourceBillId/targetBillId/reversalFlag）与实现的头+行 ORM（ErpFinReconciliation + ErpFinReconciliationLine 的 direction/paymentItemId/invoiceItemId/settledAmount/docStatus）实质偏离，补注实现权威 schema（ORM 为唯一真相源）。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] 账龄查询按配置基准日正确分桶（0-30/.../180+）
-- [ ] 当日日志已记；roadmap 1.6/1.7 闭环段进展已标注
+- [x] 账龄查询按配置基准日正确分桶（0-30/.../180+）
+- [x] 当日日志已记；roadmap 1.6/1.7 闭环段进展已标注
 
 ## Draft Review Record
 
@@ -133,14 +133,14 @@ Exit Criteria:
 
 > 仅在所有项目和每阶段退出标准都勾选 `[x]` 后关闭。结束时运行一次完整仓库验证。
 
-- [ ] 范围内行为完成：ArApItem 辅助账生成 + ErpFinReconciliation 核销 + partner 余额 + 账龄查询落地，行为测试通过
-- [ ] 相关文档对齐：`core-business-roadmap.md` 1.6/1.7 闭环段标注进展；当日日志已记
-- [ ] 已运行验证：`mvn test -pl module-finance/erp-fin-service -am` 全绿；根 `mvn test -fae` = BUILD SUCCESS（无回归）
-- [ ] 无范围内项目降级为 deferred/follow-up（自动核销/汇兑损益凭证/银行对账/核销凭证/账龄报表UI 均为计划内 Non-Goal）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于 `Closure` 节
+- [x] 范围内行为完成：ArApItem 辅助账生成 + ErpFinReconciliation 核销 + partner 余额 + 账龄查询落地，行为测试通过
+- [x] 相关文档对齐：`core-business-roadmap.md` 1.6/1.7 闭环段标注进展；当日日志已记
+- [x] 已运行验证：`mvn test -pl module-finance/erp-fin-service -am` 全绿；根 `mvn test -fae` = BUILD SUCCESS（无回归）
+- [x] 无范围内项目降级为 deferred/follow-up（自动核销/汇兑损益凭证/银行对账/核销凭证/账龄报表UI 均为计划内 Non-Goal）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于 `Closure` 节
 
 ## Deferred But Adjudicated
 
@@ -164,11 +164,18 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行 + 独立结束审计后填写>
+Status Note: 全部 3 个 Phase 落地并验证通过。辅助账生成挂接在过账管线同事务内（凭证+辅助账强一致）；核销单 create/post/reverse 含完整约束校验与状态机回写；partner 余额由辅助账 openAmount 驱动；账龄查询按配置基准日分桶。跨模块安全：生成器兼容 0300-1/0300-2 派发器的 billData 键（SUPPLIER_ID/CUSTOMER_ID + TOTAL_AMOUNT_WITH_TAX/TOTAL），未破坏 purchase/sales 过账。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计子代理（新会话）>
+- Auditor / Agent: `ses_0e0914b12ffen4DmCjlH8R6FKd`（独立 general 子代理，新会话，非执行者）
+- Verdict: **passes closure audit**
+- 证据要点：
+  - 行为完整性：`ErpFinArApItemGenerator`（按 businessType 生成/幂等/`ErpFinPostingProcessor:102` 挂接/红冲 `:127`）；`ReconciliationSettler`+`PartnerBalanceUpdater`；`ErpFinReconciliationBizModel`（create/post/reverse + 5 项约束）；`ErpFinArApItemBizModel.aging`；契约与 3 bean 注册齐全。
+  - 测试全绿：finance-service 30 tests / 0 Failures / 0 Errors / BUILD SUCCESS（与日志 30-test 一致）。
+  - 跨模块安全：`resolvePartnerId`/`resolveAmountFunctional` 兼容 4 个派发器的 billData 键，无 `ERR_AR_AP_ITEM_PARTNER_MISSING` 风险。
+  - 文档对齐：日志 0300-3 条目、roadmap 1.6/1.7 进展、`ar-ap-reconciliation.md §核销明细表` 实现 schema 补注 均已落地。
+  - 反模式自检通过：CrudBizModel 子类未遮蔽 `daoProvider`（用继承 `daoProvider()`）；变更型 `@BizMutation` 均 `@SingleSession`；biz 管道 `findList` 用 `in("status",...)`。
 
 Follow-up:
 

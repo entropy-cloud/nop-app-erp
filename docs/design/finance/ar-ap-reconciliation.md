@@ -48,6 +48,12 @@
   └─ reversalFlag（是否已冲销）
 ```
 
+> **实现权威 schema 注记（2026-07-02，计划 0300-3）**：上方为设计期扁平 schema 草图。实际实现采用**头+行**结构（ORM 为唯一真相源，见 `module-finance/model/app-erp-finance.orm.xml`）：
+> - `ErpFinReconciliation`（头）：`direction`(应收应付)、`partnerId`、`acctSchemaId`、`businessDate`、`totalAmountSource/Functional`、`fxGainLoss`、`docStatus`(DRAFT/POSTED/REVERSED)。
+> - `ErpFinReconciliationLine`（行）：`paymentItemId`→`ErpFinArApItem`（付款/收款项）、`invoiceItemId`→`ErpFinArApItem`（发票项）、`settledAmountSource/Functional`。
+>
+> 核销对象不是「源单据 ID」而是辅助账项（`ErpFinArApItem`）ID——发票/收付款过账时由 `ErpFinArApItemGenerator` 生成辅助账项，核销在辅助账项层面多对多匹配并回写其 `settledAmount/openAmount/status`。红冲以 `docStatus=REVERSED` + 反向结算表达，非 `reversalFlag` 布尔。
+
 ## 核销流程
 
 ### 应收核销流程（收款核销应收）
