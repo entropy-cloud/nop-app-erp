@@ -17,6 +17,8 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -44,6 +46,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpFinPostingService extends JunitAutoTestCase {
+    private static final IServiceContext CTX = new ServiceContextImpl();
+
 
     static final int DC_DEBIT = 10;
     static final int DC_CREDIT = 20;
@@ -82,9 +86,9 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         ErpFinVoucher voucher = voucherDao.requireEntityById(voucherId);
         assertEquals(VOUCHER_STATUS_POSTED, voucher.getDocStatus(), "凭证应为已过账");
         assertEquals(false, voucher.getIsReversed(), "非红字凭证");
-        assertTrue(new BigDecimal(voucher.getTotalDebit()).compareTo(new BigDecimal("113")) == 0,
+        assertTrue(voucher.getTotalDebit().compareTo(new BigDecimal("113")) == 0,
                 "借方合计 113");
-        assertTrue(new BigDecimal(voucher.getTotalCredit()).compareTo(new BigDecimal("113")) == 0,
+        assertTrue(voucher.getTotalCredit().compareTo(new BigDecimal("113")) == 0,
                 "贷方合计 113");
         assertEquals(VOUCHER_TYPE_TRANSFER, voucher.getVoucherType(), "凭证字来自模板");
 
@@ -185,14 +189,14 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         assertEquals(VOUCHER_STATUS_POSTED, red.getDocStatus(), "红字凭证走正常 DRAFT→POSTED");
         assertEquals(false, original.getIsReversed(), "原凭证保留（审计轨迹），非红字");
 
-        BigDecimal redDebit = new BigDecimal(red.getTotalDebit());
-        BigDecimal redCredit = new BigDecimal(red.getTotalCredit());
+        BigDecimal redDebit = red.getTotalDebit();
+        BigDecimal redCredit = red.getTotalCredit();
         assertTrue(redDebit.compareTo(BigDecimal.ZERO) < 0, "红字凭证借方合计为负");
         assertTrue(redCredit.compareTo(BigDecimal.ZERO) < 0, "红字凭证贷方合计为负");
         assertTrue(redDebit.compareTo(redCredit) == 0, "红字凭证自身借贷平衡");
 
-        BigDecimal origDebit = new BigDecimal(original.getTotalDebit());
-        BigDecimal origCredit = new BigDecimal(original.getTotalCredit());
+        BigDecimal origDebit = original.getTotalDebit();
+        BigDecimal origCredit = original.getTotalCredit();
         assertTrue(origDebit.add(redDebit).compareTo(BigDecimal.ZERO) == 0, "原+红 借方净额为 0");
         assertTrue(origCredit.add(redCredit).compareTo(BigDecimal.ZERO) == 0, "原+红 贷方净额为 0");
 

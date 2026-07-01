@@ -136,15 +136,15 @@ public class ErpFinPostingService {
         if (!originalLines.isEmpty()) {
             ErpFinVoucherLine first = originalLines.get(0);
             ctx.setCurrencyId(first.getCurrencyId());
-            ctx.setExchangeRate(parseAmount(first.getExchangeRate()));
+            ctx.setExchangeRate(first.getExchangeRate());
         }
 
         List<VoucherFact> facts = new ArrayList<>(originalLines.size());
         BigDecimal totalDebit = BigDecimal.ZERO;
         BigDecimal totalCredit = BigDecimal.ZERO;
         for (ErpFinVoucherLine ol : originalLines) {
-            BigDecimal debit = parseAmount(ol.getDebitAmount());
-            BigDecimal credit = parseAmount(ol.getCreditAmount());
+            BigDecimal debit = ol.getDebitAmount() != null ? ol.getDebitAmount() : BigDecimal.ZERO;
+            BigDecimal credit = ol.getCreditAmount() != null ? ol.getCreditAmount() : BigDecimal.ZERO;
             BigDecimal negDebit = debit.negate();
             BigDecimal negCredit = credit.negate();
             totalDebit = totalDebit.add(negDebit);
@@ -201,8 +201,8 @@ public class ErpFinPostingService {
         voucher.setOrgId(orgId);
         voucher.setAcctSchemaId(acctSchemaId);
         voucher.setPeriodId(periodId);
-        voucher.setTotalDebit(totalDebit.toPlainString());
-        voucher.setTotalCredit(totalCredit.toPlainString());
+        voucher.setTotalDebit(totalDebit);
+        voucher.setTotalCredit(totalCredit);
         voucher.setIsReversed(isReversed);
         if (reversalOfVoucherId != null) {
             voucher.setReversalOfVoucherId(reversalOfVoucherId);
@@ -213,9 +213,9 @@ public class ErpFinPostingService {
         Long voucherId = voucher.getId();
 
         Long currencyId = ctx.getCurrencyId();
-        String exchangeRate = ctx.getExchangeRate() != null
-                ? ctx.getExchangeRate().toPlainString()
-                : EXCHANGE_RATE_DEFAULT.toPlainString();
+        BigDecimal exchangeRate = ctx.getExchangeRate() != null
+                ? ctx.getExchangeRate()
+                : EXCHANGE_RATE_DEFAULT;
 
         int lineNo = 1;
         for (VoucherFact fact : facts) {
@@ -228,12 +228,12 @@ public class ErpFinPostingService {
             line.setSubjectName(fact.getSubjectName());
             line.setDcDirection(fact.getDcDirection());
             boolean isCredit = fact.getDcDirection() != null && fact.getDcDirection() == DC_CREDIT;
-            line.setDebitAmount(isCredit ? BigDecimal.ZERO.toPlainString() : amt.toPlainString());
-            line.setCreditAmount(isCredit ? amt.toPlainString() : BigDecimal.ZERO.toPlainString());
+            line.setDebitAmount(isCredit ? BigDecimal.ZERO : amt);
+            line.setCreditAmount(isCredit ? amt : BigDecimal.ZERO);
             line.setCurrencyId(currencyId);
             line.setExchangeRate(exchangeRate);
-            line.setAmountSource(amt.toPlainString());
-            line.setAmountFunctional(amt.toPlainString());
+            line.setAmountSource(amt);
+            line.setAmountFunctional(amt);
             line.setAcctSchemaId(acctSchemaId);
             line.setMemo(fact.getMemo());
             line.setBusinessType(businessType != null ? businessType.getCode()
@@ -354,13 +354,6 @@ public class ErpFinPostingService {
         List<ErpFinVoucherLine> lines = new ArrayList<>(dao.findAllByQuery(q));
         lines.sort(Comparator.comparingInt(l -> l.getLineNo() == null ? Integer.MAX_VALUE : l.getLineNo()));
         return lines;
-    }
-
-    private BigDecimal parseAmount(String text) {
-        if (StringHelper.isBlank(text)) {
-            return BigDecimal.ZERO;
-        }
-        return new BigDecimal(text.trim());
     }
 
     private String buildVoucherCode(ErpFinBusinessType type, boolean reversal) {

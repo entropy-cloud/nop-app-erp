@@ -53,20 +53,20 @@
         </prop>
         <prop name="exchangeRate" displayName="汇率" propId="9" i18n-en:displayName="Exchange Rate" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="1">
-            <schema domain="exchangeRate" type="java.lang.String" precision="20" scale="8"/>
+            <schema domain="exchangeRate" type="java.math.BigDecimal" precision="20" scale="8"/>
         </prop>
         <prop name="totalAmountSource" displayName="核销总额(源币)" propId="10" i18n-en:displayName="Total Amount Source"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="totalAmountFunctional" displayName="核销总额(本位币)" propId="11"
               i18n-en:displayName="Total Amount Functional" queryable="true" sortable="true" insertable="true"
               updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="fxGainLoss" displayName="汇兑损益" propId="12" i18n-en:displayName="Fx Gain Loss" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="docStatus" displayName="状态" propId="13" i18n-en:displayName="Doc Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">

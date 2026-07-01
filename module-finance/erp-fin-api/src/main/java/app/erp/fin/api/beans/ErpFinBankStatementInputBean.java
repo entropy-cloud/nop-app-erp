@@ -82,58 +82,58 @@
         }
 
 
-        private String _beginningBalance;
+        private java.math.BigDecimal _beginningBalance;
 
     
         @PropMeta(propId=6)
     
-        public String getBeginningBalance(){
+        public java.math.BigDecimal getBeginningBalance(){
             return _beginningBalance;
         }
 
-        public void setBeginningBalance(String value){
+        public void setBeginningBalance(java.math.BigDecimal value){
             this._beginningBalance = value;
         }
 
 
-        private String _endingBalance;
+        private java.math.BigDecimal _endingBalance;
 
     
         @PropMeta(propId=7)
     
-        public String getEndingBalance(){
+        public java.math.BigDecimal getEndingBalance(){
             return _endingBalance;
         }
 
-        public void setEndingBalance(String value){
+        public void setEndingBalance(java.math.BigDecimal value){
             this._endingBalance = value;
         }
 
 
-        private String _totalDebit;
+        private java.math.BigDecimal _totalDebit;
 
     
         @PropMeta(propId=8)
     
-        public String getTotalDebit(){
+        public java.math.BigDecimal getTotalDebit(){
             return _totalDebit;
         }
 
-        public void setTotalDebit(String value){
+        public void setTotalDebit(java.math.BigDecimal value){
             this._totalDebit = value;
         }
 
 
-        private String _totalCredit;
+        private java.math.BigDecimal _totalCredit;
 
     
         @PropMeta(propId=9)
     
-        public String getTotalCredit(){
+        public java.math.BigDecimal getTotalCredit(){
             return _totalCredit;
         }
 
-        public void setTotalCredit(String value){
+        public void setTotalCredit(java.math.BigDecimal value){
             this._totalCredit = value;
         }
 

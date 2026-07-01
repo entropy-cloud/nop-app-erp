@@ -110,16 +110,16 @@
         }
 
 
-        private String _amount;
+        private java.math.BigDecimal _amount;
 
     
         @PropMeta(propId=8)
     
-        public String getAmount(){
+        public java.math.BigDecimal getAmount(){
             return _amount;
         }
 
-        public void setAmount(String value){
+        public void setAmount(java.math.BigDecimal value){
             this._amount = value;
         }
 
@@ -138,16 +138,16 @@
         }
 
 
-        private String _balanceAfter;
+        private java.math.BigDecimal _balanceAfter;
 
     
         @PropMeta(propId=10)
     
-        public String getBalanceAfter(){
+        public java.math.BigDecimal getBalanceAfter(){
             return _balanceAfter;
         }
 
-        public void setBalanceAfter(String value){
+        public void setBalanceAfter(java.math.BigDecimal value){
             this._balanceAfter = value;
         }
 

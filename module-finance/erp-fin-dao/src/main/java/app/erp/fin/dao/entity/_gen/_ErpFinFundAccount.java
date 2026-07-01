@@ -206,10 +206,10 @@ public class _ErpFinFundAccount extends DynamicOrmEntity{
     private java.lang.Long _currencyId;
     
     /* 期初余额: OPENING_BALANCE */
-    private java.lang.String _openingBalance;
+    private java.math.BigDecimal _openingBalance;
     
     /* 当前余额: CURRENT_BALANCE */
-    private java.lang.String _currentBalance;
+    private java.math.BigDecimal _currentBalance;
     
     /* 状态: STATUS */
     private java.lang.Integer _status;
@@ -468,9 +468,9 @@ public class _ErpFinFundAccount extends DynamicOrmEntity{
             }
         
             case PROP_ID_openingBalance:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_openingBalance));
                }
                setOpeningBalance(typedValue);
@@ -478,9 +478,9 @@ public class _ErpFinFundAccount extends DynamicOrmEntity{
             }
         
             case PROP_ID_currentBalance:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_currentBalance));
                }
                setCurrentBalance(typedValue);
@@ -641,14 +641,14 @@ public class _ErpFinFundAccount extends DynamicOrmEntity{
         
             case PROP_ID_openingBalance:{
                onInitProp(propId);
-               this._openingBalance = (java.lang.String)value;
+               this._openingBalance = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_currentBalance:{
                onInitProp(propId);
-               this._currentBalance = (java.lang.String)value;
+               this._currentBalance = (java.math.BigDecimal)value;
                
                break;
             }
@@ -889,7 +889,7 @@ public class _ErpFinFundAccount extends DynamicOrmEntity{
     /**
      * 期初余额: OPENING_BALANCE
      */
-    public final java.lang.String getOpeningBalance(){
+    public final java.math.BigDecimal getOpeningBalance(){
          onPropGet(PROP_ID_openingBalance);
          return _openingBalance;
     }
@@ -897,7 +897,7 @@ public class _ErpFinFundAccount extends DynamicOrmEntity{
     /**
      * 期初余额: OPENING_BALANCE
      */
-    public final void setOpeningBalance(java.lang.String value){
+    public final void setOpeningBalance(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_openingBalance,value)){
             this._openingBalance = value;
             internalClearRefs(PROP_ID_openingBalance);
@@ -908,7 +908,7 @@ public class _ErpFinFundAccount extends DynamicOrmEntity{
     /**
      * 当前余额: CURRENT_BALANCE
      */
-    public final java.lang.String getCurrentBalance(){
+    public final java.math.BigDecimal getCurrentBalance(){
          onPropGet(PROP_ID_currentBalance);
          return _currentBalance;
     }
@@ -916,7 +916,7 @@ public class _ErpFinFundAccount extends DynamicOrmEntity{
     /**
      * 当前余额: CURRENT_BALANCE
      */
-    public final void setCurrentBalance(java.lang.String value){
+    public final void setCurrentBalance(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_currentBalance,value)){
             this._currentBalance = value;
             internalClearRefs(PROP_ID_currentBalance);

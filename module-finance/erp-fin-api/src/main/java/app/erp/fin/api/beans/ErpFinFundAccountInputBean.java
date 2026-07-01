@@ -138,30 +138,30 @@
         }
 
 
-        private String _openingBalance;
+        private java.math.BigDecimal _openingBalance;
 
     
         @PropMeta(propId=10)
     
-        public String getOpeningBalance(){
+        public java.math.BigDecimal getOpeningBalance(){
             return _openingBalance;
         }
 
-        public void setOpeningBalance(String value){
+        public void setOpeningBalance(java.math.BigDecimal value){
             this._openingBalance = value;
         }
 
 
-        private String _currentBalance;
+        private java.math.BigDecimal _currentBalance;
 
     
         @PropMeta(propId=11)
     
-        public String getCurrentBalance(){
+        public java.math.BigDecimal getCurrentBalance(){
             return _currentBalance;
         }
 
-        public void setCurrentBalance(String value){
+        public void setCurrentBalance(java.math.BigDecimal value){
             this._currentBalance = value;
         }
 

@@ -110,30 +110,30 @@
         }
 
 
-        private String _debitAmount;
+        private java.math.BigDecimal _debitAmount;
 
     
         @PropMeta(propId=8)
     
-        public String getDebitAmount(){
+        public java.math.BigDecimal getDebitAmount(){
             return _debitAmount;
         }
 
-        public void setDebitAmount(String value){
+        public void setDebitAmount(java.math.BigDecimal value){
             this._debitAmount = value;
         }
 
 
-        private String _creditAmount;
+        private java.math.BigDecimal _creditAmount;
 
     
         @PropMeta(propId=9)
     
-        public String getCreditAmount(){
+        public java.math.BigDecimal getCreditAmount(){
             return _creditAmount;
         }
 
-        public void setCreditAmount(String value){
+        public void setCreditAmount(java.math.BigDecimal value){
             this._creditAmount = value;
         }
 
@@ -152,44 +152,44 @@
         }
 
 
-        private String _exchangeRate;
+        private java.math.BigDecimal _exchangeRate;
 
     
         @PropMeta(propId=11)
     
-        public String getExchangeRate(){
+        public java.math.BigDecimal getExchangeRate(){
             return _exchangeRate;
         }
 
-        public void setExchangeRate(String value){
+        public void setExchangeRate(java.math.BigDecimal value){
             this._exchangeRate = value;
         }
 
 
-        private String _amountSource;
+        private java.math.BigDecimal _amountSource;
 
     
         @PropMeta(propId=12)
     
-        public String getAmountSource(){
+        public java.math.BigDecimal getAmountSource(){
             return _amountSource;
         }
 
-        public void setAmountSource(String value){
+        public void setAmountSource(java.math.BigDecimal value){
             this._amountSource = value;
         }
 
 
-        private String _amountFunctional;
+        private java.math.BigDecimal _amountFunctional;
 
     
         @PropMeta(propId=13)
     
-        public String getAmountFunctional(){
+        public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;
         }
 
-        public void setAmountFunctional(String value){
+        public void setAmountFunctional(java.math.BigDecimal value){
             this._amountFunctional = value;
         }
 

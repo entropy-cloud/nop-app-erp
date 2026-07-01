@@ -34,16 +34,16 @@
                 <col id="statementDate" mandatory="true" sortable="true"/>
 
                 <!--期初余额-->
-                <col id="beginningBalance" sortable="true"/>
+                <col id="beginningBalance" ui:number="true" sortable="true"/>
 
                 <!--期末余额-->
-                <col id="endingBalance" sortable="true"/>
+                <col id="endingBalance" ui:number="true" sortable="true"/>
 
                 <!--借方发生额-->
-                <col id="totalDebit" sortable="true"/>
+                <col id="totalDebit" ui:number="true" sortable="true"/>
 
                 <!--贷方发生额-->
-                <col id="totalCredit" sortable="true"/>
+                <col id="totalCredit" ui:number="true" sortable="true"/>
 
                 <!--导入时间-->
                 <col id="importTime" sortable="true"/>

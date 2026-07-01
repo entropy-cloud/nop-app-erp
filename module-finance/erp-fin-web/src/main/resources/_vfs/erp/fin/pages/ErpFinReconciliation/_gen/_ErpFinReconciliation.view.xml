@@ -43,16 +43,16 @@
                 <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--汇率-->
-                <col id="exchangeRate" sortable="true"/>
+                <col id="exchangeRate" ui:number="true" sortable="true"/>
 
                 <!--核销总额(源币)-->
-                <col id="totalAmountSource" sortable="true"/>
+                <col id="totalAmountSource" ui:number="true" sortable="true"/>
 
                 <!--核销总额(本位币)-->
-                <col id="totalAmountFunctional" sortable="true"/>
+                <col id="totalAmountFunctional" ui:number="true" sortable="true"/>
 
                 <!--汇兑损益-->
-                <col id="fxGainLoss" sortable="true"/>
+                <col id="fxGainLoss" ui:number="true" sortable="true"/>
 
                 <!--状态-->
                 <col id="docStatus" mandatory="true" ui:number="true" sortable="true"/>

@@ -243,10 +243,10 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
     private java.lang.Long _periodId;
     
     /* 借方合计(本位币): TOTAL_DEBIT */
-    private java.lang.String _totalDebit;
+    private java.math.BigDecimal _totalDebit;
     
     /* 贷方合计(本位币): TOTAL_CREDIT */
-    private java.lang.String _totalCredit;
+    private java.math.BigDecimal _totalCredit;
     
     /* 是否红字冲销凭证: IS_REVERSED */
     private java.lang.Boolean _isReversed;
@@ -529,9 +529,9 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
             }
         
             case PROP_ID_totalDebit:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_totalDebit));
                }
                setTotalDebit(typedValue);
@@ -539,9 +539,9 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
             }
         
             case PROP_ID_totalCredit:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_totalCredit));
                }
                setTotalCredit(typedValue);
@@ -742,14 +742,14 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
         
             case PROP_ID_totalDebit:{
                onInitProp(propId);
-               this._totalDebit = (java.lang.String)value;
+               this._totalDebit = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_totalCredit:{
                onInitProp(propId);
-               this._totalCredit = (java.lang.String)value;
+               this._totalCredit = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1018,7 +1018,7 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
     /**
      * 借方合计(本位币): TOTAL_DEBIT
      */
-    public final java.lang.String getTotalDebit(){
+    public final java.math.BigDecimal getTotalDebit(){
          onPropGet(PROP_ID_totalDebit);
          return _totalDebit;
     }
@@ -1026,7 +1026,7 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
     /**
      * 借方合计(本位币): TOTAL_DEBIT
      */
-    public final void setTotalDebit(java.lang.String value){
+    public final void setTotalDebit(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_totalDebit,value)){
             this._totalDebit = value;
             internalClearRefs(PROP_ID_totalDebit);
@@ -1037,7 +1037,7 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
     /**
      * 贷方合计(本位币): TOTAL_CREDIT
      */
-    public final java.lang.String getTotalCredit(){
+    public final java.math.BigDecimal getTotalCredit(){
          onPropGet(PROP_ID_totalCredit);
          return _totalCredit;
     }
@@ -1045,7 +1045,7 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
     /**
      * 贷方合计(本位币): TOTAL_CREDIT
      */
-    public final void setTotalCredit(java.lang.String value){
+    public final void setTotalCredit(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_totalCredit,value)){
             this._totalCredit = value;
             internalClearRefs(PROP_ID_totalCredit);

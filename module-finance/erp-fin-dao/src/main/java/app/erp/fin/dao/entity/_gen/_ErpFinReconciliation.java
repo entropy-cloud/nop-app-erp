@@ -230,16 +230,16 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
     private java.lang.Long _currencyId;
     
     /* 汇率: EXCHANGE_RATE */
-    private java.lang.String _exchangeRate;
+    private java.math.BigDecimal _exchangeRate;
     
     /* 核销总额(源币): TOTAL_AMOUNT_SOURCE */
-    private java.lang.String _totalAmountSource;
+    private java.math.BigDecimal _totalAmountSource;
     
     /* 核销总额(本位币): TOTAL_AMOUNT_FUNCTIONAL */
-    private java.lang.String _totalAmountFunctional;
+    private java.math.BigDecimal _totalAmountFunctional;
     
     /* 汇兑损益: FX_GAIN_LOSS */
-    private java.lang.String _fxGainLoss;
+    private java.math.BigDecimal _fxGainLoss;
     
     /* 状态: DOC_STATUS */
     private java.lang.Integer _docStatus;
@@ -503,9 +503,9 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
             }
         
             case PROP_ID_exchangeRate:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_exchangeRate));
                }
                setExchangeRate(typedValue);
@@ -513,9 +513,9 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
             }
         
             case PROP_ID_totalAmountSource:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_totalAmountSource));
                }
                setTotalAmountSource(typedValue);
@@ -523,9 +523,9 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
             }
         
             case PROP_ID_totalAmountFunctional:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_totalAmountFunctional));
                }
                setTotalAmountFunctional(typedValue);
@@ -533,9 +533,9 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
             }
         
             case PROP_ID_fxGainLoss:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_fxGainLoss));
                }
                setFxGainLoss(typedValue);
@@ -709,28 +709,28 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
         
             case PROP_ID_exchangeRate:{
                onInitProp(propId);
-               this._exchangeRate = (java.lang.String)value;
+               this._exchangeRate = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_totalAmountSource:{
                onInitProp(propId);
-               this._totalAmountSource = (java.lang.String)value;
+               this._totalAmountSource = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_totalAmountFunctional:{
                onInitProp(propId);
-               this._totalAmountFunctional = (java.lang.String)value;
+               this._totalAmountFunctional = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_fxGainLoss:{
                onInitProp(propId);
-               this._fxGainLoss = (java.lang.String)value;
+               this._fxGainLoss = (java.math.BigDecimal)value;
                
                break;
             }
@@ -966,7 +966,7 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
     /**
      * 汇率: EXCHANGE_RATE
      */
-    public final java.lang.String getExchangeRate(){
+    public final java.math.BigDecimal getExchangeRate(){
          onPropGet(PROP_ID_exchangeRate);
          return _exchangeRate;
     }
@@ -974,7 +974,7 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
     /**
      * 汇率: EXCHANGE_RATE
      */
-    public final void setExchangeRate(java.lang.String value){
+    public final void setExchangeRate(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_exchangeRate,value)){
             this._exchangeRate = value;
             internalClearRefs(PROP_ID_exchangeRate);
@@ -985,7 +985,7 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
     /**
      * 核销总额(源币): TOTAL_AMOUNT_SOURCE
      */
-    public final java.lang.String getTotalAmountSource(){
+    public final java.math.BigDecimal getTotalAmountSource(){
          onPropGet(PROP_ID_totalAmountSource);
          return _totalAmountSource;
     }
@@ -993,7 +993,7 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
     /**
      * 核销总额(源币): TOTAL_AMOUNT_SOURCE
      */
-    public final void setTotalAmountSource(java.lang.String value){
+    public final void setTotalAmountSource(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_totalAmountSource,value)){
             this._totalAmountSource = value;
             internalClearRefs(PROP_ID_totalAmountSource);
@@ -1004,7 +1004,7 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
     /**
      * 核销总额(本位币): TOTAL_AMOUNT_FUNCTIONAL
      */
-    public final java.lang.String getTotalAmountFunctional(){
+    public final java.math.BigDecimal getTotalAmountFunctional(){
          onPropGet(PROP_ID_totalAmountFunctional);
          return _totalAmountFunctional;
     }
@@ -1012,7 +1012,7 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
     /**
      * 核销总额(本位币): TOTAL_AMOUNT_FUNCTIONAL
      */
-    public final void setTotalAmountFunctional(java.lang.String value){
+    public final void setTotalAmountFunctional(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_totalAmountFunctional,value)){
             this._totalAmountFunctional = value;
             internalClearRefs(PROP_ID_totalAmountFunctional);
@@ -1023,7 +1023,7 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
     /**
      * 汇兑损益: FX_GAIN_LOSS
      */
-    public final java.lang.String getFxGainLoss(){
+    public final java.math.BigDecimal getFxGainLoss(){
          onPropGet(PROP_ID_fxGainLoss);
          return _fxGainLoss;
     }
@@ -1031,7 +1031,7 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
     /**
      * 汇兑损益: FX_GAIN_LOSS
      */
-    public final void setFxGainLoss(java.lang.String value){
+    public final void setFxGainLoss(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_fxGainLoss,value)){
             this._fxGainLoss = value;
             internalClearRefs(PROP_ID_fxGainLoss);

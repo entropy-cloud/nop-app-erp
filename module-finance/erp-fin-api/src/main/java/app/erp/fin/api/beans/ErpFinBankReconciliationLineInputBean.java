@@ -96,16 +96,16 @@
         }
 
 
-        private String _amount;
+        private java.math.BigDecimal _amount;
 
     
         @PropMeta(propId=7)
     
-        public String getAmount(){
+        public java.math.BigDecimal getAmount(){
             return _amount;
         }
 
-        public void setAmount(String value){
+        public void setAmount(java.math.BigDecimal value){
             this._amount = value;
         }
 

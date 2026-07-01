@@ -49,7 +49,7 @@
         </prop>
         <prop name="amount" displayName="金额" propId="8" i18n-en:displayName="Amount" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="currencyId" displayName="币种" propId="9" i18n-en:displayName="Currency" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="currency">
@@ -57,7 +57,7 @@
         </prop>
         <prop name="balanceAfter" displayName="交易后余额" propId="10" i18n-en:displayName="Balance After" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="matchStatus" displayName="匹配状态" propId="11" i18n-en:displayName="Match Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">

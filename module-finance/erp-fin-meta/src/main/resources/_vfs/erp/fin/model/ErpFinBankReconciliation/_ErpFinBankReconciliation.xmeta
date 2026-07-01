@@ -45,15 +45,15 @@
         </prop>
         <prop name="bookBalance" displayName="账面余额" propId="7" i18n-en:displayName="Book Balance" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="statementBalance" displayName="对账单余额" propId="8" i18n-en:displayName="Statement Balance"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="unreconciledDiff" displayName="未达差异" propId="9" i18n-en:displayName="Unreconciled Difference"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="isBalanced" displayName="是否平衡" propId="10" i18n-en:displayName="Is Balanced" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="false">

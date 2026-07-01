@@ -138,58 +138,58 @@
         }
 
 
-        private String _exchangeRate;
+        private java.math.BigDecimal _exchangeRate;
 
     
         @PropMeta(propId=9)
     
-        public String getExchangeRate(){
+        public java.math.BigDecimal getExchangeRate(){
             return _exchangeRate;
         }
 
-        public void setExchangeRate(String value){
+        public void setExchangeRate(java.math.BigDecimal value){
             this._exchangeRate = value;
         }
 
 
-        private String _totalAmountSource;
+        private java.math.BigDecimal _totalAmountSource;
 
     
         @PropMeta(propId=10)
     
-        public String getTotalAmountSource(){
+        public java.math.BigDecimal getTotalAmountSource(){
             return _totalAmountSource;
         }
 
-        public void setTotalAmountSource(String value){
+        public void setTotalAmountSource(java.math.BigDecimal value){
             this._totalAmountSource = value;
         }
 
 
-        private String _totalAmountFunctional;
+        private java.math.BigDecimal _totalAmountFunctional;
 
     
         @PropMeta(propId=11)
     
-        public String getTotalAmountFunctional(){
+        public java.math.BigDecimal getTotalAmountFunctional(){
             return _totalAmountFunctional;
         }
 
-        public void setTotalAmountFunctional(String value){
+        public void setTotalAmountFunctional(java.math.BigDecimal value){
             this._totalAmountFunctional = value;
         }
 
 
-        private String _fxGainLoss;
+        private java.math.BigDecimal _fxGainLoss;
 
     
         @PropMeta(propId=12)
     
-        public String getFxGainLoss(){
+        public java.math.BigDecimal getFxGainLoss(){
             return _fxGainLoss;
         }
 
-        public void setFxGainLoss(String value){
+        public void setFxGainLoss(java.math.BigDecimal value){
             this._fxGainLoss = value;
         }
 

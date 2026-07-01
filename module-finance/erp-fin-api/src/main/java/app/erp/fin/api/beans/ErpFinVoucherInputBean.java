@@ -139,30 +139,30 @@
         }
 
 
-        private String _totalDebit;
+        private java.math.BigDecimal _totalDebit;
 
     
         @PropMeta(propId=10)
     
-        public String getTotalDebit(){
+        public java.math.BigDecimal getTotalDebit(){
             return _totalDebit;
         }
 
-        public void setTotalDebit(String value){
+        public void setTotalDebit(java.math.BigDecimal value){
             this._totalDebit = value;
         }
 
 
-        private String _totalCredit;
+        private java.math.BigDecimal _totalCredit;
 
     
         @PropMeta(propId=11)
     
-        public String getTotalCredit(){
+        public java.math.BigDecimal getTotalCredit(){
             return _totalCredit;
         }
 
-        public void setTotalCredit(String value){
+        public void setTotalCredit(java.math.BigDecimal value){
             this._totalCredit = value;
         }
 

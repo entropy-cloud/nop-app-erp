@@ -49,11 +49,11 @@
         </prop>
         <prop name="debitAmount" displayName="借方金额(本位币)" propId="8" i18n-en:displayName="Debit Amount" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="creditAmount" displayName="贷方金额(本位币)" propId="9" i18n-en:displayName="Credit Amount"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="currencyId" displayName="币种" propId="10" i18n-en:displayName="Currency" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="currency">
@@ -61,15 +61,15 @@
         </prop>
         <prop name="exchangeRate" displayName="汇率" propId="11" i18n-en:displayName="Exchange Rate" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="1">
-            <schema domain="exchangeRate" type="java.lang.String" precision="20" scale="8"/>
+            <schema domain="exchangeRate" type="java.math.BigDecimal" precision="20" scale="8"/>
         </prop>
         <prop name="amountSource" displayName="源币种金额" propId="12" i18n-en:displayName="Amt (Source)" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="amountFunctional" displayName="本位币金额" propId="13" i18n-en:displayName="Amt (Functional)"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="acctSchemaId" displayName="账套" propId="14" i18n-en:displayName="Acct Schema" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="acctSchema">

@@ -66,33 +66,33 @@
         </prop>
         <prop name="exchangeRate" displayName="汇率" propId="12" i18n-en:displayName="Exchange Rate" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="1">
-            <schema domain="exchangeRate" type="java.lang.String" precision="20" scale="8"/>
+            <schema domain="exchangeRate" type="java.math.BigDecimal" precision="20" scale="8"/>
         </prop>
         <prop name="amountSource" displayName="源币种金额" propId="13" i18n-en:displayName="Amt (Source)" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="amountFunctional" displayName="本位币金额" propId="14" i18n-en:displayName="Amt (Functional)"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="settledAmountSource" displayName="已核销源币金额" propId="15" i18n-en:displayName="Settled Amount Source"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="settledAmountFunctional" displayName="已核销本位币金额" propId="16"
               i18n-en:displayName="Settled Amount Functional" queryable="true" sortable="true" insertable="true"
               updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="openAmountSource" displayName="未核销源币金额" propId="17" i18n-en:displayName="Open Amount Source"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="openAmountFunctional" displayName="未核销本位币金额" propId="18"
               i18n-en:displayName="Open Amount Functional" mandatory="true" queryable="true" sortable="true"
               insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="status" displayName="状态" propId="19" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">

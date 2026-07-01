@@ -40,13 +40,13 @@
                 <col id="dcDirection" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--金额-->
-                <col id="amount" mandatory="true" sortable="true"/>
+                <col id="amount" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--币种-->
                 <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--交易后余额-->
-                <col id="balanceAfter" sortable="true"/>
+                <col id="balanceAfter" ui:number="true" sortable="true"/>
 
                 <!--匹配状态-->
                 <col id="matchStatus" mandatory="true" ui:number="true" sortable="true"/>

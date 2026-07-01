@@ -96,114 +96,114 @@
         }
 
 
-        private String _openingDebit;
+        private java.math.BigDecimal _openingDebit;
 
     
         @PropMeta(propId=7)
     
-        public String getOpeningDebit(){
+        public java.math.BigDecimal getOpeningDebit(){
             return _openingDebit;
         }
 
-        public void setOpeningDebit(String value){
+        public void setOpeningDebit(java.math.BigDecimal value){
             this._openingDebit = value;
         }
 
 
-        private String _openingCredit;
+        private java.math.BigDecimal _openingCredit;
 
     
         @PropMeta(propId=8)
     
-        public String getOpeningCredit(){
+        public java.math.BigDecimal getOpeningCredit(){
             return _openingCredit;
         }
 
-        public void setOpeningCredit(String value){
+        public void setOpeningCredit(java.math.BigDecimal value){
             this._openingCredit = value;
         }
 
 
-        private String _periodDebit;
+        private java.math.BigDecimal _periodDebit;
 
     
         @PropMeta(propId=9)
     
-        public String getPeriodDebit(){
+        public java.math.BigDecimal getPeriodDebit(){
             return _periodDebit;
         }
 
-        public void setPeriodDebit(String value){
+        public void setPeriodDebit(java.math.BigDecimal value){
             this._periodDebit = value;
         }
 
 
-        private String _periodCredit;
+        private java.math.BigDecimal _periodCredit;
 
     
         @PropMeta(propId=10)
     
-        public String getPeriodCredit(){
+        public java.math.BigDecimal getPeriodCredit(){
             return _periodCredit;
         }
 
-        public void setPeriodCredit(String value){
+        public void setPeriodCredit(java.math.BigDecimal value){
             this._periodCredit = value;
         }
 
 
-        private String _closingDebit;
+        private java.math.BigDecimal _closingDebit;
 
     
         @PropMeta(propId=11)
     
-        public String getClosingDebit(){
+        public java.math.BigDecimal getClosingDebit(){
             return _closingDebit;
         }
 
-        public void setClosingDebit(String value){
+        public void setClosingDebit(java.math.BigDecimal value){
             this._closingDebit = value;
         }
 
 
-        private String _closingCredit;
+        private java.math.BigDecimal _closingCredit;
 
     
         @PropMeta(propId=12)
     
-        public String getClosingCredit(){
+        public java.math.BigDecimal getClosingCredit(){
             return _closingCredit;
         }
 
-        public void setClosingCredit(String value){
+        public void setClosingCredit(java.math.BigDecimal value){
             this._closingCredit = value;
         }
 
 
-        private String _yearOpeningDebit;
+        private java.math.BigDecimal _yearOpeningDebit;
 
     
         @PropMeta(propId=13)
     
-        public String getYearOpeningDebit(){
+        public java.math.BigDecimal getYearOpeningDebit(){
             return _yearOpeningDebit;
         }
 
-        public void setYearOpeningDebit(String value){
+        public void setYearOpeningDebit(java.math.BigDecimal value){
             this._yearOpeningDebit = value;
         }
 
 
-        private String _yearOpeningCredit;
+        private java.math.BigDecimal _yearOpeningCredit;
 
     
         @PropMeta(propId=14)
     
-        public String getYearOpeningCredit(){
+        public java.math.BigDecimal getYearOpeningCredit(){
             return _yearOpeningCredit;
         }
 
-        public void setYearOpeningCredit(String value){
+        public void setYearOpeningCredit(java.math.BigDecimal value){
             this._yearOpeningCredit = value;
         }
 

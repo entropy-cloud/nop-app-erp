@@ -37,13 +37,13 @@
                 <col id="reconciliationDate" mandatory="true" sortable="true"/>
 
                 <!--账面余额-->
-                <col id="bookBalance" mandatory="true" sortable="true"/>
+                <col id="bookBalance" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--对账单余额-->
-                <col id="statementBalance" mandatory="true" sortable="true"/>
+                <col id="statementBalance" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--未达差异-->
-                <col id="unreconciledDiff" sortable="true"/>
+                <col id="unreconciledDiff" ui:number="true" sortable="true"/>
 
                 <!--是否平衡-->
                 <col id="isBalanced" sortable="true"/>

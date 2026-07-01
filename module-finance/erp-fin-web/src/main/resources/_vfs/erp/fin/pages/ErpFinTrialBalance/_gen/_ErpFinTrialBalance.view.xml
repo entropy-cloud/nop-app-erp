@@ -40,22 +40,22 @@
                 <col id="subjectName" sortable="true"/>
 
                 <!--期初借方-->
-                <col id="openingDebit" sortable="true"/>
+                <col id="openingDebit" ui:number="true" sortable="true"/>
 
                 <!--期初贷方-->
-                <col id="openingCredit" sortable="true"/>
+                <col id="openingCredit" ui:number="true" sortable="true"/>
 
                 <!--本期借方-->
-                <col id="periodDebit" sortable="true"/>
+                <col id="periodDebit" ui:number="true" sortable="true"/>
 
                 <!--本期贷方-->
-                <col id="periodCredit" sortable="true"/>
+                <col id="periodCredit" ui:number="true" sortable="true"/>
 
                 <!--期末借方-->
-                <col id="closingDebit" sortable="true"/>
+                <col id="closingDebit" ui:number="true" sortable="true"/>
 
                 <!--期末贷方-->
-                <col id="closingCredit" sortable="true"/>
+                <col id="closingCredit" ui:number="true" sortable="true"/>
 
                 <!--生成时间-->
                 <col id="generatedAt" mandatory="true" sortable="true"/>

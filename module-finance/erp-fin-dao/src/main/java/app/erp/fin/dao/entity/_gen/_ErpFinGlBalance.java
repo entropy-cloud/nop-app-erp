@@ -250,28 +250,28 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
     private java.lang.Long _currencyId;
     
     /* 期初借方(本位币): OPENING_DEBIT */
-    private java.lang.String _openingDebit;
+    private java.math.BigDecimal _openingDebit;
     
     /* 期初贷方(本位币): OPENING_CREDIT */
-    private java.lang.String _openingCredit;
+    private java.math.BigDecimal _openingCredit;
     
     /* 本期借方发生(本位币): PERIOD_DEBIT */
-    private java.lang.String _periodDebit;
+    private java.math.BigDecimal _periodDebit;
     
     /* 本期贷方发生(本位币): PERIOD_CREDIT */
-    private java.lang.String _periodCredit;
+    private java.math.BigDecimal _periodCredit;
     
     /* 期末借方(本位币): CLOSING_DEBIT */
-    private java.lang.String _closingDebit;
+    private java.math.BigDecimal _closingDebit;
     
     /* 期末贷方(本位币): CLOSING_CREDIT */
-    private java.lang.String _closingCredit;
+    private java.math.BigDecimal _closingCredit;
     
     /* 年初借方: YEAR_OPENING_DEBIT */
-    private java.lang.String _yearOpeningDebit;
+    private java.math.BigDecimal _yearOpeningDebit;
     
     /* 年初贷方: YEAR_OPENING_CREDIT */
-    private java.lang.String _yearOpeningCredit;
+    private java.math.BigDecimal _yearOpeningCredit;
     
     /* 辅助-往来单位: PARTNER_ID */
     private java.lang.Long _partnerId;
@@ -521,9 +521,9 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
             }
         
             case PROP_ID_openingDebit:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_openingDebit));
                }
                setOpeningDebit(typedValue);
@@ -531,9 +531,9 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
             }
         
             case PROP_ID_openingCredit:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_openingCredit));
                }
                setOpeningCredit(typedValue);
@@ -541,9 +541,9 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
             }
         
             case PROP_ID_periodDebit:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_periodDebit));
                }
                setPeriodDebit(typedValue);
@@ -551,9 +551,9 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
             }
         
             case PROP_ID_periodCredit:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_periodCredit));
                }
                setPeriodCredit(typedValue);
@@ -561,9 +561,9 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
             }
         
             case PROP_ID_closingDebit:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_closingDebit));
                }
                setClosingDebit(typedValue);
@@ -571,9 +571,9 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
             }
         
             case PROP_ID_closingCredit:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_closingCredit));
                }
                setClosingCredit(typedValue);
@@ -581,9 +581,9 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
             }
         
             case PROP_ID_yearOpeningDebit:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_yearOpeningDebit));
                }
                setYearOpeningDebit(typedValue);
@@ -591,9 +591,9 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
             }
         
             case PROP_ID_yearOpeningCredit:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_yearOpeningCredit));
                }
                setYearOpeningCredit(typedValue);
@@ -753,56 +753,56 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
         
             case PROP_ID_openingDebit:{
                onInitProp(propId);
-               this._openingDebit = (java.lang.String)value;
+               this._openingDebit = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_openingCredit:{
                onInitProp(propId);
-               this._openingCredit = (java.lang.String)value;
+               this._openingCredit = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_periodDebit:{
                onInitProp(propId);
-               this._periodDebit = (java.lang.String)value;
+               this._periodDebit = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_periodCredit:{
                onInitProp(propId);
-               this._periodCredit = (java.lang.String)value;
+               this._periodCredit = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_closingDebit:{
                onInitProp(propId);
-               this._closingDebit = (java.lang.String)value;
+               this._closingDebit = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_closingCredit:{
                onInitProp(propId);
-               this._closingCredit = (java.lang.String)value;
+               this._closingCredit = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_yearOpeningDebit:{
                onInitProp(propId);
-               this._yearOpeningDebit = (java.lang.String)value;
+               this._yearOpeningDebit = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_yearOpeningCredit:{
                onInitProp(propId);
-               this._yearOpeningCredit = (java.lang.String)value;
+               this._yearOpeningCredit = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1000,7 +1000,7 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
     /**
      * 期初借方(本位币): OPENING_DEBIT
      */
-    public final java.lang.String getOpeningDebit(){
+    public final java.math.BigDecimal getOpeningDebit(){
          onPropGet(PROP_ID_openingDebit);
          return _openingDebit;
     }
@@ -1008,7 +1008,7 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
     /**
      * 期初借方(本位币): OPENING_DEBIT
      */
-    public final void setOpeningDebit(java.lang.String value){
+    public final void setOpeningDebit(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_openingDebit,value)){
             this._openingDebit = value;
             internalClearRefs(PROP_ID_openingDebit);
@@ -1019,7 +1019,7 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
     /**
      * 期初贷方(本位币): OPENING_CREDIT
      */
-    public final java.lang.String getOpeningCredit(){
+    public final java.math.BigDecimal getOpeningCredit(){
          onPropGet(PROP_ID_openingCredit);
          return _openingCredit;
     }
@@ -1027,7 +1027,7 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
     /**
      * 期初贷方(本位币): OPENING_CREDIT
      */
-    public final void setOpeningCredit(java.lang.String value){
+    public final void setOpeningCredit(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_openingCredit,value)){
             this._openingCredit = value;
             internalClearRefs(PROP_ID_openingCredit);
@@ -1038,7 +1038,7 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
     /**
      * 本期借方发生(本位币): PERIOD_DEBIT
      */
-    public final java.lang.String getPeriodDebit(){
+    public final java.math.BigDecimal getPeriodDebit(){
          onPropGet(PROP_ID_periodDebit);
          return _periodDebit;
     }
@@ -1046,7 +1046,7 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
     /**
      * 本期借方发生(本位币): PERIOD_DEBIT
      */
-    public final void setPeriodDebit(java.lang.String value){
+    public final void setPeriodDebit(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_periodDebit,value)){
             this._periodDebit = value;
             internalClearRefs(PROP_ID_periodDebit);
@@ -1057,7 +1057,7 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
     /**
      * 本期贷方发生(本位币): PERIOD_CREDIT
      */
-    public final java.lang.String getPeriodCredit(){
+    public final java.math.BigDecimal getPeriodCredit(){
          onPropGet(PROP_ID_periodCredit);
          return _periodCredit;
     }
@@ -1065,7 +1065,7 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
     /**
      * 本期贷方发生(本位币): PERIOD_CREDIT
      */
-    public final void setPeriodCredit(java.lang.String value){
+    public final void setPeriodCredit(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_periodCredit,value)){
             this._periodCredit = value;
             internalClearRefs(PROP_ID_periodCredit);
@@ -1076,7 +1076,7 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
     /**
      * 期末借方(本位币): CLOSING_DEBIT
      */
-    public final java.lang.String getClosingDebit(){
+    public final java.math.BigDecimal getClosingDebit(){
          onPropGet(PROP_ID_closingDebit);
          return _closingDebit;
     }
@@ -1084,7 +1084,7 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
     /**
      * 期末借方(本位币): CLOSING_DEBIT
      */
-    public final void setClosingDebit(java.lang.String value){
+    public final void setClosingDebit(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_closingDebit,value)){
             this._closingDebit = value;
             internalClearRefs(PROP_ID_closingDebit);
@@ -1095,7 +1095,7 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
     /**
      * 期末贷方(本位币): CLOSING_CREDIT
      */
-    public final java.lang.String getClosingCredit(){
+    public final java.math.BigDecimal getClosingCredit(){
          onPropGet(PROP_ID_closingCredit);
          return _closingCredit;
     }
@@ -1103,7 +1103,7 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
     /**
      * 期末贷方(本位币): CLOSING_CREDIT
      */
-    public final void setClosingCredit(java.lang.String value){
+    public final void setClosingCredit(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_closingCredit,value)){
             this._closingCredit = value;
             internalClearRefs(PROP_ID_closingCredit);
@@ -1114,7 +1114,7 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
     /**
      * 年初借方: YEAR_OPENING_DEBIT
      */
-    public final java.lang.String getYearOpeningDebit(){
+    public final java.math.BigDecimal getYearOpeningDebit(){
          onPropGet(PROP_ID_yearOpeningDebit);
          return _yearOpeningDebit;
     }
@@ -1122,7 +1122,7 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
     /**
      * 年初借方: YEAR_OPENING_DEBIT
      */
-    public final void setYearOpeningDebit(java.lang.String value){
+    public final void setYearOpeningDebit(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_yearOpeningDebit,value)){
             this._yearOpeningDebit = value;
             internalClearRefs(PROP_ID_yearOpeningDebit);
@@ -1133,7 +1133,7 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
     /**
      * 年初贷方: YEAR_OPENING_CREDIT
      */
-    public final java.lang.String getYearOpeningCredit(){
+    public final java.math.BigDecimal getYearOpeningCredit(){
          onPropGet(PROP_ID_yearOpeningCredit);
          return _yearOpeningCredit;
     }
@@ -1141,7 +1141,7 @@ public class _ErpFinGlBalance extends DynamicOrmEntity{
     /**
      * 年初贷方: YEAR_OPENING_CREDIT
      */
-    public final void setYearOpeningCredit(java.lang.String value){
+    public final void setYearOpeningCredit(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_yearOpeningCredit,value)){
             this._yearOpeningCredit = value;
             internalClearRefs(PROP_ID_yearOpeningCredit);

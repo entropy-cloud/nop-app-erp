@@ -45,35 +45,35 @@
         </prop>
         <prop name="openingDebit" displayName="期初借方(本位币)" propId="7" i18n-en:displayName="Opening Debit"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="openingCredit" displayName="期初贷方(本位币)" propId="8" i18n-en:displayName="Opening Credit"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="periodDebit" displayName="本期借方发生(本位币)" propId="9" i18n-en:displayName="Period Debit"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="periodCredit" displayName="本期贷方发生(本位币)" propId="10" i18n-en:displayName="Period Credit"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="closingDebit" displayName="期末借方(本位币)" propId="11" i18n-en:displayName="Closing Debit"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="closingCredit" displayName="期末贷方(本位币)" propId="12" i18n-en:displayName="Closing Credit"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="yearOpeningDebit" displayName="年初借方" propId="13" i18n-en:displayName="Year Opening Debit"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="yearOpeningCredit" displayName="年初贷方" propId="14" i18n-en:displayName="Year Opening Credit"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="partnerId" displayName="辅助-往来单位" propId="15" i18n-en:displayName="Partner" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="partner">

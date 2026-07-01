@@ -57,11 +57,11 @@
         </prop>
         <prop name="totalDebit" displayName="借方合计(本位币)" propId="10" i18n-en:displayName="Total Debit" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="totalCredit" displayName="贷方合计(本位币)" propId="11" i18n-en:displayName="Total Credit" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="isReversed" displayName="是否红字冲销凭证" propId="12" i18n-en:displayName="Is Reversed" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="false">

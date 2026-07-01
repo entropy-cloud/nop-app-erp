@@ -141,10 +141,10 @@
                 <column code="PERIOD_ID" displayName="会计期间" mandatory="true" name="periodId" propId="9"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Period"/>
                 <column code="TOTAL_DEBIT" defaultValue="0" displayName="借方合计(本位币)" domain="amount" name="totalDebit"
-                        precision="20" propId="10" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Total Debit"/>
                 <column code="TOTAL_CREDIT" defaultValue="0" displayName="贷方合计(本位币)" domain="amount" name="totalCredit"
-                        precision="20" propId="11" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="11" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Total Credit"/>
                 <column code="IS_REVERSED" defaultValue="false" displayName="是否红字冲销凭证" name="isReversed" propId="12"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Reversed"/>
@@ -237,21 +237,21 @@
                         stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-fin/dc-direction"
                         i18n-en:displayName="Dc Direction"/>
                 <column code="DEBIT_AMOUNT" defaultValue="0" displayName="借方金额(本位币)" domain="amount" name="debitAmount"
-                        precision="20" propId="8" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="8" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Debit Amount"/>
                 <column code="CREDIT_AMOUNT" defaultValue="0" displayName="贷方金额(本位币)" domain="amount"
-                        name="creditAmount" precision="20" propId="9" scale="4" stdDataType="string"
+                        name="creditAmount" precision="20" propId="9" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Credit Amount"/>
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="10"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
-                        precision="20" propId="11" scale="8" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="11" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
                 <column code="AMOUNT_SOURCE" displayName="源币种金额" domain="amount" name="amountSource" precision="20"
-                        propId="12" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="12" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Source)"/>
                 <column code="AMOUNT_FUNCTIONAL" displayName="本位币金额" domain="amount" name="amountFunctional"
-                        precision="20" propId="13" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="13" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
                 <column code="ACCT_SCHEMA_ID" displayName="账套" mandatory="true" name="acctSchemaId" propId="14"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
@@ -678,25 +678,25 @@
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="11"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
-                        precision="20" propId="12" scale="8" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="12" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
                 <column code="AMOUNT_SOURCE" displayName="源币种金额" domain="amount" mandatory="true" name="amountSource"
-                        precision="20" propId="13" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="13" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Source)"/>
                 <column code="AMOUNT_FUNCTIONAL" displayName="本位币金额" domain="amount" mandatory="true"
-                        name="amountFunctional" precision="20" propId="14" scale="4" stdDataType="string"
+                        name="amountFunctional" precision="20" propId="14" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Amt (Functional)"/>
                 <column code="SETTLED_AMOUNT_SOURCE" defaultValue="0" displayName="已核销源币金额" domain="amount"
-                        name="settledAmountSource" precision="20" propId="15" scale="4" stdDataType="string"
+                        name="settledAmountSource" precision="20" propId="15" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Settled Amount Source"/>
                 <column code="SETTLED_AMOUNT_FUNCTIONAL" defaultValue="0" displayName="已核销本位币金额" domain="amount"
-                        name="settledAmountFunctional" precision="20" propId="16" scale="4" stdDataType="string"
+                        name="settledAmountFunctional" precision="20" propId="16" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Settled Amount Functional"/>
                 <column code="OPEN_AMOUNT_SOURCE" displayName="未核销源币金额" domain="amount" mandatory="true"
-                        name="openAmountSource" precision="20" propId="17" scale="4" stdDataType="string"
+                        name="openAmountSource" precision="20" propId="17" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Open Amount Source"/>
                 <column code="OPEN_AMOUNT_FUNCTIONAL" displayName="未核销本位币金额" domain="amount" mandatory="true"
-                        name="openAmountFunctional" precision="20" propId="18" scale="4" stdDataType="string"
+                        name="openAmountFunctional" precision="20" propId="18" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Open Amount Functional"/>
                 <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="19" stdDataType="int"
                         stdSqlType="INTEGER" ext:dict="erp-fin/ar-ap-status" i18n-en:displayName="Status"/>
@@ -776,16 +776,16 @@
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="8"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
-                        precision="20" propId="9" scale="8" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="9" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
                 <column code="TOTAL_AMOUNT_SOURCE" defaultValue="0" displayName="核销总额(源币)" domain="amount"
-                        name="totalAmountSource" precision="20" propId="10" scale="4" stdDataType="string"
+                        name="totalAmountSource" precision="20" propId="10" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Total Amount Source"/>
                 <column code="TOTAL_AMOUNT_FUNCTIONAL" defaultValue="0" displayName="核销总额(本位币)" domain="amount"
-                        name="totalAmountFunctional" precision="20" propId="11" scale="4" stdDataType="string"
+                        name="totalAmountFunctional" precision="20" propId="11" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Total Amount Functional"/>
                 <column code="FX_GAIN_LOSS" defaultValue="0" displayName="汇兑损益" domain="amount" name="fxGainLoss"
-                        precision="20" propId="12" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="12" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Fx Gain Loss"/>
                 <column code="DOC_STATUS" displayName="状态" mandatory="true" name="docStatus" propId="13"
                         stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-fin/reconciliation-status"
@@ -864,10 +864,10 @@
                 <column code="INVOICE_ITEM_ID" displayName="被核销发票项" mandatory="true" name="invoiceItemId" propId="5"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Invoice Item"/>
                 <column code="SETTLED_AMOUNT_SOURCE" displayName="核销金额(源币)" domain="amount" mandatory="true"
-                        name="settledAmountSource" precision="20" propId="6" scale="4" stdDataType="string"
+                        name="settledAmountSource" precision="20" propId="6" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Settled Amount Source"/>
                 <column code="SETTLED_AMOUNT_FUNCTIONAL" displayName="核销金额(本位币)" domain="amount" mandatory="true"
-                        name="settledAmountFunctional" precision="20" propId="7" scale="4" stdDataType="string"
+                        name="settledAmountFunctional" precision="20" propId="7" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Settled Amount Functional"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="8"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
@@ -925,28 +925,28 @@
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="6"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="OPENING_DEBIT" defaultValue="0" displayName="期初借方(本位币)" domain="amount"
-                        name="openingDebit" precision="20" propId="7" scale="4" stdDataType="string"
+                        name="openingDebit" precision="20" propId="7" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Opening Debit"/>
                 <column code="OPENING_CREDIT" defaultValue="0" displayName="期初贷方(本位币)" domain="amount"
-                        name="openingCredit" precision="20" propId="8" scale="4" stdDataType="string"
+                        name="openingCredit" precision="20" propId="8" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Opening Credit"/>
                 <column code="PERIOD_DEBIT" defaultValue="0" displayName="本期借方发生(本位币)" domain="amount"
-                        name="periodDebit" precision="20" propId="9" scale="4" stdDataType="string" stdSqlType="DECIMAL"
-                        i18n-en:displayName="Period Debit"/>
+                        name="periodDebit" precision="20" propId="9" scale="4" stdDataType="decimal"
+                        stdSqlType="DECIMAL" i18n-en:displayName="Period Debit"/>
                 <column code="PERIOD_CREDIT" defaultValue="0" displayName="本期贷方发生(本位币)" domain="amount"
-                        name="periodCredit" precision="20" propId="10" scale="4" stdDataType="string"
+                        name="periodCredit" precision="20" propId="10" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Period Credit"/>
                 <column code="CLOSING_DEBIT" defaultValue="0" displayName="期末借方(本位币)" domain="amount"
-                        name="closingDebit" precision="20" propId="11" scale="4" stdDataType="string"
+                        name="closingDebit" precision="20" propId="11" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Closing Debit"/>
                 <column code="CLOSING_CREDIT" defaultValue="0" displayName="期末贷方(本位币)" domain="amount"
-                        name="closingCredit" precision="20" propId="12" scale="4" stdDataType="string"
+                        name="closingCredit" precision="20" propId="12" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Closing Credit"/>
                 <column code="YEAR_OPENING_DEBIT" defaultValue="0" displayName="年初借方" domain="amount"
-                        name="yearOpeningDebit" precision="20" propId="13" scale="4" stdDataType="string"
+                        name="yearOpeningDebit" precision="20" propId="13" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Year Opening Debit"/>
                 <column code="YEAR_OPENING_CREDIT" defaultValue="0" displayName="年初贷方" domain="amount"
-                        name="yearOpeningCredit" precision="20" propId="14" scale="4" stdDataType="string"
+                        name="yearOpeningCredit" precision="20" propId="14" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Year Opening Credit"/>
                 <column code="PARTNER_ID" displayName="辅助-往来单位" name="partnerId" propId="15" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
@@ -1047,22 +1047,22 @@
                 <column code="SUBJECT_NAME" displayName="科目名称" domain="subjectName" name="subjectName" precision="200"
                         propId="7" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Subject Name"/>
                 <column code="OPENING_DEBIT" defaultValue="0" displayName="期初借方" domain="amount" name="openingDebit"
-                        precision="20" propId="8" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="8" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Opening Debit"/>
                 <column code="OPENING_CREDIT" defaultValue="0" displayName="期初贷方" domain="amount" name="openingCredit"
-                        precision="20" propId="9" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="9" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Opening Credit"/>
                 <column code="PERIOD_DEBIT" defaultValue="0" displayName="本期借方" domain="amount" name="periodDebit"
-                        precision="20" propId="10" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Period Debit"/>
                 <column code="PERIOD_CREDIT" defaultValue="0" displayName="本期贷方" domain="amount" name="periodCredit"
-                        precision="20" propId="11" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="11" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Period Credit"/>
                 <column code="CLOSING_DEBIT" defaultValue="0" displayName="期末借方" domain="amount" name="closingDebit"
-                        precision="20" propId="12" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="12" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Closing Debit"/>
                 <column code="CLOSING_CREDIT" defaultValue="0" displayName="期末贷方" domain="amount" name="closingCredit"
-                        precision="20" propId="13" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="13" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Closing Credit"/>
                 <column code="GENERATED_AT" displayName="生成时间" mandatory="true" name="generatedAt" propId="14"
                         stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Generated At"/>
@@ -1135,10 +1135,10 @@
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="9"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="OPENING_BALANCE" defaultValue="0" displayName="期初余额" domain="amount" name="openingBalance"
-                        precision="20" propId="10" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Opening Balance"/>
                 <column code="CURRENT_BALANCE" defaultValue="0" displayName="当前余额" domain="amount" name="currentBalance"
-                        precision="20" propId="11" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="11" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Current Balance"/>
                 <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="12" stdDataType="int"
                         stdSqlType="INTEGER" ext:dict="erp-fin/fund-account-status" i18n-en:displayName="Status"/>
@@ -1198,16 +1198,16 @@
                 <column code="STATEMENT_DATE" displayName="对账日期" mandatory="true" name="statementDate" propId="5"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Statement Date"/>
                 <column code="BEGINNING_BALANCE" defaultValue="0" displayName="期初余额" domain="amount"
-                        name="beginningBalance" precision="20" propId="6" scale="4" stdDataType="string"
+                        name="beginningBalance" precision="20" propId="6" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Opening Balance"/>
                 <column code="ENDING_BALANCE" defaultValue="0" displayName="期末余额" domain="amount" name="endingBalance"
-                        precision="20" propId="7" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="7" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Closing Balance"/>
                 <column code="TOTAL_DEBIT" defaultValue="0" displayName="借方发生额" domain="amount" name="totalDebit"
-                        precision="20" propId="8" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="8" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Total Debit"/>
                 <column code="TOTAL_CREDIT" defaultValue="0" displayName="贷方发生额" domain="amount" name="totalCredit"
-                        precision="20" propId="9" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="9" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Total Credit"/>
                 <column code="IMPORT_TIME" displayName="导入时间" name="importTime" propId="10" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Import Time"/>
@@ -1269,11 +1269,11 @@
                         stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-fin/dc-direction"
                         i18n-en:displayName="Dc Direction"/>
                 <column code="AMOUNT" displayName="金额" domain="amount" mandatory="true" name="amount" precision="20"
-                        propId="8" scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Amount"/>
+                        propId="8" scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Amount"/>
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="9"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="BALANCE_AFTER" displayName="交易后余额" domain="amount" name="balanceAfter" precision="20"
-                        propId="10" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Balance After"/>
                 <column code="MATCH_STATUS" displayName="匹配状态" mandatory="true" name="matchStatus" propId="11"
                         stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-fin/ar-ap-status"
@@ -1339,13 +1339,13 @@
                 <column code="RECONCILIATION_DATE" displayName="对账日期" mandatory="true" name="reconciliationDate"
                         propId="6" stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Reconciliation Date"/>
                 <column code="BOOK_BALANCE" displayName="账面余额" domain="amount" mandatory="true" name="bookBalance"
-                        precision="20" propId="7" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="7" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Book Balance"/>
                 <column code="STATEMENT_BALANCE" displayName="对账单余额" domain="amount" mandatory="true"
-                        name="statementBalance" precision="20" propId="8" scale="4" stdDataType="string"
+                        name="statementBalance" precision="20" propId="8" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Statement Balance"/>
                 <column code="UNRECONCILED_DIFF" defaultValue="0" displayName="未达差异" domain="amount"
-                        name="unreconciledDiff" precision="20" propId="9" scale="4" stdDataType="string"
+                        name="unreconciledDiff" precision="20" propId="9" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Unreconciled Difference"/>
                 <column code="IS_BALANCED" defaultValue="false" displayName="是否平衡" name="isBalanced" propId="10"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Balanced"/>
@@ -1423,7 +1423,7 @@
                         stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-fin/dc-direction"
                         i18n-en:displayName="Dc Direction"/>
                 <column code="AMOUNT" displayName="金额" domain="amount" mandatory="true" name="amount" precision="20"
-                        propId="7" scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Amount"/>
+                        propId="7" scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Amount"/>
                 <column code="SIDE" displayName="调整方" mandatory="true" name="side" precision="20" propId="8"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Side"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="9"

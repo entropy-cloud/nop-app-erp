@@ -34,10 +34,10 @@
                 <col id="invoiceItemId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--核销金额(源币)-->
-                <col id="settledAmountSource" mandatory="true" sortable="true"/>
+                <col id="settledAmountSource" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--核销金额(本位币)-->
-                <col id="settledAmountFunctional" mandatory="true" sortable="true"/>
+                <col id="settledAmountFunctional" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

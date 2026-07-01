@@ -46,7 +46,7 @@
         </prop>
         <prop name="amount" displayName="金额" propId="7" i18n-en:displayName="Amount" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="side" displayName="调整方" propId="8" i18n-en:displayName="Side" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">

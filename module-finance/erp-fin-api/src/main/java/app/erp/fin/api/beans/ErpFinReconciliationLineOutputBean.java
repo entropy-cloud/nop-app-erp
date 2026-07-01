@@ -83,30 +83,30 @@
         }
 
 
-        private String _settledAmountSource;
+        private java.math.BigDecimal _settledAmountSource;
 
     
         @PropMeta(propId=6)
     
-        public String getSettledAmountSource(){
+        public java.math.BigDecimal getSettledAmountSource(){
             return _settledAmountSource;
         }
 
-        public void setSettledAmountSource(String value){
+        public void setSettledAmountSource(java.math.BigDecimal value){
             this._settledAmountSource = value;
         }
 
 
-        private String _settledAmountFunctional;
+        private java.math.BigDecimal _settledAmountFunctional;
 
     
         @PropMeta(propId=7)
     
-        public String getSettledAmountFunctional(){
+        public java.math.BigDecimal getSettledAmountFunctional(){
             return _settledAmountFunctional;
         }
 
-        public void setSettledAmountFunctional(String value){
+        public void setSettledAmountFunctional(java.math.BigDecimal value){
             this._settledAmountFunctional = value;
         }
 

@@ -159,10 +159,10 @@ public class _ErpFinReconciliationLine extends DynamicOrmEntity{
     private java.lang.Long _invoiceItemId;
     
     /* 核销金额(源币): SETTLED_AMOUNT_SOURCE */
-    private java.lang.String _settledAmountSource;
+    private java.math.BigDecimal _settledAmountSource;
     
     /* 核销金额(本位币): SETTLED_AMOUNT_FUNCTIONAL */
-    private java.lang.String _settledAmountFunctional;
+    private java.math.BigDecimal _settledAmountFunctional;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -363,9 +363,9 @@ public class _ErpFinReconciliationLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_settledAmountSource:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_settledAmountSource));
                }
                setSettledAmountSource(typedValue);
@@ -373,9 +373,9 @@ public class _ErpFinReconciliationLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_settledAmountFunctional:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_settledAmountFunctional));
                }
                setSettledAmountFunctional(typedValue);
@@ -498,14 +498,14 @@ public class _ErpFinReconciliationLine extends DynamicOrmEntity{
         
             case PROP_ID_settledAmountSource:{
                onInitProp(propId);
-               this._settledAmountSource = (java.lang.String)value;
+               this._settledAmountSource = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_settledAmountFunctional:{
                onInitProp(propId);
-               this._settledAmountFunctional = (java.lang.String)value;
+               this._settledAmountFunctional = (java.math.BigDecimal)value;
                
                break;
             }
@@ -663,7 +663,7 @@ public class _ErpFinReconciliationLine extends DynamicOrmEntity{
     /**
      * 核销金额(源币): SETTLED_AMOUNT_SOURCE
      */
-    public final java.lang.String getSettledAmountSource(){
+    public final java.math.BigDecimal getSettledAmountSource(){
          onPropGet(PROP_ID_settledAmountSource);
          return _settledAmountSource;
     }
@@ -671,7 +671,7 @@ public class _ErpFinReconciliationLine extends DynamicOrmEntity{
     /**
      * 核销金额(源币): SETTLED_AMOUNT_SOURCE
      */
-    public final void setSettledAmountSource(java.lang.String value){
+    public final void setSettledAmountSource(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_settledAmountSource,value)){
             this._settledAmountSource = value;
             internalClearRefs(PROP_ID_settledAmountSource);
@@ -682,7 +682,7 @@ public class _ErpFinReconciliationLine extends DynamicOrmEntity{
     /**
      * 核销金额(本位币): SETTLED_AMOUNT_FUNCTIONAL
      */
-    public final java.lang.String getSettledAmountFunctional(){
+    public final java.math.BigDecimal getSettledAmountFunctional(){
          onPropGet(PROP_ID_settledAmountFunctional);
          return _settledAmountFunctional;
     }
@@ -690,7 +690,7 @@ public class _ErpFinReconciliationLine extends DynamicOrmEntity{
     /**
      * 核销金额(本位币): SETTLED_AMOUNT_FUNCTIONAL
      */
-    public final void setSettledAmountFunctional(java.lang.String value){
+    public final void setSettledAmountFunctional(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_settledAmountFunctional,value)){
             this._settledAmountFunctional = value;
             internalClearRefs(PROP_ID_settledAmountFunctional);

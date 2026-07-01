@@ -40,22 +40,22 @@
                 <col id="dcDirection" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--借方金额(本位币)-->
-                <col id="debitAmount" sortable="true"/>
+                <col id="debitAmount" ui:number="true" sortable="true"/>
 
                 <!--贷方金额(本位币)-->
-                <col id="creditAmount" sortable="true"/>
+                <col id="creditAmount" ui:number="true" sortable="true"/>
 
                 <!--币种-->
                 <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--汇率-->
-                <col id="exchangeRate" sortable="true"/>
+                <col id="exchangeRate" ui:number="true" sortable="true"/>
 
                 <!--源币种金额-->
-                <col id="amountSource" sortable="true"/>
+                <col id="amountSource" ui:number="true" sortable="true"/>
 
                 <!--本位币金额-->
-                <col id="amountFunctional" sortable="true"/>
+                <col id="amountFunctional" ui:number="true" sortable="true"/>
 
                 <!--账套-->
                 <col id="acctSchemaId" mandatory="true" ui:number="true" sortable="true"/>

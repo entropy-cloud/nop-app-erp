@@ -207,13 +207,13 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
     private java.time.LocalDate _reconciliationDate;
     
     /* 账面余额: BOOK_BALANCE */
-    private java.lang.String _bookBalance;
+    private java.math.BigDecimal _bookBalance;
     
     /* 对账单余额: STATEMENT_BALANCE */
-    private java.lang.String _statementBalance;
+    private java.math.BigDecimal _statementBalance;
     
     /* 未达差异: UNRECONCILED_DIFF */
-    private java.lang.String _unreconciledDiff;
+    private java.math.BigDecimal _unreconciledDiff;
     
     /* 是否平衡: IS_BALANCED */
     private java.lang.Boolean _isBalanced;
@@ -454,9 +454,9 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
             }
         
             case PROP_ID_bookBalance:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_bookBalance));
                }
                setBookBalance(typedValue);
@@ -464,9 +464,9 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
             }
         
             case PROP_ID_statementBalance:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_statementBalance));
                }
                setStatementBalance(typedValue);
@@ -474,9 +474,9 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
             }
         
             case PROP_ID_unreconciledDiff:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_unreconciledDiff));
                }
                setUnreconciledDiff(typedValue);
@@ -646,21 +646,21 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
         
             case PROP_ID_bookBalance:{
                onInitProp(propId);
-               this._bookBalance = (java.lang.String)value;
+               this._bookBalance = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_statementBalance:{
                onInitProp(propId);
-               this._statementBalance = (java.lang.String)value;
+               this._statementBalance = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_unreconciledDiff:{
                onInitProp(propId);
-               this._unreconciledDiff = (java.lang.String)value;
+               this._unreconciledDiff = (java.math.BigDecimal)value;
                
                break;
             }
@@ -865,7 +865,7 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
     /**
      * 账面余额: BOOK_BALANCE
      */
-    public final java.lang.String getBookBalance(){
+    public final java.math.BigDecimal getBookBalance(){
          onPropGet(PROP_ID_bookBalance);
          return _bookBalance;
     }
@@ -873,7 +873,7 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
     /**
      * 账面余额: BOOK_BALANCE
      */
-    public final void setBookBalance(java.lang.String value){
+    public final void setBookBalance(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_bookBalance,value)){
             this._bookBalance = value;
             internalClearRefs(PROP_ID_bookBalance);
@@ -884,7 +884,7 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
     /**
      * 对账单余额: STATEMENT_BALANCE
      */
-    public final java.lang.String getStatementBalance(){
+    public final java.math.BigDecimal getStatementBalance(){
          onPropGet(PROP_ID_statementBalance);
          return _statementBalance;
     }
@@ -892,7 +892,7 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
     /**
      * 对账单余额: STATEMENT_BALANCE
      */
-    public final void setStatementBalance(java.lang.String value){
+    public final void setStatementBalance(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_statementBalance,value)){
             this._statementBalance = value;
             internalClearRefs(PROP_ID_statementBalance);
@@ -903,7 +903,7 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
     /**
      * 未达差异: UNRECONCILED_DIFF
      */
-    public final java.lang.String getUnreconciledDiff(){
+    public final java.math.BigDecimal getUnreconciledDiff(){
          onPropGet(PROP_ID_unreconciledDiff);
          return _unreconciledDiff;
     }
@@ -911,7 +911,7 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
     /**
      * 未达差异: UNRECONCILED_DIFF
      */
-    public final void setUnreconciledDiff(java.lang.String value){
+    public final void setUnreconciledDiff(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_unreconciledDiff,value)){
             this._unreconciledDiff = value;
             internalClearRefs(PROP_ID_unreconciledDiff);

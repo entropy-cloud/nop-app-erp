@@ -294,22 +294,22 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
     private java.lang.Integer _dcDirection;
     
     /* 借方金额(本位币): DEBIT_AMOUNT */
-    private java.lang.String _debitAmount;
+    private java.math.BigDecimal _debitAmount;
     
     /* 贷方金额(本位币): CREDIT_AMOUNT */
-    private java.lang.String _creditAmount;
+    private java.math.BigDecimal _creditAmount;
     
     /* 币种: CURRENCY_ID */
     private java.lang.Long _currencyId;
     
     /* 汇率: EXCHANGE_RATE */
-    private java.lang.String _exchangeRate;
+    private java.math.BigDecimal _exchangeRate;
     
     /* 源币种金额: AMOUNT_SOURCE */
-    private java.lang.String _amountSource;
+    private java.math.BigDecimal _amountSource;
     
     /* 本位币金额: AMOUNT_FUNCTIONAL */
-    private java.lang.String _amountFunctional;
+    private java.math.BigDecimal _amountFunctional;
     
     /* 账套: ACCT_SCHEMA_ID */
     private java.lang.Long _acctSchemaId;
@@ -602,9 +602,9 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_debitAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_debitAmount));
                }
                setDebitAmount(typedValue);
@@ -612,9 +612,9 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_creditAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_creditAmount));
                }
                setCreditAmount(typedValue);
@@ -632,9 +632,9 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_exchangeRate:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_exchangeRate));
                }
                setExchangeRate(typedValue);
@@ -642,9 +642,9 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_amountSource:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_amountSource));
                }
                setAmountSource(typedValue);
@@ -652,9 +652,9 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_amountFunctional:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_amountFunctional));
                }
                setAmountFunctional(typedValue);
@@ -881,14 +881,14 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
         
             case PROP_ID_debitAmount:{
                onInitProp(propId);
-               this._debitAmount = (java.lang.String)value;
+               this._debitAmount = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_creditAmount:{
                onInitProp(propId);
-               this._creditAmount = (java.lang.String)value;
+               this._creditAmount = (java.math.BigDecimal)value;
                
                break;
             }
@@ -902,21 +902,21 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
         
             case PROP_ID_exchangeRate:{
                onInitProp(propId);
-               this._exchangeRate = (java.lang.String)value;
+               this._exchangeRate = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_amountSource:{
                onInitProp(propId);
-               this._amountSource = (java.lang.String)value;
+               this._amountSource = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_amountFunctional:{
                onInitProp(propId);
-               this._amountFunctional = (java.lang.String)value;
+               this._amountFunctional = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1175,7 +1175,7 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
     /**
      * 借方金额(本位币): DEBIT_AMOUNT
      */
-    public final java.lang.String getDebitAmount(){
+    public final java.math.BigDecimal getDebitAmount(){
          onPropGet(PROP_ID_debitAmount);
          return _debitAmount;
     }
@@ -1183,7 +1183,7 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
     /**
      * 借方金额(本位币): DEBIT_AMOUNT
      */
-    public final void setDebitAmount(java.lang.String value){
+    public final void setDebitAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_debitAmount,value)){
             this._debitAmount = value;
             internalClearRefs(PROP_ID_debitAmount);
@@ -1194,7 +1194,7 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
     /**
      * 贷方金额(本位币): CREDIT_AMOUNT
      */
-    public final java.lang.String getCreditAmount(){
+    public final java.math.BigDecimal getCreditAmount(){
          onPropGet(PROP_ID_creditAmount);
          return _creditAmount;
     }
@@ -1202,7 +1202,7 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
     /**
      * 贷方金额(本位币): CREDIT_AMOUNT
      */
-    public final void setCreditAmount(java.lang.String value){
+    public final void setCreditAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_creditAmount,value)){
             this._creditAmount = value;
             internalClearRefs(PROP_ID_creditAmount);
@@ -1232,7 +1232,7 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
     /**
      * 汇率: EXCHANGE_RATE
      */
-    public final java.lang.String getExchangeRate(){
+    public final java.math.BigDecimal getExchangeRate(){
          onPropGet(PROP_ID_exchangeRate);
          return _exchangeRate;
     }
@@ -1240,7 +1240,7 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
     /**
      * 汇率: EXCHANGE_RATE
      */
-    public final void setExchangeRate(java.lang.String value){
+    public final void setExchangeRate(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_exchangeRate,value)){
             this._exchangeRate = value;
             internalClearRefs(PROP_ID_exchangeRate);
@@ -1251,7 +1251,7 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
     /**
      * 源币种金额: AMOUNT_SOURCE
      */
-    public final java.lang.String getAmountSource(){
+    public final java.math.BigDecimal getAmountSource(){
          onPropGet(PROP_ID_amountSource);
          return _amountSource;
     }
@@ -1259,7 +1259,7 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
     /**
      * 源币种金额: AMOUNT_SOURCE
      */
-    public final void setAmountSource(java.lang.String value){
+    public final void setAmountSource(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_amountSource,value)){
             this._amountSource = value;
             internalClearRefs(PROP_ID_amountSource);
@@ -1270,7 +1270,7 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
     /**
      * 本位币金额: AMOUNT_FUNCTIONAL
      */
-    public final java.lang.String getAmountFunctional(){
+    public final java.math.BigDecimal getAmountFunctional(){
          onPropGet(PROP_ID_amountFunctional);
          return _amountFunctional;
     }
@@ -1278,7 +1278,7 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
     /**
      * 本位币金额: AMOUNT_FUNCTIONAL
      */
-    public final void setAmountFunctional(java.lang.String value){
+    public final void setAmountFunctional(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_amountFunctional,value)){
             this._amountFunctional = value;
             internalClearRefs(PROP_ID_amountFunctional);

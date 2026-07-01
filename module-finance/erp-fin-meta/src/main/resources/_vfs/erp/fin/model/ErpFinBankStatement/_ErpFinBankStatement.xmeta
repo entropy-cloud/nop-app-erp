@@ -41,19 +41,19 @@
         </prop>
         <prop name="beginningBalance" displayName="期初余额" propId="6" i18n-en:displayName="Opening Balance"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="endingBalance" displayName="期末余额" propId="7" i18n-en:displayName="Closing Balance" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="totalDebit" displayName="借方发生额" propId="8" i18n-en:displayName="Total Debit" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="totalCredit" displayName="贷方发生额" propId="9" i18n-en:displayName="Total Credit" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="importTime" displayName="导入时间" propId="10" i18n-en:displayName="Import Time" queryable="true"
               sortable="true" insertable="true" updatable="true">

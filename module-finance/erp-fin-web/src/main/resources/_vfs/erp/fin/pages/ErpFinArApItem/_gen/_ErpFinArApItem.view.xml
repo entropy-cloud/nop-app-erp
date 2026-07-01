@@ -52,25 +52,25 @@
                 <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--汇率-->
-                <col id="exchangeRate" sortable="true"/>
+                <col id="exchangeRate" ui:number="true" sortable="true"/>
 
                 <!--源币种金额-->
-                <col id="amountSource" mandatory="true" sortable="true"/>
+                <col id="amountSource" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--本位币金额-->
-                <col id="amountFunctional" mandatory="true" sortable="true"/>
+                <col id="amountFunctional" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--已核销源币金额-->
-                <col id="settledAmountSource" sortable="true"/>
+                <col id="settledAmountSource" ui:number="true" sortable="true"/>
 
                 <!--已核销本位币金额-->
-                <col id="settledAmountFunctional" sortable="true"/>
+                <col id="settledAmountFunctional" ui:number="true" sortable="true"/>
 
                 <!--未核销源币金额-->
-                <col id="openAmountSource" mandatory="true" sortable="true"/>
+                <col id="openAmountSource" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--未核销本位币金额-->
-                <col id="openAmountFunctional" mandatory="true" sortable="true"/>
+                <col id="openAmountFunctional" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--状态-->
                 <col id="status" mandatory="true" ui:number="true" sortable="true"/>

@@ -46,10 +46,10 @@
                 <col id="periodId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--借方合计(本位币)-->
-                <col id="totalDebit" sortable="true"/>
+                <col id="totalDebit" ui:number="true" sortable="true"/>
 
                 <!--贷方合计(本位币)-->
-                <col id="totalCredit" sortable="true"/>
+                <col id="totalCredit" ui:number="true" sortable="true"/>
 
                 <!--是否红字冲销凭证-->
                 <col id="isReversed" sortable="true"/>

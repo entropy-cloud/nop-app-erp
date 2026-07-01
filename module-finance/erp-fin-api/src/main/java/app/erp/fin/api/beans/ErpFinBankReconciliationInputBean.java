@@ -97,44 +97,44 @@
         }
 
 
-        private String _bookBalance;
+        private java.math.BigDecimal _bookBalance;
 
     
         @PropMeta(propId=7)
     
-        public String getBookBalance(){
+        public java.math.BigDecimal getBookBalance(){
             return _bookBalance;
         }
 
-        public void setBookBalance(String value){
+        public void setBookBalance(java.math.BigDecimal value){
             this._bookBalance = value;
         }
 
 
-        private String _statementBalance;
+        private java.math.BigDecimal _statementBalance;
 
     
         @PropMeta(propId=8)
     
-        public String getStatementBalance(){
+        public java.math.BigDecimal getStatementBalance(){
             return _statementBalance;
         }
 
-        public void setStatementBalance(String value){
+        public void setStatementBalance(java.math.BigDecimal value){
             this._statementBalance = value;
         }
 
 
-        private String _unreconciledDiff;
+        private java.math.BigDecimal _unreconciledDiff;
 
     
         @PropMeta(propId=9)
     
-        public String getUnreconciledDiff(){
+        public java.math.BigDecimal getUnreconciledDiff(){
             return _unreconciledDiff;
         }
 
-        public void setUnreconciledDiff(String value){
+        public void setUnreconciledDiff(java.math.BigDecimal value){
             this._unreconciledDiff = value;
         }
 

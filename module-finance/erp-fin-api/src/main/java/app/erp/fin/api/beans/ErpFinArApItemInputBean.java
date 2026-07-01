@@ -166,100 +166,100 @@
         }
 
 
-        private String _exchangeRate;
+        private java.math.BigDecimal _exchangeRate;
 
     
         @PropMeta(propId=12)
     
-        public String getExchangeRate(){
+        public java.math.BigDecimal getExchangeRate(){
             return _exchangeRate;
         }
 
-        public void setExchangeRate(String value){
+        public void setExchangeRate(java.math.BigDecimal value){
             this._exchangeRate = value;
         }
 
 
-        private String _amountSource;
+        private java.math.BigDecimal _amountSource;
 
     
         @PropMeta(propId=13)
     
-        public String getAmountSource(){
+        public java.math.BigDecimal getAmountSource(){
             return _amountSource;
         }
 
-        public void setAmountSource(String value){
+        public void setAmountSource(java.math.BigDecimal value){
             this._amountSource = value;
         }
 
 
-        private String _amountFunctional;
+        private java.math.BigDecimal _amountFunctional;
 
     
         @PropMeta(propId=14)
     
-        public String getAmountFunctional(){
+        public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;
         }
 
-        public void setAmountFunctional(String value){
+        public void setAmountFunctional(java.math.BigDecimal value){
             this._amountFunctional = value;
         }
 
 
-        private String _settledAmountSource;
+        private java.math.BigDecimal _settledAmountSource;
 
     
         @PropMeta(propId=15)
     
-        public String getSettledAmountSource(){
+        public java.math.BigDecimal getSettledAmountSource(){
             return _settledAmountSource;
         }
 
-        public void setSettledAmountSource(String value){
+        public void setSettledAmountSource(java.math.BigDecimal value){
             this._settledAmountSource = value;
         }
 
 
-        private String _settledAmountFunctional;
+        private java.math.BigDecimal _settledAmountFunctional;
 
     
         @PropMeta(propId=16)
     
-        public String getSettledAmountFunctional(){
+        public java.math.BigDecimal getSettledAmountFunctional(){
             return _settledAmountFunctional;
         }
 
-        public void setSettledAmountFunctional(String value){
+        public void setSettledAmountFunctional(java.math.BigDecimal value){
             this._settledAmountFunctional = value;
         }
 
 
-        private String _openAmountSource;
+        private java.math.BigDecimal _openAmountSource;
 
     
         @PropMeta(propId=17)
     
-        public String getOpenAmountSource(){
+        public java.math.BigDecimal getOpenAmountSource(){
             return _openAmountSource;
         }
 
-        public void setOpenAmountSource(String value){
+        public void setOpenAmountSource(java.math.BigDecimal value){
             this._openAmountSource = value;
         }
 
 
-        private String _openAmountFunctional;
+        private java.math.BigDecimal _openAmountFunctional;
 
     
         @PropMeta(propId=18)
     
-        public String getOpenAmountFunctional(){
+        public java.math.BigDecimal getOpenAmountFunctional(){
             return _openAmountFunctional;
         }
 
-        public void setOpenAmountFunctional(String value){
+        public void setOpenAmountFunctional(java.math.BigDecimal value){
             this._openAmountFunctional = value;
         }
 

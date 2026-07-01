@@ -37,28 +37,28 @@
                 <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--期初借方(本位币)-->
-                <col id="openingDebit" sortable="true"/>
+                <col id="openingDebit" ui:number="true" sortable="true"/>
 
                 <!--期初贷方(本位币)-->
-                <col id="openingCredit" sortable="true"/>
+                <col id="openingCredit" ui:number="true" sortable="true"/>
 
                 <!--本期借方发生(本位币)-->
-                <col id="periodDebit" sortable="true"/>
+                <col id="periodDebit" ui:number="true" sortable="true"/>
 
                 <!--本期贷方发生(本位币)-->
-                <col id="periodCredit" sortable="true"/>
+                <col id="periodCredit" ui:number="true" sortable="true"/>
 
                 <!--期末借方(本位币)-->
-                <col id="closingDebit" sortable="true"/>
+                <col id="closingDebit" ui:number="true" sortable="true"/>
 
                 <!--期末贷方(本位币)-->
-                <col id="closingCredit" sortable="true"/>
+                <col id="closingCredit" ui:number="true" sortable="true"/>
 
                 <!--年初借方-->
-                <col id="yearOpeningDebit" sortable="true"/>
+                <col id="yearOpeningDebit" ui:number="true" sortable="true"/>
 
                 <!--年初贷方-->
-                <col id="yearOpeningCredit" sortable="true"/>
+                <col id="yearOpeningCredit" ui:number="true" sortable="true"/>
 
                 <!--辅助-往来单位-->
                 <col id="partnerId" ui:number="true" sortable="true"/>
