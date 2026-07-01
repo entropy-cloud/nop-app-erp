@@ -20,7 +20,7 @@
 - 1.7 销售到收款串联：`partial`（AR 段 SO→Delivery→Invoice→Receipt + AR_INVOICE/RECEIPT 过账 + 域级核销 done，计划 0300-2；**财务辅助账 + 正式核销单 + 往来余额/账龄 done，计划 0300-3**；自动核销/汇兑损益归 0300-3 Non-Goal，销售退货归 1.10）
 - 1.8 费用报销/票据/资金：`todo`
 - 1.9 采购退货与退款：`done`（计划 0456-1：退货单三轴审批状态机 + 库存反向出库 + PURCHASE_RETURN 红字冲减凭证 + DIRECTION_PAYABLE 负 openAmount 辅助账回减应付；红字发票自动生成/换货/批次退货/现金退款归 Non-Goal）
-- 1.10 销售退货与退款：`todo`
+- 1.10 销售退货与退款：`done`（计划 0456-2：退货单三轴审批状态机 + 库存反向入库 + SALES_RETURN 反向 SALES_OUTPUT 凭证（借存货/贷成本）+ DIRECTION_RECEIVABLE 负 openAmount 辅助账回减应收 + 已收款退货反向收款核销；红字发票自动生成/退款方式路由/换货/退货质检/批次退货归 Non-Goal）
 - 1.11 批次追溯链：`todo`
 
 ### Milestone M4 — 业财一体端到端
@@ -43,7 +43,7 @@
 | 1.7 | 销售到收款端到端串联 | sales/finance | `flow-overview.md` | 🔶 `partial`（AR 段 done 计划 0300-2；辅助账+核销+账龄 done 计划 0300-3；自动核销/汇兑损益归 0300-3 Non-Goal，退货归 1.10） |
 | 1.8 | 费用报销/票据/资金模块业务逻辑 | finance | `expense-claim.md`, `treasury.md` | — |
 | 1.9 | 采购退货与退款 | purchase/finance | `purchase/returns.md` | ✅ `done`（计划 0456-1） |
-| 1.10 | 销售退货与退款 | sales/finance | `sales/returns.md` | — |
+| 1.10 | 销售退货与退款 | sales/finance | `sales/returns.md` | ✅ `done`（计划 0456-2：三轴审批 + 反向入库 + SALES_RETURN 凭证 + 负 AR 辅助账回减应收 + 反向收款核销） |
 | 1.11 | 批次追溯链逻辑 | inventory | `inventory/trace-chain.md` | — |
 
 ### M4 — 业财一体端到端

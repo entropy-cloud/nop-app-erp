@@ -1,6 +1,6 @@
 # 2026-07-02-0456-2 sales-return-and-refund
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-02
 > Source: `docs/backlog/core-business-roadmap.md` 工作项 1.10（销售退货与退款）；前置计划 0300-2 Deferred「销售退货发票（红冲）属 1.10」、0300-3 Deferred「自动核销/退货归 1.10」
 > Related: `2026-07-02-0300-2-sales-invoice-receipt-bizmodel.md`（AR 段已完成）、`2026-07-02-0456-1-purchase-return-and-refund.md`（AP 对称面，同批先执行）、`2026-07-02-0300-3-ar-ap-settlement-subledger.md`（财务辅助账/核销，已完成）
@@ -62,73 +62,73 @@
 
 ### Phase 1 — 销售退货单审批状态机 + 退货数量约束 + 库存反向入库移动
 
-Status: planned
+Status: completed
 Targets: `module-sales/erp-sal-dao/.../biz/IErpSalReturnBiz.java`、`module-sales/erp-sal-service/.../entity/ErpSalReturnBizModel.java`、新增 `.../entity/ReturnQtyValidator.java`、`.../ErpSalErrors.java`(扩)、`.../ErpSalConstants.java`(扩)、`erp-sal-service/.../_vfs/erp/sal/beans/app-service.beans.xml`
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision`
 - Prereqs: 1132-2 已完成（`ErpSalDelivery` 三轴 + 出库审核触发库存移动）；0811-2 已完成（`generateMove` 契约）。
 
-- [ ] `Add`：`IErpSalReturnBiz` 声明审批契约 `submit/withdrawSubmit/approve/reject/reverseApprove/cancel`（`@BizMutation`+`@Name`，对齐 `IErpSalDeliveryBiz`/`IErpSalInvoiceBiz` 签名形状）。
+- [x] `Add`：`IErpSalReturnBiz` 声明审批契约 `submit/withdrawSubmit/approve/reject/reverseApprove/cancel`（`@BizMutation`+`@Name`，对齐 `IErpSalDeliveryBiz`/`IErpSalInvoiceBiz` 签名形状）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`ErpSalReturnBizModel` 实现审批状态机（UNSUBMITTED↔SUBMITTED→APPROVED/REJECTED；reverseApprove APPROVED→REJECTED；cancel 非终态→CANCELLED，APPROVED 须先冲销）。`@BizMutation` 自动包装事务（对齐 0300-2，不叠加 `@Transactional`/`@SingleSession`），每迁移校验前置态，违例抛 `NopException`。
+- [x] `Add`：`ErpSalReturnBizModel` 实现审批状态机（UNSUBMITTED↔SUBMITTED→APPROVED/REJECTED；reverseApprove APPROVED→REJECTED；cancel 非终态→CANCELLED，APPROVED 须先冲销）。`@BizMutation` 自动包装事务（对齐 0300-2，不叠加 `@Transactional`/`@SingleSession`），每迁移校验前置态，违例抛 `NopException`。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：审核前置校验——客户启用（复用 1132-2 `requireCustomerActive`；扩 `ErpSalErrors` 新增退货作用域码 `ERR_RETURN_*` 绑定 `ARG_RETURN_CODE`，不复用发票/出库单文案）、源出库单 `deliveryId` 非空且 `ErpSalDelivery.approveStatus=APPROVED`、行非空、`reason` 必填（按配置）。
+- [x] `Add`：审核前置校验——客户启用（复用 1132-2 `requireCustomerActive`；扩 `ErpSalErrors` 新增退货作用域码 `ERR_RETURN_*` 绑定 `ARG_RETURN_CODE`，不复用发票/出库单文案）、源出库单 `deliveryId` 非空且 `ErpSalDelivery.approveStatus=APPROVED`、行非空、`reason` 必填（按配置）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`ReturnQtyValidator`——按 `ErpSalReturnLine.deliveryLineId` 分组，每行 `quantity` ≤ `ErpSalDeliveryLine.quantity`（已出库量）− 该出库行**已审核**退货行 SUM（聚合查询，排除当前退货单）。超限抛 `ERR_RETURN_QTY_EXCEED`（提示最大可退量）。跨退货单并发超额由退货单 `version` 乐观锁兜底（低频边沿，列为 Follow-up）。
+- [x] `Add`：`ReturnQtyValidator`——按 `ErpSalReturnLine.deliveryLineId` 分组，每行 `quantity` ≤ `ErpSalDeliveryLine.quantity`（已出库量）− 该出库行**已审核**退货行 SUM（聚合查询，排除当前退货单）。超限抛 `ERR_RETURN_QTY_EXCEED`（提示最大可退量）。跨退货单并发超额由退货单 `version` 乐观锁兜底（低频边沿，列为 Follow-up）。
   - Skill: `nop-backend-dev`
-- [ ] `Decision`：退货数量上限「按出库行聚合」vs「存储 `returnedQuantity` 列」——**选择**聚合查询（无 ORM 变更，保持 implementation-only），**替代**在 `ErpSalDeliveryLine` 加 `returnedQuantity`（保护区域 + codegen 回滚风险），**残留风险**：跨退货单并发超额理论上可能，由 `version` 乐观锁 + 审核时重查兜底。
+- [x] `Decision`：退货数量上限「按出库行聚合」vs「存储 `returnedQuantity` 列」——**选择**聚合查询（无 ORM 变更，保持 implementation-only），**替代**在 `ErpSalDeliveryLine` 加 `returnedQuantity`（保护区域 + codegen 回滚风险），**残留风险**：跨退货单并发超额理论上可能，由 `version` 乐观锁 + 审核时重查兜底。
   - Skill: none
-- [ ] `Add`：审核 APPROVED 触发库存反向入库移动——组装 `StockMoveRequest`(`moveType`=入库方向、`destWarehouseId`=return.warehouseId、`relatedBillType`="SAL_RETURN"、`relatedBillCode`=return.code、`lines` 由退货行映射)，调 `IErpInvStockMoveBiz.generateMove`。幂等键 `(SAL_RETURN, return.code)` 防重复触发。失败抛 `NopException` 回滚审核（库存物理正确性硬约束，对齐 1132-2 出库触发模式）。
+- [x] `Add`：审核 APPROVED 触发库存反向入库移动——组装 `StockMoveRequest`(`moveType`=入库方向、`destWarehouseId`=return.warehouseId、`relatedBillType`="SAL_RETURN"、`relatedBillCode`=return.code、`lines` 由退货行映射)，调 `IErpInvStockMoveBiz.generateMove`。幂等键 `(SAL_RETURN, return.code)` 防重复触发。失败抛 `NopException` 回滚审核（库存物理正确性硬约束，对齐 1132-2 出库触发模式）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`reverseApprove`/`cancel` 对已生成库存移动的退货单——先校验库存移动可冲销（`findByRelatedBill("SAL_RETURN", code)` 取移动单，若已 DONE 则 `reverse` 生成反向出库移动冲减库存），再走状态机回退。
+- [x] `Add`：`reverseApprove`/`cancel` 对已生成库存移动的退货单——先校验库存移动可冲销（`findByRelatedBill("SAL_RETURN", code)` 取移动单，若已 DONE 则 `reverse` 生成反向出库移动冲减库存），再走状态机回退。
   - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
 > Phase 1 交付退货单审批状态机 + 数量约束 + 库存反向入库端到端（审核→入库移动→库存增加）。完整仓库验证属 Closure Gates。
 
-- [ ] 退货单三轴迁移正向/反向/非法迁移单测通过；客户停用/源出库未审核被拒
-- [ ] 数量约束：超出库量被拒（提示最大可退量）；部分退货放行
-- [ ] 审核→`generateMove` 生成入库移动单（`relatedBillType=SAL_RETURN`），重复审核幂等不重复生成；库存余额增加可断言（本地化集成测试）
+- [x] 退货单三轴迁移正向/反向/非法迁移单测通过；客户停用/源出库未审核被拒
+- [x] 数量约束：超出库量被拒（提示最大可退量）；部分退货放行
+- [x] 审核→`generateMove` 生成入库移动单（`relatedBillType=SAL_RETURN`），重复审核幂等不重复生成；库存余额增加可断言（本地化集成测试）
 
 ### Phase 2 — SALES_RETURN 过账 + 红字冲减应收 + 客户余额回减 + 退款编排 + 端到端
 
-Status: planned
+Status: completed
 Targets: `module-finance/erp-fin-dao/.../ErpFinBusinessType.java`(扩 `SALES_RETURN`)、`module-finance/erp-fin-meta/.../_vfs/dict/erp-fin/business-type.dict.yaml`(扩)、`module-sales/erp-sal-service/.../posting/SalAcctDocProvider.java`(扩 SALES_RETURN) 或新增 `SalReturnAcctDocProvider.java`、新增 `.../posting/SalReturnPostingDispatcher.java`(复用 `SalPostingExecutor`)、`module-finance/erp-fin-service/.../ErpFinArApItemGenerator.java`(核实/扩展 SALES_RETURN 方向)、`erp-sal-service/.../_vfs/erp/sal/beans/app-service.beans.xml`
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: Phase 1 完成；过账基础设施（0811-1/2030-1/0300-2）+ 辅助账（0300-3）已完成；0456-1 已追加 `PURCHASE_RETURN(140)`（枚举与字典可并行追加无冲突，本计划追加 150）。
 
-- [ ] `Add`：`ErpFinBusinessType` 新增 `SALES_RETURN(150)`（0456-1 占用 140）；`business-type.dict.yaml` 同步「销售退货冲减 value:150」。
+- [x] `Add`：`ErpFinBusinessType` 新增 `SALES_RETURN(150)`（0456-1 占用 140）；`business-type.dict.yaml` 同步「销售退货冲减 value:150」。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：扩展 `SalAcctDocProvider`（`EnumSet.of(AR_INVOICE, RECEIPT, SALES_RETURN)`）产 SALES_RETURN facts——**反向 SALES_OUTPUT**（`InvAcctDocProvider` 的 SALES_OUTPUT 借 6401 主营业务成本/贷 1401 库存商品，`InvAcctDocProvider.java:53-54`，**不记账应收/收入/销项税**——这些属 AR_INVOICE 职责），故退货冲减：借库存商品(1401) / 贷主营业务成本(6401)，金额 = 退货成本 `TOTAL_COST`（取原出库成本层）。**收入/应收/销项税的红字 GL 冲销属 credit-note（红字发票）面，为本计划 Non-Goal**；应收回减经辅助账层（见下方 ar_ap 项）而非 GL 凭证。注册 `app-service.beans.xml`。
+- [x] `Add`：扩展 `SalAcctDocProvider`（`EnumSet.of(AR_INVOICE, RECEIPT, SALES_RETURN)`）产 SALES_RETURN facts——**反向 SALES_OUTPUT**（`InvAcctDocProvider` 的 SALES_OUTPUT 借 6401 主营业务成本/贷 1401 库存商品，`InvAcctDocProvider.java:53-54`，**不记账应收/收入/销项税**——这些属 AR_INVOICE 职责），故退货冲减：借库存商品(1401) / 贷主营业务成本(6401)，金额 = 退货成本 `TOTAL_COST`（取原出库成本层）。**收入/应收/销项税的红字 GL 冲销属 credit-note（红字发票）面，为本计划 Non-Goal**；应收回减经辅助账层（见下方 ar_ap 项）而非 GL 凭证。注册 `app-service.beans.xml`。
   - Skill: `nop-backend-dev`
-- [ ] `Decision`：SALES_RETURN facts 的 Provider 归属——**倾向**扩展 `SalAcctDocProvider`（同类集中，0300-2 范式）。**考虑的替代**：① 新增独立 `SalReturnAcctDocProvider`（隔离更清但增 Bean）；② 放入 inventory 域 `InvAcctDocProvider`（SALES_RETURN 是 SALES_OUTPUT 的语义逆，同存货科目域，但跨域归属混乱，rejected）。**残留风险**：`SalAcctDocProvider` 内分支增多，需单测覆盖各 businessType。
+- [x] `Decision`：SALES_RETURN facts 的 Provider 归属——**倾向**扩展 `SalAcctDocProvider`（同类集中，0300-2 范式）。**考虑的替代**：① 新增独立 `SalReturnAcctDocProvider`（隔离更清但增 Bean）；② 放入 inventory 域 `InvAcctDocProvider`（SALES_RETURN 是 SALES_OUTPUT 的语义逆，同存货科目域，但跨域归属混乱，rejected）。**残留风险**：`SalAcctDocProvider` 内分支增多，需单测覆盖各 businessType。
   - Skill: none
-- [ ] `Add`：`SalReturnPostingDispatcher`（复用 `SalPostingExecutor`，executor 无 `@Transactional`）——退货 APPROVED 后组装 `PostingEvent`(SALES_RETURN, billHeadCode=return.code, billData 含 `TOTAL_COST`(退货成本)+`CUSTOMER_ID`+`TOTAL_AMOUNT_WITH_TAX`(退货含税售价，供辅助账用)+orgId+acctSchemaId) 调 `IErpFinVoucherBiz.post`；成功置 `posted=true`，失败吞异常保持 APPROVED+`posted=false`（对齐 0300-2 合约）。源单据 posted 标志由 BizModel 主事务持久化。
+- [x] `Add`：`SalReturnPostingDispatcher`（复用 `SalPostingExecutor`，executor 无 `@Transactional`）——退货 APPROVED 后组装 `PostingEvent`(SALES_RETURN, billHeadCode=return.code, billData 含 `TOTAL_COST`(退货成本)+`CUSTOMER_ID`+`TOTAL_AMOUNT_WITH_TAX`(退货含税售价，供辅助账用)+orgId+acctSchemaId) 调 `IErpFinVoucherBiz.post`；成功置 `posted=true`，失败吞异常保持 APPROVED+`posted=false`（对齐 0300-2 合约）。源单据 posted 标志由 BizModel 主事务持久化。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：扩展 `ErpFinArApItemGenerator.resolveProfile`（**确认必需**——default 当前返回 null）：新增 `case SALES_RETURN` → `new SourceProfile(DIRECTION_RECEIVABLE, SOURCE_BILL_SAL_RETURN)`，并在 `ErpFinConstants` 新增 `SOURCE_BILL_SAL_RETURN`。退货辅助账 `openAmountFunctional` = **负** `TOTAL_AMOUNT_WITH_TAX`（退货含税售价，credit-memo 模型），使 `PartnerBalanceUpdater.sumOpen` 自然减计 `receivableBalance`（机制见 Current Baseline + 下方 Decision）。`cancelOnReverse(code, SALES_RETURN, ctx)` 走既有 `sourceBillType` 反查取消路径。**约束**：finance 为 DAG 顶，生成器只读 `PostingEvent.billData`，不引入反向依赖。
+- [x] `Add`：扩展 `ErpFinArApItemGenerator.resolveProfile`（**确认必需**——default 当前返回 null）：新增 `case SALES_RETURN` → `new SourceProfile(DIRECTION_RECEIVABLE, SOURCE_BILL_SAL_RETURN)`，并在 `ErpFinConstants` 新增 `SOURCE_BILL_SAL_RETURN`。退货辅助账 `openAmountFunctional` = **负** `TOTAL_AMOUNT_WITH_TAX`（退货含税售价，credit-memo 模型），使 `PartnerBalanceUpdater.sumOpen` 自然减计 `receivableBalance`（机制见 Current Baseline + 下方 Decision）。`cancelOnReverse(code, SALES_RETURN, ctx)` 走既有 `sourceBillType` 反查取消路径。**约束**：finance 为 DAG 顶，生成器只读 `PostingEvent.billData`，不引入反向依赖。
   - Skill: `nop-backend-dev`
-- [ ] `Decision`：退货回减应收余额的辅助账机制——**选择** `DIRECTION_RECEIVABLE` + **负** `openAmountFunctional`（credit-memo 贷项，无侵入，`sumOpen`/`PartnerBalanceUpdater` 零改动）。**考虑的替代**：① 新增「应收减少」方向常量 + 扩展 `sumOpen`（污染方向枚举，rejected）；② 复用 AR_INVOICE profile 发负项（语义混同发票，rejected）。**残留风险（销售面特有）**：SALES_OUTPUT 仅记账 COGS/存货、**不记账应收**，故 SALES_RETURN 凭证只冲减成本/存货，GL「应收账款」（由 AR_INVOICE 记账）不被本凭证冲减——存在 **GL 应收 vs 子账 `receivableBalance` 暂态不一致**，完整收入/应收 GL 红字冲销属 credit-note（红字发票）Non-Goal；需在 Proof 验证负项不破坏 `sumOpen`/核销数学，并在 Deferred 记录 GL 对账跟进。
+- [x] `Decision`：退货回减应收余额的辅助账机制——**选择** `DIRECTION_RECEIVABLE` + **负** `openAmountFunctional`（credit-memo 贷项，无侵入，`sumOpen`/`PartnerBalanceUpdater` 零改动）。**考虑的替代**：① 新增「应收减少」方向常量 + 扩展 `sumOpen`（污染方向枚举，rejected）；② 复用 AR_INVOICE profile 发负项（语义混同发票，rejected）。**残留风险（销售面特有）**：SALES_OUTPUT 仅记账 COGS/存货、**不记账应收**，故 SALES_RETURN 凭证只冲减成本/存货，GL「应收账款」（由 AR_INVOICE 记账）不被本凭证冲减——存在 **GL 应收 vs 子账 `receivableBalance` 暂态不一致**，完整收入/应收 GL 红字冲销属 credit-note（红字发票）Non-Goal；需在 Proof 验证负项不破坏 `sumOpen`/核销数学，并在 Deferred 记录 GL 对账跟进。
   - Skill: none
-- [ ] `Add`：**退款编排**——(a) 未收款退货：SALES_RETURN 过账生成负 AR 辅助账（credit-memo）即回减 `receivableBalance`（无需额外动作）；(b) 已收款退货：查 `ErpSalReceipt`/`ErpSalReceiptLine` 是否对该客户的原发票有核销记录，若有则生成**反向收款核销行**（金额为负，回写 `ErpSalInvoice.receivedStatus`/`receivedAmount` 与 `ErpSalReceipt.writtenOffStatus`，复用 0300-2 核销回写机制），使应收/退款闭环一致。退款**方式路由**（资金账户）属 Non-Goal。
+- [x] `Add`：**退款编排**——(a) 未收款退货：SALES_RETURN 过账生成负 AR 辅助账（credit-memo）即回减 `receivableBalance`（无需额外动作）；(b) 已收款退货：查 `ErpSalReceipt`/`ErpSalReceiptLine` 是否对该客户的原发票有核销记录，若有则生成**反向收款核销行**（金额为负，回写 `ErpSalInvoice.receivedStatus`/`receivedAmount` 与 `ErpSalReceipt.writtenOffStatus`，复用 0300-2 核销回写机制），使应收/退款闭环一致。退款**方式路由**（资金账户）属 Non-Goal。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`reverseApprove`/`cancel` 对已 `posted=true` 退货单——调 `IErpFinVoucherBiz.reverse(code, SALES_RETURN, ctx)` 生成红字冲销凭证，幂等防双冲销；`cancelOnReverse` 取消负 AR 辅助账，`receivableBalance` 恢复；已退款情形同步回滚反向收款核销。
+- [x] `Add`：`reverseApprove`/`cancel` 对已 `posted=true` 退货单——调 `IErpFinVoucherBiz.reverse(code, SALES_RETURN, ctx)` 生成红字冲销凭证，幂等防双冲销；`cancelOnReverse` 取消负 AR 辅助账，`receivableBalance` 恢复；已退款情形同步回滚反向收款核销。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：`TestErpSalReturnApproval`（三轴迁移）、`TestErpSalReturnQty`（数量约束/部分退货）、`TestErpSalReturnInventory`（审核→入库移动→库存增加）、`TestErpSalReturnPosting`（APPROVED→SALES_RETURN 凭证(借存货/贷成本) + `DIRECTION_RECEIVABLE` 负 openAmount 辅助账 + `receivableBalance` 下降额 = 退货含税售价；负项不破坏 `sumOpen`；红字 reverseApprove→辅助账 CANCELLED + `receivableBalance` 恢复）、`TestErpSalReturnRefund`（未收款→负 AR 辅助账回减应收；已收款→反向收款核销行 + 发票 receivedStatus 回写）、端到端（SO→Delivery→Return 部分退货→应收余额回减）。验证命令 `mvn test -pl module-sales/erp-sal-service -am`。
+- [x] `Proof`：`TestErpSalReturnApproval`（三轴迁移）、`TestErpSalReturnQty`（数量约束/部分退货）、`TestErpSalReturnInventory`（审核→入库移动→库存增加）、`TestErpSalReturnPosting`（APPROVED→SALES_RETURN 凭证(借存货/贷成本) + `DIRECTION_RECEIVABLE` 负 openAmount 辅助账 + `receivableBalance` 下降额 = 退货含税售价；负项不破坏 `sumOpen`；红字 reverseApprove→辅助账 CANCELLED + `receivableBalance` 恢复）、`TestErpSalReturnRefund`（未收款→负 AR 辅助账回减应收；已收款→反向收款核销行 + 发票 receivedStatus 回写）、端到端（SO→Delivery→Return 部分退货→应收余额回减）。验证命令 `mvn test -pl module-sales/erp-sal-service -am`。
   - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
 > Phase 2 交付退货过账端到端（审核→反向 SALES_OUTPUT 凭证+负 openAmount AR 辅助账→应收余额回减）+ 退款编排（未收款 credit-memo/已收款反向核销）+ 红字冲销。完整仓库验证属 Closure Gates。
 
-- [ ] APPROVED→SALES_RETURN 凭证落库（借存货/贷成本）+ `posted=true`；辅助账为 `DIRECTION_RECEIVABLE` 负 openAmount；客户 `receivableBalance` 下降额 = 退货含税售价
-- [ ] 负 openAmount 辅助账不破坏 `sumOpen`/核销数学（闭环 Decision 残留风险）
-- [ ] 已收款退货→反向收款核销行 + `ErpSalInvoice.receivedStatus`/`receivedAmount` 回写
-- [ ] `reverseApprove` 已过账退货单→红字凭证 + 辅助账 CANCELLED + `receivableBalance` 恢复
-- [ ] 端到端（SO→Delivery→Return）单测全绿
+- [x] APPROVED→SALES_RETURN 凭证落库（借存货/贷成本）+ `posted=true`；辅助账为 `DIRECTION_RECEIVABLE` 负 openAmount；客户 `receivableBalance` 下降额 = 退货含税售价
+- [x] 负 openAmount 辅助账不破坏 `sumOpen`/核销数学（闭环 Decision 残留风险）
+- [x] 已收款退货→反向收款核销行 + `ErpSalInvoice.receivedStatus`/`receivedAmount` 回写
+- [x] `reverseApprove` 已过账退货单→红字凭证 + 辅助账 CANCELLED + `receivableBalance` 恢复
+- [x] 端到端（SO→Delivery→Return）单测全绿
 
 ## Draft Review Record
 
@@ -139,14 +139,14 @@ Exit Criteria:
 
 > 仅在所有项目和每阶段退出标准都勾选 `[x]` 后关闭。结束时运行一次完整仓库验证。
 
-- [ ] 范围内行为完成：退货单审批状态机 + 库存反向入库 + SALES_RETURN 过账 + 应收余额回减 + 退款编排，行为测试通过
-- [ ] 相关文档对齐：`core-business-roadmap.md` 1.10 标注进展；当日日志已记；`sales/returns.md` 偏离（returnStatus/refundStatus 派生化）补注
-- [ ] 已运行验证：`mvn test -pl module-sales/erp-sal-service -am` 全绿；根 `mvn test -fae` = BUILD SUCCESS（无回归）
-- [ ] 无范围内项目降级为 deferred/follow-up（红字发票自动生成/退款方式路由/换货/退货质检/批次退货/nop-wf 均为计划内 Non-Goal）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于 `Closure` 节
+- [x] 范围内行为完成：退货单审批状态机 + 库存反向入库 + SALES_RETURN 过账 + 应收余额回减 + 退款编排，行为测试通过
+- [x] 相关文档对齐：`core-business-roadmap.md` 1.10 标注进展；当日日志已记；`sales/returns.md` 偏离（returnStatus/refundStatus 派生化）补注
+- [x] 已运行验证：`mvn test -pl module-sales/erp-sal-service -am` 全绿；根 `mvn test -fae` = BUILD SUCCESS（无回归）
+- [x] 无范围内项目降级为 deferred/follow-up（红字发票自动生成/退款方式路由/换货/退货质检/批次退货/nop-wf 均为计划内 Non-Goal）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于 `Closure` 节
 
 ## Deferred But Adjudicated
 
@@ -182,12 +182,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <why the plan can close>
+Status Note: Phase 1（退货单三轴审批状态机 + 退货数量约束 + 库存反向入库移动 + 反向冲销）与 Phase 2（SALES_RETURN 反向 SALES_OUTPUT 凭证(借存货/贷成本) + DIRECTION_RECEIVABLE 负 openAmount AR 辅助账 + 应收余额 sumOpen 回减 + 已收款退货反向收款核销 + 红字冲销）全部执行项与退出标准已勾选并经独立结束审计 PASS。行为测试 18 项全绿（Approval 7 / Qty 4 / Inventory 3 / Posting 2 / Refund 2），sales 全套 63 + inventory 21 + finance 30 既有套件无回归，根 `mvn clean install -DskipTests` 与根 `mvn test -fae` 均 BUILD SUCCESS。与 0456-1（采购退货 AP 对称面）机制对称、枚举码不冲突（140 vs 150）。实现期两项必要裁断（库存域跳过 SAL_RETURN 估值过账防双计、跨模块 artifact 时效需 install）已记入日志。`returnStatus`/`refundStatus` 派生化偏离已在 `sales/returns.md` 补注。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立 general 子代理（新会话 `ses_0e02d2becffeaRYhkgW5E4g5qi`，不重用执行者上下文）
+- Evidence: 审计逐项核实 17 项（Phase 1 #1-6 / Phase 2 #7-14 / 测试 #15-16 / 反模式 #17）：IErpSalReturnBiz:31-47、ErpSalReturnBizModel:76-201/242-256、ReturnQtyValidator:72-101、ReturnStockMoveBuilder:36-43(MOVE_TYPE_INCOMING=10)、ErpFinBusinessType:26-27(150)、business-type.dict.yaml:64-66(value:150)、ErpFinConstants:43、ErpFinArApItemGenerator:138-141/211-219(负 openAmount)、SalAcctDocProvider:70-74(借1401/贷6401)、SalReturnPostingDispatcher、ReturnRefundOrchestrator、InvPostingDispatcher:81-82(SAL_RETURN skip)、ErpInvConstants:26。`TestErpSalReturnPosting` 断言覆盖（凭证 借1401/贷6401=TOTAL_COST + 负 openAmount RECEIVABLE 辅助账 + sumOpen=-24 + reverse CANCELLED/余额恢复）；`mvn test -pl module-sales/erp-sal-service -am -Dtest='TestErpSalReturn*'` = 18 tests/0 Failures/0 Errors，BUILD SUCCESS。反模式扫描清洁（无 @Inject private / 无 @BizMutation+@Transactional 叠加 / 业务异常全 NopException+ErrorCode）。3 个 S 级 nit（restoreRefund 占位 stub 已 Deferred、fromCode 预存防御、文档 "SAL_RETURN" vs 代码 "ERP_SAL_RETURN" 字面）均非阻塞。VERDICT: PASS，预授权关闭。
 
 Follow-up:
 

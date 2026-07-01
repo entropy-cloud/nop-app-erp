@@ -85,6 +85,13 @@
 | 退货状态 | returnStatus | 初始/部分退货/全额退货 |
 | 退款状态 | refundStatus | 未退款/部分退款/已退款 |
 
+> **实现偏离说明（计划 0456-2）**：`returnStatus`/`refundStatus` 两轴在 ORM 模型中**未落地为存储字段**。
+> 「部分/全额退货」是源出库行累计退货进度的**派生视图**（按 `ErpSalDeliveryLine` 聚合已审核退货行 SUM 计算）；
+> 「退款进度」是 AR 辅助账 `ErpFinArApItem` 的 open/reconciled 状态的**派生视图**。故实现复用现有 `docStatus`
+> +`approveStatus` 两轴表达退货单生命周期（终态 = ACTIVE+APPROVED+`posted=true`），保持 implementation-only
+> （无 ORM 保护区域变更）。残留风险：列表页无法直接按 returnStatus/refundStatus 筛选，触发条件满足时
+> （退货/退款报表需高频筛选）再评估加 `ErpSalDeliveryLine.returnedQuantity` 冗余列 + 重新 codegen。
+
 ### 状态迁移
 
 ```
