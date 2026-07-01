@@ -52,34 +52,21 @@ pnpm audit:suspects
 
 ## Mission Driver
 
-`tools/mission-driver/` is a **mission-driven development loop engine** — a generic opencode-based workflow that cycles through health-check → execute plans → draft plans → review plans → deep audit.
+This project drives development via the AGE template's **mission-driver** — a mission-driven loop engine (health-check → execute plans → draft plans → review plans → deep audit). The engine source lives in the template (`attractor-guided-engineering-template/tools/mission-driver/`); this repo holds only a thin launcher plus per-project mission configs, and does not maintain a local copy.
 
-It is the template's **single source of truth** for this tool. Projects reference it via a thin shell script rather than maintaining their own copy.
+- `tools/mission-driver.sh` — launcher; resolves `MISSION_DRIVER_HOME` to the template and forwards args. Override the location with the `MISSION_DRIVER_HOME` env var.
+- `missions/<name>.json` — per-project mission config (paths + commands). See the template's `mission.json.example` and `design/mission-design.md` for the full schema.
 
-### Integration
-
-Create `tools/mission-driver.sh` in your project:
+Commands (k8s-style subcommands):
 
 ```bash
-#!/bin/bash
-MISSION_DRIVER_HOME="${MISSION_DRIVER_HOME:-$HOME/app/attractor-guided-engineering-template/tools/mission-driver}"
-DIR="$(cd "$(dirname "$0")" && pwd)"
-exec node "$MISSION_DRIVER_HOME/src/main.js" --dir "$DIR/.." --missions-dir "missions" "$@"
+./tools/mission-driver.sh run <mission>              # run the full flow
+./tools/mission-driver.sh run <mission> --step <S>   # run a single step
+./tools/mission-driver.sh draft "<description>"      # AI-generate a mission.json
+./tools/mission-driver.sh list [missions|steps]      # list (default: missions)
 ```
 
-Set `MISSION_DRIVER_HOME` env var if the template lives elsewhere.
-
-### Per-Project Setup
-
-1. `tools/mission-driver.sh` — the thin script above
-2. `missions/<name>.json` — mission config with project paths and commands
-
-Run `--draft-mission <description>` to have the AI generate a mission.json:
-```bash
-./tools/mission-driver.sh --draft-mission "Build the component library"
-```
-
-See `mission.json.example` and `design/mission-design.md` for the full schema.
+Run `./tools/mission-driver.sh --help` for all options.
 
 ## Configuration
 
