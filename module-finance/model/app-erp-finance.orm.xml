@@ -150,7 +150,7 @@
                 <column name="isReversed" displayName="是否红字冲销凭证" stdSqlType="BOOLEAN" defaultValue="false" code="IS_REVERSED" propId="12" stdDataType="boolean" i18n-en:displayName='Is Reversed' />
                 <column name="reversalOfVoucherId" displayName="原冲销凭证ID" stdSqlType="BIGINT" code="REVERSAL_OF_VOUCHER_ID" propId="13" stdDataType="long" i18n-en:displayName='Reversal Of Voucher' />
                 <column name="docStatus" displayName="凭证状态" ext:dict="erp-fin/voucher-status" mandatory="true" code="DOC_STATUS" propId="14" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
-                <column name="postedBy" displayName="过账人" stdSqlType="BIGINT" code="POSTED_BY" propId="15" stdDataType="long" i18n-en:displayName='Posted By' />
+                <column name="postedBy" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="15" stdDataType="string" i18n-en:displayName='Posted By' />
                 <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="16" stdDataType="datetime" i18n-en:displayName='Posted At' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="17" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="18" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
@@ -161,10 +161,16 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="23" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="period" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriod" tagSet="pub" i18n-en:displayName='Period' ref-i18n-en:displayName='Accounting Voucher'><join><on leftProp="periodId" rightProp="id"/></join></to-one>
-                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub" i18n-en:displayName='Acct Schema' ref-i18n-en:displayName='Accounting Voucher'><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
-                <to-many name="lines" refEntityName="app.erp.fin.dao.entity.ErpFinVoucherLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ref-i18n-en:displayName='Accounting Voucher'><join><on leftProp="id" rightProp="voucherId"/></join></to-many>
-                <to-many name="billLinks" refEntityName="app.erp.fin.dao.entity.ErpFinVoucherBillR" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Bill Links' ref-i18n-en:displayName='Accounting Voucher'><join><on leftProp="id" rightProp="voucherId"/></join></to-many>
+                <to-one name="period" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriod" tagSet="pub" i18n-en:displayName='Period'><join><on leftProp="periodId" rightProp="id"/></join></to-one>
+                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub" i18n-en:displayName='Acct Schema'><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
+                <to-many name="lines" refEntityName="app.erp.fin.dao.entity.ErpFinVoucherLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="10"><join><on leftProp="id" rightProp="voucherId"/></join></to-many>
+                <to-many name="billLinks" refEntityName="app.erp.fin.dao.entity.ErpFinVoucherBillR" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Bill Links' ext:estRows="5"><join><on leftProp="id" rightProp="voucherId"/></join></to-many>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join><on leftProp="orgId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="reversalOfVoucher" refEntityName="app.erp.fin.dao.entity.ErpFinVoucher" tagSet="pub">
+                    <join><on leftProp="reversalOfVoucherId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -205,17 +211,17 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="29" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="voucher" refEntityName="app.erp.fin.dao.entity.ErpFinVoucher" tagSet="pub" i18n-en:displayName='Voucher' ref-i18n-en:displayName='Voucher Line'><join><on leftProp="voucherId" rightProp="id"/></join></to-one>
-                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub" i18n-en:displayName='Subject' ref-i18n-en:displayName='Voucher Line'><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
-                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub" i18n-en:displayName='Acct Schema' ref-i18n-en:displayName='Voucher Line'><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency' ref-i18n-en:displayName='Voucher Line'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
-                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Partner' ref-i18n-en:displayName='Voucher Line'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
-                <to-one name="department" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Department' ref-i18n-en:displayName='Voucher Line'><join><on leftProp="departmentId" rightProp="id"/></join></to-one>
-                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub" i18n-en:displayName='Warehouse' ref-i18n-en:displayName='Voucher Line'><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='Voucher Line'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
-                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material' ref-i18n-en:displayName='Voucher Line'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
-                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub" i18n-en:displayName='Project' ref-i18n-en:displayName='Voucher Line'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
-                <to-one name="costCenter" refEntityName="app.erp.md.dao.entity.ErpMdCostCenter" tagSet="pub" i18n-en:displayName='Cost Center' ref-i18n-en:displayName='Voucher Line'><join><on leftProp="costCenterId" rightProp="id"/></join></to-one>
+                <to-one name="voucher" refEntityName="app.erp.fin.dao.entity.ErpFinVoucher" tagSet="pub" i18n-en:displayName='Voucher'><join><on leftProp="voucherId" rightProp="id"/></join></to-one>
+                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub" i18n-en:displayName='Subject'><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
+                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub" i18n-en:displayName='Acct Schema'><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Partner'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
+                <to-one name="department" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Department'><join><on leftProp="departmentId" rightProp="id"/></join></to-one>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub" i18n-en:displayName='Warehouse'><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
+                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub" i18n-en:displayName='Project'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
+                <to-one name="costCenter" refEntityName="app.erp.md.dao.entity.ErpMdCostCenter" tagSet="pub" i18n-en:displayName='Cost Center'><join><on leftProp="costCenterId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -242,8 +248,8 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub" i18n-en:displayName='Acct Schema' ref-i18n-en:displayName='Voucher Template'><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
-                <to-many name="lines" refEntityName="app.erp.fin.dao.entity.ErpFinVoucherTemplateLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ref-i18n-en:displayName='Voucher Template'><join><on leftProp="id" rightProp="templateId"/></join></to-many>
+                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub" i18n-en:displayName='Acct Schema'><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
+                <to-many name="lines" refEntityName="app.erp.fin.dao.entity.ErpFinVoucherTemplateLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="10"><join><on leftProp="id" rightProp="templateId"/></join></to-many>
             </relations>
         </entity>
 
@@ -269,7 +275,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="15" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="template" refEntityName="app.erp.fin.dao.entity.ErpFinVoucherTemplate" tagSet="pub" i18n-en:displayName='Template' ref-i18n-en:displayName='Voucher Template Line'><join><on leftProp="templateId" rightProp="id"/></join></to-one>
+                <to-one name="template" refEntityName="app.erp.fin.dao.entity.ErpFinVoucherTemplate" tagSet="pub" i18n-en:displayName='Template'><join><on leftProp="templateId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -292,7 +298,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="12" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="voucher" refEntityName="app.erp.fin.dao.entity.ErpFinVoucher" tagSet="pub" i18n-en:displayName='Voucher' ref-i18n-en:displayName='Voucher Business Link'><join><on leftProp="voucherId" rightProp="id"/></join></to-one>
+                <to-one name="voucher" refEntityName="app.erp.fin.dao.entity.ErpFinVoucher" tagSet="pub" i18n-en:displayName='Voucher'><join><on leftProp="voucherId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -312,7 +318,7 @@
                 <column name="quarter" displayName="季度" stdSqlType="INTEGER" code="QUARTER" propId="9" stdDataType="int" i18n-en:displayName='Quarter' />
                 <column name="isAdjustment" displayName="是否调整期" stdSqlType="BOOLEAN" defaultValue="false" code="IS_ADJUSTMENT" propId="10" stdDataType="boolean" i18n-en:displayName='Is Adjustment' />
                 <column name="status" displayName="期间状态" ext:dict="erp-fin/period-status" mandatory="true" code="STATUS" propId="11" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
-                <column name="closedBy" displayName="结账人" stdSqlType="BIGINT" code="CLOSED_BY" propId="12" stdDataType="long" i18n-en:displayName='Closed By' />
+                <column name="closedBy" displayName="结账人" stdSqlType="VARCHAR" precision="36" code="CLOSED_BY" propId="12" stdDataType="string" i18n-en:displayName='Closed By' />
                 <column name="closedAt" displayName="结账时间" stdSqlType="DATETIME" code="CLOSED_AT" propId="13" stdDataType="datetime" i18n-en:displayName='Closed At' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="14" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="15" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -322,7 +328,10 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="19" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-many name="statusRecords" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriodStatus" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Status Records' ref-i18n-en:displayName='Accounting Period'><join><on leftProp="id" rightProp="periodId"/></join></to-many>
+                <to-many name="statusRecords" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriodStatus" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Status Records' ext:estRows="24"><join><on leftProp="id" rightProp="periodId"/></join></to-many>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join><on leftProp="orgId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -350,8 +359,8 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="period" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriod" tagSet="pub" i18n-en:displayName='Period' ref-i18n-en:displayName='Period Close Status'><join><on leftProp="periodId" rightProp="id"/></join></to-one>
-                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub" i18n-en:displayName='Acct Schema' ref-i18n-en:displayName='Period Close Status'><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
+                <to-one name="period" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriod" tagSet="pub" i18n-en:displayName='Period'><join><on leftProp="periodId" rightProp="id"/></join></to-one>
+                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub" i18n-en:displayName='Acct Schema'><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -389,9 +398,15 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="27" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Partner' ref-i18n-en:displayName='AR/AP Subledger'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
-                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub" i18n-en:displayName='Acct Schema' ref-i18n-en:displayName='AR/AP Subledger'><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency' ref-i18n-en:displayName='AR/AP Subledger'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Partner'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
+                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub" i18n-en:displayName='Acct Schema'><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+                <to-one name="period" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriod" tagSet="pub">
+                    <join><on leftProp="periodId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join><on leftProp="orgId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -413,7 +428,7 @@
                 <column name="totalAmountFunctional" displayName="核销总额(本位币)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT_FUNCTIONAL" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Amount Functional' />
                 <column name="fxGainLoss" displayName="汇兑损益" domain="amount" defaultValue="0" code="FX_GAIN_LOSS" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Fx Gain Loss' />
                 <column name="docStatus" displayName="状态" ext:dict="erp-fin/reconciliation-status" mandatory="true" code="DOC_STATUS" propId="13" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
-                <column name="postedBy" displayName="过账人" stdSqlType="BIGINT" code="POSTED_BY" propId="14" stdDataType="long" i18n-en:displayName='Posted By' />
+                <column name="postedBy" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="14" stdDataType="string" i18n-en:displayName='Posted By' />
                 <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="15" stdDataType="datetime" i18n-en:displayName='Posted At' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="16" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="17" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
@@ -424,10 +439,13 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="22" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Partner' ref-i18n-en:displayName='Reconciliation'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
-                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub" i18n-en:displayName='Acct Schema' ref-i18n-en:displayName='Reconciliation'><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency' ref-i18n-en:displayName='Reconciliation'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
-                <to-many name="lines" refEntityName="app.erp.fin.dao.entity.ErpFinReconciliationLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ref-i18n-en:displayName='Reconciliation'><join><on leftProp="id" rightProp="reconciliationId"/></join></to-many>
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Partner'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
+                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub" i18n-en:displayName='Acct Schema'><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+                <to-many name="lines" refEntityName="app.erp.fin.dao.entity.ErpFinReconciliationLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="30"><join><on leftProp="id" rightProp="reconciliationId"/></join></to-many>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join><on leftProp="orgId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -452,7 +470,13 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="14" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="reconciliation" refEntityName="app.erp.fin.dao.entity.ErpFinReconciliation" tagSet="pub" i18n-en:displayName='Reconciliation' ref-i18n-en:displayName='Reconciliation Line'><join><on leftProp="reconciliationId" rightProp="id"/></join></to-one>
+                <to-one name="reconciliation" refEntityName="app.erp.fin.dao.entity.ErpFinReconciliation" tagSet="pub" i18n-en:displayName='Reconciliation'><join><on leftProp="reconciliationId" rightProp="id"/></join></to-one>
+                <to-one name="paymentItem" refEntityName="app.erp.fin.dao.entity.ErpFinArApItem" tagSet="pub">
+                    <join><on leftProp="paymentItemId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="invoiceItem" refEntityName="app.erp.fin.dao.entity.ErpFinArApItem" tagSet="pub">
+                    <join><on leftProp="invoiceItemId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -488,10 +512,25 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="24" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub" i18n-en:displayName='Acct Schema' ref-i18n-en:displayName='GL Balance'><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
-                <to-one name="period" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriod" tagSet="pub" i18n-en:displayName='Period' ref-i18n-en:displayName='GL Balance'><join><on leftProp="periodId" rightProp="id"/></join></to-one>
-                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub" i18n-en:displayName='Subject' ref-i18n-en:displayName='GL Balance'><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency' ref-i18n-en:displayName='GL Balance'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub" i18n-en:displayName='Acct Schema'><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
+                <to-one name="period" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriod" tagSet="pub" i18n-en:displayName='Period'><join><on leftProp="periodId" rightProp="id"/></join></to-one>
+                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub" i18n-en:displayName='Subject'><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join><on leftProp="orgId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub">
+                    <join><on leftProp="partnerId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="department" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join><on leftProp="departmentId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub">
+                    <join><on leftProp="warehouseId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub" >
+                    <join><on leftProp="projectId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -522,9 +561,12 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="20" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub" i18n-en:displayName='Acct Schema' ref-i18n-en:displayName='Trial Balance'><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
-                <to-one name="period" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriod" tagSet="pub" i18n-en:displayName='Period' ref-i18n-en:displayName='Trial Balance'><join><on leftProp="periodId" rightProp="id"/></join></to-one>
-                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub" i18n-en:displayName='Subject' ref-i18n-en:displayName='Trial Balance'><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
+                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub" i18n-en:displayName='Acct Schema'><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
+                <to-one name="period" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriod" tagSet="pub" i18n-en:displayName='Period'><join><on leftProp="periodId" rightProp="id"/></join></to-one>
+                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub" i18n-en:displayName='Subject'><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join><on leftProp="orgId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -554,8 +596,11 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="19" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency' ref-i18n-en:displayName='Fund Account'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
-                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub" i18n-en:displayName='Subject' ref-i18n-en:displayName='Fund Account'><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub" i18n-en:displayName='Subject'><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join><on leftProp="orgId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -584,7 +629,10 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="fundAccount" refEntityName="app.erp.fin.dao.entity.ErpFinFundAccount" tagSet="pub" i18n-en:displayName='Fund Account' ref-i18n-en:displayName='Bank Statement'><join><on leftProp="fundAccountId" rightProp="id"/></join></to-one>
+                <to-one name="fundAccount" refEntityName="app.erp.fin.dao.entity.ErpFinFundAccount" tagSet="pub" i18n-en:displayName='Fund Account'><join><on leftProp="fundAccountId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join><on leftProp="orgId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -614,9 +662,9 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="19" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="statement" refEntityName="app.erp.fin.dao.entity.ErpFinBankStatement" tagSet="pub" i18n-en:displayName='Statement' ref-i18n-en:displayName='Bank Statement Line'><join><on leftProp="statementId" rightProp="id"/></join></to-one>
-                <to-one name="matchedLine" refEntityName="app.erp.fin.dao.entity.ErpFinVoucherLine" tagSet="pub" i18n-en:displayName='Matched Voucher Line' ref-i18n-en:displayName='Bank Statement Line'><join><on leftProp="matchedLineId" rightProp="id"/></join></to-one>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency' ref-i18n-en:displayName='Bank Statement Line'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+                <to-one name="statement" refEntityName="app.erp.fin.dao.entity.ErpFinBankStatement" tagSet="pub" i18n-en:displayName='Statement'><join><on leftProp="statementId" rightProp="id"/></join></to-one>
+                <to-one name="matchedLine" refEntityName="app.erp.fin.dao.entity.ErpFinVoucherLine" tagSet="pub" i18n-en:displayName='Matched Voucher Line'><join><on leftProp="matchedLineId" rightProp="id"/></join></to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -647,9 +695,12 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="20" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="fundAccount" refEntityName="app.erp.fin.dao.entity.ErpFinFundAccount" tagSet="pub" i18n-en:displayName='Fund Account' ref-i18n-en:displayName='Bank Reconciliation'><join><on leftProp="fundAccountId" rightProp="id"/></join></to-one>
-                <to-one name="statement" refEntityName="app.erp.fin.dao.entity.ErpFinBankStatement" tagSet="pub" i18n-en:displayName='Bank Statement' ref-i18n-en:displayName='Bank Reconciliation'><join><on leftProp="statementId" rightProp="id"/></join></to-one>
-                <to-many name="adjustmentLines" refEntityName="app.erp.fin.dao.entity.ErpFinBankReconciliationLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Adjustment Lines' ref-i18n-en:displayName='Bank Reconciliation'><join><on leftProp="id" rightProp="reconciliationId"/></join></to-many>
+                <to-one name="fundAccount" refEntityName="app.erp.fin.dao.entity.ErpFinFundAccount" tagSet="pub" i18n-en:displayName='Fund Account'><join><on leftProp="fundAccountId" rightProp="id"/></join></to-one>
+                <to-one name="statement" refEntityName="app.erp.fin.dao.entity.ErpFinBankStatement" tagSet="pub" i18n-en:displayName='Bank Statement'><join><on leftProp="statementId" rightProp="id"/></join></to-one>
+                <to-many name="adjustmentLines" refEntityName="app.erp.fin.dao.entity.ErpFinBankReconciliationLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Adjustment Lines' ext:estRows="10"><join><on leftProp="id" rightProp="reconciliationId"/></join></to-many>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join><on leftProp="orgId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -675,7 +726,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="15" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="reconciliation" refEntityName="app.erp.fin.dao.entity.ErpFinBankReconciliation" tagSet="pub" i18n-en:displayName='Reconciliation' ref-i18n-en:displayName='Reconciliation Line'><join><on leftProp="reconciliationId" rightProp="id"/></join></to-one>
+                <to-one name="reconciliation" refEntityName="app.erp.fin.dao.entity.ErpFinBankReconciliation" tagSet="pub" i18n-en:displayName='Reconciliation'><join><on leftProp="reconciliationId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 

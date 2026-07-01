@@ -31,6 +31,7 @@ prop:
       isAdjustment: 是否调整期
       month: 月份
       name: 期间名称
+      org: null
       orgId: 组织
       quarter: 季度
       startDate: 开始日期
@@ -85,9 +86,11 @@ prop:
       id: ID
       openAmountFunctional: 未核销本位币金额
       openAmountSource: 未核销源币金额
+      org: null
       orgId: 组织
       partner: null
       partnerId: 往来单位
+      period: null
       periodId: 所属期间
       remark: 备注
       settledAmountFunctional: 已核销本位币金额
@@ -112,6 +115,7 @@ prop:
       fundAccountId: 资金账户
       id: ID
       isBalanced: 是否平衡
+      org: null
       orgId: 组织
       reconciledAt: 对账完成时间
       reconciledBy: 对账人
@@ -155,6 +159,7 @@ prop:
       fundAccountId: 资金账户
       id: ID
       importTime: 导入时间
+      org: null
       orgId: 组织
       remark: 备注
       statementDate: 对账日期
@@ -203,6 +208,7 @@ prop:
       id: ID
       name: 账户名称
       openingBalance: 期初余额
+      org: null
       orgId: 所属组织
       remark: 备注
       status: 状态
@@ -222,22 +228,27 @@ prop:
       currency: null
       currencyId: 币种
       delVersion: 逻辑删除版本
+      department: null
       departmentId: 辅助-部门
       id: ID
       openingCredit: 期初贷方(本位币)
       openingDebit: 期初借方(本位币)
+      org: null
       orgId: 组织
+      partner: null
       partnerId: 辅助-往来单位
       period: null
       periodCredit: 本期贷方发生(本位币)
       periodDebit: 本期借方发生(本位币)
       periodId: 期间
+      project: null
       projectId: 辅助-项目
       subject: null
       subjectId: 科目
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+      warehouse: null
       warehouseId: 辅助-仓库
       yearOpeningCredit: 年初贷方
       yearOpeningDebit: 年初借方
@@ -259,6 +270,7 @@ prop:
       fxGainLoss: 汇兑损益
       id: ID
       lines: null
+      org: null
       orgId: 组织
       partner: null
       partnerId: 往来单位
@@ -275,8 +287,10 @@ prop:
       createdBy: 创建人
       delVersion: 逻辑删除版本
       id: ID
+      invoiceItem: null
       invoiceItemId: 被核销发票项
       lineNo: 行号
+      paymentItem: null
       paymentItemId: 付款/收款项(invoice or payment item)
       reconciliation: null
       reconciliationId: 核销单ID
@@ -298,6 +312,7 @@ prop:
       id: ID
       openingCredit: 期初贷方
       openingDebit: 期初借方
+      org: null
       orgId: 组织
       period: null
       periodCredit: 本期贷方
@@ -323,6 +338,7 @@ prop:
       id: ID
       isReversed: 是否红字冲销凭证
       lines: null
+      org: null
       orgId: 核算组织
       period: null
       periodId: 会计期间
@@ -331,6 +347,7 @@ prop:
       postingType: 过账类型
       postingType_label: 过账类型
       remark: 备注
+      reversalOfVoucher: null
       reversalOfVoucherId: 原冲销凭证ID
       totalCredit: 贷方合计(本位币)
       totalDebit: 借方合计(本位币)

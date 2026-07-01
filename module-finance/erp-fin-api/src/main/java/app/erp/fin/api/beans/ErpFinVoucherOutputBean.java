@@ -246,16 +246,16 @@
         }
 
 
-        private Long _postedBy;
+        private String _postedBy;
 
     
         @PropMeta(propId=15)
     
-        public Long getPostedBy(){
+        public String getPostedBy(){
             return _postedBy;
         }
 
-        public void setPostedBy(Long value){
+        public void setPostedBy(String value){
             this._postedBy = value;
         }
 
@@ -413,6 +413,28 @@
 
         public void setBillLinks(List<Map<String,Object>> value){
             this._billLinks = value;
+        }
+
+
+        private Map<String,Object> _org;
+
+        public Map<String,Object> getOrg(){
+            return _org;
+        }
+
+        public void setOrg(Map<String,Object> value){
+            this._org = value;
+        }
+
+
+        private Map<String,Object> _reversalOfVoucher;
+
+        public Map<String,Object> getReversalOfVoucher(){
+            return _reversalOfVoucher;
+        }
+
+        public void setReversalOfVoucher(Map<String,Object> value){
+            this._reversalOfVoucher = value;
         }
 
 

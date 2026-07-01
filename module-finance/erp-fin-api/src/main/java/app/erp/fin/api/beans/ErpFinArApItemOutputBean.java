@@ -448,4 +448,26 @@
         }
 
 
+        private Map<String,Object> _period;
+
+        public Map<String,Object> getPeriod(){
+            return _period;
+        }
+
+        public void setPeriod(Map<String,Object> value){
+            this._period = value;
+        }
+
+
+        private Map<String,Object> _org;
+
+        public Map<String,Object> getOrg(){
+            return _org;
+        }
+
+        public void setOrg(Map<String,Object> value){
+            this._org = value;
+        }
+
+
     }

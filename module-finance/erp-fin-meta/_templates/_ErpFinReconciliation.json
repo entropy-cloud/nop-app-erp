@@ -14,7 +14,7 @@
   "fxGainLoss": "",
   "docStatus": 0,
   "docStatus_label": "",
-  "postedBy": 0,
+  "postedBy": "",
   "postedAt": "2000-01-01 14:00:00",
   "remark": "",
   "delVersion": 0,
@@ -26,5 +26,6 @@
   "partner": null,
   "acctSchema": null,
   "currency": null,
-  "lines": null
+  "lines": null,
+  "org": null
 }

@@ -167,16 +167,16 @@
         }
 
 
-        private Long _closedBy;
+        private String _closedBy;
 
     
         @PropMeta(propId=12)
     
-        public Long getClosedBy(){
+        public String getClosedBy(){
             return _closedBy;
         }
 
-        public void setClosedBy(Long value){
+        public void setClosedBy(String value){
             this._closedBy = value;
         }
 

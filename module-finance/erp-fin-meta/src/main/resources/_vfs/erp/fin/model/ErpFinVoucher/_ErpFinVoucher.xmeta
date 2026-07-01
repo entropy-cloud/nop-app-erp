@@ -44,7 +44,7 @@
             <schema domain="voucherNo" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="orgId" displayName="核算组织" propId="7" i18n-en:displayName="Organization" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="org">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="acctSchemaId" displayName="账套" propId="8" i18n-en:displayName="Acct Schema" mandatory="true"
@@ -68,7 +68,7 @@
             <schema type="java.lang.Boolean"/>
         </prop>
         <prop name="reversalOfVoucherId" displayName="原冲销凭证ID" propId="13" i18n-en:displayName="Reversal Of Voucher"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="reversalOfVoucher">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="docStatus" displayName="凭证状态" propId="14" i18n-en:displayName="Doc Status" mandatory="true"
@@ -77,7 +77,7 @@
         </prop>
         <prop name="postedBy" displayName="过账人" propId="15" i18n-en:displayName="Posted By" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String" precision="36"/>
         </prop>
         <prop name="postedAt" displayName="过账时间" propId="16" i18n-en:displayName="Posted At" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -134,6 +134,16 @@
             <schema>
                 <item bizObjName="ErpFinVoucherBillR"/>
             </schema>
+        </prop>
+        <prop name="org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="orgId"
+              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="reversalOfVoucher" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="reversalOfVoucherId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpFinVoucher"/>
         </prop>
     </props>
 </meta>

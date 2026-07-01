@@ -41,6 +41,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       statusRecords: Status Records
+      org: null
     ErpFinAccountingPeriodStatus:
       id: ID
       periodId: Period
@@ -99,6 +100,8 @@ prop:
       partner: Partner
       acctSchema: Acct Schema
       currency: Currency
+      period: null
+      org: null
     ErpFinBankReconciliation:
       id: ID
       code: Code
@@ -124,6 +127,7 @@ prop:
       fundAccount: Fund Account
       statement: Bank Statement
       adjustmentLines: Adjustment Lines
+      org: null
     ErpFinBankReconciliationLine:
       id: ID
       reconciliationId: Reconciliation
@@ -163,6 +167,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       fundAccount: Fund Account
+      org: null
     ErpFinBankStatementLine:
       id: ID
       statementId: Statement
@@ -212,6 +217,7 @@ prop:
       updateTime: Update Time
       currency: Currency
       subject: Subject
+      org: null
     ErpFinGlBalance:
       id: ID
       orgId: Organization
@@ -241,6 +247,11 @@ prop:
       period: Period
       subject: Subject
       currency: Currency
+      org: null
+      partner: null
+      department: null
+      warehouse: null
+      project: null
     ErpFinReconciliation:
       id: ID
       code: Code
@@ -270,6 +281,7 @@ prop:
       acctSchema: Acct Schema
       currency: Currency
       lines: Lines
+      org: null
     ErpFinReconciliationLine:
       id: ID
       reconciliationId: Reconciliation
@@ -286,6 +298,8 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       reconciliation: Reconciliation
+      paymentItem: null
+      invoiceItem: null
     ErpFinTrialBalance:
       id: ID
       orgId: Organization
@@ -310,6 +324,7 @@ prop:
       acctSchema: Acct Schema
       period: Period
       subject: Subject
+      org: null
     ErpFinVoucher:
       id: ID
       code: Code
@@ -341,6 +356,8 @@ prop:
       acctSchema: Acct Schema
       lines: Lines
       billLinks: Bill Links
+      org: null
+      reversalOfVoucher: null
     ErpFinVoucherBillR:
       id: ID
       voucherId: Voucher

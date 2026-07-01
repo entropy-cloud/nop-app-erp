@@ -32,7 +32,7 @@
             <schema type="java.lang.String" precision="200"/>
         </prop>
         <prop name="orgId" displayName="组织" propId="4" i18n-en:displayName="Organization" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="year" displayName="年度" propId="5" i18n-en:displayName="Year" mandatory="true" queryable="true"
@@ -65,7 +65,7 @@
         </prop>
         <prop name="closedBy" displayName="结账人" propId="12" i18n-en:displayName="Closed By" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String" precision="36"/>
         </prop>
         <prop name="closedAt" displayName="结账时间" propId="13" i18n-en:displayName="Closed At" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -101,6 +101,10 @@
             <schema>
                 <item bizObjName="ErpFinAccountingPeriodStatus"/>
             </schema>
+        </prop>
+        <prop name="org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="orgId"
+              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
         </prop>
     </props>
 </meta>

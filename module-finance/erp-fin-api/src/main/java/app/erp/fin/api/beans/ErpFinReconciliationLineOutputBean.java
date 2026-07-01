@@ -220,4 +220,26 @@
         }
 
 
+        private Map<String,Object> _paymentItem;
+
+        public Map<String,Object> getPaymentItem(){
+            return _paymentItem;
+        }
+
+        public void setPaymentItem(Map<String,Object> value){
+            this._paymentItem = value;
+        }
+
+
+        private Map<String,Object> _invoiceItem;
+
+        public Map<String,Object> getInvoiceItem(){
+            return _invoiceItem;
+        }
+
+        public void setInvoiceItem(Map<String,Object> value){
+            this._invoiceItem = value;
+        }
+
+
     }

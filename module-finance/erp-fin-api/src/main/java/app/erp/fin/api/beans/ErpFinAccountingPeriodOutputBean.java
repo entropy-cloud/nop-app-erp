@@ -180,16 +180,16 @@
         }
 
 
-        private Long _closedBy;
+        private String _closedBy;
 
     
         @PropMeta(propId=12)
     
-        public Long getClosedBy(){
+        public String getClosedBy(){
             return _closedBy;
         }
 
-        public void setClosedBy(Long value){
+        public void setClosedBy(String value){
             this._closedBy = value;
         }
 
@@ -300,6 +300,17 @@
 
         public void setStatusRecords(List<Map<String,Object>> value){
             this._statusRecords = value;
+        }
+
+
+        private Map<String,Object> _org;
+
+        public Map<String,Object> getOrg(){
+            return _org;
+        }
+
+        public void setOrg(Map<String,Object> value){
+            this._org = value;
         }
 
 

@@ -16,7 +16,7 @@
   "reversalOfVoucherId": 0,
   "docStatus": 0,
   "docStatus_label": "",
-  "postedBy": 0,
+  "postedBy": "",
   "postedAt": "2000-01-01 14:00:00",
   "remark": "",
   "delVersion": 0,
@@ -28,5 +28,7 @@
   "period": null,
   "acctSchema": null,
   "lines": null,
-  "billLinks": null
+  "billLinks": null,
+  "org": null,
+  "reversalOfVoucher": null
 }

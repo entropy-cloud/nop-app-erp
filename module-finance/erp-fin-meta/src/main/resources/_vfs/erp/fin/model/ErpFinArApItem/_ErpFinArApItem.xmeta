@@ -28,7 +28,7 @@
             <schema domain="voucherCode" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="orgId" displayName="组织" propId="3" i18n-en:displayName="Organization" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="org">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="acctSchemaId" displayName="账套" propId="4" i18n-en:displayName="Acct Schema" mandatory="true"
@@ -99,7 +99,7 @@
             <schema type="java.lang.Integer" dict="erp-fin/ar-ap-status"/>
         </prop>
         <prop name="periodId" displayName="所属期间" propId="20" i18n-en:displayName="Period" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="period">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="remark" displayName="备注" propId="21" i18n-en:displayName="Remark" queryable="true" sortable="true"
@@ -144,6 +144,15 @@
               queryable="true" ext:joinLeftProp="currencyId" ext:joinRightProp="id" biz:moduleId="erp/md"
               insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdCurrency"/>
+        </prop>
+        <prop name="period" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="periodId"
+              ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpFinAccountingPeriod"/>
+        </prop>
+        <prop name="org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="orgId"
+              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
         </prop>
     </props>
 </meta>

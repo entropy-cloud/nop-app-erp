@@ -5,21 +5,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean id="app.erp.fin.service.entity.ErpFinAccountingPeriodBizModel" ioc:type="@bean:id" ioc:default="true"/>
-
-    <bean id="biz_ErpFinAccountingPeriod" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.fin.biz.IErpFinAccountingPeriodBiz" ioc:force-lazy-property="true" lazy-init="true"
-          primary="true">
-        <property name="bizObjName" value="ErpFinAccountingPeriod"/>
-    </bean>
-
-    <bean id="app.erp.fin.service.entity.ErpFinVoucherBizModel" ioc:type="@bean:id" ioc:default="true"/>
-
-    <bean id="biz_ErpFinVoucher" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.fin.biz.IErpFinVoucherBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
-        <property name="bizObjName" value="ErpFinVoucher"/>
-    </bean>
-
     <bean id="app.erp.fin.service.entity.ErpFinVoucherTemplateBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpFinVoucherTemplate" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -28,27 +13,12 @@
         <property name="bizObjName" value="ErpFinVoucherTemplate"/>
     </bean>
 
-    <bean id="app.erp.fin.service.entity.ErpFinAccountingPeriodStatusBizModel" ioc:type="@bean:id" ioc:default="true"/>
+    <bean id="app.erp.fin.service.entity.ErpFinAccountingPeriodBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
-    <bean id="biz_ErpFinAccountingPeriodStatus" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.fin.biz.IErpFinAccountingPeriodStatusBiz" ioc:force-lazy-property="true" lazy-init="true"
+    <bean id="biz_ErpFinAccountingPeriod" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinAccountingPeriodBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
-        <property name="bizObjName" value="ErpFinAccountingPeriodStatus"/>
-    </bean>
-
-    <bean id="app.erp.fin.service.entity.ErpFinTrialBalanceBizModel" ioc:type="@bean:id" ioc:default="true"/>
-
-    <bean id="biz_ErpFinTrialBalance" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.fin.biz.IErpFinTrialBalanceBiz" ioc:force-lazy-property="true" lazy-init="true"
-          primary="true">
-        <property name="bizObjName" value="ErpFinTrialBalance"/>
-    </bean>
-
-    <bean id="app.erp.fin.service.entity.ErpFinGlBalanceBizModel" ioc:type="@bean:id" ioc:default="true"/>
-
-    <bean id="biz_ErpFinGlBalance" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.fin.biz.IErpFinGlBalanceBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
-        <property name="bizObjName" value="ErpFinGlBalance"/>
+        <property name="bizObjName" value="ErpFinAccountingPeriod"/>
     </bean>
 
     <bean id="app.erp.fin.service.entity.ErpFinFundAccountBizModel" ioc:type="@bean:id" ioc:default="true"/>
@@ -59,6 +29,37 @@
         <property name="bizObjName" value="ErpFinFundAccount"/>
     </bean>
 
+    <bean id="app.erp.fin.service.entity.ErpFinReconciliationBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinReconciliation" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinReconciliationBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinReconciliation"/>
+    </bean>
+
+    <bean id="app.erp.fin.service.entity.ErpFinVoucherTemplateLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinVoucherTemplateLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinVoucherTemplateLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinVoucherTemplateLine"/>
+    </bean>
+
+    <bean id="app.erp.fin.service.entity.ErpFinVoucherBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinVoucher" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinVoucherBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpFinVoucher"/>
+    </bean>
+
+    <bean id="app.erp.fin.service.entity.ErpFinAccountingPeriodStatusBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinAccountingPeriodStatus" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinAccountingPeriodStatusBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinAccountingPeriodStatus"/>
+    </bean>
+
     <bean id="app.erp.fin.service.entity.ErpFinArApItemBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpFinArApItem" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -66,12 +67,27 @@
         <property name="bizObjName" value="ErpFinArApItem"/>
     </bean>
 
-    <bean id="app.erp.fin.service.entity.ErpFinReconciliationBizModel" ioc:type="@bean:id" ioc:default="true"/>
+    <bean id="app.erp.fin.service.entity.ErpFinGlBalanceBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
-    <bean id="biz_ErpFinReconciliation" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.fin.biz.IErpFinReconciliationBiz" ioc:force-lazy-property="true" lazy-init="true"
+    <bean id="biz_ErpFinGlBalance" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinGlBalanceBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpFinGlBalance"/>
+    </bean>
+
+    <bean id="app.erp.fin.service.entity.ErpFinTrialBalanceBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinTrialBalance" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinTrialBalanceBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
-        <property name="bizObjName" value="ErpFinReconciliation"/>
+        <property name="bizObjName" value="ErpFinTrialBalance"/>
+    </bean>
+
+    <bean id="app.erp.fin.service.entity.ErpFinBankStatementBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinBankStatement" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinBankStatementBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinBankStatement"/>
     </bean>
 
     <bean id="app.erp.fin.service.entity.ErpFinVoucherLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
@@ -90,22 +106,6 @@
         <property name="bizObjName" value="ErpFinVoucherBillR"/>
     </bean>
 
-    <bean id="app.erp.fin.service.entity.ErpFinVoucherTemplateLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
-
-    <bean id="biz_ErpFinVoucherTemplateLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.fin.biz.IErpFinVoucherTemplateLineBiz" ioc:force-lazy-property="true" lazy-init="true"
-          primary="true">
-        <property name="bizObjName" value="ErpFinVoucherTemplateLine"/>
-    </bean>
-
-    <bean id="app.erp.fin.service.entity.ErpFinBankStatementBizModel" ioc:type="@bean:id" ioc:default="true"/>
-
-    <bean id="biz_ErpFinBankStatement" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.fin.biz.IErpFinBankStatementBiz" ioc:force-lazy-property="true" lazy-init="true"
-          primary="true">
-        <property name="bizObjName" value="ErpFinBankStatement"/>
-    </bean>
-
     <bean id="app.erp.fin.service.entity.ErpFinReconciliationLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpFinReconciliationLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -114,20 +114,20 @@
         <property name="bizObjName" value="ErpFinReconciliationLine"/>
     </bean>
 
-    <bean id="app.erp.fin.service.entity.ErpFinBankStatementLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
-
-    <bean id="biz_ErpFinBankStatementLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.fin.biz.IErpFinBankStatementLineBiz" ioc:force-lazy-property="true" lazy-init="true"
-          primary="true">
-        <property name="bizObjName" value="ErpFinBankStatementLine"/>
-    </bean>
-
     <bean id="app.erp.fin.service.entity.ErpFinBankReconciliationBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpFinBankReconciliation" class="io.nop.biz.proxy.BizProxyFactoryBean"
           ioc:type="app.erp.fin.biz.IErpFinBankReconciliationBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
         <property name="bizObjName" value="ErpFinBankReconciliation"/>
+    </bean>
+
+    <bean id="app.erp.fin.service.entity.ErpFinBankStatementLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinBankStatementLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinBankStatementLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinBankStatementLine"/>
     </bean>
 
     <bean id="app.erp.fin.service.entity.ErpFinBankReconciliationLineBizModel" ioc:type="@bean:id" ioc:default="true"/>

@@ -26,5 +26,10 @@
   "acctSchema": null,
   "period": null,
   "subject": null,
-  "currency": null
+  "currency": null,
+  "org": null,
+  "partner": null,
+  "department": null,
+  "warehouse": null,
+  "project": null
 }

@@ -28,7 +28,7 @@
             <schema domain="voucherCode" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="orgId" displayName="组织" propId="3" i18n-en:displayName="Organization" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="org">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="acctSchemaId" displayName="账套" propId="4" i18n-en:displayName="Acct Schema" mandatory="true"
@@ -74,7 +74,7 @@
         </prop>
         <prop name="postedBy" displayName="过账人" propId="14" i18n-en:displayName="Posted By" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String" precision="36"/>
         </prop>
         <prop name="postedAt" displayName="过账时间" propId="15" i18n-en:displayName="Posted At" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -129,6 +129,11 @@
             <schema>
                 <item bizObjName="ErpFinReconciliationLine"/>
             </schema>
+        </prop>
+        <prop name="org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="orgId"
+              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
         </prop>
     </props>
 </meta>

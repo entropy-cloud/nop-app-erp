@@ -34,11 +34,11 @@
         </prop>
         <prop name="paymentItemId" displayName="付款/收款项(invoice or payment item)" propId="4"
               i18n-en:displayName="Payment Item" mandatory="true" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+              updatable="true" ext:relation="paymentItem">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="invoiceItemId" displayName="被核销发票项" propId="5" i18n-en:displayName="Invoice Item" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="invoiceItem">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="settledAmountSource" displayName="核销金额(源币)" propId="6" i18n-en:displayName="Settled Amount Source"
@@ -82,6 +82,16 @@
               queryable="true" ext:joinLeftProp="reconciliationId" ext:joinRightProp="id" insertable="false"
               updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpFinReconciliation"/>
+        </prop>
+        <prop name="paymentItem" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="paymentItemId" ext:joinRightProp="id" insertable="false" updatable="false"
+              mandatory="true" lazy="true">
+            <schema bizObjName="ErpFinArApItem"/>
+        </prop>
+        <prop name="invoiceItem" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="invoiceItemId" ext:joinRightProp="id" insertable="false" updatable="false"
+              mandatory="true" lazy="true">
+            <schema bizObjName="ErpFinArApItem"/>
         </prop>
     </props>
 </meta>

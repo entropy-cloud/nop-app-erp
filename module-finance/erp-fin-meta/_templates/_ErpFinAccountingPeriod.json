@@ -11,7 +11,7 @@
   "isAdjustment": false,
   "status": 0,
   "status_label": "",
-  "closedBy": 0,
+  "closedBy": "",
   "closedAt": "2000-01-01 14:00:00",
   "delVersion": 0,
   "version": 0,
@@ -19,5 +19,6 @@
   "createTime": "2000-01-01 14:00:00",
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
-  "statusRecords": null
+  "statusRecords": null,
+  "org": null
 }

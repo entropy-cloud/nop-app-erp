@@ -84,6 +84,12 @@ public class _ErpFinReconciliationLine extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_reconciliation = "reconciliation";
     
+    /* relation:  */
+    public static final String PROP_NAME_paymentItem = "paymentItem";
+    
+    /* relation:  */
+    public static final String PROP_NAME_invoiceItem = "invoiceItem";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -842,6 +848,52 @@ public class _ErpFinReconciliationLine extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_reconciliation, refEntity,()->{
            
                            this.setReconciliationId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.fin.dao.entity.ErpFinArApItem getPaymentItem(){
+       return (app.erp.fin.dao.entity.ErpFinArApItem)internalGetRefEntity(PROP_NAME_paymentItem);
+    }
+
+    public final void setPaymentItem(app.erp.fin.dao.entity.ErpFinArApItem refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setPaymentItemId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_paymentItem, refEntity,()->{
+           
+                           this.setPaymentItemId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.fin.dao.entity.ErpFinArApItem getInvoiceItem(){
+       return (app.erp.fin.dao.entity.ErpFinArApItem)internalGetRefEntity(PROP_NAME_invoiceItem);
+    }
+
+    public final void setInvoiceItem(app.erp.fin.dao.entity.ErpFinArApItem refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setInvoiceItemId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_invoiceItem, refEntity,()->{
+           
+                           this.setInvoiceItemId(refEntity.getId());
                        
            });
            }

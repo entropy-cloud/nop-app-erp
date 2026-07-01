@@ -52,7 +52,7 @@
                 <col id="status" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--结账人-->
-                <col id="closedBy" ui:number="true" sortable="true"/>
+                <col id="closedBy" sortable="true"/>
 
                 <!--结账时间-->
                 <col id="closedAt" sortable="true"/>

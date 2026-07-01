@@ -65,7 +65,7 @@ public class _ErpFinAccountingPeriod extends DynamicOrmEntity{
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 11;
     
-    /* 结账人: CLOSED_BY BIGINT */
+    /* 结账人: CLOSED_BY VARCHAR */
     public static final String PROP_NAME_closedBy = "closedBy";
     public static final int PROP_ID_closedBy = 12;
     
@@ -103,6 +103,9 @@ public class _ErpFinAccountingPeriod extends DynamicOrmEntity{
     
     /* relation:  */
     public static final String PROP_NAME_statusRecords = "statusRecords";
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
     
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
@@ -206,7 +209,7 @@ public class _ErpFinAccountingPeriod extends DynamicOrmEntity{
     private java.lang.Integer _status;
     
     /* 结账人: CLOSED_BY */
-    private java.lang.Long _closedBy;
+    private java.lang.String _closedBy;
     
     /* 结账时间: CLOSED_AT */
     private java.time.LocalDateTime _closedAt;
@@ -482,9 +485,9 @@ public class _ErpFinAccountingPeriod extends DynamicOrmEntity{
             }
         
             case PROP_ID_closedBy:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_closedBy));
                }
                setClosedBy(typedValue);
@@ -649,7 +652,7 @@ public class _ErpFinAccountingPeriod extends DynamicOrmEntity{
         
             case PROP_ID_closedBy:{
                onInitProp(propId);
-               this._closedBy = (java.lang.Long)value;
+               this._closedBy = (java.lang.String)value;
                
                break;
             }
@@ -921,7 +924,7 @@ public class _ErpFinAccountingPeriod extends DynamicOrmEntity{
     /**
      * 结账人: CLOSED_BY
      */
-    public final java.lang.Long getClosedBy(){
+    public final java.lang.String getClosedBy(){
          onPropGet(PROP_ID_closedBy);
          return _closedBy;
     }
@@ -929,7 +932,7 @@ public class _ErpFinAccountingPeriod extends DynamicOrmEntity{
     /**
      * 结账人: CLOSED_BY
      */
-    public final void setClosedBy(java.lang.Long value){
+    public final void setClosedBy(java.lang.String value){
         if(onPropSet(PROP_ID_closedBy,value)){
             this._closedBy = value;
             internalClearRefs(PROP_ID_closedBy);
@@ -1078,6 +1081,29 @@ public class _ErpFinAccountingPeriod extends DynamicOrmEntity{
      */
     public final IOrmEntitySet<app.erp.fin.dao.entity.ErpFinAccountingPeriodStatus> getStatusRecords(){
        return _statusRecords;
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
     }
        
 }

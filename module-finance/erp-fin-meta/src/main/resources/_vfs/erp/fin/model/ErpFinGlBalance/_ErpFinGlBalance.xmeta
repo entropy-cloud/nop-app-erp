@@ -24,7 +24,7 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="orgId" displayName="组织" propId="2" i18n-en:displayName="Organization" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="org">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="acctSchemaId" displayName="账套" propId="3" i18n-en:displayName="Acct Schema" mandatory="true"
@@ -76,19 +76,19 @@
             <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
         </prop>
         <prop name="partnerId" displayName="辅助-往来单位" propId="15" i18n-en:displayName="Partner" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="partner">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="departmentId" displayName="辅助-部门" propId="16" i18n-en:displayName="Department" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="department">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="projectId" displayName="辅助-项目" propId="17" i18n-en:displayName="Project" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="project">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="warehouseId" displayName="辅助-仓库" propId="18" i18n-en:displayName="Warehouse" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="warehouse">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="19" i18n-en:displayName="Del Flag" mandatory="true"
@@ -134,6 +134,31 @@
               queryable="true" ext:joinLeftProp="currencyId" ext:joinRightProp="id" biz:moduleId="erp/md"
               insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdCurrency"/>
+        </prop>
+        <prop name="org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="orgId"
+              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="partner" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="partnerId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpMdPartner"/>
+        </prop>
+        <prop name="department" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="departmentId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="warehouse" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="warehouseId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpMdWarehouse"/>
+        </prop>
+        <prop name="project" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="projectId" ext:joinRightProp="id" biz:moduleId="erp/prj" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpPrjProject"/>
         </prop>
     </props>
 </meta>

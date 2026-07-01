@@ -393,4 +393,59 @@
         }
 
 
+        private Map<String,Object> _org;
+
+        public Map<String,Object> getOrg(){
+            return _org;
+        }
+
+        public void setOrg(Map<String,Object> value){
+            this._org = value;
+        }
+
+
+        private Map<String,Object> _partner;
+
+        public Map<String,Object> getPartner(){
+            return _partner;
+        }
+
+        public void setPartner(Map<String,Object> value){
+            this._partner = value;
+        }
+
+
+        private Map<String,Object> _department;
+
+        public Map<String,Object> getDepartment(){
+            return _department;
+        }
+
+        public void setDepartment(Map<String,Object> value){
+            this._department = value;
+        }
+
+
+        private Map<String,Object> _warehouse;
+
+        public Map<String,Object> getWarehouse(){
+            return _warehouse;
+        }
+
+        public void setWarehouse(Map<String,Object> value){
+            this._warehouse = value;
+        }
+
+
+        private Map<String,Object> _project;
+
+        public Map<String,Object> getProject(){
+            return _project;
+        }
+
+        public void setProject(Map<String,Object> value){
+            this._project = value;
+        }
+
+
     }
