@@ -1,5 +1,7 @@
 package app.erp.fin.service.posting;
 
+import app.erp.fin.dao.ErpFinBusinessType;
+import app.erp.fin.dao.PostingEvent;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 

@@ -29,7 +29,8 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        <!-- compile: 存货过账接入财务过账引擎（IErpFinPostingService / IErpFinAcctDocProvider SPI 位于 finance-service）。
+        <!-- compile: 存货过账接入财务过账引擎（凭证聚合根 Facade IErpFinVoucherBiz 位于 finance-dao；
+             IErpFinAcctDocProvider SPI 位于 finance-service）。
              inventory→finance 单向无环（finance 为 DAG 顶，不依赖 inventory）。 -->
         <dependency>
             <artifactId>app-erp-finance-service</artifactId>

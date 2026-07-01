@@ -1,4 +1,4 @@
-package app.erp.fin.service.posting;
+package app.erp.fin.dao;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -6,11 +6,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * 业财过账事件。由业务域调用方在单据审核通过后构造，提交给 {@link ErpFinPostingService#post(PostingEvent)}。
+ * 业财过账事件。由业务域调用方在单据审核通过后构造，提交给凭证聚合根 facade
+ * {@code IErpFinVoucherBiz.post(PostingEvent, IServiceContext)}。
  *
  * <p>{@code billData} 承载单据头+行数据（含金额占位键值与科目映射维度），由各 Provider 自行解释。
  *
- * <p>引擎只持有本快照，不持有任意源业务单据的 ORM 引用，因此不置位源单据的 {@code posted} 标志
+ * <p>本类型位于 finance-dao（跨域契约面），供各业务域（如 inventory）跨模块构造与提交；
+ * 引擎只持有本快照，不持有任意源业务单据的 ORM 引用，因此不置位源单据的 {@code posted} 标志
  * （源 {@code posted} 由域调用方在 {@code post()} 成功返回后自行置位）。
  */
 public class PostingEvent {

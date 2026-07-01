@@ -1,26 +1,31 @@
 package app.erp.inv.service.posting;
 
-import app.erp.fin.service.posting.ErpFinPostingService;
-import app.erp.fin.service.posting.PostingEvent;
-import io.nop.api.core.annotations.txn.Transactional;
-import io.nop.api.core.annotations.txn.TransactionPropagation;
+import app.erp.fin.biz.IErpFinVoucherBiz;
+import app.erp.fin.dao.PostingEvent;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 
 import jakarta.inject.Inject;
 
 /**
- * 存货过账执行器：以独立新事务（{@link TransactionPropagation#REQUIRES_NEW}）调用财务过账引擎，
- * 使过账失败不污染移动单主事务（cross-domain「失败不影响移动单终态」）。
+ * 存货过账执行器：跨域经凭证聚合根 Facade {@link IErpFinVoucherBiz} 调用财务过账引擎
+ * （{@code processor-extension-pattern.md} 硬规则 2：跨域注入 IErpXxxBiz，不注入 Processor 具体类）。
  *
- * <p>独立事务边界保证：过账异常在本事务内回滚（无凭证落库），主事务（移动单 DONE+流水+余额）不受影响。
- * 调用方 {@link InvPostingDispatcher} 以 try/catch 包裹本方法返回值/异常。
+ * <p>跨域失败隔离的事务边界（过账失败回滚独立事务，不污染移动单主事务）由 Facade
+ * {@code IErpFinVoucherBiz.post()} 的 {@code @Transactional(REQUIRES_NEW)} 承接（硬规则 1：事务边界钉 Facade，
+ * 不下放编排层）。本执行器不再自带 {@code @Transactional}。调用方 {@link InvPostingDispatcher} 以
+ * try/catch 包裹本方法返回值/异常。
  */
 public class InvPostingExecutor {
 
     @Inject
-    ErpFinPostingService postingService;
+    IErpFinVoucherBiz voucherBiz;
 
-    @Transactional(propagation = TransactionPropagation.REQUIRES_NEW)
     public Long postEvent(PostingEvent event) {
-        return postingService.post(event);
+        IServiceContext context = IServiceContext.getCtx();
+        if (context == null) {
+            context = new ServiceContextImpl();
+        }
+        return voucherBiz.post(event, context);
     }
 }

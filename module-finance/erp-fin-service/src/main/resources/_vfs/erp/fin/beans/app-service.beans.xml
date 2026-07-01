@@ -8,7 +8,8 @@
 
     <import resource="_service.beans.xml"/>
 
-    <!-- 业财过账引擎（非 BizModel 服务）：SPI 注册中心 + 默认模板 Provider + 编排服务 -->
+    <!-- 业财过账引擎（非 BizModel 编排层）：SPI 注册中心 + 默认模板 Provider + 过账编排 Processor。
+         Processor 被凭证聚合根 Facade ErpFinVoucherBizModel 内部调用（见 processor-extension-pattern.md）。 -->
     <bean id="app.erp.fin.service.posting.ErpFinAcctDocRegistry"
           class="app.erp.fin.service.posting.ErpFinAcctDocRegistry">
         <property name="providers">
@@ -24,6 +25,6 @@
     <bean id="app.erp.fin.service.posting.provider.ErpFinTemplateAcctDocProvider"
           class="app.erp.fin.service.posting.provider.ErpFinTemplateAcctDocProvider"/>
 
-    <bean id="app.erp.fin.service.posting.ErpFinPostingService"
-          class="app.erp.fin.service.posting.ErpFinPostingService"/>
+    <bean id="app.erp.fin.service.posting.ErpFinPostingProcessor"
+          class="app.erp.fin.service.posting.ErpFinPostingProcessor"/>
 </beans>

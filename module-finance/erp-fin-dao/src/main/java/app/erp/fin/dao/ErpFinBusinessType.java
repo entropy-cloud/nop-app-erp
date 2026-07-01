@@ -1,8 +1,11 @@
-package app.erp.fin.service.posting;
+package app.erp.fin.dao;
 
 /**
  * 业财过账业务类型枚举。常量的 {@link #code} 与字典 {@code erp-fin/business-type} 的数值逐一一致，
  * 是过账引擎类型安全的门面（字典是数值权威源，本枚举是编译期类型安全包装）。
+ *
+ * <p>本枚举位于 finance-dao（与 {@code IErpFinVoucherBiz} 跨域契约同层），供 facade 参数（
+ * {@code post/reverse}）与各域过账派发器/Provider 跨模块引用；过账编排（finance-service）经 import 使用。
  *
  * <p>新增字典项时须同步追加枚举常量。
  */

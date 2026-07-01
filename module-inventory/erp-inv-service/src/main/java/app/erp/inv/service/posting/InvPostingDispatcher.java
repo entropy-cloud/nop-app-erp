@@ -1,7 +1,7 @@
 package app.erp.inv.service.posting;
 
-import app.erp.fin.service.posting.ErpFinBusinessType;
-import app.erp.fin.service.posting.PostingEvent;
+import app.erp.fin.dao.ErpFinBusinessType;
+import app.erp.fin.dao.PostingEvent;
 import app.erp.inv.dao.entity.ErpInvStockLedger;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.inv.dao.entity.ErpInvStockMoveLine;

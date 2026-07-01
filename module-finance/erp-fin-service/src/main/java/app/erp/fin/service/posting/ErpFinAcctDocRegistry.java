@@ -1,5 +1,6 @@
 package app.erp.fin.service.posting;
 
+import app.erp.fin.dao.ErpFinBusinessType;
 import io.nop.api.core.exceptions.NopException;
 import jakarta.annotation.PostConstruct;
 

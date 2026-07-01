@@ -1,5 +1,8 @@
 package app.erp.fin.service.posting;
 
+import app.erp.fin.biz.IErpFinVoucherBiz;
+import app.erp.fin.dao.ErpFinBusinessType;
+import app.erp.fin.dao.PostingEvent;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
@@ -36,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 业财过账编排服务 + 默认模板 Provider 的服务层集成测试（Phase 2）。
  *
  * <p>{@code @NopTestConfig(localDb=true, initDatabaseSchema=TRUE, enableActionAuth=FALSE)} + H2，
- * 直接调用 {@link ErpFinPostingService} 的 Java API（过账是服务内编排逻辑，不走 GraphQL 快照），
+ * 直接调用凭证聚合根 Facade {@link IErpFinVoucherBiz} 的 Java API（过账 Facade 入口，不走 GraphQL 快照），
  * 断言实体落库状态而非响应 JSON。测试自包含：seed 期间+科目+模板 → 调 post() → 断言凭证/分录/回链。
  *
  * <p>覆盖：happy path（凭证+分录+回链落库、凭证 docStatus=POSTED、借贷平衡）、幂等（重复过账空操作）、
@@ -62,7 +65,7 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
     @Inject
     IOrmTemplate ormTemplate;
     @Inject
-    ErpFinPostingService postingService;
+    IErpFinVoucherBiz voucherBiz;
 
     @Test
     public void testPostHappyPath() {
@@ -79,7 +82,7 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         PostingEvent event = apInvoiceEvent("AP-HAPPY-001", voucherDate,
                 new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
 
-        Long voucherId = postingService.post(event);
+        Long voucherId = voucherBiz.post(event, CTX);
 
         assertNotNull(voucherId, "happy path 应生成并返回凭证 ID");
         IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
@@ -111,8 +114,8 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         PostingEvent event = apInvoiceEvent("AP-IDEM-001", voucherDate,
                 new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
 
-        Long first = postingService.post(event);
-        Long second = postingService.post(event);
+        Long first = voucherBiz.post(event, CTX);
+        Long second = voucherBiz.post(event, CTX);
 
         assertNotNull(first, "首次过账应生成凭证");
         assertNull(second, "重复过账应空操作返回 null");
@@ -137,7 +140,7 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         PostingEvent event = apInvoiceEvent("AP-UNBAL-001", voucherDate,
                 new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("200"));
 
-        assertThrows(NopException.class, () -> postingService.post(event), "借贷不平衡应抛 NopException");
+        assertThrows(NopException.class, () -> voucherBiz.post(event, CTX), "借贷不平衡应抛 NopException");
         assertEquals(0, countBillLinks("AP-UNBAL-001", BUSINESS_TYPE_AP_INVOICE), "被拒不应落库回链");
     }
 
@@ -156,7 +159,7 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         PostingEvent event = apInvoiceEvent("AP-CLOSED-001", voucherDate,
                 new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
 
-        assertThrows(NopException.class, () -> postingService.post(event), "期间已结账应抛 NopException");
+        assertThrows(NopException.class, () -> voucherBiz.post(event, CTX), "期间已结账应抛 NopException");
         assertEquals(0, countBillLinks("AP-CLOSED-001", BUSINESS_TYPE_AP_INVOICE), "被拒不应落库回链");
     }
 
@@ -172,11 +175,11 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
             seedApInvoiceTemplate();
         });
 
-        Long originalId = postingService.post(apInvoiceEvent("AP-REV-001", voucherDate,
-                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113")));
+        Long originalId = voucherBiz.post(apInvoiceEvent("AP-REV-001", voucherDate,
+                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113")), CTX);
         assertNotNull(originalId, "前置：先 happy 过账生成原凭证");
 
-        Long redId = postingService.reverse("AP-REV-001", ErpFinBusinessType.AP_INVOICE);
+        Long redId = voucherBiz.reverse("AP-REV-001", ErpFinBusinessType.AP_INVOICE, CTX);
         assertNotNull(redId, "红冲应生成红字凭证");
         assertNotEquals(originalId, redId, "红字凭证是新凭证，非原凭证");
 
@@ -214,7 +217,7 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
     @Test
     public void testReverseNotFound() {
         assertThrows(NopException.class,
-                () -> postingService.reverse("AP-NOSUCH-001", ErpFinBusinessType.AP_INVOICE),
+                () -> voucherBiz.reverse("AP-NOSUCH-001", ErpFinBusinessType.AP_INVOICE, CTX),
                 "无已过账凭证应抛 NopException");
     }
 
