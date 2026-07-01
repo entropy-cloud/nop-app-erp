@@ -80,22 +80,10 @@ public class ReceiveStockMoveBuilder {
             req.setSkuId(line.getSkuId());
             req.setUoMId(line.getUoMId());
             req.setQuantity(line.getQuantity());
-            req.setUnitCost(parseUnitPrice(line.getUnitPrice()));
+            req.setUnitCost(line.getUnitPrice());
             req.setBatchNo(line.getBatchNo());
             result.add(req);
         }
         return result;
-    }
-
-    private BigDecimal parseUnitPrice(String unitPrice) {
-        if (StringHelper.isBlank(unitPrice)) {
-            return null;
-        }
-        try {
-            return new BigDecimal(unitPrice.trim());
-        } catch (NumberFormatException e) {
-            throw new NopException(ErpPurErrors.ERR_INVALID_UNIT_PRICE)
-                    .param(ErpPurErrors.ARG_PRICE_TEXT, unitPrice);
-        }
     }
 }

@@ -28,7 +28,7 @@
                 <col id="invoiceId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--核销金额-->
-                <col id="amount" mandatory="true" sortable="true"/>
+                <col id="amount" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

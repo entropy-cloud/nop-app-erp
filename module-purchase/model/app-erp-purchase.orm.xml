@@ -227,7 +227,7 @@
                 <column name="rfqId" displayName="询价单" stdSqlType="BIGINT" code="RFQ_ID" propId="4" stdDataType="long" i18n-en:displayName='Rfq' />
                 <column name="supplierId" displayName="供应商" stdSqlType="BIGINT" mandatory="true" code="SUPPLIER_ID" propId="5" stdDataType="long" i18n-en:displayName='Supplier' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true" code="CURRENCY_ID" propId="6" stdDataType="long" i18n-en:displayName='Currency' />
-                <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Exchange Rate' />
+                <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="7" stdSqlType="DECIMAL" precision="20" scale="8" i18n-en:displayName='Exchange Rate' />
                 <column name="businessDate" displayName="报价日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="8" stdDataType="date" i18n-en:displayName='Business Date' />
                 <column name="validFrom" displayName="生效日期" stdSqlType="DATE" code="VALID_FROM" propId="9" stdDataType="date" i18n-en:displayName='Valid From' />
                 <column name="validTo" displayName="失效日期" stdSqlType="DATE" code="VALID_TO" propId="10" stdDataType="date" i18n-en:displayName='Valid To' />
@@ -262,8 +262,8 @@
                 <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="4" stdDataType="long" i18n-en:displayName='Material' />
                 <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UO_M_ID" propId="5" stdDataType="long" i18n-en:displayName='UoM' />
                 <column name="quantity" displayName="数量" domain="quantity" stdSqlType="DECIMAL" code="QUANTITY" propId="6" i18n-en:displayName='Quantity' />
-                <column name="unitPrice" displayName="报价单价(不含税)" domain="unitPrice" mandatory="true" code="UNIT_PRICE" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Unit Price' />
-                <column name="taxRate" displayName="税率(%)" domain="taxRate" code="TAX_RATE" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Tax Rate' />
+                <column name="unitPrice" displayName="报价单价(不含税)" domain="unitPrice" mandatory="true" code="UNIT_PRICE" propId="7" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Unit Price' />
+                <column name="taxRate" displayName="税率(%)" domain="taxRate" code="TAX_RATE" propId="8" stdSqlType="DECIMAL" precision="10" scale="4" i18n-en:displayName='Tax Rate' />
                 <column name="leadTimeDays" displayName="交货周期(天)" stdSqlType="INTEGER" code="LEAD_TIME_DAYS" propId="9" stdDataType="int" i18n-en:displayName='Lead Time Days' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="11" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
@@ -290,8 +290,8 @@
                 <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="3" stdDataType="long" i18n-en:displayName='Material' />
                 <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UO_M_ID" propId="4" stdDataType="long" i18n-en:displayName='UoM' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true" code="CURRENCY_ID" propId="5" stdDataType="long" i18n-en:displayName='Currency' />
-                <column name="unitPrice" displayName="协议单价(不含税)" domain="unitPrice" mandatory="true" code="UNIT_PRICE" propId="6" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Unit Price' />
-                <column name="taxRate" displayName="税率(%)" domain="taxRate" code="TAX_RATE" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Tax Rate' />
+                <column name="unitPrice" displayName="协议单价(不含税)" domain="unitPrice" mandatory="true" code="UNIT_PRICE" propId="6" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Unit Price' />
+                <column name="taxRate" displayName="税率(%)" domain="taxRate" code="TAX_RATE" propId="7" stdSqlType="DECIMAL" precision="10" scale="4" i18n-en:displayName='Tax Rate' />
                 <column name="minOrderQuantity" displayName="最小起订量" domain="quantity" stdSqlType="DECIMAL" code="MIN_ORDER_QUANTITY" propId="8" i18n-en:displayName='Min Order Quantity' />
                 <column name="leadTimeDays" displayName="交货周期(天)" stdSqlType="INTEGER" code="LEAD_TIME_DAYS" propId="9" stdDataType="int" i18n-en:displayName='Lead Time Days' />
                 <column name="validFrom" displayName="生效日期" stdSqlType="DATE" code="VALID_FROM" propId="10" stdDataType="date" i18n-en:displayName='Valid From' />
@@ -328,15 +328,15 @@
                 <column name="businessDate" displayName="订单日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="8" stdDataType="date" i18n-en:displayName='Business Date' />
                 <column name="deliveryDate" displayName="交货日期" stdSqlType="DATE" code="DELIVERY_DATE" propId="9" stdDataType="date" i18n-en:displayName='Delivery Date' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true" code="CURRENCY_ID" propId="10" stdDataType="long" i18n-en:displayName='Currency' />
-                <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Exchange Rate' />
-                <column name="amountSource" displayName="合计金额(源币不含税)" domain="amount" defaultValue="0" code="AMOUNT_SOURCE" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Amt (Source)' />
-                <column name="amountFunctional" displayName="合计金额(本位币不含税)" domain="amount" defaultValue="0" code="AMOUNT_FUNCTIONAL" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Amt (Functional)' />
-                <column name="totalAmount" displayName="合计金额(本位币不含税)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT" propId="14" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Amt' />
-                <column name="totalTaxAmount" displayName="合计税额" domain="taxAmount" defaultValue="0" code="TOTAL_TAX_AMOUNT" propId="15" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Tax' />
-                <column name="totalAmountWithTax" displayName="合计金额(含税)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT_WITH_TAX" propId="16" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total (Inc. Tax)' />
-                <column name="discountRate" displayName="整单折扣率(%)" domain="discountRate" code="DISCOUNT_RATE" propId="17" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Discount %' />
-                <column name="discountAmount" displayName="折扣金额" domain="amount" defaultValue="0" code="DISCOUNT_AMOUNT" propId="18" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Discount Amt' />
-                <column name="paidAmount" displayName="已付金额" domain="amount" defaultValue="0" code="PAID_AMOUNT" propId="19" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Paid Amount' />
+                <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="11" stdSqlType="DECIMAL" precision="20" scale="8" i18n-en:displayName='Exchange Rate' />
+                <column name="amountSource" displayName="合计金额(源币不含税)" domain="amount" defaultValue="0" code="AMOUNT_SOURCE" propId="12" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amt (Source)' />
+                <column name="amountFunctional" displayName="合计金额(本位币不含税)" domain="amount" defaultValue="0" code="AMOUNT_FUNCTIONAL" propId="13" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amt (Functional)' />
+                <column name="totalAmount" displayName="合计金额(本位币不含税)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT" propId="14" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Amt' />
+                <column name="totalTaxAmount" displayName="合计税额" domain="taxAmount" defaultValue="0" code="TOTAL_TAX_AMOUNT" propId="15" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Tax' />
+                <column name="totalAmountWithTax" displayName="合计金额(含税)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT_WITH_TAX" propId="16" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total (Inc. Tax)' />
+                <column name="discountRate" displayName="整单折扣率(%)" domain="discountRate" code="DISCOUNT_RATE" propId="17" stdSqlType="DECIMAL" precision="10" scale="4" i18n-en:displayName='Discount %' />
+                <column name="discountAmount" displayName="折扣金额" domain="amount" defaultValue="0" code="DISCOUNT_AMOUNT" propId="18" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Discount Amt' />
+                <column name="paidAmount" displayName="已付金额" domain="amount" defaultValue="0" code="PAID_AMOUNT" propId="19" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Paid Amount' />
                 <column name="settlementMethodId" displayName="结算方式" stdSqlType="BIGINT" code="SETTLEMENT_METHOD_ID" propId="20" stdDataType="long" i18n-en:displayName='Settlement Method' />
                 <column name="docStatus" displayName="单据状态" ext:dict="erp-pur/doc-status" mandatory="true" code="DOC_STATUS" propId="21" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
                 <column name="approveStatus" displayName="审核状态" ext:dict="erp-pur/approve-status" mandatory="true" code="APPROVE_STATUS" propId="22" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Approve Status' />
@@ -379,12 +379,12 @@
                 <column name="skuId" displayName="SKU" stdSqlType="BIGINT" code="SKU_ID" propId="5" stdDataType="long" i18n-en:displayName='SKU' />
                 <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UO_M_ID" propId="6" stdDataType="long" i18n-en:displayName='UoM' />
                 <column name="quantity" displayName="数量" domain="quantity" stdSqlType="DECIMAL" mandatory="true" code="QUANTITY" propId="7" i18n-en:displayName='Quantity' />
-                <column name="unitPrice" displayName="单价(不含税)" domain="unitPrice" mandatory="true" code="UNIT_PRICE" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Unit Price' />
-                <column name="taxRate" displayName="税率(%)" domain="taxRate" code="TAX_RATE" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Tax Rate' />
+                <column name="unitPrice" displayName="单价(不含税)" domain="unitPrice" mandatory="true" code="UNIT_PRICE" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Unit Price' />
+                <column name="taxRate" displayName="税率(%)" domain="taxRate" code="TAX_RATE" propId="9" stdSqlType="DECIMAL" precision="10" scale="4" i18n-en:displayName='Tax Rate' />
                 <column name="taxRateId" displayName="税率主数据" stdSqlType="BIGINT" code="TAX_RATE_ID" propId="10" stdDataType="long" i18n-en:displayName='Tax Rate' />
-                <column name="taxAmount" displayName="税额" domain="taxAmount" defaultValue="0" code="TAX_AMOUNT" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Tax Amount' />
-                <column name="amount" displayName="金额(不含税)" domain="amount" mandatory="true" code="AMOUNT" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Amount' />
-                <column name="amountWithTax" displayName="金额(含税)" domain="amount" code="AMOUNT_WITH_TAX" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Amount With Tax' />
+                <column name="taxAmount" displayName="税额" domain="taxAmount" defaultValue="0" code="TAX_AMOUNT" propId="11" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Tax Amount' />
+                <column name="amount" displayName="金额(不含税)" domain="amount" mandatory="true" code="AMOUNT" propId="12" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amount' />
+                <column name="amountWithTax" displayName="金额(含税)" domain="amount" code="AMOUNT_WITH_TAX" propId="13" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amount With Tax' />
                 <column name="receivedQuantity" displayName="已收货数量" domain="quantity" stdSqlType="DECIMAL" defaultValue="0" code="RECEIVED_QUANTITY" propId="14" i18n-en:displayName='Received Quantity' />
                 <column name="invoicedQuantity" displayName="已开票数量" domain="quantity" stdSqlType="DECIMAL" defaultValue="0" code="INVOICED_QUANTITY" propId="15" i18n-en:displayName='Invoiced Quantity' />
                 <column name="warehouseId" displayName="收货仓库" stdSqlType="BIGINT" code="WAREHOUSE_ID" propId="16" stdDataType="long" i18n-en:displayName='Warehouse' />
@@ -421,12 +421,12 @@
                 <column name="warehouseId" displayName="入库仓库" stdSqlType="BIGINT" mandatory="true" code="WAREHOUSE_ID" propId="6" stdDataType="long" i18n-en:displayName='Warehouse' />
                 <column name="businessDate" displayName="入库日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="7" stdDataType="date" i18n-en:displayName='Business Date' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true" code="CURRENCY_ID" propId="8" stdDataType="long" i18n-en:displayName='Currency' />
-                <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Exchange Rate' />
-                <column name="amountSource" displayName="合计金额(源币)" domain="amount" defaultValue="0" code="AMOUNT_SOURCE" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Amt (Source)' />
-                <column name="amountFunctional" displayName="合计金额(本位币)" domain="amount" defaultValue="0" code="AMOUNT_FUNCTIONAL" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Amt (Functional)' />
-                <column name="totalAmount" displayName="合计金额(不含税)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Amt' />
-                <column name="totalTaxAmount" displayName="合计税额" domain="taxAmount" defaultValue="0" code="TOTAL_TAX_AMOUNT" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Tax' />
-                <column name="totalAmountWithTax" displayName="合计金额(含税)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT_WITH_TAX" propId="14" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total (Inc. Tax)' />
+                <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="9" stdSqlType="DECIMAL" precision="20" scale="8" i18n-en:displayName='Exchange Rate' />
+                <column name="amountSource" displayName="合计金额(源币)" domain="amount" defaultValue="0" code="AMOUNT_SOURCE" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amt (Source)' />
+                <column name="amountFunctional" displayName="合计金额(本位币)" domain="amount" defaultValue="0" code="AMOUNT_FUNCTIONAL" propId="11" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amt (Functional)' />
+                <column name="totalAmount" displayName="合计金额(不含税)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT" propId="12" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Amt' />
+                <column name="totalTaxAmount" displayName="合计税额" domain="taxAmount" defaultValue="0" code="TOTAL_TAX_AMOUNT" propId="13" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Tax' />
+                <column name="totalAmountWithTax" displayName="合计金额(含税)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT_WITH_TAX" propId="14" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total (Inc. Tax)' />
                 <column name="receiveStatus" displayName="收货状态" ext:dict="erp-pur/receive-status" code="RECEIVE_STATUS" propId="15" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Receive Status' />
                 <column name="receiveType" displayName="入库类型" ext:dict="erp-pur/receive-type" code="RECEIVE_TYPE" propId="16" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Receive Type' />
                 <column name="docStatus" displayName="单据状态" ext:dict="erp-pur/doc-status" mandatory="true" code="DOC_STATUS" propId="17" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
@@ -468,10 +468,10 @@
                 <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UO_M_ID" propId="7" stdDataType="long" i18n-en:displayName='UoM' />
                 <column name="quantity" displayName="实收数量" domain="quantity" stdSqlType="DECIMAL" mandatory="true" code="QUANTITY" propId="8" i18n-en:displayName='Quantity' />
                 <column name="rejectedQuantity" displayName="拒收数量" domain="quantity" stdSqlType="DECIMAL" defaultValue="0" code="REJECTED_QUANTITY" propId="9" i18n-en:displayName='Rejected Quantity' />
-                <column name="unitPrice" displayName="单价(不含税)" domain="unitPrice" code="UNIT_PRICE" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Unit Price' />
-                <column name="taxRate" displayName="税率(%)" domain="taxRate" code="TAX_RATE" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Tax Rate' />
-                <column name="taxAmount" displayName="税额" domain="taxAmount" code="TAX_AMOUNT" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Tax Amount' />
-                <column name="amount" displayName="金额(不含税)" domain="amount" code="AMOUNT" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Amount' />
+                <column name="unitPrice" displayName="单价(不含税)" domain="unitPrice" code="UNIT_PRICE" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Unit Price' />
+                <column name="taxRate" displayName="税率(%)" domain="taxRate" code="TAX_RATE" propId="11" stdSqlType="DECIMAL" precision="10" scale="4" i18n-en:displayName='Tax Rate' />
+                <column name="taxAmount" displayName="税额" domain="taxAmount" code="TAX_AMOUNT" propId="12" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Tax Amount' />
+                <column name="amount" displayName="金额(不含税)" domain="amount" code="AMOUNT" propId="13" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amount' />
                 <column name="warehouseId" displayName="入库库位" stdSqlType="BIGINT" code="WAREHOUSE_ID" propId="14" stdDataType="long" i18n-en:displayName='Warehouse' />
                 <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="15" stdDataType="string" i18n-en:displayName='Batch No' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="16" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
@@ -505,13 +505,13 @@
                 <column name="invoiceType" displayName="发票类型" ext:dict="erp-pur/invoice-type" code="INVOICE_TYPE" propId="6" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Invoice Type' />
                 <column name="businessDate" displayName="发票日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="7" stdDataType="date" i18n-en:displayName='Business Date' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true" code="CURRENCY_ID" propId="8" stdDataType="long" i18n-en:displayName='Currency' />
-                <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Exchange Rate' />
-                <column name="amountSource" displayName="合计金额(源币)" domain="amount" defaultValue="0" code="AMOUNT_SOURCE" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Amt (Source)' />
-                <column name="amountFunctional" displayName="合计金额(本位币)" domain="amount" defaultValue="0" code="AMOUNT_FUNCTIONAL" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Amt (Functional)' />
-                <column name="totalAmount" displayName="合计金额(不含税)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Amt' />
-                <column name="totalTaxAmount" displayName="合计税额" domain="taxAmount" defaultValue="0" code="TOTAL_TAX_AMOUNT" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Tax' />
-                <column name="totalAmountWithTax" displayName="合计金额(含税)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT_WITH_TAX" propId="14" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total (Inc. Tax)' />
-                <column name="paidAmount" displayName="已付金额" domain="amount" defaultValue="0" code="PAID_AMOUNT" propId="15" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Paid Amount' />
+                <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="9" stdSqlType="DECIMAL" precision="20" scale="8" i18n-en:displayName='Exchange Rate' />
+                <column name="amountSource" displayName="合计金额(源币)" domain="amount" defaultValue="0" code="AMOUNT_SOURCE" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amt (Source)' />
+                <column name="amountFunctional" displayName="合计金额(本位币)" domain="amount" defaultValue="0" code="AMOUNT_FUNCTIONAL" propId="11" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amt (Functional)' />
+                <column name="totalAmount" displayName="合计金额(不含税)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT" propId="12" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Amt' />
+                <column name="totalTaxAmount" displayName="合计税额" domain="taxAmount" defaultValue="0" code="TOTAL_TAX_AMOUNT" propId="13" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Tax' />
+                <column name="totalAmountWithTax" displayName="合计金额(含税)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT_WITH_TAX" propId="14" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total (Inc. Tax)' />
+                <column name="paidAmount" displayName="已付金额" domain="amount" defaultValue="0" code="PAID_AMOUNT" propId="15" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Paid Amount' />
                 <column name="docStatus" displayName="单据状态" ext:dict="erp-pur/doc-status" mandatory="true" code="DOC_STATUS" propId="16" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
                 <column name="approveStatus" displayName="审核状态" ext:dict="erp-pur/approve-status" mandatory="true" code="APPROVE_STATUS" propId="17" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Approve Status' />
                 <column name="paidStatus" displayName="付款进度" ext:dict="erp-pur/paid-status" code="PAID_STATUS" propId="18" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Paid Status' />
@@ -548,10 +548,10 @@
                 <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="5" stdDataType="long" i18n-en:displayName='Material' />
                 <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UO_M_ID" propId="6" stdDataType="long" i18n-en:displayName='UoM' />
                 <column name="quantity" displayName="数量" domain="quantity" stdSqlType="DECIMAL" mandatory="true" code="QUANTITY" propId="7" i18n-en:displayName='Quantity' />
-                <column name="unitPrice" displayName="单价(不含税)" domain="unitPrice" code="UNIT_PRICE" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Unit Price' />
-                <column name="taxRate" displayName="税率(%)" domain="taxRate" code="TAX_RATE" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Tax Rate' />
-                <column name="taxAmount" displayName="税额" domain="taxAmount" code="TAX_AMOUNT" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Tax Amount' />
-                <column name="amount" displayName="金额(不含税)" domain="amount" code="AMOUNT" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Amount' />
+                <column name="unitPrice" displayName="单价(不含税)" domain="unitPrice" code="UNIT_PRICE" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Unit Price' />
+                <column name="taxRate" displayName="税率(%)" domain="taxRate" code="TAX_RATE" propId="9" stdSqlType="DECIMAL" precision="10" scale="4" i18n-en:displayName='Tax Rate' />
+                <column name="taxAmount" displayName="税额" domain="taxAmount" code="TAX_AMOUNT" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Tax Amount' />
+                <column name="amount" displayName="金额(不含税)" domain="amount" code="AMOUNT" propId="11" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amount' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="13" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="14" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -579,10 +579,10 @@
                 <column name="supplierId" displayName="供应商" stdSqlType="BIGINT" mandatory="true" code="SUPPLIER_ID" propId="4" stdDataType="long" i18n-en:displayName='Supplier' />
                 <column name="businessDate" displayName="付款日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="5" stdDataType="date" i18n-en:displayName='Business Date' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true" code="CURRENCY_ID" propId="6" stdDataType="long" i18n-en:displayName='Currency' />
-                <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Exchange Rate' />
-                <column name="amountSource" displayName="合计金额(源币)" domain="amount" mandatory="true" code="AMOUNT_SOURCE" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Amt (Source)' />
-                <column name="amountFunctional" displayName="合计金额(本位币)" domain="amount" mandatory="true" code="AMOUNT_FUNCTIONAL" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Amt (Functional)' />
-                <column name="totalAmount" displayName="合计金额" domain="amount" mandatory="true" code="TOTAL_AMOUNT" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Amt' />
+                <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="7" stdSqlType="DECIMAL" precision="20" scale="8" i18n-en:displayName='Exchange Rate' />
+                <column name="amountSource" displayName="合计金额(源币)" domain="amount" mandatory="true" code="AMOUNT_SOURCE" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amt (Source)' />
+                <column name="amountFunctional" displayName="合计金额(本位币)" domain="amount" mandatory="true" code="AMOUNT_FUNCTIONAL" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amt (Functional)' />
+                <column name="totalAmount" displayName="合计金额" domain="amount" mandatory="true" code="TOTAL_AMOUNT" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Amt' />
                 <column name="settlementMethodId" displayName="结算方式" stdSqlType="BIGINT" code="SETTLEMENT_METHOD_ID" propId="11" stdDataType="long" i18n-en:displayName='Settlement Method' />
                 <column name="paymentMethod" displayName="付款方式" stdSqlType="VARCHAR" precision="50" code="PAYMENT_METHOD" propId="12" stdDataType="string" i18n-en:displayName='Payment Method' />
                 <column name="bankAccountId" displayName="付款账户(资金账户)" stdSqlType="BIGINT" code="BANK_ACCOUNT_ID" propId="13" stdDataType="long" i18n-en:displayName='Bank Account' />
@@ -622,7 +622,7 @@
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="paymentId" displayName="付款单ID" stdSqlType="BIGINT" mandatory="true" code="PAYMENT_ID" propId="2" stdDataType="long" i18n-en:displayName='Payment' />
                 <column name="invoiceId" displayName="发票ID" stdSqlType="BIGINT" mandatory="true" code="INVOICE_ID" propId="3" stdDataType="long" i18n-en:displayName='Invoice' />
-                <column name="amount" displayName="核销金额" domain="amount" mandatory="true" code="AMOUNT" propId="4" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Amount' />
+                <column name="amount" displayName="核销金额" domain="amount" mandatory="true" code="AMOUNT" propId="4" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amount' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="5" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="6" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="7" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -650,12 +650,12 @@
                 <column name="warehouseId" displayName="出库仓库" stdSqlType="BIGINT" mandatory="true" code="WAREHOUSE_ID" propId="6" stdDataType="long" i18n-en:displayName='Warehouse' />
                 <column name="businessDate" displayName="退货日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="7" stdDataType="date" i18n-en:displayName='Business Date' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true" code="CURRENCY_ID" propId="8" stdDataType="long" i18n-en:displayName='Currency' />
-                <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Exchange Rate' />
-                <column name="amountSource" displayName="合计金额(源币)" domain="amount" defaultValue="0" code="AMOUNT_SOURCE" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Amt (Source)' />
-                <column name="amountFunctional" displayName="合计金额(本位币)" domain="amount" defaultValue="0" code="AMOUNT_FUNCTIONAL" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Amt (Functional)' />
-                <column name="totalAmount" displayName="合计金额(不含税)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Amt' />
-                <column name="totalTaxAmount" displayName="合计税额" domain="taxAmount" defaultValue="0" code="TOTAL_TAX_AMOUNT" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Tax' />
-                <column name="totalAmountWithTax" displayName="合计金额(含税)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT_WITH_TAX" propId="14" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total (Inc. Tax)' />
+                <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="9" stdSqlType="DECIMAL" precision="20" scale="8" i18n-en:displayName='Exchange Rate' />
+                <column name="amountSource" displayName="合计金额(源币)" domain="amount" defaultValue="0" code="AMOUNT_SOURCE" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amt (Source)' />
+                <column name="amountFunctional" displayName="合计金额(本位币)" domain="amount" defaultValue="0" code="AMOUNT_FUNCTIONAL" propId="11" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amt (Functional)' />
+                <column name="totalAmount" displayName="合计金额(不含税)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT" propId="12" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Amt' />
+                <column name="totalTaxAmount" displayName="合计税额" domain="taxAmount" defaultValue="0" code="TOTAL_TAX_AMOUNT" propId="13" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Tax' />
+                <column name="totalAmountWithTax" displayName="合计金额(含税)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT_WITH_TAX" propId="14" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total (Inc. Tax)' />
                 <column name="docStatus" displayName="单据状态" ext:dict="erp-pur/doc-status" mandatory="true" code="DOC_STATUS" propId="15" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
                 <column name="approveStatus" displayName="审核状态" ext:dict="erp-pur/approve-status" mandatory="true" code="APPROVE_STATUS" propId="16" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Approve Status' />
                 <column name="posted" displayName="已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="17" stdDataType="boolean" i18n-en:displayName='Posted' />
@@ -694,10 +694,10 @@
                 <column name="skuId" displayName="SKU" stdSqlType="BIGINT" code="SKU_ID" propId="6" stdDataType="long" i18n-en:displayName='SKU' />
                 <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UO_M_ID" propId="7" stdDataType="long" i18n-en:displayName='UoM' />
                 <column name="quantity" displayName="退货数量" domain="quantity" stdSqlType="DECIMAL" mandatory="true" code="QUANTITY" propId="8" i18n-en:displayName='Quantity' />
-                <column name="unitPrice" displayName="单价(不含税)" domain="unitPrice" code="UNIT_PRICE" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Unit Price' />
-                <column name="taxRate" displayName="税率(%)" domain="taxRate" code="TAX_RATE" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Tax Rate' />
-                <column name="taxAmount" displayName="税额" domain="taxAmount" code="TAX_AMOUNT" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Tax Amount' />
-                <column name="amount" displayName="金额(不含税)" domain="amount" code="AMOUNT" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Amount' />
+                <column name="unitPrice" displayName="单价(不含税)" domain="unitPrice" code="UNIT_PRICE" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Unit Price' />
+                <column name="taxRate" displayName="税率(%)" domain="taxRate" code="TAX_RATE" propId="10" stdSqlType="DECIMAL" precision="10" scale="4" i18n-en:displayName='Tax Rate' />
+                <column name="taxAmount" displayName="税额" domain="taxAmount" code="TAX_AMOUNT" propId="11" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Tax Amount' />
+                <column name="amount" displayName="金额(不含税)" domain="amount" code="AMOUNT" propId="12" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amount' />
                 <column name="reason" displayName="退货原因" stdSqlType="VARCHAR" precision="500" code="REASON" propId="13" stdDataType="string" i18n-en:displayName='Reason' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="14" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="15" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />

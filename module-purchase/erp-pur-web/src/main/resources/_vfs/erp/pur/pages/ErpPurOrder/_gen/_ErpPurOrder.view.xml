@@ -49,31 +49,31 @@
                 <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--汇率-->
-                <col id="exchangeRate" sortable="true"/>
+                <col id="exchangeRate" ui:number="true" sortable="true"/>
 
                 <!--合计金额(源币不含税)-->
-                <col id="amountSource" sortable="true"/>
+                <col id="amountSource" ui:number="true" sortable="true"/>
 
                 <!--合计金额(本位币不含税)-->
-                <col id="amountFunctional" sortable="true"/>
+                <col id="amountFunctional" ui:number="true" sortable="true"/>
 
                 <!--合计金额(本位币不含税)-->
-                <col id="totalAmount" sortable="true"/>
+                <col id="totalAmount" ui:number="true" sortable="true"/>
 
                 <!--合计税额-->
-                <col id="totalTaxAmount" sortable="true"/>
+                <col id="totalTaxAmount" ui:number="true" sortable="true"/>
 
                 <!--合计金额(含税)-->
-                <col id="totalAmountWithTax" sortable="true"/>
+                <col id="totalAmountWithTax" ui:number="true" sortable="true"/>
 
                 <!--整单折扣率(%)-->
-                <col id="discountRate" sortable="true"/>
+                <col id="discountRate" ui:number="true" sortable="true"/>
 
                 <!--折扣金额-->
-                <col id="discountAmount" sortable="true"/>
+                <col id="discountAmount" ui:number="true" sortable="true"/>
 
                 <!--已付金额-->
-                <col id="paidAmount" sortable="true"/>
+                <col id="paidAmount" ui:number="true" sortable="true"/>
 
                 <!--结算方式-->
                 <col id="settlementMethodId" ui:number="true" sortable="true"/>

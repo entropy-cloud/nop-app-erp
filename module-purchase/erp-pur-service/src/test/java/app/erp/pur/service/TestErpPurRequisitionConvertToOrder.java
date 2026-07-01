@@ -16,6 +16,8 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -39,6 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurRequisitionConvertToOrder extends JunitAutoTestCase {
+    private static final IServiceContext CTX = new ServiceContextImpl();
+
 
     static final Long ORG_ID = 1401L;
     static final Long REQUESTER_ID = 2401L;
@@ -65,7 +69,7 @@ public class TestErpPurRequisitionConvertToOrder extends JunitAutoTestCase {
 
         ConvertToOrderRequest request = newRequest("5", "13");
 
-        ErpPurOrder order = reqBiz.convertToOrder(req.getId(), request);
+        ErpPurOrder order = reqBiz.convertToOrder(req.getId(), request, CTX);
         assertNotNull(order.getId(), "订单已持久化");
         assertEquals(ErpPurConstants.APPROVE_STATUS_UNSUBMITTED, order.getApproveStatus(),
                 "转化产物 approveStatus=UNSUBMITTED");
@@ -85,12 +89,12 @@ public class TestErpPurRequisitionConvertToOrder extends JunitAutoTestCase {
         assertEquals(MATERIAL_ID, l1.getMaterialId(), "行1 materialId 复制");
         assertEquals(UOM_ID, l1.getUoMId(), "行1 uoMId 复制");
         assertEquals(0, new BigDecimal("10").compareTo(l1.getQuantity()), "行1 quantity 复制");
-        assertEquals(0, new BigDecimal("5").compareTo(new BigDecimal(l1.getUnitPrice())), "行1 unitPrice=调用方提供");
+        assertEquals(0, new BigDecimal("5").compareTo(l1.getUnitPrice()), "行1 unitPrice=调用方提供");
         // amount = 5 × 10 = 50；taxRate=13 → taxAmount=6.50；amountWithTax=56.50（VARCHAR 存储）
-        assertEquals(0, new BigDecimal("50").compareTo(new BigDecimal(l1.getAmount())), "行1 amount=50");
-        assertEquals(0, new BigDecimal("13").compareTo(new BigDecimal(l1.getTaxRate())), "行1 taxRate=调用方提供");
-        assertEquals(0, new BigDecimal("6.50").compareTo(new BigDecimal(l1.getTaxAmount())), "行1 taxAmount=6.50");
-        assertEquals(0, new BigDecimal("56.50").compareTo(new BigDecimal(l1.getAmountWithTax())),
+        assertEquals(0, new BigDecimal("50").compareTo(l1.getAmount()), "行1 amount=50");
+        assertEquals(0, new BigDecimal("13").compareTo(l1.getTaxRate()), "行1 taxRate=调用方提供");
+        assertEquals(0, new BigDecimal("6.50").compareTo(l1.getTaxAmount()), "行1 taxAmount=6.50");
+        assertEquals(0, new BigDecimal("56.50").compareTo(l1.getAmountWithTax()),
                 "行1 amountWithTax=56.50");
     }
 
@@ -101,7 +105,7 @@ public class TestErpPurRequisitionConvertToOrder extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> saveRequisitionWithLine(req, 1, SUPPLIER_ID, new BigDecimal("10")));
 
         ConvertToOrderRequest request = newRequest("5", null);
-        assertThrows(NopException.class, () -> reqBiz.convertToOrder(req.getId(), request),
+        assertThrows(NopException.class, () -> reqBiz.convertToOrder(req.getId(), request, CTX),
                 "非 APPROVED 请购转化应抛 ERR_REQ_NOT_APPROVED");
     }
 
@@ -115,7 +119,7 @@ public class TestErpPurRequisitionConvertToOrder extends JunitAutoTestCase {
         });
 
         ConvertToOrderRequest request = newRequest("5", null);
-        assertThrows(NopException.class, () -> reqBiz.convertToOrder(req.getId(), request),
+        assertThrows(NopException.class, () -> reqBiz.convertToOrder(req.getId(), request, CTX),
                 "行供应商不一致应抛 ERR_REQ_MIXED_OR_MISSING_SUPPLIER");
     }
 
@@ -129,7 +133,7 @@ public class TestErpPurRequisitionConvertToOrder extends JunitAutoTestCase {
         });
 
         ConvertToOrderRequest request = newRequest("5", null);
-        assertThrows(NopException.class, () -> reqBiz.convertToOrder(req.getId(), request),
+        assertThrows(NopException.class, () -> reqBiz.convertToOrder(req.getId(), request, CTX),
                 "行供应商缺失应抛 ERR_REQ_MIXED_OR_MISSING_SUPPLIER");
     }
 
@@ -139,16 +143,16 @@ public class TestErpPurRequisitionConvertToOrder extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> saveRequisitionWithLine(req, 1, SUPPLIER_ID, new BigDecimal("10")));
         ConvertToOrderRequest request = newRequest("5", null);
 
-        ErpPurOrder first = reqBiz.convertToOrder(req.getId(), request);
+        ErpPurOrder first = reqBiz.convertToOrder(req.getId(), request, CTX);
         assertNotNull(first);
 
         // 重复转化 → 拒绝（已存在未作废订单）
-        assertThrows(NopException.class, () -> reqBiz.convertToOrder(req.getId(), request),
+        assertThrows(NopException.class, () -> reqBiz.convertToOrder(req.getId(), request, CTX),
                 "已转化请购重复转化应抛 ERR_REQ_ALREADY_CONVERTED");
 
         // 作废原订单后可重新转化
-        orderBiz.cancel(first.getId());
-        ErpPurOrder second = reqBiz.convertToOrder(req.getId(), request);
+        orderBiz.cancel(first.getId(), CTX);
+        ErpPurOrder second = reqBiz.convertToOrder(req.getId(), request, CTX);
         assertNotNull(second);
         assertEquals(ErpPurConstants.APPROVE_STATUS_UNSUBMITTED, second.getApproveStatus());
     }
@@ -161,12 +165,12 @@ public class TestErpPurRequisitionConvertToOrder extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> seedActiveSupplier(SUPPLIER_ID));
 
         ConvertToOrderRequest request = newRequest("5", null);
-        ErpPurOrder order = reqBiz.convertToOrder(req.getId(), request);
+        ErpPurOrder order = reqBiz.convertToOrder(req.getId(), request, CTX);
 
-        ErpPurOrder submitted = orderBiz.submit(order.getId());
+        ErpPurOrder submitted = orderBiz.submit(order.getId(), CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_SUBMITTED, submitted.getApproveStatus());
 
-        ErpPurOrder approved = orderBiz.approve(order.getId());
+        ErpPurOrder approved = orderBiz.approve(order.getId(), CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus(),
                 "转化产物订单可走 Phase 1 状态机推进到 APPROVED");
     }

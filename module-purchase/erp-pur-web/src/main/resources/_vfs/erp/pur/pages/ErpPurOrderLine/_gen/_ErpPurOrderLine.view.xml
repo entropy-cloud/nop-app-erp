@@ -40,22 +40,22 @@
                 <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--单价(不含税)-->
-                <col id="unitPrice" mandatory="true" sortable="true"/>
+                <col id="unitPrice" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--税率(%)-->
-                <col id="taxRate" sortable="true"/>
+                <col id="taxRate" ui:number="true" sortable="true"/>
 
                 <!--税率主数据-->
                 <col id="taxRateId" ui:number="true" sortable="true"/>
 
                 <!--税额-->
-                <col id="taxAmount" sortable="true"/>
+                <col id="taxAmount" ui:number="true" sortable="true"/>
 
                 <!--金额(不含税)-->
-                <col id="amount" mandatory="true" sortable="true"/>
+                <col id="amount" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--金额(含税)-->
-                <col id="amountWithTax" sortable="true"/>
+                <col id="amountWithTax" ui:number="true" sortable="true"/>
 
                 <!--已收货数量-->
                 <col id="receivedQuantity" ui:number="true" sortable="true"/>

@@ -12,6 +12,8 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -29,6 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurRequisitionApproval extends JunitAutoTestCase {
+    private static final IServiceContext CTX = new ServiceContextImpl();
+
 
     static final Long ORG_ID = 1201L;
     static final Long REQUESTER_ID = 2201L;
@@ -47,11 +51,11 @@ public class TestErpPurRequisitionApproval extends JunitAutoTestCase {
         ErpPurRequisition req = newRequisition("PR-SUBMIT-001");
         ormTemplate.runInSession(() -> saveRequisitionWithLine(req));
 
-        ErpPurRequisition submitted = reqBiz.submit(req.getId());
+        ErpPurRequisition submitted = reqBiz.submit(req.getId(), CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_SUBMITTED, submitted.getApproveStatus(),
                 "提交 → SUBMITTED");
 
-        ErpPurRequisition approved = reqBiz.approve(req.getId());
+        ErpPurRequisition approved = reqBiz.approve(req.getId(), CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus(),
                 "审核通过 → APPROVED");
     }
@@ -61,12 +65,12 @@ public class TestErpPurRequisitionApproval extends JunitAutoTestCase {
         ErpPurRequisition req = newRequisition("PR-REJ-001");
         ormTemplate.runInSession(() -> saveRequisitionWithLine(req));
 
-        reqBiz.submit(req.getId());
-        ErpPurRequisition rejected = reqBiz.reject(req.getId());
+        reqBiz.submit(req.getId(), CTX);
+        ErpPurRequisition rejected = reqBiz.reject(req.getId(), CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_REJECTED, rejected.getApproveStatus(),
                 "驳回 → REJECTED");
 
-        ErpPurRequisition resubmitted = reqBiz.submit(req.getId());
+        ErpPurRequisition resubmitted = reqBiz.submit(req.getId(), CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_SUBMITTED, resubmitted.getApproveStatus(),
                 "REJECTED 重新提交 → SUBMITTED");
     }
@@ -76,19 +80,19 @@ public class TestErpPurRequisitionApproval extends JunitAutoTestCase {
         ErpPurRequisition req = newRequisition("PR-ILL-001");
         ormTemplate.runInSession(() -> saveRequisitionWithLine(req));
 
-        reqBiz.submit(req.getId());
-        ErpPurRequisition approved = reqBiz.approve(req.getId());
+        reqBiz.submit(req.getId(), CTX);
+        ErpPurRequisition approved = reqBiz.approve(req.getId(), CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus());
 
         // APPROVED → 再次 submit 非法
-        assertThrows(NopException.class, () -> reqBiz.submit(req.getId()),
+        assertThrows(NopException.class, () -> reqBiz.submit(req.getId(), CTX),
                 "APPROVED 不可再提交，应抛 NopException");
         // APPROVED → withdrawSubmit 非法
-        assertThrows(NopException.class, () -> reqBiz.withdrawSubmit(req.getId()),
+        assertThrows(NopException.class, () -> reqBiz.withdrawSubmit(req.getId(), CTX),
                 "APPROVED 不可撤回提交，应抛 NopException");
 
         // 反审核 APPROVED → REJECTED，目标态非 UNSUBMITTED（state-machine §3/§11.4）
-        ErpPurRequisition reversed = reqBiz.reverseApprove(req.getId());
+        ErpPurRequisition reversed = reqBiz.reverseApprove(req.getId(), CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_REJECTED, reversed.getApproveStatus(),
                 "反审核目标态 = REJECTED 非 UNSUBMITTED");
     }
@@ -98,12 +102,12 @@ public class TestErpPurRequisitionApproval extends JunitAutoTestCase {
         ErpPurRequisition req = newRequisition("PR-CANCEL-001");
         ormTemplate.runInSession(() -> saveRequisitionWithLine(req));
 
-        ErpPurRequisition cancelled = reqBiz.cancel(req.getId());
+        ErpPurRequisition cancelled = reqBiz.cancel(req.getId(), CTX);
         assertEquals(ErpPurConstants.DOC_STATUS_CANCELLED, cancelled.getDocStatus(),
                 "草稿 → 作废 docStatus=CANCELLED");
 
         // 已作废不可再提交
-        assertThrows(NopException.class, () -> reqBiz.submit(req.getId()),
+        assertThrows(NopException.class, () -> reqBiz.submit(req.getId(), CTX),
                 "已作废请购单不可提交，应抛 NopException");
     }
 

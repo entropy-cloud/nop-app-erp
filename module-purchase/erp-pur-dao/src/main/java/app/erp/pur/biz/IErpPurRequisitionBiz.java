@@ -1,12 +1,13 @@
 
 package app.erp.pur.biz;
 
-import io.nop.api.core.annotations.orm.SingleSession;
-import io.nop.api.core.annotations.txn.Transactional;
+import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.core.Name;
+import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
 
-import app.erp.pur.dao.entity.ErpPurRequisition;
 import app.erp.pur.dao.entity.ErpPurOrder;
+import app.erp.pur.dao.entity.ErpPurRequisition;
 
 /**
  * 采购请购单业务接口。除标准 CRUD 外，定义三轴审批状态机 + 请购→订单转化契约
@@ -27,40 +28,33 @@ import app.erp.pur.dao.entity.ErpPurOrder;
  */
 public interface IErpPurRequisitionBiz extends ICrudBiz<ErpPurRequisition> {
 
-    @SingleSession
-    @Transactional
-    ErpPurRequisition submit(Long requisitionId);
+    @BizMutation
+    ErpPurRequisition submit(@Name("requisitionId") Long requisitionId, IServiceContext context);
 
-    @SingleSession
-    @Transactional
-    ErpPurRequisition withdrawSubmit(Long requisitionId);
+    @BizMutation
+    ErpPurRequisition withdrawSubmit(@Name("requisitionId") Long requisitionId, IServiceContext context);
 
-    @SingleSession
-    @Transactional
-    ErpPurRequisition approve(Long requisitionId);
+    @BizMutation
+    ErpPurRequisition approve(@Name("requisitionId") Long requisitionId, IServiceContext context);
 
-    @SingleSession
-    @Transactional
-    ErpPurRequisition reject(Long requisitionId);
+    @BizMutation
+    ErpPurRequisition reject(@Name("requisitionId") Long requisitionId, IServiceContext context);
 
-    @SingleSession
-    @Transactional
-    ErpPurRequisition reverseApprove(Long requisitionId);
+    @BizMutation
+    ErpPurRequisition reverseApprove(@Name("requisitionId") Long requisitionId, IServiceContext context);
 
-    @SingleSession
-    @Transactional
-    ErpPurRequisition cancel(Long requisitionId);
+    @BizMutation
+    ErpPurRequisition cancel(@Name("requisitionId") Long requisitionId, IServiceContext context);
 
     /**
-     * 将 APPROVED 请购单转化为采购订单。
-     *
-     * <p>转化是请购的生命周期动作（请购 APPROVED → 派生订单），入口在请购侧。内部组装 {@link ErpPurOrder} + 行后持久化。
+     * 将 APPROVED 请购单转化为采购订单。入口在请购侧（请购 APPROVED → 派生订单）。
      *
      * @param requisitionId 请购单 ID（须为 APPROVED）
-     * @param request       调用方补充字段（仓库/币种/每行单价等，请购头/行无这些字段）
+     * @param request       调用方补充字段（仓库/币种/每行单价等）
      * @return 新建的采购订单（approveStatus=UNSUBMITTED, docStatus=DRAFT，回链 requisitionId）
      */
-    @SingleSession
-    @Transactional
-    ErpPurOrder convertToOrder(Long requisitionId, ConvertToOrderRequest request);
+    @BizMutation
+    ErpPurOrder convertToOrder(@Name("requisitionId") Long requisitionId,
+                               @Name("request") ConvertToOrderRequest request,
+                               IServiceContext context);
 }

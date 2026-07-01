@@ -37,16 +37,16 @@
                 <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--汇率-->
-                <col id="exchangeRate" sortable="true"/>
+                <col id="exchangeRate" ui:number="true" sortable="true"/>
 
                 <!--合计金额(源币)-->
-                <col id="amountSource" mandatory="true" sortable="true"/>
+                <col id="amountSource" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--合计金额(本位币)-->
-                <col id="amountFunctional" mandatory="true" sortable="true"/>
+                <col id="amountFunctional" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--合计金额-->
-                <col id="totalAmount" mandatory="true" sortable="true"/>
+                <col id="totalAmount" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--结算方式-->
                 <col id="settlementMethodId" ui:number="true" sortable="true"/>

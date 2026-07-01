@@ -98,58 +98,58 @@
         }
 
 
-        private String _exchangeRate;
+        private java.math.BigDecimal _exchangeRate;
 
     
         @PropMeta(propId=7)
     
-        public String getExchangeRate(){
+        public java.math.BigDecimal getExchangeRate(){
             return _exchangeRate;
         }
 
-        public void setExchangeRate(String value){
+        public void setExchangeRate(java.math.BigDecimal value){
             this._exchangeRate = value;
         }
 
 
-        private String _amountSource;
+        private java.math.BigDecimal _amountSource;
 
     
         @PropMeta(propId=8)
     
-        public String getAmountSource(){
+        public java.math.BigDecimal getAmountSource(){
             return _amountSource;
         }
 
-        public void setAmountSource(String value){
+        public void setAmountSource(java.math.BigDecimal value){
             this._amountSource = value;
         }
 
 
-        private String _amountFunctional;
+        private java.math.BigDecimal _amountFunctional;
 
     
         @PropMeta(propId=9)
     
-        public String getAmountFunctional(){
+        public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;
         }
 
-        public void setAmountFunctional(String value){
+        public void setAmountFunctional(java.math.BigDecimal value){
             this._amountFunctional = value;
         }
 
 
-        private String _totalAmount;
+        private java.math.BigDecimal _totalAmount;
 
     
         @PropMeta(propId=10)
     
-        public String getTotalAmount(){
+        public java.math.BigDecimal getTotalAmount(){
             return _totalAmount;
         }
 
-        public void setTotalAmount(String value){
+        public void setTotalAmount(java.math.BigDecimal value){
             this._totalAmount = value;
         }
 

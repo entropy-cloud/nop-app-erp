@@ -45,7 +45,7 @@
         </prop>
         <prop name="exchangeRate" displayName="汇率" propId="7" i18n-en:displayName="Exchange Rate" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="1">
-            <schema domain="exchangeRate" type="java.lang.String" precision="20" scale="8"/>
+            <schema domain="exchangeRate" type="java.math.BigDecimal" precision="20" scale="8"/>
         </prop>
         <prop name="businessDate" displayName="报价日期" propId="8" i18n-en:displayName="Business Date" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">

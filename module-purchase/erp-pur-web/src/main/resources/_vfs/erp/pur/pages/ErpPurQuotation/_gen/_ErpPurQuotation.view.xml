@@ -37,7 +37,7 @@
                 <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--汇率-->
-                <col id="exchangeRate" sortable="true"/>
+                <col id="exchangeRate" ui:number="true" sortable="true"/>
 
                 <!--报价日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>

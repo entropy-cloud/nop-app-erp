@@ -210,7 +210,7 @@ public class _ErpPurQuotation extends DynamicOrmEntity{
     private java.lang.Long _currencyId;
     
     /* 汇率: EXCHANGE_RATE */
-    private java.lang.String _exchangeRate;
+    private java.math.BigDecimal _exchangeRate;
     
     /* 报价日期: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
@@ -457,9 +457,9 @@ public class _ErpPurQuotation extends DynamicOrmEntity{
             }
         
             case PROP_ID_exchangeRate:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_exchangeRate));
                }
                setExchangeRate(typedValue);
@@ -649,7 +649,7 @@ public class _ErpPurQuotation extends DynamicOrmEntity{
         
             case PROP_ID_exchangeRate:{
                onInitProp(propId);
-               this._exchangeRate = (java.lang.String)value;
+               this._exchangeRate = (java.math.BigDecimal)value;
                
                break;
             }
@@ -868,7 +868,7 @@ public class _ErpPurQuotation extends DynamicOrmEntity{
     /**
      * 汇率: EXCHANGE_RATE
      */
-    public final java.lang.String getExchangeRate(){
+    public final java.math.BigDecimal getExchangeRate(){
          onPropGet(PROP_ID_exchangeRate);
          return _exchangeRate;
     }
@@ -876,7 +876,7 @@ public class _ErpPurQuotation extends DynamicOrmEntity{
     /**
      * 汇率: EXCHANGE_RATE
      */
-    public final void setExchangeRate(java.lang.String value){
+    public final void setExchangeRate(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_exchangeRate,value)){
             this._exchangeRate = value;
             internalClearRefs(PROP_ID_exchangeRate);

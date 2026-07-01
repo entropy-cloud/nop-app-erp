@@ -15,6 +15,8 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -35,6 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurRequisitionToOrderEnd extends JunitAutoTestCase {
+    private static final IServiceContext CTX = new ServiceContextImpl();
+
 
     static final Long ORG_ID = 1501L;
     static final Long REQUESTER_ID = 2501L;
@@ -62,30 +66,30 @@ public class TestErpPurRequisitionToOrderEnd extends JunitAutoTestCase {
 
         Long reqId = 8501L;
         // 1. 建请购 UNSUBMITTED → 提交 → 审核 APPROVED
-        ErpPurRequisition submitted = reqBiz.submit(reqId);
+        ErpPurRequisition submitted = reqBiz.submit(reqId, CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_SUBMITTED, submitted.getApproveStatus());
-        ErpPurRequisition approved = reqBiz.approve(reqId);
+        ErpPurRequisition approved = reqBiz.approve(reqId, CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus());
 
         // 2. APPROVED 请购 + 补充字段 → 转化生成订单(UNSUBMITTED)
         ConvertToOrderRequest request = newRequest();
-        ErpPurOrder order = reqBiz.convertToOrder(reqId, request);
+        ErpPurOrder order = reqBiz.convertToOrder(reqId, request, CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_UNSUBMITTED, order.getApproveStatus());
         assertEquals(reqId, order.getRequisitionId(), "回链 requisitionId");
 
         // 3. 订单 UNSUBMITTED → 提交 → 审核 APPROVED（订单审核纯状态推进，不下游触发）
-        ErpPurOrder orderSubmitted = orderBiz.submit(order.getId());
+        ErpPurOrder orderSubmitted = orderBiz.submit(order.getId(), CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_SUBMITTED, orderSubmitted.getApproveStatus());
-        ErpPurOrder orderApproved = orderBiz.approve(order.getId());
+        ErpPurOrder orderApproved = orderBiz.approve(order.getId(), CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, orderApproved.getApproveStatus());
         // 订单审核不触发库存移动单（与入库单审核触发 generateMove 实质性不同）
         assertEquals(false, orderApproved.getPosted(), "订单审核 posted=false（纯状态推进，不触发库存/凭证）");
 
         // 4. 作废订单 → 可重新转化（幂等防重复转化的恢复路径）
-        ErpPurOrder cancelled = orderBiz.cancel(order.getId());
+        ErpPurOrder cancelled = orderBiz.cancel(order.getId(), CTX);
         assertEquals(ErpPurConstants.DOC_STATUS_CANCELLED, cancelled.getDocStatus());
 
-        ErpPurOrder secondOrder = reqBiz.convertToOrder(reqId, request);
+        ErpPurOrder secondOrder = reqBiz.convertToOrder(reqId, request, CTX);
         assertNotNull(secondOrder.getId());
         assertEquals(ErpPurConstants.APPROVE_STATUS_UNSUBMITTED, secondOrder.getApproveStatus(),
                 "作废原订单后可重新转化");

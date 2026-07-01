@@ -154,128 +154,128 @@
         }
 
 
-        private String _exchangeRate;
+        private java.math.BigDecimal _exchangeRate;
 
     
         @PropMeta(propId=11)
     
-        public String getExchangeRate(){
+        public java.math.BigDecimal getExchangeRate(){
             return _exchangeRate;
         }
 
-        public void setExchangeRate(String value){
+        public void setExchangeRate(java.math.BigDecimal value){
             this._exchangeRate = value;
         }
 
 
-        private String _amountSource;
+        private java.math.BigDecimal _amountSource;
 
     
         @PropMeta(propId=12)
     
-        public String getAmountSource(){
+        public java.math.BigDecimal getAmountSource(){
             return _amountSource;
         }
 
-        public void setAmountSource(String value){
+        public void setAmountSource(java.math.BigDecimal value){
             this._amountSource = value;
         }
 
 
-        private String _amountFunctional;
+        private java.math.BigDecimal _amountFunctional;
 
     
         @PropMeta(propId=13)
     
-        public String getAmountFunctional(){
+        public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;
         }
 
-        public void setAmountFunctional(String value){
+        public void setAmountFunctional(java.math.BigDecimal value){
             this._amountFunctional = value;
         }
 
 
-        private String _totalAmount;
+        private java.math.BigDecimal _totalAmount;
 
     
         @PropMeta(propId=14)
     
-        public String getTotalAmount(){
+        public java.math.BigDecimal getTotalAmount(){
             return _totalAmount;
         }
 
-        public void setTotalAmount(String value){
+        public void setTotalAmount(java.math.BigDecimal value){
             this._totalAmount = value;
         }
 
 
-        private String _totalTaxAmount;
+        private java.math.BigDecimal _totalTaxAmount;
 
     
         @PropMeta(propId=15)
     
-        public String getTotalTaxAmount(){
+        public java.math.BigDecimal getTotalTaxAmount(){
             return _totalTaxAmount;
         }
 
-        public void setTotalTaxAmount(String value){
+        public void setTotalTaxAmount(java.math.BigDecimal value){
             this._totalTaxAmount = value;
         }
 
 
-        private String _totalAmountWithTax;
+        private java.math.BigDecimal _totalAmountWithTax;
 
     
         @PropMeta(propId=16)
     
-        public String getTotalAmountWithTax(){
+        public java.math.BigDecimal getTotalAmountWithTax(){
             return _totalAmountWithTax;
         }
 
-        public void setTotalAmountWithTax(String value){
+        public void setTotalAmountWithTax(java.math.BigDecimal value){
             this._totalAmountWithTax = value;
         }
 
 
-        private String _discountRate;
+        private java.math.BigDecimal _discountRate;
 
     
         @PropMeta(propId=17)
     
-        public String getDiscountRate(){
+        public java.math.BigDecimal getDiscountRate(){
             return _discountRate;
         }
 
-        public void setDiscountRate(String value){
+        public void setDiscountRate(java.math.BigDecimal value){
             this._discountRate = value;
         }
 
 
-        private String _discountAmount;
+        private java.math.BigDecimal _discountAmount;
 
     
         @PropMeta(propId=18)
     
-        public String getDiscountAmount(){
+        public java.math.BigDecimal getDiscountAmount(){
             return _discountAmount;
         }
 
-        public void setDiscountAmount(String value){
+        public void setDiscountAmount(java.math.BigDecimal value){
             this._discountAmount = value;
         }
 
 
-        private String _paidAmount;
+        private java.math.BigDecimal _paidAmount;
 
     
         @PropMeta(propId=19)
     
-        public String getPaidAmount(){
+        public java.math.BigDecimal getPaidAmount(){
             return _paidAmount;
         }
 
-        public void setPaidAmount(String value){
+        public void setPaidAmount(java.math.BigDecimal value){
             this._paidAmount = value;
         }
 

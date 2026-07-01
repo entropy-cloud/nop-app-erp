@@ -45,11 +45,11 @@
         </prop>
         <prop name="unitPrice" displayName="报价单价(不含税)" propId="7" i18n-en:displayName="Unit Price" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="unitPrice" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="unitPrice" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="taxRate" displayName="税率(%)" propId="8" i18n-en:displayName="Tax Rate" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="taxRate" type="java.lang.String" precision="10" scale="4"/>
+            <schema domain="taxRate" type="java.math.BigDecimal" precision="10" scale="4"/>
         </prop>
         <prop name="leadTimeDays" displayName="交货周期(天)" propId="9" i18n-en:displayName="Lead Time Days" queryable="true"
               sortable="true" insertable="true" updatable="true">

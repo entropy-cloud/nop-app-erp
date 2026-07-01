@@ -24,6 +24,9 @@ import io.nop.commons.util.StringHelper;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
+import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.core.context.IServiceContext;
+import io.nop.api.core.annotations.core.Name;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -67,10 +70,9 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
         setEntityName(ErpPurReceive.class.getName());
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpPurReceive submit(Long receiveId) {
+    @BizMutation
+    public ErpPurReceive submit(@Name("receiveId") Long receiveId, IServiceContext context) {
         ErpPurReceive receive = requireReceive(receiveId);
         requireNotCancelled(receive);
         Integer status = receive.getApproveStatus();
@@ -88,10 +90,9 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
         return receive;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpPurReceive withdrawSubmit(Long receiveId) {
+    @BizMutation
+    public ErpPurReceive withdrawSubmit(@Name("receiveId") Long receiveId, IServiceContext context) {
         ErpPurReceive receive = requireReceive(receiveId);
         requireNotCancelled(receive);
         Integer status = receive.getApproveStatus();
@@ -103,10 +104,9 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
         return receive;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpPurReceive approve(Long receiveId) {
+    @BizMutation
+    public ErpPurReceive approve(@Name("receiveId") Long receiveId, IServiceContext context) {
         ErpPurReceive receive = requireReceive(receiveId);
         Integer status = receive.getApproveStatus();
         // 幂等：已审核单据再次审核为空操作（state-machine §4），库存移动单已存在，不重复触发。
@@ -119,7 +119,7 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
         }
         requireSupplierActive(receive);
 
-        ErpInvStockMove move = triggerIncomingMove(receive);
+        ErpInvStockMove move = triggerIncomingMove(receive, context);
         // 跨域 generateMove 调用可能扰动会话脏跟踪，故重新加载并以 updateEntity 显式持久化。
         receive = dao().getEntityById(receiveId);
         receive.setApproveStatus(ErpPurConstants.APPROVE_STATUS_APPROVED);
@@ -132,10 +132,9 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
         return receive;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpPurReceive reject(Long receiveId) {
+    @BizMutation
+    public ErpPurReceive reject(@Name("receiveId") Long receiveId, IServiceContext context) {
         ErpPurReceive receive = requireReceive(receiveId);
         requireNotCancelled(receive);
         Integer status = receive.getApproveStatus();
@@ -147,10 +146,9 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
         return receive;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpPurReceive reverseApprove(Long receiveId) {
+    @BizMutation
+    public ErpPurReceive reverseApprove(@Name("receiveId") Long receiveId, IServiceContext context) {
         ErpPurReceive receive = requireReceive(receiveId);
         Integer status = receive.getApproveStatus();
         // 幂等：已 REJECTED（曾驳回或已反审核）无更多可冲销，直接返回。
@@ -160,17 +158,16 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
         if (status == null || status != ErpPurConstants.APPROVE_STATUS_APPROVED) {
             throw illegalTransition(receive, status, "APPROVED");
         }
-        ensureReversed(receive);
+        ensureReversed(receive, context);
         receive = dao().getEntityById(receiveId);
         receive.setApproveStatus(ErpPurConstants.APPROVE_STATUS_REJECTED);
         dao().updateEntity(receive);
         return receive;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpPurReceive cancel(Long receiveId) {
+    @BizMutation
+    public ErpPurReceive cancel(@Name("receiveId") Long receiveId, IServiceContext context) {
         ErpPurReceive receive = requireReceive(receiveId);
         Integer docStatus = receive.getDocStatus();
         if (docStatus != null && docStatus == ErpPurConstants.DOC_STATUS_CANCELLED) {
@@ -178,7 +175,7 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
         }
         Integer approveStatus = receive.getApproveStatus();
         if (approveStatus != null && approveStatus == ErpPurConstants.APPROVE_STATUS_APPROVED) {
-            ensureReversed(receive);
+            ensureReversed(receive, context);
             receive = dao().getEntityById(receiveId);
         }
         receive.setDocStatus(ErpPurConstants.DOC_STATUS_CANCELLED);
@@ -196,10 +193,10 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
      * 审核通过后构造 {@link StockMoveRequest}(INCOMING) 调 {@link IErpInvStockMoveBiz#generateMove}（业务联动自动 DONE、幂等），
      * 返回生成的入库移动单。移动单 DONE 后库存域内部触发存货过账（PURCHASE_INPUT），{@code billHeadCode}=移动单 code。
      */
-    ErpInvStockMove triggerIncomingMove(ErpPurReceive receive) {
+    ErpInvStockMove triggerIncomingMove(ErpPurReceive receive, IServiceContext context) {
         List<ErpPurReceiveLine> lines = loadLines(receive.getId());
         StockMoveRequest request = stockMoveBuilder.build(receive, lines);
-        return stockMoveBiz.generateMove(request);
+        return stockMoveBiz.generateMove(request, context);
     }
 
     /**
@@ -223,7 +220,7 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
      *       不存在则调 {@link IErpInvStockMoveBiz#reverse}（库存域 DONE 时冲销流水/余额/红字凭证）。</li>
      * </ol>
      */
-    void ensureReversed(ErpPurReceive receive) {
+    void ensureReversed(ErpPurReceive receive, IServiceContext context) {
         ErpInvStockMove original = findMove(ErpPurConstants.RELATED_BILL_TYPE_PUR_RECEIVE, receive.getCode());
         if (original == null) {
             throw new NopException(ErpPurErrors.ERR_MOVE_NOT_FOUND)
@@ -233,7 +230,7 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
         if (existingReversal != null) {
             return;
         }
-        stockMoveBiz.reverse(original.getId());
+        stockMoveBiz.reverse(original.getId(), context);
     }
 
     /**

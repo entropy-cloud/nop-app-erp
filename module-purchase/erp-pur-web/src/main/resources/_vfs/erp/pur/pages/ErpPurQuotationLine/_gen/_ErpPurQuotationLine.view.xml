@@ -37,10 +37,10 @@
                 <col id="quantity" ui:number="true" sortable="true"/>
 
                 <!--报价单价(不含税)-->
-                <col id="unitPrice" mandatory="true" sortable="true"/>
+                <col id="unitPrice" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--税率(%)-->
-                <col id="taxRate" sortable="true"/>
+                <col id="taxRate" ui:number="true" sortable="true"/>
 
                 <!--交货周期(天)-->
                 <col id="leadTimeDays" ui:number="true" sortable="true"/>

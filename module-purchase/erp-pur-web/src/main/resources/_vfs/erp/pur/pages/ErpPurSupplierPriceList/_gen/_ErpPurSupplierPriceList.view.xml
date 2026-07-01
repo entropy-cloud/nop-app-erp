@@ -34,10 +34,10 @@
                 <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--协议单价(不含税)-->
-                <col id="unitPrice" mandatory="true" sortable="true"/>
+                <col id="unitPrice" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--税率(%)-->
-                <col id="taxRate" sortable="true"/>
+                <col id="taxRate" ui:number="true" sortable="true"/>
 
                 <!--最小起订量-->
                 <col id="minOrderQuantity" ui:number="true" sortable="true"/>

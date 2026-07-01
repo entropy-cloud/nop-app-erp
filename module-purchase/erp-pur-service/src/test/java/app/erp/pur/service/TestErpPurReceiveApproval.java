@@ -13,6 +13,8 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -29,6 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurReceiveApproval extends JunitAutoTestCase {
+    private static final IServiceContext CTX = new ServiceContextImpl();
+
 
     static final Long ORG_ID = 1101L;
     static final Long SUPPLIER_ID = 2101L;
@@ -52,15 +56,15 @@ public class TestErpPurReceiveApproval extends JunitAutoTestCase {
             saveReceiveWithLine(receive);
         });
 
-        ErpPurReceive submitted = receiveBiz.submit(receive.getId());
+        ErpPurReceive submitted = receiveBiz.submit(receive.getId(), CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_SUBMITTED, submitted.getApproveStatus(),
                 "提交 → SUBMITTED");
 
-        ErpPurReceive rejected = receiveBiz.reject(receive.getId());
+        ErpPurReceive rejected = receiveBiz.reject(receive.getId(), CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_REJECTED, rejected.getApproveStatus(),
                 "驳回 → REJECTED");
 
-        ErpPurReceive resubmitted = receiveBiz.submit(receive.getId());
+        ErpPurReceive resubmitted = receiveBiz.submit(receive.getId(), CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_SUBMITTED, resubmitted.getApproveStatus(),
                 "REJECTED 重新提交 → SUBMITTED");
     }
@@ -73,15 +77,15 @@ public class TestErpPurReceiveApproval extends JunitAutoTestCase {
             saveReceiveWithLine(receive);
         });
 
-        receiveBiz.submit(receive.getId());
-        ErpPurReceive approved = receiveBiz.approve(receive.getId());
+        receiveBiz.submit(receive.getId(), CTX);
+        ErpPurReceive approved = receiveBiz.approve(receive.getId(), CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus());
 
         // APPROVED → 再次 submit 非法（仅 UNSUBMITTED/REJECTED 可提交）
-        assertThrows(NopException.class, () -> receiveBiz.submit(receive.getId()),
+        assertThrows(NopException.class, () -> receiveBiz.submit(receive.getId(), CTX),
                 "APPROVED 不可再提交，应抛 NopException");
         // APPROVED → withdrawSubmit 非法
-        assertThrows(NopException.class, () -> receiveBiz.withdrawSubmit(receive.getId()),
+        assertThrows(NopException.class, () -> receiveBiz.withdrawSubmit(receive.getId(), CTX),
                 "APPROVED 不可撤回提交，应抛 NopException");
     }
 
@@ -93,7 +97,7 @@ public class TestErpPurReceiveApproval extends JunitAutoTestCase {
             saveReceiveWithLine(receive);
         });
 
-        assertThrows(NopException.class, () -> receiveBiz.submit(receive.getId()),
+        assertThrows(NopException.class, () -> receiveBiz.submit(receive.getId(), CTX),
                 "供应商停用 → submit 应抛 ERR_PARTNER_INACTIVE");
     }
 
@@ -105,12 +109,12 @@ public class TestErpPurReceiveApproval extends JunitAutoTestCase {
             saveReceiveWithLine(receive);
         });
 
-        ErpPurReceive cancelled = receiveBiz.cancel(receive.getId());
+        ErpPurReceive cancelled = receiveBiz.cancel(receive.getId(), CTX);
         assertEquals(ErpPurConstants.DOC_STATUS_CANCELLED, cancelled.getDocStatus(),
                 "草稿 → 作废 docStatus=CANCELLED");
 
         // 已作废不可再提交
-        assertThrows(NopException.class, () -> receiveBiz.submit(receive.getId()),
+        assertThrows(NopException.class, () -> receiveBiz.submit(receive.getId(), CTX),
                 "已作废单据不可提交，应抛 NopException");
     }
 
@@ -128,7 +132,7 @@ public class TestErpPurReceiveApproval extends JunitAutoTestCase {
         receive.setWarehouseId(WAREHOUSE_ID);
         receive.setBusinessDate(LocalDate.of(2026, 7, 1));
         receive.setCurrencyId(CURRENCY_ID);
-        receive.setExchangeRate("1");
+        receive.setExchangeRate(new BigDecimal("1"));
         receive.setDocStatus(ErpPurConstants.DOC_STATUS_DRAFT);
         receive.setApproveStatus(ErpPurConstants.APPROVE_STATUS_UNSUBMITTED);
         receive.setReceiveStatus(ErpPurConstants.RECEIVE_STATUS_UNRECEIVED);
@@ -145,7 +149,7 @@ public class TestErpPurReceiveApproval extends JunitAutoTestCase {
         line.setMaterialId(MATERIAL_ID);
         line.setUoMId(UOM_ID);
         line.setQuantity(new BigDecimal("10"));
-        line.setUnitPrice("5");
+        line.setUnitPrice(new BigDecimal("5"));
         lineDao.saveEntity(line);
     }
 

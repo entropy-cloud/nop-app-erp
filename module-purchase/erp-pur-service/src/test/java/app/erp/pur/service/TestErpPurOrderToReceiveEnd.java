@@ -23,6 +23,8 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -42,6 +44,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurOrderToReceiveEnd extends JunitAutoTestCase {
+    private static final IServiceContext CTX = new ServiceContextImpl();
+
 
     static final Long ORG_ID = 1301L;
     static final Long SUPPLIER_ID = 2301L;
@@ -69,16 +73,16 @@ public class TestErpPurOrderToReceiveEnd extends JunitAutoTestCase {
             Long orderId = newOrder("PO-E2E-001");
             newOrderLine(orderId, orderLine, 1, new BigDecimal("10"));
             newReceive("PR-E2E-001", receiveId, orderId);
-            newReceiveLine(receiveLineId, receiveId, orderLine, new BigDecimal("10"), "5");
+            newReceiveLine(receiveLineId, receiveId, orderLine, new BigDecimal("10"), new BigDecimal("5"));
             return null;
         });
 
         // 1. UNSUBMITTED → 提交
-        ErpPurReceive submitted = receiveBiz.submit(receiveId);
+        ErpPurReceive submitted = receiveBiz.submit(receiveId, CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_SUBMITTED, submitted.getApproveStatus());
 
         // 2. 审核 → 入库移动单 DONE + 余额 + 凭证 + posted + 收货状态回写
-        ErpPurReceive approved = receiveBiz.approve(receiveId);
+        ErpPurReceive approved = receiveBiz.approve(receiveId, CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus());
         assertEquals(true, approved.getPosted(), "入库审核 posted=true");
         assertEquals(ErpPurConstants.RECEIVE_STATUS_RECEIVED, approved.getReceiveStatus(),
@@ -87,13 +91,13 @@ public class TestErpPurOrderToReceiveEnd extends JunitAutoTestCase {
         ErpInvStockMove move = findMove("PR-E2E-001");
         assertNotNull(move);
         assertEquals(ErpInvConstants.DOC_STATUS_DONE, move.getDocStatus());
-        assertEquals(0, new BigDecimal(findBalance().getTotalQuantity()).compareTo(new BigDecimal("10")),
+        assertEquals(0, findBalance().getTotalQuantity().compareTo(new BigDecimal("10")),
                 "库存余额 +10");
 
         ErpFinVoucherBillR link = findVoucherLink(move.getCode());
         assertNotNull(link, "存货估值凭证落地");
         ErpFinVoucher voucher = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(link.getVoucherId());
-        assertTrue(new BigDecimal(voucher.getTotalDebit()).compareTo(new BigDecimal("50")) == 0,
+        assertTrue(voucher.getTotalDebit().compareTo(new BigDecimal("50")) == 0,
                 "借存货 50");
 
         ErpPurOrder order = findOrder("PO-E2E-001");
@@ -101,9 +105,9 @@ public class TestErpPurOrderToReceiveEnd extends JunitAutoTestCase {
                 "订单收货状态回写 RECEIVED（单行全收清）");
 
         // 3. 反审核 → 内部冲销，余额冲回 0，APPROVED→REJECTED
-        ErpPurReceive reversed = receiveBiz.reverseApprove(receiveId);
+        ErpPurReceive reversed = receiveBiz.reverseApprove(receiveId, CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_REJECTED, reversed.getApproveStatus());
-        assertEquals(0, new BigDecimal(findBalance().getTotalQuantity()).compareTo(BigDecimal.ZERO),
+        assertEquals(0, findBalance().getTotalQuantity().compareTo(BigDecimal.ZERO),
                 "冲销后库存余额归零");
         ErpInvStockMove reversal = findReversal(move.getCode());
         assertNotNull(reversal, "应生成反向冲销移动单");
@@ -197,8 +201,8 @@ public class TestErpPurOrderToReceiveEnd extends JunitAutoTestCase {
         line.setMaterialId(MATERIAL_ID);
         line.setUoMId(UOM_ID);
         line.setQuantity(qty);
-        line.setUnitPrice("5");
-        line.setAmount(qty.multiply(new BigDecimal("5")).toPlainString());
+        line.setUnitPrice(new BigDecimal("5"));
+        line.setAmount(qty.multiply(new BigDecimal("5")));
         dao.saveEntity(line);
     }
 
@@ -213,7 +217,7 @@ public class TestErpPurOrderToReceiveEnd extends JunitAutoTestCase {
         receive.setWarehouseId(WAREHOUSE_ID);
         receive.setBusinessDate(LocalDate.of(2026, 7, 1));
         receive.setCurrencyId(CURRENCY_ID);
-        receive.setExchangeRate("1");
+        receive.setExchangeRate(new BigDecimal("1"));
         receive.setDocStatus(ErpPurConstants.DOC_STATUS_DRAFT);
         receive.setApproveStatus(ErpPurConstants.APPROVE_STATUS_UNSUBMITTED);
         receive.setReceiveStatus(ErpPurConstants.RECEIVE_STATUS_UNRECEIVED);
@@ -221,7 +225,7 @@ public class TestErpPurOrderToReceiveEnd extends JunitAutoTestCase {
         dao.saveEntity(receive);
     }
 
-    private void newReceiveLine(Long lineId, Long receiveId, Long orderLineId, BigDecimal qty, String unitPrice) {
+    private void newReceiveLine(Long lineId, Long receiveId, Long orderLineId, BigDecimal qty, BigDecimal unitPrice) {
         IEntityDao<ErpPurReceiveLine> dao = daoProvider.daoFor(ErpPurReceiveLine.class);
         ErpPurReceiveLine line = new ErpPurReceiveLine();
         line.setId(lineId);

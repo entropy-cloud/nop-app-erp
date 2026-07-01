@@ -18,6 +18,9 @@ import io.nop.commons.util.StringHelper;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
+import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.core.context.IServiceContext;
+import io.nop.api.core.annotations.core.Name;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,10 +52,9 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
         setEntityName(ErpPurOrder.class.getName());
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpPurOrder submit(Long orderId) {
+    @BizMutation
+    public ErpPurOrder submit(@Name("orderId") Long orderId, IServiceContext context) {
         ErpPurOrder order = requireOrder(orderId);
         requireNotCancelled(order);
         Integer status = order.getApproveStatus();
@@ -70,10 +72,9 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
         return order;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpPurOrder withdrawSubmit(Long orderId) {
+    @BizMutation
+    public ErpPurOrder withdrawSubmit(@Name("orderId") Long orderId, IServiceContext context) {
         ErpPurOrder order = requireOrder(orderId);
         requireNotCancelled(order);
         Integer status = order.getApproveStatus();
@@ -85,10 +86,9 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
         return order;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpPurOrder approve(Long orderId) {
+    @BizMutation
+    public ErpPurOrder approve(@Name("orderId") Long orderId, IServiceContext context) {
         ErpPurOrder order = requireOrder(orderId);
         Integer status = order.getApproveStatus();
         // 幂等：已审核订单再次审核为空操作（state-machine §4，订单无库存触发故无副作用可重复）。
@@ -108,10 +108,9 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
         return order;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpPurOrder reject(Long orderId) {
+    @BizMutation
+    public ErpPurOrder reject(@Name("orderId") Long orderId, IServiceContext context) {
         ErpPurOrder order = requireOrder(orderId);
         requireNotCancelled(order);
         Integer status = order.getApproveStatus();
@@ -123,10 +122,9 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
         return order;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpPurOrder reverseApprove(Long orderId) {
+    @BizMutation
+    public ErpPurOrder reverseApprove(@Name("orderId") Long orderId, IServiceContext context) {
         ErpPurOrder order = requireOrder(orderId);
         Integer status = order.getApproveStatus();
         // 幂等：已 REJECTED 无更多可反审核，直接返回。
@@ -143,10 +141,9 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
         return order;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpPurOrder cancel(Long orderId) {
+    @BizMutation
+    public ErpPurOrder cancel(@Name("orderId") Long orderId, IServiceContext context) {
         ErpPurOrder order = requireOrder(orderId);
         Integer docStatus = order.getDocStatus();
         if (docStatus != null && docStatus == ErpPurConstants.DOC_STATUS_CANCELLED) {

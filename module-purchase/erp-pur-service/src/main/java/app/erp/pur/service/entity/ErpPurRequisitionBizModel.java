@@ -21,6 +21,9 @@ import io.nop.commons.util.StringHelper;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
+import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.core.context.IServiceContext;
+import io.nop.api.core.annotations.core.Name;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -59,10 +62,9 @@ public class ErpPurRequisitionBizModel extends CrudBizModel<ErpPurRequisition> i
         setEntityName(ErpPurRequisition.class.getName());
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpPurRequisition submit(Long requisitionId) {
+    @BizMutation
+    public ErpPurRequisition submit(@Name("requisitionId") Long requisitionId, IServiceContext context) {
         ErpPurRequisition req = requireRequisition(requisitionId);
         requireNotCancelled(req);
         Integer status = req.getApproveStatus();
@@ -79,10 +81,9 @@ public class ErpPurRequisitionBizModel extends CrudBizModel<ErpPurRequisition> i
         return req;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpPurRequisition withdrawSubmit(Long requisitionId) {
+    @BizMutation
+    public ErpPurRequisition withdrawSubmit(@Name("requisitionId") Long requisitionId, IServiceContext context) {
         ErpPurRequisition req = requireRequisition(requisitionId);
         requireNotCancelled(req);
         Integer status = req.getApproveStatus();
@@ -94,10 +95,9 @@ public class ErpPurRequisitionBizModel extends CrudBizModel<ErpPurRequisition> i
         return req;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpPurRequisition approve(Long requisitionId) {
+    @BizMutation
+    public ErpPurRequisition approve(@Name("requisitionId") Long requisitionId, IServiceContext context) {
         ErpPurRequisition req = requireRequisition(requisitionId);
         Integer status = req.getApproveStatus();
         // 幂等：已审核请购再次审核为空操作（state-machine §4）。
@@ -116,10 +116,9 @@ public class ErpPurRequisitionBizModel extends CrudBizModel<ErpPurRequisition> i
         return req;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpPurRequisition reject(Long requisitionId) {
+    @BizMutation
+    public ErpPurRequisition reject(@Name("requisitionId") Long requisitionId, IServiceContext context) {
         ErpPurRequisition req = requireRequisition(requisitionId);
         requireNotCancelled(req);
         Integer status = req.getApproveStatus();
@@ -131,10 +130,9 @@ public class ErpPurRequisitionBizModel extends CrudBizModel<ErpPurRequisition> i
         return req;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpPurRequisition reverseApprove(Long requisitionId) {
+    @BizMutation
+    public ErpPurRequisition reverseApprove(@Name("requisitionId") Long requisitionId, IServiceContext context) {
         ErpPurRequisition req = requireRequisition(requisitionId);
         Integer status = req.getApproveStatus();
         // 幂等：已 REJECTED 无更多可反审核，直接返回。
@@ -151,10 +149,9 @@ public class ErpPurRequisitionBizModel extends CrudBizModel<ErpPurRequisition> i
         return req;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpPurRequisition cancel(Long requisitionId) {
+    @BizMutation
+    public ErpPurRequisition cancel(@Name("requisitionId") Long requisitionId, IServiceContext context) {
         ErpPurRequisition req = requireRequisition(requisitionId);
         Integer docStatus = req.getDocStatus();
         if (docStatus != null && docStatus == ErpPurConstants.DOC_STATUS_CANCELLED) {
@@ -167,10 +164,9 @@ public class ErpPurRequisitionBizModel extends CrudBizModel<ErpPurRequisition> i
 
     // ---------- Phase 2: 请购→订单转化 ----------
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpPurOrder convertToOrder(Long requisitionId, ConvertToOrderRequest request) {
+    @BizMutation
+    public ErpPurOrder convertToOrder(@Name("requisitionId") Long requisitionId, @Name("request") ConvertToOrderRequest request, IServiceContext context) {
         ErpPurRequisition req = requireRequisition(requisitionId);
         Integer status = req.getApproveStatus();
         // (a) 仅 APPROVED 请购可转化

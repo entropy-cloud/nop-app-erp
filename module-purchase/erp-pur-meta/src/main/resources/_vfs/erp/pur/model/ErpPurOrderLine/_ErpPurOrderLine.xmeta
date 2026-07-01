@@ -49,11 +49,11 @@
         </prop>
         <prop name="unitPrice" displayName="单价(不含税)" propId="8" i18n-en:displayName="Unit Price" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="unitPrice" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="unitPrice" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="taxRate" displayName="税率(%)" propId="9" i18n-en:displayName="Tax Rate" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="taxRate" type="java.lang.String" precision="10" scale="4"/>
+            <schema domain="taxRate" type="java.math.BigDecimal" precision="10" scale="4"/>
         </prop>
         <prop name="taxRateId" displayName="税率主数据" propId="10" i18n-en:displayName="Tax Rate" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="taxRateMd">
@@ -61,15 +61,15 @@
         </prop>
         <prop name="taxAmount" displayName="税额" propId="11" i18n-en:displayName="Tax Amount" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="taxAmount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="taxAmount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="amount" displayName="金额(不含税)" propId="12" i18n-en:displayName="Amount" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="amountWithTax" displayName="金额(含税)" propId="13" i18n-en:displayName="Amount With Tax"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="receivedQuantity" displayName="已收货数量" propId="14" i18n-en:displayName="Received Quantity"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">

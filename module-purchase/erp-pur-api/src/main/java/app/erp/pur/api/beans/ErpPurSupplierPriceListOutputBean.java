@@ -83,30 +83,30 @@
         }
 
 
-        private String _unitPrice;
+        private java.math.BigDecimal _unitPrice;
 
     
         @PropMeta(propId=6)
     
-        public String getUnitPrice(){
+        public java.math.BigDecimal getUnitPrice(){
             return _unitPrice;
         }
 
-        public void setUnitPrice(String value){
+        public void setUnitPrice(java.math.BigDecimal value){
             this._unitPrice = value;
         }
 
 
-        private String _taxRate;
+        private java.math.BigDecimal _taxRate;
 
     
         @PropMeta(propId=7)
     
-        public String getTaxRate(){
+        public java.math.BigDecimal getTaxRate(){
             return _taxRate;
         }
 
-        public void setTaxRate(String value){
+        public void setTaxRate(java.math.BigDecimal value){
             this._taxRate = value;
         }
 

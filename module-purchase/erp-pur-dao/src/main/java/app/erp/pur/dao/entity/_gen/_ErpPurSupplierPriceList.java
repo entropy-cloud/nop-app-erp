@@ -197,10 +197,10 @@ public class _ErpPurSupplierPriceList extends DynamicOrmEntity{
     private java.lang.Long _currencyId;
     
     /* 协议单价(不含税): UNIT_PRICE */
-    private java.lang.String _unitPrice;
+    private java.math.BigDecimal _unitPrice;
     
     /* 税率(%): TAX_RATE */
-    private java.lang.String _taxRate;
+    private java.math.BigDecimal _taxRate;
     
     /* 最小起订量: MIN_ORDER_QUANTITY */
     private java.math.BigDecimal _minOrderQuantity;
@@ -431,9 +431,9 @@ public class _ErpPurSupplierPriceList extends DynamicOrmEntity{
             }
         
             case PROP_ID_unitPrice:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_unitPrice));
                }
                setUnitPrice(typedValue);
@@ -441,9 +441,9 @@ public class _ErpPurSupplierPriceList extends DynamicOrmEntity{
             }
         
             case PROP_ID_taxRate:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_taxRate));
                }
                setTaxRate(typedValue);
@@ -616,14 +616,14 @@ public class _ErpPurSupplierPriceList extends DynamicOrmEntity{
         
             case PROP_ID_unitPrice:{
                onInitProp(propId);
-               this._unitPrice = (java.lang.String)value;
+               this._unitPrice = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_taxRate:{
                onInitProp(propId);
-               this._taxRate = (java.lang.String)value;
+               this._taxRate = (java.math.BigDecimal)value;
                
                break;
             }
@@ -816,7 +816,7 @@ public class _ErpPurSupplierPriceList extends DynamicOrmEntity{
     /**
      * 协议单价(不含税): UNIT_PRICE
      */
-    public final java.lang.String getUnitPrice(){
+    public final java.math.BigDecimal getUnitPrice(){
          onPropGet(PROP_ID_unitPrice);
          return _unitPrice;
     }
@@ -824,7 +824,7 @@ public class _ErpPurSupplierPriceList extends DynamicOrmEntity{
     /**
      * 协议单价(不含税): UNIT_PRICE
      */
-    public final void setUnitPrice(java.lang.String value){
+    public final void setUnitPrice(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_unitPrice,value)){
             this._unitPrice = value;
             internalClearRefs(PROP_ID_unitPrice);
@@ -835,7 +835,7 @@ public class _ErpPurSupplierPriceList extends DynamicOrmEntity{
     /**
      * 税率(%): TAX_RATE
      */
-    public final java.lang.String getTaxRate(){
+    public final java.math.BigDecimal getTaxRate(){
          onPropGet(PROP_ID_taxRate);
          return _taxRate;
     }
@@ -843,7 +843,7 @@ public class _ErpPurSupplierPriceList extends DynamicOrmEntity{
     /**
      * 税率(%): TAX_RATE
      */
-    public final void setTaxRate(java.lang.String value){
+    public final void setTaxRate(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_taxRate,value)){
             this._taxRate = value;
             internalClearRefs(PROP_ID_taxRate);

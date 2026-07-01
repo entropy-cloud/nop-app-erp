@@ -1,8 +1,9 @@
 
 package app.erp.pur.biz;
 
-import io.nop.api.core.annotations.orm.SingleSession;
-import io.nop.api.core.annotations.txn.Transactional;
+import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.core.Name;
+import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
 
 import app.erp.pur.dao.entity.ErpPurReceive;
@@ -23,27 +24,21 @@ import app.erp.pur.dao.entity.ErpPurReceive;
  */
 public interface IErpPurReceiveBiz extends ICrudBiz<ErpPurReceive> {
 
-    @SingleSession
-    @Transactional
-    ErpPurReceive submit(Long receiveId);
+    @BizMutation
+    ErpPurReceive submit(@Name("receiveId") Long receiveId, IServiceContext context);
 
-    @SingleSession
-    @Transactional
-    ErpPurReceive withdrawSubmit(Long receiveId);
+    @BizMutation
+    ErpPurReceive withdrawSubmit(@Name("receiveId") Long receiveId, IServiceContext context);
 
-    @SingleSession
-    @Transactional
-    ErpPurReceive approve(Long receiveId);
+    @BizMutation
+    ErpPurReceive approve(@Name("receiveId") Long receiveId, IServiceContext context);
 
-    @SingleSession
-    @Transactional
-    ErpPurReceive reject(Long receiveId);
+    @BizMutation
+    ErpPurReceive reject(@Name("receiveId") Long receiveId, IServiceContext context);
 
-    @SingleSession
-    @Transactional
-    ErpPurReceive reverseApprove(Long receiveId);
+    @BizMutation
+    ErpPurReceive reverseApprove(@Name("receiveId") Long receiveId, IServiceContext context);
 
-    @SingleSession
-    @Transactional
-    ErpPurReceive cancel(Long receiveId);
+    @BizMutation
+    ErpPurReceive cancel(@Name("receiveId") Long receiveId, IServiceContext context);
 }

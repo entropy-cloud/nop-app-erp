@@ -47,7 +47,7 @@ public class RequisitionToOrderConverter {
         order.setWarehouseId(request.getWarehouseId());
         order.setBusinessDate(req.getBusinessDate());
         order.setCurrencyId(request.getCurrencyId());
-        order.setExchangeRate("1");
+        order.setExchangeRate(BigDecimal.ONE);
         order.setApproveStatus(ErpPurConstants.APPROVE_STATUS_UNSUBMITTED);
         order.setDocStatus(ErpPurConstants.DOC_STATUS_DRAFT);
         order.setReceiveStatus(ErpPurConstants.RECEIVE_STATUS_UNRECEIVED);
@@ -70,19 +70,19 @@ public class RequisitionToOrderConverter {
 
             String unitPrice = request.getLineUnitPrices().get(reqLine.getLineNo());
             BigDecimal price = parseUnitPrice(unitPrice, reqLine);
-            line.setUnitPrice(price.toPlainString());
+            line.setUnitPrice(price);
 
             String taxRate = request.getLineTaxRates().get(reqLine.getLineNo());
             BigDecimal rate = parseTaxRate(taxRate);
-            line.setTaxRate(rate == null ? null : rate.toPlainString());
+            line.setTaxRate(rate);
 
             BigDecimal amount = price.multiply(reqLine.getQuantity());
-            line.setAmount(amount.toPlainString());
+            line.setAmount(amount);
 
             BigDecimal taxAmount = rate == null ? BigDecimal.ZERO
                     : amount.multiply(rate).divide(HUNDRED, 2, BigDecimal.ROUND_HALF_UP);
-            line.setTaxAmount(taxAmount.toPlainString());
-            line.setAmountWithTax(amount.add(taxAmount).toPlainString());
+            line.setTaxAmount(taxAmount);
+            line.setAmountWithTax(amount.add(taxAmount));
 
             result.add(line);
         }

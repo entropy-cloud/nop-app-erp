@@ -13,6 +13,8 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -30,6 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurOrderApproval extends JunitAutoTestCase {
+    private static final IServiceContext CTX = new ServiceContextImpl();
+
 
     static final Long ORG_ID = 1101L;
     static final Long SUPPLIER_ID = 2101L;
@@ -53,11 +57,11 @@ public class TestErpPurOrderApproval extends JunitAutoTestCase {
             saveOrderWithLine(order);
         });
 
-        ErpPurOrder submitted = orderBiz.submit(order.getId());
+        ErpPurOrder submitted = orderBiz.submit(order.getId(), CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_SUBMITTED, submitted.getApproveStatus(),
                 "提交 → SUBMITTED");
 
-        ErpPurOrder approved = orderBiz.approve(order.getId());
+        ErpPurOrder approved = orderBiz.approve(order.getId(), CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus(),
                 "审核通过 → APPROVED");
         assertEquals("PO-SUBMIT-001", approved.getCode(), "订单审核不触发库存/凭证，仅状态推进");
@@ -71,12 +75,12 @@ public class TestErpPurOrderApproval extends JunitAutoTestCase {
             saveOrderWithLine(order);
         });
 
-        orderBiz.submit(order.getId());
-        ErpPurOrder rejected = orderBiz.reject(order.getId());
+        orderBiz.submit(order.getId(), CTX);
+        ErpPurOrder rejected = orderBiz.reject(order.getId(), CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_REJECTED, rejected.getApproveStatus(),
                 "驳回 → REJECTED");
 
-        ErpPurOrder resubmitted = orderBiz.submit(order.getId());
+        ErpPurOrder resubmitted = orderBiz.submit(order.getId(), CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_SUBMITTED, resubmitted.getApproveStatus(),
                 "REJECTED 重新提交 → SUBMITTED");
     }
@@ -89,19 +93,19 @@ public class TestErpPurOrderApproval extends JunitAutoTestCase {
             saveOrderWithLine(order);
         });
 
-        orderBiz.submit(order.getId());
-        ErpPurOrder approved = orderBiz.approve(order.getId());
+        orderBiz.submit(order.getId(), CTX);
+        ErpPurOrder approved = orderBiz.approve(order.getId(), CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus());
 
         // APPROVED → 再次 submit 非法（仅 UNSUBMITTED/REJECTED 可提交）
-        assertThrows(NopException.class, () -> orderBiz.submit(order.getId()),
+        assertThrows(NopException.class, () -> orderBiz.submit(order.getId(), CTX),
                 "APPROVED 不可再提交，应抛 NopException");
         // APPROVED → withdrawSubmit 非法
-        assertThrows(NopException.class, () -> orderBiz.withdrawSubmit(order.getId()),
+        assertThrows(NopException.class, () -> orderBiz.withdrawSubmit(order.getId(), CTX),
                 "APPROVED 不可撤回提交，应抛 NopException");
 
         // 反审核 APPROVED → REJECTED，目标态非 UNSUBMITTED（state-machine §3/§11.4）
-        ErpPurOrder reversed = orderBiz.reverseApprove(order.getId());
+        ErpPurOrder reversed = orderBiz.reverseApprove(order.getId(), CTX);
         assertEquals(ErpPurConstants.APPROVE_STATUS_REJECTED, reversed.getApproveStatus(),
                 "反审核目标态 = REJECTED 非 UNSUBMITTED");
     }
@@ -115,14 +119,14 @@ public class TestErpPurOrderApproval extends JunitAutoTestCase {
             seedSupplier(SUPPLIER_ID, 20);
             saveOrderWithLine(order);
         });
-        assertThrows(NopException.class, () -> orderBiz.submit(order.getId()),
+        assertThrows(NopException.class, () -> orderBiz.submit(order.getId(), CTX),
                 "供应商停用 → submit 应抛 ERR_PARTNER_INACTIVE");
 
         // approve 路径：直接置 SUBMITTED 后审核也应被供应商停用拒绝（approve 双点校验）
         ErpPurOrder submittedOrder = newOrder("PO-INACTIVE-002");
         submittedOrder.setApproveStatus(ErpPurConstants.APPROVE_STATUS_SUBMITTED);
         ormTemplate.runInSession(() -> saveOrderWithLine(submittedOrder));
-        assertThrows(NopException.class, () -> orderBiz.approve(submittedOrder.getId()),
+        assertThrows(NopException.class, () -> orderBiz.approve(submittedOrder.getId(), CTX),
                 "供应商停用 → approve 也应抛 ERR_PARTNER_INACTIVE");
     }
 
@@ -134,12 +138,12 @@ public class TestErpPurOrderApproval extends JunitAutoTestCase {
             saveOrderWithLine(order);
         });
 
-        ErpPurOrder cancelled = orderBiz.cancel(order.getId());
+        ErpPurOrder cancelled = orderBiz.cancel(order.getId(), CTX);
         assertEquals(ErpPurConstants.DOC_STATUS_CANCELLED, cancelled.getDocStatus(),
                 "草稿 → 作废 docStatus=CANCELLED");
 
         // 已作废不可再提交
-        assertThrows(NopException.class, () -> orderBiz.submit(order.getId()),
+        assertThrows(NopException.class, () -> orderBiz.submit(order.getId(), CTX),
                 "已作废订单不可提交，应抛 NopException");
     }
 
@@ -153,7 +157,7 @@ public class TestErpPurOrderApproval extends JunitAutoTestCase {
         order.setWarehouseId(WAREHOUSE_ID);
         order.setBusinessDate(LocalDate.of(2026, 7, 1));
         order.setCurrencyId(CURRENCY_ID);
-        order.setExchangeRate("1");
+        order.setExchangeRate(new BigDecimal("1"));
         order.setDocStatus(ErpPurConstants.DOC_STATUS_DRAFT);
         order.setApproveStatus(ErpPurConstants.APPROVE_STATUS_UNSUBMITTED);
         order.setReceiveStatus(ErpPurConstants.RECEIVE_STATUS_UNRECEIVED);
@@ -170,8 +174,8 @@ public class TestErpPurOrderApproval extends JunitAutoTestCase {
         line.setMaterialId(MATERIAL_ID);
         line.setUoMId(UOM_ID);
         line.setQuantity(new BigDecimal("10"));
-        line.setUnitPrice("5");
-        line.setAmount("50");
+        line.setUnitPrice(new BigDecimal("5"));
+        line.setAmount(new BigDecimal("50"));
         lineDao.saveEntity(line);
     }
 

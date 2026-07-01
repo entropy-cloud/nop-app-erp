@@ -2,7 +2,7 @@
   "id": 0,
   "paymentId": 0,
   "invoiceId": 0,
-  "amount": "",
+  "amount": 0.0,
   "remark": "",
   "delVersion": 0,
   "version": 0,

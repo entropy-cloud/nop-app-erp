@@ -236,16 +236,16 @@ public class _ErpPurReceiveLine extends DynamicOrmEntity{
     private java.math.BigDecimal _rejectedQuantity;
     
     /* 单价(不含税): UNIT_PRICE */
-    private java.lang.String _unitPrice;
+    private java.math.BigDecimal _unitPrice;
     
     /* 税率(%): TAX_RATE */
-    private java.lang.String _taxRate;
+    private java.math.BigDecimal _taxRate;
     
     /* 税额: TAX_AMOUNT */
-    private java.lang.String _taxAmount;
+    private java.math.BigDecimal _taxAmount;
     
     /* 金额(不含税): AMOUNT */
-    private java.lang.String _amount;
+    private java.math.BigDecimal _amount;
     
     /* 入库库位: WAREHOUSE_ID */
     private java.lang.Long _warehouseId;
@@ -516,9 +516,9 @@ public class _ErpPurReceiveLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_unitPrice:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_unitPrice));
                }
                setUnitPrice(typedValue);
@@ -526,9 +526,9 @@ public class _ErpPurReceiveLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_taxRate:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_taxRate));
                }
                setTaxRate(typedValue);
@@ -536,9 +536,9 @@ public class _ErpPurReceiveLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_taxAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_taxAmount));
                }
                setTaxAmount(typedValue);
@@ -546,9 +546,9 @@ public class _ErpPurReceiveLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_amount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_amount));
                }
                setAmount(typedValue);
@@ -719,28 +719,28 @@ public class _ErpPurReceiveLine extends DynamicOrmEntity{
         
             case PROP_ID_unitPrice:{
                onInitProp(propId);
-               this._unitPrice = (java.lang.String)value;
+               this._unitPrice = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_taxRate:{
                onInitProp(propId);
-               this._taxRate = (java.lang.String)value;
+               this._taxRate = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_taxAmount:{
                onInitProp(propId);
-               this._taxAmount = (java.lang.String)value;
+               this._taxAmount = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_amount:{
                onInitProp(propId);
-               this._amount = (java.lang.String)value;
+               this._amount = (java.math.BigDecimal)value;
                
                break;
             }
@@ -988,7 +988,7 @@ public class _ErpPurReceiveLine extends DynamicOrmEntity{
     /**
      * 单价(不含税): UNIT_PRICE
      */
-    public final java.lang.String getUnitPrice(){
+    public final java.math.BigDecimal getUnitPrice(){
          onPropGet(PROP_ID_unitPrice);
          return _unitPrice;
     }
@@ -996,7 +996,7 @@ public class _ErpPurReceiveLine extends DynamicOrmEntity{
     /**
      * 单价(不含税): UNIT_PRICE
      */
-    public final void setUnitPrice(java.lang.String value){
+    public final void setUnitPrice(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_unitPrice,value)){
             this._unitPrice = value;
             internalClearRefs(PROP_ID_unitPrice);
@@ -1007,7 +1007,7 @@ public class _ErpPurReceiveLine extends DynamicOrmEntity{
     /**
      * 税率(%): TAX_RATE
      */
-    public final java.lang.String getTaxRate(){
+    public final java.math.BigDecimal getTaxRate(){
          onPropGet(PROP_ID_taxRate);
          return _taxRate;
     }
@@ -1015,7 +1015,7 @@ public class _ErpPurReceiveLine extends DynamicOrmEntity{
     /**
      * 税率(%): TAX_RATE
      */
-    public final void setTaxRate(java.lang.String value){
+    public final void setTaxRate(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_taxRate,value)){
             this._taxRate = value;
             internalClearRefs(PROP_ID_taxRate);
@@ -1026,7 +1026,7 @@ public class _ErpPurReceiveLine extends DynamicOrmEntity{
     /**
      * 税额: TAX_AMOUNT
      */
-    public final java.lang.String getTaxAmount(){
+    public final java.math.BigDecimal getTaxAmount(){
          onPropGet(PROP_ID_taxAmount);
          return _taxAmount;
     }
@@ -1034,7 +1034,7 @@ public class _ErpPurReceiveLine extends DynamicOrmEntity{
     /**
      * 税额: TAX_AMOUNT
      */
-    public final void setTaxAmount(java.lang.String value){
+    public final void setTaxAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_taxAmount,value)){
             this._taxAmount = value;
             internalClearRefs(PROP_ID_taxAmount);
@@ -1045,7 +1045,7 @@ public class _ErpPurReceiveLine extends DynamicOrmEntity{
     /**
      * 金额(不含税): AMOUNT
      */
-    public final java.lang.String getAmount(){
+    public final java.math.BigDecimal getAmount(){
          onPropGet(PROP_ID_amount);
          return _amount;
     }
@@ -1053,7 +1053,7 @@ public class _ErpPurReceiveLine extends DynamicOrmEntity{
     /**
      * 金额(不含税): AMOUNT
      */
-    public final void setAmount(java.lang.String value){
+    public final void setAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_amount,value)){
             this._amount = value;
             internalClearRefs(PROP_ID_amount);
