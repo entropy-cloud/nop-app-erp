@@ -18,6 +18,9 @@ import io.nop.biz.crud.CrudBizModel;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
+import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.core.context.IServiceContext;
+import io.nop.api.core.annotations.core.Name;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -57,10 +60,9 @@ public class ErpSalQuotationBizModel extends CrudBizModel<ErpSalQuotation> imple
         setEntityName(ErpSalQuotation.class.getName());
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpSalQuotation submit(Long quotationId) {
+    @BizMutation
+    public ErpSalQuotation submit(@Name("quotationId") Long quotationId, IServiceContext context) {
         ErpSalQuotation quotation = requireQuotation(quotationId);
         requireNotCancelled(quotation);
         Integer status = quotation.getApproveStatus();
@@ -77,10 +79,9 @@ public class ErpSalQuotationBizModel extends CrudBizModel<ErpSalQuotation> imple
         return quotation;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpSalQuotation withdrawSubmit(Long quotationId) {
+    @BizMutation
+    public ErpSalQuotation withdrawSubmit(@Name("quotationId") Long quotationId, IServiceContext context) {
         ErpSalQuotation quotation = requireQuotation(quotationId);
         requireNotCancelled(quotation);
         Integer status = quotation.getApproveStatus();
@@ -92,10 +93,9 @@ public class ErpSalQuotationBizModel extends CrudBizModel<ErpSalQuotation> imple
         return quotation;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpSalQuotation approve(Long quotationId) {
+    @BizMutation
+    public ErpSalQuotation approve(@Name("quotationId") Long quotationId, IServiceContext context) {
         ErpSalQuotation quotation = requireQuotation(quotationId);
         Integer status = quotation.getApproveStatus();
         // 幂等：已审核再次审核为空操作。
@@ -112,10 +112,9 @@ public class ErpSalQuotationBizModel extends CrudBizModel<ErpSalQuotation> imple
         return quotation;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpSalQuotation reject(Long quotationId) {
+    @BizMutation
+    public ErpSalQuotation reject(@Name("quotationId") Long quotationId, IServiceContext context) {
         ErpSalQuotation quotation = requireQuotation(quotationId);
         requireNotCancelled(quotation);
         Integer status = quotation.getApproveStatus();
@@ -127,10 +126,9 @@ public class ErpSalQuotationBizModel extends CrudBizModel<ErpSalQuotation> imple
         return quotation;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpSalQuotation reverseApprove(Long quotationId) {
+    @BizMutation
+    public ErpSalQuotation reverseApprove(@Name("quotationId") Long quotationId, IServiceContext context) {
         ErpSalQuotation quotation = requireQuotation(quotationId);
         Integer status = quotation.getApproveStatus();
         // 幂等：已 REJECTED 直接返回。
@@ -145,10 +143,9 @@ public class ErpSalQuotationBizModel extends CrudBizModel<ErpSalQuotation> imple
         return quotation;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpSalQuotation cancel(Long quotationId) {
+    @BizMutation
+    public ErpSalQuotation cancel(@Name("quotationId") Long quotationId, IServiceContext context) {
         ErpSalQuotation quotation = requireQuotation(quotationId);
         Integer docStatus = quotation.getDocStatus();
         if (docStatus != null && docStatus == ErpSalConstants.DOC_STATUS_CANCELLED) {
@@ -159,10 +156,9 @@ public class ErpSalQuotationBizModel extends CrudBizModel<ErpSalQuotation> imple
         return quotation;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpSalQuotation confirmCustomerAccepted(Long quotationId) {
+    @BizMutation
+    public ErpSalQuotation confirmCustomerAccepted(@Name("quotationId") Long quotationId, IServiceContext context) {
         ErpSalQuotation quotation = requireQuotation(quotationId);
         requireNotCancelled(quotation);
         Integer status = quotation.getApproveStatus();
@@ -175,10 +171,9 @@ public class ErpSalQuotationBizModel extends CrudBizModel<ErpSalQuotation> imple
         return quotation;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpSalOrder convertToOrder(Long quotationId) {
+    @BizMutation
+    public ErpSalOrder convertToOrder(@Name("quotationId") Long quotationId, IServiceContext context) {
         ErpSalQuotation quotation = requireQuotation(quotationId);
         requireNotCancelled(quotation);
         Integer status = quotation.getApproveStatus();

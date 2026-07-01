@@ -28,6 +28,8 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -54,6 +56,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
+    private static final IServiceContext CTX = new ServiceContextImpl();
+
 
     static final Long ORG_ID = 1201L;
     static final Long CUSTOMER_ID = 2201L;
@@ -90,7 +94,7 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
             return null;
         });
 
-        ErpSalDelivery approved = deliveryBiz.approve(deliveryId);
+        ErpSalDelivery approved = deliveryBiz.approve(deliveryId, CTX);
 
         assertEquals(ErpSalConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus(), "审核 → APPROVED");
         assertEquals(true, approved.getPosted(), "出库移动单 DONE + 过账成功 → posted=true");
@@ -103,7 +107,7 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
 
         ErpInvStockBalance balance = findBalance();
         assertNotNull(balance, "应存在库存余额");
-        assertEquals(0, new BigDecimal(balance.getTotalQuantity()).compareTo(new BigDecimal("10")),
+        assertEquals(0, balance.getTotalQuantity().compareTo(new BigDecimal("10")),
                 "余额 total = 20(预置) - 10(出库) = 10");
 
         ErpFinVoucherBillR link = findVoucherLink(move.getCode());
@@ -111,9 +115,9 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
         ErpFinVoucher voucher = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(link.getVoucherId());
         assertEquals(VOUCHER_STATUS_POSTED, voucher.getDocStatus(), "凭证 docStatus=已过账");
         // SALES_OUTPUT：借 6401 主营业务成本 / 贷 1401 库存商品，金额=10×avgCost5=50
-        assertTrue(new BigDecimal(voucher.getTotalDebit()).compareTo(new BigDecimal("50")) == 0,
+        assertTrue(voucher.getTotalDebit().compareTo(new BigDecimal("50")) == 0,
                 "借方合计=主营业务成本 10×5=50");
-        assertTrue(new BigDecimal(voucher.getTotalCredit()).compareTo(new BigDecimal("50")) == 0,
+        assertTrue(voucher.getTotalCredit().compareTo(new BigDecimal("50")) == 0,
                 "贷方合计=库存商品 50");
     }
 
@@ -135,7 +139,7 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
         });
 
         // 可用量不足 → 库存域 CONFIRM 抛 NopException → 整个审核事务回滚
-        assertThrows(NopException.class, () -> deliveryBiz.approve(deliveryId),
+        assertThrows(NopException.class, () -> deliveryBiz.approve(deliveryId, CTX),
                 "可用量不足应抛 NopException 致审核回滚");
 
         // 出库单保持 SUBMITTED
@@ -149,7 +153,7 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
         assertTrue(residual == null || residual.getDocStatus() != ErpInvConstants.DOC_STATUS_DONE,
                 "回滚 → 移动单未推进到 DONE（无库存记账/过账效果）");
         // 余额未变（仍为预置 5）
-        assertEquals(0, new BigDecimal(findBalance().getTotalQuantity()).compareTo(new BigDecimal("5")),
+        assertEquals(0, findBalance().getTotalQuantity().compareTo(new BigDecimal("5")),
                 "回滚 → 库存余额未扣减");
     }
 
@@ -169,8 +173,8 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
             return null;
         });
 
-        deliveryBiz.approve(deliveryId);
-        deliveryBiz.approve(deliveryId); // 二次审核幂等空操作
+        deliveryBiz.approve(deliveryId, CTX);
+        deliveryBiz.approve(deliveryId, CTX); // 二次审核幂等空操作
 
         assertEquals(1, countMoves("SD-IDEM-001"), "幂等：不应产生第二张出库移动单");
     }
@@ -194,7 +198,7 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
         setNegativeStock(true);
         try {
             // erp-inv.allow-negative-stock=true → 库存域跳过可用量校验，不足仍可审核
-            ErpSalDelivery approved = deliveryBiz.approve(deliveryId);
+            ErpSalDelivery approved = deliveryBiz.approve(deliveryId, CTX);
             assertEquals(ErpSalConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus(),
                     "负库存放行 → 审核 APPROVED");
 
@@ -204,7 +208,7 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
 
             ErpInvStockBalance balance = findBalance();
             assertNotNull(balance, "应建立库存余额");
-            assertEquals(0, new BigDecimal(balance.getTotalQuantity()).compareTo(new BigDecimal("-5")),
+            assertEquals(0, balance.getTotalQuantity().compareTo(new BigDecimal("-5")),
                     "totalQty 允许为负 -5");
         } finally {
             setNegativeStock(false);
@@ -229,7 +233,7 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
             return null;
         });
 
-        deliveryBiz.approve(delivery1);
+        deliveryBiz.approve(delivery1, CTX);
         ErpSalOrder order = findOrder("SO-ROLL-001");
         assertEquals(ErpSalConstants.DELIVERY_STATUS_PARTIAL, order.getDeliveryStatus(),
                 "订单仅 1/2 行发清 → PARTIAL");
@@ -242,7 +246,7 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
             newDeliveryLine(deliveryLine2, delivery2, orderLine2, new BigDecimal("10"));
             return null;
         });
-        deliveryBiz.approve(delivery2);
+        deliveryBiz.approve(delivery2, CTX);
 
         assertEquals(ErpSalConstants.DELIVERY_STATUS_DELIVERED, findOrder("SO-ROLL-001").getDeliveryStatus(),
                 "两行均发清 → 订单 DELIVERED");
@@ -264,12 +268,12 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
             return null;
         });
 
-        deliveryBiz.approve(deliveryId);
+        deliveryBiz.approve(deliveryId, CTX);
         ErpInvStockMove original = findMove("SD-REV-001");
         assertNotNull(original);
         assertEquals(0, countReversals(original.getCode()), "反审核前无冲销单");
 
-        ErpSalDelivery reversed = deliveryBiz.reverseApprove(deliveryId);
+        ErpSalDelivery reversed = deliveryBiz.reverseApprove(deliveryId, CTX);
         assertEquals(ErpSalConstants.APPROVE_STATUS_REJECTED, reversed.getApproveStatus(),
                 "反审核 → REJECTED（保留曾审核语义）");
         assertEquals(1, countReversals(original.getCode()), "应内部生成 1 张反向冲销移动单");
@@ -280,7 +284,7 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
 
         // 余额被冲销回原预置值（20 - 10 出库 + 10 入库冲销 = 20）
         ErpInvStockBalance balance = findBalance();
-        assertEquals(0, new BigDecimal(balance.getTotalQuantity()).compareTo(new BigDecimal("20")),
+        assertEquals(0, balance.getTotalQuantity().compareTo(new BigDecimal("20")),
                 "冲销后余额恢复为预置 20");
 
         // 冲销单 posted 与红字凭证回链一致（库存 reverse() 不传播 acctSchemaId，红字凭证是否生成由库存域决定）
@@ -289,7 +293,7 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
                 "冲销单 posted 与红字凭证回链一致");
 
         // 二次反审核幂等：不产生第二张冲销单
-        deliveryBiz.reverseApprove(deliveryId);
+        deliveryBiz.reverseApprove(deliveryId, CTX);
         assertEquals(1, countReversals(original.getCode()), "二次反审核幂等，不产生第二张冲销单");
     }
 
@@ -376,7 +380,7 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
         line.setUnitCost(unitCost);
         line.setCurrencyId(CURRENCY_ID);
         request.setLines(Collections.singletonList(line));
-        return stockMoveBiz.generateMove(request);
+        return stockMoveBiz.generateMove(request, CTX);
     }
 
     private Long newOrder(String code) {

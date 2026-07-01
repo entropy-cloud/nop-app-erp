@@ -26,6 +26,8 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -45,6 +47,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalOrderToDeliveryEnd extends JunitAutoTestCase {
+    private static final IServiceContext CTX = new ServiceContextImpl();
+
 
     static final Long ORG_ID = 1301L;
     static final Long CUSTOMER_ID = 2301L;
@@ -81,11 +85,11 @@ public class TestErpSalOrderToDeliveryEnd extends JunitAutoTestCase {
         });
 
         // 1. UNSUBMITTED → 提交
-        ErpSalDelivery submitted = deliveryBiz.submit(deliveryId);
+        ErpSalDelivery submitted = deliveryBiz.submit(deliveryId, CTX);
         assertEquals(ErpSalConstants.APPROVE_STATUS_SUBMITTED, submitted.getApproveStatus());
 
         // 2. 审核 → 出库移动单 DONE + 余额扣减 + 存货凭证 + posted + 发货状态回写
-        ErpSalDelivery approved = deliveryBiz.approve(deliveryId);
+        ErpSalDelivery approved = deliveryBiz.approve(deliveryId, CTX);
         assertEquals(ErpSalConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus());
         assertEquals(true, approved.getPosted(), "出库审核 posted=true");
 
@@ -93,16 +97,16 @@ public class TestErpSalOrderToDeliveryEnd extends JunitAutoTestCase {
         assertNotNull(move);
         assertEquals(ErpInvConstants.DOC_STATUS_DONE, move.getDocStatus());
         assertEquals(ErpInvConstants.MOVE_TYPE_OUTGOING, move.getMoveType(), "出库类型");
-        assertEquals(0, new BigDecimal(findBalance().getTotalQuantity()).compareTo(new BigDecimal("10")),
+        assertEquals(0, findBalance().getTotalQuantity().compareTo(new BigDecimal("10")),
                 "库存余额 20(预置) - 10(出库) = 10");
 
         ErpFinVoucherBillR link = findVoucherLink(move.getCode());
         assertNotNull(link, "存货估值凭证(SALES_OUTPUT)落地");
         ErpFinVoucher voucher = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(link.getVoucherId());
         // SALES_OUTPUT：借 6401 主营业务成本 10×5=50 / 贷 1401 库存商品 50
-        assertEquals(0, new BigDecimal(voucher.getTotalDebit()).compareTo(new BigDecimal("50")),
+        assertEquals(0, voucher.getTotalDebit().compareTo(new BigDecimal("50")),
                 "借主营业务成本 50");
-        assertEquals(0, new BigDecimal(voucher.getTotalCredit()).compareTo(new BigDecimal("50")),
+        assertEquals(0, voucher.getTotalCredit().compareTo(new BigDecimal("50")),
                 "贷库存商品 50");
 
         ErpSalOrder order = findOrder("SO-E2E-001");
@@ -110,9 +114,9 @@ public class TestErpSalOrderToDeliveryEnd extends JunitAutoTestCase {
                 "订单发货状态回写 DELIVERED（单行全发清）");
 
         // 3. 反审核 → 内部冲销，余额恢复为预置 20，APPROVED→REJECTED
-        ErpSalDelivery reversed = deliveryBiz.reverseApprove(deliveryId);
+        ErpSalDelivery reversed = deliveryBiz.reverseApprove(deliveryId, CTX);
         assertEquals(ErpSalConstants.APPROVE_STATUS_REJECTED, reversed.getApproveStatus());
-        assertEquals(0, new BigDecimal(findBalance().getTotalQuantity()).compareTo(new BigDecimal("20")),
+        assertEquals(0, findBalance().getTotalQuantity().compareTo(new BigDecimal("20")),
                 "冲销后库存余额恢复为预置 20");
         ErpInvStockMove reversal = findReversal(move.getCode());
         assertNotNull(reversal, "应生成反向冲销移动单");
@@ -198,7 +202,7 @@ public class TestErpSalOrderToDeliveryEnd extends JunitAutoTestCase {
         line.setUnitCost(unitCost);
         line.setCurrencyId(CURRENCY_ID);
         request.setLines(Collections.singletonList(line));
-        return stockMoveBiz.generateMove(request);
+        return stockMoveBiz.generateMove(request, CTX);
     }
 
     private Long newOrder(String code) {

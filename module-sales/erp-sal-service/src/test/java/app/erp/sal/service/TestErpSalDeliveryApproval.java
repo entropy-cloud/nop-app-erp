@@ -13,6 +13,8 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -29,6 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalDeliveryApproval extends JunitAutoTestCase {
+    private static final IServiceContext CTX = new ServiceContextImpl();
+
 
     static final Long ORG_ID = 1101L;
     static final Long CUSTOMER_ID = 2101L;
@@ -52,15 +56,15 @@ public class TestErpSalDeliveryApproval extends JunitAutoTestCase {
             saveDeliveryWithLine(delivery);
         });
 
-        ErpSalDelivery submitted = deliveryBiz.submit(delivery.getId());
+        ErpSalDelivery submitted = deliveryBiz.submit(delivery.getId(), CTX);
         assertEquals(ErpSalConstants.APPROVE_STATUS_SUBMITTED, submitted.getApproveStatus(),
                 "提交 → SUBMITTED");
 
-        ErpSalDelivery rejected = deliveryBiz.reject(delivery.getId());
+        ErpSalDelivery rejected = deliveryBiz.reject(delivery.getId(), CTX);
         assertEquals(ErpSalConstants.APPROVE_STATUS_REJECTED, rejected.getApproveStatus(),
                 "驳回 → REJECTED");
 
-        ErpSalDelivery resubmitted = deliveryBiz.submit(delivery.getId());
+        ErpSalDelivery resubmitted = deliveryBiz.submit(delivery.getId(), CTX);
         assertEquals(ErpSalConstants.APPROVE_STATUS_SUBMITTED, resubmitted.getApproveStatus(),
                 "REJECTED 重新提交 → SUBMITTED");
     }
@@ -73,14 +77,14 @@ public class TestErpSalDeliveryApproval extends JunitAutoTestCase {
             saveDeliveryWithLine(delivery);
         });
 
-        deliveryBiz.submit(delivery.getId());
+        deliveryBiz.submit(delivery.getId(), CTX);
         // UNSUBMITTED→approve 非法（仅 SUBMITTED 可审核）
-        assertThrows(NopException.class, () -> deliveryBiz.approve(delivery.getId()),
+        assertThrows(NopException.class, () -> deliveryBiz.approve(delivery.getId(), CTX),
                 "未提交不可直接审核，应抛 NopException");
 
         // 单独构造一个 SUBMITTED 单据验证 withdrawSubmit 后再 approve 非法
-        deliveryBiz.withdrawSubmit(delivery.getId());
-        assertThrows(NopException.class, () -> deliveryBiz.withdrawSubmit(delivery.getId()),
+        deliveryBiz.withdrawSubmit(delivery.getId(), CTX);
+        assertThrows(NopException.class, () -> deliveryBiz.withdrawSubmit(delivery.getId(), CTX),
                 "UNSUBMITTED 不可撤回提交，应抛 NopException");
     }
 
@@ -92,7 +96,7 @@ public class TestErpSalDeliveryApproval extends JunitAutoTestCase {
             saveDeliveryWithLine(delivery);
         });
 
-        assertThrows(NopException.class, () -> deliveryBiz.submit(delivery.getId()),
+        assertThrows(NopException.class, () -> deliveryBiz.submit(delivery.getId(), CTX),
                 "客户停用 → submit 应抛 ERR_PARTNER_INACTIVE");
     }
 
@@ -104,12 +108,12 @@ public class TestErpSalDeliveryApproval extends JunitAutoTestCase {
             saveDeliveryWithLine(delivery);
         });
 
-        ErpSalDelivery cancelled = deliveryBiz.cancel(delivery.getId());
+        ErpSalDelivery cancelled = deliveryBiz.cancel(delivery.getId(), CTX);
         assertEquals(ErpSalConstants.DOC_STATUS_CANCELLED, cancelled.getDocStatus(),
                 "草稿 → 作废 docStatus=CANCELLED");
 
         // 已作废不可再提交
-        assertThrows(NopException.class, () -> deliveryBiz.submit(delivery.getId()),
+        assertThrows(NopException.class, () -> deliveryBiz.submit(delivery.getId(), CTX),
                 "已作废单据不可提交，应抛 NopException");
     }
 

@@ -14,6 +14,8 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -31,6 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalOrderApproval extends JunitAutoTestCase {
+    private static final IServiceContext CTX = new ServiceContextImpl();
+
 
     static final Long ORG_ID = 1301L;
     static final Long CUSTOMER_ID = 2301L;
@@ -55,20 +59,20 @@ public class TestErpSalOrderApproval extends JunitAutoTestCase {
             saveOrderWithLine(order, "10");
         });
 
-        ErpSalOrder submitted = orderBiz.submit(order.getId());
+        ErpSalOrder submitted = orderBiz.submit(order.getId(), CTX);
         assertEquals(ErpSalConstants.APPROVE_STATUS_SUBMITTED, submitted.getApproveStatus(),
                 "提交 → SUBMITTED");
 
-        ErpSalOrder rejected = orderBiz.reject(order.getId());
+        ErpSalOrder rejected = orderBiz.reject(order.getId(), CTX);
         assertEquals(ErpSalConstants.APPROVE_STATUS_REJECTED, rejected.getApproveStatus(),
                 "驳回 → REJECTED");
 
-        ErpSalOrder resubmitted = orderBiz.submit(order.getId());
+        ErpSalOrder resubmitted = orderBiz.submit(order.getId(), CTX);
         assertEquals(ErpSalConstants.APPROVE_STATUS_SUBMITTED, resubmitted.getApproveStatus(),
                 "REJECTED 重新提交 → SUBMITTED");
 
         // approve 仅状态推进（无库存/凭证触发），信用额度不超限 → APPROVED
-        ErpSalOrder approved = orderBiz.approve(order.getId());
+        ErpSalOrder approved = orderBiz.approve(order.getId(), CTX);
         assertEquals(ErpSalConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus(),
                 "审核 → APPROVED");
     }
@@ -82,13 +86,13 @@ public class TestErpSalOrderApproval extends JunitAutoTestCase {
         });
 
         // UNSUBMITTED→approve 非法（仅 SUBMITTED 可审核）
-        assertThrows(NopException.class, () -> orderBiz.approve(order.getId()),
+        assertThrows(NopException.class, () -> orderBiz.approve(order.getId(), CTX),
                 "未提交不可直接审核，应抛 NopException");
 
-        orderBiz.submit(order.getId());
-        orderBiz.withdrawSubmit(order.getId());
+        orderBiz.submit(order.getId(), CTX);
+        orderBiz.withdrawSubmit(order.getId(), CTX);
         // UNSUBMITTED 不可撤回提交
-        assertThrows(NopException.class, () -> orderBiz.withdrawSubmit(order.getId()),
+        assertThrows(NopException.class, () -> orderBiz.withdrawSubmit(order.getId(), CTX),
                 "UNSUBMITTED 不可撤回提交，应抛 NopException");
     }
 
@@ -100,7 +104,7 @@ public class TestErpSalOrderApproval extends JunitAutoTestCase {
             saveOrderWithLine(order, "10");
         });
 
-        assertThrows(NopException.class, () -> orderBiz.submit(order.getId()),
+        assertThrows(NopException.class, () -> orderBiz.submit(order.getId(), CTX),
                 "客户停用 → submit 应抛 ERR_PARTNER_INACTIVE");
     }
 
@@ -114,8 +118,8 @@ public class TestErpSalOrderApproval extends JunitAutoTestCase {
             saveOrderWithLine(order, "10");
         });
 
-        orderBiz.submit(order.getId());
-        ErpSalOrder approved = orderBiz.approve(order.getId());
+        orderBiz.submit(order.getId(), CTX);
+        ErpSalOrder approved = orderBiz.approve(order.getId(), CTX);
         assertEquals(ErpSalConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus(),
                 "SOFT_WARNING 超额度应放行 → APPROVED");
     }
@@ -130,8 +134,8 @@ public class TestErpSalOrderApproval extends JunitAutoTestCase {
             saveOrderWithLine(order, "10");
         });
 
-        orderBiz.submit(order.getId());
-        assertThrows(NopException.class, () -> orderBiz.approve(order.getId()),
+        orderBiz.submit(order.getId(), CTX);
+        assertThrows(NopException.class, () -> orderBiz.approve(order.getId(), CTX),
                 "HARD_BLOCK 超额度应抛 ERR_CREDIT_LIMIT_EXCEEDED");
     }
 
@@ -145,8 +149,8 @@ public class TestErpSalOrderApproval extends JunitAutoTestCase {
             saveOrderWithLine(order, "10");
         });
 
-        orderBiz.submit(order.getId());
-        ErpSalOrder approved = orderBiz.approve(order.getId());
+        orderBiz.submit(order.getId(), CTX);
+        ErpSalOrder approved = orderBiz.approve(order.getId(), CTX);
         assertEquals(ErpSalConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus(),
                 "creditLimit=null 不控制 → APPROVED");
     }
@@ -164,14 +168,14 @@ public class TestErpSalOrderApproval extends JunitAutoTestCase {
         });
 
         // A 审核：outstanding 此时空（无已审核单），60 ≤ 100 → APPROVED
-        orderBiz.submit(orderA.getId());
-        ErpSalOrder approvedA = orderBiz.approve(orderA.getId());
+        orderBiz.submit(orderA.getId(), CTX);
+        ErpSalOrder approvedA = orderBiz.approve(orderA.getId(), CTX);
         assertEquals(ErpSalConstants.APPROVE_STATUS_APPROVED, approvedA.getApproveStatus(),
                 "A 首单审核不超额度 → APPROVED");
 
         // B 审核：outstanding 含 A(60, 未出库)，available=40 < 50 → 拒绝（证明 A 计入 outstanding）
-        orderBiz.submit(orderB.getId());
-        assertThrows(NopException.class, () -> orderBiz.approve(orderB.getId()),
+        orderBiz.submit(orderB.getId(), CTX);
+        assertThrows(NopException.class, () -> orderBiz.approve(orderB.getId(), CTX),
                 "outstanding 含已审核未出库 A → B 超额度拒绝");
 
         // 将 A 置为 DELIVERED（已发货）→ 不再计入 outstanding，B 应可审核通过
@@ -180,7 +184,7 @@ public class TestErpSalOrderApproval extends JunitAutoTestCase {
             a.setDeliveryStatus(ErpSalConstants.DELIVERY_STATUS_DELIVERED);
             daoProvider.daoFor(ErpSalOrder.class).updateEntity(a);
         });
-        ErpSalOrder approvedB = orderBiz.approve(orderB.getId());
+        ErpSalOrder approvedB = orderBiz.approve(orderB.getId(), CTX);
         assertEquals(ErpSalConstants.APPROVE_STATUS_APPROVED, approvedB.getApproveStatus(),
                 "A 已发货不计入 outstanding → B 通过");
     }
