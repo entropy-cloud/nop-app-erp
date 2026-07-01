@@ -110,10 +110,16 @@ public class _ErpCsEntitlement extends DynamicOrmEntity{
 
     
     /* relation:  */
+    public static final String PROP_NAME_partner = "partner";
+    
+    /* relation:  */
     public static final String PROP_NAME_contract = "contract";
     
     /* relation:  */
     public static final String PROP_NAME_slaPolicy = "slaPolicy";
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
     
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
@@ -1174,6 +1180,29 @@ public class _ErpCsEntitlement extends DynamicOrmEntity{
     /**
      * 
      */
+    public final app.erp.md.dao.entity.ErpMdPartner getPartner(){
+       return (app.erp.md.dao.entity.ErpMdPartner)internalGetRefEntity(PROP_NAME_partner);
+    }
+
+    public final void setPartner(app.erp.md.dao.entity.ErpMdPartner refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setPartnerId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_partner, refEntity,()->{
+           
+                           this.setPartnerId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
     public final app.erp.cs.dao.entity.ErpCsContract getContract(){
        return (app.erp.cs.dao.entity.ErpCsContract)internalGetRefEntity(PROP_NAME_contract);
     }
@@ -1211,6 +1240,29 @@ public class _ErpCsEntitlement extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_slaPolicy, refEntity,()->{
            
                            this.setSlaPolicyId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
                        
            });
            }

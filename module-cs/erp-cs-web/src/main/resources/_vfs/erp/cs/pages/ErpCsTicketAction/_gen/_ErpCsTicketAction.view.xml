@@ -34,7 +34,7 @@
                 <col id="toStatus" ui:number="true" sortable="true"/>
 
                 <!--操作人-->
-                <col id="operatorId" ui:number="true" sortable="true"/>
+                <col id="operatorId" sortable="true"/>
 
                 <!--操作内容-->
                 <col id="content" sortable="true"/>

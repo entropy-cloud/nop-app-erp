@@ -37,6 +37,7 @@ prop:
       updatedBy: 修改人
       version: 数据版本
     ErpCtApprovalRecord:
+      approvalMatrix: null
       approvalMatrixId: 审批矩阵
       approvalOrder: 顺序号
       approvalStatus: 审批状态
@@ -75,7 +76,8 @@ prop:
       updatedBy: 修改人
       version: 数据版本
     ErpCtContract:
-      attachmentId: 合同附件
+      attachmentFileId: 合同附件
+      attachmentFileIdComponentFileStatus: null
       code: 合同编号
       contractDirection: 合同方向
       contractDirection_label: 合同方向
@@ -84,6 +86,7 @@ prop:
       contractType_label: 合同类型
       createTime: 创建时间
       createdBy: 创建人
+      currency: null
       currencyId: 币种
       delVersion: 逻辑删除版本
       description: 描述
@@ -120,6 +123,7 @@ prop:
       id: ID
       invoicePlans: null
       lineNo: 行号
+      material: null
       materialId: 物料
       quantity: 数量
       remark: 备注
@@ -130,7 +134,8 @@ prop:
     ErpCtContractVersion:
       approvedAt: 批准时间
       approvedBy: 批准人
-      attachmentId: 版本附件
+      attachmentFileId: 版本附件
+      attachmentFileIdComponentFileStatus: null
       content: 版本内容
       contract: null
       contractId: 合同ID
@@ -149,7 +154,8 @@ prop:
       versionNo: 版本号
     ErpCtDocument:
       archiveDate: 归档日期
-      attachmentId: 附件
+      attachmentFileId: 附件
+      attachmentFileIdComponentFileStatus: null
       code: 文档编码
       contract: null
       contractId: 关联合同
@@ -229,6 +235,7 @@ prop:
       id: ID
       org: null
       orgId: 业务组织
+      partner: null
       partnerId: 对方伙伴
       rebateType: 返利类型
       rebateType_label: 返利类型
@@ -277,7 +284,8 @@ prop:
       updatedBy: 修改人
       version: 数据版本
     ErpCtSignatureRequest:
-      attachmentId: 已签署文件
+      attachmentFileId: 已签署文件
+      attachmentFileIdComponentFileStatus: null
       certificateUrl: 完成证书URL
       completedAt: 签署完成时间
       contractVersion: null
@@ -291,6 +299,7 @@ prop:
       org: null
       orgId: 业务组织
       provider: 签名提供商
+      providerRequest: null
       providerRequestId: 提供商请求ID
       remark: 备注
       signers: 签署人(JSON)

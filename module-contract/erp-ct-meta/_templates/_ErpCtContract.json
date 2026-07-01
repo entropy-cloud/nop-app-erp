@@ -18,7 +18,7 @@
   "templateId": 0,
   "parentContractId": 0,
   "description": "",
-  "attachmentId": 0,
+  "attachmentFileId": "",
   "remark": "",
   "delVersion": 0,
   "version": 0,
@@ -31,5 +31,7 @@
   "parentContract": null,
   "org": null,
   "lines": null,
-  "versions": null
+  "versions": null,
+  "currency": null,
+  "attachmentFileIdComponentFileStatus": null
 }

@@ -209,7 +209,7 @@
                 <column name="campaignId" displayName="营销活动" stdSqlType="BIGINT" code="CAMPAIGN_ID" propId="22" stdDataType="long" i18n-en:displayName='Campaign' />
                 <column name="utmMedium" displayName="UTM Medium" stdSqlType="VARCHAR" precision="100" code="UTM_MEDIUM" propId="23" stdDataType="string" i18n-en:displayName='UTM Medium' />
                 <column name="utmSource" displayName="UTM Source" stdSqlType="VARCHAR" precision="100" code="UTM_SOURCE" propId="24" stdDataType="string" i18n-en:displayName='UTM Source' />
-                <column name="ownerId" displayName="负责人" stdSqlType="BIGINT" code="OWNER_ID" propId="25" stdDataType="long" i18n-en:displayName='Owner' />
+                <column name="ownerId" stdDomain="userId" displayName="负责人" stdSqlType="VARCHAR" precision="36" code="OWNER_ID" propId="25" stdDataType="string" i18n-en:displayName='Owner' />
                 <column name="teamId" displayName="销售团队" stdSqlType="BIGINT" code="TEAM_ID" propId="26" stdDataType="long" i18n-en:displayName='Team' />
                 <column name="lostReasonId" displayName="丢单原因" stdSqlType="BIGINT" code="LOST_REASON_ID" propId="27" stdDataType="long" i18n-en:displayName='Lost Reason' />
                 <column name="lostReasonDesc" displayName="丢单描述" stdSqlType="VARCHAR" precision="500" code="LOST_REASON_DESC" propId="28" stdDataType="string" i18n-en:displayName='Lost Reason Description' />
@@ -227,17 +227,17 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="40" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Partner' ref-i18n-en:displayName='Lead'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
-                <to-one name="source" refEntityName="app.erp.crm.dao.entity.ErpCrmSource" tagSet="pub" i18n-en:displayName='Source' ref-i18n-en:displayName='Lead'><join><on leftProp="sourceId" rightProp="id"/></join></to-one>
-                <to-one name="leadStatus" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadStatus" tagSet="pub" i18n-en:displayName='Lead Status' ref-i18n-en:displayName='Lead'><join><on leftProp="leadStatusId" rightProp="id"/></join></to-one>
-                <to-one name="stage" refEntityName="app.erp.crm.dao.entity.ErpCrmStage" tagSet="pub" i18n-en:displayName='Stage' ref-i18n-en:displayName='Lead'><join><on leftProp="stageId" rightProp="id"/></join></to-one>
-                <to-one name="campaign" refEntityName="app.erp.crm.dao.entity.ErpCrmCampaign" tagSet="pub" i18n-en:displayName='Campaign' ref-i18n-en:displayName='Lead'><join><on leftProp="campaignId" rightProp="id"/></join></to-one>
-                <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub" i18n-en:displayName='Team' ref-i18n-en:displayName='Lead'><join><on leftProp="teamId" rightProp="id"/></join></to-one>
-                <to-one name="lostReason" refEntityName="app.erp.crm.dao.entity.ErpCrmLostReason" tagSet="pub" i18n-en:displayName='Lost Reason' ref-i18n-en:displayName='Lead'><join><on leftProp="lostReasonId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='Lead'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
-                <to-many name="events" refEntityName="app.erp.crm.dao.entity.ErpCrmEvent" tagSet="pub" i18n-en:displayName='Events' ref-i18n-en:displayName='Lead'><join><on leftProp="id" rightProp="relatedLeadId"/></join></to-many>
-                <to-many name="activities" refEntityName="app.erp.crm.dao.entity.ErpCrmActivity" tagSet="pub" i18n-en:displayName='Activities' ref-i18n-en:displayName='Lead'><join><on leftProp="id" rightProp="leadId"/></join></to-many>
-                <to-many name="convLogs" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadConvLog" tagSet="pub" i18n-en:displayName='Conv Logs' ref-i18n-en:displayName='Lead'><join><on leftProp="id" rightProp="leadId"/></join></to-many>
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Partner'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
+                <to-one name="source" refEntityName="app.erp.crm.dao.entity.ErpCrmSource" tagSet="pub" i18n-en:displayName='Source'><join><on leftProp="sourceId" rightProp="id"/></join></to-one>
+                <to-one name="leadStatus" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadStatus" tagSet="pub" i18n-en:displayName='Lead Status'><join><on leftProp="leadStatusId" rightProp="id"/></join></to-one>
+                <to-one name="stage" refEntityName="app.erp.crm.dao.entity.ErpCrmStage" tagSet="pub" i18n-en:displayName='Stage'><join><on leftProp="stageId" rightProp="id"/></join></to-one>
+                <to-one name="campaign" refEntityName="app.erp.crm.dao.entity.ErpCrmCampaign" tagSet="pub" i18n-en:displayName='Campaign'><join><on leftProp="campaignId" rightProp="id"/></join></to-one>
+                <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub" i18n-en:displayName='Team'><join><on leftProp="teamId" rightProp="id"/></join></to-one>
+                <to-one name="lostReason" refEntityName="app.erp.crm.dao.entity.ErpCrmLostReason" tagSet="pub" i18n-en:displayName='Lost Reason'><join><on leftProp="lostReasonId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-many name="events" refEntityName="app.erp.crm.dao.entity.ErpCrmEvent" tagSet="pub" i18n-en:displayName='Events' ext:estRows="20"><join><on leftProp="id" rightProp="relatedLeadId"/></join></to-many>
+                <to-many name="activities" refEntityName="app.erp.crm.dao.entity.ErpCrmActivity" tagSet="pub" i18n-en:displayName='Activities' ext:estRows="20"><join><on leftProp="id" rightProp="leadId"/></join></to-many>
+                <to-many name="convLogs" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadConvLog" tagSet="pub" i18n-en:displayName='Conv Logs' ext:estRows="50"><join><on leftProp="id" rightProp="leadId"/></join></to-many>
             </relations>
         </entity>
 
@@ -283,8 +283,8 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="15" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub" i18n-en:displayName='Team' ref-i18n-en:displayName='Stage'><join><on leftProp="teamId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='Stage'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub" i18n-en:displayName='Team'><join><on leftProp="teamId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -335,7 +335,7 @@
                 <column name="code" displayName="编码" domain="code" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
                 <column name="name" displayName="名称" domain="name" mandatory="true" code="NAME" propId="3" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Name' />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="4" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="teamLeaderId" displayName="团队负责人" stdSqlType="BIGINT" code="TEAM_LEADER_ID" propId="5" stdDataType="long" i18n-en:displayName='Team Leader' />
+                <column name="teamLeaderId" stdDomain="userId" displayName="团队负责人" stdSqlType="VARCHAR" precision="36" code="TEAM_LEADER_ID" propId="5" stdDataType="string" i18n-en:displayName='Team Leader' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="6" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="7" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="8" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -345,7 +345,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="12" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='Team'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -374,7 +374,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='Campaign'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -398,7 +398,7 @@
                 <column name="relatedBillCode" displayName="关联单据号" stdSqlType="VARCHAR" precision="50" code="RELATED_BILL_CODE" propId="13" stdDataType="string" i18n-en:displayName='Related Bill Code' />
                 <column name="partnerId" displayName="关联客户" stdSqlType="BIGINT" code="PARTNER_ID" propId="14" stdDataType="long" i18n-en:displayName='Partner' />
                 <column name="contactId" displayName="联系人" stdSqlType="BIGINT" code="CONTACT_ID" propId="15" stdDataType="long" i18n-en:displayName='Contact' />
-                <column name="ownerId" displayName="负责人" stdSqlType="BIGINT" code="OWNER_ID" propId="16" stdDataType="long" i18n-en:displayName='Owner' />
+                <column name="ownerId" stdDomain="userId" displayName="负责人" stdSqlType="VARCHAR" precision="36" code="OWNER_ID" propId="16" stdDataType="string" i18n-en:displayName='Owner' />
                 <column name="status" displayName="活动状态" ext:dict="erp-crm/event-status" mandatory="true" code="STATUS" propId="17" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
                 <column name="priority" displayName="优先级" ext:dict="erp-crm/event-priority" mandatory="true" code="PRIORITY" propId="18" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Priority' />
                 <column name="isRecurrent" displayName="是否重复事件" stdSqlType="BOOLEAN" defaultValue="false" code="IS_RECURRENT" propId="19" stdDataType="boolean" i18n-en:displayName='Is Recurrent' />
@@ -413,11 +413,12 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="28" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="relatedLead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub" i18n-en:displayName='Related Lead' ref-i18n-en:displayName='Event'><join><on leftProp="relatedLeadId" rightProp="id"/></join></to-one>
-                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Partner' ref-i18n-en:displayName='Event'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
-                <to-one name="parentEvent" refEntityName="app.erp.crm.dao.entity.ErpCrmEvent" tagSet="pub" i18n-en:displayName='Parent Event' ref-i18n-en:displayName='Event'><join><on leftProp="parentEventId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='Event'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
-                <to-one name="eventCategory" refEntityName="app.erp.crm.dao.entity.ErpCrmEventCategory" tagSet="pub" i18n-en:displayName='Event Category' ref-i18n-en:displayName='Event'><join><on leftProp="eventCategoryId" rightProp="id"/></join></to-one>
+                <to-one name="relatedLead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub" i18n-en:displayName='Related Lead'><join><on leftProp="relatedLeadId" rightProp="id"/></join></to-one>
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Partner'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
+                <to-one name="parentEvent" refEntityName="app.erp.crm.dao.entity.ErpCrmEvent" tagSet="pub" i18n-en:displayName='Parent Event'><join><on leftProp="parentEventId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="eventCategory" refEntityName="app.erp.crm.dao.entity.ErpCrmEventCategory" tagSet="pub" i18n-en:displayName='Event Category'><join><on leftProp="eventCategoryId" rightProp="id"/></join></to-one>
+                <to-one name="contact" refEntityName="app.erp.md.dao.entity.ErpMdPartnerContact" i18n-en:displayName='Contact'><join><on leftProp="contactId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -451,7 +452,7 @@
                 <column name="activityType" displayName="活动类型" ext:dict="erp-crm/activity-type" mandatory="true" code="ACTIVITY_TYPE" propId="4" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Activity Type' />
                 <column name="activityDate" displayName="活动日期" stdSqlType="DATETIME" mandatory="true" code="ACTIVITY_DATE" propId="5" stdDataType="datetime" i18n-en:displayName='Activity Date' />
                 <column name="summary" displayName="内容摘要" stdSqlType="VARCHAR" precision="500" code="SUMMARY" propId="6" stdDataType="string" i18n-en:displayName='Summary' />
-                <column name="ownerId" displayName="负责人" stdSqlType="BIGINT" code="OWNER_ID" propId="7" stdDataType="long" i18n-en:displayName='Owner' />
+                <column name="ownerId" stdDomain="userId" displayName="负责人" stdSqlType="VARCHAR" precision="36" code="OWNER_ID" propId="7" stdDataType="string" i18n-en:displayName='Owner' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="9" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="10" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -461,8 +462,8 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="14" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="lead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub" i18n-en:displayName='Lead' ref-i18n-en:displayName='Activity'><join><on leftProp="leadId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='Activity'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="lead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub" i18n-en:displayName='Lead'><join><on leftProp="leadId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -477,7 +478,7 @@
                 <column name="fromStageId" displayName="前阶段" stdSqlType="BIGINT" code="FROM_STAGE_ID" propId="4" stdDataType="long" i18n-en:displayName='From Stage' />
                 <column name="toStageId" displayName="后阶段" stdSqlType="BIGINT" code="TO_STAGE_ID" propId="5" stdDataType="long" i18n-en:displayName='To Stage' />
                 <column name="changedAt" displayName="变更时间" stdSqlType="DATETIME" mandatory="true" code="CHANGED_AT" propId="6" stdDataType="datetime" i18n-en:displayName='Changed At' />
-                <column name="changedBy" displayName="变更人" stdSqlType="BIGINT" code="CHANGED_BY" propId="7" stdDataType="long" i18n-en:displayName='Changed By' />
+                <column name="changedBy" displayName="变更人" stdSqlType="VARCHAR" precision="36" code="CHANGED_BY" propId="7" stdDataType="string" i18n-en:displayName='Changed By' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="9" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="10" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -487,10 +488,10 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="14" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="lead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub" i18n-en:displayName='Lead' ref-i18n-en:displayName='Conv Log'><join><on leftProp="leadId" rightProp="id"/></join></to-one>
-                <to-one name="fromStage" refEntityName="app.erp.crm.dao.entity.ErpCrmStage" tagSet="pub" i18n-en:displayName='From Stage' ref-i18n-en:displayName='Conv Log'><join><on leftProp="fromStageId" rightProp="id"/></join></to-one>
-                <to-one name="toStage" refEntityName="app.erp.crm.dao.entity.ErpCrmStage" tagSet="pub" i18n-en:displayName='To Stage' ref-i18n-en:displayName='Conv Log'><join><on leftProp="toStageId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='Conv Log'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="lead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub" i18n-en:displayName='Lead'><join><on leftProp="leadId" rightProp="id"/></join></to-one>
+                <to-one name="fromStage" refEntityName="app.erp.crm.dao.entity.ErpCrmStage" tagSet="pub" i18n-en:displayName='From Stage'><join><on leftProp="fromStageId" rightProp="id"/></join></to-one>
+                <to-one name="toStage" refEntityName="app.erp.crm.dao.entity.ErpCrmStage" tagSet="pub" i18n-en:displayName='To Stage'><join><on leftProp="toStageId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -537,7 +538,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='LeadScoreConfig'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -566,8 +567,8 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="config" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadScoreConfig" tagSet="pub" i18n-en:displayName='Config' ref-i18n-en:displayName='LeadScoreConfigLine'><join><on leftProp="configId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='LeadScoreConfigLine'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="config" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadScoreConfig" tagSet="pub" i18n-en:displayName='Config'><join><on leftProp="configId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -595,9 +596,9 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="lead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub" i18n-en:displayName='Lead' ref-i18n-en:displayName='LeadScore'><join><on leftProp="leadId" rightProp="id"/></join></to-one>
-                <to-one name="config" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadScoreConfig" tagSet="pub" i18n-en:displayName='Config' ref-i18n-en:displayName='LeadScore'><join><on leftProp="configId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='LeadScore'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="lead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub" i18n-en:displayName='Lead'><join><on leftProp="leadId" rightProp="id"/></join></to-one>
+                <to-one name="config" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadScoreConfig" tagSet="pub" i18n-en:displayName='Config'><join><on leftProp="configId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -625,9 +626,9 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="score" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadScore" tagSet="pub" i18n-en:displayName='Score' ref-i18n-en:displayName='LeadScoreLine'><join><on leftProp="scoreId" rightProp="id"/></join></to-one>
-                <to-one name="configLine" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadScoreConfigLine" tagSet="pub" i18n-en:displayName='Config Line' ref-i18n-en:displayName='LeadScoreLine'><join><on leftProp="configLineId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='LeadScoreLine'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="score" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadScore" tagSet="pub" i18n-en:displayName='Score'><join><on leftProp="scoreId" rightProp="id"/></join></to-one>
+                <to-one name="configLine" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadScoreConfigLine" tagSet="pub" i18n-en:displayName='Config Line'><join><on leftProp="configLineId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -654,7 +655,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='ForecastPeriod'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -668,7 +669,7 @@
                 <column name="periodId" displayName="预测期间" stdSqlType="BIGINT" mandatory="true" code="PERIOD_ID" propId="3" stdDataType="long" i18n-en:displayName='Period' />
                 <column name="territoryId" displayName="销售区域" stdSqlType="BIGINT" code="TERRITORY_ID" propId="4" stdDataType="long" i18n-en:displayName='Territory' />
                 <column name="teamId" displayName="销售团队" stdSqlType="BIGINT" code="TEAM_ID" propId="5" stdDataType="long" i18n-en:displayName='Team' />
-                <column name="ownerId" displayName="销售员" stdSqlType="BIGINT" code="OWNER_ID" propId="6" stdDataType="long" i18n-en:displayName='Owner' />
+                <column name="ownerId" stdDomain="userId" displayName="销售员" stdSqlType="VARCHAR" precision="36" code="OWNER_ID" propId="6" stdDataType="string" i18n-en:displayName='Owner' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="7" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="commitAmount" displayName="承诺金额" domain="amount" code="COMMIT_AMOUNT" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Commit Amount' />
                 <column name="upsideAmount" displayName="乐观金额" domain="amount" code="UPSIDE_AMOUNT" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Upside Amount' />
@@ -687,11 +688,13 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="22" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="period" refEntityName="app.erp.crm.dao.entity.ErpCrmForecastPeriod" tagSet="pub" i18n-en:displayName='Period' ref-i18n-en:displayName='Forecast'><join><on leftProp="periodId" rightProp="id"/></join></to-one>
-                <to-one name="territory" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub" i18n-en:displayName='Territory' ref-i18n-en:displayName='Forecast'><join><on leftProp="territoryId" rightProp="id"/></join></to-one>
-                <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub" i18n-en:displayName='Team' ref-i18n-en:displayName='Forecast'><join><on leftProp="teamId" rightProp="id"/></join></to-one>
-                <to-one name="owner" refEntityName="io.nop.auth.dao.entity.NopAuthUser" tagSet="pub" notGenCode="true" biz:moduleId="nop/auth" i18n-en:displayName='Owner' ref-i18n-en:displayName='Forecast'><join><on leftProp="ownerId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='Forecast'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="period" refEntityName="app.erp.crm.dao.entity.ErpCrmForecastPeriod" tagSet="pub" i18n-en:displayName='Period'><join><on leftProp="periodId" rightProp="id"/></join></to-one>
+                <to-one name="territory" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub" i18n-en:displayName='Territory'><join><on leftProp="territoryId" rightProp="id"/></join></to-one>
+                <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub" i18n-en:displayName='Team'><join><on leftProp="teamId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
+                    <join><on leftProp="currencyId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -718,9 +721,9 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="forecast" refEntityName="app.erp.crm.dao.entity.ErpCrmForecast" tagSet="pub" i18n-en:displayName='Forecast' ref-i18n-en:displayName='ForecastLine'><join><on leftProp="forecastId" rightProp="id"/></join></to-one>
-                <to-one name="lead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub" i18n-en:displayName='Lead' ref-i18n-en:displayName='ForecastLine'><join><on leftProp="leadId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='ForecastLine'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="forecast" refEntityName="app.erp.crm.dao.entity.ErpCrmForecast" tagSet="pub" i18n-en:displayName='Forecast'><join><on leftProp="forecastId" rightProp="id"/></join></to-one>
+                <to-one name="lead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub" i18n-en:displayName='Lead'><join><on leftProp="leadId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -733,7 +736,7 @@
                 <column name="forecastId" displayName="预测数据" stdSqlType="BIGINT" code="FORECAST_ID" propId="2" stdDataType="long" i18n-en:displayName='Forecast' />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="periodId" displayName="预测期间" stdSqlType="BIGINT" mandatory="true" code="PERIOD_ID" propId="4" stdDataType="long" i18n-en:displayName='Period' />
-                <column name="ownerId" displayName="销售员" stdSqlType="BIGINT" code="OWNER_ID" propId="5" stdDataType="long" i18n-en:displayName='Owner' />
+                <column name="ownerId" stdDomain="userId" displayName="销售员" stdSqlType="VARCHAR" precision="36" code="OWNER_ID" propId="5" stdDataType="string" i18n-en:displayName='Owner' />
                 <column name="teamId" displayName="销售团队" stdSqlType="BIGINT" code="TEAM_ID" propId="6" stdDataType="long" i18n-en:displayName='Team' />
                 <column name="territoryId" displayName="销售区域" stdSqlType="BIGINT" code="TERRITORY_ID" propId="7" stdDataType="long" i18n-en:displayName='Territory' />
                 <column name="commitAmount" displayName="承诺金额" domain="amount" code="COMMIT_AMOUNT" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Commit Amount' />
@@ -752,9 +755,15 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="21" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="forecast" refEntityName="app.erp.crm.dao.entity.ErpCrmForecast" tagSet="pub" i18n-en:displayName='Forecast' ref-i18n-en:displayName='ForecastAccuracy'><join><on leftProp="forecastId" rightProp="id"/></join></to-one>
-                <to-one name="period" refEntityName="app.erp.crm.dao.entity.ErpCrmForecastPeriod" tagSet="pub" i18n-en:displayName='Period' ref-i18n-en:displayName='ForecastAccuracy'><join><on leftProp="periodId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='ForecastAccuracy'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="forecast" refEntityName="app.erp.crm.dao.entity.ErpCrmForecast" tagSet="pub" i18n-en:displayName='Forecast'><join><on leftProp="forecastId" rightProp="id"/></join></to-one>
+                <to-one name="period" refEntityName="app.erp.crm.dao.entity.ErpCrmForecastPeriod" tagSet="pub" i18n-en:displayName='Period'><join><on leftProp="periodId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub">
+                    <join><on leftProp="teamId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="territory" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub">
+                    <join><on leftProp="territoryId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -785,9 +794,8 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="20" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="parent" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub" i18n-en:displayName='Parent' ref-i18n-en:displayName='Territory'><join><on leftProp="parentId" rightProp="id"/></join></to-one>
-                <to-one name="manager" refEntityName="io.nop.auth.dao.entity.NopAuthUser" tagSet="pub" notGenCode="true" biz:moduleId="nop/auth" i18n-en:displayName='Manager' ref-i18n-en:displayName='Territory'><join><on leftProp="managerId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='Territory'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="parent" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub" i18n-en:displayName='Parent'><join><on leftProp="parentId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -816,9 +824,9 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="territory" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub" i18n-en:displayName='Territory' ref-i18n-en:displayName='TerritoryAssignmentRule'><join><on leftProp="territoryId" rightProp="id"/></join></to-one>
-                <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub" i18n-en:displayName='Team' ref-i18n-en:displayName='TerritoryAssignmentRule'><join><on leftProp="groupId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='TerritoryAssignmentRule'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="territory" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub" i18n-en:displayName='Territory'><join><on leftProp="territoryId" rightProp="id"/></join></to-one>
+                <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub" i18n-en:displayName='Team'><join><on leftProp="groupId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -831,7 +839,7 @@
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="territoryId" displayName="区域" stdSqlType="BIGINT" code="TERRITORY_ID" propId="3" stdDataType="long" i18n-en:displayName='Territory' />
                 <column name="teamId" displayName="团队" stdSqlType="BIGINT" code="TEAM_ID" propId="4" stdDataType="long" i18n-en:displayName='Team' />
-                <column name="ownerId" displayName="销售员" stdSqlType="BIGINT" code="OWNER_ID" propId="5" stdDataType="long" i18n-en:displayName='Owner' />
+                <column name="ownerId" stdDomain="userId" displayName="销售员" stdSqlType="VARCHAR" precision="36" code="OWNER_ID" propId="5" stdDataType="string" i18n-en:displayName='Owner' />
                 <column name="periodType" displayName="配额期间类型" ext:dict="erp-crm/quota-period-type" mandatory="true" code="PERIOD_TYPE" propId="6" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Period Type' />
                 <column name="fiscalYear" displayName="财年" stdSqlType="INTEGER" code="FISCAL_YEAR" propId="7" stdDataType="int" i18n-en:displayName='Fiscal Year' />
                 <column name="periodLabel" displayName="期间标签" stdSqlType="VARCHAR" precision="100" code="PERIOD_LABEL" propId="8" stdDataType="string" i18n-en:displayName='Period Label' />
@@ -847,10 +855,12 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="territory" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub" i18n-en:displayName='Territory' ref-i18n-en:displayName='Quota'><join><on leftProp="territoryId" rightProp="id"/></join></to-one>
-                <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub" i18n-en:displayName='Team' ref-i18n-en:displayName='Quota'><join><on leftProp="teamId" rightProp="id"/></join></to-one>
-                <to-one name="owner" refEntityName="io.nop.auth.dao.entity.NopAuthUser" tagSet="pub" notGenCode="true" biz:moduleId="nop/auth" i18n-en:displayName='Owner' ref-i18n-en:displayName='Quota'><join><on leftProp="ownerId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='Quota'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="territory" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub" i18n-en:displayName='Territory'><join><on leftProp="territoryId" rightProp="id"/></join></to-one>
+                <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub" i18n-en:displayName='Team'><join><on leftProp="teamId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
+                    <join><on leftProp="currencyId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -880,7 +890,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='ProductConfigurator'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -908,8 +918,8 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="configurator" refEntityName="app.erp.crm.dao.entity.ErpCrmProductConfigurator" tagSet="pub" i18n-en:displayName='Configurator' ref-i18n-en:displayName='ConfigRule'><join><on leftProp="configuratorId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='ConfigRule'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="configurator" refEntityName="app.erp.crm.dao.entity.ErpCrmProductConfigurator" tagSet="pub" i18n-en:displayName='Configurator'><join><on leftProp="configuratorId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -939,7 +949,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="19" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='BundlePricing'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -964,8 +974,11 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="14" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="bundle" refEntityName="app.erp.crm.dao.entity.ErpCrmBundlePricing" tagSet="pub" i18n-en:displayName='Bundle' ref-i18n-en:displayName='BundlePricingLine'><join><on leftProp="bundleId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='BundlePricingLine'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="bundle" refEntityName="app.erp.crm.dao.entity.ErpCrmBundlePricing" tagSet="pub" i18n-en:displayName='Bundle'><join><on leftProp="bundleId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="product" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
+                    <join><on leftProp="productId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -1002,7 +1015,16 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="26" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='PriceRule'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="product" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
+                    <join><on leftProp="productId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub">
+                    <join><on leftProp="customerId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
+                    <join><on leftProp="currencyId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -1031,7 +1053,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='Sequence'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -1060,8 +1082,8 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="sequence" refEntityName="app.erp.crm.dao.entity.ErpCrmSequence" tagSet="pub" i18n-en:displayName='Sequence' ref-i18n-en:displayName='SequenceStep'><join><on leftProp="sequenceId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='SequenceStep'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="sequence" refEntityName="app.erp.crm.dao.entity.ErpCrmSequence" tagSet="pub" i18n-en:displayName='Sequence'><join><on leftProp="sequenceId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -1087,8 +1109,8 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="15" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="sequence" refEntityName="app.erp.crm.dao.entity.ErpCrmSequence" tagSet="pub" i18n-en:displayName='Sequence' ref-i18n-en:displayName='SequenceAssignment'><join><on leftProp="sequenceId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='SequenceAssignment'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="sequence" refEntityName="app.erp.crm.dao.entity.ErpCrmSequence" tagSet="pub" i18n-en:displayName='Sequence'><join><on leftProp="sequenceId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -1114,9 +1136,9 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="15" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="lead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub" i18n-en:displayName='Lead' ref-i18n-en:displayName='LeadSequenceProgress'><join><on leftProp="leadId" rightProp="id"/></join></to-one>
-                <to-one name="sequence" refEntityName="app.erp.crm.dao.entity.ErpCrmSequence" tagSet="pub" i18n-en:displayName='Sequence' ref-i18n-en:displayName='LeadSequenceProgress'><join><on leftProp="sequenceId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='LeadSequenceProgress'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="lead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub" i18n-en:displayName='Lead'><join><on leftProp="leadId" rightProp="id"/></join></to-one>
+                <to-one name="sequence" refEntityName="app.erp.crm.dao.entity.ErpCrmSequence" tagSet="pub" i18n-en:displayName='Sequence'><join><on leftProp="sequenceId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -1155,10 +1177,10 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="26" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='LeadFunnel'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
-                <to-one name="territory" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub" i18n-en:displayName='Territory' ref-i18n-en:displayName='LeadFunnel'><join><on leftProp="territoryId" rightProp="id"/></join></to-one>
-                <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub" i18n-en:displayName='Team' ref-i18n-en:displayName='LeadFunnel'><join><on leftProp="teamId" rightProp="id"/></join></to-one>
-                <to-one name="source" refEntityName="app.erp.crm.dao.entity.ErpCrmSource" tagSet="pub" i18n-en:displayName='Source' ref-i18n-en:displayName='LeadFunnel'><join><on leftProp="sourceId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="territory" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub" i18n-en:displayName='Territory'><join><on leftProp="territoryId" rightProp="id"/></join></to-one>
+                <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub" i18n-en:displayName='Team'><join><on leftProp="teamId" rightProp="id"/></join></to-one>
+                <to-one name="source" refEntityName="app.erp.crm.dao.entity.ErpCrmSource" tagSet="pub" i18n-en:displayName='Source'><join><on leftProp="sourceId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -1191,9 +1213,9 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="22" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="funnel" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadFunnel" tagSet="pub" i18n-en:displayName='Funnel' ref-i18n-en:displayName='FunnelStageMetrics'><join><on leftProp="funnelId" rightProp="id"/></join></to-one>
-                <to-one name="stage" refEntityName="app.erp.crm.dao.entity.ErpCrmStage" tagSet="pub" i18n-en:displayName='Stage' ref-i18n-en:displayName='FunnelStageMetrics'><join><on leftProp="stageId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org' ref-i18n-en:displayName='FunnelStageMetrics'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="funnel" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadFunnel" tagSet="pub" i18n-en:displayName='Funnel'><join><on leftProp="funnelId" rightProp="id"/></join></to-one>
+                <to-one name="stage" refEntityName="app.erp.crm.dao.entity.ErpCrmStage" tagSet="pub" i18n-en:displayName='Stage'><join><on leftProp="stageId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -1222,13 +1244,30 @@
             </columns>
         </entity>
 
-        <entity displayName="用户" name="io.nop.auth.dao.entity.NopAuthUser"
-                notGenCode="true" biz:moduleId="nop/auth" tableName="nop_auth_user">
+        <entity displayName="往来单位联系人" name="app.erp.md.dao.entity.ErpMdPartnerContact"
+                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_partner_contact">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="userName" code="USER_NAME" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='User Name' />
-                <column name="displayName" code="DISPLAY_NAME" stdSqlType="VARCHAR" precision="100" stdDataType="string" i18n-en:displayName='Display Name' />
-                <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
+                <column name="contactName" code="CONTACT_NAME" stdSqlType="VARCHAR" precision="100" stdDataType="string" i18n-en:displayName='Contact Name' />
+                <column name="phone" code="PHONE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Phone' />
+                <column name="email" code="EMAIL" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Email' />
+            </columns>
+        </entity>
+        <entity displayName="币种" name="app.erp.md.dao.entity.ErpMdCurrency"
+                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_currency">
+            <columns>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name' />
+            </columns>
+        </entity>
+
+        <entity displayName="物料" name="app.erp.md.dao.entity.ErpMdMaterial"
+                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_material">
+            <columns>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name' />
             </columns>
         </entity>
     </entities>

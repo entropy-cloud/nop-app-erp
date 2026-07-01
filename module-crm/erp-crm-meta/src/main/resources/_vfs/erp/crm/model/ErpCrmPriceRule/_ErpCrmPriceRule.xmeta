@@ -44,7 +44,7 @@
             <schema type="java.lang.Integer"/>
         </prop>
         <prop name="productId" displayName="适用产品" propId="7" i18n-en:displayName="Product" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="product">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="productCategory" displayName="适用产品品类" propId="8" i18n-en:displayName="Product Category"
@@ -52,7 +52,7 @@
             <schema type="java.lang.String" precision="100"/>
         </prop>
         <prop name="customerId" displayName="适用客户" propId="9" i18n-en:displayName="Customer" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="customer">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="customerCategory" displayName="适用客户类别" propId="10" i18n-en:displayName="Customer Category"
@@ -80,7 +80,7 @@
             <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
         </prop>
         <prop name="currencyId" displayName="币种" propId="16" i18n-en:displayName="Currency" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="currency">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="effectiveFrom" displayName="生效开始日期" propId="17" i18n-en:displayName="Effective From"
@@ -127,6 +127,21 @@
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
               lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="product" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="productId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpMdMaterial"/>
+        </prop>
+        <prop name="customer" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="customerId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpMdPartner"/>
+        </prop>
+        <prop name="currency" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="currencyId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpMdCurrency"/>
         </prop>
     </props>
 </meta>

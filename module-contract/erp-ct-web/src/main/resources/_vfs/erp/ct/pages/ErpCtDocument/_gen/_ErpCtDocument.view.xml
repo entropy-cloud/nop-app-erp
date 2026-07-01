@@ -37,7 +37,7 @@
                 <col id="docType" mandatory="true" sortable="true"/>
 
                 <!--附件-->
-                <col id="attachmentId" ui:number="true" sortable="true"/>
+                <col id="attachmentFileId" sortable="true"/>
 
                 <!--文件大小(字节)-->
                 <col id="fileSize" ui:number="true" sortable="true"/>
@@ -103,7 +103,7 @@
  id[ID] orgId[业务组织]
  contractId[关联合同] code[文档编码]
  docName[文档名称] docType[文档类型]
- attachmentId[附件] fileSize[文件大小(字节)]
+ attachmentFileId[附件] fileSize[文件大小(字节)]
  fileHash[文件哈希] mimeType[MIME类型]
  ocrText[OCR文本] ocrStatus[OCR状态]
  fullTextSearch[全文检索] metadataTags[元数据标签(JSON)]
@@ -120,7 +120,7 @@
  id[ID] orgId[业务组织]
  contractId[关联合同] code[文档编码]
  docName[文档名称] docType[文档类型]
- attachmentId[附件] fileSize[文件大小(字节)]
+ attachmentFileId[附件] fileSize[文件大小(字节)]
  fileHash[文件哈希] mimeType[MIME类型]
  ocrText[OCR文本] ocrStatus[OCR状态]
  fullTextSearch[全文检索] metadataTags[元数据标签(JSON)]
@@ -134,7 +134,7 @@
  id[ID] orgId[业务组织]
  contractId[关联合同] code[文档编码]
  docName[文档名称] docType[文档类型]
- attachmentId[附件] fileSize[文件大小(字节)]
+ attachmentFileId[附件] fileSize[文件大小(字节)]
  fileHash[文件哈希] mimeType[MIME类型]
  ocrText[OCR文本] ocrStatus[OCR状态]
  fullTextSearch[全文检索] metadataTags[元数据标签(JSON)]

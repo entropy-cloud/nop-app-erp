@@ -132,6 +132,15 @@ public class _ErpCrmPriceRule extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_org = "org";
     
+    /* relation:  */
+    public static final String PROP_NAME_product = "product";
+    
+    /* relation:  */
+    public static final String PROP_NAME_customer = "customer";
+    
+    /* relation:  */
+    public static final String PROP_NAME_currency = "currency";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1430,6 +1439,75 @@ public class _ErpCrmPriceRule extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_org, refEntity,()->{
            
                            this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdMaterial getProduct(){
+       return (app.erp.md.dao.entity.ErpMdMaterial)internalGetRefEntity(PROP_NAME_product);
+    }
+
+    public final void setProduct(app.erp.md.dao.entity.ErpMdMaterial refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setProductId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_product, refEntity,()->{
+           
+                           this.setProductId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdPartner getCustomer(){
+       return (app.erp.md.dao.entity.ErpMdPartner)internalGetRefEntity(PROP_NAME_customer);
+    }
+
+    public final void setCustomer(app.erp.md.dao.entity.ErpMdPartner refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCustomerId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_customer, refEntity,()->{
+           
+                           this.setCustomerId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdCurrency getCurrency(){
+       return (app.erp.md.dao.entity.ErpMdCurrency)internalGetRefEntity(PROP_NAME_currency);
+    }
+
+    public final void setCurrency(app.erp.md.dao.entity.ErpMdCurrency refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCurrencyId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_currency, refEntity,()->{
+           
+                           this.setCurrencyId(refEntity.getId());
                        
            });
            }

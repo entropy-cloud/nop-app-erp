@@ -48,7 +48,7 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="currencyId" displayName="币种" propId="8" i18n-en:displayName="Currency" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="currency">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="totalAmount" displayName="合同总额" propId="9" i18n-en:displayName="Total Amount" queryable="true"
@@ -83,9 +83,9 @@
               sortable="true" insertable="true" updatable="true">
             <schema domain="content" type="java.lang.String" precision="4000"/>
         </prop>
-        <prop name="attachmentId" displayName="合同附件" propId="17" i18n-en:displayName="Attachment" queryable="true"
+        <prop name="attachmentFileId" displayName="合同附件" propId="17" i18n-en:displayName="Attachment" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema stdDomain="file" type="java.lang.String" precision="200"/>
         </prop>
         <prop name="remark" displayName="备注" propId="18" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">
@@ -148,6 +148,15 @@
             <schema>
                 <item bizObjName="ErpCtContractVersion"/>
             </schema>
+        </prop>
+        <prop name="currency" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="currencyId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpMdCurrency"/>
+        </prop>
+        <prop name="attachmentFileIdComponentFileStatus" mapToProp="attachmentFileIdComponent.fileStatus"
+              internal="true" lazy="true">
+            <schema type="io.nop.api.core.beans.file.FileStatusBean"/>
         </prop>
     </props>
 </meta>

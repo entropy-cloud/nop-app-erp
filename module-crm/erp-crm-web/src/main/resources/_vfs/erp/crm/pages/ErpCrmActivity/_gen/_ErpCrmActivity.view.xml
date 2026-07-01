@@ -37,7 +37,7 @@
                 <col id="summary" sortable="true"/>
 
                 <!--负责人-->
-                <col id="ownerId" ui:number="true" sortable="true"/>
+                <col id="ownerId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

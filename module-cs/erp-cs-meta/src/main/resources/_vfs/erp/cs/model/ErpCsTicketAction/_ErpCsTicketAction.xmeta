@@ -41,7 +41,7 @@
         </prop>
         <prop name="operatorId" displayName="操作人" propId="6" i18n-en:displayName="Operator" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
         <prop name="content" displayName="操作内容" propId="7" i18n-en:displayName="Content" queryable="true"
               sortable="true" insertable="true" updatable="true">

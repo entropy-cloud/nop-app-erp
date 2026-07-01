@@ -77,6 +77,9 @@ public class _ErpCsKnowledgeBase extends DynamicOrmEntity{
     private static int _PROP_ID_BOUND = 14;
 
     
+    /* relation:  */
+    public static final String PROP_NAME_category = "category";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -773,5 +776,28 @@ public class _ErpCsKnowledgeBase extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.cs.dao.entity.ErpCsCannedCategory getCategory(){
+       return (app.erp.cs.dao.entity.ErpCsCannedCategory)internalGetRefEntity(PROP_NAME_category);
+    }
+
+    public final void setCategory(app.erp.cs.dao.entity.ErpCsCannedCategory refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCategoryId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_category, refEntity,()->{
+           
+                           this.setCategoryId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
 }
 // resume CPD analysis - CPD-ON

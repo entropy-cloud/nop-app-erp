@@ -36,7 +36,7 @@
             <schema type="java.lang.Integer" dict="erp-cs/ticket-priority"/>
         </prop>
         <prop name="defaultSlaPolicyId" displayName="默认 SLA 策略" propId="5" i18n-en:displayName="Default SLA Policy"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="defaultSlaPolicy">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="sequence" displayName="排序" propId="6" i18n-en:displayName="Sequence" queryable="true"
@@ -70,6 +70,11 @@
         <prop name="updateTime" displayName="修改时间" propId="13" i18n-en:displayName="Update Time" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="defaultSlaPolicy" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="defaultSlaPolicyId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpCsSlaPolicy"/>
         </prop>
     </props>
 </meta>

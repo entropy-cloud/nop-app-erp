@@ -69,7 +69,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     public static final String PROP_NAME_approvalStatus = "approvalStatus";
     public static final int PROP_ID_approvalStatus = 12;
     
-    /* 审批人: APPROVED_BY_ID BIGINT */
+    /* 审批人: APPROVED_BY_ID VARCHAR */
     public static final String PROP_NAME_approvedById = "approvedById";
     public static final int PROP_ID_approvedById = 13;
     
@@ -119,6 +119,9 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     
     /* relation:  */
     public static final String PROP_NAME_ticket = "ticket";
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
     
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
@@ -237,7 +240,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     private java.lang.Integer _approvalStatus;
     
     /* 审批人: APPROVED_BY_ID */
-    private java.lang.Long _approvedById;
+    private java.lang.String _approvedById;
     
     /* 审批时间: APPROVED_AT */
     private java.time.LocalDateTime _approvedAt;
@@ -544,9 +547,9 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
             }
         
             case PROP_ID_approvedById:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_approvedById));
                }
                setApprovedById(typedValue);
@@ -748,7 +751,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
         
             case PROP_ID_approvedById:{
                onInitProp(propId);
-               this._approvedById = (java.lang.Long)value;
+               this._approvedById = (java.lang.String)value;
                
                break;
             }
@@ -1060,7 +1063,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     /**
      * 审批人: APPROVED_BY_ID
      */
-    public final java.lang.Long getApprovedById(){
+    public final java.lang.String getApprovedById(){
          onPropGet(PROP_ID_approvedById);
          return _approvedById;
     }
@@ -1068,7 +1071,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     /**
      * 审批人: APPROVED_BY_ID
      */
-    public final void setApprovedById(java.lang.Long value){
+    public final void setApprovedById(java.lang.String value){
         if(onPropSet(PROP_ID_approvedById,value)){
             this._approvedById = value;
             internalClearRefs(PROP_ID_approvedById);
@@ -1283,6 +1286,29 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_ticket, refEntity,()->{
            
                            this.setTicketId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
                        
            });
            }

@@ -43,9 +43,9 @@
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="attachmentId" displayName="附件" propId="7" i18n-en:displayName="Attachment" queryable="true"
+        <prop name="attachmentFileId" displayName="附件" propId="7" i18n-en:displayName="Attachment" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema stdDomain="file" type="java.lang.String" precision="200"/>
         </prop>
         <prop name="fileSize" displayName="文件大小(字节)" propId="8" i18n-en:displayName="File Size" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -132,6 +132,10 @@
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
               lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="attachmentFileIdComponentFileStatus" mapToProp="attachmentFileIdComponent.fileStatus"
+              internal="true" lazy="true">
+            <schema type="io.nop.api.core.beans.file.FileStatusBean"/>
         </prop>
     </props>
 </meta>

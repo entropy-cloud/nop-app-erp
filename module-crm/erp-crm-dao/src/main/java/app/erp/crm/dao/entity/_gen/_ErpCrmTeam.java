@@ -37,7 +37,7 @@ public class _ErpCrmTeam extends DynamicOrmEntity{
     public static final String PROP_NAME_orgId = "orgId";
     public static final int PROP_ID_orgId = 4;
     
-    /* 团队负责人: TEAM_LEADER_ID BIGINT */
+    /* 团队负责人: TEAM_LEADER_ID VARCHAR */
     public static final String PROP_NAME_teamLeaderId = "teamLeaderId";
     public static final int PROP_ID_teamLeaderId = 5;
     
@@ -136,7 +136,7 @@ public class _ErpCrmTeam extends DynamicOrmEntity{
     private java.lang.Long _orgId;
     
     /* 团队负责人: TEAM_LEADER_ID */
-    private java.lang.Long _teamLeaderId;
+    private java.lang.String _teamLeaderId;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -321,9 +321,9 @@ public class _ErpCrmTeam extends DynamicOrmEntity{
             }
         
             case PROP_ID_teamLeaderId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_teamLeaderId));
                }
                setTeamLeaderId(typedValue);
@@ -439,7 +439,7 @@ public class _ErpCrmTeam extends DynamicOrmEntity{
         
             case PROP_ID_teamLeaderId:{
                onInitProp(propId);
-               this._teamLeaderId = (java.lang.Long)value;
+               this._teamLeaderId = (java.lang.String)value;
                
                break;
             }
@@ -578,7 +578,7 @@ public class _ErpCrmTeam extends DynamicOrmEntity{
     /**
      * 团队负责人: TEAM_LEADER_ID
      */
-    public final java.lang.Long getTeamLeaderId(){
+    public final java.lang.String getTeamLeaderId(){
          onPropGet(PROP_ID_teamLeaderId);
          return _teamLeaderId;
     }
@@ -586,7 +586,7 @@ public class _ErpCrmTeam extends DynamicOrmEntity{
     /**
      * 团队负责人: TEAM_LEADER_ID
      */
-    public final void setTeamLeaderId(java.lang.Long value){
+    public final void setTeamLeaderId(java.lang.String value){
         if(onPropSet(PROP_ID_teamLeaderId,value)){
             this._teamLeaderId = value;
             internalClearRefs(PROP_ID_teamLeaderId);

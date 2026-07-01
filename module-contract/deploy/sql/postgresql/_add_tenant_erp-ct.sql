@@ -5,9 +5,17 @@ alter table erp_ct_template add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_md_organization add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
-alter table erp_ct_contract add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+alter table erp_md_currency add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_material add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ct_approval_matrix add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_ct_signature_request add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_ct_approval_matrix add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_ct_contract add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ct_contract_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -42,11 +50,23 @@ alter table erp_ct_template add constraint PK_erp_ct_template primary key (NOP_T
 alter table erp_md_md_organization drop constraint PK_erp_md_md_organization;
 alter table erp_md_md_organization add constraint PK_erp_md_md_organization primary key (NOP_TENANT_ID, id);
 
-alter table erp_ct_contract drop constraint PK_erp_ct_contract;
-alter table erp_ct_contract add constraint PK_erp_ct_contract primary key (NOP_TENANT_ID, id);
+alter table erp_md_currency drop constraint PK_erp_md_currency;
+alter table erp_md_currency add constraint PK_erp_md_currency primary key (NOP_TENANT_ID, id);
+
+alter table erp_md_material drop constraint PK_erp_md_material;
+alter table erp_md_material add constraint PK_erp_md_material primary key (NOP_TENANT_ID, id);
 
 alter table erp_ct_approval_matrix drop constraint PK_erp_ct_approval_matrix;
 alter table erp_ct_approval_matrix add constraint PK_erp_ct_approval_matrix primary key (NOP_TENANT_ID, id);
+
+alter table erp_ct_signature_request drop constraint PK_erp_ct_signature_request;
+alter table erp_ct_signature_request add constraint PK_erp_ct_signature_request primary key (NOP_TENANT_ID, id);
+
+alter table erp_ct_approval_matrix drop constraint PK_erp_ct_approval_matrix;
+alter table erp_ct_approval_matrix add constraint PK_erp_ct_approval_matrix primary key (NOP_TENANT_ID, id);
+
+alter table erp_ct_contract drop constraint PK_erp_ct_contract;
+alter table erp_ct_contract add constraint PK_erp_ct_contract primary key (NOP_TENANT_ID, id);
 
 alter table erp_ct_contract_line drop constraint PK_erp_ct_contract_line;
 alter table erp_ct_contract_line add constraint PK_erp_ct_contract_line primary key (NOP_TENANT_ID, id);

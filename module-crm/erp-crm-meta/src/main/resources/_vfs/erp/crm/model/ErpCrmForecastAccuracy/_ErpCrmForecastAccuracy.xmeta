@@ -37,14 +37,14 @@
         </prop>
         <prop name="ownerId" displayName="销售员" propId="5" i18n-en:displayName="Owner" queryable="true" sortable="true"
               insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
         <prop name="teamId" displayName="销售团队" propId="6" i18n-en:displayName="Team" queryable="true" sortable="true"
-              insertable="true" updatable="true">
+              insertable="true" updatable="true" ext:relation="team">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="territoryId" displayName="销售区域" propId="7" i18n-en:displayName="Territory" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="territory">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="commitAmount" displayName="承诺金额" propId="8" i18n-en:displayName="Commit Amount" queryable="true"
@@ -117,6 +117,14 @@
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
               lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="team" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="teamId"
+              ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpCrmTeam"/>
+        </prop>
+        <prop name="territory" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="territoryId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpCrmTerritory"/>
         </prop>
     </props>
 </meta>

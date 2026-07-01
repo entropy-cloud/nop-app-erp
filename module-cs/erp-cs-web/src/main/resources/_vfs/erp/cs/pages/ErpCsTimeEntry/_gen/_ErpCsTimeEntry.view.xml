@@ -55,7 +55,7 @@
                 <col id="approvalStatus" ui:number="true" sortable="true"/>
 
                 <!--审批人-->
-                <col id="approvedById" ui:number="true" sortable="true"/>
+                <col id="approvedById" sortable="true"/>
 
                 <!--审批时间-->
                 <col id="approvedAt" sortable="true"/>

@@ -34,7 +34,7 @@
                 <col id="approvalOrder" ui:number="true" sortable="true"/>
 
                 <!--审批人-->
-                <col id="approverId" ui:number="true" sortable="true"/>
+                <col id="approverId" sortable="true"/>
 
                 <!--审批状态-->
                 <col id="approvalStatus" mandatory="true" ui:number="true" sortable="true"/>

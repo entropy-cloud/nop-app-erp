@@ -81,7 +81,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     public static final String PROP_NAME_contactId = "contactId";
     public static final int PROP_ID_contactId = 15;
     
-    /* 负责人: OWNER_ID BIGINT */
+    /* 负责人: OWNER_ID VARCHAR */
     public static final String PROP_NAME_ownerId = "ownerId";
     public static final int PROP_ID_ownerId = 16;
     
@@ -151,6 +151,9 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     
     /* relation:  */
     public static final String PROP_NAME_eventCategory = "eventCategory";
+    
+    /* relation:  */
+    public static final String PROP_NAME_contact = "contact";
     
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
@@ -293,7 +296,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     private java.lang.Long _contactId;
     
     /* 负责人: OWNER_ID */
-    private java.lang.Long _ownerId;
+    private java.lang.String _ownerId;
     
     /* 活动状态: STATUS */
     private java.lang.String _status;
@@ -651,9 +654,9 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
             }
         
             case PROP_ID_ownerId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_ownerId));
                }
                setOwnerId(typedValue);
@@ -896,7 +899,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
         
             case PROP_ID_ownerId:{
                onInitProp(propId);
-               this._ownerId = (java.lang.Long)value;
+               this._ownerId = (java.lang.String)value;
                
                break;
             }
@@ -1279,7 +1282,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     /**
      * 负责人: OWNER_ID
      */
-    public final java.lang.Long getOwnerId(){
+    public final java.lang.String getOwnerId(){
          onPropGet(PROP_ID_ownerId);
          return _ownerId;
     }
@@ -1287,7 +1290,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     /**
      * 负责人: OWNER_ID
      */
-    public final void setOwnerId(java.lang.Long value){
+    public final void setOwnerId(java.lang.String value){
         if(onPropSet(PROP_ID_ownerId,value)){
             this._ownerId = value;
             internalClearRefs(PROP_ID_ownerId);
@@ -1632,6 +1635,29 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_eventCategory, refEntity,()->{
            
                            this.setEventCategoryId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdPartnerContact getContact(){
+       return (app.erp.md.dao.entity.ErpMdPartnerContact)internalGetRefEntity(PROP_NAME_contact);
+    }
+
+    public final void setContact(app.erp.md.dao.entity.ErpMdPartnerContact refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setContactId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_contact, refEntity,()->{
+           
+                           this.setContactId(refEntity.getId());
                        
            });
            }

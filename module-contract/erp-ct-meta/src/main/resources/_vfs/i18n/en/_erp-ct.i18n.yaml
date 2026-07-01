@@ -57,6 +57,7 @@ prop:
       updateTime: Update Time
       contract: Contract
       org: Org
+      approvalMatrix: null
     ErpCtConsumptionLine:
       id: ID
       contractLineId: Contract Line
@@ -94,7 +95,7 @@ prop:
       templateId: Template
       parentContractId: Parent Contract
       description: Description
-      attachmentId: Attachment
+      attachmentFileId: Attachment
       remark: Remark
       delVersion: Del Flag
       version: Version
@@ -108,6 +109,8 @@ prop:
       org: Org
       lines: Lines
       versions: Versions
+      currency: null
+      attachmentFileIdComponentFileStatus: null
     ErpCtContractLine:
       id: ID
       contractId: Contract
@@ -127,13 +130,14 @@ prop:
       contract: Contract
       invoicePlans: Invoice Plans
       consumptionLines: Consumption Lines
+      material: null
     ErpCtContractVersion:
       id: ID
       contractId: Contract
       versionNo: Version No
       versionDate: Version Date
       content: Content
-      attachmentId: Attachment
+      attachmentFileId: Attachment
       isCurrent: Is Current
       status: Status
       status_label: null
@@ -147,6 +151,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       contract: Contract
+      attachmentFileIdComponentFileStatus: null
     ErpCtDocument:
       id: ID
       orgId: Organization
@@ -154,7 +159,7 @@ prop:
       code: Code
       docName: Document Name
       docType: Document Type
-      attachmentId: Attachment
+      attachmentFileId: Attachment
       fileSize: File Size
       fileHash: File Hash
       mimeType: MIME Type
@@ -176,6 +181,7 @@ prop:
       updateTime: Update Time
       contract: Contract
       org: Org
+      attachmentFileIdComponentFileStatus: null
     ErpCtInvoicePlan:
       id: ID
       contractLineId: Contract Line
@@ -240,6 +246,7 @@ prop:
       updateTime: Update Time
       contract: Contract
       org: Org
+      partner: null
     ErpCtRebateSettlement:
       id: ID
       rebateAgreementId: Rebate Agreement
@@ -288,7 +295,7 @@ prop:
       completedAt: Completed At
       certificateUrl: Certificate URL
       evidenceNo: Evidence No
-      attachmentId: Signed Attachment
+      attachmentFileId: Attachment
       errorMsg: Error Message
       remark: Remark
       delVersion: Del Flag
@@ -299,6 +306,8 @@ prop:
       updateTime: Update Time
       contractVersion: Contract Version
       org: Org
+      providerRequest: null
+      attachmentFileIdComponentFileStatus: null
     ErpCtTemplate:
       id: ID
       code: Code

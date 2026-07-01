@@ -24,11 +24,11 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="2" i18n-en:displayName="Organization" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="agentId" displayName="客服" propId="3" i18n-en:displayName="Agent" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="true" ext:relation="agent">
+              sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="serviceType" displayName="服务类型" propId="4" i18n-en:displayName="Service Type" queryable="true"
@@ -71,10 +71,9 @@
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
-        <prop name="agent" i18n-en:displayName="Agent" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="agentId" ext:joinRightProp="id" biz:moduleId="nop/auth" insertable="false"
-              updatable="false" mandatory="true" lazy="true">
-            <schema bizObjName="NopAuthUser"/>
+        <prop name="org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="orgId"
+              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
         </prop>
     </props>
 </meta>

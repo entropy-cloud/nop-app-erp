@@ -31,8 +31,8 @@
             <schema type="java.lang.String" precision="200"/>
         </prop>
         <prop name="teamLeaderId" displayName="团队负责人" propId="4" i18n-en:displayName="Team Leader" queryable="true"
-              sortable="true" insertable="true" updatable="true" ext:relation="teamLeader">
-            <schema type="java.lang.Long"/>
+              sortable="true" insertable="true" updatable="true">
+            <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
         <prop name="remark" displayName="备注" propId="5" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">
@@ -61,11 +61,6 @@
         <prop name="updateTime" displayName="修改时间" propId="11" i18n-en:displayName="Update Time" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
-        </prop>
-        <prop name="teamLeader" i18n-en:displayName="Team Leader" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="teamLeaderId" ext:joinRightProp="id" biz:moduleId="nop/auth"
-              insertable="false" updatable="false" lazy="true">
-            <schema bizObjName="NopAuthUser"/>
         </prop>
     </props>
 </meta>

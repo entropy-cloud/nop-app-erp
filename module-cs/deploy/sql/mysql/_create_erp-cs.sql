@@ -4,40 +4,16 @@ CREATE TABLE erp_md_md_partner(
   constraint PK_erp_md_md_partner primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_cs_ticket_type(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  CODE VARCHAR(50) NOT NULL    COMMENT '编码',
-  NAME VARCHAR(200) NOT NULL    COMMENT '名称',
-  DEFAULT_PRIORITY INTEGER NULL    COMMENT '默认优先级',
-  DEFAULT_SLA_POLICY_ID BIGINT NULL    COMMENT '默认 SLA 策略',
-  SEQUENCE INTEGER default 0  NULL    COMMENT '排序',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_cs_ticket_type primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_md_auth_user(
-  ID BIGINT NOT NULL    COMMENT 'null',
-  constraint PK_erp_md_auth_user primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
 CREATE TABLE erp_md_md_organization(
   ID BIGINT NOT NULL    COMMENT 'null',
   constraint PK_erp_md_md_organization primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_cs_knowledge_base(
+CREATE TABLE erp_cs_team(
   ID BIGINT NOT NULL    COMMENT 'ID',
-  CODE VARCHAR(50) NULL    COMMENT '编码',
-  TITLE VARCHAR(200) NOT NULL    COMMENT '标题',
-  CONTENT VARCHAR(4000) NULL    COMMENT '正文',
-  CATEGORY_ID BIGINT NULL    COMMENT '分类',
-  IS_PUBLISHED BOOLEAN default 0  NULL    COMMENT '是否发布',
+  CODE VARCHAR(50) NOT NULL    COMMENT '编码',
+  NAME VARCHAR(200) NOT NULL    COMMENT '名称',
+  TEAM_LEADER_ID VARCHAR(36) NULL    COMMENT '团队负责人',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -45,7 +21,7 @@ CREATE TABLE erp_cs_knowledge_base(
   CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_cs_knowledge_base primary key (ID)
+  constraint PK_erp_cs_team primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_cs_canned_category(
@@ -65,61 +41,6 @@ CREATE TABLE erp_cs_canned_category(
   constraint PK_erp_cs_canned_category primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_cs_catalog_category(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  CODE VARCHAR(50) NOT NULL    COMMENT '编码',
-  NAME VARCHAR(200) NOT NULL    COMMENT '名称',
-  ORG_ID BIGINT NULL    COMMENT '业务组织',
-  PARENT_ID BIGINT NULL    COMMENT '父分类',
-  ICON VARCHAR(100) NULL    COMMENT '图标',
-  SEQUENCE INTEGER default 0  NULL    COMMENT '排序',
-  IS_ACTIVE BOOLEAN default 1  NULL    COMMENT '是否启用',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_cs_catalog_category primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_cs_contract(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  CODE VARCHAR(50) NOT NULL    COMMENT '编码',
-  NAME VARCHAR(200) NOT NULL    COMMENT '名称',
-  ORG_ID BIGINT NULL    COMMENT '业务组织',
-  PARTNER_ID BIGINT NULL    COMMENT '签约客户',
-  CONTRACT_TYPE INTEGER NULL    COMMENT '合同类型',
-  START_DATE DATE NULL    COMMENT '生效日期',
-  END_DATE DATE NULL    COMMENT '到期日期',
-  TOTAL_AMOUNT DECIMAL(20,4) NULL    COMMENT '合同总金额',
-  BILLING_CYCLE INTEGER NULL    COMMENT '计费周期',
-  STATUS INTEGER NULL    COMMENT '合同状态',
-  ATTACHMENT_ID BIGINT NULL    COMMENT '合同附件',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_cs_contract primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_cs_team(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  CODE VARCHAR(50) NOT NULL    COMMENT '编码',
-  NAME VARCHAR(200) NOT NULL    COMMENT '名称',
-  TEAM_LEADER_ID BIGINT NULL    COMMENT '团队负责人',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_cs_team primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
 CREATE TABLE erp_cs_agent_rate(
   ID BIGINT NOT NULL    COMMENT 'ID',
   ORG_ID BIGINT NULL    COMMENT '业务组织',
@@ -137,26 +58,44 @@ CREATE TABLE erp_cs_agent_rate(
   constraint PK_erp_cs_agent_rate primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_cs_canned_response(
+CREATE TABLE erp_cs_contract(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '编码',
+  NAME VARCHAR(200) NOT NULL    COMMENT '名称',
   ORG_ID BIGINT NULL    COMMENT '业务组织',
-  TITLE VARCHAR(200) NOT NULL    COMMENT '模板标题',
-  CONTENT VARCHAR(4000) NOT NULL    COMMENT '模板正文',
-  CATEGORY_ID BIGINT NULL    COMMENT '应答分类',
-  VARIABLE_DEFS VARCHAR(4000) NULL    COMMENT '变量定义',
-  MACRO_TICKET_TYPE_ID BIGINT NULL    COMMENT '自动匹配工单类型',
-  MACRO_PRIORITY INTEGER NULL    COMMENT '自动匹配优先级',
-  SEQUENCE INTEGER default 0  NULL    COMMENT '排序',
-  IS_ACTIVE BOOLEAN default 1  NULL    COMMENT '是否启用',
-  USAGE_COUNT INTEGER default 0  NULL    COMMENT '使用次数',
+  PARTNER_ID BIGINT NULL    COMMENT '签约客户',
+  CONTRACT_TYPE INTEGER NULL    COMMENT '合同类型',
+  START_DATE DATE NULL    COMMENT '生效日期',
+  END_DATE DATE NULL    COMMENT '到期日期',
+  TOTAL_AMOUNT DECIMAL(20,4) NULL    COMMENT '合同总金额',
+  BILLING_CYCLE INTEGER NULL    COMMENT '计费周期',
+  STATUS INTEGER NULL    COMMENT '合同状态',
+  ATTACHMENT_FILE_ID VARCHAR(200) NULL    COMMENT '合同附件',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
   CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
   CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_cs_canned_response primary key (ID)
+  constraint PK_erp_cs_contract primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_cs_catalog_category(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '编码',
+  NAME VARCHAR(200) NOT NULL    COMMENT '名称',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  PARENT_ID BIGINT NULL    COMMENT '父分类',
+  ICON VARCHAR(100) NULL    COMMENT '图标',
+  SEQUENCE INTEGER default 0  NULL    COMMENT '排序',
+  IS_ACTIVE BOOLEAN default 1  NULL    COMMENT '是否启用',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_cs_catalog_category primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_cs_sla_policy(
@@ -178,6 +117,40 @@ CREATE TABLE erp_cs_sla_policy(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   constraint PK_erp_cs_sla_policy primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_cs_knowledge_base(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NULL    COMMENT '编码',
+  TITLE VARCHAR(200) NOT NULL    COMMENT '标题',
+  CONTENT VARCHAR(4000) NULL    COMMENT '正文',
+  CATEGORY_ID BIGINT NULL    COMMENT '分类',
+  IS_PUBLISHED BOOLEAN default 0  NULL    COMMENT '是否发布',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_cs_knowledge_base primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_cs_ticket_type(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '编码',
+  NAME VARCHAR(200) NOT NULL    COMMENT '名称',
+  DEFAULT_PRIORITY INTEGER NULL    COMMENT '默认优先级',
+  DEFAULT_SLA_POLICY_ID BIGINT NULL    COMMENT '默认 SLA 策略',
+  SEQUENCE INTEGER default 0  NULL    COMMENT '排序',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_cs_ticket_type primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_cs_entitlement(
@@ -203,6 +176,28 @@ CREATE TABLE erp_cs_entitlement(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   constraint PK_erp_cs_entitlement primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_cs_canned_response(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '编码',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  TITLE VARCHAR(200) NOT NULL    COMMENT '模板标题',
+  CONTENT VARCHAR(4000) NOT NULL    COMMENT '模板正文',
+  CATEGORY_ID BIGINT NULL    COMMENT '应答分类',
+  VARIABLE_DEFS VARCHAR(4000) NULL    COMMENT '变量定义',
+  MACRO_TICKET_TYPE_ID BIGINT NULL    COMMENT '自动匹配工单类型',
+  MACRO_PRIORITY INTEGER NULL    COMMENT '自动匹配优先级',
+  SEQUENCE INTEGER default 0  NULL    COMMENT '排序',
+  IS_ACTIVE BOOLEAN default 1  NULL    COMMENT '是否启用',
+  USAGE_COUNT INTEGER default 0  NULL    COMMENT '使用次数',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_cs_canned_response primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_cs_service_catalog_item(
@@ -242,7 +237,7 @@ CREATE TABLE erp_cs_ticket(
   TICKET_TYPE_ID BIGINT NOT NULL    COMMENT '工单类型',
   PRIORITY INTEGER NOT NULL    COMMENT '优先级',
   SOURCE INTEGER NULL    COMMENT '来源',
-  ASSIGNED_TO_ID BIGINT NULL    COMMENT '分配处理人',
+  ASSIGNED_TO_ID VARCHAR(36) NULL    COMMENT '分配处理人',
   SLA_POLICY_ID BIGINT NULL    COMMENT 'SLA 策略',
   DEADLINE_DATE_TIME DATETIME NULL    COMMENT 'SLA 截止时间',
   IS_SLA_COMPLETED BOOLEAN default 0  NULL    COMMENT 'SLA 是否完成',
@@ -290,7 +285,7 @@ CREATE TABLE erp_cs_ticket_action(
   ACTION_TYPE INTEGER NOT NULL    COMMENT '操作类型',
   FROM_STATUS INTEGER NULL    COMMENT '起始状态',
   TO_STATUS INTEGER NULL    COMMENT '目标状态',
-  OPERATOR_ID BIGINT NULL    COMMENT '操作人',
+  OPERATOR_ID VARCHAR(36) NULL    COMMENT '操作人',
   CONTENT VARCHAR(4000) NULL    COMMENT '操作内容',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -335,7 +330,7 @@ CREATE TABLE erp_cs_time_entry(
   BILLABLE_AMOUNT DECIMAL(20,4) NULL    COMMENT '计费金额',
   DESCRIPTION VARCHAR(1000) NULL    COMMENT '工作内容描述',
   APPROVAL_STATUS INTEGER NULL    COMMENT '审批状态',
-  APPROVED_BY_ID BIGINT NULL    COMMENT '审批人',
+  APPROVED_BY_ID VARCHAR(36) NULL    COMMENT '审批人',
   APPROVED_AT DATETIME NULL    COMMENT '审批时间',
   PROJECT_ID BIGINT NULL    COMMENT '关联项目',
   TASK_ID BIGINT NULL    COMMENT '关联任务',
@@ -352,29 +347,27 @@ CREATE TABLE erp_cs_time_entry(
 
    ALTER TABLE erp_md_md_partner COMMENT 'ErpMdPartner';
                 
-   ALTER TABLE erp_cs_ticket_type COMMENT '工单类型';
-                
-   ALTER TABLE erp_md_auth_user COMMENT 'NopAuthUser';
-                
    ALTER TABLE erp_md_md_organization COMMENT 'ErpMdOrganization';
-                
-   ALTER TABLE erp_cs_knowledge_base COMMENT '知识库';
-                
-   ALTER TABLE erp_cs_canned_category COMMENT '预设应答分类';
-                
-   ALTER TABLE erp_cs_catalog_category COMMENT '目录分类';
-                
-   ALTER TABLE erp_cs_contract COMMENT '支持合同';
                 
    ALTER TABLE erp_cs_team COMMENT '客服团队';
                 
+   ALTER TABLE erp_cs_canned_category COMMENT '预设应答分类';
+                
    ALTER TABLE erp_cs_agent_rate COMMENT '客服费率';
                 
-   ALTER TABLE erp_cs_canned_response COMMENT '预设应答模板';
+   ALTER TABLE erp_cs_contract COMMENT '支持合同';
+                
+   ALTER TABLE erp_cs_catalog_category COMMENT '目录分类';
                 
    ALTER TABLE erp_cs_sla_policy COMMENT 'SLA 策略';
                 
+   ALTER TABLE erp_cs_knowledge_base COMMENT '知识库';
+                
+   ALTER TABLE erp_cs_ticket_type COMMENT '工单类型';
+                
    ALTER TABLE erp_cs_entitlement COMMENT '服务权益';
+                
+   ALTER TABLE erp_cs_canned_response COMMENT '预设应答模板';
                 
    ALTER TABLE erp_cs_service_catalog_item COMMENT '服务目录项';
                 

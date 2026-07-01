@@ -3,7 +3,7 @@
   "forecastId": 0,
   "orgId": 0,
   "periodId": 0,
-  "ownerId": 0,
+  "ownerId": "",
   "teamId": 0,
   "territoryId": 0,
   "commitAmount": "",
@@ -22,5 +22,7 @@
   "updateTime": "2000-01-01 14:00:00",
   "forecast": null,
   "period": null,
-  "org": null
+  "org": null,
+  "team": null,
+  "territory": null
 }

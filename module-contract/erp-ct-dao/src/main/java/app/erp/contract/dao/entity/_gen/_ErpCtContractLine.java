@@ -94,6 +94,9 @@ public class _ErpCtContractLine extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_consumptionLines = "consumptionLines";
     
+    /* relation:  */
+    public static final String PROP_NAME_material = "material";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -921,6 +924,29 @@ public class _ErpCtContractLine extends DynamicOrmEntity{
      */
     public final IOrmEntitySet<app.erp.contract.dao.entity.ErpCtConsumptionLine> getConsumptionLines(){
        return _consumptionLines;
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdMaterial getMaterial(){
+       return (app.erp.md.dao.entity.ErpMdMaterial)internalGetRefEntity(PROP_NAME_material);
+    }
+
+    public final void setMaterial(app.erp.md.dao.entity.ErpMdMaterial refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setMaterialId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_material, refEntity,()->{
+           
+                           this.setMaterialId(refEntity.getId());
+                       
+           });
+           }
+       
     }
        
 }

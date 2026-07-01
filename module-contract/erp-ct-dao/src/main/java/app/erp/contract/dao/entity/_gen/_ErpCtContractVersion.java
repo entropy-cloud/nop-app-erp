@@ -41,9 +41,9 @@ public class _ErpCtContractVersion extends DynamicOrmEntity{
     public static final String PROP_NAME_content = "content";
     public static final int PROP_ID_content = 5;
     
-    /* 版本附件: ATTACHMENT_ID BIGINT */
-    public static final String PROP_NAME_attachmentId = "attachmentId";
-    public static final int PROP_ID_attachmentId = 6;
+    /* 版本附件: ATTACHMENT_FILE_ID VARCHAR */
+    public static final String PROP_NAME_attachmentFileId = "attachmentFileId";
+    public static final int PROP_ID_attachmentFileId = 6;
     
     /* 是否当前版本: IS_CURRENT BOOLEAN */
     public static final String PROP_NAME_isCurrent = "isCurrent";
@@ -53,7 +53,7 @@ public class _ErpCtContractVersion extends DynamicOrmEntity{
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 8;
     
-    /* 批准人: APPROVED_BY BIGINT */
+    /* 批准人: APPROVED_BY VARCHAR */
     public static final String PROP_NAME_approvedBy = "approvedBy";
     public static final int PROP_ID_approvedBy = 9;
     
@@ -96,6 +96,9 @@ public class _ErpCtContractVersion extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_contract = "contract";
     
+    /* component:  */
+    public static final String PROP_NAME_attachmentFileIdComponent = "attachmentFileIdComponent";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -119,8 +122,8 @@ public class _ErpCtContractVersion extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_content] = PROP_NAME_content;
           PROP_NAME_TO_ID.put(PROP_NAME_content, PROP_ID_content);
       
-          PROP_ID_TO_NAME[PROP_ID_attachmentId] = PROP_NAME_attachmentId;
-          PROP_NAME_TO_ID.put(PROP_NAME_attachmentId, PROP_ID_attachmentId);
+          PROP_ID_TO_NAME[PROP_ID_attachmentFileId] = PROP_NAME_attachmentFileId;
+          PROP_NAME_TO_ID.put(PROP_NAME_attachmentFileId, PROP_ID_attachmentFileId);
       
           PROP_ID_TO_NAME[PROP_ID_isCurrent] = PROP_NAME_isCurrent;
           PROP_NAME_TO_ID.put(PROP_NAME_isCurrent, PROP_ID_isCurrent);
@@ -173,8 +176,8 @@ public class _ErpCtContractVersion extends DynamicOrmEntity{
     /* 版本内容: CONTENT */
     private java.lang.String _content;
     
-    /* 版本附件: ATTACHMENT_ID */
-    private java.lang.Long _attachmentId;
+    /* 版本附件: ATTACHMENT_FILE_ID */
+    private java.lang.String _attachmentFileId;
     
     /* 是否当前版本: IS_CURRENT */
     private java.lang.Boolean _isCurrent;
@@ -183,7 +186,7 @@ public class _ErpCtContractVersion extends DynamicOrmEntity{
     private java.lang.Integer _status;
     
     /* 批准人: APPROVED_BY */
-    private java.lang.Long _approvedBy;
+    private java.lang.String _approvedBy;
     
     /* 批准时间: APPROVED_AT */
     private java.time.LocalDateTime _approvedAt;
@@ -298,8 +301,8 @@ public class _ErpCtContractVersion extends DynamicOrmEntity{
             case PROP_ID_content:
                return getContent();
         
-            case PROP_ID_attachmentId:
-               return getAttachmentId();
+            case PROP_ID_attachmentFileId:
+               return getAttachmentFileId();
         
             case PROP_ID_isCurrent:
                return getIsCurrent();
@@ -395,13 +398,13 @@ public class _ErpCtContractVersion extends DynamicOrmEntity{
                break;
             }
         
-            case PROP_ID_attachmentId:{
-               java.lang.Long typedValue = null;
+            case PROP_ID_attachmentFileId:{
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
-                       err-> newTypeConversionError(PROP_NAME_attachmentId));
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_attachmentFileId));
                }
-               setAttachmentId(typedValue);
+               setAttachmentFileId(typedValue);
                break;
             }
         
@@ -426,9 +429,9 @@ public class _ErpCtContractVersion extends DynamicOrmEntity{
             }
         
             case PROP_ID_approvedBy:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_approvedBy));
                }
                setApprovedBy(typedValue);
@@ -559,9 +562,9 @@ public class _ErpCtContractVersion extends DynamicOrmEntity{
                break;
             }
         
-            case PROP_ID_attachmentId:{
+            case PROP_ID_attachmentFileId:{
                onInitProp(propId);
-               this._attachmentId = (java.lang.Long)value;
+               this._attachmentFileId = (java.lang.String)value;
                
                break;
             }
@@ -582,7 +585,7 @@ public class _ErpCtContractVersion extends DynamicOrmEntity{
         
             case PROP_ID_approvedBy:{
                onInitProp(propId);
-               this._approvedBy = (java.lang.Long)value;
+               this._approvedBy = (java.lang.String)value;
                
                break;
             }
@@ -745,20 +748,20 @@ public class _ErpCtContractVersion extends DynamicOrmEntity{
     }
     
     /**
-     * 版本附件: ATTACHMENT_ID
+     * 版本附件: ATTACHMENT_FILE_ID
      */
-    public final java.lang.Long getAttachmentId(){
-         onPropGet(PROP_ID_attachmentId);
-         return _attachmentId;
+    public final java.lang.String getAttachmentFileId(){
+         onPropGet(PROP_ID_attachmentFileId);
+         return _attachmentFileId;
     }
 
     /**
-     * 版本附件: ATTACHMENT_ID
+     * 版本附件: ATTACHMENT_FILE_ID
      */
-    public final void setAttachmentId(java.lang.Long value){
-        if(onPropSet(PROP_ID_attachmentId,value)){
-            this._attachmentId = value;
-            internalClearRefs(PROP_ID_attachmentId);
+    public final void setAttachmentFileId(java.lang.String value){
+        if(onPropSet(PROP_ID_attachmentFileId,value)){
+            this._attachmentFileId = value;
+            internalClearRefs(PROP_ID_attachmentFileId);
             
         }
     }
@@ -804,7 +807,7 @@ public class _ErpCtContractVersion extends DynamicOrmEntity{
     /**
      * 批准人: APPROVED_BY
      */
-    public final java.lang.Long getApprovedBy(){
+    public final java.lang.String getApprovedBy(){
          onPropGet(PROP_ID_approvedBy);
          return _approvedBy;
     }
@@ -812,7 +815,7 @@ public class _ErpCtContractVersion extends DynamicOrmEntity{
     /**
      * 批准人: APPROVED_BY
      */
-    public final void setApprovedBy(java.lang.Long value){
+    public final void setApprovedBy(java.lang.String value){
         if(onPropSet(PROP_ID_approvedBy,value)){
             this._approvedBy = value;
             internalClearRefs(PROP_ID_approvedBy);
@@ -995,5 +998,22 @@ public class _ErpCtContractVersion extends DynamicOrmEntity{
        
     }
        
+   private io.nop.orm.component.OrmFileComponent _attachmentFileIdComponent;
+
+   private static Map<String,Integer> COMPONENT_PROP_ID_MAP_attachmentFileIdComponent = new HashMap<>();
+   static{
+      
+         COMPONENT_PROP_ID_MAP_attachmentFileIdComponent.put(io.nop.orm.component.OrmFileComponent.PROP_NAME_filePath,PROP_ID_attachmentFileId);
+      
+   }
+
+   public final io.nop.orm.component.OrmFileComponent getAttachmentFileIdComponent(){
+      if(_attachmentFileIdComponent == null){
+          _attachmentFileIdComponent = new io.nop.orm.component.OrmFileComponent();
+          _attachmentFileIdComponent.bindToEntity(this, COMPONENT_PROP_ID_MAP_attachmentFileIdComponent);
+      }
+      return _attachmentFileIdComponent;
+   }
+
 }
 // resume CPD analysis - CPD-ON

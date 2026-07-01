@@ -56,7 +56,7 @@
             <schema type="java.lang.Boolean"/>
         </prop>
         <prop name="escalationUserId" displayName="升级通知人" propId="10" i18n-en:displayName="Escalation User"
-              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="escalationUser">
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="description" displayName="说明" propId="11" i18n-en:displayName="Description" queryable="true"
@@ -95,11 +95,6 @@
         <prop name="team" i18n-en:displayName="Team" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="teamId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpCsTeam"/>
-        </prop>
-        <prop name="escalationUser" i18n-en:displayName="Escalation User" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="escalationUserId" ext:joinRightProp="id" biz:moduleId="nop/auth"
-              insertable="false" updatable="false" lazy="true">
-            <schema bizObjName="NopAuthUser"/>
         </prop>
     </props>
 </meta>

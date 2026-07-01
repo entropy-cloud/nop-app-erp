@@ -3,7 +3,7 @@
   "orgId": 0,
   "territoryId": 0,
   "teamId": 0,
-  "ownerId": 0,
+  "ownerId": "",
   "periodType": "",
   "periodType_label": "",
   "fiscalYear": 0,
@@ -20,6 +20,6 @@
   "updateTime": "2000-01-01 14:00:00",
   "territory": null,
   "team": null,
-  "owner": null,
-  "org": null
+  "org": null,
+  "currency": null
 }

@@ -52,7 +52,7 @@
                 <col id="status" ui:number="true" sortable="true"/>
 
                 <!--合同附件-->
-                <col id="attachmentId" ui:number="true" sortable="true"/>
+                <col id="attachmentFileId" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
@@ -81,7 +81,7 @@
  partnerId[签约客户] contractType[合同类型]
  startDate[生效日期] endDate[到期日期]
  totalAmount[合同总金额] billingCycle[计费周期]
- status[合同状态] attachmentId[合同附件]
+ status[合同状态] attachmentFileId[合同附件]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
  updateTime[修改时间] 
@@ -94,7 +94,7 @@
  partnerId[签约客户] contractType[合同类型]
  startDate[生效日期] endDate[到期日期]
  totalAmount[合同总金额] billingCycle[计费周期]
- status[合同状态] attachmentId[合同附件]
+ status[合同状态] attachmentFileId[合同附件]
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-支持合同" i18n-en:title="Edit Support Contract">
@@ -104,7 +104,7 @@
  partnerId[签约客户] contractType[合同类型]
  startDate[生效日期] endDate[到期日期]
  totalAmount[合同总金额] billingCycle[计费周期]
- status[合同状态] attachmentId[合同附件]
+ status[合同状态] attachmentFileId[合同附件]
  delVersion[逻辑删除版本] 
 </layout>
         </form>

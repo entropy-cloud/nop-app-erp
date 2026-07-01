@@ -32,7 +32,7 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="productId" displayName="产品" propId="4" i18n-en:displayName="Product" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="product">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="quantity" displayName="数量" propId="5" i18n-en:displayName="Quantity" queryable="true"
@@ -84,6 +84,11 @@
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
               lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="product" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="productId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpMdMaterial"/>
         </prop>
     </props>
 </meta>

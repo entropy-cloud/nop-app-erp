@@ -4,7 +4,7 @@
   "orgId": 0,
   "approvalMatrixId": 0,
   "approvalOrder": 0,
-  "approverId": 0,
+  "approverId": "",
   "approvalStatus": 0,
   "approvalStatus_label": "",
   "comment": "",
@@ -18,5 +18,6 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "contract": null,
-  "org": null
+  "org": null,
+  "approvalMatrix": null
 }

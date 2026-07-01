@@ -134,8 +134,8 @@
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Parent Contract"/>
                 <column code="DESCRIPTION" displayName="描述" domain="content" name="description" precision="4000"
                         propId="16" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Description"/>
-                <column code="ATTACHMENT_ID" displayName="合同附件" name="attachmentId" propId="17" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Attachment"/>
+                <column code="ATTACHMENT_FILE_ID" displayName="合同附件" name="attachmentFileId" precision="200" propId="17"
+                        stdDataType="string" stdDomain="file" stdSqlType="VARCHAR" i18n-en:displayName="Attachment"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="18"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -155,33 +155,32 @@
                         propId="24" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
             <relations>
-                <to-one name="partner" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
-                        biz:moduleId="erp/md" i18n-en:displayName="Partner" ref-i18n-en:displayName="Contract">
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
+                        i18n-en:displayName="Partner">
                     <join>
                         <on leftProp="partnerId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="template" refEntityName="app.erp.contract.dao.entity.ErpCtTemplate" tagSet="pub"
-                        i18n-en:displayName="Template" ref-i18n-en:displayName="Contract">
+                        i18n-en:displayName="Template">
                     <join>
                         <on leftProp="templateId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="parentContract" refEntityName="app.erp.contract.dao.entity.ErpCtContract" tagSet="pub"
-                        i18n-en:displayName="Parent Contract" ref-i18n-en:displayName="Contract">
+                        i18n-en:displayName="Parent Contract">
                     <join>
                         <on leftProp="parentContractId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org" ref-i18n-en:displayName="Contract">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-many cascadeDelete="true" name="lines" refEntityName="app.erp.contract.dao.entity.ErpCtContractLine"
-                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines"
-                         ref-i18n-en:displayName="Contract">
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines" ext:estRows="20">
                     <join>
                         <on leftProp="id" rightProp="contractId"/>
                     </join>
@@ -189,11 +188,16 @@
                 <to-many cascadeDelete="true" name="versions"
                          refEntityName="app.erp.contract.dao.entity.ErpCtContractVersion"
                          tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Versions"
-                         ref-i18n-en:displayName="Contract">
+                         ext:estRows="10">
                     <join>
                         <on leftProp="id" rightProp="contractId"/>
                     </join>
                 </to-many>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
+                    <join>
+                        <on leftProp="currencyId" rightProp="id"/>
+                    </join>
+                </to-one>
             </relations>
         </entity>
         <entity className="app.erp.contract.dao.entity.ErpCtContractLine" createTimeProp="createTime"
@@ -239,7 +243,7 @@
             </columns>
             <relations>
                 <to-one name="contract" refEntityName="app.erp.contract.dao.entity.ErpCtContract" tagSet="pub"
-                        i18n-en:displayName="Contract" ref-i18n-en:displayName="Contract Line">
+                        i18n-en:displayName="Contract">
                     <join>
                         <on leftProp="contractId" rightProp="id"/>
                     </join>
@@ -247,7 +251,7 @@
                 <to-many cascadeDelete="true" name="invoicePlans"
                          refEntityName="app.erp.contract.dao.entity.ErpCtInvoicePlan"
                          tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Invoice Plans"
-                         ref-i18n-en:displayName="Contract Line">
+                         ext:estRows="12">
                     <join>
                         <on leftProp="id" rightProp="contractLineId"/>
                     </join>
@@ -255,11 +259,16 @@
                 <to-many cascadeDelete="true" name="consumptionLines"
                          refEntityName="app.erp.contract.dao.entity.ErpCtConsumptionLine"
                          tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Consumption Lines"
-                         ref-i18n-en:displayName="Contract Line">
+                         ext:estRows="36">
                     <join>
                         <on leftProp="id" rightProp="contractLineId"/>
                     </join>
                 </to-many>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
+                    <join>
+                        <on leftProp="materialId" rightProp="id"/>
+                    </join>
+                </to-one>
             </relations>
         </entity>
         <entity className="app.erp.contract.dao.entity.ErpCtContractVersion" createTimeProp="createTime"
@@ -279,14 +288,14 @@
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Version Date"/>
                 <column code="CONTENT" displayName="版本内容" domain="content" name="content" precision="4000" propId="5"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Content"/>
-                <column code="ATTACHMENT_ID" displayName="版本附件" name="attachmentId" propId="6" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Attachment"/>
+                <column code="ATTACHMENT_FILE_ID" displayName="版本附件" name="attachmentFileId" precision="200" propId="6"
+                        stdDataType="string" stdDomain="file" stdSqlType="VARCHAR" i18n-en:displayName="Attachment"/>
                 <column code="IS_CURRENT" defaultValue="false" displayName="是否当前版本" name="isCurrent" propId="7"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Current"/>
                 <column code="STATUS" displayName="版本状态" mandatory="true" name="status" propId="8" stdDataType="int"
                         stdSqlType="INTEGER" ext:dict="erp-ct/version-status" i18n-en:displayName="Status"/>
-                <column code="APPROVED_BY" displayName="批准人" name="approvedBy" propId="9" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Approved By"/>
+                <column code="APPROVED_BY" displayName="批准人" name="approvedBy" precision="36" propId="9"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
                 <column code="APPROVED_AT" displayName="批准时间" name="approvedAt" propId="10" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="11"
@@ -309,7 +318,7 @@
             </columns>
             <relations>
                 <to-one name="contract" refEntityName="app.erp.contract.dao.entity.ErpCtContract" tagSet="pub"
-                        i18n-en:displayName="Contract" ref-i18n-en:displayName="Contract Version">
+                        i18n-en:displayName="Contract">
                     <join>
                         <on leftProp="contractId" rightProp="id"/>
                     </join>
@@ -360,7 +369,7 @@
             </columns>
             <relations>
                 <to-one name="contractLine" refEntityName="app.erp.contract.dao.entity.ErpCtContractLine" tagSet="pub"
-                        i18n-en:displayName="Contract Line" ref-i18n-en:displayName="Invoice Plan">
+                        i18n-en:displayName="Contract Line">
                     <join>
                         <on leftProp="contractLineId" rightProp="id"/>
                     </join>
@@ -410,7 +419,7 @@
             </columns>
             <relations>
                 <to-one name="contractLine" refEntityName="app.erp.contract.dao.entity.ErpCtContractLine" tagSet="pub"
-                        i18n-en:displayName="Contract Line" ref-i18n-en:displayName="Consumption Line">
+                        i18n-en:displayName="Contract Line">
                     <join>
                         <on leftProp="contractLineId" rightProp="id"/>
                     </join>
@@ -502,9 +511,8 @@
                         propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
             <relations>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
-                        ref-i18n-en:displayName="Approval Matrix">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -528,8 +536,8 @@
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Approval Matrix"/>
                 <column code="APPROVAL_ORDER" displayName="顺序号" name="approvalOrder" propId="5" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Approval Order"/>
-                <column code="APPROVER_ID" displayName="审批人" name="approverId" propId="6" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Approver"/>
+                <column code="APPROVER_ID" displayName="审批人" name="approverId" precision="36" propId="6"
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approver"/>
                 <column code="APPROVAL_STATUS" displayName="审批状态" mandatory="true" name="approvalStatus" propId="7"
                         stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ct/approval-status"
                         i18n-en:displayName="Approval Status"/>
@@ -559,16 +567,21 @@
             </columns>
             <relations>
                 <to-one name="contract" refEntityName="app.erp.contract.dao.entity.ErpCtContract" tagSet="pub"
-                        i18n-en:displayName="Contract" ref-i18n-en:displayName="Approval Records">
+                        i18n-en:displayName="Contract">
                     <join>
                         <on leftProp="contractId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
-                        ref-i18n-en:displayName="Approval Record">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="approvalMatrix" refEntityName="app.erp.contract.dao.entity.ErpCtApprovalMatrix"
+                        tagSet="pub">
+                    <join>
+                        <on leftProp="approvalMatrixId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -616,14 +629,13 @@
             </columns>
             <relations>
                 <to-one name="contractLine" refEntityName="app.erp.contract.dao.entity.ErpCtContractLine" tagSet="pub"
-                        i18n-en:displayName="Contract Line" ref-i18n-en:displayName="Volume Discounts">
+                        i18n-en:displayName="Contract Line">
                     <join>
                         <on leftProp="contractLineId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
-                        ref-i18n-en:displayName="Volume Discount">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -687,16 +699,20 @@
             </columns>
             <relations>
                 <to-one name="contract" refEntityName="app.erp.contract.dao.entity.ErpCtContract" tagSet="pub"
-                        i18n-en:displayName="Contract" ref-i18n-en:displayName="Rebate Agreements">
+                        i18n-en:displayName="Contract">
                     <join>
                         <on leftProp="contractId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
-                        ref-i18n-en:displayName="Rebate Agreement">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub">
+                    <join>
+                        <on leftProp="partnerId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -742,7 +758,7 @@
             </columns>
             <relations>
                 <to-one name="rebateAgreement" refEntityName="app.erp.contract.dao.entity.ErpCtRebateAgreement"
-                        tagSet="pub" i18n-en:displayName="Rebate Agreement" ref-i18n-en:displayName="Rebate Tiers">
+                        tagSet="pub" i18n-en:displayName="Rebate Agreement">
                     <join>
                         <on leftProp="rebateAgreementId" rightProp="id"/>
                     </join>
@@ -798,14 +814,13 @@
             </columns>
             <relations>
                 <to-one name="rebateAgreement" refEntityName="app.erp.contract.dao.entity.ErpCtRebateAgreement"
-                        tagSet="pub" i18n-en:displayName="Rebate Agreement" ref-i18n-en:displayName="Rebate Accruals">
+                        tagSet="pub" i18n-en:displayName="Rebate Agreement">
                     <join>
                         <on leftProp="rebateAgreementId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
-                        ref-i18n-en:displayName="Rebate Accrual">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -860,14 +875,13 @@
             </columns>
             <relations>
                 <to-one name="rebateAgreement" refEntityName="app.erp.contract.dao.entity.ErpCtRebateAgreement"
-                        tagSet="pub" i18n-en:displayName="Rebate Agreement" ref-i18n-en:displayName="Rebate Settlements">
+                        tagSet="pub" i18n-en:displayName="Rebate Agreement">
                     <join>
                         <on leftProp="rebateAgreementId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
-                        ref-i18n-en:displayName="Rebate Settlement">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -903,8 +917,9 @@
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Certificate URL"/>
                 <column code="EVIDENCE_NO" displayName="存证编号" name="evidenceNo" precision="200" propId="11"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Evidence No"/>
-                <column code="ATTACHMENT_ID" displayName="已签署文件" name="attachmentId" propId="12" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Signed Attachment"/>
+                <column code="ATTACHMENT_FILE_ID" displayName="已签署文件" name="attachmentFileId" precision="200"
+                        propId="12" stdDataType="string" stdDomain="file" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Attachment"/>
                 <column code="ERROR_MSG" displayName="错误信息" name="errorMsg" precision="1000" propId="13"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Error Message"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="14"
@@ -927,16 +942,21 @@
             </columns>
             <relations>
                 <to-one name="contractVersion" refEntityName="app.erp.contract.dao.entity.ErpCtContractVersion"
-                        tagSet="pub" i18n-en:displayName="Contract Version" ref-i18n-en:displayName="Signature Requests">
+                        tagSet="pub" i18n-en:displayName="Contract Version">
                     <join>
                         <on leftProp="contractVersionId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
-                        ref-i18n-en:displayName="Signature Request">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="providerRequest" refEntityName="app.erp.contract.dao.entity.ErpCtSignatureRequest"
+                        tagSet="pub">
+                    <join>
+                        <on leftProp="providerRequestId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -959,8 +979,8 @@
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Document Name"/>
                 <column code="DOC_TYPE" displayName="文档类型" mandatory="true" name="docType" precision="50" propId="6"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Document Type"/>
-                <column code="ATTACHMENT_ID" displayName="附件" name="attachmentId" propId="7" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Attachment"/>
+                <column code="ATTACHMENT_FILE_ID" displayName="附件" name="attachmentFileId" precision="200" propId="7"
+                        stdDataType="string" stdDomain="file" stdSqlType="VARCHAR" i18n-en:displayName="Attachment"/>
                 <column code="FILE_SIZE" displayName="文件大小(字节)" name="fileSize" propId="8" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="File Size"/>
                 <column code="FILE_HASH" displayName="文件哈希" name="fileHash" precision="100" propId="9"
@@ -1005,13 +1025,13 @@
             </columns>
             <relations>
                 <to-one name="contract" refEntityName="app.erp.contract.dao.entity.ErpCtContract" tagSet="pub"
-                        i18n-en:displayName="Contract" ref-i18n-en:displayName="Documents">
+                        i18n-en:displayName="Contract">
                     <join>
                         <on leftProp="contractId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org" ref-i18n-en:displayName="Document">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -1032,6 +1052,52 @@
             <columns>
                 <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"
                         stdSqlType="BIGINT" tagSet="seq-default"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.ct.dao.entity.ErpCtApprovalMatrix" displayName="审批矩阵"
+                name="app.erp.ct.dao.entity.ErpCtApprovalMatrix" notGenCode="true" tableName="erp_ct_approval_matrix"
+                biz:moduleId="erp/ct">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="ID"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Code"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Name"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.ct.dao.entity.ErpCtSignatureRequest" displayName="签名请求"
+                name="app.erp.ct.dao.entity.ErpCtSignatureRequest" notGenCode="true"
+                tableName="erp_ct_signature_request" biz:moduleId="erp/ct">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="ID"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Code"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdCurrency" displayName="币种"
+                name="app.erp.md.dao.entity.ErpMdCurrency" notGenCode="true" tableName="erp_md_currency"
+                biz:moduleId="erp/md">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="ID"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Code"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Name"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdMaterial" displayName="物料"
+                name="app.erp.md.dao.entity.ErpMdMaterial" notGenCode="true" tableName="erp_md_material"
+                biz:moduleId="erp/md">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="ID"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Code"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Name"/>
             </columns>
         </entity>
     </entities>

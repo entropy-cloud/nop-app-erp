@@ -10,7 +10,7 @@
   "completedAt": "2000-01-01 14:00:00",
   "certificateUrl": "",
   "evidenceNo": "",
-  "attachmentId": 0,
+  "attachmentFileId": "",
   "errorMsg": "",
   "remark": "",
   "delVersion": 0,
@@ -20,5 +20,7 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "contractVersion": null,
-  "org": null
+  "org": null,
+  "providerRequest": null,
+  "attachmentFileIdComponentFileStatus": null
 }

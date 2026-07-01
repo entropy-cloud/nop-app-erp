@@ -37,7 +37,7 @@
                 <col id="changedAt" mandatory="true" sortable="true"/>
 
                 <!--变更人-->
-                <col id="changedBy" ui:number="true" sortable="true"/>
+                <col id="changedBy" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

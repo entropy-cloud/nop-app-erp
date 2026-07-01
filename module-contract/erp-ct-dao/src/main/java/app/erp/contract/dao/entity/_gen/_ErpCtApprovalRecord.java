@@ -41,7 +41,7 @@ public class _ErpCtApprovalRecord extends DynamicOrmEntity{
     public static final String PROP_NAME_approvalOrder = "approvalOrder";
     public static final int PROP_ID_approvalOrder = 5;
     
-    /* 审批人: APPROVER_ID BIGINT */
+    /* 审批人: APPROVER_ID VARCHAR */
     public static final String PROP_NAME_approverId = "approverId";
     public static final int PROP_ID_approverId = 6;
     
@@ -95,6 +95,12 @@ public class _ErpCtApprovalRecord extends DynamicOrmEntity{
     
     /* relation:  */
     public static final String PROP_NAME_contract = "contract";
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
+    /* relation:  */
+    public static final String PROP_NAME_approvalMatrix = "approvalMatrix";
     
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
@@ -174,7 +180,7 @@ public class _ErpCtApprovalRecord extends DynamicOrmEntity{
     private java.lang.Integer _approvalOrder;
     
     /* 审批人: APPROVER_ID */
-    private java.lang.Long _approverId;
+    private java.lang.String _approverId;
     
     /* 审批状态: APPROVAL_STATUS */
     private java.lang.Integer _approvalStatus;
@@ -396,9 +402,9 @@ public class _ErpCtApprovalRecord extends DynamicOrmEntity{
             }
         
             case PROP_ID_approverId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_approverId));
                }
                setApproverId(typedValue);
@@ -561,7 +567,7 @@ public class _ErpCtApprovalRecord extends DynamicOrmEntity{
         
             case PROP_ID_approverId:{
                onInitProp(propId);
-               this._approverId = (java.lang.Long)value;
+               this._approverId = (java.lang.String)value;
                
                break;
             }
@@ -747,7 +753,7 @@ public class _ErpCtApprovalRecord extends DynamicOrmEntity{
     /**
      * 审批人: APPROVER_ID
      */
-    public final java.lang.Long getApproverId(){
+    public final java.lang.String getApproverId(){
          onPropGet(PROP_ID_approverId);
          return _approverId;
     }
@@ -755,7 +761,7 @@ public class _ErpCtApprovalRecord extends DynamicOrmEntity{
     /**
      * 审批人: APPROVER_ID
      */
-    public final void setApproverId(java.lang.Long value){
+    public final void setApproverId(java.lang.String value){
         if(onPropSet(PROP_ID_approverId,value)){
             this._approverId = value;
             internalClearRefs(PROP_ID_approverId);
@@ -989,6 +995,52 @@ public class _ErpCtApprovalRecord extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_contract, refEntity,()->{
            
                            this.setContractId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.contract.dao.entity.ErpCtApprovalMatrix getApprovalMatrix(){
+       return (app.erp.contract.dao.entity.ErpCtApprovalMatrix)internalGetRefEntity(PROP_NAME_approvalMatrix);
+    }
+
+    public final void setApprovalMatrix(app.erp.contract.dao.entity.ErpCtApprovalMatrix refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setApprovalMatrixId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_approvalMatrix, refEntity,()->{
+           
+                           this.setApprovalMatrixId(refEntity.getId());
                        
            });
            }

@@ -37,7 +37,7 @@
             <schema type="java.lang.String" precision="50"/>
         </prop>
         <prop name="providerRequestId" displayName="提供商请求ID" propId="5" i18n-en:displayName="Provider Request ID"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="providerRequest">
             <schema type="java.lang.String" precision="200"/>
         </prop>
         <prop name="status" displayName="签章状态" propId="6" i18n-en:displayName="Status" mandatory="true" queryable="true"
@@ -64,9 +64,9 @@
               sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="200"/>
         </prop>
-        <prop name="attachmentId" displayName="已签署文件" propId="12" i18n-en:displayName="Signed Attachment"
-              queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+        <prop name="attachmentFileId" displayName="已签署文件" propId="12" i18n-en:displayName="Attachment" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema stdDomain="file" type="java.lang.String" precision="200"/>
         </prop>
         <prop name="errorMsg" displayName="错误信息" propId="13" i18n-en:displayName="Error Message" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -109,6 +109,15 @@
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
               lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="providerRequest" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="providerRequestId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpCtSignatureRequest"/>
+        </prop>
+        <prop name="attachmentFileIdComponentFileStatus" mapToProp="attachmentFileIdComponent.fileStatus"
+              internal="true" lazy="true">
+            <schema type="io.nop.api.core.beans.file.FileStatusBean"/>
         </prop>
     </props>
 </meta>

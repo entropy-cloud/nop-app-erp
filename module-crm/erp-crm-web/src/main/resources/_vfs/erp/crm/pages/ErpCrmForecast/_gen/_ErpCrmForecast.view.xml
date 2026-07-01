@@ -34,7 +34,7 @@
                 <col id="teamId" ui:number="true" sortable="true"/>
 
                 <!--销售员-->
-                <col id="ownerId" ui:number="true" sortable="true"/>
+                <col id="ownerId" sortable="true"/>
 
                 <!--币种-->
                 <col id="currencyId" ui:number="true" sortable="true"/>

@@ -11,9 +11,13 @@ alter table erp_md_organization add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NU
 
 alter table erp_crm_event_category add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_md_partner_contact add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_crm_quote_template add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
-alter table nop_auth_user add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+alter table erp_md_currency add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_material add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_crm_team add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -23,27 +27,19 @@ alter table erp_crm_lead_score_config add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' 
 
 alter table erp_crm_forecast_period add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_crm_territory add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_crm_product_configurator add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_crm_bundle_pricing add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
-alter table erp_crm_price_rule add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
-
 alter table erp_crm_sequence add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
-alter table erp_crm_territory add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+alter table erp_crm_price_rule add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_crm_stage add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_crm_lead_score_config_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
-
-alter table erp_crm_config_rule add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
-
-alter table erp_crm_bundle_pricing_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
-
-alter table erp_crm_sequence_step add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
-
-alter table erp_crm_sequence_assignment add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_crm_forecast add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -52,6 +48,14 @@ alter table erp_crm_territory_assignment_rule add NOP_TENANT_ID VARCHAR(32) DEFA
 alter table erp_crm_quota add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_crm_lead_funnel add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_crm_config_rule add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_crm_bundle_pricing_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_crm_sequence_step add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_crm_sequence_assignment add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_crm_lead add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -91,11 +95,17 @@ alter table erp_md_organization add constraint PK_erp_md_organization primary ke
 alter table erp_crm_event_category drop constraint PK_erp_crm_event_category;
 alter table erp_crm_event_category add constraint PK_erp_crm_event_category primary key (NOP_TENANT_ID, id);
 
+alter table erp_md_partner_contact drop constraint PK_erp_md_partner_contact;
+alter table erp_md_partner_contact add constraint PK_erp_md_partner_contact primary key (NOP_TENANT_ID, id);
+
 alter table erp_crm_quote_template drop constraint PK_erp_crm_quote_template;
 alter table erp_crm_quote_template add constraint PK_erp_crm_quote_template primary key (NOP_TENANT_ID, id);
 
-alter table nop_auth_user drop constraint PK_nop_auth_user;
-alter table nop_auth_user add constraint PK_nop_auth_user primary key (NOP_TENANT_ID, id);
+alter table erp_md_currency drop constraint PK_erp_md_currency;
+alter table erp_md_currency add constraint PK_erp_md_currency primary key (NOP_TENANT_ID, id);
+
+alter table erp_md_material drop constraint PK_erp_md_material;
+alter table erp_md_material add constraint PK_erp_md_material primary key (NOP_TENANT_ID, id);
 
 alter table erp_crm_team drop constraint PK_erp_crm_team;
 alter table erp_crm_team add constraint PK_erp_crm_team primary key (NOP_TENANT_ID, id);
@@ -109,38 +119,26 @@ alter table erp_crm_lead_score_config add constraint PK_erp_crm_lead_score_confi
 alter table erp_crm_forecast_period drop constraint PK_erp_crm_forecast_period;
 alter table erp_crm_forecast_period add constraint PK_erp_crm_forecast_period primary key (NOP_TENANT_ID, id);
 
+alter table erp_crm_territory drop constraint PK_erp_crm_territory;
+alter table erp_crm_territory add constraint PK_erp_crm_territory primary key (NOP_TENANT_ID, id);
+
 alter table erp_crm_product_configurator drop constraint PK_erp_crm_product_configurator;
 alter table erp_crm_product_configurator add constraint PK_erp_crm_product_configurator primary key (NOP_TENANT_ID, id);
 
 alter table erp_crm_bundle_pricing drop constraint PK_erp_crm_bundle_pricing;
 alter table erp_crm_bundle_pricing add constraint PK_erp_crm_bundle_pricing primary key (NOP_TENANT_ID, id);
 
-alter table erp_crm_price_rule drop constraint PK_erp_crm_price_rule;
-alter table erp_crm_price_rule add constraint PK_erp_crm_price_rule primary key (NOP_TENANT_ID, id);
-
 alter table erp_crm_sequence drop constraint PK_erp_crm_sequence;
 alter table erp_crm_sequence add constraint PK_erp_crm_sequence primary key (NOP_TENANT_ID, id);
 
-alter table erp_crm_territory drop constraint PK_erp_crm_territory;
-alter table erp_crm_territory add constraint PK_erp_crm_territory primary key (NOP_TENANT_ID, id);
+alter table erp_crm_price_rule drop constraint PK_erp_crm_price_rule;
+alter table erp_crm_price_rule add constraint PK_erp_crm_price_rule primary key (NOP_TENANT_ID, id);
 
 alter table erp_crm_stage drop constraint PK_erp_crm_stage;
 alter table erp_crm_stage add constraint PK_erp_crm_stage primary key (NOP_TENANT_ID, id);
 
 alter table erp_crm_lead_score_config_line drop constraint PK_erp_crm_lead_score_config_line;
 alter table erp_crm_lead_score_config_line add constraint PK_erp_crm_lead_score_config_line primary key (NOP_TENANT_ID, id);
-
-alter table erp_crm_config_rule drop constraint PK_erp_crm_config_rule;
-alter table erp_crm_config_rule add constraint PK_erp_crm_config_rule primary key (NOP_TENANT_ID, id);
-
-alter table erp_crm_bundle_pricing_line drop constraint PK_erp_crm_bundle_pricing_line;
-alter table erp_crm_bundle_pricing_line add constraint PK_erp_crm_bundle_pricing_line primary key (NOP_TENANT_ID, id);
-
-alter table erp_crm_sequence_step drop constraint PK_erp_crm_sequence_step;
-alter table erp_crm_sequence_step add constraint PK_erp_crm_sequence_step primary key (NOP_TENANT_ID, id);
-
-alter table erp_crm_sequence_assignment drop constraint PK_erp_crm_sequence_assignment;
-alter table erp_crm_sequence_assignment add constraint PK_erp_crm_sequence_assignment primary key (NOP_TENANT_ID, id);
 
 alter table erp_crm_forecast drop constraint PK_erp_crm_forecast;
 alter table erp_crm_forecast add constraint PK_erp_crm_forecast primary key (NOP_TENANT_ID, id);
@@ -153,6 +151,18 @@ alter table erp_crm_quota add constraint PK_erp_crm_quota primary key (NOP_TENAN
 
 alter table erp_crm_lead_funnel drop constraint PK_erp_crm_lead_funnel;
 alter table erp_crm_lead_funnel add constraint PK_erp_crm_lead_funnel primary key (NOP_TENANT_ID, id);
+
+alter table erp_crm_config_rule drop constraint PK_erp_crm_config_rule;
+alter table erp_crm_config_rule add constraint PK_erp_crm_config_rule primary key (NOP_TENANT_ID, id);
+
+alter table erp_crm_bundle_pricing_line drop constraint PK_erp_crm_bundle_pricing_line;
+alter table erp_crm_bundle_pricing_line add constraint PK_erp_crm_bundle_pricing_line primary key (NOP_TENANT_ID, id);
+
+alter table erp_crm_sequence_step drop constraint PK_erp_crm_sequence_step;
+alter table erp_crm_sequence_step add constraint PK_erp_crm_sequence_step primary key (NOP_TENANT_ID, id);
+
+alter table erp_crm_sequence_assignment drop constraint PK_erp_crm_sequence_assignment;
+alter table erp_crm_sequence_assignment add constraint PK_erp_crm_sequence_assignment primary key (NOP_TENANT_ID, id);
 
 alter table erp_crm_lead drop constraint PK_erp_crm_lead;
 alter table erp_crm_lead add constraint PK_erp_crm_lead primary key (NOP_TENANT_ID, id);

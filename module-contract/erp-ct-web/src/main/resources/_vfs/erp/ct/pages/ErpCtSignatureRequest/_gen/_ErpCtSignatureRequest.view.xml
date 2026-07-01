@@ -52,7 +52,7 @@
                 <col id="evidenceNo" sortable="true"/>
 
                 <!--已签署文件-->
-                <col id="attachmentId" ui:number="true" sortable="true"/>
+                <col id="attachmentFileId" sortable="true"/>
 
                 <!--错误信息-->
                 <col id="errorMsg" sortable="true"/>
@@ -87,7 +87,7 @@
  providerRequestId[提供商请求ID] status[签章状态]
  signers[签署人(JSON)] signingDeadline[签署截止日期]
  completedAt[签署完成时间] certificateUrl[完成证书URL]
- evidenceNo[存证编号] attachmentId[已签署文件]
+ evidenceNo[存证编号] attachmentFileId[已签署文件]
  errorMsg[错误信息] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
@@ -101,7 +101,7 @@
  providerRequestId[提供商请求ID] status[签章状态]
  signers[签署人(JSON)] signingDeadline[签署截止日期]
  completedAt[签署完成时间] certificateUrl[完成证书URL]
- evidenceNo[存证编号] attachmentId[已签署文件]
+ evidenceNo[存证编号] attachmentFileId[已签署文件]
  errorMsg[错误信息] remark[备注]
 </layout>
         </form>
@@ -112,7 +112,7 @@
  providerRequestId[提供商请求ID] status[签章状态]
  signers[签署人(JSON)] signingDeadline[签署截止日期]
  completedAt[签署完成时间] certificateUrl[完成证书URL]
- evidenceNo[存证编号] attachmentId[已签署文件]
+ evidenceNo[存证编号] attachmentFileId[已签署文件]
  errorMsg[错误信息] remark[备注]
  delVersion[逻辑删除版本] 
 </layout>

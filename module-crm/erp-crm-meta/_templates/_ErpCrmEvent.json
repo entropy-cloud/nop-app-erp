@@ -15,7 +15,7 @@
   "relatedBillCode": "",
   "partnerId": 0,
   "contactId": 0,
-  "ownerId": 0,
+  "ownerId": "",
   "status": "",
   "status_label": "",
   "priority": "",
@@ -34,5 +34,6 @@
   "partner": null,
   "parentEvent": null,
   "org": null,
-  "eventCategory": null
+  "eventCategory": null,
+  "contact": null
 }

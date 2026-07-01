@@ -5,9 +5,17 @@ alter table erp_ct_template add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_md_organization add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
-alter table erp_ct_contract add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+alter table erp_md_currency add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_material add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ct_approval_matrix add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_ct_signature_request add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_ct_approval_matrix add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_ct_contract add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ct_contract_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -42,11 +50,23 @@ alter table erp_ct_template add primary key (NOP_TENANT_ID, ID);
 alter table erp_md_md_organization drop primary key;
 alter table erp_md_md_organization add primary key (NOP_TENANT_ID, ID);
 
-alter table erp_ct_contract drop primary key;
-alter table erp_ct_contract add primary key (NOP_TENANT_ID, ID);
+alter table erp_md_currency drop primary key;
+alter table erp_md_currency add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_material drop primary key;
+alter table erp_md_material add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_ct_approval_matrix drop primary key;
 alter table erp_ct_approval_matrix add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_ct_signature_request drop primary key;
+alter table erp_ct_signature_request add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_ct_approval_matrix drop primary key;
+alter table erp_ct_approval_matrix add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_ct_contract drop primary key;
+alter table erp_ct_contract add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_ct_contract_line drop primary key;
 alter table erp_ct_contract_line add primary key (NOP_TENANT_ID, ID);

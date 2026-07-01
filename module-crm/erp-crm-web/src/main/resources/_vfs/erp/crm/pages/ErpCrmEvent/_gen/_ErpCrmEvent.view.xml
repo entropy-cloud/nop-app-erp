@@ -64,7 +64,7 @@
                 <col id="contactId" ui:number="true" sortable="true"/>
 
                 <!--负责人-->
-                <col id="ownerId" ui:number="true" sortable="true"/>
+                <col id="ownerId" sortable="true"/>
 
                 <!--活动状态-->
                 <col id="status" mandatory="true" sortable="true"/>

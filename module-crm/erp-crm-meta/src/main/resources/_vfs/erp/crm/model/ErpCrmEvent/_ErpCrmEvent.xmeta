@@ -75,12 +75,12 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="contactId" displayName="联系人" propId="15" i18n-en:displayName="Contact" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="contact">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="ownerId" displayName="负责人" propId="16" i18n-en:displayName="Owner" queryable="true" sortable="true"
               insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
         <prop name="status" displayName="活动状态" propId="17" i18n-en:displayName="Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -154,6 +154,10 @@
               queryable="true" ext:joinLeftProp="eventCategoryId" ext:joinRightProp="id" insertable="false"
               updatable="false" lazy="true">
             <schema bizObjName="ErpCrmEventCategory"/>
+        </prop>
+        <prop name="contact" i18n-en:displayName="Contact" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="contactId" ext:joinRightProp="id" biz:moduleId="erp/md" lazy="true" published="false">
+            <schema bizObjName="ErpMdPartnerContact"/>
         </prop>
     </props>
 </meta>

@@ -4,7 +4,7 @@
   "periodId": 0,
   "territoryId": 0,
   "teamId": 0,
-  "ownerId": 0,
+  "ownerId": "",
   "currencyId": 0,
   "commitAmount": "",
   "upsideAmount": "",
@@ -24,6 +24,6 @@
   "period": null,
   "territory": null,
   "team": null,
-  "owner": null,
-  "org": null
+  "org": null,
+  "currency": null
 }

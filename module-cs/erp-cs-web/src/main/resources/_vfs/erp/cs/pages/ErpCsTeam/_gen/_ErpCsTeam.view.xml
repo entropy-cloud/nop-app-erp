@@ -28,7 +28,7 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--团队负责人-->
-                <col id="teamLeaderId" ui:number="true" sortable="true"/>
+                <col id="teamLeaderId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

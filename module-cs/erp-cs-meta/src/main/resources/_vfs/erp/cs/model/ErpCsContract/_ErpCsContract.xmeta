@@ -32,7 +32,7 @@
             <schema type="java.lang.String" precision="200"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="4" i18n-en:displayName="Organization" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="partnerId" displayName="签约客户" propId="5" i18n-en:displayName="Partner" queryable="true"
@@ -63,9 +63,9 @@
               insertable="true" updatable="true">
             <schema type="java.lang.Integer" dict="erp-cs/contract-status"/>
         </prop>
-        <prop name="attachmentId" displayName="合同附件" propId="12" i18n-en:displayName="Attachment" queryable="true"
+        <prop name="attachmentFileId" displayName="合同附件" propId="12" i18n-en:displayName="Attachment" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema stdDomain="file" type="java.lang.String" precision="200"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="13" i18n-en:displayName="Del Flag" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
@@ -95,6 +95,14 @@
               queryable="true" ext:joinLeftProp="partnerId" ext:joinRightProp="id" biz:moduleId="erp/md"
               insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdPartner"/>
+        </prop>
+        <prop name="org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="orgId"
+              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="attachmentFileIdComponentFileStatus" mapToProp="attachmentFileIdComponent.fileStatus"
+              internal="true" lazy="true">
+            <schema type="io.nop.api.core.beans.file.FileStatusBean"/>
         </prop>
     </props>
 </meta>

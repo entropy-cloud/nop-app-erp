@@ -61,7 +61,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     public static final String PROP_NAME_source = "source";
     public static final int PROP_ID_source = 10;
     
-    /* 分配处理人: ASSIGNED_TO_ID BIGINT */
+    /* 分配处理人: ASSIGNED_TO_ID VARCHAR */
     public static final String PROP_NAME_assignedToId = "assignedToId";
     public static final int PROP_ID_assignedToId = 11;
     
@@ -142,10 +142,19 @@ public class _ErpCsTicket extends DynamicOrmEntity{
 
     
     /* relation:  */
+    public static final String PROP_NAME_customer = "customer";
+    
+    /* relation:  */
+    public static final String PROP_NAME_contact = "contact";
+    
+    /* relation:  */
     public static final String PROP_NAME_ticketType = "ticketType";
     
     /* relation:  */
     public static final String PROP_NAME_slaPolicy = "slaPolicy";
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
     
     /* relation:  */
     public static final String PROP_NAME_catalogItem = "catalogItem";
@@ -282,7 +291,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     private java.lang.Integer _source;
     
     /* 分配处理人: ASSIGNED_TO_ID */
-    private java.lang.Long _assignedToId;
+    private java.lang.String _assignedToId;
     
     /* SLA 策略: SLA_POLICY_ID */
     private java.lang.Long _slaPolicyId;
@@ -611,9 +620,9 @@ public class _ErpCsTicket extends DynamicOrmEntity{
             }
         
             case PROP_ID_assignedToId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_assignedToId));
                }
                setAssignedToId(typedValue);
@@ -881,7 +890,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
         
             case PROP_ID_assignedToId:{
                onInitProp(propId);
-               this._assignedToId = (java.lang.Long)value;
+               this._assignedToId = (java.lang.String)value;
                
                break;
             }
@@ -1211,7 +1220,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 分配处理人: ASSIGNED_TO_ID
      */
-    public final java.lang.Long getAssignedToId(){
+    public final java.lang.String getAssignedToId(){
          onPropGet(PROP_ID_assignedToId);
          return _assignedToId;
     }
@@ -1219,7 +1228,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 分配处理人: ASSIGNED_TO_ID
      */
-    public final void setAssignedToId(java.lang.Long value){
+    public final void setAssignedToId(java.lang.String value){
         if(onPropSet(PROP_ID_assignedToId,value)){
             this._assignedToId = value;
             internalClearRefs(PROP_ID_assignedToId);
@@ -1572,6 +1581,52 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 
      */
+    public final app.erp.md.dao.entity.ErpMdPartner getCustomer(){
+       return (app.erp.md.dao.entity.ErpMdPartner)internalGetRefEntity(PROP_NAME_customer);
+    }
+
+    public final void setCustomer(app.erp.md.dao.entity.ErpMdPartner refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCustomerId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_customer, refEntity,()->{
+           
+                           this.setCustomerId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdPartner getContact(){
+       return (app.erp.md.dao.entity.ErpMdPartner)internalGetRefEntity(PROP_NAME_contact);
+    }
+
+    public final void setContact(app.erp.md.dao.entity.ErpMdPartner refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setContactId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_contact, refEntity,()->{
+           
+                           this.setContactId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
     public final app.erp.cs.dao.entity.ErpCsTicketType getTicketType(){
        return (app.erp.cs.dao.entity.ErpCsTicketType)internalGetRefEntity(PROP_NAME_ticketType);
     }
@@ -1609,6 +1664,29 @@ public class _ErpCsTicket extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_slaPolicy, refEntity,()->{
            
                            this.setSlaPolicyId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
                        
            });
            }

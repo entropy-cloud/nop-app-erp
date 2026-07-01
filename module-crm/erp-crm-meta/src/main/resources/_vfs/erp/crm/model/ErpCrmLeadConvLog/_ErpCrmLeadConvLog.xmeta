@@ -45,7 +45,7 @@
         </prop>
         <prop name="changedBy" displayName="变更人" propId="7" i18n-en:displayName="Changed By" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String" precision="36"/>
         </prop>
         <prop name="remark" displayName="备注" propId="8" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

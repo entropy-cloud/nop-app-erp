@@ -5,19 +5,11 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean id="app.erp.cs.service.entity.ErpCsTicketTypeBizModel" ioc:type="@bean:id" ioc:default="true"/>
+    <bean id="app.erp.cs.service.entity.ErpCsTeamBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
-    <bean id="biz_ErpCsTicketType" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.cs.biz.IErpCsTicketTypeBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
-        <property name="bizObjName" value="ErpCsTicketType"/>
-    </bean>
-
-    <bean id="app.erp.cs.service.entity.ErpCsKnowledgeBaseBizModel" ioc:type="@bean:id" ioc:default="true"/>
-
-    <bean id="biz_ErpCsKnowledgeBase" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.cs.biz.IErpCsKnowledgeBaseBiz" ioc:force-lazy-property="true" lazy-init="true"
-          primary="true">
-        <property name="bizObjName" value="ErpCsKnowledgeBase"/>
+    <bean id="biz_ErpCsTeam" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.cs.biz.IErpCsTeamBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCsTeam"/>
     </bean>
 
     <bean id="app.erp.cs.service.entity.ErpCsCannedCategoryBizModel" ioc:type="@bean:id" ioc:default="true"/>
@@ -28,12 +20,11 @@
         <property name="bizObjName" value="ErpCsCannedCategory"/>
     </bean>
 
-    <bean id="app.erp.cs.service.entity.ErpCsCatalogCategoryBizModel" ioc:type="@bean:id" ioc:default="true"/>
+    <bean id="app.erp.cs.service.entity.ErpCsAgentRateBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
-    <bean id="biz_ErpCsCatalogCategory" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.cs.biz.IErpCsCatalogCategoryBiz" ioc:force-lazy-property="true" lazy-init="true"
-          primary="true">
-        <property name="bizObjName" value="ErpCsCatalogCategory"/>
+    <bean id="biz_ErpCsAgentRate" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.cs.biz.IErpCsAgentRateBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCsAgentRate"/>
     </bean>
 
     <bean id="app.erp.cs.service.entity.ErpCsContractBizModel" ioc:type="@bean:id" ioc:default="true"/>
@@ -43,26 +34,12 @@
         <property name="bizObjName" value="ErpCsContract"/>
     </bean>
 
-    <bean id="app.erp.cs.service.entity.ErpCsTeamBizModel" ioc:type="@bean:id" ioc:default="true"/>
+    <bean id="app.erp.cs.service.entity.ErpCsCatalogCategoryBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
-    <bean id="biz_ErpCsTeam" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.cs.biz.IErpCsTeamBiz"
-          ioc:force-lazy-property="true" lazy-init="true" primary="true">
-        <property name="bizObjName" value="ErpCsTeam"/>
-    </bean>
-
-    <bean id="app.erp.cs.service.entity.ErpCsAgentRateBizModel" ioc:type="@bean:id" ioc:default="true"/>
-
-    <bean id="biz_ErpCsAgentRate" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.cs.biz.IErpCsAgentRateBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
-        <property name="bizObjName" value="ErpCsAgentRate"/>
-    </bean>
-
-    <bean id="app.erp.cs.service.entity.ErpCsCannedResponseBizModel" ioc:type="@bean:id" ioc:default="true"/>
-
-    <bean id="biz_ErpCsCannedResponse" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.cs.biz.IErpCsCannedResponseBiz" ioc:force-lazy-property="true" lazy-init="true"
+    <bean id="biz_ErpCsCatalogCategory" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.cs.biz.IErpCsCatalogCategoryBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
-        <property name="bizObjName" value="ErpCsCannedResponse"/>
+        <property name="bizObjName" value="ErpCsCatalogCategory"/>
     </bean>
 
     <bean id="app.erp.cs.service.entity.ErpCsSlaPolicyBizModel" ioc:type="@bean:id" ioc:default="true"/>
@@ -72,11 +49,34 @@
         <property name="bizObjName" value="ErpCsSlaPolicy"/>
     </bean>
 
+    <bean id="app.erp.cs.service.entity.ErpCsKnowledgeBaseBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCsKnowledgeBase" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.cs.biz.IErpCsKnowledgeBaseBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCsKnowledgeBase"/>
+    </bean>
+
+    <bean id="app.erp.cs.service.entity.ErpCsTicketTypeBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCsTicketType" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.cs.biz.IErpCsTicketTypeBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCsTicketType"/>
+    </bean>
+
     <bean id="app.erp.cs.service.entity.ErpCsEntitlementBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpCsEntitlement" class="io.nop.biz.proxy.BizProxyFactoryBean"
           ioc:type="app.erp.cs.biz.IErpCsEntitlementBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
         <property name="bizObjName" value="ErpCsEntitlement"/>
+    </bean>
+
+    <bean id="app.erp.cs.service.entity.ErpCsCannedResponseBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCsCannedResponse" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.cs.biz.IErpCsCannedResponseBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCsCannedResponse"/>
     </bean>
 
     <bean id="app.erp.cs.service.entity.ErpCsServiceCatalogItemBizModel" ioc:type="@bean:id" ioc:default="true"/>

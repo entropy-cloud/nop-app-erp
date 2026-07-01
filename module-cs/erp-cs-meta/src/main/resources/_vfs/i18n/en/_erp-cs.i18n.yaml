@@ -33,7 +33,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
-      agent: Agent
+      org: null
     ErpCsCannedCategory:
       id: ID
       code: Code
@@ -49,6 +49,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       parent: Parent Category
+      org: null
     ErpCsCannedResponse:
       id: ID
       code: Code
@@ -71,6 +72,7 @@ prop:
       updateTime: Update Time
       category: Category
       macroTicketType: Macro Ticket Type
+      org: null
     ErpCsCatalogCategory:
       id: ID
       code: Code
@@ -87,6 +89,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       parent: Parent Category
+      org: null
     ErpCsCatalogFulfillment:
       id: ID
       code: Code
@@ -106,6 +109,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       catalogItem: Catalog Item
+      org: null
     ErpCsContract:
       id: ID
       code: Code
@@ -121,7 +125,7 @@ prop:
       billingCycle_label: null
       status: Status
       status_label: null
-      attachmentId: Attachment
+      attachmentFileId: Attachment
       delVersion: Del Flag
       version: Version
       createdBy: Created By
@@ -129,6 +133,8 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       partner: Partner
+      org: null
+      attachmentFileIdComponentFileStatus: null
     ErpCsEntitlement:
       id: ID
       code: Code
@@ -155,6 +161,7 @@ prop:
       partner: Partner
       contract: Contract
       slaPolicy: SLA Policy
+      org: null
     ErpCsKnowledgeBase:
       id: ID
       code: Code
@@ -169,6 +176,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      category: null
     ErpCsServiceCatalogItem:
       id: ID
       code: Code
@@ -196,6 +204,7 @@ prop:
       parent: Parent Item
       ticketType: Ticket Type
       slaPolicy: SLA Policy
+      org: null
     ErpCsSlaPolicy:
       id: ID
       code: Code
@@ -217,7 +226,6 @@ prop:
       updateTime: Update Time
       ticketType: Ticket Type
       team: Team
-      escalationUser: Escalation User
     ErpCsSurvey:
       id: ID
       orgId: Organization
@@ -238,6 +246,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       ticket: Ticket
+      org: null
     ErpCsTeam:
       id: ID
       code: Code
@@ -250,7 +259,6 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
-      teamLeader: Team Leader
     ErpCsTicket:
       id: ID
       code: Code
@@ -290,7 +298,6 @@ prop:
       contact: Contact
       ticketType: Ticket Type
       slaPolicy: SLA Policy
-      assignedTo: Assigned To
       org: Org
       catalogItem: Catalog Item
       actions: Actions
@@ -327,6 +334,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      defaultSlaPolicy: null
     ErpCsTimeEntry:
       id: ID
       orgId: Organization
@@ -354,8 +362,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       ticket: Ticket
-      agent: Agent
-      approvedBy: Approved By
+      org: null
 dict:
   label:
     erp-cs/ticket-status: Ticket Status

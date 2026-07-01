@@ -49,7 +49,7 @@
                 <col id="source" ui:number="true" sortable="true"/>
 
                 <!--分配处理人-->
-                <col id="assignedToId" ui:number="true" sortable="true"/>
+                <col id="assignedToId" sortable="true"/>
 
                 <!--SLA 策略-->
                 <col id="slaPolicyId" ui:number="true" sortable="true"/>

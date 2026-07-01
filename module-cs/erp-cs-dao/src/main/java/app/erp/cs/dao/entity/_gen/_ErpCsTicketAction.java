@@ -41,7 +41,7 @@ public class _ErpCsTicketAction extends DynamicOrmEntity{
     public static final String PROP_NAME_toStatus = "toStatus";
     public static final int PROP_ID_toStatus = 5;
     
-    /* 操作人: OPERATOR_ID BIGINT */
+    /* 操作人: OPERATOR_ID VARCHAR */
     public static final String PROP_NAME_operatorId = "operatorId";
     public static final int PROP_ID_operatorId = 6;
     
@@ -146,7 +146,7 @@ public class _ErpCsTicketAction extends DynamicOrmEntity{
     private java.lang.Integer _toStatus;
     
     /* 操作人: OPERATOR_ID */
-    private java.lang.Long _operatorId;
+    private java.lang.String _operatorId;
     
     /* 操作内容: CONTENT */
     private java.lang.String _content;
@@ -344,9 +344,9 @@ public class _ErpCsTicketAction extends DynamicOrmEntity{
             }
         
             case PROP_ID_operatorId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_operatorId));
                }
                setOperatorId(typedValue);
@@ -469,7 +469,7 @@ public class _ErpCsTicketAction extends DynamicOrmEntity{
         
             case PROP_ID_operatorId:{
                onInitProp(propId);
-               this._operatorId = (java.lang.Long)value;
+               this._operatorId = (java.lang.String)value;
                
                break;
             }
@@ -627,7 +627,7 @@ public class _ErpCsTicketAction extends DynamicOrmEntity{
     /**
      * 操作人: OPERATOR_ID
      */
-    public final java.lang.Long getOperatorId(){
+    public final java.lang.String getOperatorId(){
          onPropGet(PROP_ID_operatorId);
          return _operatorId;
     }
@@ -635,7 +635,7 @@ public class _ErpCsTicketAction extends DynamicOrmEntity{
     /**
      * 操作人: OPERATOR_ID
      */
-    public final void setOperatorId(java.lang.Long value){
+    public final void setOperatorId(java.lang.String value){
         if(onPropSet(PROP_ID_operatorId,value)){
             this._operatorId = value;
             internalClearRefs(PROP_ID_operatorId);

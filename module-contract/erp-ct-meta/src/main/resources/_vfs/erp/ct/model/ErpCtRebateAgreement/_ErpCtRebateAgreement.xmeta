@@ -36,7 +36,7 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="partnerId" displayName="对方伙伴" propId="5" i18n-en:displayName="Partner" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="partner">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="rebateType" displayName="返利类型" propId="6" i18n-en:displayName="Rebate Type" mandatory="true"
@@ -110,6 +110,11 @@
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
               lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="partner" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="partnerId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" mandatory="true" lazy="true">
+            <schema bizObjName="ErpMdPartner"/>
         </prop>
     </props>
 </meta>

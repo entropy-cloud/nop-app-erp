@@ -93,6 +93,7 @@ prop:
       updateTime: Update Time
       bundle: Bundle
       org: Org
+      product: null
     ErpCrmCampaign:
       id: ID
       code: Code
@@ -171,6 +172,7 @@ prop:
       parentEvent: Parent Event
       org: Org
       eventCategory: Event Category
+      contact: Contact
     ErpCrmEventCategory:
       id: ID
       code: Code
@@ -209,8 +211,8 @@ prop:
       period: Period
       territory: Territory
       team: Team
-      owner: Owner
       org: Org
+      currency: null
     ErpCrmForecastAccuracy:
       id: ID
       forecastId: Forecast
@@ -236,6 +238,8 @@ prop:
       forecast: Forecast
       period: Period
       org: Org
+      team: null
+      territory: null
     ErpCrmForecastLine:
       id: ID
       forecastId: Forecast
@@ -565,6 +569,9 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
+      product: null
+      customer: null
+      currency: null
     ErpCrmProductConfigurator:
       id: ID
       code: Code
@@ -606,8 +613,8 @@ prop:
       updateTime: Update Time
       territory: Territory
       team: Team
-      owner: Owner
       org: Org
+      currency: null
     ErpCrmQuoteTemplate:
       id: ID
       code: Code
@@ -749,7 +756,6 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       parent: Parent
-      manager: Manager
       org: Org
     ErpCrmTerritoryAssignmentRule:
       id: ID

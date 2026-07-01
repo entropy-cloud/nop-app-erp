@@ -4,40 +4,16 @@ CREATE TABLE erp_md_md_partner(
   constraint PK_erp_md_md_partner primary key (ID)
 );
 
-CREATE TABLE erp_cs_ticket_type(
-  ID NUMBER(20) NOT NULL ,
-  CODE VARCHAR2(50) NOT NULL ,
-  NAME VARCHAR2(200) NOT NULL ,
-  DEFAULT_PRIORITY INTEGER  ,
-  DEFAULT_SLA_POLICY_ID NUMBER(20)  ,
-  SEQUENCE INTEGER default 0   ,
-  REMARK VARCHAR2(1000)  ,
-  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
-  VERSION INTEGER default 0  NOT NULL ,
-  CREATED_BY VARCHAR2(50) NOT NULL ,
-  CREATE_TIME TIMESTAMP NOT NULL ,
-  UPDATED_BY VARCHAR2(50) NOT NULL ,
-  UPDATE_TIME TIMESTAMP NOT NULL ,
-  constraint PK_erp_cs_ticket_type primary key (ID)
-);
-
-CREATE TABLE erp_md_auth_user(
-  ID NUMBER(20) NOT NULL ,
-  constraint PK_erp_md_auth_user primary key (ID)
-);
-
 CREATE TABLE erp_md_md_organization(
   ID NUMBER(20) NOT NULL ,
   constraint PK_erp_md_md_organization primary key (ID)
 );
 
-CREATE TABLE erp_cs_knowledge_base(
+CREATE TABLE erp_cs_team(
   ID NUMBER(20) NOT NULL ,
-  CODE VARCHAR2(50)  ,
-  TITLE VARCHAR2(200) NOT NULL ,
-  CONTENT VARCHAR2(4000)  ,
-  CATEGORY_ID NUMBER(20)  ,
-  IS_PUBLISHED CHAR(1) default 0   ,
+  CODE VARCHAR2(50) NOT NULL ,
+  NAME VARCHAR2(200) NOT NULL ,
+  TEAM_LEADER_ID VARCHAR2(36)  ,
   REMARK VARCHAR2(1000)  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,
@@ -45,7 +21,7 @@ CREATE TABLE erp_cs_knowledge_base(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
-  constraint PK_erp_cs_knowledge_base primary key (ID)
+  constraint PK_erp_cs_team primary key (ID)
 );
 
 CREATE TABLE erp_cs_canned_category(
@@ -65,61 +41,6 @@ CREATE TABLE erp_cs_canned_category(
   constraint PK_erp_cs_canned_category primary key (ID)
 );
 
-CREATE TABLE erp_cs_catalog_category(
-  ID NUMBER(20) NOT NULL ,
-  CODE VARCHAR2(50) NOT NULL ,
-  NAME VARCHAR2(200) NOT NULL ,
-  ORG_ID NUMBER(20)  ,
-  PARENT_ID NUMBER(20)  ,
-  ICON VARCHAR2(100)  ,
-  SEQUENCE INTEGER default 0   ,
-  IS_ACTIVE CHAR(1) default 1   ,
-  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
-  VERSION INTEGER default 0  NOT NULL ,
-  CREATED_BY VARCHAR2(50) NOT NULL ,
-  CREATE_TIME TIMESTAMP NOT NULL ,
-  UPDATED_BY VARCHAR2(50) NOT NULL ,
-  UPDATE_TIME TIMESTAMP NOT NULL ,
-  constraint PK_erp_cs_catalog_category primary key (ID)
-);
-
-CREATE TABLE erp_cs_contract(
-  ID NUMBER(20) NOT NULL ,
-  CODE VARCHAR2(50) NOT NULL ,
-  NAME VARCHAR2(200) NOT NULL ,
-  ORG_ID NUMBER(20)  ,
-  PARTNER_ID NUMBER(20)  ,
-  CONTRACT_TYPE INTEGER  ,
-  START_DATE DATE  ,
-  END_DATE DATE  ,
-  TOTAL_AMOUNT NUMBER(20,4)  ,
-  BILLING_CYCLE INTEGER  ,
-  STATUS INTEGER  ,
-  ATTACHMENT_ID NUMBER(20)  ,
-  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
-  VERSION INTEGER default 0  NOT NULL ,
-  CREATED_BY VARCHAR2(50) NOT NULL ,
-  CREATE_TIME TIMESTAMP NOT NULL ,
-  UPDATED_BY VARCHAR2(50) NOT NULL ,
-  UPDATE_TIME TIMESTAMP NOT NULL ,
-  constraint PK_erp_cs_contract primary key (ID)
-);
-
-CREATE TABLE erp_cs_team(
-  ID NUMBER(20) NOT NULL ,
-  CODE VARCHAR2(50) NOT NULL ,
-  NAME VARCHAR2(200) NOT NULL ,
-  TEAM_LEADER_ID NUMBER(20)  ,
-  REMARK VARCHAR2(1000)  ,
-  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
-  VERSION INTEGER default 0  NOT NULL ,
-  CREATED_BY VARCHAR2(50) NOT NULL ,
-  CREATE_TIME TIMESTAMP NOT NULL ,
-  UPDATED_BY VARCHAR2(50) NOT NULL ,
-  UPDATE_TIME TIMESTAMP NOT NULL ,
-  constraint PK_erp_cs_team primary key (ID)
-);
-
 CREATE TABLE erp_cs_agent_rate(
   ID NUMBER(20) NOT NULL ,
   ORG_ID NUMBER(20)  ,
@@ -137,26 +58,44 @@ CREATE TABLE erp_cs_agent_rate(
   constraint PK_erp_cs_agent_rate primary key (ID)
 );
 
-CREATE TABLE erp_cs_canned_response(
+CREATE TABLE erp_cs_contract(
   ID NUMBER(20) NOT NULL ,
   CODE VARCHAR2(50) NOT NULL ,
+  NAME VARCHAR2(200) NOT NULL ,
   ORG_ID NUMBER(20)  ,
-  TITLE VARCHAR2(200) NOT NULL ,
-  CONTENT VARCHAR2(4000) NOT NULL ,
-  CATEGORY_ID NUMBER(20)  ,
-  VARIABLE_DEFS VARCHAR2(4000)  ,
-  MACRO_TICKET_TYPE_ID NUMBER(20)  ,
-  MACRO_PRIORITY INTEGER  ,
-  SEQUENCE INTEGER default 0   ,
-  IS_ACTIVE CHAR(1) default 1   ,
-  USAGE_COUNT INTEGER default 0   ,
+  PARTNER_ID NUMBER(20)  ,
+  CONTRACT_TYPE INTEGER  ,
+  START_DATE DATE  ,
+  END_DATE DATE  ,
+  TOTAL_AMOUNT NUMBER(20,4)  ,
+  BILLING_CYCLE INTEGER  ,
+  STATUS INTEGER  ,
+  ATTACHMENT_FILE_ID VARCHAR2(200)  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,
   CREATED_BY VARCHAR2(50) NOT NULL ,
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
-  constraint PK_erp_cs_canned_response primary key (ID)
+  constraint PK_erp_cs_contract primary key (ID)
+);
+
+CREATE TABLE erp_cs_catalog_category(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  NAME VARCHAR2(200) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  PARENT_ID NUMBER(20)  ,
+  ICON VARCHAR2(100)  ,
+  SEQUENCE INTEGER default 0   ,
+  IS_ACTIVE CHAR(1) default 1   ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_cs_catalog_category primary key (ID)
 );
 
 CREATE TABLE erp_cs_sla_policy(
@@ -178,6 +117,40 @@ CREATE TABLE erp_cs_sla_policy(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   constraint PK_erp_cs_sla_policy primary key (ID)
+);
+
+CREATE TABLE erp_cs_knowledge_base(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50)  ,
+  TITLE VARCHAR2(200) NOT NULL ,
+  CONTENT VARCHAR2(4000)  ,
+  CATEGORY_ID NUMBER(20)  ,
+  IS_PUBLISHED CHAR(1) default 0   ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_cs_knowledge_base primary key (ID)
+);
+
+CREATE TABLE erp_cs_ticket_type(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  NAME VARCHAR2(200) NOT NULL ,
+  DEFAULT_PRIORITY INTEGER  ,
+  DEFAULT_SLA_POLICY_ID NUMBER(20)  ,
+  SEQUENCE INTEGER default 0   ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_cs_ticket_type primary key (ID)
 );
 
 CREATE TABLE erp_cs_entitlement(
@@ -203,6 +176,28 @@ CREATE TABLE erp_cs_entitlement(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   constraint PK_erp_cs_entitlement primary key (ID)
+);
+
+CREATE TABLE erp_cs_canned_response(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  TITLE VARCHAR2(200) NOT NULL ,
+  CONTENT VARCHAR2(4000) NOT NULL ,
+  CATEGORY_ID NUMBER(20)  ,
+  VARIABLE_DEFS VARCHAR2(4000)  ,
+  MACRO_TICKET_TYPE_ID NUMBER(20)  ,
+  MACRO_PRIORITY INTEGER  ,
+  SEQUENCE INTEGER default 0   ,
+  IS_ACTIVE CHAR(1) default 1   ,
+  USAGE_COUNT INTEGER default 0   ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_cs_canned_response primary key (ID)
 );
 
 CREATE TABLE erp_cs_service_catalog_item(
@@ -242,7 +237,7 @@ CREATE TABLE erp_cs_ticket(
   TICKET_TYPE_ID NUMBER(20) NOT NULL ,
   PRIORITY INTEGER NOT NULL ,
   SOURCE INTEGER  ,
-  ASSIGNED_TO_ID NUMBER(20)  ,
+  ASSIGNED_TO_ID VARCHAR2(36)  ,
   SLA_POLICY_ID NUMBER(20)  ,
   DEADLINE_DATE_TIME DATE  ,
   IS_SLA_COMPLETED CHAR(1) default 0   ,
@@ -290,7 +285,7 @@ CREATE TABLE erp_cs_ticket_action(
   ACTION_TYPE INTEGER NOT NULL ,
   FROM_STATUS INTEGER  ,
   TO_STATUS INTEGER  ,
-  OPERATOR_ID NUMBER(20)  ,
+  OPERATOR_ID VARCHAR2(36)  ,
   CONTENT VARCHAR2(4000)  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,
@@ -335,7 +330,7 @@ CREATE TABLE erp_cs_time_entry(
   BILLABLE_AMOUNT NUMBER(20,4)  ,
   DESCRIPTION VARCHAR2(1000)  ,
   APPROVAL_STATUS INTEGER  ,
-  APPROVED_BY_ID NUMBER(20)  ,
+  APPROVED_BY_ID VARCHAR2(36)  ,
   APPROVED_AT DATE  ,
   PROJECT_ID NUMBER(20)  ,
   TASK_ID NUMBER(20)  ,
@@ -352,65 +347,31 @@ CREATE TABLE erp_cs_time_entry(
 
       COMMENT ON TABLE erp_md_md_partner IS 'ErpMdPartner';
                 
-      COMMENT ON TABLE erp_cs_ticket_type IS '工单类型';
-                
-      COMMENT ON COLUMN erp_cs_ticket_type.ID IS 'ID';
-                    
-      COMMENT ON COLUMN erp_cs_ticket_type.CODE IS '编码';
-                    
-      COMMENT ON COLUMN erp_cs_ticket_type.NAME IS '名称';
-                    
-      COMMENT ON COLUMN erp_cs_ticket_type.DEFAULT_PRIORITY IS '默认优先级';
-                    
-      COMMENT ON COLUMN erp_cs_ticket_type.DEFAULT_SLA_POLICY_ID IS '默认 SLA 策略';
-                    
-      COMMENT ON COLUMN erp_cs_ticket_type.SEQUENCE IS '排序';
-                    
-      COMMENT ON COLUMN erp_cs_ticket_type.REMARK IS '备注';
-                    
-      COMMENT ON COLUMN erp_cs_ticket_type.DEL_VERSION IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_cs_ticket_type.VERSION IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_cs_ticket_type.CREATED_BY IS '创建人';
-                    
-      COMMENT ON COLUMN erp_cs_ticket_type.CREATE_TIME IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_cs_ticket_type.UPDATED_BY IS '修改人';
-                    
-      COMMENT ON COLUMN erp_cs_ticket_type.UPDATE_TIME IS '修改时间';
-                    
-      COMMENT ON TABLE erp_md_auth_user IS 'NopAuthUser';
-                
       COMMENT ON TABLE erp_md_md_organization IS 'ErpMdOrganization';
                 
-      COMMENT ON TABLE erp_cs_knowledge_base IS '知识库';
+      COMMENT ON TABLE erp_cs_team IS '客服团队';
                 
-      COMMENT ON COLUMN erp_cs_knowledge_base.ID IS 'ID';
+      COMMENT ON COLUMN erp_cs_team.ID IS 'ID';
                     
-      COMMENT ON COLUMN erp_cs_knowledge_base.CODE IS '编码';
+      COMMENT ON COLUMN erp_cs_team.CODE IS '编码';
                     
-      COMMENT ON COLUMN erp_cs_knowledge_base.TITLE IS '标题';
+      COMMENT ON COLUMN erp_cs_team.NAME IS '名称';
                     
-      COMMENT ON COLUMN erp_cs_knowledge_base.CONTENT IS '正文';
+      COMMENT ON COLUMN erp_cs_team.TEAM_LEADER_ID IS '团队负责人';
                     
-      COMMENT ON COLUMN erp_cs_knowledge_base.CATEGORY_ID IS '分类';
+      COMMENT ON COLUMN erp_cs_team.REMARK IS '备注';
                     
-      COMMENT ON COLUMN erp_cs_knowledge_base.IS_PUBLISHED IS '是否发布';
+      COMMENT ON COLUMN erp_cs_team.DEL_VERSION IS '逻辑删除版本';
                     
-      COMMENT ON COLUMN erp_cs_knowledge_base.REMARK IS '备注';
+      COMMENT ON COLUMN erp_cs_team.VERSION IS '数据版本';
                     
-      COMMENT ON COLUMN erp_cs_knowledge_base.DEL_VERSION IS '逻辑删除版本';
+      COMMENT ON COLUMN erp_cs_team.CREATED_BY IS '创建人';
                     
-      COMMENT ON COLUMN erp_cs_knowledge_base.VERSION IS '数据版本';
+      COMMENT ON COLUMN erp_cs_team.CREATE_TIME IS '创建时间';
                     
-      COMMENT ON COLUMN erp_cs_knowledge_base.CREATED_BY IS '创建人';
+      COMMENT ON COLUMN erp_cs_team.UPDATED_BY IS '修改人';
                     
-      COMMENT ON COLUMN erp_cs_knowledge_base.CREATE_TIME IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_cs_knowledge_base.UPDATED_BY IS '修改人';
-                    
-      COMMENT ON COLUMN erp_cs_knowledge_base.UPDATE_TIME IS '修改时间';
+      COMMENT ON COLUMN erp_cs_team.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_cs_canned_category IS '预设应答分类';
                 
@@ -439,6 +400,72 @@ CREATE TABLE erp_cs_time_entry(
       COMMENT ON COLUMN erp_cs_canned_category.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_cs_canned_category.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_cs_agent_rate IS '客服费率';
+                
+      COMMENT ON COLUMN erp_cs_agent_rate.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_cs_agent_rate.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_cs_agent_rate.AGENT_ID IS '客服';
+                    
+      COMMENT ON COLUMN erp_cs_agent_rate.SERVICE_TYPE IS '服务类型';
+                    
+      COMMENT ON COLUMN erp_cs_agent_rate.RATE IS '费率(元/小时)';
+                    
+      COMMENT ON COLUMN erp_cs_agent_rate.EFFECTIVE_DATE IS '生效日期';
+                    
+      COMMENT ON COLUMN erp_cs_agent_rate.IS_ACTIVE IS '是否启用';
+                    
+      COMMENT ON COLUMN erp_cs_agent_rate.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_cs_agent_rate.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_cs_agent_rate.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_cs_agent_rate.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_cs_agent_rate.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_cs_agent_rate.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_cs_contract IS '支持合同';
+                
+      COMMENT ON COLUMN erp_cs_contract.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_cs_contract.CODE IS '编码';
+                    
+      COMMENT ON COLUMN erp_cs_contract.NAME IS '名称';
+                    
+      COMMENT ON COLUMN erp_cs_contract.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_cs_contract.PARTNER_ID IS '签约客户';
+                    
+      COMMENT ON COLUMN erp_cs_contract.CONTRACT_TYPE IS '合同类型';
+                    
+      COMMENT ON COLUMN erp_cs_contract.START_DATE IS '生效日期';
+                    
+      COMMENT ON COLUMN erp_cs_contract.END_DATE IS '到期日期';
+                    
+      COMMENT ON COLUMN erp_cs_contract.TOTAL_AMOUNT IS '合同总金额';
+                    
+      COMMENT ON COLUMN erp_cs_contract.BILLING_CYCLE IS '计费周期';
+                    
+      COMMENT ON COLUMN erp_cs_contract.STATUS IS '合同状态';
+                    
+      COMMENT ON COLUMN erp_cs_contract.ATTACHMENT_FILE_ID IS '合同附件';
+                    
+      COMMENT ON COLUMN erp_cs_contract.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_cs_contract.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_cs_contract.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_cs_contract.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_cs_contract.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_cs_contract.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_cs_catalog_category IS '目录分类';
                 
@@ -469,134 +496,6 @@ CREATE TABLE erp_cs_time_entry(
       COMMENT ON COLUMN erp_cs_catalog_category.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_cs_catalog_category.UPDATE_TIME IS '修改时间';
-                    
-      COMMENT ON TABLE erp_cs_contract IS '支持合同';
-                
-      COMMENT ON COLUMN erp_cs_contract.ID IS 'ID';
-                    
-      COMMENT ON COLUMN erp_cs_contract.CODE IS '编码';
-                    
-      COMMENT ON COLUMN erp_cs_contract.NAME IS '名称';
-                    
-      COMMENT ON COLUMN erp_cs_contract.ORG_ID IS '业务组织';
-                    
-      COMMENT ON COLUMN erp_cs_contract.PARTNER_ID IS '签约客户';
-                    
-      COMMENT ON COLUMN erp_cs_contract.CONTRACT_TYPE IS '合同类型';
-                    
-      COMMENT ON COLUMN erp_cs_contract.START_DATE IS '生效日期';
-                    
-      COMMENT ON COLUMN erp_cs_contract.END_DATE IS '到期日期';
-                    
-      COMMENT ON COLUMN erp_cs_contract.TOTAL_AMOUNT IS '合同总金额';
-                    
-      COMMENT ON COLUMN erp_cs_contract.BILLING_CYCLE IS '计费周期';
-                    
-      COMMENT ON COLUMN erp_cs_contract.STATUS IS '合同状态';
-                    
-      COMMENT ON COLUMN erp_cs_contract.ATTACHMENT_ID IS '合同附件';
-                    
-      COMMENT ON COLUMN erp_cs_contract.DEL_VERSION IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_cs_contract.VERSION IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_cs_contract.CREATED_BY IS '创建人';
-                    
-      COMMENT ON COLUMN erp_cs_contract.CREATE_TIME IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_cs_contract.UPDATED_BY IS '修改人';
-                    
-      COMMENT ON COLUMN erp_cs_contract.UPDATE_TIME IS '修改时间';
-                    
-      COMMENT ON TABLE erp_cs_team IS '客服团队';
-                
-      COMMENT ON COLUMN erp_cs_team.ID IS 'ID';
-                    
-      COMMENT ON COLUMN erp_cs_team.CODE IS '编码';
-                    
-      COMMENT ON COLUMN erp_cs_team.NAME IS '名称';
-                    
-      COMMENT ON COLUMN erp_cs_team.TEAM_LEADER_ID IS '团队负责人';
-                    
-      COMMENT ON COLUMN erp_cs_team.REMARK IS '备注';
-                    
-      COMMENT ON COLUMN erp_cs_team.DEL_VERSION IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_cs_team.VERSION IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_cs_team.CREATED_BY IS '创建人';
-                    
-      COMMENT ON COLUMN erp_cs_team.CREATE_TIME IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_cs_team.UPDATED_BY IS '修改人';
-                    
-      COMMENT ON COLUMN erp_cs_team.UPDATE_TIME IS '修改时间';
-                    
-      COMMENT ON TABLE erp_cs_agent_rate IS '客服费率';
-                
-      COMMENT ON COLUMN erp_cs_agent_rate.ID IS 'ID';
-                    
-      COMMENT ON COLUMN erp_cs_agent_rate.ORG_ID IS '业务组织';
-                    
-      COMMENT ON COLUMN erp_cs_agent_rate.AGENT_ID IS '客服';
-                    
-      COMMENT ON COLUMN erp_cs_agent_rate.SERVICE_TYPE IS '服务类型';
-                    
-      COMMENT ON COLUMN erp_cs_agent_rate.RATE IS '费率(元/小时)';
-                    
-      COMMENT ON COLUMN erp_cs_agent_rate.EFFECTIVE_DATE IS '生效日期';
-                    
-      COMMENT ON COLUMN erp_cs_agent_rate.IS_ACTIVE IS '是否启用';
-                    
-      COMMENT ON COLUMN erp_cs_agent_rate.DEL_VERSION IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_cs_agent_rate.VERSION IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_cs_agent_rate.CREATED_BY IS '创建人';
-                    
-      COMMENT ON COLUMN erp_cs_agent_rate.CREATE_TIME IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_cs_agent_rate.UPDATED_BY IS '修改人';
-                    
-      COMMENT ON COLUMN erp_cs_agent_rate.UPDATE_TIME IS '修改时间';
-                    
-      COMMENT ON TABLE erp_cs_canned_response IS '预设应答模板';
-                
-      COMMENT ON COLUMN erp_cs_canned_response.ID IS 'ID';
-                    
-      COMMENT ON COLUMN erp_cs_canned_response.CODE IS '编码';
-                    
-      COMMENT ON COLUMN erp_cs_canned_response.ORG_ID IS '业务组织';
-                    
-      COMMENT ON COLUMN erp_cs_canned_response.TITLE IS '模板标题';
-                    
-      COMMENT ON COLUMN erp_cs_canned_response.CONTENT IS '模板正文';
-                    
-      COMMENT ON COLUMN erp_cs_canned_response.CATEGORY_ID IS '应答分类';
-                    
-      COMMENT ON COLUMN erp_cs_canned_response.VARIABLE_DEFS IS '变量定义';
-                    
-      COMMENT ON COLUMN erp_cs_canned_response.MACRO_TICKET_TYPE_ID IS '自动匹配工单类型';
-                    
-      COMMENT ON COLUMN erp_cs_canned_response.MACRO_PRIORITY IS '自动匹配优先级';
-                    
-      COMMENT ON COLUMN erp_cs_canned_response.SEQUENCE IS '排序';
-                    
-      COMMENT ON COLUMN erp_cs_canned_response.IS_ACTIVE IS '是否启用';
-                    
-      COMMENT ON COLUMN erp_cs_canned_response.USAGE_COUNT IS '使用次数';
-                    
-      COMMENT ON COLUMN erp_cs_canned_response.DEL_VERSION IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_cs_canned_response.VERSION IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_cs_canned_response.CREATED_BY IS '创建人';
-                    
-      COMMENT ON COLUMN erp_cs_canned_response.CREATE_TIME IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_cs_canned_response.UPDATED_BY IS '修改人';
-                    
-      COMMENT ON COLUMN erp_cs_canned_response.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_cs_sla_policy IS 'SLA 策略';
                 
@@ -633,6 +532,62 @@ CREATE TABLE erp_cs_time_entry(
       COMMENT ON COLUMN erp_cs_sla_policy.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_cs_sla_policy.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_cs_knowledge_base IS '知识库';
+                
+      COMMENT ON COLUMN erp_cs_knowledge_base.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_cs_knowledge_base.CODE IS '编码';
+                    
+      COMMENT ON COLUMN erp_cs_knowledge_base.TITLE IS '标题';
+                    
+      COMMENT ON COLUMN erp_cs_knowledge_base.CONTENT IS '正文';
+                    
+      COMMENT ON COLUMN erp_cs_knowledge_base.CATEGORY_ID IS '分类';
+                    
+      COMMENT ON COLUMN erp_cs_knowledge_base.IS_PUBLISHED IS '是否发布';
+                    
+      COMMENT ON COLUMN erp_cs_knowledge_base.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_cs_knowledge_base.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_cs_knowledge_base.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_cs_knowledge_base.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_cs_knowledge_base.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_cs_knowledge_base.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_cs_knowledge_base.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_cs_ticket_type IS '工单类型';
+                
+      COMMENT ON COLUMN erp_cs_ticket_type.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_type.CODE IS '编码';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_type.NAME IS '名称';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_type.DEFAULT_PRIORITY IS '默认优先级';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_type.DEFAULT_SLA_POLICY_ID IS '默认 SLA 策略';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_type.SEQUENCE IS '排序';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_type.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_type.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_type.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_type.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_type.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_type.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_type.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_cs_entitlement IS '服务权益';
                 
@@ -677,6 +632,44 @@ CREATE TABLE erp_cs_time_entry(
       COMMENT ON COLUMN erp_cs_entitlement.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_cs_entitlement.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_cs_canned_response IS '预设应答模板';
+                
+      COMMENT ON COLUMN erp_cs_canned_response.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_cs_canned_response.CODE IS '编码';
+                    
+      COMMENT ON COLUMN erp_cs_canned_response.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_cs_canned_response.TITLE IS '模板标题';
+                    
+      COMMENT ON COLUMN erp_cs_canned_response.CONTENT IS '模板正文';
+                    
+      COMMENT ON COLUMN erp_cs_canned_response.CATEGORY_ID IS '应答分类';
+                    
+      COMMENT ON COLUMN erp_cs_canned_response.VARIABLE_DEFS IS '变量定义';
+                    
+      COMMENT ON COLUMN erp_cs_canned_response.MACRO_TICKET_TYPE_ID IS '自动匹配工单类型';
+                    
+      COMMENT ON COLUMN erp_cs_canned_response.MACRO_PRIORITY IS '自动匹配优先级';
+                    
+      COMMENT ON COLUMN erp_cs_canned_response.SEQUENCE IS '排序';
+                    
+      COMMENT ON COLUMN erp_cs_canned_response.IS_ACTIVE IS '是否启用';
+                    
+      COMMENT ON COLUMN erp_cs_canned_response.USAGE_COUNT IS '使用次数';
+                    
+      COMMENT ON COLUMN erp_cs_canned_response.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_cs_canned_response.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_cs_canned_response.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_cs_canned_response.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_cs_canned_response.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_cs_canned_response.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_cs_service_catalog_item IS '服务目录项';
                 

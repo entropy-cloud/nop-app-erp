@@ -85,9 +85,9 @@ public class _ErpCtContract extends DynamicOrmEntity{
     public static final String PROP_NAME_description = "description";
     public static final int PROP_ID_description = 16;
     
-    /* 合同附件: ATTACHMENT_ID BIGINT */
-    public static final String PROP_NAME_attachmentId = "attachmentId";
-    public static final int PROP_ID_attachmentId = 17;
+    /* 合同附件: ATTACHMENT_FILE_ID VARCHAR */
+    public static final String PROP_NAME_attachmentFileId = "attachmentFileId";
+    public static final int PROP_ID_attachmentFileId = 17;
     
     /* 备注: REMARK VARCHAR */
     public static final String PROP_NAME_remark = "remark";
@@ -122,16 +122,28 @@ public class _ErpCtContract extends DynamicOrmEntity{
 
     
     /* relation:  */
+    public static final String PROP_NAME_partner = "partner";
+    
+    /* relation:  */
     public static final String PROP_NAME_template = "template";
     
     /* relation:  */
     public static final String PROP_NAME_parentContract = "parentContract";
     
     /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
+    /* relation:  */
     public static final String PROP_NAME_lines = "lines";
     
     /* relation:  */
     public static final String PROP_NAME_versions = "versions";
+    
+    /* relation:  */
+    public static final String PROP_NAME_currency = "currency";
+    
+    /* component:  */
+    public static final String PROP_NAME_attachmentFileIdComponent = "attachmentFileIdComponent";
     
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
@@ -189,8 +201,8 @@ public class _ErpCtContract extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_description] = PROP_NAME_description;
           PROP_NAME_TO_ID.put(PROP_NAME_description, PROP_ID_description);
       
-          PROP_ID_TO_NAME[PROP_ID_attachmentId] = PROP_NAME_attachmentId;
-          PROP_NAME_TO_ID.put(PROP_NAME_attachmentId, PROP_ID_attachmentId);
+          PROP_ID_TO_NAME[PROP_ID_attachmentFileId] = PROP_NAME_attachmentFileId;
+          PROP_NAME_TO_ID.put(PROP_NAME_attachmentFileId, PROP_ID_attachmentFileId);
       
           PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
           PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
@@ -264,8 +276,8 @@ public class _ErpCtContract extends DynamicOrmEntity{
     /* 描述: DESCRIPTION */
     private java.lang.String _description;
     
-    /* 合同附件: ATTACHMENT_ID */
-    private java.lang.Long _attachmentId;
+    /* 合同附件: ATTACHMENT_FILE_ID */
+    private java.lang.String _attachmentFileId;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -410,8 +422,8 @@ public class _ErpCtContract extends DynamicOrmEntity{
             case PROP_ID_description:
                return getDescription();
         
-            case PROP_ID_attachmentId:
-               return getAttachmentId();
+            case PROP_ID_attachmentFileId:
+               return getAttachmentFileId();
         
             case PROP_ID_remark:
                return getRemark();
@@ -605,13 +617,13 @@ public class _ErpCtContract extends DynamicOrmEntity{
                break;
             }
         
-            case PROP_ID_attachmentId:{
-               java.lang.Long typedValue = null;
+            case PROP_ID_attachmentFileId:{
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
-                       err-> newTypeConversionError(PROP_NAME_attachmentId));
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_attachmentFileId));
                }
-               setAttachmentId(typedValue);
+               setAttachmentFileId(typedValue);
                break;
             }
         
@@ -806,9 +818,9 @@ public class _ErpCtContract extends DynamicOrmEntity{
                break;
             }
         
-            case PROP_ID_attachmentId:{
+            case PROP_ID_attachmentFileId:{
                onInitProp(propId);
-               this._attachmentId = (java.lang.Long)value;
+               this._attachmentFileId = (java.lang.String)value;
                
                break;
             }
@@ -1173,20 +1185,20 @@ public class _ErpCtContract extends DynamicOrmEntity{
     }
     
     /**
-     * 合同附件: ATTACHMENT_ID
+     * 合同附件: ATTACHMENT_FILE_ID
      */
-    public final java.lang.Long getAttachmentId(){
-         onPropGet(PROP_ID_attachmentId);
-         return _attachmentId;
+    public final java.lang.String getAttachmentFileId(){
+         onPropGet(PROP_ID_attachmentFileId);
+         return _attachmentFileId;
     }
 
     /**
-     * 合同附件: ATTACHMENT_ID
+     * 合同附件: ATTACHMENT_FILE_ID
      */
-    public final void setAttachmentId(java.lang.Long value){
-        if(onPropSet(PROP_ID_attachmentId,value)){
-            this._attachmentId = value;
-            internalClearRefs(PROP_ID_attachmentId);
+    public final void setAttachmentFileId(java.lang.String value){
+        if(onPropSet(PROP_ID_attachmentFileId,value)){
+            this._attachmentFileId = value;
+            internalClearRefs(PROP_ID_attachmentFileId);
             
         }
     }
@@ -1327,6 +1339,29 @@ public class _ErpCtContract extends DynamicOrmEntity{
     /**
      * 
      */
+    public final app.erp.md.dao.entity.ErpMdPartner getPartner(){
+       return (app.erp.md.dao.entity.ErpMdPartner)internalGetRefEntity(PROP_NAME_partner);
+    }
+
+    public final void setPartner(app.erp.md.dao.entity.ErpMdPartner refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setPartnerId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_partner, refEntity,()->{
+           
+                           this.setPartnerId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
     public final app.erp.contract.dao.entity.ErpCtTemplate getTemplate(){
        return (app.erp.contract.dao.entity.ErpCtTemplate)internalGetRefEntity(PROP_NAME_template);
     }
@@ -1370,6 +1405,29 @@ public class _ErpCtContract extends DynamicOrmEntity{
        
     }
        
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
     private final OrmEntitySet<app.erp.contract.dao.entity.ErpCtContractLine> _lines = new OrmEntitySet<>(this, PROP_NAME_lines,
         null, null,app.erp.contract.dao.entity.ErpCtContractLine.class);
 
@@ -1390,5 +1448,45 @@ public class _ErpCtContract extends DynamicOrmEntity{
        return _versions;
     }
        
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdCurrency getCurrency(){
+       return (app.erp.md.dao.entity.ErpMdCurrency)internalGetRefEntity(PROP_NAME_currency);
+    }
+
+    public final void setCurrency(app.erp.md.dao.entity.ErpMdCurrency refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCurrencyId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_currency, refEntity,()->{
+           
+                           this.setCurrencyId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+   private io.nop.orm.component.OrmFileComponent _attachmentFileIdComponent;
+
+   private static Map<String,Integer> COMPONENT_PROP_ID_MAP_attachmentFileIdComponent = new HashMap<>();
+   static{
+      
+         COMPONENT_PROP_ID_MAP_attachmentFileIdComponent.put(io.nop.orm.component.OrmFileComponent.PROP_NAME_filePath,PROP_ID_attachmentFileId);
+      
+   }
+
+   public final io.nop.orm.component.OrmFileComponent getAttachmentFileIdComponent(){
+      if(_attachmentFileIdComponent == null){
+          _attachmentFileIdComponent = new io.nop.orm.component.OrmFileComponent();
+          _attachmentFileIdComponent.bindToEntity(this, COMPONENT_PROP_ID_MAP_attachmentFileIdComponent);
+      }
+      return _attachmentFileIdComponent;
+   }
+
 }
 // resume CPD analysis - CPD-ON

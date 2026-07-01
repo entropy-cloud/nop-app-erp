@@ -12,19 +12,19 @@
         <property name="bizObjName" value="ErpCtTemplate"/>
     </bean>
 
-    <bean id="app.erp.ct.service.entity.ErpCtContractBizModel" ioc:type="@bean:id" ioc:default="true"/>
-
-    <bean id="biz_ErpCtContract" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.ct.biz.IErpCtContractBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
-        <property name="bizObjName" value="ErpCtContract"/>
-    </bean>
-
     <bean id="app.erp.ct.service.entity.ErpCtApprovalMatrixBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpCtApprovalMatrix" class="io.nop.biz.proxy.BizProxyFactoryBean"
           ioc:type="app.erp.ct.biz.IErpCtApprovalMatrixBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
         <property name="bizObjName" value="ErpCtApprovalMatrix"/>
+    </bean>
+
+    <bean id="app.erp.ct.service.entity.ErpCtContractBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCtContract" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ct.biz.IErpCtContractBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCtContract"/>
     </bean>
 
     <bean id="app.erp.ct.service.entity.ErpCtContractLineBizModel" ioc:type="@bean:id" ioc:default="true"/>

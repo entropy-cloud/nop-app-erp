@@ -45,7 +45,7 @@
         </prop>
         <prop name="ownerId" displayName="负责人" propId="7" i18n-en:displayName="Owner" queryable="true" sortable="true"
               insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
         <prop name="remark" displayName="备注" propId="8" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

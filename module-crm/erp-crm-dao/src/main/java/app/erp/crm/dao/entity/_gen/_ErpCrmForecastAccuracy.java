@@ -37,7 +37,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     public static final String PROP_NAME_periodId = "periodId";
     public static final int PROP_ID_periodId = 4;
     
-    /* 销售员: OWNER_ID BIGINT */
+    /* 销售员: OWNER_ID VARCHAR */
     public static final String PROP_NAME_ownerId = "ownerId";
     public static final int PROP_ID_ownerId = 5;
     
@@ -117,6 +117,12 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     
     /* relation:  */
     public static final String PROP_NAME_org = "org";
+    
+    /* relation:  */
+    public static final String PROP_NAME_team = "team";
+    
+    /* relation:  */
+    public static final String PROP_NAME_territory = "territory";
     
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
@@ -205,7 +211,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     private java.lang.Long _periodId;
     
     /* 销售员: OWNER_ID */
-    private java.lang.Long _ownerId;
+    private java.lang.String _ownerId;
     
     /* 销售团队: TEAM_ID */
     private java.lang.Long _teamId;
@@ -444,9 +450,9 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
             }
         
             case PROP_ID_ownerId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_ownerId));
                }
                setOwnerId(typedValue);
@@ -652,7 +658,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
         
             case PROP_ID_ownerId:{
                onInitProp(propId);
-               this._ownerId = (java.lang.Long)value;
+               this._ownerId = (java.lang.String)value;
                
                break;
             }
@@ -854,7 +860,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * 销售员: OWNER_ID
      */
-    public final java.lang.Long getOwnerId(){
+    public final java.lang.String getOwnerId(){
          onPropGet(PROP_ID_ownerId);
          return _ownerId;
     }
@@ -862,7 +868,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * 销售员: OWNER_ID
      */
-    public final void setOwnerId(java.lang.Long value){
+    public final void setOwnerId(java.lang.String value){
         if(onPropSet(PROP_ID_ownerId,value)){
             this._ownerId = value;
             internalClearRefs(PROP_ID_ownerId);
@@ -1237,6 +1243,52 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_org, refEntity,()->{
            
                            this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.crm.dao.entity.ErpCrmTeam getTeam(){
+       return (app.erp.crm.dao.entity.ErpCrmTeam)internalGetRefEntity(PROP_NAME_team);
+    }
+
+    public final void setTeam(app.erp.crm.dao.entity.ErpCrmTeam refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setTeamId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_team, refEntity,()->{
+           
+                           this.setTeamId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.crm.dao.entity.ErpCrmTerritory getTerritory(){
+       return (app.erp.crm.dao.entity.ErpCrmTerritory)internalGetRefEntity(PROP_NAME_territory);
+    }
+
+    public final void setTerritory(app.erp.crm.dao.entity.ErpCrmTerritory refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setTerritoryId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_territory, refEntity,()->{
+           
+                           this.setTerritoryId(refEntity.getId());
                        
            });
            }

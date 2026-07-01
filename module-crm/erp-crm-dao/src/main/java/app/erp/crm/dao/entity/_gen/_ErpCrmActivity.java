@@ -45,7 +45,7 @@ public class _ErpCrmActivity extends DynamicOrmEntity{
     public static final String PROP_NAME_summary = "summary";
     public static final int PROP_ID_summary = 6;
     
-    /* 负责人: OWNER_ID BIGINT */
+    /* 负责人: OWNER_ID VARCHAR */
     public static final String PROP_NAME_ownerId = "ownerId";
     public static final int PROP_ID_ownerId = 7;
     
@@ -159,7 +159,7 @@ public class _ErpCrmActivity extends DynamicOrmEntity{
     private java.lang.String _summary;
     
     /* 负责人: OWNER_ID */
-    private java.lang.Long _ownerId;
+    private java.lang.String _ownerId;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -370,9 +370,9 @@ public class _ErpCrmActivity extends DynamicOrmEntity{
             }
         
             case PROP_ID_ownerId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_ownerId));
                }
                setOwnerId(typedValue);
@@ -502,7 +502,7 @@ public class _ErpCrmActivity extends DynamicOrmEntity{
         
             case PROP_ID_ownerId:{
                onInitProp(propId);
-               this._ownerId = (java.lang.Long)value;
+               this._ownerId = (java.lang.String)value;
                
                break;
             }
@@ -679,7 +679,7 @@ public class _ErpCrmActivity extends DynamicOrmEntity{
     /**
      * 负责人: OWNER_ID
      */
-    public final java.lang.Long getOwnerId(){
+    public final java.lang.String getOwnerId(){
          onPropGet(PROP_ID_ownerId);
          return _ownerId;
     }
@@ -687,7 +687,7 @@ public class _ErpCrmActivity extends DynamicOrmEntity{
     /**
      * 负责人: OWNER_ID
      */
-    public final void setOwnerId(java.lang.Long value){
+    public final void setOwnerId(java.lang.String value){
         if(onPropSet(PROP_ID_ownerId,value)){
             this._ownerId = value;
             internalClearRefs(PROP_ID_ownerId);

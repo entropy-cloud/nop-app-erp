@@ -4,11 +4,11 @@
   "versionNo": 0,
   "versionDate": "2000-01-01",
   "content": "",
-  "attachmentId": 0,
+  "attachmentFileId": "",
   "isCurrent": false,
   "status": 0,
   "status_label": "",
-  "approvedBy": 0,
+  "approvedBy": "",
   "approvedAt": "2000-01-01 14:00:00",
   "remark": "",
   "delVersion": 0,
@@ -17,5 +17,6 @@
   "createTime": "2000-01-01 14:00:00",
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
-  "contract": null
+  "contract": null,
+  "attachmentFileIdComponentFileStatus": null
 }

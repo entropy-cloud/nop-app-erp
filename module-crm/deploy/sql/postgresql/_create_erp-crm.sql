@@ -80,6 +80,14 @@ CREATE TABLE erp_crm_event_category(
   constraint PK_erp_crm_event_category primary key (id)
 );
 
+CREATE TABLE erp_md_partner_contact(
+  id INT8  ,
+  contact_name VARCHAR(100)  ,
+  phone VARCHAR(50)  ,
+  email VARCHAR(200)  ,
+  constraint PK_erp_md_partner_contact primary key (id)
+);
+
 CREATE TABLE erp_crm_quote_template(
   id INT8 NOT NULL ,
   code VARCHAR(50) NOT NULL ,
@@ -96,12 +104,18 @@ CREATE TABLE erp_crm_quote_template(
   constraint PK_erp_crm_quote_template primary key (id)
 );
 
-CREATE TABLE nop_auth_user(
+CREATE TABLE erp_md_currency(
   id INT8  ,
-  user_name VARCHAR(50)  ,
-  display_name VARCHAR(100)  ,
-  status INT4  ,
-  constraint PK_nop_auth_user primary key (id)
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  constraint PK_erp_md_currency primary key (id)
+);
+
+CREATE TABLE erp_md_material(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  constraint PK_erp_md_material primary key (id)
 );
 
 CREATE TABLE erp_crm_team(
@@ -109,7 +123,7 @@ CREATE TABLE erp_crm_team(
   code VARCHAR(50) NOT NULL ,
   name VARCHAR(200) NOT NULL ,
   org_id INT8  ,
-  team_leader_id INT8  ,
+  team_leader_id VARCHAR(36)  ,
   remark VARCHAR(1000)  ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
@@ -182,6 +196,30 @@ CREATE TABLE erp_crm_forecast_period(
   constraint PK_erp_crm_forecast_period primary key (id)
 );
 
+CREATE TABLE erp_crm_territory(
+  id INT8 NOT NULL ,
+  code VARCHAR(50) NOT NULL ,
+  name VARCHAR(200) NOT NULL ,
+  org_id INT8  ,
+  parent_id INT8  ,
+  territory_type VARCHAR(20) NOT NULL ,
+  manager_id INT8  ,
+  description VARCHAR(500)  ,
+  full_path VARCHAR(500)  ,
+  level INT4 default 0   ,
+  is_active BOOLEAN default true   ,
+  is_leaf BOOLEAN default false   ,
+  sort_order INT4 default 0   ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_crm_territory primary key (id)
+);
+
 CREATE TABLE erp_crm_product_configurator(
   id INT8 NOT NULL ,
   code VARCHAR(50) NOT NULL ,
@@ -226,6 +264,26 @@ CREATE TABLE erp_crm_bundle_pricing(
   constraint PK_erp_crm_bundle_pricing primary key (id)
 );
 
+CREATE TABLE erp_crm_sequence(
+  id INT8 NOT NULL ,
+  code VARCHAR(50) NOT NULL ,
+  name VARCHAR(200) NOT NULL ,
+  org_id INT8  ,
+  template_type VARCHAR(30) NOT NULL ,
+  description VARCHAR(500)  ,
+  expected_duration INT4  ,
+  is_active BOOLEAN default true   ,
+  is_default BOOLEAN default false   ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_crm_sequence primary key (id)
+);
+
 CREATE TABLE erp_crm_price_rule(
   id INT8 NOT NULL ,
   code VARCHAR(50) NOT NULL ,
@@ -254,50 +312,6 @@ CREATE TABLE erp_crm_price_rule(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   constraint PK_erp_crm_price_rule primary key (id)
-);
-
-CREATE TABLE erp_crm_sequence(
-  id INT8 NOT NULL ,
-  code VARCHAR(50) NOT NULL ,
-  name VARCHAR(200) NOT NULL ,
-  org_id INT8  ,
-  template_type VARCHAR(30) NOT NULL ,
-  description VARCHAR(500)  ,
-  expected_duration INT4  ,
-  is_active BOOLEAN default true   ,
-  is_default BOOLEAN default false   ,
-  remark VARCHAR(1000)  ,
-  del_version INT8 default 0  NOT NULL ,
-  version INT4 default 0  NOT NULL ,
-  created_by VARCHAR(50) NOT NULL ,
-  create_time TIMESTAMP NOT NULL ,
-  updated_by VARCHAR(50) NOT NULL ,
-  update_time TIMESTAMP NOT NULL ,
-  constraint PK_erp_crm_sequence primary key (id)
-);
-
-CREATE TABLE erp_crm_territory(
-  id INT8 NOT NULL ,
-  code VARCHAR(50) NOT NULL ,
-  name VARCHAR(200) NOT NULL ,
-  org_id INT8  ,
-  parent_id INT8  ,
-  territory_type VARCHAR(20) NOT NULL ,
-  manager_id INT8  ,
-  description VARCHAR(500)  ,
-  full_path VARCHAR(500)  ,
-  level INT4 default 0   ,
-  is_active BOOLEAN default true   ,
-  is_leaf BOOLEAN default false   ,
-  sort_order INT4 default 0   ,
-  remark VARCHAR(1000)  ,
-  del_version INT8 default 0  NOT NULL ,
-  version INT4 default 0  NOT NULL ,
-  created_by VARCHAR(50) NOT NULL ,
-  create_time TIMESTAMP NOT NULL ,
-  updated_by VARCHAR(50) NOT NULL ,
-  update_time TIMESTAMP NOT NULL ,
-  constraint PK_erp_crm_territory primary key (id)
 );
 
 CREATE TABLE erp_crm_stage(
@@ -339,6 +353,106 @@ CREATE TABLE erp_crm_lead_score_config_line(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   constraint PK_erp_crm_lead_score_config_line primary key (id)
+);
+
+CREATE TABLE erp_crm_forecast(
+  id INT8 NOT NULL ,
+  org_id INT8  ,
+  period_id INT8 NOT NULL ,
+  territory_id INT8  ,
+  team_id INT8  ,
+  owner_id VARCHAR(36)  ,
+  currency_id INT8  ,
+  commit_amount NUMERIC(20,4)  ,
+  upside_amount NUMERIC(20,4)  ,
+  weighted_amount NUMERIC(20,4)  ,
+  best_case_amount NUMERIC(20,4)  ,
+  opportunity_count INT4 default 0   ,
+  commit_opportunity_count INT4 default 0   ,
+  expected_closed_revenue NUMERIC(20,4)  ,
+  last_calculated_at TIMESTAMP  ,
+  notes VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_crm_forecast primary key (id)
+);
+
+CREATE TABLE erp_crm_territory_assignment_rule(
+  id INT8 NOT NULL ,
+  org_id INT8  ,
+  rule_name VARCHAR(200) NOT NULL ,
+  priority INT4 default 0   ,
+  territory_id INT8 NOT NULL ,
+  condition_type VARCHAR(30) NOT NULL ,
+  condition_value VARCHAR(4000)  ,
+  assignment_method VARCHAR(20) NOT NULL ,
+  group_id INT8  ,
+  is_default BOOLEAN default false   ,
+  is_active BOOLEAN default true   ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_crm_territory_assignment_rule primary key (id)
+);
+
+CREATE TABLE erp_crm_quota(
+  id INT8 NOT NULL ,
+  org_id INT8  ,
+  territory_id INT8  ,
+  team_id INT8  ,
+  owner_id VARCHAR(36)  ,
+  period_type VARCHAR(20) NOT NULL ,
+  fiscal_year INT4  ,
+  period_label VARCHAR(100)  ,
+  quota_amount NUMERIC(20,4)  ,
+  currency_id INT8  ,
+  is_finalized BOOLEAN default false   ,
+  notes VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_crm_quota primary key (id)
+);
+
+CREATE TABLE erp_crm_lead_funnel(
+  id INT8 NOT NULL ,
+  org_id INT8  ,
+  funnel_name VARCHAR(200) NOT NULL ,
+  period_start DATE NOT NULL ,
+  period_end DATE NOT NULL ,
+  territory_id INT8  ,
+  team_id INT8  ,
+  source_id INT8  ,
+  total_leads_at_top INT4 default 0   ,
+  total_opportunities INT4 default 0   ,
+  total_won INT4 default 0   ,
+  total_lost INT4 default 0   ,
+  total_revenue NUMERIC(20,4)  ,
+  lost_revenue NUMERIC(20,4)  ,
+  weighted_revenue NUMERIC(20,4)  ,
+  avg_deal_size NUMERIC(20,4)  ,
+  avg_sales_cycle_days NUMERIC(10,2)  ,
+  calculated_at TIMESTAMP  ,
+  calculated_by VARCHAR(50)  ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_crm_lead_funnel primary key (id)
 );
 
 CREATE TABLE erp_crm_config_rule(
@@ -421,106 +535,6 @@ CREATE TABLE erp_crm_sequence_assignment(
   constraint PK_erp_crm_sequence_assignment primary key (id)
 );
 
-CREATE TABLE erp_crm_forecast(
-  id INT8 NOT NULL ,
-  org_id INT8  ,
-  period_id INT8 NOT NULL ,
-  territory_id INT8  ,
-  team_id INT8  ,
-  owner_id INT8  ,
-  currency_id INT8  ,
-  commit_amount NUMERIC(20,4)  ,
-  upside_amount NUMERIC(20,4)  ,
-  weighted_amount NUMERIC(20,4)  ,
-  best_case_amount NUMERIC(20,4)  ,
-  opportunity_count INT4 default 0   ,
-  commit_opportunity_count INT4 default 0   ,
-  expected_closed_revenue NUMERIC(20,4)  ,
-  last_calculated_at TIMESTAMP  ,
-  notes VARCHAR(1000)  ,
-  del_version INT8 default 0  NOT NULL ,
-  version INT4 default 0  NOT NULL ,
-  created_by VARCHAR(50) NOT NULL ,
-  create_time TIMESTAMP NOT NULL ,
-  updated_by VARCHAR(50) NOT NULL ,
-  update_time TIMESTAMP NOT NULL ,
-  constraint PK_erp_crm_forecast primary key (id)
-);
-
-CREATE TABLE erp_crm_territory_assignment_rule(
-  id INT8 NOT NULL ,
-  org_id INT8  ,
-  rule_name VARCHAR(200) NOT NULL ,
-  priority INT4 default 0   ,
-  territory_id INT8 NOT NULL ,
-  condition_type VARCHAR(30) NOT NULL ,
-  condition_value VARCHAR(4000)  ,
-  assignment_method VARCHAR(20) NOT NULL ,
-  group_id INT8  ,
-  is_default BOOLEAN default false   ,
-  is_active BOOLEAN default true   ,
-  remark VARCHAR(1000)  ,
-  del_version INT8 default 0  NOT NULL ,
-  version INT4 default 0  NOT NULL ,
-  created_by VARCHAR(50) NOT NULL ,
-  create_time TIMESTAMP NOT NULL ,
-  updated_by VARCHAR(50) NOT NULL ,
-  update_time TIMESTAMP NOT NULL ,
-  constraint PK_erp_crm_territory_assignment_rule primary key (id)
-);
-
-CREATE TABLE erp_crm_quota(
-  id INT8 NOT NULL ,
-  org_id INT8  ,
-  territory_id INT8  ,
-  team_id INT8  ,
-  owner_id INT8  ,
-  period_type VARCHAR(20) NOT NULL ,
-  fiscal_year INT4  ,
-  period_label VARCHAR(100)  ,
-  quota_amount NUMERIC(20,4)  ,
-  currency_id INT8  ,
-  is_finalized BOOLEAN default false   ,
-  notes VARCHAR(1000)  ,
-  del_version INT8 default 0  NOT NULL ,
-  version INT4 default 0  NOT NULL ,
-  created_by VARCHAR(50) NOT NULL ,
-  create_time TIMESTAMP NOT NULL ,
-  updated_by VARCHAR(50) NOT NULL ,
-  update_time TIMESTAMP NOT NULL ,
-  constraint PK_erp_crm_quota primary key (id)
-);
-
-CREATE TABLE erp_crm_lead_funnel(
-  id INT8 NOT NULL ,
-  org_id INT8  ,
-  funnel_name VARCHAR(200) NOT NULL ,
-  period_start DATE NOT NULL ,
-  period_end DATE NOT NULL ,
-  territory_id INT8  ,
-  team_id INT8  ,
-  source_id INT8  ,
-  total_leads_at_top INT4 default 0   ,
-  total_opportunities INT4 default 0   ,
-  total_won INT4 default 0   ,
-  total_lost INT4 default 0   ,
-  total_revenue NUMERIC(20,4)  ,
-  lost_revenue NUMERIC(20,4)  ,
-  weighted_revenue NUMERIC(20,4)  ,
-  avg_deal_size NUMERIC(20,4)  ,
-  avg_sales_cycle_days NUMERIC(10,2)  ,
-  calculated_at TIMESTAMP  ,
-  calculated_by VARCHAR(50)  ,
-  remark VARCHAR(1000)  ,
-  del_version INT8 default 0  NOT NULL ,
-  version INT4 default 0  NOT NULL ,
-  created_by VARCHAR(50) NOT NULL ,
-  create_time TIMESTAMP NOT NULL ,
-  updated_by VARCHAR(50) NOT NULL ,
-  update_time TIMESTAMP NOT NULL ,
-  constraint PK_erp_crm_lead_funnel primary key (id)
-);
-
 CREATE TABLE erp_crm_lead(
   id INT8 NOT NULL ,
   code VARCHAR(50) NOT NULL ,
@@ -546,7 +560,7 @@ CREATE TABLE erp_crm_lead(
   campaign_id INT8  ,
   utm_medium VARCHAR(100)  ,
   utm_source VARCHAR(100)  ,
-  owner_id INT8  ,
+  owner_id VARCHAR(36)  ,
   team_id INT8  ,
   lost_reason_id INT8  ,
   lost_reason_desc VARCHAR(500)  ,
@@ -570,7 +584,7 @@ CREATE TABLE erp_crm_forecast_accuracy(
   forecast_id INT8  ,
   org_id INT8  ,
   period_id INT8 NOT NULL ,
-  owner_id INT8  ,
+  owner_id VARCHAR(36)  ,
   team_id INT8  ,
   territory_id INT8  ,
   commit_amount NUMERIC(20,4)  ,
@@ -632,7 +646,7 @@ CREATE TABLE erp_crm_event(
   related_bill_code VARCHAR(50)  ,
   partner_id INT8  ,
   contact_id INT8  ,
-  owner_id INT8  ,
+  owner_id VARCHAR(36)  ,
   status VARCHAR(20) NOT NULL ,
   priority VARCHAR(20) NOT NULL ,
   is_recurrent BOOLEAN default false   ,
@@ -655,7 +669,7 @@ CREATE TABLE erp_crm_activity(
   activity_type VARCHAR(20) NOT NULL ,
   activity_date TIMESTAMP NOT NULL ,
   summary VARCHAR(500)  ,
-  owner_id INT8  ,
+  owner_id VARCHAR(36)  ,
   remark VARCHAR(1000)  ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
@@ -673,7 +687,7 @@ CREATE TABLE erp_crm_lead_conv_log(
   from_stage_id INT8  ,
   to_stage_id INT8  ,
   changed_at TIMESTAMP NOT NULL ,
-  changed_by INT8  ,
+  changed_by VARCHAR(36)  ,
   remark VARCHAR(1000)  ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
@@ -868,6 +882,8 @@ CREATE TABLE erp_crm_lead_score_line(
                     
       COMMENT ON COLUMN erp_crm_event_category.update_time IS '修改时间';
                     
+      COMMENT ON TABLE erp_md_partner_contact IS '往来单位联系人';
+                
       COMMENT ON TABLE erp_crm_quote_template IS '报价模板';
                 
       COMMENT ON COLUMN erp_crm_quote_template.id IS 'ID';
@@ -894,7 +910,9 @@ CREATE TABLE erp_crm_lead_score_line(
                     
       COMMENT ON COLUMN erp_crm_quote_template.update_time IS '修改时间';
                     
-      COMMENT ON TABLE nop_auth_user IS '用户';
+      COMMENT ON TABLE erp_md_currency IS '币种';
+                
+      COMMENT ON TABLE erp_md_material IS '物料';
                 
       COMMENT ON TABLE erp_crm_team IS '销售团队';
                 
@@ -1028,6 +1046,48 @@ CREATE TABLE erp_crm_lead_score_line(
                     
       COMMENT ON COLUMN erp_crm_forecast_period.update_time IS '修改时间';
                     
+      COMMENT ON TABLE erp_crm_territory IS '销售区域';
+                
+      COMMENT ON COLUMN erp_crm_territory.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_crm_territory.code IS '编码';
+                    
+      COMMENT ON COLUMN erp_crm_territory.name IS '名称';
+                    
+      COMMENT ON COLUMN erp_crm_territory.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_crm_territory.parent_id IS '父区域';
+                    
+      COMMENT ON COLUMN erp_crm_territory.territory_type IS '区域类型';
+                    
+      COMMENT ON COLUMN erp_crm_territory.manager_id IS '区域负责人';
+                    
+      COMMENT ON COLUMN erp_crm_territory.description IS '区域描述';
+                    
+      COMMENT ON COLUMN erp_crm_territory.full_path IS '路径冗余';
+                    
+      COMMENT ON COLUMN erp_crm_territory.level IS '层级深度';
+                    
+      COMMENT ON COLUMN erp_crm_territory.is_active IS '是否启用';
+                    
+      COMMENT ON COLUMN erp_crm_territory.is_leaf IS '是否叶子节点';
+                    
+      COMMENT ON COLUMN erp_crm_territory.sort_order IS '排序';
+                    
+      COMMENT ON COLUMN erp_crm_territory.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_crm_territory.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_crm_territory.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_crm_territory.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_crm_territory.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_crm_territory.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_crm_territory.update_time IS '修改时间';
+                    
       COMMENT ON TABLE erp_crm_product_configurator IS '产品配置器';
                 
       COMMENT ON COLUMN erp_crm_product_configurator.id IS 'ID';
@@ -1104,6 +1164,40 @@ CREATE TABLE erp_crm_lead_score_line(
                     
       COMMENT ON COLUMN erp_crm_bundle_pricing.update_time IS '修改时间';
                     
+      COMMENT ON TABLE erp_crm_sequence IS '销售序列';
+                
+      COMMENT ON COLUMN erp_crm_sequence.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_crm_sequence.code IS '编码';
+                    
+      COMMENT ON COLUMN erp_crm_sequence.name IS '名称';
+                    
+      COMMENT ON COLUMN erp_crm_sequence.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_crm_sequence.template_type IS '序列模板类型';
+                    
+      COMMENT ON COLUMN erp_crm_sequence.description IS '描述';
+                    
+      COMMENT ON COLUMN erp_crm_sequence.expected_duration IS '预期完成天数';
+                    
+      COMMENT ON COLUMN erp_crm_sequence.is_active IS '是否启用';
+                    
+      COMMENT ON COLUMN erp_crm_sequence.is_default IS '是否默认序列';
+                    
+      COMMENT ON COLUMN erp_crm_sequence.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_crm_sequence.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_crm_sequence.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_crm_sequence.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_crm_sequence.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_crm_sequence.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_crm_sequence.update_time IS '修改时间';
+                    
       COMMENT ON TABLE erp_crm_price_rule IS '价格规则';
                 
       COMMENT ON COLUMN erp_crm_price_rule.id IS 'ID';
@@ -1157,82 +1251,6 @@ CREATE TABLE erp_crm_lead_score_line(
       COMMENT ON COLUMN erp_crm_price_rule.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_crm_price_rule.update_time IS '修改时间';
-                    
-      COMMENT ON TABLE erp_crm_sequence IS '销售序列';
-                
-      COMMENT ON COLUMN erp_crm_sequence.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_crm_sequence.code IS '编码';
-                    
-      COMMENT ON COLUMN erp_crm_sequence.name IS '名称';
-                    
-      COMMENT ON COLUMN erp_crm_sequence.org_id IS '业务组织';
-                    
-      COMMENT ON COLUMN erp_crm_sequence.template_type IS '序列模板类型';
-                    
-      COMMENT ON COLUMN erp_crm_sequence.description IS '描述';
-                    
-      COMMENT ON COLUMN erp_crm_sequence.expected_duration IS '预期完成天数';
-                    
-      COMMENT ON COLUMN erp_crm_sequence.is_active IS '是否启用';
-                    
-      COMMENT ON COLUMN erp_crm_sequence.is_default IS '是否默认序列';
-                    
-      COMMENT ON COLUMN erp_crm_sequence.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_crm_sequence.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_crm_sequence.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_crm_sequence.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_crm_sequence.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_crm_sequence.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_crm_sequence.update_time IS '修改时间';
-                    
-      COMMENT ON TABLE erp_crm_territory IS '销售区域';
-                
-      COMMENT ON COLUMN erp_crm_territory.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_crm_territory.code IS '编码';
-                    
-      COMMENT ON COLUMN erp_crm_territory.name IS '名称';
-                    
-      COMMENT ON COLUMN erp_crm_territory.org_id IS '业务组织';
-                    
-      COMMENT ON COLUMN erp_crm_territory.parent_id IS '父区域';
-                    
-      COMMENT ON COLUMN erp_crm_territory.territory_type IS '区域类型';
-                    
-      COMMENT ON COLUMN erp_crm_territory.manager_id IS '区域负责人';
-                    
-      COMMENT ON COLUMN erp_crm_territory.description IS '区域描述';
-                    
-      COMMENT ON COLUMN erp_crm_territory.full_path IS '路径冗余';
-                    
-      COMMENT ON COLUMN erp_crm_territory.level IS '层级深度';
-                    
-      COMMENT ON COLUMN erp_crm_territory.is_active IS '是否启用';
-                    
-      COMMENT ON COLUMN erp_crm_territory.is_leaf IS '是否叶子节点';
-                    
-      COMMENT ON COLUMN erp_crm_territory.sort_order IS '排序';
-                    
-      COMMENT ON COLUMN erp_crm_territory.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_crm_territory.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_crm_territory.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_crm_territory.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_crm_territory.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_crm_territory.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_crm_territory.update_time IS '修改时间';
                     
       COMMENT ON TABLE erp_crm_stage IS '漏斗阶段';
                 
@@ -1303,142 +1321,6 @@ CREATE TABLE erp_crm_lead_score_line(
       COMMENT ON COLUMN erp_crm_lead_score_config_line.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_crm_lead_score_config_line.update_time IS '修改时间';
-                    
-      COMMENT ON TABLE erp_crm_config_rule IS '配置规则';
-                
-      COMMENT ON COLUMN erp_crm_config_rule.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_crm_config_rule.configurator_id IS '所属配置器';
-                    
-      COMMENT ON COLUMN erp_crm_config_rule.org_id IS '业务组织';
-                    
-      COMMENT ON COLUMN erp_crm_config_rule.rule_type IS '规则类型';
-                    
-      COMMENT ON COLUMN erp_crm_config_rule.source_feature_code IS '条件特征编码';
-                    
-      COMMENT ON COLUMN erp_crm_config_rule.source_feature_value IS '条件特征值';
-                    
-      COMMENT ON COLUMN erp_crm_config_rule.target_feature_code IS '目标特征编码';
-                    
-      COMMENT ON COLUMN erp_crm_config_rule.target_feature_value IS '目标特征值';
-                    
-      COMMENT ON COLUMN erp_crm_config_rule.condition_expression IS '复杂条件表达式';
-                    
-      COMMENT ON COLUMN erp_crm_config_rule.sequence IS '排序';
-                    
-      COMMENT ON COLUMN erp_crm_config_rule.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_crm_config_rule.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_crm_config_rule.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_crm_config_rule.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_crm_config_rule.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_crm_config_rule.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_crm_config_rule.update_time IS '修改时间';
-                    
-      COMMENT ON TABLE erp_crm_bundle_pricing_line IS '捆绑包明细';
-                
-      COMMENT ON COLUMN erp_crm_bundle_pricing_line.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_crm_bundle_pricing_line.bundle_id IS '所属捆绑包';
-                    
-      COMMENT ON COLUMN erp_crm_bundle_pricing_line.org_id IS '业务组织';
-                    
-      COMMENT ON COLUMN erp_crm_bundle_pricing_line.product_id IS '产品';
-                    
-      COMMENT ON COLUMN erp_crm_bundle_pricing_line.quantity IS '数量';
-                    
-      COMMENT ON COLUMN erp_crm_bundle_pricing_line.unit_price IS '单价';
-                    
-      COMMENT ON COLUMN erp_crm_bundle_pricing_line.sequence IS '排序';
-                    
-      COMMENT ON COLUMN erp_crm_bundle_pricing_line.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_crm_bundle_pricing_line.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_crm_bundle_pricing_line.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_crm_bundle_pricing_line.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_crm_bundle_pricing_line.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_crm_bundle_pricing_line.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_crm_bundle_pricing_line.update_time IS '修改时间';
-                    
-      COMMENT ON TABLE erp_crm_sequence_step IS '序列步骤';
-                
-      COMMENT ON COLUMN erp_crm_sequence_step.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_step.sequence_id IS '所属序列';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_step.org_id IS '业务组织';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_step.step_name IS '步骤名称';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_step.step_order IS '步骤序号';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_step.due_days IS '距上一步间隔天数';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_step.activity_type IS '步骤活动类型';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_step.step_description IS '步骤说明';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_step.completion_condition IS '完成条件';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_step.is_mandatory IS '是否必须完成';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_step.auto_create_event IS '是否自动创建事件';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_step.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_step.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_step.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_step.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_step.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_step.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_step.update_time IS '修改时间';
-                    
-      COMMENT ON TABLE erp_crm_sequence_assignment IS '序列分配规则';
-                
-      COMMENT ON COLUMN erp_crm_sequence_assignment.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_assignment.org_id IS '业务组织';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_assignment.sequence_id IS '目标序列';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_assignment.priority IS '优先级';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_assignment.condition_type IS '条件类型';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_assignment.condition_value IS '条件值(JSON)';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_assignment.is_active IS '是否启用';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_assignment.is_default IS '是否默认规则';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_assignment.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_assignment.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_assignment.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_assignment.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_assignment.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_assignment.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_crm_sequence_assignment.update_time IS '修改时间';
                     
       COMMENT ON TABLE erp_crm_forecast IS '预测数据';
                 
@@ -1615,6 +1497,142 @@ CREATE TABLE erp_crm_lead_score_line(
       COMMENT ON COLUMN erp_crm_lead_funnel.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_crm_lead_funnel.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_crm_config_rule IS '配置规则';
+                
+      COMMENT ON COLUMN erp_crm_config_rule.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_crm_config_rule.configurator_id IS '所属配置器';
+                    
+      COMMENT ON COLUMN erp_crm_config_rule.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_crm_config_rule.rule_type IS '规则类型';
+                    
+      COMMENT ON COLUMN erp_crm_config_rule.source_feature_code IS '条件特征编码';
+                    
+      COMMENT ON COLUMN erp_crm_config_rule.source_feature_value IS '条件特征值';
+                    
+      COMMENT ON COLUMN erp_crm_config_rule.target_feature_code IS '目标特征编码';
+                    
+      COMMENT ON COLUMN erp_crm_config_rule.target_feature_value IS '目标特征值';
+                    
+      COMMENT ON COLUMN erp_crm_config_rule.condition_expression IS '复杂条件表达式';
+                    
+      COMMENT ON COLUMN erp_crm_config_rule.sequence IS '排序';
+                    
+      COMMENT ON COLUMN erp_crm_config_rule.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_crm_config_rule.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_crm_config_rule.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_crm_config_rule.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_crm_config_rule.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_crm_config_rule.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_crm_config_rule.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_crm_bundle_pricing_line IS '捆绑包明细';
+                
+      COMMENT ON COLUMN erp_crm_bundle_pricing_line.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_crm_bundle_pricing_line.bundle_id IS '所属捆绑包';
+                    
+      COMMENT ON COLUMN erp_crm_bundle_pricing_line.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_crm_bundle_pricing_line.product_id IS '产品';
+                    
+      COMMENT ON COLUMN erp_crm_bundle_pricing_line.quantity IS '数量';
+                    
+      COMMENT ON COLUMN erp_crm_bundle_pricing_line.unit_price IS '单价';
+                    
+      COMMENT ON COLUMN erp_crm_bundle_pricing_line.sequence IS '排序';
+                    
+      COMMENT ON COLUMN erp_crm_bundle_pricing_line.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_crm_bundle_pricing_line.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_crm_bundle_pricing_line.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_crm_bundle_pricing_line.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_crm_bundle_pricing_line.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_crm_bundle_pricing_line.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_crm_bundle_pricing_line.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_crm_sequence_step IS '序列步骤';
+                
+      COMMENT ON COLUMN erp_crm_sequence_step.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_step.sequence_id IS '所属序列';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_step.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_step.step_name IS '步骤名称';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_step.step_order IS '步骤序号';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_step.due_days IS '距上一步间隔天数';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_step.activity_type IS '步骤活动类型';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_step.step_description IS '步骤说明';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_step.completion_condition IS '完成条件';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_step.is_mandatory IS '是否必须完成';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_step.auto_create_event IS '是否自动创建事件';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_step.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_step.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_step.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_step.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_step.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_step.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_step.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_crm_sequence_assignment IS '序列分配规则';
+                
+      COMMENT ON COLUMN erp_crm_sequence_assignment.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_assignment.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_assignment.sequence_id IS '目标序列';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_assignment.priority IS '优先级';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_assignment.condition_type IS '条件类型';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_assignment.condition_value IS '条件值(JSON)';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_assignment.is_active IS '是否启用';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_assignment.is_default IS '是否默认规则';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_assignment.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_assignment.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_assignment.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_assignment.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_assignment.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_assignment.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_crm_sequence_assignment.update_time IS '修改时间';
                     
       COMMENT ON TABLE erp_crm_lead IS '线索/商机';
                 

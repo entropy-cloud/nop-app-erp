@@ -26,32 +26,31 @@ CREATE TABLE erp_md_md_organization(
   constraint PK_erp_md_md_organization primary key (ID)
 );
 
-CREATE TABLE erp_ct_contract(
-  ID NUMBER(20) NOT NULL ,
-  CODE VARCHAR2(50) NOT NULL ,
-  ORG_ID NUMBER(20)  ,
-  CONTRACT_NAME VARCHAR2(200) NOT NULL ,
-  CONTRACT_TYPE INTEGER NOT NULL ,
-  CONTRACT_DIRECTION INTEGER NOT NULL ,
-  PARTNER_ID NUMBER(20) NOT NULL ,
-  CURRENCY_ID NUMBER(20)  ,
-  TOTAL_AMOUNT NUMBER(20,4)  ,
-  START_DATE DATE NOT NULL ,
-  END_DATE DATE NOT NULL ,
-  SIGN_DATE DATE  ,
-  STATUS INTEGER NOT NULL ,
-  TEMPLATE_ID NUMBER(20)  ,
-  PARENT_CONTRACT_ID NUMBER(20)  ,
-  DESCRIPTION VARCHAR2(4000)  ,
-  ATTACHMENT_ID NUMBER(20)  ,
-  REMARK VARCHAR2(1000)  ,
-  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
-  VERSION INTEGER default 0  NOT NULL ,
-  CREATED_BY VARCHAR2(50) NOT NULL ,
-  CREATE_TIME TIMESTAMP NOT NULL ,
-  UPDATED_BY VARCHAR2(50) NOT NULL ,
-  UPDATE_TIME TIMESTAMP NOT NULL ,
-  constraint PK_erp_ct_contract primary key (ID)
+CREATE TABLE erp_md_currency(
+  ID NUMBER(20)  ,
+  CODE VARCHAR2(50)  ,
+  NAME VARCHAR2(200)  ,
+  constraint PK_erp_md_currency primary key (ID)
+);
+
+CREATE TABLE erp_md_material(
+  ID NUMBER(20)  ,
+  CODE VARCHAR2(50)  ,
+  NAME VARCHAR2(200)  ,
+  constraint PK_erp_md_material primary key (ID)
+);
+
+CREATE TABLE erp_ct_approval_matrix(
+  ID NUMBER(20)  ,
+  CODE VARCHAR2(50)  ,
+  NAME VARCHAR2(200)  ,
+  constraint PK_erp_ct_approval_matrix primary key (ID)
+);
+
+CREATE TABLE erp_ct_signature_request(
+  ID NUMBER(20)  ,
+  CODE VARCHAR2(50)  ,
+  constraint PK_erp_ct_signature_request primary key (ID)
 );
 
 CREATE TABLE erp_ct_approval_matrix(
@@ -73,6 +72,34 @@ CREATE TABLE erp_ct_approval_matrix(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   constraint PK_erp_ct_approval_matrix primary key (ID)
+);
+
+CREATE TABLE erp_ct_contract(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  CONTRACT_NAME VARCHAR2(200) NOT NULL ,
+  CONTRACT_TYPE INTEGER NOT NULL ,
+  CONTRACT_DIRECTION INTEGER NOT NULL ,
+  PARTNER_ID NUMBER(20) NOT NULL ,
+  CURRENCY_ID NUMBER(20)  ,
+  TOTAL_AMOUNT NUMBER(20,4)  ,
+  START_DATE DATE NOT NULL ,
+  END_DATE DATE NOT NULL ,
+  SIGN_DATE DATE  ,
+  STATUS INTEGER NOT NULL ,
+  TEMPLATE_ID NUMBER(20)  ,
+  PARENT_CONTRACT_ID NUMBER(20)  ,
+  DESCRIPTION VARCHAR2(4000)  ,
+  ATTACHMENT_FILE_ID VARCHAR2(200)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_ct_contract primary key (ID)
 );
 
 CREATE TABLE erp_ct_contract_line(
@@ -100,10 +127,10 @@ CREATE TABLE erp_ct_contract_version(
   VERSION_NO INTEGER NOT NULL ,
   VERSION_DATE DATE NOT NULL ,
   CONTENT VARCHAR2(4000)  ,
-  ATTACHMENT_ID NUMBER(20)  ,
+  ATTACHMENT_FILE_ID VARCHAR2(200)  ,
   IS_CURRENT CHAR(1) default 0   ,
   STATUS INTEGER NOT NULL ,
-  APPROVED_BY NUMBER(20)  ,
+  APPROVED_BY VARCHAR2(36)  ,
   APPROVED_AT DATE  ,
   REMARK VARCHAR2(1000)  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
@@ -121,7 +148,7 @@ CREATE TABLE erp_ct_approval_record(
   ORG_ID NUMBER(20)  ,
   APPROVAL_MATRIX_ID NUMBER(20)  ,
   APPROVAL_ORDER INTEGER  ,
-  APPROVER_ID NUMBER(20)  ,
+  APPROVER_ID VARCHAR2(36)  ,
   APPROVAL_STATUS INTEGER NOT NULL ,
   "COMMENT" VARCHAR2(1000)  ,
   APPROVED_AT DATE  ,
@@ -167,7 +194,7 @@ CREATE TABLE erp_ct_document(
   CODE VARCHAR2(50) NOT NULL ,
   DOC_NAME VARCHAR2(200) NOT NULL ,
   DOC_TYPE VARCHAR2(50) NOT NULL ,
-  ATTACHMENT_ID NUMBER(20)  ,
+  ATTACHMENT_FILE_ID VARCHAR2(200)  ,
   FILE_SIZE NUMBER(20)  ,
   FILE_HASH VARCHAR2(100)  ,
   MIME_TYPE VARCHAR2(100)  ,
@@ -258,7 +285,7 @@ CREATE TABLE erp_ct_signature_request(
   COMPLETED_AT DATE  ,
   CERTIFICATE_URL VARCHAR2(1000)  ,
   EVIDENCE_NO VARCHAR2(200)  ,
-  ATTACHMENT_ID NUMBER(20)  ,
+  ATTACHMENT_FILE_ID VARCHAR2(200)  ,
   ERROR_MSG VARCHAR2(1000)  ,
   REMARK VARCHAR2(1000)  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
@@ -362,56 +389,14 @@ CREATE TABLE erp_ct_rebate_settlement(
                     
       COMMENT ON TABLE erp_md_md_organization IS 'ErpMdOrganization';
                 
-      COMMENT ON TABLE erp_ct_contract IS '合同';
+      COMMENT ON TABLE erp_md_currency IS '币种';
                 
-      COMMENT ON COLUMN erp_ct_contract.ID IS 'ID';
-                    
-      COMMENT ON COLUMN erp_ct_contract.CODE IS '合同编号';
-                    
-      COMMENT ON COLUMN erp_ct_contract.ORG_ID IS '业务组织';
-                    
-      COMMENT ON COLUMN erp_ct_contract.CONTRACT_NAME IS '合同名称';
-                    
-      COMMENT ON COLUMN erp_ct_contract.CONTRACT_TYPE IS '合同类型';
-                    
-      COMMENT ON COLUMN erp_ct_contract.CONTRACT_DIRECTION IS '合同方向';
-                    
-      COMMENT ON COLUMN erp_ct_contract.PARTNER_ID IS '合作方';
-                    
-      COMMENT ON COLUMN erp_ct_contract.CURRENCY_ID IS '币种';
-                    
-      COMMENT ON COLUMN erp_ct_contract.TOTAL_AMOUNT IS '合同总额';
-                    
-      COMMENT ON COLUMN erp_ct_contract.START_DATE IS '生效日期';
-                    
-      COMMENT ON COLUMN erp_ct_contract.END_DATE IS '到期日期';
-                    
-      COMMENT ON COLUMN erp_ct_contract.SIGN_DATE IS '签署日期';
-                    
-      COMMENT ON COLUMN erp_ct_contract.STATUS IS '合同状态';
-                    
-      COMMENT ON COLUMN erp_ct_contract.TEMPLATE_ID IS '合同模板';
-                    
-      COMMENT ON COLUMN erp_ct_contract.PARENT_CONTRACT_ID IS '父合同';
-                    
-      COMMENT ON COLUMN erp_ct_contract.DESCRIPTION IS '描述';
-                    
-      COMMENT ON COLUMN erp_ct_contract.ATTACHMENT_ID IS '合同附件';
-                    
-      COMMENT ON COLUMN erp_ct_contract.REMARK IS '备注';
-                    
-      COMMENT ON COLUMN erp_ct_contract.DEL_VERSION IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_ct_contract.VERSION IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_ct_contract.CREATED_BY IS '创建人';
-                    
-      COMMENT ON COLUMN erp_ct_contract.CREATE_TIME IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_ct_contract.UPDATED_BY IS '修改人';
-                    
-      COMMENT ON COLUMN erp_ct_contract.UPDATE_TIME IS '修改时间';
-                    
+      COMMENT ON TABLE erp_md_material IS '物料';
+                
+      COMMENT ON TABLE erp_ct_approval_matrix IS '审批矩阵';
+                
+      COMMENT ON TABLE erp_ct_signature_request IS '签名请求';
+                
       COMMENT ON TABLE erp_ct_approval_matrix IS '审批矩阵';
                 
       COMMENT ON COLUMN erp_ct_approval_matrix.ID IS 'ID';
@@ -447,6 +432,56 @@ CREATE TABLE erp_ct_rebate_settlement(
       COMMENT ON COLUMN erp_ct_approval_matrix.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_ct_approval_matrix.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_ct_contract IS '合同';
+                
+      COMMENT ON COLUMN erp_ct_contract.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_ct_contract.CODE IS '合同编号';
+                    
+      COMMENT ON COLUMN erp_ct_contract.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_ct_contract.CONTRACT_NAME IS '合同名称';
+                    
+      COMMENT ON COLUMN erp_ct_contract.CONTRACT_TYPE IS '合同类型';
+                    
+      COMMENT ON COLUMN erp_ct_contract.CONTRACT_DIRECTION IS '合同方向';
+                    
+      COMMENT ON COLUMN erp_ct_contract.PARTNER_ID IS '合作方';
+                    
+      COMMENT ON COLUMN erp_ct_contract.CURRENCY_ID IS '币种';
+                    
+      COMMENT ON COLUMN erp_ct_contract.TOTAL_AMOUNT IS '合同总额';
+                    
+      COMMENT ON COLUMN erp_ct_contract.START_DATE IS '生效日期';
+                    
+      COMMENT ON COLUMN erp_ct_contract.END_DATE IS '到期日期';
+                    
+      COMMENT ON COLUMN erp_ct_contract.SIGN_DATE IS '签署日期';
+                    
+      COMMENT ON COLUMN erp_ct_contract.STATUS IS '合同状态';
+                    
+      COMMENT ON COLUMN erp_ct_contract.TEMPLATE_ID IS '合同模板';
+                    
+      COMMENT ON COLUMN erp_ct_contract.PARENT_CONTRACT_ID IS '父合同';
+                    
+      COMMENT ON COLUMN erp_ct_contract.DESCRIPTION IS '描述';
+                    
+      COMMENT ON COLUMN erp_ct_contract.ATTACHMENT_FILE_ID IS '合同附件';
+                    
+      COMMENT ON COLUMN erp_ct_contract.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_ct_contract.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_ct_contract.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_ct_contract.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_ct_contract.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_ct_contract.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_ct_contract.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_ct_contract_line IS '合同行';
                 
@@ -492,7 +527,7 @@ CREATE TABLE erp_ct_rebate_settlement(
                     
       COMMENT ON COLUMN erp_ct_contract_version.CONTENT IS '版本内容';
                     
-      COMMENT ON COLUMN erp_ct_contract_version.ATTACHMENT_ID IS '版本附件';
+      COMMENT ON COLUMN erp_ct_contract_version.ATTACHMENT_FILE_ID IS '版本附件';
                     
       COMMENT ON COLUMN erp_ct_contract_version.IS_CURRENT IS '是否当前版本';
                     
@@ -608,7 +643,7 @@ CREATE TABLE erp_ct_rebate_settlement(
                     
       COMMENT ON COLUMN erp_ct_document.DOC_TYPE IS '文档类型';
                     
-      COMMENT ON COLUMN erp_ct_document.ATTACHMENT_ID IS '附件';
+      COMMENT ON COLUMN erp_ct_document.ATTACHMENT_FILE_ID IS '附件';
                     
       COMMENT ON COLUMN erp_ct_document.FILE_SIZE IS '文件大小(字节)';
                     
@@ -766,7 +801,7 @@ CREATE TABLE erp_ct_rebate_settlement(
                     
       COMMENT ON COLUMN erp_ct_signature_request.EVIDENCE_NO IS '存证编号';
                     
-      COMMENT ON COLUMN erp_ct_signature_request.ATTACHMENT_ID IS '已签署文件';
+      COMMENT ON COLUMN erp_ct_signature_request.ATTACHMENT_FILE_ID IS '已签署文件';
                     
       COMMENT ON COLUMN erp_ct_signature_request.ERROR_MSG IS '错误信息';
                     

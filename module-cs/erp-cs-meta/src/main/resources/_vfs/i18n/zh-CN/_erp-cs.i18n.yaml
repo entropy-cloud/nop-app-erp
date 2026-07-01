@@ -19,7 +19,6 @@ entity:
 prop:
   label:
     ErpCsAgentRate:
-      agent: null
       agentId: 客服
       createTime: 创建时间
       createdBy: 创建人
@@ -27,6 +26,7 @@ prop:
       effectiveDate: 生效日期
       id: ID
       isActive: 是否启用
+      org: null
       orgId: 业务组织
       rate: 费率(元/小时)
       serviceType: 服务类型
@@ -42,6 +42,7 @@ prop:
       icon: 图标
       id: ID
       name: 名称
+      org: null
       orgId: 业务组织
       parent: null
       parentId: 父分类
@@ -63,6 +64,7 @@ prop:
       macroPriority_label: 自动匹配优先级
       macroTicketType: null
       macroTicketTypeId: 自动匹配工单类型
+      org: null
       orgId: 业务组织
       sequence: 排序
       title: 模板标题
@@ -80,6 +82,7 @@ prop:
       id: ID
       isActive: 是否启用
       name: 名称
+      org: null
       orgId: 业务组织
       parent: null
       parentId: 父分类
@@ -101,13 +104,15 @@ prop:
       estimatedDuration: 预估时长(分钟)
       id: ID
       isMandatory: 是否必须执行
+      org: null
       orgId: 业务组织
       sequence: 执行顺序
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
     ErpCsContract:
-      attachmentId: 合同附件
+      attachmentFileId: 合同附件
+      attachmentFileIdComponentFileStatus: null
       billingCycle: 计费周期
       billingCycle_label: 计费周期
       code: 编码
@@ -119,6 +124,7 @@ prop:
       endDate: 到期日期
       id: ID
       name: 名称
+      org: null
       orgId: 业务组织
       partner: null
       partnerId: 签约客户
@@ -143,6 +149,7 @@ prop:
       maxResponseTime: 承诺响应时限(分钟)
       maxTickets: 最大工单数
       notes: 备注
+      org: null
       orgId: 业务组织
       partner: null
       partnerId: 客户
@@ -156,6 +163,7 @@ prop:
       usedTickets: 已用工单数
       version: 数据版本
     ErpCsKnowledgeBase:
+      category: null
       categoryId: 分类
       code: 编码
       content: 正文
@@ -183,6 +191,7 @@ prop:
       isActive: 是否上架
       isPublic: 是否客户可见
       name: 名称
+      org: null
       orgId: 业务组织
       parent: null
       parentId: 父项
@@ -202,7 +211,6 @@ prop:
       createdBy: 创建人
       delVersion: 逻辑删除版本
       description: 说明
-      escalationUser: null
       escalationUserId: 升级通知人
       id: ID
       isWorkingDays: 仅计算工作日
@@ -227,6 +235,7 @@ prop:
       delVersion: 逻辑删除版本
       id: ID
       npsScore: NPS评分
+      org: null
       orgId: 业务组织
       respondedAt: 响应时间
       surveyChannel: 发送渠道
@@ -246,7 +255,6 @@ prop:
       id: ID
       name: 名称
       remark: 备注
-      teamLeader: null
       teamLeaderId: 团队负责人
       updateTime: 修改时间
       updatedBy: 修改人
@@ -255,7 +263,6 @@ prop:
       actions: null
       approveStatus: 审核状态
       approveStatus_label: 审核状态
-      assignedTo: null
       assignedToId: 分配处理人
       catalogItem: null
       catalogItemId: 服务目录项
@@ -318,6 +325,7 @@ prop:
       createdBy: 创建人
       defaultPriority: 默认优先级
       defaultPriority_label: 默认优先级
+      defaultSlaPolicy: null
       defaultSlaPolicyId: 默认 SLA 策略
       delVersion: 逻辑删除版本
       id: ID
@@ -328,12 +336,10 @@ prop:
       updatedBy: 修改人
       version: 数据版本
     ErpCsTimeEntry:
-      agent: null
       agentId: 处理人
       approvalStatus: 审批状态
       approvalStatus_label: 审批状态
       approvedAt: 审批时间
-      approvedBy: null
       approvedById: 审批人
       billableAmount: 计费金额
       billingRate: 计费费率
@@ -345,6 +351,7 @@ prop:
       endTime: 结束时间
       id: ID
       isBillable: 是否可计费
+      org: null
       orgId: 业务组织
       projectId: 关联项目
       source: 来源

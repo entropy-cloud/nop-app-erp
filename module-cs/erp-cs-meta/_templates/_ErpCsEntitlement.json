@@ -23,5 +23,6 @@
   "updateTime": "2000-01-01 14:00:00",
   "partner": null,
   "contract": null,
-  "slaPolicy": null
+  "slaPolicy": null,
+  "org": null
 }

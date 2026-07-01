@@ -166,8 +166,8 @@
                         stdSqlType="INTEGER" ext:dict="erp-cs/ticket-priority" i18n-en:displayName="Priority"/>
                 <column code="SOURCE" displayName="来源" name="source" propId="10" stdDataType="int" stdSqlType="INTEGER"
                         ext:dict="erp-cs/ticket-source" i18n-en:displayName="Source"/>
-                <column code="ASSIGNED_TO_ID" displayName="分配处理人" name="assignedToId" propId="11" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Assigned To"/>
+                <column code="ASSIGNED_TO_ID" displayName="分配处理人" name="assignedToId" precision="36" propId="11"
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Assigned To"/>
                 <column code="SLA_POLICY_ID" displayName="SLA 策略" name="slaPolicyId" propId="12" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="SLA Policy"/>
                 <column code="DEADLINE_DATE_TIME" displayName="SLA 截止时间" name="deadlineDateTime" propId="13"
@@ -211,53 +211,44 @@
                         propId="29" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
             <relations>
-                <to-one name="customer" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdPartner"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Customer"
-                        ref-i18n-en:displayName="Ticket">
+                <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
+                        i18n-en:displayName="Customer">
                     <join>
                         <on leftProp="customerId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="contact" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
-                        biz:moduleId="erp/md" i18n-en:displayName="Contact" ref-i18n-en:displayName="Ticket">
+                <to-one name="contact" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
+                        i18n-en:displayName="Contact">
                     <join>
                         <on leftProp="contactId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="ticketType" refEntityName="app.erp.cs.dao.entity.ErpCsTicketType" tagSet="pub"
-                        i18n-en:displayName="Ticket Type" ref-i18n-en:displayName="Ticket">
+                        i18n-en:displayName="Ticket Type">
                     <join>
                         <on leftProp="ticketTypeId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="slaPolicy" refEntityName="app.erp.cs.dao.entity.ErpCsSlaPolicy" tagSet="pub"
-                        i18n-en:displayName="SLA Policy" ref-i18n-en:displayName="Ticket">
+                        i18n-en:displayName="SLA Policy">
                     <join>
                         <on leftProp="slaPolicyId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="assignedTo" notGenCode="true" refEntityName="io.nop.auth.dao.entity.NopAuthUser"
-                        tagSet="pub" biz:moduleId="nop/auth" i18n-en:displayName="Assigned To"
-                        ref-i18n-en:displayName="Ticket">
-                    <join>
-                        <on leftProp="assignedToId" rightProp="id"/>
-                    </join>
-                </to-one>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org" ref-i18n-en:displayName="Ticket">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="catalogItem" refEntityName="app.erp.cs.dao.entity.ErpCsServiceCatalogItem" tagSet="pub"
-                        i18n-en:displayName="Catalog Item" ref-i18n-en:displayName="Ticket">
+                        i18n-en:displayName="Catalog Item">
                     <join>
                         <on leftProp="catalogItemId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-many cascadeDelete="true" name="actions" refEntityName="app.erp.cs.dao.entity.ErpCsTicketAction"
-                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Actions"
-                         ref-i18n-en:displayName="Ticket">
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Actions" ext:estRows="20">
                     <join>
                         <on leftProp="id" rightProp="ticketId"/>
                     </join>
@@ -300,6 +291,13 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <relations>
+                <to-one name="defaultSlaPolicy" refEntityName="app.erp.cs.dao.entity.ErpCsSlaPolicy" tagSet="pub">
+                    <join>
+                        <on leftProp="defaultSlaPolicyId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
         </entity>
         <entity className="app.erp.cs.dao.entity.ErpCsSlaPolicy" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="SLA 策略"
@@ -346,23 +344,16 @@
                         propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
             <relations>
-                <to-one name="ticketType" refEntityName="app.erp.cs.dao.entity.ErpCsTicketType" tagSet="pub"
-                        i18n-en:displayName="Ticket Type" ref-i18n-en:displayName="SLA Policy">
+                <to-one ignoreDepends="true" name="ticketType" refEntityName="app.erp.cs.dao.entity.ErpCsTicketType"
+                        tagSet="pub" i18n-en:displayName="Ticket Type">
                     <join>
                         <on leftProp="ticketTypeId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="team" refEntityName="app.erp.cs.dao.entity.ErpCsTeam" tagSet="pub"
-                        i18n-en:displayName="Team" ref-i18n-en:displayName="SLA Policy">
+                        i18n-en:displayName="Team">
                     <join>
                         <on leftProp="teamId" rightProp="id"/>
-                    </join>
-                </to-one>
-                <to-one name="escalationUser" notGenCode="true" refEntityName="io.nop.auth.dao.entity.NopAuthUser"
-                        tagSet="pub" biz:moduleId="nop/auth" i18n-en:displayName="Escalation User"
-                        ref-i18n-en:displayName="SLA Policy">
-                    <join>
-                        <on leftProp="escalationUserId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -379,8 +370,8 @@
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
                 <column code="NAME" displayName="名称" mandatory="true" name="name" precision="200" propId="3"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
-                <column code="TEAM_LEADER_ID" displayName="团队负责人" name="teamLeaderId" propId="4" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Team Leader"/>
+                <column code="TEAM_LEADER_ID" displayName="团队负责人" name="teamLeaderId" precision="36" propId="4"
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Team Leader"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="5"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -399,15 +390,6 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="11" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
-            <relations>
-                <to-one name="teamLeader" notGenCode="true" refEntityName="io.nop.auth.dao.entity.NopAuthUser"
-                        tagSet="pub" biz:moduleId="nop/auth" i18n-en:displayName="Team Leader"
-                        ref-i18n-en:displayName="CS Team">
-                    <join>
-                        <on leftProp="teamLeaderId" rightProp="id"/>
-                    </join>
-                </to-one>
-            </relations>
         </entity>
         <entity className="app.erp.cs.dao.entity.ErpCsTicketAction" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工单操作日志"
@@ -426,8 +408,8 @@
                         stdSqlType="INTEGER" ext:dict="erp-cs/ticket-status" i18n-en:displayName="From Status"/>
                 <column code="TO_STATUS" displayName="目标状态" name="toStatus" propId="5" stdDataType="int"
                         stdSqlType="INTEGER" ext:dict="erp-cs/ticket-status" i18n-en:displayName="To Status"/>
-                <column code="OPERATOR_ID" displayName="操作人" name="operatorId" propId="6" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Operator"/>
+                <column code="OPERATOR_ID" displayName="操作人" name="operatorId" precision="36" propId="6"
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Operator"/>
                 <column code="CONTENT" displayName="操作内容" domain="content" name="content" precision="4000" propId="7"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Content"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -448,7 +430,7 @@
             </columns>
             <relations>
                 <to-one name="ticket" refEntityName="app.erp.cs.dao.entity.ErpCsTicket" tagSet="pub"
-                        i18n-en:displayName="Ticket" ref-i18n-en:displayName="Ticket Action">
+                        i18n-en:displayName="Ticket">
                     <join>
                         <on leftProp="ticketId" rightProp="id"/>
                     </join>
@@ -492,6 +474,13 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <relations>
+                <to-one name="category" refEntityName="app.erp.cs.dao.entity.ErpCsCannedCategory" tagSet="pub">
+                    <join>
+                        <on leftProp="categoryId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
         </entity>
         <entity className="app.erp.cs.dao.entity.ErpCsCannedCategory" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="预设应答分类"
@@ -532,9 +521,14 @@
             </columns>
             <relations>
                 <to-one name="parent" refEntityName="app.erp.cs.dao.entity.ErpCsCannedCategory" tagSet="pub"
-                        i18n-en:displayName="Parent Category" ref-i18n-en:displayName="Child Categories">
+                        i18n-en:displayName="Parent Category">
                     <join>
                         <on leftProp="parentId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -588,15 +582,20 @@
             </columns>
             <relations>
                 <to-one name="category" refEntityName="app.erp.cs.dao.entity.ErpCsCannedCategory" tagSet="pub"
-                        i18n-en:displayName="Category" ref-i18n-en:displayName="Canned Responses">
+                        i18n-en:displayName="Category">
                     <join>
                         <on leftProp="categoryId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="macroTicketType" refEntityName="app.erp.cs.dao.entity.ErpCsTicketType" tagSet="pub"
-                        i18n-en:displayName="Macro Ticket Type" ref-i18n-en:displayName="Canned Responses">
+                        i18n-en:displayName="Macro Ticket Type">
                     <join>
                         <on leftProp="macroTicketTypeId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -647,9 +646,14 @@
             </columns>
             <relations>
                 <to-one name="ticket" refEntityName="app.erp.cs.dao.entity.ErpCsTicket" tagSet="pub"
-                        i18n-en:displayName="Ticket" ref-i18n-en:displayName="Survey">
+                        i18n-en:displayName="Ticket">
                     <join>
                         <on leftProp="ticketId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -691,10 +695,9 @@
                         propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
             <relations>
-                <to-one name="agent" notGenCode="true" refEntityName="io.nop.auth.dao.entity.NopAuthUser" tagSet="pub"
-                        biz:moduleId="nop/auth" i18n-en:displayName="Agent" ref-i18n-en:displayName="Agent Rates">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
                     <join>
-                        <on leftProp="agentId" rightProp="id"/>
+                        <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -728,8 +731,8 @@
                         stdSqlType="INTEGER" ext:dict="erp-cs/billing-cycle" i18n-en:displayName="Billing Cycle"/>
                 <column code="STATUS" displayName="合同状态" name="status" propId="11" stdDataType="int"
                         stdSqlType="INTEGER" ext:dict="erp-cs/contract-status" i18n-en:displayName="Status"/>
-                <column code="ATTACHMENT_ID" displayName="合同附件" name="attachmentId" propId="12" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Attachment"/>
+                <column code="ATTACHMENT_FILE_ID" displayName="合同附件" name="attachmentFileId" precision="200" propId="12"
+                        stdDataType="string" stdDomain="file" stdSqlType="VARCHAR" i18n-en:displayName="Attachment"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="13" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Del Flag"/>
@@ -747,10 +750,15 @@
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
             <relations>
-                <to-one name="partner" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
-                        biz:moduleId="erp/md" i18n-en:displayName="Partner" ref-i18n-en:displayName="Contracts">
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
+                        i18n-en:displayName="Partner">
                     <join>
                         <on leftProp="partnerId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -809,22 +817,27 @@
                         propId="21" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
             <relations>
-                <to-one name="partner" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
-                        biz:moduleId="erp/md" i18n-en:displayName="Partner" ref-i18n-en:displayName="Entitlements">
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
+                        i18n-en:displayName="Partner">
                     <join>
                         <on leftProp="partnerId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="contract" refEntityName="app.erp.cs.dao.entity.ErpCsContract" tagSet="pub"
-                        i18n-en:displayName="Contract" ref-i18n-en:displayName="Entitlements">
+                        i18n-en:displayName="Contract">
                     <join>
                         <on leftProp="contractId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="slaPolicy" refEntityName="app.erp.cs.dao.entity.ErpCsSlaPolicy" tagSet="pub"
-                        i18n-en:displayName="SLA Policy" ref-i18n-en:displayName="Entitlements">
+                        i18n-en:displayName="SLA Policy">
                     <join>
                         <on leftProp="slaPolicyId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -870,9 +883,14 @@
             </columns>
             <relations>
                 <to-one name="parent" refEntityName="app.erp.cs.dao.entity.ErpCsCatalogCategory" tagSet="pub"
-                        i18n-en:displayName="Parent Category" ref-i18n-en:displayName="Child Categories">
+                        i18n-en:displayName="Parent Category">
                     <join>
                         <on leftProp="parentId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -936,27 +954,32 @@
             </columns>
             <relations>
                 <to-one name="category" refEntityName="app.erp.cs.dao.entity.ErpCsCatalogCategory" tagSet="pub"
-                        i18n-en:displayName="Category" ref-i18n-en:displayName="Catalog Items">
+                        i18n-en:displayName="Category">
                     <join>
                         <on leftProp="categoryId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="parent" refEntityName="app.erp.cs.dao.entity.ErpCsServiceCatalogItem" tagSet="pub"
-                        i18n-en:displayName="Parent Item" ref-i18n-en:displayName="Child Items">
+                        i18n-en:displayName="Parent Item">
                     <join>
                         <on leftProp="parentId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="ticketType" refEntityName="app.erp.cs.dao.entity.ErpCsTicketType" tagSet="pub"
-                        i18n-en:displayName="Ticket Type" ref-i18n-en:displayName="Catalog Items">
+                        i18n-en:displayName="Ticket Type">
                     <join>
                         <on leftProp="ticketTypeId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="slaPolicy" refEntityName="app.erp.cs.dao.entity.ErpCsSlaPolicy" tagSet="pub"
-                        i18n-en:displayName="SLA Policy" ref-i18n-en:displayName="Catalog Items">
+                        i18n-en:displayName="SLA Policy">
                     <join>
                         <on leftProp="slaPolicyId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -1007,9 +1030,14 @@
             </columns>
             <relations>
                 <to-one name="catalogItem" refEntityName="app.erp.cs.dao.entity.ErpCsServiceCatalogItem" tagSet="pub"
-                        i18n-en:displayName="Catalog Item" ref-i18n-en:displayName="Fulfillments">
+                        i18n-en:displayName="Catalog Item">
                     <join>
                         <on leftProp="catalogItemId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -1047,8 +1075,8 @@
                 <column code="APPROVAL_STATUS" displayName="审批状态" name="approvalStatus" propId="12" stdDataType="int"
                         stdSqlType="INTEGER" ext:dict="erp-cs/time-entry-approve-status"
                         i18n-en:displayName="Approval Status"/>
-                <column code="APPROVED_BY_ID" displayName="审批人" name="approvedById" propId="13" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Approved By"/>
+                <column code="APPROVED_BY_ID" displayName="审批人" name="approvedById" precision="36" propId="13"
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
                 <column code="APPROVED_AT" displayName="审批时间" name="approvedAt" propId="14" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
                 <column code="PROJECT_ID" displayName="关联项目" name="projectId" propId="15" stdDataType="long"
@@ -1075,22 +1103,14 @@
             </columns>
             <relations>
                 <to-one name="ticket" refEntityName="app.erp.cs.dao.entity.ErpCsTicket" tagSet="pub"
-                        i18n-en:displayName="Ticket" ref-i18n-en:displayName="Time Entries">
+                        i18n-en:displayName="Ticket">
                     <join>
                         <on leftProp="ticketId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="agent" notGenCode="true" refEntityName="io.nop.auth.dao.entity.NopAuthUser" tagSet="pub"
-                        biz:moduleId="nop/auth" i18n-en:displayName="Agent" ref-i18n-en:displayName="Time Entries">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
                     <join>
-                        <on leftProp="agentId" rightProp="id"/>
-                    </join>
-                </to-one>
-                <to-one name="approvedBy" notGenCode="true" refEntityName="io.nop.auth.dao.entity.NopAuthUser"
-                        tagSet="pub" biz:moduleId="nop/auth" i18n-en:displayName="Approved By"
-                        ref-i18n-en:displayName="Time Entries">
-                    <join>
-                        <on leftProp="approvedById" rightProp="id"/>
+                        <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -1106,14 +1126,6 @@
         <entity className="app.erp.md.dao.entity.ErpMdOrganization" displayName="ErpMdOrganization"
                 name="app.erp.md.dao.entity.ErpMdOrganization" notGenCode="true" tableName="erp_md_md_organization"
                 biz:moduleId="erp/md">
-            <columns>
-                <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"
-                        stdSqlType="BIGINT" tagSet="seq-default"/>
-            </columns>
-        </entity>
-        <entity className="io.nop.auth.dao.entity.NopAuthUser" displayName="NopAuthUser"
-                name="io.nop.auth.dao.entity.NopAuthUser" notGenCode="true" tableName="erp_md_auth_user"
-                biz:moduleId="nop/auth">
             <columns>
                 <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"
                         stdSqlType="BIGINT" tagSet="seq-default"/>

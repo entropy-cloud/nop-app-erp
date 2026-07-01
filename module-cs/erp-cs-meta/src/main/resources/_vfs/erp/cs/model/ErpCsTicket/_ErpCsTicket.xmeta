@@ -59,8 +59,8 @@
             <schema type="java.lang.Integer" dict="erp-cs/ticket-source"/>
         </prop>
         <prop name="assignedToId" displayName="分配处理人" propId="11" i18n-en:displayName="Assigned To" queryable="true"
-              sortable="true" insertable="true" updatable="true" ext:relation="assignedTo">
-            <schema type="java.lang.Long"/>
+              sortable="true" insertable="true" updatable="true">
+            <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
         <prop name="slaPolicyId" displayName="SLA 策略" propId="12" i18n-en:displayName="SLA Policy" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="slaPolicy">
@@ -153,11 +153,6 @@
               queryable="true" ext:joinLeftProp="slaPolicyId" ext:joinRightProp="id" insertable="false"
               updatable="false" lazy="true">
             <schema bizObjName="ErpCsSlaPolicy"/>
-        </prop>
-        <prop name="assignedTo" i18n-en:displayName="Assigned To" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="assignedToId" ext:joinRightProp="id" biz:moduleId="nop/auth"
-              insertable="false" updatable="false" lazy="true">
-            <schema bizObjName="NopAuthUser"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"

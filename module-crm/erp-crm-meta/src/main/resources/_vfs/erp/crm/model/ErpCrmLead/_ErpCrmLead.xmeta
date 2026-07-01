@@ -117,7 +117,7 @@
         </prop>
         <prop name="ownerId" displayName="负责人" propId="25" i18n-en:displayName="Owner" queryable="true" sortable="true"
               insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
         <prop name="teamId" displayName="销售团队" propId="26" i18n-en:displayName="Team" queryable="true" sortable="true"
               insertable="true" updatable="true" ext:relation="team">

@@ -45,7 +45,7 @@ public class _ErpCrmLeadConvLog extends DynamicOrmEntity{
     public static final String PROP_NAME_changedAt = "changedAt";
     public static final int PROP_ID_changedAt = 6;
     
-    /* 变更人: CHANGED_BY BIGINT */
+    /* 变更人: CHANGED_BY VARCHAR */
     public static final String PROP_NAME_changedBy = "changedBy";
     public static final int PROP_ID_changedBy = 7;
     
@@ -165,7 +165,7 @@ public class _ErpCrmLeadConvLog extends DynamicOrmEntity{
     private java.time.LocalDateTime _changedAt;
     
     /* 变更人: CHANGED_BY */
-    private java.lang.Long _changedBy;
+    private java.lang.String _changedBy;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -376,9 +376,9 @@ public class _ErpCrmLeadConvLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_changedBy:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_changedBy));
                }
                setChangedBy(typedValue);
@@ -508,7 +508,7 @@ public class _ErpCrmLeadConvLog extends DynamicOrmEntity{
         
             case PROP_ID_changedBy:{
                onInitProp(propId);
-               this._changedBy = (java.lang.Long)value;
+               this._changedBy = (java.lang.String)value;
                
                break;
             }
@@ -685,7 +685,7 @@ public class _ErpCrmLeadConvLog extends DynamicOrmEntity{
     /**
      * 变更人: CHANGED_BY
      */
-    public final java.lang.Long getChangedBy(){
+    public final java.lang.String getChangedBy(){
          onPropGet(PROP_ID_changedBy);
          return _changedBy;
     }
@@ -693,7 +693,7 @@ public class _ErpCrmLeadConvLog extends DynamicOrmEntity{
     /**
      * 变更人: CHANGED_BY
      */
-    public final void setChangedBy(java.lang.Long value){
+    public final void setChangedBy(java.lang.String value){
         if(onPropSet(PROP_ID_changedBy,value)){
             this._changedBy = value;
             internalClearRefs(PROP_ID_changedBy);

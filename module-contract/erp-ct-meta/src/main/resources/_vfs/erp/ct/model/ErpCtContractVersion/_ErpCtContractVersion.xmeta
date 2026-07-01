@@ -39,9 +39,9 @@
               sortable="true" insertable="true" updatable="true">
             <schema domain="content" type="java.lang.String" precision="4000"/>
         </prop>
-        <prop name="attachmentId" displayName="版本附件" propId="6" i18n-en:displayName="Attachment" queryable="true"
+        <prop name="attachmentFileId" displayName="版本附件" propId="6" i18n-en:displayName="Attachment" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema stdDomain="file" type="java.lang.String" precision="200"/>
         </prop>
         <prop name="isCurrent" displayName="是否当前版本" propId="7" i18n-en:displayName="Is Current" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="false">
@@ -53,7 +53,7 @@
         </prop>
         <prop name="approvedBy" displayName="批准人" propId="9" i18n-en:displayName="Approved By" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String" precision="36"/>
         </prop>
         <prop name="approvedAt" displayName="批准时间" propId="10" i18n-en:displayName="Approved At" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -91,6 +91,10 @@
               queryable="true" ext:joinLeftProp="contractId" ext:joinRightProp="id" insertable="false" updatable="false"
               mandatory="true" lazy="true">
             <schema bizObjName="ErpCtContract"/>
+        </prop>
+        <prop name="attachmentFileIdComponentFileStatus" mapToProp="attachmentFileIdComponent.fileStatus"
+              internal="true" lazy="true">
+            <schema type="io.nop.api.core.beans.file.FileStatusBean"/>
         </prop>
     </props>
 </meta>

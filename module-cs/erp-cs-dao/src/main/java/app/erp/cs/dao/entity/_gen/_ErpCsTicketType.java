@@ -77,6 +77,9 @@ public class _ErpCsTicketType extends DynamicOrmEntity{
     private static int _PROP_ID_BOUND = 14;
 
     
+    /* relation:  */
+    public static final String PROP_NAME_defaultSlaPolicy = "defaultSlaPolicy";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -773,5 +776,28 @@ public class _ErpCsTicketType extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.cs.dao.entity.ErpCsSlaPolicy getDefaultSlaPolicy(){
+       return (app.erp.cs.dao.entity.ErpCsSlaPolicy)internalGetRefEntity(PROP_NAME_defaultSlaPolicy);
+    }
+
+    public final void setDefaultSlaPolicy(app.erp.cs.dao.entity.ErpCsSlaPolicy refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setDefaultSlaPolicyId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_defaultSlaPolicy, refEntity,()->{
+           
+                           this.setDefaultSlaPolicyId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
 }
 // resume CPD analysis - CPD-ON

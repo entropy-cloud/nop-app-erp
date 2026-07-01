@@ -11,7 +11,7 @@
   "priority_label": "",
   "source": 0,
   "source_label": "",
-  "assignedToId": 0,
+  "assignedToId": "",
   "slaPolicyId": 0,
   "deadlineDateTime": "2000-01-01 14:00:00",
   "isSlaCompleted": false,
@@ -37,7 +37,6 @@
   "contact": null,
   "ticketType": null,
   "slaPolicy": null,
-  "assignedTo": null,
   "org": null,
   "catalogItem": null,
   "actions": null

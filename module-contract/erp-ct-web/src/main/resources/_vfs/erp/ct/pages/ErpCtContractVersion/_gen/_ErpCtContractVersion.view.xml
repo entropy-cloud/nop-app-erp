@@ -34,7 +34,7 @@
                 <col id="content" sortable="true"/>
 
                 <!--版本附件-->
-                <col id="attachmentId" ui:number="true" sortable="true"/>
+                <col id="attachmentFileId" sortable="true"/>
 
                 <!--是否当前版本-->
                 <col id="isCurrent" sortable="true"/>
@@ -43,7 +43,7 @@
                 <col id="status" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--批准人-->
-                <col id="approvedBy" ui:number="true" sortable="true"/>
+                <col id="approvedBy" sortable="true"/>
 
                 <!--批准时间-->
                 <col id="approvedAt" sortable="true"/>
@@ -75,7 +75,7 @@
             <layout>
  id[ID] contractId[合同ID]
  versionNo[版本号] versionDate[版本日期]
- content[版本内容] attachmentId[版本附件]
+ content[版本内容] attachmentFileId[版本附件]
  isCurrent[是否当前版本] status[版本状态]
  approvedBy[批准人] approvedAt[批准时间]
  remark[备注] delVersion[逻辑删除版本]
@@ -87,7 +87,7 @@
             <layout>
  id[ID] contractId[合同ID]
  versionNo[版本号] versionDate[版本日期]
- content[版本内容] attachmentId[版本附件]
+ content[版本内容] attachmentFileId[版本附件]
  isCurrent[是否当前版本] status[版本状态]
  approvedBy[批准人] approvedAt[批准时间]
  remark[备注] 
@@ -97,7 +97,7 @@
             <layout>
  id[ID] contractId[合同ID]
  versionNo[版本号] versionDate[版本日期]
- content[版本内容] attachmentId[版本附件]
+ content[版本内容] attachmentFileId[版本附件]
  isCurrent[是否当前版本] status[版本状态]
  approvedBy[批准人] approvedAt[批准时间]
  remark[备注] delVersion[逻辑删除版本]

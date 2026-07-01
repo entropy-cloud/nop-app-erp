@@ -11,9 +11,13 @@ alter table erp_md_organization add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NU
 
 alter table erp_crm_event_category add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_md_partner_contact add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_crm_quote_template add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
-alter table nop_auth_user add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+alter table erp_md_currency add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_material add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_crm_team add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -23,27 +27,19 @@ alter table erp_crm_lead_score_config add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' 
 
 alter table erp_crm_forecast_period add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_crm_territory add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_crm_product_configurator add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_crm_bundle_pricing add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
-alter table erp_crm_price_rule add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
-
 alter table erp_crm_sequence add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
-alter table erp_crm_territory add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+alter table erp_crm_price_rule add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_crm_stage add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_crm_lead_score_config_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
-
-alter table erp_crm_config_rule add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
-
-alter table erp_crm_bundle_pricing_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
-
-alter table erp_crm_sequence_step add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
-
-alter table erp_crm_sequence_assignment add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_crm_forecast add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -52,6 +48,14 @@ alter table erp_crm_territory_assignment_rule add NOP_TENANT_ID VARCHAR(32) DEFA
 alter table erp_crm_quota add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_crm_lead_funnel add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_crm_config_rule add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_crm_bundle_pricing_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_crm_sequence_step add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_crm_sequence_assignment add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_crm_lead add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -91,11 +95,17 @@ alter table erp_md_organization add primary key (NOP_TENANT_ID, ID);
 alter table erp_crm_event_category drop primary key;
 alter table erp_crm_event_category add primary key (NOP_TENANT_ID, ID);
 
+alter table erp_md_partner_contact drop primary key;
+alter table erp_md_partner_contact add primary key (NOP_TENANT_ID, ID);
+
 alter table erp_crm_quote_template drop primary key;
 alter table erp_crm_quote_template add primary key (NOP_TENANT_ID, ID);
 
-alter table nop_auth_user drop primary key;
-alter table nop_auth_user add primary key (NOP_TENANT_ID, ID);
+alter table erp_md_currency drop primary key;
+alter table erp_md_currency add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_material drop primary key;
+alter table erp_md_material add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_crm_team drop primary key;
 alter table erp_crm_team add primary key (NOP_TENANT_ID, ID);
@@ -109,38 +119,26 @@ alter table erp_crm_lead_score_config add primary key (NOP_TENANT_ID, ID);
 alter table erp_crm_forecast_period drop primary key;
 alter table erp_crm_forecast_period add primary key (NOP_TENANT_ID, ID);
 
+alter table erp_crm_territory drop primary key;
+alter table erp_crm_territory add primary key (NOP_TENANT_ID, ID);
+
 alter table erp_crm_product_configurator drop primary key;
 alter table erp_crm_product_configurator add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_crm_bundle_pricing drop primary key;
 alter table erp_crm_bundle_pricing add primary key (NOP_TENANT_ID, ID);
 
-alter table erp_crm_price_rule drop primary key;
-alter table erp_crm_price_rule add primary key (NOP_TENANT_ID, ID);
-
 alter table erp_crm_sequence drop primary key;
 alter table erp_crm_sequence add primary key (NOP_TENANT_ID, ID);
 
-alter table erp_crm_territory drop primary key;
-alter table erp_crm_territory add primary key (NOP_TENANT_ID, ID);
+alter table erp_crm_price_rule drop primary key;
+alter table erp_crm_price_rule add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_crm_stage drop primary key;
 alter table erp_crm_stage add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_crm_lead_score_config_line drop primary key;
 alter table erp_crm_lead_score_config_line add primary key (NOP_TENANT_ID, ID);
-
-alter table erp_crm_config_rule drop primary key;
-alter table erp_crm_config_rule add primary key (NOP_TENANT_ID, ID);
-
-alter table erp_crm_bundle_pricing_line drop primary key;
-alter table erp_crm_bundle_pricing_line add primary key (NOP_TENANT_ID, ID);
-
-alter table erp_crm_sequence_step drop primary key;
-alter table erp_crm_sequence_step add primary key (NOP_TENANT_ID, ID);
-
-alter table erp_crm_sequence_assignment drop primary key;
-alter table erp_crm_sequence_assignment add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_crm_forecast drop primary key;
 alter table erp_crm_forecast add primary key (NOP_TENANT_ID, ID);
@@ -153,6 +151,18 @@ alter table erp_crm_quota add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_crm_lead_funnel drop primary key;
 alter table erp_crm_lead_funnel add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_crm_config_rule drop primary key;
+alter table erp_crm_config_rule add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_crm_bundle_pricing_line drop primary key;
+alter table erp_crm_bundle_pricing_line add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_crm_sequence_step drop primary key;
+alter table erp_crm_sequence_step add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_crm_sequence_assignment drop primary key;
+alter table erp_crm_sequence_assignment add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_crm_lead drop primary key;
 alter table erp_crm_lead add primary key (NOP_TENANT_ID, ID);

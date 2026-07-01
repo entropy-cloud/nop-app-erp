@@ -232,8 +232,8 @@
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="UTM Medium"/>
                 <column code="UTM_SOURCE" displayName="UTM Source" name="utmSource" precision="100" propId="24"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="UTM Source"/>
-                <column code="OWNER_ID" displayName="负责人" name="ownerId" propId="25" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Owner"/>
+                <column code="OWNER_ID" displayName="负责人" name="ownerId" precision="36" propId="25" stdDataType="string"
+                        stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Owner"/>
                 <column code="TEAM_ID" displayName="销售团队" name="teamId" propId="26" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Team"/>
                 <column code="LOST_REASON_ID" displayName="丢单原因" name="lostReasonId" propId="27" stdDataType="long"
@@ -271,67 +271,67 @@
             </columns>
             <relations>
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
-                        i18n-en:displayName="Partner" ref-i18n-en:displayName="Lead">
+                        i18n-en:displayName="Partner">
                     <join>
                         <on leftProp="partnerId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="source" refEntityName="app.erp.crm.dao.entity.ErpCrmSource" tagSet="pub"
-                        i18n-en:displayName="Source" ref-i18n-en:displayName="Lead">
+                        i18n-en:displayName="Source">
                     <join>
                         <on leftProp="sourceId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="leadStatus" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadStatus" tagSet="pub"
-                        i18n-en:displayName="Lead Status" ref-i18n-en:displayName="Lead">
+                        i18n-en:displayName="Lead Status">
                     <join>
                         <on leftProp="leadStatusId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="stage" refEntityName="app.erp.crm.dao.entity.ErpCrmStage" tagSet="pub"
-                        i18n-en:displayName="Stage" ref-i18n-en:displayName="Lead">
+                        i18n-en:displayName="Stage">
                     <join>
                         <on leftProp="stageId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="campaign" refEntityName="app.erp.crm.dao.entity.ErpCrmCampaign" tagSet="pub"
-                        i18n-en:displayName="Campaign" ref-i18n-en:displayName="Lead">
+                        i18n-en:displayName="Campaign">
                     <join>
                         <on leftProp="campaignId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub"
-                        i18n-en:displayName="Team" ref-i18n-en:displayName="Lead">
+                        i18n-en:displayName="Team">
                     <join>
                         <on leftProp="teamId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="lostReason" refEntityName="app.erp.crm.dao.entity.ErpCrmLostReason" tagSet="pub"
-                        i18n-en:displayName="Lost Reason" ref-i18n-en:displayName="Lead">
+                        i18n-en:displayName="Lost Reason">
                     <join>
                         <on leftProp="lostReasonId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="Lead">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-many name="events" refEntityName="app.erp.crm.dao.entity.ErpCrmEvent" tagSet="pub"
-                         i18n-en:displayName="Events" ref-i18n-en:displayName="Lead">
+                         i18n-en:displayName="Events" ext:estRows="20">
                     <join>
                         <on leftProp="id" rightProp="relatedLeadId"/>
                     </join>
                 </to-many>
                 <to-many name="activities" refEntityName="app.erp.crm.dao.entity.ErpCrmActivity" tagSet="pub"
-                         i18n-en:displayName="Activities" ref-i18n-en:displayName="Lead">
+                         i18n-en:displayName="Activities" ext:estRows="20">
                     <join>
                         <on leftProp="id" rightProp="leadId"/>
                     </join>
                 </to-many>
                 <to-many name="convLogs" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadConvLog" tagSet="pub"
-                         i18n-en:displayName="Conv Logs" ref-i18n-en:displayName="Lead">
+                         i18n-en:displayName="Conv Logs" ext:estRows="50">
                     <join>
                         <on leftProp="id" rightProp="leadId"/>
                     </join>
@@ -416,13 +416,13 @@
             </columns>
             <relations>
                 <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub"
-                        i18n-en:displayName="Team" ref-i18n-en:displayName="Stage">
+                        i18n-en:displayName="Team">
                     <join>
                         <on leftProp="teamId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="Stage">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -509,8 +509,8 @@
                         propId="3" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="4" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
-                <column code="TEAM_LEADER_ID" displayName="团队负责人" name="teamLeaderId" propId="5" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Team Leader"/>
+                <column code="TEAM_LEADER_ID" displayName="团队负责人" name="teamLeaderId" precision="36" propId="5"
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Team Leader"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="6"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -531,7 +531,7 @@
             </columns>
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="Team">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -589,7 +589,7 @@
             </columns>
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="Campaign">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -633,8 +633,8 @@
                         stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
                 <column code="CONTACT_ID" displayName="联系人" name="contactId" propId="15" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Contact"/>
-                <column code="OWNER_ID" displayName="负责人" name="ownerId" propId="16" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Owner"/>
+                <column code="OWNER_ID" displayName="负责人" name="ownerId" precision="36" propId="16" stdDataType="string"
+                        stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Owner"/>
                 <column code="STATUS" displayName="活动状态" mandatory="true" name="status" precision="20" propId="17"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-crm/event-status"
                         i18n-en:displayName="Status"/>
@@ -668,33 +668,39 @@
             </columns>
             <relations>
                 <to-one name="relatedLead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub"
-                        i18n-en:displayName="Related Lead" ref-i18n-en:displayName="Event">
+                        i18n-en:displayName="Related Lead">
                     <join>
                         <on leftProp="relatedLeadId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
-                        i18n-en:displayName="Partner" ref-i18n-en:displayName="Event">
+                        i18n-en:displayName="Partner">
                     <join>
                         <on leftProp="partnerId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="parentEvent" refEntityName="app.erp.crm.dao.entity.ErpCrmEvent" tagSet="pub"
-                        i18n-en:displayName="Parent Event" ref-i18n-en:displayName="Event">
+                        i18n-en:displayName="Parent Event">
                     <join>
                         <on leftProp="parentEventId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="Event">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="eventCategory" refEntityName="app.erp.crm.dao.entity.ErpCrmEventCategory" tagSet="pub"
-                        i18n-en:displayName="Event Category" ref-i18n-en:displayName="Event">
+                        i18n-en:displayName="Event Category">
                     <join>
                         <on leftProp="eventCategoryId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="contact" refEntityName="app.erp.md.dao.entity.ErpMdPartnerContact"
+                        i18n-en:displayName="Contact">
+                    <join>
+                        <on leftProp="contactId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -752,8 +758,8 @@
                         stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Activity Date"/>
                 <column code="SUMMARY" displayName="内容摘要" name="summary" precision="500" propId="6" stdDataType="string"
                         stdSqlType="VARCHAR" i18n-en:displayName="Summary"/>
-                <column code="OWNER_ID" displayName="负责人" name="ownerId" propId="7" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Owner"/>
+                <column code="OWNER_ID" displayName="负责人" name="ownerId" precision="36" propId="7" stdDataType="string"
+                        stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Owner"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="8"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -774,13 +780,13 @@
             </columns>
             <relations>
                 <to-one name="lead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub"
-                        i18n-en:displayName="Lead" ref-i18n-en:displayName="Activity">
+                        i18n-en:displayName="Lead">
                     <join>
                         <on leftProp="leadId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="Activity">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -806,8 +812,8 @@
                         stdSqlType="BIGINT" i18n-en:displayName="To Stage"/>
                 <column code="CHANGED_AT" displayName="变更时间" mandatory="true" name="changedAt" propId="6"
                         stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Changed At"/>
-                <column code="CHANGED_BY" displayName="变更人" name="changedBy" propId="7" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Changed By"/>
+                <column code="CHANGED_BY" displayName="变更人" name="changedBy" precision="36" propId="7"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Changed By"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="8"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -828,25 +834,25 @@
             </columns>
             <relations>
                 <to-one name="lead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub"
-                        i18n-en:displayName="Lead" ref-i18n-en:displayName="Conv Log">
+                        i18n-en:displayName="Lead">
                     <join>
                         <on leftProp="leadId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="fromStage" refEntityName="app.erp.crm.dao.entity.ErpCrmStage" tagSet="pub"
-                        i18n-en:displayName="From Stage" ref-i18n-en:displayName="Conv Log">
+                        i18n-en:displayName="From Stage">
                     <join>
                         <on leftProp="fromStageId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="toStage" refEntityName="app.erp.crm.dao.entity.ErpCrmStage" tagSet="pub"
-                        i18n-en:displayName="To Stage" ref-i18n-en:displayName="Conv Log">
+                        i18n-en:displayName="To Stage">
                     <join>
                         <on leftProp="toStageId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="Conv Log">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -935,7 +941,7 @@
             </columns>
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="LeadScoreConfig">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -993,13 +999,13 @@
             </columns>
             <relations>
                 <to-one name="config" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadScoreConfig" tagSet="pub"
-                        i18n-en:displayName="Config" ref-i18n-en:displayName="LeadScoreConfigLine">
+                        i18n-en:displayName="Config">
                     <join>
                         <on leftProp="configId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="LeadScoreConfigLine">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -1055,19 +1061,19 @@
             </columns>
             <relations>
                 <to-one name="lead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub"
-                        i18n-en:displayName="Lead" ref-i18n-en:displayName="LeadScore">
+                        i18n-en:displayName="Lead">
                     <join>
                         <on leftProp="leadId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="config" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadScoreConfig" tagSet="pub"
-                        i18n-en:displayName="Config" ref-i18n-en:displayName="LeadScore">
+                        i18n-en:displayName="Config">
                     <join>
                         <on leftProp="configId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="LeadScore">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -1121,19 +1127,19 @@
             </columns>
             <relations>
                 <to-one name="score" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadScore" tagSet="pub"
-                        i18n-en:displayName="Score" ref-i18n-en:displayName="LeadScoreLine">
+                        i18n-en:displayName="Score">
                     <join>
                         <on leftProp="scoreId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="configLine" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadScoreConfigLine" tagSet="pub"
-                        i18n-en:displayName="Config Line" ref-i18n-en:displayName="LeadScoreLine">
+                        i18n-en:displayName="Config Line">
                     <join>
                         <on leftProp="configLineId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="LeadScoreLine">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -1187,7 +1193,7 @@
             </columns>
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="ForecastPeriod">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -1210,8 +1216,8 @@
                         stdSqlType="BIGINT" i18n-en:displayName="Territory"/>
                 <column code="TEAM_ID" displayName="销售团队" name="teamId" propId="5" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Team"/>
-                <column code="OWNER_ID" displayName="销售员" name="ownerId" propId="6" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Owner"/>
+                <column code="OWNER_ID" displayName="销售员" name="ownerId" precision="36" propId="6" stdDataType="string"
+                        stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Owner"/>
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="7" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="COMMIT_AMOUNT" displayName="承诺金额" domain="amount" name="commitAmount" precision="20"
@@ -1256,33 +1262,32 @@
             </columns>
             <relations>
                 <to-one name="period" refEntityName="app.erp.crm.dao.entity.ErpCrmForecastPeriod" tagSet="pub"
-                        i18n-en:displayName="Period" ref-i18n-en:displayName="Forecast">
+                        i18n-en:displayName="Period">
                     <join>
                         <on leftProp="periodId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="territory" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub"
-                        i18n-en:displayName="Territory" ref-i18n-en:displayName="Forecast">
+                        i18n-en:displayName="Territory">
                     <join>
                         <on leftProp="territoryId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub"
-                        i18n-en:displayName="Team" ref-i18n-en:displayName="Forecast">
+                        i18n-en:displayName="Team">
                     <join>
                         <on leftProp="teamId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="owner" notGenCode="true" refEntityName="io.nop.auth.dao.entity.NopAuthUser" tagSet="pub"
-                        biz:moduleId="nop/auth" i18n-en:displayName="Owner" ref-i18n-en:displayName="Forecast">
-                    <join>
-                        <on leftProp="ownerId" rightProp="id"/>
-                    </join>
-                </to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="Forecast">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
+                    <join>
+                        <on leftProp="currencyId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -1335,19 +1340,19 @@
             </columns>
             <relations>
                 <to-one name="forecast" refEntityName="app.erp.crm.dao.entity.ErpCrmForecast" tagSet="pub"
-                        i18n-en:displayName="Forecast" ref-i18n-en:displayName="ForecastLine">
+                        i18n-en:displayName="Forecast">
                     <join>
                         <on leftProp="forecastId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="lead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub"
-                        i18n-en:displayName="Lead" ref-i18n-en:displayName="ForecastLine">
+                        i18n-en:displayName="Lead">
                     <join>
                         <on leftProp="leadId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="ForecastLine">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -1369,8 +1374,8 @@
                         i18n-en:displayName="Organization"/>
                 <column code="PERIOD_ID" displayName="预测期间" mandatory="true" name="periodId" propId="4"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Period"/>
-                <column code="OWNER_ID" displayName="销售员" name="ownerId" propId="5" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Owner"/>
+                <column code="OWNER_ID" displayName="销售员" name="ownerId" precision="36" propId="5" stdDataType="string"
+                        stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Owner"/>
                 <column code="TEAM_ID" displayName="销售团队" name="teamId" propId="6" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Team"/>
                 <column code="TERRITORY_ID" displayName="销售区域" name="territoryId" propId="7" stdDataType="long"
@@ -1413,21 +1418,31 @@
             </columns>
             <relations>
                 <to-one name="forecast" refEntityName="app.erp.crm.dao.entity.ErpCrmForecast" tagSet="pub"
-                        i18n-en:displayName="Forecast" ref-i18n-en:displayName="ForecastAccuracy">
+                        i18n-en:displayName="Forecast">
                     <join>
                         <on leftProp="forecastId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="period" refEntityName="app.erp.crm.dao.entity.ErpCrmForecastPeriod" tagSet="pub"
-                        i18n-en:displayName="Period" ref-i18n-en:displayName="ForecastAccuracy">
+                        i18n-en:displayName="Period">
                     <join>
                         <on leftProp="periodId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="ForecastAccuracy">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub">
+                    <join>
+                        <on leftProp="teamId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="territory" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub">
+                    <join>
+                        <on leftProp="territoryId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -1485,19 +1500,13 @@
             </columns>
             <relations>
                 <to-one name="parent" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub"
-                        i18n-en:displayName="Parent" ref-i18n-en:displayName="Territory">
+                        i18n-en:displayName="Parent">
                     <join>
                         <on leftProp="parentId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="manager" notGenCode="true" refEntityName="io.nop.auth.dao.entity.NopAuthUser" tagSet="pub"
-                        biz:moduleId="nop/auth" i18n-en:displayName="Manager" ref-i18n-en:displayName="Territory">
-                    <join>
-                        <on leftProp="managerId" rightProp="id"/>
-                    </join>
-                </to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="Territory">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -1557,19 +1566,19 @@
             </columns>
             <relations>
                 <to-one name="territory" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub"
-                        i18n-en:displayName="Territory" ref-i18n-en:displayName="TerritoryAssignmentRule">
+                        i18n-en:displayName="Territory">
                     <join>
                         <on leftProp="territoryId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub"
-                        i18n-en:displayName="Team" ref-i18n-en:displayName="TerritoryAssignmentRule">
+                        i18n-en:displayName="Team">
                     <join>
                         <on leftProp="groupId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="TerritoryAssignmentRule">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -1590,8 +1599,8 @@
                         stdSqlType="BIGINT" i18n-en:displayName="Territory"/>
                 <column code="TEAM_ID" displayName="团队" name="teamId" propId="4" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Team"/>
-                <column code="OWNER_ID" displayName="销售员" name="ownerId" propId="5" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Owner"/>
+                <column code="OWNER_ID" displayName="销售员" name="ownerId" precision="36" propId="5" stdDataType="string"
+                        stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Owner"/>
                 <column code="PERIOD_TYPE" displayName="配额期间类型" mandatory="true" name="periodType" precision="20"
                         propId="6" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-crm/quota-period-type"
                         i18n-en:displayName="Period Type"/>
@@ -1626,27 +1635,26 @@
             </columns>
             <relations>
                 <to-one name="territory" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub"
-                        i18n-en:displayName="Territory" ref-i18n-en:displayName="Quota">
+                        i18n-en:displayName="Territory">
                     <join>
                         <on leftProp="territoryId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub"
-                        i18n-en:displayName="Team" ref-i18n-en:displayName="Quota">
+                        i18n-en:displayName="Team">
                     <join>
                         <on leftProp="teamId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="owner" notGenCode="true" refEntityName="io.nop.auth.dao.entity.NopAuthUser" tagSet="pub"
-                        biz:moduleId="nop/auth" i18n-en:displayName="Owner" ref-i18n-en:displayName="Quota">
-                    <join>
-                        <on leftProp="ownerId" rightProp="id"/>
-                    </join>
-                </to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="Quota">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
+                    <join>
+                        <on leftProp="currencyId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -1699,7 +1707,7 @@
             </columns>
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="ProductConfigurator">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -1753,13 +1761,13 @@
             </columns>
             <relations>
                 <to-one name="configurator" refEntityName="app.erp.crm.dao.entity.ErpCrmProductConfigurator"
-                        tagSet="pub" i18n-en:displayName="Configurator" ref-i18n-en:displayName="ConfigRule">
+                        tagSet="pub" i18n-en:displayName="Configurator">
                     <join>
                         <on leftProp="configuratorId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="ConfigRule">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -1821,7 +1829,7 @@
             </columns>
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="BundlePricing">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -1869,15 +1877,20 @@
             </columns>
             <relations>
                 <to-one name="bundle" refEntityName="app.erp.crm.dao.entity.ErpCrmBundlePricing" tagSet="pub"
-                        i18n-en:displayName="Bundle" ref-i18n-en:displayName="BundlePricingLine">
+                        i18n-en:displayName="Bundle">
                     <join>
                         <on leftProp="bundleId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="BundlePricingLine">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="product" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
+                    <join>
+                        <on leftProp="productId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -1951,9 +1964,24 @@
             </columns>
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="PriceRule">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="product" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub">
+                    <join>
+                        <on leftProp="productId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub">
+                    <join>
+                        <on leftProp="customerId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
+                    <join>
+                        <on leftProp="currencyId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -2003,7 +2031,7 @@
             </columns>
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="Sequence">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -2062,13 +2090,13 @@
             </columns>
             <relations>
                 <to-one name="sequence" refEntityName="app.erp.crm.dao.entity.ErpCrmSequence" tagSet="pub"
-                        i18n-en:displayName="Sequence" ref-i18n-en:displayName="SequenceStep">
+                        i18n-en:displayName="Sequence">
                     <join>
                         <on leftProp="sequenceId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="SequenceStep">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -2120,13 +2148,13 @@
             </columns>
             <relations>
                 <to-one name="sequence" refEntityName="app.erp.crm.dao.entity.ErpCrmSequence" tagSet="pub"
-                        i18n-en:displayName="Sequence" ref-i18n-en:displayName="SequenceAssignment">
+                        i18n-en:displayName="Sequence">
                     <join>
                         <on leftProp="sequenceId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="SequenceAssignment">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -2177,19 +2205,19 @@
             </columns>
             <relations>
                 <to-one name="lead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub"
-                        i18n-en:displayName="Lead" ref-i18n-en:displayName="LeadSequenceProgress">
+                        i18n-en:displayName="Lead">
                     <join>
                         <on leftProp="leadId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="sequence" refEntityName="app.erp.crm.dao.entity.ErpCrmSequence" tagSet="pub"
-                        i18n-en:displayName="Sequence" ref-i18n-en:displayName="LeadSequenceProgress">
+                        i18n-en:displayName="Sequence">
                     <join>
                         <on leftProp="sequenceId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="LeadSequenceProgress">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -2266,25 +2294,25 @@
             </columns>
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="LeadFunnel">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="territory" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub"
-                        i18n-en:displayName="Territory" ref-i18n-en:displayName="LeadFunnel">
+                        i18n-en:displayName="Territory">
                     <join>
                         <on leftProp="territoryId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub"
-                        i18n-en:displayName="Team" ref-i18n-en:displayName="LeadFunnel">
+                        i18n-en:displayName="Team">
                     <join>
                         <on leftProp="teamId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="source" refEntityName="app.erp.crm.dao.entity.ErpCrmSource" tagSet="pub"
-                        i18n-en:displayName="Source" ref-i18n-en:displayName="LeadFunnel">
+                        i18n-en:displayName="Source">
                     <join>
                         <on leftProp="sourceId" rightProp="id"/>
                     </join>
@@ -2350,19 +2378,19 @@
             </columns>
             <relations>
                 <to-one name="funnel" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadFunnel" tagSet="pub"
-                        i18n-en:displayName="Funnel" ref-i18n-en:displayName="FunnelStageMetrics">
+                        i18n-en:displayName="Funnel">
                     <join>
                         <on leftProp="funnelId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="stage" refEntityName="app.erp.crm.dao.entity.ErpCrmStage" tagSet="pub"
-                        i18n-en:displayName="Stage" ref-i18n-en:displayName="FunnelStageMetrics">
+                        i18n-en:displayName="Stage">
                     <join>
                         <on leftProp="stageId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="FunnelStageMetrics">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -2405,18 +2433,42 @@
                         stdSqlType="VARCHAR" i18n-en:displayName="Credit Limit"/>
             </columns>
         </entity>
-        <entity className="io.nop.auth.dao.entity.NopAuthUser" displayName="用户"
-                name="io.nop.auth.dao.entity.NopAuthUser" notGenCode="true" tableName="nop_auth_user"
-                biz:moduleId="nop/auth">
+        <entity className="app.erp.md.dao.entity.ErpMdPartnerContact" displayName="往来单位联系人"
+                name="app.erp.md.dao.entity.ErpMdPartnerContact" notGenCode="true" tableName="erp_md_partner_contact"
+                biz:moduleId="erp/md">
             <columns>
                 <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
-                <column code="USER_NAME" name="userName" precision="50" propId="2" stdDataType="string"
-                        stdSqlType="VARCHAR" i18n-en:displayName="User Name"/>
-                <column code="DISPLAY_NAME" name="displayName" precision="100" propId="3" stdDataType="string"
-                        stdSqlType="VARCHAR" i18n-en:displayName="Display Name"/>
-                <column code="STATUS" name="status" propId="4" stdDataType="int" stdSqlType="INTEGER"
-                        i18n-en:displayName="Status"/>
+                <column code="CONTACT_NAME" name="contactName" precision="100" propId="2" stdDataType="string"
+                        stdSqlType="VARCHAR" i18n-en:displayName="Contact Name"/>
+                <column code="PHONE" name="phone" precision="50" propId="3" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Phone"/>
+                <column code="EMAIL" name="email" precision="200" propId="4" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Email"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdCurrency" displayName="币种"
+                name="app.erp.md.dao.entity.ErpMdCurrency" notGenCode="true" tableName="erp_md_currency"
+                biz:moduleId="erp/md">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="ID"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Code"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Name"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdMaterial" displayName="物料"
+                name="app.erp.md.dao.entity.ErpMdMaterial" notGenCode="true" tableName="erp_md_material"
+                biz:moduleId="erp/md">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="ID"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Code"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Name"/>
             </columns>
         </entity>
     </entities>
