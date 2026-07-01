@@ -1,6 +1,6 @@
 # 2026-07-01-1426-2 销售报价审批→转订单 + 销售订单审核状态机（含客户信用额度）
 
-> Plan Status: active
+> Plan Status: completed
 > Mission: erp
 > Work Item: core-business-roadmap P1 / 1.0b（销售报价单审批→转订单逻辑）+ 1.2 遗留「销售订单审核状态机 + 客户信用额度校验」段
 > Last Reviewed: 2026-07-01
@@ -121,53 +121,53 @@ Exit Criteria:
 
 ### Phase 2 - 报价单审核/客户确认状态机 + 报价→订单转化 + 幂等 + 回链
 
-Status: planned
+Status: completed
 Targets: `module-sales/erp-sal-dao/src/main/java/app/erp/sal/biz/IErpSalQuotationBiz.java`（增签名）、`module-sales/erp-sal-service/src/main/java/app/erp/sal/service/entity/ErpSalQuotationBizModel.java`（实现）、`module-sales/erp-sal-service/src/main/java/app/erp/sal/service/.../QuotationToOrderConverter.java`（域内转化组装器）、`module-sales/erp-sal-service/src/test/.../`
 Skill: none
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1（订单状态机就绪，订单可处于 UNSUBMITTED 接收转化产物）
 
-- [ ] `Decision`：报价单设计-模型差异映射。裁决：模型仅 `docStatus`+`approveStatus`+`isAccepted`——审核迁移用 `approveStatus`（UNSUBMITTED→SUBMITTED→APPROVED/REJECTED，同构三轴）；「客户确认 ACCEPTED」= 调 `confirmCustomerAccepted(quotationId)` 置 `isAccepted=true`（前置 `approveStatus=APPROVED` 且 `validTo ≥ today`，过期抛 `ERR_QUOTATION_EXPIRED`）；「EXPIRED」不在持久化（无列），由 `validTo < today` 在确认/转化时派生校验（无后台扫描）。**无 `approvedBy`/`approvedAt` 列**——审核仅翻转 `approveStatus`，不记录审核人/时间（模型边界，记为已知缺口，不改 ORM）。备选（被否）：补 ORM 列——保护区域，且 approveStatus 翻转已足够表达审核结果。残留风险：报价单无审核人审计轨迹（运营需知悉，相对订单/出库单的 `approvedBy` 是已知不对称）。
+- [x] `Decision`：报价单设计-模型差异映射。裁决：模型仅 `docStatus`+`approveStatus`+`isAccepted`——审核迁移用 `approveStatus`（UNSUBMITTED→SUBMITTED→APPROVED/REJECTED，同构三轴）；「客户确认 ACCEPTED」= 调 `confirmCustomerAccepted(quotationId)` 置 `isAccepted=true`（前置 `approveStatus=APPROVED` 且 `validTo ≥ today`，过期抛 `ERR_QUOTATION_EXPIRED`）；「EXPIRED」不在持久化（无列），由 `validTo < today` 在确认/转化时派生校验（无后台扫描）。**无 `approvedBy`/`approvedAt` 列**——审核仅翻转 `approveStatus`，不记录审核人/时间（模型边界，记为已知缺口，不改 ORM）。备选（被否）：补 ORM 列——保护区域，且 approveStatus 翻转已足够表达审核结果。残留风险：报价单无审核人审计轨迹（运营需知悉，相对订单/出库单的 `approvedBy` 是已知不对称）。
   - Skill: none
-- [ ] `Decision`：转化方法归属与触发前置。裁决：`IErpSalQuotationBiz.convertToOrder(quotationId)` 返回 `ErpSalOrder`——转化是报价单的生命周期动作；前置 `approveStatus=APPROVED AND isAccepted=true`（否则 `ERR_QUOTATION_NOT_READY`）；过期的报价（`validTo < today`）也拒绝（`ERR_QUOTATION_EXPIRED`）。备选（被否）：`IErpSalOrderBiz.createFromQuotation(...)`——把报价状态前置校验拆到订单侧，跨实体职责混乱。
+- [x] `Decision`：转化方法归属与触发前置。裁决：`IErpSalQuotationBiz.convertToOrder(quotationId)` 返回 `ErpSalOrder`——转化是报价单的生命周期动作；前置 `approveStatus=APPROVED AND isAccepted=true`（否则 `ERR_QUOTATION_NOT_READY`）；过期的报价（`validTo < today`）也拒绝（`ERR_QUOTATION_EXPIRED`）。备选（被否）：`IErpSalOrderBiz.createFromQuotation(...)`——把报价状态前置校验拆到订单侧，跨实体职责混乱。
   - Skill: none
-- [ ] `Decision`：幂等防重复转化 + 一次报价多次采购边界。裁决：转化前查询 `ErpSalOrder` where `quotationId=该报价 AND docStatus≠CANCELLED`——存在则抛 `ERR_QUOTATION_ALREADY_CONVERTED`；转化成功置 `quotation.isAccepted=true`（**纯查询+标记，无 ORM FK 改动**；`quotationId` 列已存在于订单）。原订单作废（CANCELLED）后允许重新转化。**一次报价分批多次转订单**（quotation.md 业务规则 5）：MVP 不支持——`isAccepted` 布尔无法表达部分转化，且幂等键按 quotationId 阻止重复；记为 Follow-up。备选（被否）：用金额/数量标记部分转化——需补模型列，超保护区域。残留风险：分批采购场景需先作废再重转或未来补模型。
+- [x] `Decision`：幂等防重复转化 + 一次报价多次采购边界。裁决：转化前查询 `ErpSalOrder` where `quotationId=该报价 AND docStatus≠CANCELLED`——存在则抛 `ERR_QUOTATION_ALREADY_CONVERTED`；转化成功置 `quotation.isAccepted=true`（**纯查询+标记，无 ORM FK 改动**；`quotationId` 列已存在于订单）。原订单作废（CANCELLED）后允许重新转化。**一次报价分批多次转订单**（quotation.md 业务规则 5）：MVP 不支持——`isAccepted` 布尔无法表达部分转化，且幂等键按 quotationId 阻止重复；记为 Follow-up。备选（被否）：用金额/数量标记部分转化——需补模型列，超保护区域。残留风险：分批采购场景需先作废再重转或未来补模型。
   - Skill: none
-- [ ] `Add`：`IErpSalQuotationBiz` 增 `submit`/`approve`/`reject`/`cancel`/`reverseApprove`/`withdrawSubmit`/`confirmCustomerAccepted`/`convertToOrder`；`ErpSalQuotationBizModel` 实现审核迁移 + `confirmCustomerAccepted`（置 `isAccepted=true`）+ `convertToOrder`——`QuotationToOrderConverter` 组装 `ErpSalOrder`(UNSUBMITTED/DRAFT，回链 `quotationId`、复制 `customerId`/`currencyId`/`exchangeRate`/金额族、`businessDate`=today(`CoreMetrics.currentDate()`)) + 行（复制 `materialId`/`uoMId`/`quantity`/`unitPrice`/`taxRate`/`taxAmount`/`amount`/`amountWithTax`，DECIMAL 直读直写；`skuId` 不复制，见 Goals）；持久化订单 + 行；置 `isAccepted=true`。`ErpSalErrors` 新增报价转化作用域错误码 `ERR_QUOTATION_NOT_READY`/`ERR_QUOTATION_EXPIRED`/`ERR_QUOTATION_ALREADY_CONVERTED`（本阶段引用的错误码在此显式落地）。
+- [x] `Add`：`IErpSalQuotationBiz` 增 `submit`/`approve`/`reject`/`cancel`/`reverseApprove`/`withdrawSubmit`/`confirmCustomerAccepted`/`convertToOrder`；`ErpSalQuotationBizModel` 实现审核迁移 + `confirmCustomerAccepted`（置 `isAccepted=true`）+ `convertToOrder`——`QuotationToOrderConverter` 组装 `ErpSalOrder`(UNSUBMITTED/DRAFT，回链 `quotationId`、复制 `customerId`/`currencyId`/`exchangeRate`/金额族、`businessDate`=today(`CoreMetrics.currentDate()`)) + 行（复制 `materialId`/`uoMId`/`quantity`/`unitPrice`/`taxRate`/`taxAmount`/`amount`/`amountWithTax`，DECIMAL 直读直写；`skuId` 不复制，见 Goals）；持久化订单 + 行；置 `isAccepted=true`。`ErpSalErrors` 新增报价转化作用域错误码 `ERR_QUOTATION_NOT_READY`/`ERR_QUOTATION_EXPIRED`/`ERR_QUOTATION_ALREADY_CONVERTED`（本阶段引用的错误码在此显式落地）。
   - Skill: none
-- [ ] `Proof`：`testQuotationSubmitApproveConfirmConvert`（DRAFT→SUBMITTED→APPROVED→`confirmCustomerAccepted`(`isAccepted=true`)→`convertToOrder` 生成订单 UNSUBMITTED + 行/字段/`quotationId` 回链正确）、`testConvertNotReadyRejected`（未 APPROVED 或未 `isAccepted` → `ERR_QUOTATION_NOT_READY`）、`testConvertExpiredRejected`（`validTo < today` → `ERR_QUOTATION_EXPIRED`）、`testConvertIdempotentRejected`（已转化 → `ERR_QUOTATION_ALREADY_CONVERTED`；作废原订单后可重转）、`testConvertedOrderThenCreditCheckAndApprove`（转化产物走 Phase 1 审核：SOFT_WARNING 放行 / HARD_BLOCK 超额度拒绝，证明两阶段衔接 + 信用控制作用于转化产物）。`mvn test -pl module-sales/erp-sal-service -am` 全绿。
+- [x] `Proof`：`testQuotationSubmitApproveConfirmConvert`（DRAFT→SUBMITTED→APPROVED→`confirmCustomerAccepted`(`isAccepted=true`)→`convertToOrder` 生成订单 UNSUBMITTED + 行/字段/`quotationId` 回链正确）、`testConvertNotReadyRejected`（未 APPROVED 或未 `isAccepted` → `ERR_QUOTATION_NOT_READY`）、`testConvertExpiredRejected`（`validTo < today` → `ERR_QUOTATION_EXPIRED`）、`testConvertIdempotentRejected`（已转化 → `ERR_QUOTATION_ALREADY_CONVERTED`；作废原订单后可重转）、`testConvertedOrderThenCreditCheckAndApprove`（转化产物走 Phase 1 审核：SOFT_WARNING 放行 / HARD_BLOCK 超额度拒绝，证明两阶段衔接 + 信用控制作用于转化产物）。`mvn test -pl module-sales/erp-sal-service -am` 全绿。
   - Skill: none
 
 Exit Criteria:
 
 > 本阶段交付报价审核/客户确认 + 报价→订单转化 + 幂等 + 回链。完整仓库 `mvn test` 归 Closure Gates。
 
-- [ ] 5 个报价/转化行为测试存在且 `mvn test -pl module-sales/erp-sal-service -am` 全绿
-- [ ] 转化产物订单可被 Phase 1 审核状态机 + 信用额度校验推进（证明两阶段衔接）
+- [x] 5 个报价/转化行为测试存在且 `mvn test -pl module-sales/erp-sal-service -am` 全绿
+- [x] 转化产物订单可被 Phase 1 审核状态机 + 信用额度校验推进（证明两阶段衔接）
 
 ### Phase 3 - 端到端串联 + 收尾
 
-Status: planned
+Status: completed
 Targets: `module-sales/erp-sal-service/src/test/.../`、`docs/logs/2026/{执行当日 month-day}.md`、`docs/backlog/core-business-roadmap.md`
 Skill: none
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 2
 
-- [ ] `Proof`：端到端测试 `testQuotationToOrderToEnd`（建报价→提交→审核 APPROVED→客户确认(`isAccepted`)→转化生成订单(UNSUBMITTED)→提交→审核（信用额度校验通过）APPROVED→（订单审核纯状态，不下游触发）→作废订单→可重新转化）。证明报价→订单前端循环打通 + 信用控制 + 与 Phase 1/2 衔接。`mvn test -pl module-sales/erp-sal-service -am` 全绿。
+- [x] `Proof`：端到端测试 `testQuotationToOrderToEnd`（建报价→提交→审核 APPROVED→客户确认(`isAccepted`)→转化生成订单(UNSUBMITTED)→提交→审核（信用额度校验通过）APPROVED→（订单审核纯状态，不下游触发）→作废订单→可重新转化）。证明报价→订单前端循环打通 + 信用控制 + 与 Phase 1/2 衔接。`mvn test -pl module-sales/erp-sal-service -am` 全绿。
   - Skill: none
-- [ ] `Add`：更新当日开发日志 `docs/logs/2026/{执行当日 month-day}.md`（按 `docs/logs/00-log-writing-guide.md`，时间倒序），记录报价→订单转化 + 订单审核/信用额度落地 + 验证状态。
+- [x] `Add`：更新当日开发日志 `docs/logs/2026/{执行当日 month-day}.md`（按 `docs/logs/00-log-writing-guide.md`，时间倒序），记录报价→订单转化 + 订单审核/信用额度落地 + 验证状态。
   - Skill: none
-- [ ] `Add`：`docs/backlog/core-business-roadmap.md` 工作项 1.0b 标注 `done`、1.2「订单审核状态机 + 信用额度」段标注 `done`（出库触发段已于 1132-2 done；发票/收款仍 todo）。
+- [x] `Add`：`docs/backlog/core-business-roadmap.md` 工作项 1.0b 标注 `done`、1.2「订单审核状态机 + 信用额度」段标注 `done`（出库触发段已于 1132-2 done；发票/收款仍 todo）。
   - Skill: none
 
 Exit Criteria:
 
 > 本阶段交付端到端打通 + 文档对齐。完整仓库 `mvn test` 归 Closure Gates。
 
-- [ ] 端到端测试存在且 `mvn test -pl module-sales/erp-sal-service -am` 全绿
-- [ ] 当日日志已记；roadmap 工作项 1.0b / 1.2 订单审核+信用额度段进展已标注
+- [x] 端到端测试存在且 `mvn test -pl module-sales/erp-sal-service -am` 全绿
+- [x] 当日日志已记；roadmap 工作项 1.0b / 1.2 订单审核+信用额度段进展已标注
 
 ## Draft Review Record
 
@@ -177,14 +177,14 @@ Exit Criteria:
 
 > 仅在所有项目和每阶段退出标准都勾选 `[x]` 后关闭。结束时运行一次完整仓库验证。
 
-- [ ] 范围内行为完成：订单审核状态机 + 客户启用 + 信用额度（SOFT_WARNING/HARD_BLOCK）+ 报价审核/客户确认 + 报价→订单转化（幂等/回链）全部落地，行为测试通过
-- [ ] 相关文档对齐：`core-business-roadmap.md` 工作项 1.0b / 1.2 订单审核+信用额度段标注进展；当日日志已记
-- [ ] 已运行验证：`mvn test -pl module-sales/erp-sal-service -am` 全绿；根 `mvn test -fae` = BUILD SUCCESS（无回归）
-- [ ] 无范围内项目降级为 deferred/follow-up（报价过期后台扫描/版本管理/CRM 集成/SPECIAL_APPROVAL/分批转化/发票收款/nop-wf 均为计划内 Non-Goal，非范围内降级）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于 `Closure` 节
+- [x] 范围内行为完成：订单审核状态机 + 客户启用 + 信用额度（SOFT_WARNING/HARD_BLOCK）+ 报价审核/客户确认 + 报价→订单转化（幂等/回链）全部落地，行为测试通过
+- [x] 相关文档对齐：`core-business-roadmap.md` 工作项 1.0b / 1.2 订单审核+信用额度段标注进展；当日日志已记
+- [x] 已运行验证：`mvn test -pl module-sales/erp-sal-service -am` 全绿（29 测试）；根 `mvn test -fae` = BUILD SUCCESS（163 测试，无回归）
+- [x] 无范围内项目降级为 deferred/follow-up（报价过期后台扫描/版本管理/CRM 集成/SPECIAL_APPROVAL/分批转化/发票收款/nop-wf 均为计划内 Non-Goal，非范围内降级）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于 `Closure` 节
 
 ## Deferred But Adjudicated
 
@@ -226,11 +226,21 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行 + 独立结束审计后填写>
+Status Note: completed（2026-07-01，独立结束审计 `passes closure audit`，无 P0/P1）。
 
 Closure Audit Evidence:
 
-- <待独立结束审计子代理（新会话）填写>
+- **审计会话**：独立结束审计由子代理（新会话 `ses_0e1aa2a11ffeNGz3wIg1vvzWXM`，非实施者）于 2026-07-01 针对实时工作区执行。
+- **Verdict: passes closure audit。**
+- **关键核实点（对照真实文件 + 测试结果，非自报）**：
+  1. 订单三轴状态机（`ErpSalOrderBizModel`）—— 迁移与 `sales/state-machine.md §2` 一致；反审核→REJECTED；`approve` 是**纯状态推进**（无 generateMove/无过账——与出库单审核实质不同），由端到端测试断言 `posted=false`/`deliveryStatus=UNDELIVERED` 证明。
+  2. 信用额度：`CreditLimitChecker` 实现 null=不控制 / SOFT_WARNING=告警放行 / HARD_BLOCK=抛异常；outstanding = `customerId AND approveStatus=APPROVED AND deliveryStatus≠DELIVERED AND docStatus≠CANCELLED`；由 3 个专项测试证明（含发货后释放）。
+  3. `convertToOrder`：APPROVED+isAccepted 前置（`ERR_QUOTATION_NOT_READY`）、过期（`ERR_QUOTATION_EXPIRED`）、按 `quotationId AND docStatus≠CANCELLED` 幂等（`ERR_QUOTATION_ALREADY_CONVERTED`）、作废后可重转；回链 `quotationId` 正确；字段复制正确；**skuId 正确不复制**（ORM 核实 `ErpSalQuotationLine` 无 skuId 列，orm.xml:142-179）。
+  4. Non-Goal 遵守：`git diff --stat` 显示**零** `*.orm.xml`/`*.api.xml` 变更。
+  5. 验证独立运行：`mvn test -pl module-sales/erp-sal-service -am` = **29 测试，0 Failures，0 Errors，BUILD SUCCESS**；根 `mvn test -fae` = **BUILD SUCCESS**（163 测试，无回归）。
+  6. 文档对齐：roadmap 1.0b `done` + 1.2 订单审核/信用额度段 `done`；当日日志已记。
+  7. 草案审查（iter1 accept）在案。
+- **残留非阻塞风险（均已登记为 Deferred/Follow-up）**：(a) 信用额度口径「未结算应收余额」分量=0（AR_INVOICE 未实现）；(b) SPECIAL_APPROVAL 降级为 SOFT_WARNING（nop-wf 未接线）；(c) 报价单无 approvedBy/approvedAt 审计轨迹（刻意模型边界，不改 ORM）；(d) 不支持部分转化（isAccepted 布尔）；(e) 无后台 EXPIRED 扫描（nop-job）；(f) withdrawSubmit 在无 nop-wf 时未防审核人介入；(g)（已修复）日志测试计数笔误 28→29。
 
 Follow-up:
 

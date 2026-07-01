@@ -1,6 +1,6 @@
 # 2026-07-01-2200-1-test-migration-graphql-engine 测试迁移到 IGraphQLEngine 计划
 
-> Plan Status: draft
+> Plan Status: active
 > Last Reviewed: 2026-07-01
 > Source: 计划 `2026-07-01-1900-1` Phase 1 Proof 项的具体化（I*Biz 接口加 `IServiceContext` 后，直调测试运行时 `no-current-session`）
 > Related: `docs/lessons/04-bizmodel-service-method-contract-and-testing.md`（验证结论）、`nop-entropy/docs-for-ai/02-core-guides/testing.md`（测试规范）
@@ -12,8 +12,8 @@
 - BizModel 实现层已对齐（纯 `@BizMutation`，无 `@SingleSession`，跨域调用透传 `context`）。
 - **但 14 个测试文件（~121 处）仍直调 `bizObj.method(args, CTX)`**（裸 `new ServiceContextImpl()`），运行时多步方法报 `nop.err.orm.dao.update-entity-no-current-session`：
   - inventory：`TestErpInvStockMoveBizModel`、`TestErpInvStockMoveBookkeeping`、`TestErpInvPosting`（generateMove/confirm/complete/cancel/reverse）
-  - purchase：`TestErpPur{Order,Receive,Requisition}{Approval,StockMove,ConvertToOrder,ToReceiveEnd,ToOrderEnd}`（6 个，submit/approve/reject/reverseApprove/cancel/convertToOrder）
-  - sales：`TestErpSal{Order,Delivery}{Approval,StockMove,ToDeliveryEnd}`（4 个 + DeliveryStockMove，submit/approve/reject/reverseApprove/cancel/confirmCustomerAccepted/convertToOrder）
+  - purchase（7 文件）：`TestErpPurOrderApproval`、`TestErpPurReceiveApproval`、`TestErpPurReceiveStockMove`、`TestErpPurRequisitionApproval`、`TestErpPurRequisitionConvertToOrder`、`TestErpPurOrderToReceiveEnd`、`TestErpPurRequisitionToOrderEnd`（submit/approve/reject/reverseApprove/cancel/convertToOrder）
+  - sales（4 文件）：`TestErpSalOrderApproval`、`TestErpSalDeliveryApproval`、`TestErpSalDeliveryStockMove`、`TestErpSalOrderToDeliveryEnd`（submit/approve/reject/reverseApprove/cancel/confirmCustomerAccepted）
 - 根因（已验证，见 lessons/04）：BizModel 服务方法依赖执行环境提供的 ORM Session/事务/IUserContext，直调时这些缺失。正确做法是经 `IGraphQLEngine.newRpcContext`+`executeRpc`，引擎建 session、注入 context、走完整管道。
 - 参照样板：`TestErpInvStockMoveGraphQL`（验证 generateMove 经引擎成功）、`TestErpInvStockMoveCrudSmoke`（executeRpc helper + GraphQL save 建种子）。
 - finance `TestErpFinPostingService` 直调 `ErpFinPostingService`（**non-BizModel bean**，自带 `@SingleSession @Transactional`），不在本计划范围、已绿。
@@ -69,7 +69,7 @@ Skill: `code-quality-audit-prompt`
 Exit Criteria:
 - [ ] inventory 三测试经 IGraphQLEngine 全绿；无 `CTX`/`ServiceContextImpl` 残留
 
-### Phase 2 — purchase（6 文件，~55 处调用）
+### Phase 2 — purchase（7 文件，~55 处调用）
 
 Status: planned
 Targets: `TestErpPurOrderApproval`、`TestErpPurReceiveApproval`、`TestErpPurReceiveStockMove`、`TestErpPurRequisitionApproval`、`TestErpPurRequisitionConvertToOrder`、`TestErpPurOrderToReceiveEnd`、`TestErpPurRequisitionToOrderEnd`
@@ -82,12 +82,12 @@ Skill: `code-quality-audit-prompt`
 - [ ] **Proof** `mvn test -pl module-purchase/erp-pur-service -am` 全绿。
 
 Exit Criteria:
-- [ ] purchase 六测试经 IGraphQLEngine 全绿；跨域（purchase→inventory→finance）端到端验证保留
+- [ ] purchase 七测试经 IGraphQLEngine 全绿；跨域（purchase→inventory→finance）端到端验证保留
 
-### Phase 3 — sales（5 文件，~55 处调用）
+### Phase 3 — sales（4 文件，~55 处调用）
 
 Status: planned
-Targets: `TestErpSalOrderApproval`、`TestErpSalDeliveryApproval`、`TestErpSalDeliveryStockMove`、`TestErpSalOrderToDeliveryEnd`、（`TestErpSalQuotationApproval` 若存在）
+Targets: `TestErpSalOrderApproval`、`TestErpSalDeliveryApproval`、`TestErpSalDeliveryStockMove`、`TestErpSalOrderToDeliveryEnd`
 Skill: `code-quality-audit-prompt`
 
 - [ ] **Fix** 状态机测试（Order/Delivery Approval）：submit/approve/reject/reverseApprove/cancel/withdrawSubmit → `ErpSal{Order,Delivery}__*`。客户信用额度策略断言 → errorCode/status。
@@ -100,7 +100,7 @@ Exit Criteria:
 
 ## Draft Review Record
 
-- Independent draft review iteration 1: pending
+- Independent draft review iteration 1: accept (mission-driver review 2026-07-01) — format compliant, scope/non-goals clear, closure gates verifiable. Fixed per-domain file counts against repo ground truth: purchase 6→7（实际 7 个迁移目标，CrudSmoke 已排除）, sales 5→4 并移除不存在的 `TestErpSalQuotationApproval`（仓库中仅 `QuotationCrudSmoke`，属 Non-Goal）。合计仍为 14（3+7+4），与 Closure Gates 一致。无 Blocker；Minor 项（阶段标题用破折号、Task Route 字段命名 `Skill` 而非 `Skill Selection Basis`、`Verification` 行 maven `-pl` 大括号扩展不可直接执行）留待执行期/结束审计处理。
 
 ## Closure Gates
 
