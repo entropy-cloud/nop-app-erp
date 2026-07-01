@@ -41,6 +41,7 @@ prop:
       invoiceType: 发票类型
       invoiceType_label: 发票类型
       lines: null
+      org: null
       orgId: 业务组织
       paidAmount: 已付金额
       paidStatus: 付款进度
@@ -69,11 +70,13 @@ prop:
       material: null
       materialId: 物料
       quantity: 数量
+      receiveLine: null
       receiveLineId: 入库行ID
       remark: 备注
       taxAmount: 税额
       taxRate: 税率(%)
       unitPrice: 单价(不含税)
+      uoM: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
@@ -108,10 +111,12 @@ prop:
       posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人
+      quotation: null
       quotationId: 报价单
       receiveStatus: 收货状态
       receiveStatus_label: 收货状态
       remark: 备注
+      requisition: null
       requisitionId: 请购单
       settlementMethod: null
       settlementMethodId: 结算方式
@@ -138,6 +143,7 @@ prop:
       materialId: 物料
       order: null
       orderId: 订单ID
+      project: null
       projectId: 项目
       quantity: 数量
       receivedQuantity: 已收货数量
@@ -163,6 +169,7 @@ prop:
       approveStatus_label: 审核状态
       approvedAt: 审核时间
       approvedBy: 审核人
+      bankAccount: null
       bankAccountId: 付款账户(资金账户)
       businessDate: 付款日期
       code: 单号
@@ -176,7 +183,9 @@ prop:
       exchangeRate: 汇率
       id: ID
       lines: null
+      org: null
       orgId: 业务组织
+      partnerBankAccount: null
       partnerBankAccountId: 供应商收款账户(银行账户主数据)
       paymentMethod: 付款方式
       posted: 已过账
@@ -223,6 +232,7 @@ prop:
       id: ID
       isAccepted: 是否中标
       lines: null
+      org: null
       orgId: 业务组织
       remark: 备注
       rfq: null
@@ -265,6 +275,7 @@ prop:
       code: 单号
       createTime: 创建时间
       createdBy: 创建人
+      currency: null
       currencyId: 币种
       delVersion: 逻辑删除版本
       docStatus: 单据状态
@@ -274,6 +285,7 @@ prop:
       lines: null
       order: null
       orderId: 采购订单
+      org: null
       orgId: 业务组织
       posted: 已过账
       postedAt: 过账时间
@@ -303,6 +315,7 @@ prop:
       lineNo: 行号
       material: null
       materialId: 物料
+      orderLine: null
       orderLineId: 订单行ID
       quantity: 实收数量
       receive: null
@@ -319,6 +332,7 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+      warehouse: null
       warehouseId: 入库库位
     ErpPurRequisition:
       approveStatus: 审核状态
@@ -330,13 +344,16 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
+      department: null
       departmentId: 请购部门
       docStatus: 单据状态
       docStatus_label: 单据状态
       id: ID
       lines: null
+      org: null
       orgId: 业务组织
       remark: 备注
+      requester: null
       requesterId: 请购人(职员)
       requiredDate: 需求日期
       updateTime: 修改时间
@@ -350,12 +367,14 @@ prop:
       lineNo: 行号
       material: null
       materialId: 物料
+      project: null
       projectId: 项目
       quantity: 请购数量
       remark: 备注
       requiredDate: 需求日期
       requisition: null
       requisitionId: 请购单ID
+      suggestedSupplier: null
       suggestedSupplierId: 建议供应商
       uoM: null
       uoMId: 计量单位
@@ -373,6 +392,7 @@ prop:
       code: 单号
       createTime: 创建时间
       createdBy: 创建人
+      currency: null
       currencyId: 币种
       delVersion: 逻辑删除版本
       docStatus: 单据状态
@@ -380,6 +400,7 @@ prop:
       exchangeRate: 汇率
       id: ID
       lines: null
+      org: null
       orgId: 业务组织
       posted: 已过账
       postedAt: 过账时间
@@ -408,6 +429,7 @@ prop:
       materialId: 物料
       quantity: 退货数量
       reason: 退货原因
+      receiveLine: null
       receiveLineId: 入库行ID
       remark: 备注
       return: null
@@ -434,6 +456,7 @@ prop:
       docStatus_label: 单据状态
       id: ID
       lines: null
+      org: null
       orgId: 业务组织
       quotations: null
       remark: 备注

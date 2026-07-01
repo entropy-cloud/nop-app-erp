@@ -115,6 +115,9 @@ public class _ErpPurQuotation extends DynamicOrmEntity{
     public static final String PROP_NAME_currency = "currency";
     
     /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
+    /* relation:  */
     public static final String PROP_NAME_lines = "lines";
     
 
@@ -1191,6 +1194,29 @@ public class _ErpPurQuotation extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_currency, refEntity,()->{
            
                            this.setCurrencyId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
                        
            });
            }

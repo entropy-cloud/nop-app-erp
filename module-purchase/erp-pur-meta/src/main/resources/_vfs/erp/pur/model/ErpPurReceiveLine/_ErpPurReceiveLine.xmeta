@@ -28,7 +28,7 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="orderLineId" displayName="订单行ID" propId="3" i18n-en:displayName="Order Line" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="orderLine">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="lineNo" displayName="行号" propId="4" i18n-en:displayName="Line No" mandatory="true" queryable="true"
@@ -72,7 +72,7 @@
             <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
         </prop>
         <prop name="warehouseId" displayName="入库库位" propId="14" i18n-en:displayName="Warehouse" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="warehouse">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="batchNo" displayName="批号" propId="15" i18n-en:displayName="Batch No" queryable="true"
@@ -126,6 +126,16 @@
               ext:joinLeftProp="uoMId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
               mandatory="true" lazy="true">
             <schema bizObjName="ErpMdUoM"/>
+        </prop>
+        <prop name="orderLine" i18n-en:displayName="Order Line" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="orderLineId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpPurOrderLine"/>
+        </prop>
+        <prop name="warehouse" i18n-en:displayName="Warehouse" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="warehouseId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdWarehouse"/>
         </prop>
     </props>
 </meta>

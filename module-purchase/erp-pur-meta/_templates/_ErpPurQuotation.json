@@ -24,5 +24,6 @@
   "rfq": null,
   "supplier": null,
   "currency": null,
+  "org": null,
   "lines": null
 }

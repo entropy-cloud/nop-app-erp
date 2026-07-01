@@ -57,7 +57,7 @@ public class _ErpPurRequisition extends DynamicOrmEntity{
     public static final String PROP_NAME_approveStatus = "approveStatus";
     public static final int PROP_ID_approveStatus = 9;
     
-    /* 审核人: APPROVED_BY BIGINT */
+    /* 审核人: APPROVED_BY VARCHAR */
     public static final String PROP_NAME_approvedBy = "approvedBy";
     public static final int PROP_ID_approvedBy = 10;
     
@@ -96,6 +96,15 @@ public class _ErpPurRequisition extends DynamicOrmEntity{
 
     private static int _PROP_ID_BOUND = 19;
 
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
+    /* relation:  */
+    public static final String PROP_NAME_requester = "requester";
+    
+    /* relation:  */
+    public static final String PROP_NAME_department = "department";
     
     /* relation:  */
     public static final String PROP_NAME_lines = "lines";
@@ -193,7 +202,7 @@ public class _ErpPurRequisition extends DynamicOrmEntity{
     private java.lang.Integer _approveStatus;
     
     /* 审核人: APPROVED_BY */
-    private java.lang.Long _approvedBy;
+    private java.lang.String _approvedBy;
     
     /* 审核时间: APPROVED_AT */
     private java.time.LocalDateTime _approvedAt;
@@ -449,9 +458,9 @@ public class _ErpPurRequisition extends DynamicOrmEntity{
             }
         
             case PROP_ID_approvedBy:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_approvedBy));
                }
                setApprovedBy(typedValue);
@@ -612,7 +621,7 @@ public class _ErpPurRequisition extends DynamicOrmEntity{
         
             case PROP_ID_approvedBy:{
                onInitProp(propId);
-               this._approvedBy = (java.lang.Long)value;
+               this._approvedBy = (java.lang.String)value;
                
                break;
             }
@@ -853,7 +862,7 @@ public class _ErpPurRequisition extends DynamicOrmEntity{
     /**
      * 审核人: APPROVED_BY
      */
-    public final java.lang.Long getApprovedBy(){
+    public final java.lang.String getApprovedBy(){
          onPropGet(PROP_ID_approvedBy);
          return _approvedBy;
     }
@@ -861,7 +870,7 @@ public class _ErpPurRequisition extends DynamicOrmEntity{
     /**
      * 审核人: APPROVED_BY
      */
-    public final void setApprovedBy(java.lang.Long value){
+    public final void setApprovedBy(java.lang.String value){
         if(onPropSet(PROP_ID_approvedBy,value)){
             this._approvedBy = value;
             internalClearRefs(PROP_ID_approvedBy);
@@ -1021,6 +1030,75 @@ public class _ErpPurRequisition extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdEmployee getRequester(){
+       return (app.erp.md.dao.entity.ErpMdEmployee)internalGetRefEntity(PROP_NAME_requester);
+    }
+
+    public final void setRequester(app.erp.md.dao.entity.ErpMdEmployee refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setRequesterId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_requester, refEntity,()->{
+           
+                           this.setRequesterId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getDepartment(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_department);
+    }
+
+    public final void setDepartment(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setDepartmentId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_department, refEntity,()->{
+           
+                           this.setDepartmentId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
     private final OrmEntitySet<app.erp.pur.dao.entity.ErpPurRequisitionLine> _lines = new OrmEntitySet<>(this, PROP_NAME_lines,
         null, null,app.erp.pur.dao.entity.ErpPurRequisitionLine.class);
 

@@ -371,14 +371,13 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
 
     // ---------- misc helpers ----------
 
-    private Long currentUserId() {
+    private String currentUserId() {
         try {
             IUserContext ctx = IUserContext.get();
             if (ctx == null) {
                 return null;
             }
-            String userId = ctx.getUserId();
-            return StringHelper.isBlank(userId) ? null : Long.valueOf(userId);
+            return ctx.getUserId();
         } catch (Exception e) {
             return null;
         }

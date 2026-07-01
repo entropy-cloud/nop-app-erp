@@ -19,8 +19,8 @@
   "approveStatus_label": "",
   "posted": false,
   "postedAt": "2000-01-01 14:00:00",
-  "postedBy": 0,
-  "approvedBy": 0,
+  "postedBy": "",
+  "approvedBy": "",
   "approvedAt": "2000-01-01 14:00:00",
   "remark": "",
   "delVersion": 0,
@@ -32,5 +32,7 @@
   "receive": null,
   "supplier": null,
   "warehouse": null,
+  "org": null,
+  "currency": null,
   "lines": null
 }

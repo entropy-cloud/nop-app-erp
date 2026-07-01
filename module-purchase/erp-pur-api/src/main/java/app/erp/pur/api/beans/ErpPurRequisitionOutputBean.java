@@ -164,16 +164,16 @@
         }
 
 
-        private Long _approvedBy;
+        private String _approvedBy;
 
     
         @PropMeta(propId=10)
     
-        public Long getApprovedBy(){
+        public String getApprovedBy(){
             return _approvedBy;
         }
 
-        public void setApprovedBy(Long value){
+        public void setApprovedBy(String value){
             this._approvedBy = value;
         }
 
@@ -287,6 +287,39 @@
 
         public void setUpdateTime(java.sql.Timestamp value){
             this._updateTime = value;
+        }
+
+
+        private Map<String,Object> _org;
+
+        public Map<String,Object> getOrg(){
+            return _org;
+        }
+
+        public void setOrg(Map<String,Object> value){
+            this._org = value;
+        }
+
+
+        private Map<String,Object> _requester;
+
+        public Map<String,Object> getRequester(){
+            return _requester;
+        }
+
+        public void setRequester(Map<String,Object> value){
+            this._requester = value;
+        }
+
+
+        private Map<String,Object> _department;
+
+        public Map<String,Object> getDepartment(){
+            return _department;
+        }
+
+        public void setDepartment(Map<String,Object> value){
+            this._department = value;
         }
 
 

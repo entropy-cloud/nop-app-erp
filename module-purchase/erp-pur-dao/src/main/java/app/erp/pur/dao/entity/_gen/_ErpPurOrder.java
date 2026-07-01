@@ -125,11 +125,11 @@ public class _ErpPurOrder extends DynamicOrmEntity{
     public static final String PROP_NAME_postedAt = "postedAt";
     public static final int PROP_ID_postedAt = 26;
     
-    /* 过账人: POSTED_BY BIGINT */
+    /* 过账人: POSTED_BY VARCHAR */
     public static final String PROP_NAME_postedBy = "postedBy";
     public static final int PROP_ID_postedBy = 27;
     
-    /* 审核人: APPROVED_BY BIGINT */
+    /* 审核人: APPROVED_BY VARCHAR */
     public static final String PROP_NAME_approvedBy = "approvedBy";
     public static final int PROP_ID_approvedBy = 28;
     
@@ -182,10 +182,16 @@ public class _ErpPurOrder extends DynamicOrmEntity{
     public static final String PROP_NAME_settlementMethod = "settlementMethod";
     
     /* relation:  */
-    public static final String PROP_NAME_lines = "lines";
+    public static final String PROP_NAME_org = "org";
     
     /* relation:  */
-    public static final String PROP_NAME_org = "org";
+    public static final String PROP_NAME_requisition = "requisition";
+    
+    /* relation:  */
+    public static final String PROP_NAME_quotation = "quotation";
+    
+    /* relation:  */
+    public static final String PROP_NAME_lines = "lines";
     
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
@@ -385,10 +391,10 @@ public class _ErpPurOrder extends DynamicOrmEntity{
     private java.time.LocalDateTime _postedAt;
     
     /* 过账人: POSTED_BY */
-    private java.lang.Long _postedBy;
+    private java.lang.String _postedBy;
     
     /* 审核人: APPROVED_BY */
-    private java.lang.Long _approvedBy;
+    private java.lang.String _approvedBy;
     
     /* 审核时间: APPROVED_AT */
     private java.time.LocalDateTime _approvedAt;
@@ -868,9 +874,9 @@ public class _ErpPurOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_postedBy:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_postedBy));
                }
                setPostedBy(typedValue);
@@ -878,9 +884,9 @@ public class _ErpPurOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_approvedBy:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_approvedBy));
                }
                setApprovedBy(typedValue);
@@ -1160,14 +1166,14 @@ public class _ErpPurOrder extends DynamicOrmEntity{
         
             case PROP_ID_postedBy:{
                onInitProp(propId);
-               this._postedBy = (java.lang.Long)value;
+               this._postedBy = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_approvedBy:{
                onInitProp(propId);
-               this._approvedBy = (java.lang.Long)value;
+               this._approvedBy = (java.lang.String)value;
                
                break;
             }
@@ -1731,7 +1737,7 @@ public class _ErpPurOrder extends DynamicOrmEntity{
     /**
      * 过账人: POSTED_BY
      */
-    public final java.lang.Long getPostedBy(){
+    public final java.lang.String getPostedBy(){
          onPropGet(PROP_ID_postedBy);
          return _postedBy;
     }
@@ -1739,7 +1745,7 @@ public class _ErpPurOrder extends DynamicOrmEntity{
     /**
      * 过账人: POSTED_BY
      */
-    public final void setPostedBy(java.lang.Long value){
+    public final void setPostedBy(java.lang.String value){
         if(onPropSet(PROP_ID_postedBy,value)){
             this._postedBy = value;
             internalClearRefs(PROP_ID_postedBy);
@@ -1750,7 +1756,7 @@ public class _ErpPurOrder extends DynamicOrmEntity{
     /**
      * 审核人: APPROVED_BY
      */
-    public final java.lang.Long getApprovedBy(){
+    public final java.lang.String getApprovedBy(){
          onPropGet(PROP_ID_approvedBy);
          return _approvedBy;
     }
@@ -1758,7 +1764,7 @@ public class _ErpPurOrder extends DynamicOrmEntity{
     /**
      * 审核人: APPROVED_BY
      */
-    public final void setApprovedBy(java.lang.Long value){
+    public final void setApprovedBy(java.lang.String value){
         if(onPropSet(PROP_ID_approvedBy,value)){
             this._approvedBy = value;
             internalClearRefs(PROP_ID_approvedBy);
@@ -2010,16 +2016,6 @@ public class _ErpPurOrder extends DynamicOrmEntity{
        
     }
        
-    private final OrmEntitySet<app.erp.pur.dao.entity.ErpPurOrderLine> _lines = new OrmEntitySet<>(this, PROP_NAME_lines,
-        null, null,app.erp.pur.dao.entity.ErpPurOrderLine.class);
-
-    /**
-     * 。 refPropName: , keyProp: {rel.keyProp}
-     */
-    public final IOrmEntitySet<app.erp.pur.dao.entity.ErpPurOrderLine> getLines(){
-       return _lines;
-    }
-       
     /**
      * 
      */
@@ -2041,6 +2037,62 @@ public class _ErpPurOrder extends DynamicOrmEntity{
            });
            }
        
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.pur.dao.entity.ErpPurRequisition getRequisition(){
+       return (app.erp.pur.dao.entity.ErpPurRequisition)internalGetRefEntity(PROP_NAME_requisition);
+    }
+
+    public final void setRequisition(app.erp.pur.dao.entity.ErpPurRequisition refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setRequisitionId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_requisition, refEntity,()->{
+           
+                           this.setRequisitionId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.pur.dao.entity.ErpPurQuotation getQuotation(){
+       return (app.erp.pur.dao.entity.ErpPurQuotation)internalGetRefEntity(PROP_NAME_quotation);
+    }
+
+    public final void setQuotation(app.erp.pur.dao.entity.ErpPurQuotation refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setQuotationId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_quotation, refEntity,()->{
+           
+                           this.setQuotationId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    private final OrmEntitySet<app.erp.pur.dao.entity.ErpPurOrderLine> _lines = new OrmEntitySet<>(this, PROP_NAME_lines,
+        null, null,app.erp.pur.dao.entity.ErpPurOrderLine.class);
+
+    /**
+     * 。 refPropName: , keyProp: {rel.keyProp}
+     */
+    public final IOrmEntitySet<app.erp.pur.dao.entity.ErpPurOrderLine> getLines(){
+       return _lines;
     }
        
 }

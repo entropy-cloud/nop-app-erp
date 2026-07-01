@@ -1,24 +1,19 @@
 
-CREATE TABLE erp_pur_requisition(
-  id INT8 NOT NULL ,
-  code VARCHAR(50) NOT NULL ,
-  org_id INT8  ,
-  requester_id INT8 NOT NULL ,
-  department_id INT8  ,
-  business_date DATE NOT NULL ,
-  required_date DATE  ,
-  doc_status INT4 NOT NULL ,
-  approve_status INT4 NOT NULL ,
-  approved_by INT8  ,
-  approved_at TIMESTAMP  ,
-  remark VARCHAR(1000)  ,
-  del_version INT8 default 0  NOT NULL ,
-  version INT4 default 0  NOT NULL ,
-  created_by VARCHAR(50) NOT NULL ,
-  create_time TIMESTAMP NOT NULL ,
-  updated_by VARCHAR(50) NOT NULL ,
-  update_time TIMESTAMP NOT NULL ,
-  constraint PK_erp_pur_requisition primary key (id)
+CREATE TABLE erp_md_organization(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  org_type INT4  ,
+  parent_id INT8  ,
+  status INT4  ,
+  constraint PK_erp_md_organization primary key (id)
+);
+
+CREATE TABLE erp_md_employee(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  constraint PK_erp_md_employee primary key (id)
 );
 
 CREATE TABLE erp_md_material(
@@ -47,6 +42,14 @@ CREATE TABLE erp_md_partner(
   status INT4  ,
   credit_limit VARCHAR(50)  ,
   constraint PK_erp_md_partner primary key (id)
+);
+
+CREATE TABLE erp_prj_project(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  status INT4  ,
+  constraint PK_erp_prj_project primary key (id)
 );
 
 CREATE TABLE erp_md_currency(
@@ -78,16 +81,6 @@ CREATE TABLE erp_md_settlement_method(
   constraint PK_erp_md_settlement_method primary key (id)
 );
 
-CREATE TABLE erp_md_organization(
-  id INT8  ,
-  code VARCHAR(50)  ,
-  name VARCHAR(200)  ,
-  org_type INT4  ,
-  parent_id INT8  ,
-  status INT4  ,
-  constraint PK_erp_md_organization primary key (id)
-);
-
 CREATE TABLE erp_md_material_sku(
   id INT8  ,
   material_id INT8  ,
@@ -114,15 +107,18 @@ CREATE TABLE erp_md_bank_account(
   constraint PK_erp_md_bank_account primary key (id)
 );
 
-CREATE TABLE erp_pur_rfq(
+CREATE TABLE erp_pur_requisition(
   id INT8 NOT NULL ,
   code VARCHAR(50) NOT NULL ,
   org_id INT8  ,
-  requisition_id INT8  ,
+  requester_id INT8 NOT NULL ,
+  department_id INT8  ,
   business_date DATE NOT NULL ,
-  valid_until DATE  ,
+  required_date DATE  ,
   doc_status INT4 NOT NULL ,
   approve_status INT4 NOT NULL ,
+  approved_by VARCHAR(36)  ,
+  approved_at TIMESTAMP  ,
   remark VARCHAR(1000)  ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
@@ -130,27 +126,7 @@ CREATE TABLE erp_pur_rfq(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
-  constraint PK_erp_pur_rfq primary key (id)
-);
-
-CREATE TABLE erp_pur_requisition_line(
-  id INT8 NOT NULL ,
-  requisition_id INT8 NOT NULL ,
-  line_no INT4 NOT NULL ,
-  material_id INT8 NOT NULL ,
-  uo_m_id INT8 NOT NULL ,
-  quantity NUMERIC(20,4) NOT NULL ,
-  required_date DATE  ,
-  suggested_supplier_id INT8  ,
-  project_id INT8  ,
-  remark VARCHAR(1000)  ,
-  del_version INT8 default 0  NOT NULL ,
-  version INT4 default 0  NOT NULL ,
-  created_by VARCHAR(50) NOT NULL ,
-  create_time TIMESTAMP NOT NULL ,
-  updated_by VARCHAR(50) NOT NULL ,
-  update_time TIMESTAMP NOT NULL ,
-  constraint PK_erp_pur_requisition_line primary key (id)
+  constraint PK_erp_pur_requisition primary key (id)
 );
 
 CREATE TABLE erp_pur_supplier_price_list(
@@ -197,8 +173,8 @@ CREATE TABLE erp_pur_invoice(
   paid_status INT4  ,
   posted BOOLEAN default false   ,
   posted_at TIMESTAMP  ,
-  posted_by INT8  ,
-  approved_by INT8  ,
+  posted_by VARCHAR(36)  ,
+  approved_by VARCHAR(36)  ,
   approved_at TIMESTAMP  ,
   remark VARCHAR(1000)  ,
   del_version INT8 default 0  NOT NULL ,
@@ -230,8 +206,8 @@ CREATE TABLE erp_pur_payment(
   written_off_status INT4  ,
   posted BOOLEAN default false   ,
   posted_at TIMESTAMP  ,
-  posted_by INT8  ,
-  approved_by INT8  ,
+  posted_by VARCHAR(36)  ,
+  approved_by VARCHAR(36)  ,
   approved_at TIMESTAMP  ,
   remark VARCHAR(1000)  ,
   del_version INT8 default 0  NOT NULL ,
@@ -243,36 +219,16 @@ CREATE TABLE erp_pur_payment(
   constraint PK_erp_pur_payment primary key (id)
 );
 
-CREATE TABLE erp_pur_order(
+CREATE TABLE erp_pur_requisition_line(
   id INT8 NOT NULL ,
-  code VARCHAR(50) NOT NULL ,
-  org_id INT8  ,
-  requisition_id INT8  ,
-  quotation_id INT8  ,
-  supplier_id INT8 NOT NULL ,
-  warehouse_id INT8  ,
-  business_date DATE NOT NULL ,
-  delivery_date DATE  ,
-  currency_id INT8 NOT NULL ,
-  exchange_rate NUMERIC(20,8) default 1   ,
-  amount_source NUMERIC(20,4) default 0   ,
-  amount_functional NUMERIC(20,4) default 0   ,
-  total_amount NUMERIC(20,4) default 0   ,
-  total_tax_amount NUMERIC(20,4) default 0   ,
-  total_amount_with_tax NUMERIC(20,4) default 0   ,
-  discount_rate NUMERIC(10,4)  ,
-  discount_amount NUMERIC(20,4) default 0   ,
-  paid_amount NUMERIC(20,4) default 0   ,
-  settlement_method_id INT8  ,
-  doc_status INT4 NOT NULL ,
-  approve_status INT4 NOT NULL ,
-  paid_status INT4  ,
-  receive_status INT4  ,
-  posted BOOLEAN default false   ,
-  posted_at TIMESTAMP  ,
-  posted_by INT8  ,
-  approved_by INT8  ,
-  approved_at TIMESTAMP  ,
+  requisition_id INT8 NOT NULL ,
+  line_no INT4 NOT NULL ,
+  material_id INT8 NOT NULL ,
+  uo_m_id INT8 NOT NULL ,
+  quantity NUMERIC(20,4) NOT NULL ,
+  required_date DATE  ,
+  suggested_supplier_id INT8  ,
+  project_id INT8  ,
   remark VARCHAR(1000)  ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
@@ -280,7 +236,41 @@ CREATE TABLE erp_pur_order(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
-  constraint PK_erp_pur_order primary key (id)
+  constraint PK_erp_pur_requisition_line primary key (id)
+);
+
+CREATE TABLE erp_pur_rfq(
+  id INT8 NOT NULL ,
+  code VARCHAR(50) NOT NULL ,
+  org_id INT8  ,
+  requisition_id INT8  ,
+  business_date DATE NOT NULL ,
+  valid_until DATE  ,
+  doc_status INT4 NOT NULL ,
+  approve_status INT4 NOT NULL ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_pur_rfq primary key (id)
+);
+
+CREATE TABLE erp_pur_payment_line(
+  id INT8 NOT NULL ,
+  payment_id INT8 NOT NULL ,
+  invoice_id INT8 NOT NULL ,
+  amount NUMERIC(20,4) NOT NULL ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_pur_payment_line primary key (id)
 );
 
 CREATE TABLE erp_pur_rfq_line(
@@ -324,18 +314,16 @@ CREATE TABLE erp_pur_quotation(
   constraint PK_erp_pur_quotation primary key (id)
 );
 
-CREATE TABLE erp_pur_invoice_line(
+CREATE TABLE erp_pur_quotation_line(
   id INT8 NOT NULL ,
-  invoice_id INT8 NOT NULL ,
-  receive_line_id INT8  ,
+  quotation_id INT8 NOT NULL ,
   line_no INT4 NOT NULL ,
   material_id INT8 NOT NULL ,
   uo_m_id INT8 NOT NULL ,
-  quantity NUMERIC(20,4) NOT NULL ,
-  unit_price NUMERIC(20,4)  ,
+  quantity NUMERIC(20,4)  ,
+  unit_price NUMERIC(20,4) NOT NULL ,
   tax_rate NUMERIC(10,4)  ,
-  tax_amount NUMERIC(20,4)  ,
-  amount NUMERIC(20,4)  ,
+  lead_time_days INT4  ,
   remark VARCHAR(1000)  ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
@@ -343,14 +331,39 @@ CREATE TABLE erp_pur_invoice_line(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
-  constraint PK_erp_pur_invoice_line primary key (id)
+  constraint PK_erp_pur_quotation_line primary key (id)
 );
 
-CREATE TABLE erp_pur_payment_line(
+CREATE TABLE erp_pur_order(
   id INT8 NOT NULL ,
-  payment_id INT8 NOT NULL ,
-  invoice_id INT8 NOT NULL ,
-  amount NUMERIC(20,4) NOT NULL ,
+  code VARCHAR(50) NOT NULL ,
+  org_id INT8  ,
+  requisition_id INT8  ,
+  quotation_id INT8  ,
+  supplier_id INT8 NOT NULL ,
+  warehouse_id INT8  ,
+  business_date DATE NOT NULL ,
+  delivery_date DATE  ,
+  currency_id INT8 NOT NULL ,
+  exchange_rate NUMERIC(20,8) default 1   ,
+  amount_source NUMERIC(20,4) default 0   ,
+  amount_functional NUMERIC(20,4) default 0   ,
+  total_amount NUMERIC(20,4) default 0   ,
+  total_tax_amount NUMERIC(20,4) default 0   ,
+  total_amount_with_tax NUMERIC(20,4) default 0   ,
+  discount_rate NUMERIC(10,4)  ,
+  discount_amount NUMERIC(20,4) default 0   ,
+  paid_amount NUMERIC(20,4) default 0   ,
+  settlement_method_id INT8  ,
+  doc_status INT4 NOT NULL ,
+  approve_status INT4 NOT NULL ,
+  paid_status INT4  ,
+  receive_status INT4  ,
+  posted BOOLEAN default false   ,
+  posted_at TIMESTAMP  ,
+  posted_by VARCHAR(36)  ,
+  approved_by VARCHAR(36)  ,
+  approved_at TIMESTAMP  ,
   remark VARCHAR(1000)  ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
@@ -358,7 +371,7 @@ CREATE TABLE erp_pur_payment_line(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
-  constraint PK_erp_pur_payment_line primary key (id)
+  constraint PK_erp_pur_order primary key (id)
 );
 
 CREATE TABLE erp_pur_order_line(
@@ -410,8 +423,8 @@ CREATE TABLE erp_pur_receive(
   approve_status INT4 NOT NULL ,
   posted BOOLEAN default false   ,
   posted_at TIMESTAMP  ,
-  posted_by INT8  ,
-  approved_by INT8  ,
+  posted_by VARCHAR(36)  ,
+  approved_by VARCHAR(36)  ,
   approved_at TIMESTAMP  ,
   remark VARCHAR(1000)  ,
   del_version INT8 default 0  NOT NULL ,
@@ -421,26 +434,6 @@ CREATE TABLE erp_pur_receive(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   constraint PK_erp_pur_receive primary key (id)
-);
-
-CREATE TABLE erp_pur_quotation_line(
-  id INT8 NOT NULL ,
-  quotation_id INT8 NOT NULL ,
-  line_no INT4 NOT NULL ,
-  material_id INT8 NOT NULL ,
-  uo_m_id INT8 NOT NULL ,
-  quantity NUMERIC(20,4)  ,
-  unit_price NUMERIC(20,4) NOT NULL ,
-  tax_rate NUMERIC(10,4)  ,
-  lead_time_days INT4  ,
-  remark VARCHAR(1000)  ,
-  del_version INT8 default 0  NOT NULL ,
-  version INT4 default 0  NOT NULL ,
-  created_by VARCHAR(50) NOT NULL ,
-  create_time TIMESTAMP NOT NULL ,
-  updated_by VARCHAR(50) NOT NULL ,
-  update_time TIMESTAMP NOT NULL ,
-  constraint PK_erp_pur_quotation_line primary key (id)
 );
 
 CREATE TABLE erp_pur_receive_line(
@@ -488,8 +481,8 @@ CREATE TABLE erp_pur_return(
   approve_status INT4 NOT NULL ,
   posted BOOLEAN default false   ,
   posted_at TIMESTAMP  ,
-  posted_by INT8  ,
-  approved_by INT8  ,
+  posted_by VARCHAR(36)  ,
+  approved_by VARCHAR(36)  ,
   approved_at TIMESTAMP  ,
   remark VARCHAR(1000)  ,
   del_version INT8 default 0  NOT NULL ,
@@ -499,6 +492,28 @@ CREATE TABLE erp_pur_return(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   constraint PK_erp_pur_return primary key (id)
+);
+
+CREATE TABLE erp_pur_invoice_line(
+  id INT8 NOT NULL ,
+  invoice_id INT8 NOT NULL ,
+  receive_line_id INT8  ,
+  line_no INT4 NOT NULL ,
+  material_id INT8 NOT NULL ,
+  uo_m_id INT8 NOT NULL ,
+  quantity NUMERIC(20,4) NOT NULL ,
+  unit_price NUMERIC(20,4)  ,
+  tax_rate NUMERIC(10,4)  ,
+  tax_amount NUMERIC(20,4)  ,
+  amount NUMERIC(20,4)  ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_pur_invoice_line primary key (id)
 );
 
 CREATE TABLE erp_pur_return_line(
@@ -526,6 +541,30 @@ CREATE TABLE erp_pur_return_line(
 );
 
 
+      COMMENT ON TABLE erp_md_organization IS '组织';
+                
+      COMMENT ON TABLE erp_md_employee IS '员工';
+                
+      COMMENT ON TABLE erp_md_material IS '物料';
+                
+      COMMENT ON TABLE erp_md_uom IS '计量单位';
+                
+      COMMENT ON TABLE erp_md_partner IS '往来单位';
+                
+      COMMENT ON TABLE erp_prj_project IS '项目';
+                
+      COMMENT ON TABLE erp_md_currency IS '币种';
+                
+      COMMENT ON TABLE erp_md_warehouse IS '仓库';
+                
+      COMMENT ON TABLE erp_md_settlement_method IS '结算方式';
+                
+      COMMENT ON TABLE erp_md_material_sku IS '物料SKU';
+                
+      COMMENT ON TABLE erp_md_tax_rate IS '税率';
+                
+      COMMENT ON TABLE erp_md_bank_account IS '银行账户';
+                
       COMMENT ON TABLE erp_pur_requisition IS '采购请购单';
                 
       COMMENT ON COLUMN erp_pur_requisition.id IS 'ID';
@@ -563,92 +602,6 @@ CREATE TABLE erp_pur_return_line(
       COMMENT ON COLUMN erp_pur_requisition.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_pur_requisition.update_time IS '修改时间';
-                    
-      COMMENT ON TABLE erp_md_material IS '物料';
-                
-      COMMENT ON TABLE erp_md_uom IS '计量单位';
-                
-      COMMENT ON TABLE erp_md_partner IS '往来单位';
-                
-      COMMENT ON TABLE erp_md_currency IS '币种';
-                
-      COMMENT ON TABLE erp_md_warehouse IS '仓库';
-                
-      COMMENT ON TABLE erp_md_settlement_method IS '结算方式';
-                
-      COMMENT ON TABLE erp_md_organization IS '组织';
-                
-      COMMENT ON TABLE erp_md_material_sku IS '物料SKU';
-                
-      COMMENT ON TABLE erp_md_tax_rate IS '税率';
-                
-      COMMENT ON TABLE erp_md_bank_account IS '银行账户';
-                
-      COMMENT ON TABLE erp_pur_rfq IS '采购询价单';
-                
-      COMMENT ON COLUMN erp_pur_rfq.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_pur_rfq.code IS '单号';
-                    
-      COMMENT ON COLUMN erp_pur_rfq.org_id IS '业务组织';
-                    
-      COMMENT ON COLUMN erp_pur_rfq.requisition_id IS '请购单';
-                    
-      COMMENT ON COLUMN erp_pur_rfq.business_date IS '询价日期';
-                    
-      COMMENT ON COLUMN erp_pur_rfq.valid_until IS '报价有效期至';
-                    
-      COMMENT ON COLUMN erp_pur_rfq.doc_status IS '单据状态';
-                    
-      COMMENT ON COLUMN erp_pur_rfq.approve_status IS '审核状态';
-                    
-      COMMENT ON COLUMN erp_pur_rfq.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_pur_rfq.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_pur_rfq.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_pur_rfq.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_pur_rfq.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_pur_rfq.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_pur_rfq.update_time IS '修改时间';
-                    
-      COMMENT ON TABLE erp_pur_requisition_line IS '采购请购单行';
-                
-      COMMENT ON COLUMN erp_pur_requisition_line.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_pur_requisition_line.requisition_id IS '请购单ID';
-                    
-      COMMENT ON COLUMN erp_pur_requisition_line.line_no IS '行号';
-                    
-      COMMENT ON COLUMN erp_pur_requisition_line.material_id IS '物料';
-                    
-      COMMENT ON COLUMN erp_pur_requisition_line.uo_m_id IS '计量单位';
-                    
-      COMMENT ON COLUMN erp_pur_requisition_line.quantity IS '请购数量';
-                    
-      COMMENT ON COLUMN erp_pur_requisition_line.required_date IS '需求日期';
-                    
-      COMMENT ON COLUMN erp_pur_requisition_line.suggested_supplier_id IS '建议供应商';
-                    
-      COMMENT ON COLUMN erp_pur_requisition_line.project_id IS '项目';
-                    
-      COMMENT ON COLUMN erp_pur_requisition_line.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_pur_requisition_line.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_pur_requisition_line.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_pur_requisition_line.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_pur_requisition_line.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_pur_requisition_line.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_pur_requisition_line.update_time IS '修改时间';
                     
       COMMENT ON TABLE erp_pur_supplier_price_list IS '供应商价格清单';
                 
@@ -812,6 +765,200 @@ CREATE TABLE erp_pur_return_line(
                     
       COMMENT ON COLUMN erp_pur_payment.update_time IS '修改时间';
                     
+      COMMENT ON TABLE erp_pur_requisition_line IS '采购请购单行';
+                
+      COMMENT ON COLUMN erp_pur_requisition_line.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_pur_requisition_line.requisition_id IS '请购单ID';
+                    
+      COMMENT ON COLUMN erp_pur_requisition_line.line_no IS '行号';
+                    
+      COMMENT ON COLUMN erp_pur_requisition_line.material_id IS '物料';
+                    
+      COMMENT ON COLUMN erp_pur_requisition_line.uo_m_id IS '计量单位';
+                    
+      COMMENT ON COLUMN erp_pur_requisition_line.quantity IS '请购数量';
+                    
+      COMMENT ON COLUMN erp_pur_requisition_line.required_date IS '需求日期';
+                    
+      COMMENT ON COLUMN erp_pur_requisition_line.suggested_supplier_id IS '建议供应商';
+                    
+      COMMENT ON COLUMN erp_pur_requisition_line.project_id IS '项目';
+                    
+      COMMENT ON COLUMN erp_pur_requisition_line.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_pur_requisition_line.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_pur_requisition_line.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_pur_requisition_line.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_pur_requisition_line.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_pur_requisition_line.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_pur_requisition_line.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_pur_rfq IS '采购询价单';
+                
+      COMMENT ON COLUMN erp_pur_rfq.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_pur_rfq.code IS '单号';
+                    
+      COMMENT ON COLUMN erp_pur_rfq.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_pur_rfq.requisition_id IS '请购单';
+                    
+      COMMENT ON COLUMN erp_pur_rfq.business_date IS '询价日期';
+                    
+      COMMENT ON COLUMN erp_pur_rfq.valid_until IS '报价有效期至';
+                    
+      COMMENT ON COLUMN erp_pur_rfq.doc_status IS '单据状态';
+                    
+      COMMENT ON COLUMN erp_pur_rfq.approve_status IS '审核状态';
+                    
+      COMMENT ON COLUMN erp_pur_rfq.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_pur_rfq.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_pur_rfq.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_pur_rfq.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_pur_rfq.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_pur_rfq.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_pur_rfq.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_pur_payment_line IS '付款核销行';
+                
+      COMMENT ON COLUMN erp_pur_payment_line.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_pur_payment_line.payment_id IS '付款单ID';
+                    
+      COMMENT ON COLUMN erp_pur_payment_line.invoice_id IS '发票ID';
+                    
+      COMMENT ON COLUMN erp_pur_payment_line.amount IS '核销金额';
+                    
+      COMMENT ON COLUMN erp_pur_payment_line.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_pur_payment_line.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_pur_payment_line.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_pur_payment_line.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_pur_payment_line.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_pur_payment_line.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_pur_payment_line.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_pur_rfq_line IS '采购询价单行';
+                
+      COMMENT ON COLUMN erp_pur_rfq_line.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_pur_rfq_line.rfq_id IS '询价单ID';
+                    
+      COMMENT ON COLUMN erp_pur_rfq_line.line_no IS '行号';
+                    
+      COMMENT ON COLUMN erp_pur_rfq_line.material_id IS '物料';
+                    
+      COMMENT ON COLUMN erp_pur_rfq_line.uo_m_id IS '计量单位';
+                    
+      COMMENT ON COLUMN erp_pur_rfq_line.quantity IS '询价数量';
+                    
+      COMMENT ON COLUMN erp_pur_rfq_line.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_pur_rfq_line.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_pur_rfq_line.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_pur_rfq_line.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_pur_rfq_line.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_pur_rfq_line.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_pur_rfq_line.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_pur_quotation IS '供应商报价单';
+                
+      COMMENT ON COLUMN erp_pur_quotation.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_pur_quotation.code IS '单号';
+                    
+      COMMENT ON COLUMN erp_pur_quotation.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_pur_quotation.rfq_id IS '询价单';
+                    
+      COMMENT ON COLUMN erp_pur_quotation.supplier_id IS '供应商';
+                    
+      COMMENT ON COLUMN erp_pur_quotation.currency_id IS '币种';
+                    
+      COMMENT ON COLUMN erp_pur_quotation.exchange_rate IS '汇率';
+                    
+      COMMENT ON COLUMN erp_pur_quotation.business_date IS '报价日期';
+                    
+      COMMENT ON COLUMN erp_pur_quotation.valid_from IS '生效日期';
+                    
+      COMMENT ON COLUMN erp_pur_quotation.valid_to IS '失效日期';
+                    
+      COMMENT ON COLUMN erp_pur_quotation.is_accepted IS '是否中标';
+                    
+      COMMENT ON COLUMN erp_pur_quotation.doc_status IS '单据状态';
+                    
+      COMMENT ON COLUMN erp_pur_quotation.approve_status IS '审核状态';
+                    
+      COMMENT ON COLUMN erp_pur_quotation.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_pur_quotation.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_pur_quotation.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_pur_quotation.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_pur_quotation.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_pur_quotation.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_pur_quotation.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_pur_quotation_line IS '供应商报价单行';
+                
+      COMMENT ON COLUMN erp_pur_quotation_line.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_pur_quotation_line.quotation_id IS '报价单ID';
+                    
+      COMMENT ON COLUMN erp_pur_quotation_line.line_no IS '行号';
+                    
+      COMMENT ON COLUMN erp_pur_quotation_line.material_id IS '物料';
+                    
+      COMMENT ON COLUMN erp_pur_quotation_line.uo_m_id IS '计量单位';
+                    
+      COMMENT ON COLUMN erp_pur_quotation_line.quantity IS '数量';
+                    
+      COMMENT ON COLUMN erp_pur_quotation_line.unit_price IS '报价单价(不含税)';
+                    
+      COMMENT ON COLUMN erp_pur_quotation_line.tax_rate IS '税率(%)';
+                    
+      COMMENT ON COLUMN erp_pur_quotation_line.lead_time_days IS '交货周期(天)';
+                    
+      COMMENT ON COLUMN erp_pur_quotation_line.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_pur_quotation_line.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_pur_quotation_line.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_pur_quotation_line.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_pur_quotation_line.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_pur_quotation_line.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_pur_quotation_line.update_time IS '修改时间';
+                    
       COMMENT ON TABLE erp_pur_order IS '采购订单';
                 
       COMMENT ON COLUMN erp_pur_order.id IS 'ID';
@@ -885,138 +1032,6 @@ CREATE TABLE erp_pur_return_line(
       COMMENT ON COLUMN erp_pur_order.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_pur_order.update_time IS '修改时间';
-                    
-      COMMENT ON TABLE erp_pur_rfq_line IS '采购询价单行';
-                
-      COMMENT ON COLUMN erp_pur_rfq_line.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_pur_rfq_line.rfq_id IS '询价单ID';
-                    
-      COMMENT ON COLUMN erp_pur_rfq_line.line_no IS '行号';
-                    
-      COMMENT ON COLUMN erp_pur_rfq_line.material_id IS '物料';
-                    
-      COMMENT ON COLUMN erp_pur_rfq_line.uo_m_id IS '计量单位';
-                    
-      COMMENT ON COLUMN erp_pur_rfq_line.quantity IS '询价数量';
-                    
-      COMMENT ON COLUMN erp_pur_rfq_line.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_pur_rfq_line.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_pur_rfq_line.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_pur_rfq_line.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_pur_rfq_line.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_pur_rfq_line.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_pur_rfq_line.update_time IS '修改时间';
-                    
-      COMMENT ON TABLE erp_pur_quotation IS '供应商报价单';
-                
-      COMMENT ON COLUMN erp_pur_quotation.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_pur_quotation.code IS '单号';
-                    
-      COMMENT ON COLUMN erp_pur_quotation.org_id IS '业务组织';
-                    
-      COMMENT ON COLUMN erp_pur_quotation.rfq_id IS '询价单';
-                    
-      COMMENT ON COLUMN erp_pur_quotation.supplier_id IS '供应商';
-                    
-      COMMENT ON COLUMN erp_pur_quotation.currency_id IS '币种';
-                    
-      COMMENT ON COLUMN erp_pur_quotation.exchange_rate IS '汇率';
-                    
-      COMMENT ON COLUMN erp_pur_quotation.business_date IS '报价日期';
-                    
-      COMMENT ON COLUMN erp_pur_quotation.valid_from IS '生效日期';
-                    
-      COMMENT ON COLUMN erp_pur_quotation.valid_to IS '失效日期';
-                    
-      COMMENT ON COLUMN erp_pur_quotation.is_accepted IS '是否中标';
-                    
-      COMMENT ON COLUMN erp_pur_quotation.doc_status IS '单据状态';
-                    
-      COMMENT ON COLUMN erp_pur_quotation.approve_status IS '审核状态';
-                    
-      COMMENT ON COLUMN erp_pur_quotation.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_pur_quotation.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_pur_quotation.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_pur_quotation.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_pur_quotation.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_pur_quotation.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_pur_quotation.update_time IS '修改时间';
-                    
-      COMMENT ON TABLE erp_pur_invoice_line IS '采购发票行';
-                
-      COMMENT ON COLUMN erp_pur_invoice_line.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_pur_invoice_line.invoice_id IS '发票ID';
-                    
-      COMMENT ON COLUMN erp_pur_invoice_line.receive_line_id IS '入库行ID';
-                    
-      COMMENT ON COLUMN erp_pur_invoice_line.line_no IS '行号';
-                    
-      COMMENT ON COLUMN erp_pur_invoice_line.material_id IS '物料';
-                    
-      COMMENT ON COLUMN erp_pur_invoice_line.uo_m_id IS '计量单位';
-                    
-      COMMENT ON COLUMN erp_pur_invoice_line.quantity IS '数量';
-                    
-      COMMENT ON COLUMN erp_pur_invoice_line.unit_price IS '单价(不含税)';
-                    
-      COMMENT ON COLUMN erp_pur_invoice_line.tax_rate IS '税率(%)';
-                    
-      COMMENT ON COLUMN erp_pur_invoice_line.tax_amount IS '税额';
-                    
-      COMMENT ON COLUMN erp_pur_invoice_line.amount IS '金额(不含税)';
-                    
-      COMMENT ON COLUMN erp_pur_invoice_line.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_pur_invoice_line.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_pur_invoice_line.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_pur_invoice_line.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_pur_invoice_line.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_pur_invoice_line.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_pur_invoice_line.update_time IS '修改时间';
-                    
-      COMMENT ON TABLE erp_pur_payment_line IS '付款核销行';
-                
-      COMMENT ON COLUMN erp_pur_payment_line.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_pur_payment_line.payment_id IS '付款单ID';
-                    
-      COMMENT ON COLUMN erp_pur_payment_line.invoice_id IS '发票ID';
-                    
-      COMMENT ON COLUMN erp_pur_payment_line.amount IS '核销金额';
-                    
-      COMMENT ON COLUMN erp_pur_payment_line.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_pur_payment_line.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_pur_payment_line.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_pur_payment_line.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_pur_payment_line.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_pur_payment_line.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_pur_payment_line.update_time IS '修改时间';
                     
       COMMENT ON TABLE erp_pur_order_line IS '采购订单行';
                 
@@ -1130,40 +1145,6 @@ CREATE TABLE erp_pur_return_line(
                     
       COMMENT ON COLUMN erp_pur_receive.update_time IS '修改时间';
                     
-      COMMENT ON TABLE erp_pur_quotation_line IS '供应商报价单行';
-                
-      COMMENT ON COLUMN erp_pur_quotation_line.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_pur_quotation_line.quotation_id IS '报价单ID';
-                    
-      COMMENT ON COLUMN erp_pur_quotation_line.line_no IS '行号';
-                    
-      COMMENT ON COLUMN erp_pur_quotation_line.material_id IS '物料';
-                    
-      COMMENT ON COLUMN erp_pur_quotation_line.uo_m_id IS '计量单位';
-                    
-      COMMENT ON COLUMN erp_pur_quotation_line.quantity IS '数量';
-                    
-      COMMENT ON COLUMN erp_pur_quotation_line.unit_price IS '报价单价(不含税)';
-                    
-      COMMENT ON COLUMN erp_pur_quotation_line.tax_rate IS '税率(%)';
-                    
-      COMMENT ON COLUMN erp_pur_quotation_line.lead_time_days IS '交货周期(天)';
-                    
-      COMMENT ON COLUMN erp_pur_quotation_line.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_pur_quotation_line.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_pur_quotation_line.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_pur_quotation_line.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_pur_quotation_line.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_pur_quotation_line.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_pur_quotation_line.update_time IS '修改时间';
-                    
       COMMENT ON TABLE erp_pur_receive_line IS '采购入库单行';
                 
       COMMENT ON COLUMN erp_pur_receive_line.id IS 'ID';
@@ -1267,6 +1248,44 @@ CREATE TABLE erp_pur_return_line(
       COMMENT ON COLUMN erp_pur_return.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_pur_return.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_pur_invoice_line IS '采购发票行';
+                
+      COMMENT ON COLUMN erp_pur_invoice_line.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_pur_invoice_line.invoice_id IS '发票ID';
+                    
+      COMMENT ON COLUMN erp_pur_invoice_line.receive_line_id IS '入库行ID';
+                    
+      COMMENT ON COLUMN erp_pur_invoice_line.line_no IS '行号';
+                    
+      COMMENT ON COLUMN erp_pur_invoice_line.material_id IS '物料';
+                    
+      COMMENT ON COLUMN erp_pur_invoice_line.uo_m_id IS '计量单位';
+                    
+      COMMENT ON COLUMN erp_pur_invoice_line.quantity IS '数量';
+                    
+      COMMENT ON COLUMN erp_pur_invoice_line.unit_price IS '单价(不含税)';
+                    
+      COMMENT ON COLUMN erp_pur_invoice_line.tax_rate IS '税率(%)';
+                    
+      COMMENT ON COLUMN erp_pur_invoice_line.tax_amount IS '税额';
+                    
+      COMMENT ON COLUMN erp_pur_invoice_line.amount IS '金额(不含税)';
+                    
+      COMMENT ON COLUMN erp_pur_invoice_line.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_pur_invoice_line.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_pur_invoice_line.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_pur_invoice_line.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_pur_invoice_line.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_pur_invoice_line.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_pur_invoice_line.update_time IS '修改时间';
                     
       COMMENT ON TABLE erp_pur_return_line IS '采购退货单行';
                 

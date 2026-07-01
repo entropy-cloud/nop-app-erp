@@ -46,7 +46,7 @@
                 <col id="approveStatus" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--审核人-->
-                <col id="approvedBy" ui:number="true" sortable="true"/>
+                <col id="approvedBy" sortable="true"/>
 
                 <!--审核时间-->
                 <col id="approvedAt" sortable="true"/>

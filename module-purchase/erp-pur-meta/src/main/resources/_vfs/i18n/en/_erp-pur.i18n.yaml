@@ -56,6 +56,7 @@ prop:
       updateTime: Update Time
       supplier: Supplier
       currency: Currency
+      org: Org
       lines: Lines
     ErpPurInvoiceLine:
       id: ID
@@ -78,6 +79,8 @@ prop:
       updateTime: Update Time
       invoice: Invoice
       material: Material
+      receiveLine: Receive Line
+      uoM: Uo M
     ErpPurOrder:
       id: ID
       code: Code
@@ -123,8 +126,10 @@ prop:
       warehouse: Warehouse
       currency: Currency
       settlementMethod: Settlement Method
-      lines: Lines
       org: Org
+      requisition: Requisition
+      quotation: Quotation
+      lines: Lines
     ErpPurOrderLine:
       id: ID
       orderId: Order
@@ -156,6 +161,7 @@ prop:
       uoM: Uo M
       taxRateMd: Tax Rate Md
       warehouse: Warehouse
+      project: Project
     ErpPurPayment:
       id: ID
       code: Code
@@ -192,6 +198,9 @@ prop:
       supplier: Supplier
       currency: Currency
       settlementMethod: Settlement Method
+      org: Org
+      bankAccount: Bank Account
+      partnerBankAccount: Partner Bank Account
       lines: Lines
     ErpPurPaymentLine:
       id: ID
@@ -233,6 +242,7 @@ prop:
       rfq: Rfq
       supplier: Supplier
       currency: Currency
+      org: Org
       lines: Lines
     ErpPurQuotationLine:
       id: ID
@@ -292,6 +302,8 @@ prop:
       order: Order
       supplier: Supplier
       warehouse: Warehouse
+      org: Org
+      currency: Currency
       lines: Lines
     ErpPurReceiveLine:
       id: ID
@@ -320,6 +332,8 @@ prop:
       material: Material
       sku: Sku
       uoM: Uo M
+      orderLine: Order Line
+      warehouse: Warehouse
     ErpPurRequisition:
       id: ID
       code: Code
@@ -341,6 +355,9 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      org: Org
+      requester: Requester
+      department: Department
       lines: Lines
     ErpPurRequisitionLine:
       id: ID
@@ -362,6 +379,8 @@ prop:
       requisition: Requisition
       material: Material
       uoM: Uo M
+      suggestedSupplier: Suggested Supplier
+      project: Project
     ErpPurReturn:
       id: ID
       code: Code
@@ -396,6 +415,8 @@ prop:
       receive: Receive
       supplier: Supplier
       warehouse: Warehouse
+      org: Org
+      currency: Currency
       lines: Lines
     ErpPurReturnLine:
       id: ID
@@ -422,6 +443,7 @@ prop:
       material: Material
       sku: Sku
       uoM: Uo M
+      receiveLine: Receive Line
     ErpPurRfq:
       id: ID
       code: Code
@@ -441,6 +463,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       requisition: Requisition
+      org: Org
       lines: Lines
       quotations: Quotations
     ErpPurRfqLine:

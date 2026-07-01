@@ -24,5 +24,7 @@
   "receive": null,
   "material": null,
   "sku": null,
-  "uoM": null
+  "uoM": null,
+  "orderLine": null,
+  "warehouse": null
 }

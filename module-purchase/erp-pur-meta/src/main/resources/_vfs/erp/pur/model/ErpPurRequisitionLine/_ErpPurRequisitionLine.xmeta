@@ -48,11 +48,11 @@
             <schema type="java.time.LocalDate"/>
         </prop>
         <prop name="suggestedSupplierId" displayName="建议供应商" propId="8" i18n-en:displayName="Suggested Supplier"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="suggestedSupplier">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="projectId" displayName="项目" propId="9" i18n-en:displayName="Project" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="project">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="remark" displayName="备注" propId="10" i18n-en:displayName="Remark" queryable="true" sortable="true"
@@ -97,6 +97,16 @@
               ext:joinLeftProp="uoMId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
               mandatory="true" lazy="true">
             <schema bizObjName="ErpMdUoM"/>
+        </prop>
+        <prop name="suggestedSupplier" i18n-en:displayName="Suggested Supplier" tagSet="pub" ext:kind="to-one"
+              internal="true" queryable="true" ext:joinLeftProp="suggestedSupplierId" ext:joinRightProp="id"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdPartner"/>
+        </prop>
+        <prop name="project" i18n-en:displayName="Project" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="projectId" ext:joinRightProp="id" biz:moduleId="erp/prj"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpPrjProject"/>
         </prop>
     </props>
 </meta>

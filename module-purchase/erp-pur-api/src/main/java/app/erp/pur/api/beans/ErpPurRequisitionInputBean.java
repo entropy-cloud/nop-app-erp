@@ -139,16 +139,16 @@
         }
 
 
-        private Long _approvedBy;
+        private String _approvedBy;
 
     
         @PropMeta(propId=10)
     
-        public Long getApprovedBy(){
+        public String getApprovedBy(){
             return _approvedBy;
         }
 
-        public void setApprovedBy(Long value){
+        public void setApprovedBy(String value){
             this._approvedBy = value;
         }
 

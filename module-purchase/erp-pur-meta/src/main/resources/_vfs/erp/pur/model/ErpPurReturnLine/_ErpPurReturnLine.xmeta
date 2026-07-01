@@ -28,7 +28,7 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="receiveLineId" displayName="入库行ID" propId="3" i18n-en:displayName="Receive Line" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="receiveLine">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="lineNo" displayName="行号" propId="4" i18n-en:displayName="Line No" mandatory="true" queryable="true"
@@ -118,6 +118,11 @@
               ext:joinLeftProp="uoMId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
               mandatory="true" lazy="true">
             <schema bizObjName="ErpMdUoM"/>
+        </prop>
+        <prop name="receiveLine" i18n-en:displayName="Receive Line" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="receiveLineId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpPurReceiveLine"/>
         </prop>
     </props>
 </meta>

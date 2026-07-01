@@ -207,14 +207,13 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
 
     // ---------- misc helpers ----------
 
-    private Long currentUserId() {
+    private String currentUserId() {
         try {
             IUserContext ctx = IUserContext.get();
             if (ctx == null) {
                 return null;
             }
-            String userId = ctx.getUserId();
-            return StringHelper.isBlank(userId) ? null : Long.valueOf(userId);
+            return ctx.getUserId();
         } catch (Exception e) {
             return null;
         }

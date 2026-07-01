@@ -98,6 +98,12 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_uoM = "uoM";
     
+    /* relation:  */
+    public static final String PROP_NAME_suggestedSupplier = "suggestedSupplier";
+    
+    /* relation:  */
+    public static final String PROP_NAME_project = "project";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -992,6 +998,52 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_uoM, refEntity,()->{
            
                            this.setUoMId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdPartner getSuggestedSupplier(){
+       return (app.erp.md.dao.entity.ErpMdPartner)internalGetRefEntity(PROP_NAME_suggestedSupplier);
+    }
+
+    public final void setSuggestedSupplier(app.erp.md.dao.entity.ErpMdPartner refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setSuggestedSupplierId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_suggestedSupplier, refEntity,()->{
+           
+                           this.setSuggestedSupplierId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.prj.dao.entity.ErpPrjProject getProject(){
+       return (app.erp.prj.dao.entity.ErpPrjProject)internalGetRefEntity(PROP_NAME_project);
+    }
+
+    public final void setProject(app.erp.prj.dao.entity.ErpPrjProject refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setProjectId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_project, refEntity,()->{
+           
+                           this.setProjectId(refEntity.getId());
                        
            });
            }

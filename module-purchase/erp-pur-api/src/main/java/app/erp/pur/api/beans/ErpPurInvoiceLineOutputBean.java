@@ -287,4 +287,26 @@
         }
 
 
+        private Map<String,Object> _receiveLine;
+
+        public Map<String,Object> getReceiveLine(){
+            return _receiveLine;
+        }
+
+        public void setReceiveLine(Map<String,Object> value){
+            this._receiveLine = value;
+        }
+
+
+        private Map<String,Object> _uoM;
+
+        public Map<String,Object> getUoM(){
+            return _uoM;
+        }
+
+        public void setUoM(Map<String,Object> value){
+            this._uoM = value;
+        }
+
+
     }

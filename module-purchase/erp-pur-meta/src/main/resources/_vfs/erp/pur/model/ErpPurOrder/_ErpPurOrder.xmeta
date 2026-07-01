@@ -32,11 +32,11 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="requisitionId" displayName="请购单" propId="4" i18n-en:displayName="Requisition" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="requisition">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="quotationId" displayName="报价单" propId="5" i18n-en:displayName="Quotation" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="quotation">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="supplierId" displayName="供应商" propId="6" i18n-en:displayName="Supplier" mandatory="true"
@@ -125,11 +125,11 @@
         </prop>
         <prop name="postedBy" displayName="过账人" propId="27" i18n-en:displayName="Posted By" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String" precision="36"/>
         </prop>
         <prop name="approvedBy" displayName="审核人" propId="28" i18n-en:displayName="Approved By" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String" precision="36"/>
         </prop>
         <prop name="approvedAt" displayName="审核时间" propId="29" i18n-en:displayName="Approved At" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -183,17 +183,27 @@
               biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdSettlementMethod"/>
         </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="requisition" i18n-en:displayName="Requisition" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="requisitionId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpPurRequisition"/>
+        </prop>
+        <prop name="quotation" i18n-en:displayName="Quotation" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="quotationId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpPurQuotation"/>
+        </prop>
         <prop name="lines" i18n-en:displayName="Lines" tagSet="pub,cascade-delete,insertable,updatable"
               ext:kind="to-many" internal="true" ext:joinLeftProp="id" ext:joinRightProp="orderId" insertable="true"
               updatable="true" lazy="true">
             <schema>
                 <item bizObjName="ErpPurOrderLine"/>
             </schema>
-        </prop>
-        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
-              lazy="true">
-            <schema bizObjName="ErpMdOrganization"/>
         </prop>
     </props>
 </meta>

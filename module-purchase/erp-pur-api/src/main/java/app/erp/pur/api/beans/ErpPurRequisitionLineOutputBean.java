@@ -270,4 +270,26 @@
         }
 
 
+        private Map<String,Object> _suggestedSupplier;
+
+        public Map<String,Object> getSuggestedSupplier(){
+            return _suggestedSupplier;
+        }
+
+        public void setSuggestedSupplier(Map<String,Object> value){
+            this._suggestedSupplier = value;
+        }
+
+
+        private Map<String,Object> _project;
+
+        public Map<String,Object> getProject(){
+            return _project;
+        }
+
+        public void setProject(Map<String,Object> value){
+            this._project = value;
+        }
+
+
     }

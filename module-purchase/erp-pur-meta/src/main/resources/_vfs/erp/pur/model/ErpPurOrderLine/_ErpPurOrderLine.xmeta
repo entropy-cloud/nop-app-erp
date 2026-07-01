@@ -84,7 +84,7 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="projectId" displayName="项目" propId="17" i18n-en:displayName="Project" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="project">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="remark" displayName="备注" propId="18" i18n-en:displayName="Remark" queryable="true" sortable="true"
@@ -144,6 +144,10 @@
               queryable="true" ext:joinLeftProp="warehouseId" ext:joinRightProp="id" biz:moduleId="erp/md"
               insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdWarehouse"/>
+        </prop>
+        <prop name="project" i18n-en:displayName="Project" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="projectId" ext:joinRightProp="id" biz:moduleId="erp/prj" lazy="true" published="false">
+            <schema bizObjName="ErpPrjProject"/>
         </prop>
     </props>
 </meta>

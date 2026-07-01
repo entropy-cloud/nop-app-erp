@@ -337,4 +337,15 @@
         }
 
 
+        private Map<String,Object> _receiveLine;
+
+        public Map<String,Object> getReceiveLine(){
+            return _receiveLine;
+        }
+
+        public void setReceiveLine(Map<String,Object> value){
+            this._receiveLine = value;
+        }
+
+
     }
