@@ -4,29 +4,27 @@ package app.erp.sal.service.entity;
 import app.erp.inv.biz.IErpInvStockMoveBiz;
 import app.erp.inv.biz.StockMoveRequest;
 import app.erp.inv.dao.entity.ErpInvStockMove;
+import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
+import app.erp.sal.biz.IErpSalOrderBiz;
 import app.erp.sal.biz.IErpSalDeliveryBiz;
 import app.erp.sal.dao.entity.ErpSalDelivery;
 import app.erp.sal.dao.entity.ErpSalDeliveryLine;
-import app.erp.sal.dao.entity.ErpSalOrder;
 import app.erp.sal.dao.entity.ErpSalOrderLine;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
 import io.nop.api.core.annotations.biz.BizModel;
-import io.nop.api.core.annotations.orm.SingleSession;
-import io.nop.api.core.annotations.txn.Transactional;
+import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
-import io.nop.commons.util.StringHelper;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
-import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.core.context.IServiceContext;
-import io.nop.api.core.annotations.core.Name;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -42,18 +40,10 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * {@code docs/design/sales/state-machine.md}，与采购域镜像对称）+ 出库审核触发库存移动（对齐
  * {@code docs/design/inventory/cross-domain.md} 的 {@code generateMove} 调用方契约 + 销售独有可用量校验）。
  *
- * <ul>
- *   <li>审核轴：UNSUBMITTED→SUBMITTED→APPROVED/REJECTED，驳回→重提，反审核 APPROVED→REJECTED。</li>
- *   <li>单据轴：任意非终态→docStatus=CANCELLED（已 APPROVED 者须先冲销出库移动单）。</li>
- *   <li>{@link #approve} 通过后调 {@link IErpInvStockMoveBiz#generateMove}(OUTGOING)——可用量不足由库存域
- *       CONFIRM 内 {@code validateAvailable} 抛 {@link NopException} 致整个出库单审核回滚（销售独有，state-machine §4）；
- *       {@code delivery.posted = move.posted}，并回写源订单 {@code deliveryStatus}。</li>
- *   <li>{@link #reverseApprove}/{@link #cancel} 内部冲销已生成出库移动单（按 {@code (relatedBillType,relatedBillCode)}
- *       纯查询定位原单，按 {@code (REVERSAL,原单.code)} 幂等防双冲销）。</li>
- * </ul>
+ * <p>跨实体访问对齐 {@code ai-defaults.md}：客户启用校验经 {@link IErpMdPartnerBiz}；
+ * 发货进度回写源订单经 {@link IErpSalOrderBiz}；冲销时定位出库移动单经 {@link IErpInvStockMoveBiz}。
  *
  * <p>状态机迁移校验前置 {@code approveStatus}/{@code docStatus}，违反抛 {@link NopException}。
- * {@code @SingleSession}+{@code @Transactional} 提供 ORM Session 与事务边界（同 inventory/purchase 基线）。
  */
 @BizModel("ErpSalDelivery")
 public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> implements IErpSalDeliveryBiz {
@@ -65,6 +55,12 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
     DeliveryStockMoveBuilder stockMoveBuilder;
 
     @Inject
+    IErpSalOrderBiz orderBiz;
+
+    @Inject
+    IErpMdPartnerBiz mdPartnerBiz;
+
+    @Inject
     IOrmTemplate ormTemplate;
 
     public ErpSalDeliveryBizModel() {
@@ -74,7 +70,7 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
     @Override
     @BizMutation
     public ErpSalDelivery submit(@Name("deliveryId") Long deliveryId, IServiceContext context) {
-        ErpSalDelivery delivery = requireDelivery(deliveryId);
+        ErpSalDelivery delivery = requireDelivery(deliveryId, context);
         requireNotCancelled(delivery);
         Integer status = delivery.getApproveStatus();
         if (status == null) {
@@ -85,7 +81,7 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
             throw illegalTransition(delivery, status, "UNSUBMITTED 或 REJECTED");
         }
         requireLinesNonEmpty(delivery);
-        requireCustomerActive(delivery);
+        requireCustomerActive(delivery, context);
         delivery.setApproveStatus(ErpSalConstants.APPROVE_STATUS_SUBMITTED);
         dao().updateEntity(delivery);
         return delivery;
@@ -94,7 +90,7 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
     @Override
     @BizMutation
     public ErpSalDelivery withdrawSubmit(@Name("deliveryId") Long deliveryId, IServiceContext context) {
-        ErpSalDelivery delivery = requireDelivery(deliveryId);
+        ErpSalDelivery delivery = requireDelivery(deliveryId, context);
         requireNotCancelled(delivery);
         Integer status = delivery.getApproveStatus();
         if (status == null || status != ErpSalConstants.APPROVE_STATUS_SUBMITTED) {
@@ -108,7 +104,7 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
     @Override
     @BizMutation
     public ErpSalDelivery approve(@Name("deliveryId") Long deliveryId, IServiceContext context) {
-        ErpSalDelivery delivery = requireDelivery(deliveryId);
+        ErpSalDelivery delivery = requireDelivery(deliveryId, context);
         Integer status = delivery.getApproveStatus();
         // 幂等：已审核单据再次审核为空操作（state-machine §4），出库移动单已存在，不重复触发。
         if (status != null && status == ErpSalConstants.APPROVE_STATUS_APPROVED) {
@@ -118,7 +114,7 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
         if (status == null || status != ErpSalConstants.APPROVE_STATUS_SUBMITTED) {
             throw illegalTransition(delivery, status, "SUBMITTED");
         }
-        requireCustomerActive(delivery);
+        requireCustomerActive(delivery, context);
 
         ErpInvStockMove move = triggerOutgoingMove(delivery, context);
         // 跨域 generateMove 调用可能扰动会话脏跟踪，故重新加载并以 updateEntity 显式持久化。
@@ -128,14 +124,14 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
         delivery.setApprovedAt(CoreMetrics.currentDateTime());
         applyPostingResult(delivery, move);
         dao().updateEntity(delivery);
-        rollupOrderDeliveryStatus(delivery);
+        rollupOrderDeliveryStatus(delivery, context);
         return delivery;
     }
 
     @Override
     @BizMutation
     public ErpSalDelivery reject(@Name("deliveryId") Long deliveryId, IServiceContext context) {
-        ErpSalDelivery delivery = requireDelivery(deliveryId);
+        ErpSalDelivery delivery = requireDelivery(deliveryId, context);
         requireNotCancelled(delivery);
         Integer status = delivery.getApproveStatus();
         if (status == null || status != ErpSalConstants.APPROVE_STATUS_SUBMITTED) {
@@ -149,7 +145,7 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
     @Override
     @BizMutation
     public ErpSalDelivery reverseApprove(@Name("deliveryId") Long deliveryId, IServiceContext context) {
-        ErpSalDelivery delivery = requireDelivery(deliveryId);
+        ErpSalDelivery delivery = requireDelivery(deliveryId, context);
         Integer status = delivery.getApproveStatus();
         // 幂等：已 REJECTED（曾驳回或已反审核）无更多可冲销，直接返回。
         if (status != null && status == ErpSalConstants.APPROVE_STATUS_REJECTED) {
@@ -168,7 +164,7 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
     @Override
     @BizMutation
     public ErpSalDelivery cancel(@Name("deliveryId") Long deliveryId, IServiceContext context) {
-        ErpSalDelivery delivery = requireDelivery(deliveryId);
+        ErpSalDelivery delivery = requireDelivery(deliveryId, context);
         Integer docStatus = delivery.getDocStatus();
         if (docStatus != null && docStatus == ErpSalConstants.DOC_STATUS_CANCELLED) {
             throw illegalDocTransition(delivery, docStatus, "非已作废");
@@ -189,18 +185,15 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
      * 审核通过后构造 {@link StockMoveRequest}(OUTGOING) 调 {@link IErpInvStockMoveBiz#generateMove}。
      * 出库类在库存域 CONFIRM 校验可用量（{@code availableQuantity ≥ quantity}），不足抛 {@link NopException}
      * 致整个出库单审核回滚（对齐 state-machine §4 销售独有 + cross-domain「不足拒绝+审核回滚」）。
-     * 业务联动自动 DONE 后库存域内部触发存货过账（SALES_OUTPUT，借主营业务成本/贷存货），{@code billHeadCode}=移动单 code。
      */
     ErpInvStockMove triggerOutgoingMove(ErpSalDelivery delivery, IServiceContext context) {
         List<ErpSalDeliveryLine> lines = loadLines(delivery.getId());
-        StockMoveRequest request = stockMoveBuilder.build(delivery, lines);
+        StockMoveRequest request = stockMoveBuilder.build(delivery, lines, context);
         return stockMoveBiz.generateMove(request, context);
     }
 
     /**
      * 将移动单过账结果接线到出库单：{@code delivery.posted = move.posted}、{@code postedAt}/{@code postedBy} 落地。
-     * 存货估值过账（结转成本）由库存域独占（InvAcctDocProvider，SALES_OUTPUT 非默认 Provider），
-     * sales 不注册过账 Provider（避免与库存域非默认声明冲突致 ERR_DUPLICATE_PROVIDER）。
      */
     private void applyPostingResult(ErpSalDelivery delivery, ErpInvStockMove move) {
         delivery.setPosted(Boolean.TRUE.equals(move.getPosted()));
@@ -211,21 +204,18 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
     }
 
     /**
-     * 反审核/作废前的内部冲销（Design A）：
-     * <ol>
-     *   <li>按 {@code (ERP_SAL_DELIVERY, delivery.code)} 纯查询定位原出库移动单（无 ORM FK，不改 model）；缺失抛
-     *       {@link ErpSalErrors#ERR_MOVE_NOT_FOUND}（APPROVED 却无移动单为数据不一致）。</li>
-     *   <li>按 {@code (REVERSAL, 原单.code)} 查是否已存在反向冲销移动单——已存在则跳过（幂等防双冲销）；
-     *       不存在则调 {@link IErpInvStockMoveBiz#reverse}（库存域 DONE 时冲销流水/余额/红字凭证）。</li>
-     * </ol>
+     * 反审核/作废前的内部冲销（Design A）：经 {@link IErpInvStockMoveBiz} 定位原出库移动单与既有冲销单，
+     * 不存在冲销单则调 {@link IErpInvStockMoveBiz#reverse}。
      */
     void ensureReversed(ErpSalDelivery delivery, IServiceContext context) {
-        ErpInvStockMove original = findMove(ErpSalConstants.RELATED_BILL_TYPE_SAL_DELIVERY, delivery.getCode());
+        ErpInvStockMove original = stockMoveBiz.findByRelatedBill(
+                ErpSalConstants.RELATED_BILL_TYPE_SAL_DELIVERY, delivery.getCode(), context);
         if (original == null) {
             throw new NopException(ErpSalErrors.ERR_MOVE_NOT_FOUND)
                     .param(ErpSalErrors.ARG_DELIVERY_CODE, delivery.getCode());
         }
-        ErpInvStockMove existingReversal = findMove(ErpSalConstants.RELATED_BILL_TYPE_REVERSAL, original.getCode());
+        ErpInvStockMove existingReversal = stockMoveBiz.findByRelatedBill(
+                ErpSalConstants.RELATED_BILL_TYPE_REVERSAL, original.getCode(), context);
         if (existingReversal != null) {
             return;
         }
@@ -233,17 +223,12 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
     }
 
     /**
-     * 回写源订单 {@code deliveryStatus}：按「累计已发 / 订单数量」按行比较（BigDecimal），全发清→DELIVERED、
-     * 部分发→PARTIAL、未发→UNDELIVERED。当前出库单（正在审核）的行始终计入（避免依赖同事务内查询可见性）；
-     * 其他已审核出库单经查询累加。
+     * 回写源订单 {@code deliveryStatus}：按「累计已发 / 订单数量」按行比较，全发清→DELIVERED、
+     * 部分发→PARTIAL、未发→UNDELIVERED。进度回写经 {@link IErpSalOrderBiz}（跨聚合写）。
      */
-    void rollupOrderDeliveryStatus(ErpSalDelivery currentDelivery) {
+    void rollupOrderDeliveryStatus(ErpSalDelivery currentDelivery, IServiceContext context) {
         Long orderId = currentDelivery.getOrderId();
         if (orderId == null) {
-            return;
-        }
-        ErpSalOrder order = daoFor(ErpSalOrder.class).getEntityById(orderId);
-        if (order == null) {
             return;
         }
         List<ErpSalOrderLine> orderLines = loadOrderLines(orderId);
@@ -280,8 +265,7 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
         } else {
             rolled = ErpSalConstants.DELIVERY_STATUS_UNDELIVERED;
         }
-        order.setDeliveryStatus(rolled);
-        daoFor(ErpSalOrder.class).updateEntity(order);
+        orderBiz.updateDeliveryStatus(orderId, rolled, context);
     }
 
     private void addLineQuantities(Map<Long, BigDecimal> map, List<ErpSalDeliveryLine> lines) {
@@ -304,13 +288,8 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
 
     // ---------- validation helpers ----------
 
-    private ErpSalDelivery requireDelivery(Long deliveryId) {
-        ErpSalDelivery delivery = dao().getEntityById(deliveryId);
-        if (delivery == null) {
-            throw new NopException(ErpSalErrors.ERR_DELIVERY_NOT_FOUND)
-                    .param(ErpSalErrors.ARG_DELIVERY_ID, deliveryId);
-        }
-        return delivery;
+    private ErpSalDelivery requireDelivery(Long deliveryId, IServiceContext context) {
+        return requireEntity(String.valueOf(deliveryId), null, context);
     }
 
     private void requireNotCancelled(ErpSalDelivery delivery) {
@@ -327,12 +306,11 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
         }
     }
 
-    private void requireCustomerActive(ErpSalDelivery delivery) {
+    private void requireCustomerActive(ErpSalDelivery delivery, IServiceContext context) {
         if (delivery.getCustomerId() == null) {
             return;
         }
-        // 客户启用校验为纯实体读（master-data 机制 B，无跨域 I*Biz 业务逻辑），故用 daoFor 直接加载。
-        ErpMdPartner partner = daoFor(ErpMdPartner.class).getEntityById(delivery.getCustomerId());
+        ErpMdPartner partner = mdPartnerBiz.findById(delivery.getCustomerId(), context);
         if (partner == null || partner.getStatus() == null
                 || partner.getStatus() != ErpSalConstants.PARTNER_STATUS_ACTIVE) {
             throw new NopException(ErpSalErrors.ERR_PARTNER_INACTIVE)
@@ -354,15 +332,6 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
         QueryBean q = new QueryBean();
         q.addFilter(eq("orderId", orderId));
         return new ArrayList<>(dao.findAllByQuery(q));
-    }
-
-    private ErpInvStockMove findMove(String relatedBillType, String relatedBillCode) {
-        ormTemplate.flushSession();
-        IEntityDao<ErpInvStockMove> dao = daoFor(ErpInvStockMove.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(and(eq("relatedBillType", relatedBillType), eq("relatedBillCode", relatedBillCode)));
-        List<ErpInvStockMove> list = dao.findAllByQuery(q);
-        return list.isEmpty() ? null : list.get(0);
     }
 
     // ---------- misc helpers ----------

@@ -1,31 +1,36 @@
 
 package app.erp.pur.service.entity;
 
+import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
+import app.erp.pur.biz.ConvertToOrderRequest;
 import app.erp.pur.biz.IErpPurOrderBiz;
 import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.dao.entity.ErpPurOrderLine;
+import app.erp.pur.dao.entity.ErpPurRequisition;
+import app.erp.pur.dao.entity.ErpPurRequisitionLine;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
+import io.nop.api.core.annotations.biz.BizAction;
 import io.nop.api.core.annotations.biz.BizModel;
-import io.nop.api.core.annotations.orm.SingleSession;
-import io.nop.api.core.annotations.txn.Transactional;
+import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.auth.IUserContext;
+import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
-import io.nop.commons.util.StringHelper;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
-import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.core.context.IServiceContext;
-import io.nop.api.core.annotations.core.Name;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.ne;
 
 /**
  * 采购订单 BizModel。在 {@link CrudBizModel} 标准 CRUD 之上实现三轴审批状态机
@@ -34,19 +39,21 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p><b>订单审核 = 纯状态推进，不触发库存/凭证</b>（订单是意向，下游单据才触发）——与入库单审核触发
  * {@code generateMove} 实质性不同，故 {@link #approve} 不含跨域调用。
  *
- * <ul>
- *   <li>审核轴：UNSUBMITTED→SUBMITTED→APPROVED/REJECTED，驳回→重提，反审核 APPROVED→REJECTED。</li>
- *   <li>单据轴：任意非终态→docStatus=CANCELLED。</li>
- * </ul>
- *
- * <p>状态机迁移校验前置 {@code approveStatus}/{@code docStatus}，违反抛 {@link NopException}。
- * {@code @SingleSession}+{@code @Transactional} 提供 ORM Session 与事务边界（同入库单基线）。
+ * <p>跨实体访问对齐 {@code ai-defaults.md}：供应商启用校验经 {@link IErpMdPartnerBiz}；
+ * 请购→订单转化、收货进度回写由本接口的 {@link #createFromRequisition}/{@link #updateReceiveStatus}
+ * 承接（操作自身聚合 {@link ErpPurOrder}/行）。
  */
 @BizModel("ErpPurOrder")
 public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IErpPurOrderBiz {
 
     @Inject
     IOrmTemplate ormTemplate;
+
+    @Inject
+    IErpMdPartnerBiz mdPartnerBiz;
+
+    @Inject
+    RequisitionToOrderConverter converter;
 
     public ErpPurOrderBizModel() {
         setEntityName(ErpPurOrder.class.getName());
@@ -55,7 +62,7 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
     @Override
     @BizMutation
     public ErpPurOrder submit(@Name("orderId") Long orderId, IServiceContext context) {
-        ErpPurOrder order = requireOrder(orderId);
+        ErpPurOrder order = requireOrder(orderId, context);
         requireNotCancelled(order);
         Integer status = order.getApproveStatus();
         if (status == null) {
@@ -66,7 +73,7 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
             throw illegalTransition(order, status, "UNSUBMITTED 或 REJECTED");
         }
         requireLinesNonEmpty(order);
-        requireSupplierActive(order);
+        requireSupplierActive(order, context);
         order.setApproveStatus(ErpPurConstants.APPROVE_STATUS_SUBMITTED);
         dao().updateEntity(order);
         return order;
@@ -75,7 +82,7 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
     @Override
     @BizMutation
     public ErpPurOrder withdrawSubmit(@Name("orderId") Long orderId, IServiceContext context) {
-        ErpPurOrder order = requireOrder(orderId);
+        ErpPurOrder order = requireOrder(orderId, context);
         requireNotCancelled(order);
         Integer status = order.getApproveStatus();
         if (status == null || status != ErpPurConstants.APPROVE_STATUS_SUBMITTED) {
@@ -89,7 +96,7 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
     @Override
     @BizMutation
     public ErpPurOrder approve(@Name("orderId") Long orderId, IServiceContext context) {
-        ErpPurOrder order = requireOrder(orderId);
+        ErpPurOrder order = requireOrder(orderId, context);
         Integer status = order.getApproveStatus();
         // 幂等：已审核订单再次审核为空操作（state-machine §4，订单无库存触发故无副作用可重复）。
         if (status != null && status == ErpPurConstants.APPROVE_STATUS_APPROVED) {
@@ -99,7 +106,7 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
         if (status == null || status != ErpPurConstants.APPROVE_STATUS_SUBMITTED) {
             throw illegalTransition(order, status, "SUBMITTED");
         }
-        requireSupplierActive(order);
+        requireSupplierActive(order, context);
         // 订单审核 = 纯状态推进（state-machine §2），不触发库存/凭证（下游入库单才触发）。
         order.setApproveStatus(ErpPurConstants.APPROVE_STATUS_APPROVED);
         order.setApprovedBy(currentUserId());
@@ -111,7 +118,7 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
     @Override
     @BizMutation
     public ErpPurOrder reject(@Name("orderId") Long orderId, IServiceContext context) {
-        ErpPurOrder order = requireOrder(orderId);
+        ErpPurOrder order = requireOrder(orderId, context);
         requireNotCancelled(order);
         Integer status = order.getApproveStatus();
         if (status == null || status != ErpPurConstants.APPROVE_STATUS_SUBMITTED) {
@@ -125,7 +132,7 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
     @Override
     @BizMutation
     public ErpPurOrder reverseApprove(@Name("orderId") Long orderId, IServiceContext context) {
-        ErpPurOrder order = requireOrder(orderId);
+        ErpPurOrder order = requireOrder(orderId, context);
         Integer status = order.getApproveStatus();
         // 幂等：已 REJECTED 无更多可反审核，直接返回。
         if (status != null && status == ErpPurConstants.APPROVE_STATUS_REJECTED) {
@@ -144,7 +151,7 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
     @Override
     @BizMutation
     public ErpPurOrder cancel(@Name("orderId") Long orderId, IServiceContext context) {
-        ErpPurOrder order = requireOrder(orderId);
+        ErpPurOrder order = requireOrder(orderId, context);
         Integer docStatus = order.getDocStatus();
         if (docStatus != null && docStatus == ErpPurConstants.DOC_STATUS_CANCELLED) {
             throw illegalDocTransition(order, docStatus, "非已作废");
@@ -155,15 +162,58 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
         return order;
     }
 
-    // ---------- validation helpers ----------
+    // ---------- 跨聚合写契约（请购→订单转化、收货进度回写） ----------
 
-    ErpPurOrder requireOrder(Long orderId) {
-        ErpPurOrder order = dao().getEntityById(orderId);
-        if (order == null) {
-            throw new NopException(ErpPurErrors.ERR_ORDER_NOT_FOUND)
-                    .param(ErpPurErrors.ARG_ORDER_CODE, String.valueOf(orderId));
+    @Override
+    @BizAction
+    public ErpPurOrder createFromRequisition(@Name("requisition") ErpPurRequisition requisition,
+                                             @Name("lines") List<ErpPurRequisitionLine> lines,
+                                             @Name("supplierId") Long supplierId,
+                                             @Name("request") ConvertToOrderRequest request,
+                                             IServiceContext context) {
+        ErpPurOrder order = converter.build(requisition, lines, supplierId, request);
+        dao().saveEntity(order);
+        // flush 使订单 ID 落地，再保存行（行 orderId 依赖头 ID）
+        ormTemplate.flushSession();
+        for (ErpPurOrderLine orderLine : converter.buildLines(order, lines, request)) {
+            daoFor(ErpPurOrderLine.class).saveEntity(orderLine);
         }
         return order;
+    }
+
+    @Override
+    @BizAction
+    public boolean existsActiveByRequisition(@Name("requisitionId") Long requisitionId, IServiceContext context) {
+        if (requisitionId == null) {
+            return false;
+        }
+        ormTemplate.flushSession();
+        QueryBean q = new QueryBean();
+        q.addFilter(and(eq("requisitionId", requisitionId),
+                ne("docStatus", ErpPurConstants.DOC_STATUS_CANCELLED)));
+        return !dao().findAllByQuery(q).isEmpty();
+    }
+
+    @Override
+    @BizAction
+    public void updateReceiveStatus(@Name("orderId") Long orderId,
+                                    @Name("receiveStatus") Integer receiveStatus,
+                                    IServiceContext context) {
+        if (orderId == null) {
+            return;
+        }
+        ErpPurOrder order = dao().getEntityById(orderId);
+        if (order == null) {
+            return;
+        }
+        order.setReceiveStatus(receiveStatus);
+        dao().updateEntity(order);
+    }
+
+    // ---------- validation helpers ----------
+
+    ErpPurOrder requireOrder(Long orderId, IServiceContext context) {
+        return requireEntity(String.valueOf(orderId), null, context);
     }
 
     void requireNotCancelled(ErpPurOrder order) {
@@ -180,12 +230,11 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
         }
     }
 
-    void requireSupplierActive(ErpPurOrder order) {
+    void requireSupplierActive(ErpPurOrder order, IServiceContext context) {
         if (order.getSupplierId() == null) {
             return;
         }
-        // 供应商启用校验为纯实体读（master-data 机制 B，无跨域 I*Biz 业务逻辑），故用 daoFor 直接加载。
-        ErpMdPartner partner = daoFor(ErpMdPartner.class).getEntityById(order.getSupplierId());
+        ErpMdPartner partner = mdPartnerBiz.findById(order.getSupplierId(), context);
         if (partner == null || partner.getStatus() == null
                 || partner.getStatus() != ErpPurConstants.PARTNER_STATUS_ACTIVE) {
             throw new NopException(ErpPurErrors.ERR_PARTNER_INACTIVE)
@@ -197,7 +246,7 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
 
     List<ErpPurOrderLine> loadLines(Long orderId) {
         IEntityDao<ErpPurOrderLine> dao = daoFor(ErpPurOrderLine.class);
-        io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
+        QueryBean q = new QueryBean();
         q.addFilter(eq("orderId", orderId));
         return new ArrayList<>(dao.findAllByQuery(q));
     }

@@ -2,6 +2,7 @@
 package app.erp.pur.service.entity;
 
 import app.erp.pur.biz.ConvertToOrderRequest;
+import app.erp.pur.biz.IErpPurOrderBiz;
 import app.erp.pur.biz.IErpPurRequisitionBiz;
 import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.dao.entity.ErpPurOrderLine;
@@ -10,42 +11,30 @@ import app.erp.pur.dao.entity.ErpPurRequisitionLine;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
 import io.nop.api.core.annotations.biz.BizModel;
-import io.nop.api.core.annotations.orm.SingleSession;
-import io.nop.api.core.annotations.txn.Transactional;
+import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
-import io.nop.commons.util.StringHelper;
 import io.nop.dao.api.IEntityDao;
-import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
-import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.core.context.IServiceContext;
-import io.nop.api.core.annotations.core.Name;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
-import static io.nop.api.core.beans.FilterBeans.ne;
 
 /**
  * 采购请购单 BizModel。在 {@link CrudBizModel} 标准 CRUD 之上实现三轴审批状态机 + 请购→订单转化
  * （对齐 {@code docs/design/purchase/requisition.md} + {@code docs/design/purchase/state-machine.md}）。
  *
- * <ul>
- *   <li>审核轴：UNSUBMITTED→SUBMITTED→APPROVED/REJECTED，驳回→重提，反审核 APPROVED→REJECTED。</li>
- *   <li>单据轴：任意非终态→docStatus=CANCELLED。</li>
- *   <li>{@link #approve} 仅状态推进（请购无自动下游触发，转化是显式独立动作）。</li>
- *   <li>请购头无供应商，状态机不做供应商启用校验（转化时校验行建议供应商一致性）。</li>
- *   <li>{@link #convertToOrder}：APPROVED 请购 + 调用方补充字段 → 创建 {@link ErpPurOrder}(UNSUBMITTED/DRAFT) + 行，
- *       回链 {@code order.requisitionId}，幂等防重复转化。</li>
- * </ul>
+ * <p>请购→订单转化为跨聚合写：经 {@link IErpPurOrderBiz} 的 {@code createFromRequisition}/{@code existsActiveByRequisition}
+ * 委托订单聚合（订单/行的组装与持久化归订单侧，请购侧仅做 APPROVED 校验、供应商一致性校验与幂等防重）。
  *
  * <p>状态机迁移校验前置 {@code approveStatus}/{@code docStatus}，违反抛 {@link NopException}。
  */
@@ -53,10 +42,7 @@ import static io.nop.api.core.beans.FilterBeans.ne;
 public class ErpPurRequisitionBizModel extends CrudBizModel<ErpPurRequisition> implements IErpPurRequisitionBiz {
 
     @Inject
-    IOrmTemplate ormTemplate;
-
-    @Inject
-    RequisitionToOrderConverter converter;
+    IErpPurOrderBiz orderBiz;
 
     public ErpPurRequisitionBizModel() {
         setEntityName(ErpPurRequisition.class.getName());
@@ -65,7 +51,7 @@ public class ErpPurRequisitionBizModel extends CrudBizModel<ErpPurRequisition> i
     @Override
     @BizMutation
     public ErpPurRequisition submit(@Name("requisitionId") Long requisitionId, IServiceContext context) {
-        ErpPurRequisition req = requireRequisition(requisitionId);
+        ErpPurRequisition req = requireRequisition(requisitionId, context);
         requireNotCancelled(req);
         Integer status = req.getApproveStatus();
         if (status == null) {
@@ -84,7 +70,7 @@ public class ErpPurRequisitionBizModel extends CrudBizModel<ErpPurRequisition> i
     @Override
     @BizMutation
     public ErpPurRequisition withdrawSubmit(@Name("requisitionId") Long requisitionId, IServiceContext context) {
-        ErpPurRequisition req = requireRequisition(requisitionId);
+        ErpPurRequisition req = requireRequisition(requisitionId, context);
         requireNotCancelled(req);
         Integer status = req.getApproveStatus();
         if (status == null || status != ErpPurConstants.APPROVE_STATUS_SUBMITTED) {
@@ -98,7 +84,7 @@ public class ErpPurRequisitionBizModel extends CrudBizModel<ErpPurRequisition> i
     @Override
     @BizMutation
     public ErpPurRequisition approve(@Name("requisitionId") Long requisitionId, IServiceContext context) {
-        ErpPurRequisition req = requireRequisition(requisitionId);
+        ErpPurRequisition req = requireRequisition(requisitionId, context);
         Integer status = req.getApproveStatus();
         // 幂等：已审核请购再次审核为空操作（state-machine §4）。
         if (status != null && status == ErpPurConstants.APPROVE_STATUS_APPROVED) {
@@ -119,7 +105,7 @@ public class ErpPurRequisitionBizModel extends CrudBizModel<ErpPurRequisition> i
     @Override
     @BizMutation
     public ErpPurRequisition reject(@Name("requisitionId") Long requisitionId, IServiceContext context) {
-        ErpPurRequisition req = requireRequisition(requisitionId);
+        ErpPurRequisition req = requireRequisition(requisitionId, context);
         requireNotCancelled(req);
         Integer status = req.getApproveStatus();
         if (status == null || status != ErpPurConstants.APPROVE_STATUS_SUBMITTED) {
@@ -133,7 +119,7 @@ public class ErpPurRequisitionBizModel extends CrudBizModel<ErpPurRequisition> i
     @Override
     @BizMutation
     public ErpPurRequisition reverseApprove(@Name("requisitionId") Long requisitionId, IServiceContext context) {
-        ErpPurRequisition req = requireRequisition(requisitionId);
+        ErpPurRequisition req = requireRequisition(requisitionId, context);
         Integer status = req.getApproveStatus();
         // 幂等：已 REJECTED 无更多可反审核，直接返回。
         if (status != null && status == ErpPurConstants.APPROVE_STATUS_REJECTED) {
@@ -143,7 +129,6 @@ public class ErpPurRequisitionBizModel extends CrudBizModel<ErpPurRequisition> i
             throw illegalTransition(req, status, "APPROVED");
         }
         // 请购无下游触发，反审核仅状态迁移（反审核目标态 REJECTED，对齐 §3/§11.4）。
-        // 若请购已转化为订单，反审核请购的下游影响属独立关注点，本计划不处理。
         req.setApproveStatus(ErpPurConstants.APPROVE_STATUS_REJECTED);
         dao().updateEntity(req);
         return req;
@@ -152,7 +137,7 @@ public class ErpPurRequisitionBizModel extends CrudBizModel<ErpPurRequisition> i
     @Override
     @BizMutation
     public ErpPurRequisition cancel(@Name("requisitionId") Long requisitionId, IServiceContext context) {
-        ErpPurRequisition req = requireRequisition(requisitionId);
+        ErpPurRequisition req = requireRequisition(requisitionId, context);
         Integer docStatus = req.getDocStatus();
         if (docStatus != null && docStatus == ErpPurConstants.DOC_STATUS_CANCELLED) {
             throw illegalDocTransition(req, docStatus, "非已作废");
@@ -162,12 +147,12 @@ public class ErpPurRequisitionBizModel extends CrudBizModel<ErpPurRequisition> i
         return req;
     }
 
-    // ---------- Phase 2: 请购→订单转化 ----------
+    // ---------- 请购→订单转化（跨聚合写委托 IErpPurOrderBiz） ----------
 
     @Override
     @BizMutation
     public ErpPurOrder convertToOrder(@Name("requisitionId") Long requisitionId, @Name("request") ConvertToOrderRequest request, IServiceContext context) {
-        ErpPurRequisition req = requireRequisition(requisitionId);
+        ErpPurRequisition req = requireRequisition(requisitionId, context);
         Integer status = req.getApproveStatus();
         // (a) 仅 APPROVED 请购可转化
         if (status == null || status != ErpPurConstants.APPROVE_STATUS_APPROVED) {
@@ -182,17 +167,13 @@ public class ErpPurRequisitionBizModel extends CrudBizModel<ErpPurRequisition> i
         }
         // (b) 供应商一致性约束（单请购单供应商，MVP）
         Long supplierId = requireConsistentSupplier(req, lines);
-        // (c) 幂等防重复转化：已存在 docStatus≠CANCELLED 且 requisitionId=该请购 的订单
-        requireNotAlreadyConverted(requisitionId);
-        // (d)(e)(f) 组装并持久化订单 + 行
-        ErpPurOrder order = converter.build(req, lines, supplierId, request);
-        daoFor(ErpPurOrder.class).saveEntity(order);
-        // flush 使订单 ID 落地，再保存行（行 orderId 依赖头 ID）
-        ormTemplate.flushSession();
-        for (ErpPurOrderLine orderLine : converter.buildLines(order, lines, request)) {
-            daoFor(ErpPurOrderLine.class).saveEntity(orderLine);
+        // (c) 幂等防重复转化：订单侧查既有 docStatus≠CANCELLED 且 requisitionId 命中
+        if (orderBiz.existsActiveByRequisition(requisitionId, context)) {
+            throw new NopException(ErpPurErrors.ERR_REQ_ALREADY_CONVERTED)
+                    .param(ErpPurErrors.ARG_REQUISITION_ID, requisitionId);
         }
-        return order;
+        // (d)(e)(f) 组装并持久化订单 + 行（委托订单聚合）
+        return orderBiz.createFromRequisition(req, lines, supplierId, request, context);
     }
 
     /**
@@ -215,32 +196,10 @@ public class ErpPurRequisitionBizModel extends CrudBizModel<ErpPurRequisition> i
         return suppliers.iterator().next();
     }
 
-    /**
-     * 幂等防重复转化：查询 {@code ErpPurOrder} where {@code requisitionId=该请购 AND docStatus≠CANCELLED}；
-     * 存在则抛 {@link ErpPurErrors#ERR_REQ_ALREADY_CONVERTED}（纯查询，无 ORM FK 改动，requisitionId 列已存在）。
-     * 原订单作废（docStatus=CANCELLED）后允许重新转化。
-     */
-    private void requireNotAlreadyConverted(Long requisitionId) {
-        ormTemplate.flushSession();
-        IEntityDao<ErpPurOrder> dao = daoFor(ErpPurOrder.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(and(eq("requisitionId", requisitionId),
-                ne("docStatus", ErpPurConstants.DOC_STATUS_CANCELLED)));
-        if (!dao.findAllByQuery(q).isEmpty()) {
-            throw new NopException(ErpPurErrors.ERR_REQ_ALREADY_CONVERTED)
-                    .param(ErpPurErrors.ARG_REQUISITION_ID, requisitionId);
-        }
-    }
-
     // ---------- validation helpers ----------
 
-    ErpPurRequisition requireRequisition(Long requisitionId) {
-        ErpPurRequisition req = dao().getEntityById(requisitionId);
-        if (req == null) {
-            throw new NopException(ErpPurErrors.ERR_REQ_NOT_FOUND)
-                    .param(ErpPurErrors.ARG_REQUISITION_ID, requisitionId);
-        }
-        return req;
+    ErpPurRequisition requireRequisition(Long requisitionId, IServiceContext context) {
+        return requireEntity(String.valueOf(requisitionId), null, context);
     }
 
     void requireNotCancelled(ErpPurRequisition req) {

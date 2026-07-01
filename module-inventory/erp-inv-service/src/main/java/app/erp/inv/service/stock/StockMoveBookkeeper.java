@@ -74,7 +74,7 @@ public class StockMoveBookkeeper {
             return balance;
         }
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
-        balance = new ErpInvStockBalance();
+        balance = dao.newEntity();
         balance.setOrgId(move.getOrgId());
         balance.setMaterialId(line.getMaterialId());
         balance.setSkuId(line.getSkuId());
@@ -151,7 +151,7 @@ public class StockMoveBookkeeper {
                              ErpInvStockBalance balance, Long warehouseId, Long locationId,
                              BigDecimal signedQty, BigDecimal unitCost, BigDecimal signedTotalCost) {
         IEntityDao<ErpInvStockLedger> dao = daoProvider.daoFor(ErpInvStockLedger.class);
-        ErpInvStockLedger ledger = new ErpInvStockLedger();
+        ErpInvStockLedger ledger = dao.newEntity();
         ledger.setCode("SL-" + StringHelper.generateUUID());
         ledger.setOrgId(move.getOrgId());
         ledger.setMoveId(move.getId());

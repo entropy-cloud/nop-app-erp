@@ -1,5 +1,6 @@
 package app.erp.sal.service.entity;
 
+import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.sal.dao.entity.ErpSalOrder;
 import app.erp.sal.service.ErpSalConstants;
@@ -7,6 +8,7 @@ import app.erp.sal.service.ErpSalErrors;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
+import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -23,22 +25,12 @@ import static io.nop.api.core.beans.FilterBeans.ne;
 /**
  * 客户信用额度校验器。供 {@link ErpSalOrderBizModel#approve} 在 SUBMITTED→APPROVED 时调用。
  *
- * <p>权威：{@code docs/design/sales/README.md} §信用额度控制 + {@code docs/design/flow-overview.md} §2.2。
- *
  * <p>额度计算口径（MVP）：{@code available = ErpMdPartner.creditLimit − outstanding}，其中
  * {@code outstanding = Σ(totalAmountWithTax) of ErpSalOrder where customerId=该客户 AND approveStatus=APPROVED
  * AND deliveryStatus≠DELIVERED AND docStatus≠CANCELLED}。若 {@code available < 本单 totalAmountWithTax} 判定超额度。
  *
- * <p>「未结算应收余额（AR_INVOICE 未核销）」分量当前为 0（销售发票未实现），MVP 不计入；Follow-up 在 AR_INVOICE 落地后补入。
- *
- * <p>三级策略（{@code erp-sal.credit-check-level}，默认 {@code SOFT_WARNING}）：
- * <ul>
- *   <li>{@code SOFT_WARNING}：超额度记录告警日志但放行审核。</li>
- *   <li>{@code HARD_BLOCK}：超额度抛 {@link NopException}({@link ErpSalErrors#ERR_CREDIT_LIMIT_EXCEEDED})。</li>
- *   <li>{@code SPECIAL_APPROVAL}：MVP 降级为 SOFT_WARNING 行为（nop-wf 未接线，无法路由额外审批人），记为 Follow-up。</li>
- * </ul>
- *
- * <p>{@code creditLimit} 为 null（未设置）视为不控制（放行）。调用时传入的「本单」尚未置 APPROVED，故不在 outstanding 内（不会被重复计算）。
+ * <p>客户主数据读取经 {@link IErpMdPartnerBiz}（跨域只读经 I*Biz 管道）；
+ * sales 域 outstanding 订单聚合为本域内部只读（{@code daoFor(ErpSalOrder.class)}，对齐 plan S2 C 段保留项）。
  */
 public class CreditLimitChecker {
 
@@ -47,15 +39,18 @@ public class CreditLimitChecker {
     @Inject
     IDaoProvider daoProvider;
 
+    @Inject
+    IErpMdPartnerBiz mdPartnerBiz;
+
     /**
      * @param customerId       客户 ID
      * @param thisOrderAmount  当前审核订单的含税总额（totalAmountWithTax），null 视为 0
      */
-    public void check(Long customerId, BigDecimal thisOrderAmount) {
+    public void check(Long customerId, BigDecimal thisOrderAmount, IServiceContext context) {
         if (customerId == null) {
             return;
         }
-        ErpMdPartner partner = daoProvider.daoFor(ErpMdPartner.class).getEntityById(customerId);
+        ErpMdPartner partner = mdPartnerBiz.findById(customerId, context);
         if (partner == null) {
             return;
         }
@@ -87,6 +82,7 @@ public class CreditLimitChecker {
     }
 
     private BigDecimal sumOutstanding(Long customerId) {
+        // sales 域内部只读聚合（plan S2 C 段保留项），不走跨域 I*Biz。
         IEntityDao<ErpSalOrder> dao = daoProvider.daoFor(ErpSalOrder.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(

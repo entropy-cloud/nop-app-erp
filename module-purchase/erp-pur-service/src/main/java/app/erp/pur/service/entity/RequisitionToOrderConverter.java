@@ -9,6 +9,8 @@ import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.commons.util.StringHelper;
+import io.nop.dao.api.IDaoProvider;
+import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -37,9 +39,12 @@ public class RequisitionToOrderConverter {
 
     private static final BigDecimal HUNDRED = new BigDecimal("100");
 
+    @Inject
+    IDaoProvider daoProvider;
+
     public ErpPurOrder build(ErpPurRequisition req, List<ErpPurRequisitionLine> lines,
                              Long supplierId, ConvertToOrderRequest request) {
-        ErpPurOrder order = new ErpPurOrder();
+        ErpPurOrder order = daoProvider.daoFor(ErpPurOrder.class).newEntity();
         order.setCode(generateOrderCode(req));
         order.setOrgId(req.getOrgId());
         order.setRequisitionId(req.getId());
@@ -60,7 +65,7 @@ public class RequisitionToOrderConverter {
         List<ErpPurOrderLine> result = new ArrayList<>(reqLines.size());
         int lineNo = 1;
         for (ErpPurRequisitionLine reqLine : reqLines) {
-            ErpPurOrderLine line = new ErpPurOrderLine();
+            ErpPurOrderLine line = daoProvider.daoFor(ErpPurOrderLine.class).newEntity();
             line.setOrderId(order.getId());
             line.setLineNo(lineNo++);
             line.setMaterialId(reqLine.getMaterialId());

@@ -1,6 +1,7 @@
 
 package app.erp.inv.biz;
 
+import io.nop.api.core.annotations.biz.BizAction;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.core.context.IServiceContext;
@@ -52,4 +53,13 @@ public interface IErpInvStockMoveBiz extends ICrudBiz<ErpInvStockMove> {
      */
     @BizMutation
     ErpInvStockMove reverse(@Name("moveId") Long moveId, IServiceContext context);
+
+    /**
+     * 按业务回链 {@code (relatedBillType, relatedBillCode)} 反查库存移动单，不存在返回 null。
+     * 供 purchase/sales 反审核/作废时定位已生成的入库/出库移动单（跨域只读，经 I*Biz 管道）。
+     */
+    @BizAction
+    ErpInvStockMove findByRelatedBill(@Name("relatedBillType") String relatedBillType,
+                                      @Name("relatedBillCode") String relatedBillCode,
+                                      IServiceContext context);
 }

@@ -57,6 +57,44 @@ public class TestErpInvStockMoveGraphQL extends JunitAutoTestCase {
         assertNotNull(((Map<?, ?>) result.getData()).get("id"));
     }
 
+    /**
+     * 验证 {@code ErpInvStockMove__reverse} 经 GraphQL 可达：业务联动 generateMove 自动 DONE 后，reverse 生成反向冲销单。
+     * （{@code confirm} 为内部过渡步骤 DRAFT→CONFIRMED，generateMove 内部经 doConfirm 自动推进，
+     *  复用同一 @BizMutation 注册机制；独立 confirm 无独立 DRAFT 创建入口，故不单列直测。）
+     */
+    @Test
+    public void testReverseViaGraphQL() {
+        String uomId = saveUoM();
+        String materialId = saveMaterial(uomId);
+
+        Map<String, Object> line = new LinkedHashMap<>();
+        line.put("materialId", materialId);
+        line.put("uoMId", uomId);
+        line.put("quantity", 10);
+        line.put("unitCost", 5);
+
+        Map<String, Object> req = new LinkedHashMap<>();
+        req.put("moveType", 10);
+        req.put("orgId", 1001);
+        req.put("businessDate", "2026-07-01");
+        req.put("destWarehouseId", 3001);
+        req.put("acctSchemaId", 7001);
+        req.put("currencyId", 6001);
+        req.put("relatedBillType", "GQL-REV");
+        req.put("relatedBillCode", "REV-001");
+        req.put("lines", Collections.singletonList(line));
+
+        ApiResponse<?> gen = executeRpc(mutation, "ErpInvStockMove__generateMove",
+                ApiRequest.build(Map.of("request", req)));
+        assertEquals(0, gen.getStatus(), "业务联动 generateMove 应自动 DONE");
+        String moveId = idOf(gen);
+
+        ApiResponse<?> rev = executeRpc(mutation, "ErpInvStockMove__reverse",
+                ApiRequest.build(Map.of("moveId", moveId)));
+        assertEquals(0, rev.getStatus(), "reverse 经 GraphQL 引擎应成功（DONE→生成反向冲销单）");
+        assertNotNull(((Map<?, ?>) rev.getData()).get("id"));
+    }
+
     private String saveUoM() {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("code", "PCS");

@@ -8,6 +8,7 @@ import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.inv.dao.entity.ErpInvStockMoveLine;
 import app.erp.inv.service.ErpInvConstants;
 import app.erp.inv.service.ErpInvErrors;
+import io.nop.api.core.annotations.biz.BizAction;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.beans.query.QueryBean;
@@ -18,6 +19,7 @@ import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.commons.util.StringHelper;
 import io.nop.dao.api.IEntityDao;
+import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.orm.SingleSession;
@@ -51,6 +53,9 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
 
     @Inject
     app.erp.inv.service.posting.InvPostingDispatcher postingDispatcher;
+
+    @Inject
+    IOrmTemplate ormTemplate;
 
     public ErpInvStockMoveBizModel() {
         setEntityName(ErpInvStockMove.class.getName());
@@ -163,6 +168,21 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
         return generateMove(reverseReq, context);
     }
 
+    @Override
+    @BizAction
+    public ErpInvStockMove findByRelatedBill(@Name("relatedBillType") String relatedBillType,
+                                             @Name("relatedBillCode") String relatedBillCode,
+                                             IServiceContext context) {
+        if (relatedBillType == null || relatedBillCode == null) {
+            return null;
+        }
+        ormTemplate.flushSession();
+        ErpInvStockMove example = dao().newEntity();
+        example.setRelatedBillType(relatedBillType);
+        example.setRelatedBillCode(relatedBillCode);
+        return dao().findFirstByExample(example);
+    }
+
     // ---------- state machine internals ----------
 
     private void doConfirm(ErpInvStockMove move, List<ErpInvStockMoveLine> lines) {
@@ -240,7 +260,7 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
     // ---------- helpers: entity construction ----------
 
     private ErpInvStockMove newMove(StockMoveRequest request) {
-        ErpInvStockMove move = new ErpInvStockMove();
+        ErpInvStockMove move = newEntity();
         move.setCode(StringHelper.isBlank(request.getCode()) ? newMoveCode() : request.getCode());
         move.setMoveType(request.getMoveType());
         move.setOrgId(request.getOrgId());
@@ -265,7 +285,7 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
         }
         int lineNo = 1;
         for (StockMoveLineRequest req : request.getLines()) {
-            ErpInvStockMoveLine line = new ErpInvStockMoveLine();
+            ErpInvStockMoveLine line = daoFor(ErpInvStockMoveLine.class).newEntity();
             line.setMoveId(move.getId());
             line.setLineNo(lineNo++);
             line.setMaterialId(req.getMaterialId());

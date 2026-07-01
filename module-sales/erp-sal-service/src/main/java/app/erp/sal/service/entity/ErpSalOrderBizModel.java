@@ -1,15 +1,19 @@
 
 package app.erp.sal.service.entity;
 
+import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.sal.biz.IErpSalOrderBiz;
 import app.erp.sal.dao.entity.ErpSalOrder;
 import app.erp.sal.dao.entity.ErpSalOrderLine;
+import app.erp.sal.dao.entity.ErpSalQuotation;
+import app.erp.sal.dao.entity.ErpSalQuotationLine;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
+import io.nop.api.core.annotations.biz.BizAction;
 import io.nop.api.core.annotations.biz.BizModel;
-import io.nop.api.core.annotations.orm.SingleSession;
-import io.nop.api.core.annotations.txn.Transactional;
+import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
@@ -17,27 +21,24 @@ import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.commons.util.StringHelper;
 import io.nop.dao.api.IEntityDao;
+import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
-import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.core.context.IServiceContext;
-import io.nop.api.core.annotations.core.Name;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.ne;
 
 /**
  * 销售订单 BizModel。在 {@link CrudBizModel} 标准 CRUD 之上实现三轴审批状态机（对齐
  * {@code docs/design/sales/state-machine.md} §2「销售订单｜仅状态推进」，不触发库存/凭证）+ 客户启用校验 +
  * 客户信用额度校验（对齐 {@code docs/design/sales/README.md} §信用额度控制）。
  *
- * <ul>
- *   <li>审核轴：UNSUBMITTED→SUBMITTED→APPROVED/REJECTED，驳回→重提，反审核 APPROVED→REJECTED。</li>
- *   <li>单据轴：任意非终态→docStatus=CANCELLED（订单审核未触发库存/凭证，故作废无冲销前置）。</li>
- *   <li>{@link #approve} 仅状态推进——落地 {@code approvedBy}/{@code approvedAt} + 客户启用校验 +
- *       {@link CreditLimitChecker#check}（按 {@code erp-sal.credit-check-level} 三级策略）。</li>
- * </ul>
+ * <p>跨实体访问对齐 {@code ai-defaults.md}：客户启用校验经 {@link IErpMdPartnerBiz}；
+ * 报价→订单转化、发货进度回写由本接口的 {@link #createFromQuotation}/{@link #updateDeliveryStatus} 承接。
  *
  * <p>状态机迁移校验前置 {@code approveStatus}/{@code docStatus}，违反抛 {@link NopException}。
  */
@@ -47,6 +48,15 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
     @Inject
     CreditLimitChecker creditLimitChecker;
 
+    @Inject
+    IErpMdPartnerBiz mdPartnerBiz;
+
+    @Inject
+    QuotationToOrderConverter quotationToOrderConverter;
+
+    @Inject
+    IOrmTemplate ormTemplate;
+
     public ErpSalOrderBizModel() {
         setEntityName(ErpSalOrder.class.getName());
     }
@@ -54,7 +64,7 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
     @Override
     @BizMutation
     public ErpSalOrder submit(@Name("orderId") Long orderId, IServiceContext context) {
-        ErpSalOrder order = requireOrder(orderId);
+        ErpSalOrder order = requireOrder(orderId, context);
         requireNotCancelled(order);
         Integer status = order.getApproveStatus();
         if (status == null) {
@@ -65,7 +75,7 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
             throw illegalTransition(order, status, "UNSUBMITTED 或 REJECTED");
         }
         requireLinesNonEmpty(order);
-        requireCustomerActive(order);
+        requireCustomerActive(order, context);
         order.setApproveStatus(ErpSalConstants.APPROVE_STATUS_SUBMITTED);
         dao().updateEntity(order);
         return order;
@@ -74,7 +84,7 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
     @Override
     @BizMutation
     public ErpSalOrder withdrawSubmit(@Name("orderId") Long orderId, IServiceContext context) {
-        ErpSalOrder order = requireOrder(orderId);
+        ErpSalOrder order = requireOrder(orderId, context);
         requireNotCancelled(order);
         Integer status = order.getApproveStatus();
         if (status == null || status != ErpSalConstants.APPROVE_STATUS_SUBMITTED) {
@@ -88,7 +98,7 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
     @Override
     @BizMutation
     public ErpSalOrder approve(@Name("orderId") Long orderId, IServiceContext context) {
-        ErpSalOrder order = requireOrder(orderId);
+        ErpSalOrder order = requireOrder(orderId, context);
         Integer status = order.getApproveStatus();
         // 幂等：已审核单据再次审核为空操作（state-machine §4）。
         if (status != null && status == ErpSalConstants.APPROVE_STATUS_APPROVED) {
@@ -98,9 +108,9 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
         if (status == null || status != ErpSalConstants.APPROVE_STATUS_SUBMITTED) {
             throw illegalTransition(order, status, "SUBMITTED");
         }
-        requireCustomerActive(order);
+        requireCustomerActive(order, context);
         // 信用额度校验（本单此时仍为 SUBMITTED，不在 outstanding 内，不会被重复计算）。
-        creditLimitChecker.check(order.getCustomerId(), order.getTotalAmountWithTax());
+        creditLimitChecker.check(order.getCustomerId(), order.getTotalAmountWithTax(), context);
         order.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
         order.setApprovedBy(currentUserId());
         order.setApprovedAt(CoreMetrics.currentDateTime());
@@ -112,7 +122,7 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
     @Override
     @BizMutation
     public ErpSalOrder reject(@Name("orderId") Long orderId, IServiceContext context) {
-        ErpSalOrder order = requireOrder(orderId);
+        ErpSalOrder order = requireOrder(orderId, context);
         requireNotCancelled(order);
         Integer status = order.getApproveStatus();
         if (status == null || status != ErpSalConstants.APPROVE_STATUS_SUBMITTED) {
@@ -126,7 +136,7 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
     @Override
     @BizMutation
     public ErpSalOrder reverseApprove(@Name("orderId") Long orderId, IServiceContext context) {
-        ErpSalOrder order = requireOrder(orderId);
+        ErpSalOrder order = requireOrder(orderId, context);
         Integer status = order.getApproveStatus();
         // 幂等：已 REJECTED（曾驳回或已反审核）直接返回。
         if (status != null && status == ErpSalConstants.APPROVE_STATUS_REJECTED) {
@@ -144,7 +154,7 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
     @Override
     @BizMutation
     public ErpSalOrder cancel(@Name("orderId") Long orderId, IServiceContext context) {
-        ErpSalOrder order = requireOrder(orderId);
+        ErpSalOrder order = requireOrder(orderId, context);
         Integer docStatus = order.getDocStatus();
         if (docStatus != null && docStatus == ErpSalConstants.DOC_STATUS_CANCELLED) {
             throw illegalDocTransition(order, docStatus, "非已作废");
@@ -155,15 +165,59 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
         return order;
     }
 
-    // ---------- validation helpers ----------
+    // ---------- 跨聚合写契约（报价→订单转化、发货进度回写） ----------
 
-    private ErpSalOrder requireOrder(Long orderId) {
-        ErpSalOrder order = dao().getEntityById(orderId);
-        if (order == null) {
-            throw new NopException(ErpSalErrors.ERR_ORDER_NOT_FOUND)
-                    .param(ErpSalErrors.ARG_ORDER_ID, orderId);
+    @Override
+    @BizAction
+    public ErpSalOrder createFromQuotation(@Name("quotation") ErpSalQuotation quotation,
+                                           @Name("lines") List<ErpSalQuotationLine> lines,
+                                           IServiceContext context) {
+        ErpSalOrder order = quotationToOrderConverter.build(quotation, lines);
+        if (order.getCode() == null) {
+            order.setCode("SO-FROM-Q-" + StringHelper.generateUUID());
+        }
+        dao().saveEntity(order);
+        IEntityDao<ErpSalOrderLine> lineDao = daoFor(ErpSalOrderLine.class);
+        for (ErpSalOrderLine line : order.getLines() == null ? new ArrayList<ErpSalOrderLine>() : order.getLines()) {
+            line.setOrderId(order.getId());
+            lineDao.saveEntity(line);
         }
         return order;
+    }
+
+    @Override
+    @BizAction
+    public boolean existsActiveByQuotation(@Name("quotationId") Long quotationId, IServiceContext context) {
+        if (quotationId == null) {
+            return false;
+        }
+        ormTemplate.flushSession();
+        QueryBean q = new QueryBean();
+        q.addFilter(and(eq("quotationId", quotationId),
+                ne("docStatus", ErpSalConstants.DOC_STATUS_CANCELLED)));
+        return !dao().findAllByQuery(q).isEmpty();
+    }
+
+    @Override
+    @BizAction
+    public void updateDeliveryStatus(@Name("orderId") Long orderId,
+                                     @Name("deliveryStatus") Integer deliveryStatus,
+                                     IServiceContext context) {
+        if (orderId == null) {
+            return;
+        }
+        ErpSalOrder order = dao().getEntityById(orderId);
+        if (order == null) {
+            return;
+        }
+        order.setDeliveryStatus(deliveryStatus);
+        dao().updateEntity(order);
+    }
+
+    // ---------- validation helpers ----------
+
+    private ErpSalOrder requireOrder(Long orderId, IServiceContext context) {
+        return requireEntity(String.valueOf(orderId), null, context);
     }
 
     private void requireNotCancelled(ErpSalOrder order) {
@@ -180,12 +234,11 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
         }
     }
 
-    private void requireCustomerActive(ErpSalOrder order) {
+    private void requireCustomerActive(ErpSalOrder order, IServiceContext context) {
         if (order.getCustomerId() == null) {
             return;
         }
-        // 客户启用校验为纯实体读（master-data 机制 B），故用 daoFor 直接加载。
-        ErpMdPartner partner = daoFor(ErpMdPartner.class).getEntityById(order.getCustomerId());
+        ErpMdPartner partner = mdPartnerBiz.findById(order.getCustomerId(), context);
         if (partner == null || partner.getStatus() == null
                 || partner.getStatus() != ErpSalConstants.PARTNER_STATUS_ACTIVE) {
             throw new NopException(ErpSalErrors.ERR_PARTNER_INACTIVE)

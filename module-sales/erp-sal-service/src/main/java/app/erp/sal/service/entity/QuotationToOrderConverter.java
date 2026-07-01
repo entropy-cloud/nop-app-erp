@@ -6,6 +6,8 @@ import app.erp.sal.dao.entity.ErpSalQuotation;
 import app.erp.sal.dao.entity.ErpSalQuotationLine;
 import app.erp.sal.service.ErpSalConstants;
 import io.nop.api.core.time.CoreMetrics;
+import io.nop.dao.api.IDaoProvider;
+import jakarta.inject.Inject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +32,14 @@ import java.util.List;
  */
 public class QuotationToOrderConverter {
 
+    @Inject
+    IDaoProvider daoProvider;
+
     /**
      * 组装转化订单（含行）。{@code order.code} 留空由调用方/生成规则填充。
      */
     public ErpSalOrder build(ErpSalQuotation quotation, List<ErpSalQuotationLine> quotationLines) {
-        ErpSalOrder order = new ErpSalOrder();
+        ErpSalOrder order = daoProvider.daoFor(ErpSalOrder.class).newEntity();
         order.setQuotationId(quotation.getId());
         order.setOrgId(quotation.getOrgId());
         order.setCustomerId(quotation.getCustomerId());
@@ -56,7 +61,7 @@ public class QuotationToOrderConverter {
         List<ErpSalOrderLine> result = new ArrayList<>(quotationLines.size());
         int lineNo = 1;
         for (ErpSalQuotationLine ql : quotationLines) {
-            ErpSalOrderLine line = new ErpSalOrderLine();
+            ErpSalOrderLine line = daoProvider.daoFor(ErpSalOrderLine.class).newEntity();
             line.setLineNo(ql.getLineNo() == null ? lineNo : ql.getLineNo());
             line.setMaterialId(ql.getMaterialId());
             // ErpSalQuotationLine 无 skuId 列 → 订单行 skuId 留空（不复制）。

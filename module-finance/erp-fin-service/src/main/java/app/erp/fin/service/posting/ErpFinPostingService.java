@@ -4,13 +4,17 @@ import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
+import app.erp.md.biz.IErpMdSubjectBiz;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.annotations.txn.Transactional;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
+import io.nop.biz.api.IBizObjectManager;
 import io.nop.commons.util.StringHelper;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -61,6 +65,9 @@ public class ErpFinPostingService {
 
     @Inject
     ErpFinAcctDocRegistry registry;
+
+    @Inject
+    IBizObjectManager bizObjectManager;
 
     @SingleSession
     @Transactional
@@ -192,7 +199,7 @@ public class ErpFinPostingService {
         LocalDate voucherDate = ctx.getVoucherDate();
         Integer voucherType = ctx.getVoucherType() != null ? ctx.getVoucherType() : DEFAULT_VOUCHER_TYPE_TRANSFER;
 
-        ErpFinVoucher voucher = new ErpFinVoucher();
+        ErpFinVoucher voucher = daoProvider.daoFor(ErpFinVoucher.class).newEntity();
         voucher.setCode(buildVoucherCode(businessType != null ? businessType
                 : (event != null ? event.getBusinessType() : null), isReversed));
         voucher.setVoucherType(voucherType);
@@ -220,7 +227,7 @@ public class ErpFinPostingService {
         int lineNo = 1;
         for (VoucherFact fact : facts) {
             BigDecimal amt = fact.getAmount() == null ? BigDecimal.ZERO : fact.getAmount();
-            ErpFinVoucherLine line = new ErpFinVoucherLine();
+            ErpFinVoucherLine line = lineDao.newEntity();
             line.setVoucherId(voucherId);
             line.setLineNo(lineNo++);
             line.setSubjectId(fact.getSubjectId());
@@ -251,7 +258,7 @@ public class ErpFinPostingService {
         ErpFinBusinessType resolvedType = businessType != null ? businessType
                 : (event != null ? event.getBusinessType() : null);
         if (!StringHelper.isBlank(resolvedBillCode) && resolvedType != null) {
-            ErpFinVoucherBillR billR = new ErpFinVoucherBillR();
+            ErpFinVoucherBillR billR = billRDao.newEntity();
             billR.setVoucherId(voucherId);
             billR.setBillType(resolvedType.name());
             billR.setBillCode(resolvedBillCode);
@@ -318,8 +325,14 @@ public class ErpFinPostingService {
         if (facts.isEmpty()) {
             return;
         }
+        // 过账引擎为非 BizModel 服务（无请求上下文），按需构造 IServiceContext 供 I*Biz 调用；
+        // 科目解析经 master-data 的 IErpMdSubjectBiz（跨域只读经 I*Biz 管道，对齐 service-layer 跨实体访问规则）。
         Map<String, ErpMdSubject> cache = new HashMap<>();
-        IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
+        IServiceContext context = IServiceContext.getCtx();
+        if (context == null) {
+            context = new ServiceContextImpl();
+        }
+        IErpMdSubjectBiz mdSubjectBiz = bizObjectManager.getBizObject(ErpMdSubject.class.getSimpleName()).asProxy();
         for (VoucherFact fact : facts) {
             if (fact.getSubjectId() != null) {
                 continue;
@@ -330,14 +343,11 @@ public class ErpFinPostingService {
             }
             ErpMdSubject subject = cache.get(code);
             if (subject == null) {
-                QueryBean q = new QueryBean();
-                q.addFilter(eq("code", code));
-                List<ErpMdSubject> list = dao.findAllByQuery(q);
-                if (list.isEmpty()) {
+                subject = mdSubjectBiz.findByCode(code, context);
+                if (subject == null) {
                     throw new NopException(ErpFinPostingErrors.ERR_SUBJECT_NOT_FOUND)
                             .param(ErpFinPostingErrors.ARG_SUBJECT_CODE, code);
                 }
-                subject = list.get(0);
                 cache.put(code, subject);
             }
             fact.setSubjectId(subject.getId());
