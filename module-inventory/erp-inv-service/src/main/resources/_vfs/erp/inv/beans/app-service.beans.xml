@@ -7,4 +7,11 @@
     <import resource="_dao.beans.xml"/>
 
     <import resource="_service.beans.xml"/>
+
+    <!-- 库存域服务（非 BizModel）：记账器 + 存货过账派发器 -->
+    <bean id="app.erp.inv.service.stock.StockMoveBookkeeper"
+          class="app.erp.inv.service.stock.StockMoveBookkeeper"/>
+
+    <bean id="app.erp.inv.service.posting.InvPostingDispatcher"
+          class="app.erp.inv.service.posting.InvPostingDispatcher"/>
 </beans>

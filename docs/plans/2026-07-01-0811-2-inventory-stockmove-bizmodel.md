@@ -78,57 +78,59 @@
 
 ### Phase 1 - generateMove 契约 + StockMove 状态机 + 幂等
 
-Status: planned
+Status: completed
 Targets: `module-inventory/erp-inv-dao/src/main/java/app/erp/inv/biz/IErpInvStockMoveBiz.java`（增 `generateMove` 等方法签名）、`module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/entity/ErpInvStockMoveBizModel.java`（实现）、`module-inventory/erp-inv-service/src/test/.../entity/`
 Skill: none
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: 无（状态机/契约不依赖过账引擎）
 
-- [ ] `Decision`：`generateMove` 签名与推进策略。裁决：签名按 `cross-domain.md`——`generateMove(moveType, lines, sourceWarehouseId/locationId, destWarehouseId/locationId, businessDate, relatedBillType, relatedBillCode, orgId, acctSchemaId, currencyId)` 返回 `ErpInvStockMove`。业务单据联动（`relatedBillType` 非空）自动 DRAFT→CONFIRMED→DONE 一次推进（cross-domain「业务联动的移动单通常自动推进到 DONE」）；独立创建的移动单（`relatedBillType` 空，如盘点调整）停在 CONFIRMED 待库管员二次确认。备选（被否）：始终停在 CONFIRMED——业务联动场景库管员无须介入，强加二次确认致单据沉没。残留风险：业务联动自动 DONE 假设触发方（purchase/sales）已做完所有校验；若调用方校验不足，错误移动单会直接 DONE（须在 `generateMove` 契约文档要求调用方先自校验）。
+- [x] `Decision`：`generateMove` 签名与推进策略。裁决：签名按 `cross-domain.md`——`generateMove(moveType, lines, sourceWarehouseId/locationId, destWarehouseId/locationId, businessDate, relatedBillType, relatedBillCode, orgId, acctSchemaId, currencyId)` 返回 `ErpInvStockMove`。业务单据联动（`relatedBillType` 非空）自动 DRAFT→CONFIRMED→DONE 一次推进（cross-domain「业务联动的移动单通常自动推进到 DONE」）；独立创建的移动单（`relatedBillType` 空，如盘点调整）停在 CONFIRMED 待库管员二次确认。备选（被否）：始终停在 CONFIRMED——业务联动场景库管员无须介入，强加二次确认致单据沉没。残留风险：业务联动自动 DONE 假设触发方（purchase/sales）已做完所有校验；若调用方校验不足，错误移动单会直接 DONE（须在 `generateMove` 契约文档要求调用方先自校验）。
   - Skill: none
-- [ ] `Decision`：幂等键。裁决：`(relatedBillType, relatedBillCode)` 为业务联动移动单的幂等键——同源单重复 `generateMove` 反查已有移动单直接返回，不新建（对齐状态机§异常路径「重复触发幂等」）。独立移动单（无源单）不参与幂等（允许手工多次创建）。备选（被否）：用移动单 `code`——`code` 是生成后产物，调用方传入的是源单号。残留风险：独立移动单无幂等，重复手工提交会产生重复单（由 UI 防重 + 库管员确认缓解，属可接受运营行为）。
+- [x] `Decision`：幂等键。裁决：`(relatedBillType, relatedBillCode)` 为业务联动移动单的幂等键——同源单重复 `generateMove` 反查已有移动单直接返回，不新建（对齐状态机§异常路径「重复触发幂等」）。独立移动单（无源单）不参与幂等（允许手工多次创建）。备选（被否）：用移动单 `code`——`code` 是生成后产物，调用方传入的是源单号。残留风险：独立移动单无幂等，重复手工提交会产生重复单（由 UI 防重 + 库管员确认缓解，属可接受运营行为）。
   - Skill: none
-- [ ] `Add`：`IErpInvStockMoveBiz` 增 `generateMove(...)`、`confirm(moveId)`、`complete(moveId)`、`cancel(moveId)`、`reverse(moveId)`（生成反向冲销移动单）方法签名；`ErpInvStockMoveBizModel` 实现状态迁移——每条迁移校验前置 `docStatus`（DRAFT→CONFIRMED→DONE 有向无环；CANCELLED 仅从 DRAFT/CONFIRMED），迁移违反抛 `NopException`。`@BizMutation` 自动事务，余额/流水同事务（cross-domain 一致性规则，Phase 2 落地写入）。
+- [x] `Add`：`IErpInvStockMoveBiz` 增 `generateMove(...)`、`confirm(moveId)`、`complete(moveId)`、`cancel(moveId)`、`reverse(moveId)`（生成反向冲销移动单）方法签名；`ErpInvStockMoveBizModel` 实现状态迁移——每条迁移校验前置 `docStatus`（DRAFT→CONFIRMED→DONE 有向无环；CANCELLED 仅从 DRAFT/CONFIRMED），迁移违反抛 `NopException`。`@Transactional` 自动事务，余额/流水同事务（cross-domain 一致性规则，Phase 2 落地写入）。
   - Skill: none
-- [ ] `Proof`：服务层集成测试（`@NopTestConfig(localDb=true, initDatabaseSchema=TRUE, enableActionAuth=FALSE)` + master-data test 依赖，`createPrereqs()` 自建物料/仓库/库位）——`testGenerateMoveBusinessLinkedAutoCompletes`（业务联动 → DRAFT→CONFIRMED→DONE）、`testGenerateMoveIdempotent`（同源单二次返回同一移动单）、`testManualMoveStopsAtConfirmed`（独立移动单停 CONFIRMED）、`testIllegalTransitionRejected`（DONE→CONFIRMED 等非法迁移抛 `NopException`）、`testCancelReleasesReservation`（出库类 CONFIRMED 后 CANCELLED 释放预留）。`mvn test -pl module-inventory/erp-inv-service -am` 全绿。
+- [x] `Proof`：服务层集成测试（`@NopTestConfig(localDb=true, initDatabaseSchema=TRUE, enableActionAuth=FALSE)` + master-data test 依赖，`createPrereqs()` 自建物料/仓库/库位）——`testGenerateMoveBusinessLinkedAutoCompletes`（业务联动 → DRAFT→CONFIRMED→DONE）、`testGenerateMoveIdempotent`（同源单二次返回同一移动单）、`testManualMoveStopsAtConfirmed`（独立移动单停 CONFIRMED）、`testIllegalTransitionRejected`（DONE→CONFIRMED 等非法迁移抛 `NopException`）、`testCancelReleasesReservation`（出库类 CONFIRMED 后 CANCELLED 释放预留）。`mvn test -pl module-inventory/erp-inv-service -am` 全绿。
   - Skill: none
-- [ ] `Proof`：移动单状态机正确性复核——用 `docs/skills/state-machine-business-review-prompt.md` 针对终态/可达性/异常路径（重复触发、冲销=新建反向单非回退）自检，记录结论于本阶段执行落地（非阻塞门控，但须执行）。
+- [x] `Proof`：移动单状态机正确性复核——用 `docs/skills/state-machine-business-review-prompt.md` 针对终态/可达性/异常路径（重复触发、冲销=新建反向单非回退）自检，记录结论于本阶段执行落地（非阻塞门控，但须执行）。
   - Skill: state-machine-business-review-prompt
 
 Exit Criteria:
 
 > 本阶段交付状态机 + 契约 + 幂等。完整仓库 `mvn test` 归 Closure Gates。
 
-- [ ] `generateMove`/`confirm`/`complete`/`cancel`/`reverse` 5 个行为测试存在且 `mvn test -pl module-inventory/erp-inv-service -am` 全绿
-- [ ] 业务联动自动推进 + 幂等 + 非法迁移拒绝均经测试证明
+- [x] `generateMove`/`confirm`/`complete`/`cancel`/`reverse` 5 个行为测试存在且 `mvn test -pl module-inventory/erp-inv-service -am` 全绿
+- [x] 业务联动自动推进 + 幂等 + 非法迁移拒绝均经测试证明
+
+**状态机自检结论**（按 10 维复核）：终态 DONE/CANCELLED 无出边（confirm 限 DRAFT、complete 限 CONFIRMED、cancel 限 DRAFT/CONFIRMED）；DRAFT→CONFIRMED→DONE 有向无环；冲销 `reverse` 校验 DONE 后生成新反向单（不回退原单状态），无循环；幂等键 `(relatedBillType,relatedBillCode)`；非法迁移统一抛 `NopException(ERR_ILLEGAL_STATUS_TRANSITION)`；预留量在出库/内部调拨 CONFIRMED 增、DONE/CANCELLED 释。终态/可达性/异常路径全部符合 `state-machine.md`。
 
 ### Phase 2 - 不可变流水 + 余额驱动 + 可用量校验 + 负库存配置
 
-Status: planned
+Status: completed
 Targets: `module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/entity/ErpInvStockMoveBizModel.java`（增流水/余额逻辑）、`.../stock/ErpInvStockBalanceCalculator.java`（或等效内聚组件）、`module-inventory/erp-inv-service/src/test/.../`
 Skill: none
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1
 
-- [ ] `Decision`：成本计算方法。裁决：DONE 时按 `ErpInvStockBalance.costMethod`（移动加权平均为基线，`costMethod` dict `erp-md/cost-method`）计算——入库：新 `avgCost = (旧 totalCost + 入库 totalCost) / (旧 totalQuantity + 入库 quantity)`；出库：`unitCost = 当前 avgCost`（快照固化写入流水），`totalCost -= unitCost × quantity`。`StockLedger.balanceQuantity`/`balanceTotalCost` 记录写流水时的结存结存快照（不可变）。`BigDecimal` 运算，写入 VARCHAR 列。备选（被否）：FIFO/批次成本——`costMethod` 支持多方法但本计划基线只落地移动加权平均，FIFO/批次属 Follow-up。残留风险：负库存下移动加权平均的 `avgCost` 可能失真（cross-domain §负库存会计处理 已约定「自然平滑」，但持续负库存的 `avgCost` 须监控——见 Deferred 负库存监控告警）。
+- [x] `Decision`：成本计算方法。裁决：DONE 时按 `ErpInvStockBalance.costMethod`（移动加权平均为基线，`costMethod` dict `erp-md/cost-method`）计算——入库：新 `avgCost = (旧 totalCost + 入库 totalCost) / (旧 totalQuantity + 入库 quantity)`；出库：`unitCost = 当前 avgCost`（快照固化写入流水），`totalCost -= unitCost × quantity`。`StockLedger.balanceQuantity`/`balanceTotalCost` 记录写流水时的结存结存快照（不可变）。`BigDecimal` 运算，写入 VARCHAR 列。备选（被否）：FIFO/批次成本——`costMethod` 支持多方法但本计划基线只落地移动加权平均，FIFO/批次属 Follow-up。残留风险：负库存下移动加权平均的 `avgCost` 可能失真（cross-domain §负库存会计处理 已约定「自然平滑」，但持续负库存的 `avgCost` 须监控——见 Deferred 负库存监控告警）。
   - Skill: none
-- [ ] `Decision`：预留量作用对象。裁决：状态机的「预留量」作用于 `ErpInvStockBalance.reservedQuantity`/`availableQuantity` 聚合（出库类 CONFIRMED：`reservedQuantity += qty`、`availableQuantity -= qty`；DONE：`totalQuantity -= qty`、`reservedQuantity -= qty`、重算 `availableQuantity`/成本；CANCELLED：`reservedQuantity -= qty`、`availableQuantity += qty`）。**不**创建 `ErpInvReservation` 记录级预留单（那是按订单/工单的显式预留，独立功能）。备选（被否）：每次 CONFIRMED 建 `ErpInvReservation` 单——混同两个预留概念，且本计划 Non-Goal 排除记录级预留管理。残留风险：聚合预留不区分「为哪个源单预留」，无法按订单释放单笔预留（记录级预留管理 Follow-up 落地后补齐按源单精细化）。
+- [x] `Decision`：预留量作用对象。裁决：状态机的「预留量」作用于 `ErpInvStockBalance.reservedQuantity`/`availableQuantity` 聚合（出库类 CONFIRMED：`reservedQuantity += qty`、`availableQuantity -= qty`；DONE：`totalQuantity -= qty`、`reservedQuantity -= qty`、重算 `availableQuantity`/成本；CANCELLED：`reservedQuantity -= qty`、`availableQuantity += qty`）。**不**创建 `ErpInvReservation` 记录级预留单（那是按订单/工单的显式预留，独立功能）。备选（被否）：每次 CONFIRMED 建 `ErpInvReservation` 单——混同两个预留概念，且本计划 Non-Goal 排除记录级预留管理。残留风险：聚合预留不区分「为哪个源单预留」，无法按订单释放单笔预留（记录级预留管理 Follow-up 落地后补齐按源单精细化）。
   - Skill: none
-- [ ] `Add`：`complete(moveId)` 落地——同一事务内：(1) 按行写 `ErpInvStockLedger`（不可变，含 `balanceQuantity`/`balanceTotalCost` 结存快照、`unitCost`/`totalCost`）；(2) 更新 `ErpInvStockBalance`（按 `materialId`×`warehouseId`×`locationId`×`batchNo` 维度 upsert，重算 `totalQuantity`/`avgCost`/`totalCost`/`reservedQuantity`/`availableQuantity`）；(3) 入库类增加余额、出库类扣减、内部调拨扣源加目的。冲销 `reverse` 生成反向移动单走同流程（cross-domain「冲销本质是反向移动」）。
+- [x] `Add`：`complete(moveId)` 落地——同一事务内：(1) 按行写 `ErpInvStockLedger`（不可变，含 `balanceQuantity`/`balanceTotalCost` 结存快照、`unitCost`/`totalCost`）；(2) 更新 `ErpInvStockBalance`（按 `materialId`×`warehouseId`×`locationId`×`batchNo` 维度 upsert，重算 `totalQuantity`/`avgCost`/`totalCost`/`reservedQuantity`/`availableQuantity`）；(3) 入库类增加余额、出库类扣减、内部调拨扣源加目的。冲销 `reverse` 生成反向移动单走同流程（cross-domain「冲销本质是反向移动」）。
   - Skill: none
-- [ ] `Add`：`confirm(moveId)` 落地——出库类/内部调拨源库位校验 `availableQuantity ≥ quantity`（`BigDecimal` 比较），不足抛 `NopException`（cross-domain「不足拒绝 + 整个业务单据审核回滚」）；通过则增预留。读取 `erp-inv.allow-negative-stock` 配置，`true` 时跳过校验。
+- [x] `Add`：`confirm(moveId)` 落地——出库类/内部调拨源库位校验 `availableQuantity ≥ quantity`（`BigDecimal` 比较），不足抛 `NopException`（cross-domain「不足拒绝 + 整个业务单据审核回滚」）；通过则增预留。读取 `erp-inv.allow-negative-stock` 配置，`true` 时跳过校验。
   - Skill: none
-- [ ] `Proof`：`testCompleteWritesImmutableLedger`（DONE 后流水存在且 `balanceQuantity`/`balanceTotalCost` 正确；二次写入失败/不可改）、`testIncomingUpdatesBalanceAvgCost`（入库后 `avgCost`/`totalQuantity` 按移动加权平均正确）、`testOutgoingDeductsBalance`（出库后 `totalQuantity` 减少、成本按 avgCost 快照）、`testConfirmInsufficientAvailableRejected`（出库可用量不足 → `NopException` + 无预留增加）、`testNegativeStockConfigAllowsShortage`（`allow-negative-stock=true` 时不足仍可确认）。
+- [x] `Proof`：`testCompleteWritesImmutableLedger`（DONE 后流水存在且 `balanceQuantity`/`balanceTotalCost` 正确；二次写入失败/不可改）、`testIncomingUpdatesBalanceAvgCost`（入库后 `avgCost`/`totalQuantity` 按移动加权平均正确）、`testOutgoingDeductsBalance`（出库后 `totalQuantity` 减少、成本按 avgCost 快照）、`testConfirmInsufficientAvailableRejected`（出库可用量不足 → `NopException` + 无预留增加）、`testNegativeStockConfigAllowsShortage`（`allow-negative-stock=true` 时不足仍可确认）。
   - Skill: none
 
 Exit Criteria:
 
 > 本阶段交付流水/余额/可用量核心记账。完整仓库 `mvn test` 归 Closure Gates。
 
-- [ ] 5 个记账行为测试存在且 `mvn test -pl module-inventory/erp-inv-service -am` 全绿
-- [ ] 流水不可变 + 移动加权平均成本 + 可用量校验/负库存配置均经测试证明
+- [x] 5 个记账行为测试存在且 `mvn test -pl module-inventory/erp-inv-service -am` 全绿
+- [x] 流水不可变 + 移动加权平均成本 + 可用量校验/负库存配置均经测试证明
 
 ### Phase 3 - 存货过账接入（DONE→PostingEvent + InvAcctDocProvider）+ 收尾
 

@@ -29,6 +29,13 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- compile: 存货过账接入财务过账引擎（IErpFinPostingService / IErpFinAcctDocProvider SPI 位于 finance-service）。
+             inventory→finance 单向无环（finance 为 DAG 顶，不依赖 inventory）。 -->
+        <dependency>
+            <artifactId>app-erp-finance-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!-- test-only: 引入 master-data 注册跨域业务对象(ErpMd*)，使单域 GraphQL save 跨域引用校验可通过 -->
         <dependency>
             <artifactId>app-erp-master-data-service</artifactId>

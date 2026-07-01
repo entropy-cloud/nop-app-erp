@@ -5,6 +5,43 @@ import io.nop.orm.biz.ICrudBiz;
 
 import app.erp.inv.dao.entity.ErpInvStockMove;
 
-public interface IErpInvStockMoveBiz extends ICrudBiz<ErpInvStockMove>{
+/**
+ * 库存移动单业务接口。除标准 CRUD 外，定义跨域/状态机契约：
+ *
+ * <ul>
+ *   <li>{@link #generateMove(StockMoveRequest)}：业务单据联动入口（purchase/sales Processor 调用），
+ *       幂等（{@code (relatedBillType, relatedBillCode)} 为键），业务联动自动推进到 DONE。</li>
+ *   <li>{@link #confirm(Long)} / {@link #complete(Long)} / {@link #cancel(Long)}：状态机迁移。</li>
+ *   <li>{@link #reverse(Long)}：DONE 的纠错路径——生成反向冲销移动单（非反审核）。</li>
+ * </ul>
+ *
+ * <p>权威状态机见 {@code docs/design/inventory/state-machine.md}；跨域契约见 {@code docs/design/inventory/cross-domain.md}。
+ */
+public interface IErpInvStockMoveBiz extends ICrudBiz<ErpInvStockMove> {
 
+    /**
+     * 生成库存移动单。业务单据联动（{@code relatedBillType} 非空）自动 DRAFT→CONFIRMED→DONE；
+     * 独立创建停在 CONFIRMED。同源单重复触发幂等返回已生成移动单。
+     */
+    ErpInvStockMove generateMove(StockMoveRequest request);
+
+    /**
+     * DRAFT → CONFIRMED。出库类/内部调拨校验可用量充足（除非配置允许负库存），通过则增预留。
+     */
+    ErpInvStockMove confirm(Long moveId);
+
+    /**
+     * CONFIRMED → DONE。写不可变库存流水、更新余额（移动加权平均成本）、释放预留、发存货过账事件。
+     */
+    ErpInvStockMove complete(Long moveId);
+
+    /**
+     * DRAFT/CONFIRMED → CANCELLED。若已确认占预留则释放。终态。
+     */
+    ErpInvStockMove cancel(Long moveId);
+
+    /**
+     * 已完成移动单的纠错路径：不改原单，生成反向冲销移动单（新 DRAFT，数量取负），走正常流程到 DONE。
+     */
+    ErpInvStockMove reverse(Long moveId);
 }
