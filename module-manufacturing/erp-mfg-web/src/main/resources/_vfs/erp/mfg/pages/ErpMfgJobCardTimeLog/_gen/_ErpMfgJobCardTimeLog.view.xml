@@ -28,7 +28,7 @@
                 <col id="workOrderId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--操作员(职员)-->
-                <col id="operatorId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="operatorId" mandatory="true" sortable="true"/>
 
                 <!--作业日期-->
                 <col id="workDate" mandatory="true" sortable="true"/>

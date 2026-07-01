@@ -109,6 +109,15 @@ public class _ErpMfgBomLine extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_uoM = "uoM";
     
+    /* relation:  */
+    public static final String PROP_NAME_operation = "operation";
+    
+    /* relation:  */
+    public static final String PROP_NAME_warehouse = "warehouse";
+    
+    /* relation:  */
+    public static final String PROP_NAME_alternativeMaterial = "alternativeMaterial";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1116,6 +1125,75 @@ public class _ErpMfgBomLine extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_uoM, refEntity,()->{
            
                            this.setUoMId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.mfg.dao.entity.ErpMfgBomOperation getOperation(){
+       return (app.erp.mfg.dao.entity.ErpMfgBomOperation)internalGetRefEntity(PROP_NAME_operation);
+    }
+
+    public final void setOperation(app.erp.mfg.dao.entity.ErpMfgBomOperation refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOperationId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_operation, refEntity,()->{
+           
+                           this.setOperationId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdWarehouse getWarehouse(){
+       return (app.erp.md.dao.entity.ErpMdWarehouse)internalGetRefEntity(PROP_NAME_warehouse);
+    }
+
+    public final void setWarehouse(app.erp.md.dao.entity.ErpMdWarehouse refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setWarehouseId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_warehouse, refEntity,()->{
+           
+                           this.setWarehouseId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdMaterial getAlternativeMaterial(){
+       return (app.erp.md.dao.entity.ErpMdMaterial)internalGetRefEntity(PROP_NAME_alternativeMaterial);
+    }
+
+    public final void setAlternativeMaterial(app.erp.md.dao.entity.ErpMdMaterial refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setAlternativeMaterialId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_alternativeMaterial, refEntity,()->{
+           
+                           this.setAlternativeMaterialId(refEntity.getId());
                        
            });
            }

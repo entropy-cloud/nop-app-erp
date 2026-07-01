@@ -30,21 +30,26 @@ prop:
       createdBy: 创建人
       delVersion: 逻辑删除版本
       id: ID
+      inputLot: null
       inputLotId: 输入批次
       inputMaterial: null
       inputMaterialId: 输入物料
       inputQty: 投入数量
+      inputUoM: null
       inputUoMId: 投入计量单位
       isInputConsumed: 输入是否已消耗
       jobCard: null
       jobCardId: 作业卡
       lineNo: 行号
       lotStatus: 批次状态
+      operation: null
       operationId: 工序
+      outputLot: null
       outputLotId: 产出批次
       outputMaterial: null
       outputMaterialId: 产出物料
       outputQty: 产出数量
+      outputUoM: null
       outputUoMId: 产出计量单位
       productionDate: 生产日期
       productionTime: 生产时间
@@ -103,6 +108,7 @@ prop:
       version: 数据版本
       yieldRate: 产出率(%)
     ErpMfgBomLine:
+      alternativeMaterial: null
       alternativeMaterialId: 替代物料
       bom: null
       bomId: BOM ID
@@ -113,6 +119,7 @@ prop:
       lineNo: 行号
       material: null
       materialId: 物料
+      operation: null
       operationId: 工序ID
       quantity: 数量
       remark: 备注
@@ -124,6 +131,7 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+      warehouse: null
       warehouseId: 发货仓库
     ErpMfgBomOperation:
       bom: null
@@ -133,6 +141,7 @@ prop:
       delVersion: 逻辑删除版本
       id: ID
       lineNo: 行号
+      operation: null
       operationId: 工序ID
       rate: 效率系数
       remark: 备注
@@ -152,6 +161,7 @@ prop:
       delVersion: 逻辑删除版本
       id: ID
       lines: null
+      org: null
       orgId: 业务组织
       remark: 备注
       status: 状态
@@ -164,6 +174,7 @@ prop:
       costRollupId: 滚算单ID
       createTime: 创建时间
       createdBy: 创建人
+      currency: null
       currencyId: 币种
       delVersion: 逻辑删除版本
       id: ID
@@ -194,6 +205,7 @@ prop:
       lineNo: 行号
       material: null
       materialId: 物料
+      operation: null
       operationId: 工序
       posted: 已过账
       remark: 备注
@@ -220,6 +232,7 @@ prop:
       delVersion: 逻辑删除版本
       id: ID
       lineNo: 行号
+      operation: null
       operationId: 工序ID
       plannedQuantity: 计划数量
       remark: 备注
@@ -245,6 +258,7 @@ prop:
       jobCard: null
       jobCardId: 作业卡ID
       laborCost: 人工成本
+      operator: null
       operatorId: 操作员(职员)
       remark: 备注
       runMins: 加工时间(分钟)
@@ -266,6 +280,7 @@ prop:
       code: 单号
       createTime: 创建时间
       createdBy: 创建人
+      currency: null
       currencyId: 币种
       delVersion: 逻辑删除版本
       docStatus: 单据状态
@@ -275,6 +290,7 @@ prop:
       jobCard: null
       jobCardId: 作业卡
       lines: null
+      org: null
       orgId: 业务组织
       posted: 已过账
       postedAt: 过账时间
@@ -297,6 +313,7 @@ prop:
       issueId: 领料单ID
       issuedQuantity: 实领数量
       lineNo: 行号
+      location: null
       locationId: 库位
       material: null
       materialId: 物料
@@ -311,6 +328,7 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+      workOrderLine: null
       workOrderLineId: 对应工单投入行
     ErpMfgMrpDemand:
       createTime: 创建时间
@@ -342,6 +360,7 @@ prop:
       demands: null
       id: ID
       lines: null
+      org: null
       orgId: 业务组织
       planningHorizonDays: 计划区间(天)
       remark: 备注
@@ -367,6 +386,7 @@ prop:
       onHand: 现有库存
       orderType: 建议类型
       orderType_label: 建议类型
+      parentLine: null
       parentLineId: 父需求行(多级 BOM 展开)
       plannedDate: 计划到货/开工日期
       plannedQuantity: 计划数量
@@ -448,6 +468,7 @@ prop:
       exchangeRate: 汇率
       id: ID
       lines: null
+      org: null
       orgId: 业务组织
       posted: 已过账
       postedAt: 过账时间
@@ -455,9 +476,12 @@ prop:
       postedStatus: 过账状态
       postedStatus_label: 过账状态
       processingFee: 加工费
+      product: null
       productId: 产品
+      productionVersion: null
       productionVersionId: 生产版本
       remark: 备注
+      routing: null
       routingId: 工艺路线
       supplier: null
       supplierId: 委外供应商
@@ -532,6 +556,7 @@ prop:
       routing: null
       routingId: 工艺路线
       scrappedQuantity: 报废数量
+      sourceMrpPlan: null
       sourceMrpPlanId: 来源 MRP 计划
       sourceOrderCode: 来源单据号
       sourceOrderType: 来源单据类型(SALES_ORDER/FORECAST/MANUAL)
@@ -546,6 +571,7 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
+      destWarehouse: null
       destWarehouseId: 入库仓库(产出用)
       id: ID
       lineNo: 行号
@@ -557,6 +583,7 @@ prop:
       scrappedQuantity: 报废数量
       sku: null
       skuId: SKU
+      sourceWarehouse: null
       sourceWarehouseId: 领料仓库(投入用)
       uoM: null
       uoMId: 计量单位

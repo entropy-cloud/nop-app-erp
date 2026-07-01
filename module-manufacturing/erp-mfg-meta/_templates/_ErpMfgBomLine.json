@@ -20,5 +20,8 @@
   "bom": null,
   "material": null,
   "sku": null,
-  "uoM": null
+  "uoM": null,
+  "operation": null,
+  "warehouse": null,
+  "alternativeMaterial": null
 }

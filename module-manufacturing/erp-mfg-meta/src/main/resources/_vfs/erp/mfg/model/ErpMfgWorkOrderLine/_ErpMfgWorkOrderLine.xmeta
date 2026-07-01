@@ -61,11 +61,11 @@
             <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
         </prop>
         <prop name="sourceWarehouseId" displayName="领料仓库(投入用)" propId="11" i18n-en:displayName="Source Warehouse"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="sourceWarehouse">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="destWarehouseId" displayName="入库仓库(产出用)" propId="12" i18n-en:displayName="Dest Warehouse"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="destWarehouse">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="remark" displayName="备注" propId="13" i18n-en:displayName="Remark" queryable="true" sortable="true"
@@ -115,6 +115,16 @@
               ext:joinLeftProp="uoMId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
               mandatory="true" lazy="true">
             <schema bizObjName="ErpMdUoM"/>
+        </prop>
+        <prop name="sourceWarehouse" i18n-en:displayName="Source Warehouse" tagSet="pub" ext:kind="to-one"
+              internal="true" queryable="true" ext:joinLeftProp="sourceWarehouseId" ext:joinRightProp="id"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdWarehouse"/>
+        </prop>
+        <prop name="destWarehouse" i18n-en:displayName="Dest Warehouse" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="destWarehouseId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdWarehouse"/>
         </prop>
     </props>
 </meta>

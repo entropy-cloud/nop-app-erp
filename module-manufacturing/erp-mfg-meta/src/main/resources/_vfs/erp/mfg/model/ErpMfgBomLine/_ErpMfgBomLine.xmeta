@@ -48,7 +48,7 @@
             <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
         </prop>
         <prop name="operationId" displayName="工序ID" propId="8" i18n-en:displayName="Operation" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="operation">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="remark" displayName="备注" propId="9" i18n-en:displayName="Remark" queryable="true" sortable="true"
@@ -60,11 +60,11 @@
             <schema domain="rate" type="java.lang.String" precision="10" scale="4"/>
         </prop>
         <prop name="warehouseId" displayName="发货仓库" propId="11" i18n-en:displayName="Warehouse" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="warehouse">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="alternativeMaterialId" displayName="替代物料" propId="12" i18n-en:displayName="Alternative Material"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="alternativeMaterial">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="13" i18n-en:displayName="Del Flag" mandatory="true"
@@ -110,6 +110,21 @@
               ext:joinLeftProp="uoMId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
               mandatory="true" lazy="true">
             <schema bizObjName="ErpMdUoM"/>
+        </prop>
+        <prop name="operation" i18n-en:displayName="Operation" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="operationId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpMfgBomOperation"/>
+        </prop>
+        <prop name="warehouse" i18n-en:displayName="Warehouse" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="warehouseId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdWarehouse"/>
+        </prop>
+        <prop name="alternativeMaterial" i18n-en:displayName="Alternative Material" tagSet="pub" ext:kind="to-one"
+              internal="true" queryable="true" ext:joinLeftProp="alternativeMaterialId" ext:joinRightProp="id"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdMaterial"/>
         </prop>
     </props>
 </meta>

@@ -64,7 +64,7 @@
             <schema domain="unitPrice" type="java.lang.String" precision="20" scale="4"/>
         </prop>
         <prop name="currencyId" displayName="币种" propId="12" i18n-en:displayName="Currency" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="currency">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="13" i18n-en:displayName="Del Flag" mandatory="true"
@@ -105,6 +105,11 @@
               ext:joinLeftProp="uoMId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
               mandatory="true" lazy="true">
             <schema bizObjName="ErpMdUoM"/>
+        </prop>
+        <prop name="currency" i18n-en:displayName="Currency" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="currencyId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdCurrency"/>
         </prop>
     </props>
 </meta>

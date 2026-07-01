@@ -309,4 +309,37 @@
         }
 
 
+        private Map<String,Object> _operation;
+
+        public Map<String,Object> getOperation(){
+            return _operation;
+        }
+
+        public void setOperation(Map<String,Object> value){
+            this._operation = value;
+        }
+
+
+        private Map<String,Object> _warehouse;
+
+        public Map<String,Object> getWarehouse(){
+            return _warehouse;
+        }
+
+        public void setWarehouse(Map<String,Object> value){
+            this._warehouse = value;
+        }
+
+
+        private Map<String,Object> _alternativeMaterial;
+
+        public Map<String,Object> getAlternativeMaterial(){
+            return _alternativeMaterial;
+        }
+
+        public void setAlternativeMaterial(Map<String,Object> value){
+            this._alternativeMaterial = value;
+        }
+
+
     }

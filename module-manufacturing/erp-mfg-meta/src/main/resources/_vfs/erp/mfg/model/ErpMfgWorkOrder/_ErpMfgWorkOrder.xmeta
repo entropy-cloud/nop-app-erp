@@ -44,7 +44,7 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="sourceMrpPlanId" displayName="来源 MRP 计划" propId="7" i18n-en:displayName="Source Mrp Plan"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="sourceMrpPlan">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="sourceOrderType" displayName="来源单据类型(SALES_ORDER/FORECAST/MANUAL)" propId="8"
@@ -142,7 +142,7 @@
         </prop>
         <prop name="postedBy" displayName="过账人" propId="31" i18n-en:displayName="Posted By" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String" precision="36"/>
         </prop>
         <prop name="remark" displayName="备注" propId="32" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">
@@ -226,6 +226,11 @@
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
               lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="sourceMrpPlan" i18n-en:displayName="Source MRP Plan" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="sourceMrpPlanId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpMfgMrpPlan"/>
         </prop>
     </props>
 </meta>

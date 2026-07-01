@@ -54,16 +54,16 @@
         }
 
 
-        private Long _operatorId;
+        private String _operatorId;
 
     
         @PropMeta(propId=4)
     
-        public Long getOperatorId(){
+        public String getOperatorId(){
             return _operatorId;
         }
 
-        public void setOperatorId(Long value){
+        public void setOperatorId(String value){
             this._operatorId = value;
         }
 

@@ -19,5 +19,6 @@
   "updateTime": "2000-01-01 14:00:00",
   "costRollup": null,
   "material": null,
-  "uoM": null
+  "uoM": null,
+  "currency": null
 }

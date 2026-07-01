@@ -21,7 +21,7 @@
   "postedStatus": "",
   "postedStatus_label": "",
   "postedAt": "2000-01-01 14:00:00",
-  "postedBy": 0,
+  "postedBy": "",
   "remark": "",
   "amountSource": "",
   "amountFunctional": "",
@@ -35,5 +35,9 @@
   "supplier": null,
   "workcenter": null,
   "currency": null,
-  "lines": null
+  "lines": null,
+  "org": null,
+  "routing": null,
+  "productionVersion": null,
+  "product": null
 }

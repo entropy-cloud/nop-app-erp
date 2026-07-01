@@ -25,6 +25,16 @@ CREATE TABLE erp_md_uom(
   constraint PK_erp_md_uom primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_md_warehouse(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  WAREHOUSE_TYPE INTEGER NULL    COMMENT 'null',
+  ORG_ID BIGINT NULL    COMMENT 'null',
+  STATUS INTEGER NULL    COMMENT 'null',
+  constraint PK_erp_md_warehouse primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_mfg_workcenter(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '工作中心编码',
@@ -79,31 +89,13 @@ CREATE TABLE erp_md_organization(
   constraint PK_erp_md_organization primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_mfg_mrp_plan(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  CODE VARCHAR(50) NOT NULL    COMMENT '计划号',
-  ORG_ID BIGINT NULL    COMMENT '业务组织',
-  BUSINESS_DATE DATE NOT NULL    COMMENT '计划日期',
-  PLANNING_HORIZON_DAYS INTEGER NULL    COMMENT '计划区间(天)',
-  STATUS INTEGER NOT NULL    COMMENT '状态',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_mfg_mrp_plan primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_md_warehouse(
+CREATE TABLE erp_md_location(
   ID BIGINT NULL    COMMENT 'null',
+  WAREHOUSE_ID BIGINT NULL    COMMENT 'null',
   CODE VARCHAR(50) NULL    COMMENT 'null',
   NAME VARCHAR(200) NULL    COMMENT 'null',
-  WAREHOUSE_TYPE INTEGER NULL    COMMENT 'null',
-  ORG_ID BIGINT NULL    COMMENT 'null',
-  STATUS INTEGER NULL    COMMENT 'null',
-  constraint PK_erp_md_warehouse primary key (ID)
+  PARENT_ID BIGINT NULL    COMMENT 'null',
+  constraint PK_erp_md_location primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_md_partner(
@@ -116,30 +108,17 @@ CREATE TABLE erp_md_partner(
   constraint PK_erp_md_partner primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_mfg_cost_rollup(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  CODE VARCHAR(50) NOT NULL    COMMENT '单号',
-  ORG_ID BIGINT NULL    COMMENT '业务组织',
-  BUSINESS_DATE DATE NOT NULL    COMMENT '计算日期',
-  COSTING_VERSION VARCHAR(50) NULL    COMMENT '成本核算版本',
-  STATUS INTEGER NOT NULL    COMMENT '状态',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_mfg_cost_rollup primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_md_location(
+CREATE TABLE erp_md_employee(
   ID BIGINT NULL    COMMENT 'null',
-  WAREHOUSE_ID BIGINT NULL    COMMENT 'null',
   CODE VARCHAR(50) NULL    COMMENT 'null',
   NAME VARCHAR(200) NULL    COMMENT 'null',
-  PARENT_ID BIGINT NULL    COMMENT 'null',
-  constraint PK_erp_md_location primary key (ID)
+  constraint PK_erp_md_employee primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_inv_batch(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  constraint PK_erp_inv_batch primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_mfg_bom(
@@ -183,6 +162,102 @@ CREATE TABLE erp_mfg_routing_operation(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   constraint PK_erp_mfg_routing_operation primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_mfg_mrp_plan(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '计划号',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  BUSINESS_DATE DATE NOT NULL    COMMENT '计划日期',
+  PLANNING_HORIZON_DAYS INTEGER NULL    COMMENT '计划区间(天)',
+  STATUS INTEGER NOT NULL    COMMENT '状态',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_mfg_mrp_plan primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_mfg_cost_rollup(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '单号',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  BUSINESS_DATE DATE NOT NULL    COMMENT '计算日期',
+  COSTING_VERSION VARCHAR(50) NULL    COMMENT '成本核算版本',
+  STATUS INTEGER NOT NULL    COMMENT '状态',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_mfg_cost_rollup primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_mfg_bom_byproduct(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  BOM_ID BIGINT NOT NULL    COMMENT 'BOM ID',
+  LINE_NO INTEGER NOT NULL    COMMENT '行号',
+  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
+  SKU_ID BIGINT NULL    COMMENT 'SKU',
+  UO_M_ID BIGINT NOT NULL    COMMENT '计量单位',
+  QUANTITY DECIMAL(20,4) NOT NULL    COMMENT '数量',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  BYPRODUCT_TYPE INTEGER NULL    COMMENT '联副产品类型',
+  YIELD_RATE DECIMAL(10,4) default 100  NULL    COMMENT '产出率(%)',
+  COST_ALLOCATION_PERCENT DECIMAL(10,4) default 0  NULL    COMMENT '成本分摊比例(%)',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_mfg_bom_byproduct primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_mfg_production_version(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '版本编码',
+  PRODUCT_ID BIGINT NOT NULL    COMMENT '产品',
+  BOM_ID BIGINT NOT NULL    COMMENT 'BOM',
+  ROUTING_ID BIGINT NOT NULL    COMMENT '工艺路线',
+  VALID_FROM DATE NULL    COMMENT '生效日期',
+  VALID_TO DATE NULL    COMMENT '失效日期',
+  LOT_SIZE_FROM DECIMAL(20,4) NULL    COMMENT '批量下限',
+  LOT_SIZE_TO DECIMAL(20,4) NULL    COMMENT '批量上限',
+  IS_DEFAULT BOOLEAN default 0  NULL    COMMENT '是否默认版本',
+  IS_ACTIVE BOOLEAN default 1  NULL    COMMENT '是否有效',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_mfg_production_version primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_mfg_bom_operation(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  BOM_ID BIGINT NOT NULL    COMMENT 'BOM ID',
+  LINE_NO INTEGER NOT NULL    COMMENT '行号',
+  OPERATION_ID BIGINT NOT NULL    COMMENT '工序ID',
+  WORKCENTER_ID BIGINT NULL    COMMENT '工作中心',
+  STANDARD_TIME DECIMAL(12,2) NULL    COMMENT '标准工时',
+  TIME_UNIT VARCHAR(20) NULL    COMMENT '时间单位',
+  RATE DECIMAL(10,4) default 1  NULL    COMMENT '效率系数',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_mfg_bom_operation primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_mfg_mrp_plan_line(
@@ -252,90 +327,6 @@ CREATE TABLE erp_mfg_cost_rollup_line(
   constraint PK_erp_mfg_cost_rollup_line primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_mfg_bom_line(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  BOM_ID BIGINT NOT NULL    COMMENT 'BOM ID',
-  LINE_NO INTEGER NOT NULL    COMMENT '行号',
-  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
-  SKU_ID BIGINT NULL    COMMENT 'SKU',
-  UO_M_ID BIGINT NOT NULL    COMMENT '计量单位',
-  QUANTITY DECIMAL(20,4) NOT NULL    COMMENT '数量',
-  OPERATION_ID BIGINT NULL    COMMENT '工序ID',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  SCRAP_RATE DECIMAL(10,4) default 0  NULL    COMMENT '损耗率(%)',
-  WAREHOUSE_ID BIGINT NULL    COMMENT '发货仓库',
-  ALTERNATIVE_MATERIAL_ID BIGINT NULL    COMMENT '替代物料',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_mfg_bom_line primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_mfg_bom_operation(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  BOM_ID BIGINT NOT NULL    COMMENT 'BOM ID',
-  LINE_NO INTEGER NOT NULL    COMMENT '行号',
-  OPERATION_ID BIGINT NOT NULL    COMMENT '工序ID',
-  WORKCENTER_ID BIGINT NULL    COMMENT '工作中心',
-  STANDARD_TIME DECIMAL(12,2) NULL    COMMENT '标准工时',
-  TIME_UNIT VARCHAR(20) NULL    COMMENT '时间单位',
-  RATE DECIMAL(10,4) default 1  NULL    COMMENT '效率系数',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_mfg_bom_operation primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_mfg_bom_byproduct(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  BOM_ID BIGINT NOT NULL    COMMENT 'BOM ID',
-  LINE_NO INTEGER NOT NULL    COMMENT '行号',
-  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
-  SKU_ID BIGINT NULL    COMMENT 'SKU',
-  UO_M_ID BIGINT NOT NULL    COMMENT '计量单位',
-  QUANTITY DECIMAL(20,4) NOT NULL    COMMENT '数量',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  BYPRODUCT_TYPE INTEGER NULL    COMMENT '联副产品类型',
-  YIELD_RATE DECIMAL(10,4) default 100  NULL    COMMENT '产出率(%)',
-  COST_ALLOCATION_PERCENT DECIMAL(10,4) default 0  NULL    COMMENT '成本分摊比例(%)',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_mfg_bom_byproduct primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_mfg_production_version(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  CODE VARCHAR(50) NOT NULL    COMMENT '版本编码',
-  PRODUCT_ID BIGINT NOT NULL    COMMENT '产品',
-  BOM_ID BIGINT NOT NULL    COMMENT 'BOM',
-  ROUTING_ID BIGINT NOT NULL    COMMENT '工艺路线',
-  VALID_FROM DATE NULL    COMMENT '生效日期',
-  VALID_TO DATE NULL    COMMENT '失效日期',
-  LOT_SIZE_FROM DECIMAL(20,4) NULL    COMMENT '批量下限',
-  LOT_SIZE_TO DECIMAL(20,4) NULL    COMMENT '批量上限',
-  IS_DEFAULT BOOLEAN default 0  NULL    COMMENT '是否默认版本',
-  IS_ACTIVE BOOLEAN default 1  NULL    COMMENT '是否有效',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_mfg_production_version primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
 CREATE TABLE erp_mfg_work_order(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '工单号',
@@ -367,7 +358,7 @@ CREATE TABLE erp_mfg_work_order(
   PRIORITY INTEGER NULL    COMMENT '优先级',
   POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
   POSTED_AT DATETIME NULL    COMMENT '过账时间',
-  POSTED_BY BIGINT NULL    COMMENT '过账人',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -379,6 +370,28 @@ CREATE TABLE erp_mfg_work_order(
   AMOUNT_SOURCE DECIMAL(20,4) default 0  NULL    COMMENT '源币种金额',
   AMOUNT_FUNCTIONAL DECIMAL(20,4) default 0  NULL    COMMENT '本位币金额',
   constraint PK_erp_mfg_work_order primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_mfg_bom_line(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  BOM_ID BIGINT NOT NULL    COMMENT 'BOM ID',
+  LINE_NO INTEGER NOT NULL    COMMENT '行号',
+  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
+  SKU_ID BIGINT NULL    COMMENT 'SKU',
+  UO_M_ID BIGINT NOT NULL    COMMENT '计量单位',
+  QUANTITY DECIMAL(20,4) NOT NULL    COMMENT '数量',
+  OPERATION_ID BIGINT NULL    COMMENT '工序ID',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  SCRAP_RATE DECIMAL(10,4) default 0  NULL    COMMENT '损耗率(%)',
+  WAREHOUSE_ID BIGINT NULL    COMMENT '发货仓库',
+  ALTERNATIVE_MATERIAL_ID BIGINT NULL    COMMENT '替代物料',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_mfg_bom_line primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_mfg_work_order_line(
@@ -424,7 +437,7 @@ CREATE TABLE erp_mfg_subcontract_order(
   POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
   POSTED_STATUS VARCHAR(20) NOT NULL    COMMENT '过账状态',
   POSTED_AT DATETIME NULL    COMMENT '过账时间',
-  POSTED_BY BIGINT NULL    COMMENT '过账人',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
   AMOUNT_SOURCE DECIMAL(20,4) default 0  NULL    COMMENT '源币种金额',
   AMOUNT_FUNCTIONAL DECIMAL(20,4) default 0  NULL    COMMENT '本位币金额',
@@ -520,7 +533,7 @@ CREATE TABLE erp_mfg_material_issue(
   APPROVE_STATUS INTEGER NOT NULL    COMMENT '审核状态',
   POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
   POSTED_AT DATETIME NULL    COMMENT '过账时间',
-  POSTED_BY BIGINT NULL    COMMENT '过账人',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -539,7 +552,7 @@ CREATE TABLE erp_mfg_job_card_time_log(
   ID BIGINT NOT NULL    COMMENT 'ID',
   JOB_CARD_ID BIGINT NOT NULL    COMMENT '作业卡ID',
   WORK_ORDER_ID BIGINT NOT NULL    COMMENT '工单ID',
-  OPERATOR_ID BIGINT NOT NULL    COMMENT '操作员(职员)',
+  OPERATOR_ID VARCHAR(36) NOT NULL    COMMENT '操作员(职员)',
   WORK_DATE DATE NOT NULL    COMMENT '作业日期',
   START_TIME DATETIME NULL    COMMENT '开始时间',
   END_TIME DATETIME NULL    COMMENT '结束时间',
@@ -619,6 +632,8 @@ CREATE TABLE erp_mfg_material_issue_line(
                 
    ALTER TABLE erp_md_uom COMMENT '计量单位';
                 
+   ALTER TABLE erp_md_warehouse COMMENT '仓库';
+                
    ALTER TABLE erp_mfg_workcenter COMMENT '工作中心';
                 
    ALTER TABLE erp_mfg_routing COMMENT '工艺路线';
@@ -627,19 +642,27 @@ CREATE TABLE erp_mfg_material_issue_line(
                 
    ALTER TABLE erp_md_organization COMMENT '组织';
                 
-   ALTER TABLE erp_mfg_mrp_plan COMMENT 'MRP计划';
-                
-   ALTER TABLE erp_md_warehouse COMMENT '仓库';
+   ALTER TABLE erp_md_location COMMENT '库位';
                 
    ALTER TABLE erp_md_partner COMMENT '往来单位';
                 
-   ALTER TABLE erp_mfg_cost_rollup COMMENT '标准成本滚算';
+   ALTER TABLE erp_md_employee COMMENT '员工';
                 
-   ALTER TABLE erp_md_location COMMENT '库位';
+   ALTER TABLE erp_inv_batch COMMENT '批次';
                 
    ALTER TABLE erp_mfg_bom COMMENT 'BOM';
                 
    ALTER TABLE erp_mfg_routing_operation COMMENT '工艺路线工序';
+                
+   ALTER TABLE erp_mfg_mrp_plan COMMENT 'MRP计划';
+                
+   ALTER TABLE erp_mfg_cost_rollup COMMENT '标准成本滚算';
+                
+   ALTER TABLE erp_mfg_bom_byproduct COMMENT 'BOM联副产品';
+                
+   ALTER TABLE erp_mfg_production_version COMMENT '生产版本';
+                
+   ALTER TABLE erp_mfg_bom_operation COMMENT 'BOM工艺';
                 
    ALTER TABLE erp_mfg_mrp_plan_line COMMENT 'MRP计划行';
                 
@@ -647,15 +670,9 @@ CREATE TABLE erp_mfg_material_issue_line(
                 
    ALTER TABLE erp_mfg_cost_rollup_line COMMENT '标准成本滚算行';
                 
-   ALTER TABLE erp_mfg_bom_line COMMENT 'BOM行';
-                
-   ALTER TABLE erp_mfg_bom_operation COMMENT 'BOM工艺';
-                
-   ALTER TABLE erp_mfg_bom_byproduct COMMENT 'BOM联副产品';
-                
-   ALTER TABLE erp_mfg_production_version COMMENT '生产版本';
-                
    ALTER TABLE erp_mfg_work_order COMMENT '工单';
+                
+   ALTER TABLE erp_mfg_bom_line COMMENT 'BOM行';
                 
    ALTER TABLE erp_mfg_work_order_line COMMENT '工单行';
                 

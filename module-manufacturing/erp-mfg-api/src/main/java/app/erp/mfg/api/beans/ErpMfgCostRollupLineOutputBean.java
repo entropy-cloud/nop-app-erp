@@ -298,4 +298,15 @@
         }
 
 
+        private Map<String,Object> _currency;
+
+        public Map<String,Object> getCurrency(){
+            return _currency;
+        }
+
+        public void setCurrency(Map<String,Object> value){
+            this._currency = value;
+        }
+
+
     }

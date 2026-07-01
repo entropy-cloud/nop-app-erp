@@ -113,6 +113,12 @@ public class _ErpMfgWorkOrderLine extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_uoM = "uoM";
     
+    /* relation:  */
+    public static final String PROP_NAME_sourceWarehouse = "sourceWarehouse";
+    
+    /* relation:  */
+    public static final String PROP_NAME_destWarehouse = "destWarehouse";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1165,6 +1171,52 @@ public class _ErpMfgWorkOrderLine extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_uoM, refEntity,()->{
            
                            this.setUoMId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdWarehouse getSourceWarehouse(){
+       return (app.erp.md.dao.entity.ErpMdWarehouse)internalGetRefEntity(PROP_NAME_sourceWarehouse);
+    }
+
+    public final void setSourceWarehouse(app.erp.md.dao.entity.ErpMdWarehouse refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setSourceWarehouseId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_sourceWarehouse, refEntity,()->{
+           
+                           this.setSourceWarehouseId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdWarehouse getDestWarehouse(){
+       return (app.erp.md.dao.entity.ErpMdWarehouse)internalGetRefEntity(PROP_NAME_destWarehouse);
+    }
+
+    public final void setDestWarehouse(app.erp.md.dao.entity.ErpMdWarehouse refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setDestWarehouseId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_destWarehouse, refEntity,()->{
+           
+                           this.setDestWarehouseId(refEntity.getId());
                        
            });
            }

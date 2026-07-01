@@ -22,5 +22,7 @@
   "issue": null,
   "material": null,
   "sku": null,
-  "uoM": null
+  "uoM": null,
+  "workOrderLine": null,
+  "location": null
 }

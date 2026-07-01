@@ -107,6 +107,9 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_workcenter = "workcenter";
     
+    /* relation:  */
+    public static final String PROP_NAME_operation = "operation";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1113,6 +1116,29 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_workcenter, refEntity,()->{
            
                            this.setWorkcenterId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.mfg.dao.entity.ErpMfgBomOperation getOperation(){
+       return (app.erp.mfg.dao.entity.ErpMfgBomOperation)internalGetRefEntity(PROP_NAME_operation);
+    }
+
+    public final void setOperation(app.erp.mfg.dao.entity.ErpMfgBomOperation refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOperationId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_operation, refEntity,()->{
+           
+                           this.setOperationId(refEntity.getId());
                        
            });
            }

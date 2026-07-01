@@ -54,6 +54,11 @@ prop:
       jobCard: Job Card
       inputMaterial: Input Material
       outputMaterial: Output Material
+      operation: Operation
+      inputLot: Input Lot
+      inputUoM: Input UoM
+      outputLot: Output Lot
+      outputUoM: Output UoM
     ErpMfgBom:
       id: ID
       code: Code
@@ -125,6 +130,9 @@ prop:
       material: Material
       sku: Sku
       uoM: Uo M
+      operation: Operation
+      warehouse: Warehouse
+      alternativeMaterial: Alternative Material
     ErpMfgBomOperation:
       id: ID
       bomId: Bom
@@ -143,6 +151,7 @@ prop:
       updateTime: Update Time
       bom: Bom
       workcenter: Workcenter
+      operation: Operation
     ErpMfgCostRollup:
       id: ID
       code: Code
@@ -159,6 +168,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       lines: Lines
+      org: Org
     ErpMfgCostRollupLine:
       id: ID
       costRollupId: Cost Rollup
@@ -181,6 +191,7 @@ prop:
       costRollup: Cost Rollup
       material: Material
       uoM: Uo M
+      currency: Currency
     ErpMfgCostVariance:
       id: ID
       workOrderId: Work Order
@@ -210,6 +221,7 @@ prop:
       workOrder: Work Order
       material: Material
       workcenter: Workcenter
+      operation: Operation
     ErpMfgJobCard:
       id: ID
       workOrderId: Work Order
@@ -233,6 +245,7 @@ prop:
       updateTime: Update Time
       workOrder: Work Order
       workcenter: Workcenter
+      operation: Operation
     ErpMfgJobCardTimeLog:
       id: ID
       jobCardId: Job Card
@@ -257,6 +270,7 @@ prop:
       updateTime: Update Time
       jobCard: Job Card
       workOrder: Work Order
+      operator: Operator
     ErpMfgMaterialIssue:
       id: ID
       code: Code
@@ -287,6 +301,8 @@ prop:
       jobCard: Job Card
       warehouse: Warehouse
       lines: Lines
+      org: Org
+      currency: Currency
     ErpMfgMaterialIssueLine:
       id: ID
       issueId: Issue
@@ -312,6 +328,8 @@ prop:
       material: Material
       sku: Sku
       uoM: Uo M
+      workOrderLine: Work Order Line
+      location: Location
     ErpMfgMrpDemand:
       id: ID
       mrpPlanId: Mrp Plan
@@ -350,6 +368,7 @@ prop:
       updateTime: Update Time
       lines: Lines
       demands: Demands
+      org: Org
     ErpMfgMrpPlanLine:
       id: ID
       mrpPlanId: Mrp Plan
@@ -376,6 +395,7 @@ prop:
       mrpPlan: Mrp Plan
       material: Material
       uoM: Uo M
+      parentLine: Parent Line
     ErpMfgProductionVersion:
       id: ID
       code: Code
@@ -469,6 +489,10 @@ prop:
       workcenter: Workcenter
       currency: Currency
       lines: Lines
+      org: Org
+      routing: Routing
+      productionVersion: Production Version
+      product: Product
     ErpMfgSubcontractOrderLine:
       id: ID
       subcontractOrderId: Subcontract Order
@@ -541,6 +565,7 @@ prop:
       lines: Lines
       jobCards: Job Cards
       org: Org
+      sourceMrpPlan: Source MRP Plan
     ErpMfgWorkOrderLine:
       id: ID
       workOrderId: Work Order
@@ -565,6 +590,8 @@ prop:
       material: Material
       sku: Sku
       uoM: Uo M
+      sourceWarehouse: Source Warehouse
+      destWarehouse: Dest Warehouse
     ErpMfgWorkcenter:
       id: ID
       code: Code

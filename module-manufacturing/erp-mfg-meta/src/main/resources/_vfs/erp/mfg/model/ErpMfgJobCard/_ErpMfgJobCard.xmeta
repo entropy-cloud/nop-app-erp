@@ -28,7 +28,7 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="operationId" displayName="工序ID" propId="3" i18n-en:displayName="Operation" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="operation">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="lineNo" displayName="行号" propId="4" i18n-en:displayName="Line No" mandatory="true" queryable="true"
@@ -104,6 +104,11 @@
               queryable="true" ext:joinLeftProp="workcenterId" ext:joinRightProp="id" insertable="false"
               updatable="false" lazy="true">
             <schema bizObjName="ErpMfgWorkcenter"/>
+        </prop>
+        <prop name="operation" i18n-en:displayName="Operation" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="operationId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpMfgBomOperation"/>
         </prop>
     </props>
 </meta>

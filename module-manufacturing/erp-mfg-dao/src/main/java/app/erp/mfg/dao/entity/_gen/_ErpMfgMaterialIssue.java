@@ -65,7 +65,7 @@ public class _ErpMfgMaterialIssue extends DynamicOrmEntity{
     public static final String PROP_NAME_postedAt = "postedAt";
     public static final int PROP_ID_postedAt = 11;
     
-    /* 过账人: POSTED_BY BIGINT */
+    /* 过账人: POSTED_BY VARCHAR */
     public static final String PROP_NAME_postedBy = "postedBy";
     public static final int PROP_ID_postedBy = 12;
     
@@ -128,6 +128,12 @@ public class _ErpMfgMaterialIssue extends DynamicOrmEntity{
     
     /* relation:  */
     public static final String PROP_NAME_lines = "lines";
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
+    /* relation:  */
+    public static final String PROP_NAME_currency = "currency";
     
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
@@ -243,7 +249,7 @@ public class _ErpMfgMaterialIssue extends DynamicOrmEntity{
     private java.time.LocalDateTime _postedAt;
     
     /* 过账人: POSTED_BY */
-    private java.lang.Long _postedBy;
+    private java.lang.String _postedBy;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -543,9 +549,9 @@ public class _ErpMfgMaterialIssue extends DynamicOrmEntity{
             }
         
             case PROP_ID_postedBy:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_postedBy));
                }
                setPostedBy(typedValue);
@@ -750,7 +756,7 @@ public class _ErpMfgMaterialIssue extends DynamicOrmEntity{
         
             case PROP_ID_postedBy:{
                onInitProp(propId);
-               this._postedBy = (java.lang.Long)value;
+               this._postedBy = (java.lang.String)value;
                
                break;
             }
@@ -1050,7 +1056,7 @@ public class _ErpMfgMaterialIssue extends DynamicOrmEntity{
     /**
      * 过账人: POSTED_BY
      */
-    public final java.lang.Long getPostedBy(){
+    public final java.lang.String getPostedBy(){
          onPropGet(PROP_ID_postedBy);
          return _postedBy;
     }
@@ -1058,7 +1064,7 @@ public class _ErpMfgMaterialIssue extends DynamicOrmEntity{
     /**
      * 过账人: POSTED_BY
      */
-    public final void setPostedBy(java.lang.Long value){
+    public final void setPostedBy(java.lang.String value){
         if(onPropSet(PROP_ID_postedBy,value)){
             this._postedBy = value;
             internalClearRefs(PROP_ID_postedBy);
@@ -1352,6 +1358,52 @@ public class _ErpMfgMaterialIssue extends DynamicOrmEntity{
      */
     public final IOrmEntitySet<app.erp.mfg.dao.entity.ErpMfgMaterialIssueLine> getLines(){
        return _lines;
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdCurrency getCurrency(){
+       return (app.erp.md.dao.entity.ErpMdCurrency)internalGetRefEntity(PROP_NAME_currency);
+    }
+
+    public final void setCurrency(app.erp.md.dao.entity.ErpMdCurrency refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCurrencyId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_currency, refEntity,()->{
+           
+                           this.setCurrencyId(refEntity.getId());
+                       
+           });
+           }
+       
     }
        
 }

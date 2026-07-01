@@ -118,6 +118,9 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_uoM = "uoM";
     
+    /* relation:  */
+    public static final String PROP_NAME_parentLine = "parentLine";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1237,6 +1240,29 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_uoM, refEntity,()->{
            
                            this.setUoMId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.mfg.dao.entity.ErpMfgMrpPlanLine getParentLine(){
+       return (app.erp.mfg.dao.entity.ErpMfgMrpPlanLine)internalGetRefEntity(PROP_NAME_parentLine);
+    }
+
+    public final void setParentLine(app.erp.mfg.dao.entity.ErpMfgMrpPlanLine refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setParentLineId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_parentLine, refEntity,()->{
+           
+                           this.setParentLineId(refEntity.getId());
                        
            });
            }

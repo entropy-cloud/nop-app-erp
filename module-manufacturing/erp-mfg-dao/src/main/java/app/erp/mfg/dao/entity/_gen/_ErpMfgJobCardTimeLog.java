@@ -33,7 +33,7 @@ public class _ErpMfgJobCardTimeLog extends DynamicOrmEntity{
     public static final String PROP_NAME_workOrderId = "workOrderId";
     public static final int PROP_ID_workOrderId = 3;
     
-    /* 操作员(职员): OPERATOR_ID BIGINT */
+    /* 操作员(职员): OPERATOR_ID VARCHAR */
     public static final String PROP_NAME_operatorId = "operatorId";
     public static final int PROP_ID_operatorId = 4;
     
@@ -114,6 +114,9 @@ public class _ErpMfgJobCardTimeLog extends DynamicOrmEntity{
     
     /* relation:  */
     public static final String PROP_NAME_workOrder = "workOrder";
+    
+    /* relation:  */
+    public static final String PROP_NAME_operator = "operator";
     
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
@@ -199,7 +202,7 @@ public class _ErpMfgJobCardTimeLog extends DynamicOrmEntity{
     private java.lang.Long _workOrderId;
     
     /* 操作员(职员): OPERATOR_ID */
-    private java.lang.Long _operatorId;
+    private java.lang.String _operatorId;
     
     /* 作业日期: WORK_DATE */
     private java.time.LocalDate _workDate;
@@ -431,9 +434,9 @@ public class _ErpMfgJobCardTimeLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_operatorId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_operatorId));
                }
                setOperatorId(typedValue);
@@ -642,7 +645,7 @@ public class _ErpMfgJobCardTimeLog extends DynamicOrmEntity{
         
             case PROP_ID_operatorId:{
                onInitProp(propId);
-               this._operatorId = (java.lang.Long)value;
+               this._operatorId = (java.lang.String)value;
                
                break;
             }
@@ -832,7 +835,7 @@ public class _ErpMfgJobCardTimeLog extends DynamicOrmEntity{
     /**
      * 操作员(职员): OPERATOR_ID
      */
-    public final java.lang.Long getOperatorId(){
+    public final java.lang.String getOperatorId(){
          onPropGet(PROP_ID_operatorId);
          return _operatorId;
     }
@@ -840,7 +843,7 @@ public class _ErpMfgJobCardTimeLog extends DynamicOrmEntity{
     /**
      * 操作员(职员): OPERATOR_ID
      */
-    public final void setOperatorId(java.lang.Long value){
+    public final void setOperatorId(java.lang.String value){
         if(onPropSet(PROP_ID_operatorId,value)){
             this._operatorId = value;
             internalClearRefs(PROP_ID_operatorId);
@@ -1211,6 +1214,30 @@ public class _ErpMfgJobCardTimeLog extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_workOrder, refEntity,()->{
            
                            this.setWorkOrderId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdEmployee getOperator(){
+       return (app.erp.md.dao.entity.ErpMdEmployee)internalGetRefEntity(PROP_NAME_operator);
+    }
+
+    public final void setOperator(app.erp.md.dao.entity.ErpMdEmployee refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOperatorId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_operator, refEntity,()->{
+           
+                           this.orm_propValue(PROP_ID_operatorId,
+                           refEntity.getId());
                        
            });
            }

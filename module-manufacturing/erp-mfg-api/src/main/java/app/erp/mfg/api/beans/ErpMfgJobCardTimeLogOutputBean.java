@@ -55,16 +55,16 @@
         }
 
 
-        private Long _operatorId;
+        private String _operatorId;
 
     
         @PropMeta(propId=4)
     
-        public Long getOperatorId(){
+        public String getOperatorId(){
             return _operatorId;
         }
 
-        public void setOperatorId(Long value){
+        public void setOperatorId(String value){
             this._operatorId = value;
         }
 
@@ -326,6 +326,17 @@
 
         public void setWorkOrder(Map<String,Object> value){
             this._workOrder = value;
+        }
+
+
+        private Map<String,Object> _operator;
+
+        public Map<String,Object> getOperator(){
+            return _operator;
+        }
+
+        public void setOperator(Map<String,Object> value){
+            this._operator = value;
         }
 
 

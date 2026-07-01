@@ -26,5 +26,10 @@
   "workOrder": null,
   "jobCard": null,
   "inputMaterial": null,
-  "outputMaterial": null
+  "outputMaterial": null,
+  "operation": null,
+  "inputLot": null,
+  "inputUoM": null,
+  "outputLot": null,
+  "outputUoM": null
 }

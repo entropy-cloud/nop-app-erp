@@ -337,4 +337,26 @@
         }
 
 
+        private Map<String,Object> _workOrderLine;
+
+        public Map<String,Object> getWorkOrderLine(){
+            return _workOrderLine;
+        }
+
+        public void setWorkOrderLine(Map<String,Object> value){
+            this._workOrderLine = value;
+        }
+
+
+        private Map<String,Object> _location;
+
+        public Map<String,Object> getLocation(){
+            return _location;
+        }
+
+        public void setLocation(Map<String,Object> value){
+            this._location = value;
+        }
+
+
     }

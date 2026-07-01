@@ -26,5 +26,6 @@
   "updateTime": "2000-01-01 14:00:00",
   "workOrder": null,
   "material": null,
-  "workcenter": null
+  "workcenter": null,
+  "operation": null
 }

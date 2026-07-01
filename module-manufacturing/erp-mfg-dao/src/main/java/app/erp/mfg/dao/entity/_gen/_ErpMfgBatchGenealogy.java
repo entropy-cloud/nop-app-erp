@@ -133,6 +133,21 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_outputMaterial = "outputMaterial";
     
+    /* relation:  */
+    public static final String PROP_NAME_operation = "operation";
+    
+    /* relation:  */
+    public static final String PROP_NAME_inputLot = "inputLot";
+    
+    /* relation:  */
+    public static final String PROP_NAME_inputUoM = "inputUoM";
+    
+    /* relation:  */
+    public static final String PROP_NAME_outputLot = "outputLot";
+    
+    /* relation:  */
+    public static final String PROP_NAME_outputUoM = "outputUoM";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1410,6 +1425,121 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_outputMaterial, refEntity,()->{
            
                            this.setOutputMaterialId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.mfg.dao.entity.ErpMfgBomOperation getOperation(){
+       return (app.erp.mfg.dao.entity.ErpMfgBomOperation)internalGetRefEntity(PROP_NAME_operation);
+    }
+
+    public final void setOperation(app.erp.mfg.dao.entity.ErpMfgBomOperation refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOperationId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_operation, refEntity,()->{
+           
+                           this.setOperationId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.inv.dao.entity.ErpInvBatch getInputLot(){
+       return (app.erp.inv.dao.entity.ErpInvBatch)internalGetRefEntity(PROP_NAME_inputLot);
+    }
+
+    public final void setInputLot(app.erp.inv.dao.entity.ErpInvBatch refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setInputLotId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_inputLot, refEntity,()->{
+           
+                           this.setInputLotId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdUoM getInputUoM(){
+       return (app.erp.md.dao.entity.ErpMdUoM)internalGetRefEntity(PROP_NAME_inputUoM);
+    }
+
+    public final void setInputUoM(app.erp.md.dao.entity.ErpMdUoM refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setInputUoMId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_inputUoM, refEntity,()->{
+           
+                           this.setInputUoMId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.inv.dao.entity.ErpInvBatch getOutputLot(){
+       return (app.erp.inv.dao.entity.ErpInvBatch)internalGetRefEntity(PROP_NAME_outputLot);
+    }
+
+    public final void setOutputLot(app.erp.inv.dao.entity.ErpInvBatch refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOutputLotId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_outputLot, refEntity,()->{
+           
+                           this.setOutputLotId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdUoM getOutputUoM(){
+       return (app.erp.md.dao.entity.ErpMdUoM)internalGetRefEntity(PROP_NAME_outputUoM);
+    }
+
+    public final void setOutputUoM(app.erp.md.dao.entity.ErpMdUoM refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOutputUoMId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_outputUoM, refEntity,()->{
+           
+                           this.setOutputUoMId(refEntity.getId());
                        
            });
            }

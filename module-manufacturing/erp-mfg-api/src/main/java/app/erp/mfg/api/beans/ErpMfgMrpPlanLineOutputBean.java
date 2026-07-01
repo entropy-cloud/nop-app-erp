@@ -352,4 +352,15 @@
         }
 
 
+        private Map<String,Object> _parentLine;
+
+        public Map<String,Object> getParentLine(){
+            return _parentLine;
+        }
+
+        public void setParentLine(Map<String,Object> value){
+            this._parentLine = value;
+        }
+
+
     }

@@ -323,4 +323,26 @@
         }
 
 
+        private Map<String,Object> _sourceWarehouse;
+
+        public Map<String,Object> getSourceWarehouse(){
+            return _sourceWarehouse;
+        }
+
+        public void setSourceWarehouse(Map<String,Object> value){
+            this._sourceWarehouse = value;
+        }
+
+
+        private Map<String,Object> _destWarehouse;
+
+        public Map<String,Object> getDestWarehouse(){
+            return _destWarehouse;
+        }
+
+        public void setDestWarehouse(Map<String,Object> value){
+            this._destWarehouse = value;
+        }
+
+
     }

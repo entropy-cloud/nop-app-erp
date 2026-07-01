@@ -313,4 +313,15 @@
         }
 
 
+        private Map<String,Object> _operation;
+
+        public Map<String,Object> getOperation(){
+            return _operation;
+        }
+
+        public void setOperation(Map<String,Object> value){
+            this._operation = value;
+        }
+
+
     }

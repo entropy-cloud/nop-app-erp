@@ -28,7 +28,7 @@
             <schema domain="workOrderCode" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="workOrderId" displayName="来源工单" propId="4" i18n-en:displayName="Work Order" queryable="true"
@@ -44,15 +44,15 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="routingId" displayName="工艺路线" propId="7" i18n-en:displayName="Routing" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="routing">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="productionVersionId" displayName="生产版本" propId="8" i18n-en:displayName="Production Version"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="productionVersion">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="productId" displayName="产品" propId="9" i18n-en:displayName="Product" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="product">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="businessDate" displayName="委外日期" propId="10" i18n-en:displayName="Business Date" mandatory="true"
@@ -97,7 +97,7 @@
         </prop>
         <prop name="postedBy" displayName="过账人" propId="20" i18n-en:displayName="Posted By" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String" precision="36"/>
         </prop>
         <prop name="remark" displayName="备注" propId="21" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">
@@ -161,6 +161,26 @@
             <schema>
                 <item bizObjName="ErpMfgSubcontractOrderLine"/>
             </schema>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="routing" i18n-en:displayName="Routing" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="routingId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMfgRouting"/>
+        </prop>
+        <prop name="productionVersion" i18n-en:displayName="Production Version" tagSet="pub" ext:kind="to-one"
+              internal="true" queryable="true" ext:joinLeftProp="productionVersionId" ext:joinRightProp="id"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMfgProductionVersion"/>
+        </prop>
+        <prop name="product" i18n-en:displayName="Product" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="productId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
+            <schema bizObjName="ErpMdMaterial"/>
         </prop>
     </props>
 </meta>

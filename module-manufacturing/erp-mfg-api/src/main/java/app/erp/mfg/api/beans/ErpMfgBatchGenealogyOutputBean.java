@@ -393,4 +393,59 @@
         }
 
 
+        private Map<String,Object> _operation;
+
+        public Map<String,Object> getOperation(){
+            return _operation;
+        }
+
+        public void setOperation(Map<String,Object> value){
+            this._operation = value;
+        }
+
+
+        private Map<String,Object> _inputLot;
+
+        public Map<String,Object> getInputLot(){
+            return _inputLot;
+        }
+
+        public void setInputLot(Map<String,Object> value){
+            this._inputLot = value;
+        }
+
+
+        private Map<String,Object> _inputUoM;
+
+        public Map<String,Object> getInputUoM(){
+            return _inputUoM;
+        }
+
+        public void setInputUoM(Map<String,Object> value){
+            this._inputUoM = value;
+        }
+
+
+        private Map<String,Object> _outputLot;
+
+        public Map<String,Object> getOutputLot(){
+            return _outputLot;
+        }
+
+        public void setOutputLot(Map<String,Object> value){
+            this._outputLot = value;
+        }
+
+
+        private Map<String,Object> _outputUoM;
+
+        public Map<String,Object> getOutputUoM(){
+            return _outputUoM;
+        }
+
+        public void setOutputUoM(Map<String,Object> value){
+            this._outputUoM = value;
+        }
+
+
     }

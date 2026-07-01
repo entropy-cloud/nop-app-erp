@@ -25,6 +25,16 @@ CREATE TABLE erp_md_uom(
   constraint PK_erp_md_uom primary key (id)
 );
 
+CREATE TABLE erp_md_warehouse(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  warehouse_type INT4  ,
+  org_id INT8  ,
+  status INT4  ,
+  constraint PK_erp_md_warehouse primary key (id)
+);
+
 CREATE TABLE erp_mfg_workcenter(
   id INT8 NOT NULL ,
   code VARCHAR(50) NOT NULL ,
@@ -79,31 +89,13 @@ CREATE TABLE erp_md_organization(
   constraint PK_erp_md_organization primary key (id)
 );
 
-CREATE TABLE erp_mfg_mrp_plan(
-  id INT8 NOT NULL ,
-  code VARCHAR(50) NOT NULL ,
-  org_id INT8  ,
-  business_date DATE NOT NULL ,
-  planning_horizon_days INT4  ,
-  status INT4 NOT NULL ,
-  remark VARCHAR(1000)  ,
-  del_version INT8 default 0  NOT NULL ,
-  version INT4 default 0  NOT NULL ,
-  created_by VARCHAR(50) NOT NULL ,
-  create_time TIMESTAMP NOT NULL ,
-  updated_by VARCHAR(50) NOT NULL ,
-  update_time TIMESTAMP NOT NULL ,
-  constraint PK_erp_mfg_mrp_plan primary key (id)
-);
-
-CREATE TABLE erp_md_warehouse(
+CREATE TABLE erp_md_location(
   id INT8  ,
+  warehouse_id INT8  ,
   code VARCHAR(50)  ,
   name VARCHAR(200)  ,
-  warehouse_type INT4  ,
-  org_id INT8  ,
-  status INT4  ,
-  constraint PK_erp_md_warehouse primary key (id)
+  parent_id INT8  ,
+  constraint PK_erp_md_location primary key (id)
 );
 
 CREATE TABLE erp_md_partner(
@@ -116,30 +108,17 @@ CREATE TABLE erp_md_partner(
   constraint PK_erp_md_partner primary key (id)
 );
 
-CREATE TABLE erp_mfg_cost_rollup(
-  id INT8 NOT NULL ,
-  code VARCHAR(50) NOT NULL ,
-  org_id INT8  ,
-  business_date DATE NOT NULL ,
-  costing_version VARCHAR(50)  ,
-  status INT4 NOT NULL ,
-  remark VARCHAR(1000)  ,
-  del_version INT8 default 0  NOT NULL ,
-  version INT4 default 0  NOT NULL ,
-  created_by VARCHAR(50) NOT NULL ,
-  create_time TIMESTAMP NOT NULL ,
-  updated_by VARCHAR(50) NOT NULL ,
-  update_time TIMESTAMP NOT NULL ,
-  constraint PK_erp_mfg_cost_rollup primary key (id)
-);
-
-CREATE TABLE erp_md_location(
+CREATE TABLE erp_md_employee(
   id INT8  ,
-  warehouse_id INT8  ,
   code VARCHAR(50)  ,
   name VARCHAR(200)  ,
-  parent_id INT8  ,
-  constraint PK_erp_md_location primary key (id)
+  constraint PK_erp_md_employee primary key (id)
+);
+
+CREATE TABLE erp_inv_batch(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  constraint PK_erp_inv_batch primary key (id)
 );
 
 CREATE TABLE erp_mfg_bom(
@@ -183,6 +162,102 @@ CREATE TABLE erp_mfg_routing_operation(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   constraint PK_erp_mfg_routing_operation primary key (id)
+);
+
+CREATE TABLE erp_mfg_mrp_plan(
+  id INT8 NOT NULL ,
+  code VARCHAR(50) NOT NULL ,
+  org_id INT8  ,
+  business_date DATE NOT NULL ,
+  planning_horizon_days INT4  ,
+  status INT4 NOT NULL ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_mfg_mrp_plan primary key (id)
+);
+
+CREATE TABLE erp_mfg_cost_rollup(
+  id INT8 NOT NULL ,
+  code VARCHAR(50) NOT NULL ,
+  org_id INT8  ,
+  business_date DATE NOT NULL ,
+  costing_version VARCHAR(50)  ,
+  status INT4 NOT NULL ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_mfg_cost_rollup primary key (id)
+);
+
+CREATE TABLE erp_mfg_bom_byproduct(
+  id INT8 NOT NULL ,
+  bom_id INT8 NOT NULL ,
+  line_no INT4 NOT NULL ,
+  material_id INT8 NOT NULL ,
+  sku_id INT8  ,
+  uo_m_id INT8 NOT NULL ,
+  quantity NUMERIC(20,4) NOT NULL ,
+  remark VARCHAR(1000)  ,
+  byproduct_type INT4  ,
+  yield_rate NUMERIC(10,4) default 100   ,
+  cost_allocation_percent NUMERIC(10,4) default 0   ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_mfg_bom_byproduct primary key (id)
+);
+
+CREATE TABLE erp_mfg_production_version(
+  id INT8 NOT NULL ,
+  code VARCHAR(50) NOT NULL ,
+  product_id INT8 NOT NULL ,
+  bom_id INT8 NOT NULL ,
+  routing_id INT8 NOT NULL ,
+  valid_from DATE  ,
+  valid_to DATE  ,
+  lot_size_from NUMERIC(20,4)  ,
+  lot_size_to NUMERIC(20,4)  ,
+  is_default BOOLEAN default false   ,
+  is_active BOOLEAN default true   ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_mfg_production_version primary key (id)
+);
+
+CREATE TABLE erp_mfg_bom_operation(
+  id INT8 NOT NULL ,
+  bom_id INT8 NOT NULL ,
+  line_no INT4 NOT NULL ,
+  operation_id INT8 NOT NULL ,
+  workcenter_id INT8  ,
+  standard_time NUMERIC(12,2)  ,
+  time_unit VARCHAR(20)  ,
+  rate NUMERIC(10,4) default 1   ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_mfg_bom_operation primary key (id)
 );
 
 CREATE TABLE erp_mfg_mrp_plan_line(
@@ -252,90 +327,6 @@ CREATE TABLE erp_mfg_cost_rollup_line(
   constraint PK_erp_mfg_cost_rollup_line primary key (id)
 );
 
-CREATE TABLE erp_mfg_bom_line(
-  id INT8 NOT NULL ,
-  bom_id INT8 NOT NULL ,
-  line_no INT4 NOT NULL ,
-  material_id INT8 NOT NULL ,
-  sku_id INT8  ,
-  uo_m_id INT8 NOT NULL ,
-  quantity NUMERIC(20,4) NOT NULL ,
-  operation_id INT8  ,
-  remark VARCHAR(1000)  ,
-  scrap_rate NUMERIC(10,4) default 0   ,
-  warehouse_id INT8  ,
-  alternative_material_id INT8  ,
-  del_version INT8 default 0  NOT NULL ,
-  version INT4 default 0  NOT NULL ,
-  created_by VARCHAR(50) NOT NULL ,
-  create_time TIMESTAMP NOT NULL ,
-  updated_by VARCHAR(50) NOT NULL ,
-  update_time TIMESTAMP NOT NULL ,
-  constraint PK_erp_mfg_bom_line primary key (id)
-);
-
-CREATE TABLE erp_mfg_bom_operation(
-  id INT8 NOT NULL ,
-  bom_id INT8 NOT NULL ,
-  line_no INT4 NOT NULL ,
-  operation_id INT8 NOT NULL ,
-  workcenter_id INT8  ,
-  standard_time NUMERIC(12,2)  ,
-  time_unit VARCHAR(20)  ,
-  rate NUMERIC(10,4) default 1   ,
-  remark VARCHAR(1000)  ,
-  del_version INT8 default 0  NOT NULL ,
-  version INT4 default 0  NOT NULL ,
-  created_by VARCHAR(50) NOT NULL ,
-  create_time TIMESTAMP NOT NULL ,
-  updated_by VARCHAR(50) NOT NULL ,
-  update_time TIMESTAMP NOT NULL ,
-  constraint PK_erp_mfg_bom_operation primary key (id)
-);
-
-CREATE TABLE erp_mfg_bom_byproduct(
-  id INT8 NOT NULL ,
-  bom_id INT8 NOT NULL ,
-  line_no INT4 NOT NULL ,
-  material_id INT8 NOT NULL ,
-  sku_id INT8  ,
-  uo_m_id INT8 NOT NULL ,
-  quantity NUMERIC(20,4) NOT NULL ,
-  remark VARCHAR(1000)  ,
-  byproduct_type INT4  ,
-  yield_rate NUMERIC(10,4) default 100   ,
-  cost_allocation_percent NUMERIC(10,4) default 0   ,
-  del_version INT8 default 0  NOT NULL ,
-  version INT4 default 0  NOT NULL ,
-  created_by VARCHAR(50) NOT NULL ,
-  create_time TIMESTAMP NOT NULL ,
-  updated_by VARCHAR(50) NOT NULL ,
-  update_time TIMESTAMP NOT NULL ,
-  constraint PK_erp_mfg_bom_byproduct primary key (id)
-);
-
-CREATE TABLE erp_mfg_production_version(
-  id INT8 NOT NULL ,
-  code VARCHAR(50) NOT NULL ,
-  product_id INT8 NOT NULL ,
-  bom_id INT8 NOT NULL ,
-  routing_id INT8 NOT NULL ,
-  valid_from DATE  ,
-  valid_to DATE  ,
-  lot_size_from NUMERIC(20,4)  ,
-  lot_size_to NUMERIC(20,4)  ,
-  is_default BOOLEAN default false   ,
-  is_active BOOLEAN default true   ,
-  remark VARCHAR(1000)  ,
-  del_version INT8 default 0  NOT NULL ,
-  version INT4 default 0  NOT NULL ,
-  created_by VARCHAR(50) NOT NULL ,
-  create_time TIMESTAMP NOT NULL ,
-  updated_by VARCHAR(50) NOT NULL ,
-  update_time TIMESTAMP NOT NULL ,
-  constraint PK_erp_mfg_production_version primary key (id)
-);
-
 CREATE TABLE erp_mfg_work_order(
   id INT8 NOT NULL ,
   code VARCHAR(50) NOT NULL ,
@@ -367,7 +358,7 @@ CREATE TABLE erp_mfg_work_order(
   priority INT4  ,
   posted BOOLEAN default false   ,
   posted_at TIMESTAMP  ,
-  posted_by INT8  ,
+  posted_by VARCHAR(36)  ,
   remark VARCHAR(1000)  ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
@@ -379,6 +370,28 @@ CREATE TABLE erp_mfg_work_order(
   amount_source NUMERIC(20,4) default 0   ,
   amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_mfg_work_order primary key (id)
+);
+
+CREATE TABLE erp_mfg_bom_line(
+  id INT8 NOT NULL ,
+  bom_id INT8 NOT NULL ,
+  line_no INT4 NOT NULL ,
+  material_id INT8 NOT NULL ,
+  sku_id INT8  ,
+  uo_m_id INT8 NOT NULL ,
+  quantity NUMERIC(20,4) NOT NULL ,
+  operation_id INT8  ,
+  remark VARCHAR(1000)  ,
+  scrap_rate NUMERIC(10,4) default 0   ,
+  warehouse_id INT8  ,
+  alternative_material_id INT8  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_mfg_bom_line primary key (id)
 );
 
 CREATE TABLE erp_mfg_work_order_line(
@@ -424,7 +437,7 @@ CREATE TABLE erp_mfg_subcontract_order(
   posted BOOLEAN default false   ,
   posted_status VARCHAR(20) NOT NULL ,
   posted_at TIMESTAMP  ,
-  posted_by INT8  ,
+  posted_by VARCHAR(36)  ,
   remark VARCHAR(1000)  ,
   amount_source NUMERIC(20,4) default 0   ,
   amount_functional NUMERIC(20,4) default 0   ,
@@ -520,7 +533,7 @@ CREATE TABLE erp_mfg_material_issue(
   approve_status INT4 NOT NULL ,
   posted BOOLEAN default false   ,
   posted_at TIMESTAMP  ,
-  posted_by INT8  ,
+  posted_by VARCHAR(36)  ,
   remark VARCHAR(1000)  ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
@@ -539,7 +552,7 @@ CREATE TABLE erp_mfg_job_card_time_log(
   id INT8 NOT NULL ,
   job_card_id INT8 NOT NULL ,
   work_order_id INT8 NOT NULL ,
-  operator_id INT8 NOT NULL ,
+  operator_id VARCHAR(36) NOT NULL ,
   work_date DATE NOT NULL ,
   start_time TIMESTAMP  ,
   end_time TIMESTAMP  ,
@@ -619,6 +632,8 @@ CREATE TABLE erp_mfg_material_issue_line(
                 
       COMMENT ON TABLE erp_md_uom IS '计量单位';
                 
+      COMMENT ON TABLE erp_md_warehouse IS '仓库';
+                
       COMMENT ON TABLE erp_mfg_workcenter IS '工作中心';
                 
       COMMENT ON COLUMN erp_mfg_workcenter.id IS 'ID';
@@ -679,67 +694,13 @@ CREATE TABLE erp_mfg_material_issue_line(
                 
       COMMENT ON TABLE erp_md_organization IS '组织';
                 
-      COMMENT ON TABLE erp_mfg_mrp_plan IS 'MRP计划';
-                
-      COMMENT ON COLUMN erp_mfg_mrp_plan.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_mfg_mrp_plan.code IS '计划号';
-                    
-      COMMENT ON COLUMN erp_mfg_mrp_plan.org_id IS '业务组织';
-                    
-      COMMENT ON COLUMN erp_mfg_mrp_plan.business_date IS '计划日期';
-                    
-      COMMENT ON COLUMN erp_mfg_mrp_plan.planning_horizon_days IS '计划区间(天)';
-                    
-      COMMENT ON COLUMN erp_mfg_mrp_plan.status IS '状态';
-                    
-      COMMENT ON COLUMN erp_mfg_mrp_plan.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_mfg_mrp_plan.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_mfg_mrp_plan.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_mfg_mrp_plan.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_mfg_mrp_plan.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_mfg_mrp_plan.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_mfg_mrp_plan.update_time IS '修改时间';
-                    
-      COMMENT ON TABLE erp_md_warehouse IS '仓库';
+      COMMENT ON TABLE erp_md_location IS '库位';
                 
       COMMENT ON TABLE erp_md_partner IS '往来单位';
                 
-      COMMENT ON TABLE erp_mfg_cost_rollup IS '标准成本滚算';
+      COMMENT ON TABLE erp_md_employee IS '员工';
                 
-      COMMENT ON COLUMN erp_mfg_cost_rollup.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_mfg_cost_rollup.code IS '单号';
-                    
-      COMMENT ON COLUMN erp_mfg_cost_rollup.org_id IS '业务组织';
-                    
-      COMMENT ON COLUMN erp_mfg_cost_rollup.business_date IS '计算日期';
-                    
-      COMMENT ON COLUMN erp_mfg_cost_rollup.costing_version IS '成本核算版本';
-                    
-      COMMENT ON COLUMN erp_mfg_cost_rollup.status IS '状态';
-                    
-      COMMENT ON COLUMN erp_mfg_cost_rollup.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_mfg_cost_rollup.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_mfg_cost_rollup.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_mfg_cost_rollup.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_mfg_cost_rollup.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_mfg_cost_rollup.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_mfg_cost_rollup.update_time IS '修改时间';
-                    
-      COMMENT ON TABLE erp_md_location IS '库位';
+      COMMENT ON TABLE erp_inv_batch IS '批次';
                 
       COMMENT ON TABLE erp_mfg_bom IS 'BOM';
                 
@@ -814,6 +775,168 @@ CREATE TABLE erp_mfg_material_issue_line(
       COMMENT ON COLUMN erp_mfg_routing_operation.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_mfg_routing_operation.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_mfg_mrp_plan IS 'MRP计划';
+                
+      COMMENT ON COLUMN erp_mfg_mrp_plan.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_plan.code IS '计划号';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_plan.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_plan.business_date IS '计划日期';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_plan.planning_horizon_days IS '计划区间(天)';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_plan.status IS '状态';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_plan.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_plan.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_plan.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_plan.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_plan.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_plan.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_plan.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_mfg_cost_rollup IS '标准成本滚算';
+                
+      COMMENT ON COLUMN erp_mfg_cost_rollup.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_rollup.code IS '单号';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_rollup.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_rollup.business_date IS '计算日期';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_rollup.costing_version IS '成本核算版本';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_rollup.status IS '状态';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_rollup.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_rollup.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_rollup.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_rollup.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_rollup.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_rollup.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_mfg_cost_rollup.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_mfg_bom_byproduct IS 'BOM联副产品';
+                
+      COMMENT ON COLUMN erp_mfg_bom_byproduct.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_byproduct.bom_id IS 'BOM ID';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_byproduct.line_no IS '行号';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_byproduct.material_id IS '物料';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_byproduct.sku_id IS 'SKU';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_byproduct.uo_m_id IS '计量单位';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_byproduct.quantity IS '数量';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_byproduct.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_byproduct.byproduct_type IS '联副产品类型';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_byproduct.yield_rate IS '产出率(%)';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_byproduct.cost_allocation_percent IS '成本分摊比例(%)';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_byproduct.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_byproduct.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_byproduct.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_byproduct.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_byproduct.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_byproduct.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_mfg_production_version IS '生产版本';
+                
+      COMMENT ON COLUMN erp_mfg_production_version.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_mfg_production_version.code IS '版本编码';
+                    
+      COMMENT ON COLUMN erp_mfg_production_version.product_id IS '产品';
+                    
+      COMMENT ON COLUMN erp_mfg_production_version.bom_id IS 'BOM';
+                    
+      COMMENT ON COLUMN erp_mfg_production_version.routing_id IS '工艺路线';
+                    
+      COMMENT ON COLUMN erp_mfg_production_version.valid_from IS '生效日期';
+                    
+      COMMENT ON COLUMN erp_mfg_production_version.valid_to IS '失效日期';
+                    
+      COMMENT ON COLUMN erp_mfg_production_version.lot_size_from IS '批量下限';
+                    
+      COMMENT ON COLUMN erp_mfg_production_version.lot_size_to IS '批量上限';
+                    
+      COMMENT ON COLUMN erp_mfg_production_version.is_default IS '是否默认版本';
+                    
+      COMMENT ON COLUMN erp_mfg_production_version.is_active IS '是否有效';
+                    
+      COMMENT ON COLUMN erp_mfg_production_version.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_mfg_production_version.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_mfg_production_version.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_mfg_production_version.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_mfg_production_version.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_mfg_production_version.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_mfg_production_version.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_mfg_bom_operation IS 'BOM工艺';
+                
+      COMMENT ON COLUMN erp_mfg_bom_operation.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_operation.bom_id IS 'BOM ID';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_operation.line_no IS '行号';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_operation.operation_id IS '工序ID';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_operation.workcenter_id IS '工作中心';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_operation.standard_time IS '标准工时';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_operation.time_unit IS '时间单位';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_operation.rate IS '效率系数';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_operation.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_operation.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_operation.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_operation.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_operation.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_operation.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_operation.update_time IS '修改时间';
                     
       COMMENT ON TABLE erp_mfg_mrp_plan_line IS 'MRP计划行';
                 
@@ -931,150 +1054,6 @@ CREATE TABLE erp_mfg_material_issue_line(
                     
       COMMENT ON COLUMN erp_mfg_cost_rollup_line.update_time IS '修改时间';
                     
-      COMMENT ON TABLE erp_mfg_bom_line IS 'BOM行';
-                
-      COMMENT ON COLUMN erp_mfg_bom_line.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_line.bom_id IS 'BOM ID';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_line.line_no IS '行号';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_line.material_id IS '物料';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_line.sku_id IS 'SKU';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_line.uo_m_id IS '计量单位';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_line.quantity IS '数量';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_line.operation_id IS '工序ID';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_line.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_line.scrap_rate IS '损耗率(%)';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_line.warehouse_id IS '发货仓库';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_line.alternative_material_id IS '替代物料';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_line.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_line.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_line.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_line.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_line.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_line.update_time IS '修改时间';
-                    
-      COMMENT ON TABLE erp_mfg_bom_operation IS 'BOM工艺';
-                
-      COMMENT ON COLUMN erp_mfg_bom_operation.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_operation.bom_id IS 'BOM ID';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_operation.line_no IS '行号';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_operation.operation_id IS '工序ID';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_operation.workcenter_id IS '工作中心';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_operation.standard_time IS '标准工时';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_operation.time_unit IS '时间单位';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_operation.rate IS '效率系数';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_operation.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_operation.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_operation.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_operation.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_operation.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_operation.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_operation.update_time IS '修改时间';
-                    
-      COMMENT ON TABLE erp_mfg_bom_byproduct IS 'BOM联副产品';
-                
-      COMMENT ON COLUMN erp_mfg_bom_byproduct.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_byproduct.bom_id IS 'BOM ID';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_byproduct.line_no IS '行号';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_byproduct.material_id IS '物料';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_byproduct.sku_id IS 'SKU';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_byproduct.uo_m_id IS '计量单位';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_byproduct.quantity IS '数量';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_byproduct.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_byproduct.byproduct_type IS '联副产品类型';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_byproduct.yield_rate IS '产出率(%)';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_byproduct.cost_allocation_percent IS '成本分摊比例(%)';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_byproduct.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_byproduct.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_byproduct.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_byproduct.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_byproduct.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_mfg_bom_byproduct.update_time IS '修改时间';
-                    
-      COMMENT ON TABLE erp_mfg_production_version IS '生产版本';
-                
-      COMMENT ON COLUMN erp_mfg_production_version.id IS 'ID';
-                    
-      COMMENT ON COLUMN erp_mfg_production_version.code IS '版本编码';
-                    
-      COMMENT ON COLUMN erp_mfg_production_version.product_id IS '产品';
-                    
-      COMMENT ON COLUMN erp_mfg_production_version.bom_id IS 'BOM';
-                    
-      COMMENT ON COLUMN erp_mfg_production_version.routing_id IS '工艺路线';
-                    
-      COMMENT ON COLUMN erp_mfg_production_version.valid_from IS '生效日期';
-                    
-      COMMENT ON COLUMN erp_mfg_production_version.valid_to IS '失效日期';
-                    
-      COMMENT ON COLUMN erp_mfg_production_version.lot_size_from IS '批量下限';
-                    
-      COMMENT ON COLUMN erp_mfg_production_version.lot_size_to IS '批量上限';
-                    
-      COMMENT ON COLUMN erp_mfg_production_version.is_default IS '是否默认版本';
-                    
-      COMMENT ON COLUMN erp_mfg_production_version.is_active IS '是否有效';
-                    
-      COMMENT ON COLUMN erp_mfg_production_version.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_mfg_production_version.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_mfg_production_version.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_mfg_production_version.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_mfg_production_version.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_mfg_production_version.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_mfg_production_version.update_time IS '修改时间';
-                    
       COMMENT ON TABLE erp_mfg_work_order IS '工单';
                 
       COMMENT ON COLUMN erp_mfg_work_order.id IS 'ID';
@@ -1158,6 +1137,44 @@ CREATE TABLE erp_mfg_material_issue_line(
       COMMENT ON COLUMN erp_mfg_work_order.amount_source IS '源币种金额';
                     
       COMMENT ON COLUMN erp_mfg_work_order.amount_functional IS '本位币金额';
+                    
+      COMMENT ON TABLE erp_mfg_bom_line IS 'BOM行';
+                
+      COMMENT ON COLUMN erp_mfg_bom_line.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_line.bom_id IS 'BOM ID';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_line.line_no IS '行号';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_line.material_id IS '物料';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_line.sku_id IS 'SKU';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_line.uo_m_id IS '计量单位';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_line.quantity IS '数量';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_line.operation_id IS '工序ID';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_line.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_line.scrap_rate IS '损耗率(%)';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_line.warehouse_id IS '发货仓库';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_line.alternative_material_id IS '替代物料';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_line.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_line.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_line.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_line.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_line.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_mfg_bom_line.update_time IS '修改时间';
                     
       COMMENT ON TABLE erp_mfg_work_order_line IS '工单行';
                 
