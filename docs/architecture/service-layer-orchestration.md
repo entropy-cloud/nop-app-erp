@@ -113,92 +113,30 @@ task.xml 中通过 `customType="rule:Execute"` 调用规则引擎，`rule:*` 前
 
 ```xml
 <step name="validate">
-    <input name="order"/>
     <source><![CDATA[
         if (order.status != 'SUBMITTED')
-            throw new NopException("erp.purchase.order-not-submitted")
+            throw new NopScriptError("erp.purchase.order-not-submitted")
                 .param("orderId", order.id);
     ]]></source>
 </step>
 ```
 
-`errorCode` 是字符串路径（如 `erp.purchase.order-not-submitted`），对应 `domain-design-guidelines.md §7` 的命名规范。
+`NopScriptError` 是 XLang 脚本中的异常类（继承 `NopEvalException → NopException`），构造参数为 errorCode 字符串，`.param()` 链式传递错误参数。
 
-## 示例：完整的 task.xml
+## 完整示例
 
-```xml
-<task name="ErpPurOrder/approve" version="1"
-      x:schema="/nop/schema/task/task.xdef"
-      xmlns:rule="rule" xmlns:c="c">
-
-    <steps>
-        <!-- 1. 校验 -->
-        <step name="validate">
-            <input name="order"/>
-            <source><![CDATA[
-                if (order.status != 'SUBMITTED')
-                    throw new NopException("erp.purchase.order-not-submitted")
-                        .param("orderId", order.id);
-            ]]></source>
-        </step>
-
-        <!-- 2. 调规则做审批路由，提取 route 和 approverId 到父作用域 -->
-        <step name="checkApprovalRoute" customType="rule:Execute"
-              rule:ruleName="pur-order-approval"
-              rule:inputs="${{amount: order.totalAmount}}">
-            <input name="order"/>
-            <output name="route" value="${RESULT.route}"/>
-            <output name="approverId" value="${RESULT.approverId}"/>
-        </step>
-
-        <!-- 3. 按规则结果分支 -->
-        <if name="routeByApproval">
-            <condition>route == 'auto'</condition>
-            <then>
-                <invoke name="doAutoApprove" bean="erpPurOrderBiz" method="approve">
-                    <input name="orderId" value="${order.id}"/>
-                </invoke>
-            </then>
-            <else>
-                <suspend name="waitManual">
-                    <resume-when>stepRt.getContext().getUserId() == approverId</resume-when>
-                </suspend>
-            </else>
-        </if>
-
-        <!-- 4. 后处理 -->
-        <step name="postProcess">
-            <source><![CDATA[
-                notifyService.notify('order.approved',
-                    approverId, {orderNo: order.orderNo});
-            ]]></source>
-        </step>
-    </steps>
-
-    <output name="finalStatus">
-        <source>route == 'auto' ? 'APPROVED' : 'PENDING_APPROVAL'</source>
-    </output>
-</task>
-```
+参考 `module-purchase/erp-pur-service/src/main/resources/_vfs/erp/pur/_task/ErpPurReceive/approve.task.xml`（采购入库单审核：校验状态和数量 → 调规则判断超收 → 调库存域生成移动单 → 回写订单数量和状态）。
 
 ## Delta 定制
 
-定制方在 `_delta/{deltaDir}/` 下覆盖 `service/_task/{BizObj}/{method}.task.xml`，通过 `x:extends="super"` 继承基线，只覆写需要变动的步骤。
-
-例如替换审批路由规则为自定义规则，其他校验、过账、通知步骤不变：
+定制方在 `_delta/{deltaDir}/` 下覆盖对应 `task.xml`，通过 `x:extends="super"` 继承基线，只覆写需要变动的步骤。例如替换超收规则，其他步骤不变：
 
 ```xml
-<task x:extends="super" x:schema="/nop/schema/task/task.xdef">
-    <steps>
-        <!-- 只覆写步骤2：换规则 -->
-        <step name="checkApprovalRoute" x:override="replace" customType="rule:Execute"
-              rule:ruleName="sal-order-approval-custom">
-            <input name="order"/>
-            <output name="route"/>
-        </step>
-        <!-- 其他步骤继承基线，不变 -->
-    </steps>
-</task>
+<step name="checkOverReceive" x:override="replace" customType="rule:Execute">
+    <input name="ruleName" value="'pur-receive-over-allowance-pharma'"/>
+    <input name="inputs" value="${{receive: receive}}"/>
+    <output name="allowed" value="${RESULT.allowed}"/>
+</step>
 ```
 
 ## 相关文档
