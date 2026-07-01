@@ -1,0 +1,50 @@
+package app.erp.fin.service.posting;
+
+import io.nop.api.core.exceptions.ErrorCode;
+
+/**
+ * 业财过账引擎错误码。所有过账流程中的业务异常使用 {@link io.nop.api.core.exceptions.NopException} + 本接口的 {@link ErrorCode}。
+ */
+public interface ErpFinPostingErrors {
+
+    String ARG_BUSINESS_TYPE = "businessType";
+    String ARG_BILL_HEAD_CODE = "billHeadCode";
+    String ARG_SUBJECT_CODE = "subjectCode";
+    String ARG_AMOUNT_KEY = "amountKey";
+    String ARG_PROVIDER = "provider";
+    String ARG_EXISTING_PROVIDER = "existingProvider";
+    String ARG_CONFLICT_PROVIDER = "conflictProvider";
+    String ARG_VOUCHER_DATE = "voucherDate";
+    String ARG_PERIOD_STATUS = "periodStatus";
+    String ARG_TOTAL_DEBIT = "totalDebit";
+    String ARG_TOTAL_CREDIT = "totalCredit";
+
+    ErrorCode ERR_DUPLICATE_PROVIDER = ErrorCode.define("erp.err.fin.posting.duplicate-provider",
+            "业务类型 {businessType} 被多个非默认 Provider 声明：{existingProvider} 与 {conflictProvider}",
+            ARG_BUSINESS_TYPE, ARG_EXISTING_PROVIDER, ARG_CONFLICT_PROVIDER);
+
+    ErrorCode ERR_NO_PROVIDER = ErrorCode.define("erp.err.fin.posting.no-provider",
+            "未找到业务类型 {businessType} 的过账 Provider", ARG_BUSINESS_TYPE);
+
+    ErrorCode ERR_TEMPLATE_NOT_FOUND = ErrorCode.define("erp.err.fin.posting.template-not-found",
+            "未找到业务类型 {businessType} 的启用凭证模板", ARG_BUSINESS_TYPE);
+
+    ErrorCode ERR_SUBJECT_NOT_FOUND = ErrorCode.define("erp.err.fin.posting.subject-not-found",
+            "科目编码 {subjectCode} 不存在", ARG_SUBJECT_CODE);
+
+    ErrorCode ERR_AMOUNT_KEY_NOT_RESOLVED = ErrorCode.define("erp.err.fin.posting.amount-key-not-resolved",
+            "模板金额占位键 {amountKey} 在单据数据中无对应值", ARG_AMOUNT_KEY);
+
+    ErrorCode ERR_PERIOD_NOT_FOUND = ErrorCode.define("erp.err.fin.posting.period-not-found",
+            "凭证日期 {voucherDate} 未匹配到会计期间", ARG_VOUCHER_DATE);
+
+    ErrorCode ERR_PERIOD_CLOSED = ErrorCode.define("erp.err.fin.posting.period-closed",
+            "会计期间未开启，不允许过账（期间状态={periodStatus}）", ARG_PERIOD_STATUS);
+
+    ErrorCode ERR_UNBALANCED = ErrorCode.define("erp.err.fin.posting.unbalanced",
+            "借贷不平衡：借方合计={totalDebit}，贷方合计={totalCredit}", ARG_TOTAL_DEBIT, ARG_TOTAL_CREDIT);
+
+    ErrorCode ERR_REVERSE_SOURCE_NOT_FOUND = ErrorCode.define("erp.err.fin.posting.reverse-source-not-found",
+            "未找到业务单据 {billHeadCode}（业务类型 {businessType}）的已过账凭证，无法红冲",
+            ARG_BILL_HEAD_CODE, ARG_BUSINESS_TYPE);
+}

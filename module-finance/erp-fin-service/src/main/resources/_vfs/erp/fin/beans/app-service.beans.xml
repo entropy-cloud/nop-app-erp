@@ -7,4 +7,23 @@
     <import resource="_dao.beans.xml"/>
 
     <import resource="_service.beans.xml"/>
+
+    <!-- 业财过账引擎（非 BizModel 服务）：SPI 注册中心 + 默认模板 Provider + 编排服务 -->
+    <bean id="app.erp.fin.service.posting.ErpFinAcctDocRegistry"
+          class="app.erp.fin.service.posting.ErpFinAcctDocRegistry">
+        <property name="providers">
+            <ioc:collect-beans by-type="app.erp.fin.service.posting.IErpFinAcctDocProvider"
+                               only-concrete-classes="true" ioc:ignore-depends="true"/>
+        </property>
+        <property name="validators">
+            <ioc:collect-beans by-type="app.erp.fin.service.posting.IErpFinFactsValidator"
+                               only-concrete-classes="true" ioc:ignore-depends="true"/>
+        </property>
+    </bean>
+
+    <bean id="app.erp.fin.service.posting.provider.ErpFinTemplateAcctDocProvider"
+          class="app.erp.fin.service.posting.provider.ErpFinTemplateAcctDocProvider"/>
+
+    <bean id="app.erp.fin.service.posting.ErpFinPostingService"
+          class="app.erp.fin.service.posting.ErpFinPostingService"/>
 </beans>
