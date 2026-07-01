@@ -1,6 +1,6 @@
 # 2026-07-02-0300-2 sales-invoice-receipt-bizmodel
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-02
 > Source: `docs/backlog/core-business-roadmap.md` 工作项 1.7（销售到收款串联，AR 段）；前置计划 1132-2 Deferred「销售发票/收款 Provider（AR_INVOICE/RECEIPT）」
 > Related: `2026-07-01-1132-2-sales-delivery-approval-inventory-trigger.md`（出库段，已完成）、`2026-07-02-0300-1-purchase-invoice-payment-three-way-match.md`（AP 对称面，同批）、`2026-07-02-0300-3-ar-ap-settlement-subledger.md`（财务核销/辅助账后继）、`2026-07-01-1426-2-sales-quotation-to-order-and-order-approval.md`（信用额度 AR 分量 Deferred 解除触发）
@@ -56,84 +56,89 @@
 
 ### Phase 1 — 销售发票审批状态机 + AR_INVOICE 过账
 
-Status: planned
+Status: completed
 Targets: `module-sales/erp-sal-dao/.../biz/IErpSalInvoiceBiz.java`、`module-sales/erp-sal-service/.../entity/ErpSalInvoiceBizModel.java`、新增 `.../posting/SalAcctDocProvider.java`（AR_INVOICE）、`.../posting/SalInvoicePostingDispatcher.java`+`SalInvoicePostingExecutor.java`、`.../ErpSalErrors.java`(扩)、`.../ErpSalConstants.java`(扩)、`erp-sal-service/.../_vfs/erp/sal/beans/app-service.beans.xml`、`erp-sal-service/pom.xml`
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Proof`
 - Prereqs: 1132-2 已完成（出库段 + ErpSalDelivery 三轴）；过账基础设施已完成。
 
-- [ ] `Add`：`IErpSalInvoiceBiz` 声明三轴契约 `submit/withdrawSubmit/approve/reject/reverseApprove/cancel`（对齐 `IErpSalDeliveryBiz` 签名形状）。
+- [x] `Add`：`IErpSalInvoiceBiz` 声明三轴契约 `submit/withdrawSubmit/approve/reject/reverseApprove/cancel`（对齐 `IErpSalDeliveryBiz` 签名形状）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`ErpSalInvoiceBizModel` 实现三轴状态机（与 0300-1 发票面同构）；`@SingleSession @Transactional`，校验前置态，违例抛 `NopException`。扩 `ErpSalErrors` 新增发票作用域码 `ERR_INVOICE_*` 绑定 `ARG_INVOICE_CODE`（不复用出库单 `ARG_DELIVERY_CODE` 文案）。
+- [x] `Add`：`ErpSalInvoiceBizModel` 实现三轴状态机（与 0300-1 发票面同构）；`@SingleSession @Transactional`，校验前置态，违例抛 `NopException`。扩 `ErpSalErrors` 新增发票作用域码 `ERR_INVOICE_*` 绑定 `ARG_INVOICE_CODE`（不复用出库单 `ARG_DELIVERY_CODE` 文案）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：发票审核前置校验——客户启用（复用 1132-2/1426-2 `requireCustomerActive` 机制）、行非空。
+- [x] `Add`：发票审核前置校验——客户启用（复用 1132-2/1426-2 `requireCustomerActive` 机制）、行非空。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`SalAcctDocProvider implements IErpFinAcctDocProvider`（`EnumSet.of(AR_INVOICE)`，非默认），产 3 条 `VoucherFact`：借应收科目 / 贷收入科目 + 贷销项税科目（金额取发票 `totalAmountWithTax`/`totalAmount`/`totalTaxAmount`，对齐 `posting.md` AR_INVOICE 映射与 `InvAcctDocProvider` 形状）。注册于 `app-service.beans.xml`。
+- [x] `Add`：`SalAcctDocProvider implements IErpFinAcctDocProvider`（`EnumSet.of(AR_INVOICE)`，非默认），产 3 条 `VoucherFact`：借应收科目 / 贷收入科目 + 贷销项税科目（金额取发票 `totalAmountWithTax`/`totalAmount`/`totalTaxAmount`，对齐 `posting.md` AR_INVOICE 映射与 `InvAcctDocProvider` 形状）。注册于 `app-service.beans.xml`。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`SalInvoicePostingDispatcher`+`SalInvoicePostingExecutor`（**对齐 `InvPostingDispatcher`/`InvPostingExecutor`：executor 无 `@Transactional`，跨域失败隔离由 Facade `IErpFinVoucherBiz.post()` 的 `REQUIRES_NEW` 承接，硬规则 1**）——发票 APPROVED 后组装 `PostingEvent`(AR_INVOICE, billHeadCode=invoice.code, billData 含金额族+customerId+orgId+acctSchemaId) 调 `IErpFinVoucherBiz.post`；成功 `posted=true`，失败吞异常保持 APPROVED+`posted=false`（对齐失败不阻塞终态合约）。
+- [x] `Add`：`SalInvoicePostingDispatcher`+`SalInvoicePostingExecutor`（**对齐 `InvPostingDispatcher`/`InvPostingExecutor`：executor 无 `@Transactional`，跨域失败隔离由 Facade `IErpFinVoucherBiz.post()` 的 `REQUIRES_NEW` 承接，硬规则 1**）——发票 APPROVED 后组装 `PostingEvent`(AR_INVOICE, billHeadCode=invoice.code, billData 含金额族+customerId+orgId+acctSchemaId) 调 `IErpFinVoucherBiz.post`；成功 `posted=true`，失败吞异常保持 APPROVED+`posted=false`（对齐失败不阻塞终态合约）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`reverseApprove`/`cancel` 对已 `posted=true` 发票——先 `IErpFinVoucherBiz.reverse(code, AR_INVOICE, ctx)` 红字冲销，幂等防双冲销。
+- [x] `Add`：`reverseApprove`/`cancel` 对已 `posted=true` 发票——先 `IErpFinVoucherBiz.reverse(code, AR_INVOICE, ctx)` 红字冲销，幂等防双冲销。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：`TestErpSalInvoiceApproval`（三轴迁移正向/反向/非法迁移/停用客户）、`TestErpSalInvoicePosting`（APPROVED→凭证 posted=true 分录方向正确 借应收/贷收入+销项税；红字 reverseApprove）。验证命令 `mvn test -pl module-sales/erp-sal-service -am`。
+- [x] `Proof`：`TestErpSalInvoiceApproval`（三轴迁移正向/反向/非法迁移/停用客户）、`TestErpSalInvoicePosting`（APPROVED→凭证 posted=true 分录方向正确 借应收/贷收入+销项税；红字 reverseApprove）。验证命令 `mvn test -pl module-sales/erp-sal-service -am`。
   - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] 发票三轴状态机行为可观察（迁移 + 非法迁移抛 NopException）
-- [ ] 发票审核 posted=true 且凭证分录方向正确（AR_INVOICE 借应收/贷收入+销项税）；反审核生成红字凭证
+- [x] 发票三轴状态机行为可观察（迁移 + 非法迁移抛 NopException）
+- [x] 发票审核 posted=true 且凭证分录方向正确（AR_INVOICE 借应收/贷收入+销项税）；反审核生成红字凭证
 
 ### Phase 2 — 收款单审批状态机 + RECEIPT 过账 + 域级核销
 
-Status: planned
+Status: completed
 Targets: `IErpSalReceiptBiz.java`、`ErpSalReceiptBizModel.java`、`SalAcctDocProvider`(扩 RECEIPT) 或独立 `SalReceiptAcctDocProvider`、`SalReceiptPostingDispatcher`+`Executor`、`ReceiptSettler`、`ErpSalErrors`/`ErpSalConstants`(扩)、beans.xml/pom.xml
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: Phase 1（发票已可审核生成应收）。
 
-- [ ] `Add`：`IErpSalReceiptBiz` 三轴契约 + 域级核销动作 `settle(receiptId, List<SettlementAllocation>, ctx)` 与 `reverseSettlement`（与 0300-1 付款面对称）。
+- [x] `Add`：`IErpSalReceiptBiz` 三轴契约 + 域级核销动作 `settle(receiptId, List<SettlementAllocation>, ctx)` 与 `reverseSettlement`（与 0300-1 付款面对称）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`ErpSalReceiptBizModel` 实现收款三轴状态机；`approve` 触发 RECEIPT 过账。
+- [x] `Add`：`ErpSalReceiptBizModel` 实现收款三轴状态机；`approve` 触发 RECEIPT 过账。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：RECEIPT 过账——按 Phase 2 Decision 选定 `SalAcctDocProvider` 扩 `RECEIPT` 或独立 `SalReceiptAcctDocProvider`，产 2 条 VoucherFact：借银行存款科目 / 贷应收科目（金额取收款 totalAmount）。`SalReceiptPostingDispatcher`+`Executor`（同 Phase 1：executor 无 `@Transactional`，REQUIRES_NEW 由 Facade 承接），APPROVED→posted=true。
+- [x] `Add`：RECEIPT 过账——按 Phase 2 Decision 选定 `SalAcctDocProvider` 扩 `RECEIPT` 或独立 `SalReceiptAcctDocProvider`，产 2 条 VoucherFact：借银行存款科目 / 贷应收科目（金额取收款 totalAmount）。`SalReceiptPostingDispatcher`+`Executor`（同 Phase 1：executor 无 `@Transactional`，REQUIRES_NEW 由 Facade 承接），APPROVED→posted=true。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`ReceiptSettler` 域级核销——按 `ErpSalReceiptLine`(receiptId→invoiceId+amount) 登记；约束：同客户、双方 APPROVED、核销金额不超发票未收余额（`totalAmountWithTax − receivedAmount`）与收款未核销余额；违例抛 `ERR_SETTLE_*`。回写 `ErpSalInvoice.receivedAmount`+=amt + `receivedStatus`(UNRECEIVED→PARTIAL→RECEIVED) 与 `ErpSalReceipt.writtenOffStatus`。
+- [x] `Add`：`ReceiptSettler` 域级核销——按 `ErpSalReceiptLine`(receiptId→invoiceId+amount) 登记；约束：同客户、双方 APPROVED、核销金额不超发票未收余额（`totalAmountWithTax − receivedAmount`）与收款未核销余额；违例抛 `ERR_SETTLE_*`。回写 `ErpSalInvoice.receivedAmount`+=amt + `receivedStatus`(UNRECEIVED→PARTIAL→RECEIVED) 与 `ErpSalReceipt.writtenOffStatus`。
   - Skill: `nop-backend-dev`
-- [ ] `Decision`：(a) RECEIPT Provider 归属——`SalAcctDocProvider` 扩 RECEIPT（与 AR_INVOICE 同类集中）vs 独立 `SalReceiptAcctDocProvider`。记录选择（与 0300-1 PAYMENT Decision 保持一致口径）、替代、残留风险。(b) 核销触发时机（审核自动 vs 独立 `settle` 两步）——与 0300-1 保持一致选择（MVP 独立 `settle`），记录理由与残留风险。
+- [x] `Decision`：(a) RECEIPT Provider 归属——`SalAcctDocProvider` 扩 RECEIPT（与 AR_INVOICE 同类集中）vs 独立 `SalReceiptAcctDocProvider`。记录选择（与 0300-1 PAYMENT Decision 保持一致口径）、替代、残留风险。(b) 核销触发时机（审核自动 vs 独立 `settle` 两步）——与 0300-1 保持一致选择（MVP 独立 `settle`），记录理由与残留风险。
   - Skill: none
-- [ ] `Add`：`reverseSettlement`——生成反向 ReceiptLine 冲销，恢复发票/收款余额与状态。
+- [x] `Add`：`reverseSettlement`——生成反向 ReceiptLine 冲销，恢复发票/收款余额与状态。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：`TestErpSalReceiptApproval`（三轴 + RECEIPT 过账 posted=true）、`TestErpSalReceiptSettlement`（部分核销 receivedStatus=PARTIAL、全额 RECEIVED、跨客户拒绝、超额拒绝、reverseSettlement 恢复）。验证命令 `mvn test -pl module-sales/erp-sal-service -am`。
+- [x] `Proof`：`TestErpSalReceiptApproval`（三轴 + RECEIPT 过账 posted=true）、`TestErpSalReceiptSettlement`（部分核销 receivedStatus=PARTIAL、全额 RECEIVED、跨客户拒绝、超额拒绝、reverseSettlement 恢复）。验证命令 `mvn test -pl module-sales/erp-sal-service -am`。
   - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] 收款三轴状态机行为可观察；RECEIPT 过账 posted=true（借银行存款/贷应收）
-- [ ] 域级核销：部分/全额核销正确回写 receivedStatus/receivedAmount/writtenOffStatus；约束违例拒绝；冲销恢复余额
+- [x] 收款三轴状态机行为可观察；RECEIPT 过账 posted=true（借银行存款/贷应收）
+- [x] 域级核销：部分/全额核销正确回写 receivedStatus/receivedAmount/writtenOffStatus；约束违例拒绝；冲销恢复余额
+
+Phase 2 Decision 记录：
+
+- (a) RECEIPT Provider 归属——**选定**：`SalAcctDocProvider` 扩 `RECEIPT`（与 `AR_INVOICE` 同类集中），与采购域 `PurAcctDocProvider` 收编 `PAYMENT` 口径一致。**替代**：独立 `SalReceiptAcctDocProvider`（增加 Bean 数，无额外收益）。**残留风险**：单 Provider 承载两个业务类型，若日后两者科目解析差异显著则需拆分；当前科目解析统一走引擎 `resolveSubjects`，差异仅 in-memory `billData` key，无需拆分。
+- (b) 核销触发时机——**选定**：独立 `settle` 两步（审核后显式核销），与采购域 `PaymentSettler` 对称。**理由**：解耦审核与核销，审核（产生应收/银行凭证）与核销（域内回写余额）语义正交；自动核销需隐式选择发票分配规则，MVP 不引入该复杂度。**残留风险**：用户须显式调 `settle` 才回写 receivedStatus；增强项（自动核销规则）已列入 Deferred（0300-3 承接）。
 
 ### Phase 3 — 销售到收款端到端串联 + 反向场景 + 文档/日志
 
-Status: planned
+Status: completed
 Targets: `TestErpSalOrderToCashEnd.java`、`docs/logs/2026/{07-02}.md`、`docs/backlog/core-business-roadmap.md`
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 + Phase 2。
 
-- [ ] `Add`：端到端测试 `TestErpSalOrderToCashEnd`——建 SO→approve(信用额度校验)→Delivery(1132-2)→approve(触发出库移动+SALES_OUTPUT 成本结转凭证)→建 Invoice(回链 DeliveryLine)→approve(AR_INVOICE 凭证)→建 Receipt→approve(RECEIPT 凭证)→settle(部分核销，invoice.receivedStatus=PARTIAL)。断言全链状态、posted、receivedStatus 一致。
+- [x] `Add`：端到端测试 `TestErpSalOrderToCashEnd`——建 SO→approve(信用额度校验)→Delivery(1132-2)→approve(触发出库移动+SALES_OUTPUT 成本结转凭证)→建 Invoice(回链 DeliveryLine)→approve(AR_INVOICE 凭证)→建 Receipt→approve(RECEIPT 凭证)→settle(部分核销，invoice.receivedStatus=PARTIAL)。断言全链状态、posted、receivedStatus 一致。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：反向场景测试——发票 reverseApprove（红字冲销 AR 凭证）、收款 reverseSettlement + reverseApprove（红字冲销 RECEIPT 凭证）。
+- [x] `Add`：反向场景测试——发票 reverseApprove（红字冲销 AR 凭证）、收款 reverseSettlement + reverseApprove（红字冲销 RECEIPT 凭证）。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：根 `mvn test -fae` 无回归。验证命令 `mvn test -fae`（根目录）。
+- [x] `Proof`：根 `mvn test -fae` 无回归。验证命令 `mvn test -fae`（根目录）。
   - Skill: none
-- [ ] `Add`：`docs/logs/2026/{执行当日 month-day}.md` 新增本计划条目（含验证状态）；`docs/backlog/core-business-roadmap.md` 工作项 1.7 AR 段标注进展。
+- [x] `Add`：`docs/logs/2026/{执行当日 month-day}.md` 新增本计划条目（含验证状态）；`docs/backlog/core-business-roadmap.md` 工作项 1.7 AR 段标注进展。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] 端到端 SO→Delivery→Invoice→Receipt(部分) 全链行为可观察（状态+posted+receivedStatus 一致），含反向冲销
-- [ ] 当日日志已记；roadmap 1.7 AR 段进展已标注
+- [x] 端到端 SO→Delivery→Invoice→Receipt(部分) 全链行为可观察（状态+posted+receivedStatus 一致），含反向冲销
+- [x] 当日日志已记；roadmap 1.7 AR 段进展已标注
 
 ## Draft Review Record
 
@@ -144,14 +149,14 @@ Exit Criteria:
 
 > 仅在所有项目和每阶段退出标准都勾选 `[x]` 后关闭。结束时运行一次完整仓库验证。
 
-- [ ] 范围内行为完成：发票/收款三轴状态机 + AR_INVOICE/RECEIPT 过账 + 域级核销 + 端到端全链落地，行为测试通过
-- [ ] 相关文档对齐：`core-business-roadmap.md` 1.7 AR 段标注进展；当日日志已记
-- [ ] 已运行验证：`mvn test -pl module-sales/erp-sal-service -am` 全绿；根 `mvn test -fae` = BUILD SUCCESS（无回归）
-- [ ] 无范围内项目降级为 deferred/follow-up（财务辅助账/信用额度分量增强/退货发票/nop-wf/自动核销/汇兑损益/银企直连 均为计划内 Non-Goal）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于 `Closure` 节
+- [x] 范围内行为完成：发票/收款三轴状态机 + AR_INVOICE/RECEIPT 过账 + 域级核销 + 端到端全链落地，行为测试通过
+- [x] 相关文档对齐：`core-business-roadmap.md` 1.7 AR 段标注进展；当日日志已记
+- [x] 已运行验证：`mvn test -pl module-sales/erp-sal-service -am` 全绿；根 `mvn test -fae` = BUILD SUCCESS（无回归）
+- [x] 无范围内项目降级为 deferred/follow-up（财务辅助账/信用额度分量增强/退货发票/nop-wf/自动核销/汇兑损益/银企直连 均为计划内 Non-Goal）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于 `Closure` 节
 
 ## Deferred But Adjudicated
 
@@ -175,11 +180,20 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行 + 独立结束审计后填写>
+Status Note: 计划三阶段全部执行完成，所有 Phase 退出标准与 Closure Gates 已勾选；独立结束审计通过（passes closure audit）。验证全绿。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计子代理（新会话）>
+- Auditor / Agent: ses_0e0b5a737ffeS4cZxSKbUT5oTA（独立 general 子代理，新会话）
+- Verdict: **passes closure audit**（无 BLOCKER/MAJOR；2 项非阻塞 Note）
+- 审计范围与结论：
+  1. **Scope completeness — PASS**：13 个交付物组全部落地（IErpSalInvoiceBiz/IErpSalReceiptBiz 三轴契约 + settle/reverseSettlement、SettlementAllocation DTO、ErpSalInvoiceBizModel/ErpSalReceiptBizModel、ReceiptSettler、SalAcctDocProvider(AR_INVOICE+RECEIPT)、SalPostingExecutor、SalInvoice/SalReceiptPostingDispatcher、ErpSalErrors/ErpSalConstants 扩展、beans.xml 5 bean 注册、pom.xml finance-service 依赖）。
+  2. **Hard rule compliance — PASS**：`SalPostingExecutor` 无 `@Transactional`（草案 BLOCKER 已正确消除，REQUIRES_NEW 钉 Facade `IErpFinVoucherBiz.post`）；BizModel 仅 `@BizMutation`；`@Inject` 非 private；异常全为 `NopException`+`ErrorCode`；AR_INVOICE 借应收/贷收入+销项税、RECEIPT 借银行存款/贷应收 方向正确（对齐 posting.md）；跨实体走 IErpMdPartnerBiz + Facade；源 `posted` 由 BizModel 主事务持久化（dispatcher 不持久化源单据）。
+  3. **科目编码 sanity — PASS**：AR_INVOICE 1131/6001/2221、RECEIPT 1002/1131，与采购镜像（AP_INVOICE 1403/2221/2202、PAYMENT 2202/1002）对称。
+  4. **测试覆盖 — PASS**：5 个测试文件覆盖发票/收款三轴、AR_INVOICE/RECEIPT 过账、域级核销（部分/全额/跨客户拒/超余额拒/冲销恢复）、端到端 SO→Delivery→Invoice→Receipt（部分核销）+ 反向冲销。
+  5. **验证状态诚实性 — PASS**（独立复跑）：`mvn test -pl module-sales/erp-sal-service -am` = Tests run: 45, Failures: 0, Errors: 0, Skipped: 0；根 `mvn test -fae` = BUILD SUCCESS（全 18 域 reactor，无回归，02:07 min）。
+  6. **文档/日志/roadmap 一致性 — PASS**：`docs/logs/2026/07-02.md` 含 0300-2 条目（full-green 验证状态）；`core-business-roadmap.md` 1.7 标 partial（AR 段 done）；计划 Phase Status/Exit Criteria 全勾选。
+- Note（非阻塞）：(a) 计划 Phase 1 targets prose 写 `SalInvoicePostingExecutor`，实际交付共享 `SalPostingExecutor`——更忠于采购镜像（单一 `PurPostingExecutor`），审计清单亦命名 `SalPostingExecutor`，非差异；(b) `ReceiptSettler` 用 `IDaoProvider`/`IOrmTemplate` 处理同模块实体（发票/核销行），对齐 `PaymentSettler` 模式，javadoc 已记录（非 BizModel 服务、非跨域）。
 
 Follow-up:
 

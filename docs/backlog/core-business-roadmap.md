@@ -17,7 +17,7 @@
 - 1.4 三单匹配逻辑：`done`
 - 1.5 过账 Provider：`done`
 - 1.6 采购到付款串联：`partial`（AP 段 PO→Receive→Invoice→Pay + 三单匹配 + 域级核销 done，计划 0300-1；财务辅助账/自动核销/退货归 0300-3/1.9）
-- 1.7 销售到收款串联：`todo`
+- 1.7 销售到收款串联：`partial`（AR 段 SO→Delivery→Invoice→Receipt + AR_INVOICE/RECEIPT 过账 + 域级核销 done，计划 0300-2；财务辅助账/自动核销/汇兑损益归 0300-3，销售退货归 1.10）
 - 1.8 费用报销/票据/资金：`todo`
 - 1.9 采购退货与退款：`todo`
 - 1.10 销售退货与退款：`todo`
@@ -40,7 +40,7 @@
 | 1.4 | 三单匹配逻辑（PO/Receive/Invoice） | purchase | `purchase/three-way-match.md` | ✅ `done` |
 | 1.5 | IErpFinAcctDocProvider 过账 Provider | finance | `finance/posting.md` | ✅ `done` |
 | 1.6 | 采购到付款端到端串联 | purchase/finance | `flow-overview.md` | 🔶 `partial`（AP 段 done 计划 0300-1；辅助账/自动核销/退货归 0300-3/1.9） |
-| 1.7 | 销售到收款端到端串联 | sales/finance | `flow-overview.md` | — |
+| 1.7 | 销售到收款端到端串联 | sales/finance | `flow-overview.md` | 🔶 `partial`（AR 段 done 计划 0300-2；辅助账/自动核销/汇兑损益归 0300-3，退货归 1.10） |
 | 1.8 | 费用报销/票据/资金模块业务逻辑 | finance | `expense-claim.md`, `treasury.md` | — |
 | 1.9 | 采购退货与退款 | purchase/finance | `purchase/returns.md` | — |
 | 1.10 | 销售退货与退款 | sales/finance | `sales/returns.md` | — |
