@@ -91,6 +91,12 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_employee = "employee";
     
+    /* relation:  */
+    public static final String PROP_NAME_project = "project";
+    
+    /* relation:  */
+    public static final String PROP_NAME_task = "task";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -917,6 +923,52 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_employee, refEntity,()->{
            
                            this.setEmployeeId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.prj.dao.entity.ErpPrjProject getProject(){
+       return (app.erp.prj.dao.entity.ErpPrjProject)internalGetRefEntity(PROP_NAME_project);
+    }
+
+    public final void setProject(app.erp.prj.dao.entity.ErpPrjProject refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setProjectId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_project, refEntity,()->{
+           
+                           this.setProjectId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.prj.dao.entity.ErpPrjTask getTask(){
+       return (app.erp.prj.dao.entity.ErpPrjTask)internalGetRefEntity(PROP_NAME_task);
+    }
+
+    public final void setTask(app.erp.prj.dao.entity.ErpPrjTask refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setTaskId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_task, refEntity,()->{
+           
+                           this.setTaskId(refEntity.getId());
                        
            });
            }

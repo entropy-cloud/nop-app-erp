@@ -85,6 +85,12 @@ public class _ErpHrShiftRotationPattern extends DynamicOrmEntity{
     private static int _PROP_ID_BOUND = 16;
 
     
+    /* relation:  */
+    public static final String PROP_NAME_group = "group";
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -871,5 +877,51 @@ public class _ErpHrShiftRotationPattern extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.hr.dao.entity.ErpHrShiftRotationPattern getGroup(){
+       return (app.erp.hr.dao.entity.ErpHrShiftRotationPattern)internalGetRefEntity(PROP_NAME_group);
+    }
+
+    public final void setGroup(app.erp.hr.dao.entity.ErpHrShiftRotationPattern refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setGroupId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_group, refEntity,()->{
+           
+                           this.setGroupId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
 }
 // resume CPD analysis - CPD-ON

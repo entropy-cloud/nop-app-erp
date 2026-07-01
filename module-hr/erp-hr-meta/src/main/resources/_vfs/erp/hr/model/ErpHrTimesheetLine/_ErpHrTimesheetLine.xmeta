@@ -36,11 +36,11 @@
             <schema type="java.time.LocalDate"/>
         </prop>
         <prop name="projectId" displayName="项目" propId="5" i18n-en:displayName="Project" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="project">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="taskId" displayName="任务" propId="6" i18n-en:displayName="Task" queryable="true" sortable="true"
-              insertable="true" updatable="true">
+              insertable="true" updatable="true" ext:relation="task">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="activityType" displayName="活动类型" propId="7" i18n-en:displayName="Activity Type" queryable="true"
@@ -88,6 +88,16 @@
               queryable="true" ext:joinLeftProp="employeeId" ext:joinRightProp="id" insertable="false" updatable="false"
               mandatory="true" lazy="true">
             <schema bizObjName="ErpHrEmployee"/>
+        </prop>
+        <prop name="project" i18n-en:displayName="Project" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="projectId" ext:joinRightProp="id" biz:moduleId="erp/prj"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpPrjProject"/>
+        </prop>
+        <prop name="task" i18n-en:displayName="Task" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="taskId" ext:joinRightProp="id" biz:moduleId="erp/prj" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpPrjTask"/>
         </prop>
     </props>
 </meta>

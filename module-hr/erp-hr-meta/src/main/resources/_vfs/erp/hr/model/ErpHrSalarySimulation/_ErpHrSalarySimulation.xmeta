@@ -32,7 +32,7 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="sourceSalaryId" displayName="源薪酬记录" propId="4" i18n-en:displayName="Source Salary" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="sourceSalary">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="simulationPeriodYear" displayName="模拟年份" propId="5" i18n-en:displayName="Simulation Period Year"
@@ -52,7 +52,7 @@
             <schema type="java.lang.Integer" dict="erp-hr/simulation-status"/>
         </prop>
         <prop name="reviewerId" displayName="审批人" propId="9" i18n-en:displayName="Reviewer" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="reviewer">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="reviewedAt" displayName="审批时间" propId="10" i18n-en:displayName="Reviewed At" queryable="true"
@@ -64,7 +64,7 @@
             <schema type="java.time.LocalDateTime"/>
         </prop>
         <prop name="convertedSalaryId" displayName="转正式薪酬ID" propId="12" i18n-en:displayName="Converted Salary"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="convertedSalary">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="notes" displayName="备注" propId="13" i18n-en:displayName="Notes" queryable="true" sortable="true"
@@ -94,6 +94,21 @@
         <prop name="updateTime" displayName="修改时间" propId="19" i18n-en:displayName="Update Time" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="sourceSalary" i18n-en:displayName="Source Salary" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="sourceSalaryId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpHrSalary"/>
+        </prop>
+        <prop name="reviewer" i18n-en:displayName="Reviewer" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="reviewerId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpHrEmployee"/>
+        </prop>
+        <prop name="convertedSalary" i18n-en:displayName="Converted Salary" tagSet="pub" ext:kind="to-one"
+              internal="true" queryable="true" ext:joinLeftProp="convertedSalaryId" ext:joinRightProp="id"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpHrSalary"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"

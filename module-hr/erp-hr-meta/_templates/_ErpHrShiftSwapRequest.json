@@ -19,5 +19,8 @@
   "updateTime": "2000-01-01 14:00:00",
   "requester": null,
   "targetEmployee": null,
+  "sourceAssignment": null,
+  "targetAssignment": null,
+  "approvedBy": null,
   "org": null
 }

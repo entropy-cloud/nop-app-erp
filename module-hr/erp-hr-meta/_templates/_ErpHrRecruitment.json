@@ -9,7 +9,7 @@
   "candidateEmail": "",
   "source": 0,
   "source_label": "",
-  "resumeAttachmentId": 0,
+  "resumeAttachmentFileId": "",
   "status": 0,
   "status_label": "",
   "interviewerId": 0,
@@ -28,5 +28,7 @@
   "position": null,
   "department": null,
   "employee": null,
-  "org": null
+  "interviewer": null,
+  "org": null,
+  "resumeAttachmentFileIdComponentFileStatus": null
 }

@@ -101,6 +101,18 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
     private static int _PROP_ID_BOUND = 20;
 
     
+    /* relation:  */
+    public static final String PROP_NAME_sourceSalary = "sourceSalary";
+    
+    /* relation:  */
+    public static final String PROP_NAME_reviewer = "reviewer";
+    
+    /* relation:  */
+    public static final String PROP_NAME_convertedSalary = "convertedSalary";
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1067,5 +1079,97 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.hr.dao.entity.ErpHrSalary getSourceSalary(){
+       return (app.erp.hr.dao.entity.ErpHrSalary)internalGetRefEntity(PROP_NAME_sourceSalary);
+    }
+
+    public final void setSourceSalary(app.erp.hr.dao.entity.ErpHrSalary refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setSourceSalaryId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_sourceSalary, refEntity,()->{
+           
+                           this.setSourceSalaryId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.hr.dao.entity.ErpHrEmployee getReviewer(){
+       return (app.erp.hr.dao.entity.ErpHrEmployee)internalGetRefEntity(PROP_NAME_reviewer);
+    }
+
+    public final void setReviewer(app.erp.hr.dao.entity.ErpHrEmployee refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setReviewerId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_reviewer, refEntity,()->{
+           
+                           this.setReviewerId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.hr.dao.entity.ErpHrSalary getConvertedSalary(){
+       return (app.erp.hr.dao.entity.ErpHrSalary)internalGetRefEntity(PROP_NAME_convertedSalary);
+    }
+
+    public final void setConvertedSalary(app.erp.hr.dao.entity.ErpHrSalary refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setConvertedSalaryId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_convertedSalary, refEntity,()->{
+           
+                           this.setConvertedSalaryId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
 }
 // resume CPD analysis - CPD-ON

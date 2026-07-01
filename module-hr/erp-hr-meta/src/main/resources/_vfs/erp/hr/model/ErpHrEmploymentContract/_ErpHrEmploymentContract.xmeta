@@ -64,7 +64,7 @@
             <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="salaryCurrencyId" displayName="薪资币种" propId="12" i18n-en:displayName="Salary Currency"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="salaryCurrency">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="salaryPayMethod" displayName="发薪方式" propId="13" i18n-en:displayName="Salary Pay Method"
@@ -83,9 +83,9 @@
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.Integer" dict="erp-hr/contract-status"/>
         </prop>
-        <prop name="attachmentId" displayName="合同文件" propId="17" i18n-en:displayName="Attachment" queryable="true"
+        <prop name="attachmentFileId" displayName="合同文件" propId="17" i18n-en:displayName="Attachment" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema stdDomain="file" type="java.lang.String" precision="200"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="18" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
@@ -124,10 +124,19 @@
               mandatory="true" lazy="true">
             <schema bizObjName="ErpHrEmployee"/>
         </prop>
+        <prop name="salaryCurrency" i18n-en:displayName="Salary Currency" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="salaryCurrencyId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdCurrency"/>
+        </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
               lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="attachmentFileIdComponentFileStatus" mapToProp="attachmentFileIdComponent.fileStatus"
+              internal="true" lazy="true">
+            <schema type="io.nop.api.core.beans.file.FileStatusBean"/>
         </prop>
     </props>
 </meta>

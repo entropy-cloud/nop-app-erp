@@ -85,9 +85,9 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 16;
     
-    /* 合同文件: ATTACHMENT_ID BIGINT */
-    public static final String PROP_NAME_attachmentId = "attachmentId";
-    public static final int PROP_ID_attachmentId = 17;
+    /* 合同文件: ATTACHMENT_FILE_ID VARCHAR */
+    public static final String PROP_NAME_attachmentFileId = "attachmentFileId";
+    public static final int PROP_ID_attachmentFileId = 17;
     
     /* 业务组织: ORG_ID BIGINT */
     public static final String PROP_NAME_orgId = "orgId";
@@ -127,6 +127,15 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
     
     /* relation:  */
     public static final String PROP_NAME_employee = "employee";
+    
+    /* relation:  */
+    public static final String PROP_NAME_salaryCurrency = "salaryCurrency";
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
+    /* component:  */
+    public static final String PROP_NAME_attachmentFileIdComponent = "attachmentFileIdComponent";
     
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
@@ -184,8 +193,8 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_status] = PROP_NAME_status;
           PROP_NAME_TO_ID.put(PROP_NAME_status, PROP_ID_status);
       
-          PROP_ID_TO_NAME[PROP_ID_attachmentId] = PROP_NAME_attachmentId;
-          PROP_NAME_TO_ID.put(PROP_NAME_attachmentId, PROP_ID_attachmentId);
+          PROP_ID_TO_NAME[PROP_ID_attachmentFileId] = PROP_NAME_attachmentFileId;
+          PROP_NAME_TO_ID.put(PROP_NAME_attachmentFileId, PROP_ID_attachmentFileId);
       
           PROP_ID_TO_NAME[PROP_ID_orgId] = PROP_NAME_orgId;
           PROP_NAME_TO_ID.put(PROP_NAME_orgId, PROP_ID_orgId);
@@ -262,8 +271,8 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
     /* 合同状态: STATUS */
     private java.lang.Integer _status;
     
-    /* 合同文件: ATTACHMENT_ID */
-    private java.lang.Long _attachmentId;
+    /* 合同文件: ATTACHMENT_FILE_ID */
+    private java.lang.String _attachmentFileId;
     
     /* 业务组织: ORG_ID */
     private java.lang.Long _orgId;
@@ -411,8 +420,8 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
             case PROP_ID_status:
                return getStatus();
         
-            case PROP_ID_attachmentId:
-               return getAttachmentId();
+            case PROP_ID_attachmentFileId:
+               return getAttachmentFileId();
         
             case PROP_ID_orgId:
                return getOrgId();
@@ -609,13 +618,13 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
                break;
             }
         
-            case PROP_ID_attachmentId:{
-               java.lang.Long typedValue = null;
+            case PROP_ID_attachmentFileId:{
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
-                       err-> newTypeConversionError(PROP_NAME_attachmentId));
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_attachmentFileId));
                }
-               setAttachmentId(typedValue);
+               setAttachmentFileId(typedValue);
                break;
             }
         
@@ -820,9 +829,9 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
                break;
             }
         
-            case PROP_ID_attachmentId:{
+            case PROP_ID_attachmentFileId:{
                onInitProp(propId);
-               this._attachmentId = (java.lang.Long)value;
+               this._attachmentFileId = (java.lang.String)value;
                
                break;
             }
@@ -1194,20 +1203,20 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
     }
     
     /**
-     * 合同文件: ATTACHMENT_ID
+     * 合同文件: ATTACHMENT_FILE_ID
      */
-    public final java.lang.Long getAttachmentId(){
-         onPropGet(PROP_ID_attachmentId);
-         return _attachmentId;
+    public final java.lang.String getAttachmentFileId(){
+         onPropGet(PROP_ID_attachmentFileId);
+         return _attachmentFileId;
     }
 
     /**
-     * 合同文件: ATTACHMENT_ID
+     * 合同文件: ATTACHMENT_FILE_ID
      */
-    public final void setAttachmentId(java.lang.Long value){
-        if(onPropSet(PROP_ID_attachmentId,value)){
-            this._attachmentId = value;
-            internalClearRefs(PROP_ID_attachmentId);
+    public final void setAttachmentFileId(java.lang.String value){
+        if(onPropSet(PROP_ID_attachmentFileId,value)){
+            this._attachmentFileId = value;
+            internalClearRefs(PROP_ID_attachmentFileId);
             
         }
     }
@@ -1387,5 +1396,68 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
        
     }
        
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdCurrency getSalaryCurrency(){
+       return (app.erp.md.dao.entity.ErpMdCurrency)internalGetRefEntity(PROP_NAME_salaryCurrency);
+    }
+
+    public final void setSalaryCurrency(app.erp.md.dao.entity.ErpMdCurrency refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setSalaryCurrencyId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_salaryCurrency, refEntity,()->{
+           
+                           this.setSalaryCurrencyId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+   private io.nop.orm.component.OrmFileComponent _attachmentFileIdComponent;
+
+   private static Map<String,Integer> COMPONENT_PROP_ID_MAP_attachmentFileIdComponent = new HashMap<>();
+   static{
+      
+         COMPONENT_PROP_ID_MAP_attachmentFileIdComponent.put(io.nop.orm.component.OrmFileComponent.PROP_NAME_filePath,PROP_ID_attachmentFileId);
+      
+   }
+
+   public final io.nop.orm.component.OrmFileComponent getAttachmentFileIdComponent(){
+      if(_attachmentFileIdComponent == null){
+          _attachmentFileIdComponent = new io.nop.orm.component.OrmFileComponent();
+          _attachmentFileIdComponent.bindToEntity(this, COMPONENT_PROP_ID_MAP_attachmentFileIdComponent);
+      }
+      return _attachmentFileIdComponent;
+   }
+
 }
 // resume CPD analysis - CPD-ON

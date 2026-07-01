@@ -84,6 +84,15 @@ public class _ErpHrDepartment extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_parent = "parent";
     
+    /* relation:  */
+    public static final String PROP_NAME_manager = "manager";
+    
+    /* relation:  */
+    public static final String PROP_NAME_costCenter = "costCenter";
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -842,6 +851,75 @@ public class _ErpHrDepartment extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_parent, refEntity,()->{
            
                            this.setParentId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.hr.dao.entity.ErpHrEmployee getManager(){
+       return (app.erp.hr.dao.entity.ErpHrEmployee)internalGetRefEntity(PROP_NAME_manager);
+    }
+
+    public final void setManager(app.erp.hr.dao.entity.ErpHrEmployee refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setManagerId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_manager, refEntity,()->{
+           
+                           this.setManagerId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdCostCenter getCostCenter(){
+       return (app.erp.md.dao.entity.ErpMdCostCenter)internalGetRefEntity(PROP_NAME_costCenter);
+    }
+
+    public final void setCostCenter(app.erp.md.dao.entity.ErpMdCostCenter refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCostCenterId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_costCenter, refEntity,()->{
+           
+                           this.setCostCenterId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
                        
            });
            }

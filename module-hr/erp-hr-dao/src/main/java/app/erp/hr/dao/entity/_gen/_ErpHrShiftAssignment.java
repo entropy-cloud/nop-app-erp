@@ -107,6 +107,18 @@ public class _ErpHrShiftAssignment extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_shift = "shift";
     
+    /* relation:  */
+    public static final String PROP_NAME_leaveRequest = "leaveRequest";
+    
+    /* relation:  */
+    public static final String PROP_NAME_swapRequest = "swapRequest";
+    
+    /* relation:  */
+    public static final String PROP_NAME_replacedByAssignment = "replacedByAssignment";
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1113,6 +1125,98 @@ public class _ErpHrShiftAssignment extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_shift, refEntity,()->{
            
                            this.setShiftId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.hr.dao.entity.ErpHrLeaveRequest getLeaveRequest(){
+       return (app.erp.hr.dao.entity.ErpHrLeaveRequest)internalGetRefEntity(PROP_NAME_leaveRequest);
+    }
+
+    public final void setLeaveRequest(app.erp.hr.dao.entity.ErpHrLeaveRequest refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setLeaveRequestId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_leaveRequest, refEntity,()->{
+           
+                           this.setLeaveRequestId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.hr.dao.entity.ErpHrShiftSwapRequest getSwapRequest(){
+       return (app.erp.hr.dao.entity.ErpHrShiftSwapRequest)internalGetRefEntity(PROP_NAME_swapRequest);
+    }
+
+    public final void setSwapRequest(app.erp.hr.dao.entity.ErpHrShiftSwapRequest refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setSwapRequestId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_swapRequest, refEntity,()->{
+           
+                           this.setSwapRequestId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.hr.dao.entity.ErpHrShiftAssignment getReplacedByAssignment(){
+       return (app.erp.hr.dao.entity.ErpHrShiftAssignment)internalGetRefEntity(PROP_NAME_replacedByAssignment);
+    }
+
+    public final void setReplacedByAssignment(app.erp.hr.dao.entity.ErpHrShiftAssignment refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setReplacedByAssignmentId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_replacedByAssignment, refEntity,()->{
+           
+                           this.setReplacedByAssignmentId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
                        
            });
            }

@@ -56,15 +56,15 @@
             <schema type="java.lang.String" precision="50"/>
         </prop>
         <prop name="leaveRequestId" displayName="关联休假" propId="10" i18n-en:displayName="Leave Request" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="leaveRequest">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="swapRequestId" displayName="关联调换" propId="11" i18n-en:displayName="Swap Request" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="swapRequest">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="replacedByAssignmentId" displayName="被替换排班" propId="12" i18n-en:displayName="Replaced By"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="replacedByAssignment">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="status" displayName="状态" propId="13" i18n-en:displayName="Status" queryable="true" sortable="true"
@@ -104,6 +104,21 @@
               ext:joinLeftProp="shiftId" ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true"
               lazy="true">
             <schema bizObjName="ErpHrShift"/>
+        </prop>
+        <prop name="leaveRequest" i18n-en:displayName="Leave Request" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="leaveRequestId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpHrLeaveRequest"/>
+        </prop>
+        <prop name="swapRequest" i18n-en:displayName="Swap Request" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="swapRequestId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpHrShiftSwapRequest"/>
+        </prop>
+        <prop name="replacedByAssignment" i18n-en:displayName="Replaced By" tagSet="pub" ext:kind="to-one"
+              internal="true" queryable="true" ext:joinLeftProp="replacedByAssignmentId" ext:joinRightProp="id"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpHrShiftAssignment"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"

@@ -1,12 +1,42 @@
 
+CREATE TABLE erp_md_cost_center(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  constraint PK_erp_md_cost_center primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_bank_account(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  BANKNAME VARCHAR(50) NULL    COMMENT 'null',
+  constraint PK_erp_md_bank_account primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_md_md_organization(
   ID BIGINT NOT NULL    COMMENT 'null',
   constraint PK_erp_md_md_organization primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_md_auth_user(
-  ID BIGINT NOT NULL    COMMENT 'null',
-  constraint PK_erp_md_auth_user primary key (ID)
+CREATE TABLE erp_md_currency(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  constraint PK_erp_md_currency primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_prj_project(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  constraint PK_erp_prj_project primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_prj_task(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  constraint PK_erp_prj_task primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_hr_department(
@@ -25,29 +55,6 @@ CREATE TABLE erp_hr_department(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   constraint PK_erp_hr_department primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_hr_salary_simulation(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  CODE VARCHAR(50) NOT NULL    COMMENT '编号',
-  ORG_ID BIGINT NULL    COMMENT '业务组织',
-  SOURCE_SALARY_ID BIGINT NULL    COMMENT '源薪酬记录',
-  SIMULATION_PERIOD_YEAR INTEGER NOT NULL    COMMENT '模拟年份',
-  SIMULATION_PERIOD_MONTH INTEGER NOT NULL    COMMENT '模拟月份',
-  SIMULATION_NAME VARCHAR(200) NULL    COMMENT '模拟名称',
-  STATUS INTEGER NOT NULL    COMMENT '状态',
-  REVIEWER_ID BIGINT NULL    COMMENT '审批人',
-  REVIEWED_AT DATETIME NULL    COMMENT '审批时间',
-  CONVERTED_AT DATETIME NULL    COMMENT '转正式时间',
-  CONVERTED_SALARY_ID BIGINT NULL    COMMENT '转正式薪酬ID',
-  NOTES VARCHAR(1000) NULL    COMMENT '备注',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_hr_salary_simulation primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_hr_shift(
@@ -96,36 +103,6 @@ CREATE TABLE erp_hr_shift_rotation_pattern(
   constraint PK_erp_hr_shift_rotation_pattern primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_hr_survey(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  CODE VARCHAR(50) NOT NULL    COMMENT '编号',
-  TITLE VARCHAR(200) NOT NULL    COMMENT '问卷标题',
-  DESCRIPTION VARCHAR(2000) NULL    COMMENT '问卷说明',
-  SURVEY_TYPE INTEGER NOT NULL    COMMENT '调研类型',
-  IS_ANONYMOUS BOOLEAN default 1  NULL    COMMENT '是否匿名',
-  STATUS INTEGER NOT NULL    COMMENT '状态',
-  START_DATE DATE NULL    COMMENT '开始日期',
-  END_DATE DATE NULL    COMMENT '截止日期',
-  TARGET_DEPARTMENT_ID BIGINT NULL    COMMENT '目标部门',
-  INCLUDE_ENPS BOOLEAN default 0  NULL    COMMENT '包含eNPS',
-  ENPS_QUESTION VARCHAR(500) NULL    COMMENT 'eNPS题面',
-  REMINDER_DAYS INTEGER default 3  NULL    COMMENT '催填间隔天数',
-  TOTAL_QUESTIONS INTEGER default 0  NULL    COMMENT '总题数',
-  TOTAL_RESPONSES INTEGER default 0  NULL    COMMENT '总答卷数',
-  COMPLETION_RATE DECIMAL(5,2) NULL    COMMENT '完成率',
-  AVG_SCORE DECIMAL(5,2) NULL    COMMENT '平均分',
-  ENPS_SCORE INTEGER NULL    COMMENT 'eNPS得分',
-  ORG_ID BIGINT NULL    COMMENT '业务组织',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_hr_survey primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
 CREATE TABLE erp_hr_competency(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '编码',
@@ -164,46 +141,34 @@ CREATE TABLE erp_hr_position(
   constraint PK_erp_hr_position primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_hr_survey_question(
+CREATE TABLE erp_hr_survey(
   ID BIGINT NOT NULL    COMMENT 'ID',
-  SURVEY_ID BIGINT NOT NULL    COMMENT '所属问卷',
-  SORT_ORDER INTEGER NULL    COMMENT '排序号',
-  QUESTION_TEXT VARCHAR(2000) NOT NULL    COMMENT '题目内容',
-  QUESTION_TYPE INTEGER NOT NULL    COMMENT '题型',
-  RATING_SCALE_MIN INTEGER default 1  NULL    COMMENT '评分最低分',
-  RATING_SCALE_MAX INTEGER default 5  NULL    COMMENT '评分最高分',
-  RATING_LABEL_MIN VARCHAR(100) NULL    COMMENT '最低分标签',
-  RATING_LABEL_MAX VARCHAR(100) NULL    COMMENT '最高分标签',
-  OPTIONS VARCHAR(2000) NULL    COMMENT '选项列表',
-  DRIVER_CATEGORY INTEGER NULL    COMMENT '驱动因子分类',
-  IS_REQUIRED BOOLEAN default 1  NULL    COMMENT '是否必填',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_hr_survey_question primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_hr_survey_result(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  SURVEY_ID BIGINT NOT NULL    COMMENT '所属问卷',
-  DEPARTMENT_ID BIGINT NULL    COMMENT '部门',
-  TOTAL_RESPONSES INTEGER default 0  NULL    COMMENT '答卷数',
+  CODE VARCHAR(50) NOT NULL    COMMENT '编号',
+  TITLE VARCHAR(200) NOT NULL    COMMENT '问卷标题',
+  DESCRIPTION VARCHAR(2000) NULL    COMMENT '问卷说明',
+  SURVEY_TYPE INTEGER NOT NULL    COMMENT '调研类型',
+  IS_ANONYMOUS BOOLEAN default 1  NULL    COMMENT '是否匿名',
+  STATUS INTEGER NOT NULL    COMMENT '状态',
+  START_DATE DATE NULL    COMMENT '开始日期',
+  END_DATE DATE NULL    COMMENT '截止日期',
+  TARGET_DEPARTMENT_ID BIGINT NULL    COMMENT '目标部门',
+  INCLUDE_ENPS BOOLEAN default 0  NULL    COMMENT '包含eNPS',
+  ENPS_QUESTION VARCHAR(500) NULL    COMMENT 'eNPS题面',
+  REMINDER_DAYS INTEGER default 3  NULL    COMMENT '催填间隔天数',
+  TOTAL_QUESTIONS INTEGER default 0  NULL    COMMENT '总题数',
+  TOTAL_RESPONSES INTEGER default 0  NULL    COMMENT '总答卷数',
+  COMPLETION_RATE DECIMAL(5,2) NULL    COMMENT '完成率',
   AVG_SCORE DECIMAL(5,2) NULL    COMMENT '平均分',
   ENPS_SCORE INTEGER NULL    COMMENT 'eNPS得分',
-  DRIVER_SCORES VARCHAR(2000) NULL    COMMENT '驱动因子得分',
-  QUESTION_BREAKDOWN VARCHAR(4000) NULL    COMMENT '每题得分',
-  TREND_DATA VARCHAR(4000) NULL    COMMENT '历史趋势',
-  LAST_CALCULATED_AT DATETIME NULL    COMMENT '最后计算时间',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
   CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
   CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_hr_survey_result primary key (ID)
+  constraint PK_erp_hr_survey primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_hr_competency_level(
@@ -281,6 +246,48 @@ CREATE TABLE erp_hr_role_competency(
   constraint PK_erp_hr_role_competency primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_hr_survey_question(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  SURVEY_ID BIGINT NOT NULL    COMMENT '所属问卷',
+  SORT_ORDER INTEGER NULL    COMMENT '排序号',
+  QUESTION_TEXT VARCHAR(2000) NOT NULL    COMMENT '题目内容',
+  QUESTION_TYPE INTEGER NOT NULL    COMMENT '题型',
+  RATING_SCALE_MIN INTEGER default 1  NULL    COMMENT '评分最低分',
+  RATING_SCALE_MAX INTEGER default 5  NULL    COMMENT '评分最高分',
+  RATING_LABEL_MIN VARCHAR(100) NULL    COMMENT '最低分标签',
+  RATING_LABEL_MAX VARCHAR(100) NULL    COMMENT '最高分标签',
+  OPTIONS VARCHAR(2000) NULL    COMMENT '选项列表',
+  DRIVER_CATEGORY INTEGER NULL    COMMENT '驱动因子分类',
+  IS_REQUIRED BOOLEAN default 1  NULL    COMMENT '是否必填',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_hr_survey_question primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_hr_survey_result(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  SURVEY_ID BIGINT NOT NULL    COMMENT '所属问卷',
+  DEPARTMENT_ID BIGINT NULL    COMMENT '部门',
+  TOTAL_RESPONSES INTEGER default 0  NULL    COMMENT '答卷数',
+  AVG_SCORE DECIMAL(5,2) NULL    COMMENT '平均分',
+  ENPS_SCORE INTEGER NULL    COMMENT 'eNPS得分',
+  DRIVER_SCORES VARCHAR(2000) NULL    COMMENT '驱动因子得分',
+  QUESTION_BREAKDOWN VARCHAR(4000) NULL    COMMENT '每题得分',
+  TREND_DATA VARCHAR(4000) NULL    COMMENT '历史趋势',
+  LAST_CALCULATED_AT DATETIME NULL    COMMENT '最后计算时间',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_hr_survey_result primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_hr_employment_contract(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '合同编号',
@@ -298,7 +305,7 @@ CREATE TABLE erp_hr_employment_contract(
   SOCIAL_INSURANCE_BASE DECIMAL(20,4) NULL    COMMENT '社保基数',
   HOUSING_FUND_BASE DECIMAL(20,4) NULL    COMMENT '公积金基数',
   STATUS INTEGER NOT NULL    COMMENT '合同状态',
-  ATTACHMENT_ID BIGINT NULL    COMMENT '合同文件',
+  ATTACHMENT_FILE_ID VARCHAR(200) NULL    COMMENT '合同文件',
   ORG_ID BIGINT NULL    COMMENT '业务组织',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
@@ -393,7 +400,7 @@ CREATE TABLE erp_hr_recruitment(
   CANDIDATE_PHONE VARCHAR(20) NULL    COMMENT '联系电话',
   CANDIDATE_EMAIL VARCHAR(200) NULL    COMMENT '电子邮箱',
   SOURCE INTEGER NULL    COMMENT '来源',
-  RESUME_ATTACHMENT_ID BIGINT NULL    COMMENT '简历附件',
+  RESUME_ATTACHMENT_FILE_ID VARCHAR(200) NULL    COMMENT '简历附件',
   STATUS INTEGER NOT NULL    COMMENT '状态',
   INTERVIEWER_ID BIGINT NULL    COMMENT '面试官',
   INTERVIEW_DATE DATE NULL    COMMENT '面试日期',
@@ -409,50 +416,6 @@ CREATE TABLE erp_hr_recruitment(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   constraint PK_erp_hr_recruitment primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_hr_shift_assignment(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  ORG_ID BIGINT NULL    COMMENT '业务组织',
-  EMPLOYEE_ID BIGINT NOT NULL    COMMENT '员工',
-  SHIFT_ID BIGINT NOT NULL    COMMENT '班次',
-  ASSIGNMENT_DATE DATE NOT NULL    COMMENT '排班日期',
-  ACTUAL_START_TIME DATETIME NULL    COMMENT '实际签到时间',
-  ACTUAL_END_TIME DATETIME NULL    COMMENT '实际签退时间',
-  IS_ABSENT BOOLEAN default 0  NULL    COMMENT '是否缺勤',
-  ABSENCE_REASON VARCHAR(50) NULL    COMMENT '缺勤原因',
-  LEAVE_REQUEST_ID BIGINT NULL    COMMENT '关联休假',
-  SWAP_REQUEST_ID BIGINT NULL    COMMENT '关联调换',
-  REPLACED_BY_ASSIGNMENT_ID BIGINT NULL    COMMENT '被替换排班',
-  STATUS VARCHAR(50) NULL    COMMENT '状态',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_hr_shift_assignment primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_hr_shift_swap_request(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  CODE VARCHAR(50) NOT NULL    COMMENT '编号',
-  ORG_ID BIGINT NULL    COMMENT '业务组织',
-  REQUESTER_ID BIGINT NOT NULL    COMMENT '申请人',
-  TARGET_EMPLOYEE_ID BIGINT NULL    COMMENT '目标员工',
-  SOURCE_ASSIGNMENT_ID BIGINT NOT NULL    COMMENT '原排班',
-  TARGET_ASSIGNMENT_ID BIGINT NULL    COMMENT '目标排班',
-  SWAP_DATE DATE NOT NULL    COMMENT '调换日期',
-  REASON VARCHAR(500) NULL    COMMENT '调换原因',
-  STATUS INTEGER NOT NULL    COMMENT '状态',
-  APPROVED_BY_ID BIGINT NULL    COMMENT '审批人',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_hr_shift_swap_request primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_hr_survey_response(
@@ -551,6 +514,29 @@ CREATE TABLE erp_hr_attendance(
   constraint PK_erp_hr_attendance primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_hr_shift_assignment(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  EMPLOYEE_ID BIGINT NOT NULL    COMMENT '员工',
+  SHIFT_ID BIGINT NOT NULL    COMMENT '班次',
+  ASSIGNMENT_DATE DATE NOT NULL    COMMENT '排班日期',
+  ACTUAL_START_TIME DATETIME NULL    COMMENT '实际签到时间',
+  ACTUAL_END_TIME DATETIME NULL    COMMENT '实际签退时间',
+  IS_ABSENT BOOLEAN default 0  NULL    COMMENT '是否缺勤',
+  ABSENCE_REASON VARCHAR(50) NULL    COMMENT '缺勤原因',
+  LEAVE_REQUEST_ID BIGINT NULL    COMMENT '关联休假',
+  SWAP_REQUEST_ID BIGINT NULL    COMMENT '关联调换',
+  REPLACED_BY_ASSIGNMENT_ID BIGINT NULL    COMMENT '被替换排班',
+  STATUS VARCHAR(50) NULL    COMMENT '状态',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_hr_shift_assignment primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_hr_timesheet_line(
   ID BIGINT NOT NULL    COMMENT 'ID',
   TIMESHEET_ID BIGINT NOT NULL    COMMENT '工时表ID',
@@ -568,6 +554,29 @@ CREATE TABLE erp_hr_timesheet_line(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   constraint PK_erp_hr_timesheet_line primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_hr_salary_simulation(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '编号',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  SOURCE_SALARY_ID BIGINT NULL    COMMENT '源薪酬记录',
+  SIMULATION_PERIOD_YEAR INTEGER NOT NULL    COMMENT '模拟年份',
+  SIMULATION_PERIOD_MONTH INTEGER NOT NULL    COMMENT '模拟月份',
+  SIMULATION_NAME VARCHAR(200) NULL    COMMENT '模拟名称',
+  STATUS INTEGER NOT NULL    COMMENT '状态',
+  REVIEWER_ID BIGINT NULL    COMMENT '审批人',
+  REVIEWED_AT DATETIME NULL    COMMENT '审批时间',
+  CONVERTED_AT DATETIME NULL    COMMENT '转正式时间',
+  CONVERTED_SALARY_ID BIGINT NULL    COMMENT '转正式薪酬ID',
+  NOTES VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_hr_salary_simulation primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_hr_survey_answer(
@@ -623,34 +632,61 @@ CREATE TABLE erp_hr_development_plan_item(
   constraint PK_erp_hr_development_plan_item primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_hr_shift_swap_request(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '编号',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  REQUESTER_ID BIGINT NOT NULL    COMMENT '申请人',
+  TARGET_EMPLOYEE_ID BIGINT NULL    COMMENT '目标员工',
+  SOURCE_ASSIGNMENT_ID BIGINT NOT NULL    COMMENT '原排班',
+  TARGET_ASSIGNMENT_ID BIGINT NULL    COMMENT '目标排班',
+  SWAP_DATE DATE NOT NULL    COMMENT '调换日期',
+  REASON VARCHAR(500) NULL    COMMENT '调换原因',
+  STATUS INTEGER NOT NULL    COMMENT '状态',
+  APPROVED_BY_ID BIGINT NULL    COMMENT '审批人',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_hr_shift_swap_request primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+
+   ALTER TABLE erp_md_cost_center COMMENT '成本中心';
+                
+   ALTER TABLE erp_md_bank_account COMMENT '银行账户';
+                
    ALTER TABLE erp_md_md_organization COMMENT 'ErpMdOrganization';
                 
-   ALTER TABLE erp_md_auth_user COMMENT 'NopAuthUser';
+   ALTER TABLE erp_md_currency COMMENT '币种';
+                
+   ALTER TABLE erp_prj_project COMMENT '项目';
+                
+   ALTER TABLE erp_prj_task COMMENT '任务';
                 
    ALTER TABLE erp_hr_department COMMENT '部门';
-                
-   ALTER TABLE erp_hr_salary_simulation COMMENT '薪酬模拟';
                 
    ALTER TABLE erp_hr_shift COMMENT '班次模板';
                 
    ALTER TABLE erp_hr_shift_rotation_pattern COMMENT '轮换排班模板';
                 
-   ALTER TABLE erp_hr_survey COMMENT '问卷模板';
-                
    ALTER TABLE erp_hr_competency COMMENT '胜任力字典';
                 
    ALTER TABLE erp_hr_position COMMENT '职位';
                 
-   ALTER TABLE erp_hr_survey_question COMMENT '问卷题目';
-                
-   ALTER TABLE erp_hr_survey_result COMMENT '调研结果';
+   ALTER TABLE erp_hr_survey COMMENT '问卷模板';
                 
    ALTER TABLE erp_hr_competency_level COMMENT '胜任力等级';
                 
    ALTER TABLE erp_hr_employee COMMENT '员工';
                 
    ALTER TABLE erp_hr_role_competency COMMENT '岗位胜任力要求';
+                
+   ALTER TABLE erp_hr_survey_question COMMENT '问卷题目';
+                
+   ALTER TABLE erp_hr_survey_result COMMENT '调研结果';
                 
    ALTER TABLE erp_hr_employment_contract COMMENT '劳动合同';
                 
@@ -662,10 +698,6 @@ CREATE TABLE erp_hr_development_plan_item(
                 
    ALTER TABLE erp_hr_recruitment COMMENT '招聘记录';
                 
-   ALTER TABLE erp_hr_shift_assignment COMMENT '排班分配';
-                
-   ALTER TABLE erp_hr_shift_swap_request COMMENT '排班调换申请';
-                
    ALTER TABLE erp_hr_survey_response COMMENT '答卷';
                 
    ALTER TABLE erp_hr_employee_assessment COMMENT '员工评估';
@@ -676,11 +708,17 @@ CREATE TABLE erp_hr_development_plan_item(
                 
    ALTER TABLE erp_hr_attendance COMMENT '考勤记录';
                 
+   ALTER TABLE erp_hr_shift_assignment COMMENT '排班分配';
+                
    ALTER TABLE erp_hr_timesheet_line COMMENT '工时表明细';
+                
+   ALTER TABLE erp_hr_salary_simulation COMMENT '薪酬模拟';
                 
    ALTER TABLE erp_hr_survey_answer COMMENT '回答明细';
                 
    ALTER TABLE erp_hr_assessment_detail COMMENT '评估明细';
                 
    ALTER TABLE erp_hr_development_plan_item COMMENT '发展计划项';
+                
+   ALTER TABLE erp_hr_shift_swap_request COMMENT '排班调换申请';
                 

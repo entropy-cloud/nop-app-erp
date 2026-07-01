@@ -17,7 +17,7 @@
   "housingFundBase": 0.0,
   "status": 0,
   "status_label": "",
-  "attachmentId": 0,
+  "attachmentFileId": "",
   "orgId": 0,
   "remark": "",
   "delVersion": 0,
@@ -27,5 +27,7 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "employee": null,
-  "org": null
+  "salaryCurrency": null,
+  "org": null,
+  "attachmentFileIdComponentFileStatus": null
 }

@@ -36,11 +36,11 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="managerId" displayName="部门负责人" propId="5" i18n-en:displayName="Manager" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="manager">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="costCenterId" displayName="成本中心" propId="6" i18n-en:displayName="Cost Center" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="costCenter">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="7" i18n-en:displayName="Organization" queryable="true"
@@ -79,6 +79,16 @@
               queryable="true" ext:joinLeftProp="parentId" ext:joinRightProp="id" insertable="false" updatable="false"
               lazy="true">
             <schema bizObjName="ErpHrDepartment"/>
+        </prop>
+        <prop name="manager" i18n-en:displayName="Manager" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="managerId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpHrEmployee"/>
+        </prop>
+        <prop name="costCenter" i18n-en:displayName="Cost Center" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="costCenterId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdCostCenter"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"

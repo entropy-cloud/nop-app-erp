@@ -91,11 +91,11 @@
             <schema type="java.lang.String" precision="200"/>
         </prop>
         <prop name="superiorId" displayName="直接上级" propId="19" i18n-en:displayName="Superior" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="superior">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="costCenterId" displayName="默认成本中心" propId="20" i18n-en:displayName="Cost Center" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="costCenter">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="hireDate" displayName="入职日期" propId="21" i18n-en:displayName="Hire Date" mandatory="true"
@@ -127,7 +127,7 @@
             <schema type="java.lang.Integer" dict="erp-hr/employee-type"/>
         </prop>
         <prop name="bankAccountId" displayName="工资卡账户" propId="28" i18n-en:displayName="Bank Account" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="bankAccount">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="socialSecurityNo" displayName="社保号" propId="29" i18n-en:displayName="Social Security No"
@@ -183,6 +183,21 @@
               queryable="true" ext:joinLeftProp="positionId" ext:joinRightProp="id" insertable="false" updatable="false"
               lazy="true">
             <schema bizObjName="ErpHrPosition"/>
+        </prop>
+        <prop name="superior" i18n-en:displayName="Superior" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="superiorId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpHrEmployee"/>
+        </prop>
+        <prop name="costCenter" i18n-en:displayName="Cost Center" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="costCenterId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdCostCenter"/>
+        </prop>
+        <prop name="bankAccount" i18n-en:displayName="Bank Account" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="bankAccountId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdBankAccount"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"

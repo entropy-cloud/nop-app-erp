@@ -20,5 +20,8 @@
   "updateTime": "2000-01-01 14:00:00",
   "employee": null,
   "shift": null,
+  "leaveRequest": null,
+  "swapRequest": null,
+  "replacedByAssignment": null,
   "org": null
 }

@@ -29,5 +29,6 @@
   "updateTime": "2000-01-01 14:00:00",
   "questions": null,
   "responses": null,
+  "targetDepartment": null,
   "org": null
 }

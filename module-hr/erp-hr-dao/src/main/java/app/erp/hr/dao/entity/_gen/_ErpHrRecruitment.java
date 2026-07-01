@@ -57,9 +57,9 @@ public class _ErpHrRecruitment extends DynamicOrmEntity{
     public static final String PROP_NAME_source = "source";
     public static final int PROP_ID_source = 9;
     
-    /* 简历附件: RESUME_ATTACHMENT_ID BIGINT */
-    public static final String PROP_NAME_resumeAttachmentId = "resumeAttachmentId";
-    public static final int PROP_ID_resumeAttachmentId = 10;
+    /* 简历附件: RESUME_ATTACHMENT_FILE_ID VARCHAR */
+    public static final String PROP_NAME_resumeAttachmentFileId = "resumeAttachmentFileId";
+    public static final int PROP_ID_resumeAttachmentFileId = 10;
     
     /* 状态: STATUS INTEGER */
     public static final String PROP_NAME_status = "status";
@@ -130,6 +130,15 @@ public class _ErpHrRecruitment extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_employee = "employee";
     
+    /* relation:  */
+    public static final String PROP_NAME_interviewer = "interviewer";
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
+    /* component:  */
+    public static final String PROP_NAME_resumeAttachmentFileIdComponent = "resumeAttachmentFileIdComponent";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -165,8 +174,8 @@ public class _ErpHrRecruitment extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_source] = PROP_NAME_source;
           PROP_NAME_TO_ID.put(PROP_NAME_source, PROP_ID_source);
       
-          PROP_ID_TO_NAME[PROP_ID_resumeAttachmentId] = PROP_NAME_resumeAttachmentId;
-          PROP_NAME_TO_ID.put(PROP_NAME_resumeAttachmentId, PROP_ID_resumeAttachmentId);
+          PROP_ID_TO_NAME[PROP_ID_resumeAttachmentFileId] = PROP_NAME_resumeAttachmentFileId;
+          PROP_NAME_TO_ID.put(PROP_NAME_resumeAttachmentFileId, PROP_ID_resumeAttachmentFileId);
       
           PROP_ID_TO_NAME[PROP_ID_status] = PROP_NAME_status;
           PROP_NAME_TO_ID.put(PROP_NAME_status, PROP_ID_status);
@@ -240,8 +249,8 @@ public class _ErpHrRecruitment extends DynamicOrmEntity{
     /* 来源: SOURCE */
     private java.lang.Integer _source;
     
-    /* 简历附件: RESUME_ATTACHMENT_ID */
-    private java.lang.Long _resumeAttachmentId;
+    /* 简历附件: RESUME_ATTACHMENT_FILE_ID */
+    private java.lang.String _resumeAttachmentFileId;
     
     /* 状态: STATUS */
     private java.lang.Integer _status;
@@ -386,8 +395,8 @@ public class _ErpHrRecruitment extends DynamicOrmEntity{
             case PROP_ID_source:
                return getSource();
         
-            case PROP_ID_resumeAttachmentId:
-               return getResumeAttachmentId();
+            case PROP_ID_resumeAttachmentFileId:
+               return getResumeAttachmentFileId();
         
             case PROP_ID_status:
                return getStatus();
@@ -532,13 +541,13 @@ public class _ErpHrRecruitment extends DynamicOrmEntity{
                break;
             }
         
-            case PROP_ID_resumeAttachmentId:{
-               java.lang.Long typedValue = null;
+            case PROP_ID_resumeAttachmentFileId:{
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
-                       err-> newTypeConversionError(PROP_NAME_resumeAttachmentId));
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_resumeAttachmentFileId));
                }
-               setResumeAttachmentId(typedValue);
+               setResumeAttachmentFileId(typedValue);
                break;
             }
         
@@ -754,9 +763,9 @@ public class _ErpHrRecruitment extends DynamicOrmEntity{
                break;
             }
         
-            case PROP_ID_resumeAttachmentId:{
+            case PROP_ID_resumeAttachmentFileId:{
                onInitProp(propId);
-               this._resumeAttachmentId = (java.lang.Long)value;
+               this._resumeAttachmentFileId = (java.lang.String)value;
                
                break;
             }
@@ -1037,20 +1046,20 @@ public class _ErpHrRecruitment extends DynamicOrmEntity{
     }
     
     /**
-     * 简历附件: RESUME_ATTACHMENT_ID
+     * 简历附件: RESUME_ATTACHMENT_FILE_ID
      */
-    public final java.lang.Long getResumeAttachmentId(){
-         onPropGet(PROP_ID_resumeAttachmentId);
-         return _resumeAttachmentId;
+    public final java.lang.String getResumeAttachmentFileId(){
+         onPropGet(PROP_ID_resumeAttachmentFileId);
+         return _resumeAttachmentFileId;
     }
 
     /**
-     * 简历附件: RESUME_ATTACHMENT_ID
+     * 简历附件: RESUME_ATTACHMENT_FILE_ID
      */
-    public final void setResumeAttachmentId(java.lang.Long value){
-        if(onPropSet(PROP_ID_resumeAttachmentId,value)){
-            this._resumeAttachmentId = value;
-            internalClearRefs(PROP_ID_resumeAttachmentId);
+    public final void setResumeAttachmentFileId(java.lang.String value){
+        if(onPropSet(PROP_ID_resumeAttachmentFileId,value)){
+            this._resumeAttachmentFileId = value;
+            internalClearRefs(PROP_ID_resumeAttachmentFileId);
             
         }
     }
@@ -1390,5 +1399,68 @@ public class _ErpHrRecruitment extends DynamicOrmEntity{
        
     }
        
+    /**
+     * 
+     */
+    public final app.erp.hr.dao.entity.ErpHrEmployee getInterviewer(){
+       return (app.erp.hr.dao.entity.ErpHrEmployee)internalGetRefEntity(PROP_NAME_interviewer);
+    }
+
+    public final void setInterviewer(app.erp.hr.dao.entity.ErpHrEmployee refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setInterviewerId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_interviewer, refEntity,()->{
+           
+                           this.setInterviewerId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+   private io.nop.orm.component.OrmFileComponent _resumeAttachmentFileIdComponent;
+
+   private static Map<String,Integer> COMPONENT_PROP_ID_MAP_resumeAttachmentFileIdComponent = new HashMap<>();
+   static{
+      
+         COMPONENT_PROP_ID_MAP_resumeAttachmentFileIdComponent.put(io.nop.orm.component.OrmFileComponent.PROP_NAME_filePath,PROP_ID_resumeAttachmentFileId);
+      
+   }
+
+   public final io.nop.orm.component.OrmFileComponent getResumeAttachmentFileIdComponent(){
+      if(_resumeAttachmentFileIdComponent == null){
+          _resumeAttachmentFileIdComponent = new io.nop.orm.component.OrmFileComponent();
+          _resumeAttachmentFileIdComponent.bindToEntity(this, COMPONENT_PROP_ID_MAP_resumeAttachmentFileIdComponent);
+      }
+      return _resumeAttachmentFileIdComponent;
+   }
+
 }
 // resume CPD analysis - CPD-ON

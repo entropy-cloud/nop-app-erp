@@ -40,11 +40,12 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="sourceAssignmentId" displayName="原排班" propId="6" i18n-en:displayName="Source Assignment"
-              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true"
+              ext:relation="sourceAssignment">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="targetAssignmentId" displayName="目标排班" propId="7" i18n-en:displayName="Target Assignment"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="targetAssignment">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="swapDate" displayName="调换日期" propId="8" i18n-en:displayName="Swap Date" mandatory="true"
@@ -60,7 +61,7 @@
             <schema type="java.lang.Integer" dict="erp-hr/swap-status"/>
         </prop>
         <prop name="approvedById" displayName="审批人" propId="11" i18n-en:displayName="Approved By" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="approvedBy">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="12" i18n-en:displayName="Del Flag" mandatory="true"
@@ -94,6 +95,21 @@
         </prop>
         <prop name="targetEmployee" i18n-en:displayName="Target Employee" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="targetEmployeeId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpHrEmployee"/>
+        </prop>
+        <prop name="sourceAssignment" i18n-en:displayName="Source Assignment" tagSet="pub" ext:kind="to-one"
+              internal="true" queryable="true" ext:joinLeftProp="sourceAssignmentId" ext:joinRightProp="id"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
+            <schema bizObjName="ErpHrShiftAssignment"/>
+        </prop>
+        <prop name="targetAssignment" i18n-en:displayName="Target Assignment" tagSet="pub" ext:kind="to-one"
+              internal="true" queryable="true" ext:joinLeftProp="targetAssignmentId" ext:joinRightProp="id"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpHrShiftAssignment"/>
+        </prop>
+        <prop name="approvedBy" i18n-en:displayName="Approved By" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="approvedById" ext:joinRightProp="id" insertable="false"
               updatable="false" lazy="true">
             <schema bizObjName="ErpHrEmployee"/>
         </prop>

@@ -121,6 +121,8 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       parent: Parent Department
+      manager: Manager
+      costCenter: Cost Center
       org: Org
     ErpHrDevelopmentPlan:
       id: ID
@@ -209,6 +211,9 @@ prop:
       updateTime: Update Time
       department: Department
       position: Position
+      superior: Superior
+      costCenter: Cost Center
+      bankAccount: Bank Account
       org: Org
     ErpHrEmployeeAssessment:
       id: ID
@@ -251,7 +256,7 @@ prop:
       housingFundBase: Housing Fund Base
       status: Status
       status_label: null
-      attachmentId: Attachment
+      attachmentFileId: Attachment
       orgId: Organization
       remark: Remark
       delVersion: Del Flag
@@ -261,7 +266,9 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       employee: Employee
+      salaryCurrency: Salary Currency
       org: Org
+      attachmentFileIdComponentFileStatus: null
     ErpHrGapAnalysis:
       id: ID
       employeeId: Employee
@@ -334,7 +341,7 @@ prop:
       candidateEmail: Candidate Email
       source: Source
       source_label: null
-      resumeAttachmentId: Resume Attachment
+      resumeAttachmentFileId: Resume Attachment
       status: Status
       status_label: null
       interviewerId: Interviewer
@@ -353,7 +360,9 @@ prop:
       position: Position
       department: Department
       employee: Employee
+      interviewer: Interviewer
       org: Org
+      resumeAttachmentFileIdComponentFileStatus: null
     ErpHrRoleCompetency:
       id: ID
       positionId: Position
@@ -421,6 +430,9 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      sourceSalary: Source Salary
+      reviewer: Reviewer
+      convertedSalary: Converted Salary
       org: Org
     ErpHrShift:
       id: ID
@@ -470,6 +482,9 @@ prop:
       updateTime: Update Time
       employee: Employee
       shift: Shift
+      leaveRequest: Leave Request
+      swapRequest: Swap Request
+      replacedByAssignment: Replaced By
       org: Org
     ErpHrShiftRotationPattern:
       id: ID
@@ -487,6 +502,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      group: Group
       org: Org
     ErpHrShiftSwapRequest:
       id: ID
@@ -509,6 +525,9 @@ prop:
       updateTime: Update Time
       requester: Requester
       targetEmployee: Target Employee
+      sourceAssignment: Source Assignment
+      targetAssignment: Target Assignment
+      approvedBy: Approved By
       org: Org
     ErpHrSurvey:
       id: ID
@@ -541,6 +560,7 @@ prop:
       updateTime: Update Time
       questions: Questions
       responses: Responses
+      targetDepartment: Target Department
       org: Org
     ErpHrSurveyAnswer:
       id: ID
@@ -655,6 +675,8 @@ prop:
       updateTime: Update Time
       timesheet: Timesheet
       employee: Employee
+      project: Project
+      task: Task
 dict:
   label:
     erp-hr/employment-status: Employment Status

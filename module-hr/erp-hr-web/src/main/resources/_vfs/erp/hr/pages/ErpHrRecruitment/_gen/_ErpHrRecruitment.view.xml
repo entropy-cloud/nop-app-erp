@@ -46,7 +46,7 @@
                 <col id="source" ui:number="true" sortable="true"/>
 
                 <!--简历附件-->
-                <col id="resumeAttachmentId" ui:number="true" sortable="true"/>
+                <col id="resumeAttachmentFileId" sortable="true"/>
 
                 <!--状态-->
                 <col id="status" mandatory="true" ui:number="true" sortable="true"/>
@@ -98,7 +98,7 @@
  positionId[招聘职位] departmentId[招聘部门]
  headcount[招聘人数] candidateName[应聘者姓名]
  candidatePhone[联系电话] candidateEmail[电子邮箱]
- source[来源] resumeAttachmentId[简历附件]
+ source[来源] resumeAttachmentFileId[简历附件]
  status[状态] interviewerId[面试官]
  interviewDate[面试日期] offerSalary[Offer薪资]
  hiredDate[入职日期] employeeId[关联员工]
@@ -114,7 +114,7 @@
  positionId[招聘职位] departmentId[招聘部门]
  headcount[招聘人数] candidateName[应聘者姓名]
  candidatePhone[联系电话] candidateEmail[电子邮箱]
- source[来源] resumeAttachmentId[简历附件]
+ source[来源] resumeAttachmentFileId[简历附件]
  status[状态] interviewerId[面试官]
  interviewDate[面试日期] offerSalary[Offer薪资]
  hiredDate[入职日期] employeeId[关联员工]
@@ -127,7 +127,7 @@
  positionId[招聘职位] departmentId[招聘部门]
  headcount[招聘人数] candidateName[应聘者姓名]
  candidatePhone[联系电话] candidateEmail[电子邮箱]
- source[来源] resumeAttachmentId[简历附件]
+ source[来源] resumeAttachmentFileId[简历附件]
  status[状态] interviewerId[面试官]
  interviewDate[面试日期] offerSalary[Offer薪资]
  hiredDate[入职日期] employeeId[关联员工]

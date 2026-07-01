@@ -56,7 +56,7 @@
             <schema type="java.time.LocalDate"/>
         </prop>
         <prop name="targetDepartmentId" displayName="目标部门" propId="10" i18n-en:displayName="Target Department"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="targetDepartment">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="includeENps" displayName="包含eNPS" propId="11" i18n-en:displayName="Include eNPS" queryable="true"
@@ -136,6 +136,11 @@
             <schema>
                 <item bizObjName="ErpHrSurveyResponse"/>
             </schema>
+        </prop>
+        <prop name="targetDepartment" i18n-en:displayName="Target Department" tagSet="pub" ext:kind="to-one"
+              internal="true" queryable="true" ext:joinLeftProp="targetDepartmentId" ext:joinRightProp="id"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpHrDepartment"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"

@@ -107,11 +107,13 @@ prop:
       version: 数据版本
     ErpHrDepartment:
       code: 编码
+      costCenter: null
       costCenterId: 成本中心
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
       id: ID
+      manager: null
       managerId: 部门负责人
       name: 名称
       org: null
@@ -164,9 +166,11 @@ prop:
       updatedBy: 修改人
       version: 数据版本
     ErpHrEmployee:
+      bankAccount: null
       bankAccountId: 工资卡账户
       birthDate: 出生日期
       code: 工号
+      costCenter: null
       costCenterId: 默认成本中心
       createTime: 创建时间
       createdBy: 创建人
@@ -204,6 +208,7 @@ prop:
       resignationDate: 离职日期
       resignationReason: 离职原因
       socialSecurityNo: 社保号
+      superior: null
       superiorId: 直接上级
       taxFileNo: 个税档案号
       updateTime: 修改时间
@@ -234,7 +239,8 @@ prop:
       version: 数据版本
     ErpHrEmploymentContract:
       annualSalary: 年薪(税前)
-      attachmentId: 合同文件
+      attachmentFileId: 合同文件
+      attachmentFileIdComponentFileStatus: null
       code: 合同编号
       contractType: 合同类型
       contractType_label: 合同类型
@@ -251,6 +257,7 @@ prop:
       orgId: 业务组织
       probationMonths: 试用期月数
       remark: 备注
+      salaryCurrency: null
       salaryCurrencyId: 薪资币种
       salaryPayMethod: 发薪方式
       signDate: 签订日期
@@ -339,6 +346,7 @@ prop:
       hiredDate: 入职日期
       id: ID
       interviewDate: 面试日期
+      interviewer: null
       interviewerId: 面试官
       offerSalary: Offer薪资
       org: null
@@ -346,7 +354,8 @@ prop:
       position: null
       positionId: 招聘职位
       remark: 备注
-      resumeAttachmentId: 简历附件
+      resumeAttachmentFileId: 简历附件
+      resumeAttachmentFileIdComponentFileStatus: null
       source: 来源
       source_label: 来源
       status: 状态
@@ -403,6 +412,7 @@ prop:
     ErpHrSalarySimulation:
       code: 编号
       convertedAt: 转正式时间
+      convertedSalary: null
       convertedSalaryId: 转正式薪酬ID
       createTime: 创建时间
       createdBy: 创建人
@@ -412,10 +422,12 @@ prop:
       org: null
       orgId: 业务组织
       reviewedAt: 审批时间
+      reviewer: null
       reviewerId: 审批人
       simulationName: 模拟名称
       simulationPeriodMonth: 模拟月份
       simulationPeriodYear: 模拟年份
+      sourceSalary: null
       sourceSalaryId: 源薪酬记录
       status: 状态
       status_label: 状态
@@ -460,13 +472,16 @@ prop:
       employeeId: 员工
       id: ID
       isAbsent: 是否缺勤
+      leaveRequest: null
       leaveRequestId: 关联休假
       org: null
       orgId: 业务组织
+      replacedByAssignment: null
       replacedByAssignmentId: 被替换排班
       shift: null
       shiftId: 班次
       status: 状态
+      swapRequest: null
       swapRequestId: 关联调换
       updateTime: 修改时间
       updatedBy: 修改人
@@ -476,6 +491,7 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
+      group: null
       groupId: 轮换组
       id: ID
       name: 名称
@@ -489,6 +505,7 @@ prop:
       updatedBy: 修改人
       version: 数据版本
     ErpHrShiftSwapRequest:
+      approvedBy: null
       approvedById: 审批人
       code: 编号
       createTime: 创建时间
@@ -500,10 +517,12 @@ prop:
       reason: 调换原因
       requester: null
       requesterId: 申请人
+      sourceAssignment: null
       sourceAssignmentId: 原排班
       status: 状态
       status_label: 状态
       swapDate: 调换日期
+      targetAssignment: null
       targetAssignmentId: 目标排班
       targetEmployee: null
       targetEmployeeId: 目标员工
@@ -535,6 +554,7 @@ prop:
       status_label: 状态
       surveyType: 调研类型
       surveyType_label: 调研类型
+      targetDepartment: null
       targetDepartmentId: 目标部门
       title: 问卷标题
       totalQuestions: 总题数
@@ -647,7 +667,9 @@ prop:
       employeeId: 员工
       hours: 小时数
       id: ID
+      project: null
       projectId: 项目
+      task: null
       taskId: 任务
       timesheet: null
       timesheetId: 工时表ID
