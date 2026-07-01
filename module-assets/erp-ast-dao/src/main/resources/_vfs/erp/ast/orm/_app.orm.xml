@@ -153,39 +153,45 @@
             </columns>
             <relations>
                 <to-one name="category" refEntityName="app.erp.ast.dao.entity.ErpAstAssetCategory" tagSet="pub"
-                        i18n-en:displayName="Category" ref-i18n-en:displayName="Fixed Asset">
+                        i18n-en:displayName="Category">
                     <join>
                         <on leftProp="categoryId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="department" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Department" ref-i18n-en:displayName="Fixed Asset">
+                        i18n-en:displayName="Department">
                     <join>
                         <on leftProp="departmentId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="location" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub"
-                        i18n-en:displayName="Location" ref-i18n-en:displayName="Fixed Asset">
+                        i18n-en:displayName="Location">
                     <join>
                         <on leftProp="locationId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="employee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"
-                        i18n-en:displayName="Employee" ref-i18n-en:displayName="Fixed Asset">
+                        i18n-en:displayName="Employee">
                     <join>
                         <on leftProp="employeeId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
-                        i18n-en:displayName="Currency" ref-i18n-en:displayName="Fixed Asset">
+                        i18n-en:displayName="Currency">
                     <join>
                         <on leftProp="currencyId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="Fixed Asset">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="staff" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"
+                        i18n-en:displayName="Staff">
+                    <join>
+                        <on leftProp="staffId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -234,19 +240,19 @@
             </columns>
             <relations>
                 <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"
-                        i18n-en:displayName="Subject" ref-i18n-en:displayName="Asset Category">
+                        i18n-en:displayName="Subject">
                     <join>
                         <on leftProp="subjectId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="depreciationSubject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"
-                        i18n-en:displayName="Depreciation Subject" ref-i18n-en:displayName="Asset Category">
+                        i18n-en:displayName="Depreciation Subject">
                     <join>
                         <on leftProp="depreciationSubjectId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="expenseSubject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"
-                        i18n-en:displayName="Expense Subject" ref-i18n-en:displayName="Asset Category">
+                        i18n-en:displayName="Expense Subject">
                     <join>
                         <on leftProp="expenseSubjectId" rightProp="id"/>
                     </join>
@@ -289,8 +295,8 @@
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="12" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
-                <column code="POSTED_BY" displayName="过账人" name="postedBy" propId="13" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Posted By"/>
+                <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="13"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
                 <column code="VOUCHER_ID" displayName="凭证ID" name="voucherId" propId="14" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Voucher"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -324,9 +330,27 @@
             </columns>
             <relations>
                 <to-one name="asset" refEntityName="app.erp.ast.dao.entity.ErpAstAsset" tagSet="pub"
-                        i18n-en:displayName="Asset" ref-i18n-en:displayName="Depreciation Schedule">
+                        i18n-en:displayName="Asset">
                     <join>
                         <on leftProp="assetId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="voucher" refEntityName="app.erp.fin.dao.entity.ErpFinVoucher" tagSet="pub"
+                        i18n-en:displayName="Voucher">
+                    <join>
+                        <on leftProp="voucherId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
+                        i18n-en:displayName="Currency">
+                    <join>
+                        <on leftProp="currencyId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -375,8 +399,8 @@
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="18" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
-                <column code="POSTED_BY" displayName="过账人" name="postedBy" propId="19" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Posted By"/>
+                <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="19"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
                 <column code="DOC_VERSION" defaultValue="1" displayName="单据版本" mandatory="true" name="docVersion"
                         precision="20" propId="20" stdDataType="string" stdSqlType="VARCHAR"
                         i18n-en:displayName="Doc Version"/>
@@ -411,9 +435,63 @@
             </columns>
             <relations>
                 <to-one name="asset" refEntityName="app.erp.ast.dao.entity.ErpAstAsset" tagSet="pub"
-                        i18n-en:displayName="Asset" ref-i18n-en:displayName="Asset Movement">
+                        i18n-en:displayName="Asset">
                     <join>
                         <on leftProp="assetId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="fromDepartment" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="From Department">
+                    <join>
+                        <on leftProp="fromDepartmentId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="toDepartment" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="To Department">
+                    <join>
+                        <on leftProp="toDepartmentId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="fromStaff" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"
+                        i18n-en:displayName="From Staff">
+                    <join>
+                        <on leftProp="fromStaffId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="toStaff" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"
+                        i18n-en:displayName="To Staff">
+                    <join>
+                        <on leftProp="toStaffId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="fromLocation" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub"
+                        i18n-en:displayName="From Location">
+                    <join>
+                        <on leftProp="fromLocationId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="toLocation" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub"
+                        i18n-en:displayName="To Location">
+                    <join>
+                        <on leftProp="toLocationId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="handler" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"
+                        i18n-en:displayName="Handler">
+                    <join>
+                        <on leftProp="handlerId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
+                        i18n-en:displayName="Currency">
+                    <join>
+                        <on leftProp="currencyId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -458,10 +536,10 @@
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="14" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
-                <column code="POSTED_BY" displayName="过账人" name="postedBy" propId="15" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Posted By"/>
-                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" propId="16" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Approved By"/>
+                <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="15"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="16"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="17" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -490,9 +568,21 @@
             </columns>
             <relations>
                 <to-one name="asset" refEntityName="app.erp.ast.dao.entity.ErpAstAsset" tagSet="pub"
-                        i18n-en:displayName="Asset" ref-i18n-en:displayName="Asset Value Adjustment">
+                        i18n-en:displayName="Asset">
                     <join>
                         <on leftProp="assetId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
+                        i18n-en:displayName="Currency">
+                    <join>
+                        <on leftProp="currencyId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -538,10 +628,10 @@
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="15" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
-                <column code="POSTED_BY" displayName="过账人" name="postedBy" propId="16" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Posted By"/>
-                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" propId="17" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Approved By"/>
+                <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="16"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="17"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="18" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -570,9 +660,21 @@
             </columns>
             <relations>
                 <to-one name="asset" refEntityName="app.erp.ast.dao.entity.ErpAstAsset" tagSet="pub"
-                        i18n-en:displayName="Asset" ref-i18n-en:displayName="Asset Disposal">
+                        i18n-en:displayName="Asset">
                     <join>
                         <on leftProp="assetId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
+                        i18n-en:displayName="Currency">
+                    <join>
+                        <on leftProp="currencyId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -618,10 +720,10 @@
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="15" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
-                <column code="POSTED_BY" displayName="过账人" name="postedBy" propId="16" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Posted By"/>
-                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" propId="17" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Approved By"/>
+                <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="16"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="17"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="18" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -655,9 +757,21 @@
             </columns>
             <relations>
                 <to-one name="category" refEntityName="app.erp.ast.dao.entity.ErpAstAssetCategory" tagSet="pub"
-                        i18n-en:displayName="Category" ref-i18n-en:displayName="Asset Capitalization">
+                        i18n-en:displayName="Category">
                     <join>
                         <on leftProp="categoryId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
+                        i18n-en:displayName="Currency">
+                    <join>
+                        <on leftProp="currencyId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -728,15 +842,27 @@
             </columns>
             <relations>
                 <to-one name="category" refEntityName="app.erp.ast.dao.entity.ErpAstAssetCategory" tagSet="pub"
-                        i18n-en:displayName="Category" ref-i18n-en:displayName="CIP">
+                        i18n-en:displayName="Category">
                     <join>
                         <on leftProp="categoryId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
-                        i18n-en:displayName="Currency" ref-i18n-en:displayName="CIP">
+                        i18n-en:displayName="Currency">
                     <join>
                         <on leftProp="currencyId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="completedAsset" refEntityName="app.erp.ast.dao.entity.ErpAstAsset" tagSet="pub"
+                        i18n-en:displayName="Completed Asset">
+                    <join>
+                        <on leftProp="completedAssetId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -771,10 +897,10 @@
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="11" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
-                <column code="POSTED_BY" displayName="过账人" name="postedBy" propId="12" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Posted By"/>
-                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" propId="13" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Approved By"/>
+                <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="12"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="13"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="14" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -806,9 +932,21 @@
             </columns>
             <relations>
                 <to-one name="sourceAsset" refEntityName="app.erp.ast.dao.entity.ErpAstAsset" tagSet="pub"
-                        i18n-en:displayName="Source Asset" ref-i18n-en:displayName="Asset Split">
+                        i18n-en:displayName="Source Asset">
                     <join>
                         <on leftProp="sourceAssetId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
+                        i18n-en:displayName="Currency">
+                    <join>
+                        <on leftProp="currencyId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -843,10 +981,10 @@
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="11" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
-                <column code="POSTED_BY" displayName="过账人" name="postedBy" propId="12" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Posted By"/>
-                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" propId="13" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Approved By"/>
+                <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="12"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="13"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="14" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -878,9 +1016,21 @@
             </columns>
             <relations>
                 <to-one name="targetAsset" refEntityName="app.erp.ast.dao.entity.ErpAstAsset" tagSet="pub"
-                        i18n-en:displayName="Target Asset" ref-i18n-en:displayName="Asset Merge">
+                        i18n-en:displayName="Target Asset">
                     <join>
                         <on leftProp="targetAssetId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
+                        i18n-en:displayName="Currency">
+                    <join>
+                        <on leftProp="currencyId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -983,6 +1133,16 @@
                         i18n-en:displayName="Subject Class"/>
                 <column code="DIRECTION" name="direction" propId="6" stdDataType="int" stdSqlType="INTEGER"
                         i18n-en:displayName="Direction"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.fin.dao.entity.ErpFinVoucher" displayName="凭证"
+                name="app.erp.fin.dao.entity.ErpFinVoucher" notGenCode="true" tableName="erp_fin_voucher"
+                biz:moduleId="erp/fin">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="ID"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Code"/>
             </columns>
         </entity>
     </entities>

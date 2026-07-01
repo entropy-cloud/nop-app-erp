@@ -28,13 +28,6 @@
         <property name="bizObjName" value="ErpAstAssetCapitalization"/>
     </bean>
 
-    <bean id="app.erp.ast.service.entity.ErpAstCipBizModel" ioc:type="@bean:id" ioc:default="true"/>
-
-    <bean id="biz_ErpAstCip" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.ast.biz.IErpAstCipBiz"
-          ioc:force-lazy-property="true" lazy-init="true" primary="true">
-        <property name="bizObjName" value="ErpAstCip"/>
-    </bean>
-
     <bean id="app.erp.ast.service.entity.ErpAstDepreciationScheduleBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpAstDepreciationSchedule" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -63,6 +56,13 @@
     <bean id="biz_ErpAstDisposal" class="io.nop.biz.proxy.BizProxyFactoryBean"
           ioc:type="app.erp.ast.biz.IErpAstDisposalBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
         <property name="bizObjName" value="ErpAstDisposal"/>
+    </bean>
+
+    <bean id="app.erp.ast.service.entity.ErpAstCipBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpAstCip" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.ast.biz.IErpAstCipBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpAstCip"/>
     </bean>
 
     <bean id="app.erp.ast.service.entity.ErpAstSplitBizModel" ioc:type="@bean:id" ioc:default="true"/>

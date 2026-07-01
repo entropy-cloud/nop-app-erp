@@ -26,5 +26,7 @@
   "amountSource": 0.0,
   "amountFunctional": 0.0,
   "category": null,
-  "currency": null
+  "currency": null,
+  "org": null,
+  "completedAsset": null
 }

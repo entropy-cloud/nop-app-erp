@@ -146,9 +146,8 @@
                         propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
             <relations>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
-                        ref-i18n-en:displayName="EDI Format">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -182,8 +181,9 @@
                         stdSqlType="VARCHAR" i18n-en:displayName="Error Message"/>
                 <column code="RETRY_COUNT" defaultValue="0" displayName="重试次数" mandatory="true" name="retryCount"
                         propId="10" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Retry Count"/>
-                <column code="ATTACHMENT_ID" displayName="附件（EDI 报文文件）" name="attachmentId" propId="11"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Attachment"/>
+                <column code="ATTACHMENT_FILE_ID" displayName="附件（EDI 报文文件）" name="attachmentFileId" precision="200"
+                        propId="11" stdDataType="string" stdDomain="file" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Attachment"/>
                 <column code="SENT_AT" displayName="发送时间" name="sentAt" propId="12" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Sent At"/>
                 <column code="ACKNOWLEDGED_AT" displayName="确认时间" name="acknowledgedAt" propId="13"
@@ -208,14 +208,13 @@
             </columns>
             <relations>
                 <to-one name="format" refEntityName="app.erp.b2b.dao.entity.ErpB2bEdiFormat" tagSet="pub"
-                        i18n-en:displayName="Format" ref-i18n-en:displayName="EDI Document">
+                        i18n-en:displayName="Format">
                     <join>
                         <on leftProp="formatId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
-                        ref-i18n-en:displayName="EDI Document">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -273,26 +272,25 @@
             </columns>
             <relations>
                 <to-one name="sourceEdiDoc" refEntityName="app.erp.b2b.dao.entity.ErpB2bEdiDoc" tagSet="pub"
-                        i18n-en:displayName="Source EDI Document" ref-i18n-en:displayName="ASN">
+                        i18n-en:displayName="Source EDI Document">
                     <join>
                         <on leftProp="sourceEdiDocId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="partner" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
-                        biz:moduleId="erp/md" i18n-en:displayName="Partner" ref-i18n-en:displayName="ASN">
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
+                        i18n-en:displayName="Partner">
                     <join>
                         <on leftProp="partnerId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org" ref-i18n-en:displayName="ASN">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-many cascadeDelete="true" name="lines" refEntityName="app.erp.b2b.dao.entity.ErpB2bAsnLine"
-                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines"
-                         ref-i18n-en:displayName="ASN">
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines" ext:estRows="30">
                     <join>
                         <on leftProp="id" rightProp="asnId"/>
                     </join>
@@ -340,14 +338,13 @@
             </columns>
             <relations>
                 <to-one name="asn" refEntityName="app.erp.b2b.dao.entity.ErpB2bAsn" tagSet="pub"
-                        i18n-en:displayName="ASN" ref-i18n-en:displayName="ASN Line">
+                        i18n-en:displayName="ASN">
                     <join>
                         <on leftProp="asnId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="material" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdMaterial"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Material"
-                        ref-i18n-en:displayName="ASN Line">
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
+                        i18n-en:displayName="Material">
                     <join>
                         <on leftProp="materialId" rightProp="id"/>
                     </join>
@@ -393,15 +390,14 @@
                         propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
             <relations>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
-                        ref-i18n-en:displayName="Code Mapping">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="partner" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
-                        biz:moduleId="erp/md" i18n-en:displayName="Partner" ref-i18n-en:displayName="Code Mapping">
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
+                        i18n-en:displayName="Partner">
                     <join>
                         <on leftProp="partnerId" rightProp="id"/>
                     </join>
@@ -452,13 +448,13 @@
             </columns>
             <relations>
                 <to-one name="ediDoc" refEntityName="app.erp.b2b.dao.entity.ErpB2bEdiDoc" tagSet="pub"
-                        i18n-en:displayName="EDI Document" ref-i18n-en:displayName="EDI Log">
+                        i18n-en:displayName="EDI Document">
                     <join>
                         <on leftProp="ediDocId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org" ref-i18n-en:displayName="EDI Log">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -531,15 +527,14 @@
                         propId="26" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
             <relations>
-                <to-one name="partner" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
-                        biz:moduleId="erp/md" i18n-en:displayName="Partner" ref-i18n-en:displayName="Partner Profile">
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
+                        i18n-en:displayName="Partner">
                     <join>
                         <on leftProp="partnerId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
-                        ref-i18n-en:displayName="Partner Profile">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -590,7 +585,7 @@
             </columns>
             <relations>
                 <to-one name="partnerProfile" refEntityName="app.erp.b2b.dao.entity.ErpB2bPartnerProfile" tagSet="pub"
-                        i18n-en:displayName="Partner Profile" ref-i18n-en:displayName="Credentials">
+                        i18n-en:displayName="Partner Profile">
                     <join>
                         <on leftProp="partnerProfileId" rightProp="id"/>
                     </join>
@@ -648,7 +643,7 @@
             </columns>
             <relations>
                 <to-one name="partnerProfile" refEntityName="app.erp.b2b.dao.entity.ErpB2bPartnerProfile" tagSet="pub"
-                        i18n-en:displayName="Partner Profile" ref-i18n-en:displayName="Test Exchanges">
+                        i18n-en:displayName="Partner Profile">
                     <join>
                         <on leftProp="partnerProfileId" rightProp="id"/>
                     </join>
@@ -700,7 +695,7 @@
             </columns>
             <relations>
                 <to-one name="partnerProfile" refEntityName="app.erp.b2b.dao.entity.ErpB2bPartnerProfile" tagSet="pub"
-                        i18n-en:displayName="Partner Profile" ref-i18n-en:displayName="Certification Checklists">
+                        i18n-en:displayName="Partner Profile">
                     <join>
                         <on leftProp="partnerProfileId" rightProp="id"/>
                     </join>
@@ -779,17 +774,21 @@
                         propId="30" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
             <relations>
-                <to-one name="partner" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
-                        biz:moduleId="erp/md" i18n-en:displayName="Partner" ref-i18n-en:displayName="MFT Configs">
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
+                        i18n-en:displayName="Partner">
                     <join>
                         <on leftProp="partnerId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
-                        ref-i18n-en:displayName="MFT Config">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="cert" refEntityName="app.erp.b2b.dao.entity.ErpB2bMftCertificate" tagSet="pub">
+                    <join>
+                        <on leftProp="certId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -848,15 +847,14 @@
                         propId="21" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
             <relations>
-                <to-one name="partner" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
-                        biz:moduleId="erp/md" i18n-en:displayName="Partner" ref-i18n-en:displayName="MFT Certificates">
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
+                        i18n-en:displayName="Partner">
                     <join>
                         <on leftProp="partnerId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
-                        ref-i18n-en:displayName="MFT Certificate">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -933,13 +931,13 @@
             </columns>
             <relations>
                 <to-one name="config" refEntityName="app.erp.b2b.dao.entity.ErpB2bMftConfig" tagSet="pub"
-                        i18n-en:displayName="MFT Config" ref-i18n-en:displayName="MFT Logs">
+                        i18n-en:displayName="MFT Config">
                     <join>
                         <on leftProp="configId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org" ref-i18n-en:displayName="MFT Log">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>

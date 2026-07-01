@@ -101,6 +101,12 @@ public class _ErpB2bAsn extends DynamicOrmEntity{
     public static final String PROP_NAME_sourceEdiDoc = "sourceEdiDoc";
     
     /* relation:  */
+    public static final String PROP_NAME_partner = "partner";
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
+    /* relation:  */
     public static final String PROP_NAME_lines = "lines";
     
 
@@ -1041,6 +1047,52 @@ public class _ErpB2bAsn extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_sourceEdiDoc, refEntity,()->{
            
                            this.setSourceEdiDocId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdPartner getPartner(){
+       return (app.erp.md.dao.entity.ErpMdPartner)internalGetRefEntity(PROP_NAME_partner);
+    }
+
+    public final void setPartner(app.erp.md.dao.entity.ErpMdPartner refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setPartnerId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_partner, refEntity,()->{
+           
+                           this.setPartnerId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
                        
            });
            }

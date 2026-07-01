@@ -47,6 +47,7 @@ prop:
       employee: Employee
       currency: Currency
       org: Org
+      staff: Staff
     ErpAstAssetCapitalization:
       id: ID
       code: Code
@@ -81,6 +82,8 @@ prop:
       amountSource: Amt (Source)
       amountFunctional: Amt (Functional)
       category: Category
+      org: Org
+      currency: Currency
     ErpAstAssetCategory:
       id: ID
       code: Code
@@ -130,6 +133,8 @@ prop:
       amountFunctional: Amt (Functional)
       category: Category
       currency: Currency
+      org: Org
+      completedAsset: Completed Asset
     ErpAstDepreciationSchedule:
       id: ID
       assetId: Asset
@@ -158,6 +163,9 @@ prop:
       amountSource: Amt (Source)
       amountFunctional: Amt (Functional)
       asset: Asset
+      org: Org
+      voucher: Voucher
+      currency: Currency
     ErpAstDisposal:
       id: ID
       code: Code
@@ -191,6 +199,8 @@ prop:
       amountSource: Amt (Source)
       amountFunctional: Amt (Functional)
       asset: Asset
+      org: Org
+      currency: Currency
     ErpAstMerge:
       id: ID
       code: Code
@@ -219,6 +229,8 @@ prop:
       amountSource: Amt (Source)
       amountFunctional: Amt (Functional)
       targetAsset: Target Asset
+      org: Org
+      currency: Currency
     ErpAstMovement:
       id: ID
       code: Code
@@ -254,6 +266,15 @@ prop:
       amountSource: Amt (Source)
       amountFunctional: Amt (Functional)
       asset: Asset
+      org: Org
+      fromDepartment: From Department
+      toDepartment: To Department
+      fromStaff: From Staff
+      toStaff: To Staff
+      fromLocation: From Location
+      toLocation: To Location
+      handler: Handler
+      currency: Currency
     ErpAstSplit:
       id: ID
       code: Code
@@ -282,6 +303,8 @@ prop:
       amountSource: Amt (Source)
       amountFunctional: Amt (Functional)
       sourceAsset: Source Asset
+      org: Org
+      currency: Currency
     ErpAstValueAdjustment:
       id: ID
       code: Code
@@ -313,6 +336,8 @@ prop:
       amountSource: Amt (Source)
       amountFunctional: Amt (Functional)
       asset: Asset
+      org: Org
+      currency: Currency
 dict:
   label:
     erp-ast/asset-status: Asset Status

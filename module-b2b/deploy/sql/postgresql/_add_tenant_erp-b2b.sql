@@ -11,8 +11,6 @@ alter table erp_b2b_code_mapping add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT N
 
 alter table erp_b2b_partner_profile add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
-alter table erp_b2b_mft_config add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
-
 alter table erp_b2b_mft_certificate add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_b2b_edi_doc add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -23,11 +21,13 @@ alter table erp_b2b_test_exchange add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT 
 
 alter table erp_b2b_certification_checklist add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
-alter table erp_b2b_mft_log add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+alter table erp_b2b_mft_config add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_b2b_asn add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_b2b_edi_log add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_b2b_mft_log add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_b2b_asn_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -49,9 +49,6 @@ alter table erp_b2b_code_mapping add constraint PK_erp_b2b_code_mapping primary 
 alter table erp_b2b_partner_profile drop constraint PK_erp_b2b_partner_profile;
 alter table erp_b2b_partner_profile add constraint PK_erp_b2b_partner_profile primary key (NOP_TENANT_ID, id);
 
-alter table erp_b2b_mft_config drop constraint PK_erp_b2b_mft_config;
-alter table erp_b2b_mft_config add constraint PK_erp_b2b_mft_config primary key (NOP_TENANT_ID, id);
-
 alter table erp_b2b_mft_certificate drop constraint PK_erp_b2b_mft_certificate;
 alter table erp_b2b_mft_certificate add constraint PK_erp_b2b_mft_certificate primary key (NOP_TENANT_ID, id);
 
@@ -67,14 +64,17 @@ alter table erp_b2b_test_exchange add constraint PK_erp_b2b_test_exchange primar
 alter table erp_b2b_certification_checklist drop constraint PK_erp_b2b_certification_checklist;
 alter table erp_b2b_certification_checklist add constraint PK_erp_b2b_certification_checklist primary key (NOP_TENANT_ID, id);
 
-alter table erp_b2b_mft_log drop constraint PK_erp_b2b_mft_log;
-alter table erp_b2b_mft_log add constraint PK_erp_b2b_mft_log primary key (NOP_TENANT_ID, id);
+alter table erp_b2b_mft_config drop constraint PK_erp_b2b_mft_config;
+alter table erp_b2b_mft_config add constraint PK_erp_b2b_mft_config primary key (NOP_TENANT_ID, id);
 
 alter table erp_b2b_asn drop constraint PK_erp_b2b_asn;
 alter table erp_b2b_asn add constraint PK_erp_b2b_asn primary key (NOP_TENANT_ID, id);
 
 alter table erp_b2b_edi_log drop constraint PK_erp_b2b_edi_log;
 alter table erp_b2b_edi_log add constraint PK_erp_b2b_edi_log primary key (NOP_TENANT_ID, id);
+
+alter table erp_b2b_mft_log drop constraint PK_erp_b2b_mft_log;
+alter table erp_b2b_mft_log add constraint PK_erp_b2b_mft_log primary key (NOP_TENANT_ID, id);
 
 alter table erp_b2b_asn_line drop constraint PK_erp_b2b_asn_line;
 alter table erp_b2b_asn_line add constraint PK_erp_b2b_asn_line primary key (NOP_TENANT_ID, id);

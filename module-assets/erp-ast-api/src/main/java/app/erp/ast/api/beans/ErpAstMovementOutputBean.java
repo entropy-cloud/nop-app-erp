@@ -289,16 +289,16 @@
         }
 
 
-        private Long _postedBy;
+        private String _postedBy;
 
     
         @PropMeta(propId=19)
     
-        public Long getPostedBy(){
+        public String getPostedBy(){
             return _postedBy;
         }
 
-        public void setPostedBy(Long value){
+        public void setPostedBy(String value){
             this._postedBy = value;
         }
 
@@ -479,6 +479,105 @@
 
         public void setAsset(Map<String,Object> value){
             this._asset = value;
+        }
+
+
+        private Map<String,Object> _org;
+
+        public Map<String,Object> getOrg(){
+            return _org;
+        }
+
+        public void setOrg(Map<String,Object> value){
+            this._org = value;
+        }
+
+
+        private Map<String,Object> _fromDepartment;
+
+        public Map<String,Object> getFromDepartment(){
+            return _fromDepartment;
+        }
+
+        public void setFromDepartment(Map<String,Object> value){
+            this._fromDepartment = value;
+        }
+
+
+        private Map<String,Object> _toDepartment;
+
+        public Map<String,Object> getToDepartment(){
+            return _toDepartment;
+        }
+
+        public void setToDepartment(Map<String,Object> value){
+            this._toDepartment = value;
+        }
+
+
+        private Map<String,Object> _fromStaff;
+
+        public Map<String,Object> getFromStaff(){
+            return _fromStaff;
+        }
+
+        public void setFromStaff(Map<String,Object> value){
+            this._fromStaff = value;
+        }
+
+
+        private Map<String,Object> _toStaff;
+
+        public Map<String,Object> getToStaff(){
+            return _toStaff;
+        }
+
+        public void setToStaff(Map<String,Object> value){
+            this._toStaff = value;
+        }
+
+
+        private Map<String,Object> _fromLocation;
+
+        public Map<String,Object> getFromLocation(){
+            return _fromLocation;
+        }
+
+        public void setFromLocation(Map<String,Object> value){
+            this._fromLocation = value;
+        }
+
+
+        private Map<String,Object> _toLocation;
+
+        public Map<String,Object> getToLocation(){
+            return _toLocation;
+        }
+
+        public void setToLocation(Map<String,Object> value){
+            this._toLocation = value;
+        }
+
+
+        private Map<String,Object> _handler;
+
+        public Map<String,Object> getHandler(){
+            return _handler;
+        }
+
+        public void setHandler(Map<String,Object> value){
+            this._handler = value;
+        }
+
+
+        private Map<String,Object> _currency;
+
+        public Map<String,Object> getCurrency(){
+            return _currency;
+        }
+
+        public void setCurrency(Map<String,Object> value){
+            this._currency = value;
         }
 
 

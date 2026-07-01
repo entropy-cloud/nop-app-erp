@@ -93,7 +93,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     public static final String PROP_NAME_postedAt = "postedAt";
     public static final int PROP_ID_postedAt = 18;
     
-    /* 过账人: POSTED_BY BIGINT */
+    /* 过账人: POSTED_BY VARCHAR */
     public static final String PROP_NAME_postedBy = "postedBy";
     public static final int PROP_ID_postedBy = 19;
     
@@ -151,6 +151,33 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     
     /* relation:  */
     public static final String PROP_NAME_asset = "asset";
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
+    /* relation:  */
+    public static final String PROP_NAME_fromDepartment = "fromDepartment";
+    
+    /* relation:  */
+    public static final String PROP_NAME_toDepartment = "toDepartment";
+    
+    /* relation:  */
+    public static final String PROP_NAME_fromStaff = "fromStaff";
+    
+    /* relation:  */
+    public static final String PROP_NAME_toStaff = "toStaff";
+    
+    /* relation:  */
+    public static final String PROP_NAME_fromLocation = "fromLocation";
+    
+    /* relation:  */
+    public static final String PROP_NAME_toLocation = "toLocation";
+    
+    /* relation:  */
+    public static final String PROP_NAME_handler = "handler";
+    
+    /* relation:  */
+    public static final String PROP_NAME_currency = "currency";
     
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
@@ -311,7 +338,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     private java.time.LocalDateTime _postedAt;
     
     /* 过账人: POSTED_BY */
-    private java.lang.Long _postedBy;
+    private java.lang.String _postedBy;
     
     /* 单据版本: DOC_VERSION */
     private java.lang.String _docVersion;
@@ -708,9 +735,9 @@ public class _ErpAstMovement extends DynamicOrmEntity{
             }
         
             case PROP_ID_postedBy:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_postedBy));
                }
                setPostedBy(typedValue);
@@ -974,7 +1001,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
         
             case PROP_ID_postedBy:{
                onInitProp(propId);
-               this._postedBy = (java.lang.Long)value;
+               this._postedBy = (java.lang.String)value;
                
                break;
             }
@@ -1414,7 +1441,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 过账人: POSTED_BY
      */
-    public final java.lang.Long getPostedBy(){
+    public final java.lang.String getPostedBy(){
          onPropGet(PROP_ID_postedBy);
          return _postedBy;
     }
@@ -1422,7 +1449,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 过账人: POSTED_BY
      */
-    public final void setPostedBy(java.lang.Long value){
+    public final void setPostedBy(java.lang.String value){
         if(onPropSet(PROP_ID_postedBy,value)){
             this._postedBy = value;
             internalClearRefs(PROP_ID_postedBy);
@@ -1675,6 +1702,213 @@ public class _ErpAstMovement extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_asset, refEntity,()->{
            
                            this.setAssetId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getFromDepartment(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_fromDepartment);
+    }
+
+    public final void setFromDepartment(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setFromDepartmentId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_fromDepartment, refEntity,()->{
+           
+                           this.setFromDepartmentId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getToDepartment(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_toDepartment);
+    }
+
+    public final void setToDepartment(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setToDepartmentId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_toDepartment, refEntity,()->{
+           
+                           this.setToDepartmentId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdEmployee getFromStaff(){
+       return (app.erp.md.dao.entity.ErpMdEmployee)internalGetRefEntity(PROP_NAME_fromStaff);
+    }
+
+    public final void setFromStaff(app.erp.md.dao.entity.ErpMdEmployee refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setFromStaffId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_fromStaff, refEntity,()->{
+           
+                           this.setFromStaffId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdEmployee getToStaff(){
+       return (app.erp.md.dao.entity.ErpMdEmployee)internalGetRefEntity(PROP_NAME_toStaff);
+    }
+
+    public final void setToStaff(app.erp.md.dao.entity.ErpMdEmployee refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setToStaffId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_toStaff, refEntity,()->{
+           
+                           this.setToStaffId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdLocation getFromLocation(){
+       return (app.erp.md.dao.entity.ErpMdLocation)internalGetRefEntity(PROP_NAME_fromLocation);
+    }
+
+    public final void setFromLocation(app.erp.md.dao.entity.ErpMdLocation refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setFromLocationId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_fromLocation, refEntity,()->{
+           
+                           this.setFromLocationId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdLocation getToLocation(){
+       return (app.erp.md.dao.entity.ErpMdLocation)internalGetRefEntity(PROP_NAME_toLocation);
+    }
+
+    public final void setToLocation(app.erp.md.dao.entity.ErpMdLocation refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setToLocationId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_toLocation, refEntity,()->{
+           
+                           this.setToLocationId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdEmployee getHandler(){
+       return (app.erp.md.dao.entity.ErpMdEmployee)internalGetRefEntity(PROP_NAME_handler);
+    }
+
+    public final void setHandler(app.erp.md.dao.entity.ErpMdEmployee refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setHandlerId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_handler, refEntity,()->{
+           
+                           this.setHandlerId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdCurrency getCurrency(){
+       return (app.erp.md.dao.entity.ErpMdCurrency)internalGetRefEntity(PROP_NAME_currency);
+    }
+
+    public final void setCurrency(app.erp.md.dao.entity.ErpMdCurrency refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCurrencyId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_currency, refEntity,()->{
+           
+                           this.setCurrencyId(refEntity.getId());
                        
            });
            }

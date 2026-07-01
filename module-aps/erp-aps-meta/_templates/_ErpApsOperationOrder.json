@@ -14,7 +14,7 @@
   "runtimePerUnit": 0.0,
   "qty": 0.0,
   "totalDuration": 0.0,
-  "assignedToId": 0,
+  "assignedToId": "",
   "isOutsourced": false,
   "status": 0,
   "status_label": "",

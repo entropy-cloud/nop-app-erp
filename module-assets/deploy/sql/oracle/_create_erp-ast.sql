@@ -47,6 +47,12 @@ CREATE TABLE erp_md_subject(
   constraint PK_erp_md_subject primary key (ID)
 );
 
+CREATE TABLE erp_fin_voucher(
+  ID NUMBER(20)  ,
+  CODE VARCHAR2(50)  ,
+  constraint PK_erp_fin_voucher primary key (ID)
+);
+
 CREATE TABLE erp_md_material_category(
   ID NUMBER(20)  ,
   CODE VARCHAR2(50)  ,
@@ -120,8 +126,8 @@ CREATE TABLE erp_ast_asset_capitalization(
   APPROVE_STATUS INTEGER NOT NULL ,
   POSTED CHAR(1) default 0   ,
   POSTED_AT DATE  ,
-  POSTED_BY NUMBER(20)  ,
-  APPROVED_BY NUMBER(20)  ,
+  POSTED_BY VARCHAR2(36)  ,
+  APPROVED_BY VARCHAR2(36)  ,
   APPROVED_AT DATE  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,
@@ -137,35 +143,6 @@ CREATE TABLE erp_ast_asset_capitalization(
   constraint PK_erp_ast_asset_capitalization primary key (ID)
 );
 
-CREATE TABLE erp_ast_cip(
-  ID NUMBER(20) NOT NULL ,
-  CODE VARCHAR2(50) NOT NULL ,
-  NAME VARCHAR2(200) NOT NULL ,
-  ORG_ID NUMBER(20)  ,
-  CATEGORY_ID NUMBER(20)  ,
-  CURRENCY_ID NUMBER(20)  ,
-  BUSINESS_DATE DATE NOT NULL ,
-  ESTIMATED_COMPLETION_DATE DATE  ,
-  ACCUMULATED_COST NUMBER(20,4) default 0   ,
-  IS_COMPLETED CHAR(1) default 0   ,
-  COMPLETED_ASSET_ID NUMBER(20)  ,
-  STATUS INTEGER NOT NULL ,
-  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
-  VERSION INTEGER default 0  NOT NULL ,
-  CREATED_BY VARCHAR2(50) NOT NULL ,
-  CREATE_TIME TIMESTAMP NOT NULL ,
-  UPDATED_BY VARCHAR2(50) NOT NULL ,
-  UPDATE_TIME TIMESTAMP NOT NULL ,
-  REMARK VARCHAR2(1000)  ,
-  POSTED CHAR(1) default 0   ,
-  POSTED_AT TIMESTAMP  ,
-  POSTED_BY VARCHAR2(50)  ,
-  EXCHANGE_RATE NUMBER(20,8) NOT NULL ,
-  AMOUNT_SOURCE NUMBER(20,4) default 0   ,
-  AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
-  constraint PK_erp_ast_cip primary key (ID)
-);
-
 CREATE TABLE erp_ast_depreciation_schedule(
   ID NUMBER(20) NOT NULL ,
   ASSET_ID NUMBER(20) NOT NULL ,
@@ -179,7 +156,7 @@ CREATE TABLE erp_ast_depreciation_schedule(
   EXECUTED_AT DATE  ,
   POSTED CHAR(1) default 0   ,
   POSTED_AT DATE  ,
-  POSTED_BY NUMBER(20)  ,
+  POSTED_BY VARCHAR2(36)  ,
   VOUCHER_ID NUMBER(20)  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,
@@ -214,7 +191,7 @@ CREATE TABLE erp_ast_movement(
   APPROVE_STATUS INTEGER NOT NULL ,
   POSTED CHAR(1) default 0   ,
   POSTED_AT DATE  ,
-  POSTED_BY NUMBER(20)  ,
+  POSTED_BY VARCHAR2(36)  ,
   DOC_VERSION VARCHAR2(20) default '1'  NOT NULL ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,
@@ -245,8 +222,8 @@ CREATE TABLE erp_ast_value_adjustment(
   APPROVE_STATUS INTEGER NOT NULL ,
   POSTED CHAR(1) default 0   ,
   POSTED_AT DATE  ,
-  POSTED_BY NUMBER(20)  ,
-  APPROVED_BY NUMBER(20)  ,
+  POSTED_BY VARCHAR2(36)  ,
+  APPROVED_BY VARCHAR2(36)  ,
   APPROVED_AT DATE  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,
@@ -276,8 +253,8 @@ CREATE TABLE erp_ast_disposal(
   APPROVE_STATUS INTEGER NOT NULL ,
   POSTED CHAR(1) default 0   ,
   POSTED_AT DATE  ,
-  POSTED_BY NUMBER(20)  ,
-  APPROVED_BY NUMBER(20)  ,
+  POSTED_BY VARCHAR2(36)  ,
+  APPROVED_BY VARCHAR2(36)  ,
   APPROVED_AT DATE  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,
@@ -289,6 +266,35 @@ CREATE TABLE erp_ast_disposal(
   AMOUNT_SOURCE NUMBER(20,4) default 0   ,
   AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
   constraint PK_erp_ast_disposal primary key (ID)
+);
+
+CREATE TABLE erp_ast_cip(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  NAME VARCHAR2(200) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  CATEGORY_ID NUMBER(20)  ,
+  CURRENCY_ID NUMBER(20)  ,
+  BUSINESS_DATE DATE NOT NULL ,
+  ESTIMATED_COMPLETION_DATE DATE  ,
+  ACCUMULATED_COST NUMBER(20,4) default 0   ,
+  IS_COMPLETED CHAR(1) default 0   ,
+  COMPLETED_ASSET_ID NUMBER(20)  ,
+  STATUS INTEGER NOT NULL ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  REMARK VARCHAR2(1000)  ,
+  POSTED CHAR(1) default 0   ,
+  POSTED_AT TIMESTAMP  ,
+  POSTED_BY VARCHAR2(50)  ,
+  EXCHANGE_RATE NUMBER(20,8) NOT NULL ,
+  AMOUNT_SOURCE NUMBER(20,4) default 0   ,
+  AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
+  constraint PK_erp_ast_cip primary key (ID)
 );
 
 CREATE TABLE erp_ast_split(
@@ -303,8 +309,8 @@ CREATE TABLE erp_ast_split(
   APPROVE_STATUS INTEGER NOT NULL ,
   POSTED CHAR(1) default 0   ,
   POSTED_AT DATE  ,
-  POSTED_BY NUMBER(20)  ,
-  APPROVED_BY NUMBER(20)  ,
+  POSTED_BY VARCHAR2(36)  ,
+  APPROVED_BY VARCHAR2(36)  ,
   APPROVED_AT DATE  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,
@@ -331,8 +337,8 @@ CREATE TABLE erp_ast_merge(
   APPROVE_STATUS INTEGER NOT NULL ,
   POSTED CHAR(1) default 0   ,
   POSTED_AT DATE  ,
-  POSTED_BY NUMBER(20)  ,
-  APPROVED_BY NUMBER(20)  ,
+  POSTED_BY VARCHAR2(36)  ,
+  APPROVED_BY VARCHAR2(36)  ,
   APPROVED_AT DATE  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,
@@ -357,6 +363,8 @@ CREATE TABLE erp_ast_merge(
       COMMENT ON TABLE erp_md_currency IS '币种';
                 
       COMMENT ON TABLE erp_md_subject IS '会计科目';
+                
+      COMMENT ON TABLE erp_fin_voucher IS '凭证';
                 
       COMMENT ON TABLE erp_md_material_category IS '物料分类';
                 
@@ -505,58 +513,6 @@ CREATE TABLE erp_ast_merge(
       COMMENT ON COLUMN erp_ast_asset_capitalization.AMOUNT_SOURCE IS '源币种金额';
                     
       COMMENT ON COLUMN erp_ast_asset_capitalization.AMOUNT_FUNCTIONAL IS '本位币金额';
-                    
-      COMMENT ON TABLE erp_ast_cip IS '在建工程';
-                
-      COMMENT ON COLUMN erp_ast_cip.ID IS 'ID';
-                    
-      COMMENT ON COLUMN erp_ast_cip.CODE IS '工程编码';
-                    
-      COMMENT ON COLUMN erp_ast_cip.NAME IS '工程名称';
-                    
-      COMMENT ON COLUMN erp_ast_cip.ORG_ID IS '所属组织';
-                    
-      COMMENT ON COLUMN erp_ast_cip.CATEGORY_ID IS '预定资产类别(完工后转入)';
-                    
-      COMMENT ON COLUMN erp_ast_cip.CURRENCY_ID IS '币种';
-                    
-      COMMENT ON COLUMN erp_ast_cip.BUSINESS_DATE IS '开工日期';
-                    
-      COMMENT ON COLUMN erp_ast_cip.ESTIMATED_COMPLETION_DATE IS '预计完工日期';
-                    
-      COMMENT ON COLUMN erp_ast_cip.ACCUMULATED_COST IS '累计归集成本';
-                    
-      COMMENT ON COLUMN erp_ast_cip.IS_COMPLETED IS '是否已转固';
-                    
-      COMMENT ON COLUMN erp_ast_cip.COMPLETED_ASSET_ID IS '完工转出资产';
-                    
-      COMMENT ON COLUMN erp_ast_cip.STATUS IS '状态';
-                    
-      COMMENT ON COLUMN erp_ast_cip.DEL_VERSION IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_ast_cip.VERSION IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_ast_cip.CREATED_BY IS '创建人';
-                    
-      COMMENT ON COLUMN erp_ast_cip.CREATE_TIME IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_ast_cip.UPDATED_BY IS '修改人';
-                    
-      COMMENT ON COLUMN erp_ast_cip.UPDATE_TIME IS '修改时间';
-                    
-      COMMENT ON COLUMN erp_ast_cip.REMARK IS '备注';
-                    
-      COMMENT ON COLUMN erp_ast_cip.POSTED IS '是否已过账';
-                    
-      COMMENT ON COLUMN erp_ast_cip.POSTED_AT IS '过账时间';
-                    
-      COMMENT ON COLUMN erp_ast_cip.POSTED_BY IS '过账人';
-                    
-      COMMENT ON COLUMN erp_ast_cip.EXCHANGE_RATE IS '汇率';
-                    
-      COMMENT ON COLUMN erp_ast_cip.AMOUNT_SOURCE IS '源币种金额';
-                    
-      COMMENT ON COLUMN erp_ast_cip.AMOUNT_FUNCTIONAL IS '本位币金额';
                     
       COMMENT ON TABLE erp_ast_depreciation_schedule IS '折旧计划';
                 
@@ -783,6 +739,58 @@ CREATE TABLE erp_ast_merge(
       COMMENT ON COLUMN erp_ast_disposal.AMOUNT_SOURCE IS '源币种金额';
                     
       COMMENT ON COLUMN erp_ast_disposal.AMOUNT_FUNCTIONAL IS '本位币金额';
+                    
+      COMMENT ON TABLE erp_ast_cip IS '在建工程';
+                
+      COMMENT ON COLUMN erp_ast_cip.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_ast_cip.CODE IS '工程编码';
+                    
+      COMMENT ON COLUMN erp_ast_cip.NAME IS '工程名称';
+                    
+      COMMENT ON COLUMN erp_ast_cip.ORG_ID IS '所属组织';
+                    
+      COMMENT ON COLUMN erp_ast_cip.CATEGORY_ID IS '预定资产类别(完工后转入)';
+                    
+      COMMENT ON COLUMN erp_ast_cip.CURRENCY_ID IS '币种';
+                    
+      COMMENT ON COLUMN erp_ast_cip.BUSINESS_DATE IS '开工日期';
+                    
+      COMMENT ON COLUMN erp_ast_cip.ESTIMATED_COMPLETION_DATE IS '预计完工日期';
+                    
+      COMMENT ON COLUMN erp_ast_cip.ACCUMULATED_COST IS '累计归集成本';
+                    
+      COMMENT ON COLUMN erp_ast_cip.IS_COMPLETED IS '是否已转固';
+                    
+      COMMENT ON COLUMN erp_ast_cip.COMPLETED_ASSET_ID IS '完工转出资产';
+                    
+      COMMENT ON COLUMN erp_ast_cip.STATUS IS '状态';
+                    
+      COMMENT ON COLUMN erp_ast_cip.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_ast_cip.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_ast_cip.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_ast_cip.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_ast_cip.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_ast_cip.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_ast_cip.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_ast_cip.POSTED IS '是否已过账';
+                    
+      COMMENT ON COLUMN erp_ast_cip.POSTED_AT IS '过账时间';
+                    
+      COMMENT ON COLUMN erp_ast_cip.POSTED_BY IS '过账人';
+                    
+      COMMENT ON COLUMN erp_ast_cip.EXCHANGE_RATE IS '汇率';
+                    
+      COMMENT ON COLUMN erp_ast_cip.AMOUNT_SOURCE IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_ast_cip.AMOUNT_FUNCTIONAL IS '本位币金额';
                     
       COMMENT ON TABLE erp_ast_split IS '资产拆分单';
                 

@@ -11,7 +11,7 @@
   "blockingLevel_label": "",
   "error": "",
   "retryCount": 0,
-  "attachmentId": 0,
+  "attachmentFileId": "",
   "sentAt": "2000-01-01 14:00:00",
   "acknowledgedAt": "2000-01-01 14:00:00",
   "remark": "",
@@ -22,5 +22,6 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "format": null,
-  "org": null
+  "org": null,
+  "attachmentFileIdComponentFileStatus": null
 }

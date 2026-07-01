@@ -64,7 +64,7 @@
                 <col id="totalDuration" ui:number="true" sortable="true"/>
 
                 <!--操作工-->
-                <col id="assignedToId" ui:number="true" sortable="true"/>
+                <col id="assignedToId" sortable="true"/>
 
                 <!--是否外协-->
                 <col id="isOutsourced" sortable="true"/>

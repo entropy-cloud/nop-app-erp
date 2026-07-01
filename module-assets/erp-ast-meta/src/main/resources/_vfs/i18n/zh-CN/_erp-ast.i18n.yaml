@@ -40,6 +40,7 @@ prop:
       originalValue: 原值
       remark: 备注
       residualValue: 残值
+      staff: null
       staffId: 使用人(往来单位,旧字段保留)
       status: 资产状态
       status_label: 资产状态
@@ -63,12 +64,14 @@ prop:
       code: 单号
       createTime: 创建时间
       createdBy: 创建人
+      currency: null
       currencyId: 币种
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
       exchangeRate: 汇率
       id: ID
+      org: null
       orgId: 业务组织
       originalValue: 原值
       posted: 已过账
@@ -109,6 +112,7 @@ prop:
       category: null
       categoryId: 预定资产类别(完工后转入)
       code: 工程编码
+      completedAsset: null
       completedAssetId: 完工转出资产
       createTime: 创建时间
       createdBy: 创建人
@@ -120,6 +124,7 @@ prop:
       id: ID
       isCompleted: 是否已转固
       name: 工程名称
+      org: null
       orgId: 所属组织
       posted: 是否已过账
       postedAt: 过账时间
@@ -140,12 +145,14 @@ prop:
       businessDate: 业务日期
       createTime: 创建时间
       createdBy: 创建人
+      currency: null
       currencyId: 币种
       delVersion: 逻辑删除版本
       exchangeRate: 汇率
       executedAt: 执行时间
       id: ID
       netBookValue: 净值
+      org: null
       orgId: 所属组织
       period: 折旧期间
       plannedAmount: 计划折旧额
@@ -157,6 +164,7 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+      voucher: null
       voucherId: 凭证ID
     ErpAstDisposal:
       amountFunctional: 本位币金额
@@ -171,6 +179,7 @@ prop:
       code: 单号
       createTime: 创建时间
       createdBy: 创建人
+      currency: null
       currencyId: 币种
       delVersion: 逻辑删除版本
       disposalAmount: 处置金额
@@ -181,6 +190,7 @@ prop:
       exchangeRate: 汇率
       gainLoss: 损益
       id: ID
+      org: null
       orgId: 业务组织
       posted: 已过账
       postedAt: 过账时间
@@ -202,6 +212,7 @@ prop:
       code: 单号
       createTime: 创建时间
       createdBy: 创建人
+      currency: null
       currencyId: 币种
       delVersion: 逻辑删除版本
       docStatus: 单据状态
@@ -209,6 +220,7 @@ prop:
       exchangeRate: 汇率
       id: ID
       mergeReason: 合并原因
+      org: null
       orgId: 业务组织
       posted: 已过账
       postedAt: 过账时间
@@ -230,6 +242,7 @@ prop:
       code: 单号
       createTime: 创建时间
       createdBy: 创建人
+      currency: null
       currencyId: 币种
       delVersion: 逻辑删除版本
       docStatus: 单据状态
@@ -237,19 +250,27 @@ prop:
       docVersion: 单据版本
       exchangeRate: 汇率
       fromDate: 开始日期
+      fromDepartment: null
       fromDepartmentId: 原使用部门
+      fromLocation: null
       fromLocationId: 原使用地点
+      fromStaff: null
       fromStaffId: 原使用人
+      handler: null
       handlerId: 经办人
       id: ID
+      org: null
       orgId: 业务组织
       posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人
       remark: 备注
       thruDate: 截止日期
+      toDepartment: null
       toDepartmentId: 新使用部门
+      toLocation: null
       toLocationId: 新使用地点
+      toStaff: null
       toStaffId: 新使用人
       updateTime: 修改时间
       updatedBy: 修改人
@@ -265,12 +286,14 @@ prop:
       code: 单号
       createTime: 创建时间
       createdBy: 创建人
+      currency: null
       currencyId: 币种
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
       exchangeRate: 汇率
       id: ID
+      org: null
       orgId: 业务组织
       posted: 已过账
       postedAt: 过账时间
@@ -298,12 +321,14 @@ prop:
       code: 单号
       createTime: 创建时间
       createdBy: 创建人
+      currency: null
       currencyId: 币种
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
       exchangeRate: 汇率
       id: ID
+      org: null
       orgId: 业务组织
       posted: 已过账
       postedAt: 过账时间

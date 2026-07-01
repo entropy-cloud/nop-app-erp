@@ -61,9 +61,9 @@
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
             <schema type="java.lang.Integer"/>
         </prop>
-        <prop name="attachmentId" displayName="附件（EDI 报文文件）" propId="11" i18n-en:displayName="Attachment"
+        <prop name="attachmentFileId" displayName="附件（EDI 报文文件）" propId="11" i18n-en:displayName="Attachment"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema stdDomain="file" type="java.lang.String" precision="200"/>
         </prop>
         <prop name="sentAt" displayName="发送时间" propId="12" i18n-en:displayName="Sent At" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -109,6 +109,10 @@
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
               lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="attachmentFileIdComponentFileStatus" mapToProp="attachmentFileIdComponent.fileStatus"
+              internal="true" lazy="true">
+            <schema type="io.nop.api.core.beans.file.FileStatusBean"/>
         </prop>
     </props>
 </meta>

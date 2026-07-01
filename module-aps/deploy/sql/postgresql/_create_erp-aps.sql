@@ -20,7 +20,7 @@ CREATE TABLE erp_aps_operation_order(
   runtime_per_unit NUMERIC(10,2)  ,
   qty NUMERIC(20,4) NOT NULL ,
   total_duration NUMERIC(10,2)  ,
-  assigned_to_id INT8  ,
+  assigned_to_id VARCHAR(36)  ,
   is_outsourced BOOLEAN default false   ,
   status INT4 NOT NULL ,
   org_id INT8  ,

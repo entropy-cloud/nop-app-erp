@@ -467,4 +467,15 @@
         }
 
 
+        private Map<String,Object> _staff;
+
+        public Map<String,Object> getStaff(){
+            return _staff;
+        }
+
+        public void setStaff(Map<String,Object> value){
+            this._staff = value;
+        }
+
+
     }

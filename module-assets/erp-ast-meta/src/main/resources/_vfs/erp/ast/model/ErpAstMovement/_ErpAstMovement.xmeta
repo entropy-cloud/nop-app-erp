@@ -28,7 +28,7 @@
             <schema domain="assetCode" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="assetId" displayName="资产ID" propId="4" i18n-en:displayName="Asset" mandatory="true" queryable="true"
@@ -48,31 +48,31 @@
             <schema type="java.time.LocalDate"/>
         </prop>
         <prop name="fromDepartmentId" displayName="原使用部门" propId="8" i18n-en:displayName="From Department"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="fromDepartment">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="toDepartmentId" displayName="新使用部门" propId="9" i18n-en:displayName="To Department" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="toDepartment">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="fromStaffId" displayName="原使用人" propId="10" i18n-en:displayName="From Staff" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="fromStaff">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="toStaffId" displayName="新使用人" propId="11" i18n-en:displayName="To Staff" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="toStaff">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="fromLocationId" displayName="原使用地点" propId="12" i18n-en:displayName="From Location" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="fromLocation">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="toLocationId" displayName="新使用地点" propId="13" i18n-en:displayName="To Location" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="toLocation">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="handlerId" displayName="经办人" propId="14" i18n-en:displayName="Handler" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="handler">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="docStatus" displayName="单据状态" propId="15" i18n-en:displayName="Doc Status" mandatory="true"
@@ -93,7 +93,7 @@
         </prop>
         <prop name="postedBy" displayName="过账人" propId="19" i18n-en:displayName="Posted By" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String" precision="36"/>
         </prop>
         <prop name="docVersion" displayName="单据版本" propId="20" i18n-en:displayName="Doc Version" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="1">
@@ -128,7 +128,7 @@
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
         <prop name="currencyId" displayName="币种" propId="28" i18n-en:displayName="Currency" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="currency">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="exchangeRate" displayName="汇率" propId="29" i18n-en:displayName="Exchange Rate" mandatory="true"
@@ -147,6 +147,51 @@
               ext:joinLeftProp="assetId" ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true"
               lazy="true">
             <schema bizObjName="ErpAstAsset"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="fromDepartment" i18n-en:displayName="From Department" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="fromDepartmentId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="toDepartment" i18n-en:displayName="To Department" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="toDepartmentId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="fromStaff" i18n-en:displayName="From Staff" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="fromStaffId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdEmployee"/>
+        </prop>
+        <prop name="toStaff" i18n-en:displayName="To Staff" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="toStaffId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdEmployee"/>
+        </prop>
+        <prop name="fromLocation" i18n-en:displayName="From Location" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="fromLocationId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdLocation"/>
+        </prop>
+        <prop name="toLocation" i18n-en:displayName="To Location" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="toLocationId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdLocation"/>
+        </prop>
+        <prop name="handler" i18n-en:displayName="Handler" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="handlerId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdEmployee"/>
+        </prop>
+        <prop name="currency" i18n-en:displayName="Currency" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="currencyId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdCurrency"/>
         </prop>
     </props>
 </meta>

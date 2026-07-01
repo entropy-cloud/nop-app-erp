@@ -180,16 +180,16 @@
         }
 
 
-        private Long _postedBy;
+        private String _postedBy;
 
     
         @PropMeta(propId=13)
     
-        public Long getPostedBy(){
+        public String getPostedBy(){
             return _postedBy;
         }
 
-        public void setPostedBy(Long value){
+        public void setPostedBy(String value){
             this._postedBy = value;
         }
 

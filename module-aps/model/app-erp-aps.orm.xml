@@ -71,7 +71,7 @@
                 <column name="runtimePerUnit" displayName="每件加工时间(分钟)" domain="duration" code="RUNTIME_PER_UNIT" propId="13" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Runtime Per Unit' />
                 <column name="qty" displayName="加工数量" domain="quantity" mandatory="true" code="QTY" propId="14" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Quantity' />
                 <column name="totalDuration" displayName="总耗时(分钟)" domain="duration" code="TOTAL_DURATION" propId="15" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Total Duration' />
-                <column name="assignedToId" displayName="操作工" stdSqlType="BIGINT" code="ASSIGNED_TO_ID" propId="16" stdDataType="long" i18n-en:displayName='Assigned To' />
+                <column name="assignedToId" stdDomain="userId" displayName="操作工" stdSqlType="VARCHAR" precision="36" code="ASSIGNED_TO_ID" propId="16" stdDataType="string" i18n-en:displayName='Assigned To' />
                 <column name="isOutsourced" displayName="是否外协" stdSqlType="BOOLEAN" defaultValue="false" code="IS_OUTSOURCED" propId="17" stdDataType="boolean" i18n-en:displayName='Is Outsourced' />
                 <column name="status" displayName="状态" ext:dict="erp-aps/operation-order-status" mandatory="true" code="STATUS" propId="18" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="19" stdDataType="long" i18n-en:displayName='Organization' />
@@ -84,7 +84,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="26" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Org' ref-i18n-en:displayName='Operation Order'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -111,7 +111,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Org' ref-i18n-en:displayName='Schedule'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -136,7 +136,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="14" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Org' ref-i18n-en:displayName='Constraint'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
     
@@ -167,7 +167,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="20" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Org' ref-i18n-en:displayName='OP Routing'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -201,7 +201,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="23" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Org' ref-i18n-en:displayName='Dispatch Rule'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -232,7 +232,10 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="20" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Org' ref-i18n-en:displayName='Dispatch Log'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="operationOrder" refEntityName="app.erp.aps.dao.entity.ErpApsOperationOrder" tagSet="pub">
+                    <join><on leftProp="operationOrderId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 

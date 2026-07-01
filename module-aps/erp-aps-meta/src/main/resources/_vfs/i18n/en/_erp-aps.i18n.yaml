@@ -48,6 +48,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
+      operationOrder: null
     ErpApsDispatchRule:
       id: ID
       orgId: Organization

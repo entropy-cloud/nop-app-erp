@@ -31,7 +31,7 @@
             <schema domain="name" type="java.lang.String" precision="200"/>
         </prop>
         <prop name="orgId" displayName="所属组织" propId="4" i18n-en:displayName="Organization" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="categoryId" displayName="预定资产类别(完工后转入)" propId="5" i18n-en:displayName="Category" queryable="true"
@@ -60,7 +60,7 @@
             <schema type="java.lang.Boolean"/>
         </prop>
         <prop name="completedAssetId" displayName="完工转出资产" propId="11" i18n-en:displayName="Completed Asset"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="completedAsset">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="status" displayName="状态" propId="12" i18n-en:displayName="Status" mandatory="true" queryable="true"
@@ -128,6 +128,16 @@
               queryable="true" ext:joinLeftProp="currencyId" ext:joinRightProp="id" biz:moduleId="erp/md"
               insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdCurrency"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="completedAsset" i18n-en:displayName="Completed Asset" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="completedAssetId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpAstAsset"/>
         </prop>
     </props>
 </meta>

@@ -38,6 +38,7 @@ prop:
       materialAvailable: 物料齐套
       newStatus: 派工后状态
       note: 备注
+      operationOrder: null
       operationOrderId: 工序工单
       operatorAvailable: 操作工可用
       org: null

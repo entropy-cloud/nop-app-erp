@@ -32,5 +32,6 @@
   "location": null,
   "employee": null,
   "currency": null,
-  "org": null
+  "org": null,
+  "staff": null
 }

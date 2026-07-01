@@ -61,9 +61,9 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
     public static final String PROP_NAME_retryCount = "retryCount";
     public static final int PROP_ID_retryCount = 10;
     
-    /* 附件（EDI 报文文件）: ATTACHMENT_ID BIGINT */
-    public static final String PROP_NAME_attachmentId = "attachmentId";
-    public static final int PROP_ID_attachmentId = 11;
+    /* 附件（EDI 报文文件）: ATTACHMENT_FILE_ID VARCHAR */
+    public static final String PROP_NAME_attachmentFileId = "attachmentFileId";
+    public static final int PROP_ID_attachmentFileId = 11;
     
     /* 发送时间: SENT_AT DATETIME */
     public static final String PROP_NAME_sentAt = "sentAt";
@@ -108,6 +108,12 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_format = "format";
     
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
+    /* component:  */
+    public static final String PROP_NAME_attachmentFileIdComponent = "attachmentFileIdComponent";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -146,8 +152,8 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_retryCount] = PROP_NAME_retryCount;
           PROP_NAME_TO_ID.put(PROP_NAME_retryCount, PROP_ID_retryCount);
       
-          PROP_ID_TO_NAME[PROP_ID_attachmentId] = PROP_NAME_attachmentId;
-          PROP_NAME_TO_ID.put(PROP_NAME_attachmentId, PROP_ID_attachmentId);
+          PROP_ID_TO_NAME[PROP_ID_attachmentFileId] = PROP_NAME_attachmentFileId;
+          PROP_NAME_TO_ID.put(PROP_NAME_attachmentFileId, PROP_ID_attachmentFileId);
       
           PROP_ID_TO_NAME[PROP_ID_sentAt] = PROP_NAME_sentAt;
           PROP_NAME_TO_ID.put(PROP_NAME_sentAt, PROP_ID_sentAt);
@@ -209,8 +215,8 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
     /* 重试次数: RETRY_COUNT */
     private java.lang.Integer _retryCount;
     
-    /* 附件（EDI 报文文件）: ATTACHMENT_ID */
-    private java.lang.Long _attachmentId;
+    /* 附件（EDI 报文文件）: ATTACHMENT_FILE_ID */
+    private java.lang.String _attachmentFileId;
     
     /* 发送时间: SENT_AT */
     private java.time.LocalDateTime _sentAt;
@@ -343,8 +349,8 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
             case PROP_ID_retryCount:
                return getRetryCount();
         
-            case PROP_ID_attachmentId:
-               return getAttachmentId();
+            case PROP_ID_attachmentFileId:
+               return getAttachmentFileId();
         
             case PROP_ID_sentAt:
                return getSentAt();
@@ -484,13 +490,13 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
                break;
             }
         
-            case PROP_ID_attachmentId:{
-               java.lang.Long typedValue = null;
+            case PROP_ID_attachmentFileId:{
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
-                       err-> newTypeConversionError(PROP_NAME_attachmentId));
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_attachmentFileId));
                }
-               setAttachmentId(typedValue);
+               setAttachmentFileId(typedValue);
                break;
             }
         
@@ -663,9 +669,9 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
                break;
             }
         
-            case PROP_ID_attachmentId:{
+            case PROP_ID_attachmentFileId:{
                onInitProp(propId);
-               this._attachmentId = (java.lang.Long)value;
+               this._attachmentFileId = (java.lang.String)value;
                
                break;
             }
@@ -930,20 +936,20 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
     }
     
     /**
-     * 附件（EDI 报文文件）: ATTACHMENT_ID
+     * 附件（EDI 报文文件）: ATTACHMENT_FILE_ID
      */
-    public final java.lang.Long getAttachmentId(){
-         onPropGet(PROP_ID_attachmentId);
-         return _attachmentId;
+    public final java.lang.String getAttachmentFileId(){
+         onPropGet(PROP_ID_attachmentFileId);
+         return _attachmentFileId;
     }
 
     /**
-     * 附件（EDI 报文文件）: ATTACHMENT_ID
+     * 附件（EDI 报文文件）: ATTACHMENT_FILE_ID
      */
-    public final void setAttachmentId(java.lang.Long value){
-        if(onPropSet(PROP_ID_attachmentId,value)){
-            this._attachmentId = value;
-            internalClearRefs(PROP_ID_attachmentId);
+    public final void setAttachmentFileId(java.lang.String value){
+        if(onPropSet(PROP_ID_attachmentFileId,value)){
+            this._attachmentFileId = value;
+            internalClearRefs(PROP_ID_attachmentFileId);
             
         }
     }
@@ -1142,5 +1148,45 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
        
     }
        
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+   private io.nop.orm.component.OrmFileComponent _attachmentFileIdComponent;
+
+   private static Map<String,Integer> COMPONENT_PROP_ID_MAP_attachmentFileIdComponent = new HashMap<>();
+   static{
+      
+         COMPONENT_PROP_ID_MAP_attachmentFileIdComponent.put(io.nop.orm.component.OrmFileComponent.PROP_NAME_filePath,PROP_ID_attachmentFileId);
+      
+   }
+
+   public final io.nop.orm.component.OrmFileComponent getAttachmentFileIdComponent(){
+      if(_attachmentFileIdComponent == null){
+          _attachmentFileIdComponent = new io.nop.orm.component.OrmFileComponent();
+          _attachmentFileIdComponent.bindToEntity(this, COMPONENT_PROP_ID_MAP_attachmentFileIdComponent);
+      }
+      return _attachmentFileIdComponent;
+   }
+
 }
 // resume CPD analysis - CPD-ON

@@ -134,7 +134,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="15" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Org' ref-i18n-en:displayName='EDI Format'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -153,7 +153,7 @@
                 <column name="blockingLevel" displayName="阻断级别" ext:dict="erp-b2b/blocking-level" mandatory="true" defaultValue="10" code="BLOCKING_LEVEL" propId="8" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Blocking Level' />
                 <column name="error" displayName="错误信息" stdSqlType="VARCHAR" precision="2000" code="ERROR" propId="9" stdDataType="string" i18n-en:displayName='Error Message' />
                 <column name="retryCount" displayName="重试次数" stdSqlType="INTEGER" mandatory="true" defaultValue="0" code="RETRY_COUNT" propId="10" stdDataType="int" i18n-en:displayName='Retry Count' />
-                <column name="attachmentId" displayName="附件（EDI 报文文件）" stdSqlType="BIGINT" code="ATTACHMENT_ID" propId="11" stdDataType="long" i18n-en:displayName='Attachment' />
+                <column name="attachmentFileId" displayName="附件（EDI 报文文件）" stdSqlType="VARCHAR" precision="200" stdDataType="string" code="ATTACHMENT_FILE_ID" propId="11" i18n-en:displayName='Attachment' stdDomain="file"/>
                 <column name="sentAt" displayName="发送时间" stdSqlType="DATETIME" code="SENT_AT" propId="12" stdDataType="datetime" i18n-en:displayName='Sent At' />
                 <column name="acknowledgedAt" displayName="确认时间" stdSqlType="DATETIME" code="ACKNOWLEDGED_AT" propId="13" stdDataType="datetime" i18n-en:displayName='Acknowledged At' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="14" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
@@ -165,8 +165,9 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="20" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="format" refEntityName="app.erp.b2b.dao.entity.ErpB2bEdiFormat" tagSet="pub" i18n-en:displayName='Format' ref-i18n-en:displayName='EDI Document'><join><on leftProp="formatId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Org' ref-i18n-en:displayName='EDI Document'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="format" refEntityName="app.erp.b2b.dao.entity.ErpB2bEdiFormat" tagSet="pub" i18n-en:displayName='Format'><join><on leftProp="formatId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                
             </relations>
             <unique-keys>
                 <unique-key name="UK_EDI_DOC_FORMAT_BILL" columns="formatId,relatedBillType,relatedBillCode"/>
@@ -198,10 +199,10 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="sourceEdiDoc" refEntityName="app.erp.b2b.dao.entity.ErpB2bEdiDoc" tagSet="pub" i18n-en:displayName='Source EDI Document' ref-i18n-en:displayName='ASN'><join><on leftProp="sourceEdiDocId" rightProp="id"/></join></to-one>
-                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Partner' ref-i18n-en:displayName='ASN'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Org' ref-i18n-en:displayName='ASN'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
-                <to-many name="lines" refEntityName="app.erp.b2b.dao.entity.ErpB2bAsnLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ref-i18n-en:displayName='ASN'><join><on leftProp="id" rightProp="asnId"/></join></to-many>
+                <to-one name="sourceEdiDoc" refEntityName="app.erp.b2b.dao.entity.ErpB2bEdiDoc" tagSet="pub" i18n-en:displayName='Source EDI Document'><join><on leftProp="sourceEdiDocId" rightProp="id"/></join></to-one>
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Partner'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-many name="lines" refEntityName="app.erp.b2b.dao.entity.ErpB2bAsnLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="30"><join><on leftProp="id" rightProp="asnId"/></join></to-many>
             </relations>
         </entity>
 
@@ -226,8 +227,8 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="14" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="asn" refEntityName="app.erp.b2b.dao.entity.ErpB2bAsn" tagSet="pub" i18n-en:displayName='ASN' ref-i18n-en:displayName='ASN Line'><join><on leftProp="asnId" rightProp="id"/></join></to-one>
-                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Material' ref-i18n-en:displayName='ASN Line'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
+                <to-one name="asn" refEntityName="app.erp.b2b.dao.entity.ErpB2bAsn" tagSet="pub" i18n-en:displayName='ASN'><join><on leftProp="asnId" rightProp="id"/></join></to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -251,8 +252,8 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="13" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Org' ref-i18n-en:displayName='Code Mapping'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
-                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Partner' ref-i18n-en:displayName='Code Mapping'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Partner'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -279,8 +280,8 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="ediDoc" refEntityName="app.erp.b2b.dao.entity.ErpB2bEdiDoc" tagSet="pub" i18n-en:displayName='EDI Document' ref-i18n-en:displayName='EDI Log'><join><on leftProp="ediDocId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Org' ref-i18n-en:displayName='EDI Log'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="ediDoc" refEntityName="app.erp.b2b.dao.entity.ErpB2bEdiDoc" tagSet="pub" i18n-en:displayName='EDI Document'><join><on leftProp="ediDocId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
     
@@ -317,8 +318,8 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="26" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Partner' ref-i18n-en:displayName='Partner Profile'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Org' ref-i18n-en:displayName='Partner Profile'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Partner'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -344,7 +345,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="15" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="partnerProfile" refEntityName="app.erp.b2b.dao.entity.ErpB2bPartnerProfile" tagSet="pub" i18n-en:displayName='Partner Profile' ref-i18n-en:displayName='Credentials'><join><on leftProp="partnerProfileId" rightProp="id"/></join></to-one>
+                <to-one name="partnerProfile" refEntityName="app.erp.b2b.dao.entity.ErpB2bPartnerProfile" tagSet="pub" i18n-en:displayName='Partner Profile'><join><on leftProp="partnerProfileId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -374,7 +375,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="19" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="partnerProfile" refEntityName="app.erp.b2b.dao.entity.ErpB2bPartnerProfile" tagSet="pub" i18n-en:displayName='Partner Profile' ref-i18n-en:displayName='Test Exchanges'><join><on leftProp="partnerProfileId" rightProp="id"/></join></to-one>
+                <to-one name="partnerProfile" refEntityName="app.erp.b2b.dao.entity.ErpB2bPartnerProfile" tagSet="pub" i18n-en:displayName='Partner Profile'><join><on leftProp="partnerProfileId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -401,7 +402,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="partnerProfile" refEntityName="app.erp.b2b.dao.entity.ErpB2bPartnerProfile" tagSet="pub" i18n-en:displayName='Partner Profile' ref-i18n-en:displayName='Certification Checklists'><join><on leftProp="partnerProfileId" rightProp="id"/></join></to-one>
+                <to-one name="partnerProfile" refEntityName="app.erp.b2b.dao.entity.ErpB2bPartnerProfile" tagSet="pub" i18n-en:displayName='Partner Profile'><join><on leftProp="partnerProfileId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -442,8 +443,11 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="30" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Partner' ref-i18n-en:displayName='MFT Configs'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Org' ref-i18n-en:displayName='MFT Config'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Partner'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="cert" refEntityName="app.erp.b2b.dao.entity.ErpB2bMftCertificate" tagSet="pub">
+                    <join><on leftProp="certId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -475,8 +479,8 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="21" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Partner' ref-i18n-en:displayName='MFT Certificates'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Org' ref-i18n-en:displayName='MFT Certificate'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Partner'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -516,8 +520,8 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="29" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="config" refEntityName="app.erp.b2b.dao.entity.ErpB2bMftConfig" tagSet="pub" i18n-en:displayName='MFT Config' ref-i18n-en:displayName='MFT Logs'><join><on leftProp="configId" rightProp="id"/></join></to-one>
-                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" notGenCode="true" biz:moduleId="erp/md" i18n-en:displayName='Org' ref-i18n-en:displayName='MFT Log'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="config" refEntityName="app.erp.b2b.dao.entity.ErpB2bMftConfig" tagSet="pub" i18n-en:displayName='MFT Config'><join><on leftProp="configId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 

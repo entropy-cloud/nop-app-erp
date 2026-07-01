@@ -104,7 +104,7 @@ prop:
       blockingLevel_label: null
       error: Error Message
       retryCount: Retry Count
-      attachmentId: Attachment
+      attachmentFileId: Attachment
       sentAt: Sent At
       acknowledgedAt: Acknowledged At
       remark: Remark
@@ -116,6 +116,7 @@ prop:
       updateTime: Update Time
       format: Format
       org: Org
+      attachmentFileIdComponentFileStatus: null
     ErpB2bEdiFormat:
       id: ID
       code: Code
@@ -212,6 +213,7 @@ prop:
       updateTime: Update Time
       partner: Partner
       org: Org
+      cert: null
     ErpB2bMftLog:
       id: ID
       orgId: Organization

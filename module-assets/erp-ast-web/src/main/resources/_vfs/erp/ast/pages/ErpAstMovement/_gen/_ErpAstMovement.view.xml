@@ -73,7 +73,7 @@
                 <col id="postedAt" sortable="true"/>
 
                 <!--过账人-->
-                <col id="postedBy" ui:number="true" sortable="true"/>
+                <col id="postedBy" sortable="true"/>
 
                 <!--单据版本-->
                 <col id="docVersion" mandatory="true" sortable="true"/>

@@ -397,4 +397,26 @@
         }
 
 
+        private Map<String,Object> _org;
+
+        public Map<String,Object> getOrg(){
+            return _org;
+        }
+
+        public void setOrg(Map<String,Object> value){
+            this._org = value;
+        }
+
+
+        private Map<String,Object> _completedAsset;
+
+        public Map<String,Object> getCompletedAsset(){
+            return _completedAsset;
+        }
+
+        public void setCompletedAsset(Map<String,Object> value){
+            this._completedAsset = value;
+        }
+
+
     }

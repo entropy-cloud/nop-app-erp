@@ -84,7 +84,7 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="staffId" displayName="使用人(往来单位,旧字段保留)" propId="17" i18n-en:displayName="Staff" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="staff">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="brandModel" displayName="品牌型号" propId="18" i18n-en:displayName="Brand / Model" queryable="true"
@@ -152,6 +152,11 @@
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
               lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="staff" i18n-en:displayName="Staff" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="staffId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpMdEmployee"/>
         </prop>
     </props>
 </meta>

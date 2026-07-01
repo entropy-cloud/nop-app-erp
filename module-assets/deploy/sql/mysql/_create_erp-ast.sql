@@ -47,6 +47,12 @@ CREATE TABLE erp_md_subject(
   constraint PK_erp_md_subject primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_fin_voucher(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  constraint PK_erp_fin_voucher primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_md_material_category(
   ID BIGINT NULL    COMMENT 'null',
   CODE VARCHAR(50) NULL    COMMENT 'null',
@@ -120,8 +126,8 @@ CREATE TABLE erp_ast_asset_capitalization(
   APPROVE_STATUS INTEGER NOT NULL    COMMENT '审核状态',
   POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
   POSTED_AT DATETIME NULL    COMMENT '过账时间',
-  POSTED_BY BIGINT NULL    COMMENT '过账人',
-  APPROVED_BY BIGINT NULL    COMMENT '审核人',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
+  APPROVED_BY VARCHAR(36) NULL    COMMENT '审核人',
   APPROVED_AT DATETIME NULL    COMMENT '审核时间',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -137,35 +143,6 @@ CREATE TABLE erp_ast_asset_capitalization(
   constraint PK_erp_ast_asset_capitalization primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_ast_cip(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  CODE VARCHAR(50) NOT NULL    COMMENT '工程编码',
-  NAME VARCHAR(200) NOT NULL    COMMENT '工程名称',
-  ORG_ID BIGINT NULL    COMMENT '所属组织',
-  CATEGORY_ID BIGINT NULL    COMMENT '预定资产类别(完工后转入)',
-  CURRENCY_ID BIGINT NULL    COMMENT '币种',
-  BUSINESS_DATE DATE NOT NULL    COMMENT '开工日期',
-  ESTIMATED_COMPLETION_DATE DATE NULL    COMMENT '预计完工日期',
-  ACCUMULATED_COST DECIMAL(20,4) default 0  NULL    COMMENT '累计归集成本',
-  IS_COMPLETED BOOLEAN default 0  NULL    COMMENT '是否已转固',
-  COMPLETED_ASSET_ID BIGINT NULL    COMMENT '完工转出资产',
-  STATUS INTEGER NOT NULL    COMMENT '状态',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  POSTED BOOLEAN default 0  NULL    COMMENT '是否已过账',
-  POSTED_AT DATETIME(3) NULL    COMMENT '过账时间',
-  POSTED_BY VARCHAR(50) NULL    COMMENT '过账人',
-  EXCHANGE_RATE DECIMAL(20,8) NOT NULL    COMMENT '汇率',
-  AMOUNT_SOURCE DECIMAL(20,4) default 0  NULL    COMMENT '源币种金额',
-  AMOUNT_FUNCTIONAL DECIMAL(20,4) default 0  NULL    COMMENT '本位币金额',
-  constraint PK_erp_ast_cip primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
 CREATE TABLE erp_ast_depreciation_schedule(
   ID BIGINT NOT NULL    COMMENT 'ID',
   ASSET_ID BIGINT NOT NULL    COMMENT '资产ID',
@@ -179,7 +156,7 @@ CREATE TABLE erp_ast_depreciation_schedule(
   EXECUTED_AT DATETIME NULL    COMMENT '执行时间',
   POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
   POSTED_AT DATETIME NULL    COMMENT '过账时间',
-  POSTED_BY BIGINT NULL    COMMENT '过账人',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
   VOUCHER_ID BIGINT NULL    COMMENT '凭证ID',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -214,7 +191,7 @@ CREATE TABLE erp_ast_movement(
   APPROVE_STATUS INTEGER NOT NULL    COMMENT '审核状态',
   POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
   POSTED_AT DATETIME NULL    COMMENT '过账时间',
-  POSTED_BY BIGINT NULL    COMMENT '过账人',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
   DOC_VERSION VARCHAR(20) default '1'  NOT NULL    COMMENT '单据版本',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -245,8 +222,8 @@ CREATE TABLE erp_ast_value_adjustment(
   APPROVE_STATUS INTEGER NOT NULL    COMMENT '审核状态',
   POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
   POSTED_AT DATETIME NULL    COMMENT '过账时间',
-  POSTED_BY BIGINT NULL    COMMENT '过账人',
-  APPROVED_BY BIGINT NULL    COMMENT '审核人',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
+  APPROVED_BY VARCHAR(36) NULL    COMMENT '审核人',
   APPROVED_AT DATETIME NULL    COMMENT '审核时间',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -276,8 +253,8 @@ CREATE TABLE erp_ast_disposal(
   APPROVE_STATUS INTEGER NOT NULL    COMMENT '审核状态',
   POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
   POSTED_AT DATETIME NULL    COMMENT '过账时间',
-  POSTED_BY BIGINT NULL    COMMENT '过账人',
-  APPROVED_BY BIGINT NULL    COMMENT '审核人',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
+  APPROVED_BY VARCHAR(36) NULL    COMMENT '审核人',
   APPROVED_AT DATETIME NULL    COMMENT '审核时间',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -289,6 +266,35 @@ CREATE TABLE erp_ast_disposal(
   AMOUNT_SOURCE DECIMAL(20,4) default 0  NULL    COMMENT '源币种金额',
   AMOUNT_FUNCTIONAL DECIMAL(20,4) default 0  NULL    COMMENT '本位币金额',
   constraint PK_erp_ast_disposal primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_ast_cip(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '工程编码',
+  NAME VARCHAR(200) NOT NULL    COMMENT '工程名称',
+  ORG_ID BIGINT NULL    COMMENT '所属组织',
+  CATEGORY_ID BIGINT NULL    COMMENT '预定资产类别(完工后转入)',
+  CURRENCY_ID BIGINT NULL    COMMENT '币种',
+  BUSINESS_DATE DATE NOT NULL    COMMENT '开工日期',
+  ESTIMATED_COMPLETION_DATE DATE NULL    COMMENT '预计完工日期',
+  ACCUMULATED_COST DECIMAL(20,4) default 0  NULL    COMMENT '累计归集成本',
+  IS_COMPLETED BOOLEAN default 0  NULL    COMMENT '是否已转固',
+  COMPLETED_ASSET_ID BIGINT NULL    COMMENT '完工转出资产',
+  STATUS INTEGER NOT NULL    COMMENT '状态',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  POSTED BOOLEAN default 0  NULL    COMMENT '是否已过账',
+  POSTED_AT DATETIME(3) NULL    COMMENT '过账时间',
+  POSTED_BY VARCHAR(50) NULL    COMMENT '过账人',
+  EXCHANGE_RATE DECIMAL(20,8) NOT NULL    COMMENT '汇率',
+  AMOUNT_SOURCE DECIMAL(20,4) default 0  NULL    COMMENT '源币种金额',
+  AMOUNT_FUNCTIONAL DECIMAL(20,4) default 0  NULL    COMMENT '本位币金额',
+  constraint PK_erp_ast_cip primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_ast_split(
@@ -303,8 +309,8 @@ CREATE TABLE erp_ast_split(
   APPROVE_STATUS INTEGER NOT NULL    COMMENT '审核状态',
   POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
   POSTED_AT DATETIME NULL    COMMENT '过账时间',
-  POSTED_BY BIGINT NULL    COMMENT '过账人',
-  APPROVED_BY BIGINT NULL    COMMENT '审核人',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
+  APPROVED_BY VARCHAR(36) NULL    COMMENT '审核人',
   APPROVED_AT DATETIME NULL    COMMENT '审核时间',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -331,8 +337,8 @@ CREATE TABLE erp_ast_merge(
   APPROVE_STATUS INTEGER NOT NULL    COMMENT '审核状态',
   POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
   POSTED_AT DATETIME NULL    COMMENT '过账时间',
-  POSTED_BY BIGINT NULL    COMMENT '过账人',
-  APPROVED_BY BIGINT NULL    COMMENT '审核人',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
+  APPROVED_BY VARCHAR(36) NULL    COMMENT '审核人',
   APPROVED_AT DATETIME NULL    COMMENT '审核时间',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -358,6 +364,8 @@ CREATE TABLE erp_ast_merge(
                 
    ALTER TABLE erp_md_subject COMMENT '会计科目';
                 
+   ALTER TABLE erp_fin_voucher COMMENT '凭证';
+                
    ALTER TABLE erp_md_material_category COMMENT '物料分类';
                 
    ALTER TABLE erp_ast_asset_category COMMENT '资产类别';
@@ -366,8 +374,6 @@ CREATE TABLE erp_ast_merge(
                 
    ALTER TABLE erp_ast_asset_capitalization COMMENT '资产资本化';
                 
-   ALTER TABLE erp_ast_cip COMMENT '在建工程';
-                
    ALTER TABLE erp_ast_depreciation_schedule COMMENT '折旧计划';
                 
    ALTER TABLE erp_ast_movement COMMENT '资产移动';
@@ -375,6 +381,8 @@ CREATE TABLE erp_ast_merge(
    ALTER TABLE erp_ast_value_adjustment COMMENT '资产价值调整';
                 
    ALTER TABLE erp_ast_disposal COMMENT '资产处置';
+                
+   ALTER TABLE erp_ast_cip COMMENT '在建工程';
                 
    ALTER TABLE erp_ast_split COMMENT '资产拆分单';
                 

@@ -81,7 +81,7 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     public static final String PROP_NAME_totalDuration = "totalDuration";
     public static final int PROP_ID_totalDuration = 15;
     
-    /* 操作工: ASSIGNED_TO_ID BIGINT */
+    /* 操作工: ASSIGNED_TO_ID VARCHAR */
     public static final String PROP_NAME_assignedToId = "assignedToId";
     public static final int PROP_ID_assignedToId = 16;
     
@@ -128,6 +128,9 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
 
     private static int _PROP_ID_BOUND = 27;
 
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
     
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
@@ -264,7 +267,7 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     private java.math.BigDecimal _totalDuration;
     
     /* 操作工: ASSIGNED_TO_ID */
-    private java.lang.Long _assignedToId;
+    private java.lang.String _assignedToId;
     
     /* 是否外协: IS_OUTSOURCED */
     private java.lang.Boolean _isOutsourced;
@@ -610,9 +613,9 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_assignedToId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_assignedToId));
                }
                setAssignedToId(typedValue);
@@ -835,7 +838,7 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
         
             case PROP_ID_assignedToId:{
                onInitProp(propId);
-               this._assignedToId = (java.lang.Long)value;
+               this._assignedToId = (java.lang.String)value;
                
                break;
             }
@@ -1204,7 +1207,7 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     /**
      * 操作工: ASSIGNED_TO_ID
      */
-    public final java.lang.Long getAssignedToId(){
+    public final java.lang.String getAssignedToId(){
          onPropGet(PROP_ID_assignedToId);
          return _assignedToId;
     }
@@ -1212,7 +1215,7 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     /**
      * 操作工: ASSIGNED_TO_ID
      */
-    public final void setAssignedToId(java.lang.Long value){
+    public final void setAssignedToId(java.lang.String value){
         if(onPropSet(PROP_ID_assignedToId,value)){
             this._assignedToId = value;
             internalClearRefs(PROP_ID_assignedToId);
@@ -1410,5 +1413,28 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
 }
 // resume CPD analysis - CPD-ON

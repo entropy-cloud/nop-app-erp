@@ -80,40 +80,6 @@ CREATE TABLE erp_b2b_partner_profile(
   constraint PK_erp_b2b_partner_profile primary key (ID)
 );
 
-CREATE TABLE erp_b2b_mft_config(
-  ID NUMBER(20) NOT NULL ,
-  ORG_ID NUMBER(20)  ,
-  PARTNER_ID NUMBER(20) NOT NULL ,
-  PROTOCOL VARCHAR2(50) NOT NULL ,
-  TRANSPORT_ENDPOINT VARCHAR2(500) NOT NULL ,
-  LOCAL_AS2_ID VARCHAR2(100)  ,
-  REMOTE_AS2_ID VARCHAR2(100)  ,
-  SFTP_USERNAME VARCHAR2(100)  ,
-  SFTP_PORT INTEGER default 22   ,
-  FTPS_PORT INTEGER default 990   ,
-  FTPS_IMPLICIT_TLS CHAR(1) default 1   ,
-  COMPRESSION CHAR(1) default 0   ,
-  ENCRYPTION CHAR(1) default 0   ,
-  ENCRYPTION_ALGO VARCHAR2(50)  ,
-  SIGNATURE CHAR(1) default 0   ,
-  SIGNATURE_ALGO VARCHAR2(50)  ,
-  CERT_ID NUMBER(20)  ,
-  ACTIVE CHAR(1) default 1   ,
-  MAX_RETRIES INTEGER default 3   ,
-  RETRY_INTERVAL_MIN INTEGER default 15   ,
-  DEAD_LETTER_ENABLED CHAR(1) default 1   ,
-  MONITOR_DIRECTORY VARCHAR2(500)  ,
-  MONITOR_INTERVAL_SEC INTEGER default 60   ,
-  REMARK VARCHAR2(1000)  ,
-  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
-  VERSION INTEGER default 0  NOT NULL ,
-  CREATED_BY VARCHAR2(50) NOT NULL ,
-  CREATE_TIME TIMESTAMP NOT NULL ,
-  UPDATED_BY VARCHAR2(50) NOT NULL ,
-  UPDATE_TIME TIMESTAMP NOT NULL ,
-  constraint PK_erp_b2b_mft_config primary key (ID)
-);
-
 CREATE TABLE erp_b2b_mft_certificate(
   ID NUMBER(20) NOT NULL ,
   ORG_ID NUMBER(20)  ,
@@ -150,7 +116,7 @@ CREATE TABLE erp_b2b_edi_doc(
   BLOCKING_LEVEL INTEGER default 10  NOT NULL ,
   ERROR VARCHAR2(2000)  ,
   RETRY_COUNT INTEGER default 0  NOT NULL ,
-  ATTACHMENT_ID NUMBER(20)  ,
+  ATTACHMENT_FILE_ID VARCHAR2(200)  ,
   SENT_AT DATE  ,
   ACKNOWLEDGED_AT DATE  ,
   REMARK VARCHAR2(1000)  ,
@@ -225,29 +191,30 @@ CREATE TABLE erp_b2b_certification_checklist(
   constraint PK_erp_b2b_certification_checklist primary key (ID)
 );
 
-CREATE TABLE erp_b2b_mft_log(
+CREATE TABLE erp_b2b_mft_config(
   ID NUMBER(20) NOT NULL ,
   ORG_ID NUMBER(20)  ,
-  CONFIG_ID NUMBER(20) NOT NULL ,
-  RELATED_BILL_TYPE VARCHAR2(50)  ,
-  RELATED_BILL_CODE VARCHAR2(50)  ,
-  DIRECTION VARCHAR2(50) NOT NULL ,
-  FILE_NAME VARCHAR2(500)  ,
-  FILE_SIZE NUMBER(20)  ,
-  FILE_HASH VARCHAR2(100)  ,
-  MESSAGE_ID VARCHAR2(200)  ,
-  MDN_STATUS VARCHAR2(50)  ,
+  PARTNER_ID NUMBER(20) NOT NULL ,
   PROTOCOL VARCHAR2(50) NOT NULL ,
-  STATUS VARCHAR2(50) NOT NULL ,
-  START_TIME DATE  ,
-  END_TIME DATE  ,
-  DURATION_MS NUMBER(20)  ,
-  ERROR_CODE VARCHAR2(50)  ,
-  ERROR_MSG VARCHAR2(1000)  ,
-  RETRY_COUNT INTEGER default 0   ,
-  IS_COMPRESSED CHAR(1) default 0   ,
-  IS_ENCRYPTED CHAR(1) default 0   ,
-  IS_SIGNED CHAR(1) default 0   ,
+  TRANSPORT_ENDPOINT VARCHAR2(500) NOT NULL ,
+  LOCAL_AS2_ID VARCHAR2(100)  ,
+  REMOTE_AS2_ID VARCHAR2(100)  ,
+  SFTP_USERNAME VARCHAR2(100)  ,
+  SFTP_PORT INTEGER default 22   ,
+  FTPS_PORT INTEGER default 990   ,
+  FTPS_IMPLICIT_TLS CHAR(1) default 1   ,
+  COMPRESSION CHAR(1) default 0   ,
+  ENCRYPTION CHAR(1) default 0   ,
+  ENCRYPTION_ALGO VARCHAR2(50)  ,
+  SIGNATURE CHAR(1) default 0   ,
+  SIGNATURE_ALGO VARCHAR2(50)  ,
+  CERT_ID NUMBER(20)  ,
+  ACTIVE CHAR(1) default 1   ,
+  MAX_RETRIES INTEGER default 3   ,
+  RETRY_INTERVAL_MIN INTEGER default 15   ,
+  DEAD_LETTER_ENABLED CHAR(1) default 1   ,
+  MONITOR_DIRECTORY VARCHAR2(500)  ,
+  MONITOR_INTERVAL_SEC INTEGER default 60   ,
   REMARK VARCHAR2(1000)  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,
@@ -255,7 +222,7 @@ CREATE TABLE erp_b2b_mft_log(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
-  constraint PK_erp_b2b_mft_log primary key (ID)
+  constraint PK_erp_b2b_mft_config primary key (ID)
 );
 
 CREATE TABLE erp_b2b_asn(
@@ -298,6 +265,39 @@ CREATE TABLE erp_b2b_edi_log(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   constraint PK_erp_b2b_edi_log primary key (ID)
+);
+
+CREATE TABLE erp_b2b_mft_log(
+  ID NUMBER(20) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  CONFIG_ID NUMBER(20) NOT NULL ,
+  RELATED_BILL_TYPE VARCHAR2(50)  ,
+  RELATED_BILL_CODE VARCHAR2(50)  ,
+  DIRECTION VARCHAR2(50) NOT NULL ,
+  FILE_NAME VARCHAR2(500)  ,
+  FILE_SIZE NUMBER(20)  ,
+  FILE_HASH VARCHAR2(100)  ,
+  MESSAGE_ID VARCHAR2(200)  ,
+  MDN_STATUS VARCHAR2(50)  ,
+  PROTOCOL VARCHAR2(50) NOT NULL ,
+  STATUS VARCHAR2(50) NOT NULL ,
+  START_TIME DATE  ,
+  END_TIME DATE  ,
+  DURATION_MS NUMBER(20)  ,
+  ERROR_CODE VARCHAR2(50)  ,
+  ERROR_MSG VARCHAR2(1000)  ,
+  RETRY_COUNT INTEGER default 0   ,
+  IS_COMPRESSED CHAR(1) default 0   ,
+  IS_ENCRYPTED CHAR(1) default 0   ,
+  IS_SIGNED CHAR(1) default 0   ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_b2b_mft_log primary key (ID)
 );
 
 CREATE TABLE erp_b2b_asn_line(
@@ -439,68 +439,6 @@ CREATE TABLE erp_b2b_asn_line(
                     
       COMMENT ON COLUMN erp_b2b_partner_profile.UPDATE_TIME IS '修改时间';
                     
-      COMMENT ON TABLE erp_b2b_mft_config IS 'MFT 配置';
-                
-      COMMENT ON COLUMN erp_b2b_mft_config.ID IS 'ID';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.ORG_ID IS '业务组织';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.PARTNER_ID IS '合作伙伴';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.PROTOCOL IS '传输协议';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.TRANSPORT_ENDPOINT IS '传输端点';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.LOCAL_AS2_ID IS '本地AS2 ID';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.REMOTE_AS2_ID IS '对方AS2 ID';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.SFTP_USERNAME IS 'SFTP用户名';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.SFTP_PORT IS 'SFTP端口';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.FTPS_PORT IS 'FTPS端口';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.FTPS_IMPLICIT_TLS IS '隐式TLS';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.COMPRESSION IS '启用压缩';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.ENCRYPTION IS '启用加密';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.ENCRYPTION_ALGO IS '加密算法';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.SIGNATURE IS '启用签名';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.SIGNATURE_ALGO IS '签名算法';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.CERT_ID IS '关联证书';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.ACTIVE IS '启用';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.MAX_RETRIES IS '最大重试次数';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.RETRY_INTERVAL_MIN IS '重试间隔(分钟)';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.DEAD_LETTER_ENABLED IS '启用死信队列';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.MONITOR_DIRECTORY IS '监控目录';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.MONITOR_INTERVAL_SEC IS '监控间隔(秒)';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.REMARK IS '备注';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.DEL_VERSION IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.VERSION IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.CREATED_BY IS '创建人';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.CREATE_TIME IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.UPDATED_BY IS '修改人';
-                    
-      COMMENT ON COLUMN erp_b2b_mft_config.UPDATE_TIME IS '修改时间';
-                    
       COMMENT ON TABLE erp_b2b_mft_certificate IS 'MFT 证书';
                 
       COMMENT ON COLUMN erp_b2b_mft_certificate.ID IS 'ID';
@@ -567,7 +505,7 @@ CREATE TABLE erp_b2b_asn_line(
                     
       COMMENT ON COLUMN erp_b2b_edi_doc.RETRY_COUNT IS '重试次数';
                     
-      COMMENT ON COLUMN erp_b2b_edi_doc.ATTACHMENT_ID IS '附件（EDI 报文文件）';
+      COMMENT ON COLUMN erp_b2b_edi_doc.ATTACHMENT_FILE_ID IS '附件（EDI 报文文件）';
                     
       COMMENT ON COLUMN erp_b2b_edi_doc.SENT_AT IS '发送时间';
                     
@@ -693,65 +631,67 @@ CREATE TABLE erp_b2b_asn_line(
                     
       COMMENT ON COLUMN erp_b2b_certification_checklist.UPDATE_TIME IS '修改时间';
                     
-      COMMENT ON TABLE erp_b2b_mft_log IS 'MFT 传输日志';
+      COMMENT ON TABLE erp_b2b_mft_config IS 'MFT 配置';
                 
-      COMMENT ON COLUMN erp_b2b_mft_log.ID IS 'ID';
+      COMMENT ON COLUMN erp_b2b_mft_config.ID IS 'ID';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.ORG_ID IS '业务组织';
+      COMMENT ON COLUMN erp_b2b_mft_config.ORG_ID IS '业务组织';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.CONFIG_ID IS 'MFT配置';
+      COMMENT ON COLUMN erp_b2b_mft_config.PARTNER_ID IS '合作伙伴';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.RELATED_BILL_TYPE IS '关联单据类型';
+      COMMENT ON COLUMN erp_b2b_mft_config.PROTOCOL IS '传输协议';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.RELATED_BILL_CODE IS '关联单据号';
+      COMMENT ON COLUMN erp_b2b_mft_config.TRANSPORT_ENDPOINT IS '传输端点';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.DIRECTION IS '方向';
+      COMMENT ON COLUMN erp_b2b_mft_config.LOCAL_AS2_ID IS '本地AS2 ID';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.FILE_NAME IS '文件名';
+      COMMENT ON COLUMN erp_b2b_mft_config.REMOTE_AS2_ID IS '对方AS2 ID';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.FILE_SIZE IS '文件大小(字节)';
+      COMMENT ON COLUMN erp_b2b_mft_config.SFTP_USERNAME IS 'SFTP用户名';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.FILE_HASH IS '文件哈希';
+      COMMENT ON COLUMN erp_b2b_mft_config.SFTP_PORT IS 'SFTP端口';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.MESSAGE_ID IS 'AS2 Message-ID';
+      COMMENT ON COLUMN erp_b2b_mft_config.FTPS_PORT IS 'FTPS端口';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.MDN_STATUS IS 'MDN状态';
+      COMMENT ON COLUMN erp_b2b_mft_config.FTPS_IMPLICIT_TLS IS '隐式TLS';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.PROTOCOL IS '传输协议';
+      COMMENT ON COLUMN erp_b2b_mft_config.COMPRESSION IS '启用压缩';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.STATUS IS '传输状态';
+      COMMENT ON COLUMN erp_b2b_mft_config.ENCRYPTION IS '启用加密';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.START_TIME IS '开始时间';
+      COMMENT ON COLUMN erp_b2b_mft_config.ENCRYPTION_ALGO IS '加密算法';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.END_TIME IS '结束时间';
+      COMMENT ON COLUMN erp_b2b_mft_config.SIGNATURE IS '启用签名';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.DURATION_MS IS '耗时(毫秒)';
+      COMMENT ON COLUMN erp_b2b_mft_config.SIGNATURE_ALGO IS '签名算法';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.ERROR_CODE IS '错误码';
+      COMMENT ON COLUMN erp_b2b_mft_config.CERT_ID IS '关联证书';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.ERROR_MSG IS '错误消息';
+      COMMENT ON COLUMN erp_b2b_mft_config.ACTIVE IS '启用';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.RETRY_COUNT IS '重试次数';
+      COMMENT ON COLUMN erp_b2b_mft_config.MAX_RETRIES IS '最大重试次数';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.IS_COMPRESSED IS '压缩';
+      COMMENT ON COLUMN erp_b2b_mft_config.RETRY_INTERVAL_MIN IS '重试间隔(分钟)';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.IS_ENCRYPTED IS '加密';
+      COMMENT ON COLUMN erp_b2b_mft_config.DEAD_LETTER_ENABLED IS '启用死信队列';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.IS_SIGNED IS '签名';
+      COMMENT ON COLUMN erp_b2b_mft_config.MONITOR_DIRECTORY IS '监控目录';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.REMARK IS '备注';
+      COMMENT ON COLUMN erp_b2b_mft_config.MONITOR_INTERVAL_SEC IS '监控间隔(秒)';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.DEL_VERSION IS '逻辑删除版本';
+      COMMENT ON COLUMN erp_b2b_mft_config.REMARK IS '备注';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.VERSION IS '数据版本';
+      COMMENT ON COLUMN erp_b2b_mft_config.DEL_VERSION IS '逻辑删除版本';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.CREATED_BY IS '创建人';
+      COMMENT ON COLUMN erp_b2b_mft_config.VERSION IS '数据版本';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.CREATE_TIME IS '创建时间';
+      COMMENT ON COLUMN erp_b2b_mft_config.CREATED_BY IS '创建人';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.UPDATED_BY IS '修改人';
+      COMMENT ON COLUMN erp_b2b_mft_config.CREATE_TIME IS '创建时间';
                     
-      COMMENT ON COLUMN erp_b2b_mft_log.UPDATE_TIME IS '修改时间';
+      COMMENT ON COLUMN erp_b2b_mft_config.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_config.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_b2b_asn IS '提前发货通知';
                 
@@ -824,6 +764,66 @@ CREATE TABLE erp_b2b_asn_line(
       COMMENT ON COLUMN erp_b2b_edi_log.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_b2b_edi_log.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_b2b_mft_log IS 'MFT 传输日志';
+                
+      COMMENT ON COLUMN erp_b2b_mft_log.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.CONFIG_ID IS 'MFT配置';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.RELATED_BILL_TYPE IS '关联单据类型';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.RELATED_BILL_CODE IS '关联单据号';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.DIRECTION IS '方向';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.FILE_NAME IS '文件名';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.FILE_SIZE IS '文件大小(字节)';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.FILE_HASH IS '文件哈希';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.MESSAGE_ID IS 'AS2 Message-ID';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.MDN_STATUS IS 'MDN状态';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.PROTOCOL IS '传输协议';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.STATUS IS '传输状态';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.START_TIME IS '开始时间';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.END_TIME IS '结束时间';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.DURATION_MS IS '耗时(毫秒)';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.ERROR_CODE IS '错误码';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.ERROR_MSG IS '错误消息';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.RETRY_COUNT IS '重试次数';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.IS_COMPRESSED IS '压缩';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.IS_ENCRYPTED IS '加密';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.IS_SIGNED IS '签名';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_b2b_mft_log.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_b2b_asn_line IS 'ASN 明细行';
                 

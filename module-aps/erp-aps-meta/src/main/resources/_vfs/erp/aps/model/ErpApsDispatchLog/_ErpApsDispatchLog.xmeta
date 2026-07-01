@@ -28,7 +28,8 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="operationOrderId" displayName="工序工单" propId="3" i18n-en:displayName="Operation Order"
-              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true"
+              ext:relation="operationOrder">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="workcenterId" displayName="工作中心" propId="4" i18n-en:displayName="Workcenter" queryable="true"
@@ -104,6 +105,11 @@
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
               lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="operationOrder" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="operationOrderId" ext:joinRightProp="id" insertable="false" updatable="false"
+              mandatory="true" lazy="true">
+            <schema bizObjName="ErpApsOperationOrder"/>
         </prop>
     </props>
 </meta>

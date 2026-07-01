@@ -147,6 +147,9 @@ public class _ErpAstAsset extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_org = "org";
     
+    /* relation:  */
+    public static final String PROP_NAME_staff = "staff";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1560,6 +1563,29 @@ public class _ErpAstAsset extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_org, refEntity,()->{
            
                            this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdEmployee getStaff(){
+       return (app.erp.md.dao.entity.ErpMdEmployee)internalGetRefEntity(PROP_NAME_staff);
+    }
+
+    public final void setStaff(app.erp.md.dao.entity.ErpMdEmployee refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setStaffId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_staff, refEntity,()->{
+           
+                           this.setStaffId(refEntity.getId());
                        
            });
            }

@@ -19,7 +19,7 @@
   "approveStatus_label": "",
   "posted": false,
   "postedAt": "2000-01-01 14:00:00",
-  "postedBy": 0,
+  "postedBy": "",
   "docVersion": "",
   "delVersion": 0,
   "version": 0,
@@ -32,5 +32,14 @@
   "exchangeRate": 0.0,
   "amountSource": 0.0,
   "amountFunctional": 0.0,
-  "asset": null
+  "asset": null,
+  "org": null,
+  "fromDepartment": null,
+  "toDepartment": null,
+  "fromStaff": null,
+  "toStaff": null,
+  "fromLocation": null,
+  "toLocation": null,
+  "handler": null,
+  "currency": null
 }

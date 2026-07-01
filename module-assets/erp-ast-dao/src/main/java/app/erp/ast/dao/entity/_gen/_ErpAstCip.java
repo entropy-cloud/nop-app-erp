@@ -131,6 +131,12 @@ public class _ErpAstCip extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_currency = "currency";
     
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
+    /* relation:  */
+    public static final String PROP_NAME_completedAsset = "completedAsset";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1407,6 +1413,52 @@ public class _ErpAstCip extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_currency, refEntity,()->{
            
                            this.setCurrencyId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.ast.dao.entity.ErpAstAsset getCompletedAsset(){
+       return (app.erp.ast.dao.entity.ErpAstAsset)internalGetRefEntity(PROP_NAME_completedAsset);
+    }
+
+    public final void setCompletedAsset(app.erp.ast.dao.entity.ErpAstAsset refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCompletedAssetId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_completedAsset, refEntity,()->{
+           
+                           this.setCompletedAssetId(refEntity.getId());
                        
            });
            }

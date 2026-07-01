@@ -81,7 +81,7 @@
         </prop>
         <prop name="assignedToId" displayName="操作工" propId="16" i18n-en:displayName="Assigned To" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
         <prop name="isOutsourced" displayName="是否外协" propId="17" i18n-en:displayName="Is Outsourced" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="false">

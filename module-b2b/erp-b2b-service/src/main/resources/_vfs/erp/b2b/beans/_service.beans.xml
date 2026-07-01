@@ -28,13 +28,6 @@
         <property name="bizObjName" value="ErpB2bPartnerProfile"/>
     </bean>
 
-    <bean id="app.erp.b2b.service.entity.ErpB2bMftConfigBizModel" ioc:type="@bean:id" ioc:default="true"/>
-
-    <bean id="biz_ErpB2bMftConfig" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.b2b.biz.IErpB2bMftConfigBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
-        <property name="bizObjName" value="ErpB2bMftConfig"/>
-    </bean>
-
     <bean id="app.erp.b2b.service.entity.ErpB2bMftCertificateBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpB2bMftCertificate" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -74,11 +67,11 @@
         <property name="bizObjName" value="ErpB2bCertificationChecklist"/>
     </bean>
 
-    <bean id="app.erp.b2b.service.entity.ErpB2bMftLogBizModel" ioc:type="@bean:id" ioc:default="true"/>
+    <bean id="app.erp.b2b.service.entity.ErpB2bMftConfigBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
-    <bean id="biz_ErpB2bMftLog" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.b2b.biz.IErpB2bMftLogBiz"
-          ioc:force-lazy-property="true" lazy-init="true" primary="true">
-        <property name="bizObjName" value="ErpB2bMftLog"/>
+    <bean id="biz_ErpB2bMftConfig" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.b2b.biz.IErpB2bMftConfigBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpB2bMftConfig"/>
     </bean>
 
     <bean id="app.erp.b2b.service.entity.ErpB2bAsnBizModel" ioc:type="@bean:id" ioc:default="true"/>
@@ -93,6 +86,13 @@
     <bean id="biz_ErpB2bEdiLog" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.b2b.biz.IErpB2bEdiLogBiz"
           ioc:force-lazy-property="true" lazy-init="true" primary="true">
         <property name="bizObjName" value="ErpB2bEdiLog"/>
+    </bean>
+
+    <bean id="app.erp.b2b.service.entity.ErpB2bMftLogBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpB2bMftLog" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.b2b.biz.IErpB2bMftLogBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpB2bMftLog"/>
     </bean>
 
     <bean id="app.erp.b2b.service.entity.ErpB2bAsnLineBizModel" ioc:type="@bean:id" ioc:default="true"/>

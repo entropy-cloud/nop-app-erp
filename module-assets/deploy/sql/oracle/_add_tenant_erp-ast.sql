@@ -9,6 +9,8 @@ alter table erp_md_currency add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_subject add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
+alter table erp_fin_voucher add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
 alter table erp_md_material_category add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ast_asset_category add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
@@ -17,8 +19,6 @@ alter table erp_ast_asset add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ast_asset_capitalization add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
-alter table erp_ast_cip add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
-
 alter table erp_ast_depreciation_schedule add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ast_movement add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
@@ -26,6 +26,8 @@ alter table erp_ast_movement add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL
 alter table erp_ast_value_adjustment add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ast_disposal add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
+alter table erp_ast_cip add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ast_split add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
@@ -46,6 +48,9 @@ alter table erp_md_currency add constraint PK_erp_md_currency primary key (NOP_T
 alter table erp_md_subject drop constraint PK_erp_md_subject;
 alter table erp_md_subject add constraint PK_erp_md_subject primary key (NOP_TENANT_ID, ID);
 
+alter table erp_fin_voucher drop constraint PK_erp_fin_voucher;
+alter table erp_fin_voucher add constraint PK_erp_fin_voucher primary key (NOP_TENANT_ID, ID);
+
 alter table erp_md_material_category drop constraint PK_erp_md_material_category;
 alter table erp_md_material_category add constraint PK_erp_md_material_category primary key (NOP_TENANT_ID, ID);
 
@@ -58,9 +63,6 @@ alter table erp_ast_asset add constraint PK_erp_ast_asset primary key (NOP_TENAN
 alter table erp_ast_asset_capitalization drop constraint PK_erp_ast_asset_capitalization;
 alter table erp_ast_asset_capitalization add constraint PK_erp_ast_asset_capitalization primary key (NOP_TENANT_ID, ID);
 
-alter table erp_ast_cip drop constraint PK_erp_ast_cip;
-alter table erp_ast_cip add constraint PK_erp_ast_cip primary key (NOP_TENANT_ID, ID);
-
 alter table erp_ast_depreciation_schedule drop constraint PK_erp_ast_depreciation_schedule;
 alter table erp_ast_depreciation_schedule add constraint PK_erp_ast_depreciation_schedule primary key (NOP_TENANT_ID, ID);
 
@@ -72,6 +74,9 @@ alter table erp_ast_value_adjustment add constraint PK_erp_ast_value_adjustment 
 
 alter table erp_ast_disposal drop constraint PK_erp_ast_disposal;
 alter table erp_ast_disposal add constraint PK_erp_ast_disposal primary key (NOP_TENANT_ID, ID);
+
+alter table erp_ast_cip drop constraint PK_erp_ast_cip;
+alter table erp_ast_cip add constraint PK_erp_ast_cip primary key (NOP_TENANT_ID, ID);
 
 alter table erp_ast_split drop constraint PK_erp_ast_split;
 alter table erp_ast_split add constraint PK_erp_ast_split primary key (NOP_TENANT_ID, ID);

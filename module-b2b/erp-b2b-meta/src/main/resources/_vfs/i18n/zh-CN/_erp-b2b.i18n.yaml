@@ -93,7 +93,8 @@ prop:
       version: 数据版本
     ErpB2bEdiDoc:
       acknowledgedAt: 确认时间
-      attachmentId: 附件（EDI 报文文件）
+      attachmentFileId: 附件（EDI 报文文件）
+      attachmentFileIdComponentFileStatus: null
       blockingLevel: 阻断级别
       blockingLevel_label: 阻断级别
       code: 事务编码
@@ -181,6 +182,7 @@ prop:
       version: 数据版本
     ErpB2bMftConfig:
       active: 启用
+      cert: null
       certId: 关联证书
       compression: 启用压缩
       createTime: 创建时间
