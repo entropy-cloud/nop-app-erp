@@ -39,6 +39,8 @@
 | originReturnedMoveId | 原始退货移动单ID | 退货移动单关联的原出库移动单 |
 | returnedMoveIds | 退货移动单ID列表 | 本移动关联的退货移动单 |
 
+> **实现说明（存储模型偏离，2026-07-02 计划 0700-1）**：上表概念为 M2M 自关联（Odoo `move_orig_ids`/`move_dest_ids`），但本仓**实际落地为「单 uplink 列 + 反向查询」**——移动单只持久化两个可空上链列 `originMoveId`（上游移动单）与 `originReturnedMoveId`（退货指向的原出/入库移动单），下游链 `destMoveIds`/`returnedMoveIds` 以**反向查询**表达（按 `originMoveId=?` / `originReturnedMoveId=?` 反查），不存 M2M 中间表、不做双向维护。理由：避免 M2M 中间表 + 删除时双向清理的复杂度；现网所有联动（采购入库→出库、调拨出→入、退货→原单）均为单上游。残留风险：多源合并移动单（理论多上游）单 uplink 只记主上游，多源场景出现时改 M2M/多 uplink 列（Follow-up）。
+
 ### 追溯链结构
 
 ```
