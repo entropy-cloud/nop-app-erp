@@ -70,6 +70,8 @@
 
 ## 退货单状态机
 
+> **实现偏离记录（plan 0456-1 Decision）**：本节原提的三轴含 `returnStatus`（初始/部分退货/全额退货）。实现期**不新增** `returnStatus` ORM 字段——其语义是**源入库行的累计退货进度**（派生视图），非退货单固有状态。复用现有 `docStatus`+`approveStatus` 两轴表达退货单生命周期（终态 = ACTIVE+APPROVED+`posted=true`），「部分/全额退货」以 `ReturnQtyValidator` 的聚合查询表达（Σ 已审核退货行 / 入库行量）。`ErpPurReturn`/`ErpPurReceiveLine` 均无 `returnStatus`/`returnedQuantity` 列。触发加冗余列的条件见 plan 0456-1 Deferred。
+
 ### 三轴状态分离
 
 采购退货单同样采用三轴状态分离：
