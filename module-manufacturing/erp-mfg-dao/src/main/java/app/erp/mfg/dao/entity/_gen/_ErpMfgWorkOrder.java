@@ -381,13 +381,13 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     private java.lang.Long _productId;
     
     /* 计划数量: PLANNED_QUANTITY */
-    private java.lang.String _plannedQuantity;
+    private java.math.BigDecimal _plannedQuantity;
     
     /* 完工数量: COMPLETED_QUANTITY */
-    private java.lang.String _completedQuantity;
+    private java.math.BigDecimal _completedQuantity;
     
     /* 报废数量: SCRAPPED_QUANTITY */
-    private java.lang.String _scrappedQuantity;
+    private java.math.BigDecimal _scrappedQuantity;
     
     /* 工单日期: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
@@ -408,22 +408,22 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     private java.lang.Long _currencyId;
     
     /* 材料成本: MATERIAL_COST */
-    private java.lang.String _materialCost;
+    private java.math.BigDecimal _materialCost;
     
     /* 人工成本: LABOR_COST */
-    private java.lang.String _laborCost;
+    private java.math.BigDecimal _laborCost;
     
     /* 制造费用: OVERHEAD_COST */
-    private java.lang.String _overheadCost;
+    private java.math.BigDecimal _overheadCost;
     
     /* 委外成本: SUBCONTRACT_COST */
-    private java.lang.String _subcontractCost;
+    private java.math.BigDecimal _subcontractCost;
     
     /* 总成本: TOTAL_COST */
-    private java.lang.String _totalCost;
+    private java.math.BigDecimal _totalCost;
     
     /* 单位成本: UNIT_COST */
-    private java.lang.String _unitCost;
+    private java.math.BigDecimal _unitCost;
     
     /* 单据状态: DOC_STATUS */
     private java.lang.Integer _docStatus;
@@ -782,9 +782,9 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_plannedQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_plannedQuantity));
                }
                setPlannedQuantity(typedValue);
@@ -792,9 +792,9 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_completedQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_completedQuantity));
                }
                setCompletedQuantity(typedValue);
@@ -802,9 +802,9 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_scrappedQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_scrappedQuantity));
                }
                setScrappedQuantity(typedValue);
@@ -872,9 +872,9 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_materialCost));
                }
                setMaterialCost(typedValue);
@@ -882,9 +882,9 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_laborCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_laborCost));
                }
                setLaborCost(typedValue);
@@ -892,9 +892,9 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_overheadCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_overheadCost));
                }
                setOverheadCost(typedValue);
@@ -902,9 +902,9 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_subcontractCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_subcontractCost));
                }
                setSubcontractCost(typedValue);
@@ -912,9 +912,9 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_totalCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_totalCost));
                }
                setTotalCost(typedValue);
@@ -922,9 +922,9 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_unitCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_unitCost));
                }
                setUnitCost(typedValue);
@@ -1172,21 +1172,21 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
         
             case PROP_ID_plannedQuantity:{
                onInitProp(propId);
-               this._plannedQuantity = (java.lang.String)value;
+               this._plannedQuantity = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_completedQuantity:{
                onInitProp(propId);
-               this._completedQuantity = (java.lang.String)value;
+               this._completedQuantity = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_scrappedQuantity:{
                onInitProp(propId);
-               this._scrappedQuantity = (java.lang.String)value;
+               this._scrappedQuantity = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1235,42 +1235,42 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
         
             case PROP_ID_materialCost:{
                onInitProp(propId);
-               this._materialCost = (java.lang.String)value;
+               this._materialCost = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_laborCost:{
                onInitProp(propId);
-               this._laborCost = (java.lang.String)value;
+               this._laborCost = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_overheadCost:{
                onInitProp(propId);
-               this._overheadCost = (java.lang.String)value;
+               this._overheadCost = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_subcontractCost:{
                onInitProp(propId);
-               this._subcontractCost = (java.lang.String)value;
+               this._subcontractCost = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_totalCost:{
                onInitProp(propId);
-               this._totalCost = (java.lang.String)value;
+               this._totalCost = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_unitCost:{
                onInitProp(propId);
-               this._unitCost = (java.lang.String)value;
+               this._unitCost = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1586,7 +1586,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 计划数量: PLANNED_QUANTITY
      */
-    public final java.lang.String getPlannedQuantity(){
+    public final java.math.BigDecimal getPlannedQuantity(){
          onPropGet(PROP_ID_plannedQuantity);
          return _plannedQuantity;
     }
@@ -1594,7 +1594,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 计划数量: PLANNED_QUANTITY
      */
-    public final void setPlannedQuantity(java.lang.String value){
+    public final void setPlannedQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_plannedQuantity,value)){
             this._plannedQuantity = value;
             internalClearRefs(PROP_ID_plannedQuantity);
@@ -1605,7 +1605,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 完工数量: COMPLETED_QUANTITY
      */
-    public final java.lang.String getCompletedQuantity(){
+    public final java.math.BigDecimal getCompletedQuantity(){
          onPropGet(PROP_ID_completedQuantity);
          return _completedQuantity;
     }
@@ -1613,7 +1613,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 完工数量: COMPLETED_QUANTITY
      */
-    public final void setCompletedQuantity(java.lang.String value){
+    public final void setCompletedQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_completedQuantity,value)){
             this._completedQuantity = value;
             internalClearRefs(PROP_ID_completedQuantity);
@@ -1624,7 +1624,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 报废数量: SCRAPPED_QUANTITY
      */
-    public final java.lang.String getScrappedQuantity(){
+    public final java.math.BigDecimal getScrappedQuantity(){
          onPropGet(PROP_ID_scrappedQuantity);
          return _scrappedQuantity;
     }
@@ -1632,7 +1632,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 报废数量: SCRAPPED_QUANTITY
      */
-    public final void setScrappedQuantity(java.lang.String value){
+    public final void setScrappedQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_scrappedQuantity,value)){
             this._scrappedQuantity = value;
             internalClearRefs(PROP_ID_scrappedQuantity);
@@ -1757,7 +1757,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 材料成本: MATERIAL_COST
      */
-    public final java.lang.String getMaterialCost(){
+    public final java.math.BigDecimal getMaterialCost(){
          onPropGet(PROP_ID_materialCost);
          return _materialCost;
     }
@@ -1765,7 +1765,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 材料成本: MATERIAL_COST
      */
-    public final void setMaterialCost(java.lang.String value){
+    public final void setMaterialCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_materialCost,value)){
             this._materialCost = value;
             internalClearRefs(PROP_ID_materialCost);
@@ -1776,7 +1776,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 人工成本: LABOR_COST
      */
-    public final java.lang.String getLaborCost(){
+    public final java.math.BigDecimal getLaborCost(){
          onPropGet(PROP_ID_laborCost);
          return _laborCost;
     }
@@ -1784,7 +1784,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 人工成本: LABOR_COST
      */
-    public final void setLaborCost(java.lang.String value){
+    public final void setLaborCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_laborCost,value)){
             this._laborCost = value;
             internalClearRefs(PROP_ID_laborCost);
@@ -1795,7 +1795,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 制造费用: OVERHEAD_COST
      */
-    public final java.lang.String getOverheadCost(){
+    public final java.math.BigDecimal getOverheadCost(){
          onPropGet(PROP_ID_overheadCost);
          return _overheadCost;
     }
@@ -1803,7 +1803,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 制造费用: OVERHEAD_COST
      */
-    public final void setOverheadCost(java.lang.String value){
+    public final void setOverheadCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_overheadCost,value)){
             this._overheadCost = value;
             internalClearRefs(PROP_ID_overheadCost);
@@ -1814,7 +1814,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 委外成本: SUBCONTRACT_COST
      */
-    public final java.lang.String getSubcontractCost(){
+    public final java.math.BigDecimal getSubcontractCost(){
          onPropGet(PROP_ID_subcontractCost);
          return _subcontractCost;
     }
@@ -1822,7 +1822,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 委外成本: SUBCONTRACT_COST
      */
-    public final void setSubcontractCost(java.lang.String value){
+    public final void setSubcontractCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_subcontractCost,value)){
             this._subcontractCost = value;
             internalClearRefs(PROP_ID_subcontractCost);
@@ -1833,7 +1833,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 总成本: TOTAL_COST
      */
-    public final java.lang.String getTotalCost(){
+    public final java.math.BigDecimal getTotalCost(){
          onPropGet(PROP_ID_totalCost);
          return _totalCost;
     }
@@ -1841,7 +1841,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 总成本: TOTAL_COST
      */
-    public final void setTotalCost(java.lang.String value){
+    public final void setTotalCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_totalCost,value)){
             this._totalCost = value;
             internalClearRefs(PROP_ID_totalCost);
@@ -1852,7 +1852,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 单位成本: UNIT_COST
      */
-    public final java.lang.String getUnitCost(){
+    public final java.math.BigDecimal getUnitCost(){
          onPropGet(PROP_ID_unitCost);
          return _unitCost;
     }
@@ -1860,7 +1860,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 单位成本: UNIT_COST
      */
-    public final void setUnitCost(java.lang.String value){
+    public final void setUnitCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_unitCost,value)){
             this._unitCost = value;
             internalClearRefs(PROP_ID_unitCost);

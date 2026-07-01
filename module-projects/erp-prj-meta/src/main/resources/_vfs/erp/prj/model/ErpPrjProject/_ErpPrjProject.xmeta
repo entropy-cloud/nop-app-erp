@@ -61,15 +61,15 @@
         </prop>
         <prop name="committedCost" displayName="已承诺成本" propId="11" i18n-en:displayName="Committed Cost" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="actualCost" displayName="实际成本" propId="12" i18n-en:displayName="Actual Cost" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="billedAmount" displayName="已开票金额" propId="13" i18n-en:displayName="Billed Amount" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="status" displayName="状态" propId="14" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">

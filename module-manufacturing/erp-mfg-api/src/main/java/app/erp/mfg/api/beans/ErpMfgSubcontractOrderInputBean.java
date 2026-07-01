@@ -167,44 +167,44 @@
         }
 
 
-        private String _exchangeRate;
+        private java.math.BigDecimal _exchangeRate;
 
     
         @PropMeta(propId=12)
     
-        public String getExchangeRate(){
+        public java.math.BigDecimal getExchangeRate(){
             return _exchangeRate;
         }
 
-        public void setExchangeRate(String value){
+        public void setExchangeRate(java.math.BigDecimal value){
             this._exchangeRate = value;
         }
 
 
-        private String _processingFee;
+        private java.math.BigDecimal _processingFee;
 
     
         @PropMeta(propId=13)
     
-        public String getProcessingFee(){
+        public java.math.BigDecimal getProcessingFee(){
             return _processingFee;
         }
 
-        public void setProcessingFee(String value){
+        public void setProcessingFee(java.math.BigDecimal value){
             this._processingFee = value;
         }
 
 
-        private String _totalAmount;
+        private java.math.BigDecimal _totalAmount;
 
     
         @PropMeta(propId=14)
     
-        public String getTotalAmount(){
+        public java.math.BigDecimal getTotalAmount(){
             return _totalAmount;
         }
 
-        public void setTotalAmount(String value){
+        public void setTotalAmount(java.math.BigDecimal value){
             this._totalAmount = value;
         }
 

@@ -111,30 +111,30 @@
         }
 
 
-        private String _lotSizeFrom;
+        private java.math.BigDecimal _lotSizeFrom;
 
     
         @PropMeta(propId=8)
     
-        public String getLotSizeFrom(){
+        public java.math.BigDecimal getLotSizeFrom(){
             return _lotSizeFrom;
         }
 
-        public void setLotSizeFrom(String value){
+        public void setLotSizeFrom(java.math.BigDecimal value){
             this._lotSizeFrom = value;
         }
 
 
-        private String _lotSizeTo;
+        private java.math.BigDecimal _lotSizeTo;
 
     
         @PropMeta(propId=9)
     
-        public String getLotSizeTo(){
+        public java.math.BigDecimal getLotSizeTo(){
             return _lotSizeTo;
         }
 
-        public void setLotSizeTo(String value){
+        public void setLotSizeTo(java.math.BigDecimal value){
             this._lotSizeTo = value;
         }
 

@@ -41,27 +41,27 @@
         </prop>
         <prop name="materialCost" displayName="材料成本" propId="6" i18n-en:displayName="Material Cost" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="laborCost" displayName="人工成本" propId="7" i18n-en:displayName="Labor Cost" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="overheadCost" displayName="制造费用" propId="8" i18n-en:displayName="Overhead Cost" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="subcontractCost" displayName="委外成本" propId="9" i18n-en:displayName="Subcontract Cost"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="totalCost" displayName="总成本" propId="10" i18n-en:displayName="Total Cost" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="unitCost" displayName="单位标准成本" propId="11" i18n-en:displayName="Unit Cost" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="unitPrice" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="unitPrice" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="currencyId" displayName="币种" propId="12" i18n-en:displayName="Currency" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="currency">

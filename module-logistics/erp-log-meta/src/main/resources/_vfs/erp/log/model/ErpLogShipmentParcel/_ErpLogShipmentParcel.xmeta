@@ -57,7 +57,7 @@
         </prop>
         <prop name="declaredValue" displayName="申报价值" propId="10" i18n-en:displayName="Declared Value" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="isActive" displayName="是否有效" propId="11" i18n-en:displayName="Active" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="1">

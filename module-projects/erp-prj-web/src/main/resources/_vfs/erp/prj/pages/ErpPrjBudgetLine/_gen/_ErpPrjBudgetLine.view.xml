@@ -37,13 +37,13 @@
                 <col id="taskId" ui:number="true" sortable="true"/>
 
                 <!--预算金额-->
-                <col id="plannedAmount" mandatory="true" sortable="true"/>
+                <col id="plannedAmount" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--已承诺金额-->
-                <col id="committedAmount" sortable="true"/>
+                <col id="committedAmount" ui:number="true" sortable="true"/>
 
                 <!--实际金额-->
-                <col id="actualAmount" sortable="true"/>
+                <col id="actualAmount" ui:number="true" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

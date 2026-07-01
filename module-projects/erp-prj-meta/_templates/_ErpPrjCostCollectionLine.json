@@ -7,7 +7,7 @@
   "sourceBillCode": "",
   "subjectId": 0,
   "taskId": 0,
-  "amount": "",
+  "amount": 0.0,
   "remark": "",
   "delVersion": 0,
   "version": 0,

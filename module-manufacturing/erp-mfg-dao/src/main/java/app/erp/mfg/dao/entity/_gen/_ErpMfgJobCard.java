@@ -191,13 +191,13 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
     private java.lang.Integer _lineNo;
     
     /* 计划数量: PLANNED_QUANTITY */
-    private java.lang.String _plannedQuantity;
+    private java.math.BigDecimal _plannedQuantity;
     
     /* 完工数量: COMPLETED_QUANTITY */
-    private java.lang.String _completedQuantity;
+    private java.math.BigDecimal _completedQuantity;
     
     /* 报废数量: SCRAPPED_QUANTITY */
-    private java.lang.String _scrappedQuantity;
+    private java.math.BigDecimal _scrappedQuantity;
     
     /* 状态: STATUS */
     private java.lang.Integer _status;
@@ -418,9 +418,9 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
             }
         
             case PROP_ID_plannedQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_plannedQuantity));
                }
                setPlannedQuantity(typedValue);
@@ -428,9 +428,9 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
             }
         
             case PROP_ID_completedQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_completedQuantity));
                }
                setCompletedQuantity(typedValue);
@@ -438,9 +438,9 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
             }
         
             case PROP_ID_scrappedQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_scrappedQuantity));
                }
                setScrappedQuantity(typedValue);
@@ -606,21 +606,21 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
         
             case PROP_ID_plannedQuantity:{
                onInitProp(propId);
-               this._plannedQuantity = (java.lang.String)value;
+               this._plannedQuantity = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_completedQuantity:{
                onInitProp(propId);
-               this._completedQuantity = (java.lang.String)value;
+               this._completedQuantity = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_scrappedQuantity:{
                onInitProp(propId);
-               this._scrappedQuantity = (java.lang.String)value;
+               this._scrappedQuantity = (java.math.BigDecimal)value;
                
                break;
             }
@@ -794,7 +794,7 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
     /**
      * 计划数量: PLANNED_QUANTITY
      */
-    public final java.lang.String getPlannedQuantity(){
+    public final java.math.BigDecimal getPlannedQuantity(){
          onPropGet(PROP_ID_plannedQuantity);
          return _plannedQuantity;
     }
@@ -802,7 +802,7 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
     /**
      * 计划数量: PLANNED_QUANTITY
      */
-    public final void setPlannedQuantity(java.lang.String value){
+    public final void setPlannedQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_plannedQuantity,value)){
             this._plannedQuantity = value;
             internalClearRefs(PROP_ID_plannedQuantity);
@@ -813,7 +813,7 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
     /**
      * 完工数量: COMPLETED_QUANTITY
      */
-    public final java.lang.String getCompletedQuantity(){
+    public final java.math.BigDecimal getCompletedQuantity(){
          onPropGet(PROP_ID_completedQuantity);
          return _completedQuantity;
     }
@@ -821,7 +821,7 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
     /**
      * 完工数量: COMPLETED_QUANTITY
      */
-    public final void setCompletedQuantity(java.lang.String value){
+    public final void setCompletedQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_completedQuantity,value)){
             this._completedQuantity = value;
             internalClearRefs(PROP_ID_completedQuantity);
@@ -832,7 +832,7 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
     /**
      * 报废数量: SCRAPPED_QUANTITY
      */
-    public final java.lang.String getScrappedQuantity(){
+    public final java.math.BigDecimal getScrappedQuantity(){
          onPropGet(PROP_ID_scrappedQuantity);
          return _scrappedQuantity;
     }
@@ -840,7 +840,7 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
     /**
      * 报废数量: SCRAPPED_QUANTITY
      */
-    public final void setScrappedQuantity(java.lang.String value){
+    public final void setScrappedQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_scrappedQuantity,value)){
             this._scrappedQuantity = value;
             internalClearRefs(PROP_ID_scrappedQuantity);

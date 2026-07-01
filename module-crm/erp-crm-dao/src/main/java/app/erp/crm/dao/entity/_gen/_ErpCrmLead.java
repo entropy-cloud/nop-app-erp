@@ -392,16 +392,16 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     private java.lang.Long _stageId;
     
     /* 预期收入: EXPECTED_REVENUE */
-    private java.lang.String _expectedRevenue;
+    private java.math.BigDecimal _expectedRevenue;
     
     /* 乐观预期: BEST_CASE_AMOUNT */
-    private java.lang.String _bestCaseAmount;
+    private java.math.BigDecimal _bestCaseAmount;
     
     /* 悲观预期: WORST_CASE_AMOUNT */
-    private java.lang.String _worstCaseAmount;
+    private java.math.BigDecimal _worstCaseAmount;
     
     /* 周期性收入: RECURRING_REVENUE */
-    private java.lang.String _recurringRevenue;
+    private java.math.BigDecimal _recurringRevenue;
     
     /* 周期性计划: RECURRING_PLAN */
     private java.lang.String _recurringPlan;
@@ -815,9 +815,9 @@ public class _ErpCrmLead extends DynamicOrmEntity{
             }
         
             case PROP_ID_expectedRevenue:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_expectedRevenue));
                }
                setExpectedRevenue(typedValue);
@@ -825,9 +825,9 @@ public class _ErpCrmLead extends DynamicOrmEntity{
             }
         
             case PROP_ID_bestCaseAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_bestCaseAmount));
                }
                setBestCaseAmount(typedValue);
@@ -835,9 +835,9 @@ public class _ErpCrmLead extends DynamicOrmEntity{
             }
         
             case PROP_ID_worstCaseAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_worstCaseAmount));
                }
                setWorstCaseAmount(typedValue);
@@ -845,9 +845,9 @@ public class _ErpCrmLead extends DynamicOrmEntity{
             }
         
             case PROP_ID_recurringRevenue:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_recurringRevenue));
                }
                setRecurringRevenue(typedValue);
@@ -1183,28 +1183,28 @@ public class _ErpCrmLead extends DynamicOrmEntity{
         
             case PROP_ID_expectedRevenue:{
                onInitProp(propId);
-               this._expectedRevenue = (java.lang.String)value;
+               this._expectedRevenue = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_bestCaseAmount:{
                onInitProp(propId);
-               this._bestCaseAmount = (java.lang.String)value;
+               this._bestCaseAmount = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_worstCaseAmount:{
                onInitProp(propId);
-               this._worstCaseAmount = (java.lang.String)value;
+               this._worstCaseAmount = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_recurringRevenue:{
                onInitProp(propId);
-               this._recurringRevenue = (java.lang.String)value;
+               this._recurringRevenue = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1638,7 +1638,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 预期收入: EXPECTED_REVENUE
      */
-    public final java.lang.String getExpectedRevenue(){
+    public final java.math.BigDecimal getExpectedRevenue(){
          onPropGet(PROP_ID_expectedRevenue);
          return _expectedRevenue;
     }
@@ -1646,7 +1646,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 预期收入: EXPECTED_REVENUE
      */
-    public final void setExpectedRevenue(java.lang.String value){
+    public final void setExpectedRevenue(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_expectedRevenue,value)){
             this._expectedRevenue = value;
             internalClearRefs(PROP_ID_expectedRevenue);
@@ -1657,7 +1657,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 乐观预期: BEST_CASE_AMOUNT
      */
-    public final java.lang.String getBestCaseAmount(){
+    public final java.math.BigDecimal getBestCaseAmount(){
          onPropGet(PROP_ID_bestCaseAmount);
          return _bestCaseAmount;
     }
@@ -1665,7 +1665,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 乐观预期: BEST_CASE_AMOUNT
      */
-    public final void setBestCaseAmount(java.lang.String value){
+    public final void setBestCaseAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_bestCaseAmount,value)){
             this._bestCaseAmount = value;
             internalClearRefs(PROP_ID_bestCaseAmount);
@@ -1676,7 +1676,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 悲观预期: WORST_CASE_AMOUNT
      */
-    public final java.lang.String getWorstCaseAmount(){
+    public final java.math.BigDecimal getWorstCaseAmount(){
          onPropGet(PROP_ID_worstCaseAmount);
          return _worstCaseAmount;
     }
@@ -1684,7 +1684,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 悲观预期: WORST_CASE_AMOUNT
      */
-    public final void setWorstCaseAmount(java.lang.String value){
+    public final void setWorstCaseAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_worstCaseAmount,value)){
             this._worstCaseAmount = value;
             internalClearRefs(PROP_ID_worstCaseAmount);
@@ -1695,7 +1695,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 周期性收入: RECURRING_REVENUE
      */
-    public final java.lang.String getRecurringRevenue(){
+    public final java.math.BigDecimal getRecurringRevenue(){
          onPropGet(PROP_ID_recurringRevenue);
          return _recurringRevenue;
     }
@@ -1703,7 +1703,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 周期性收入: RECURRING_REVENUE
      */
-    public final void setRecurringRevenue(java.lang.String value){
+    public final void setRecurringRevenue(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_recurringRevenue,value)){
             this._recurringRevenue = value;
             internalClearRefs(PROP_ID_recurringRevenue);

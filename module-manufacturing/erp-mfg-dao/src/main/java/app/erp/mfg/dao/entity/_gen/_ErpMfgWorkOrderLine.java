@@ -209,13 +209,13 @@ public class _ErpMfgWorkOrderLine extends DynamicOrmEntity{
     private java.lang.Long _uoMId;
     
     /* 计划数量: PLANNED_QUANTITY */
-    private java.lang.String _plannedQuantity;
+    private java.math.BigDecimal _plannedQuantity;
     
     /* 实际数量(完工/领用): ACTUAL_QUANTITY */
-    private java.lang.String _actualQuantity;
+    private java.math.BigDecimal _actualQuantity;
     
     /* 报废数量: SCRAPPED_QUANTITY */
-    private java.lang.String _scrappedQuantity;
+    private java.math.BigDecimal _scrappedQuantity;
     
     /* 领料仓库(投入用): SOURCE_WAREHOUSE_ID */
     private java.lang.Long _sourceWarehouseId;
@@ -457,9 +457,9 @@ public class _ErpMfgWorkOrderLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_plannedQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_plannedQuantity));
                }
                setPlannedQuantity(typedValue);
@@ -467,9 +467,9 @@ public class _ErpMfgWorkOrderLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_actualQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_actualQuantity));
                }
                setActualQuantity(typedValue);
@@ -477,9 +477,9 @@ public class _ErpMfgWorkOrderLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_scrappedQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_scrappedQuantity));
                }
                setScrappedQuantity(typedValue);
@@ -636,21 +636,21 @@ public class _ErpMfgWorkOrderLine extends DynamicOrmEntity{
         
             case PROP_ID_plannedQuantity:{
                onInitProp(propId);
-               this._plannedQuantity = (java.lang.String)value;
+               this._plannedQuantity = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_actualQuantity:{
                onInitProp(propId);
-               this._actualQuantity = (java.lang.String)value;
+               this._actualQuantity = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_scrappedQuantity:{
                onInitProp(propId);
-               this._scrappedQuantity = (java.lang.String)value;
+               this._scrappedQuantity = (java.math.BigDecimal)value;
                
                break;
             }
@@ -860,7 +860,7 @@ public class _ErpMfgWorkOrderLine extends DynamicOrmEntity{
     /**
      * 计划数量: PLANNED_QUANTITY
      */
-    public final java.lang.String getPlannedQuantity(){
+    public final java.math.BigDecimal getPlannedQuantity(){
          onPropGet(PROP_ID_plannedQuantity);
          return _plannedQuantity;
     }
@@ -868,7 +868,7 @@ public class _ErpMfgWorkOrderLine extends DynamicOrmEntity{
     /**
      * 计划数量: PLANNED_QUANTITY
      */
-    public final void setPlannedQuantity(java.lang.String value){
+    public final void setPlannedQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_plannedQuantity,value)){
             this._plannedQuantity = value;
             internalClearRefs(PROP_ID_plannedQuantity);
@@ -879,7 +879,7 @@ public class _ErpMfgWorkOrderLine extends DynamicOrmEntity{
     /**
      * 实际数量(完工/领用): ACTUAL_QUANTITY
      */
-    public final java.lang.String getActualQuantity(){
+    public final java.math.BigDecimal getActualQuantity(){
          onPropGet(PROP_ID_actualQuantity);
          return _actualQuantity;
     }
@@ -887,7 +887,7 @@ public class _ErpMfgWorkOrderLine extends DynamicOrmEntity{
     /**
      * 实际数量(完工/领用): ACTUAL_QUANTITY
      */
-    public final void setActualQuantity(java.lang.String value){
+    public final void setActualQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_actualQuantity,value)){
             this._actualQuantity = value;
             internalClearRefs(PROP_ID_actualQuantity);
@@ -898,7 +898,7 @@ public class _ErpMfgWorkOrderLine extends DynamicOrmEntity{
     /**
      * 报废数量: SCRAPPED_QUANTITY
      */
-    public final java.lang.String getScrappedQuantity(){
+    public final java.math.BigDecimal getScrappedQuantity(){
          onPropGet(PROP_ID_scrappedQuantity);
          return _scrappedQuantity;
     }
@@ -906,7 +906,7 @@ public class _ErpMfgWorkOrderLine extends DynamicOrmEntity{
     /**
      * 报废数量: SCRAPPED_QUANTITY
      */
-    public final void setScrappedQuantity(java.lang.String value){
+    public final void setScrappedQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_scrappedQuantity,value)){
             this._scrappedQuantity = value;
             internalClearRefs(PROP_ID_scrappedQuantity);

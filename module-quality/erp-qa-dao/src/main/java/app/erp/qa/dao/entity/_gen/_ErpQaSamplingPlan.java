@@ -168,13 +168,13 @@ public class _ErpQaSamplingPlan extends DynamicOrmEntity{
     private java.lang.String _aqlLevel;
     
     /* 批量下限: LOT_SIZE_FROM */
-    private java.lang.String _lotSizeFrom;
+    private java.math.BigDecimal _lotSizeFrom;
     
     /* 批量上限: LOT_SIZE_TO */
-    private java.lang.String _lotSizeTo;
+    private java.math.BigDecimal _lotSizeTo;
     
     /* 样本量: SAMPLE_SIZE */
-    private java.lang.String _sampleSize;
+    private java.math.BigDecimal _sampleSize;
     
     /* 合格判定数(Ac): ACCEPT_NUMBER */
     private java.lang.Integer _acceptNumber;
@@ -383,9 +383,9 @@ public class _ErpQaSamplingPlan extends DynamicOrmEntity{
             }
         
             case PROP_ID_lotSizeFrom:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_lotSizeFrom));
                }
                setLotSizeFrom(typedValue);
@@ -393,9 +393,9 @@ public class _ErpQaSamplingPlan extends DynamicOrmEntity{
             }
         
             case PROP_ID_lotSizeTo:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_lotSizeTo));
                }
                setLotSizeTo(typedValue);
@@ -403,9 +403,9 @@ public class _ErpQaSamplingPlan extends DynamicOrmEntity{
             }
         
             case PROP_ID_sampleSize:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_sampleSize));
                }
                setSampleSize(typedValue);
@@ -551,21 +551,21 @@ public class _ErpQaSamplingPlan extends DynamicOrmEntity{
         
             case PROP_ID_lotSizeFrom:{
                onInitProp(propId);
-               this._lotSizeFrom = (java.lang.String)value;
+               this._lotSizeFrom = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_lotSizeTo:{
                onInitProp(propId);
-               this._lotSizeTo = (java.lang.String)value;
+               this._lotSizeTo = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_sampleSize:{
                onInitProp(propId);
-               this._sampleSize = (java.lang.String)value;
+               this._sampleSize = (java.math.BigDecimal)value;
                
                break;
             }
@@ -725,7 +725,7 @@ public class _ErpQaSamplingPlan extends DynamicOrmEntity{
     /**
      * 批量下限: LOT_SIZE_FROM
      */
-    public final java.lang.String getLotSizeFrom(){
+    public final java.math.BigDecimal getLotSizeFrom(){
          onPropGet(PROP_ID_lotSizeFrom);
          return _lotSizeFrom;
     }
@@ -733,7 +733,7 @@ public class _ErpQaSamplingPlan extends DynamicOrmEntity{
     /**
      * 批量下限: LOT_SIZE_FROM
      */
-    public final void setLotSizeFrom(java.lang.String value){
+    public final void setLotSizeFrom(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_lotSizeFrom,value)){
             this._lotSizeFrom = value;
             internalClearRefs(PROP_ID_lotSizeFrom);
@@ -744,7 +744,7 @@ public class _ErpQaSamplingPlan extends DynamicOrmEntity{
     /**
      * 批量上限: LOT_SIZE_TO
      */
-    public final java.lang.String getLotSizeTo(){
+    public final java.math.BigDecimal getLotSizeTo(){
          onPropGet(PROP_ID_lotSizeTo);
          return _lotSizeTo;
     }
@@ -752,7 +752,7 @@ public class _ErpQaSamplingPlan extends DynamicOrmEntity{
     /**
      * 批量上限: LOT_SIZE_TO
      */
-    public final void setLotSizeTo(java.lang.String value){
+    public final void setLotSizeTo(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_lotSizeTo,value)){
             this._lotSizeTo = value;
             internalClearRefs(PROP_ID_lotSizeTo);
@@ -763,7 +763,7 @@ public class _ErpQaSamplingPlan extends DynamicOrmEntity{
     /**
      * 样本量: SAMPLE_SIZE
      */
-    public final java.lang.String getSampleSize(){
+    public final java.math.BigDecimal getSampleSize(){
          onPropGet(PROP_ID_sampleSize);
          return _sampleSize;
     }
@@ -771,7 +771,7 @@ public class _ErpQaSamplingPlan extends DynamicOrmEntity{
     /**
      * 样本量: SAMPLE_SIZE
      */
-    public final void setSampleSize(java.lang.String value){
+    public final void setSampleSize(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_sampleSize,value)){
             this._sampleSize = value;
             internalClearRefs(PROP_ID_sampleSize);

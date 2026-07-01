@@ -58,10 +58,10 @@
                 <col id="inspectionDate" mandatory="true" sortable="true"/>
 
                 <!--批量-->
-                <col id="lotQuantity" sortable="true"/>
+                <col id="lotQuantity" ui:number="true" sortable="true"/>
 
                 <!--抽样数量-->
-                <col id="sampleQuantity" sortable="true"/>
+                <col id="sampleQuantity" ui:number="true" sortable="true"/>
 
                 <!--检验员(职员)-->
                 <col id="inspectorId" ui:number="true" sortable="true"/>

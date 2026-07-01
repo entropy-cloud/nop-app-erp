@@ -300,13 +300,13 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     private java.lang.Long _currencyId;
     
     /* 汇率: EXCHANGE_RATE */
-    private java.lang.String _exchangeRate;
+    private java.math.BigDecimal _exchangeRate;
     
     /* 加工费: PROCESSING_FEE */
-    private java.lang.String _processingFee;
+    private java.math.BigDecimal _processingFee;
     
     /* 合计金额: TOTAL_AMOUNT */
-    private java.lang.String _totalAmount;
+    private java.math.BigDecimal _totalAmount;
     
     /* 单据状态: DOC_STATUS */
     private java.lang.Integer _docStatus;
@@ -636,9 +636,9 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_exchangeRate:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_exchangeRate));
                }
                setExchangeRate(typedValue);
@@ -646,9 +646,9 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_processingFee:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_processingFee));
                }
                setProcessingFee(typedValue);
@@ -656,9 +656,9 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_totalAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_totalAmount));
                }
                setTotalAmount(typedValue);
@@ -903,21 +903,21 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
         
             case PROP_ID_exchangeRate:{
                onInitProp(propId);
-               this._exchangeRate = (java.lang.String)value;
+               this._exchangeRate = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_processingFee:{
                onInitProp(propId);
-               this._processingFee = (java.lang.String)value;
+               this._processingFee = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_totalAmount:{
                onInitProp(propId);
-               this._totalAmount = (java.lang.String)value;
+               this._totalAmount = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1245,7 +1245,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 汇率: EXCHANGE_RATE
      */
-    public final java.lang.String getExchangeRate(){
+    public final java.math.BigDecimal getExchangeRate(){
          onPropGet(PROP_ID_exchangeRate);
          return _exchangeRate;
     }
@@ -1253,7 +1253,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 汇率: EXCHANGE_RATE
      */
-    public final void setExchangeRate(java.lang.String value){
+    public final void setExchangeRate(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_exchangeRate,value)){
             this._exchangeRate = value;
             internalClearRefs(PROP_ID_exchangeRate);
@@ -1264,7 +1264,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 加工费: PROCESSING_FEE
      */
-    public final java.lang.String getProcessingFee(){
+    public final java.math.BigDecimal getProcessingFee(){
          onPropGet(PROP_ID_processingFee);
          return _processingFee;
     }
@@ -1272,7 +1272,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 加工费: PROCESSING_FEE
      */
-    public final void setProcessingFee(java.lang.String value){
+    public final void setProcessingFee(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_processingFee,value)){
             this._processingFee = value;
             internalClearRefs(PROP_ID_processingFee);
@@ -1283,7 +1283,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 合计金额: TOTAL_AMOUNT
      */
-    public final java.lang.String getTotalAmount(){
+    public final java.math.BigDecimal getTotalAmount(){
          onPropGet(PROP_ID_totalAmount);
          return _totalAmount;
     }
@@ -1291,7 +1291,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 合计金额: TOTAL_AMOUNT
      */
-    public final void setTotalAmount(java.lang.String value){
+    public final void setTotalAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_totalAmount,value)){
             this._totalAmount = value;
             internalClearRefs(PROP_ID_totalAmount);

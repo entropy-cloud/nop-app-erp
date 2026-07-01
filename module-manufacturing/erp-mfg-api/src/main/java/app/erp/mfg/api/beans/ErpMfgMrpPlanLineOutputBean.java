@@ -109,72 +109,72 @@
         }
 
 
-        private String _grossRequirement;
+        private java.math.BigDecimal _grossRequirement;
 
     
         @PropMeta(propId=7)
     
-        public String getGrossRequirement(){
+        public java.math.BigDecimal getGrossRequirement(){
             return _grossRequirement;
         }
 
-        public void setGrossRequirement(String value){
+        public void setGrossRequirement(java.math.BigDecimal value){
             this._grossRequirement = value;
         }
 
 
-        private String _scheduledReceipt;
+        private java.math.BigDecimal _scheduledReceipt;
 
     
         @PropMeta(propId=8)
     
-        public String getScheduledReceipt(){
+        public java.math.BigDecimal getScheduledReceipt(){
             return _scheduledReceipt;
         }
 
-        public void setScheduledReceipt(String value){
+        public void setScheduledReceipt(java.math.BigDecimal value){
             this._scheduledReceipt = value;
         }
 
 
-        private String _onHand;
+        private java.math.BigDecimal _onHand;
 
     
         @PropMeta(propId=9)
     
-        public String getOnHand(){
+        public java.math.BigDecimal getOnHand(){
             return _onHand;
         }
 
-        public void setOnHand(String value){
+        public void setOnHand(java.math.BigDecimal value){
             this._onHand = value;
         }
 
 
-        private String _netRequirement;
+        private java.math.BigDecimal _netRequirement;
 
     
         @PropMeta(propId=10)
     
-        public String getNetRequirement(){
+        public java.math.BigDecimal getNetRequirement(){
             return _netRequirement;
         }
 
-        public void setNetRequirement(String value){
+        public void setNetRequirement(java.math.BigDecimal value){
             this._netRequirement = value;
         }
 
 
-        private String _plannedQuantity;
+        private java.math.BigDecimal _plannedQuantity;
 
     
         @PropMeta(propId=11)
     
-        public String getPlannedQuantity(){
+        public java.math.BigDecimal getPlannedQuantity(){
             return _plannedQuantity;
         }
 
-        public void setPlannedQuantity(String value){
+        public void setPlannedQuantity(java.math.BigDecimal value){
             this._plannedQuantity = value;
         }
 

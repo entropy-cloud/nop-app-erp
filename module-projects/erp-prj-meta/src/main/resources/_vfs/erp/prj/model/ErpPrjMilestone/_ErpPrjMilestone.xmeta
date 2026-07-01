@@ -45,7 +45,7 @@
         </prop>
         <prop name="billingAmount" displayName="应结算金额" propId="7" i18n-en:displayName="Billing Amount" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="isBillingTrigger" displayName="是否触发开票节点" propId="8" i18n-en:displayName="Is Billing Trigger"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="false">

@@ -193,7 +193,7 @@ public class _ErpLogShipmentParcel extends DynamicOrmEntity{
     private java.lang.String _height;
     
     /* 申报价值: DECLARED_VALUE */
-    private java.lang.String _declaredValue;
+    private java.math.BigDecimal _declaredValue;
     
     /* 是否有效: IS_ACTIVE */
     private java.lang.Integer _isActive;
@@ -449,9 +449,9 @@ public class _ErpLogShipmentParcel extends DynamicOrmEntity{
             }
         
             case PROP_ID_declaredValue:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_declaredValue));
                }
                setDeclaredValue(typedValue);
@@ -612,7 +612,7 @@ public class _ErpLogShipmentParcel extends DynamicOrmEntity{
         
             case PROP_ID_declaredValue:{
                onInitProp(propId);
-               this._declaredValue = (java.lang.String)value;
+               this._declaredValue = (java.math.BigDecimal)value;
                
                break;
             }
@@ -853,7 +853,7 @@ public class _ErpLogShipmentParcel extends DynamicOrmEntity{
     /**
      * 申报价值: DECLARED_VALUE
      */
-    public final java.lang.String getDeclaredValue(){
+    public final java.math.BigDecimal getDeclaredValue(){
          onPropGet(PROP_ID_declaredValue);
          return _declaredValue;
     }
@@ -861,7 +861,7 @@ public class _ErpLogShipmentParcel extends DynamicOrmEntity{
     /**
      * 申报价值: DECLARED_VALUE
      */
-    public final void setDeclaredValue(java.lang.String value){
+    public final void setDeclaredValue(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_declaredValue,value)){
             this._declaredValue = value;
             internalClearRefs(PROP_ID_declaredValue);

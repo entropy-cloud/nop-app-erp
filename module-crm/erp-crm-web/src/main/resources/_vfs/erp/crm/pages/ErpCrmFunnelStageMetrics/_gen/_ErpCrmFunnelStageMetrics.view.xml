@@ -58,7 +58,7 @@
                 <col id="lostCount" ui:number="true" sortable="true"/>
 
                 <!--本阶段丢失金额-->
-                <col id="lostAmount" sortable="true"/>
+                <col id="lostAmount" ui:number="true" sortable="true"/>
 
                 <!--TOP丢失原因(JSON)-->
                 <col id="lostReasonTop" sortable="true"/>

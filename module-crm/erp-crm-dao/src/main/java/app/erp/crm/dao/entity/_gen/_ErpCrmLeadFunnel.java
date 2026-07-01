@@ -267,16 +267,16 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     private java.lang.Integer _totalLost;
     
     /* 赢单总收入: TOTAL_REVENUE */
-    private java.lang.String _totalRevenue;
+    private java.math.BigDecimal _totalRevenue;
     
     /* 丢失金额合计: LOST_REVENUE */
-    private java.lang.String _lostRevenue;
+    private java.math.BigDecimal _lostRevenue;
     
     /* 加权收入合计: WEIGHTED_REVENUE */
-    private java.lang.String _weightedRevenue;
+    private java.math.BigDecimal _weightedRevenue;
     
     /* 平均赢单金额: AVG_DEAL_SIZE */
-    private java.lang.String _avgDealSize;
+    private java.math.BigDecimal _avgDealSize;
     
     /* 平均销售周期天数: AVG_SALES_CYCLE_DAYS */
     private java.lang.Double _avgSalesCycleDays;
@@ -592,9 +592,9 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
             }
         
             case PROP_ID_totalRevenue:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_totalRevenue));
                }
                setTotalRevenue(typedValue);
@@ -602,9 +602,9 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
             }
         
             case PROP_ID_lostRevenue:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_lostRevenue));
                }
                setLostRevenue(typedValue);
@@ -612,9 +612,9 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
             }
         
             case PROP_ID_weightedRevenue:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_weightedRevenue));
                }
                setWeightedRevenue(typedValue);
@@ -622,9 +622,9 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
             }
         
             case PROP_ID_avgDealSize:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_avgDealSize));
                }
                setAvgDealSize(typedValue);
@@ -826,28 +826,28 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
         
             case PROP_ID_totalRevenue:{
                onInitProp(propId);
-               this._totalRevenue = (java.lang.String)value;
+               this._totalRevenue = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_lostRevenue:{
                onInitProp(propId);
-               this._lostRevenue = (java.lang.String)value;
+               this._lostRevenue = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_weightedRevenue:{
                onInitProp(propId);
-               this._weightedRevenue = (java.lang.String)value;
+               this._weightedRevenue = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_avgDealSize:{
                onInitProp(propId);
-               this._avgDealSize = (java.lang.String)value;
+               this._avgDealSize = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1159,7 +1159,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     /**
      * 赢单总收入: TOTAL_REVENUE
      */
-    public final java.lang.String getTotalRevenue(){
+    public final java.math.BigDecimal getTotalRevenue(){
          onPropGet(PROP_ID_totalRevenue);
          return _totalRevenue;
     }
@@ -1167,7 +1167,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     /**
      * 赢单总收入: TOTAL_REVENUE
      */
-    public final void setTotalRevenue(java.lang.String value){
+    public final void setTotalRevenue(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_totalRevenue,value)){
             this._totalRevenue = value;
             internalClearRefs(PROP_ID_totalRevenue);
@@ -1178,7 +1178,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     /**
      * 丢失金额合计: LOST_REVENUE
      */
-    public final java.lang.String getLostRevenue(){
+    public final java.math.BigDecimal getLostRevenue(){
          onPropGet(PROP_ID_lostRevenue);
          return _lostRevenue;
     }
@@ -1186,7 +1186,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     /**
      * 丢失金额合计: LOST_REVENUE
      */
-    public final void setLostRevenue(java.lang.String value){
+    public final void setLostRevenue(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_lostRevenue,value)){
             this._lostRevenue = value;
             internalClearRefs(PROP_ID_lostRevenue);
@@ -1197,7 +1197,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     /**
      * 加权收入合计: WEIGHTED_REVENUE
      */
-    public final java.lang.String getWeightedRevenue(){
+    public final java.math.BigDecimal getWeightedRevenue(){
          onPropGet(PROP_ID_weightedRevenue);
          return _weightedRevenue;
     }
@@ -1205,7 +1205,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     /**
      * 加权收入合计: WEIGHTED_REVENUE
      */
-    public final void setWeightedRevenue(java.lang.String value){
+    public final void setWeightedRevenue(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_weightedRevenue,value)){
             this._weightedRevenue = value;
             internalClearRefs(PROP_ID_weightedRevenue);
@@ -1216,7 +1216,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     /**
      * 平均赢单金额: AVG_DEAL_SIZE
      */
-    public final java.lang.String getAvgDealSize(){
+    public final java.math.BigDecimal getAvgDealSize(){
          onPropGet(PROP_ID_avgDealSize);
          return _avgDealSize;
     }
@@ -1224,7 +1224,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     /**
      * 平均赢单金额: AVG_DEAL_SIZE
      */
-    public final void setAvgDealSize(java.lang.String value){
+    public final void setAvgDealSize(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_avgDealSize,value)){
             this._avgDealSize = value;
             internalClearRefs(PROP_ID_avgDealSize);

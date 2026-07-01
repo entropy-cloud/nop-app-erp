@@ -261,19 +261,19 @@ public class _ErpCrmPriceRule extends DynamicOrmEntity{
     private java.lang.String _customerCategory;
     
     /* 最小数量: MIN_QUANTITY */
-    private java.lang.String _minQuantity;
+    private java.math.BigDecimal _minQuantity;
     
     /* 最大数量: MAX_QUANTITY */
-    private java.lang.String _maxQuantity;
+    private java.math.BigDecimal _maxQuantity;
     
     /* 覆盖单价: PRICE_OVERRIDE */
-    private java.lang.String _priceOverride;
+    private java.math.BigDecimal _priceOverride;
     
     /* 折扣百分比: DISCOUNT_PERCENT */
     private java.lang.Double _discountPercent;
     
     /* 折扣固定金额: DISCOUNT_AMOUNT */
-    private java.lang.String _discountAmount;
+    private java.math.BigDecimal _discountAmount;
     
     /* 币种: CURRENCY_ID */
     private java.lang.Long _currencyId;
@@ -572,9 +572,9 @@ public class _ErpCrmPriceRule extends DynamicOrmEntity{
             }
         
             case PROP_ID_minQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_minQuantity));
                }
                setMinQuantity(typedValue);
@@ -582,9 +582,9 @@ public class _ErpCrmPriceRule extends DynamicOrmEntity{
             }
         
             case PROP_ID_maxQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_maxQuantity));
                }
                setMaxQuantity(typedValue);
@@ -592,9 +592,9 @@ public class _ErpCrmPriceRule extends DynamicOrmEntity{
             }
         
             case PROP_ID_priceOverride:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_priceOverride));
                }
                setPriceOverride(typedValue);
@@ -612,9 +612,9 @@ public class _ErpCrmPriceRule extends DynamicOrmEntity{
             }
         
             case PROP_ID_discountAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_discountAmount));
                }
                setDiscountAmount(typedValue);
@@ -812,21 +812,21 @@ public class _ErpCrmPriceRule extends DynamicOrmEntity{
         
             case PROP_ID_minQuantity:{
                onInitProp(propId);
-               this._minQuantity = (java.lang.String)value;
+               this._minQuantity = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_maxQuantity:{
                onInitProp(propId);
-               this._maxQuantity = (java.lang.String)value;
+               this._maxQuantity = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_priceOverride:{
                onInitProp(propId);
-               this._priceOverride = (java.lang.String)value;
+               this._priceOverride = (java.math.BigDecimal)value;
                
                break;
             }
@@ -840,7 +840,7 @@ public class _ErpCrmPriceRule extends DynamicOrmEntity{
         
             case PROP_ID_discountAmount:{
                onInitProp(propId);
-               this._discountAmount = (java.lang.String)value;
+               this._discountAmount = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1121,7 +1121,7 @@ public class _ErpCrmPriceRule extends DynamicOrmEntity{
     /**
      * 最小数量: MIN_QUANTITY
      */
-    public final java.lang.String getMinQuantity(){
+    public final java.math.BigDecimal getMinQuantity(){
          onPropGet(PROP_ID_minQuantity);
          return _minQuantity;
     }
@@ -1129,7 +1129,7 @@ public class _ErpCrmPriceRule extends DynamicOrmEntity{
     /**
      * 最小数量: MIN_QUANTITY
      */
-    public final void setMinQuantity(java.lang.String value){
+    public final void setMinQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_minQuantity,value)){
             this._minQuantity = value;
             internalClearRefs(PROP_ID_minQuantity);
@@ -1140,7 +1140,7 @@ public class _ErpCrmPriceRule extends DynamicOrmEntity{
     /**
      * 最大数量: MAX_QUANTITY
      */
-    public final java.lang.String getMaxQuantity(){
+    public final java.math.BigDecimal getMaxQuantity(){
          onPropGet(PROP_ID_maxQuantity);
          return _maxQuantity;
     }
@@ -1148,7 +1148,7 @@ public class _ErpCrmPriceRule extends DynamicOrmEntity{
     /**
      * 最大数量: MAX_QUANTITY
      */
-    public final void setMaxQuantity(java.lang.String value){
+    public final void setMaxQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_maxQuantity,value)){
             this._maxQuantity = value;
             internalClearRefs(PROP_ID_maxQuantity);
@@ -1159,7 +1159,7 @@ public class _ErpCrmPriceRule extends DynamicOrmEntity{
     /**
      * 覆盖单价: PRICE_OVERRIDE
      */
-    public final java.lang.String getPriceOverride(){
+    public final java.math.BigDecimal getPriceOverride(){
          onPropGet(PROP_ID_priceOverride);
          return _priceOverride;
     }
@@ -1167,7 +1167,7 @@ public class _ErpCrmPriceRule extends DynamicOrmEntity{
     /**
      * 覆盖单价: PRICE_OVERRIDE
      */
-    public final void setPriceOverride(java.lang.String value){
+    public final void setPriceOverride(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_priceOverride,value)){
             this._priceOverride = value;
             internalClearRefs(PROP_ID_priceOverride);
@@ -1197,7 +1197,7 @@ public class _ErpCrmPriceRule extends DynamicOrmEntity{
     /**
      * 折扣固定金额: DISCOUNT_AMOUNT
      */
-    public final java.lang.String getDiscountAmount(){
+    public final java.math.BigDecimal getDiscountAmount(){
          onPropGet(PROP_ID_discountAmount);
          return _discountAmount;
     }
@@ -1205,7 +1205,7 @@ public class _ErpCrmPriceRule extends DynamicOrmEntity{
     /**
      * 折扣固定金额: DISCOUNT_AMOUNT
      */
-    public final void setDiscountAmount(java.lang.String value){
+    public final void setDiscountAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_discountAmount,value)){
             this._discountAmount = value;
             internalClearRefs(PROP_ID_discountAmount);

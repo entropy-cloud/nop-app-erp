@@ -43,10 +43,10 @@
                 <col id="currencyId" ui:number="true" sortable="true"/>
 
                 <!--汇率-->
-                <col id="exchangeRate" sortable="true"/>
+                <col id="exchangeRate" ui:number="true" sortable="true"/>
 
                 <!--开票金额-->
-                <col id="totalAmount" sortable="true"/>
+                <col id="totalAmount" ui:number="true" sortable="true"/>
 
                 <!--单据状态-->
                 <col id="docStatus" mandatory="true" ui:number="true" sortable="true"/>

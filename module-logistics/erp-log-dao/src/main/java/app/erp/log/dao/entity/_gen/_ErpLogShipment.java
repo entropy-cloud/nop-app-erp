@@ -364,7 +364,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     private java.lang.String _labelUrl;
     
     /* 运费: FREIGHT_AMOUNT */
-    private java.lang.String _freightAmount;
+    private java.math.BigDecimal _freightAmount;
     
     /* 运费币种: FREIGHT_CURRENCY_ID */
     private java.lang.Long _freightCurrencyId;
@@ -753,9 +753,9 @@ public class _ErpLogShipment extends DynamicOrmEntity{
             }
         
             case PROP_ID_freightAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_freightAmount));
                }
                setFreightAmount(typedValue);
@@ -1123,7 +1123,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
         
             case PROP_ID_freightAmount:{
                onInitProp(propId);
-               this._freightAmount = (java.lang.String)value;
+               this._freightAmount = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1523,7 +1523,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     /**
      * 运费: FREIGHT_AMOUNT
      */
-    public final java.lang.String getFreightAmount(){
+    public final java.math.BigDecimal getFreightAmount(){
          onPropGet(PROP_ID_freightAmount);
          return _freightAmount;
     }
@@ -1531,7 +1531,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     /**
      * 运费: FREIGHT_AMOUNT
      */
-    public final void setFreightAmount(java.lang.String value){
+    public final void setFreightAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_freightAmount,value)){
             this._freightAmount = value;
             internalClearRefs(PROP_ID_freightAmount);

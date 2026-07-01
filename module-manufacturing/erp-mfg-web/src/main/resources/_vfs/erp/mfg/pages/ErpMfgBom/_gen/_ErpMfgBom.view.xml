@@ -52,7 +52,7 @@
                 <col id="versionLabel" sortable="true"/>
 
                 <!--BOM数量-->
-                <col id="qty" sortable="true"/>
+                <col id="qty" ui:number="true" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>

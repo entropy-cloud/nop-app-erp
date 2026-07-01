@@ -45,7 +45,7 @@
         </prop>
         <prop name="inputQty" displayName="投入数量" propId="7" i18n-en:displayName="Input Qty" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="inputUoMId" displayName="投入计量单位" propId="8" i18n-en:displayName="Input UoM" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="inputUoM">
@@ -62,7 +62,7 @@
         </prop>
         <prop name="outputQty" displayName="产出数量" propId="11" i18n-en:displayName="Output Qty" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="outputUoMId" displayName="产出计量单位" propId="12" i18n-en:displayName="Output UoM" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="outputUoM">

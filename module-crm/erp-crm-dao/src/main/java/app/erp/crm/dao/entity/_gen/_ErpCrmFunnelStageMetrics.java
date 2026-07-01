@@ -239,7 +239,7 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
     private java.lang.Integer _lostCount;
     
     /* 本阶段丢失金额: LOST_AMOUNT */
-    private java.lang.String _lostAmount;
+    private java.math.BigDecimal _lostAmount;
     
     /* TOP丢失原因(JSON): LOST_REASON_TOP */
     private java.lang.String _lostReasonTop;
@@ -547,9 +547,9 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
             }
         
             case PROP_ID_lostAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_lostAmount));
                }
                setLostAmount(typedValue);
@@ -738,7 +738,7 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
         
             case PROP_ID_lostAmount:{
                onInitProp(propId);
-               this._lostAmount = (java.lang.String)value;
+               this._lostAmount = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1055,7 +1055,7 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
     /**
      * 本阶段丢失金额: LOST_AMOUNT
      */
-    public final java.lang.String getLostAmount(){
+    public final java.math.BigDecimal getLostAmount(){
          onPropGet(PROP_ID_lostAmount);
          return _lostAmount;
     }
@@ -1063,7 +1063,7 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
     /**
      * 本阶段丢失金额: LOST_AMOUNT
      */
-    public final void setLostAmount(java.lang.String value){
+    public final void setLostAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_lostAmount,value)){
             this._lostAmount = value;
             internalClearRefs(PROP_ID_lostAmount);

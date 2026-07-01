@@ -46,7 +46,7 @@
                 <col id="height" sortable="true"/>
 
                 <!--申报价值-->
-                <col id="declaredValue" sortable="true"/>
+                <col id="declaredValue" ui:number="true" sortable="true"/>
 
                 <!--是否有效-->
                 <col id="isActive" mandatory="true" ui:number="true" sortable="true"/>

@@ -43,7 +43,7 @@
                 <col id="periodLabel" sortable="true"/>
 
                 <!--配额金额-->
-                <col id="quotaAmount" sortable="true"/>
+                <col id="quotaAmount" ui:number="true" sortable="true"/>
 
                 <!--币种-->
                 <col id="currencyId" ui:number="true" sortable="true"/>

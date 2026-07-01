@@ -250,7 +250,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     private java.lang.Long _inputMaterialId;
     
     /* 投入数量: INPUT_QTY */
-    private java.lang.String _inputQty;
+    private java.math.BigDecimal _inputQty;
     
     /* 投入计量单位: INPUT_UO_M_ID */
     private java.lang.Long _inputUoMId;
@@ -262,7 +262,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     private java.lang.Long _outputMaterialId;
     
     /* 产出数量: OUTPUT_QTY */
-    private java.lang.String _outputQty;
+    private java.math.BigDecimal _outputQty;
     
     /* 产出计量单位: OUTPUT_UO_M_ID */
     private java.lang.Long _outputUoMId;
@@ -521,9 +521,9 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
             }
         
             case PROP_ID_inputQty:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_inputQty));
                }
                setInputQty(typedValue);
@@ -561,9 +561,9 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
             }
         
             case PROP_ID_outputQty:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_outputQty));
                }
                setOutputQty(typedValue);
@@ -753,7 +753,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
         
             case PROP_ID_inputQty:{
                onInitProp(propId);
-               this._inputQty = (java.lang.String)value;
+               this._inputQty = (java.math.BigDecimal)value;
                
                break;
             }
@@ -781,7 +781,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
         
             case PROP_ID_outputQty:{
                onInitProp(propId);
-               this._outputQty = (java.lang.String)value;
+               this._outputQty = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1000,7 +1000,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * 投入数量: INPUT_QTY
      */
-    public final java.lang.String getInputQty(){
+    public final java.math.BigDecimal getInputQty(){
          onPropGet(PROP_ID_inputQty);
          return _inputQty;
     }
@@ -1008,7 +1008,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * 投入数量: INPUT_QTY
      */
-    public final void setInputQty(java.lang.String value){
+    public final void setInputQty(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_inputQty,value)){
             this._inputQty = value;
             internalClearRefs(PROP_ID_inputQty);
@@ -1076,7 +1076,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * 产出数量: OUTPUT_QTY
      */
-    public final java.lang.String getOutputQty(){
+    public final java.math.BigDecimal getOutputQty(){
          onPropGet(PROP_ID_outputQty);
          return _outputQty;
     }
@@ -1084,7 +1084,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * 产出数量: OUTPUT_QTY
      */
-    public final void setOutputQty(java.lang.String value){
+    public final void setOutputQty(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_outputQty,value)){
             this._outputQty = value;
             internalClearRefs(PROP_ID_outputQty);

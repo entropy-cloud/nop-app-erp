@@ -83,86 +83,86 @@
         }
 
 
-        private String _materialCost;
+        private java.math.BigDecimal _materialCost;
 
     
         @PropMeta(propId=6)
     
-        public String getMaterialCost(){
+        public java.math.BigDecimal getMaterialCost(){
             return _materialCost;
         }
 
-        public void setMaterialCost(String value){
+        public void setMaterialCost(java.math.BigDecimal value){
             this._materialCost = value;
         }
 
 
-        private String _laborCost;
+        private java.math.BigDecimal _laborCost;
 
     
         @PropMeta(propId=7)
     
-        public String getLaborCost(){
+        public java.math.BigDecimal getLaborCost(){
             return _laborCost;
         }
 
-        public void setLaborCost(String value){
+        public void setLaborCost(java.math.BigDecimal value){
             this._laborCost = value;
         }
 
 
-        private String _overheadCost;
+        private java.math.BigDecimal _overheadCost;
 
     
         @PropMeta(propId=8)
     
-        public String getOverheadCost(){
+        public java.math.BigDecimal getOverheadCost(){
             return _overheadCost;
         }
 
-        public void setOverheadCost(String value){
+        public void setOverheadCost(java.math.BigDecimal value){
             this._overheadCost = value;
         }
 
 
-        private String _subcontractCost;
+        private java.math.BigDecimal _subcontractCost;
 
     
         @PropMeta(propId=9)
     
-        public String getSubcontractCost(){
+        public java.math.BigDecimal getSubcontractCost(){
             return _subcontractCost;
         }
 
-        public void setSubcontractCost(String value){
+        public void setSubcontractCost(java.math.BigDecimal value){
             this._subcontractCost = value;
         }
 
 
-        private String _totalCost;
+        private java.math.BigDecimal _totalCost;
 
     
         @PropMeta(propId=10)
     
-        public String getTotalCost(){
+        public java.math.BigDecimal getTotalCost(){
             return _totalCost;
         }
 
-        public void setTotalCost(String value){
+        public void setTotalCost(java.math.BigDecimal value){
             this._totalCost = value;
         }
 
 
-        private String _unitCost;
+        private java.math.BigDecimal _unitCost;
 
     
         @PropMeta(propId=11)
     
-        public String getUnitCost(){
+        public java.math.BigDecimal getUnitCost(){
             return _unitCost;
         }
 
-        public void setUnitCost(String value){
+        public void setUnitCost(java.math.BigDecimal value){
             this._unitCost = value;
         }
 

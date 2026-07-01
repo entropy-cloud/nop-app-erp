@@ -31,10 +31,10 @@
                 <col id="productId" ui:number="true" sortable="true"/>
 
                 <!--数量-->
-                <col id="quantity" sortable="true"/>
+                <col id="quantity" ui:number="true" sortable="true"/>
 
                 <!--单价-->
-                <col id="unitPrice" sortable="true"/>
+                <col id="unitPrice" ui:number="true" sortable="true"/>
 
                 <!--排序-->
                 <col id="sequence" ui:number="true" sortable="true"/>

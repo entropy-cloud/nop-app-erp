@@ -190,22 +190,22 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
     private java.lang.Long _uoMId;
     
     /* 材料成本: MATERIAL_COST */
-    private java.lang.String _materialCost;
+    private java.math.BigDecimal _materialCost;
     
     /* 人工成本: LABOR_COST */
-    private java.lang.String _laborCost;
+    private java.math.BigDecimal _laborCost;
     
     /* 制造费用: OVERHEAD_COST */
-    private java.lang.String _overheadCost;
+    private java.math.BigDecimal _overheadCost;
     
     /* 委外成本: SUBCONTRACT_COST */
-    private java.lang.String _subcontractCost;
+    private java.math.BigDecimal _subcontractCost;
     
     /* 总成本: TOTAL_COST */
-    private java.lang.String _totalCost;
+    private java.math.BigDecimal _totalCost;
     
     /* 单位标准成本: UNIT_COST */
-    private java.lang.String _unitCost;
+    private java.math.BigDecimal _unitCost;
     
     /* 币种: CURRENCY_ID */
     private java.lang.Long _currencyId;
@@ -418,9 +418,9 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_materialCost));
                }
                setMaterialCost(typedValue);
@@ -428,9 +428,9 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_laborCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_laborCost));
                }
                setLaborCost(typedValue);
@@ -438,9 +438,9 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_overheadCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_overheadCost));
                }
                setOverheadCost(typedValue);
@@ -448,9 +448,9 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_subcontractCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_subcontractCost));
                }
                setSubcontractCost(typedValue);
@@ -458,9 +458,9 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_totalCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_totalCost));
                }
                setTotalCost(typedValue);
@@ -468,9 +468,9 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_unitCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_unitCost));
                }
                setUnitCost(typedValue);
@@ -593,42 +593,42 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
         
             case PROP_ID_materialCost:{
                onInitProp(propId);
-               this._materialCost = (java.lang.String)value;
+               this._materialCost = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_laborCost:{
                onInitProp(propId);
-               this._laborCost = (java.lang.String)value;
+               this._laborCost = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_overheadCost:{
                onInitProp(propId);
-               this._overheadCost = (java.lang.String)value;
+               this._overheadCost = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_subcontractCost:{
                onInitProp(propId);
-               this._subcontractCost = (java.lang.String)value;
+               this._subcontractCost = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_totalCost:{
                onInitProp(propId);
-               this._totalCost = (java.lang.String)value;
+               this._totalCost = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_unitCost:{
                onInitProp(propId);
-               this._unitCost = (java.lang.String)value;
+               this._unitCost = (java.math.BigDecimal)value;
                
                break;
             }
@@ -786,7 +786,7 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
     /**
      * 材料成本: MATERIAL_COST
      */
-    public final java.lang.String getMaterialCost(){
+    public final java.math.BigDecimal getMaterialCost(){
          onPropGet(PROP_ID_materialCost);
          return _materialCost;
     }
@@ -794,7 +794,7 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
     /**
      * 材料成本: MATERIAL_COST
      */
-    public final void setMaterialCost(java.lang.String value){
+    public final void setMaterialCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_materialCost,value)){
             this._materialCost = value;
             internalClearRefs(PROP_ID_materialCost);
@@ -805,7 +805,7 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
     /**
      * 人工成本: LABOR_COST
      */
-    public final java.lang.String getLaborCost(){
+    public final java.math.BigDecimal getLaborCost(){
          onPropGet(PROP_ID_laborCost);
          return _laborCost;
     }
@@ -813,7 +813,7 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
     /**
      * 人工成本: LABOR_COST
      */
-    public final void setLaborCost(java.lang.String value){
+    public final void setLaborCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_laborCost,value)){
             this._laborCost = value;
             internalClearRefs(PROP_ID_laborCost);
@@ -824,7 +824,7 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
     /**
      * 制造费用: OVERHEAD_COST
      */
-    public final java.lang.String getOverheadCost(){
+    public final java.math.BigDecimal getOverheadCost(){
          onPropGet(PROP_ID_overheadCost);
          return _overheadCost;
     }
@@ -832,7 +832,7 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
     /**
      * 制造费用: OVERHEAD_COST
      */
-    public final void setOverheadCost(java.lang.String value){
+    public final void setOverheadCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_overheadCost,value)){
             this._overheadCost = value;
             internalClearRefs(PROP_ID_overheadCost);
@@ -843,7 +843,7 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
     /**
      * 委外成本: SUBCONTRACT_COST
      */
-    public final java.lang.String getSubcontractCost(){
+    public final java.math.BigDecimal getSubcontractCost(){
          onPropGet(PROP_ID_subcontractCost);
          return _subcontractCost;
     }
@@ -851,7 +851,7 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
     /**
      * 委外成本: SUBCONTRACT_COST
      */
-    public final void setSubcontractCost(java.lang.String value){
+    public final void setSubcontractCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_subcontractCost,value)){
             this._subcontractCost = value;
             internalClearRefs(PROP_ID_subcontractCost);
@@ -862,7 +862,7 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
     /**
      * 总成本: TOTAL_COST
      */
-    public final java.lang.String getTotalCost(){
+    public final java.math.BigDecimal getTotalCost(){
          onPropGet(PROP_ID_totalCost);
          return _totalCost;
     }
@@ -870,7 +870,7 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
     /**
      * 总成本: TOTAL_COST
      */
-    public final void setTotalCost(java.lang.String value){
+    public final void setTotalCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_totalCost,value)){
             this._totalCost = value;
             internalClearRefs(PROP_ID_totalCost);
@@ -881,7 +881,7 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
     /**
      * 单位标准成本: UNIT_COST
      */
-    public final java.lang.String getUnitCost(){
+    public final java.math.BigDecimal getUnitCost(){
          onPropGet(PROP_ID_unitCost);
          return _unitCost;
     }
@@ -889,7 +889,7 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
     /**
      * 单位标准成本: UNIT_COST
      */
-    public final void setUnitCost(java.lang.String value){
+    public final void setUnitCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_unitCost,value)){
             this._unitCost = value;
             internalClearRefs(PROP_ID_unitCost);

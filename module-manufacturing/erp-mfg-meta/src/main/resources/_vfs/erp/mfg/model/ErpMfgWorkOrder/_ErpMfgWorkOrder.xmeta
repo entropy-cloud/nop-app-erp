@@ -62,15 +62,15 @@
         </prop>
         <prop name="plannedQuantity" displayName="计划数量" propId="11" i18n-en:displayName="Planned Quantity"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="completedQuantity" displayName="完工数量" propId="12" i18n-en:displayName="Completed Quantity"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="scrappedQuantity" displayName="报废数量" propId="13" i18n-en:displayName="Scrapped Quantity"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="businessDate" displayName="工单日期" propId="14" i18n-en:displayName="Business Date" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -98,27 +98,27 @@
         </prop>
         <prop name="materialCost" displayName="材料成本" propId="20" i18n-en:displayName="Material Cost" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="laborCost" displayName="人工成本" propId="21" i18n-en:displayName="Labor Cost" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="overheadCost" displayName="制造费用" propId="22" i18n-en:displayName="Overhead Cost" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="subcontractCost" displayName="委外成本" propId="23" i18n-en:displayName="Subcontract Cost"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="totalCost" displayName="总成本" propId="24" i18n-en:displayName="Total Cost" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="unitCost" displayName="单位成本" propId="25" i18n-en:displayName="Unit Cost" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="unitPrice" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="unitPrice" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="docStatus" displayName="单据状态" propId="26" i18n-en:displayName="Doc Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">

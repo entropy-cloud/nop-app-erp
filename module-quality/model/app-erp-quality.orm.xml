@@ -142,8 +142,8 @@
                 <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="13" stdDataType="string" i18n-en:displayName='Batch No' />
                 <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" stdDataType="date" i18n-en:displayName='Business Date' />
                 <column name="inspectionDate" displayName="检验日期" stdSqlType="DATE" mandatory="true" code="INSPECTION_DATE" propId="14" stdDataType="date" i18n-en:displayName='Inspection Date' />
-                <column name="lotQuantity" displayName="批量" domain="quantity" code="LOT_QUANTITY" propId="15" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Lot Quantity' />
-                <column name="sampleQuantity" displayName="抽样数量" domain="quantity" code="SAMPLE_QUANTITY" propId="16" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Sample Quantity' />
+                <column name="lotQuantity" displayName="批量" domain="quantity" code="LOT_QUANTITY" propId="15" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Lot Quantity' />
+                <column name="sampleQuantity" displayName="抽样数量" domain="quantity" code="SAMPLE_QUANTITY" propId="16" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Sample Quantity' />
                 <column name="inspectorId" displayName="检验员(职员)" stdSqlType="BIGINT" code="INSPECTOR_ID" propId="17" stdDataType="long" i18n-en:displayName='Inspector' />
                 <column name="result" displayName="质检结果" ext:dict="erp-qa/inspection-result" mandatory="true" code="RESULT" propId="18" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Result' />
                 <column name="docStatus" displayName="单据状态" ext:dict="erp-qa/doc-status" mandatory="true" code="DOC_STATUS" propId="19" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
@@ -266,7 +266,7 @@
                 <column name="sourceCode" displayName="来源单号" stdSqlType="VARCHAR" precision="50" code="SOURCE_CODE" propId="5" stdDataType="string" i18n-en:displayName='Source Code' />
                 <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="6" stdDataType="long" i18n-en:displayName='Material' />
                 <column name="inspectionId" displayName="质检单ID" stdSqlType="BIGINT" code="INSPECTION_ID" propId="7" stdDataType="long" i18n-en:displayName='Inspection' />
-                <column name="quantity" displayName="不合格数量" domain="quantity" code="QUANTITY" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Quantity' />
+                <column name="quantity" displayName="不合格数量" domain="quantity" code="QUANTITY" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Quantity' />
                 <column name="description" displayName="问题描述" stdSqlType="VARCHAR" precision="2000" code="DESCRIPTION" propId="9" stdDataType="string" i18n-en:displayName='Description' />
                 <column name="severity" displayName="严重程度" ext:dict="erp-qa/severity" mandatory="true" code="SEVERITY" propId="10" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Severity' />
                 <column name="dispositionType" displayName="处理决定" ext:dict="erp-qa/disposition-type" code="DISPOSITION_TYPE" propId="11" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Disposition Type' />
@@ -429,9 +429,9 @@
                 <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
                 <column name="name" displayName="名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="NAME" propId="3" stdDataType="string" i18n-en:displayName='Name' />
                 <column name="aqlLevel" displayName="AQL 检验水平(如 II)" stdSqlType="VARCHAR" precision="20" mandatory="true" code="AQL_LEVEL" propId="4" stdDataType="string" i18n-en:displayName='Aql Level' />
-                <column name="lotSizeFrom" displayName="批量下限" domain="quantity" code="LOT_SIZE_FROM" propId="5" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Lot Size From' />
-                <column name="lotSizeTo" displayName="批量上限" domain="quantity" code="LOT_SIZE_TO" propId="6" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Lot Size To' />
-                <column name="sampleSize" displayName="样本量" domain="quantity" mandatory="true" code="SAMPLE_SIZE" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Sample Size' />
+                <column name="lotSizeFrom" displayName="批量下限" domain="quantity" code="LOT_SIZE_FROM" propId="5" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Lot Size From' />
+                <column name="lotSizeTo" displayName="批量上限" domain="quantity" code="LOT_SIZE_TO" propId="6" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Lot Size To' />
+                <column name="sampleSize" displayName="样本量" domain="quantity" mandatory="true" code="SAMPLE_SIZE" propId="7" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Sample Size' />
                 <column name="acceptNumber" displayName="合格判定数(Ac)" stdSqlType="INTEGER" mandatory="true" code="ACCEPT_NUMBER" propId="8" stdDataType="int" i18n-en:displayName='Accept Number' />
                 <column name="rejectNumber" displayName="不合格判定数(Re)" stdSqlType="INTEGER" mandatory="true" code="REJECT_NUMBER" propId="9" stdDataType="int" i18n-en:displayName='Reject Number' />
                 <column name="isActive" displayName="是否启用" stdSqlType="BOOLEAN" defaultValue="true" code="IS_ACTIVE" propId="10" stdDataType="boolean" i18n-en:displayName='Active' />

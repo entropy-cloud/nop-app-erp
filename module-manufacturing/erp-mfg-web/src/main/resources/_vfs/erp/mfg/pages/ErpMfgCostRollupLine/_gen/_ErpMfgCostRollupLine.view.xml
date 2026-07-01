@@ -34,22 +34,22 @@
                 <col id="uoMId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--材料成本-->
-                <col id="materialCost" sortable="true"/>
+                <col id="materialCost" ui:number="true" sortable="true"/>
 
                 <!--人工成本-->
-                <col id="laborCost" sortable="true"/>
+                <col id="laborCost" ui:number="true" sortable="true"/>
 
                 <!--制造费用-->
-                <col id="overheadCost" sortable="true"/>
+                <col id="overheadCost" ui:number="true" sortable="true"/>
 
                 <!--委外成本-->
-                <col id="subcontractCost" sortable="true"/>
+                <col id="subcontractCost" ui:number="true" sortable="true"/>
 
                 <!--总成本-->
-                <col id="totalCost" sortable="true"/>
+                <col id="totalCost" ui:number="true" sortable="true"/>
 
                 <!--单位标准成本-->
-                <col id="unitCost" sortable="true"/>
+                <col id="unitCost" ui:number="true" sortable="true"/>
 
                 <!--币种-->
                 <col id="currencyId" ui:number="true" sortable="true"/>

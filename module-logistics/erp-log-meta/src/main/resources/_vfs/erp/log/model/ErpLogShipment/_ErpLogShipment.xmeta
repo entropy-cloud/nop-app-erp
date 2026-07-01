@@ -61,7 +61,7 @@
         </prop>
         <prop name="freightAmount" displayName="运费" propId="11" i18n-en:displayName="Freight Amount" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="freightCurrencyId" displayName="运费币种" propId="12" i18n-en:displayName="Currency" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="freightCurrency">

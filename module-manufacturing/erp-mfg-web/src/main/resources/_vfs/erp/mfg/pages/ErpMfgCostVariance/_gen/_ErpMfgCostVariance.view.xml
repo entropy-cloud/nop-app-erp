@@ -40,28 +40,28 @@
                 <col id="operationId" ui:number="true" sortable="true"/>
 
                 <!--标准金额-->
-                <col id="standardAmount" sortable="true"/>
+                <col id="standardAmount" ui:number="true" sortable="true"/>
 
                 <!--实际金额-->
-                <col id="actualAmount" sortable="true"/>
+                <col id="actualAmount" ui:number="true" sortable="true"/>
 
                 <!--差异金额-->
-                <col id="varianceAmount" sortable="true"/>
+                <col id="varianceAmount" ui:number="true" sortable="true"/>
 
                 <!--差异百分比-->
                 <col id="variancePercent" sortable="true"/>
 
                 <!--标准数量-->
-                <col id="standardQty" sortable="true"/>
+                <col id="standardQty" ui:number="true" sortable="true"/>
 
                 <!--实际数量-->
-                <col id="actualQty" sortable="true"/>
+                <col id="actualQty" ui:number="true" sortable="true"/>
 
                 <!--标准单价-->
-                <col id="standardPrice" sortable="true"/>
+                <col id="standardPrice" ui:number="true" sortable="true"/>
 
                 <!--实际单价-->
-                <col id="actualPrice" sortable="true"/>
+                <col id="actualPrice" ui:number="true" sortable="true"/>
 
                 <!--工作中心-->
                 <col id="workcenterId" ui:number="true" sortable="true"/>

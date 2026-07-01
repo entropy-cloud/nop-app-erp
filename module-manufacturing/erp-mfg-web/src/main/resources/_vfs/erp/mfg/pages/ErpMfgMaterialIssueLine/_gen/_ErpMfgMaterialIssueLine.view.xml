@@ -40,16 +40,16 @@
                 <col id="workOrderLineId" ui:number="true" sortable="true"/>
 
                 <!--应领数量-->
-                <col id="requiredQuantity" mandatory="true" sortable="true"/>
+                <col id="requiredQuantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--实领数量-->
                 <col id="issuedQuantity" sortable="true"/>
 
                 <!--单位成本-->
-                <col id="unitCost" sortable="true"/>
+                <col id="unitCost" ui:number="true" sortable="true"/>
 
                 <!--总成本-->
-                <col id="totalCost" sortable="true"/>
+                <col id="totalCost" ui:number="true" sortable="true"/>
 
                 <!--批号-->
                 <col id="batchNo" sortable="true"/>

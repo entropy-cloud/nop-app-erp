@@ -49,15 +49,15 @@
         </prop>
         <prop name="standardAmount" displayName="标准金额" propId="8" i18n-en:displayName="Standard Amount" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="actualAmount" displayName="实际金额" propId="9" i18n-en:displayName="Actual Amount" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="varianceAmount" displayName="差异金额" propId="10" i18n-en:displayName="Variance Amount"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="variancePercent" displayName="差异百分比" propId="11" i18n-en:displayName="Variance Percent"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
@@ -65,19 +65,19 @@
         </prop>
         <prop name="standardQty" displayName="标准数量" propId="12" i18n-en:displayName="Standard Qty" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="actualQty" displayName="实际数量" propId="13" i18n-en:displayName="Actual Qty" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="standardPrice" displayName="标准单价" propId="14" i18n-en:displayName="Standard Price" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="unitPrice" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="unitPrice" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="actualPrice" displayName="实际单价" propId="15" i18n-en:displayName="Actual Price" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="unitPrice" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="unitPrice" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="workcenterId" displayName="工作中心" propId="16" i18n-en:displayName="Workcenter" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="workcenter">

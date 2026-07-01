@@ -194,10 +194,10 @@ public class _ErpCrmBundlePricing extends DynamicOrmEntity{
     private java.lang.String _discountType;
     
     /* 折扣值: DISCOUNT_VALUE */
-    private java.lang.String _discountValue;
+    private java.math.BigDecimal _discountValue;
     
     /* 捆绑包总价: BUNDLE_AMOUNT */
-    private java.lang.String _bundleAmount;
+    private java.math.BigDecimal _bundleAmount;
     
     /* 生效开始日期: EFFECTIVE_FROM */
     private java.time.LocalDate _effectiveFrom;
@@ -442,9 +442,9 @@ public class _ErpCrmBundlePricing extends DynamicOrmEntity{
             }
         
             case PROP_ID_discountValue:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_discountValue));
                }
                setDiscountValue(typedValue);
@@ -452,9 +452,9 @@ public class _ErpCrmBundlePricing extends DynamicOrmEntity{
             }
         
             case PROP_ID_bundleAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_bundleAmount));
                }
                setBundleAmount(typedValue);
@@ -621,14 +621,14 @@ public class _ErpCrmBundlePricing extends DynamicOrmEntity{
         
             case PROP_ID_discountValue:{
                onInitProp(propId);
-               this._discountValue = (java.lang.String)value;
+               this._discountValue = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_bundleAmount:{
                onInitProp(propId);
-               this._bundleAmount = (java.lang.String)value;
+               this._bundleAmount = (java.math.BigDecimal)value;
                
                break;
             }
@@ -845,7 +845,7 @@ public class _ErpCrmBundlePricing extends DynamicOrmEntity{
     /**
      * 折扣值: DISCOUNT_VALUE
      */
-    public final java.lang.String getDiscountValue(){
+    public final java.math.BigDecimal getDiscountValue(){
          onPropGet(PROP_ID_discountValue);
          return _discountValue;
     }
@@ -853,7 +853,7 @@ public class _ErpCrmBundlePricing extends DynamicOrmEntity{
     /**
      * 折扣值: DISCOUNT_VALUE
      */
-    public final void setDiscountValue(java.lang.String value){
+    public final void setDiscountValue(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_discountValue,value)){
             this._discountValue = value;
             internalClearRefs(PROP_ID_discountValue);
@@ -864,7 +864,7 @@ public class _ErpCrmBundlePricing extends DynamicOrmEntity{
     /**
      * 捆绑包总价: BUNDLE_AMOUNT
      */
-    public final java.lang.String getBundleAmount(){
+    public final java.math.BigDecimal getBundleAmount(){
          onPropGet(PROP_ID_bundleAmount);
          return _bundleAmount;
     }
@@ -872,7 +872,7 @@ public class _ErpCrmBundlePricing extends DynamicOrmEntity{
     /**
      * 捆绑包总价: BUNDLE_AMOUNT
      */
-    public final void setBundleAmount(java.lang.String value){
+    public final void setBundleAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_bundleAmount,value)){
             this._bundleAmount = value;
             internalClearRefs(PROP_ID_bundleAmount);

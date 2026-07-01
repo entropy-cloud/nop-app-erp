@@ -37,7 +37,7 @@
                 <col id="actualDate" sortable="true"/>
 
                 <!--应结算金额-->
-                <col id="billingAmount" sortable="true"/>
+                <col id="billingAmount" ui:number="true" sortable="true"/>
 
                 <!--是否触发开票节点-->
                 <col id="isBillingTrigger" sortable="true"/>

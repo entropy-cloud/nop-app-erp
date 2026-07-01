@@ -49,7 +49,7 @@
                 <col id="labelUrl" sortable="true"/>
 
                 <!--运费-->
-                <col id="freightAmount" sortable="true"/>
+                <col id="freightAmount" ui:number="true" sortable="true"/>
 
                 <!--运费币种-->
                 <col id="freightCurrencyId" ui:number="true" sortable="true"/>

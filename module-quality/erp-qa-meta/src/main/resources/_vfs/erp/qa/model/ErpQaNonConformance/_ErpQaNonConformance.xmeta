@@ -49,7 +49,7 @@
         </prop>
         <prop name="quantity" displayName="不合格数量" propId="8" i18n-en:displayName="Quantity" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="description" displayName="问题描述" propId="9" i18n-en:displayName="Description" queryable="true"
               sortable="true" insertable="true" updatable="true">

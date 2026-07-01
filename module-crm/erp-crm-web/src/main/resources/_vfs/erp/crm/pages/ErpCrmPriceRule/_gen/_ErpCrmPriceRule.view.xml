@@ -49,19 +49,19 @@
                 <col id="customerCategory" sortable="true"/>
 
                 <!--最小数量-->
-                <col id="minQuantity" sortable="true"/>
+                <col id="minQuantity" ui:number="true" sortable="true"/>
 
                 <!--最大数量-->
-                <col id="maxQuantity" sortable="true"/>
+                <col id="maxQuantity" ui:number="true" sortable="true"/>
 
                 <!--覆盖单价-->
-                <col id="priceOverride" sortable="true"/>
+                <col id="priceOverride" ui:number="true" sortable="true"/>
 
                 <!--折扣百分比-->
                 <col id="discountPercent" ui:number="true" sortable="true"/>
 
                 <!--折扣固定金额-->
-                <col id="discountAmount" sortable="true"/>
+                <col id="discountAmount" ui:number="true" sortable="true"/>
 
                 <!--币种-->
                 <col id="currencyId" ui:number="true" sortable="true"/>

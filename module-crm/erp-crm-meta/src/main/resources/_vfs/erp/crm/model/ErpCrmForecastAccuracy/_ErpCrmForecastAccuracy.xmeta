@@ -49,15 +49,15 @@
         </prop>
         <prop name="commitAmount" displayName="承诺金额" propId="8" i18n-en:displayName="Commit Amount" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="upsideAmount" displayName="乐观金额" propId="9" i18n-en:displayName="Upside Amount" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="actualClosedRevenue" displayName="实际关闭收入" propId="10" i18n-en:displayName="Actual Closed Revenue"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="commitAccuracy" displayName="承诺准确率" propId="11" i18n-en:displayName="Commit Accuracy"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -69,7 +69,7 @@
         </prop>
         <prop name="deviationAmount" displayName="偏差绝对值" propId="13" i18n-en:displayName="Deviation Amount"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="calculatedBy" displayName="计算人" propId="14" i18n-en:displayName="Calculated By" queryable="true"
               sortable="true" insertable="true" updatable="true">

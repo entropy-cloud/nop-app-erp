@@ -49,11 +49,11 @@
         </prop>
         <prop name="discountValue" displayName="折扣值" propId="8" i18n-en:displayName="Discount Value" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="bundleAmount" displayName="捆绑包总价" propId="9" i18n-en:displayName="Bundle Amount" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="effectiveFrom" displayName="生效开始日期" propId="10" i18n-en:displayName="Effective From"
               queryable="true" sortable="true" insertable="true" updatable="true">

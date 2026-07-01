@@ -176,13 +176,13 @@ public class _ErpPrjBudgetLine extends DynamicOrmEntity{
     private java.lang.Long _taskId;
     
     /* 预算金额: PLANNED_AMOUNT */
-    private java.lang.String _plannedAmount;
+    private java.math.BigDecimal _plannedAmount;
     
     /* 已承诺金额: COMMITTED_AMOUNT */
-    private java.lang.String _committedAmount;
+    private java.math.BigDecimal _committedAmount;
     
     /* 实际金额: ACTUAL_AMOUNT */
-    private java.lang.String _actualAmount;
+    private java.math.BigDecimal _actualAmount;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -399,9 +399,9 @@ public class _ErpPrjBudgetLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_plannedAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_plannedAmount));
                }
                setPlannedAmount(typedValue);
@@ -409,9 +409,9 @@ public class _ErpPrjBudgetLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_committedAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_committedAmount));
                }
                setCommittedAmount(typedValue);
@@ -419,9 +419,9 @@ public class _ErpPrjBudgetLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_actualAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_actualAmount));
                }
                setActualAmount(typedValue);
@@ -551,21 +551,21 @@ public class _ErpPrjBudgetLine extends DynamicOrmEntity{
         
             case PROP_ID_plannedAmount:{
                onInitProp(propId);
-               this._plannedAmount = (java.lang.String)value;
+               this._plannedAmount = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_committedAmount:{
                onInitProp(propId);
-               this._committedAmount = (java.lang.String)value;
+               this._committedAmount = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_actualAmount:{
                onInitProp(propId);
-               this._actualAmount = (java.lang.String)value;
+               this._actualAmount = (java.math.BigDecimal)value;
                
                break;
             }
@@ -742,7 +742,7 @@ public class _ErpPrjBudgetLine extends DynamicOrmEntity{
     /**
      * 预算金额: PLANNED_AMOUNT
      */
-    public final java.lang.String getPlannedAmount(){
+    public final java.math.BigDecimal getPlannedAmount(){
          onPropGet(PROP_ID_plannedAmount);
          return _plannedAmount;
     }
@@ -750,7 +750,7 @@ public class _ErpPrjBudgetLine extends DynamicOrmEntity{
     /**
      * 预算金额: PLANNED_AMOUNT
      */
-    public final void setPlannedAmount(java.lang.String value){
+    public final void setPlannedAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_plannedAmount,value)){
             this._plannedAmount = value;
             internalClearRefs(PROP_ID_plannedAmount);
@@ -761,7 +761,7 @@ public class _ErpPrjBudgetLine extends DynamicOrmEntity{
     /**
      * 已承诺金额: COMMITTED_AMOUNT
      */
-    public final java.lang.String getCommittedAmount(){
+    public final java.math.BigDecimal getCommittedAmount(){
          onPropGet(PROP_ID_committedAmount);
          return _committedAmount;
     }
@@ -769,7 +769,7 @@ public class _ErpPrjBudgetLine extends DynamicOrmEntity{
     /**
      * 已承诺金额: COMMITTED_AMOUNT
      */
-    public final void setCommittedAmount(java.lang.String value){
+    public final void setCommittedAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_committedAmount,value)){
             this._committedAmount = value;
             internalClearRefs(PROP_ID_committedAmount);
@@ -780,7 +780,7 @@ public class _ErpPrjBudgetLine extends DynamicOrmEntity{
     /**
      * 实际金额: ACTUAL_AMOUNT
      */
-    public final java.lang.String getActualAmount(){
+    public final java.math.BigDecimal getActualAmount(){
          onPropGet(PROP_ID_actualAmount);
          return _actualAmount;
     }
@@ -788,7 +788,7 @@ public class _ErpPrjBudgetLine extends DynamicOrmEntity{
     /**
      * 实际金额: ACTUAL_AMOUNT
      */
-    public final void setActualAmount(java.lang.String value){
+    public final void setActualAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_actualAmount,value)){
             this._actualAmount = value;
             internalClearRefs(PROP_ID_actualAmount);

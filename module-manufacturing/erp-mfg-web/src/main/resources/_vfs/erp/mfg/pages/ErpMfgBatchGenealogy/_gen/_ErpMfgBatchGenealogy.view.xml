@@ -37,7 +37,7 @@
                 <col id="inputMaterialId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--投入数量-->
-                <col id="inputQty" mandatory="true" sortable="true"/>
+                <col id="inputQty" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--投入计量单位-->
                 <col id="inputUoMId" mandatory="true" ui:number="true" sortable="true"/>
@@ -49,7 +49,7 @@
                 <col id="outputMaterialId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--产出数量-->
-                <col id="outputQty" mandatory="true" sortable="true"/>
+                <col id="outputQty" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--产出计量单位-->
                 <col id="outputUoMId" mandatory="true" ui:number="true" sortable="true"/>

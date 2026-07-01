@@ -245,28 +245,28 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
     private java.lang.Long _operationId;
     
     /* 标准金额: STANDARD_AMOUNT */
-    private java.lang.String _standardAmount;
+    private java.math.BigDecimal _standardAmount;
     
     /* 实际金额: ACTUAL_AMOUNT */
-    private java.lang.String _actualAmount;
+    private java.math.BigDecimal _actualAmount;
     
     /* 差异金额: VARIANCE_AMOUNT */
-    private java.lang.String _varianceAmount;
+    private java.math.BigDecimal _varianceAmount;
     
     /* 差异百分比: VARIANCE_PERCENT */
     private java.lang.String _variancePercent;
     
     /* 标准数量: STANDARD_QTY */
-    private java.lang.String _standardQty;
+    private java.math.BigDecimal _standardQty;
     
     /* 实际数量: ACTUAL_QTY */
-    private java.lang.String _actualQty;
+    private java.math.BigDecimal _actualQty;
     
     /* 标准单价: STANDARD_PRICE */
-    private java.lang.String _standardPrice;
+    private java.math.BigDecimal _standardPrice;
     
     /* 实际单价: ACTUAL_PRICE */
-    private java.lang.String _actualPrice;
+    private java.math.BigDecimal _actualPrice;
     
     /* 工作中心: WORKCENTER_ID */
     private java.lang.Long _workcenterId;
@@ -529,9 +529,9 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
             }
         
             case PROP_ID_standardAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_standardAmount));
                }
                setStandardAmount(typedValue);
@@ -539,9 +539,9 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
             }
         
             case PROP_ID_actualAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_actualAmount));
                }
                setActualAmount(typedValue);
@@ -549,9 +549,9 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
             }
         
             case PROP_ID_varianceAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_varianceAmount));
                }
                setVarianceAmount(typedValue);
@@ -569,9 +569,9 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
             }
         
             case PROP_ID_standardQty:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_standardQty));
                }
                setStandardQty(typedValue);
@@ -579,9 +579,9 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
             }
         
             case PROP_ID_actualQty:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_actualQty));
                }
                setActualQty(typedValue);
@@ -589,9 +589,9 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
             }
         
             case PROP_ID_standardPrice:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_standardPrice));
                }
                setStandardPrice(typedValue);
@@ -599,9 +599,9 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
             }
         
             case PROP_ID_actualPrice:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_actualPrice));
                }
                setActualPrice(typedValue);
@@ -768,21 +768,21 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
         
             case PROP_ID_standardAmount:{
                onInitProp(propId);
-               this._standardAmount = (java.lang.String)value;
+               this._standardAmount = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_actualAmount:{
                onInitProp(propId);
-               this._actualAmount = (java.lang.String)value;
+               this._actualAmount = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_varianceAmount:{
                onInitProp(propId);
-               this._varianceAmount = (java.lang.String)value;
+               this._varianceAmount = (java.math.BigDecimal)value;
                
                break;
             }
@@ -796,28 +796,28 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
         
             case PROP_ID_standardQty:{
                onInitProp(propId);
-               this._standardQty = (java.lang.String)value;
+               this._standardQty = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_actualQty:{
                onInitProp(propId);
-               this._actualQty = (java.lang.String)value;
+               this._actualQty = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_standardPrice:{
                onInitProp(propId);
-               this._standardPrice = (java.lang.String)value;
+               this._standardPrice = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_actualPrice:{
                onInitProp(propId);
-               this._actualPrice = (java.lang.String)value;
+               this._actualPrice = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1034,7 +1034,7 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
     /**
      * 标准金额: STANDARD_AMOUNT
      */
-    public final java.lang.String getStandardAmount(){
+    public final java.math.BigDecimal getStandardAmount(){
          onPropGet(PROP_ID_standardAmount);
          return _standardAmount;
     }
@@ -1042,7 +1042,7 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
     /**
      * 标准金额: STANDARD_AMOUNT
      */
-    public final void setStandardAmount(java.lang.String value){
+    public final void setStandardAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_standardAmount,value)){
             this._standardAmount = value;
             internalClearRefs(PROP_ID_standardAmount);
@@ -1053,7 +1053,7 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
     /**
      * 实际金额: ACTUAL_AMOUNT
      */
-    public final java.lang.String getActualAmount(){
+    public final java.math.BigDecimal getActualAmount(){
          onPropGet(PROP_ID_actualAmount);
          return _actualAmount;
     }
@@ -1061,7 +1061,7 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
     /**
      * 实际金额: ACTUAL_AMOUNT
      */
-    public final void setActualAmount(java.lang.String value){
+    public final void setActualAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_actualAmount,value)){
             this._actualAmount = value;
             internalClearRefs(PROP_ID_actualAmount);
@@ -1072,7 +1072,7 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
     /**
      * 差异金额: VARIANCE_AMOUNT
      */
-    public final java.lang.String getVarianceAmount(){
+    public final java.math.BigDecimal getVarianceAmount(){
          onPropGet(PROP_ID_varianceAmount);
          return _varianceAmount;
     }
@@ -1080,7 +1080,7 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
     /**
      * 差异金额: VARIANCE_AMOUNT
      */
-    public final void setVarianceAmount(java.lang.String value){
+    public final void setVarianceAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_varianceAmount,value)){
             this._varianceAmount = value;
             internalClearRefs(PROP_ID_varianceAmount);
@@ -1110,7 +1110,7 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
     /**
      * 标准数量: STANDARD_QTY
      */
-    public final java.lang.String getStandardQty(){
+    public final java.math.BigDecimal getStandardQty(){
          onPropGet(PROP_ID_standardQty);
          return _standardQty;
     }
@@ -1118,7 +1118,7 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
     /**
      * 标准数量: STANDARD_QTY
      */
-    public final void setStandardQty(java.lang.String value){
+    public final void setStandardQty(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_standardQty,value)){
             this._standardQty = value;
             internalClearRefs(PROP_ID_standardQty);
@@ -1129,7 +1129,7 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
     /**
      * 实际数量: ACTUAL_QTY
      */
-    public final java.lang.String getActualQty(){
+    public final java.math.BigDecimal getActualQty(){
          onPropGet(PROP_ID_actualQty);
          return _actualQty;
     }
@@ -1137,7 +1137,7 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
     /**
      * 实际数量: ACTUAL_QTY
      */
-    public final void setActualQty(java.lang.String value){
+    public final void setActualQty(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_actualQty,value)){
             this._actualQty = value;
             internalClearRefs(PROP_ID_actualQty);
@@ -1148,7 +1148,7 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
     /**
      * 标准单价: STANDARD_PRICE
      */
-    public final java.lang.String getStandardPrice(){
+    public final java.math.BigDecimal getStandardPrice(){
          onPropGet(PROP_ID_standardPrice);
          return _standardPrice;
     }
@@ -1156,7 +1156,7 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
     /**
      * 标准单价: STANDARD_PRICE
      */
-    public final void setStandardPrice(java.lang.String value){
+    public final void setStandardPrice(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_standardPrice,value)){
             this._standardPrice = value;
             internalClearRefs(PROP_ID_standardPrice);
@@ -1167,7 +1167,7 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
     /**
      * 实际单价: ACTUAL_PRICE
      */
-    public final java.lang.String getActualPrice(){
+    public final java.math.BigDecimal getActualPrice(){
          onPropGet(PROP_ID_actualPrice);
          return _actualPrice;
     }
@@ -1175,7 +1175,7 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
     /**
      * 实际单价: ACTUAL_PRICE
      */
-    public final void setActualPrice(java.lang.String value){
+    public final void setActualPrice(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_actualPrice,value)){
             this._actualPrice = value;
             internalClearRefs(PROP_ID_actualPrice);

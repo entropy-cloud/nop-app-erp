@@ -37,7 +37,7 @@
                 <col id="uoMId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--数量-->
-                <col id="quantity" mandatory="true" sortable="true"/>
+                <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

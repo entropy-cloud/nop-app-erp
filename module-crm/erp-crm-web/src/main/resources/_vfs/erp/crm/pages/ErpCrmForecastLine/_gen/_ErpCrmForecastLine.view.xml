@@ -34,10 +34,10 @@
                 <col id="probability" ui:number="true" sortable="true"/>
 
                 <!--预期收入快照-->
-                <col id="expectedRevenue" sortable="true"/>
+                <col id="expectedRevenue" ui:number="true" sortable="true"/>
 
                 <!--加权收入-->
-                <col id="weightedRevenue" sortable="true"/>
+                <col id="weightedRevenue" ui:number="true" sortable="true"/>
 
                 <!--预测分类-->
                 <col id="forecastCategory" mandatory="true" sortable="true"/>

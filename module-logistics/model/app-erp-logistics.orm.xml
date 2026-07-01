@@ -165,7 +165,7 @@
                 <column name="shipmentDate" displayName="发运日期" stdSqlType="DATE" code="SHIPMENT_DATE" propId="8" stdDataType="date" i18n-en:displayName='Shipment Date' />
                 <column name="trackingNo" displayName="运单号" stdSqlType="VARCHAR" precision="100" code="TRACKING_NO" propId="9" stdDataType="string" i18n-en:displayName='Tracking No' />
                 <column name="labelUrl" displayName="面单URL" stdSqlType="VARCHAR" precision="500" code="LABEL_URL" propId="10" stdDataType="string" i18n-en:displayName='Label URL' />
-                <column name="freightAmount" displayName="运费" domain="amount" code="FREIGHT_AMOUNT" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Freight Amount' />
+                <column name="freightAmount" displayName="运费" domain="amount" code="FREIGHT_AMOUNT" propId="11" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Freight Amount' />
                 <column name="freightCurrencyId" displayName="运费币种" stdSqlType="BIGINT" code="FREIGHT_CURRENCY_ID" propId="12" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="freightTerms" displayName="运费条款" ext:dict="erp-log/freight-terms" code="FREIGHT_TERMS" propId="13" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Freight Terms' />
                 <column name="freightSettlementStatus" displayName="运费结算状态" ext:dict="erp-log/settlement-status" code="FREIGHT_SETTLEMENT_STATUS" propId="14" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Settlement Status' />
@@ -218,7 +218,7 @@
                 <column name="shipmentId" displayName="发运单ID" stdSqlType="BIGINT" mandatory="true" code="SHIPMENT_ID" propId="2" stdDataType="long" i18n-en:displayName='Shipment' />
                 <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int" i18n-en:displayName='Line No' />
                 <column name="materialId" displayName="物料" stdSqlType="BIGINT" code="MATERIAL_ID" propId="4" stdDataType="long" i18n-en:displayName='Material' />
-                <column name="quantity" displayName="数量" domain="quantity" code="QUANTITY" propId="5" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Quantity' />
+                <column name="quantity" displayName="数量" domain="quantity" code="QUANTITY" propId="5" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Quantity' />
                 <column name="unit" displayName="单位" stdSqlType="VARCHAR" precision="50" code="UNIT" propId="6" stdDataType="string" i18n-en:displayName='Unit' />
                 <column name="packageDescription" displayName="包装说明" stdSqlType="VARCHAR" precision="500" code="PACKAGE_DESCRIPTION" propId="7" stdDataType="string" i18n-en:displayName='Package Description' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
@@ -249,7 +249,7 @@
                 <column name="length" displayName="长(cm)" domain="dimension" code="LENGTH" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Length' />
                 <column name="width" displayName="宽(cm)" domain="dimension" code="WIDTH" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Width' />
                 <column name="height" displayName="高(cm)" domain="dimension" code="HEIGHT" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Height' />
-                <column name="declaredValue" displayName="申报价值" domain="amount" code="DECLARED_VALUE" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Declared Value' />
+                <column name="declaredValue" displayName="申报价值" domain="amount" code="DECLARED_VALUE" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Declared Value' />
                 <column name="isActive" displayName="是否有效" stdSqlType="INTEGER" mandatory="true" defaultValue="1" code="IS_ACTIVE" propId="11" stdDataType="int" i18n-en:displayName='Active' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="13" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />

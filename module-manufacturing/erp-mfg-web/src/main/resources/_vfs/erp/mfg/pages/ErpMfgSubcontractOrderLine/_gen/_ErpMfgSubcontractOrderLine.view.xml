@@ -34,13 +34,13 @@
                 <col id="uoMId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--委外数量-->
-                <col id="quantity" mandatory="true" sortable="true"/>
+                <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--单位加工费-->
-                <col id="unitProcessingFee" sortable="true"/>
+                <col id="unitProcessingFee" ui:number="true" sortable="true"/>
 
                 <!--金额-->
-                <col id="amount" sortable="true"/>
+                <col id="amount" ui:number="true" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

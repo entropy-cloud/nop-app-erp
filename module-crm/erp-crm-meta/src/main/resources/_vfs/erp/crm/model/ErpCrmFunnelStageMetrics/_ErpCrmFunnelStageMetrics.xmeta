@@ -73,7 +73,7 @@
         </prop>
         <prop name="lostAmount" displayName="本阶段丢失金额" propId="14" i18n-en:displayName="Lost Amount" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="lostReasonTop" displayName="TOP丢失原因(JSON)" propId="15" i18n-en:displayName="Lost Reason Top"
               queryable="true" sortable="true" insertable="true" updatable="true">

@@ -68,44 +68,44 @@
         }
 
 
-        private String _plannedQuantity;
+        private java.math.BigDecimal _plannedQuantity;
 
     
         @PropMeta(propId=5)
     
-        public String getPlannedQuantity(){
+        public java.math.BigDecimal getPlannedQuantity(){
             return _plannedQuantity;
         }
 
-        public void setPlannedQuantity(String value){
+        public void setPlannedQuantity(java.math.BigDecimal value){
             this._plannedQuantity = value;
         }
 
 
-        private String _completedQuantity;
+        private java.math.BigDecimal _completedQuantity;
 
     
         @PropMeta(propId=6)
     
-        public String getCompletedQuantity(){
+        public java.math.BigDecimal getCompletedQuantity(){
             return _completedQuantity;
         }
 
-        public void setCompletedQuantity(String value){
+        public void setCompletedQuantity(java.math.BigDecimal value){
             this._completedQuantity = value;
         }
 
 
-        private String _scrappedQuantity;
+        private java.math.BigDecimal _scrappedQuantity;
 
     
         @PropMeta(propId=7)
     
-        public String getScrappedQuantity(){
+        public java.math.BigDecimal getScrappedQuantity(){
             return _scrappedQuantity;
         }
 
-        public void setScrappedQuantity(String value){
+        public void setScrappedQuantity(java.math.BigDecimal value){
             this._scrappedQuantity = value;
         }
 

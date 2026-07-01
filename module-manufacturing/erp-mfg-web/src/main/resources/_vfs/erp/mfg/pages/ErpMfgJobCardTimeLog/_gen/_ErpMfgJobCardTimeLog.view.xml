@@ -49,16 +49,16 @@
                 <col id="runMins" sortable="true"/>
 
                 <!--本班完工数量-->
-                <col id="completedQuantity" sortable="true"/>
+                <col id="completedQuantity" ui:number="true" sortable="true"/>
 
                 <!--本班报废数量-->
-                <col id="scrappedQuantity" sortable="true"/>
+                <col id="scrappedQuantity" ui:number="true" sortable="true"/>
 
                 <!--小时费率-->
                 <col id="hourlyRate" sortable="true"/>
 
                 <!--人工成本-->
-                <col id="laborCost" sortable="true"/>
+                <col id="laborCost" ui:number="true" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

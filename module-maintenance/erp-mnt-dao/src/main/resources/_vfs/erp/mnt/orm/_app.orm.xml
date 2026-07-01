@@ -714,7 +714,7 @@
                 <column code="WAREHOUSE_ID" displayName="领料仓库" name="warehouseId" propId="8" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
                 <column code="TOTAL_AMOUNT" defaultValue="0" displayName="金额合计" domain="amount" name="totalAmount"
-                        precision="20" propId="9" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="9" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Total Amt"/>
                 <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="10"
                         stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-mnt/doc-status"
@@ -802,12 +802,12 @@
                 <column code="UO_M_ID" displayName="计量单位" mandatory="true" name="uoMId" propId="5" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="UoM"/>
                 <column code="QUANTITY" displayName="消耗数量" domain="quantity" mandatory="true" name="quantity"
-                        precision="20" propId="6" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="6" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Quantity"/>
                 <column code="UNIT_COST" displayName="单位成本" name="unitCost" precision="20" propId="7" scale="4"
                         stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Unit Cost"/>
                 <column code="AMOUNT" displayName="金额" domain="amount" name="amount" precision="20" propId="8" scale="4"
-                        stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Amount"/>
+                        stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Amount"/>
                 <column code="BATCH_NO" displayName="批号" name="batchNo" precision="50" propId="9" stdDataType="string"
                         stdSqlType="VARCHAR" i18n-en:displayName="Batch No"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="10"

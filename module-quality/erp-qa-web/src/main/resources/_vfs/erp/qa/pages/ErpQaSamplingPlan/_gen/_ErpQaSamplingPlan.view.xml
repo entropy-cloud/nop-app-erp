@@ -31,13 +31,13 @@
                 <col id="aqlLevel" mandatory="true" sortable="true"/>
 
                 <!--批量下限-->
-                <col id="lotSizeFrom" sortable="true"/>
+                <col id="lotSizeFrom" ui:number="true" sortable="true"/>
 
                 <!--批量上限-->
-                <col id="lotSizeTo" sortable="true"/>
+                <col id="lotSizeTo" ui:number="true" sortable="true"/>
 
                 <!--样本量-->
-                <col id="sampleSize" mandatory="true" sortable="true"/>
+                <col id="sampleSize" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--合格判定数(Ac)-->
                 <col id="acceptNumber" mandatory="true" ui:number="true" sortable="true"/>

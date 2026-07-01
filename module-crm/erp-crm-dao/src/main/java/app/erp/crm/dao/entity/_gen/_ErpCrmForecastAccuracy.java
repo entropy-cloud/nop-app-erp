@@ -220,13 +220,13 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     private java.lang.Long _territoryId;
     
     /* 承诺金额: COMMIT_AMOUNT */
-    private java.lang.String _commitAmount;
+    private java.math.BigDecimal _commitAmount;
     
     /* 乐观金额: UPSIDE_AMOUNT */
-    private java.lang.String _upsideAmount;
+    private java.math.BigDecimal _upsideAmount;
     
     /* 实际关闭收入: ACTUAL_CLOSED_REVENUE */
-    private java.lang.String _actualClosedRevenue;
+    private java.math.BigDecimal _actualClosedRevenue;
     
     /* 承诺准确率: COMMIT_ACCURACY */
     private java.lang.Double _commitAccuracy;
@@ -235,7 +235,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     private java.lang.Double _upsideAccuracy;
     
     /* 偏差绝对值: DEVIATION_AMOUNT */
-    private java.lang.String _deviationAmount;
+    private java.math.BigDecimal _deviationAmount;
     
     /* 计算人: CALCULATED_BY */
     private java.lang.String _calculatedBy;
@@ -480,9 +480,9 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
             }
         
             case PROP_ID_commitAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_commitAmount));
                }
                setCommitAmount(typedValue);
@@ -490,9 +490,9 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
             }
         
             case PROP_ID_upsideAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_upsideAmount));
                }
                setUpsideAmount(typedValue);
@@ -500,9 +500,9 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
             }
         
             case PROP_ID_actualClosedRevenue:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_actualClosedRevenue));
                }
                setActualClosedRevenue(typedValue);
@@ -530,9 +530,9 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
             }
         
             case PROP_ID_deviationAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_deviationAmount));
                }
                setDeviationAmount(typedValue);
@@ -679,21 +679,21 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
         
             case PROP_ID_commitAmount:{
                onInitProp(propId);
-               this._commitAmount = (java.lang.String)value;
+               this._commitAmount = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_upsideAmount:{
                onInitProp(propId);
-               this._upsideAmount = (java.lang.String)value;
+               this._upsideAmount = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_actualClosedRevenue:{
                onInitProp(propId);
-               this._actualClosedRevenue = (java.lang.String)value;
+               this._actualClosedRevenue = (java.math.BigDecimal)value;
                
                break;
             }
@@ -714,7 +714,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
         
             case PROP_ID_deviationAmount:{
                onInitProp(propId);
-               this._deviationAmount = (java.lang.String)value;
+               this._deviationAmount = (java.math.BigDecimal)value;
                
                break;
             }
@@ -917,7 +917,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * 承诺金额: COMMIT_AMOUNT
      */
-    public final java.lang.String getCommitAmount(){
+    public final java.math.BigDecimal getCommitAmount(){
          onPropGet(PROP_ID_commitAmount);
          return _commitAmount;
     }
@@ -925,7 +925,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * 承诺金额: COMMIT_AMOUNT
      */
-    public final void setCommitAmount(java.lang.String value){
+    public final void setCommitAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_commitAmount,value)){
             this._commitAmount = value;
             internalClearRefs(PROP_ID_commitAmount);
@@ -936,7 +936,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * 乐观金额: UPSIDE_AMOUNT
      */
-    public final java.lang.String getUpsideAmount(){
+    public final java.math.BigDecimal getUpsideAmount(){
          onPropGet(PROP_ID_upsideAmount);
          return _upsideAmount;
     }
@@ -944,7 +944,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * 乐观金额: UPSIDE_AMOUNT
      */
-    public final void setUpsideAmount(java.lang.String value){
+    public final void setUpsideAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_upsideAmount,value)){
             this._upsideAmount = value;
             internalClearRefs(PROP_ID_upsideAmount);
@@ -955,7 +955,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * 实际关闭收入: ACTUAL_CLOSED_REVENUE
      */
-    public final java.lang.String getActualClosedRevenue(){
+    public final java.math.BigDecimal getActualClosedRevenue(){
          onPropGet(PROP_ID_actualClosedRevenue);
          return _actualClosedRevenue;
     }
@@ -963,7 +963,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * 实际关闭收入: ACTUAL_CLOSED_REVENUE
      */
-    public final void setActualClosedRevenue(java.lang.String value){
+    public final void setActualClosedRevenue(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_actualClosedRevenue,value)){
             this._actualClosedRevenue = value;
             internalClearRefs(PROP_ID_actualClosedRevenue);
@@ -1012,7 +1012,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * 偏差绝对值: DEVIATION_AMOUNT
      */
-    public final java.lang.String getDeviationAmount(){
+    public final java.math.BigDecimal getDeviationAmount(){
          onPropGet(PROP_ID_deviationAmount);
          return _deviationAmount;
     }
@@ -1020,7 +1020,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * 偏差绝对值: DEVIATION_AMOUNT
      */
-    public final void setDeviationAmount(java.lang.String value){
+    public final void setDeviationAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_deviationAmount,value)){
             this._deviationAmount = value;
             internalClearRefs(PROP_ID_deviationAmount);

@@ -126,16 +126,16 @@
         }
 
 
-        private String _totalAmount;
+        private java.math.BigDecimal _totalAmount;
 
     
         @PropMeta(propId=9)
     
-        public String getTotalAmount(){
+        public java.math.BigDecimal getTotalAmount(){
             return _totalAmount;
         }
 
-        public void setTotalAmount(String value){
+        public void setTotalAmount(java.math.BigDecimal value){
             this._totalAmount = value;
         }
 

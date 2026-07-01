@@ -55,16 +55,16 @@
                 <col id="totalLost" ui:number="true" sortable="true"/>
 
                 <!--赢单总收入-->
-                <col id="totalRevenue" sortable="true"/>
+                <col id="totalRevenue" ui:number="true" sortable="true"/>
 
                 <!--丢失金额合计-->
-                <col id="lostRevenue" sortable="true"/>
+                <col id="lostRevenue" ui:number="true" sortable="true"/>
 
                 <!--加权收入合计-->
-                <col id="weightedRevenue" sortable="true"/>
+                <col id="weightedRevenue" ui:number="true" sortable="true"/>
 
                 <!--平均赢单金额-->
-                <col id="avgDealSize" sortable="true"/>
+                <col id="avgDealSize" ui:number="true" sortable="true"/>
 
                 <!--平均销售周期天数-->
                 <col id="avgSalesCycleDays" ui:number="true" sortable="true"/>

@@ -43,7 +43,7 @@
                 <col id="sourceBillCode" sortable="true"/>
 
                 <!--需求数量-->
-                <col id="quantity" mandatory="true" sortable="true"/>
+                <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--需求日期-->
                 <col id="requirementDate" mandatory="true" sortable="true"/>

@@ -52,13 +52,13 @@
                 <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--汇率-->
-                <col id="exchangeRate" mandatory="true" sortable="true"/>
+                <col id="exchangeRate" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--加工费-->
-                <col id="processingFee" sortable="true"/>
+                <col id="processingFee" ui:number="true" sortable="true"/>
 
                 <!--合计金额-->
-                <col id="totalAmount" sortable="true"/>
+                <col id="totalAmount" ui:number="true" sortable="true"/>
 
                 <!--单据状态-->
                 <col id="docStatus" mandatory="true" ui:number="true" sortable="true"/>

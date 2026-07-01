@@ -409,7 +409,7 @@
                 <column name="equipmentId" displayName="设备ID" stdSqlType="BIGINT" mandatory="true" code="EQUIPMENT_ID" propId="6" stdDataType="long" i18n-en:displayName='Equipment' />
                 <column name="businessDate" displayName="消耗日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="7" stdDataType="date" i18n-en:displayName='Business Date' />
                 <column name="warehouseId" displayName="领料仓库" stdSqlType="BIGINT" code="WAREHOUSE_ID" propId="8" stdDataType="long" i18n-en:displayName='Warehouse' />
-                <column name="totalAmount" displayName="金额合计" domain="amount" defaultValue="0" code="TOTAL_AMOUNT" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Amt' />
+                <column name="totalAmount" displayName="金额合计" domain="amount" defaultValue="0" code="TOTAL_AMOUNT" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Amt' />
                 <column name="docStatus" displayName="单据状态" ext:dict="erp-mnt/doc-status" mandatory="true" code="DOC_STATUS" propId="10" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
                 <column name="approveStatus" displayName="审核状态" ext:dict="erp-mnt/approve-status" mandatory="true" code="APPROVE_STATUS" propId="11" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Approve Status' />
                 <column name="posted" displayName="已过账(库存已出库)" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="12" stdDataType="boolean" i18n-en:displayName='Posted' />
@@ -447,9 +447,9 @@
                 <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int" i18n-en:displayName='Line No' />
                 <column name="materialId" displayName="备件(物料)" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="4" stdDataType="long" i18n-en:displayName='Material' />
                 <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UO_M_ID" propId="5" stdDataType="long" i18n-en:displayName='UoM' />
-                <column name="quantity" displayName="消耗数量" domain="quantity" mandatory="true" code="QUANTITY" propId="6" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Quantity' />
+                <column name="quantity" displayName="消耗数量" domain="quantity" mandatory="true" code="QUANTITY" propId="6" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Quantity' />
                 <column name="unitCost" displayName="单位成本" stdSqlType="DECIMAL" precision="20" scale="4" code="UNIT_COST" propId="7" stdDataType="decimal" i18n-en:displayName='Unit Cost' />
-                <column name="amount" displayName="金额" domain="amount" code="AMOUNT" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Amount' />
+                <column name="amount" displayName="金额" domain="amount" code="AMOUNT" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amount' />
                 <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="9" stdDataType="string" i18n-en:displayName='Batch No' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="11" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />

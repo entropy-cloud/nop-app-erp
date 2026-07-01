@@ -251,13 +251,13 @@ public class _ErpPrjProject extends DynamicOrmEntity{
     private java.lang.String _budget;
     
     /* 已承诺成本: COMMITTED_COST */
-    private java.lang.String _committedCost;
+    private java.math.BigDecimal _committedCost;
     
     /* 实际成本: ACTUAL_COST */
-    private java.lang.String _actualCost;
+    private java.math.BigDecimal _actualCost;
     
     /* 已开票金额: BILLED_AMOUNT */
-    private java.lang.String _billedAmount;
+    private java.math.BigDecimal _billedAmount;
     
     /* 状态: STATUS */
     private java.lang.Integer _status;
@@ -538,9 +538,9 @@ public class _ErpPrjProject extends DynamicOrmEntity{
             }
         
             case PROP_ID_committedCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_committedCost));
                }
                setCommittedCost(typedValue);
@@ -548,9 +548,9 @@ public class _ErpPrjProject extends DynamicOrmEntity{
             }
         
             case PROP_ID_actualCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_actualCost));
                }
                setActualCost(typedValue);
@@ -558,9 +558,9 @@ public class _ErpPrjProject extends DynamicOrmEntity{
             }
         
             case PROP_ID_billedAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_billedAmount));
                }
                setBilledAmount(typedValue);
@@ -738,21 +738,21 @@ public class _ErpPrjProject extends DynamicOrmEntity{
         
             case PROP_ID_committedCost:{
                onInitProp(propId);
-               this._committedCost = (java.lang.String)value;
+               this._committedCost = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_actualCost:{
                onInitProp(propId);
-               this._actualCost = (java.lang.String)value;
+               this._actualCost = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_billedAmount:{
                onInitProp(propId);
-               this._billedAmount = (java.lang.String)value;
+               this._billedAmount = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1019,7 +1019,7 @@ public class _ErpPrjProject extends DynamicOrmEntity{
     /**
      * 已承诺成本: COMMITTED_COST
      */
-    public final java.lang.String getCommittedCost(){
+    public final java.math.BigDecimal getCommittedCost(){
          onPropGet(PROP_ID_committedCost);
          return _committedCost;
     }
@@ -1027,7 +1027,7 @@ public class _ErpPrjProject extends DynamicOrmEntity{
     /**
      * 已承诺成本: COMMITTED_COST
      */
-    public final void setCommittedCost(java.lang.String value){
+    public final void setCommittedCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_committedCost,value)){
             this._committedCost = value;
             internalClearRefs(PROP_ID_committedCost);
@@ -1038,7 +1038,7 @@ public class _ErpPrjProject extends DynamicOrmEntity{
     /**
      * 实际成本: ACTUAL_COST
      */
-    public final java.lang.String getActualCost(){
+    public final java.math.BigDecimal getActualCost(){
          onPropGet(PROP_ID_actualCost);
          return _actualCost;
     }
@@ -1046,7 +1046,7 @@ public class _ErpPrjProject extends DynamicOrmEntity{
     /**
      * 实际成本: ACTUAL_COST
      */
-    public final void setActualCost(java.lang.String value){
+    public final void setActualCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_actualCost,value)){
             this._actualCost = value;
             internalClearRefs(PROP_ID_actualCost);
@@ -1057,7 +1057,7 @@ public class _ErpPrjProject extends DynamicOrmEntity{
     /**
      * 已开票金额: BILLED_AMOUNT
      */
-    public final java.lang.String getBilledAmount(){
+    public final java.math.BigDecimal getBilledAmount(){
          onPropGet(PROP_ID_billedAmount);
          return _billedAmount;
     }
@@ -1065,7 +1065,7 @@ public class _ErpPrjProject extends DynamicOrmEntity{
     /**
      * 已开票金额: BILLED_AMOUNT
      */
-    public final void setBilledAmount(java.lang.String value){
+    public final void setBilledAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_billedAmount,value)){
             this._billedAmount = value;
             internalClearRefs(PROP_ID_billedAmount);

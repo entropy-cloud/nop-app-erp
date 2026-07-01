@@ -141,10 +141,10 @@
                 <column code="INSPECTION_DATE" displayName="检验日期" mandatory="true" name="inspectionDate" propId="14"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Inspection Date"/>
                 <column code="LOT_QUANTITY" displayName="批量" domain="quantity" name="lotQuantity" precision="20"
-                        propId="15" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="15" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Lot Quantity"/>
                 <column code="SAMPLE_QUANTITY" displayName="抽样数量" domain="quantity" name="sampleQuantity" precision="20"
-                        propId="16" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="16" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Sample Quantity"/>
                 <column code="INSPECTOR_ID" displayName="检验员(职员)" name="inspectorId" propId="17" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Inspector"/>
@@ -413,7 +413,7 @@
                 <column code="INSPECTION_ID" displayName="质检单ID" name="inspectionId" propId="7" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Inspection"/>
                 <column code="QUANTITY" displayName="不合格数量" domain="quantity" name="quantity" precision="20" propId="8"
-                        scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Quantity"/>
+                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Quantity"/>
                 <column code="DESCRIPTION" displayName="问题描述" name="description" precision="2000" propId="9"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Description"/>
                 <column code="SEVERITY" displayName="严重程度" mandatory="true" name="severity" propId="10"
@@ -716,12 +716,13 @@
                 <column code="AQL_LEVEL" displayName="AQL 检验水平(如 II)" mandatory="true" name="aqlLevel" precision="20"
                         propId="4" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Aql Level"/>
                 <column code="LOT_SIZE_FROM" displayName="批量下限" domain="quantity" name="lotSizeFrom" precision="20"
-                        propId="5" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="5" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Lot Size From"/>
                 <column code="LOT_SIZE_TO" displayName="批量上限" domain="quantity" name="lotSizeTo" precision="20"
-                        propId="6" scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Lot Size To"/>
+                        propId="6" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Lot Size To"/>
                 <column code="SAMPLE_SIZE" displayName="样本量" domain="quantity" mandatory="true" name="sampleSize"
-                        precision="20" propId="7" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="7" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Sample Size"/>
                 <column code="ACCEPT_NUMBER" displayName="合格判定数(Ac)" mandatory="true" name="acceptNumber" propId="8"
                         stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Accept Number"/>

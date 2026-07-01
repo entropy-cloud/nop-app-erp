@@ -97,16 +97,16 @@
         }
 
 
-        private String _inputQty;
+        private java.math.BigDecimal _inputQty;
 
     
         @PropMeta(propId=7)
     
-        public String getInputQty(){
+        public java.math.BigDecimal getInputQty(){
             return _inputQty;
         }
 
-        public void setInputQty(String value){
+        public void setInputQty(java.math.BigDecimal value){
             this._inputQty = value;
         }
 
@@ -153,16 +153,16 @@
         }
 
 
-        private String _outputQty;
+        private java.math.BigDecimal _outputQty;
 
     
         @PropMeta(propId=11)
     
-        public String getOutputQty(){
+        public java.math.BigDecimal getOutputQty(){
             return _outputQty;
         }
 
-        public void setOutputQty(String value){
+        public void setOutputQty(java.math.BigDecimal value){
             this._outputQty = value;
         }
 

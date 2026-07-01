@@ -5,7 +5,7 @@
   "materialId": 0,
   "skuId": 0,
   "uoMId": 0,
-  "quantity": "",
+  "quantity": 0.0,
   "operationId": 0,
   "remark": "",
   "scrapRate": "",

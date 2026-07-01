@@ -12,7 +12,7 @@
   "dropOffRate": 0.0,
   "avgDaysInStage": 0.0,
   "lostCount": 0,
-  "lostAmount": "",
+  "lostAmount": 0.0,
   "lostReasonTop": "",
   "remark": "",
   "delVersion": 0,

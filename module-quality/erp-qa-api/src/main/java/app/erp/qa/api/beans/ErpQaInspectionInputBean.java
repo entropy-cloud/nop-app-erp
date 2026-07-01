@@ -195,30 +195,30 @@
         }
 
 
-        private String _lotQuantity;
+        private java.math.BigDecimal _lotQuantity;
 
     
         @PropMeta(propId=15)
     
-        public String getLotQuantity(){
+        public java.math.BigDecimal getLotQuantity(){
             return _lotQuantity;
         }
 
-        public void setLotQuantity(String value){
+        public void setLotQuantity(java.math.BigDecimal value){
             this._lotQuantity = value;
         }
 
 
-        private String _sampleQuantity;
+        private java.math.BigDecimal _sampleQuantity;
 
     
         @PropMeta(propId=16)
     
-        public String getSampleQuantity(){
+        public java.math.BigDecimal getSampleQuantity(){
             return _sampleQuantity;
         }
 
-        public void setSampleQuantity(String value){
+        public void setSampleQuantity(java.math.BigDecimal value){
             this._sampleQuantity = value;
         }
 

@@ -3,7 +3,7 @@
   "shipmentId": 0,
   "lineNo": 0,
   "materialId": 0,
-  "quantity": "",
+  "quantity": 0.0,
   "unit": "",
   "packageDescription": "",
   "remark": "",

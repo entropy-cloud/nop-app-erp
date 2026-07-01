@@ -111,44 +111,44 @@
         }
 
 
-        private String _standardAmount;
+        private java.math.BigDecimal _standardAmount;
 
     
         @PropMeta(propId=8)
     
-        public String getStandardAmount(){
+        public java.math.BigDecimal getStandardAmount(){
             return _standardAmount;
         }
 
-        public void setStandardAmount(String value){
+        public void setStandardAmount(java.math.BigDecimal value){
             this._standardAmount = value;
         }
 
 
-        private String _actualAmount;
+        private java.math.BigDecimal _actualAmount;
 
     
         @PropMeta(propId=9)
     
-        public String getActualAmount(){
+        public java.math.BigDecimal getActualAmount(){
             return _actualAmount;
         }
 
-        public void setActualAmount(String value){
+        public void setActualAmount(java.math.BigDecimal value){
             this._actualAmount = value;
         }
 
 
-        private String _varianceAmount;
+        private java.math.BigDecimal _varianceAmount;
 
     
         @PropMeta(propId=10)
     
-        public String getVarianceAmount(){
+        public java.math.BigDecimal getVarianceAmount(){
             return _varianceAmount;
         }
 
-        public void setVarianceAmount(String value){
+        public void setVarianceAmount(java.math.BigDecimal value){
             this._varianceAmount = value;
         }
 
@@ -167,58 +167,58 @@
         }
 
 
-        private String _standardQty;
+        private java.math.BigDecimal _standardQty;
 
     
         @PropMeta(propId=12)
     
-        public String getStandardQty(){
+        public java.math.BigDecimal getStandardQty(){
             return _standardQty;
         }
 
-        public void setStandardQty(String value){
+        public void setStandardQty(java.math.BigDecimal value){
             this._standardQty = value;
         }
 
 
-        private String _actualQty;
+        private java.math.BigDecimal _actualQty;
 
     
         @PropMeta(propId=13)
     
-        public String getActualQty(){
+        public java.math.BigDecimal getActualQty(){
             return _actualQty;
         }
 
-        public void setActualQty(String value){
+        public void setActualQty(java.math.BigDecimal value){
             this._actualQty = value;
         }
 
 
-        private String _standardPrice;
+        private java.math.BigDecimal _standardPrice;
 
     
         @PropMeta(propId=14)
     
-        public String getStandardPrice(){
+        public java.math.BigDecimal getStandardPrice(){
             return _standardPrice;
         }
 
-        public void setStandardPrice(String value){
+        public void setStandardPrice(java.math.BigDecimal value){
             this._standardPrice = value;
         }
 
 
-        private String _actualPrice;
+        private java.math.BigDecimal _actualPrice;
 
     
         @PropMeta(propId=15)
     
-        public String getActualPrice(){
+        public java.math.BigDecimal getActualPrice(){
             return _actualPrice;
         }
 
-        public void setActualPrice(String value){
+        public void setActualPrice(java.math.BigDecimal value){
             this._actualPrice = value;
         }
 

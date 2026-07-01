@@ -40,13 +40,13 @@
                 <col id="territoryId" ui:number="true" sortable="true"/>
 
                 <!--承诺金额-->
-                <col id="commitAmount" sortable="true"/>
+                <col id="commitAmount" ui:number="true" sortable="true"/>
 
                 <!--乐观金额-->
-                <col id="upsideAmount" sortable="true"/>
+                <col id="upsideAmount" ui:number="true" sortable="true"/>
 
                 <!--实际关闭收入-->
-                <col id="actualClosedRevenue" sortable="true"/>
+                <col id="actualClosedRevenue" ui:number="true" sortable="true"/>
 
                 <!--承诺准确率-->
                 <col id="commitAccuracy" ui:number="true" sortable="true"/>
@@ -55,7 +55,7 @@
                 <col id="upsideAccuracy" ui:number="true" sortable="true"/>
 
                 <!--偏差绝对值-->
-                <col id="deviationAmount" sortable="true"/>
+                <col id="deviationAmount" ui:number="true" sortable="true"/>
 
                 <!--计算人-->
                 <col id="calculatedBy" sortable="true"/>

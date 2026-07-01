@@ -153,30 +153,30 @@
         }
 
 
-        private String _completedQuantity;
+        private java.math.BigDecimal _completedQuantity;
 
     
         @PropMeta(propId=11)
     
-        public String getCompletedQuantity(){
+        public java.math.BigDecimal getCompletedQuantity(){
             return _completedQuantity;
         }
 
-        public void setCompletedQuantity(String value){
+        public void setCompletedQuantity(java.math.BigDecimal value){
             this._completedQuantity = value;
         }
 
 
-        private String _scrappedQuantity;
+        private java.math.BigDecimal _scrappedQuantity;
 
     
         @PropMeta(propId=12)
     
-        public String getScrappedQuantity(){
+        public java.math.BigDecimal getScrappedQuantity(){
             return _scrappedQuantity;
         }
 
-        public void setScrappedQuantity(String value){
+        public void setScrappedQuantity(java.math.BigDecimal value){
             this._scrappedQuantity = value;
         }
 
@@ -195,16 +195,16 @@
         }
 
 
-        private String _laborCost;
+        private java.math.BigDecimal _laborCost;
 
     
         @PropMeta(propId=14)
     
-        public String getLaborCost(){
+        public java.math.BigDecimal getLaborCost(){
             return _laborCost;
         }
 
-        public void setLaborCost(String value){
+        public void setLaborCost(java.math.BigDecimal value){
             this._laborCost = value;
         }
 

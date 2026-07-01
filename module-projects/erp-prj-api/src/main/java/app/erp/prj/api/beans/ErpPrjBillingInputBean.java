@@ -125,30 +125,30 @@
         }
 
 
-        private String _exchangeRate;
+        private java.math.BigDecimal _exchangeRate;
 
     
         @PropMeta(propId=9)
     
-        public String getExchangeRate(){
+        public java.math.BigDecimal getExchangeRate(){
             return _exchangeRate;
         }
 
-        public void setExchangeRate(String value){
+        public void setExchangeRate(java.math.BigDecimal value){
             this._exchangeRate = value;
         }
 
 
-        private String _totalAmount;
+        private java.math.BigDecimal _totalAmount;
 
     
         @PropMeta(propId=10)
     
-        public String getTotalAmount(){
+        public java.math.BigDecimal getTotalAmount(){
             return _totalAmount;
         }
 
-        public void setTotalAmount(String value){
+        public void setTotalAmount(java.math.BigDecimal value){
             this._totalAmount = value;
         }
 

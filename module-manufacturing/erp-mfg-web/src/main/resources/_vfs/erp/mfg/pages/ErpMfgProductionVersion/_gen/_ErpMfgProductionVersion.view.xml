@@ -40,10 +40,10 @@
                 <col id="validTo" sortable="true"/>
 
                 <!--批量下限-->
-                <col id="lotSizeFrom" sortable="true"/>
+                <col id="lotSizeFrom" ui:number="true" sortable="true"/>
 
                 <!--批量上限-->
-                <col id="lotSizeTo" sortable="true"/>
+                <col id="lotSizeTo" ui:number="true" sortable="true"/>
 
                 <!--是否默认版本-->
                 <col id="isDefault" sortable="true"/>

@@ -53,11 +53,11 @@
         </prop>
         <prop name="exchangeRate" displayName="汇率" propId="9" i18n-en:displayName="Exchange Rate" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="1">
-            <schema domain="exchangeRate" type="java.lang.String" precision="20" scale="8"/>
+            <schema domain="exchangeRate" type="java.math.BigDecimal" precision="20" scale="8"/>
         </prop>
         <prop name="totalAmount" displayName="开票金额" propId="10" i18n-en:displayName="Total Amt" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="docStatus" displayName="单据状态" propId="11" i18n-en:displayName="Doc Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">

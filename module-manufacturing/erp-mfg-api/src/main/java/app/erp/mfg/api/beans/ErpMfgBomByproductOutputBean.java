@@ -97,16 +97,16 @@
         }
 
 
-        private String _quantity;
+        private java.math.BigDecimal _quantity;
 
     
         @PropMeta(propId=7)
     
-        public String getQuantity(){
+        public java.math.BigDecimal getQuantity(){
             return _quantity;
         }
 
-        public void setQuantity(String value){
+        public void setQuantity(java.math.BigDecimal value){
             this._quantity = value;
         }
 

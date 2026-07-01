@@ -49,19 +49,19 @@
         </prop>
         <prop name="commitAmount" displayName="承诺金额" propId="8" i18n-en:displayName="Commit Amount" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="upsideAmount" displayName="乐观金额" propId="9" i18n-en:displayName="Upside Amount" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="weightedAmount" displayName="加权金额" propId="10" i18n-en:displayName="Weighted Amount"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="bestCaseAmount" displayName="最佳金额" propId="11" i18n-en:displayName="Best Case Amount"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="opportunityCount" displayName="商机总数" propId="12" i18n-en:displayName="Opportunity Count"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
@@ -75,7 +75,7 @@
         <prop name="expectedClosedRevenue" displayName="实际已关闭收入" propId="14"
               i18n-en:displayName="Expected Closed Revenue" queryable="true" sortable="true" insertable="true"
               updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="lastCalculatedAt" displayName="最近计算时间" propId="15" i18n-en:displayName="Last Calculated At"
               queryable="true" sortable="true" insertable="true" updatable="true">

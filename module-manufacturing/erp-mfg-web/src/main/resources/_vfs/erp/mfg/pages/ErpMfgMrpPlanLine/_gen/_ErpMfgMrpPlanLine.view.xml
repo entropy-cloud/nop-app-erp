@@ -37,19 +37,19 @@
                 <col id="orderType" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--毛需求-->
-                <col id="grossRequirement" mandatory="true" sortable="true"/>
+                <col id="grossRequirement" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--预计入库-->
-                <col id="scheduledReceipt" sortable="true"/>
+                <col id="scheduledReceipt" ui:number="true" sortable="true"/>
 
                 <!--现有库存-->
-                <col id="onHand" sortable="true"/>
+                <col id="onHand" ui:number="true" sortable="true"/>
 
                 <!--净需求-->
-                <col id="netRequirement" mandatory="true" sortable="true"/>
+                <col id="netRequirement" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--计划数量-->
-                <col id="plannedQuantity" mandatory="true" sortable="true"/>
+                <col id="plannedQuantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--计划到货/开工日期-->
                 <col id="plannedDate" mandatory="true" sortable="true"/>

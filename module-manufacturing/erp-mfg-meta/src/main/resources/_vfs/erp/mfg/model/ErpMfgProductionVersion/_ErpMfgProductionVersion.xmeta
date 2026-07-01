@@ -49,11 +49,11 @@
         </prop>
         <prop name="lotSizeFrom" displayName="批量下限" propId="8" i18n-en:displayName="Lot Size From" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="lotSizeTo" displayName="批量上限" propId="9" i18n-en:displayName="Lot Size To" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="isDefault" displayName="是否默认版本" propId="10" i18n-en:displayName="Is Default" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="false">

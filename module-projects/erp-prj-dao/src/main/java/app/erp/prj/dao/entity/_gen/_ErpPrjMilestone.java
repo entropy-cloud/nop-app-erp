@@ -170,7 +170,7 @@ public class _ErpPrjMilestone extends DynamicOrmEntity{
     private java.time.LocalDate _actualDate;
     
     /* 应结算金额: BILLING_AMOUNT */
-    private java.lang.String _billingAmount;
+    private java.math.BigDecimal _billingAmount;
     
     /* 是否触发开票节点: IS_BILLING_TRIGGER */
     private java.lang.Boolean _isBillingTrigger;
@@ -393,9 +393,9 @@ public class _ErpPrjMilestone extends DynamicOrmEntity{
             }
         
             case PROP_ID_billingAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_billingAmount));
                }
                setBillingAmount(typedValue);
@@ -545,7 +545,7 @@ public class _ErpPrjMilestone extends DynamicOrmEntity{
         
             case PROP_ID_billingAmount:{
                onInitProp(propId);
-               this._billingAmount = (java.lang.String)value;
+               this._billingAmount = (java.math.BigDecimal)value;
                
                break;
             }
@@ -736,7 +736,7 @@ public class _ErpPrjMilestone extends DynamicOrmEntity{
     /**
      * 应结算金额: BILLING_AMOUNT
      */
-    public final java.lang.String getBillingAmount(){
+    public final java.math.BigDecimal getBillingAmount(){
          onPropGet(PROP_ID_billingAmount);
          return _billingAmount;
     }
@@ -744,7 +744,7 @@ public class _ErpPrjMilestone extends DynamicOrmEntity{
     /**
      * 应结算金额: BILLING_AMOUNT
      */
-    public final void setBillingAmount(java.lang.String value){
+    public final void setBillingAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_billingAmount,value)){
             this._billingAmount = value;
             internalClearRefs(PROP_ID_billingAmount);

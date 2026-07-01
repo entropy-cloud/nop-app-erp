@@ -111,16 +111,16 @@
         }
 
 
-        private String _requiredQuantity;
+        private java.math.BigDecimal _requiredQuantity;
 
     
         @PropMeta(propId=8)
     
-        public String getRequiredQuantity(){
+        public java.math.BigDecimal getRequiredQuantity(){
             return _requiredQuantity;
         }
 
-        public void setRequiredQuantity(String value){
+        public void setRequiredQuantity(java.math.BigDecimal value){
             this._requiredQuantity = value;
         }
 
@@ -139,30 +139,30 @@
         }
 
 
-        private String _unitCost;
+        private java.math.BigDecimal _unitCost;
 
     
         @PropMeta(propId=10)
     
-        public String getUnitCost(){
+        public java.math.BigDecimal getUnitCost(){
             return _unitCost;
         }
 
-        public void setUnitCost(String value){
+        public void setUnitCost(java.math.BigDecimal value){
             this._unitCost = value;
         }
 
 
-        private String _totalCost;
+        private java.math.BigDecimal _totalCost;
 
     
         @PropMeta(propId=11)
     
-        public String getTotalCost(){
+        public java.math.BigDecimal getTotalCost(){
             return _totalCost;
         }
 
-        public void setTotalCost(String value){
+        public void setTotalCost(java.math.BigDecimal value){
             this._totalCost = value;
         }
 

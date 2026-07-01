@@ -9,7 +9,7 @@
   "shipmentDate": "2000-01-01",
   "trackingNo": "",
   "labelUrl": "",
-  "freightAmount": "",
+  "freightAmount": 0.0,
   "freightCurrencyId": 0,
   "freightTerms": 0,
   "freightTerms_label": "",

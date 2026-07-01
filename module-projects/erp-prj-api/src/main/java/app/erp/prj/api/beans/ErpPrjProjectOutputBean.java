@@ -154,44 +154,44 @@
         }
 
 
-        private String _committedCost;
+        private java.math.BigDecimal _committedCost;
 
     
         @PropMeta(propId=11)
     
-        public String getCommittedCost(){
+        public java.math.BigDecimal getCommittedCost(){
             return _committedCost;
         }
 
-        public void setCommittedCost(String value){
+        public void setCommittedCost(java.math.BigDecimal value){
             this._committedCost = value;
         }
 
 
-        private String _actualCost;
+        private java.math.BigDecimal _actualCost;
 
     
         @PropMeta(propId=12)
     
-        public String getActualCost(){
+        public java.math.BigDecimal getActualCost(){
             return _actualCost;
         }
 
-        public void setActualCost(String value){
+        public void setActualCost(java.math.BigDecimal value){
             this._actualCost = value;
         }
 
 
-        private String _billedAmount;
+        private java.math.BigDecimal _billedAmount;
 
     
         @PropMeta(propId=13)
     
-        public String getBilledAmount(){
+        public java.math.BigDecimal getBilledAmount(){
             return _billedAmount;
         }
 
-        public void setBilledAmount(String value){
+        public void setBilledAmount(java.math.BigDecimal value){
             this._billedAmount = value;
         }
 

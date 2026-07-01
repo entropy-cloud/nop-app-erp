@@ -173,10 +173,10 @@ public class _ErpCrmForecastLine extends DynamicOrmEntity{
     private java.lang.Integer _probability;
     
     /* 预期收入快照: EXPECTED_REVENUE */
-    private java.lang.String _expectedRevenue;
+    private java.math.BigDecimal _expectedRevenue;
     
     /* 加权收入: WEIGHTED_REVENUE */
-    private java.lang.String _weightedRevenue;
+    private java.math.BigDecimal _weightedRevenue;
     
     /* 预测分类: FORECAST_CATEGORY */
     private java.lang.String _forecastCategory;
@@ -389,9 +389,9 @@ public class _ErpCrmForecastLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_expectedRevenue:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_expectedRevenue));
                }
                setExpectedRevenue(typedValue);
@@ -399,9 +399,9 @@ public class _ErpCrmForecastLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_weightedRevenue:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_weightedRevenue));
                }
                setWeightedRevenue(typedValue);
@@ -544,14 +544,14 @@ public class _ErpCrmForecastLine extends DynamicOrmEntity{
         
             case PROP_ID_expectedRevenue:{
                onInitProp(propId);
-               this._expectedRevenue = (java.lang.String)value;
+               this._expectedRevenue = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_weightedRevenue:{
                onInitProp(propId);
-               this._weightedRevenue = (java.lang.String)value;
+               this._weightedRevenue = (java.math.BigDecimal)value;
                
                break;
             }
@@ -723,7 +723,7 @@ public class _ErpCrmForecastLine extends DynamicOrmEntity{
     /**
      * 预期收入快照: EXPECTED_REVENUE
      */
-    public final java.lang.String getExpectedRevenue(){
+    public final java.math.BigDecimal getExpectedRevenue(){
          onPropGet(PROP_ID_expectedRevenue);
          return _expectedRevenue;
     }
@@ -731,7 +731,7 @@ public class _ErpCrmForecastLine extends DynamicOrmEntity{
     /**
      * 预期收入快照: EXPECTED_REVENUE
      */
-    public final void setExpectedRevenue(java.lang.String value){
+    public final void setExpectedRevenue(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_expectedRevenue,value)){
             this._expectedRevenue = value;
             internalClearRefs(PROP_ID_expectedRevenue);
@@ -742,7 +742,7 @@ public class _ErpCrmForecastLine extends DynamicOrmEntity{
     /**
      * 加权收入: WEIGHTED_REVENUE
      */
-    public final java.lang.String getWeightedRevenue(){
+    public final java.math.BigDecimal getWeightedRevenue(){
          onPropGet(PROP_ID_weightedRevenue);
          return _weightedRevenue;
     }
@@ -750,7 +750,7 @@ public class _ErpCrmForecastLine extends DynamicOrmEntity{
     /**
      * 加权收入: WEIGHTED_REVENUE
      */
-    public final void setWeightedRevenue(java.lang.String value){
+    public final void setWeightedRevenue(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_weightedRevenue,value)){
             this._weightedRevenue = value;
             internalClearRefs(PROP_ID_weightedRevenue);

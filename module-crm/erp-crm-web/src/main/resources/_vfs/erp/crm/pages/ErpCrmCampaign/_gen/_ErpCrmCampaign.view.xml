@@ -46,10 +46,10 @@
                 <col id="endDate" sortable="true"/>
 
                 <!--预算金额-->
-                <col id="budgetAmount" sortable="true"/>
+                <col id="budgetAmount" ui:number="true" sortable="true"/>
 
                 <!--实际成本-->
-                <col id="actualCost" sortable="true"/>
+                <col id="actualCost" ui:number="true" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

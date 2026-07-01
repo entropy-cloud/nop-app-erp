@@ -40,16 +40,16 @@
                 <col id="currencyId" ui:number="true" sortable="true"/>
 
                 <!--承诺金额-->
-                <col id="commitAmount" sortable="true"/>
+                <col id="commitAmount" ui:number="true" sortable="true"/>
 
                 <!--乐观金额-->
-                <col id="upsideAmount" sortable="true"/>
+                <col id="upsideAmount" ui:number="true" sortable="true"/>
 
                 <!--加权金额-->
-                <col id="weightedAmount" sortable="true"/>
+                <col id="weightedAmount" ui:number="true" sortable="true"/>
 
                 <!--最佳金额-->
-                <col id="bestCaseAmount" sortable="true"/>
+                <col id="bestCaseAmount" ui:number="true" sortable="true"/>
 
                 <!--商机总数-->
                 <col id="opportunityCount" ui:number="true" sortable="true"/>
@@ -58,7 +58,7 @@
                 <col id="commitOpportunityCount" ui:number="true" sortable="true"/>
 
                 <!--实际已关闭收入-->
-                <col id="expectedClosedRevenue" sortable="true"/>
+                <col id="expectedClosedRevenue" ui:number="true" sortable="true"/>
 
                 <!--最近计算时间-->
                 <col id="lastCalculatedAt" sortable="true"/>

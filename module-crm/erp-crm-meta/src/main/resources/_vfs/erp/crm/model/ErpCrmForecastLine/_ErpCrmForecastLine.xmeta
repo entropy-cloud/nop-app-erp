@@ -41,11 +41,11 @@
         </prop>
         <prop name="expectedRevenue" displayName="预期收入快照" propId="6" i18n-en:displayName="Expected Revenue"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="weightedRevenue" displayName="加权收入" propId="7" i18n-en:displayName="Weighted Revenue"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="forecastCategory" displayName="预测分类" propId="8" i18n-en:displayName="Forecast Category"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">

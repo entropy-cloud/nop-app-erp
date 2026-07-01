@@ -40,13 +40,13 @@
                 <col id="uoMId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--计划数量-->
-                <col id="plannedQuantity" mandatory="true" sortable="true"/>
+                <col id="plannedQuantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--实际数量(完工/领用)-->
-                <col id="actualQuantity" sortable="true"/>
+                <col id="actualQuantity" ui:number="true" sortable="true"/>
 
                 <!--报废数量-->
-                <col id="scrappedQuantity" sortable="true"/>
+                <col id="scrappedQuantity" ui:number="true" sortable="true"/>
 
                 <!--领料仓库(投入用)-->
                 <col id="sourceWarehouseId" ui:number="true" sortable="true"/>

@@ -182,7 +182,7 @@ public class _ErpMfgMrpDemand extends DynamicOrmEntity{
     private java.lang.String _sourceBillCode;
     
     /* 需求数量: QUANTITY */
-    private java.lang.String _quantity;
+    private java.math.BigDecimal _quantity;
     
     /* 需求日期: REQUIREMENT_DATE */
     private java.time.LocalDate _requirementDate;
@@ -419,9 +419,9 @@ public class _ErpMfgMrpDemand extends DynamicOrmEntity{
             }
         
             case PROP_ID_quantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_quantity));
                }
                setQuantity(typedValue);
@@ -565,7 +565,7 @@ public class _ErpMfgMrpDemand extends DynamicOrmEntity{
         
             case PROP_ID_quantity:{
                onInitProp(propId);
-               this._quantity = (java.lang.String)value;
+               this._quantity = (java.math.BigDecimal)value;
                
                break;
             }
@@ -780,7 +780,7 @@ public class _ErpMfgMrpDemand extends DynamicOrmEntity{
     /**
      * 需求数量: QUANTITY
      */
-    public final java.lang.String getQuantity(){
+    public final java.math.BigDecimal getQuantity(){
          onPropGet(PROP_ID_quantity);
          return _quantity;
     }
@@ -788,7 +788,7 @@ public class _ErpMfgMrpDemand extends DynamicOrmEntity{
     /**
      * 需求数量: QUANTITY
      */
-    public final void setQuantity(java.lang.String value){
+    public final void setQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_quantity,value)){
             this._quantity = value;
             internalClearRefs(PROP_ID_quantity);

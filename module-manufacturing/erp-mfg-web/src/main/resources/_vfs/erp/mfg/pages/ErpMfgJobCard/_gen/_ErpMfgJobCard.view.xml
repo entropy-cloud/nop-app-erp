@@ -31,13 +31,13 @@
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--计划数量-->
-                <col id="plannedQuantity" mandatory="true" sortable="true"/>
+                <col id="plannedQuantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--完工数量-->
-                <col id="completedQuantity" sortable="true"/>
+                <col id="completedQuantity" ui:number="true" sortable="true"/>
 
                 <!--报废数量-->
-                <col id="scrappedQuantity" sortable="true"/>
+                <col id="scrappedQuantity" ui:number="true" sortable="true"/>
 
                 <!--状态-->
                 <col id="status" mandatory="true" ui:number="true" sortable="true"/>

@@ -61,16 +61,16 @@
                 <col id="stageId" ui:number="true" sortable="true"/>
 
                 <!--预期收入-->
-                <col id="expectedRevenue" sortable="true"/>
+                <col id="expectedRevenue" ui:number="true" sortable="true"/>
 
                 <!--乐观预期-->
-                <col id="bestCaseAmount" sortable="true"/>
+                <col id="bestCaseAmount" ui:number="true" sortable="true"/>
 
                 <!--悲观预期-->
-                <col id="worstCaseAmount" sortable="true"/>
+                <col id="worstCaseAmount" ui:number="true" sortable="true"/>
 
                 <!--周期性收入-->
-                <col id="recurringRevenue" sortable="true"/>
+                <col id="recurringRevenue" ui:number="true" sortable="true"/>
 
                 <!--周期性计划-->
                 <col id="recurringPlan" sortable="true"/>

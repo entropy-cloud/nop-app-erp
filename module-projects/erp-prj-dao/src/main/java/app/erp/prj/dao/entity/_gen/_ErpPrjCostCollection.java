@@ -221,7 +221,7 @@ public class _ErpPrjCostCollection extends DynamicOrmEntity{
     private java.lang.Long _currencyId;
     
     /* 归集金额合计: TOTAL_AMOUNT */
-    private java.lang.String _totalAmount;
+    private java.math.BigDecimal _totalAmount;
     
     /* 单据状态: DOC_STATUS */
     private java.lang.Integer _docStatus;
@@ -480,9 +480,9 @@ public class _ErpPrjCostCollection extends DynamicOrmEntity{
             }
         
             case PROP_ID_totalAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_totalAmount));
                }
                setTotalAmount(typedValue);
@@ -692,7 +692,7 @@ public class _ErpPrjCostCollection extends DynamicOrmEntity{
         
             case PROP_ID_totalAmount:{
                onInitProp(propId);
-               this._totalAmount = (java.lang.String)value;
+               this._totalAmount = (java.math.BigDecimal)value;
                
                break;
             }
@@ -925,7 +925,7 @@ public class _ErpPrjCostCollection extends DynamicOrmEntity{
     /**
      * 归集金额合计: TOTAL_AMOUNT
      */
-    public final java.lang.String getTotalAmount(){
+    public final java.math.BigDecimal getTotalAmount(){
          onPropGet(PROP_ID_totalAmount);
          return _totalAmount;
     }
@@ -933,7 +933,7 @@ public class _ErpPrjCostCollection extends DynamicOrmEntity{
     /**
      * 归集金额合计: TOTAL_AMOUNT
      */
-    public final void setTotalAmount(java.lang.String value){
+    public final void setTotalAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_totalAmount,value)){
             this._totalAmount = value;
             internalClearRefs(PROP_ID_totalAmount);

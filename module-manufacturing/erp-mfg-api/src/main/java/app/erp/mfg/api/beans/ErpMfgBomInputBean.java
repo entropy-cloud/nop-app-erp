@@ -167,16 +167,16 @@
         }
 
 
-        private String _qty;
+        private java.math.BigDecimal _qty;
 
     
         @PropMeta(propId=12)
     
-        public String getQty(){
+        public java.math.BigDecimal getQty(){
             return _qty;
         }
 
-        public void setQty(String value){
+        public void setQty(java.math.BigDecimal value){
             this._qty = value;
         }
 

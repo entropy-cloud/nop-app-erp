@@ -49,7 +49,7 @@
         </prop>
         <prop name="requiredQuantity" displayName="应领数量" propId="8" i18n-en:displayName="Required Quantity"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="issuedQuantity" displayName="实领数量" propId="9" i18n-en:displayName="Issued Quantity" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
@@ -57,11 +57,11 @@
         </prop>
         <prop name="unitCost" displayName="单位成本" propId="10" i18n-en:displayName="Unit Cost" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="unitPrice" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="unitPrice" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="totalCost" displayName="总成本" propId="11" i18n-en:displayName="Total Cost" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="batchNo" displayName="批号" propId="12" i18n-en:displayName="Batch No" queryable="true"
               sortable="true" insertable="true" updatable="true">

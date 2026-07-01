@@ -82,44 +82,44 @@
         }
 
 
-        private String _quantity;
+        private java.math.BigDecimal _quantity;
 
     
         @PropMeta(propId=6)
     
-        public String getQuantity(){
+        public java.math.BigDecimal getQuantity(){
             return _quantity;
         }
 
-        public void setQuantity(String value){
+        public void setQuantity(java.math.BigDecimal value){
             this._quantity = value;
         }
 
 
-        private String _unitProcessingFee;
+        private java.math.BigDecimal _unitProcessingFee;
 
     
         @PropMeta(propId=7)
     
-        public String getUnitProcessingFee(){
+        public java.math.BigDecimal getUnitProcessingFee(){
             return _unitProcessingFee;
         }
 
-        public void setUnitProcessingFee(String value){
+        public void setUnitProcessingFee(java.math.BigDecimal value){
             this._unitProcessingFee = value;
         }
 
 
-        private String _amount;
+        private java.math.BigDecimal _amount;
 
     
         @PropMeta(propId=8)
     
-        public String getAmount(){
+        public java.math.BigDecimal getAmount(){
             return _amount;
         }
 
-        public void setAmount(String value){
+        public void setAmount(java.math.BigDecimal value){
             this._amount = value;
         }
 

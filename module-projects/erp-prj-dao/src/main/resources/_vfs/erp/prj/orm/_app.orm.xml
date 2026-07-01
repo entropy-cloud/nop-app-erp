@@ -92,13 +92,13 @@
                 <column code="BUDGET" defaultValue="0" displayName="预算总额" domain="budget" name="budget" precision="20"
                         propId="10" scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Budget"/>
                 <column code="COMMITTED_COST" defaultValue="0" displayName="已承诺成本" domain="amount" name="committedCost"
-                        precision="20" propId="11" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="11" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Committed Cost"/>
                 <column code="ACTUAL_COST" defaultValue="0" displayName="实际成本" domain="amount" name="actualCost"
-                        precision="20" propId="12" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="12" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Actual Cost"/>
                 <column code="BILLED_AMOUNT" defaultValue="0" displayName="已开票金额" domain="amount" name="billedAmount"
-                        precision="20" propId="13" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="13" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Billed Amount"/>
                 <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="14" stdDataType="int"
                         stdSqlType="INTEGER" ext:dict="erp-prj/project-status" i18n-en:displayName="Status"/>
@@ -538,7 +538,7 @@
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="6" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="TOTAL_AMOUNT" defaultValue="0" displayName="预算总额" domain="amount" name="totalAmount"
-                        precision="20" propId="7" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="7" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Total Amt"/>
                 <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="8"
                         stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-prj/project-status"
@@ -609,13 +609,13 @@
                 <column code="TASK_ID" displayName="任务" name="taskId" propId="6" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Task"/>
                 <column code="PLANNED_AMOUNT" displayName="预算金额" domain="amount" mandatory="true" name="plannedAmount"
-                        precision="20" propId="7" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="7" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Planned Amount"/>
                 <column code="COMMITTED_AMOUNT" defaultValue="0" displayName="已承诺金额" domain="amount"
-                        name="committedAmount" precision="20" propId="8" scale="4" stdDataType="string"
+                        name="committedAmount" precision="20" propId="8" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Committed Amount"/>
                 <column code="ACTUAL_AMOUNT" defaultValue="0" displayName="实际金额" domain="amount" name="actualAmount"
-                        precision="20" propId="9" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="9" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Actual Amount"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="10"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
@@ -675,7 +675,7 @@
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="6" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="TOTAL_AMOUNT" defaultValue="0" displayName="归集金额合计" domain="amount" name="totalAmount"
-                        precision="20" propId="7" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="7" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Total Amt"/>
                 <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="8"
                         stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-prj/project-status"
@@ -768,7 +768,7 @@
                 <column code="TASK_ID" displayName="任务" name="taskId" propId="8" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Task"/>
                 <column code="AMOUNT" displayName="金额" domain="amount" mandatory="true" name="amount" precision="20"
-                        propId="9" scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Amount"/>
+                        propId="9" scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Amount"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="10"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -826,7 +826,7 @@
                 <column code="ACTUAL_DATE" displayName="实际完成日期" name="actualDate" propId="6" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Actual Date"/>
                 <column code="BILLING_AMOUNT" defaultValue="0" displayName="应结算金额" domain="amount" name="billingAmount"
-                        precision="20" propId="7" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="7" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Billing Amount"/>
                 <column code="IS_BILLING_TRIGGER" defaultValue="false" displayName="是否触发开票节点" name="isBillingTrigger"
                         propId="8" stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Billing Trigger"/>
@@ -882,10 +882,10 @@
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="8" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
-                        precision="20" propId="9" scale="8" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="9" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
                 <column code="TOTAL_AMOUNT" defaultValue="0" displayName="开票金额" domain="amount" name="totalAmount"
-                        precision="20" propId="10" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Total Amt"/>
                 <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="11"
                         stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-prj/project-status"
@@ -980,7 +980,7 @@
                 <column code="SUBJECT_ID" displayName="科目" name="subjectId" propId="6" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Subject"/>
                 <column code="AMOUNT" displayName="金额" domain="amount" mandatory="true" name="amount" precision="20"
-                        propId="7" scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Amount"/>
+                        propId="7" scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Amount"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="8"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"

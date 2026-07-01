@@ -214,19 +214,19 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     private java.lang.Integer _orderType;
     
     /* 毛需求: GROSS_REQUIREMENT */
-    private java.lang.String _grossRequirement;
+    private java.math.BigDecimal _grossRequirement;
     
     /* 预计入库: SCHEDULED_RECEIPT */
-    private java.lang.String _scheduledReceipt;
+    private java.math.BigDecimal _scheduledReceipt;
     
     /* 现有库存: ON_HAND */
-    private java.lang.String _onHand;
+    private java.math.BigDecimal _onHand;
     
     /* 净需求: NET_REQUIREMENT */
-    private java.lang.String _netRequirement;
+    private java.math.BigDecimal _netRequirement;
     
     /* 计划数量: PLANNED_QUANTITY */
-    private java.lang.String _plannedQuantity;
+    private java.math.BigDecimal _plannedQuantity;
     
     /* 计划到货/开工日期: PLANNED_DATE */
     private java.time.LocalDate _plannedDate;
@@ -467,9 +467,9 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_grossRequirement:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_grossRequirement));
                }
                setGrossRequirement(typedValue);
@@ -477,9 +477,9 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_scheduledReceipt:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_scheduledReceipt));
                }
                setScheduledReceipt(typedValue);
@@ -487,9 +487,9 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_onHand:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_onHand));
                }
                setOnHand(typedValue);
@@ -497,9 +497,9 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_netRequirement:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_netRequirement));
                }
                setNetRequirement(typedValue);
@@ -507,9 +507,9 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_plannedQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_plannedQuantity));
                }
                setPlannedQuantity(typedValue);
@@ -669,35 +669,35 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
         
             case PROP_ID_grossRequirement:{
                onInitProp(propId);
-               this._grossRequirement = (java.lang.String)value;
+               this._grossRequirement = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_scheduledReceipt:{
                onInitProp(propId);
-               this._scheduledReceipt = (java.lang.String)value;
+               this._scheduledReceipt = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_onHand:{
                onInitProp(propId);
-               this._onHand = (java.lang.String)value;
+               this._onHand = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_netRequirement:{
                onInitProp(propId);
-               this._netRequirement = (java.lang.String)value;
+               this._netRequirement = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_plannedQuantity:{
                onInitProp(propId);
-               this._plannedQuantity = (java.lang.String)value;
+               this._plannedQuantity = (java.math.BigDecimal)value;
                
                break;
             }
@@ -895,7 +895,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     /**
      * 毛需求: GROSS_REQUIREMENT
      */
-    public final java.lang.String getGrossRequirement(){
+    public final java.math.BigDecimal getGrossRequirement(){
          onPropGet(PROP_ID_grossRequirement);
          return _grossRequirement;
     }
@@ -903,7 +903,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     /**
      * 毛需求: GROSS_REQUIREMENT
      */
-    public final void setGrossRequirement(java.lang.String value){
+    public final void setGrossRequirement(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_grossRequirement,value)){
             this._grossRequirement = value;
             internalClearRefs(PROP_ID_grossRequirement);
@@ -914,7 +914,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     /**
      * 预计入库: SCHEDULED_RECEIPT
      */
-    public final java.lang.String getScheduledReceipt(){
+    public final java.math.BigDecimal getScheduledReceipt(){
          onPropGet(PROP_ID_scheduledReceipt);
          return _scheduledReceipt;
     }
@@ -922,7 +922,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     /**
      * 预计入库: SCHEDULED_RECEIPT
      */
-    public final void setScheduledReceipt(java.lang.String value){
+    public final void setScheduledReceipt(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_scheduledReceipt,value)){
             this._scheduledReceipt = value;
             internalClearRefs(PROP_ID_scheduledReceipt);
@@ -933,7 +933,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     /**
      * 现有库存: ON_HAND
      */
-    public final java.lang.String getOnHand(){
+    public final java.math.BigDecimal getOnHand(){
          onPropGet(PROP_ID_onHand);
          return _onHand;
     }
@@ -941,7 +941,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     /**
      * 现有库存: ON_HAND
      */
-    public final void setOnHand(java.lang.String value){
+    public final void setOnHand(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_onHand,value)){
             this._onHand = value;
             internalClearRefs(PROP_ID_onHand);
@@ -952,7 +952,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     /**
      * 净需求: NET_REQUIREMENT
      */
-    public final java.lang.String getNetRequirement(){
+    public final java.math.BigDecimal getNetRequirement(){
          onPropGet(PROP_ID_netRequirement);
          return _netRequirement;
     }
@@ -960,7 +960,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     /**
      * 净需求: NET_REQUIREMENT
      */
-    public final void setNetRequirement(java.lang.String value){
+    public final void setNetRequirement(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_netRequirement,value)){
             this._netRequirement = value;
             internalClearRefs(PROP_ID_netRequirement);
@@ -971,7 +971,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     /**
      * 计划数量: PLANNED_QUANTITY
      */
-    public final java.lang.String getPlannedQuantity(){
+    public final java.math.BigDecimal getPlannedQuantity(){
          onPropGet(PROP_ID_plannedQuantity);
          return _plannedQuantity;
     }
@@ -979,7 +979,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     /**
      * 计划数量: PLANNED_QUANTITY
      */
-    public final void setPlannedQuantity(java.lang.String value){
+    public final void setPlannedQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_plannedQuantity,value)){
             this._plannedQuantity = value;
             internalClearRefs(PROP_ID_plannedQuantity);

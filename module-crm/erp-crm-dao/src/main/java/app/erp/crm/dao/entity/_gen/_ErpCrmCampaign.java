@@ -193,10 +193,10 @@ public class _ErpCrmCampaign extends DynamicOrmEntity{
     private java.time.LocalDate _endDate;
     
     /* 预算金额: BUDGET_AMOUNT */
-    private java.lang.String _budgetAmount;
+    private java.math.BigDecimal _budgetAmount;
     
     /* 实际成本: ACTUAL_COST */
-    private java.lang.String _actualCost;
+    private java.math.BigDecimal _actualCost;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -449,9 +449,9 @@ public class _ErpCrmCampaign extends DynamicOrmEntity{
             }
         
             case PROP_ID_budgetAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_budgetAmount));
                }
                setBudgetAmount(typedValue);
@@ -459,9 +459,9 @@ public class _ErpCrmCampaign extends DynamicOrmEntity{
             }
         
             case PROP_ID_actualCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_actualCost));
                }
                setActualCost(typedValue);
@@ -612,14 +612,14 @@ public class _ErpCrmCampaign extends DynamicOrmEntity{
         
             case PROP_ID_budgetAmount:{
                onInitProp(propId);
-               this._budgetAmount = (java.lang.String)value;
+               this._budgetAmount = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_actualCost:{
                onInitProp(propId);
-               this._actualCost = (java.lang.String)value;
+               this._actualCost = (java.math.BigDecimal)value;
                
                break;
             }
@@ -853,7 +853,7 @@ public class _ErpCrmCampaign extends DynamicOrmEntity{
     /**
      * 预算金额: BUDGET_AMOUNT
      */
-    public final java.lang.String getBudgetAmount(){
+    public final java.math.BigDecimal getBudgetAmount(){
          onPropGet(PROP_ID_budgetAmount);
          return _budgetAmount;
     }
@@ -861,7 +861,7 @@ public class _ErpCrmCampaign extends DynamicOrmEntity{
     /**
      * 预算金额: BUDGET_AMOUNT
      */
-    public final void setBudgetAmount(java.lang.String value){
+    public final void setBudgetAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_budgetAmount,value)){
             this._budgetAmount = value;
             internalClearRefs(PROP_ID_budgetAmount);
@@ -872,7 +872,7 @@ public class _ErpCrmCampaign extends DynamicOrmEntity{
     /**
      * 实际成本: ACTUAL_COST
      */
-    public final java.lang.String getActualCost(){
+    public final java.math.BigDecimal getActualCost(){
          onPropGet(PROP_ID_actualCost);
          return _actualCost;
     }
@@ -880,7 +880,7 @@ public class _ErpCrmCampaign extends DynamicOrmEntity{
     /**
      * 实际成本: ACTUAL_COST
      */
-    public final void setActualCost(java.lang.String value){
+    public final void setActualCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_actualCost,value)){
             this._actualCost = value;
             internalClearRefs(PROP_ID_actualCost);

@@ -31,7 +31,7 @@
                 <col id="materialId" ui:number="true" sortable="true"/>
 
                 <!--数量-->
-                <col id="quantity" sortable="true"/>
+                <col id="quantity" ui:number="true" sortable="true"/>
 
                 <!--单位-->
                 <col id="unit" sortable="true"/>

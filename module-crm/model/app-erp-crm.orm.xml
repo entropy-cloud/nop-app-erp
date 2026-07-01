@@ -199,10 +199,10 @@
                 <column name="sourceId" displayName="线索来源" stdSqlType="BIGINT" code="SOURCE_ID" propId="12" stdDataType="long" i18n-en:displayName='Source' />
                 <column name="leadStatusId" displayName="线索状态" stdSqlType="BIGINT" code="LEAD_STATUS_ID" propId="13" stdDataType="long" i18n-en:displayName='Lead Status' />
                 <column name="stageId" displayName="漏斗阶段" stdSqlType="BIGINT" code="STAGE_ID" propId="14" stdDataType="long" i18n-en:displayName='Stage' />
-                <column name="expectedRevenue" displayName="预期收入" domain="amount" code="EXPECTED_REVENUE" propId="15" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Expected Revenue' />
-                <column name="bestCaseAmount" displayName="乐观预期" domain="amount" code="BEST_CASE_AMOUNT" propId="16" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Best Case Amount' />
-                <column name="worstCaseAmount" displayName="悲观预期" domain="amount" code="WORST_CASE_AMOUNT" propId="17" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Worst Case Amount' />
-                <column name="recurringRevenue" displayName="周期性收入" domain="amount" code="RECURRING_REVENUE" propId="18" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Recurring Revenue' />
+                <column name="expectedRevenue" displayName="预期收入" domain="amount" code="EXPECTED_REVENUE" propId="15" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Expected Revenue' />
+                <column name="bestCaseAmount" displayName="乐观预期" domain="amount" code="BEST_CASE_AMOUNT" propId="16" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Best Case Amount' />
+                <column name="worstCaseAmount" displayName="悲观预期" domain="amount" code="WORST_CASE_AMOUNT" propId="17" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Worst Case Amount' />
+                <column name="recurringRevenue" displayName="周期性收入" domain="amount" code="RECURRING_REVENUE" propId="18" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Recurring Revenue' />
                 <column name="recurringPlan" displayName="周期性计划" stdSqlType="VARCHAR" precision="50" code="RECURRING_PLAN" propId="19" stdDataType="string" i18n-en:displayName='Recurring Plan' />
                 <column name="expectedCloseDate" displayName="预期签单日" stdSqlType="DATE" code="EXPECTED_CLOSE_DATE" propId="20" stdDataType="date" i18n-en:displayName='Expected Close Date' />
                 <column name="probability" displayName="成交概率" domain="probability" code="PROBABILITY" propId="21" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Probability' />
@@ -363,8 +363,8 @@
                 <column name="source" displayName="UTM Source" stdSqlType="VARCHAR" precision="100" code="SOURCE" propId="7" stdDataType="string" i18n-en:displayName='UTM Source' />
                 <column name="startDate" displayName="开始日期" stdSqlType="DATE" code="START_DATE" propId="8" stdDataType="date" i18n-en:displayName='Start Date' />
                 <column name="endDate" displayName="结束日期" stdSqlType="DATE" code="END_DATE" propId="9" stdDataType="date" i18n-en:displayName='End Date' />
-                <column name="budgetAmount" displayName="预算金额" domain="amount" code="BUDGET_AMOUNT" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Budget Amount' />
-                <column name="actualCost" displayName="实际成本" domain="amount" code="ACTUAL_COST" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Actual Cost' />
+                <column name="budgetAmount" displayName="预算金额" domain="amount" code="BUDGET_AMOUNT" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Budget Amount' />
+                <column name="actualCost" displayName="实际成本" domain="amount" code="ACTUAL_COST" propId="11" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Actual Cost' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="13" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="14" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -671,13 +671,13 @@
                 <column name="teamId" displayName="销售团队" stdSqlType="BIGINT" code="TEAM_ID" propId="5" stdDataType="long" i18n-en:displayName='Team' />
                 <column name="ownerId" stdDomain="userId" displayName="销售员" stdSqlType="VARCHAR" precision="36" code="OWNER_ID" propId="6" stdDataType="string" i18n-en:displayName='Owner' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="7" stdDataType="long" i18n-en:displayName='Currency' />
-                <column name="commitAmount" displayName="承诺金额" domain="amount" code="COMMIT_AMOUNT" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Commit Amount' />
-                <column name="upsideAmount" displayName="乐观金额" domain="amount" code="UPSIDE_AMOUNT" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Upside Amount' />
-                <column name="weightedAmount" displayName="加权金额" domain="amount" code="WEIGHTED_AMOUNT" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Weighted Amount' />
-                <column name="bestCaseAmount" displayName="最佳金额" domain="amount" code="BEST_CASE_AMOUNT" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Best Case Amount' />
+                <column name="commitAmount" displayName="承诺金额" domain="amount" code="COMMIT_AMOUNT" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Commit Amount' />
+                <column name="upsideAmount" displayName="乐观金额" domain="amount" code="UPSIDE_AMOUNT" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Upside Amount' />
+                <column name="weightedAmount" displayName="加权金额" domain="amount" code="WEIGHTED_AMOUNT" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Weighted Amount' />
+                <column name="bestCaseAmount" displayName="最佳金额" domain="amount" code="BEST_CASE_AMOUNT" propId="11" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Best Case Amount' />
                 <column name="opportunityCount" displayName="商机总数" stdSqlType="INTEGER" defaultValue="0" code="OPPORTUNITY_COUNT" propId="12" stdDataType="int" i18n-en:displayName='Opportunity Count' />
                 <column name="commitOpportunityCount" displayName="承诺商机数" stdSqlType="INTEGER" defaultValue="0" code="COMMIT_OPPORTUNITY_COUNT" propId="13" stdDataType="int" i18n-en:displayName='Commit Opportunity Count' />
-                <column name="expectedClosedRevenue" displayName="实际已关闭收入" domain="amount" code="EXPECTED_CLOSED_REVENUE" propId="14" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Expected Closed Revenue' />
+                <column name="expectedClosedRevenue" displayName="实际已关闭收入" domain="amount" code="EXPECTED_CLOSED_REVENUE" propId="14" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Expected Closed Revenue' />
                 <column name="lastCalculatedAt" displayName="最近计算时间" stdSqlType="DATETIME" code="LAST_CALCULATED_AT" propId="15" stdDataType="datetime" i18n-en:displayName='Last Calculated At' />
                 <column name="notes" displayName="备注" domain="remark" code="NOTES" propId="16" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Notes' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="17" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
@@ -708,8 +708,8 @@
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="leadId" displayName="商机" stdSqlType="BIGINT" mandatory="true" code="LEAD_ID" propId="4" stdDataType="long" i18n-en:displayName='Lead' />
                 <column name="probability" displayName="概率快照" domain="probability" code="PROBABILITY" propId="5" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Probability' />
-                <column name="expectedRevenue" displayName="预期收入快照" domain="amount" code="EXPECTED_REVENUE" propId="6" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Expected Revenue' />
-                <column name="weightedRevenue" displayName="加权收入" domain="amount" code="WEIGHTED_REVENUE" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Weighted Revenue' />
+                <column name="expectedRevenue" displayName="预期收入快照" domain="amount" code="EXPECTED_REVENUE" propId="6" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Expected Revenue' />
+                <column name="weightedRevenue" displayName="加权收入" domain="amount" code="WEIGHTED_REVENUE" propId="7" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Weighted Revenue' />
                 <column name="forecastCategory" displayName="预测分类" ext:dict="erp-crm/forecast-category" mandatory="true" code="FORECAST_CATEGORY" propId="8" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Forecast Category' />
                 <column name="includedInCommit" displayName="是否计入承诺" stdSqlType="BOOLEAN" defaultValue="false" code="INCLUDED_IN_COMMIT" propId="9" stdDataType="boolean" i18n-en:displayName='Included In Commit' />
                 <column name="stageName" displayName="阶段名快照" domain="name" code="STAGE_NAME" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Stage Name' />
@@ -739,12 +739,12 @@
                 <column name="ownerId" stdDomain="userId" displayName="销售员" stdSqlType="VARCHAR" precision="36" code="OWNER_ID" propId="5" stdDataType="string" i18n-en:displayName='Owner' />
                 <column name="teamId" displayName="销售团队" stdSqlType="BIGINT" code="TEAM_ID" propId="6" stdDataType="long" i18n-en:displayName='Team' />
                 <column name="territoryId" displayName="销售区域" stdSqlType="BIGINT" code="TERRITORY_ID" propId="7" stdDataType="long" i18n-en:displayName='Territory' />
-                <column name="commitAmount" displayName="承诺金额" domain="amount" code="COMMIT_AMOUNT" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Commit Amount' />
-                <column name="upsideAmount" displayName="乐观金额" domain="amount" code="UPSIDE_AMOUNT" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Upside Amount' />
-                <column name="actualClosedRevenue" displayName="实际关闭收入" domain="amount" code="ACTUAL_CLOSED_REVENUE" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Actual Closed Revenue' />
+                <column name="commitAmount" displayName="承诺金额" domain="amount" code="COMMIT_AMOUNT" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Commit Amount' />
+                <column name="upsideAmount" displayName="乐观金额" domain="amount" code="UPSIDE_AMOUNT" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Upside Amount' />
+                <column name="actualClosedRevenue" displayName="实际关闭收入" domain="amount" code="ACTUAL_CLOSED_REVENUE" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Actual Closed Revenue' />
                 <column name="commitAccuracy" displayName="承诺准确率" stdSqlType="DECIMAL" precision="10" scale="4" code="COMMIT_ACCURACY" propId="11" stdDataType="double" i18n-en:displayName='Commit Accuracy' />
                 <column name="upsideAccuracy" displayName="乐观准确率" stdSqlType="DECIMAL" precision="10" scale="4" code="UPSIDE_ACCURACY" propId="12" stdDataType="double" i18n-en:displayName='Upside Accuracy' />
-                <column name="deviationAmount" displayName="偏差绝对值" domain="amount" code="DEVIATION_AMOUNT" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Deviation Amount' />
+                <column name="deviationAmount" displayName="偏差绝对值" domain="amount" code="DEVIATION_AMOUNT" propId="13" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Deviation Amount' />
                 <column name="calculatedBy" displayName="计算人" domain="createdBy" code="CALCULATED_BY" propId="14" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Calculated By' />
                 <column name="calculatedAt" displayName="计算时间" stdSqlType="DATETIME" code="CALCULATED_AT" propId="15" stdDataType="datetime" i18n-en:displayName='Calculated At' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="16" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
@@ -843,7 +843,7 @@
                 <column name="periodType" displayName="配额期间类型" ext:dict="erp-crm/quota-period-type" mandatory="true" code="PERIOD_TYPE" propId="6" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Period Type' />
                 <column name="fiscalYear" displayName="财年" stdSqlType="INTEGER" code="FISCAL_YEAR" propId="7" stdDataType="int" i18n-en:displayName='Fiscal Year' />
                 <column name="periodLabel" displayName="期间标签" stdSqlType="VARCHAR" precision="100" code="PERIOD_LABEL" propId="8" stdDataType="string" i18n-en:displayName='Period Label' />
-                <column name="quotaAmount" displayName="配额金额" domain="amount" code="QUOTA_AMOUNT" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Quota Amount' />
+                <column name="quotaAmount" displayName="配额金额" domain="amount" code="QUOTA_AMOUNT" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Quota Amount' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="10" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="isFinalized" displayName="是否已定稿" stdSqlType="BOOLEAN" defaultValue="false" code="IS_FINALIZED" propId="11" stdDataType="boolean" i18n-en:displayName='Is Finalized' />
                 <column name="notes" displayName="备注" domain="remark" code="NOTES" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Notes' />
@@ -935,8 +935,8 @@
                 <column name="bundleName" displayName="捆绑包名称" domain="name" mandatory="true" code="BUNDLE_NAME" propId="5" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Bundle Name' />
                 <column name="description" displayName="描述" stdSqlType="VARCHAR" precision="1000" code="DESCRIPTION" propId="6" stdDataType="string" i18n-en:displayName='Description' />
                 <column name="discountType" displayName="折扣类型" ext:dict="erp-crm/bundle-discount-type" code="DISCOUNT_TYPE" propId="7" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Discount Type' />
-                <column name="discountValue" displayName="折扣值" domain="amount" code="DISCOUNT_VALUE" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Discount Value' />
-                <column name="bundleAmount" displayName="捆绑包总价" domain="amount" code="BUNDLE_AMOUNT" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Bundle Amount' />
+                <column name="discountValue" displayName="折扣值" domain="amount" code="DISCOUNT_VALUE" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Discount Value' />
+                <column name="bundleAmount" displayName="捆绑包总价" domain="amount" code="BUNDLE_AMOUNT" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Bundle Amount' />
                 <column name="effectiveFrom" displayName="生效开始日期" stdSqlType="DATE" code="EFFECTIVE_FROM" propId="10" stdDataType="date" i18n-en:displayName='Effective From' />
                 <column name="effectiveTo" displayName="生效结束日期" stdSqlType="DATE" code="EFFECTIVE_TO" propId="11" stdDataType="date" i18n-en:displayName='Effective To' />
                 <column name="isActive" displayName="是否启用" stdSqlType="BOOLEAN" defaultValue="true" code="IS_ACTIVE" propId="12" stdDataType="boolean" i18n-en:displayName='Is Active' />
@@ -962,8 +962,8 @@
                 <column name="bundleId" displayName="所属捆绑包" stdSqlType="BIGINT" mandatory="true" code="BUNDLE_ID" propId="2" stdDataType="long" i18n-en:displayName='Bundle' />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="productId" displayName="产品" stdSqlType="BIGINT" code="PRODUCT_ID" propId="4" stdDataType="long" i18n-en:displayName='Product' />
-                <column name="quantity" displayName="数量" domain="quantity" code="QUANTITY" propId="5" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Quantity' />
-                <column name="unitPrice" displayName="单价" domain="unitPrice" code="UNIT_PRICE" propId="6" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Unit Price' />
+                <column name="quantity" displayName="数量" domain="quantity" code="QUANTITY" propId="5" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Quantity' />
+                <column name="unitPrice" displayName="单价" domain="unitPrice" code="UNIT_PRICE" propId="6" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Unit Price' />
                 <column name="sequence" displayName="排序" stdSqlType="INTEGER" defaultValue="0" code="SEQUENCE" propId="7" stdDataType="int" i18n-en:displayName='Sequence' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="9" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
@@ -997,11 +997,11 @@
                 <column name="productCategory" displayName="适用产品品类" stdSqlType="VARCHAR" precision="100" code="PRODUCT_CATEGORY" propId="8" stdDataType="string" i18n-en:displayName='Product Category' />
                 <column name="customerId" displayName="适用客户" stdSqlType="BIGINT" code="CUSTOMER_ID" propId="9" stdDataType="long" i18n-en:displayName='Customer' />
                 <column name="customerCategory" displayName="适用客户类别" stdSqlType="VARCHAR" precision="100" code="CUSTOMER_CATEGORY" propId="10" stdDataType="string" i18n-en:displayName='Customer Category' />
-                <column name="minQuantity" displayName="最小数量" domain="quantity" code="MIN_QUANTITY" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Min Quantity' />
-                <column name="maxQuantity" displayName="最大数量" domain="quantity" code="MAX_QUANTITY" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Max Quantity' />
-                <column name="priceOverride" displayName="覆盖单价" domain="unitPrice" code="PRICE_OVERRIDE" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Price Override' />
+                <column name="minQuantity" displayName="最小数量" domain="quantity" code="MIN_QUANTITY" propId="11" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Min Quantity' />
+                <column name="maxQuantity" displayName="最大数量" domain="quantity" code="MAX_QUANTITY" propId="12" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Max Quantity' />
+                <column name="priceOverride" displayName="覆盖单价" domain="unitPrice" code="PRICE_OVERRIDE" propId="13" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Price Override' />
                 <column name="discountPercent" displayName="折扣百分比" stdSqlType="DECIMAL" precision="10" scale="2" code="DISCOUNT_PERCENT" propId="14" stdDataType="double" i18n-en:displayName='Discount Percent' />
-                <column name="discountAmount" displayName="折扣固定金额" domain="amount" code="DISCOUNT_AMOUNT" propId="15" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Discount Amount' />
+                <column name="discountAmount" displayName="折扣固定金额" domain="amount" code="DISCOUNT_AMOUNT" propId="15" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Discount Amount' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="16" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="effectiveFrom" displayName="生效开始日期" stdSqlType="DATE" code="EFFECTIVE_FROM" propId="17" stdDataType="date" i18n-en:displayName='Effective From' />
                 <column name="effectiveTo" displayName="生效结束日期" stdSqlType="DATE" code="EFFECTIVE_TO" propId="18" stdDataType="date" i18n-en:displayName='Effective To' />
@@ -1161,10 +1161,10 @@
                 <column name="totalOpportunities" displayName="商机总量" stdSqlType="INTEGER" defaultValue="0" code="TOTAL_OPPORTUNITIES" propId="10" stdDataType="int" i18n-en:displayName='Total Opportunities' />
                 <column name="totalWon" displayName="赢单总量" stdSqlType="INTEGER" defaultValue="0" code="TOTAL_WON" propId="11" stdDataType="int" i18n-en:displayName='Total Won' />
                 <column name="totalLost" displayName="丢单总量" stdSqlType="INTEGER" defaultValue="0" code="TOTAL_LOST" propId="12" stdDataType="int" i18n-en:displayName='Total Lost' />
-                <column name="totalRevenue" displayName="赢单总收入" domain="amount" code="TOTAL_REVENUE" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Revenue' />
-                <column name="lostRevenue" displayName="丢失金额合计" domain="amount" code="LOST_REVENUE" propId="14" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Lost Revenue' />
-                <column name="weightedRevenue" displayName="加权收入合计" domain="amount" code="WEIGHTED_REVENUE" propId="15" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Weighted Revenue' />
-                <column name="avgDealSize" displayName="平均赢单金额" domain="amount" code="AVG_DEAL_SIZE" propId="16" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Avg Deal Size' />
+                <column name="totalRevenue" displayName="赢单总收入" domain="amount" code="TOTAL_REVENUE" propId="13" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Revenue' />
+                <column name="lostRevenue" displayName="丢失金额合计" domain="amount" code="LOST_REVENUE" propId="14" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Lost Revenue' />
+                <column name="weightedRevenue" displayName="加权收入合计" domain="amount" code="WEIGHTED_REVENUE" propId="15" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Weighted Revenue' />
+                <column name="avgDealSize" displayName="平均赢单金额" domain="amount" code="AVG_DEAL_SIZE" propId="16" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Avg Deal Size' />
                 <column name="avgSalesCycleDays" displayName="平均销售周期天数" stdSqlType="DECIMAL" precision="10" scale="2" code="AVG_SALES_CYCLE_DAYS" propId="17" stdDataType="double" i18n-en:displayName='Avg Sales Cycle Days' />
                 <column name="calculatedAt" displayName="聚合计算时间" stdSqlType="DATETIME" code="CALCULATED_AT" propId="18" stdDataType="datetime" i18n-en:displayName='Calculated At' />
                 <column name="calculatedBy" displayName="聚合计算人" domain="createdBy" code="CALCULATED_BY" propId="19" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Calculated By' />
@@ -1202,7 +1202,7 @@
                 <column name="dropOffRate" displayName="流失率" stdSqlType="DECIMAL" precision="10" scale="4" code="DROP_OFF_RATE" propId="11" stdDataType="double" i18n-en:displayName='Drop Off Rate' />
                 <column name="avgDaysInStage" displayName="平均停留天数" stdSqlType="DECIMAL" precision="10" scale="2" code="AVG_DAYS_IN_STAGE" propId="12" stdDataType="double" i18n-en:displayName='Avg Days In Stage' />
                 <column name="lostCount" displayName="本阶段丢失数" stdSqlType="INTEGER" defaultValue="0" code="LOST_COUNT" propId="13" stdDataType="int" i18n-en:displayName='Lost Count' />
-                <column name="lostAmount" displayName="本阶段丢失金额" domain="amount" code="LOST_AMOUNT" propId="14" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Lost Amount' />
+                <column name="lostAmount" displayName="本阶段丢失金额" domain="amount" code="LOST_AMOUNT" propId="14" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Lost Amount' />
                 <column name="lostReasonTop" displayName="TOP丢失原因(JSON)" domain="jsonStr" code="LOST_REASON_TOP" propId="15" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Lost Reason Top' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="16" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="17" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />

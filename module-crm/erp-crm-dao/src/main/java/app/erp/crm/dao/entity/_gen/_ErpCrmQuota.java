@@ -199,7 +199,7 @@ public class _ErpCrmQuota extends DynamicOrmEntity{
     private java.lang.String _periodLabel;
     
     /* 配额金额: QUOTA_AMOUNT */
-    private java.lang.String _quotaAmount;
+    private java.math.BigDecimal _quotaAmount;
     
     /* 币种: CURRENCY_ID */
     private java.lang.Long _currencyId;
@@ -448,9 +448,9 @@ public class _ErpCrmQuota extends DynamicOrmEntity{
             }
         
             case PROP_ID_quotaAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_quotaAmount));
                }
                setQuotaAmount(typedValue);
@@ -614,7 +614,7 @@ public class _ErpCrmQuota extends DynamicOrmEntity{
         
             case PROP_ID_quotaAmount:{
                onInitProp(propId);
-               this._quotaAmount = (java.lang.String)value;
+               this._quotaAmount = (java.math.BigDecimal)value;
                
                break;
             }
@@ -843,7 +843,7 @@ public class _ErpCrmQuota extends DynamicOrmEntity{
     /**
      * 配额金额: QUOTA_AMOUNT
      */
-    public final java.lang.String getQuotaAmount(){
+    public final java.math.BigDecimal getQuotaAmount(){
          onPropGet(PROP_ID_quotaAmount);
          return _quotaAmount;
     }
@@ -851,7 +851,7 @@ public class _ErpCrmQuota extends DynamicOrmEntity{
     /**
      * 配额金额: QUOTA_AMOUNT
      */
-    public final void setQuotaAmount(java.lang.String value){
+    public final void setQuotaAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_quotaAmount,value)){
             this._quotaAmount = value;
             internalClearRefs(PROP_ID_quotaAmount);

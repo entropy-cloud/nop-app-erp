@@ -69,19 +69,19 @@
         </prop>
         <prop name="totalRevenue" displayName="赢单总收入" propId="13" i18n-en:displayName="Total Revenue" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="lostRevenue" displayName="丢失金额合计" propId="14" i18n-en:displayName="Lost Revenue" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="weightedRevenue" displayName="加权收入合计" propId="15" i18n-en:displayName="Weighted Revenue"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="avgDealSize" displayName="平均赢单金额" propId="16" i18n-en:displayName="Avg Deal Size" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="avgSalesCycleDays" displayName="平均销售周期天数" propId="17" i18n-en:displayName="Avg Sales Cycle Days"
               queryable="true" sortable="true" insertable="true" updatable="true">

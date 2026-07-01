@@ -173,13 +173,13 @@ public class _ErpMntSparePartUsageLine extends DynamicOrmEntity{
     private java.lang.Long _uoMId;
     
     /* 消耗数量: QUANTITY */
-    private java.lang.String _quantity;
+    private java.math.BigDecimal _quantity;
     
     /* 单位成本: UNIT_COST */
     private java.math.BigDecimal _unitCost;
     
     /* 金额: AMOUNT */
-    private java.lang.String _amount;
+    private java.math.BigDecimal _amount;
     
     /* 批号: BATCH_NO */
     private java.lang.String _batchNo;
@@ -389,9 +389,9 @@ public class _ErpMntSparePartUsageLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_quantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_quantity));
                }
                setQuantity(typedValue);
@@ -409,9 +409,9 @@ public class _ErpMntSparePartUsageLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_amount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_amount));
                }
                setAmount(typedValue);
@@ -544,7 +544,7 @@ public class _ErpMntSparePartUsageLine extends DynamicOrmEntity{
         
             case PROP_ID_quantity:{
                onInitProp(propId);
-               this._quantity = (java.lang.String)value;
+               this._quantity = (java.math.BigDecimal)value;
                
                break;
             }
@@ -558,7 +558,7 @@ public class _ErpMntSparePartUsageLine extends DynamicOrmEntity{
         
             case PROP_ID_amount:{
                onInitProp(propId);
-               this._amount = (java.lang.String)value;
+               this._amount = (java.math.BigDecimal)value;
                
                break;
             }
@@ -723,7 +723,7 @@ public class _ErpMntSparePartUsageLine extends DynamicOrmEntity{
     /**
      * 消耗数量: QUANTITY
      */
-    public final java.lang.String getQuantity(){
+    public final java.math.BigDecimal getQuantity(){
          onPropGet(PROP_ID_quantity);
          return _quantity;
     }
@@ -731,7 +731,7 @@ public class _ErpMntSparePartUsageLine extends DynamicOrmEntity{
     /**
      * 消耗数量: QUANTITY
      */
-    public final void setQuantity(java.lang.String value){
+    public final void setQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_quantity,value)){
             this._quantity = value;
             internalClearRefs(PROP_ID_quantity);
@@ -761,7 +761,7 @@ public class _ErpMntSparePartUsageLine extends DynamicOrmEntity{
     /**
      * 金额: AMOUNT
      */
-    public final java.lang.String getAmount(){
+    public final java.math.BigDecimal getAmount(){
          onPropGet(PROP_ID_amount);
          return _amount;
     }
@@ -769,7 +769,7 @@ public class _ErpMntSparePartUsageLine extends DynamicOrmEntity{
     /**
      * 金额: AMOUNT
      */
-    public final void setAmount(java.lang.String value){
+    public final void setAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_amount,value)){
             this._amount = value;
             internalClearRefs(PROP_ID_amount);

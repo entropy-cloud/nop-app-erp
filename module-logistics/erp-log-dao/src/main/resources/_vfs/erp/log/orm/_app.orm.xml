@@ -243,7 +243,7 @@
                 <column code="LABEL_URL" displayName="面单URL" name="labelUrl" precision="500" propId="10"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Label URL"/>
                 <column code="FREIGHT_AMOUNT" displayName="运费" domain="amount" name="freightAmount" precision="20"
-                        propId="11" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="11" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Freight Amount"/>
                 <column code="FREIGHT_CURRENCY_ID" displayName="运费币种" name="freightCurrencyId" propId="12"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
@@ -375,7 +375,7 @@
                 <column code="MATERIAL_ID" displayName="物料" name="materialId" propId="4" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Material"/>
                 <column code="QUANTITY" displayName="数量" domain="quantity" name="quantity" precision="20" propId="5"
-                        scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Quantity"/>
+                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Quantity"/>
                 <column code="UNIT" displayName="单位" name="unit" precision="50" propId="6" stdDataType="string"
                         stdSqlType="VARCHAR" i18n-en:displayName="Unit"/>
                 <column code="PACKAGE_DESCRIPTION" displayName="包装说明" name="packageDescription" precision="500"
@@ -439,7 +439,7 @@
                 <column code="HEIGHT" displayName="高(cm)" domain="dimension" name="height" precision="12" propId="9"
                         scale="2" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Height"/>
                 <column code="DECLARED_VALUE" displayName="申报价值" domain="amount" name="declaredValue" precision="20"
-                        propId="10" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Declared Value"/>
                 <column code="IS_ACTIVE" defaultValue="1" displayName="是否有效" mandatory="true" name="isActive"
                         propId="11" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Active"/>

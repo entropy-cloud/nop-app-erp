@@ -53,7 +53,7 @@
         </prop>
         <prop name="quantity" displayName="需求数量" propId="9" i18n-en:displayName="Quantity" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="requirementDate" displayName="需求日期" propId="10" i18n-en:displayName="Requirement Date"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">

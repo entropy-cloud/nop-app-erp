@@ -49,13 +49,13 @@
                 <col id="budget" sortable="true"/>
 
                 <!--已承诺成本-->
-                <col id="committedCost" sortable="true"/>
+                <col id="committedCost" ui:number="true" sortable="true"/>
 
                 <!--实际成本-->
-                <col id="actualCost" sortable="true"/>
+                <col id="actualCost" ui:number="true" sortable="true"/>
 
                 <!--已开票金额-->
-                <col id="billedAmount" sortable="true"/>
+                <col id="billedAmount" ui:number="true" sortable="true"/>
 
                 <!--状态-->
                 <col id="status" mandatory="true" ui:number="true" sortable="true"/>

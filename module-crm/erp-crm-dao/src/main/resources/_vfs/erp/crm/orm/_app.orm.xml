@@ -209,16 +209,16 @@
                 <column code="STAGE_ID" displayName="漏斗阶段" name="stageId" propId="14" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Stage"/>
                 <column code="EXPECTED_REVENUE" displayName="预期收入" domain="amount" name="expectedRevenue" precision="20"
-                        propId="15" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="15" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Expected Revenue"/>
                 <column code="BEST_CASE_AMOUNT" displayName="乐观预期" domain="amount" name="bestCaseAmount" precision="20"
-                        propId="16" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="16" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Best Case Amount"/>
                 <column code="WORST_CASE_AMOUNT" displayName="悲观预期" domain="amount" name="worstCaseAmount"
-                        precision="20" propId="17" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="17" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Worst Case Amount"/>
                 <column code="RECURRING_REVENUE" displayName="周期性收入" domain="amount" name="recurringRevenue"
-                        precision="20" propId="18" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="18" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Recurring Revenue"/>
                 <column code="RECURRING_PLAN" displayName="周期性计划" name="recurringPlan" precision="50" propId="19"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Recurring Plan"/>
@@ -564,10 +564,10 @@
                 <column code="END_DATE" displayName="结束日期" name="endDate" propId="9" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="End Date"/>
                 <column code="BUDGET_AMOUNT" displayName="预算金额" domain="amount" name="budgetAmount" precision="20"
-                        propId="10" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Budget Amount"/>
                 <column code="ACTUAL_COST" displayName="实际成本" domain="amount" name="actualCost" precision="20"
-                        propId="11" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="11" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Actual Cost"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="12"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
@@ -1221,16 +1221,16 @@
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="7" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="COMMIT_AMOUNT" displayName="承诺金额" domain="amount" name="commitAmount" precision="20"
-                        propId="8" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="8" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Commit Amount"/>
                 <column code="UPSIDE_AMOUNT" displayName="乐观金额" domain="amount" name="upsideAmount" precision="20"
-                        propId="9" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="9" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Upside Amount"/>
                 <column code="WEIGHTED_AMOUNT" displayName="加权金额" domain="amount" name="weightedAmount" precision="20"
-                        propId="10" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Weighted Amount"/>
                 <column code="BEST_CASE_AMOUNT" displayName="最佳金额" domain="amount" name="bestCaseAmount" precision="20"
-                        propId="11" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="11" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Best Case Amount"/>
                 <column code="OPPORTUNITY_COUNT" defaultValue="0" displayName="商机总数" name="opportunityCount" propId="12"
                         stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Opportunity Count"/>
@@ -1238,7 +1238,7 @@
                         name="commitOpportunityCount" propId="13" stdDataType="int" stdSqlType="INTEGER"
                         i18n-en:displayName="Commit Opportunity Count"/>
                 <column code="EXPECTED_CLOSED_REVENUE" displayName="实际已关闭收入" domain="amount"
-                        name="expectedClosedRevenue" precision="20" propId="14" scale="4" stdDataType="string"
+                        name="expectedClosedRevenue" precision="20" propId="14" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Expected Closed Revenue"/>
                 <column code="LAST_CALCULATED_AT" displayName="最近计算时间" name="lastCalculatedAt" propId="15"
                         stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Last Calculated At"/>
@@ -1310,10 +1310,10 @@
                 <column code="PROBABILITY" displayName="概率快照" domain="probability" name="probability" propId="5"
                         stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Probability"/>
                 <column code="EXPECTED_REVENUE" displayName="预期收入快照" domain="amount" name="expectedRevenue"
-                        precision="20" propId="6" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="6" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Expected Revenue"/>
                 <column code="WEIGHTED_REVENUE" displayName="加权收入" domain="amount" name="weightedRevenue" precision="20"
-                        propId="7" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="7" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Weighted Revenue"/>
                 <column code="FORECAST_CATEGORY" displayName="预测分类" mandatory="true" name="forecastCategory"
                         precision="20" propId="8" stdDataType="string" stdSqlType="VARCHAR"
@@ -1381,20 +1381,20 @@
                 <column code="TERRITORY_ID" displayName="销售区域" name="territoryId" propId="7" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Territory"/>
                 <column code="COMMIT_AMOUNT" displayName="承诺金额" domain="amount" name="commitAmount" precision="20"
-                        propId="8" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="8" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Commit Amount"/>
                 <column code="UPSIDE_AMOUNT" displayName="乐观金额" domain="amount" name="upsideAmount" precision="20"
-                        propId="9" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="9" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Upside Amount"/>
                 <column code="ACTUAL_CLOSED_REVENUE" displayName="实际关闭收入" domain="amount" name="actualClosedRevenue"
-                        precision="20" propId="10" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Actual Closed Revenue"/>
                 <column code="COMMIT_ACCURACY" displayName="承诺准确率" name="commitAccuracy" precision="10" propId="11"
                         scale="4" stdDataType="double" stdSqlType="DECIMAL" i18n-en:displayName="Commit Accuracy"/>
                 <column code="UPSIDE_ACCURACY" displayName="乐观准确率" name="upsideAccuracy" precision="10" propId="12"
                         scale="4" stdDataType="double" stdSqlType="DECIMAL" i18n-en:displayName="Upside Accuracy"/>
                 <column code="DEVIATION_AMOUNT" displayName="偏差绝对值" domain="amount" name="deviationAmount"
-                        precision="20" propId="13" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="13" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Deviation Amount"/>
                 <column code="CALCULATED_BY" displayName="计算人" domain="createdBy" name="calculatedBy" precision="50"
                         propId="14" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Calculated By"/>
@@ -1609,7 +1609,7 @@
                 <column code="PERIOD_LABEL" displayName="期间标签" name="periodLabel" precision="100" propId="8"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Period Label"/>
                 <column code="QUOTA_AMOUNT" displayName="配额金额" domain="amount" name="quotaAmount" precision="20"
-                        propId="9" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="9" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Quota Amount"/>
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="10" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
@@ -1798,10 +1798,10 @@
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-crm/bundle-discount-type"
                         i18n-en:displayName="Discount Type"/>
                 <column code="DISCOUNT_VALUE" displayName="折扣值" domain="amount" name="discountValue" precision="20"
-                        propId="8" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="8" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Discount Value"/>
                 <column code="BUNDLE_AMOUNT" displayName="捆绑包总价" domain="amount" name="bundleAmount" precision="20"
-                        propId="9" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="9" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Bundle Amount"/>
                 <column code="EFFECTIVE_FROM" displayName="生效开始日期" name="effectiveFrom" propId="10" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Effective From"/>
@@ -1852,9 +1852,9 @@
                 <column code="PRODUCT_ID" displayName="产品" name="productId" propId="4" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Product"/>
                 <column code="QUANTITY" displayName="数量" domain="quantity" name="quantity" precision="20" propId="5"
-                        scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Quantity"/>
+                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Quantity"/>
                 <column code="UNIT_PRICE" displayName="单价" domain="unitPrice" name="unitPrice" precision="20" propId="6"
-                        scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Unit Price"/>
+                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Unit Price"/>
                 <column code="SEQUENCE" defaultValue="0" displayName="排序" name="sequence" propId="7" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Sequence"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="8"
@@ -1923,18 +1923,18 @@
                 <column code="CUSTOMER_CATEGORY" displayName="适用客户类别" name="customerCategory" precision="100"
                         propId="10" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Customer Category"/>
                 <column code="MIN_QUANTITY" displayName="最小数量" domain="quantity" name="minQuantity" precision="20"
-                        propId="11" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="11" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Min Quantity"/>
                 <column code="MAX_QUANTITY" displayName="最大数量" domain="quantity" name="maxQuantity" precision="20"
-                        propId="12" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="12" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Max Quantity"/>
                 <column code="PRICE_OVERRIDE" displayName="覆盖单价" domain="unitPrice" name="priceOverride" precision="20"
-                        propId="13" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="13" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Price Override"/>
                 <column code="DISCOUNT_PERCENT" displayName="折扣百分比" name="discountPercent" precision="10" propId="14"
                         scale="2" stdDataType="double" stdSqlType="DECIMAL" i18n-en:displayName="Discount Percent"/>
                 <column code="DISCOUNT_AMOUNT" displayName="折扣固定金额" domain="amount" name="discountAmount" precision="20"
-                        propId="15" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="15" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Discount Amount"/>
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="16" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
@@ -2256,16 +2256,16 @@
                 <column code="TOTAL_LOST" defaultValue="0" displayName="丢单总量" name="totalLost" propId="12"
                         stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Total Lost"/>
                 <column code="TOTAL_REVENUE" displayName="赢单总收入" domain="amount" name="totalRevenue" precision="20"
-                        propId="13" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="13" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Total Revenue"/>
                 <column code="LOST_REVENUE" displayName="丢失金额合计" domain="amount" name="lostRevenue" precision="20"
-                        propId="14" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="14" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Lost Revenue"/>
                 <column code="WEIGHTED_REVENUE" displayName="加权收入合计" domain="amount" name="weightedRevenue"
-                        precision="20" propId="15" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="15" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Weighted Revenue"/>
                 <column code="AVG_DEAL_SIZE" displayName="平均赢单金额" domain="amount" name="avgDealSize" precision="20"
-                        propId="16" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="16" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Avg Deal Size"/>
                 <column code="AVG_SALES_CYCLE_DAYS" displayName="平均销售周期天数" name="avgSalesCycleDays" precision="10"
                         propId="17" scale="2" stdDataType="double" stdSqlType="DECIMAL"
@@ -2353,7 +2353,7 @@
                 <column code="LOST_COUNT" defaultValue="0" displayName="本阶段丢失数" name="lostCount" propId="13"
                         stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Lost Count"/>
                 <column code="LOST_AMOUNT" displayName="本阶段丢失金额" domain="amount" name="lostAmount" precision="20"
-                        propId="14" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="14" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Lost Amount"/>
                 <column code="LOST_REASON_TOP" displayName="TOP丢失原因(JSON)" domain="jsonStr" name="lostReasonTop"
                         precision="4000" propId="15" stdDataType="string" stdSqlType="VARCHAR"

@@ -52,7 +52,7 @@
         </prop>
         <prop name="quotaAmount" displayName="配额金额" propId="9" i18n-en:displayName="Quota Amount" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="currencyId" displayName="币种" propId="10" i18n-en:displayName="Currency" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="currency">

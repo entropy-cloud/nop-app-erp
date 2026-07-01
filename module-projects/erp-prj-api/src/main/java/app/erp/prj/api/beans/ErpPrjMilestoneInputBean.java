@@ -96,16 +96,16 @@
         }
 
 
-        private String _billingAmount;
+        private java.math.BigDecimal _billingAmount;
 
     
         @PropMeta(propId=7)
     
-        public String getBillingAmount(){
+        public java.math.BigDecimal getBillingAmount(){
             return _billingAmount;
         }
 
-        public void setBillingAmount(String value){
+        public void setBillingAmount(java.math.BigDecimal value){
             this._billingAmount = value;
         }
 

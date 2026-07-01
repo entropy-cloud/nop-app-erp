@@ -61,11 +61,11 @@
         </prop>
         <prop name="completedQuantity" displayName="本班完工数量" propId="11" i18n-en:displayName="Completed Quantity"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="scrappedQuantity" displayName="本班报废数量" propId="12" i18n-en:displayName="Scrapped Quantity"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="hourlyRate" displayName="小时费率" propId="13" i18n-en:displayName="Hourly Rate" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -73,7 +73,7 @@
         </prop>
         <prop name="laborCost" displayName="人工成本" propId="14" i18n-en:displayName="Labor Cost" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="remark" displayName="备注" propId="15" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

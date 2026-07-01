@@ -97,44 +97,44 @@
         }
 
 
-        private String _plannedAmount;
+        private java.math.BigDecimal _plannedAmount;
 
     
         @PropMeta(propId=7)
     
-        public String getPlannedAmount(){
+        public java.math.BigDecimal getPlannedAmount(){
             return _plannedAmount;
         }
 
-        public void setPlannedAmount(String value){
+        public void setPlannedAmount(java.math.BigDecimal value){
             this._plannedAmount = value;
         }
 
 
-        private String _committedAmount;
+        private java.math.BigDecimal _committedAmount;
 
     
         @PropMeta(propId=8)
     
-        public String getCommittedAmount(){
+        public java.math.BigDecimal getCommittedAmount(){
             return _committedAmount;
         }
 
-        public void setCommittedAmount(String value){
+        public void setCommittedAmount(java.math.BigDecimal value){
             this._committedAmount = value;
         }
 
 
-        private String _actualAmount;
+        private java.math.BigDecimal _actualAmount;
 
     
         @PropMeta(propId=9)
     
-        public String getActualAmount(){
+        public java.math.BigDecimal getActualAmount(){
             return _actualAmount;
         }
 
-        public void setActualAmount(String value){
+        public void setActualAmount(java.math.BigDecimal value){
             this._actualAmount = value;
         }
 

@@ -40,7 +40,7 @@
                 <col id="inspectionId" ui:number="true" sortable="true"/>
 
                 <!--不合格数量-->
-                <col id="quantity" sortable="true"/>
+                <col id="quantity" ui:number="true" sortable="true"/>
 
                 <!--问题描述-->
                 <col id="description" sortable="true"/>

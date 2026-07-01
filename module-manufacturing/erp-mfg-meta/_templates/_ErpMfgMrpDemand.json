@@ -8,7 +8,7 @@
   "demandSource_label": "",
   "sourceBillType": "",
   "sourceBillCode": "",
-  "quantity": "",
+  "quantity": 0.0,
   "requirementDate": "2000-01-01",
   "delVersion": 0,
   "version": 0,

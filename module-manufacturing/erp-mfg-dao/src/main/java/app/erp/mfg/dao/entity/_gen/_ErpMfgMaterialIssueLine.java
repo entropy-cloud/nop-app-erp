@@ -216,16 +216,16 @@ public class _ErpMfgMaterialIssueLine extends DynamicOrmEntity{
     private java.lang.Long _workOrderLineId;
     
     /* 应领数量: REQUIRED_QUANTITY */
-    private java.lang.String _requiredQuantity;
+    private java.math.BigDecimal _requiredQuantity;
     
     /* 实领数量: ISSUED_QUANTITY */
     private java.lang.Boolean _issuedQuantity;
     
     /* 单位成本: UNIT_COST */
-    private java.lang.String _unitCost;
+    private java.math.BigDecimal _unitCost;
     
     /* 总成本: TOTAL_COST */
-    private java.lang.String _totalCost;
+    private java.math.BigDecimal _totalCost;
     
     /* 批号: BATCH_NO */
     private java.lang.String _batchNo;
@@ -470,9 +470,9 @@ public class _ErpMfgMaterialIssueLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_requiredQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_requiredQuantity));
                }
                setRequiredQuantity(typedValue);
@@ -490,9 +490,9 @@ public class _ErpMfgMaterialIssueLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_unitCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_unitCost));
                }
                setUnitCost(typedValue);
@@ -500,9 +500,9 @@ public class _ErpMfgMaterialIssueLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_totalCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_totalCost));
                }
                setTotalCost(typedValue);
@@ -659,7 +659,7 @@ public class _ErpMfgMaterialIssueLine extends DynamicOrmEntity{
         
             case PROP_ID_requiredQuantity:{
                onInitProp(propId);
-               this._requiredQuantity = (java.lang.String)value;
+               this._requiredQuantity = (java.math.BigDecimal)value;
                
                break;
             }
@@ -673,14 +673,14 @@ public class _ErpMfgMaterialIssueLine extends DynamicOrmEntity{
         
             case PROP_ID_unitCost:{
                onInitProp(propId);
-               this._unitCost = (java.lang.String)value;
+               this._unitCost = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_totalCost:{
                onInitProp(propId);
-               this._totalCost = (java.lang.String)value;
+               this._totalCost = (java.math.BigDecimal)value;
                
                break;
             }
@@ -890,7 +890,7 @@ public class _ErpMfgMaterialIssueLine extends DynamicOrmEntity{
     /**
      * 应领数量: REQUIRED_QUANTITY
      */
-    public final java.lang.String getRequiredQuantity(){
+    public final java.math.BigDecimal getRequiredQuantity(){
          onPropGet(PROP_ID_requiredQuantity);
          return _requiredQuantity;
     }
@@ -898,7 +898,7 @@ public class _ErpMfgMaterialIssueLine extends DynamicOrmEntity{
     /**
      * 应领数量: REQUIRED_QUANTITY
      */
-    public final void setRequiredQuantity(java.lang.String value){
+    public final void setRequiredQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_requiredQuantity,value)){
             this._requiredQuantity = value;
             internalClearRefs(PROP_ID_requiredQuantity);
@@ -928,7 +928,7 @@ public class _ErpMfgMaterialIssueLine extends DynamicOrmEntity{
     /**
      * 单位成本: UNIT_COST
      */
-    public final java.lang.String getUnitCost(){
+    public final java.math.BigDecimal getUnitCost(){
          onPropGet(PROP_ID_unitCost);
          return _unitCost;
     }
@@ -936,7 +936,7 @@ public class _ErpMfgMaterialIssueLine extends DynamicOrmEntity{
     /**
      * 单位成本: UNIT_COST
      */
-    public final void setUnitCost(java.lang.String value){
+    public final void setUnitCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_unitCost,value)){
             this._unitCost = value;
             internalClearRefs(PROP_ID_unitCost);
@@ -947,7 +947,7 @@ public class _ErpMfgMaterialIssueLine extends DynamicOrmEntity{
     /**
      * 总成本: TOTAL_COST
      */
-    public final java.lang.String getTotalCost(){
+    public final java.math.BigDecimal getTotalCost(){
          onPropGet(PROP_ID_totalCost);
          return _totalCost;
     }
@@ -955,7 +955,7 @@ public class _ErpMfgMaterialIssueLine extends DynamicOrmEntity{
     /**
      * 总成本: TOTAL_COST
      */
-    public final void setTotalCost(java.lang.String value){
+    public final void setTotalCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_totalCost,value)){
             this._totalCost = value;
             internalClearRefs(PROP_ID_totalCost);

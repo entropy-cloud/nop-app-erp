@@ -321,10 +321,10 @@ public class _ErpQaInspection extends DynamicOrmEntity{
     private java.time.LocalDate _inspectionDate;
     
     /* 批量: LOT_QUANTITY */
-    private java.lang.String _lotQuantity;
+    private java.math.BigDecimal _lotQuantity;
     
     /* 抽样数量: SAMPLE_QUANTITY */
-    private java.lang.String _sampleQuantity;
+    private java.math.BigDecimal _sampleQuantity;
     
     /* 检验员(职员): INSPECTOR_ID */
     private java.lang.Long _inspectorId;
@@ -689,9 +689,9 @@ public class _ErpQaInspection extends DynamicOrmEntity{
             }
         
             case PROP_ID_lotQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_lotQuantity));
                }
                setLotQuantity(typedValue);
@@ -699,9 +699,9 @@ public class _ErpQaInspection extends DynamicOrmEntity{
             }
         
             case PROP_ID_sampleQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_sampleQuantity));
                }
                setSampleQuantity(typedValue);
@@ -980,14 +980,14 @@ public class _ErpQaInspection extends DynamicOrmEntity{
         
             case PROP_ID_lotQuantity:{
                onInitProp(propId);
-               this._lotQuantity = (java.lang.String)value;
+               this._lotQuantity = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_sampleQuantity:{
                onInitProp(propId);
-               this._sampleQuantity = (java.lang.String)value;
+               this._sampleQuantity = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1367,7 +1367,7 @@ public class _ErpQaInspection extends DynamicOrmEntity{
     /**
      * 批量: LOT_QUANTITY
      */
-    public final java.lang.String getLotQuantity(){
+    public final java.math.BigDecimal getLotQuantity(){
          onPropGet(PROP_ID_lotQuantity);
          return _lotQuantity;
     }
@@ -1375,7 +1375,7 @@ public class _ErpQaInspection extends DynamicOrmEntity{
     /**
      * 批量: LOT_QUANTITY
      */
-    public final void setLotQuantity(java.lang.String value){
+    public final void setLotQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_lotQuantity,value)){
             this._lotQuantity = value;
             internalClearRefs(PROP_ID_lotQuantity);
@@ -1386,7 +1386,7 @@ public class _ErpQaInspection extends DynamicOrmEntity{
     /**
      * 抽样数量: SAMPLE_QUANTITY
      */
-    public final java.lang.String getSampleQuantity(){
+    public final java.math.BigDecimal getSampleQuantity(){
          onPropGet(PROP_ID_sampleQuantity);
          return _sampleQuantity;
     }
@@ -1394,7 +1394,7 @@ public class _ErpQaInspection extends DynamicOrmEntity{
     /**
      * 抽样数量: SAMPLE_QUANTITY
      */
-    public final void setSampleQuantity(java.lang.String value){
+    public final void setSampleQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_sampleQuantity,value)){
             this._sampleQuantity = value;
             internalClearRefs(PROP_ID_sampleQuantity);

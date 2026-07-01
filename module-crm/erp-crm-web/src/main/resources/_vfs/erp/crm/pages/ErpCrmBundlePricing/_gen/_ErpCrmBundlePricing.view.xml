@@ -40,10 +40,10 @@
                 <col id="discountType" sortable="true"/>
 
                 <!--折扣值-->
-                <col id="discountValue" sortable="true"/>
+                <col id="discountValue" ui:number="true" sortable="true"/>
 
                 <!--捆绑包总价-->
-                <col id="bundleAmount" sortable="true"/>
+                <col id="bundleAmount" ui:number="true" sortable="true"/>
 
                 <!--生效开始日期-->
                 <col id="effectiveFrom" sortable="true"/>

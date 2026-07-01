@@ -37,7 +37,7 @@
                 <col id="currencyId" ui:number="true" sortable="true"/>
 
                 <!--预算总额-->
-                <col id="totalAmount" sortable="true"/>
+                <col id="totalAmount" ui:number="true" sortable="true"/>
 
                 <!--单据状态-->
                 <col id="docStatus" mandatory="true" ui:number="true" sortable="true"/>

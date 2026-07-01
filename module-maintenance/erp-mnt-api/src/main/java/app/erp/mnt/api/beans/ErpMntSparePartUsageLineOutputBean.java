@@ -83,16 +83,16 @@
         }
 
 
-        private String _quantity;
+        private java.math.BigDecimal _quantity;
 
     
         @PropMeta(propId=6)
     
-        public String getQuantity(){
+        public java.math.BigDecimal getQuantity(){
             return _quantity;
         }
 
-        public void setQuantity(String value){
+        public void setQuantity(java.math.BigDecimal value){
             this._quantity = value;
         }
 
@@ -111,16 +111,16 @@
         }
 
 
-        private String _amount;
+        private java.math.BigDecimal _amount;
 
     
         @PropMeta(propId=8)
     
-        public String getAmount(){
+        public java.math.BigDecimal getAmount(){
             return _amount;
         }
 
-        public void setAmount(String value){
+        public void setAmount(java.math.BigDecimal value){
             this._amount = value;
         }
 

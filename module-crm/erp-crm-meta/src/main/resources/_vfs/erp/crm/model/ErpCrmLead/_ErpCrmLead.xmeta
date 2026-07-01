@@ -77,19 +77,19 @@
         </prop>
         <prop name="expectedRevenue" displayName="预期收入" propId="15" i18n-en:displayName="Expected Revenue"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="bestCaseAmount" displayName="乐观预期" propId="16" i18n-en:displayName="Best Case Amount"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="worstCaseAmount" displayName="悲观预期" propId="17" i18n-en:displayName="Worst Case Amount"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="recurringRevenue" displayName="周期性收入" propId="18" i18n-en:displayName="Recurring Revenue"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="recurringPlan" displayName="周期性计划" propId="19" i18n-en:displayName="Recurring Plan" queryable="true"
               sortable="true" insertable="true" updatable="true">

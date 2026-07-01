@@ -50,15 +50,15 @@
         </prop>
         <prop name="plannedQuantity" displayName="计划数量" propId="8" i18n-en:displayName="Planned Quantity"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="actualQuantity" displayName="实际数量(完工/领用)" propId="9" i18n-en:displayName="Actual Quantity"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="scrappedQuantity" displayName="报废数量" propId="10" i18n-en:displayName="Scrapped Quantity"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="sourceWarehouseId" displayName="领料仓库(投入用)" propId="11" i18n-en:displayName="Source Warehouse"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="sourceWarehouse">

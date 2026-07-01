@@ -208,7 +208,7 @@ public class _ErpMfgBom extends DynamicOrmEntity{
     private java.lang.String _versionLabel;
     
     /* BOM数量: QTY */
-    private java.lang.String _qty;
+    private java.math.BigDecimal _qty;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -478,9 +478,9 @@ public class _ErpMfgBom extends DynamicOrmEntity{
             }
         
             case PROP_ID_qty:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_qty));
                }
                setQty(typedValue);
@@ -635,7 +635,7 @@ public class _ErpMfgBom extends DynamicOrmEntity{
         
             case PROP_ID_qty:{
                onInitProp(propId);
-               this._qty = (java.lang.String)value;
+               this._qty = (java.math.BigDecimal)value;
                
                break;
             }
@@ -900,7 +900,7 @@ public class _ErpMfgBom extends DynamicOrmEntity{
     /**
      * BOM数量: QTY
      */
-    public final java.lang.String getQty(){
+    public final java.math.BigDecimal getQty(){
          onPropGet(PROP_ID_qty);
          return _qty;
     }
@@ -908,7 +908,7 @@ public class _ErpMfgBom extends DynamicOrmEntity{
     /**
      * BOM数量: QTY
      */
-    public final void setQty(java.lang.String value){
+    public final void setQty(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_qty,value)){
             this._qty = value;
             internalClearRefs(PROP_ID_qty);

@@ -45,7 +45,7 @@
         </prop>
         <prop name="quantity" displayName="数量" propId="7" i18n-en:displayName="Quantity" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="operationId" displayName="工序ID" propId="8" i18n-en:displayName="Operation" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="operation">

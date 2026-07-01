@@ -37,11 +37,11 @@
         </prop>
         <prop name="quantity" displayName="数量" propId="5" i18n-en:displayName="Quantity" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="unitPrice" displayName="单价" propId="6" i18n-en:displayName="Unit Price" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="unitPrice" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="unitPrice" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="sequence" displayName="排序" propId="7" i18n-en:displayName="Sequence" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">

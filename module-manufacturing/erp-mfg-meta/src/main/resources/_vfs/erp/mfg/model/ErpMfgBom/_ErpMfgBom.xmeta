@@ -65,7 +65,7 @@
         </prop>
         <prop name="qty" displayName="BOM数量" propId="12" i18n-en:displayName="Qty" queryable="true" sortable="true"
               insertable="true" updatable="true" defaultValue="1">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="13" i18n-en:displayName="Del Flag" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">

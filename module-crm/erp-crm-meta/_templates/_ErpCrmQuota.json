@@ -8,7 +8,7 @@
   "periodType_label": "",
   "fiscalYear": 0,
   "periodLabel": "",
-  "quotaAmount": "",
+  "quotaAmount": 0.0,
   "currencyId": 0,
   "isFinalized": false,
   "notes": "",
