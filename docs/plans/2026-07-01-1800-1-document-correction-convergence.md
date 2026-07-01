@@ -1,6 +1,6 @@
 # 2026-07-01-1800-1-document-correction-convergence 文档修正收敛计划
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-01
 > Source: `docs/analysis/2026-07-01-0000-design-doc-readiness-and-structure-assessment.md`（第二轮修订，含 16 条选定方案）
 > Related: `02-documentation-improvement-plan.md`（已完成，覆盖 Q1-Q83 决议）
@@ -42,7 +42,7 @@ No infra prereqs beyond existing baseline. All work is documentation-level.
 
 ### Phase 1 — 落位映射 + 范围口径（#1, #8）
 
-Status: planned
+Status: completed
 Targets: `docs/architecture/domain-module-split-analysis.md`, `docs/architecture/module-boundaries.md`, `docs/architecture/data-dependency-matrix.md`, `docs/requirements/product-scope.md`, `docs/architecture/project-vision.md`, `docs/context/codebase-map.md`, `docs/architecture/system-baseline.md`, `docs/context/project-context.md`
 Skill: none
 
@@ -67,7 +67,7 @@ Exit Criteria:
 
 > 顺序说明：本阶段先于 Phase 3 的 requirements 层收边，因为 Phase 2 解决的是"同一件事在多份文档里口径冲突"的基础语义问题（审批状态/过账机制/跨域规则），Phase 3 的 requirements 清洗需要依赖于这些基础语义先收敛，避免两边互相污染。
 
-Status: planned
+Status: completed
 Targets: `docs/architecture/approval-framework.md`, `docs/design/flow-overview.md`, `docs/architecture/service-layer-orchestration.md`, `docs/design/finance/posting.md`, `docs/architecture/data-dependency-matrix.md`, `docs/architecture/cross-domain-constraints.md`, `docs/architecture/module-boundaries.md`, `docs/design/domain-design-guidelines.md`
 Skill: none
 
@@ -93,7 +93,7 @@ Exit Criteria:
 
 ### Phase 3 — requirements + 权限 + 测试（#3, #6, #7）
 
-Status: planned
+Status: completed
 Targets: `docs/requirements/product-baseline.md`, `docs/requirements/mvp.md`, `docs/design/roles-and-permissions.md`, `docs/design/app-overview.md`, `docs/architecture/testing-strategy.md`, `docs/architecture/test-strategy.md`, `docs/architecture/seed-data.md`, `docs/architecture/`, `app-erp-test-data/`, `docs/index.md`
 Skill: none
 
@@ -117,7 +117,7 @@ Exit Criteria:
 
 ### Phase 4 — 文档路由修复 + 目录清理（#9, #10, #14, #15, #16）
 
-Status: planned
+Status: completed
 Targets: `docs/design/README.md`, `docs/architecture/README.md`, `docs/design/feature-inventory.md`, `docs/design/portal/README.md`, `docs/design/portal/identity-and-access.md`, `docs/design/app-overview.md`, `docs/design/domain-design-guidelines.md`, `docs/architecture/integration-and-transaction-patterns.md`, `docs/design/erp-design-audit-checklist.md`
 Skill: none
 

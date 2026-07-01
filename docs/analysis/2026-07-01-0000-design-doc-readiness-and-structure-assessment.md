@@ -14,6 +14,8 @@
 > - 多步骤业务逻辑应优先参考 `docs-for-ai`，默认优先 `task.xml`。
 > - 本项目不是 MVP 路线，而是完整产品的渐进式演化，通过 roadmap 规划。
 > - 需要新增独立测试数据目录，用 CSV 组织，并提供稳定可发现的引用方式。
+>
+> **收敛状态：✅ 已完成**（2026-07-01）。本文 16 条选定方案已全部落地到对应 owner doc，执行与结束审计详见 `docs/plans/2026-07-01-1800-1-document-correction-convergence.md`（Plan Status: completed）。本文保留为评估与裁决的历史记录，不再作为待办工作项。
 
 ## 评估目的
 
