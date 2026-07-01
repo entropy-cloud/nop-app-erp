@@ -28,6 +28,8 @@ nop-app-erp 的定制能力按"改动成本从低到高、灵活度从高到低"
 | 模块化组装 | 中 | 高 | 按需引入/裁剪业务域模块 | `01-repo-map/domain-module-pattern.md` |
 | BizModel/Processor 手写 | 高 | 极高 | 复杂业务逻辑，无法用模型表达 | `02-core-guides/domain-logic-and-ddd.md` |
 
+> **BizModel/Processor 的配置余地细化**：拓扑稳定的复杂流程（流程骨架不可配、仅单步实现需按客户/行业覆盖）按 `processor-extension-pattern.md` 实现 Facade + Processor 两层结构，通过 protected 步骤 + 派生 bean 同名覆盖留配置余地；拓扑可变的编排仍首选 task.xml（见 `service-layer-orchestration.md`）。
+
 ## 决策顺序（Model → Delta → Java）
 
 定制时遵循平台默认决策顺序（见 `../nop-entropy/docs-for-ai/00-start-here/ai-defaults.md`）：

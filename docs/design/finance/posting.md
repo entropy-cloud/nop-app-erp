@@ -177,6 +177,8 @@ autoCreateVoucher(billHeadCode, Double[]{amountSum, taxAmountSum, voucherAmount}
 
 ## 过账引擎（可插拔 Provider 机制）
 
+> 过账流程的步骤顺序属"稳定约束"（见 §稳定约束 vs 可配置策略），Java 实现遵循 `docs/architecture/processor-extension-pattern.md` 的 Facade + Processor 两层结构与派生覆盖约定，不使用 task.xml 编排。
+
 ### 接口设计
 
 财务域定义凭证生成接口与注册中心：

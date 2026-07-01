@@ -1,9 +1,9 @@
-# CRUD 实施路线图
+# CRUD Implementation Roadmap
 
 > 最后更新：2026-07-01
 > 本路线图独立于业务逻辑实施路线图。CRUD 操作不依赖业务规则，可独立并行实施。
 
-## 目的
+## Purpose
 
 为全部 18 个模块的**标准 CRUD 操作**提供实施状态索引。每个模块在完成 CRUD 后获得：
 - 实体 DAO + 标准 `CrudBizModel<T>`（codegen 已生成空壳，需验证可运行）
@@ -13,11 +13,11 @@
 
 CRUD 完成后，业务逻辑深化在此基础上进行。
 
-## 阶段状态
+## Work Item Status
 
-> `todo` = 未开始 / `planned` = 有执行计划 / `done` = 已完成（codegen + 页面 + 菜单，测试统一在 Phase 4）
+> 每域为一个工作项，状态见下方各 Milestone 表的「状态」列。`todo` = 未开始 / `ready` = 已通过草案审查，排队待实施 / `done` = 已完成（codegen + 页面 + 菜单，测试统一在 Milestone 4）
 
-### Phase 1 — 核心 5 域（进销存+财务）
+### Milestone 1 — 核心 5 域（进销存+财务）
 
 | 域 | 实体数 | codegen | 页面 | 菜单 | 状态 |
 |---|--------|---------|------|------|------|
@@ -27,7 +27,7 @@ CRUD 完成后，业务逻辑深化在此基础上进行。
 | inventory | 15 | ✅ | ✅ | ✅ | `done` |
 | finance | 17 | ✅ | ✅ | ✅ | `done` |
 
-### Phase 2 — 扩展 5 域
+### Milestone 2 — 扩展 5 域
 
 | 域 | 实体数 | codegen | 页面 | 菜单 | 状态 |
 |---|--------|---------|------|------|------|
@@ -37,7 +37,7 @@ CRUD 完成后，业务逻辑深化在此基础上进行。
 | projects | 13 | ✅ | ✅ | ✅ | `done` |
 | maintenance | 12 | ✅ | ✅ | ✅ | `done` |
 
-### Phase 3 — 新增 8 域
+### Milestone 3 — 新增 8 域
 
 | 域 | 实体数 | codegen | 页面 | 菜单 | action-auth | 状态 |
 |---|--------|---------|------|------|------------|------|
@@ -50,11 +50,11 @@ CRUD 完成后，业务逻辑深化在此基础上进行。
 | logistics | 7 | ✅ | ✅ | ✅ | ✅ | `done` |
 | b2b | 13 | ✅ | ✅ | ✅ | ✅ | `done` |
 
-> Phase 3 页面已生成（view.xml/page.yaml 在各域 web src 树中）；app-erp-all 聚合 wiring 已完成（18 域 `-app` 依赖 + action-auth `x:extends` 聚合，见 `docs/plans/2026-06-30-2328-1-phase3-new-domains-app-aggregation.md`）。
+> Milestone 3 页面已生成（view.xml/page.yaml 在各域 web src 树中）；app-erp-all 聚合 wiring 已完成（18 域 `-app` 依赖 + action-auth `x:extends` 聚合，见 ）。
 
-### Phase 4 — CRUD 冒烟测试
+### Milestone 4 — CRUD 冒烟测试
 
-> 状态：`done`（18/18 域通过）。执行计划：`docs/plans/2026-06-30-2328-2-phase4-crud-smoke-tests.md`；manufacturing/customer-service 的前置模型缺陷由 `docs/plans/2026-07-01-0215-1-complete-deferred-crud-smoke-tests.md` 修复并补测。
+> 状态：`done`（18/18 域通过）。manufacturing/customer-service 的前置模型缺陷已修复并补测。
 
 所有 18 域的基本操作验证。框架：`JunitAutoTestCase` + GraphQL mutation/query 快照。
 
@@ -66,7 +66,7 @@ CRUD 完成后，业务逻辑深化在此基础上进行。
 | 逻辑删除 | 验证 delVersion=1 | mutation → query | delVersion=1 |
 | 关系导航 | 主子表级联 | 新建头→添加行→查询行 | 外键正确引用 |
 
-执行：`mvn test -pl module-{xx} -am`，按 Phase 1→2→3 顺序推进。
+执行：`mvn test -pl module-{xx} -am`，按 Milestone 1→2→3 顺序推进。
 
 #### 逐域通过状态（每域 5 类操作 × `JunitAutoTestCase` 快照，CHECKING 模式）
 
@@ -91,16 +91,16 @@ CRUD 完成后，业务逻辑深化在此基础上进行。
 | manufacturing | ErpMfgRouting | ErpMfgRouting→ErpMfgRoutingOperation | ✅ |
 | customer-service | ErpCsTicketType | ErpCsTicketType→ErpCsSlaPolicy | ✅ |
 
-> `mvn test`（根目录）BUILD SUCCESS：18 域冒烟测试全绿（90 方法，Failures=0/Errors=0/Skipped=0）。manufacturing（补齐 `erp-md/posted-status` 字典）与 customer-service（移除 `app.erp.pro.*` 幽灵实体声明）的两处前置模型缺陷已由 `docs/plans/2026-07-01-0215-1-complete-deferred-crud-smoke-tests.md` 修复。
+> `mvn test`（根目录）BUILD SUCCESS：18 域冒烟测试全绿（90 方法，Failures=0/Errors=0/Skipped=0）。manufacturing（补齐 `erp-md/posted-status` 字典）与 customer-service（移除 `app.erp.pro.*` 幽灵实体声明）的两处前置模型缺陷已由  修复。
 
-## 验证命令
+## Verification Commands
 
 ```bash
 mvn clean install -DskipTests
 mvn test -pl module-crm -am   # 示例: 测试单模块
 ```
 
-## 规则
+## Rule
 
 - 本文件只跟踪 CRUD 状态。业务逻辑归 `implementation-roadmap.md`。
-- Phase 1-3 页面已生成（view.xml/page.yaml）；18 域已聚合到 app-erp-all（Phase 3 完成）。
+- Milestone 1-3 页面已生成（view.xml/page.yaml）；18 域已聚合到 app-erp-all（Milestone 3 完成）。

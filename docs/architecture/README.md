@@ -15,8 +15,9 @@ Use `docs/design/` for app-layer feature and business design. Use `docs/architec
 5. `data-dependency-matrix.md` — 数据依赖矩阵（模块间只读/同步写/弱指针）
 6. `domain-module-split-analysis.md` — 18 域拆分决策与命名方案（含 §2.0 工程命名映射表）
 7. `competitive-comparison.md` — 竞品架构对标（vs Odoo/ERPNext/iDempiere/Tryton 等，超越点论证）
-8. `service-layer-orchestration.md` — 服务层编排架构（task.xml + I*Biz 分工与步骤实现选择）
-9. more specific owner docs as the project grows
+8. `service-layer-orchestration.md` — 服务层编排架构（task.xml + Java Processor 双轨编排与 I*Biz 分工）
+9. `processor-extension-pattern.md` — Java Processor 扩展模式（拓扑稳定流程的 Facade+Processor 两层结构与配置余地）
+10. more specific owner docs as the project grows
 
 ## Owner-Doc Rules
 
@@ -44,7 +45,8 @@ Use `docs/design/` for app-layer feature and business design. Use `docs/architec
 - `doc-model-design.md` - 单据模型设计（双维度类型、进销存三单链、单据编号规则）
 - `l10n-strategy.md` - 本地化策略设计（中国本地化模块、金税接口、增值税发票）
 - `api-response-conventions.md` - API 响应约定
-- `service-layer-orchestration.md` - 服务层编排架构（task.xml + I*Biz 分工、步骤实现方式选择、映射约定、Delta 定制模式）
+- `service-layer-orchestration.md` - 服务层编排架构（task.xml + Java Processor 双轨编排、步骤实现方式选择、映射约定、Delta 定制模式）
+- `processor-extension-pattern.md` - Java Processor 扩展模式（拓扑稳定流程的 Facade+Processor 两层职责、protected 步骤 + IServiceContext + 派生 bean 同名覆盖的配置余地、反模式）
 - `integration-and-transaction-patterns.md` - 集成与事务模式
 - `integration-pattern.md` - 外部 API 集成模式（Webhook 出站/入站）
 - `b2b-integration.md` - B2B **集成契约层**（EDI 格式 SPI 适用性派发 + 信封状态机 + ASN 入站、Webhook、技术边界）；**业务语义**（状态机业务含义、用例、页面）归 `docs/design/b2b/README.md`，两者相互引用

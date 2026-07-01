@@ -11,3 +11,7 @@ Recommended filenames:
 - `03-plan-closure-claimed-too-early.md`
 
 When a bug, retrospective, or audit reveals a repeatable pattern, consider promoting it into `docs/lessons/`.
+
+## Lessons
+
+- `04-bizmodel-service-method-contract-and-testing.md` — BizModel/I*Biz 服务方法契约（注解 + IServiceContext 末参 + @Name）与测试必须经 IGraphQLEngine（直调缺 session）。含 `@SingleSession` 误判实录与验证结论。

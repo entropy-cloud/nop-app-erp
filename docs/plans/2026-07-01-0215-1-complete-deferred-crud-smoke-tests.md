@@ -2,7 +2,7 @@
 
 > Plan Status: completed
 > Last Reviewed: 2026-07-01
-> Source: `docs/backlog/crud-roadmap.md` Phase 4（剩余 2 域阻塞）+ `docs/plans/2026-06-30-2328-2-phase4-crud-smoke-tests.md` Deferred（manufacturing / customer-service 模型缺陷阻塞）
+> Source: `docs/backlog/crud-roadmap.md` Milestone 4（剩余 2 域阻塞）+ `docs/plans/2026-06-30-2328-2-phase4-crud-smoke-tests.md` Deferred（manufacturing / customer-service 模型缺陷阻塞）
 > Related: `docs/plans/2026-06-30-2328-2-phase4-crud-smoke-tests.md`（其 Deferred 项的后继切片，触发条件已满足）、`docs/architecture/testing-strategy.md`（Nop 测试 runbook 落地小节，本计划复用）、`docs/design/finance/state-machine.md`（过账状态语义权威源）
 > Audit: required
 

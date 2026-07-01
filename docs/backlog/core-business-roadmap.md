@@ -1,27 +1,44 @@
-# 核心业务逻辑路线图
+# Core Business Logic Roadmap
 
 > 最后更新：2026-07-01
 > 本路线图覆盖**进销存+财务** 5 域的自定义 BizModel 方法、跨域编排、业财过账。
 > 前置条件：`crud-roadmap.md` 中对应域的 CRUD 已完成。
 
-## 阶段状态
+## Work Item Status
 
-- P1. 核心业务循环：`in-progress`（1.3 StockMove + 1.5 过账引擎已 `done`；其余 `todo`）
-- P4. 业财一体端到端：`todo`
+> 状态在工作项上；Milestone 仅为分组。各工作项的实施记录见 Implementation Order。
 
-## 实施顺序
+### Milestone M1 — 核心业务循环
+- 1.0a 采购申请审批→转订单逻辑：`done`
+- 1.0b 销售报价单审批→转订单逻辑：`todo`
+- 1.1 Purchase Order BizModel：`partial`
+- 1.2 Sales Order BizModel：`partial`
+- 1.3 StockMove BizModel：`done`
+- 1.4 三单匹配逻辑：`todo`
+- 1.5 过账 Provider：`done`
+- 1.6 采购到付款串联：`todo`
+- 1.7 销售到收款串联：`todo`
+- 1.8 费用报销/票据/资金：`todo`
+- 1.9 采购退货与退款：`todo`
+- 1.10 销售退货与退款：`todo`
+- 1.11 批次追溯链：`todo`
 
-### P1 — 核心业务循环
+### Milestone M4 — 业财一体端到端
+- 4.1–4.4：`todo`
 
-| # | 工作项 | 域 | 设计文档 | 计划 |
+## Implementation Order
+
+### M1 — 核心业务循环
+
+| # | 工作项 | 域 | 设计文档 | 状态 |
 |---|--------|-----|---------|------|
-| 1.0a | 采购申请审批→转订单逻辑 | purchase | `purchase/requisition.md` | ✅ `done` → `docs/plans/2026-07-01-1426-1-purchase-requisition-to-order-and-order-approval.md`（completed；请购/订单三轴审批状态机 + 请购→订单转化：请购审核 APPROVED→convertToOrder 生成订单(UNSUBMITTED/DRAFT)+行/回链/幂等/金额族VARCHAR+供应商一致性校验，订单 submit/approve 双点供应商启用校验，16 测试全绿；RFQ 比价/请购合并/价格清单自动带价/多供应商分组/nop-wf 仍 todo） |
+| 1.0a | 采购申请审批→转订单逻辑 | purchase | `purchase/requisition.md` | ✅ `done` |
 | 1.0b | 销售报价单审批→转订单逻辑 | sales | `sales/quotation.md` | — |
-| 1.1 | Purchase Order BizModel（审批/入库触发/过账） | purchase | `purchase/state-machine.md` | 🔶 `partial` → `docs/plans/2026-07-01-1132-1-purchase-receipt-approval-inventory-trigger.md`（completed；入库触发段 done：采购入库三轴审批状态机 + 入库审核触发 `IErpInvStockMoveBiz.generateMove` + `posted` 接线 + 收货状态回写 + 反向冲销前置，首个 purchase→inventory→finance 跨域调用方，14 测试全绿）+ `docs/plans/2026-07-01-1426-1-purchase-requisition-to-order-and-order-approval.md`（completed；订单审核状态机段 done：采购订单三轴审批状态机 + 供应商启用校验，纯状态推进无库存/凭证触发，对齐 state-machine §2）；采购发票·付款 Provider/三单匹配/付款仍 todo） |
-| 1.2 | Sales Order BizModel（审批/出库触发/过账） | sales | `sales/state-machine.md` | 🔶 `partial` → `docs/plans/2026-07-01-1132-2-sales-delivery-approval-inventory-trigger.md`（completed；出库触发段 done：销售出库三轴审批状态机 + 出库审核触发 `IErpInvStockMoveBiz.generateMove`(OUTGOING，含销售独有可用量校验/负库存) + `posted` 接线 + 发货状态回写 + 反向冲销前置，首个 sales→inventory→finance 跨域调用方，11 测试全绿；订单审核状态机/客户信用额度/销售发票·收款 Provider 仍 todo） |
-| 1.3 | StockMove BizModel（库存移动/流水/余额） | inventory | `inventory/state-machine.md` | ✅ `done` → `docs/plans/2026-07-01-0811-2-inventory-stockmove-bizmodel.md`（completed；状态机+generateMove 契约+幂等+不可变流水+移动加权平均余额+可用量/负库存+存货过账端到端，19 测试全绿；消费 1.5 过账引擎，InvAcctDocProvider 为首个业务域 Provider） |
+| 1.1 | Purchase Order BizModel（审批/入库触发/过账） | purchase | `purchase/state-machine.md` | 🔶 `partial` |
+| 1.2 | Sales Order BizModel（审批/出库触发/过账） | sales | `sales/state-machine.md` | 🔶 `partial` |
+| 1.3 | StockMove BizModel（库存移动/流水/余额） | inventory | `inventory/state-machine.md` | ✅ `done` |
 | 1.4 | 三单匹配逻辑（PO/Receive/Invoice） | purchase | `purchase/three-way-match.md` | — |
-| 1.5 | IErpFinAcctDocProvider 过账 Provider | finance | `finance/posting.md` | ✅ `done` → `docs/plans/2026-07-01-0811-1-finance-posting-engine-foundation.md`（completed；过账引擎基座落地：SPI+注册中心+编排服务+默认模板 Provider+红冲，8 测试全绿；解除 1.3 过账阶段阻塞） |
+| 1.5 | IErpFinAcctDocProvider 过账 Provider | finance | `finance/posting.md` | ✅ `done` |
 | 1.6 | 采购到付款端到端串联 | purchase/finance | `flow-overview.md` | — |
 | 1.7 | 销售到收款端到端串联 | sales/finance | `flow-overview.md` | — |
 | 1.8 | 费用报销/票据/资金模块业务逻辑 | finance | `expense-claim.md`, `treasury.md` | — |
@@ -29,7 +46,7 @@
 | 1.10 | 销售退货与退款 | sales/finance | `sales/returns.md` | — |
 | 1.11 | 批次追溯链逻辑 | inventory | `inventory/trace-chain.md` | — |
 
-### P4 — 业财一体端到端
+### M4 — 业财一体端到端
 
 | # | 工作项 | 涉及域 |
 |---|--------|---------|
@@ -38,6 +55,6 @@
 | 4.3 | 期末结账全流程（成本核算→汇兑重估→结转损益→关账） | finance |
 | 4.4 | 采购/销售退货到退款全链路 | purchase/sales/finance |
 
-## 参考示例
+## Reference
 
 第一个 `task.xml` 文件参考：`module-purchase/erp-pur-service/src/main/resources/_vfs/erp/pur/_task/ErpPurOrder/approve.task.xml`，展示了审批流的标准编排模式（校验→规则→分支→I*Biz→后处理）。

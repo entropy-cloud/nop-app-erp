@@ -2,7 +2,7 @@
 
 > Plan Status: completed
 > Last Reviewed: 2026-07-01
-> Source: `docs/backlog/crud-roadmap.md` Phase 3（8 个新业务域）
+> Source: `docs/backlog/crud-roadmap.md` Milestone 3（8 个新业务域）
 > Related: `docs/plans/2026-06-30-2328-2-phase4-crud-smoke-tests.md`（本计划解除其阻塞）、`docs/plans/01-product-grade-erp-model-overhaul.md`（Deferred「nop-cli 代码生成」的延续）
 > Audit: required
 

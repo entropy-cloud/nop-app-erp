@@ -21,7 +21,7 @@ app-erp-finance（依赖 master-data + 各业务域的 I*Biz）
 
 扩展域：
 app-erp-assets（依赖 master-data + inventory；被 finance ORM 引用）
-app-erp-projects（依赖 master-data；被 finance ORM 引用；S 写 finance 凭证）
+app-erp-projects（依赖 master-data；被 finance ORM 引用 + 被 purchase/sales ORM 只读引用；S 写 finance 凭证）
 app-erp-manufacturing（依赖 master-data + inventory；被 finance ORM 引用；事件触发 quality 检验）
 app-erp-quality（依赖 master-data；被 purchase/sales/manufacturing 事件触发检验，零业务域 ORM 引用）
 app-erp-maintenance（依赖 master-data + inventory + assets；被 manufacturing 引用）
@@ -42,7 +42,7 @@ app-erp-maintenance（依赖 master-data + inventory + assets；被 manufacturin
 | 领域工程 | 允许依赖 | 禁止依赖 |
 |----------|----------|----------|
 | `app-erp-assets` | master-data / inventory | finance（finance 引用 assets，不反向） |
-| `app-erp-projects` | master-data | finance ORM 引用（finance→projects 单向合法，projects 不反向 ORM 引用 finance）；**S 写 finance 允许**（成本归集过账，见数据矩阵 §4.2） |
+| `app-erp-projects` | master-data | finance ORM 引用（finance→projects 单向合法，projects 不反向 ORM 引用 finance）；**S 写 finance 允许**（成本归集过账，见数据矩阵 §4.2）；**purchase/sales ORM 只读引用允许**（项目采购/销售单按 `projectId` 对 `ErpPrjProject` 建 to-one，归集项目成本，机制 B 只读，projects 不反向） |
 | `app-erp-manufacturing` | master-data / inventory | finance / maintenance（ORM + S 写反向）；**quality 仅事件触发检验**（ORM 零引用，manufacturing→quality 单向业务触发允许） |
 | `app-erp-quality` | master-data | 任何业务域 ORM 引用（quality 被业务域事件触发检验，不反向 ORM 依赖） |
 | `app-erp-maintenance` | master-data / inventory / assets | manufacturing / finance（反向） |
@@ -55,8 +55,8 @@ app-erp-maintenance（依赖 master-data + inventory + assets；被 manufacturin
 **规则**（源自 `../nop-entropy/docs-for-ai/02-core-guides/cross-module-entity-reference.md`）：在**共享单库 + 单向 DAG** 前提下，业务域通过 `notGenCode="true"` 外部实体引用建立到 master-data 的 ORM `<to-one>` 关联。
 
 - **允许**：业务域 orm.xml 声明 `<entity notGenCode="true" tableName="erp_md_*">` 引用 master-data 表，建立 `<to-one>`，支持 EQL 点导航与 GraphQL 展开。
-- **允许**：finance → projects/assets（finance 是 DAG 顶，单向合法）。
-- **禁止**：业务域之间的反向或循环引用（如 inventory → purchase/sales、purchase ↔ sales、projects/assets → finance）。这些走纯外键 + 弱指针 + `I*Biz`。
+- **允许**：finance → projects/assets（finance 是 DAG 顶，单向合法）；purchase/sales → projects（项目采购/销售单按 `projectId` 建 to-one 只读引用用于成本归集，机制 B 只读，projects 不反向）。
+- **禁止**：业务域之间的反向或循环引用（如 inventory → purchase/sales、purchase ↔ sales、projects/assets → finance → 反向回 purchase/sales）。这些走纯外键 + 弱指针 + `I*Biz`。
 - **平台依据**：`nop/schema/orm/entity.xdef` 的 `@notGenCode` 注释 + `nop/orm/xlib/orm-gen.xlib:228` 平台代码生成器自身范式。
 - **完整清单**：哪些业务域引用哪些 master-data 表、to-one 命名、DAG 验证，见 `data-dependency-matrix.md §5.6`。
 

@@ -1,17 +1,22 @@
-# 扩展域业务逻辑路线图
+# Extended Domains Business Logic Roadmap
 
 > 最后更新：2026-06-30
 > 本路线图覆盖**核心 5 域之外**的 13 域自定义 BizModel 方法与编排逻辑。
 > 前置条件：`crud-roadmap.md` 中对应域的 CRUD 已完成。
 
-## 阶段状态
+## Work Item Status
 
-- P2. 扩展 5 域（资产/制造/质量/项目/维护）：`todo`
-- P3. 新增 8 域（CRM/客服/HR/APS/合同/DRP/物流/B2B）：`todo`
+> 状态在工作项上；Milestone 仅为分组。
 
-## 实施顺序
+### Milestone M2 — 扩展 5 域
+- 2.1–2.11：`todo`
 
-### P2 — 扩展 5 域
+### Milestone M3 — 新增 8 域
+- 3.1–3.21：`todo`
+
+## Implementation Order
+
+### M2 — 扩展 5 域
 
 | # | 工作项 | 域 | 设计文档 |
 |---|--------|-----|---------|
@@ -27,7 +32,7 @@
 | 2.10 | VMI 所有权转移 | inventory | `inventory/consignment.md` |
 | 2.11 | 批次召回事件 | quality | `quality/recall.md` |
 
-### P3 — 新增 8 域
+### M3 — 新增 8 域
 
 | # | 工作项 | 域 | 设计文档 |
 |---|--------|-----|---------|

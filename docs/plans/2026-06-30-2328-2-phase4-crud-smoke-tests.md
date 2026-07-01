@@ -2,7 +2,7 @@
 
 > Plan Status: completed
 > Last Reviewed: 2026-07-01
-> Source: `docs/backlog/crud-roadmap.md` Phase 4（CRUD 冒烟测试）
+> Source: `docs/backlog/crud-roadmap.md` Milestone 4（CRUD 冒烟测试）
 > Related: `docs/plans/2026-06-30-2328-1-phase3-new-domains-app-aggregation.md`（本计划 Phase 3 依赖其完成）、`docs/architecture/testing-strategy.md`、`docs/plans/01-product-grade-erp-model-overhaul.md`（Deferred「端到端业务循环验证」的前置切片）
 > Audit: required
 
