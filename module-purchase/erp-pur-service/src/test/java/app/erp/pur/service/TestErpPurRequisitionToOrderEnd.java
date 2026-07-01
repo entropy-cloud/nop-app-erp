@@ -1,44 +1,44 @@
 package app.erp.pur.service;
 
 import app.erp.md.dao.entity.ErpMdPartner;
-import app.erp.pur.biz.ConvertToOrderRequest;
-import app.erp.pur.biz.IErpPurOrderBiz;
-import app.erp.pur.biz.IErpPurRequisitionBiz;
 import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.dao.entity.ErpPurRequisition;
 import app.erp.pur.dao.entity.ErpPurRequisitionLine;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.beans.ApiRequest;
+import io.nop.api.core.beans.ApiResponse;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.graphql.core.IGraphQLExecutionContext;
+import io.nop.graphql.core.ast.GraphQLOperationType;
+import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
-import io.nop.core.context.IServiceContext;
-import io.nop.core.context.ServiceContextImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Phase 3 端到端集成测试：请购→订单前端循环打通 + 与 Phase 1/2 衔接。
  *
- * <p>完整链路：建请购→提交→审核 APPROVED→转化生成订单(UNSUBMITTED)→提交→审核 APPROVED
+ * <p>完整链路经 {@link IGraphQLEngine} 调 {@code ErpPurRequisition__submit/approve/convertToOrder} 与
+ * {@code ErpPurOrder__submit/approve/cancel}（引擎建 session/事务/管道，直调缺 OrmSession 会报错，见 lessons/04）：
+ * 建请购→提交→审核 APPROVED→转化生成订单(UNSUBMITTED)→提交→审核 APPROVED
  * →（订单审核纯状态，不下游触发）→作废订单→可重新转化。
- * 证明请购→订单前端循环打通；订单审核 = 纯状态推进（不触发库存/凭证，对齐 state-machine §2）。
  */
 @NopTestConfig(localDb = true,
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurRequisitionToOrderEnd extends JunitAutoTestCase {
-    private static final IServiceContext CTX = new ServiceContextImpl();
-
 
     static final Long ORG_ID = 1501L;
     static final Long REQUESTER_ID = 2501L;
@@ -53,9 +53,7 @@ public class TestErpPurRequisitionToOrderEnd extends JunitAutoTestCase {
     @Inject
     IOrmTemplate ormTemplate;
     @Inject
-    IErpPurRequisitionBiz reqBiz;
-    @Inject
-    IErpPurOrderBiz orderBiz;
+    IGraphQLEngine graphQLEngine;
 
     @Test
     public void testRequisitionToOrderToEnd() {
@@ -65,34 +63,78 @@ public class TestErpPurRequisitionToOrderEnd extends JunitAutoTestCase {
         });
 
         Long reqId = 8501L;
-        // 1. 建请购 UNSUBMITTED → 提交 → 审核 APPROVED
-        ErpPurRequisition submitted = reqBiz.submit(reqId, CTX);
+        assertEquals(0, submit(reqId).getStatus());
+        ErpPurRequisition submitted = daoProvider.daoFor(ErpPurRequisition.class).getEntityById(reqId);
         assertEquals(ErpPurConstants.APPROVE_STATUS_SUBMITTED, submitted.getApproveStatus());
-        ErpPurRequisition approved = reqBiz.approve(reqId, CTX);
+        assertEquals(0, approve(reqId).getStatus());
+        ErpPurRequisition approved = daoProvider.daoFor(ErpPurRequisition.class).getEntityById(reqId);
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus());
 
-        // 2. APPROVED 请购 + 补充字段 → 转化生成订单(UNSUBMITTED)
-        ConvertToOrderRequest request = newRequest();
-        ErpPurOrder order = reqBiz.convertToOrder(reqId, request, CTX);
+        Map<String, Object> request = newRequest();
+        ApiResponse<?> conv = convertToOrder(reqId, request);
+        assertEquals(0, conv.getStatus());
+        Long orderId = idOf(conv);
+        ErpPurOrder order = daoProvider.daoFor(ErpPurOrder.class).getEntityById(orderId);
         assertEquals(ErpPurConstants.APPROVE_STATUS_UNSUBMITTED, order.getApproveStatus());
         assertEquals(reqId, order.getRequisitionId(), "回链 requisitionId");
 
-        // 3. 订单 UNSUBMITTED → 提交 → 审核 APPROVED（订单审核纯状态推进，不下游触发）
-        ErpPurOrder orderSubmitted = orderBiz.submit(order.getId(), CTX);
+        assertEquals(0, orderSubmit(orderId).getStatus());
+        ErpPurOrder orderSubmitted = daoProvider.daoFor(ErpPurOrder.class).getEntityById(orderId);
         assertEquals(ErpPurConstants.APPROVE_STATUS_SUBMITTED, orderSubmitted.getApproveStatus());
-        ErpPurOrder orderApproved = orderBiz.approve(order.getId(), CTX);
+        assertEquals(0, orderApprove(orderId).getStatus());
+        ErpPurOrder orderApproved = daoProvider.daoFor(ErpPurOrder.class).getEntityById(orderId);
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, orderApproved.getApproveStatus());
-        // 订单审核不触发库存移动单（与入库单审核触发 generateMove 实质性不同）
         assertEquals(false, orderApproved.getPosted(), "订单审核 posted=false（纯状态推进，不触发库存/凭证）");
 
-        // 4. 作废订单 → 可重新转化（幂等防重复转化的恢复路径）
-        ErpPurOrder cancelled = orderBiz.cancel(order.getId(), CTX);
+        assertEquals(0, orderCancel(orderId).getStatus());
+        ErpPurOrder cancelled = daoProvider.daoFor(ErpPurOrder.class).getEntityById(orderId);
         assertEquals(ErpPurConstants.DOC_STATUS_CANCELLED, cancelled.getDocStatus());
 
-        ErpPurOrder secondOrder = reqBiz.convertToOrder(reqId, request, CTX);
+        ApiResponse<?> secondConv = convertToOrder(reqId, request);
+        assertEquals(0, secondConv.getStatus());
+        ErpPurOrder secondOrder = daoProvider.daoFor(ErpPurOrder.class).getEntityById(idOf(secondConv));
         assertNotNull(secondOrder.getId());
         assertEquals(ErpPurConstants.APPROVE_STATUS_UNSUBMITTED, secondOrder.getApproveStatus(),
                 "作废原订单后可重新转化");
+    }
+
+    // ---------- rpc helpers ----------
+
+    private ApiResponse<?> submit(Long requisitionId) {
+        return executeRpc(mutation, "ErpPurRequisition__submit",
+                ApiRequest.build(Map.of("requisitionId", requisitionId)));
+    }
+
+    private ApiResponse<?> approve(Long requisitionId) {
+        return executeRpc(mutation, "ErpPurRequisition__approve",
+                ApiRequest.build(Map.of("requisitionId", requisitionId)));
+    }
+
+    private ApiResponse<?> convertToOrder(Long requisitionId, Map<String, Object> request) {
+        return executeRpc(mutation, "ErpPurRequisition__convertToOrder",
+                ApiRequest.build(Map.of("requisitionId", requisitionId, "request", request)));
+    }
+
+    private ApiResponse<?> orderSubmit(Long orderId) {
+        return executeRpc(mutation, "ErpPurOrder__submit", ApiRequest.build(Map.of("orderId", orderId)));
+    }
+
+    private ApiResponse<?> orderApprove(Long orderId) {
+        return executeRpc(mutation, "ErpPurOrder__approve", ApiRequest.build(Map.of("orderId", orderId)));
+    }
+
+    private ApiResponse<?> orderCancel(Long orderId) {
+        return executeRpc(mutation, "ErpPurOrder__cancel", ApiRequest.build(Map.of("orderId", orderId)));
+    }
+
+    private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {
+        IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(opType, action, request);
+        return graphQLEngine.executeRpc(ctx);
+    }
+
+    private Long idOf(ApiResponse<?> resp) {
+        Object id = ((Map<?, ?>) resp.getData()).get("id");
+        return id instanceof Number ? ((Number) id).longValue() : Long.parseLong(String.valueOf(id));
     }
 
     // ---------- seed helpers ----------
@@ -130,13 +172,13 @@ public class TestErpPurRequisitionToOrderEnd extends JunitAutoTestCase {
         daoProvider.daoFor(ErpPurRequisitionLine.class).saveEntity(line);
     }
 
-    private ConvertToOrderRequest newRequest() {
-        ConvertToOrderRequest request = new ConvertToOrderRequest();
-        request.setWarehouseId(WAREHOUSE_ID);
-        request.setCurrencyId(CURRENCY_ID);
-        Map<Integer, String> prices = new HashMap<>();
+    private Map<String, Object> newRequest() {
+        Map<String, Object> request = new LinkedHashMap<>();
+        request.put("warehouseId", WAREHOUSE_ID);
+        request.put("currencyId", CURRENCY_ID);
+        Map<Integer, String> prices = new LinkedHashMap<>();
         prices.put(1, "5");
-        request.setLineUnitPrices(prices);
+        request.put("lineUnitPrices", prices);
         return request;
     }
 }

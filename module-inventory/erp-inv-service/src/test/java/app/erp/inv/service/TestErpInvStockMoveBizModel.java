@@ -1,46 +1,43 @@
 package app.erp.inv.service;
 
-import app.erp.inv.biz.IErpInvStockMoveBiz;
-import app.erp.inv.biz.StockMoveLineRequest;
-import app.erp.inv.biz.StockMoveRequest;
 import app.erp.inv.dao.entity.ErpInvStockBalance;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.beans.ApiRequest;
+import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
-import io.nop.api.core.exceptions.NopException;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
-import io.nop.orm.IOrmTemplate;
+import io.nop.graphql.core.IGraphQLExecutionContext;
+import io.nop.graphql.core.ast.GraphQLOperationType;
+import io.nop.graphql.core.engine.IGraphQLEngine;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
-import io.nop.core.context.IServiceContext;
-import io.nop.core.context.ServiceContextImpl;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Phase 1 服务层集成测试：generateMove 契约 + 状态机 + 幂等。
  *
- * <p>直接调用 {@link IErpInvStockMoveBiz} 的 Java API（不走 GraphQL 快照），断言实体落库状态。
- * 测试自包含：seed 物料/仓库/库位占位 ID（BizModel 不做跨域 ref 校验，余额维度按这些 ID 聚合）。
+ * <p>经 {@link IGraphQLEngine} 调 {@code ErpInvStockMove__generateMove/confirm/cancel/reverse}，
+ * 引擎负责建 session/事务/管道（直调会因缺 OrmSession 报错，见 lessons/04）。测试自包含：seed 占位 ID。
  */
 @NopTestConfig(localDb = true,
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvStockMoveBizModel extends JunitAutoTestCase {
-    private static final IServiceContext CTX = new ServiceContextImpl();
-
 
     static final Long ORG_ID = 1001L;
     static final Long MATERIAL_ID = 2001L;
@@ -53,14 +50,13 @@ public class TestErpInvStockMoveBizModel extends JunitAutoTestCase {
     @Inject
     IDaoProvider daoProvider;
     @Inject
-    IOrmTemplate ormTemplate;
-    @Inject
-    IErpInvStockMoveBiz stockMoveBiz;
+    IGraphQLEngine graphQLEngine;
 
     @Test
     public void testGenerateMoveBusinessLinkedAutoCompletes() {
-        ErpInvStockMove move = generateIncoming("PUR_RECEIPT", "PR-001", new BigDecimal("10"));
+        generateIncoming("PUR_RECEIPT", "PR-001", new BigDecimal("10"));
 
+        ErpInvStockMove move = findMove("PUR_RECEIPT", "PR-001");
         assertEquals(ErpInvConstants.DOC_STATUS_DONE, move.getDocStatus(),
                 "业务联动应自动推进到 DONE");
         assertEquals(false, move.getPosted(), "未接入过账前 posted=false");
@@ -69,49 +65,48 @@ public class TestErpInvStockMoveBizModel extends JunitAutoTestCase {
 
     @Test
     public void testGenerateMoveIdempotent() {
-        ErpInvStockMove first = generateIncoming("PUR_RECEIPT", "PR-IDEM-001", new BigDecimal("10"));
-        ErpInvStockMove second = generateIncoming("PUR_RECEIPT", "PR-IDEM-001", new BigDecimal("10"));
+        Long first = generateIncoming("PUR_RECEIPT", "PR-IDEM-001", new BigDecimal("10"));
+        Long second = generateIncoming("PUR_RECEIPT", "PR-IDEM-001", new BigDecimal("10"));
 
-        assertEquals(first.getId(), second.getId(), "同源单重复触发应返回同一移动单");
+        assertEquals(first, second, "同源单重复触发应返回同一移动单");
         assertEquals(1, countMovesByRelatedBill("PUR_RECEIPT", "PR-IDEM-001"),
                 "幂等：不应产生第二张移动单");
     }
 
     @Test
     public void testManualMoveStopsAtConfirmed() {
-        StockMoveRequest request = incomingRequest(null, null, new BigDecimal("10"));
-        ErpInvStockMove move = stockMoveBiz.generateMove(request, CTX);
+        Long moveId = idOf(genMove(incomingReq(null, null, new BigDecimal("10"))));
 
+        ErpInvStockMove move = daoProvider.daoFor(ErpInvStockMove.class).getEntityById(moveId);
         assertEquals(ErpInvConstants.DOC_STATUS_CONFIRMED, move.getDocStatus(),
                 "独立移动单（无源单）应停在 CONFIRMED");
     }
 
     @Test
     public void testIllegalTransitionRejected() {
-        ErpInvStockMove done = generateIncoming("PUR_RECEIPT", "PR-ILL-001", new BigDecimal("10"));
-        assertEquals(ErpInvConstants.DOC_STATUS_DONE, done.getDocStatus());
+        Long doneId = generateIncoming("PUR_RECEIPT", "PR-ILL-001", new BigDecimal("10"));
 
-        assertThrows(NopException.class, () -> stockMoveBiz.confirm(done.getId(), CTX),
-                "DONE→CONFIRMED 非法迁移应抛 NopException");
+        ApiResponse<?> resp = executeRpc(mutation, "ErpInvStockMove__confirm",
+                ApiRequest.build(Map.of("moveId", doneId)));
+        assertEquals(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), resp.getCode(),
+                "DONE→CONFIRMED 非法迁移应返回错误（经 GraphQL，不抛异常）");
     }
 
     @Test
     public void testCancelReleasesReservation() {
-        // 先入库 10 建立库存（业务联动 → DONE，total=10）
         generateIncoming("PUR_RECEIPT", "PR-CANCEL-STOCK", new BigDecimal("10"));
 
-        // 独立出库单（无源单）停在 CONFIRMED：校验可用量（10≥5）通过，占预留 5
-        StockMoveRequest manualOut = outgoingRequest(null, null, new BigDecimal("5"));
-        ErpInvStockMove manual = stockMoveBiz.generateMove(manualOut, CTX);
-        assertEquals(ErpInvConstants.DOC_STATUS_CONFIRMED, manual.getDocStatus());
-
+        Long manualId = idOf(genMove(outgoingReq(null, null, new BigDecimal("5"))));
         ErpInvStockBalance reserved = findBalance();
         assertEquals(0, reserved.getReservedQuantity().compareTo(new BigDecimal("5")),
                 "CONFIRMED 应占预留 5");
         assertEquals(0, reserved.getAvailableQuantity().compareTo(new BigDecimal("5")),
                 "可用量 = total(10) - reserved(5) - locked(0) = 5");
 
-        stockMoveBiz.cancel(manual.getId(), CTX);
+        ApiResponse<?> cancelResp = executeRpc(mutation, "ErpInvStockMove__cancel",
+                ApiRequest.build(Map.of("moveId", manualId)));
+        assertEquals(0, cancelResp.getStatus(), "cancel 应成功");
+
         ErpInvStockBalance released = findBalance();
         assertEquals(0, released.getReservedQuantity().compareTo(BigDecimal.ZERO),
                 "CANCELLED 应释放预留");
@@ -121,61 +116,89 @@ public class TestErpInvStockMoveBizModel extends JunitAutoTestCase {
 
     @Test
     public void testReverseCreatesReverseMove() {
-        ErpInvStockMove original = generateIncoming("PUR_RECEIPT", "PR-REV-001", new BigDecimal("12"));
-        assertEquals(ErpInvConstants.DOC_STATUS_DONE, original.getDocStatus());
+        Long originalId = generateIncoming("PUR_RECEIPT", "PR-REV-001", new BigDecimal("12"));
+        ErpInvStockMove original = daoProvider.daoFor(ErpInvStockMove.class).getEntityById(originalId);
 
-        ErpInvStockMove reversal = stockMoveBiz.reverse(original.getId(), CTX);
-        assertNotNull(reversal.getId(), "冲销应生成新移动单");
-        assertNotEquals(original.getId(), reversal.getId(), "冲销单是新单，非原单");
+        ApiResponse<?> reverseResp = executeRpc(mutation, "ErpInvStockMove__reverse",
+                ApiRequest.build(Map.of("moveId", originalId)));
+        assertEquals(0, reverseResp.getStatus(), "reverse 应成功");
+
+        ErpInvStockMove reversal = findMove("REVERSAL", original.getCode());
+        assertNotNull(reversal, "冲销应生成新移动单");
+        assertNotEquals(originalId, reversal.getId(), "冲销单是新单，非原单");
         assertEquals(ErpInvConstants.DOC_STATUS_DONE, reversal.getDocStatus(), "冲销单自动推进到 DONE");
         assertEquals("REVERSAL", reversal.getRelatedBillType(), "冲销单关联原单");
         assertEquals(original.getCode(), reversal.getRelatedBillCode());
-        assertEquals(ErpInvConstants.DOC_STATUS_DONE, original.getDocStatus(), "原单保持 DONE（非反审核）");
+
+        ErpInvStockMove originalAfter = daoProvider.daoFor(ErpInvStockMove.class).getEntityById(originalId);
+        assertEquals(ErpInvConstants.DOC_STATUS_DONE, originalAfter.getDocStatus(), "原单保持 DONE（非反审核）");
     }
 
     // ---------- helpers ----------
 
-    private ErpInvStockMove generateIncoming(String billType, String billCode, BigDecimal qty) {
-        return stockMoveBiz.generateMove(incomingRequest(billType, billCode, qty), CTX);
+    private Long generateIncoming(String billType, String billCode, BigDecimal qty) {
+        return idOf(genMove(incomingReq(billType, billCode, qty)));
     }
 
-    private StockMoveRequest incomingRequest(String billType, String billCode, BigDecimal qty) {
-        StockMoveRequest request = new StockMoveRequest();
-        request.setMoveType(ErpInvConstants.MOVE_TYPE_INCOMING);
-        request.setOrgId(ORG_ID);
-        request.setBusinessDate(LocalDate.of(2026, 7, 1));
-        request.setDestWarehouseId(WAREHOUSE_ID);
-        request.setDestLocationId(LOCATION_ID);
-        request.setAcctSchemaId(ACCT_SCHEMA_ID);
-        request.setCurrencyId(CURRENCY_ID);
-        request.setRelatedBillType(billType);
-        request.setRelatedBillCode(billCode);
-        request.setLines(Collections.singletonList(line(qty)));
-        return request;
+    private ApiResponse<?> genMove(Map<String, Object> req) {
+        return executeRpc(mutation, "ErpInvStockMove__generateMove", ApiRequest.build(Map.of("request", req)));
     }
 
-    private StockMoveRequest outgoingRequest(String billType, String billCode, BigDecimal qty) {
-        StockMoveRequest request = new StockMoveRequest();
-        request.setMoveType(ErpInvConstants.MOVE_TYPE_OUTGOING);
-        request.setOrgId(ORG_ID);
-        request.setBusinessDate(LocalDate.of(2026, 7, 1));
-        request.setSourceWarehouseId(WAREHOUSE_ID);
-        request.setSourceLocationId(LOCATION_ID);
-        request.setAcctSchemaId(ACCT_SCHEMA_ID);
-        request.setCurrencyId(CURRENCY_ID);
-        request.setRelatedBillType(billType);
-        request.setRelatedBillCode(billCode);
-        request.setLines(Collections.singletonList(line(qty)));
-        return request;
+    private Long idOf(ApiResponse<?> resp) {
+        Object id = ((Map<?, ?>) resp.getData()).get("id");
+        return id instanceof Number ? ((Number) id).longValue() : Long.parseLong(String.valueOf(id));
     }
 
-    private StockMoveLineRequest line(BigDecimal qty) {
-        StockMoveLineRequest line = new StockMoveLineRequest();
-        line.setMaterialId(MATERIAL_ID);
-        line.setUoMId(UOM_ID);
-        line.setQuantity(qty);
-        line.setCurrencyId(CURRENCY_ID);
+    private Map<String, Object> incomingReq(String billType, String billCode, BigDecimal qty) {
+        Map<String, Object> req = baseReq(ErpInvConstants.MOVE_TYPE_INCOMING);
+        req.put("destWarehouseId", WAREHOUSE_ID);
+        req.put("destLocationId", LOCATION_ID);
+        if (billType != null) {
+            req.put("relatedBillType", billType);
+        }
+        if (billCode != null) {
+            req.put("relatedBillCode", billCode);
+        }
+        req.put("lines", Collections.singletonList(line(qty)));
+        return req;
+    }
+
+    private Map<String, Object> outgoingReq(String billType, String billCode, BigDecimal qty) {
+        Map<String, Object> req = baseReq(ErpInvConstants.MOVE_TYPE_OUTGOING);
+        req.put("sourceWarehouseId", WAREHOUSE_ID);
+        req.put("sourceLocationId", LOCATION_ID);
+        if (billType != null) {
+            req.put("relatedBillType", billType);
+        }
+        if (billCode != null) {
+            req.put("relatedBillCode", billCode);
+        }
+        req.put("lines", Collections.singletonList(line(qty)));
+        return req;
+    }
+
+    private Map<String, Object> baseReq(Integer moveType) {
+        Map<String, Object> req = new LinkedHashMap<>();
+        req.put("moveType", moveType);
+        req.put("orgId", ORG_ID);
+        req.put("businessDate", "2026-07-01");
+        req.put("acctSchemaId", ACCT_SCHEMA_ID);
+        req.put("currencyId", CURRENCY_ID);
+        return req;
+    }
+
+    private Map<String, Object> line(BigDecimal qty) {
+        Map<String, Object> line = new LinkedHashMap<>();
+        line.put("materialId", MATERIAL_ID);
+        line.put("uoMId", UOM_ID);
+        line.put("quantity", qty);
+        line.put("currencyId", CURRENCY_ID);
         return line;
+    }
+
+    private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {
+        IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(opType, action, request);
+        return graphQLEngine.executeRpc(ctx);
     }
 
     private long countLines(Long moveId) {
@@ -198,7 +221,15 @@ public class TestErpInvStockMoveBizModel extends JunitAutoTestCase {
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", MATERIAL_ID));
         q.addFilter(eq("warehouseId", WAREHOUSE_ID));
-        java.util.List<ErpInvStockBalance> list = dao.findAllByQuery(q);
+        List<ErpInvStockBalance> list = dao.findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    private ErpInvStockMove findMove(String billType, String billCode) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("relatedBillType", billType));
+        q.addFilter(eq("relatedBillCode", billCode));
+        List<ErpInvStockMove> list = daoProvider.daoFor(ErpInvStockMove.class).findAllByQuery(q);
         return list.isEmpty() ? null : list.get(0);
     }
 }

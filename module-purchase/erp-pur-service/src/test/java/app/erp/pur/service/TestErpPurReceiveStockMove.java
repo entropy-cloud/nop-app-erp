@@ -9,28 +9,32 @@ import app.erp.inv.service.ErpInvConstants;
 import app.erp.md.dao.entity.ErpMdAcctSchema;
 import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.md.dao.entity.ErpMdSubject;
-import app.erp.pur.biz.IErpPurReceiveBiz;
 import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.dao.entity.ErpPurOrderLine;
 import app.erp.pur.dao.entity.ErpPurReceive;
 import app.erp.pur.dao.entity.ErpPurReceiveLine;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.beans.ApiRequest;
+import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.graphql.core.IGraphQLExecutionContext;
+import io.nop.graphql.core.ast.GraphQLOperationType;
+import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
-import io.nop.core.context.IServiceContext;
-import io.nop.core.context.ServiceContextImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,7 +42,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Phase 2 服务层集成测试：入库审核触发库存移动（{@code generateMove}）+ posted 接线 + 收货状态回写 + 反向冲销。
  *
- * <p>覆盖 purchase→inventory→finance 三域经 {@code generateMove} 端到端：
+ * <p>覆盖 purchase→inventory→finance 三域经 {@code generateMove} 端到端。审核/反审核经 {@link IGraphQLEngine}
+ * 调 {@code ErpPurReceive__approve/reverseApprove}，引擎建 session/事务/管道（直调缺 OrmSession 会报错，见 lessons/04）；
  * 审核→入库移动单 DONE、库存余额增加、存货估值凭证落地（{@code billHeadCode}=移动单 code）、{@code receive.posted=true}；
  * 幂等重审、收货状态回写、反审核内部冲销 + 余额冲回 + 幂等防双冲销。
  */
@@ -46,8 +51,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
-    private static final IServiceContext CTX = new ServiceContextImpl();
-
 
     static final Long ORG_ID = 1201L;
     static final Long SUPPLIER_ID = 2201L;
@@ -63,7 +66,7 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
     @Inject
     IOrmTemplate ormTemplate;
     @Inject
-    IErpPurReceiveBiz receiveBiz;
+    IGraphQLEngine graphQLEngine;
 
     @Test
     public void testApproveGeneratesIncomingMoveAndPosting() {
@@ -80,8 +83,10 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
             return null;
         });
 
-        ErpPurReceive approved = receiveBiz.approve(receiveId, CTX);
+        ApiResponse<?> resp = approve(receiveId);
+        assertEquals(0, resp.getStatus(), "审核应成功");
 
+        ErpPurReceive approved = daoProvider.daoFor(ErpPurReceive.class).getEntityById(receiveId);
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus(), "审核 → APPROVED");
         assertEquals(true, approved.getPosted(), "入库移动单 DONE + 过账成功 → posted=true");
         assertEquals(ErpPurConstants.RECEIVE_STATUS_RECEIVED, approved.getReceiveStatus(), "本单收货=已收清");
@@ -122,8 +127,8 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
             return null;
         });
 
-        receiveBiz.approve(receiveId, CTX);
-        receiveBiz.approve(receiveId, CTX); // 二次审核幂等空操作
+        assertEquals(0, approve(receiveId).getStatus());
+        assertEquals(0, approve(receiveId).getStatus()); // 二次审核幂等空操作
 
         assertEquals(1, countMoves("PR-IDEM-001"), "幂等：不应产生第二张入库移动单");
     }
@@ -145,14 +150,14 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
             return null;
         });
 
-        ErpPurReceive approved = receiveBiz.approve(receive1, CTX);
+        assertEquals(0, approve(receive1).getStatus());
+        ErpPurReceive approved = daoProvider.daoFor(ErpPurReceive.class).getEntityById(receive1);
         assertEquals(ErpPurConstants.RECEIVE_STATUS_RECEIVED, approved.getReceiveStatus(), "本单已收清");
 
         ErpPurOrder order = findOrder("PO-ROLL-001");
         assertEquals(ErpPurConstants.RECEIVE_STATUS_PARTIAL, order.getReceiveStatus(),
                 "订单仅 1/2 行收清 → PARTIAL");
 
-        // 补收第 2 行 10 → 订单应 RECEIVED
         Long receive2 = nextId();
         Long receiveLine2 = nextId();
         ormTemplate.runInSession(session -> {
@@ -160,7 +165,7 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
             newReceiveLine(receiveLine2, receive2, orderLine2, new BigDecimal("10"), new BigDecimal("5"));
             return null;
         });
-        receiveBiz.approve(receive2, CTX);
+        assertEquals(0, approve(receive2).getStatus());
 
         assertEquals(ErpPurConstants.RECEIVE_STATUS_RECEIVED, findOrder("PO-ROLL-001").getReceiveStatus(),
                 "两行均收清 → 订单 RECEIVED");
@@ -181,12 +186,13 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
             return null;
         });
 
-        receiveBiz.approve(receiveId, CTX);
+        assertEquals(0, approve(receiveId).getStatus());
         ErpInvStockMove original = findMove("PR-REV-001");
         assertNotNull(original);
         assertEquals(0, countReversals(original.getCode()), "反审核前无冲销单");
 
-        ErpPurReceive reversed = receiveBiz.reverseApprove(receiveId, CTX);
+        assertEquals(0, reverseApprove(receiveId).getStatus());
+        ErpPurReceive reversed = daoProvider.daoFor(ErpPurReceive.class).getEntityById(receiveId);
         assertEquals(ErpPurConstants.APPROVE_STATUS_REJECTED, reversed.getApproveStatus(),
                 "反审核 → REJECTED（保留曾审核语义）");
         assertEquals(1, countReversals(original.getCode()), "应内部生成 1 张反向冲销移动单");
@@ -195,21 +201,31 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
         assertEquals(ErpInvConstants.DOC_STATUS_DONE, reversal.getDocStatus(), "冲销单自动 DONE");
         assertEquals(ErpInvConstants.MOVE_TYPE_OUTGOING, reversal.getMoveType(), "入库的反向=出库");
 
-        // 余额被冲销回 0（10 入库 - 10 出库冲销）
         ErpInvStockBalance balance = findBalance();
         assertEquals(0, balance.getTotalQuantity().compareTo(BigDecimal.ZERO),
                 "冲销后余额归零");
 
-        // 红字凭证：冲销单 DONE 后由库存域 InvPostingDispatcher 派发 SALES_OUTPUT 过账。库存 reverse() 当前不传播
-        // acctSchemaId（移动单实体无该列），故冲销单 posted 与红字凭证是否生成由库存域决定（cross-domain §与财务域协作）；
-        // purchase 侧契约只保证冲销移动单生成与余额冲回，此处断言 posted 与凭证一致而非强制要求红字凭证存在。
         ErpFinVoucherBillR reversalLink = findVoucherLink(reversal.getCode());
         assertEquals(Boolean.TRUE.equals(reversal.getPosted()), reversalLink != null,
                 "冲销单 posted 与红字凭证回链一致");
 
-        // 二次反审核幂等：不产生第二张冲销单
-        receiveBiz.reverseApprove(receiveId, CTX);
+        assertEquals(0, reverseApprove(receiveId).getStatus());
         assertEquals(1, countReversals(original.getCode()), "二次反审核幂等，不产生第二张冲销单");
+    }
+
+    // ---------- rpc helpers ----------
+
+    private ApiResponse<?> approve(Long receiveId) {
+        return executeRpc(mutation, "ErpPurReceive__approve", ApiRequest.build(Map.of("receiveId", receiveId)));
+    }
+
+    private ApiResponse<?> reverseApprove(Long receiveId) {
+        return executeRpc(mutation, "ErpPurReceive__reverseApprove", ApiRequest.build(Map.of("receiveId", receiveId)));
+    }
+
+    private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {
+        IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(opType, action, request);
+        return graphQLEngine.executeRpc(ctx);
     }
 
     // ---------- seed helpers ----------

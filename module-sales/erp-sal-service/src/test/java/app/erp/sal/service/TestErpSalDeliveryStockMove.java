@@ -3,61 +3,60 @@ package app.erp.sal.service;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
-import app.erp.inv.biz.IErpInvStockMoveBiz;
-import app.erp.inv.biz.StockMoveLineRequest;
-import app.erp.inv.biz.StockMoveRequest;
 import app.erp.inv.dao.entity.ErpInvStockBalance;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.inv.service.ErpInvConstants;
+import app.erp.inv.service.ErpInvErrors;
 import app.erp.md.dao.entity.ErpMdAcctSchema;
 import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.md.dao.entity.ErpMdSubject;
-import app.erp.sal.biz.IErpSalDeliveryBiz;
 import app.erp.sal.dao.entity.ErpSalDelivery;
 import app.erp.sal.dao.entity.ErpSalDeliveryLine;
 import app.erp.sal.dao.entity.ErpSalOrder;
 import app.erp.sal.dao.entity.ErpSalOrderLine;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.beans.ApiRequest;
+import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
-import io.nop.api.core.exceptions.NopException;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.graphql.core.IGraphQLExecutionContext;
+import io.nop.graphql.core.ast.GraphQLOperationType;
+import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
-import io.nop.core.context.IServiceContext;
-import io.nop.core.context.ServiceContextImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Phase 2 服务层集成测试：出库审核触发库存移动（{@code generateMove} OUTGOING）+ 可用量校验 + posted 接线
  * + 发货状态回写 + 反向冲销。
  *
- * <p>覆盖 sales→inventory→finance 三域经 {@code generateMove} 端到端，含销售独有可用量门控：
- * 审核→出库移动单 DONE、库存余额扣减、存货估值凭证落地（SALES_OUTPUT：借主营业务成本/贷存货，{@code billHeadCode}=移动单 code）、
- * {@code delivery.posted=true}；可用量不足→NopException+审核回滚；负库存放行；幂等重审；发货状态回写；反审核内部冲销 + 幂等防双冲销。
+ * <p>覆盖 sales→inventory→finance 三域经 {@code generateMove} 端到端，含销售独有可用量门控。
+ * 审核/反审核/预置库存经 {@link IGraphQLEngine} 调 {@code ErpSalDelivery__approve/reverseApprove} 与
+ * {@code ErpInvStockMove__generateMove}，引擎建 session/事务/管道（直调缺 OrmSession 会报错，见 lessons/04）。
  */
 @NopTestConfig(localDb = true,
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
-    private static final IServiceContext CTX = new ServiceContextImpl();
-
 
     static final Long ORG_ID = 1201L;
     static final Long CUSTOMER_ID = 2201L;
@@ -73,9 +72,7 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
     @Inject
     IOrmTemplate ormTemplate;
     @Inject
-    IErpSalDeliveryBiz deliveryBiz;
-    @Inject
-    IErpInvStockMoveBiz stockMoveBiz;
+    IGraphQLEngine graphQLEngine;
 
     @Test
     public void testApproveGeneratesOutgoingMoveAndPosting() {
@@ -85,17 +82,18 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
         Long deliveryLineId = nextId();
         ormTemplate.runInSession(session -> {
             seedActiveCustomer();
-            // 预置库存 20 @ 5 = 100（出库类须校验可用量，且 SALES_OUTPUT 成本取自 avgCost 快照）
-            seedStock("SEED-OUT-001", new BigDecimal("20"), new BigDecimal("5"));
             Long orderId = newOrder("SO-POST-001");
             newOrderLine(orderId, orderLineId, 1, new BigDecimal("10"));
             newDelivery("SD-POST-001", deliveryId, orderId);
             newDeliveryLine(deliveryLineId, deliveryId, orderLineId, new BigDecimal("10"));
             return null;
         });
+        seedStock("SEED-OUT-001", new BigDecimal("20"), new BigDecimal("5"));
 
-        ErpSalDelivery approved = deliveryBiz.approve(deliveryId, CTX);
+        ApiResponse<?> resp = approve(deliveryId);
+        assertEquals(0, resp.getStatus(), "审核应成功");
 
+        ErpSalDelivery approved = daoProvider.daoFor(ErpSalDelivery.class).getEntityById(deliveryId);
         assertEquals(ErpSalConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus(), "审核 → APPROVED");
         assertEquals(true, approved.getPosted(), "出库移动单 DONE + 过账成功 → posted=true");
 
@@ -114,7 +112,6 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
         assertNotNull(link, "应生成业财回链（billCode=移动单 code）");
         ErpFinVoucher voucher = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(link.getVoucherId());
         assertEquals(VOUCHER_STATUS_POSTED, voucher.getDocStatus(), "凭证 docStatus=已过账");
-        // SALES_OUTPUT：借 6401 主营业务成本 / 贷 1401 库存商品，金额=10×avgCost5=50
         assertTrue(voucher.getTotalDebit().compareTo(new BigDecimal("50")) == 0,
                 "借方合计=主营业务成本 10×5=50");
         assertTrue(voucher.getTotalCredit().compareTo(new BigDecimal("50")) == 0,
@@ -129,26 +126,26 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
         Long deliveryLineId = nextId();
         ormTemplate.runInSession(session -> {
             seedActiveCustomer();
-            // 仅预置 5（不足出库需要的 10）
-            seedStock("SEED-INSUF-001", new BigDecimal("5"), new BigDecimal("5"));
             Long orderId = newOrder("SO-INSUF-001");
             newOrderLine(orderId, orderLineId, 1, new BigDecimal("10"));
             newDelivery("SD-INSUF-001", deliveryId, orderId);
             newDeliveryLine(deliveryLineId, deliveryId, orderLineId, new BigDecimal("10"));
             return null;
         });
+        // 仅预置 5（不足出库需要的 10）
+        seedStock("SEED-INSUF-001", new BigDecimal("5"), new BigDecimal("5"));
 
-        // 可用量不足 → 库存域 CONFIRM 抛 NopException → 整个审核事务回滚
-        assertThrows(NopException.class, () -> deliveryBiz.approve(deliveryId, CTX),
-                "可用量不足应抛 NopException 致审核回滚");
+        // 可用量不足 → 库存域 CONFIRM 拒绝 → 整个审核事务回滚
+        ApiResponse<?> bad = approve(deliveryId);
+        assertEquals(ErpInvErrors.ERR_AVAILABLE_INSUFFICIENT.getErrorCode(), bad.getCode(),
+                "可用量不足应返回 ERR_AVAILABLE_INSUFFICIENT 致审核回滚");
 
         // 出库单保持 SUBMITTED
         ErpSalDelivery after = daoProvider.daoFor(ErpSalDelivery.class).getEntityById(deliveryId);
         assertEquals(ErpSalConstants.APPROVE_STATUS_SUBMITTED, after.getApproveStatus(),
                 "审核回滚 → 出库单保持 SUBMITTED");
         assertFalse(after.getPosted(), "回滚 → posted 仍为 false");
-        // 移动单未推进到 DONE（库存域 CONFIRM 拒绝；DRAFT 实体可能残留于会话，对齐 inventory 域
-        // testConfirmInsufficientAvailableRejected 基线——业务效果回滚由余额未扣减/无过账证明）
+        // 移动单未推进到 DONE（库存域 CONFIRM 拒绝致整笔回滚）
         ErpInvStockMove residual = findMove("SD-INSUF-001");
         assertTrue(residual == null || residual.getDocStatus() != ErpInvConstants.DOC_STATUS_DONE,
                 "回滚 → 移动单未推进到 DONE（无库存记账/过账效果）");
@@ -165,16 +162,16 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
         Long deliveryLineId = nextId();
         ormTemplate.runInSession(session -> {
             seedActiveCustomer();
-            seedStock("SEED-IDEM-001", new BigDecimal("20"), new BigDecimal("5"));
             Long orderId = newOrder("SO-IDEM-001");
             newOrderLine(orderId, orderLineId, 1, new BigDecimal("10"));
             newDelivery("SD-IDEM-001", deliveryId, orderId);
             newDeliveryLine(deliveryLineId, deliveryId, orderLineId, new BigDecimal("10"));
             return null;
         });
+        seedStock("SEED-IDEM-001", new BigDecimal("20"), new BigDecimal("5"));
 
-        deliveryBiz.approve(deliveryId, CTX);
-        deliveryBiz.approve(deliveryId, CTX); // 二次审核幂等空操作
+        assertEquals(0, approve(deliveryId).getStatus());
+        assertEquals(0, approve(deliveryId).getStatus()); // 二次审核幂等空操作
 
         assertEquals(1, countMoves("SD-IDEM-001"), "幂等：不应产生第二张出库移动单");
     }
@@ -187,7 +184,6 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
         Long deliveryLineId = nextId();
         ormTemplate.runInSession(session -> {
             seedActiveCustomer();
-            // 不预置库存（无库存仍可出库）
             Long orderId = newOrder("SO-NEG-001");
             newOrderLine(orderId, orderLineId, 1, new BigDecimal("5"));
             newDelivery("SD-NEG-001", deliveryId, orderId);
@@ -198,9 +194,7 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
         setNegativeStock(true);
         try {
             // erp-inv.allow-negative-stock=true → 库存域跳过可用量校验，不足仍可审核
-            ErpSalDelivery approved = deliveryBiz.approve(deliveryId, CTX);
-            assertEquals(ErpSalConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus(),
-                    "负库存放行 → 审核 APPROVED");
+            assertEquals(0, approve(deliveryId).getStatus(), "负库存放行 → 审核 APPROVED");
 
             ErpInvStockMove move = findMove("SD-NEG-001");
             assertNotNull(move, "应生成出库移动单");
@@ -224,7 +218,6 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
         Long deliveryLine1 = nextId();
         ormTemplate.runInSession(session -> {
             seedActiveCustomer();
-            seedStock("SEED-ROLL-001", new BigDecimal("40"), new BigDecimal("5"));
             Long orderId = newOrder("SO-ROLL-001");
             newOrderLine(orderId, orderLine1, 1, new BigDecimal("10"));
             newOrderLine(orderId, orderLine2, 2, new BigDecimal("10"));
@@ -232,8 +225,9 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
             newDeliveryLine(deliveryLine1, delivery1, orderLine1, new BigDecimal("10"));
             return null;
         });
+        seedStock("SEED-ROLL-001", new BigDecimal("40"), new BigDecimal("5"));
 
-        deliveryBiz.approve(delivery1, CTX);
+        assertEquals(0, approve(delivery1).getStatus());
         ErpSalOrder order = findOrder("SO-ROLL-001");
         assertEquals(ErpSalConstants.DELIVERY_STATUS_PARTIAL, order.getDeliveryStatus(),
                 "订单仅 1/2 行发清 → PARTIAL");
@@ -246,7 +240,7 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
             newDeliveryLine(deliveryLine2, delivery2, orderLine2, new BigDecimal("10"));
             return null;
         });
-        deliveryBiz.approve(delivery2, CTX);
+        assertEquals(0, approve(delivery2).getStatus());
 
         assertEquals(ErpSalConstants.DELIVERY_STATUS_DELIVERED, findOrder("SO-ROLL-001").getDeliveryStatus(),
                 "两行均发清 → 订单 DELIVERED");
@@ -260,20 +254,21 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
         Long deliveryLineId = nextId();
         ormTemplate.runInSession(session -> {
             seedActiveCustomer();
-            seedStock("SEED-REV-001", new BigDecimal("20"), new BigDecimal("5"));
             Long orderId = newOrder("SO-REV-001");
             newOrderLine(orderId, orderLineId, 1, new BigDecimal("10"));
             newDelivery("SD-REV-001", deliveryId, orderId);
             newDeliveryLine(deliveryLineId, deliveryId, orderLineId, new BigDecimal("10"));
             return null;
         });
+        seedStock("SEED-REV-001", new BigDecimal("20"), new BigDecimal("5"));
 
-        deliveryBiz.approve(deliveryId, CTX);
+        assertEquals(0, approve(deliveryId).getStatus());
         ErpInvStockMove original = findMove("SD-REV-001");
         assertNotNull(original);
         assertEquals(0, countReversals(original.getCode()), "反审核前无冲销单");
 
-        ErpSalDelivery reversed = deliveryBiz.reverseApprove(deliveryId, CTX);
+        assertEquals(0, reverseApprove(deliveryId).getStatus());
+        ErpSalDelivery reversed = daoProvider.daoFor(ErpSalDelivery.class).getEntityById(deliveryId);
         assertEquals(ErpSalConstants.APPROVE_STATUS_REJECTED, reversed.getApproveStatus(),
                 "反审核 → REJECTED（保留曾审核语义）");
         assertEquals(1, countReversals(original.getCode()), "应内部生成 1 张反向冲销移动单");
@@ -293,8 +288,23 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
                 "冲销单 posted 与红字凭证回链一致");
 
         // 二次反审核幂等：不产生第二张冲销单
-        deliveryBiz.reverseApprove(deliveryId, CTX);
+        assertEquals(0, reverseApprove(deliveryId).getStatus(), "二次反审核幂等");
         assertEquals(1, countReversals(original.getCode()), "二次反审核幂等，不产生第二张冲销单");
+    }
+
+    // ---------- rpc helpers ----------
+
+    private ApiResponse<?> approve(Long deliveryId) {
+        return executeRpc(mutation, "ErpSalDelivery__approve", ApiRequest.build(Map.of("deliveryId", deliveryId)));
+    }
+
+    private ApiResponse<?> reverseApprove(Long deliveryId) {
+        return executeRpc(mutation, "ErpSalDelivery__reverseApprove", ApiRequest.build(Map.of("deliveryId", deliveryId)));
+    }
+
+    private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {
+        IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(opType, action, request);
+        return graphQLEngine.executeRpc(ctx);
     }
 
     // ---------- seed helpers ----------
@@ -360,27 +370,31 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
     }
 
     /**
-     * 预置库存：经库存域 INCOMING 业务联动建余额（avgCost/totalCost 就位），供后续出库校验可用量 + 成本快照。
-     * 使用独立 relatedBillType 避免与 ERP_SAL_DELIVERY 幂等键冲突。
+     * 预置库存：经 GraphQL 调 {@code ErpInvStockMove__generateMove}(INCOMING) 业务联动建余额
+     * （avgCost/totalCost 就位），供后续出库校验可用量 + 成本快照。
      */
-    private ErpInvStockMove seedStock(String billCode, BigDecimal qty, BigDecimal unitCost) {
-        StockMoveRequest request = new StockMoveRequest();
-        request.setMoveType(ErpInvConstants.MOVE_TYPE_INCOMING);
-        request.setOrgId(ORG_ID);
-        request.setBusinessDate(LocalDate.of(2026, 7, 1));
-        request.setDestWarehouseId(WAREHOUSE_ID);
-        request.setAcctSchemaId(ACCT_SCHEMA_ID);
-        request.setCurrencyId(CURRENCY_ID);
-        request.setRelatedBillType("SEED_STOCK");
-        request.setRelatedBillCode(billCode);
-        StockMoveLineRequest line = new StockMoveLineRequest();
-        line.setMaterialId(MATERIAL_ID);
-        line.setUoMId(UOM_ID);
-        line.setQuantity(qty);
-        line.setUnitCost(unitCost);
-        line.setCurrencyId(CURRENCY_ID);
-        request.setLines(Collections.singletonList(line));
-        return stockMoveBiz.generateMove(request, CTX);
+    private void seedStock(String billCode, BigDecimal qty, BigDecimal unitCost) {
+        Map<String, Object> req = new LinkedHashMap<>();
+        req.put("moveType", ErpInvConstants.MOVE_TYPE_INCOMING);
+        req.put("orgId", ORG_ID);
+        req.put("businessDate", "2026-07-01");
+        req.put("destWarehouseId", WAREHOUSE_ID);
+        req.put("acctSchemaId", ACCT_SCHEMA_ID);
+        req.put("currencyId", CURRENCY_ID);
+        req.put("relatedBillType", "SEED_STOCK");
+        req.put("relatedBillCode", billCode);
+
+        Map<String, Object> line = new LinkedHashMap<>();
+        line.put("materialId", MATERIAL_ID);
+        line.put("uoMId", UOM_ID);
+        line.put("quantity", qty);
+        line.put("unitCost", unitCost);
+        line.put("currencyId", CURRENCY_ID);
+        req.put("lines", Collections.singletonList(line));
+
+        ApiResponse<?> resp = executeRpc(mutation, "ErpInvStockMove__generateMove",
+                ApiRequest.build(Map.of("request", req)));
+        assertEquals(0, resp.getStatus(), "seedStock generateMove 应成功");
     }
 
     private Long newOrder(String code) {

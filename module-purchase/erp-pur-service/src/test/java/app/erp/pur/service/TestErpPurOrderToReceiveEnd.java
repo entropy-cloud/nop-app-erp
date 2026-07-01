@@ -9,27 +9,31 @@ import app.erp.inv.service.ErpInvConstants;
 import app.erp.md.dao.entity.ErpMdAcctSchema;
 import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.md.dao.entity.ErpMdSubject;
-import app.erp.pur.biz.IErpPurReceiveBiz;
 import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.dao.entity.ErpPurOrderLine;
 import app.erp.pur.dao.entity.ErpPurReceive;
 import app.erp.pur.dao.entity.ErpPurReceiveLine;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.beans.ApiRequest;
+import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.graphql.core.IGraphQLExecutionContext;
+import io.nop.graphql.core.ast.GraphQLOperationType;
+import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
-import io.nop.core.context.IServiceContext;
-import io.nop.core.context.ServiceContextImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -37,15 +41,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Phase 3 端到端集成测试：purchase→inventory→finance 三域经 {@code generateMove} 打通。
  *
- * <p>完整链路：建订单+入库单(UNSUBMITTED)→提交→审核→入库移动单 DONE+库存余额增加+存货凭证+{@code posted=true}
- * +订单/入库单收货状态回写→反审核（内部冲销）→余额冲回 0。
+ * <p>完整链路经 {@link IGraphQLEngine} 调 {@code ErpPurReceive__submit/approve/reverseApprove}（引擎建
+ * session/事务/管道，直调缺 OrmSession 会报错，见 lessons/04）：建订单+入库单(UNSUBMITTED)→提交→审核→
+ * 入库移动单 DONE+库存余额增加+存货凭证+{@code posted=true}+订单/入库单收货状态回写→反审核（内部冲销）→余额冲回 0。
  */
 @NopTestConfig(localDb = true,
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurOrderToReceiveEnd extends JunitAutoTestCase {
-    private static final IServiceContext CTX = new ServiceContextImpl();
-
 
     static final Long ORG_ID = 1301L;
     static final Long SUPPLIER_ID = 2301L;
@@ -60,7 +63,7 @@ public class TestErpPurOrderToReceiveEnd extends JunitAutoTestCase {
     @Inject
     IOrmTemplate ormTemplate;
     @Inject
-    IErpPurReceiveBiz receiveBiz;
+    IGraphQLEngine graphQLEngine;
 
     @Test
     public void testOrderToReceiveToEnd() {
@@ -77,12 +80,14 @@ public class TestErpPurOrderToReceiveEnd extends JunitAutoTestCase {
             return null;
         });
 
-        // 1. UNSUBMITTED → 提交
-        ErpPurReceive submitted = receiveBiz.submit(receiveId, CTX);
+        ApiResponse<?> resp = submit(receiveId);
+        assertEquals(0, resp.getStatus());
+        ErpPurReceive submitted = daoProvider.daoFor(ErpPurReceive.class).getEntityById(receiveId);
         assertEquals(ErpPurConstants.APPROVE_STATUS_SUBMITTED, submitted.getApproveStatus());
 
-        // 2. 审核 → 入库移动单 DONE + 余额 + 凭证 + posted + 收货状态回写
-        ErpPurReceive approved = receiveBiz.approve(receiveId, CTX);
+        resp = approve(receiveId);
+        assertEquals(0, resp.getStatus());
+        ErpPurReceive approved = daoProvider.daoFor(ErpPurReceive.class).getEntityById(receiveId);
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus());
         assertEquals(true, approved.getPosted(), "入库审核 posted=true");
         assertEquals(ErpPurConstants.RECEIVE_STATUS_RECEIVED, approved.getReceiveStatus(),
@@ -104,14 +109,34 @@ public class TestErpPurOrderToReceiveEnd extends JunitAutoTestCase {
         assertEquals(ErpPurConstants.RECEIVE_STATUS_RECEIVED, order.getReceiveStatus(),
                 "订单收货状态回写 RECEIVED（单行全收清）");
 
-        // 3. 反审核 → 内部冲销，余额冲回 0，APPROVED→REJECTED
-        ErpPurReceive reversed = receiveBiz.reverseApprove(receiveId, CTX);
+        resp = reverseApprove(receiveId);
+        assertEquals(0, resp.getStatus());
+        ErpPurReceive reversed = daoProvider.daoFor(ErpPurReceive.class).getEntityById(receiveId);
         assertEquals(ErpPurConstants.APPROVE_STATUS_REJECTED, reversed.getApproveStatus());
         assertEquals(0, findBalance().getTotalQuantity().compareTo(BigDecimal.ZERO),
                 "冲销后库存余额归零");
         ErpInvStockMove reversal = findReversal(move.getCode());
         assertNotNull(reversal, "应生成反向冲销移动单");
         assertEquals(ErpInvConstants.MOVE_TYPE_OUTGOING, reversal.getMoveType());
+    }
+
+    // ---------- rpc helpers ----------
+
+    private ApiResponse<?> submit(Long receiveId) {
+        return executeRpc(mutation, "ErpPurReceive__submit", ApiRequest.build(Map.of("receiveId", receiveId)));
+    }
+
+    private ApiResponse<?> approve(Long receiveId) {
+        return executeRpc(mutation, "ErpPurReceive__approve", ApiRequest.build(Map.of("receiveId", receiveId)));
+    }
+
+    private ApiResponse<?> reverseApprove(Long receiveId) {
+        return executeRpc(mutation, "ErpPurReceive__reverseApprove", ApiRequest.build(Map.of("receiveId", receiveId)));
+    }
+
+    private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {
+        IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(opType, action, request);
+        return graphQLEngine.executeRpc(ctx);
     }
 
     // ---------- seed helpers ----------

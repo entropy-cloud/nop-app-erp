@@ -1,45 +1,45 @@
 package app.erp.inv.service;
 
-import app.erp.inv.biz.IErpInvStockMoveBiz;
-import app.erp.inv.biz.StockMoveLineRequest;
-import app.erp.inv.biz.StockMoveRequest;
 import app.erp.inv.dao.entity.ErpInvStockBalance;
 import app.erp.inv.dao.entity.ErpInvStockLedger;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.beans.ApiRequest;
+import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
-import io.nop.api.core.exceptions.NopException;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
-import io.nop.orm.IOrmTemplate;
+import io.nop.graphql.core.IGraphQLExecutionContext;
+import io.nop.graphql.core.ast.GraphQLOperationType;
+import io.nop.graphql.core.engine.IGraphQLEngine;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
-import io.nop.core.context.IServiceContext;
-import io.nop.core.context.ServiceContextImpl;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Phase 2 服务层集成测试：不可变流水 + 余额驱动（移动加权平均）+ 可用量校验 + 负库存配置。
+ *
+ * <p>经 {@link IGraphQLEngine} 调 {@code ErpInvStockMove__generateMove/complete}，引擎负责建 session/事务/管道。
+ * 余额与流水断言用 DAO 直查（测试 session 内合法）。
  */
 @NopTestConfig(localDb = true,
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
-    private static final IServiceContext CTX = new ServiceContextImpl();
-
 
     static final Long ORG_ID = 1001L;
     static final Long MATERIAL_ID = 2002L;
@@ -52,15 +52,13 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
     @Inject
     IDaoProvider daoProvider;
     @Inject
-    IOrmTemplate ormTemplate;
-    @Inject
-    IErpInvStockMoveBiz stockMoveBiz;
+    IGraphQLEngine graphQLEngine;
 
     @Test
     public void testCompleteWritesImmutableLedger() {
-        ErpInvStockMove move = generateIncoming("PR-LEDG-001", new BigDecimal("10"), new BigDecimal("5"));
+        Long moveId = generateIncoming("PR-LEDG-001", new BigDecimal("10"), new BigDecimal("5"));
 
-        List<ErpInvStockLedger> ledgers = findLedgers(move.getId());
+        List<ErpInvStockLedger> ledgers = findLedgers(moveId);
         assertEquals(1, ledgers.size(), "应写 1 条不可变流水");
         ErpInvStockLedger ledger = ledgers.get(0);
         assertEquals(0, ledger.getQuantity().compareTo(new BigDecimal("10")), "入库 quantity 为正 10");
@@ -72,9 +70,11 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
                 "结存快照 balanceTotalCost=50");
         assertNotEquals(null, ledger.getCode(), "流水号非空");
 
-        // 不可变：状态机禁止 DONE 后再 complete，故不会产生第二条流水
-        assertThrows(NopException.class, () -> stockMoveBiz.complete(move.getId(), CTX));
-        assertEquals(1, findLedgers(move.getId()).size(), "DONE 后不可再写流水");
+        ApiResponse<?> completeResp = executeRpc(mutation, "ErpInvStockMove__complete",
+                ApiRequest.build(Map.of("moveId", moveId)));
+        assertEquals(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), completeResp.getCode(),
+                "DONE 后再 complete 应返回非法迁移错误（经 GraphQL，不抛异常）");
+        assertEquals(1, findLedgers(moveId).size(), "DONE 后不可再写流水");
     }
 
     @Test
@@ -85,7 +85,6 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
         assertEquals(0, balance.getAvgCost().compareTo(new BigDecimal("6")), "avgCost=6");
         assertEquals(0, balance.getTotalCost().compareTo(new BigDecimal("60")), "totalCost=60");
 
-        // 第二次入库不同单价 → 移动加权平均
         generateIncoming("PR-AVG-002", new BigDecimal("10"), new BigDecimal("8"));
         ErpInvStockBalance updated = findBalance();
         assertEquals(0, updated.getTotalQuantity().compareTo(new BigDecimal("20")), "totalQty=20");
@@ -95,9 +94,7 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
 
     @Test
     public void testOutgoingDeductsBalance() {
-        // 先入库 20 @ 10 = 200
         generateIncoming("PR-OUT-001", new BigDecimal("20"), new BigDecimal("10"));
-        // 再出库 8 → 按 avgCost=10 扣减
         generateOutgoing("SS-OUT-001", new BigDecimal("8"));
 
         ErpInvStockBalance balance = findBalance();
@@ -116,16 +113,12 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
 
     @Test
     public void testConfirmInsufficientAvailableRejected() {
-        // 无库存直接出库 → 可用量 0 < 需要 5
-        NopException ex = assertThrows(NopException.class,
-                () -> generateOutgoing("SS-INSUF-001", new BigDecimal("5")));
-        assertEquals(ErpInvErrors.ERR_AVAILABLE_INSUFFICIENT.getErrorCode(), ex.getErrorCode(),
-                "可用量不足应抛 ERR_AVAILABLE_INSUFFICIENT");
+        ApiResponse<?> resp = genMove(outgoingReq("SALES_SHIP", "SS-INSUF-001", new BigDecimal("5")));
+        assertEquals(ErpInvErrors.ERR_AVAILABLE_INSUFFICIENT.getErrorCode(), resp.getCode(),
+                "可用量不足应返回 ERR_AVAILABLE_INSUFFICIENT");
 
-        // 拒绝后：移动单未推进到 DONE（仍 DRAFT，整个业务审核回滚由调用方事务保证；本会话内单据停在 DRAFT）
         ErpInvStockMove move = findMove("SALES_SHIP", "SS-INSUF-001");
-        assertNotNull(move, "DRAFT 移动单已建（推进被拒）");
-        assertEquals(ErpInvConstants.DOC_STATUS_DRAFT, move.getDocStatus(), "拒绝后移动单不应推进到 DONE");
+        assertNull(move, "可用量不足整笔回滚，不应残留移动单");
 
         ErpInvStockBalance balance = findBalance();
         assertTrue(balance == null
@@ -137,8 +130,8 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
     public void testNegativeStockConfigAllowsShortage() {
         setNegativeStock(true);
         try {
-            // allow-negative-stock=true → 不足仍可确认并完成
-            ErpInvStockMove move = generateOutgoing("SS-NEG-001", new BigDecimal("5"));
+            Long moveId = generateOutgoing("SS-NEG-001", new BigDecimal("5"));
+            ErpInvStockMove move = daoProvider.daoFor(ErpInvStockMove.class).getEntityById(moveId);
             assertEquals(ErpInvConstants.DOC_STATUS_DONE, move.getDocStatus(), "负库存放行应完成");
 
             ErpInvStockBalance balance = findBalance();
@@ -151,44 +144,73 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private ErpInvStockMove generateIncoming(String billCode, BigDecimal qty, BigDecimal unitCost) {
-        StockMoveRequest request = new StockMoveRequest();
-        request.setMoveType(ErpInvConstants.MOVE_TYPE_INCOMING);
-        request.setOrgId(ORG_ID);
-        request.setBusinessDate(LocalDate.of(2026, 7, 1));
-        request.setDestWarehouseId(WAREHOUSE_ID);
-        request.setDestLocationId(LOCATION_ID);
-        request.setAcctSchemaId(ACCT_SCHEMA_ID);
-        request.setCurrencyId(CURRENCY_ID);
-        request.setRelatedBillType("PUR_RECEIPT");
-        request.setRelatedBillCode(billCode);
-        request.setLines(Collections.singletonList(line(qty, unitCost)));
-        return stockMoveBiz.generateMove(request, CTX);
+    private Long generateIncoming(String billCode, BigDecimal qty, BigDecimal unitCost) {
+        return idOf(genMove(incomingReq("PUR_RECEIPT", billCode, qty, unitCost)));
     }
 
-    private ErpInvStockMove generateOutgoing(String billCode, BigDecimal qty) {
-        StockMoveRequest request = new StockMoveRequest();
-        request.setMoveType(ErpInvConstants.MOVE_TYPE_OUTGOING);
-        request.setOrgId(ORG_ID);
-        request.setBusinessDate(LocalDate.of(2026, 7, 1));
-        request.setSourceWarehouseId(WAREHOUSE_ID);
-        request.setSourceLocationId(LOCATION_ID);
-        request.setAcctSchemaId(ACCT_SCHEMA_ID);
-        request.setCurrencyId(CURRENCY_ID);
-        request.setRelatedBillType("SALES_SHIP");
-        request.setRelatedBillCode(billCode);
-        request.setLines(Collections.singletonList(line(qty, null)));
-        return stockMoveBiz.generateMove(request, CTX);
+    private Long generateOutgoing(String billCode, BigDecimal qty) {
+        return idOf(genMove(outgoingReq("SALES_SHIP", billCode, qty)));
     }
 
-    private StockMoveLineRequest line(BigDecimal qty, BigDecimal unitCost) {
-        StockMoveLineRequest line = new StockMoveLineRequest();
-        line.setMaterialId(MATERIAL_ID);
-        line.setUoMId(UOM_ID);
-        line.setQuantity(qty);
-        line.setUnitCost(unitCost);
-        line.setCurrencyId(CURRENCY_ID);
+    private ApiResponse<?> genMove(Map<String, Object> req) {
+        return executeRpc(mutation, "ErpInvStockMove__generateMove", ApiRequest.build(Map.of("request", req)));
+    }
+
+    private Long idOf(ApiResponse<?> resp) {
+        Object id = ((Map<?, ?>) resp.getData()).get("id");
+        return id instanceof Number ? ((Number) id).longValue() : Long.parseLong(String.valueOf(id));
+    }
+
+    private Map<String, Object> incomingReq(String billType, String billCode, BigDecimal qty,
+                                             BigDecimal unitCost) {
+        Map<String, Object> req = baseReq(ErpInvConstants.MOVE_TYPE_INCOMING);
+        req.put("destWarehouseId", WAREHOUSE_ID);
+        req.put("destLocationId", LOCATION_ID);
+        if (billType != null) {
+            req.put("relatedBillType", billType);
+        }
+        if (billCode != null) {
+            req.put("relatedBillCode", billCode);
+        }
+        req.put("lines", Collections.singletonList(line(qty, unitCost)));
+        return req;
+    }
+
+    private Map<String, Object> outgoingReq(String billType, String billCode, BigDecimal qty) {
+        Map<String, Object> req = baseReq(ErpInvConstants.MOVE_TYPE_OUTGOING);
+        req.put("sourceWarehouseId", WAREHOUSE_ID);
+        req.put("sourceLocationId", LOCATION_ID);
+        req.put("relatedBillType", billType);
+        req.put("relatedBillCode", billCode);
+        req.put("lines", Collections.singletonList(line(qty, null)));
+        return req;
+    }
+
+    private Map<String, Object> baseReq(Integer moveType) {
+        Map<String, Object> req = new LinkedHashMap<>();
+        req.put("moveType", moveType);
+        req.put("orgId", ORG_ID);
+        req.put("businessDate", "2026-07-01");
+        req.put("acctSchemaId", ACCT_SCHEMA_ID);
+        req.put("currencyId", CURRENCY_ID);
+        return req;
+    }
+
+    private Map<String, Object> line(BigDecimal qty, BigDecimal unitCost) {
+        Map<String, Object> line = new LinkedHashMap<>();
+        line.put("materialId", MATERIAL_ID);
+        line.put("uoMId", UOM_ID);
+        line.put("quantity", qty);
+        if (unitCost != null) {
+            line.put("unitCost", unitCost);
+        }
+        line.put("currencyId", CURRENCY_ID);
         return line;
+    }
+
+    private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {
+        IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(opType, action, request);
+        return graphQLEngine.executeRpc(ctx);
     }
 
     private ErpInvStockBalance findBalance() {
@@ -205,13 +227,6 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
         QueryBean q = new QueryBean();
         q.addFilter(eq("moveId", moveId));
         return dao.findAllByQuery(q);
-    }
-
-    private long countMoves(String billType, String billCode) {
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("relatedBillType", billType));
-        q.addFilter(eq("relatedBillCode", billCode));
-        return daoProvider.daoFor(ErpInvStockMove.class).findAllByQuery(q).size();
     }
 
     private ErpInvStockMove findMove(String billType, String billCode) {

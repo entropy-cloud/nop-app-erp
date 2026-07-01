@@ -1,39 +1,40 @@
 package app.erp.pur.service;
 
 import app.erp.md.dao.entity.ErpMdPartner;
-import app.erp.pur.biz.IErpPurOrderBiz;
 import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.dao.entity.ErpPurOrderLine;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
-import io.nop.api.core.exceptions.NopException;
+import io.nop.api.core.beans.ApiRequest;
+import io.nop.api.core.beans.ApiResponse;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.graphql.core.IGraphQLExecutionContext;
+import io.nop.graphql.core.ast.GraphQLOperationType;
+import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
-import io.nop.core.context.IServiceContext;
-import io.nop.core.context.ServiceContextImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Map;
 
+import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Phase 1 服务层集成测试：采购订单三轴审批状态机 + 供应商启用校验。
  *
- * <p>直接调用 {@link IErpPurOrderBiz} 的 Java API（不走 GraphQL 快照），自建供应商/行明细后断言状态迁移。
+ * <p>经 {@link IGraphQLEngine} 调 {@code ErpPurOrder__submit/approve/reject/withdrawSubmit/reverseApprove/cancel}，
+ * 引擎负责建 session/事务/管道（直调缺 OrmSession 会报错，见 lessons/04）。测试自建供应商/行明细后断言状态迁移。
  * 订单审核 = 纯状态推进（state-machine §2「采购订单｜仅状态推进」），不触发库存/凭证。
  */
 @NopTestConfig(localDb = true,
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurOrderApproval extends JunitAutoTestCase {
-    private static final IServiceContext CTX = new ServiceContextImpl();
-
 
     static final Long ORG_ID = 1101L;
     static final Long SUPPLIER_ID = 2101L;
@@ -47,7 +48,7 @@ public class TestErpPurOrderApproval extends JunitAutoTestCase {
     @Inject
     IOrmTemplate ormTemplate;
     @Inject
-    IErpPurOrderBiz orderBiz;
+    IGraphQLEngine graphQLEngine;
 
     @Test
     public void testOrderSubmitApproveRejectResubmit() {
@@ -57,11 +58,15 @@ public class TestErpPurOrderApproval extends JunitAutoTestCase {
             saveOrderWithLine(order);
         });
 
-        ErpPurOrder submitted = orderBiz.submit(order.getId(), CTX);
+        ApiResponse<?> resp = submit(order.getId());
+        assertEquals(0, resp.getStatus(), "提交应成功");
+        ErpPurOrder submitted = daoProvider.daoFor(ErpPurOrder.class).getEntityById(order.getId());
         assertEquals(ErpPurConstants.APPROVE_STATUS_SUBMITTED, submitted.getApproveStatus(),
                 "提交 → SUBMITTED");
 
-        ErpPurOrder approved = orderBiz.approve(order.getId(), CTX);
+        resp = approve(order.getId());
+        assertEquals(0, resp.getStatus(), "审核应成功");
+        ErpPurOrder approved = daoProvider.daoFor(ErpPurOrder.class).getEntityById(order.getId());
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus(),
                 "审核通过 → APPROVED");
         assertEquals("PO-SUBMIT-001", approved.getCode(), "订单审核不触发库存/凭证，仅状态推进");
@@ -75,12 +80,14 @@ public class TestErpPurOrderApproval extends JunitAutoTestCase {
             saveOrderWithLine(order);
         });
 
-        orderBiz.submit(order.getId(), CTX);
-        ErpPurOrder rejected = orderBiz.reject(order.getId(), CTX);
+        assertEquals(0, submit(order.getId()).getStatus());
+        assertEquals(0, reject(order.getId()).getStatus());
+        ErpPurOrder rejected = daoProvider.daoFor(ErpPurOrder.class).getEntityById(order.getId());
         assertEquals(ErpPurConstants.APPROVE_STATUS_REJECTED, rejected.getApproveStatus(),
                 "驳回 → REJECTED");
 
-        ErpPurOrder resubmitted = orderBiz.submit(order.getId(), CTX);
+        assertEquals(0, submit(order.getId()).getStatus());
+        ErpPurOrder resubmitted = daoProvider.daoFor(ErpPurOrder.class).getEntityById(order.getId());
         assertEquals(ErpPurConstants.APPROVE_STATUS_SUBMITTED, resubmitted.getApproveStatus(),
                 "REJECTED 重新提交 → SUBMITTED");
     }
@@ -93,41 +100,42 @@ public class TestErpPurOrderApproval extends JunitAutoTestCase {
             saveOrderWithLine(order);
         });
 
-        orderBiz.submit(order.getId(), CTX);
-        ErpPurOrder approved = orderBiz.approve(order.getId(), CTX);
+        assertEquals(0, submit(order.getId()).getStatus());
+        assertEquals(0, approve(order.getId()).getStatus());
+        ErpPurOrder approved = daoProvider.daoFor(ErpPurOrder.class).getEntityById(order.getId());
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus());
 
-        // APPROVED → 再次 submit 非法（仅 UNSUBMITTED/REJECTED 可提交）
-        assertThrows(NopException.class, () -> orderBiz.submit(order.getId(), CTX),
-                "APPROVED 不可再提交，应抛 NopException");
-        // APPROVED → withdrawSubmit 非法
-        assertThrows(NopException.class, () -> orderBiz.withdrawSubmit(order.getId(), CTX),
-                "APPROVED 不可撤回提交，应抛 NopException");
+        ApiResponse<?> bad = submit(order.getId());
+        assertEquals(ErpPurErrors.ERR_ORDER_ILLEGAL_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
+                "APPROVED 不可再提交，应返回非法迁移错误");
+        bad = withdrawSubmit(order.getId());
+        assertEquals(ErpPurErrors.ERR_ORDER_ILLEGAL_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
+                "APPROVED 不可撤回提交，应返回非法迁移错误");
 
-        // 反审核 APPROVED → REJECTED，目标态非 UNSUBMITTED（state-machine §3/§11.4）
-        ErpPurOrder reversed = orderBiz.reverseApprove(order.getId(), CTX);
+        assertEquals(0, reverseApprove(order.getId()).getStatus());
+        ErpPurOrder reversed = daoProvider.daoFor(ErpPurOrder.class).getEntityById(order.getId());
         assertEquals(ErpPurConstants.APPROVE_STATUS_REJECTED, reversed.getApproveStatus(),
                 "反审核目标态 = REJECTED 非 UNSUBMITTED");
     }
 
     @Test
     public void testOrderInactiveSupplierRejected() {
-        // submit 路径：供应商停用 → submit 拒绝
         ErpPurOrder order = newOrder("PO-INACTIVE-001");
         order.setApproveStatus(ErpPurConstants.APPROVE_STATUS_UNSUBMITTED);
         ormTemplate.runInSession(() -> {
             seedSupplier(SUPPLIER_ID, 20);
             saveOrderWithLine(order);
         });
-        assertThrows(NopException.class, () -> orderBiz.submit(order.getId(), CTX),
-                "供应商停用 → submit 应抛 ERR_PARTNER_INACTIVE");
+        ApiResponse<?> bad = submit(order.getId());
+        assertEquals(ErpPurErrors.ERR_PARTNER_INACTIVE.getErrorCode(), bad.getCode(),
+                "供应商停用 → submit 应返回 ERR_PARTNER_INACTIVE");
 
-        // approve 路径：直接置 SUBMITTED 后审核也应被供应商停用拒绝（approve 双点校验）
         ErpPurOrder submittedOrder = newOrder("PO-INACTIVE-002");
         submittedOrder.setApproveStatus(ErpPurConstants.APPROVE_STATUS_SUBMITTED);
         ormTemplate.runInSession(() -> saveOrderWithLine(submittedOrder));
-        assertThrows(NopException.class, () -> orderBiz.approve(submittedOrder.getId(), CTX),
-                "供应商停用 → approve 也应抛 ERR_PARTNER_INACTIVE");
+        bad = approve(submittedOrder.getId());
+        assertEquals(ErpPurErrors.ERR_PARTNER_INACTIVE.getErrorCode(), bad.getCode(),
+                "供应商停用 → approve 也应返回 ERR_PARTNER_INACTIVE");
     }
 
     @Test
@@ -138,16 +146,46 @@ public class TestErpPurOrderApproval extends JunitAutoTestCase {
             saveOrderWithLine(order);
         });
 
-        ErpPurOrder cancelled = orderBiz.cancel(order.getId(), CTX);
+        assertEquals(0, cancel(order.getId()).getStatus());
+        ErpPurOrder cancelled = daoProvider.daoFor(ErpPurOrder.class).getEntityById(order.getId());
         assertEquals(ErpPurConstants.DOC_STATUS_CANCELLED, cancelled.getDocStatus(),
                 "草稿 → 作废 docStatus=CANCELLED");
 
-        // 已作废不可再提交
-        assertThrows(NopException.class, () -> orderBiz.submit(order.getId(), CTX),
-                "已作废订单不可提交，应抛 NopException");
+        ApiResponse<?> bad = submit(order.getId());
+        assertEquals(ErpPurErrors.ERR_ORDER_ILLEGAL_DOC_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
+                "已作废订单不可提交，应返回非法单据状态迁移错误");
     }
 
     // ---------- helpers ----------
+
+    private ApiResponse<?> submit(Long orderId) {
+        return executeRpc(mutation, "ErpPurOrder__submit", ApiRequest.build(Map.of("orderId", orderId)));
+    }
+
+    private ApiResponse<?> withdrawSubmit(Long orderId) {
+        return executeRpc(mutation, "ErpPurOrder__withdrawSubmit", ApiRequest.build(Map.of("orderId", orderId)));
+    }
+
+    private ApiResponse<?> approve(Long orderId) {
+        return executeRpc(mutation, "ErpPurOrder__approve", ApiRequest.build(Map.of("orderId", orderId)));
+    }
+
+    private ApiResponse<?> reject(Long orderId) {
+        return executeRpc(mutation, "ErpPurOrder__reject", ApiRequest.build(Map.of("orderId", orderId)));
+    }
+
+    private ApiResponse<?> reverseApprove(Long orderId) {
+        return executeRpc(mutation, "ErpPurOrder__reverseApprove", ApiRequest.build(Map.of("orderId", orderId)));
+    }
+
+    private ApiResponse<?> cancel(Long orderId) {
+        return executeRpc(mutation, "ErpPurOrder__cancel", ApiRequest.build(Map.of("orderId", orderId)));
+    }
+
+    private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {
+        IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(opType, action, request);
+        return graphQLEngine.executeRpc(ctx);
+    }
 
     private ErpPurOrder newOrder(String code) {
         ErpPurOrder order = new ErpPurOrder();
