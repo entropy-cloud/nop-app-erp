@@ -33,4 +33,10 @@ public interface ErpSalConstants {
     // 出库联动标识（自由字符串，inventory 侧无字典约束）
     String RELATED_BILL_TYPE_SAL_DELIVERY = "ERP_SAL_DELIVERY";
     String RELATED_BILL_TYPE_REVERSAL = "REVERSAL";
+
+    // 信用额度控制配置项 erp-sal.credit-check-level（默认 SOFT_WARNING）
+    String CONFIG_CREDIT_CHECK_LEVEL = "erp-sal.credit-check-level";
+    String CREDIT_CHECK_LEVEL_SOFT_WARNING = "SOFT_WARNING";
+    String CREDIT_CHECK_LEVEL_SPECIAL_APPROVAL = "SPECIAL_APPROVAL";
+    String CREDIT_CHECK_LEVEL_HARD_BLOCK = "HARD_BLOCK";
 }

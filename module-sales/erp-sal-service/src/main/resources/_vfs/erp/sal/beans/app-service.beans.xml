@@ -11,4 +11,12 @@
     <!-- 销售域服务（非 BizModel）：出库移动单请求构造器 -->
     <bean id="app.erp.sal.service.entity.DeliveryStockMoveBuilder"
           class="app.erp.sal.service.entity.DeliveryStockMoveBuilder"/>
+
+    <!-- 销售域服务（非 BizModel）：客户信用额度校验器（订单审核时调用） -->
+    <bean id="app.erp.sal.service.entity.CreditLimitChecker"
+          class="app.erp.sal.service.entity.CreditLimitChecker"/>
+
+    <!-- 销售域服务（非 BizModel）：报价→订单域内转化组装器 -->
+    <bean id="app.erp.sal.service.entity.QuotationToOrderConverter"
+          class="app.erp.sal.service.entity.QuotationToOrderConverter"/>
 </beans>
