@@ -3,6 +3,7 @@ package app.erp.inv.biz;
 
 import io.nop.api.core.annotations.biz.BizAction;
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
@@ -62,4 +63,30 @@ public interface IErpInvStockMoveBiz extends ICrudBiz<ErpInvStockMove> {
     ErpInvStockMove findByRelatedBill(@Name("relatedBillType") String relatedBillType,
                                       @Name("relatedBillCode") String relatedBillCode,
                                       IServiceContext context);
+
+    /**
+     * 正向追溯：从指定移动单出发，递归收集所有下游移动单（{@code originMoveId} 链，origin→dest）。
+     * 受 {@code erp-inv.trace-chain-enabled}/{@code -max-depth} 约束，含环检测与深度兜底。
+     */
+    @BizQuery
+    TraceChainResult forwardTrace(@Name("moveId") Long moveId, IServiceContext context);
+
+    /**
+     * 反向追溯：从指定移动单出发，沿 {@code originMoveId} 逐层上溯至根（dest→origin）。
+     */
+    @BizQuery
+    TraceChainResult backwardTrace(@Name("moveId") Long moveId, IServiceContext context);
+
+    /**
+     * 退货追溯（双向）：给定退货移动单 → 其原出/入库移动单；给定原移动单 → 其全部退货移动单
+     * （按 {@code originReturnedMoveId} 链）。
+     */
+    @BizQuery
+    TraceChainResult returnTrace(@Name("moveId") Long moveId, IServiceContext context);
+
+    /**
+     * 批次追溯：按 {@code batchNo} 跨移动单行与不可变流水聚合全部相关移动单。
+     */
+    @BizQuery
+    TraceChainResult batchTrace(@Name("batchNo") String batchNo, IServiceContext context);
 }

@@ -3,14 +3,17 @@ package app.erp.inv.service.entity;
 import app.erp.inv.biz.IErpInvStockMoveBiz;
 import app.erp.inv.biz.StockMoveLineRequest;
 import app.erp.inv.biz.StockMoveRequest;
+import app.erp.inv.biz.TraceChainResult;
 import app.erp.inv.dao.entity.ErpInvStockBalance;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.inv.dao.entity.ErpInvStockMoveLine;
 import app.erp.inv.service.ErpInvConstants;
 import app.erp.inv.service.ErpInvErrors;
+import app.erp.inv.service.trace.TraceChainQuery;
 import io.nop.api.core.annotations.biz.BizAction;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.core.context.IServiceContext;
@@ -53,6 +56,9 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
 
     @Inject
     app.erp.inv.service.posting.InvPostingDispatcher postingDispatcher;
+
+    @Inject
+    app.erp.inv.service.trace.TraceChainQuery traceChainQuery;
 
     @Inject
     IOrmTemplate ormTemplate;
@@ -148,6 +154,7 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
         reverseReq.setDestLocationId(original.getSourceLocationId());
         reverseReq.setRelatedBillType("REVERSAL");
         reverseReq.setRelatedBillCode(original.getCode());
+        reverseReq.setOriginReturnedMoveId(original.getId());
         reverseReq.setRemark("冲销 " + original.getCode());
         List<StockMoveLineRequest> reverseLines = new ArrayList<>(originalLines.size());
         for (ErpInvStockMoveLine ol : originalLines) {
@@ -181,6 +188,30 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
         example.setRelatedBillType(relatedBillType);
         example.setRelatedBillCode(relatedBillCode);
         return dao().findFirstByExample(example);
+    }
+
+    @Override
+    @BizQuery
+    public TraceChainResult forwardTrace(@Name("moveId") Long moveId, IServiceContext context) {
+        return traceChainQuery.forwardTrace(moveId, isTraceChainEnabled(), traceChainMaxDepth());
+    }
+
+    @Override
+    @BizQuery
+    public TraceChainResult backwardTrace(@Name("moveId") Long moveId, IServiceContext context) {
+        return traceChainQuery.backwardTrace(moveId, isTraceChainEnabled(), traceChainMaxDepth());
+    }
+
+    @Override
+    @BizQuery
+    public TraceChainResult returnTrace(@Name("moveId") Long moveId, IServiceContext context) {
+        return traceChainQuery.returnTrace(moveId, isTraceChainEnabled());
+    }
+
+    @Override
+    @BizQuery
+    public TraceChainResult batchTrace(@Name("batchNo") String batchNo, IServiceContext context) {
+        return traceChainQuery.batchTrace(batchNo, isTraceChainEnabled());
     }
 
     // ---------- state machine internals ----------
@@ -275,6 +306,8 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
         move.setRelatedBillType(request.getRelatedBillType());
         move.setRelatedBillCode(request.getRelatedBillCode());
         move.setRemark(request.getRemark());
+        move.setOriginMoveId(request.getOriginMoveId());
+        move.setOriginReturnedMoveId(request.getOriginReturnedMoveId());
         return move;
     }
 
@@ -385,6 +418,20 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
     boolean isNegativeStockAllowed() {
         Boolean flag = AppConfig.var(ErpInvConstants.CONFIG_ALLOW_NEGATIVE_STOCK, Boolean.FALSE);
         return Boolean.TRUE.equals(flag);
+    }
+
+    boolean isTraceChainEnabled() {
+        Boolean flag = AppConfig.var(ErpInvConstants.CONFIG_TRACE_CHAIN_ENABLED, Boolean.TRUE);
+        return !Boolean.FALSE.equals(flag);
+    }
+
+    int traceChainMaxDepth() {
+        Integer depth = AppConfig.var(ErpInvConstants.CONFIG_TRACE_CHAIN_MAX_DEPTH,
+                ErpInvConstants.TRACE_CHAIN_MAX_DEPTH_DEFAULT);
+        if (depth == null || depth <= 0) {
+            return ErpInvConstants.TRACE_CHAIN_MAX_DEPTH_DEFAULT;
+        }
+        return depth;
     }
 
     private String newMoveCode() {

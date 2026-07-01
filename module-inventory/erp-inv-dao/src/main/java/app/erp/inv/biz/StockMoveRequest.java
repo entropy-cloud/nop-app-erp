@@ -30,6 +30,8 @@ public class StockMoveRequest {
     private Long currencyId;
     private String code;
     private String remark;
+    private Long originMoveId;
+    private Long originReturnedMoveId;
     private List<StockMoveLineRequest> lines;
 
     public Integer getMoveType() {
@@ -134,6 +136,22 @@ public class StockMoveRequest {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public Long getOriginMoveId() {
+        return originMoveId;
+    }
+
+    public void setOriginMoveId(Long originMoveId) {
+        this.originMoveId = originMoveId;
+    }
+
+    public Long getOriginReturnedMoveId() {
+        return originReturnedMoveId;
+    }
+
+    public void setOriginReturnedMoveId(Long originReturnedMoveId) {
+        this.originReturnedMoveId = originReturnedMoveId;
     }
 
     public List<StockMoveLineRequest> getLines() {

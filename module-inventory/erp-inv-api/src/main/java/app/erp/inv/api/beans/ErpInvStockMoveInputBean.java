@@ -265,6 +265,34 @@
         }
 
 
+        private Long _originMoveId;
+
+    
+        @PropMeta(propId=24)
+    
+        public Long getOriginMoveId(){
+            return _originMoveId;
+        }
+
+        public void setOriginMoveId(Long value){
+            this._originMoveId = value;
+        }
+
+
+        private Long _originReturnedMoveId;
+
+    
+        @PropMeta(propId=25)
+    
+        public Long getOriginReturnedMoveId(){
+            return _originReturnedMoveId;
+        }
+
+        public void setOriginReturnedMoveId(Long value){
+            this._originReturnedMoveId = value;
+        }
+
+
         private List<ErpInvStockMoveLineInputBean> _lines;
 
         public List<ErpInvStockMoveLineInputBean> getLines(){

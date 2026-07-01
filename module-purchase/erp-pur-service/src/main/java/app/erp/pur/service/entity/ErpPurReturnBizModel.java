@@ -202,11 +202,30 @@ public class ErpPurReturnBizModel extends CrudBizModel<ErpPurReturn> implements 
     /**
      * 审核通过后构造 {@link StockMoveRequest}(OUTGOING) 调 {@link IErpInvStockMoveBiz#generateMove}（业务联动自动
      * DONE、幂等键 {@code (ERP_PUR_RETURN, return.code)}），返回生成的出库移动单。库存余额随 DONE 减少。
+     *
+     * <p>追溯挂链：解析源入库单（{@code receive}）生成的入库移动单 id，透传
+     * {@code originReturnedMoveId}，使退货移动单可反向追溯到原入库移动单（解除 0456-1 Deferred「追溯」语义）。
      */
     ErpInvStockMove triggerOutgoingMove(ErpPurReturn returnOrder, List<ErpPurReturnLine> lines,
                                         IServiceContext context) {
         StockMoveRequest request = stockMoveBuilder.build(returnOrder, lines, context);
+        request.setOriginReturnedMoveId(resolveSourceReceiveMoveId(returnOrder, context));
         return stockMoveBiz.generateMove(request, context);
+    }
+
+    /**
+     * 解析源入库单（退货单 {@code receive} 关系）生成的库存入库移动单 id（经
+     * {@code (ERP_PUR_RECEIVE, receive.code)} 反查）。供退货移动单挂退货追溯上链 {@code originReturnedMoveId}。
+     * 源入库单或其移动单缺失时返回 null（不阻塞退货审核，仅追溯链缺失）。
+     */
+    private Long resolveSourceReceiveMoveId(ErpPurReturn returnOrder, IServiceContext context) {
+        ErpPurReceive receive = returnOrder.getReceive();
+        if (receive == null) {
+            return null;
+        }
+        ErpInvStockMove sourceMove = stockMoveBiz.findByRelatedBill(
+                ErpPurConstants.RELATED_BILL_TYPE_PUR_RECEIVE, receive.getCode(), context);
+        return sourceMove == null ? null : sourceMove.getId();
     }
 
     /**

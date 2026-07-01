@@ -275,6 +275,10 @@ prop:
       moveType_label: 作业类型
       org: null
       orgId: 业务组织
+      originMove: null
+      originMoveId: 上游移动单
+      originReturnedMove: null
+      originReturnedMoveId: 原退货移动单
       posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人

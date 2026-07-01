@@ -372,6 +372,34 @@
         }
 
 
+        private Long _originMoveId;
+
+    
+        @PropMeta(propId=24)
+    
+        public Long getOriginMoveId(){
+            return _originMoveId;
+        }
+
+        public void setOriginMoveId(Long value){
+            this._originMoveId = value;
+        }
+
+
+        private Long _originReturnedMoveId;
+
+    
+        @PropMeta(propId=25)
+    
+        public Long getOriginReturnedMoveId(){
+            return _originReturnedMoveId;
+        }
+
+        public void setOriginReturnedMoveId(Long value){
+            this._originReturnedMoveId = value;
+        }
+
+
         private Map<String,Object> _sourceWarehouse;
 
         public Map<String,Object> getSourceWarehouse(){
@@ -424,6 +452,28 @@
 
         public void setDestLocation(Map<String,Object> value){
             this._destLocation = value;
+        }
+
+
+        private Map<String,Object> _originMove;
+
+        public Map<String,Object> getOriginMove(){
+            return _originMove;
+        }
+
+        public void setOriginMove(Map<String,Object> value){
+            this._originMove = value;
+        }
+
+
+        private Map<String,Object> _originReturnedMove;
+
+        public Map<String,Object> getOriginReturnedMove(){
+            return _originReturnedMove;
+        }
+
+        public void setOriginReturnedMove(Map<String,Object> value){
+            this._originReturnedMove = value;
         }
 
 

@@ -8,6 +8,15 @@ public interface ErpInvConstants {
 
     String CONFIG_ALLOW_NEGATIVE_STOCK = "erp-inv.allow-negative-stock";
 
+    // 追溯链配置项（trace-chain.md §配置项，缺失走默认，无 .env/外部服务）
+    String CONFIG_TRACE_CHAIN_ENABLED = "erp-inv.trace-chain-enabled";
+    String CONFIG_TRACE_CHAIN_MAX_DEPTH = "erp-inv.trace-chain-max-depth";
+    int TRACE_CHAIN_MAX_DEPTH_DEFAULT = 10;
+
+    // 追溯链 linkType 标识（TraceLink）
+    String TRACE_LINK_FORWARD = "FORWARD";
+    String TRACE_LINK_RETURN = "RETURN";
+
     int DOC_STATUS_DRAFT = 10;
     int DOC_STATUS_CONFIRMED = 20;
     int DOC_STATUS_DONE = 30;

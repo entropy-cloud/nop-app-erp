@@ -147,6 +147,10 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="23" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="ORIGIN_MOVE_ID" displayName="上游移动单" name="originMoveId" propId="24" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Origin Move"/>
+                <column code="ORIGIN_RETURNED_MOVE_ID" displayName="原退货移动单" name="originReturnedMoveId" propId="25"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Origin Returned Move"/>
             </columns>
             <relations>
                 <to-one name="sourceWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"
@@ -177,6 +181,18 @@
                         i18n-en:displayName="Dest Location">
                     <join>
                         <on leftProp="destLocationId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="originMove" refEntityName="app.erp.inv.dao.entity.ErpInvStockMove" tagSet="pub"
+                        i18n-en:displayName="Origin Move">
+                    <join>
+                        <on leftProp="originMoveId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="originReturnedMove" refEntityName="app.erp.inv.dao.entity.ErpInvStockMove" tagSet="pub"
+                        i18n-en:displayName="Origin Returned Move">
+                    <join>
+                        <on leftProp="originReturnedMoveId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-many cascadeDelete="true" name="lines" refEntityName="app.erp.inv.dao.entity.ErpInvStockMoveLine"

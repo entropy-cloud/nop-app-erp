@@ -83,6 +83,12 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--上游移动单-->
+                <col id="originMoveId" ui:number="true" sortable="true"/>
+
+                <!--原退货移动单-->
+                <col id="originReturnedMoveId" ui:number="true" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -102,6 +108,7 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
+ originMoveId[上游移动单] originReturnedMoveId[原退货移动单]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-库存移动单" i18n-en:title="Add Stock Move">
@@ -114,7 +121,8 @@
  approveStatus[审核状态] posted[已过账]
  postedAt[过账时间] postedBy[过账人]
  relatedBillType[关联单据类型] relatedBillCode[关联单据号]
- remark[备注] 
+ remark[备注] originMoveId[上游移动单]
+ originReturnedMoveId[原退货移动单] 
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-库存移动单" i18n-en:title="Edit Stock Move">
@@ -128,6 +136,7 @@
  postedAt[过账时间] postedBy[过账人]
  relatedBillType[关联单据类型] relatedBillCode[关联单据号]
  remark[备注] delVersion[逻辑删除版本]
+ originMoveId[上游移动单] originReturnedMoveId[原退货移动单]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

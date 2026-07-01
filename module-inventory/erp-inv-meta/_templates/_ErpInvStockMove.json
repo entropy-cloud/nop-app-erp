@@ -25,10 +25,14 @@
   "createTime": "2000-01-01 14:00:00",
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
+  "originMoveId": 0,
+  "originReturnedMoveId": 0,
   "sourceWarehouse": null,
   "destWarehouse": null,
   "org": null,
   "sourceLocation": null,
   "destLocation": null,
+  "originMove": null,
+  "originReturnedMove": null,
   "lines": null
 }

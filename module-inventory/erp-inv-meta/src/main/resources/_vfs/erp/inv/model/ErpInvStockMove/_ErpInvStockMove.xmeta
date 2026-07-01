@@ -111,6 +111,14 @@
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
+        <prop name="originMoveId" displayName="上游移动单" propId="24" i18n-en:displayName="Origin Move" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="originMove">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="originReturnedMoveId" displayName="原退货移动单" propId="25" i18n-en:displayName="Origin Returned Move"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="originReturnedMove">
+            <schema type="java.lang.Long"/>
+        </prop>
         <prop name="sourceWarehouse" i18n-en:displayName="Source Warehouse" tagSet="pub" ext:kind="to-one"
               internal="true" queryable="true" ext:joinLeftProp="sourceWarehouseId" ext:joinRightProp="id"
               biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
@@ -135,6 +143,16 @@
               queryable="true" ext:joinLeftProp="destLocationId" ext:joinRightProp="id" biz:moduleId="erp/md"
               insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdLocation"/>
+        </prop>
+        <prop name="originMove" i18n-en:displayName="Origin Move" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="originMoveId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpInvStockMove"/>
+        </prop>
+        <prop name="originReturnedMove" i18n-en:displayName="Origin Returned Move" tagSet="pub" ext:kind="to-one"
+              internal="true" queryable="true" ext:joinLeftProp="originReturnedMoveId" ext:joinRightProp="id"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpInvStockMove"/>
         </prop>
         <prop name="lines" i18n-en:displayName="Lines" tagSet="pub,cascade-delete,insertable,updatable"
               ext:kind="to-many" internal="true" ext:joinLeftProp="id" ext:joinRightProp="moveId" insertable="true"

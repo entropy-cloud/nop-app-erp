@@ -282,11 +282,15 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      originMoveId: Origin Move
+      originReturnedMoveId: Origin Returned Move
       sourceWarehouse: Source Warehouse
       destWarehouse: Dest Warehouse
       org: Org
       sourceLocation: Source Location
       destLocation: Dest Location
+      originMove: Origin Move
+      originReturnedMove: Origin Returned Move
       lines: Lines
     ErpInvStockMoveLine:
       id: ID

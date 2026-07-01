@@ -136,6 +136,8 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="21" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="22" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="23" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+                <column name="originMoveId" displayName="上游移动单" stdSqlType="BIGINT" code="ORIGIN_MOVE_ID" propId="24" stdDataType="long" i18n-en:displayName='Origin Move' />
+                <column name="originReturnedMoveId" displayName="原退货移动单" stdSqlType="BIGINT" code="ORIGIN_RETURNED_MOVE_ID" propId="25" stdDataType="long" i18n-en:displayName='Origin Returned Move' />
             </columns>
             <relations>
                 <to-one name="sourceWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub" i18n-en:displayName='Source Warehouse'><join><on leftProp="sourceWarehouseId" rightProp="id"/></join></to-one>
@@ -143,6 +145,8 @@
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
                 <to-one name="sourceLocation" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub" i18n-en:displayName='Source Location'><join><on leftProp="sourceLocationId" rightProp="id"/></join></to-one>
                 <to-one name="destLocation" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub" i18n-en:displayName='Dest Location'><join><on leftProp="destLocationId" rightProp="id"/></join></to-one>
+                <to-one name="originMove" refEntityName="app.erp.inv.dao.entity.ErpInvStockMove" tagSet="pub" i18n-en:displayName='Origin Move'><join><on leftProp="originMoveId" rightProp="id"/></join></to-one>
+                <to-one name="originReturnedMove" refEntityName="app.erp.inv.dao.entity.ErpInvStockMove" tagSet="pub" i18n-en:displayName='Origin Returned Move'><join><on leftProp="originReturnedMoveId" rightProp="id"/></join></to-one>
                 <to-many name="lines" refEntityName="app.erp.inv.dao.entity.ErpInvStockMoveLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="30"><join><on leftProp="id" rightProp="moveId"/></join></to-many>
             </relations>
         </entity>

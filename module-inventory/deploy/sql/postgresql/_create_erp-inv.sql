@@ -159,6 +159,8 @@ CREATE TABLE erp_inv_stock_move(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  origin_move_id INT8  ,
+  origin_returned_move_id INT8  ,
   constraint PK_erp_inv_stock_move primary key (id)
 );
 
@@ -589,6 +591,10 @@ CREATE TABLE erp_inv_stock_ledger(
       COMMENT ON COLUMN erp_inv_stock_move.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_inv_stock_move.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move.origin_move_id IS '上游移动单';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move.origin_returned_move_id IS '原退货移动单';
                     
       COMMENT ON TABLE erp_inv_batch IS '批次台账';
                 

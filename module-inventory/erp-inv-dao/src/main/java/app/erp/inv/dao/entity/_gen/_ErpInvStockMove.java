@@ -113,8 +113,16 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 23;
     
+    /* 上游移动单: ORIGIN_MOVE_ID BIGINT */
+    public static final String PROP_NAME_originMoveId = "originMoveId";
+    public static final int PROP_ID_originMoveId = 24;
+    
+    /* 原退货移动单: ORIGIN_RETURNED_MOVE_ID BIGINT */
+    public static final String PROP_NAME_originReturnedMoveId = "originReturnedMoveId";
+    public static final int PROP_ID_originReturnedMoveId = 25;
+    
 
-    private static int _PROP_ID_BOUND = 24;
+    private static int _PROP_ID_BOUND = 26;
 
     
     /* relation:  */
@@ -133,13 +141,19 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     public static final String PROP_NAME_destLocation = "destLocation";
     
     /* relation:  */
+    public static final String PROP_NAME_originMove = "originMove";
+    
+    /* relation:  */
+    public static final String PROP_NAME_originReturnedMove = "originReturnedMove";
+    
+    /* relation:  */
     public static final String PROP_NAME_lines = "lines";
     
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[24];
+    private static final String[] PROP_ID_TO_NAME = new String[26];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -212,6 +226,12 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
+          PROP_ID_TO_NAME[PROP_ID_originMoveId] = PROP_NAME_originMoveId;
+          PROP_NAME_TO_ID.put(PROP_NAME_originMoveId, PROP_ID_originMoveId);
+      
+          PROP_ID_TO_NAME[PROP_ID_originReturnedMoveId] = PROP_NAME_originReturnedMoveId;
+          PROP_NAME_TO_ID.put(PROP_NAME_originReturnedMoveId, PROP_ID_originReturnedMoveId);
+      
     }
 
     
@@ -283,6 +303,12 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* 上游移动单: ORIGIN_MOVE_ID */
+    private java.lang.Long _originMoveId;
+    
+    /* 原退货移动单: ORIGIN_RETURNED_MOVE_ID */
+    private java.lang.Long _originReturnedMoveId;
     
 
     public _ErpInvStockMove(){
@@ -426,6 +452,12 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_originMoveId:
+               return getOriginMoveId();
+        
+            case PROP_ID_originReturnedMoveId:
+               return getOriginReturnedMoveId();
         
            default:
               return super.orm_propValue(propId);
@@ -668,6 +700,26 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_originMoveId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_originMoveId));
+               }
+               setOriginMoveId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_originReturnedMoveId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_originReturnedMoveId));
+               }
+               setOriginReturnedMoveId(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -834,6 +886,20 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_originMoveId:{
+               onInitProp(propId);
+               this._originMoveId = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_originReturnedMoveId:{
+               onInitProp(propId);
+               this._originReturnedMoveId = (java.lang.Long)value;
                
                break;
             }
@@ -1282,6 +1348,44 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     }
     
     /**
+     * 上游移动单: ORIGIN_MOVE_ID
+     */
+    public final java.lang.Long getOriginMoveId(){
+         onPropGet(PROP_ID_originMoveId);
+         return _originMoveId;
+    }
+
+    /**
+     * 上游移动单: ORIGIN_MOVE_ID
+     */
+    public final void setOriginMoveId(java.lang.Long value){
+        if(onPropSet(PROP_ID_originMoveId,value)){
+            this._originMoveId = value;
+            internalClearRefs(PROP_ID_originMoveId);
+            
+        }
+    }
+    
+    /**
+     * 原退货移动单: ORIGIN_RETURNED_MOVE_ID
+     */
+    public final java.lang.Long getOriginReturnedMoveId(){
+         onPropGet(PROP_ID_originReturnedMoveId);
+         return _originReturnedMoveId;
+    }
+
+    /**
+     * 原退货移动单: ORIGIN_RETURNED_MOVE_ID
+     */
+    public final void setOriginReturnedMoveId(java.lang.Long value){
+        if(onPropSet(PROP_ID_originReturnedMoveId,value)){
+            this._originReturnedMoveId = value;
+            internalClearRefs(PROP_ID_originReturnedMoveId);
+            
+        }
+    }
+    
+    /**
      * 
      */
     public final app.erp.md.dao.entity.ErpMdWarehouse getSourceWarehouse(){
@@ -1390,6 +1494,52 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_destLocation, refEntity,()->{
            
                            this.setDestLocationId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.inv.dao.entity.ErpInvStockMove getOriginMove(){
+       return (app.erp.inv.dao.entity.ErpInvStockMove)internalGetRefEntity(PROP_NAME_originMove);
+    }
+
+    public final void setOriginMove(app.erp.inv.dao.entity.ErpInvStockMove refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOriginMoveId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_originMove, refEntity,()->{
+           
+                           this.setOriginMoveId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.inv.dao.entity.ErpInvStockMove getOriginReturnedMove(){
+       return (app.erp.inv.dao.entity.ErpInvStockMove)internalGetRefEntity(PROP_NAME_originReturnedMove);
+    }
+
+    public final void setOriginReturnedMove(app.erp.inv.dao.entity.ErpInvStockMove refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOriginReturnedMoveId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_originReturnedMove, refEntity,()->{
+           
+                           this.setOriginReturnedMoveId(refEntity.getId());
                        
            });
            }

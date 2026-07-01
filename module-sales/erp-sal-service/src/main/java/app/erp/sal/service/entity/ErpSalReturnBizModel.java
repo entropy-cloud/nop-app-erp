@@ -205,11 +205,30 @@ public class ErpSalReturnBizModel extends CrudBizModel<ErpSalReturn> implements 
     /**
      * 审核通过后构造 {@link StockMoveRequest}(INCOMING) 调 {@link IErpInvStockMoveBiz#generateMove}（业务联动自动
      * DONE、幂等键 {@code (ERP_SAL_RETURN, return.code)}），返回生成的入库移动单。库存余额随 DONE 增加。
+     *
+     * <p>追溯挂链：解析源出库单（{@code delivery}）生成的出库移动单 id，透传
+     * {@code originReturnedMoveId}，使退货移动单可反向追溯到原出库移动单（解除 0456-2 Deferred「追溯」语义）。
      */
     ErpInvStockMove triggerIncomingMove(ErpSalReturn returnOrder, List<ErpSalReturnLine> lines,
                                         IServiceContext context) {
         StockMoveRequest request = stockMoveBuilder.build(returnOrder, lines, context);
+        request.setOriginReturnedMoveId(resolveSourceDeliveryMoveId(returnOrder, context));
         return stockMoveBiz.generateMove(request, context);
+    }
+
+    /**
+     * 解析源出库单（退货单 {@code delivery} 关系）生成的库存出库移动单 id（经
+     * {@code (ERP_SAL_DELIVERY, delivery.code)} 反查）。供退货移动单挂退货追溯上链 {@code originReturnedMoveId}。
+     * 源出库单或其移动单缺失时返回 null（不阻塞退货审核，仅追溯链缺失）。
+     */
+    private Long resolveSourceDeliveryMoveId(ErpSalReturn returnOrder, IServiceContext context) {
+        ErpSalDelivery delivery = returnOrder.getDelivery();
+        if (delivery == null) {
+            return null;
+        }
+        ErpInvStockMove sourceMove = stockMoveBiz.findByRelatedBill(
+                ErpSalConstants.RELATED_BILL_TYPE_SAL_DELIVERY, delivery.getCode(), context);
+        return sourceMove == null ? null : sourceMove.getId();
     }
 
     /**
