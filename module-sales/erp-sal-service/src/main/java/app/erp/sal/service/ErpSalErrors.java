@@ -36,6 +36,14 @@ public interface ErpSalErrors {
     String ARG_INVOICE_BALANCE = "invoiceBalance";
     String ARG_RECEIPT_BALANCE = "receiptBalance";
 
+    // --- 退货作用域参数键（不复用出库单/发票文案） ---
+    String ARG_RETURN_CODE = "returnCode";
+    String ARG_RETURN_ID = "returnId";
+    String ARG_LINE_NO = "lineNo";
+    String ARG_RETURN_QTY = "returnQty";
+    String ARG_MAX_RETURN_QTY = "maxReturnQty";
+    String ARG_DELIVERED_QTY_RETURN = "deliveredQtyReturn";
+
     ErrorCode ERR_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.sal.illegal-status-transition",
             "出库单 {deliveryCode} 当前审核状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
             ARG_DELIVERY_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
@@ -150,4 +158,33 @@ public interface ErpSalErrors {
     ErrorCode ERR_SETTLE_OVER_RECEIPT_BALANCE = ErrorCode.define("erp.err.sal.settle-over-receipt-balance",
             "核销金额 {settleAmount} 超过收款单 {receiptCode} 未核销余额 {receiptBalance}",
             ARG_SETTLE_AMOUNT, ARG_RECEIPT_CODE, ARG_RECEIPT_BALANCE);
+
+    // --- 退货作用域错误码（消息文案绑定退货单参数，避免复用出库单/发票文案产生误导） ---
+
+    ErrorCode ERR_RETURN_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.sal.return-illegal-status-transition",
+            "销售退货单 {returnCode} 当前审核状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_RETURN_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+
+    ErrorCode ERR_RETURN_ILLEGAL_DOC_STATUS_TRANSITION = ErrorCode.define("erp.err.sal.return-illegal-doc-status-transition",
+            "销售退货单 {returnCode} 当前单据状态={currentDocStatus}，不允许执行该操作（期望状态={expectedDocStatus}）",
+            ARG_RETURN_CODE, ARG_CURRENT_DOC_STATUS, ARG_EXPECTED_DOC_STATUS);
+
+    ErrorCode ERR_RETURN_NOT_FOUND = ErrorCode.define("erp.err.sal.return-not-found",
+            "销售退货单 {returnId} 不存在", ARG_RETURN_ID);
+
+    ErrorCode ERR_RETURN_LINES_EMPTY = ErrorCode.define("erp.err.sal.return-lines-empty",
+            "销售退货单 {returnCode} 无行明细，不可提交审核",
+            ARG_RETURN_CODE);
+
+    ErrorCode ERR_RETURN_QTY_EXCEED = ErrorCode.define("erp.err.sal.return-qty-exceed",
+            "销售退货单 {returnCode} 第 {lineNo} 行退货数量 {returnQty} 超过可退数量 {maxReturnQty}（已出库 {deliveredQtyReturn}）",
+            ARG_RETURN_CODE, ARG_LINE_NO, ARG_RETURN_QTY, ARG_MAX_RETURN_QTY, ARG_DELIVERED_QTY_RETURN);
+
+    ErrorCode ERR_RETURN_DELIVERY_NOT_APPROVED = ErrorCode.define("erp.err.sal.return-delivery-not-approved",
+            "源出库单未审核通过，不可退货（当前审核状态={currentStatus}）",
+            ARG_CURRENT_STATUS);
+
+    ErrorCode ERR_RETURN_REASON_REQUIRED = ErrorCode.define("erp.err.sal.return-reason-required",
+            "销售退货单 {returnCode} 第 {lineNo} 行缺少退货原因（按配置必填）",
+            ARG_RETURN_CODE, ARG_LINE_NO);
 }

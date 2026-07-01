@@ -34,9 +34,11 @@ public interface ErpSalConstants {
 
     // 库存作业类型（对齐 erp-inv/operation-type，调用方侧副本避免 main 代码依赖 inventory-service）
     int MOVE_TYPE_OUTGOING = 20;
+    int MOVE_TYPE_INCOMING = 10;
 
     // 出库联动标识（自由字符串，inventory 侧无字典约束）
     String RELATED_BILL_TYPE_SAL_DELIVERY = "ERP_SAL_DELIVERY";
+    String RELATED_BILL_TYPE_SAL_RETURN = "ERP_SAL_RETURN";
     String RELATED_BILL_TYPE_REVERSAL = "REVERSAL";
 
     // 信用额度控制配置项 erp-sal.credit-check-level（默认 SOFT_WARNING）
@@ -44,4 +46,8 @@ public interface ErpSalConstants {
     String CREDIT_CHECK_LEVEL_SOFT_WARNING = "SOFT_WARNING";
     String CREDIT_CHECK_LEVEL_SPECIAL_APPROVAL = "SPECIAL_APPROVAL";
     String CREDIT_CHECK_LEVEL_HARD_BLOCK = "HARD_BLOCK";
+
+    // 退货配置项（returns.md §配置项，缺失走默认，无需 .env）
+    String CONFIG_RETURN_REASON_REQUIRED = "erp-sal.return-reason-required";
+    String CONFIG_RETURN_APPROVAL_REQUIRED = "erp-sal.return-approval-required";
 }

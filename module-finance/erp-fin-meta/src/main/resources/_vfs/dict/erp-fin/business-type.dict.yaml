@@ -61,3 +61,7 @@ options:
     value: 140
     description: 
   
+  - label: 销售退货冲减
+    value: 150
+    description: 
+  

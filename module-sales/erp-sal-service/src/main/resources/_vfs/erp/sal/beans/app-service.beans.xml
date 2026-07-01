@@ -20,6 +20,14 @@
     <bean id="app.erp.sal.service.entity.QuotationToOrderConverter"
           class="app.erp.sal.service.entity.QuotationToOrderConverter"/>
 
+    <!-- 销售域服务（非 BizModel）：退货入库移动单请求构造器（INCOMING，destWarehouse=退货仓库） -->
+    <bean id="app.erp.sal.service.entity.ReturnStockMoveBuilder"
+          class="app.erp.sal.service.entity.ReturnStockMoveBuilder"/>
+
+    <!-- 销售域服务（非 BizModel）：退货数量上限校验器（按出库行聚合已审核退货量） -->
+    <bean id="app.erp.sal.service.entity.ReturnQtyValidator"
+          class="app.erp.sal.service.entity.ReturnQtyValidator"/>
+
     <!-- 销售业财过账 Provider（注册为 Bean 后由 ErpFinAcctDocRegistry 自动聚合，处理 AR_INVOICE/RECEIPT） -->
     <bean id="app.erp.sal.service.posting.SalAcctDocProvider"
           class="app.erp.sal.service.posting.SalAcctDocProvider"/>
@@ -36,7 +44,15 @@
     <bean id="app.erp.sal.service.posting.SalReceiptPostingDispatcher"
           class="app.erp.sal.service.posting.SalReceiptPostingDispatcher"/>
 
+    <!-- 销售退货过账派发器（APPROVED→SALES_RETURN 反向 SALES_OUTPUT 凭证 借存货/贷成本；失败吞异常保持终态 posted=false） -->
+    <bean id="app.erp.sal.service.posting.SalReturnPostingDispatcher"
+          class="app.erp.sal.service.posting.SalReturnPostingDispatcher"/>
+
     <!-- 收款→发票域级核销器（ErpSalReceiptLine 多对多，回写 receivedStatus/receivedAmount/writtenOffStatus） -->
     <bean id="app.erp.sal.service.entity.ReceiptSettler"
           class="app.erp.sal.service.entity.ReceiptSettler"/>
+
+    <!-- 退货退款编排器（已收款退货→反向收款核销行 + 发票 receivedStatus 回写；复用 ReceiptSettler） -->
+    <bean id="app.erp.sal.service.entity.ReturnRefundOrchestrator"
+          class="app.erp.sal.service.entity.ReturnRefundOrchestrator"/>
 </beans>

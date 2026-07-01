@@ -40,4 +40,5 @@ public interface ErpFinConstants {
     String SOURCE_BILL_PAYMENT = "PAYMENT";
     String SOURCE_BILL_RECEIPT = "RECEIPT";
     String SOURCE_BILL_PUR_RETURN = "PUR_RETURN";
+    String SOURCE_BILL_SAL_RETURN = "SAL_RETURN";
 }

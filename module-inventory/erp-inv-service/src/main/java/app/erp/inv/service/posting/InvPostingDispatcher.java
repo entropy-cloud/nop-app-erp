@@ -47,8 +47,9 @@ public class InvPostingDispatcher {
 
     /**
      * DONE 后调用。入库→PURCHASE_INPUT、出库→SALES_OUTPUT；同法人内部调拨跳过。
-     * 采购退货（{@code relatedBillType=ERP_PUR_RETURN}）的存货估值过账由 purchase 域独占
-     * （PURCHASE_RETURN：借暂估应付/贷存货），故此处跳过，避免 SALES_OUTPUT（借成本/贷存货）与之双计存货贷方。
+     * 采购退货（{@code relatedBillType=ERP_PUR_RETURN}）/ 销售退货（{@code ERP_SAL_RETURN}）的存货估值过账
+     * 分别由 purchase/sales 域独占（PURCHASE_RETURN/SALES_RETURN：借暂估应付或成本/贷存货 与 借存货/贷成本），
+     * 故此处跳过，避免 SALES_OUTPUT/PURCHASE_INPUT（借成本或存货/贷存货或暂估应付）与之双计存货。
      * 成功置移动单 {@code posted=true}；失败吞异常保持 {@code posted=false}。
      */
     public void dispatchIfApplicable(ErpInvStockMove move, List<ErpInvStockMoveLine> lines) {
@@ -76,8 +77,9 @@ public class InvPostingDispatcher {
     }
 
     private ErpFinBusinessType resolveBusinessType(ErpInvStockMove move) {
-        // 采购退货出库移动：存货估值过账由 purchase 域 PURCHASE_RETURN 独占，inventory 跳过。
-        if (ErpInvConstants.RELATED_BILL_TYPE_PUR_RETURN.equals(move.getRelatedBillType())) {
+        // 采购退货出库移动 / 销售退货入库移动：存货估值过账由 purchase/sales 域独占，inventory 跳过。
+        if (ErpInvConstants.RELATED_BILL_TYPE_PUR_RETURN.equals(move.getRelatedBillType())
+                || ErpInvConstants.RELATED_BILL_TYPE_SAL_RETURN.equals(move.getRelatedBillType())) {
             return null;
         }
         Integer moveType = move.getMoveType();

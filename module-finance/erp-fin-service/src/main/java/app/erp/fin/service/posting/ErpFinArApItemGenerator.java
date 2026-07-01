@@ -135,6 +135,10 @@ public class ErpFinArApItemGenerator {
                 // 采购退货冲减应付：DIRECTION_PAYABLE 方向 + 负 openAmount（标准 AP 贷项 credit memo 语义），
                 // 使 PartnerBalanceUpdater.sumOpen 自然减计 payableBalance（无侵入，零改动 sumOpen/方向枚举）。
                 return new SourceProfile(ErpFinConstants.DIRECTION_PAYABLE, ErpFinConstants.SOURCE_BILL_PUR_RETURN);
+            case SALES_RETURN:
+                // 销售退货冲减应收：DIRECTION_RECEIVABLE 方向 + 负 openAmount（标准 AR 贷项 credit memo 语义），
+                // 使 PartnerBalanceUpdater.sumOpen 自然减计 receivableBalance（无侵入，零改动 sumOpen/方向枚举）。
+                return new SourceProfile(ErpFinConstants.DIRECTION_RECEIVABLE, ErpFinConstants.SOURCE_BILL_SAL_RETURN);
             default:
                 return null;
         }
@@ -182,6 +186,10 @@ public class ErpFinArApItemGenerator {
      *
      * <p>采购退货（PUR_RETURN）：取 TOTAL_AMOUNT（不含税，对齐未开票暂估应付冲减口径），**取负**
      * （AP 贷项 credit memo，使 sumOpen 减计应付余额）。进项税/含税属已开票红字发票 Non-Goal。
+     *
+     * <p>销售退货（SAL_RETURN）：取 TOTAL_AMOUNT_WITH_TAX（退货含税售价，credit memo 口径），**取负**
+     * （AR 贷项 credit memo，使 sumOpen 减计应收余额）。退货凭证只冲成本/存货（SALES_OUTPUT 反向），
+     * 收入/应收 GL 红字冲销属 credit-note Non-Goal；应收余额回减经此辅助账层完成。
      */
     protected BigDecimal resolveAmountFunctional(Map<String, Object> data, String sourceBillType) {
         if (ErpFinConstants.SOURCE_BILL_AP_INVOICE.equals(sourceBillType)
@@ -199,6 +207,15 @@ public class ErpFinArApItemGenerator {
                 return returnAmount.negate();
             }
             return amount != null ? amount.negate() : null;
+        }
+        if (ErpFinConstants.SOURCE_BILL_SAL_RETURN.equals(sourceBillType)) {
+            // 销售退货冲减：TOTAL_AMOUNT_WITH_TAX（含税售价）正值取负；回退 TOTAL_AMOUNT → AMOUNT。
+            BigDecimal returnAmount = asAmount(data.get("TOTAL_AMOUNT_WITH_TAX"),
+                    asAmount(data.get("TOTAL_AMOUNT"), amount));
+            if (returnAmount != null) {
+                return returnAmount.negate();
+            }
+            return null;
         }
         return amount;
     }

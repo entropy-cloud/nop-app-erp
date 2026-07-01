@@ -20,7 +20,8 @@ public interface ErpInvConstants {
 
     int COST_METHOD_MOVING_AVERAGE = 10;
 
-    // 业务联动源单类型（自由字符串）。采购退货出库移动的存货估值过账由 purchase 域独占（PURCHASE_RETURN），
-    // 故 inventory 域对此类联动移动跳过默认估值过账，避免与 purchase 域 PURCHASE_RETURN 凭证双计存货贷方。
+    // 业务联动源单类型（自由字符串）。采购退货出库移动 / 销售退货入库移动的存货估值过账分别由 purchase/sales 域独占
+    // （PURCHASE_RETURN/SALES_RETURN），故 inventory 域对此类联动移动跳过默认估值过账，避免与之双计存货。
     String RELATED_BILL_TYPE_PUR_RETURN = "ERP_PUR_RETURN";
+    String RELATED_BILL_TYPE_SAL_RETURN = "ERP_SAL_RETURN";
 }

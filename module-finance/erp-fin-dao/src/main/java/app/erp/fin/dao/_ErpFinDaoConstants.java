@@ -139,6 +139,11 @@ public interface _ErpFinDaoConstants {
     int BUSINESS_TYPE_PURCHASE_RETURN = 140;
                     
     /**
+     * 业务类型: 销售退货冲减 
+     */
+    int BUSINESS_TYPE_SALES_RETURN = 150;
+                    
+    /**
      * 期间状态: 开启 
      */
     int PERIOD_STATUS_OPEN = 10;

@@ -23,7 +23,8 @@ public enum ErpFinBusinessType {
     PROJECT_COST_COLLECTION(110),
     PERIOD_CLOSE(120),
     EXCHANGE_GAIN_LOSS(130),
-    PURCHASE_RETURN(140);
+    PURCHASE_RETURN(140),
+    SALES_RETURN(150);
 
     private final int code;
 
