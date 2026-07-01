@@ -7,4 +7,8 @@
     <import resource="_dao.beans.xml"/>
 
     <import resource="_service.beans.xml"/>
+
+    <!-- 销售域服务（非 BizModel）：出库移动单请求构造器 -->
+    <bean id="app.erp.sal.service.entity.DeliveryStockMoveBuilder"
+          class="app.erp.sal.service.entity.DeliveryStockMoveBuilder"/>
 </beans>

@@ -29,10 +29,44 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        <!-- test-only: 引入 master-data 以注册跨域业务对象(ErpMdPartner/ErpMdCurrency 等)，
+        <!-- compile: 出库审核触发库存移动跨域契约（IErpInvStockMoveBiz + StockMoveRequest DTO 位于 inventory dao）。
+             inventory→finance 单向、sales→inventory 单向，DAG 无环。 -->
+        <dependency>
+            <artifactId>app-erp-inventory-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!-- compile: 客户启用状态校验引用 ErpMdPartner（机制 B notGenCode，实体类不在 sales dao 生成，须 compile 依赖 master-data dao）。 -->
+        <dependency>
+            <artifactId>app-erp-master-data-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!-- test-only: generateMove Bean 实现使测试可注入运行（app-erp-all 聚合时由 app 层提供）。 -->
+        <dependency>
+            <artifactId>app-erp-inventory-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- test-only: 引入 master-data 注册跨域业务对象(ErpMdPartner/ErpMdCurrency 等)及 BizModel Bean，
              使单域 GraphQL save 的跨域引用校验(validateRefValue)可在 H2 内存库中通过 -->
         <dependency>
             <artifactId>app-erp-master-data-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- test-only: finance 过账引擎 ORM 模型声明对 assets/projects 实体的关系引用，
+             须在测试 classpath 提供这些 DAO 实体类（与 inventory-service 自身测试依赖一致） -->
+        <dependency>
+            <artifactId>app-erp-projects-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <artifactId>app-erp-assets-dao</artifactId>
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
             <scope>test</scope>
