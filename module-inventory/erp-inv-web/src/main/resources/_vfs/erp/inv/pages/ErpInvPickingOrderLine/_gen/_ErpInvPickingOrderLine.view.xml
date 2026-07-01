@@ -40,10 +40,10 @@
                 <col id="sourceLocationId" ui:number="true" sortable="true"/>
 
                 <!--应拣数量-->
-                <col id="quantity" mandatory="true" sortable="true"/>
+                <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--已拣数量-->
-                <col id="pickedQuantity" sortable="true"/>
+                <col id="pickedQuantity" ui:number="true" sortable="true"/>
 
                 <!--批号-->
                 <col id="batchNo" sortable="true"/>

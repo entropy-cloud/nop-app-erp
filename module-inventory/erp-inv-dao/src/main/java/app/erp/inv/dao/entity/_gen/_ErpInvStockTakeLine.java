@@ -216,19 +216,19 @@ public class _ErpInvStockTakeLine extends DynamicOrmEntity{
     private java.lang.String _batchNo;
     
     /* 账面数量: BOOK_QUANTITY */
-    private java.lang.String _bookQuantity;
+    private java.math.BigDecimal _bookQuantity;
     
     /* 实盘数量: ACTUAL_QUANTITY */
-    private java.lang.String _actualQuantity;
+    private java.math.BigDecimal _actualQuantity;
     
     /* 差异数量: DIFFERENCE_QUANTITY */
-    private java.lang.String _differenceQuantity;
+    private java.math.BigDecimal _differenceQuantity;
     
     /* 单位成本: UNIT_COST */
-    private java.lang.String _unitCost;
+    private java.math.BigDecimal _unitCost;
     
     /* 差异金额: DIFFERENCE_AMOUNT */
-    private java.lang.String _differenceAmount;
+    private java.math.BigDecimal _differenceAmount;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -477,9 +477,9 @@ public class _ErpInvStockTakeLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_bookQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_bookQuantity));
                }
                setBookQuantity(typedValue);
@@ -487,9 +487,9 @@ public class _ErpInvStockTakeLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_actualQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_actualQuantity));
                }
                setActualQuantity(typedValue);
@@ -497,9 +497,9 @@ public class _ErpInvStockTakeLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_differenceQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_differenceQuantity));
                }
                setDifferenceQuantity(typedValue);
@@ -507,9 +507,9 @@ public class _ErpInvStockTakeLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_unitCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_unitCost));
                }
                setUnitCost(typedValue);
@@ -517,9 +517,9 @@ public class _ErpInvStockTakeLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_differenceAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_differenceAmount));
                }
                setDifferenceAmount(typedValue);
@@ -663,35 +663,35 @@ public class _ErpInvStockTakeLine extends DynamicOrmEntity{
         
             case PROP_ID_bookQuantity:{
                onInitProp(propId);
-               this._bookQuantity = (java.lang.String)value;
+               this._bookQuantity = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_actualQuantity:{
                onInitProp(propId);
-               this._actualQuantity = (java.lang.String)value;
+               this._actualQuantity = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_differenceQuantity:{
                onInitProp(propId);
-               this._differenceQuantity = (java.lang.String)value;
+               this._differenceQuantity = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_unitCost:{
                onInitProp(propId);
-               this._unitCost = (java.lang.String)value;
+               this._unitCost = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_differenceAmount:{
                onInitProp(propId);
-               this._differenceAmount = (java.lang.String)value;
+               this._differenceAmount = (java.math.BigDecimal)value;
                
                break;
             }
@@ -906,7 +906,7 @@ public class _ErpInvStockTakeLine extends DynamicOrmEntity{
     /**
      * 账面数量: BOOK_QUANTITY
      */
-    public final java.lang.String getBookQuantity(){
+    public final java.math.BigDecimal getBookQuantity(){
          onPropGet(PROP_ID_bookQuantity);
          return _bookQuantity;
     }
@@ -914,7 +914,7 @@ public class _ErpInvStockTakeLine extends DynamicOrmEntity{
     /**
      * 账面数量: BOOK_QUANTITY
      */
-    public final void setBookQuantity(java.lang.String value){
+    public final void setBookQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_bookQuantity,value)){
             this._bookQuantity = value;
             internalClearRefs(PROP_ID_bookQuantity);
@@ -925,7 +925,7 @@ public class _ErpInvStockTakeLine extends DynamicOrmEntity{
     /**
      * 实盘数量: ACTUAL_QUANTITY
      */
-    public final java.lang.String getActualQuantity(){
+    public final java.math.BigDecimal getActualQuantity(){
          onPropGet(PROP_ID_actualQuantity);
          return _actualQuantity;
     }
@@ -933,7 +933,7 @@ public class _ErpInvStockTakeLine extends DynamicOrmEntity{
     /**
      * 实盘数量: ACTUAL_QUANTITY
      */
-    public final void setActualQuantity(java.lang.String value){
+    public final void setActualQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_actualQuantity,value)){
             this._actualQuantity = value;
             internalClearRefs(PROP_ID_actualQuantity);
@@ -944,7 +944,7 @@ public class _ErpInvStockTakeLine extends DynamicOrmEntity{
     /**
      * 差异数量: DIFFERENCE_QUANTITY
      */
-    public final java.lang.String getDifferenceQuantity(){
+    public final java.math.BigDecimal getDifferenceQuantity(){
          onPropGet(PROP_ID_differenceQuantity);
          return _differenceQuantity;
     }
@@ -952,7 +952,7 @@ public class _ErpInvStockTakeLine extends DynamicOrmEntity{
     /**
      * 差异数量: DIFFERENCE_QUANTITY
      */
-    public final void setDifferenceQuantity(java.lang.String value){
+    public final void setDifferenceQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_differenceQuantity,value)){
             this._differenceQuantity = value;
             internalClearRefs(PROP_ID_differenceQuantity);
@@ -963,7 +963,7 @@ public class _ErpInvStockTakeLine extends DynamicOrmEntity{
     /**
      * 单位成本: UNIT_COST
      */
-    public final java.lang.String getUnitCost(){
+    public final java.math.BigDecimal getUnitCost(){
          onPropGet(PROP_ID_unitCost);
          return _unitCost;
     }
@@ -971,7 +971,7 @@ public class _ErpInvStockTakeLine extends DynamicOrmEntity{
     /**
      * 单位成本: UNIT_COST
      */
-    public final void setUnitCost(java.lang.String value){
+    public final void setUnitCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_unitCost,value)){
             this._unitCost = value;
             internalClearRefs(PROP_ID_unitCost);
@@ -982,7 +982,7 @@ public class _ErpInvStockTakeLine extends DynamicOrmEntity{
     /**
      * 差异金额: DIFFERENCE_AMOUNT
      */
-    public final java.lang.String getDifferenceAmount(){
+    public final java.math.BigDecimal getDifferenceAmount(){
          onPropGet(PROP_ID_differenceAmount);
          return _differenceAmount;
     }
@@ -990,7 +990,7 @@ public class _ErpInvStockTakeLine extends DynamicOrmEntity{
     /**
      * 差异金额: DIFFERENCE_AMOUNT
      */
-    public final void setDifferenceAmount(java.lang.String value){
+    public final void setDifferenceAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_differenceAmount,value)){
             this._differenceAmount = value;
             internalClearRefs(PROP_ID_differenceAmount);

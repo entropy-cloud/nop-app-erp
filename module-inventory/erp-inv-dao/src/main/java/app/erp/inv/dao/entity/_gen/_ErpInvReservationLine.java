@@ -205,10 +205,10 @@ public class _ErpInvReservationLine extends DynamicOrmEntity{
     private java.lang.String _batchNo;
     
     /* 预留数量: RESERVED_QUANTITY */
-    private java.lang.String _reservedQuantity;
+    private java.math.BigDecimal _reservedQuantity;
     
     /* 已消耗数量: CONSUMED_QUANTITY */
-    private java.lang.String _consumedQuantity;
+    private java.math.BigDecimal _consumedQuantity;
     
     /* 计量单位: UOM_ID */
     private java.lang.Long _uomId;
@@ -454,9 +454,9 @@ public class _ErpInvReservationLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_reservedQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_reservedQuantity));
                }
                setReservedQuantity(typedValue);
@@ -464,9 +464,9 @@ public class _ErpInvReservationLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_consumedQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_consumedQuantity));
                }
                setConsumedQuantity(typedValue);
@@ -620,14 +620,14 @@ public class _ErpInvReservationLine extends DynamicOrmEntity{
         
             case PROP_ID_reservedQuantity:{
                onInitProp(propId);
-               this._reservedQuantity = (java.lang.String)value;
+               this._reservedQuantity = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_consumedQuantity:{
                onInitProp(propId);
-               this._consumedQuantity = (java.lang.String)value;
+               this._consumedQuantity = (java.math.BigDecimal)value;
                
                break;
             }
@@ -849,7 +849,7 @@ public class _ErpInvReservationLine extends DynamicOrmEntity{
     /**
      * 预留数量: RESERVED_QUANTITY
      */
-    public final java.lang.String getReservedQuantity(){
+    public final java.math.BigDecimal getReservedQuantity(){
          onPropGet(PROP_ID_reservedQuantity);
          return _reservedQuantity;
     }
@@ -857,7 +857,7 @@ public class _ErpInvReservationLine extends DynamicOrmEntity{
     /**
      * 预留数量: RESERVED_QUANTITY
      */
-    public final void setReservedQuantity(java.lang.String value){
+    public final void setReservedQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_reservedQuantity,value)){
             this._reservedQuantity = value;
             internalClearRefs(PROP_ID_reservedQuantity);
@@ -868,7 +868,7 @@ public class _ErpInvReservationLine extends DynamicOrmEntity{
     /**
      * 已消耗数量: CONSUMED_QUANTITY
      */
-    public final java.lang.String getConsumedQuantity(){
+    public final java.math.BigDecimal getConsumedQuantity(){
          onPropGet(PROP_ID_consumedQuantity);
          return _consumedQuantity;
     }
@@ -876,7 +876,7 @@ public class _ErpInvReservationLine extends DynamicOrmEntity{
     /**
      * 已消耗数量: CONSUMED_QUANTITY
      */
-    public final void setConsumedQuantity(java.lang.String value){
+    public final void setConsumedQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_consumedQuantity,value)){
             this._consumedQuantity = value;
             internalClearRefs(PROP_ID_consumedQuantity);

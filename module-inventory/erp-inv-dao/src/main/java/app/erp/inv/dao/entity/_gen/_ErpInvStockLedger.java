@@ -273,19 +273,19 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     private java.lang.Long _locationId;
     
     /* 数量: QUANTITY */
-    private java.lang.String _quantity;
+    private java.math.BigDecimal _quantity;
     
     /* 单位成本: UNIT_COST */
-    private java.lang.String _unitCost;
+    private java.math.BigDecimal _unitCost;
     
     /* 总成本: TOTAL_COST */
-    private java.lang.String _totalCost;
+    private java.math.BigDecimal _totalCost;
     
     /* 结存数量: BALANCE_QUANTITY */
-    private java.lang.String _balanceQuantity;
+    private java.math.BigDecimal _balanceQuantity;
     
     /* 结存总成本: BALANCE_TOTAL_COST */
-    private java.lang.String _balanceTotalCost;
+    private java.math.BigDecimal _balanceTotalCost;
     
     /* 计价方法: COST_METHOD */
     private java.lang.Integer _costMethod;
@@ -577,9 +577,9 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
             }
         
             case PROP_ID_quantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_quantity));
                }
                setQuantity(typedValue);
@@ -587,9 +587,9 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
             }
         
             case PROP_ID_unitCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_unitCost));
                }
                setUnitCost(typedValue);
@@ -597,9 +597,9 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
             }
         
             case PROP_ID_totalCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_totalCost));
                }
                setTotalCost(typedValue);
@@ -607,9 +607,9 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
             }
         
             case PROP_ID_balanceQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_balanceQuantity));
                }
                setBalanceQuantity(typedValue);
@@ -617,9 +617,9 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
             }
         
             case PROP_ID_balanceTotalCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_balanceTotalCost));
                }
                setBalanceTotalCost(typedValue);
@@ -820,35 +820,35 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
         
             case PROP_ID_quantity:{
                onInitProp(propId);
-               this._quantity = (java.lang.String)value;
+               this._quantity = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_unitCost:{
                onInitProp(propId);
-               this._unitCost = (java.lang.String)value;
+               this._unitCost = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_totalCost:{
                onInitProp(propId);
-               this._totalCost = (java.lang.String)value;
+               this._totalCost = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_balanceQuantity:{
                onInitProp(propId);
-               this._balanceQuantity = (java.lang.String)value;
+               this._balanceQuantity = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_balanceTotalCost:{
                onInitProp(propId);
-               this._balanceTotalCost = (java.lang.String)value;
+               this._balanceTotalCost = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1117,7 +1117,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 数量: QUANTITY
      */
-    public final java.lang.String getQuantity(){
+    public final java.math.BigDecimal getQuantity(){
          onPropGet(PROP_ID_quantity);
          return _quantity;
     }
@@ -1125,7 +1125,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 数量: QUANTITY
      */
-    public final void setQuantity(java.lang.String value){
+    public final void setQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_quantity,value)){
             this._quantity = value;
             internalClearRefs(PROP_ID_quantity);
@@ -1136,7 +1136,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 单位成本: UNIT_COST
      */
-    public final java.lang.String getUnitCost(){
+    public final java.math.BigDecimal getUnitCost(){
          onPropGet(PROP_ID_unitCost);
          return _unitCost;
     }
@@ -1144,7 +1144,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 单位成本: UNIT_COST
      */
-    public final void setUnitCost(java.lang.String value){
+    public final void setUnitCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_unitCost,value)){
             this._unitCost = value;
             internalClearRefs(PROP_ID_unitCost);
@@ -1155,7 +1155,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 总成本: TOTAL_COST
      */
-    public final java.lang.String getTotalCost(){
+    public final java.math.BigDecimal getTotalCost(){
          onPropGet(PROP_ID_totalCost);
          return _totalCost;
     }
@@ -1163,7 +1163,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 总成本: TOTAL_COST
      */
-    public final void setTotalCost(java.lang.String value){
+    public final void setTotalCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_totalCost,value)){
             this._totalCost = value;
             internalClearRefs(PROP_ID_totalCost);
@@ -1174,7 +1174,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 结存数量: BALANCE_QUANTITY
      */
-    public final java.lang.String getBalanceQuantity(){
+    public final java.math.BigDecimal getBalanceQuantity(){
          onPropGet(PROP_ID_balanceQuantity);
          return _balanceQuantity;
     }
@@ -1182,7 +1182,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 结存数量: BALANCE_QUANTITY
      */
-    public final void setBalanceQuantity(java.lang.String value){
+    public final void setBalanceQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_balanceQuantity,value)){
             this._balanceQuantity = value;
             internalClearRefs(PROP_ID_balanceQuantity);
@@ -1193,7 +1193,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 结存总成本: BALANCE_TOTAL_COST
      */
-    public final java.lang.String getBalanceTotalCost(){
+    public final java.math.BigDecimal getBalanceTotalCost(){
          onPropGet(PROP_ID_balanceTotalCost);
          return _balanceTotalCost;
     }
@@ -1201,7 +1201,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 结存总成本: BALANCE_TOTAL_COST
      */
-    public final void setBalanceTotalCost(java.lang.String value){
+    public final void setBalanceTotalCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_balanceTotalCost,value)){
             this._balanceTotalCost = value;
             internalClearRefs(PROP_ID_balanceTotalCost);

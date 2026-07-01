@@ -94,7 +94,7 @@ public class InvPostingDispatcher {
         Long acctSchemaId = null;
         Long currencyId = null;
         for (ErpInvStockLedger ledger : ledgers) {
-            BigDecimal lineCost = parse(ledger.getTotalCost());
+            BigDecimal lineCost = ledger.getTotalCost() != null ? ledger.getTotalCost() : BigDecimal.ZERO;
             totalCost = totalCost.add(lineCost.abs());
             if (acctSchemaId == null) {
                 acctSchemaId = ledger.getAcctSchemaId();
@@ -135,12 +135,5 @@ public class InvPostingDispatcher {
         QueryBean q = new QueryBean();
         q.addFilter(eq("moveId", moveId));
         return dao.findAllByQuery(q);
-    }
-
-    private static BigDecimal parse(String text) {
-        if (text == null || text.isEmpty()) {
-            return BigDecimal.ZERO;
-        }
-        return new BigDecimal(text.trim());
     }
 }

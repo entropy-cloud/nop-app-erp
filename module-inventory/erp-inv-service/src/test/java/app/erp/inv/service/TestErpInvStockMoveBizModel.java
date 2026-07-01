@@ -15,6 +15,8 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -37,6 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvStockMoveBizModel extends JunitAutoTestCase {
+    private static final IServiceContext CTX = new ServiceContextImpl();
+
 
     static final Long ORG_ID = 1001L;
     static final Long MATERIAL_ID = 2001L;
@@ -76,7 +80,7 @@ public class TestErpInvStockMoveBizModel extends JunitAutoTestCase {
     @Test
     public void testManualMoveStopsAtConfirmed() {
         StockMoveRequest request = incomingRequest(null, null, new BigDecimal("10"));
-        ErpInvStockMove move = stockMoveBiz.generateMove(request);
+        ErpInvStockMove move = stockMoveBiz.generateMove(request, CTX);
 
         assertEquals(ErpInvConstants.DOC_STATUS_CONFIRMED, move.getDocStatus(),
                 "独立移动单（无源单）应停在 CONFIRMED");
@@ -87,7 +91,7 @@ public class TestErpInvStockMoveBizModel extends JunitAutoTestCase {
         ErpInvStockMove done = generateIncoming("PUR_RECEIPT", "PR-ILL-001", new BigDecimal("10"));
         assertEquals(ErpInvConstants.DOC_STATUS_DONE, done.getDocStatus());
 
-        assertThrows(NopException.class, () -> stockMoveBiz.confirm(done.getId()),
+        assertThrows(NopException.class, () -> stockMoveBiz.confirm(done.getId(), CTX),
                 "DONE→CONFIRMED 非法迁移应抛 NopException");
     }
 
@@ -98,20 +102,20 @@ public class TestErpInvStockMoveBizModel extends JunitAutoTestCase {
 
         // 独立出库单（无源单）停在 CONFIRMED：校验可用量（10≥5）通过，占预留 5
         StockMoveRequest manualOut = outgoingRequest(null, null, new BigDecimal("5"));
-        ErpInvStockMove manual = stockMoveBiz.generateMove(manualOut);
+        ErpInvStockMove manual = stockMoveBiz.generateMove(manualOut, CTX);
         assertEquals(ErpInvConstants.DOC_STATUS_CONFIRMED, manual.getDocStatus());
 
         ErpInvStockBalance reserved = findBalance();
-        assertEquals(0, new BigDecimal(reserved.getReservedQuantity()).compareTo(new BigDecimal("5")),
+        assertEquals(0, reserved.getReservedQuantity().compareTo(new BigDecimal("5")),
                 "CONFIRMED 应占预留 5");
-        assertEquals(0, new BigDecimal(reserved.getAvailableQuantity()).compareTo(new BigDecimal("5")),
+        assertEquals(0, reserved.getAvailableQuantity().compareTo(new BigDecimal("5")),
                 "可用量 = total(10) - reserved(5) - locked(0) = 5");
 
-        stockMoveBiz.cancel(manual.getId());
+        stockMoveBiz.cancel(manual.getId(), CTX);
         ErpInvStockBalance released = findBalance();
-        assertEquals(0, new BigDecimal(released.getReservedQuantity()).compareTo(BigDecimal.ZERO),
+        assertEquals(0, released.getReservedQuantity().compareTo(BigDecimal.ZERO),
                 "CANCELLED 应释放预留");
-        assertEquals(0, new BigDecimal(released.getAvailableQuantity()).compareTo(new BigDecimal("10")),
+        assertEquals(0, released.getAvailableQuantity().compareTo(new BigDecimal("10")),
                 "释放后可用量恢复为 total(10)");
     }
 
@@ -120,7 +124,7 @@ public class TestErpInvStockMoveBizModel extends JunitAutoTestCase {
         ErpInvStockMove original = generateIncoming("PUR_RECEIPT", "PR-REV-001", new BigDecimal("12"));
         assertEquals(ErpInvConstants.DOC_STATUS_DONE, original.getDocStatus());
 
-        ErpInvStockMove reversal = stockMoveBiz.reverse(original.getId());
+        ErpInvStockMove reversal = stockMoveBiz.reverse(original.getId(), CTX);
         assertNotNull(reversal.getId(), "冲销应生成新移动单");
         assertNotEquals(original.getId(), reversal.getId(), "冲销单是新单，非原单");
         assertEquals(ErpInvConstants.DOC_STATUS_DONE, reversal.getDocStatus(), "冲销单自动推进到 DONE");
@@ -132,7 +136,7 @@ public class TestErpInvStockMoveBizModel extends JunitAutoTestCase {
     // ---------- helpers ----------
 
     private ErpInvStockMove generateIncoming(String billType, String billCode, BigDecimal qty) {
-        return stockMoveBiz.generateMove(incomingRequest(billType, billCode, qty));
+        return stockMoveBiz.generateMove(incomingRequest(billType, billCode, qty), CTX);
     }
 
     private StockMoveRequest incomingRequest(String billType, String billCode, BigDecimal qty) {

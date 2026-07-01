@@ -49,19 +49,19 @@
         </prop>
         <prop name="totalQuantity" displayName="总数量" propId="8" i18n-en:displayName="Total Quantity" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="reservedQuantity" displayName="预留数量" propId="9" i18n-en:displayName="Reserved Quantity"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="lockedQuantity" displayName="冻结数量" propId="10" i18n-en:displayName="Locked Quantity"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="availableQuantity" displayName="可用数量" propId="11" i18n-en:displayName="Available Quantity"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="costMethod" displayName="计价方法" propId="12" i18n-en:displayName="Cost Method" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -69,11 +69,11 @@
         </prop>
         <prop name="avgCost" displayName="平均成本" propId="13" i18n-en:displayName="Avg Cost" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="unitPrice" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="unitPrice" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="totalCost" displayName="总成本" propId="14" i18n-en:displayName="Total Cost" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="currencyId" displayName="币种" propId="15" i18n-en:displayName="Currency" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="currency">

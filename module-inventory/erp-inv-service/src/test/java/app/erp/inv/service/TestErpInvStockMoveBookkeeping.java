@@ -16,6 +16,8 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -36,6 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
+    private static final IServiceContext CTX = new ServiceContextImpl();
+
 
     static final Long ORG_ID = 1001L;
     static final Long MATERIAL_ID = 2002L;
@@ -59,17 +63,17 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
         List<ErpInvStockLedger> ledgers = findLedgers(move.getId());
         assertEquals(1, ledgers.size(), "应写 1 条不可变流水");
         ErpInvStockLedger ledger = ledgers.get(0);
-        assertEquals(0, new BigDecimal(ledger.getQuantity()).compareTo(new BigDecimal("10")), "入库 quantity 为正 10");
-        assertEquals(0, new BigDecimal(ledger.getUnitCost()).compareTo(new BigDecimal("5")), "单位成本 5");
-        assertEquals(0, new BigDecimal(ledger.getTotalCost()).compareTo(new BigDecimal("50")), "总成本 50");
-        assertEquals(0, new BigDecimal(ledger.getBalanceQuantity()).compareTo(new BigDecimal("10")),
+        assertEquals(0, ledger.getQuantity().compareTo(new BigDecimal("10")), "入库 quantity 为正 10");
+        assertEquals(0, ledger.getUnitCost().compareTo(new BigDecimal("5")), "单位成本 5");
+        assertEquals(0, ledger.getTotalCost().compareTo(new BigDecimal("50")), "总成本 50");
+        assertEquals(0, ledger.getBalanceQuantity().compareTo(new BigDecimal("10")),
                 "结存快照 balanceQuantity=10");
-        assertEquals(0, new BigDecimal(ledger.getBalanceTotalCost()).compareTo(new BigDecimal("50")),
+        assertEquals(0, ledger.getBalanceTotalCost().compareTo(new BigDecimal("50")),
                 "结存快照 balanceTotalCost=50");
         assertNotEquals(null, ledger.getCode(), "流水号非空");
 
         // 不可变：状态机禁止 DONE 后再 complete，故不会产生第二条流水
-        assertThrows(NopException.class, () -> stockMoveBiz.complete(move.getId()));
+        assertThrows(NopException.class, () -> stockMoveBiz.complete(move.getId(), CTX));
         assertEquals(1, findLedgers(move.getId()).size(), "DONE 后不可再写流水");
     }
 
@@ -77,16 +81,16 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
     public void testIncomingUpdatesBalanceAvgCost() {
         generateIncoming("PR-AVG-001", new BigDecimal("10"), new BigDecimal("6"));
         ErpInvStockBalance balance = findBalance();
-        assertEquals(0, new BigDecimal(balance.getTotalQuantity()).compareTo(new BigDecimal("10")), "totalQty=10");
-        assertEquals(0, new BigDecimal(balance.getAvgCost()).compareTo(new BigDecimal("6")), "avgCost=6");
-        assertEquals(0, new BigDecimal(balance.getTotalCost()).compareTo(new BigDecimal("60")), "totalCost=60");
+        assertEquals(0, balance.getTotalQuantity().compareTo(new BigDecimal("10")), "totalQty=10");
+        assertEquals(0, balance.getAvgCost().compareTo(new BigDecimal("6")), "avgCost=6");
+        assertEquals(0, balance.getTotalCost().compareTo(new BigDecimal("60")), "totalCost=60");
 
         // 第二次入库不同单价 → 移动加权平均
         generateIncoming("PR-AVG-002", new BigDecimal("10"), new BigDecimal("8"));
         ErpInvStockBalance updated = findBalance();
-        assertEquals(0, new BigDecimal(updated.getTotalQuantity()).compareTo(new BigDecimal("20")), "totalQty=20");
-        assertEquals(0, new BigDecimal(updated.getAvgCost()).compareTo(new BigDecimal("7")), "avgCost=(60+80)/20=7");
-        assertEquals(0, new BigDecimal(updated.getTotalCost()).compareTo(new BigDecimal("140")), "totalCost=140");
+        assertEquals(0, updated.getTotalQuantity().compareTo(new BigDecimal("20")), "totalQty=20");
+        assertEquals(0, updated.getAvgCost().compareTo(new BigDecimal("7")), "avgCost=(60+80)/20=7");
+        assertEquals(0, updated.getTotalCost().compareTo(new BigDecimal("140")), "totalCost=140");
     }
 
     @Test
@@ -97,17 +101,17 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
         generateOutgoing("SS-OUT-001", new BigDecimal("8"));
 
         ErpInvStockBalance balance = findBalance();
-        assertEquals(0, new BigDecimal(balance.getTotalQuantity()).compareTo(new BigDecimal("12")), "totalQty=20-8=12");
-        assertEquals(0, new BigDecimal(balance.getAvgCost()).compareTo(new BigDecimal("10")), "avgCost 不变 10");
-        assertEquals(0, new BigDecimal(balance.getTotalCost()).compareTo(new BigDecimal("120")), "totalCost=12*10=120");
+        assertEquals(0, balance.getTotalQuantity().compareTo(new BigDecimal("12")), "totalQty=20-8=12");
+        assertEquals(0, balance.getAvgCost().compareTo(new BigDecimal("10")), "avgCost 不变 10");
+        assertEquals(0, balance.getTotalCost().compareTo(new BigDecimal("120")), "totalCost=12*10=120");
 
         List<ErpInvStockLedger> outLedgers = daoProvider.daoFor(ErpInvStockLedger.class).findAllByQuery(
                 new QueryBean());
         ErpInvStockLedger outLedger = outLedgers.stream()
-                .filter(l -> new BigDecimal(l.getQuantity()).signum() < 0).findFirst().orElseThrow();
-        assertEquals(0, new BigDecimal(outLedger.getUnitCost()).compareTo(new BigDecimal("10")),
+                .filter(l -> l.getQuantity().signum() < 0).findFirst().orElseThrow();
+        assertEquals(0, outLedger.getUnitCost().compareTo(new BigDecimal("10")),
                 "出库流水 unitCost 快照=当前 avgCost 10");
-        assertEquals(0, new BigDecimal(outLedger.getQuantity()).compareTo(new BigDecimal("-8")), "出库 quantity 负 -8");
+        assertEquals(0, outLedger.getQuantity().compareTo(new BigDecimal("-8")), "出库 quantity 负 -8");
     }
 
     @Test
@@ -125,7 +129,7 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
 
         ErpInvStockBalance balance = findBalance();
         assertTrue(balance == null
-                        || new BigDecimal(balance.getReservedQuantity()).compareTo(BigDecimal.ZERO) == 0,
+                        || balance.getReservedQuantity().compareTo(BigDecimal.ZERO) == 0,
                 "拒绝不应增加预留量");
     }
 
@@ -138,7 +142,7 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
             assertEquals(ErpInvConstants.DOC_STATUS_DONE, move.getDocStatus(), "负库存放行应完成");
 
             ErpInvStockBalance balance = findBalance();
-            assertEquals(0, new BigDecimal(balance.getTotalQuantity()).compareTo(new BigDecimal("-5")),
+            assertEquals(0, balance.getTotalQuantity().compareTo(new BigDecimal("-5")),
                     "totalQty 允许为负 -5");
         } finally {
             setNegativeStock(false);
@@ -159,7 +163,7 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
         request.setRelatedBillType("PUR_RECEIPT");
         request.setRelatedBillCode(billCode);
         request.setLines(Collections.singletonList(line(qty, unitCost)));
-        return stockMoveBiz.generateMove(request);
+        return stockMoveBiz.generateMove(request, CTX);
     }
 
     private ErpInvStockMove generateOutgoing(String billCode, BigDecimal qty) {
@@ -174,7 +178,7 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
         request.setRelatedBillType("SALES_SHIP");
         request.setRelatedBillCode(billCode);
         request.setLines(Collections.singletonList(line(qty, null)));
-        return stockMoveBiz.generateMove(request);
+        return stockMoveBiz.generateMove(request, CTX);
     }
 
     private StockMoveLineRequest line(BigDecimal qty, BigDecimal unitCost) {

@@ -125,30 +125,30 @@
         }
 
 
-        private String _reservedQuantity;
+        private java.math.BigDecimal _reservedQuantity;
 
     
         @PropMeta(propId=9)
     
-        public String getReservedQuantity(){
+        public java.math.BigDecimal getReservedQuantity(){
             return _reservedQuantity;
         }
 
-        public void setReservedQuantity(String value){
+        public void setReservedQuantity(java.math.BigDecimal value){
             this._reservedQuantity = value;
         }
 
 
-        private String _consumedQuantity;
+        private java.math.BigDecimal _consumedQuantity;
 
     
         @PropMeta(propId=10)
     
-        public String getConsumedQuantity(){
+        public java.math.BigDecimal getConsumedQuantity(){
             return _consumedQuantity;
         }
 
-        public void setConsumedQuantity(String value){
+        public void setConsumedQuantity(java.math.BigDecimal value){
             this._consumedQuantity = value;
         }
 

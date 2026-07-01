@@ -97,30 +97,30 @@
         }
 
 
-        private String _totalQuantity;
+        private java.math.BigDecimal _totalQuantity;
 
     
         @PropMeta(propId=7)
     
-        public String getTotalQuantity(){
+        public java.math.BigDecimal getTotalQuantity(){
             return _totalQuantity;
         }
 
-        public void setTotalQuantity(String value){
+        public void setTotalQuantity(java.math.BigDecimal value){
             this._totalQuantity = value;
         }
 
 
-        private String _availableQuantity;
+        private java.math.BigDecimal _availableQuantity;
 
     
         @PropMeta(propId=8)
     
-        public String getAvailableQuantity(){
+        public java.math.BigDecimal getAvailableQuantity(){
             return _availableQuantity;
         }
 
-        public void setAvailableQuantity(String value){
+        public void setAvailableQuantity(java.math.BigDecimal value){
             this._availableQuantity = value;
         }
 

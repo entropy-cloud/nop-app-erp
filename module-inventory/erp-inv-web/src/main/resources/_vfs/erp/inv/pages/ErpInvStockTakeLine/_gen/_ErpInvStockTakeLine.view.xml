@@ -43,19 +43,19 @@
                 <col id="batchNo" sortable="true"/>
 
                 <!--账面数量-->
-                <col id="bookQuantity" mandatory="true" sortable="true"/>
+                <col id="bookQuantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--实盘数量-->
-                <col id="actualQuantity" mandatory="true" sortable="true"/>
+                <col id="actualQuantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--差异数量-->
-                <col id="differenceQuantity" mandatory="true" sortable="true"/>
+                <col id="differenceQuantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--单位成本-->
-                <col id="unitCost" sortable="true"/>
+                <col id="unitCost" ui:number="true" sortable="true"/>
 
                 <!--差异金额-->
-                <col id="differenceAmount" sortable="true"/>
+                <col id="differenceAmount" ui:number="true" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

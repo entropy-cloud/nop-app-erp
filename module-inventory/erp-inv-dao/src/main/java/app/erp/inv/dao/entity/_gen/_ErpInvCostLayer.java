@@ -226,16 +226,16 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     private java.lang.Integer _costMethod;
     
     /* 入库数量: INCOMING_QUANTITY */
-    private java.lang.String _incomingQuantity;
+    private java.math.BigDecimal _incomingQuantity;
     
     /* 剩余数量: REMAINING_QUANTITY */
-    private java.lang.String _remainingQuantity;
+    private java.math.BigDecimal _remainingQuantity;
     
     /* 单位成本: UNIT_COST */
-    private java.lang.String _unitCost;
+    private java.math.BigDecimal _unitCost;
     
     /* 总成本: TOTAL_COST */
-    private java.lang.String _totalCost;
+    private java.math.BigDecimal _totalCost;
     
     /* 币种: CURRENCY_ID */
     private java.lang.Long _currencyId;
@@ -486,9 +486,9 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
             }
         
             case PROP_ID_incomingQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_incomingQuantity));
                }
                setIncomingQuantity(typedValue);
@@ -496,9 +496,9 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
             }
         
             case PROP_ID_remainingQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_remainingQuantity));
                }
                setRemainingQuantity(typedValue);
@@ -506,9 +506,9 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
             }
         
             case PROP_ID_unitCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_unitCost));
                }
                setUnitCost(typedValue);
@@ -516,9 +516,9 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
             }
         
             case PROP_ID_totalCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_totalCost));
                }
                setTotalCost(typedValue);
@@ -685,28 +685,28 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
         
             case PROP_ID_incomingQuantity:{
                onInitProp(propId);
-               this._incomingQuantity = (java.lang.String)value;
+               this._incomingQuantity = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_remainingQuantity:{
                onInitProp(propId);
-               this._remainingQuantity = (java.lang.String)value;
+               this._remainingQuantity = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_unitCost:{
                onInitProp(propId);
-               this._unitCost = (java.lang.String)value;
+               this._unitCost = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_totalCost:{
                onInitProp(propId);
-               this._totalCost = (java.lang.String)value;
+               this._totalCost = (java.math.BigDecimal)value;
                
                break;
             }
@@ -923,7 +923,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * 入库数量: INCOMING_QUANTITY
      */
-    public final java.lang.String getIncomingQuantity(){
+    public final java.math.BigDecimal getIncomingQuantity(){
          onPropGet(PROP_ID_incomingQuantity);
          return _incomingQuantity;
     }
@@ -931,7 +931,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * 入库数量: INCOMING_QUANTITY
      */
-    public final void setIncomingQuantity(java.lang.String value){
+    public final void setIncomingQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_incomingQuantity,value)){
             this._incomingQuantity = value;
             internalClearRefs(PROP_ID_incomingQuantity);
@@ -942,7 +942,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * 剩余数量: REMAINING_QUANTITY
      */
-    public final java.lang.String getRemainingQuantity(){
+    public final java.math.BigDecimal getRemainingQuantity(){
          onPropGet(PROP_ID_remainingQuantity);
          return _remainingQuantity;
     }
@@ -950,7 +950,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * 剩余数量: REMAINING_QUANTITY
      */
-    public final void setRemainingQuantity(java.lang.String value){
+    public final void setRemainingQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_remainingQuantity,value)){
             this._remainingQuantity = value;
             internalClearRefs(PROP_ID_remainingQuantity);
@@ -961,7 +961,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * 单位成本: UNIT_COST
      */
-    public final java.lang.String getUnitCost(){
+    public final java.math.BigDecimal getUnitCost(){
          onPropGet(PROP_ID_unitCost);
          return _unitCost;
     }
@@ -969,7 +969,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * 单位成本: UNIT_COST
      */
-    public final void setUnitCost(java.lang.String value){
+    public final void setUnitCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_unitCost,value)){
             this._unitCost = value;
             internalClearRefs(PROP_ID_unitCost);
@@ -980,7 +980,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * 总成本: TOTAL_COST
      */
-    public final java.lang.String getTotalCost(){
+    public final java.math.BigDecimal getTotalCost(){
          onPropGet(PROP_ID_totalCost);
          return _totalCost;
     }
@@ -988,7 +988,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * 总成本: TOTAL_COST
      */
-    public final void setTotalCost(java.lang.String value){
+    public final void setTotalCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_totalCost,value)){
             this._totalCost = value;
             internalClearRefs(PROP_ID_totalCost);

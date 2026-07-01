@@ -43,10 +43,10 @@
                 <col id="batchNo" sortable="true"/>
 
                 <!--预留数量-->
-                <col id="reservedQuantity" mandatory="true" sortable="true"/>
+                <col id="reservedQuantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--已消耗数量-->
-                <col id="consumedQuantity" sortable="true"/>
+                <col id="consumedQuantity" ui:number="true" sortable="true"/>
 
                 <!--计量单位-->
                 <col id="uomId" mandatory="true" ui:number="true" sortable="true"/>

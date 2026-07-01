@@ -9,19 +9,20 @@ import app.erp.inv.dao.entity.ErpInvStockMoveLine;
 import app.erp.inv.service.ErpInvConstants;
 import app.erp.inv.service.ErpInvErrors;
 import io.nop.api.core.annotations.biz.BizModel;
-import io.nop.api.core.annotations.orm.SingleSession;
-import io.nop.api.core.annotations.txn.Transactional;
+import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
+import io.nop.core.context.IServiceContext;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.commons.util.StringHelper;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import io.nop.api.core.annotations.core.Name;
+import io.nop.api.core.annotations.orm.SingleSession;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,10 +56,9 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
         setEntityName(ErpInvStockMove.class.getName());
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpInvStockMove generateMove(StockMoveRequest request) {
+    @BizMutation
+    public ErpInvStockMove generateMove(@Name("request") StockMoveRequest request, IServiceContext context) {
         if (request.isBusinessLinked()) {
             ErpInvStockMove existing = findExisting(request.getRelatedBillType(), request.getRelatedBillCode());
             if (existing != null) {
@@ -82,30 +82,27 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
         return move;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpInvStockMove confirm(Long moveId) {
+    @BizMutation
+    public ErpInvStockMove confirm(@Name("moveId") Long moveId, IServiceContext context) {
         ErpInvStockMove move = requireMove(moveId);
         List<ErpInvStockMoveLine> lines = loadLines(move.getId());
         doConfirm(move, lines);
         return move;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpInvStockMove complete(Long moveId) {
+    @BizMutation
+    public ErpInvStockMove complete(@Name("moveId") Long moveId, IServiceContext context) {
         ErpInvStockMove move = requireMove(moveId);
         List<ErpInvStockMoveLine> lines = loadLines(move.getId());
         doComplete(move, lines, null);
         return move;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpInvStockMove cancel(Long moveId) {
+    @BizMutation
+    public ErpInvStockMove cancel(@Name("moveId") Long moveId, IServiceContext context) {
         ErpInvStockMove move = requireMove(moveId);
         Integer status = move.getDocStatus();
         if (status == null
@@ -124,10 +121,9 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
         return move;
     }
 
-    @SingleSession
-    @Transactional
     @Override
-    public ErpInvStockMove reverse(Long moveId) {
+    @BizMutation
+    public ErpInvStockMove reverse(@Name("moveId") Long moveId, IServiceContext context) {
         ErpInvStockMove original = requireMove(moveId);
         if (original.getDocStatus() == null || original.getDocStatus() != ErpInvConstants.DOC_STATUS_DONE) {
             throw new NopException(ErpInvErrors.ERR_REVERSE_NOT_DONE)
@@ -154,8 +150,8 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
             rl.setMaterialId(ol.getMaterialId());
             rl.setSkuId(ol.getSkuId());
             rl.setUoMId(ol.getUoMId());
-            rl.setQuantity(negateOrSame(parseAmount(ol.getQuantity()), original.getMoveType()));
-            rl.setUnitCost(parseAmount(ol.getUnitCost()));
+            rl.setQuantity(negateOrSame(nz(ol.getQuantity()), original.getMoveType()));
+            rl.setUnitCost(nz(ol.getUnitCost()));
             rl.setCurrencyId(ol.getCurrencyId());
             rl.setBatchNo(ol.getBatchNo());
             rl.setSerialNo(ol.getSerialNo());
@@ -164,7 +160,7 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
             reverseLines.add(rl);
         }
         reverseReq.setLines(reverseLines);
-        return generateMove(reverseReq);
+        return generateMove(reverseReq, context);
     }
 
     // ---------- state machine internals ----------
@@ -208,8 +204,8 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
         for (ErpInvStockMoveLine line : lines) {
             ErpInvStockBalance balance = bookkeeper.upsertBalance(move, line,
                     resolveReservationWarehouseId(move), resolveReservationLocationId(move, line));
-            BigDecimal available = parseAmount(balance.getAvailableQuantity());
-            BigDecimal required = parseAmount(line.getQuantity());
+            BigDecimal available = nz(balance.getAvailableQuantity());
+            BigDecimal required = nz(line.getQuantity());
             if (available.compareTo(required) < 0) {
                 throw new NopException(ErpInvErrors.ERR_AVAILABLE_INSUFFICIENT)
                         .param(ErpInvErrors.ARG_MATERIAL_ID, line.getMaterialId())
@@ -229,9 +225,9 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
         for (ErpInvStockMoveLine line : lines) {
             ErpInvStockBalance balance = bookkeeper.upsertBalance(move, line,
                     resolveReservationWarehouseId(move), resolveReservationLocationId(move, line));
-            BigDecimal qty = parseAmount(line.getQuantity());
-            BigDecimal reserved = parseAmount(balance.getReservedQuantity()).add(qty.multiply(sign));
-            balance.setReservedQuantity(reserved.toPlainString());
+            BigDecimal qty = nz(line.getQuantity());
+            BigDecimal reserved = nz(balance.getReservedQuantity()).add(qty.multiply(sign));
+            balance.setReservedQuantity(reserved);
             recomputeAvailable(balance);
             balanceDao.saveOrUpdateEntity(balance);
         }
@@ -248,7 +244,7 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
         move.setCode(StringHelper.isBlank(request.getCode()) ? newMoveCode() : request.getCode());
         move.setMoveType(request.getMoveType());
         move.setOrgId(request.getOrgId());
-        move.setBusinessDate(request.getBusinessDate() != null ? request.getBusinessDate() : LocalDate.now());
+        move.setBusinessDate(request.getBusinessDate() != null ? request.getBusinessDate() : CoreMetrics.today());
         move.setSourceWarehouseId(request.getSourceWarehouseId());
         move.setSourceLocationId(request.getSourceLocationId());
         move.setDestWarehouseId(request.getDestWarehouseId());
@@ -276,10 +272,10 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
             line.setSkuId(req.getSkuId());
             line.setUoMId(req.getUoMId());
             BigDecimal qty = req.getQuantity() != null ? req.getQuantity() : BigDecimal.ZERO;
-            line.setQuantity(qty.toPlainString());
+            line.setQuantity(qty);
             BigDecimal unitCost = req.getUnitCost() != null ? req.getUnitCost() : BigDecimal.ZERO;
-            line.setUnitCost(unitCost.toPlainString());
-            line.setTotalCost(unitCost.multiply(qty).toPlainString());
+            line.setUnitCost(unitCost);
+            line.setTotalCost(unitCost.multiply(qty));
             line.setCurrencyId(req.getCurrencyId() != null ? req.getCurrencyId() : request.getCurrencyId());
             line.setBatchNo(req.getBatchNo());
             line.setSerialNo(req.getSerialNo());
@@ -356,17 +352,14 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
     }
 
     private void recomputeAvailable(ErpInvStockBalance balance) {
-        BigDecimal total = parseAmount(balance.getTotalQuantity());
-        BigDecimal reserved = parseAmount(balance.getReservedQuantity());
-        BigDecimal locked = parseAmount(balance.getLockedQuantity());
-        balance.setAvailableQuantity(total.subtract(reserved).subtract(locked).toPlainString());
+        BigDecimal total = nz(balance.getTotalQuantity());
+        BigDecimal reserved = nz(balance.getReservedQuantity());
+        BigDecimal locked = nz(balance.getLockedQuantity());
+        balance.setAvailableQuantity(total.subtract(reserved).subtract(locked));
     }
 
-    static BigDecimal parseAmount(String text) {
-        if (StringHelper.isBlank(text)) {
-            return BigDecimal.ZERO;
-        }
-        return new BigDecimal(text.trim());
+    private static BigDecimal nz(BigDecimal v) {
+        return v != null ? v : BigDecimal.ZERO;
     }
 
     boolean isNegativeStockAllowed() {

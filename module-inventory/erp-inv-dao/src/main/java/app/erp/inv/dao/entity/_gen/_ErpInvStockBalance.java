@@ -223,25 +223,25 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
     private java.lang.String _batchNo;
     
     /* 总数量: TOTAL_QUANTITY */
-    private java.lang.String _totalQuantity;
+    private java.math.BigDecimal _totalQuantity;
     
     /* 预留数量: RESERVED_QUANTITY */
-    private java.lang.String _reservedQuantity;
+    private java.math.BigDecimal _reservedQuantity;
     
     /* 冻结数量: LOCKED_QUANTITY */
-    private java.lang.String _lockedQuantity;
+    private java.math.BigDecimal _lockedQuantity;
     
     /* 可用数量: AVAILABLE_QUANTITY */
-    private java.lang.String _availableQuantity;
+    private java.math.BigDecimal _availableQuantity;
     
     /* 计价方法: COST_METHOD */
     private java.lang.Integer _costMethod;
     
     /* 平均成本: AVG_COST */
-    private java.lang.String _avgCost;
+    private java.math.BigDecimal _avgCost;
     
     /* 总成本: TOTAL_COST */
-    private java.lang.String _totalCost;
+    private java.math.BigDecimal _totalCost;
     
     /* 币种: CURRENCY_ID */
     private java.lang.Long _currencyId;
@@ -483,9 +483,9 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
             }
         
             case PROP_ID_totalQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_totalQuantity));
                }
                setTotalQuantity(typedValue);
@@ -493,9 +493,9 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
             }
         
             case PROP_ID_reservedQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_reservedQuantity));
                }
                setReservedQuantity(typedValue);
@@ -503,9 +503,9 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
             }
         
             case PROP_ID_lockedQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_lockedQuantity));
                }
                setLockedQuantity(typedValue);
@@ -513,9 +513,9 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
             }
         
             case PROP_ID_availableQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_availableQuantity));
                }
                setAvailableQuantity(typedValue);
@@ -533,9 +533,9 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
             }
         
             case PROP_ID_avgCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_avgCost));
                }
                setAvgCost(typedValue);
@@ -543,9 +543,9 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
             }
         
             case PROP_ID_totalCost:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_totalCost));
                }
                setTotalCost(typedValue);
@@ -682,28 +682,28 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
         
             case PROP_ID_totalQuantity:{
                onInitProp(propId);
-               this._totalQuantity = (java.lang.String)value;
+               this._totalQuantity = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_reservedQuantity:{
                onInitProp(propId);
-               this._reservedQuantity = (java.lang.String)value;
+               this._reservedQuantity = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_lockedQuantity:{
                onInitProp(propId);
-               this._lockedQuantity = (java.lang.String)value;
+               this._lockedQuantity = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_availableQuantity:{
                onInitProp(propId);
-               this._availableQuantity = (java.lang.String)value;
+               this._availableQuantity = (java.math.BigDecimal)value;
                
                break;
             }
@@ -717,14 +717,14 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
         
             case PROP_ID_avgCost:{
                onInitProp(propId);
-               this._avgCost = (java.lang.String)value;
+               this._avgCost = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_totalCost:{
                onInitProp(propId);
-               this._totalCost = (java.lang.String)value;
+               this._totalCost = (java.math.BigDecimal)value;
                
                break;
             }
@@ -920,7 +920,7 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
     /**
      * 总数量: TOTAL_QUANTITY
      */
-    public final java.lang.String getTotalQuantity(){
+    public final java.math.BigDecimal getTotalQuantity(){
          onPropGet(PROP_ID_totalQuantity);
          return _totalQuantity;
     }
@@ -928,7 +928,7 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
     /**
      * 总数量: TOTAL_QUANTITY
      */
-    public final void setTotalQuantity(java.lang.String value){
+    public final void setTotalQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_totalQuantity,value)){
             this._totalQuantity = value;
             internalClearRefs(PROP_ID_totalQuantity);
@@ -939,7 +939,7 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
     /**
      * 预留数量: RESERVED_QUANTITY
      */
-    public final java.lang.String getReservedQuantity(){
+    public final java.math.BigDecimal getReservedQuantity(){
          onPropGet(PROP_ID_reservedQuantity);
          return _reservedQuantity;
     }
@@ -947,7 +947,7 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
     /**
      * 预留数量: RESERVED_QUANTITY
      */
-    public final void setReservedQuantity(java.lang.String value){
+    public final void setReservedQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_reservedQuantity,value)){
             this._reservedQuantity = value;
             internalClearRefs(PROP_ID_reservedQuantity);
@@ -958,7 +958,7 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
     /**
      * 冻结数量: LOCKED_QUANTITY
      */
-    public final java.lang.String getLockedQuantity(){
+    public final java.math.BigDecimal getLockedQuantity(){
          onPropGet(PROP_ID_lockedQuantity);
          return _lockedQuantity;
     }
@@ -966,7 +966,7 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
     /**
      * 冻结数量: LOCKED_QUANTITY
      */
-    public final void setLockedQuantity(java.lang.String value){
+    public final void setLockedQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_lockedQuantity,value)){
             this._lockedQuantity = value;
             internalClearRefs(PROP_ID_lockedQuantity);
@@ -977,7 +977,7 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
     /**
      * 可用数量: AVAILABLE_QUANTITY
      */
-    public final java.lang.String getAvailableQuantity(){
+    public final java.math.BigDecimal getAvailableQuantity(){
          onPropGet(PROP_ID_availableQuantity);
          return _availableQuantity;
     }
@@ -985,7 +985,7 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
     /**
      * 可用数量: AVAILABLE_QUANTITY
      */
-    public final void setAvailableQuantity(java.lang.String value){
+    public final void setAvailableQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_availableQuantity,value)){
             this._availableQuantity = value;
             internalClearRefs(PROP_ID_availableQuantity);
@@ -1015,7 +1015,7 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
     /**
      * 平均成本: AVG_COST
      */
-    public final java.lang.String getAvgCost(){
+    public final java.math.BigDecimal getAvgCost(){
          onPropGet(PROP_ID_avgCost);
          return _avgCost;
     }
@@ -1023,7 +1023,7 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
     /**
      * 平均成本: AVG_COST
      */
-    public final void setAvgCost(java.lang.String value){
+    public final void setAvgCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_avgCost,value)){
             this._avgCost = value;
             internalClearRefs(PROP_ID_avgCost);
@@ -1034,7 +1034,7 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
     /**
      * 总成本: TOTAL_COST
      */
-    public final java.lang.String getTotalCost(){
+    public final java.math.BigDecimal getTotalCost(){
          onPropGet(PROP_ID_totalCost);
          return _totalCost;
     }
@@ -1042,7 +1042,7 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
     /**
      * 总成本: TOTAL_COST
      */
-    public final void setTotalCost(java.lang.String value){
+    public final void setTotalCost(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_totalCost,value)){
             this._totalCost = value;
             internalClearRefs(PROP_ID_totalCost);

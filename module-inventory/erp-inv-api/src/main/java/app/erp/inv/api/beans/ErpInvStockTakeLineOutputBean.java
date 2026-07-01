@@ -125,72 +125,72 @@
         }
 
 
-        private String _bookQuantity;
+        private java.math.BigDecimal _bookQuantity;
 
     
         @PropMeta(propId=9)
     
-        public String getBookQuantity(){
+        public java.math.BigDecimal getBookQuantity(){
             return _bookQuantity;
         }
 
-        public void setBookQuantity(String value){
+        public void setBookQuantity(java.math.BigDecimal value){
             this._bookQuantity = value;
         }
 
 
-        private String _actualQuantity;
+        private java.math.BigDecimal _actualQuantity;
 
     
         @PropMeta(propId=10)
     
-        public String getActualQuantity(){
+        public java.math.BigDecimal getActualQuantity(){
             return _actualQuantity;
         }
 
-        public void setActualQuantity(String value){
+        public void setActualQuantity(java.math.BigDecimal value){
             this._actualQuantity = value;
         }
 
 
-        private String _differenceQuantity;
+        private java.math.BigDecimal _differenceQuantity;
 
     
         @PropMeta(propId=11)
     
-        public String getDifferenceQuantity(){
+        public java.math.BigDecimal getDifferenceQuantity(){
             return _differenceQuantity;
         }
 
-        public void setDifferenceQuantity(String value){
+        public void setDifferenceQuantity(java.math.BigDecimal value){
             this._differenceQuantity = value;
         }
 
 
-        private String _unitCost;
+        private java.math.BigDecimal _unitCost;
 
     
         @PropMeta(propId=12)
     
-        public String getUnitCost(){
+        public java.math.BigDecimal getUnitCost(){
             return _unitCost;
         }
 
-        public void setUnitCost(String value){
+        public void setUnitCost(java.math.BigDecimal value){
             this._unitCost = value;
         }
 
 
-        private String _differenceAmount;
+        private java.math.BigDecimal _differenceAmount;
 
     
         @PropMeta(propId=13)
     
-        public String getDifferenceAmount(){
+        public java.math.BigDecimal getDifferenceAmount(){
             return _differenceAmount;
         }
 
-        public void setDifferenceAmount(String value){
+        public void setDifferenceAmount(java.math.BigDecimal value){
             this._differenceAmount = value;
         }
 

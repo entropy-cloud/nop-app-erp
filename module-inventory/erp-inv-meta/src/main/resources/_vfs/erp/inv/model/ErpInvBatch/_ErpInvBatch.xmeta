@@ -45,11 +45,11 @@
         </prop>
         <prop name="totalQuantity" displayName="总数量" propId="7" i18n-en:displayName="Total Quantity" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="availableQuantity" displayName="可用数量" propId="8" i18n-en:displayName="Available Quantity"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="productionDate" displayName="生产日期" propId="9" i18n-en:displayName="Production Date" queryable="true"
               sortable="true" insertable="true" updatable="true">

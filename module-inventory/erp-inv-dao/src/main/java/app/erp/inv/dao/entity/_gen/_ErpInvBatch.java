@@ -200,10 +200,10 @@ public class _ErpInvBatch extends DynamicOrmEntity{
     private java.lang.Long _warehouseId;
     
     /* 总数量: TOTAL_QUANTITY */
-    private java.lang.String _totalQuantity;
+    private java.math.BigDecimal _totalQuantity;
     
     /* 可用数量: AVAILABLE_QUANTITY */
-    private java.lang.String _availableQuantity;
+    private java.math.BigDecimal _availableQuantity;
     
     /* 生产日期: PRODUCTION_DATE */
     private java.time.LocalDate _productionDate;
@@ -441,9 +441,9 @@ public class _ErpInvBatch extends DynamicOrmEntity{
             }
         
             case PROP_ID_totalQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_totalQuantity));
                }
                setTotalQuantity(typedValue);
@@ -451,9 +451,9 @@ public class _ErpInvBatch extends DynamicOrmEntity{
             }
         
             case PROP_ID_availableQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_availableQuantity));
                }
                setAvailableQuantity(typedValue);
@@ -623,14 +623,14 @@ public class _ErpInvBatch extends DynamicOrmEntity{
         
             case PROP_ID_totalQuantity:{
                onInitProp(propId);
-               this._totalQuantity = (java.lang.String)value;
+               this._totalQuantity = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_availableQuantity:{
                onInitProp(propId);
-               this._availableQuantity = (java.lang.String)value;
+               this._availableQuantity = (java.math.BigDecimal)value;
                
                break;
             }
@@ -835,7 +835,7 @@ public class _ErpInvBatch extends DynamicOrmEntity{
     /**
      * 总数量: TOTAL_QUANTITY
      */
-    public final java.lang.String getTotalQuantity(){
+    public final java.math.BigDecimal getTotalQuantity(){
          onPropGet(PROP_ID_totalQuantity);
          return _totalQuantity;
     }
@@ -843,7 +843,7 @@ public class _ErpInvBatch extends DynamicOrmEntity{
     /**
      * 总数量: TOTAL_QUANTITY
      */
-    public final void setTotalQuantity(java.lang.String value){
+    public final void setTotalQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_totalQuantity,value)){
             this._totalQuantity = value;
             internalClearRefs(PROP_ID_totalQuantity);
@@ -854,7 +854,7 @@ public class _ErpInvBatch extends DynamicOrmEntity{
     /**
      * 可用数量: AVAILABLE_QUANTITY
      */
-    public final java.lang.String getAvailableQuantity(){
+    public final java.math.BigDecimal getAvailableQuantity(){
          onPropGet(PROP_ID_availableQuantity);
          return _availableQuantity;
     }
@@ -862,7 +862,7 @@ public class _ErpInvBatch extends DynamicOrmEntity{
     /**
      * 可用数量: AVAILABLE_QUANTITY
      */
-    public final void setAvailableQuantity(java.lang.String value){
+    public final void setAvailableQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_availableQuantity,value)){
             this._availableQuantity = value;
             internalClearRefs(PROP_ID_availableQuantity);

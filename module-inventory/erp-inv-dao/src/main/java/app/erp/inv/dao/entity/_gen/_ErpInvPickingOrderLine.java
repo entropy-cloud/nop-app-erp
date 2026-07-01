@@ -192,10 +192,10 @@ public class _ErpInvPickingOrderLine extends DynamicOrmEntity{
     private java.lang.Long _sourceLocationId;
     
     /* 应拣数量: QUANTITY */
-    private java.lang.String _quantity;
+    private java.math.BigDecimal _quantity;
     
     /* 已拣数量: PICKED_QUANTITY */
-    private java.lang.String _pickedQuantity;
+    private java.math.BigDecimal _pickedQuantity;
     
     /* 批号: BATCH_NO */
     private java.lang.String _batchNo;
@@ -428,9 +428,9 @@ public class _ErpInvPickingOrderLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_quantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_quantity));
                }
                setQuantity(typedValue);
@@ -438,9 +438,9 @@ public class _ErpInvPickingOrderLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_pickedQuantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_pickedQuantity));
                }
                setPickedQuantity(typedValue);
@@ -587,14 +587,14 @@ public class _ErpInvPickingOrderLine extends DynamicOrmEntity{
         
             case PROP_ID_quantity:{
                onInitProp(propId);
-               this._quantity = (java.lang.String)value;
+               this._quantity = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_pickedQuantity:{
                onInitProp(propId);
-               this._pickedQuantity = (java.lang.String)value;
+               this._pickedQuantity = (java.math.BigDecimal)value;
                
                break;
             }
@@ -797,7 +797,7 @@ public class _ErpInvPickingOrderLine extends DynamicOrmEntity{
     /**
      * 应拣数量: QUANTITY
      */
-    public final java.lang.String getQuantity(){
+    public final java.math.BigDecimal getQuantity(){
          onPropGet(PROP_ID_quantity);
          return _quantity;
     }
@@ -805,7 +805,7 @@ public class _ErpInvPickingOrderLine extends DynamicOrmEntity{
     /**
      * 应拣数量: QUANTITY
      */
-    public final void setQuantity(java.lang.String value){
+    public final void setQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_quantity,value)){
             this._quantity = value;
             internalClearRefs(PROP_ID_quantity);
@@ -816,7 +816,7 @@ public class _ErpInvPickingOrderLine extends DynamicOrmEntity{
     /**
      * 已拣数量: PICKED_QUANTITY
      */
-    public final java.lang.String getPickedQuantity(){
+    public final java.math.BigDecimal getPickedQuantity(){
          onPropGet(PROP_ID_pickedQuantity);
          return _pickedQuantity;
     }
@@ -824,7 +824,7 @@ public class _ErpInvPickingOrderLine extends DynamicOrmEntity{
     /**
      * 已拣数量: PICKED_QUANTITY
      */
-    public final void setPickedQuantity(java.lang.String value){
+    public final void setPickedQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_pickedQuantity,value)){
             this._pickedQuantity = value;
             internalClearRefs(PROP_ID_pickedQuantity);

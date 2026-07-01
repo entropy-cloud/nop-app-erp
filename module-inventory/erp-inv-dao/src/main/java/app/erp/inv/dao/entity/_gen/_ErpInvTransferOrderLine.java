@@ -172,7 +172,7 @@ public class _ErpInvTransferOrderLine extends DynamicOrmEntity{
     private java.lang.Long _uoMId;
     
     /* 数量: QUANTITY */
-    private java.lang.String _quantity;
+    private java.math.BigDecimal _quantity;
     
     /* 批号: BATCH_NO */
     private java.lang.String _batchNo;
@@ -389,9 +389,9 @@ public class _ErpInvTransferOrderLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_quantity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_quantity));
                }
                setQuantity(typedValue);
@@ -531,7 +531,7 @@ public class _ErpInvTransferOrderLine extends DynamicOrmEntity{
         
             case PROP_ID_quantity:{
                onInitProp(propId);
-               this._quantity = (java.lang.String)value;
+               this._quantity = (java.math.BigDecimal)value;
                
                break;
             }
@@ -715,7 +715,7 @@ public class _ErpInvTransferOrderLine extends DynamicOrmEntity{
     /**
      * 数量: QUANTITY
      */
-    public final java.lang.String getQuantity(){
+    public final java.math.BigDecimal getQuantity(){
          onPropGet(PROP_ID_quantity);
          return _quantity;
     }
@@ -723,7 +723,7 @@ public class _ErpInvTransferOrderLine extends DynamicOrmEntity{
     /**
      * 数量: QUANTITY
      */
-    public final void setQuantity(java.lang.String value){
+    public final void setQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_quantity,value)){
             this._quantity = value;
             internalClearRefs(PROP_ID_quantity);

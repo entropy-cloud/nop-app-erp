@@ -49,14 +49,13 @@ public class StockMoveBookkeeper {
      */
     public void bookCompletion(ErpInvStockMove move, List<ErpInvStockMoveLine> lines, Long acctSchemaId) {
         for (ErpInvStockMoveLine line : lines) {
-            BigDecimal qty = parseAmount(line.getQuantity());
             if (move.getMoveType() != null && move.getMoveType() == ErpInvConstants.MOVE_TYPE_INTERNAL_TRANSFER) {
                 BigDecimal carriedCost = bookOutgoing(move, line, acctSchemaId);
                 bookIncoming(move, line, acctSchemaId, carriedCost);
             } else if (move.getMoveType() != null && move.getMoveType() == ErpInvConstants.MOVE_TYPE_OUTGOING) {
                 bookOutgoing(move, line, acctSchemaId);
             } else {
-                BigDecimal unitCost = line.getUnitCost() != null ? parseAmount(line.getUnitCost()) : BigDecimal.ZERO;
+                BigDecimal unitCost = nz(line.getUnitCost());
                 bookIncoming(move, line, acctSchemaId, unitCost);
             }
         }
@@ -82,13 +81,13 @@ public class StockMoveBookkeeper {
         balance.setWarehouseId(warehouseId);
         balance.setLocationId(locationId);
         balance.setBatchNo(line.getBatchNo());
-        balance.setTotalQuantity(BigDecimal.ZERO.toPlainString());
-        balance.setReservedQuantity(BigDecimal.ZERO.toPlainString());
-        balance.setLockedQuantity(BigDecimal.ZERO.toPlainString());
-        balance.setAvailableQuantity(BigDecimal.ZERO.toPlainString());
+        balance.setTotalQuantity(BigDecimal.ZERO);
+        balance.setReservedQuantity(BigDecimal.ZERO);
+        balance.setLockedQuantity(BigDecimal.ZERO);
+        balance.setAvailableQuantity(BigDecimal.ZERO);
         balance.setCostMethod(ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
-        balance.setAvgCost(BigDecimal.ZERO.toPlainString());
-        balance.setTotalCost(BigDecimal.ZERO.toPlainString());
+        balance.setAvgCost(BigDecimal.ZERO);
+        balance.setTotalCost(BigDecimal.ZERO);
         balance.setCurrencyId(line.getCurrencyId());
         dao.saveEntity(balance);
         return balance;
@@ -101,19 +100,19 @@ public class StockMoveBookkeeper {
         Long warehouseId = move.getDestWarehouseId();
         Long locationId = line.getDestLocationId() != null ? line.getDestLocationId() : move.getDestLocationId();
         ErpInvStockBalance balance = upsertBalance(move, line, warehouseId, locationId);
-        BigDecimal qty = parseAmount(line.getQuantity());
+        BigDecimal qty = nz(line.getQuantity());
         BigDecimal lineTotalCost = unitCost.multiply(qty);
 
-        BigDecimal oldTotal = parseAmount(balance.getTotalQuantity());
-        BigDecimal oldTotalCost = parseAmount(balance.getTotalCost());
+        BigDecimal oldTotal = nz(balance.getTotalQuantity());
+        BigDecimal oldTotalCost = nz(balance.getTotalCost());
         BigDecimal newTotal = oldTotal.add(qty);
         BigDecimal newTotalCost = oldTotalCost.add(lineTotalCost);
         BigDecimal newAvg = newTotal.signum() != 0
                 ? newTotalCost.divide(newTotal, SCALE, RoundingMode.HALF_UP) : BigDecimal.ZERO;
 
-        balance.setTotalQuantity(newTotal.toPlainString());
-        balance.setTotalCost(newTotalCost.toPlainString());
-        balance.setAvgCost(newAvg.toPlainString());
+        balance.setTotalQuantity(newTotal);
+        balance.setTotalCost(newTotalCost);
+        balance.setAvgCost(newAvg);
         recomputeAvailable(balance);
         daoProvider.daoFor(ErpInvStockBalance.class).saveOrUpdateEntity(balance);
 
@@ -126,20 +125,20 @@ public class StockMoveBookkeeper {
         Long locationId = line.getSourceLocationId() != null ? line.getSourceLocationId()
                 : move.getSourceLocationId();
         ErpInvStockBalance balance = upsertBalance(move, line, warehouseId, locationId);
-        BigDecimal qty = parseAmount(line.getQuantity());
-        BigDecimal unitCost = parseAmount(balance.getAvgCost());
+        BigDecimal qty = nz(line.getQuantity());
+        BigDecimal unitCost = nz(balance.getAvgCost());
         BigDecimal lineTotalCost = unitCost.multiply(qty);
 
-        BigDecimal oldTotal = parseAmount(balance.getTotalQuantity());
-        BigDecimal oldTotalCost = parseAmount(balance.getTotalCost());
+        BigDecimal oldTotal = nz(balance.getTotalQuantity());
+        BigDecimal oldTotalCost = nz(balance.getTotalCost());
         BigDecimal newTotal = oldTotal.subtract(qty);
         BigDecimal newTotalCost = oldTotalCost.subtract(lineTotalCost);
         BigDecimal newAvg = newTotal.signum() != 0
                 ? newTotalCost.divide(newTotal, SCALE, RoundingMode.HALF_UP) : unitCost;
 
-        balance.setTotalQuantity(newTotal.toPlainString());
-        balance.setTotalCost(newTotalCost.toPlainString());
-        balance.setAvgCost(newAvg.toPlainString());
+        balance.setTotalQuantity(newTotal);
+        balance.setTotalCost(newTotalCost);
+        balance.setAvgCost(newAvg);
         recomputeAvailable(balance);
         daoProvider.daoFor(ErpInvStockBalance.class).saveOrUpdateEntity(balance);
 
@@ -161,9 +160,9 @@ public class StockMoveBookkeeper {
         ledger.setSkuId(line.getSkuId());
         ledger.setWarehouseId(warehouseId);
         ledger.setLocationId(locationId);
-        ledger.setQuantity(signedQty.toPlainString());
-        ledger.setUnitCost(unitCost.toPlainString());
-        ledger.setTotalCost(signedTotalCost.toPlainString());
+        ledger.setQuantity(signedQty);
+        ledger.setUnitCost(unitCost);
+        ledger.setTotalCost(signedTotalCost);
         ledger.setBalanceQuantity(balance.getTotalQuantity());
         ledger.setBalanceTotalCost(balance.getTotalCost());
         ledger.setCostMethod(ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
@@ -176,10 +175,10 @@ public class StockMoveBookkeeper {
     }
 
     private void recomputeAvailable(ErpInvStockBalance balance) {
-        BigDecimal total = parseAmount(balance.getTotalQuantity());
-        BigDecimal reserved = parseAmount(balance.getReservedQuantity());
-        BigDecimal locked = parseAmount(balance.getLockedQuantity());
-        balance.setAvailableQuantity(total.subtract(reserved).subtract(locked).toPlainString());
+        BigDecimal total = nz(balance.getTotalQuantity());
+        BigDecimal reserved = nz(balance.getReservedQuantity());
+        BigDecimal locked = nz(balance.getLockedQuantity());
+        balance.setAvailableQuantity(total.subtract(reserved).subtract(locked));
     }
 
     private ErpInvStockBalance findBalance(Long orgId, Long materialId, Long skuId, Long warehouseId,
@@ -199,10 +198,7 @@ public class StockMoveBookkeeper {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private static BigDecimal parseAmount(String text) {
-        if (text == null || text.isEmpty()) {
-            return BigDecimal.ZERO;
-        }
-        return new BigDecimal(text.trim());
+    private static BigDecimal nz(BigDecimal v) {
+        return v != null ? v : BigDecimal.ZERO;
     }
 }

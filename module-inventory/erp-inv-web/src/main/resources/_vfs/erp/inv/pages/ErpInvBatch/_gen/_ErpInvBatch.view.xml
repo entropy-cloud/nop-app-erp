@@ -37,10 +37,10 @@
                 <col id="warehouseId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--总数量-->
-                <col id="totalQuantity" mandatory="true" sortable="true"/>
+                <col id="totalQuantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--可用数量-->
-                <col id="availableQuantity" mandatory="true" sortable="true"/>
+                <col id="availableQuantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--生产日期-->
                 <col id="productionDate" sortable="true"/>

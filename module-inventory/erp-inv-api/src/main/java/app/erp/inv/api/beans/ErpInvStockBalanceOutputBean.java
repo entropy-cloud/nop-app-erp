@@ -111,58 +111,58 @@
         }
 
 
-        private String _totalQuantity;
+        private java.math.BigDecimal _totalQuantity;
 
     
         @PropMeta(propId=8)
     
-        public String getTotalQuantity(){
+        public java.math.BigDecimal getTotalQuantity(){
             return _totalQuantity;
         }
 
-        public void setTotalQuantity(String value){
+        public void setTotalQuantity(java.math.BigDecimal value){
             this._totalQuantity = value;
         }
 
 
-        private String _reservedQuantity;
+        private java.math.BigDecimal _reservedQuantity;
 
     
         @PropMeta(propId=9)
     
-        public String getReservedQuantity(){
+        public java.math.BigDecimal getReservedQuantity(){
             return _reservedQuantity;
         }
 
-        public void setReservedQuantity(String value){
+        public void setReservedQuantity(java.math.BigDecimal value){
             this._reservedQuantity = value;
         }
 
 
-        private String _lockedQuantity;
+        private java.math.BigDecimal _lockedQuantity;
 
     
         @PropMeta(propId=10)
     
-        public String getLockedQuantity(){
+        public java.math.BigDecimal getLockedQuantity(){
             return _lockedQuantity;
         }
 
-        public void setLockedQuantity(String value){
+        public void setLockedQuantity(java.math.BigDecimal value){
             this._lockedQuantity = value;
         }
 
 
-        private String _availableQuantity;
+        private java.math.BigDecimal _availableQuantity;
 
     
         @PropMeta(propId=11)
     
-        public String getAvailableQuantity(){
+        public java.math.BigDecimal getAvailableQuantity(){
             return _availableQuantity;
         }
 
-        public void setAvailableQuantity(String value){
+        public void setAvailableQuantity(java.math.BigDecimal value){
             this._availableQuantity = value;
         }
 
@@ -193,30 +193,30 @@
         }
 
 
-        private String _avgCost;
+        private java.math.BigDecimal _avgCost;
 
     
         @PropMeta(propId=13)
     
-        public String getAvgCost(){
+        public java.math.BigDecimal getAvgCost(){
             return _avgCost;
         }
 
-        public void setAvgCost(String value){
+        public void setAvgCost(java.math.BigDecimal value){
             this._avgCost = value;
         }
 
 
-        private String _totalCost;
+        private java.math.BigDecimal _totalCost;
 
     
         @PropMeta(propId=14)
     
-        public String getTotalCost(){
+        public java.math.BigDecimal getTotalCost(){
             return _totalCost;
         }
 
-        public void setTotalCost(String value){
+        public void setTotalCost(java.math.BigDecimal value){
             this._totalCost = value;
         }
 

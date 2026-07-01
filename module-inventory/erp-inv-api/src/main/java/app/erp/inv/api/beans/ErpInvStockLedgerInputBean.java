@@ -138,72 +138,72 @@
         }
 
 
-        private String _quantity;
+        private java.math.BigDecimal _quantity;
 
     
         @PropMeta(propId=10)
     
-        public String getQuantity(){
+        public java.math.BigDecimal getQuantity(){
             return _quantity;
         }
 
-        public void setQuantity(String value){
+        public void setQuantity(java.math.BigDecimal value){
             this._quantity = value;
         }
 
 
-        private String _unitCost;
+        private java.math.BigDecimal _unitCost;
 
     
         @PropMeta(propId=11)
     
-        public String getUnitCost(){
+        public java.math.BigDecimal getUnitCost(){
             return _unitCost;
         }
 
-        public void setUnitCost(String value){
+        public void setUnitCost(java.math.BigDecimal value){
             this._unitCost = value;
         }
 
 
-        private String _totalCost;
+        private java.math.BigDecimal _totalCost;
 
     
         @PropMeta(propId=12)
     
-        public String getTotalCost(){
+        public java.math.BigDecimal getTotalCost(){
             return _totalCost;
         }
 
-        public void setTotalCost(String value){
+        public void setTotalCost(java.math.BigDecimal value){
             this._totalCost = value;
         }
 
 
-        private String _balanceQuantity;
+        private java.math.BigDecimal _balanceQuantity;
 
     
         @PropMeta(propId=13)
     
-        public String getBalanceQuantity(){
+        public java.math.BigDecimal getBalanceQuantity(){
             return _balanceQuantity;
         }
 
-        public void setBalanceQuantity(String value){
+        public void setBalanceQuantity(java.math.BigDecimal value){
             this._balanceQuantity = value;
         }
 
 
-        private String _balanceTotalCost;
+        private java.math.BigDecimal _balanceTotalCost;
 
     
         @PropMeta(propId=14)
     
-        public String getBalanceTotalCost(){
+        public java.math.BigDecimal getBalanceTotalCost(){
             return _balanceTotalCost;
         }
 
-        public void setBalanceTotalCost(String value){
+        public void setBalanceTotalCost(java.math.BigDecimal value){
             this._balanceTotalCost = value;
         }
 

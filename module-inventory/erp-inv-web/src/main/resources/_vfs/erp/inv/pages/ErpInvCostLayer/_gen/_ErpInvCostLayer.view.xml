@@ -40,16 +40,16 @@
                 <col id="costMethod" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--入库数量-->
-                <col id="incomingQuantity" mandatory="true" sortable="true"/>
+                <col id="incomingQuantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--剩余数量-->
-                <col id="remainingQuantity" mandatory="true" sortable="true"/>
+                <col id="remainingQuantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--单位成本-->
-                <col id="unitCost" mandatory="true" sortable="true"/>
+                <col id="unitCost" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--总成本-->
-                <col id="totalCost" mandatory="true" sortable="true"/>
+                <col id="totalCost" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--币种-->
                 <col id="currencyId" ui:number="true" sortable="true"/>

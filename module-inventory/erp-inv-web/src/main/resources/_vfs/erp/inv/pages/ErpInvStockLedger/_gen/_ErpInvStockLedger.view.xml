@@ -46,19 +46,19 @@
                 <col id="locationId" ui:number="true" sortable="true"/>
 
                 <!--数量-->
-                <col id="quantity" mandatory="true" sortable="true"/>
+                <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--单位成本-->
-                <col id="unitCost" sortable="true"/>
+                <col id="unitCost" ui:number="true" sortable="true"/>
 
                 <!--总成本-->
-                <col id="totalCost" sortable="true"/>
+                <col id="totalCost" ui:number="true" sortable="true"/>
 
                 <!--结存数量-->
-                <col id="balanceQuantity" mandatory="true" sortable="true"/>
+                <col id="balanceQuantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--结存总成本-->
-                <col id="balanceTotalCost" mandatory="true" sortable="true"/>
+                <col id="balanceTotalCost" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--计价方法-->
                 <col id="costMethod" ui:number="true" sortable="true"/>

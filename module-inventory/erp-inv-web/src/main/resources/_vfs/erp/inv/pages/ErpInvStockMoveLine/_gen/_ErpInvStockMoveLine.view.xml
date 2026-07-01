@@ -37,13 +37,13 @@
                 <col id="uoMId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--数量-->
-                <col id="quantity" mandatory="true" sortable="true"/>
+                <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--单位成本-->
-                <col id="unitCost" sortable="true"/>
+                <col id="unitCost" ui:number="true" sortable="true"/>
 
                 <!--总成本-->
-                <col id="totalCost" sortable="true"/>
+                <col id="totalCost" ui:number="true" sortable="true"/>
 
                 <!--币种-->
                 <col id="currencyId" ui:number="true" sortable="true"/>

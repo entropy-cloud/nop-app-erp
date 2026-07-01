@@ -40,25 +40,25 @@
                 <col id="batchNo" sortable="true"/>
 
                 <!--总数量-->
-                <col id="totalQuantity" mandatory="true" sortable="true"/>
+                <col id="totalQuantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--预留数量-->
-                <col id="reservedQuantity" sortable="true"/>
+                <col id="reservedQuantity" ui:number="true" sortable="true"/>
 
                 <!--冻结数量-->
-                <col id="lockedQuantity" sortable="true"/>
+                <col id="lockedQuantity" ui:number="true" sortable="true"/>
 
                 <!--可用数量-->
-                <col id="availableQuantity" mandatory="true" sortable="true"/>
+                <col id="availableQuantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--计价方法-->
                 <col id="costMethod" ui:number="true" sortable="true"/>
 
                 <!--平均成本-->
-                <col id="avgCost" sortable="true"/>
+                <col id="avgCost" ui:number="true" sortable="true"/>
 
                 <!--总成本-->
-                <col id="totalCost" sortable="true"/>
+                <col id="totalCost" ui:number="true" sortable="true"/>
 
                 <!--币种-->
                 <col id="currencyId" ui:number="true" sortable="true"/>

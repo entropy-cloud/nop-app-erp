@@ -158,9 +158,9 @@
                 <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="4" stdDataType="long" i18n-en:displayName='Material' />
                 <column name="skuId" displayName="SKU" stdSqlType="BIGINT" code="SKU_ID" propId="5" stdDataType="long" i18n-en:displayName='SKU' />
                 <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UO_M_ID" propId="6" stdDataType="long" i18n-en:displayName='UoM' />
-                <column name="quantity" displayName="数量" domain="quantity" mandatory="true" code="QUANTITY" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Quantity' />
-                <column name="unitCost" displayName="单位成本" domain="unitPrice" code="UNIT_COST" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Unit Cost' />
-                <column name="totalCost" displayName="总成本" domain="amount" code="TOTAL_COST" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Cost' />
+                <column name="quantity" displayName="数量" domain="quantity" mandatory="true" code="QUANTITY" propId="7" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Quantity' />
+                <column name="unitCost" displayName="单位成本" domain="unitPrice" code="UNIT_COST" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Unit Cost' />
+                <column name="totalCost" displayName="总成本" domain="amount" code="TOTAL_COST" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Cost' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="10" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="11" stdDataType="string" i18n-en:displayName='Batch No' />
                 <column name="serialNo" displayName="序列号" stdSqlType="VARCHAR" precision="50" code="SERIAL_NO" propId="12" stdDataType="string" i18n-en:displayName='Serial No' />
@@ -199,11 +199,11 @@
                 <column name="skuId" displayName="SKU" stdSqlType="BIGINT" code="SKU_ID" propId="7" stdDataType="long" i18n-en:displayName='SKU' />
                 <column name="warehouseId" displayName="仓库" stdSqlType="BIGINT" mandatory="true" code="WAREHOUSE_ID" propId="8" stdDataType="long" i18n-en:displayName='Warehouse' />
                 <column name="locationId" displayName="库位" stdSqlType="BIGINT" code="LOCATION_ID" propId="9" stdDataType="long" i18n-en:displayName='Location' />
-                <column name="quantity" displayName="数量" domain="quantity" mandatory="true" code="QUANTITY" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Quantity' />
-                <column name="unitCost" displayName="单位成本" domain="unitPrice" code="UNIT_COST" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Unit Cost' />
-                <column name="totalCost" displayName="总成本" domain="amount" code="TOTAL_COST" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Cost' />
-                <column name="balanceQuantity" displayName="结存数量" domain="quantity" mandatory="true" code="BALANCE_QUANTITY" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Balance Quantity' />
-                <column name="balanceTotalCost" displayName="结存总成本" domain="amount" mandatory="true" code="BALANCE_TOTAL_COST" propId="14" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Balance Total Cost' />
+                <column name="quantity" displayName="数量" domain="quantity" mandatory="true" code="QUANTITY" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Quantity' />
+                <column name="unitCost" displayName="单位成本" domain="unitPrice" code="UNIT_COST" propId="11" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Unit Cost' />
+                <column name="totalCost" displayName="总成本" domain="amount" code="TOTAL_COST" propId="12" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Cost' />
+                <column name="balanceQuantity" displayName="结存数量" domain="quantity" mandatory="true" code="BALANCE_QUANTITY" propId="13" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Balance Quantity' />
+                <column name="balanceTotalCost" displayName="结存总成本" domain="amount" mandatory="true" code="BALANCE_TOTAL_COST" propId="14" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Balance Total Cost' />
                 <column name="costMethod" displayName="计价方法" ext:dict="erp-md/cost-method" code="COST_METHOD" propId="15" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Cost Method' />
                 <column name="acctSchemaId" displayName="账套" stdSqlType="BIGINT" code="ACCT_SCHEMA_ID" propId="16" stdDataType="long" i18n-en:displayName='Acct Schema' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="17" stdDataType="long" i18n-en:displayName='Currency' />
@@ -242,13 +242,13 @@
                 <column name="warehouseId" displayName="仓库" stdSqlType="BIGINT" mandatory="true" code="WAREHOUSE_ID" propId="5" stdDataType="long" i18n-en:displayName='Warehouse' />
                 <column name="locationId" displayName="库位" stdSqlType="BIGINT" code="LOCATION_ID" propId="6" stdDataType="long" i18n-en:displayName='Location' />
                 <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="7" stdDataType="string" i18n-en:displayName='Batch No' />
-                <column name="totalQuantity" displayName="总数量" domain="quantity" mandatory="true" code="TOTAL_QUANTITY" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Quantity' />
-                <column name="reservedQuantity" displayName="预留数量" domain="quantity" defaultValue="0" code="RESERVED_QUANTITY" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Reserved Quantity' />
-                <column name="lockedQuantity" displayName="冻结数量" domain="quantity" defaultValue="0" code="LOCKED_QUANTITY" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Locked Quantity' />
-                <column name="availableQuantity" displayName="可用数量" domain="quantity" mandatory="true" code="AVAILABLE_QUANTITY" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Available Quantity' />
+                <column name="totalQuantity" displayName="总数量" domain="quantity" mandatory="true" code="TOTAL_QUANTITY" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Quantity' />
+                <column name="reservedQuantity" displayName="预留数量" domain="quantity" defaultValue="0" code="RESERVED_QUANTITY" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Reserved Quantity' />
+                <column name="lockedQuantity" displayName="冻结数量" domain="quantity" defaultValue="0" code="LOCKED_QUANTITY" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Locked Quantity' />
+                <column name="availableQuantity" displayName="可用数量" domain="quantity" mandatory="true" code="AVAILABLE_QUANTITY" propId="11" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Available Quantity' />
                 <column name="costMethod" displayName="计价方法" ext:dict="erp-md/cost-method" code="COST_METHOD" propId="12" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Cost Method' />
-                <column name="avgCost" displayName="平均成本" domain="unitPrice" code="AVG_COST" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Avg Cost' />
-                <column name="totalCost" displayName="总成本" domain="amount" code="TOTAL_COST" propId="14" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Cost' />
+                <column name="avgCost" displayName="平均成本" domain="unitPrice" code="AVG_COST" propId="13" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Avg Cost' />
+                <column name="totalCost" displayName="总成本" domain="amount" code="TOTAL_COST" propId="14" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Cost' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="15" stdDataType="long" i18n-en:displayName='Currency' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="16" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="17" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -309,8 +309,8 @@
                 <column name="warehouseId" displayName="仓库" stdSqlType="BIGINT" mandatory="true" code="WAREHOUSE_ID" propId="6" stdDataType="long" i18n-en:displayName='Warehouse' />
                 <column name="locationId" displayName="库位" stdSqlType="BIGINT" code="LOCATION_ID" propId="7" stdDataType="long" i18n-en:displayName='Location' />
                 <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="8" stdDataType="string" i18n-en:displayName='Batch No' />
-                <column name="reservedQuantity" displayName="预留数量" domain="quantity" mandatory="true" code="RESERVED_QUANTITY" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Reserved Quantity' />
-                <column name="consumedQuantity" displayName="已消耗数量" domain="quantity" defaultValue="0" code="CONSUMED_QUANTITY" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Consumed Quantity' />
+                <column name="reservedQuantity" displayName="预留数量" domain="quantity" mandatory="true" code="RESERVED_QUANTITY" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Reserved Quantity' />
+                <column name="consumedQuantity" displayName="已消耗数量" domain="quantity" defaultValue="0" code="CONSUMED_QUANTITY" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Consumed Quantity' />
                 <column name="uomId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UOM_ID" propId="11" stdDataType="long" i18n-en:displayName='Uom' />
                 <column name="sourceLineCode" displayName="来源行号" stdSqlType="VARCHAR" precision="50" code="SOURCE_LINE_CODE" propId="12" stdDataType="string" i18n-en:displayName='Source Line Code' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="13" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
@@ -342,10 +342,10 @@
                 <column name="warehouseId" displayName="仓库" stdSqlType="BIGINT" mandatory="true" code="WAREHOUSE_ID" propId="5" stdDataType="long" i18n-en:displayName='Warehouse' />
                 <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="6" stdDataType="string" i18n-en:displayName='Batch No' />
                 <column name="costMethod" displayName="计价方法" ext:dict="erp-md/cost-method" mandatory="true" code="COST_METHOD" propId="7" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Cost Method' />
-                <column name="incomingQuantity" displayName="入库数量" domain="quantity" mandatory="true" code="INCOMING_QUANTITY" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Incoming Quantity' />
-                <column name="remainingQuantity" displayName="剩余数量" domain="quantity" mandatory="true" code="REMAINING_QUANTITY" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remaining Quantity' />
-                <column name="unitCost" displayName="单位成本" domain="unitPrice" mandatory="true" code="UNIT_COST" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Unit Cost' />
-                <column name="totalCost" displayName="总成本" domain="amount" mandatory="true" code="TOTAL_COST" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Cost' />
+                <column name="incomingQuantity" displayName="入库数量" domain="quantity" mandatory="true" code="INCOMING_QUANTITY" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Incoming Quantity' />
+                <column name="remainingQuantity" displayName="剩余数量" domain="quantity" mandatory="true" code="REMAINING_QUANTITY" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Remaining Quantity' />
+                <column name="unitCost" displayName="单位成本" domain="unitPrice" mandatory="true" code="UNIT_COST" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Unit Cost' />
+                <column name="totalCost" displayName="总成本" domain="amount" mandatory="true" code="TOTAL_COST" propId="11" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Cost' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="12" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="incomingDate" displayName="入库日期" stdSqlType="DATE" code="INCOMING_DATE" propId="13" stdDataType="date" i18n-en:displayName='Incoming Date' />
                 <column name="incomingMoveId" displayName="入库移动单" stdSqlType="BIGINT" code="INCOMING_MOVE_ID" propId="14" stdDataType="long" i18n-en:displayName='Incoming Move' />
@@ -415,7 +415,7 @@
                 <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="4" stdDataType="long" i18n-en:displayName='Material' />
                 <column name="skuId" displayName="SKU" stdSqlType="BIGINT" code="SKU_ID" propId="5" stdDataType="long" i18n-en:displayName='SKU' />
                 <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UO_M_ID" propId="6" stdDataType="long" i18n-en:displayName='UoM' />
-                <column name="quantity" displayName="数量" domain="quantity" mandatory="true" code="QUANTITY" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Quantity' />
+                <column name="quantity" displayName="数量" domain="quantity" mandatory="true" code="QUANTITY" propId="7" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Quantity' />
                 <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="8" stdDataType="string" i18n-en:displayName='Batch No' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="10" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
@@ -477,11 +477,11 @@
                 <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UO_M_ID" propId="6" stdDataType="long" i18n-en:displayName='UoM' />
                 <column name="locationId" displayName="库位" stdSqlType="BIGINT" code="LOCATION_ID" propId="7" stdDataType="long" i18n-en:displayName='Location' />
                 <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="8" stdDataType="string" i18n-en:displayName='Batch No' />
-                <column name="bookQuantity" displayName="账面数量" domain="quantity" mandatory="true" code="BOOK_QUANTITY" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Book Quantity' />
-                <column name="actualQuantity" displayName="实盘数量" domain="quantity" mandatory="true" code="ACTUAL_QUANTITY" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Actual Quantity' />
-                <column name="differenceQuantity" displayName="差异数量" domain="quantity" mandatory="true" code="DIFFERENCE_QUANTITY" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Difference Quantity' />
-                <column name="unitCost" displayName="单位成本" domain="unitPrice" code="UNIT_COST" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Unit Cost' />
-                <column name="differenceAmount" displayName="差异金额" domain="amount" code="DIFFERENCE_AMOUNT" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Difference Amount' />
+                <column name="bookQuantity" displayName="账面数量" domain="quantity" mandatory="true" code="BOOK_QUANTITY" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Book Quantity' />
+                <column name="actualQuantity" displayName="实盘数量" domain="quantity" mandatory="true" code="ACTUAL_QUANTITY" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Actual Quantity' />
+                <column name="differenceQuantity" displayName="差异数量" domain="quantity" mandatory="true" code="DIFFERENCE_QUANTITY" propId="11" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Difference Quantity' />
+                <column name="unitCost" displayName="单位成本" domain="unitPrice" code="UNIT_COST" propId="12" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Unit Cost' />
+                <column name="differenceAmount" displayName="差异金额" domain="amount" code="DIFFERENCE_AMOUNT" propId="13" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Difference Amount' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="14" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="15" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="16" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -541,8 +541,8 @@
                 <column name="skuId" displayName="SKU" stdSqlType="BIGINT" code="SKU_ID" propId="5" stdDataType="long" i18n-en:displayName='SKU' />
                 <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UO_M_ID" propId="6" stdDataType="long" i18n-en:displayName='UoM' />
                 <column name="sourceLocationId" displayName="拣货库位" stdSqlType="BIGINT" code="SOURCE_LOCATION_ID" propId="7" stdDataType="long" i18n-en:displayName='Source Location' />
-                <column name="quantity" displayName="应拣数量" domain="quantity" mandatory="true" code="QUANTITY" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Quantity' />
-                <column name="pickedQuantity" displayName="已拣数量" domain="quantity" defaultValue="0" code="PICKED_QUANTITY" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Picked Quantity' />
+                <column name="quantity" displayName="应拣数量" domain="quantity" mandatory="true" code="QUANTITY" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Quantity' />
+                <column name="pickedQuantity" displayName="已拣数量" domain="quantity" defaultValue="0" code="PICKED_QUANTITY" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Picked Quantity' />
                 <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="10" stdDataType="string" i18n-en:displayName='Batch No' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="12" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
@@ -572,8 +572,8 @@
                 <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="4" stdDataType="long" i18n-en:displayName='Material' />
                 <column name="skuId" displayName="SKU" stdSqlType="BIGINT" code="SKU_ID" propId="5" stdDataType="long" i18n-en:displayName='SKU' />
                 <column name="warehouseId" displayName="仓库" stdSqlType="BIGINT" mandatory="true" code="WAREHOUSE_ID" propId="6" stdDataType="long" i18n-en:displayName='Warehouse' />
-                <column name="totalQuantity" displayName="总数量" domain="quantity" mandatory="true" code="TOTAL_QUANTITY" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Quantity' />
-                <column name="availableQuantity" displayName="可用数量" domain="quantity" mandatory="true" code="AVAILABLE_QUANTITY" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Available Quantity' />
+                <column name="totalQuantity" displayName="总数量" domain="quantity" mandatory="true" code="TOTAL_QUANTITY" propId="7" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Quantity' />
+                <column name="availableQuantity" displayName="可用数量" domain="quantity" mandatory="true" code="AVAILABLE_QUANTITY" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Available Quantity' />
                 <column name="productionDate" displayName="生产日期" stdSqlType="DATE" code="PRODUCTION_DATE" propId="9" stdDataType="date" i18n-en:displayName='Production Date' />
                 <column name="expiryDate" displayName="有效期至" stdSqlType="DATE" code="EXPIRY_DATE" propId="10" stdDataType="date" i18n-en:displayName='Expiry Date' />
                 <column name="shelfLifeDays" displayName="保质期(天)" stdSqlType="INTEGER" code="SHELF_LIFE_DAYS" propId="11" stdDataType="int" i18n-en:displayName='Shelf Life Days' />

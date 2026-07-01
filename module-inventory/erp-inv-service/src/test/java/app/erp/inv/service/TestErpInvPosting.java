@@ -17,6 +17,8 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -41,6 +43,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvPosting extends JunitAutoTestCase {
+    private static final IServiceContext CTX = new ServiceContextImpl();
+
 
     static final Long ORG_ID = 1003L;
     static final Long MATERIAL_ID = 2003L;
@@ -72,9 +76,9 @@ public class TestErpInvPosting extends JunitAutoTestCase {
         ErpFinVoucher voucher = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(link.getVoucherId());
         assertNotNull(voucher, "凭证应落库");
         assertEquals(VOUCHER_STATUS_POSTED, voucher.getDocStatus(), "凭证 docStatus=已过账");
-        assertTrue(new BigDecimal(voucher.getTotalDebit()).compareTo(new BigDecimal("50")) == 0,
+        assertTrue(voucher.getTotalDebit().compareTo(new BigDecimal("50")) == 0,
                 "借方合计=存货 50");
-        assertTrue(new BigDecimal(voucher.getTotalCredit()).compareTo(new BigDecimal("50")) == 0,
+        assertTrue(voucher.getTotalCredit().compareTo(new BigDecimal("50")) == 0,
                 "贷方合计=暂估应付 50");
         assertEquals(2, countLines(voucher.getId()), "入库估值凭证 2 行（借存货/贷暂估）");
     }
@@ -98,7 +102,7 @@ public class TestErpInvPosting extends JunitAutoTestCase {
         request.setRelatedBillType("TRANSFER");
         request.setRelatedBillCode("TR-NOPOST-001");
         request.setLines(Collections.singletonList(line(new BigDecimal("5"), null)));
-        ErpInvStockMove move = stockMoveBiz.generateMove(request);
+        ErpInvStockMove move = stockMoveBiz.generateMove(request, CTX);
 
         assertEquals(ErpInvConstants.DOC_STATUS_DONE, move.getDocStatus(), "内部调拨应 DONE");
         assertEquals(false, move.getPosted(), "同法人内部调拨不过账 posted=false");
@@ -131,7 +135,7 @@ public class TestErpInvPosting extends JunitAutoTestCase {
         request.setRelatedBillType("PUR_RECEIPT");
         request.setRelatedBillCode(billCode);
         request.setLines(Collections.singletonList(line(qty, unitCost)));
-        return stockMoveBiz.generateMove(request);
+        return stockMoveBiz.generateMove(request, CTX);
     }
 
     private StockMoveLineRequest line(BigDecimal qty, BigDecimal unitCost) {
