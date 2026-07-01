@@ -24,6 +24,11 @@ public interface ErpPurConstants {
     int RECEIVE_STATUS_PARTIAL = 20;
     int RECEIVE_STATUS_RECEIVED = 30;
 
+    // 付款进度（派生）paid-status：采购发票的付款状态，付款单的核销状态复用本字典
+    int PAID_STATUS_UNPAID = 10;
+    int PAID_STATUS_PARTIAL = 20;
+    int PAID_STATUS_PAID = 30;
+
     // 主数据启用状态 erp-md/active-status
     int PARTNER_STATUS_ACTIVE = 10;
 
@@ -33,4 +38,13 @@ public interface ErpPurConstants {
     // 入库联动标识（自由字符串，inventory 侧无字典约束）
     String RELATED_BILL_TYPE_PUR_RECEIVE = "ERP_PUR_RECEIVE";
     String RELATED_BILL_TYPE_REVERSAL = "REVERSAL";
+
+    // 三单匹配配置项（three-way-match.md §不匹配的处理策略，缺失走默认，无需 .env）
+    String CONFIG_MATCH_QTY_TOLERANCE = "erp-pur.match-qty-tolerance";
+    String CONFIG_MATCH_PRICE_TOLERANCE = "erp-pur.match-price-tolerance";
+    String CONFIG_MATCH_STRICT_MODE = "erp-pur.match-strict-mode";
+
+    // 已核销判定阈值：累计已核销 / 发票含税总额 ≥ 此比例视为 PAID，否则按是否 > 0 区分 PARTIAL/UNPAID。
+    // 用 BigDecimal 比例避免浮点；1.0 即全额核销才 PAID。
+    java.math.BigDecimal PAID_FULL_RATIO = java.math.BigDecimal.ONE;
 }

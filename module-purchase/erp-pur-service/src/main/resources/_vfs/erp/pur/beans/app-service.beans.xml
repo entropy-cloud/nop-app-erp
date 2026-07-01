@@ -15,4 +15,28 @@
     <!-- 采购域服务（非 BizModel）：请购→订单转化组装器 -->
     <bean id="app.erp.pur.service.entity.RequisitionToOrderConverter"
           class="app.erp.pur.service.entity.RequisitionToOrderConverter"/>
+
+    <!-- 采购域服务（非 BizModel）：三单匹配器（发票审核校验 订单↔入库↔发票） -->
+    <bean id="app.erp.pur.service.entity.ThreeWayMatcher"
+          class="app.erp.pur.service.entity.ThreeWayMatcher"/>
+
+    <!-- 采购业财过账 Provider（注册为 Bean 后由 ErpFinAcctDocRegistry 自动聚合，处理 AP_INVOICE/PAYMENT） -->
+    <bean id="app.erp.pur.service.posting.PurAcctDocProvider"
+          class="app.erp.pur.service.posting.PurAcctDocProvider"/>
+
+    <!-- 采购过账执行器（跨域经 IErpFinVoucherBiz Facade，REQUIRES_NEW 由 Facade 承接，自身无 @Transactional） -->
+    <bean id="app.erp.pur.service.posting.PurPostingExecutor"
+          class="app.erp.pur.service.posting.PurPostingExecutor"/>
+
+    <!-- 采购发票过账派发器（APPROVED→AP_INVOICE 凭证；失败吞异常保持终态 posted=false） -->
+    <bean id="app.erp.pur.service.posting.PurInvoicePostingDispatcher"
+          class="app.erp.pur.service.posting.PurInvoicePostingDispatcher"/>
+
+    <!-- 付款单过账派发器（APPROVED→PAYMENT 凭证 借应付/贷银行存款；失败吞异常保持终态 posted=false） -->
+    <bean id="app.erp.pur.service.posting.PurPaymentPostingDispatcher"
+          class="app.erp.pur.service.posting.PurPaymentPostingDispatcher"/>
+
+    <!-- 付款→发票域级核销器（ErpPurPaymentLine 多对多，回写 paidStatus/paidAmount/writtenOffStatus） -->
+    <bean id="app.erp.pur.service.entity.PaymentSettler"
+          class="app.erp.pur.service.entity.PaymentSettler"/>
 </beans>
