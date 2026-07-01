@@ -60,6 +60,8 @@ prop:
       customer: Customer
       milestone: Milestone
       lines: Lines
+      currency: null
+      org: null
     ErpPrjBillingLine:
       id: ID
       billingId: Billing
@@ -77,6 +79,7 @@ prop:
       updateTime: Update Time
       billing: Billing
       subject: Subject
+      task: null
     ErpPrjBudget:
       id: ID
       code: Code
@@ -98,6 +101,8 @@ prop:
       updateTime: Update Time
       project: Project
       lines: Lines
+      currency: null
+      org: null
     ErpPrjBudgetLine:
       id: ID
       budgetId: Budget
@@ -117,6 +122,7 @@ prop:
       updateTime: Update Time
       budget: Budget
       subject: Subject
+      task: null
     ErpPrjCostCollection:
       id: ID
       code: Code
@@ -144,6 +150,8 @@ prop:
       amountFunctional: Amt (Functional)
       project: Project
       lines: Lines
+      currency: null
+      org: null
     ErpPrjCostCollectionLine:
       id: ID
       costCollectionId: Cost Collection
@@ -163,6 +171,7 @@ prop:
       updateTime: Update Time
       costCollection: Cost Collection
       subject: Subject
+      task: null
     ErpPrjMilestone:
       id: ID
       projectId: Project
@@ -214,6 +223,8 @@ prop:
       members: Members
       budgets: Budgets
       milestones: Milestones
+      customer: null
+      org: null
     ErpPrjProjectType:
       id: ID
       code: Code
@@ -306,6 +317,7 @@ prop:
       user: User
       activityType: Activity Type
       currency: Currency
+      org: null
 dict:
   label:
     erp-prj/project-status: Project Status

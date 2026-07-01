@@ -4,6 +4,40 @@ CREATE TABLE erp_md_md_organization(
   constraint PK_erp_md_md_organization primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_md_material(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  constraint PK_erp_md_material primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_warehouse(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  constraint PK_erp_md_warehouse primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_partner(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  constraint PK_erp_md_partner primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_location(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  constraint PK_erp_md_location primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_inv_stock_move(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  constraint PK_erp_inv_stock_move primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_drp_plan(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '编号',
@@ -23,30 +57,6 @@ CREATE TABLE erp_drp_plan(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   constraint PK_erp_drp_plan primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_drp_parameter(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  WAREHOUSE_ID BIGINT NOT NULL    COMMENT '仓库',
-  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
-  SAFETY_STOCK DECIMAL(20,4) NULL    COMMENT '安全库存',
-  REPLENISHMENT_LEAD_TIME INTEGER NULL    COMMENT '补货提前期(天)',
-  ORDER_MULTIPLE DECIMAL(20,4) NULL    COMMENT '订货倍数',
-  PREFERRED_SOURCE_WAREHOUSE_ID BIGINT NULL    COMMENT '首选调出仓库',
-  PREFERRED_SUPPLIER_ID BIGINT NULL    COMMENT '首选供应商',
-  REPLENISHMENT_METHOD INTEGER NOT NULL    COMMENT '补货方法',
-  MIN_STOCK_LEVEL DECIMAL(20,4) NULL    COMMENT '最低库存',
-  MAX_STOCK_LEVEL DECIMAL(20,4) NULL    COMMENT '最高库存',
-  REVIEW_PERIOD_DAYS INTEGER NULL    COMMENT '审视周期(天)',
-  ORG_ID BIGINT NULL    COMMENT '业务组织',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_drp_parameter primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_inv_drp_safety_stock_calc(
@@ -74,44 +84,20 @@ CREATE TABLE erp_inv_drp_safety_stock_calc(
   constraint PK_erp_inv_drp_safety_stock_calc primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_inv_drp_cross_dock(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  CODE VARCHAR(50) NOT NULL    COMMENT '编号',
-  ORG_ID BIGINT NULL    COMMENT '业务组织',
-  DRP_LINE_ID BIGINT NULL    COMMENT 'DRP行',
-  INBOUND_MOVE_ID BIGINT NULL    COMMENT '入站移动单',
-  OUTBOUND_MOVE_ID BIGINT NULL    COMMENT '出站移动单',
-  SOURCE_BILL_TYPE VARCHAR(50) NULL    COMMENT '来源单据类型',
-  SOURCE_BILL_CODE VARCHAR(50) NULL    COMMENT '来源单据号',
-  TARGET_BILL_TYPE VARCHAR(50) NULL    COMMENT '目标单据类型',
-  TARGET_BILL_CODE VARCHAR(50) NULL    COMMENT '目标单据号',
-  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
-  QUANTITY DECIMAL(20,4) NOT NULL    COMMENT '越库数量',
-  STAGING_LOCATION_ID BIGINT NULL    COMMENT '暂存库位',
-  DOCK_SLOT_TIME DATETIME NULL    COMMENT '月台时间窗口',
-  STATUS INTEGER NOT NULL    COMMENT '状态',
-  MATCHED_AT DATETIME NULL    COMMENT '匹配时间',
-  LOADED_AT DATETIME NULL    COMMENT '装车完成时间',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_inv_drp_cross_dock primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_inv_drp_dock_appointment(
+CREATE TABLE erp_drp_parameter(
   ID BIGINT NOT NULL    COMMENT 'ID',
   WAREHOUSE_ID BIGINT NOT NULL    COMMENT '仓库',
-  DOCK_ID BIGINT NOT NULL    COMMENT '月台',
-  APPOINTMENT_DATE DATE NOT NULL    COMMENT '预约日期',
-  SLOT_START DATETIME NOT NULL    COMMENT '时间窗口开始',
-  SLOT_END DATETIME NOT NULL    COMMENT '时间窗口结束',
-  CROSS_DOCK_ID BIGINT NULL    COMMENT '关联越库',
-  CARRIER_INFO VARCHAR(500) NULL    COMMENT '承运商信息',
-  STATUS VARCHAR(50) NULL    COMMENT '状态',
+  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
+  SAFETY_STOCK DECIMAL(20,4) NULL    COMMENT '安全库存',
+  REPLENISHMENT_LEAD_TIME INTEGER NULL    COMMENT '补货提前期(天)',
+  ORDER_MULTIPLE DECIMAL(20,4) NULL    COMMENT '订货倍数',
+  PREFERRED_SOURCE_WAREHOUSE_ID BIGINT NULL    COMMENT '首选调出仓库',
+  PREFERRED_SUPPLIER_ID BIGINT NULL    COMMENT '首选供应商',
+  REPLENISHMENT_METHOD INTEGER NOT NULL    COMMENT '补货方法',
+  MIN_STOCK_LEVEL DECIMAL(20,4) NULL    COMMENT '最低库存',
+  MAX_STOCK_LEVEL DECIMAL(20,4) NULL    COMMENT '最高库存',
+  REVIEW_PERIOD_DAYS INTEGER NULL    COMMENT '审视周期(天)',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -119,8 +105,7 @@ CREATE TABLE erp_inv_drp_dock_appointment(
   CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  ORG_ID BIGINT NULL    COMMENT '业务组织',
-  constraint PK_erp_inv_drp_dock_appointment primary key (ID)
+  constraint PK_erp_drp_parameter primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_inv_drp_lead_time_record(
@@ -176,20 +161,79 @@ CREATE TABLE erp_drp_line(
   constraint PK_erp_drp_line primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_inv_drp_cross_dock(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '编号',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  DRP_LINE_ID BIGINT NULL    COMMENT 'DRP行',
+  INBOUND_MOVE_ID BIGINT NULL    COMMENT '入站移动单',
+  OUTBOUND_MOVE_ID BIGINT NULL    COMMENT '出站移动单',
+  SOURCE_BILL_TYPE VARCHAR(50) NULL    COMMENT '来源单据类型',
+  SOURCE_BILL_CODE VARCHAR(50) NULL    COMMENT '来源单据号',
+  TARGET_BILL_TYPE VARCHAR(50) NULL    COMMENT '目标单据类型',
+  TARGET_BILL_CODE VARCHAR(50) NULL    COMMENT '目标单据号',
+  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
+  QUANTITY DECIMAL(20,4) NOT NULL    COMMENT '越库数量',
+  STAGING_LOCATION_ID BIGINT NULL    COMMENT '暂存库位',
+  DOCK_SLOT_TIME DATETIME NULL    COMMENT '月台时间窗口',
+  STATUS INTEGER NOT NULL    COMMENT '状态',
+  MATCHED_AT DATETIME NULL    COMMENT '匹配时间',
+  LOADED_AT DATETIME NULL    COMMENT '装车完成时间',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_inv_drp_cross_dock primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_inv_drp_dock_appointment(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  WAREHOUSE_ID BIGINT NOT NULL    COMMENT '仓库',
+  DOCK_ID BIGINT NOT NULL    COMMENT '月台',
+  APPOINTMENT_DATE DATE NOT NULL    COMMENT '预约日期',
+  SLOT_START DATETIME NOT NULL    COMMENT '时间窗口开始',
+  SLOT_END DATETIME NOT NULL    COMMENT '时间窗口结束',
+  CROSS_DOCK_ID BIGINT NULL    COMMENT '关联越库',
+  CARRIER_INFO VARCHAR(500) NULL    COMMENT '承运商信息',
+  STATUS VARCHAR(50) NULL    COMMENT '状态',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  constraint PK_erp_inv_drp_dock_appointment primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 
    ALTER TABLE erp_md_md_organization COMMENT 'ErpMdOrganization';
                 
-   ALTER TABLE erp_drp_plan COMMENT 'DRP计划';
+   ALTER TABLE erp_md_material COMMENT '物料';
                 
-   ALTER TABLE erp_drp_parameter COMMENT '仓库补货参数';
+   ALTER TABLE erp_md_warehouse COMMENT '仓库';
+                
+   ALTER TABLE erp_md_partner COMMENT '往来单位';
+                
+   ALTER TABLE erp_md_location COMMENT '库位';
+                
+   ALTER TABLE erp_inv_stock_move COMMENT '库存移动';
+                
+   ALTER TABLE erp_drp_plan COMMENT 'DRP计划';
                 
    ALTER TABLE erp_inv_drp_safety_stock_calc COMMENT '安全库存计算';
                 
-   ALTER TABLE erp_inv_drp_cross_dock COMMENT '越库执行记录';
-                
-   ALTER TABLE erp_inv_drp_dock_appointment COMMENT '月台预约';
+   ALTER TABLE erp_drp_parameter COMMENT '仓库补货参数';
                 
    ALTER TABLE erp_inv_drp_lead_time_record COMMENT '提前期记录';
                 
    ALTER TABLE erp_drp_line COMMENT 'DRP明细';
+                
+   ALTER TABLE erp_inv_drp_cross_dock COMMENT '越库执行记录';
+                
+   ALTER TABLE erp_inv_drp_dock_appointment COMMENT '月台预约';
                 

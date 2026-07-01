@@ -104,7 +104,7 @@
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="22" i18n-en:displayName="Organization" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="businessDate" displayName="业务日期" propId="23" i18n-en:displayName="Business Date" queryable="true"
@@ -146,6 +146,10 @@
             <schema>
                 <item bizObjName="ErpMntSparePartUsage"/>
             </schema>
+        </prop>
+        <prop name="org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="orgId"
+              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
         </prop>
     </props>
 </meta>

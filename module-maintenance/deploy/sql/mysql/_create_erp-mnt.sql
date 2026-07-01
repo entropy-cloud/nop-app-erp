@@ -23,6 +23,13 @@ CREATE TABLE erp_mnt_equipment_category(
   constraint PK_erp_mnt_equipment_category primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_ast_asset(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  constraint PK_erp_ast_asset primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_md_organization(
   ID BIGINT NULL    COMMENT 'null',
   CODE VARCHAR(50) NULL    COMMENT 'null',
@@ -40,6 +47,16 @@ CREATE TABLE erp_md_employee(
   ORG_ID BIGINT NULL    COMMENT 'null',
   STATUS INTEGER NULL    COMMENT 'null',
   constraint PK_erp_md_employee primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_warehouse(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  WAREHOUSE_TYPE INTEGER NULL    COMMENT 'null',
+  ORG_ID BIGINT NULL    COMMENT 'null',
+  STATUS INTEGER NULL    COMMENT 'null',
+  constraint PK_erp_md_warehouse primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_md_material(
@@ -66,16 +83,6 @@ CREATE TABLE erp_md_material_category(
   NAME VARCHAR(200) NULL    COMMENT 'null',
   PARENT_ID BIGINT NULL    COMMENT 'null',
   constraint PK_erp_md_material_category primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_md_warehouse(
-  ID BIGINT NULL    COMMENT 'null',
-  CODE VARCHAR(50) NULL    COMMENT 'null',
-  NAME VARCHAR(200) NULL    COMMENT 'null',
-  WAREHOUSE_TYPE INTEGER NULL    COMMENT 'null',
-  ORG_ID BIGINT NULL    COMMENT 'null',
-  STATUS INTEGER NULL    COMMENT 'null',
-  constraint PK_erp_md_warehouse primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_mnt_equipment(
@@ -287,7 +294,7 @@ CREATE TABLE erp_mnt_spare_part_usage(
   APPROVE_STATUS INTEGER NOT NULL    COMMENT '审核状态',
   POSTED BOOLEAN default 0  NULL    COMMENT '已过账(库存已出库)',
   POSTED_AT DATETIME NULL    COMMENT '过账时间',
-  POSTED_BY BIGINT NULL    COMMENT '过账人',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -323,17 +330,19 @@ CREATE TABLE erp_mnt_spare_part_usage_line(
                 
    ALTER TABLE erp_mnt_equipment_category COMMENT '设备分类';
                 
+   ALTER TABLE erp_ast_asset COMMENT '资产';
+                
    ALTER TABLE erp_md_organization COMMENT '组织';
                 
    ALTER TABLE erp_md_employee COMMENT '职员';
+                
+   ALTER TABLE erp_md_warehouse COMMENT '仓库';
                 
    ALTER TABLE erp_md_material COMMENT '物料';
                 
    ALTER TABLE erp_md_uom COMMENT '计量单位';
                 
    ALTER TABLE erp_md_material_category COMMENT '物料分类';
-                
-   ALTER TABLE erp_md_warehouse COMMENT '仓库';
                 
    ALTER TABLE erp_mnt_equipment COMMENT '设备';
                 

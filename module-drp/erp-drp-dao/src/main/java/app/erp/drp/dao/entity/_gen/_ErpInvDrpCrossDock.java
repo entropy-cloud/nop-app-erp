@@ -121,6 +121,24 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     private static int _PROP_ID_BOUND = 25;
 
     
+    /* relation:  */
+    public static final String PROP_NAME_drpLine = "drpLine";
+    
+    /* relation:  */
+    public static final String PROP_NAME_material = "material";
+    
+    /* relation:  */
+    public static final String PROP_NAME_stagingLocation = "stagingLocation";
+    
+    /* relation:  */
+    public static final String PROP_NAME_inboundMove = "inboundMove";
+    
+    /* relation:  */
+    public static final String PROP_NAME_outboundMove = "outboundMove";
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1312,5 +1330,143 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.drp.dao.entity.ErpDrpLine getDrpLine(){
+       return (app.erp.drp.dao.entity.ErpDrpLine)internalGetRefEntity(PROP_NAME_drpLine);
+    }
+
+    public final void setDrpLine(app.erp.drp.dao.entity.ErpDrpLine refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setDrpLineId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_drpLine, refEntity,()->{
+           
+                           this.setDrpLineId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdMaterial getMaterial(){
+       return (app.erp.md.dao.entity.ErpMdMaterial)internalGetRefEntity(PROP_NAME_material);
+    }
+
+    public final void setMaterial(app.erp.md.dao.entity.ErpMdMaterial refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setMaterialId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_material, refEntity,()->{
+           
+                           this.setMaterialId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdLocation getStagingLocation(){
+       return (app.erp.md.dao.entity.ErpMdLocation)internalGetRefEntity(PROP_NAME_stagingLocation);
+    }
+
+    public final void setStagingLocation(app.erp.md.dao.entity.ErpMdLocation refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setStagingLocationId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_stagingLocation, refEntity,()->{
+           
+                           this.setStagingLocationId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.inv.dao.entity.ErpInvStockMove getInboundMove(){
+       return (app.erp.inv.dao.entity.ErpInvStockMove)internalGetRefEntity(PROP_NAME_inboundMove);
+    }
+
+    public final void setInboundMove(app.erp.inv.dao.entity.ErpInvStockMove refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setInboundMoveId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_inboundMove, refEntity,()->{
+           
+                           this.setInboundMoveId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.inv.dao.entity.ErpInvStockMove getOutboundMove(){
+       return (app.erp.inv.dao.entity.ErpInvStockMove)internalGetRefEntity(PROP_NAME_outboundMove);
+    }
+
+    public final void setOutboundMove(app.erp.inv.dao.entity.ErpInvStockMove refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOutboundMoveId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_outboundMove, refEntity,()->{
+           
+                           this.setOutboundMoveId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
 }
 // resume CPD analysis - CPD-ON

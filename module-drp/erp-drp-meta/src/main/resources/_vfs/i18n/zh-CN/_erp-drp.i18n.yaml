@@ -19,6 +19,7 @@ prop:
       forecastDemand: 预测需求量
       id: ID
       lineNo: 行号
+      material: null
       materialId: 物料
       netRequirement: 净需求
       onOrderQty: 在单量
@@ -32,6 +33,7 @@ prop:
       replenishmentType: 补货类型
       replenishmentType_label: 补货类型
       safetyStock: 安全库存
+      sourceWarehouse: null
       sourceWarehouseId: 来源仓库
       status: 状态
       status_label: 状态
@@ -39,19 +41,23 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+      warehouse: null
       warehouseId: 目标仓库
     ErpDrpParameter:
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
       id: ID
+      material: null
       materialId: 物料
       maxStockLevel: 最高库存
       minStockLevel: 最低库存
       orderMultiple: 订货倍数
       org: null
       orgId: 业务组织
+      preferredSourceWarehouse: null
       preferredSourceWarehouseId: 首选调出仓库
+      preferredSupplier: null
       preferredSupplierId: 首选供应商
       remark: 备注
       replenishmentLeadTime: 补货提前期(天)
@@ -62,6 +68,7 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+      warehouse: null
       warehouseId: 仓库
     ErpDrpPlan:
       code: 编号
@@ -90,19 +97,24 @@ prop:
       createdBy: 创建人
       delVersion: 逻辑删除版本
       dockSlotTime: 月台时间窗口
+      drpLine: null
       drpLineId: DRP行
       id: ID
+      inboundMove: null
       inboundMoveId: 入站移动单
       loadedAt: 装车完成时间
       matchedAt: 匹配时间
+      material: null
       materialId: 物料
       org: null
       orgId: 业务组织
+      outboundMove: null
       outboundMoveId: 出站移动单
       quantity: 越库数量
       remark: 备注
       sourceBillCode: 来源单据号
       sourceBillType: 来源单据类型
+      stagingLocation: null
       stagingLocationId: 暂存库位
       status: 状态
       status_label: 状态
@@ -116,8 +128,10 @@ prop:
       carrierInfo: 承运商信息
       createTime: 创建时间
       createdBy: 创建人
+      crossDock: null
       crossDockId: 关联越库
       delVersion: 逻辑删除版本
+      dock: null
       dockId: 月台
       id: ID
       org: null
@@ -129,6 +143,7 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+      warehouse: null
       warehouseId: 仓库
     ErpInvDrpLeadTimeRecord:
       actualLeadTime: 实际提前期(天)
@@ -139,6 +154,7 @@ prop:
       expectedLeadTime: 预期提前期(天)
       id: ID
       isOnTime: 是否准时
+      material: null
       materialId: 物料
       orderDate: 订单日期
       org: null
@@ -146,6 +162,7 @@ prop:
       purchaseOrderCode: 采购单号
       receiptDate: 入库日期
       remark: 备注
+      supplier: null
       supplierId: 供应商
       updateTime: 修改时间
       updatedBy: 修改人
@@ -162,6 +179,7 @@ prop:
       id: ID
       lastCalculatedAt: 计算时间
       leadTimeDays: 提前期(天)
+      material: null
       materialId: 物料
       method: 计算方法
       method_label: 计算方法
@@ -175,4 +193,5 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+      warehouse: null
       warehouseId: 仓库

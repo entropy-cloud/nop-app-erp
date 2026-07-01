@@ -3,17 +3,19 @@
 
 alter table erp_mnt_equipment_category add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
+alter table erp_ast_asset add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
 alter table erp_md_organization add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_employee add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_warehouse add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_material add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_uom add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_material_category add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
-
-alter table erp_md_warehouse add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mnt_equipment add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
@@ -43,11 +45,17 @@ alter table erp_md_location add constraint PK_erp_md_location primary key (NOP_T
 alter table erp_mnt_equipment_category drop constraint PK_erp_mnt_equipment_category;
 alter table erp_mnt_equipment_category add constraint PK_erp_mnt_equipment_category primary key (NOP_TENANT_ID, ID);
 
+alter table erp_ast_asset drop constraint PK_erp_ast_asset;
+alter table erp_ast_asset add constraint PK_erp_ast_asset primary key (NOP_TENANT_ID, ID);
+
 alter table erp_md_organization drop constraint PK_erp_md_organization;
 alter table erp_md_organization add constraint PK_erp_md_organization primary key (NOP_TENANT_ID, ID);
 
 alter table erp_md_employee drop constraint PK_erp_md_employee;
 alter table erp_md_employee add constraint PK_erp_md_employee primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_warehouse drop constraint PK_erp_md_warehouse;
+alter table erp_md_warehouse add constraint PK_erp_md_warehouse primary key (NOP_TENANT_ID, ID);
 
 alter table erp_md_material drop constraint PK_erp_md_material;
 alter table erp_md_material add constraint PK_erp_md_material primary key (NOP_TENANT_ID, ID);
@@ -57,9 +65,6 @@ alter table erp_md_uom add constraint PK_erp_md_uom primary key (NOP_TENANT_ID, 
 
 alter table erp_md_material_category drop constraint PK_erp_md_material_category;
 alter table erp_md_material_category add constraint PK_erp_md_material_category primary key (NOP_TENANT_ID, ID);
-
-alter table erp_md_warehouse drop constraint PK_erp_md_warehouse;
-alter table erp_md_warehouse add constraint PK_erp_md_warehouse primary key (NOP_TENANT_ID, ID);
 
 alter table erp_mnt_equipment drop constraint PK_erp_mnt_equipment;
 alter table erp_mnt_equipment add constraint PK_erp_mnt_equipment primary key (NOP_TENANT_ID, ID);

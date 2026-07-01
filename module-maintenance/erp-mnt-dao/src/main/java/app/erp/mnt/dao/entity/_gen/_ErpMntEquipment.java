@@ -116,6 +116,9 @@ public class _ErpMntEquipment extends DynamicOrmEntity{
     public static final String PROP_NAME_category = "category";
     
     /* relation:  */
+    public static final String PROP_NAME_asset = "asset";
+    
+    /* relation:  */
     public static final String PROP_NAME_org = "org";
     
     /* relation:  */
@@ -1229,6 +1232,29 @@ public class _ErpMntEquipment extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_category, refEntity,()->{
            
                            this.setCategoryId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.ast.dao.entity.ErpAstAsset getAsset(){
+       return (app.erp.ast.dao.entity.ErpAstAsset)internalGetRefEntity(PROP_NAME_asset);
+    }
+
+    public final void setAsset(app.erp.ast.dao.entity.ErpAstAsset refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setAssetId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_asset, refEntity,()->{
+           
+                           this.setAssetId(refEntity.getId());
                        
            });
            }

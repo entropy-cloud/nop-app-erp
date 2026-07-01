@@ -259,4 +259,15 @@
         }
 
 
+        private Map<String,Object> _task;
+
+        public Map<String,Object> getTask(){
+            return _task;
+        }
+
+        public void setTask(Map<String,Object> value){
+            this._task = value;
+        }
+
+
     }

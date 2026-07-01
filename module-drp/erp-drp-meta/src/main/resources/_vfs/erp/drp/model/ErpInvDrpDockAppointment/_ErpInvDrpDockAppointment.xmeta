@@ -24,11 +24,11 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="warehouseId" displayName="仓库" propId="2" i18n-en:displayName="Warehouse" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="warehouse">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="dockId" displayName="月台" propId="3" i18n-en:displayName="Dock" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="dock">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="appointmentDate" displayName="预约日期" propId="4" i18n-en:displayName="Appointment Date"
@@ -44,7 +44,7 @@
             <schema type="java.time.LocalDateTime"/>
         </prop>
         <prop name="crossDockId" displayName="关联越库" propId="7" i18n-en:displayName="Cross Dock" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="crossDock">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="carrierInfo" displayName="承运商信息" propId="8" i18n-en:displayName="Carrier Info" queryable="true"
@@ -86,6 +86,21 @@
         <prop name="orgId" displayName="业务组织" propId="17" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
             <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="warehouse" i18n-en:displayName="Warehouse" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="warehouseId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
+            <schema bizObjName="ErpMdWarehouse"/>
+        </prop>
+        <prop name="dock" i18n-en:displayName="Dock" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="dockId" ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true"
+              lazy="true">
+            <schema bizObjName="ErpInvDrpCrossDock"/>
+        </prop>
+        <prop name="crossDock" i18n-en:displayName="Cross Dock" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="crossDockId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpInvDrpCrossDock"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"

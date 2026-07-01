@@ -18,5 +18,7 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "project": null,
-  "lines": null
+  "lines": null,
+  "currency": null,
+  "org": null
 }

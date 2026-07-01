@@ -137,6 +137,12 @@ public class _ErpPrjProject extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_milestones = "milestones";
     
+    /* relation:  */
+    public static final String PROP_NAME_customer = "customer";
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1355,6 +1361,52 @@ public class _ErpPrjProject extends DynamicOrmEntity{
      */
     public final IOrmEntitySet<app.erp.prj.dao.entity.ErpPrjMilestone> getMilestones(){
        return _milestones;
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdPartner getCustomer(){
+       return (app.erp.md.dao.entity.ErpMdPartner)internalGetRefEntity(PROP_NAME_customer);
+    }
+
+    public final void setCustomer(app.erp.md.dao.entity.ErpMdPartner refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCustomerId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_customer, refEntity,()->{
+           
+                           this.setCustomerId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
     }
        
 }

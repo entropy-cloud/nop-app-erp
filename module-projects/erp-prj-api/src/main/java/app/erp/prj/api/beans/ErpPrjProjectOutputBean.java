@@ -422,4 +422,26 @@
         }
 
 
+        private Map<String,Object> _customer;
+
+        public Map<String,Object> getCustomer(){
+            return _customer;
+        }
+
+        public void setCustomer(Map<String,Object> value){
+            this._customer = value;
+        }
+
+
+        private Map<String,Object> _org;
+
+        public Map<String,Object> getOrg(){
+            return _org;
+        }
+
+        public void setOrg(Map<String,Object> value){
+            this._org = value;
+        }
+
+
     }

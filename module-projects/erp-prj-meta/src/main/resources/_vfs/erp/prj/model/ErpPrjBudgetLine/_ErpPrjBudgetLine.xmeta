@@ -40,7 +40,7 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="taskId" displayName="任务" propId="6" i18n-en:displayName="Task" queryable="true" sortable="true"
-              insertable="true" updatable="true">
+              insertable="true" updatable="true" ext:relation="task">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="plannedAmount" displayName="预算金额" propId="7" i18n-en:displayName="Planned Amount" mandatory="true"
@@ -92,6 +92,10 @@
               queryable="true" ext:joinLeftProp="subjectId" ext:joinRightProp="id" biz:moduleId="erp/md"
               insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdSubject"/>
+        </prop>
+        <prop name="task" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="taskId"
+              ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpPrjTask"/>
         </prop>
     </props>
 </meta>

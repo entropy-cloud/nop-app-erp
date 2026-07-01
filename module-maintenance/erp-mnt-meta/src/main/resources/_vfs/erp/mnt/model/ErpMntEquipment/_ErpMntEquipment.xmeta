@@ -36,7 +36,7 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="assetId" displayName="资产卡片(关联 assets 域)" propId="5" i18n-en:displayName="Asset" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="asset">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="workcenterId" displayName="关联工作中心(关联 mfg 域)" propId="6" i18n-en:displayName="Workcenter"
@@ -112,6 +112,11 @@
               queryable="true" ext:joinLeftProp="categoryId" ext:joinRightProp="id" insertable="false" updatable="false"
               lazy="true">
             <schema bizObjName="ErpMntEquipmentCategory"/>
+        </prop>
+        <prop name="asset" i18n-en:displayName="Asset" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="assetId" ext:joinRightProp="id" biz:moduleId="erp/ast" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpAstAsset"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"

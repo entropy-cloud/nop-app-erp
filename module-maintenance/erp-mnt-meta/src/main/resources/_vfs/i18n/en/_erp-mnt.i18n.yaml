@@ -41,6 +41,7 @@ prop:
       updateTime: Update Time
       equipment: Equipment
       calibratedByEmployee: Calibrated By Employee
+      org: null
     ErpMntDowntimeEntry:
       id: ID
       equipmentId: Equipment
@@ -57,6 +58,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       equipment: Equipment
+      relatedJobOrder: null
     ErpMntEquipment:
       id: ID
       code: Code
@@ -82,6 +84,7 @@ prop:
       updateTime: Update Time
       location: Location
       category: Category
+      asset: Asset
       org: Org
       visits: Visits
       schedules: Schedules
@@ -117,6 +120,7 @@ prop:
       updateTime: Update Time
       leader: Leader
       members: Members
+      org: null
     ErpMntMaintenanceTeamMember:
       id: ID
       teamId: Team
@@ -206,6 +210,8 @@ prop:
       request: Request
       equipment: Equipment
       lines: Lines
+      org: null
+      warehouse: null
     ErpMntSparePartUsageLine:
       id: ID
       sparePartUsageId: Spare Part Usage
@@ -260,6 +266,7 @@ prop:
       equipment: Equipment
       tasks: Tasks
       sparePartUsages: Spare Part Usages
+      org: null
     ErpMntVisitTask:
       id: ID
       visitId: Visit

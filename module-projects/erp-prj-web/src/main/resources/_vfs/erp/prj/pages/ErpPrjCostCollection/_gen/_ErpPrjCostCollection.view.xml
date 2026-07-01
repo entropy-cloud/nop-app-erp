@@ -52,7 +52,7 @@
                 <col id="postedAt" sortable="true"/>
 
                 <!--过账人-->
-                <col id="postedBy" ui:number="true" sortable="true"/>
+                <col id="postedBy" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

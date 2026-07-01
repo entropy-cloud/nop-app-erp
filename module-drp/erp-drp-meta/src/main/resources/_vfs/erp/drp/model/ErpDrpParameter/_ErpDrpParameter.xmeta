@@ -24,11 +24,11 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="warehouseId" displayName="仓库" propId="2" i18n-en:displayName="Warehouse" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="warehouse">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="materialId" displayName="物料" propId="3" i18n-en:displayName="Material" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="material">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="safetyStock" displayName="安全库存" propId="4" i18n-en:displayName="Safety Stock" queryable="true"
@@ -46,11 +46,11 @@
         </prop>
         <prop name="preferredSourceWarehouseId" displayName="首选调出仓库" propId="7"
               i18n-en:displayName="Preferred Source Warehouse" queryable="true" sortable="true" insertable="true"
-              updatable="true">
+              updatable="true" ext:relation="preferredSourceWarehouse">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="preferredSupplierId" displayName="首选供应商" propId="8" i18n-en:displayName="Preferred Supplier"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="preferredSupplier">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="replenishmentMethod" displayName="补货方法" propId="9" i18n-en:displayName="Replenishment Method"
@@ -100,6 +100,26 @@
         <prop name="updateTime" displayName="修改时间" propId="20" i18n-en:displayName="Update Time" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="warehouse" i18n-en:displayName="Warehouse" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="warehouseId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
+            <schema bizObjName="ErpMdWarehouse"/>
+        </prop>
+        <prop name="material" i18n-en:displayName="Material" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="materialId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
+            <schema bizObjName="ErpMdMaterial"/>
+        </prop>
+        <prop name="preferredSourceWarehouse" i18n-en:displayName="Preferred Source Warehouse" tagSet="pub"
+              ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="preferredSourceWarehouseId"
+              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdWarehouse"/>
+        </prop>
+        <prop name="preferredSupplier" i18n-en:displayName="Preferred Supplier" tagSet="pub" ext:kind="to-one"
+              internal="true" queryable="true" ext:joinLeftProp="preferredSupplierId" ext:joinRightProp="id"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdPartner"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"

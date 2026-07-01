@@ -32,15 +32,15 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="drpLineId" displayName="DRP行" propId="4" i18n-en:displayName="DRP Line" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="drpLine">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="inboundMoveId" displayName="入站移动单" propId="5" i18n-en:displayName="Inbound Move" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="inboundMove">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="outboundMoveId" displayName="出站移动单" propId="6" i18n-en:displayName="Outbound Move" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="outboundMove">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="sourceBillType" displayName="来源单据类型" propId="7" i18n-en:displayName="Source Bill Type"
@@ -60,7 +60,7 @@
             <schema type="java.lang.String" precision="50"/>
         </prop>
         <prop name="materialId" displayName="物料" propId="11" i18n-en:displayName="Material" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="material">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="quantity" displayName="越库数量" propId="12" i18n-en:displayName="Quantity" mandatory="true"
@@ -68,7 +68,7 @@
             <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="stagingLocationId" displayName="暂存库位" propId="13" i18n-en:displayName="Staging Location"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="stagingLocation">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="dockSlotTime" displayName="月台时间窗口" propId="14" i18n-en:displayName="Dock Slot Time" queryable="true"
@@ -114,6 +114,31 @@
         <prop name="updateTime" displayName="修改时间" propId="24" i18n-en:displayName="Update Time" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="drpLine" i18n-en:displayName="DRP Line" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="drpLineId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpDrpLine"/>
+        </prop>
+        <prop name="material" i18n-en:displayName="Material" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="materialId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
+            <schema bizObjName="ErpMdMaterial"/>
+        </prop>
+        <prop name="stagingLocation" i18n-en:displayName="Staging Location" tagSet="pub" ext:kind="to-one"
+              internal="true" queryable="true" ext:joinLeftProp="stagingLocationId" ext:joinRightProp="id"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdLocation"/>
+        </prop>
+        <prop name="inboundMove" i18n-en:displayName="Inbound Move" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="inboundMoveId" ext:joinRightProp="id" biz:moduleId="erp/inv" lazy="true"
+              published="false">
+            <schema bizObjName="ErpInvStockMove"/>
+        </prop>
+        <prop name="outboundMove" i18n-en:displayName="Outbound Move" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="outboundMoveId" ext:joinRightProp="id" biz:moduleId="erp/inv" lazy="true"
+              published="false">
+            <schema bizObjName="ErpInvStockMove"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"

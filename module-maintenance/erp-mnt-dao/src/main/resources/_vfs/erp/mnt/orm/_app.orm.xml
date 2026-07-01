@@ -165,40 +165,45 @@
             </columns>
             <relations>
                 <to-one name="location" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub"
-                        i18n-en:displayName="Location" ref-i18n-en:displayName="Equipment">
+                        i18n-en:displayName="Location">
                     <join>
                         <on leftProp="locationId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="category" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipmentCategory" tagSet="pub"
-                        i18n-en:displayName="Category" ref-i18n-en:displayName="Equipment">
+                        i18n-en:displayName="Category">
                     <join>
                         <on leftProp="categoryId" rightProp="id"/>
                     </join>
                 </to-one>
+                <to-one name="asset" refEntityName="app.erp.ast.dao.entity.ErpAstAsset" tagSet="pub"
+                        i18n-en:displayName="Asset">
+                    <join>
+                        <on leftProp="assetId" rightProp="id"/>
+                    </join>
+                </to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="Equipment">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-many cascadeDelete="true" name="visits" refEntityName="app.erp.mnt.dao.entity.ErpMntVisit"
-                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Visits"
-                         ref-i18n-en:displayName="Equipment">
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Visits" ext:estRows="50">
                     <join>
                         <on leftProp="id" rightProp="equipmentId"/>
                     </join>
                 </to-many>
                 <to-many cascadeDelete="true" name="schedules" refEntityName="app.erp.mnt.dao.entity.ErpMntSchedule"
                          tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Schedules"
-                         ref-i18n-en:displayName="Equipment">
+                         ext:estRows="10">
                     <join>
                         <on leftProp="id" rightProp="equipmentId"/>
                     </join>
                 </to-many>
                 <to-many cascadeDelete="true" name="requests" refEntityName="app.erp.mnt.dao.entity.ErpMntRequest"
                          tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Requests"
-                         ref-i18n-en:displayName="Equipment">
+                         ext:estRows="20">
                     <join>
                         <on leftProp="id" rightProp="equipmentId"/>
                     </join>
@@ -206,7 +211,7 @@
                 <to-many cascadeDelete="true" name="sparePartUsages"
                          refEntityName="app.erp.mnt.dao.entity.ErpMntSparePartUsage"
                          tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Spare Part Usages"
-                         ref-i18n-en:displayName="Equipment">
+                         ext:estRows="20">
                     <join>
                         <on leftProp="id" rightProp="equipmentId"/>
                     </join>
@@ -214,7 +219,7 @@
                 <to-many cascadeDelete="true" name="downtimeEntries"
                          refEntityName="app.erp.mnt.dao.entity.ErpMntDowntimeEntry"
                          tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Downtime Entries"
-                         ref-i18n-en:displayName="Equipment">
+                         ext:estRows="20">
                     <join>
                         <on leftProp="id" rightProp="equipmentId"/>
                     </join>
@@ -256,7 +261,7 @@
             </columns>
             <relations>
                 <to-one name="parent" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipmentCategory" tagSet="pub"
-                        i18n-en:displayName="Parent" ref-i18n-en:displayName="Equipment Category">
+                        i18n-en:displayName="Parent">
                     <join>
                         <on leftProp="parentId" rightProp="id"/>
                     </join>
@@ -314,7 +319,7 @@
             </columns>
             <relations>
                 <to-one name="equipment" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipment" tagSet="pub"
-                        i18n-en:displayName="Equipment" ref-i18n-en:displayName="Maintenance Schedule">
+                        i18n-en:displayName="Equipment">
                     <join>
                         <on leftProp="equipmentId" rightProp="id"/>
                     </join>
@@ -386,20 +391,19 @@
             </columns>
             <relations>
                 <to-one name="schedule" refEntityName="app.erp.mnt.dao.entity.ErpMntSchedule" tagSet="pub"
-                        i18n-en:displayName="Schedule" ref-i18n-en:displayName="Maintenance Visit">
+                        i18n-en:displayName="Schedule">
                     <join>
                         <on leftProp="scheduleId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="equipment" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipment" tagSet="pub"
-                        i18n-en:displayName="Equipment" ref-i18n-en:displayName="Maintenance Visit">
+                        i18n-en:displayName="Equipment">
                     <join>
                         <on leftProp="equipmentId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-many cascadeDelete="true" name="tasks" refEntityName="app.erp.mnt.dao.entity.ErpMntVisitTask"
-                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Tasks"
-                         ref-i18n-en:displayName="Maintenance Visit">
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Tasks" ext:estRows="5">
                     <join>
                         <on leftProp="id" rightProp="visitId"/>
                     </join>
@@ -407,11 +411,16 @@
                 <to-many cascadeDelete="true" name="sparePartUsages"
                          refEntityName="app.erp.mnt.dao.entity.ErpMntSparePartUsage"
                          tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Spare Part Usages"
-                         ref-i18n-en:displayName="Maintenance Visit">
+                         ext:estRows="5">
                     <join>
                         <on leftProp="id" rightProp="visitId"/>
                     </join>
                 </to-many>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
             </relations>
         </entity>
         <entity className="app.erp.mnt.dao.entity.ErpMntVisitTask" createTimeProp="createTime" createrProp="createdBy"
@@ -455,7 +464,7 @@
             </columns>
             <relations>
                 <to-one name="visit" refEntityName="app.erp.mnt.dao.entity.ErpMntVisit" tagSet="pub"
-                        i18n-en:displayName="Visit" ref-i18n-en:displayName="Maintenance Task">
+                        i18n-en:displayName="Visit">
                     <join>
                         <on leftProp="visitId" rightProp="id"/>
                     </join>
@@ -512,7 +521,7 @@
             </columns>
             <relations>
                 <to-one name="equipment" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipment" tagSet="pub"
-                        i18n-en:displayName="Equipment" ref-i18n-en:displayName="Maintenance Request">
+                        i18n-en:displayName="Equipment">
                     <join>
                         <on leftProp="equipmentId" rightProp="id"/>
                     </join>
@@ -561,9 +570,14 @@
             </columns>
             <relations>
                 <to-one name="equipment" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipment" tagSet="pub"
-                        i18n-en:displayName="Equipment" ref-i18n-en:displayName="Downtime Entry">
+                        i18n-en:displayName="Equipment">
                     <join>
                         <on leftProp="equipmentId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="relatedJobOrder" refEntityName="app.erp.mnt.dao.entity.ErpMntDowntimeEntry" tagSet="pub">
+                    <join>
+                        <on leftProp="relatedJobOrderId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -607,19 +621,23 @@
             </columns>
             <relations>
                 <to-one name="leader" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"
-                        i18n-en:displayName="Leader" ref-i18n-en:displayName="Maintenance Team">
+                        i18n-en:displayName="Leader">
                     <join>
                         <on leftProp="leaderId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-many cascadeDelete="true" name="members"
                          refEntityName="app.erp.mnt.dao.entity.ErpMntMaintenanceTeamMember"
-                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Members"
-                         ref-i18n-en:displayName="Maintenance Team">
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Members" ext:estRows="10">
                     <join>
                         <on leftProp="id" rightProp="teamId"/>
                     </join>
                 </to-many>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
             </relations>
         </entity>
         <entity className="app.erp.mnt.dao.entity.ErpMntMaintenanceTeamMember" createTimeProp="createTime"
@@ -659,13 +677,13 @@
             </columns>
             <relations>
                 <to-one name="team" refEntityName="app.erp.mnt.dao.entity.ErpMntMaintenanceTeam" tagSet="pub"
-                        i18n-en:displayName="Team" ref-i18n-en:displayName="Maintenance Team Member">
+                        i18n-en:displayName="Team">
                     <join>
                         <on leftProp="teamId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="employee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"
-                        i18n-en:displayName="Employee" ref-i18n-en:displayName="Maintenance Team Member">
+                        i18n-en:displayName="Employee">
                     <join>
                         <on leftProp="employeeId" rightProp="id"/>
                     </join>
@@ -708,8 +726,8 @@
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="13" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
-                <column code="POSTED_BY" displayName="过账人" name="postedBy" propId="14" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Posted By"/>
+                <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="14"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="15"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -730,31 +748,40 @@
             </columns>
             <relations>
                 <to-one name="visit" refEntityName="app.erp.mnt.dao.entity.ErpMntVisit" tagSet="pub"
-                        i18n-en:displayName="Visit" ref-i18n-en:displayName="Spare Part Usage">
+                        i18n-en:displayName="Visit">
                     <join>
                         <on leftProp="visitId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="request" refEntityName="app.erp.mnt.dao.entity.ErpMntRequest" tagSet="pub"
-                        i18n-en:displayName="Request" ref-i18n-en:displayName="Spare Part Usage">
+                        i18n-en:displayName="Request">
                     <join>
                         <on leftProp="requestId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="equipment" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipment" tagSet="pub"
-                        i18n-en:displayName="Equipment" ref-i18n-en:displayName="Spare Part Usage">
+                        i18n-en:displayName="Equipment">
                     <join>
                         <on leftProp="equipmentId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-many cascadeDelete="true" name="lines"
                          refEntityName="app.erp.mnt.dao.entity.ErpMntSparePartUsageLine"
-                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines"
-                         ref-i18n-en:displayName="Spare Part Usage">
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines" ext:estRows="10">
                     <join>
                         <on leftProp="id" rightProp="sparePartUsageId"/>
                     </join>
                 </to-many>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub">
+                    <join>
+                        <on leftProp="warehouseId" rightProp="id"/>
+                    </join>
+                </to-one>
             </relations>
         </entity>
         <entity className="app.erp.mnt.dao.entity.ErpMntSparePartUsageLine" createTimeProp="createTime"
@@ -803,19 +830,19 @@
             </columns>
             <relations>
                 <to-one name="sparePartUsage" refEntityName="app.erp.mnt.dao.entity.ErpMntSparePartUsage" tagSet="pub"
-                        i18n-en:displayName="Spare Part Usage" ref-i18n-en:displayName="Spare Part Usage Line">
+                        i18n-en:displayName="Spare Part Usage">
                     <join>
                         <on leftProp="sparePartUsageId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
-                        i18n-en:displayName="Material" ref-i18n-en:displayName="Spare Part Usage Line">
+                        i18n-en:displayName="Material">
                     <join>
                         <on leftProp="materialId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"
-                        i18n-en:displayName="Uo M" ref-i18n-en:displayName="Spare Part Usage Line">
+                        i18n-en:displayName="Uo M">
                     <join>
                         <on leftProp="uoMId" rightProp="id"/>
                     </join>
@@ -878,15 +905,20 @@
             </columns>
             <relations>
                 <to-one name="equipment" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipment" tagSet="pub"
-                        i18n-en:displayName="Equipment" ref-i18n-en:displayName="Calibration">
+                        i18n-en:displayName="Equipment">
                     <join>
                         <on leftProp="equipmentId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="calibratedByEmployee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"
-                        i18n-en:displayName="Calibrated By Employee" ref-i18n-en:displayName="Calibration">
+                        i18n-en:displayName="Calibrated By Employee">
                     <join>
                         <on leftProp="calibratedBy" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -1002,6 +1034,18 @@
                         i18n-en:displayName="Organization"/>
                 <column code="STATUS" name="status" propId="6" stdDataType="int" stdSqlType="INTEGER"
                         i18n-en:displayName="Status"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.ast.dao.entity.ErpAstAsset" displayName="资产"
+                name="app.erp.ast.dao.entity.ErpAstAsset" notGenCode="true" tableName="erp_ast_asset"
+                biz:moduleId="erp/ast">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="ID"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Code"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Name"/>
             </columns>
         </entity>
     </entities>

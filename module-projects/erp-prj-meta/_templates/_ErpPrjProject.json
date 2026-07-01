@@ -29,5 +29,7 @@
   "timesheets": null,
   "members": null,
   "budgets": null,
-  "milestones": null
+  "milestones": null,
+  "customer": null,
+  "org": null
 }

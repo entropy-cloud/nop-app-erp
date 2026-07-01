@@ -220,16 +220,16 @@
         }
 
 
-        private Long _postedBy;
+        private String _postedBy;
 
     
         @PropMeta(propId=14)
     
-        public Long getPostedBy(){
+        public String getPostedBy(){
             return _postedBy;
         }
 
-        public void setPostedBy(Long value){
+        public void setPostedBy(String value){
             this._postedBy = value;
         }
 
@@ -373,6 +373,28 @@
 
         public void setLines(List<Map<String,Object>> value){
             this._lines = value;
+        }
+
+
+        private Map<String,Object> _org;
+
+        public Map<String,Object> getOrg(){
+            return _org;
+        }
+
+        public void setOrg(Map<String,Object> value){
+            this._org = value;
+        }
+
+
+        private Map<String,Object> _warehouse;
+
+        public Map<String,Object> getWarehouse(){
+            return _warehouse;
+        }
+
+        public void setWarehouse(Map<String,Object> value){
+            this._warehouse = value;
         }
 
 

@@ -28,5 +28,8 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "plan": null,
+  "material": null,
+  "warehouse": null,
+  "sourceWarehouse": null,
   "org": null
 }

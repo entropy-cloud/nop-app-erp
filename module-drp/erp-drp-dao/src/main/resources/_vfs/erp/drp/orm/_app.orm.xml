@@ -122,14 +122,13 @@
             </columns>
             <relations>
                 <to-many cascadeDelete="true" name="lines" refEntityName="app.erp.drp.dao.entity.ErpDrpLine"
-                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines"
-                         ref-i18n-en:displayName="DRP Plan">
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines" ext:estRows="100">
                     <join>
                         <on leftProp="id" rightProp="planId"/>
                     </join>
                 </to-many>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org" ref-i18n-en:displayName="DRP Plan">
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -209,13 +208,31 @@
             </columns>
             <relations>
                 <to-one name="plan" refEntityName="app.erp.drp.dao.entity.ErpDrpPlan" tagSet="pub"
-                        i18n-en:displayName="Plan" ref-i18n-en:displayName="Lines">
+                        i18n-en:displayName="Plan">
                     <join>
                         <on leftProp="planId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org" ref-i18n-en:displayName="DRP Line">
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
+                        i18n-en:displayName="Material">
+                    <join>
+                        <on leftProp="materialId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"
+                        i18n-en:displayName="Warehouse">
+                    <join>
+                        <on leftProp="warehouseId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="sourceWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"
+                        i18n-en:displayName="Source Warehouse">
+                    <join>
+                        <on leftProp="sourceWarehouseId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -279,9 +296,32 @@
                         propId="20" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
             <relations>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
-                        ref-i18n-en:displayName="DRP Parameter">
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"
+                        i18n-en:displayName="Warehouse">
+                    <join>
+                        <on leftProp="warehouseId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
+                        i18n-en:displayName="Material">
+                    <join>
+                        <on leftProp="materialId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="preferredSourceWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse"
+                        tagSet="pub" i18n-en:displayName="Preferred Source Warehouse">
+                    <join>
+                        <on leftProp="preferredSourceWarehouseId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="preferredSupplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
+                        i18n-en:displayName="Preferred Supplier">
+                    <join>
+                        <on leftProp="preferredSupplierId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -346,9 +386,20 @@
                         propId="21" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
             <relations>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
-                        ref-i18n-en:displayName="Safety Stock Calc">
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
+                        i18n-en:displayName="Material">
+                    <join>
+                        <on leftProp="materialId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"
+                        i18n-en:displayName="Warehouse">
+                    <join>
+                        <on leftProp="warehouseId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -416,9 +467,38 @@
                         propId="24" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
             <relations>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
-                        ref-i18n-en:displayName="Cross Dock">
+                <to-one name="drpLine" refEntityName="app.erp.drp.dao.entity.ErpDrpLine" tagSet="pub"
+                        i18n-en:displayName="DRP Line">
+                    <join>
+                        <on leftProp="drpLineId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
+                        i18n-en:displayName="Material">
+                    <join>
+                        <on leftProp="materialId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="stagingLocation" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub"
+                        i18n-en:displayName="Staging Location">
+                    <join>
+                        <on leftProp="stagingLocationId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="inboundMove" refEntityName="app.erp.inv.dao.entity.ErpInvStockMove"
+                        i18n-en:displayName="Inbound Move">
+                    <join>
+                        <on leftProp="inboundMoveId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="outboundMove" refEntityName="app.erp.inv.dao.entity.ErpInvStockMove"
+                        i18n-en:displayName="Outbound Move">
+                    <join>
+                        <on leftProp="outboundMoveId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -471,9 +551,26 @@
                         i18n-en:displayName="Organization"/>
             </columns>
             <relations>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
-                        ref-i18n-en:displayName="Dock Appointment">
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"
+                        i18n-en:displayName="Warehouse">
+                    <join>
+                        <on leftProp="warehouseId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="dock" refEntityName="app.erp.drp.dao.entity.ErpInvDrpCrossDock" tagSet="pub"
+                        i18n-en:displayName="Dock">
+                    <join>
+                        <on leftProp="dockId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="crossDock" refEntityName="app.erp.drp.dao.entity.ErpInvDrpCrossDock" tagSet="pub"
+                        i18n-en:displayName="Cross Dock">
+                    <join>
+                        <on leftProp="crossDockId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -530,9 +627,20 @@
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
             <relations>
-                <to-one name="org" notGenCode="true" refEntityName="app.erp.md.dao.entity.ErpMdOrganization"
-                        tagSet="pub" biz:moduleId="erp/md" i18n-en:displayName="Org"
-                        ref-i18n-en:displayName="Lead Time Record">
+                <to-one name="supplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
+                        i18n-en:displayName="Supplier">
+                    <join>
+                        <on leftProp="supplierId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
+                        i18n-en:displayName="Material">
+                    <join>
+                        <on leftProp="materialId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
                     </join>
@@ -545,6 +653,64 @@
             <columns>
                 <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"
                         stdSqlType="BIGINT" tagSet="seq-default"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.inv.dao.entity.ErpInvStockMove" displayName="库存移动"
+                name="app.erp.inv.dao.entity.ErpInvStockMove" notGenCode="true" tableName="erp_inv_stock_move"
+                biz:moduleId="erp/inv">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="ID"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Code"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdLocation" displayName="库位"
+                name="app.erp.md.dao.entity.ErpMdLocation" notGenCode="true" tableName="erp_md_location"
+                biz:moduleId="erp/md">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="ID"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Code"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Name"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdMaterial" displayName="物料"
+                name="app.erp.md.dao.entity.ErpMdMaterial" notGenCode="true" tableName="erp_md_material"
+                biz:moduleId="erp/md">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="ID"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Code"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Name"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdPartner" displayName="往来单位"
+                name="app.erp.md.dao.entity.ErpMdPartner" notGenCode="true" tableName="erp_md_partner"
+                biz:moduleId="erp/md">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="ID"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Code"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Name"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdWarehouse" displayName="仓库"
+                name="app.erp.md.dao.entity.ErpMdWarehouse" notGenCode="true" tableName="erp_md_warehouse"
+                biz:moduleId="erp/md">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="ID"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Code"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Name"/>
             </columns>
         </entity>
     </entities>

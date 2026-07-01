@@ -342,6 +342,17 @@
         }
 
 
+        private Map<String,Object> _asset;
+
+        public Map<String,Object> getAsset(){
+            return _asset;
+        }
+
+        public void setAsset(Map<String,Object> value){
+            this._asset = value;
+        }
+
+
         private Map<String,Object> _org;
 
         public Map<String,Object> getOrg(){

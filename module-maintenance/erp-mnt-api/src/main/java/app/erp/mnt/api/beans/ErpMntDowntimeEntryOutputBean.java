@@ -220,4 +220,15 @@
         }
 
 
+        private Map<String,Object> _relatedJobOrder;
+
+        public Map<String,Object> getRelatedJobOrder(){
+            return _relatedJobOrder;
+        }
+
+        public void setRelatedJobOrder(Map<String,Object> value){
+            this._relatedJobOrder = value;
+        }
+
+
     }

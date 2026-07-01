@@ -101,6 +101,15 @@ public class _ErpInvDrpLeadTimeRecord extends DynamicOrmEntity{
     private static int _PROP_ID_BOUND = 20;
 
     
+    /* relation:  */
+    public static final String PROP_NAME_supplier = "supplier";
+    
+    /* relation:  */
+    public static final String PROP_NAME_material = "material";
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1067,5 +1076,74 @@ public class _ErpInvDrpLeadTimeRecord extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdPartner getSupplier(){
+       return (app.erp.md.dao.entity.ErpMdPartner)internalGetRefEntity(PROP_NAME_supplier);
+    }
+
+    public final void setSupplier(app.erp.md.dao.entity.ErpMdPartner refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setSupplierId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_supplier, refEntity,()->{
+           
+                           this.setSupplierId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdMaterial getMaterial(){
+       return (app.erp.md.dao.entity.ErpMdMaterial)internalGetRefEntity(PROP_NAME_material);
+    }
+
+    public final void setMaterial(app.erp.md.dao.entity.ErpMdMaterial refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setMaterialId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_material, refEntity,()->{
+           
+                           this.setMaterialId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
 }
 // resume CPD analysis - CPD-ON

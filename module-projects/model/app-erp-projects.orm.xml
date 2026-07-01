@@ -107,14 +107,20 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="22" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="projectType" refEntityName="app.erp.prj.dao.entity.ErpPrjProjectType" tagSet="pub" i18n-en:displayName='Project Type' ref-i18n-en:displayName='Project'><join><on leftProp="projectTypeId" rightProp="id"/></join></to-one>
-                <to-one name="manager" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub" i18n-en:displayName='Manager' ref-i18n-en:displayName='Project'><join><on leftProp="managerId" rightProp="id"/></join></to-one>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency' ref-i18n-en:displayName='Project'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
-                <to-many name="tasks" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Tasks' ref-i18n-en:displayName='Project'><join><on leftProp="id" rightProp="projectId"/></join></to-many>
-                <to-many name="timesheets" refEntityName="app.erp.prj.dao.entity.ErpPrjTimesheet" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Timesheets' ref-i18n-en:displayName='Project'><join><on leftProp="id" rightProp="projectId"/></join></to-many>
-                <to-many name="members" refEntityName="app.erp.prj.dao.entity.ErpPrjProjectUser" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Members' ref-i18n-en:displayName='Project'><join><on leftProp="id" rightProp="projectId"/></join></to-many>
-                <to-many name="budgets" refEntityName="app.erp.prj.dao.entity.ErpPrjBudget" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Budgets' ref-i18n-en:displayName='Project'><join><on leftProp="id" rightProp="projectId"/></join></to-many>
-                <to-many name="milestones" refEntityName="app.erp.prj.dao.entity.ErpPrjMilestone" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Milestones' ref-i18n-en:displayName='Project'><join><on leftProp="id" rightProp="projectId"/></join></to-many>
+                <to-one name="projectType" refEntityName="app.erp.prj.dao.entity.ErpPrjProjectType" tagSet="pub" i18n-en:displayName='Project Type'><join><on leftProp="projectTypeId" rightProp="id"/></join></to-one>
+                <to-one name="manager" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub" i18n-en:displayName='Manager'><join><on leftProp="managerId" rightProp="id"/></join></to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+                <to-many name="tasks" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Tasks' ext:estRows="50"><join><on leftProp="id" rightProp="projectId"/></join></to-many>
+                <to-many name="timesheets" refEntityName="app.erp.prj.dao.entity.ErpPrjTimesheet" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Timesheets' ext:estRows="200"><join><on leftProp="id" rightProp="projectId"/></join></to-many>
+                <to-many name="members" refEntityName="app.erp.prj.dao.entity.ErpPrjProjectUser" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Members' ext:estRows="20"><join><on leftProp="id" rightProp="projectId"/></join></to-many>
+                <to-many name="budgets" refEntityName="app.erp.prj.dao.entity.ErpPrjBudget" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Budgets' ext:estRows="10"><join><on leftProp="id" rightProp="projectId"/></join></to-many>
+                <to-many name="milestones" refEntityName="app.erp.prj.dao.entity.ErpPrjMilestone" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Milestones' ext:estRows="10"><join><on leftProp="id" rightProp="projectId"/></join></to-many>
+                <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub">
+                    <join><on leftProp="customerId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join><on leftProp="orgId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -148,12 +154,12 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="23" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub" i18n-en:displayName='Project' ref-i18n-en:displayName='Task'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
-                <to-one name="parentTask" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub" i18n-en:displayName='Parent Task' ref-i18n-en:displayName='Task'><join><on leftProp="parentTaskId" rightProp="id"/></join></to-one>
-                <to-one name="assignee" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Assignee' ref-i18n-en:displayName='Task'><join><on leftProp="assigneeId" rightProp="id"/></join></to-one>
-                <to-one name="dependsOn" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub" i18n-en:displayName='Depends On' ref-i18n-en:displayName='Task'><join><on leftProp="dependsOnId" rightProp="id"/></join></to-one>
-                <to-many name="childTasks" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Child Tasks' ref-i18n-en:displayName='Task'><join><on leftProp="id" rightProp="parentTaskId"/></join></to-many>
-                <to-many name="timesheets" refEntityName="app.erp.prj.dao.entity.ErpPrjTimesheet" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Timesheets' ref-i18n-en:displayName='Task'><join><on leftProp="id" rightProp="taskId"/></join></to-many>
+                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub" i18n-en:displayName='Project'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
+                <to-one name="parentTask" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub" i18n-en:displayName='Parent Task'><join><on leftProp="parentTaskId" rightProp="id"/></join></to-one>
+                <to-one name="assignee" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Assignee'><join><on leftProp="assigneeId" rightProp="id"/></join></to-one>
+                <to-one name="dependsOn" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub" i18n-en:displayName='Depends On'><join><on leftProp="dependsOnId" rightProp="id"/></join></to-one>
+                <to-many name="childTasks" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Child Tasks' ext:estRows="10"><join><on leftProp="id" rightProp="parentTaskId"/></join></to-many>
+                <to-many name="timesheets" refEntityName="app.erp.prj.dao.entity.ErpPrjTimesheet" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Timesheets' ext:estRows="30"><join><on leftProp="id" rightProp="taskId"/></join></to-many>
             </relations>
         </entity>
 
@@ -177,8 +183,8 @@
                 <column name="status" displayName="状态" ext:dict="erp-prj/timesheet-status" mandatory="true" code="STATUS" propId="13" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
                 <column name="posted" displayName="已过账(已转成本凭证)" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="14" stdDataType="boolean" i18n-en:displayName='Posted' />
                 <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="15" stdDataType="datetime" i18n-en:displayName='Posted At' />
-                <column name="postedBy" displayName="过账人" stdSqlType="BIGINT" code="POSTED_BY" propId="16" stdDataType="long" i18n-en:displayName='Posted By' />
-                <column name="approvedBy" displayName="审批人" stdSqlType="BIGINT" code="APPROVED_BY" propId="17" stdDataType="long" i18n-en:displayName='Approved By' />
+                <column name="postedBy" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="16" stdDataType="string" i18n-en:displayName='Posted By' />
+                <column name="approvedBy" displayName="审批人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="17" stdDataType="string" i18n-en:displayName='Approved By' />
                 <column name="approvedAt" displayName="审批时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="18" stdDataType="datetime" i18n-en:displayName='Approved At' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="19" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="20" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
@@ -189,11 +195,14 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="25" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub" i18n-en:displayName='Project' ref-i18n-en:displayName='Timesheet'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
-                <to-one name="task" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub" i18n-en:displayName='Task' ref-i18n-en:displayName='Timesheet'><join><on leftProp="taskId" rightProp="id"/></join></to-one>
-                <to-one name="user" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub" i18n-en:displayName='User' ref-i18n-en:displayName='Timesheet'><join><on leftProp="userId" rightProp="id"/></join></to-one>
-                <to-one name="activityType" refEntityName="app.erp.prj.dao.entity.ErpPrjActivityType" tagSet="pub" i18n-en:displayName='Activity Type' ref-i18n-en:displayName='Timesheet'><join><on leftProp="activityTypeId" rightProp="id"/></join></to-one>
-                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency' ref-i18n-en:displayName='Timesheet'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub" i18n-en:displayName='Project'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
+                <to-one name="task" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub" i18n-en:displayName='Task'><join><on leftProp="taskId" rightProp="id"/></join></to-one>
+                <to-one name="user" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub" i18n-en:displayName='User'><join><on leftProp="userId" rightProp="id"/></join></to-one>
+                <to-one name="activityType" refEntityName="app.erp.prj.dao.entity.ErpPrjActivityType" tagSet="pub" i18n-en:displayName='Activity Type'><join><on leftProp="activityTypeId" rightProp="id"/></join></to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join><on leftProp="orgId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -215,7 +224,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="11" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="defaultSubject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub" i18n-en:displayName='Default Subject' ref-i18n-en:displayName='Project Type'><join><on leftProp="defaultSubjectId" rightProp="id"/></join></to-one>
+                <to-one name="defaultSubject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub" i18n-en:displayName='Default Subject'><join><on leftProp="defaultSubjectId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -238,7 +247,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="12" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub" i18n-en:displayName='Subject' ref-i18n-en:displayName='Activity Type'><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
+                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub" i18n-en:displayName='Subject'><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -261,8 +270,8 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="12" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub" i18n-en:displayName='Project' ref-i18n-en:displayName='Project Member'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
-                <to-one name="user" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub" i18n-en:displayName='User' ref-i18n-en:displayName='Project Member'><join><on leftProp="userId" rightProp="id"/></join></to-one>
+                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub" i18n-en:displayName='Project'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
+                <to-one name="user" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub" i18n-en:displayName='User'><join><on leftProp="userId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -289,8 +298,14 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub" i18n-en:displayName='Project' ref-i18n-en:displayName='Project Budget'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
-                <to-many name="lines" refEntityName="app.erp.prj.dao.entity.ErpPrjBudgetLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ref-i18n-en:displayName='Project Budget'><join><on leftProp="id" rightProp="budgetId"/></join></to-many>
+                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub" i18n-en:displayName='Project'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
+                <to-many name="lines" refEntityName="app.erp.prj.dao.entity.ErpPrjBudgetLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="30"><join><on leftProp="id" rightProp="budgetId"/></join></to-many>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
+                    <join><on leftProp="currencyId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join><on leftProp="orgId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -317,8 +332,11 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="budget" refEntityName="app.erp.prj.dao.entity.ErpPrjBudget" tagSet="pub" i18n-en:displayName='Budget' ref-i18n-en:displayName='Project Budget Line'><join><on leftProp="budgetId" rightProp="id"/></join></to-one>
-                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub" i18n-en:displayName='Subject' ref-i18n-en:displayName='Project Budget Line'><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
+                <to-one name="budget" refEntityName="app.erp.prj.dao.entity.ErpPrjBudget" tagSet="pub" i18n-en:displayName='Budget'><join><on leftProp="budgetId" rightProp="id"/></join></to-one>
+                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub" i18n-en:displayName='Subject'><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
+                <to-one name="task" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub">
+                    <join><on leftProp="taskId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -338,7 +356,7 @@
                 <column name="approveStatus" displayName="审核状态" ext:dict="erp-prj/timesheet-status" mandatory="true" code="APPROVE_STATUS" propId="9" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Approve Status' />
                 <column name="posted" displayName="已过账(已转成本凭证)" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="10" stdDataType="boolean" i18n-en:displayName='Posted' />
                 <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="11" stdDataType="datetime" i18n-en:displayName='Posted At' />
-                <column name="postedBy" displayName="过账人" stdSqlType="BIGINT" code="POSTED_BY" propId="12" stdDataType="long" i18n-en:displayName='Posted By' />
+                <column name="postedBy" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="12" stdDataType="string" i18n-en:displayName='Posted By' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="exchangeRate" displayName="汇率" stdSqlType="DECIMAL" precision="20" scale="8" defaultValue="1" mandatory="true" stdDataType="string" code="EXCHANGE_RATE" i18n-en:displayName='Exchange Rate' />
                 <column name="amountSource" displayName="源币种金额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" stdDataType="string" code="AMOUNT_SOURCE" i18n-en:displayName='Amt (Source)' />
@@ -351,8 +369,14 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="19" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub" i18n-en:displayName='Project' ref-i18n-en:displayName='Project Cost Collection'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
-                <to-many name="lines" refEntityName="app.erp.prj.dao.entity.ErpPrjCostCollectionLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ref-i18n-en:displayName='Project Cost Collection'><join><on leftProp="id" rightProp="costCollectionId"/></join></to-many>
+                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub" i18n-en:displayName='Project'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
+                <to-many name="lines" refEntityName="app.erp.prj.dao.entity.ErpPrjCostCollectionLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="30"><join><on leftProp="id" rightProp="costCollectionId"/></join></to-many>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
+                    <join><on leftProp="currencyId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join><on leftProp="orgId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -379,8 +403,11 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="costCollection" refEntityName="app.erp.prj.dao.entity.ErpPrjCostCollection" tagSet="pub" i18n-en:displayName='Cost Collection' ref-i18n-en:displayName='Project Cost Collection Line'><join><on leftProp="costCollectionId" rightProp="id"/></join></to-one>
-                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub" i18n-en:displayName='Subject' ref-i18n-en:displayName='Project Cost Collection Line'><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
+                <to-one name="costCollection" refEntityName="app.erp.prj.dao.entity.ErpPrjCostCollection" tagSet="pub" i18n-en:displayName='Cost Collection'><join><on leftProp="costCollectionId" rightProp="id"/></join></to-one>
+                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub" i18n-en:displayName='Subject'><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
+                <to-one name="task" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub">
+                    <join><on leftProp="taskId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -407,7 +434,7 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub" i18n-en:displayName='Project' ref-i18n-en:displayName='Project Milestone'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
+                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub" i18n-en:displayName='Project'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -430,7 +457,7 @@
                 <column name="approveStatus" displayName="审核状态" ext:dict="erp-prj/timesheet-status" mandatory="true" code="APPROVE_STATUS" propId="12" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Approve Status' />
                 <column name="posted" displayName="已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="13" stdDataType="boolean" i18n-en:displayName='Posted' />
                 <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="14" stdDataType="datetime" i18n-en:displayName='Posted At' />
-                <column name="postedBy" displayName="过账人" stdSqlType="BIGINT" code="POSTED_BY" propId="15" stdDataType="long" i18n-en:displayName='Posted By' />
+                <column name="postedBy" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="15" stdDataType="string" i18n-en:displayName='Posted By' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="16" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                                             <column name="amountSource" displayName="源币种金额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" code="AMOUNT_SOURCE" i18n-en:displayName='Amt (Source)' />
                 <column name="amountFunctional" displayName="本位币金额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" code="AMOUNT_FUNCTIONAL" i18n-en:displayName='Amt (Functional)' />
@@ -442,10 +469,16 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="22" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub" i18n-en:displayName='Project' ref-i18n-en:displayName='Project Billing'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
-                <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Customer' ref-i18n-en:displayName='Project Billing'><join><on leftProp="customerId" rightProp="id"/></join></to-one>
-                <to-one name="milestone" refEntityName="app.erp.prj.dao.entity.ErpPrjMilestone" tagSet="pub" i18n-en:displayName='Milestone' ref-i18n-en:displayName='Project Billing'><join><on leftProp="milestoneId" rightProp="id"/></join></to-one>
-                <to-many name="lines" refEntityName="app.erp.prj.dao.entity.ErpPrjBillingLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ref-i18n-en:displayName='Project Billing'><join><on leftProp="id" rightProp="billingId"/></join></to-many>
+                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub" i18n-en:displayName='Project'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
+                <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Customer'><join><on leftProp="customerId" rightProp="id"/></join></to-one>
+                <to-one name="milestone" refEntityName="app.erp.prj.dao.entity.ErpPrjMilestone" tagSet="pub" i18n-en:displayName='Milestone'><join><on leftProp="milestoneId" rightProp="id"/></join></to-one>
+                <to-many name="lines" refEntityName="app.erp.prj.dao.entity.ErpPrjBillingLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="20"><join><on leftProp="id" rightProp="billingId"/></join></to-many>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
+                    <join><on leftProp="currencyId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join><on leftProp="orgId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 
@@ -470,8 +503,11 @@
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="14" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
             <relations>
-                <to-one name="billing" refEntityName="app.erp.prj.dao.entity.ErpPrjBilling" tagSet="pub" i18n-en:displayName='Billing' ref-i18n-en:displayName='Project Billing Line'><join><on leftProp="billingId" rightProp="id"/></join></to-one>
-                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub" i18n-en:displayName='Subject' ref-i18n-en:displayName='Project Billing Line'><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
+                <to-one name="billing" refEntityName="app.erp.prj.dao.entity.ErpPrjBilling" tagSet="pub" i18n-en:displayName='Billing'><join><on leftProp="billingId" rightProp="id"/></join></to-one>
+                <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub" i18n-en:displayName='Subject'><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
+                <to-one name="task" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub">
+                    <join><on leftProp="taskId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 

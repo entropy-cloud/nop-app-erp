@@ -235,30 +235,30 @@
         }
 
 
-        private Long _postedBy;
+        private String _postedBy;
 
     
         @PropMeta(propId=16)
     
-        public Long getPostedBy(){
+        public String getPostedBy(){
             return _postedBy;
         }
 
-        public void setPostedBy(Long value){
+        public void setPostedBy(String value){
             this._postedBy = value;
         }
 
 
-        private Long _approvedBy;
+        private String _approvedBy;
 
     
         @PropMeta(propId=17)
     
-        public Long getApprovedBy(){
+        public String getApprovedBy(){
             return _approvedBy;
         }
 
-        public void setApprovedBy(Long value){
+        public void setApprovedBy(String value){
             this._approvedBy = value;
         }
 
@@ -427,6 +427,17 @@
 
         public void setCurrency(Map<String,Object> value){
             this._currency = value;
+        }
+
+
+        private Map<String,Object> _org;
+
+        public Map<String,Object> getOrg(){
+            return _org;
+        }
+
+        public void setOrg(Map<String,Object> value){
+            this._org = value;
         }
 
 

@@ -32,7 +32,7 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="4" i18n-en:displayName="Organization" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="customerId" displayName="客户" propId="5" i18n-en:displayName="Customer" mandatory="true"
@@ -48,7 +48,7 @@
             <schema type="java.time.LocalDate"/>
         </prop>
         <prop name="currencyId" displayName="币种" propId="8" i18n-en:displayName="Currency" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="currency">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="exchangeRate" displayName="汇率" propId="9" i18n-en:displayName="Exchange Rate" queryable="true"
@@ -77,7 +77,7 @@
         </prop>
         <prop name="postedBy" displayName="过账人" propId="15" i18n-en:displayName="Posted By" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String" precision="36"/>
         </prop>
         <prop name="remark" displayName="备注" propId="16" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">
@@ -136,6 +136,15 @@
             <schema>
                 <item bizObjName="ErpPrjBillingLine"/>
             </schema>
+        </prop>
+        <prop name="currency" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="currencyId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpMdCurrency"/>
+        </prop>
+        <prop name="org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="orgId"
+              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
         </prop>
     </props>
 </meta>

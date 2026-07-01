@@ -28,16 +28,6 @@ CREATE TABLE erp_md_partner(
   constraint PK_erp_md_partner primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_md_subject(
-  ID BIGINT NULL    COMMENT 'null',
-  CODE VARCHAR(50) NULL    COMMENT 'null',
-  NAME VARCHAR(200) NULL    COMMENT 'null',
-  PARENT_ID BIGINT NULL    COMMENT 'null',
-  SUBJECT_CLASS INTEGER NULL    COMMENT 'null',
-  DIRECTION INTEGER NULL    COMMENT 'null',
-  constraint PK_erp_md_subject primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
 CREATE TABLE erp_md_organization(
   ID BIGINT NULL    COMMENT 'null',
   CODE VARCHAR(50) NULL    COMMENT 'null',
@@ -46,6 +36,16 @@ CREATE TABLE erp_md_organization(
   PARENT_ID BIGINT NULL    COMMENT 'null',
   STATUS INTEGER NULL    COMMENT 'null',
   constraint PK_erp_md_organization primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_subject(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  PARENT_ID BIGINT NULL    COMMENT 'null',
+  SUBJECT_CLASS INTEGER NULL    COMMENT 'null',
+  DIRECTION INTEGER NULL    COMMENT 'null',
+  constraint PK_erp_md_subject primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_prj_project_type(
@@ -180,7 +180,7 @@ CREATE TABLE erp_prj_cost_collection(
   APPROVE_STATUS INTEGER NOT NULL    COMMENT '审核状态',
   POSTED BOOLEAN default 0  NULL    COMMENT '已过账(已转成本凭证)',
   POSTED_AT DATETIME NULL    COMMENT '过账时间',
-  POSTED_BY BIGINT NULL    COMMENT '过账人',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -230,8 +230,8 @@ CREATE TABLE erp_prj_timesheet(
   STATUS INTEGER NOT NULL    COMMENT '状态',
   POSTED BOOLEAN default 0  NULL    COMMENT '已过账(已转成本凭证)',
   POSTED_AT DATETIME NULL    COMMENT '过账时间',
-  POSTED_BY BIGINT NULL    COMMENT '过账人',
-  APPROVED_BY BIGINT NULL    COMMENT '审批人',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
+  APPROVED_BY VARCHAR(36) NULL    COMMENT '审批人',
   APPROVED_AT DATETIME NULL    COMMENT '审批时间',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
@@ -298,7 +298,7 @@ CREATE TABLE erp_prj_billing(
   APPROVE_STATUS INTEGER NOT NULL    COMMENT '审核状态',
   POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
   POSTED_AT DATETIME NULL    COMMENT '过账时间',
-  POSTED_BY BIGINT NULL    COMMENT '过账人',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -336,9 +336,9 @@ CREATE TABLE erp_prj_billing_line(
                 
    ALTER TABLE erp_md_partner COMMENT '往来单位';
                 
-   ALTER TABLE erp_md_subject COMMENT '会计科目';
-                
    ALTER TABLE erp_md_organization COMMENT '组织';
+                
+   ALTER TABLE erp_md_subject COMMENT '会计科目';
                 
    ALTER TABLE erp_prj_project_type COMMENT '项目类型';
                 

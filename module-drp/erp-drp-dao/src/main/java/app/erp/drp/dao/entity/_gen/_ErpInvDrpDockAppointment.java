@@ -93,6 +93,18 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
     private static int _PROP_ID_BOUND = 18;
 
     
+    /* relation:  */
+    public static final String PROP_NAME_warehouse = "warehouse";
+    
+    /* relation:  */
+    public static final String PROP_NAME_dock = "dock";
+    
+    /* relation:  */
+    public static final String PROP_NAME_crossDock = "crossDock";
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -969,5 +981,97 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdWarehouse getWarehouse(){
+       return (app.erp.md.dao.entity.ErpMdWarehouse)internalGetRefEntity(PROP_NAME_warehouse);
+    }
+
+    public final void setWarehouse(app.erp.md.dao.entity.ErpMdWarehouse refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setWarehouseId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_warehouse, refEntity,()->{
+           
+                           this.setWarehouseId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.drp.dao.entity.ErpInvDrpCrossDock getDock(){
+       return (app.erp.drp.dao.entity.ErpInvDrpCrossDock)internalGetRefEntity(PROP_NAME_dock);
+    }
+
+    public final void setDock(app.erp.drp.dao.entity.ErpInvDrpCrossDock refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setDockId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_dock, refEntity,()->{
+           
+                           this.setDockId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.drp.dao.entity.ErpInvDrpCrossDock getCrossDock(){
+       return (app.erp.drp.dao.entity.ErpInvDrpCrossDock)internalGetRefEntity(PROP_NAME_crossDock);
+    }
+
+    public final void setCrossDock(app.erp.drp.dao.entity.ErpInvDrpCrossDock refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCrossDockId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_crossDock, refEntity,()->{
+           
+                           this.setCrossDockId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
 }
 // resume CPD analysis - CPD-ON

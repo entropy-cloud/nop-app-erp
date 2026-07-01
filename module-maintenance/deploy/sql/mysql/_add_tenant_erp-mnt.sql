@@ -3,17 +3,19 @@
 
 alter table erp_mnt_equipment_category add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_ast_asset add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_md_organization add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_employee add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_warehouse add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_material add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_uom add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_material_category add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
-
-alter table erp_md_warehouse add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mnt_equipment add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -43,11 +45,17 @@ alter table erp_md_location add primary key (NOP_TENANT_ID, ID);
 alter table erp_mnt_equipment_category drop primary key;
 alter table erp_mnt_equipment_category add primary key (NOP_TENANT_ID, ID);
 
+alter table erp_ast_asset drop primary key;
+alter table erp_ast_asset add primary key (NOP_TENANT_ID, ID);
+
 alter table erp_md_organization drop primary key;
 alter table erp_md_organization add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_md_employee drop primary key;
 alter table erp_md_employee add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_warehouse drop primary key;
+alter table erp_md_warehouse add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_md_material drop primary key;
 alter table erp_md_material add primary key (NOP_TENANT_ID, ID);
@@ -57,9 +65,6 @@ alter table erp_md_uom add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_md_material_category drop primary key;
 alter table erp_md_material_category add primary key (NOP_TENANT_ID, ID);
-
-alter table erp_md_warehouse drop primary key;
-alter table erp_md_warehouse add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_mnt_equipment drop primary key;
 alter table erp_mnt_equipment add primary key (NOP_TENANT_ID, ID);

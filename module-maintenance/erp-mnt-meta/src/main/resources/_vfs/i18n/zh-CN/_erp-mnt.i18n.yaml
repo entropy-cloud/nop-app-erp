@@ -31,6 +31,7 @@ prop:
       id: ID
       measuredValue: 测量值
       nextCalibrationDate: 下次校准日期
+      org: null
       orgId: 业务组织
       remark: 备注
       result: 校准结果
@@ -50,6 +51,7 @@ prop:
       equipmentId: 设备ID
       id: ID
       reason: 原因
+      relatedJobOrder: null
       relatedJobOrderId: 关联生产工单ID
       remark: 备注
       startTime: 开始时间
@@ -58,6 +60,7 @@ prop:
       updatedBy: 修改人
       version: 数据版本
     ErpMntEquipment:
+      asset: null
       assetId: 资产卡片(关联 assets 域)
       category: null
       categoryId: 分类ID
@@ -112,6 +115,7 @@ prop:
       leaderId: 负责人(职员)
       members: null
       name: 团队名称
+      org: null
       orgId: 所属组织
       remark: 备注
       updateTime: 修改时间
@@ -192,6 +196,7 @@ prop:
       equipmentId: 设备ID
       id: ID
       lines: null
+      org: null
       orgId: 业务组织
       posted: 已过账(库存已出库)
       postedAt: 过账时间
@@ -205,6 +210,7 @@ prop:
       version: 数据版本
       visit: null
       visitId: 维护访问ID
+      warehouse: null
       warehouseId: 领料仓库
     ErpMntSparePartUsageLine:
       amount: 金额
@@ -239,6 +245,7 @@ prop:
       equipment: null
       equipmentId: 设备ID
       id: ID
+      org: null
       orgId: 业务组织
       posted: 是否已过账
       postedAt: 过账时间

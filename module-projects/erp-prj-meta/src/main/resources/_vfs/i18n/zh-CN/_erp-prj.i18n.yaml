@@ -38,6 +38,7 @@ prop:
       code: 单号
       createTime: 创建时间
       createdBy: 创建人
+      currency: null
       currencyId: 币种
       customer: null
       customerId: 客户
@@ -49,6 +50,7 @@ prop:
       lines: null
       milestone: null
       milestoneId: 关联里程碑
+      org: null
       orgId: 业务组织
       posted: 已过账
       postedAt: 过账时间
@@ -73,6 +75,7 @@ prop:
       remark: 备注
       subject: null
       subjectId: 科目
+      task: null
       taskId: 任务
       updateTime: 修改时间
       updatedBy: 修改人
@@ -84,12 +87,14 @@ prop:
       code: 单号
       createTime: 创建时间
       createdBy: 创建人
+      currency: null
       currencyId: 币种
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
       id: ID
       lines: null
+      org: null
       orgId: 业务组织
       project: null
       projectId: 项目
@@ -113,6 +118,7 @@ prop:
       remark: 备注
       subject: null
       subjectId: 科目
+      task: null
       taskId: 任务
       updateTime: 修改时间
       updatedBy: 修改人
@@ -126,6 +132,7 @@ prop:
       code: 单号
       createTime: 创建时间
       createdBy: 创建人
+      currency: null
       currencyId: 币种
       delVersion: 逻辑删除版本
       docStatus: 单据状态
@@ -133,6 +140,7 @@ prop:
       exchangeRate: 汇率
       id: ID
       lines: null
+      org: null
       orgId: 业务组织
       posted: 已过账(已转成本凭证)
       postedAt: 过账时间
@@ -159,6 +167,7 @@ prop:
       sourceBillType: 来源单据类型(TIMESHEET/PURCHASE/EXPENSE)
       subject: null
       subjectId: 科目
+      task: null
       taskId: 任务
       updateTime: 修改时间
       updatedBy: 修改人
@@ -193,6 +202,7 @@ prop:
       createdBy: 创建人
       currency: null
       currencyId: 币种
+      customer: null
       customerId: 客户
       delVersion: 逻辑删除版本
       endDate: 结束日期
@@ -202,6 +212,7 @@ prop:
       members: null
       milestones: null
       name: 项目名称
+      org: null
       orgId: 业务组织
       projectType: null
       projectTypeId: 项目类型
@@ -289,6 +300,7 @@ prop:
       delVersion: 逻辑删除版本
       hours: 工时
       id: ID
+      org: null
       orgId: 业务组织
       posted: 已过账(已转成本凭证)
       postedAt: 过账时间

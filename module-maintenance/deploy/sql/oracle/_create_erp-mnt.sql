@@ -23,6 +23,13 @@ CREATE TABLE erp_mnt_equipment_category(
   constraint PK_erp_mnt_equipment_category primary key (ID)
 );
 
+CREATE TABLE erp_ast_asset(
+  ID NUMBER(20)  ,
+  CODE VARCHAR2(50)  ,
+  NAME VARCHAR2(200)  ,
+  constraint PK_erp_ast_asset primary key (ID)
+);
+
 CREATE TABLE erp_md_organization(
   ID NUMBER(20)  ,
   CODE VARCHAR2(50)  ,
@@ -40,6 +47,16 @@ CREATE TABLE erp_md_employee(
   ORG_ID NUMBER(20)  ,
   STATUS INTEGER  ,
   constraint PK_erp_md_employee primary key (ID)
+);
+
+CREATE TABLE erp_md_warehouse(
+  ID NUMBER(20)  ,
+  CODE VARCHAR2(50)  ,
+  NAME VARCHAR2(200)  ,
+  WAREHOUSE_TYPE INTEGER  ,
+  ORG_ID NUMBER(20)  ,
+  STATUS INTEGER  ,
+  constraint PK_erp_md_warehouse primary key (ID)
 );
 
 CREATE TABLE erp_md_material(
@@ -66,16 +83,6 @@ CREATE TABLE erp_md_material_category(
   NAME VARCHAR2(200)  ,
   PARENT_ID NUMBER(20)  ,
   constraint PK_erp_md_material_category primary key (ID)
-);
-
-CREATE TABLE erp_md_warehouse(
-  ID NUMBER(20)  ,
-  CODE VARCHAR2(50)  ,
-  NAME VARCHAR2(200)  ,
-  WAREHOUSE_TYPE INTEGER  ,
-  ORG_ID NUMBER(20)  ,
-  STATUS INTEGER  ,
-  constraint PK_erp_md_warehouse primary key (ID)
 );
 
 CREATE TABLE erp_mnt_equipment(
@@ -287,7 +294,7 @@ CREATE TABLE erp_mnt_spare_part_usage(
   APPROVE_STATUS INTEGER NOT NULL ,
   POSTED CHAR(1) default 0   ,
   POSTED_AT DATE  ,
-  POSTED_BY NUMBER(20)  ,
+  POSTED_BY VARCHAR2(36)  ,
   REMARK VARCHAR2(1000)  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,
@@ -345,17 +352,19 @@ CREATE TABLE erp_mnt_spare_part_usage_line(
                     
       COMMENT ON COLUMN erp_mnt_equipment_category.UPDATE_TIME IS '修改时间';
                     
+      COMMENT ON TABLE erp_ast_asset IS '资产';
+                
       COMMENT ON TABLE erp_md_organization IS '组织';
                 
       COMMENT ON TABLE erp_md_employee IS '职员';
+                
+      COMMENT ON TABLE erp_md_warehouse IS '仓库';
                 
       COMMENT ON TABLE erp_md_material IS '物料';
                 
       COMMENT ON TABLE erp_md_uom IS '计量单位';
                 
       COMMENT ON TABLE erp_md_material_category IS '物料分类';
-                
-      COMMENT ON TABLE erp_md_warehouse IS '仓库';
                 
       COMMENT ON TABLE erp_mnt_equipment IS '设备';
                 

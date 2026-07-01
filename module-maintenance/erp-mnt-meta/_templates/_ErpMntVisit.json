@@ -31,5 +31,6 @@
   "schedule": null,
   "equipment": null,
   "tasks": null,
-  "sparePartUsages": null
+  "sparePartUsages": null,
+  "org": null
 }

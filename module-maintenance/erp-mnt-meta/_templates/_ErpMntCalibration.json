@@ -24,5 +24,6 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "equipment": null,
-  "calibratedByEmployee": null
+  "calibratedByEmployee": null,
+  "org": null
 }

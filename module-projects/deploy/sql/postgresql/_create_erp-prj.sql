@@ -28,16 +28,6 @@ CREATE TABLE erp_md_partner(
   constraint PK_erp_md_partner primary key (id)
 );
 
-CREATE TABLE erp_md_subject(
-  id INT8  ,
-  code VARCHAR(50)  ,
-  name VARCHAR(200)  ,
-  parent_id INT8  ,
-  subject_class INT4  ,
-  direction INT4  ,
-  constraint PK_erp_md_subject primary key (id)
-);
-
 CREATE TABLE erp_md_organization(
   id INT8  ,
   code VARCHAR(50)  ,
@@ -46,6 +36,16 @@ CREATE TABLE erp_md_organization(
   parent_id INT8  ,
   status INT4  ,
   constraint PK_erp_md_organization primary key (id)
+);
+
+CREATE TABLE erp_md_subject(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  parent_id INT8  ,
+  subject_class INT4  ,
+  direction INT4  ,
+  constraint PK_erp_md_subject primary key (id)
 );
 
 CREATE TABLE erp_prj_project_type(
@@ -180,7 +180,7 @@ CREATE TABLE erp_prj_cost_collection(
   approve_status INT4 NOT NULL ,
   posted BOOLEAN default false   ,
   posted_at TIMESTAMP  ,
-  posted_by INT8  ,
+  posted_by VARCHAR(36)  ,
   remark VARCHAR(1000)  ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
@@ -230,8 +230,8 @@ CREATE TABLE erp_prj_timesheet(
   status INT4 NOT NULL ,
   posted BOOLEAN default false   ,
   posted_at TIMESTAMP  ,
-  posted_by INT8  ,
-  approved_by INT8  ,
+  posted_by VARCHAR(36)  ,
+  approved_by VARCHAR(36)  ,
   approved_at TIMESTAMP  ,
   remark VARCHAR(1000)  ,
   del_version INT8 default 0  NOT NULL ,
@@ -298,7 +298,7 @@ CREATE TABLE erp_prj_billing(
   approve_status INT4 NOT NULL ,
   posted BOOLEAN default false   ,
   posted_at TIMESTAMP  ,
-  posted_by INT8  ,
+  posted_by VARCHAR(36)  ,
   remark VARCHAR(1000)  ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
@@ -336,9 +336,9 @@ CREATE TABLE erp_prj_billing_line(
                 
       COMMENT ON TABLE erp_md_partner IS '往来单位';
                 
-      COMMENT ON TABLE erp_md_subject IS '会计科目';
-                
       COMMENT ON TABLE erp_md_organization IS '组织';
+                
+      COMMENT ON TABLE erp_md_subject IS '会计科目';
                 
       COMMENT ON TABLE erp_prj_project_type IS '项目类型';
                 

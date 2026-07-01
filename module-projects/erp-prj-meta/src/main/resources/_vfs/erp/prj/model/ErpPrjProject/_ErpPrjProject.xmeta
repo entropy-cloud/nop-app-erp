@@ -32,7 +32,7 @@
             <schema type="java.lang.String" precision="200"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="4" i18n-en:displayName="Organization" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="projectTypeId" displayName="项目类型" propId="5" i18n-en:displayName="Project Type" queryable="true"
@@ -40,7 +40,7 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="customerId" displayName="客户" propId="6" i18n-en:displayName="Customer" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="customer">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="currencyId" displayName="币种" propId="7" i18n-en:displayName="Currency" queryable="true"
@@ -156,6 +156,15 @@
             <schema>
                 <item bizObjName="ErpPrjMilestone"/>
             </schema>
+        </prop>
+        <prop name="customer" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="customerId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpMdPartner"/>
+        </prop>
+        <prop name="org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="orgId"
+              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
         </prop>
     </props>
 </meta>

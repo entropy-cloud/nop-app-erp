@@ -14,7 +14,7 @@
   "approveStatus_label": "",
   "posted": false,
   "postedAt": "2000-01-01 14:00:00",
-  "postedBy": 0,
+  "postedBy": "",
   "remark": "",
   "delVersion": 0,
   "version": 0,
@@ -25,5 +25,7 @@
   "visit": null,
   "request": null,
   "equipment": null,
-  "lines": null
+  "lines": null,
+  "org": null,
+  "warehouse": null
 }

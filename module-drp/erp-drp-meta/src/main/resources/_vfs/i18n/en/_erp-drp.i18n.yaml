@@ -39,6 +39,9 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       plan: Plan
+      material: Material
+      warehouse: Warehouse
+      sourceWarehouse: Source Warehouse
       org: Org
     ErpDrpParameter:
       id: ID
@@ -62,6 +65,10 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      warehouse: Warehouse
+      material: Material
+      preferredSourceWarehouse: Preferred Source Warehouse
+      preferredSupplier: Preferred Supplier
       org: Org
     ErpDrpPlan:
       id: ID
@@ -110,6 +117,11 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      drpLine: DRP Line
+      material: Material
+      stagingLocation: Staging Location
+      inboundMove: Inbound Move
+      outboundMove: Outbound Move
       org: Org
     ErpInvDrpDockAppointment:
       id: ID
@@ -129,6 +141,9 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       orgId: Organization
+      warehouse: Warehouse
+      dock: Dock
+      crossDock: Cross Dock
       org: Org
     ErpInvDrpLeadTimeRecord:
       id: ID
@@ -150,6 +165,8 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      supplier: Supplier
+      material: Material
       org: Org
     ErpInvDrpSafetyStockCalc:
       id: ID
@@ -175,6 +192,8 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      material: Material
+      warehouse: Warehouse
       org: Org
 dict:
   label:

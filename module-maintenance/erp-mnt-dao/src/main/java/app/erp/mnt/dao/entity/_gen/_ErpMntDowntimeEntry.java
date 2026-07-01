@@ -84,6 +84,9 @@ public class _ErpMntDowntimeEntry extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_equipment = "equipment";
     
+    /* relation:  */
+    public static final String PROP_NAME_relatedJobOrder = "relatedJobOrder";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -842,6 +845,29 @@ public class _ErpMntDowntimeEntry extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_equipment, refEntity,()->{
            
                            this.setEquipmentId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.mnt.dao.entity.ErpMntDowntimeEntry getRelatedJobOrder(){
+       return (app.erp.mnt.dao.entity.ErpMntDowntimeEntry)internalGetRefEntity(PROP_NAME_relatedJobOrder);
+    }
+
+    public final void setRelatedJobOrder(app.erp.mnt.dao.entity.ErpMntDowntimeEntry refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setRelatedJobOrderId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_relatedJobOrder, refEntity,()->{
+           
+                           this.setRelatedJobOrderId(refEntity.getId());
                        
            });
            }
