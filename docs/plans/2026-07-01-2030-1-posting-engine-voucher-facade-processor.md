@@ -1,7 +1,7 @@
 # 2026-07-01-2030-1-posting-engine-voucher-facade-processor 过账引擎改造：凭证聚合根 Facade + 编排 Processor
 
-> Plan Status: active
-> Last Reviewed: 2026-07-01
+> Plan Status: completed
+> Last Reviewed: 2026-07-02
 > Source: 用户架构质疑（`ErpFinPostingService` 不符合 Nop 规范）+ `docs/architecture/processor-extension-pattern.md`（新 ADR）
 > Related: `docs/plans/2026-07-01-1900-1-platform-compliance-remediation.md`（active，服务层 API 合规广谱整改，早于本 ADR，S2 含 `ErpFinPostingService:322` 一项由本计划接管）；`docs/plans/2026-07-01-0811-1-finance-posting-engine-foundation.md`（completed，过账引擎 greenfield 落地）
 > Audit: required
@@ -50,7 +50,7 @@ No infra prereqs beyond existing baseline. 纯服务层重构，无外部服务/
 
 ### Phase 1 — 过账引擎 Facade + Processor 两层重构（finance + inventory 原子完成）
 
-Status: planned
+Status: completed
 Targets: `IErpFinVoucherBiz`（finance-dao）、`ErpFinVoucherBizModel`（finance-service）、`ErpFinPostingService`→`ErpFinPostingProcessor`（finance-service）、`InvPostingExecutor`（erp-inv-service）、`app-service.beans.xml`（finance）、`TestErpFinPostingService`
 Skill: `nop-platform-conformance-audit-prompt`
 
@@ -74,28 +74,36 @@ Skill: `nop-platform-conformance-audit-prompt`
 - **不**自带 `@SingleSession`+`@Transactional`（跟随 Facade `@BizMutation`）。
 - **不**被跨域直注（仅 `ErpFinVoucherBizModel` 注入）。
 
-- [ ] **Decision** `PostingEvent` 模块归属与 facade 参数形态：`IErpFinVoucherBiz` 在 finance-dao，`PostingEvent` 当前在 finance-service.posting。选项 A：`PostingEvent` 下沉到 finance-dao（finance-dao/.../biz/ 或 dto/），facade `post(PostingEvent, ctx)`；选项 B：facade 用基础参数（billType/billHeadCode/orgId/...），`PostingEvent` 留 service 层作内部组装。记录选择 + 理由 + 残留风险。
+- [x] **Decision** `PostingEvent` 模块归属与 facade 参数形态 → **选项 A**：`PostingEvent` + `ErpFinBusinessType` 下沉到 `app.erp.fin.dao`（finance-dao），facade `post(PostingEvent, IServiceContext)` / `reverse(String, ErpFinBusinessType, IServiceContext)`。
+  - 选择理由：(1) 二者**已是跨域类型**——inventory（`InvPostingDispatcher`/`InvAcctDocProvider`）已构造/引用它们；finance-dao 是跨域契约面（`IErpFinVoucherBiz` 所在层），将跨域消息+业务类型词汇归位到 dao 使模块边界诚实。(2) `ErpFinBusinessType` 是零依赖纯值枚举（`erp-fin/business-type` 字典的类型安全门面），属领域字典层（dao）而非实现层（service）。(3) `PostingEvent` 是值 DTO，唯一依赖 `ErpFinBusinessType`+JDK 类型，搬迁自包含。(4) 选项 B（facade 用基础参数）>5 参数须再造 DTO（等价于 PostingEvent），且 `reverse` 仍需业务类型语义→仍要枚举在 dao，故无优势。
+  - 残留风险：触碰文件多于选项 B（finance-service + inventory-service 的 import 路径批量更新），已由 grep 校验机械重写覆盖；SPI 接口（`IErpFinAcctDocProvider`/`IErpFinFactsValidator`/`ErpFinAcctDocRegistry`）**机制不变**、仍留 finance-service，仅 import 路径改向 dao（service→dao 依赖方向正确，非"重构 SPI 模块归属"）。
   - Skill: none
-- [ ] **Fix** 新增 `IErpFinVoucherBiz.post`/`reverse` 动作方法签名（按上述 Decision 结果），末参 `IServiceContext`。
+- [x] **Fix** 新增 `IErpFinVoucherBiz.post`/`reverse` 动作方法签名（按上述 Decision 结果），末参 `IServiceContext`。
   - Skill: none
-- [ ] **Fix** `ErpFinVoucherBizModel` 实现 `post`/`reverse`：`@BizMutation`、注入 `ErpFinPostingProcessor` 委托编排、`IServiceContext` 透传。`post()` 声明 `@Transactional(propagation=REQUIRES_NEW)` 承接跨域失败隔离（从 `InvPostingExecutor` 上移）。
+  - 执行结果：`IErpFinVoucherBiz`（finance-dao）新增 `@BizMutation post(@Name("event") PostingEvent, IServiceContext)` 与 `@BizMutation reverse(@Name("billHeadCode") String, @Name("businessType") ErpFinBusinessType, IServiceContext)`。
+- [x] **Fix** `ErpFinVoucherBizModel` 实现 `post`/`reverse`：`@BizMutation`、注入 `ErpFinPostingProcessor` 委托编排、`IServiceContext` 透传。`post()` 声明 `@Transactional(propagation=REQUIRES_NEW)` 承接跨域失败隔离（从 `InvPostingExecutor` 上移）。
   - Skill: `nop-platform-conformance-audit-prompt`
-- [ ] **Fix** `ErpFinPostingService` → `ErpFinPostingProcessor`：重命名；去 `@SingleSession`+`@Transactional`；将 `post()`/`reverse()` 体内**内联步骤**（Provider 解析/Facts 生成/Validator 链/平衡校验）抽取为 `protected` 方法 + `IServiceContext` 末参；既有 `private` helper（`alreadyPosted`/`resolveOpenPeriod`/`persistVoucher`/`resolveSubjects`/`loadLines`/`findPostedVoucher`/`findBillLinks`/`buildVoucherCode`）改 `protected` + 加 `IServiceContext` 末参；finance 域内部 `daoFor(ErpFin{Voucher,VoucherLine,VoucherBillR,AccountingPeriod})` 按 1900-1 C 段保留（同聚合/同域内部），跨域读 `daoFor(ErpMdSubject)` 改 `IErpMdSubjectBiz`（接管 1900-1 S2 的 `ErpFinPostingService:322` 项）。
+  - 执行结果：Facade `post()` = `@BizMutation @Transactional(REQUIRES_NEW)`，`reverse()` = `@BizMutation`（默认传播，承接原 reverse 行为），均委托 `ErpFinPostingProcessor`。**执行期修正（重要）**：`@SingleSession` **未**放在 Facade，而下沉到 Processor 的 `process()`/`reverseProcess()`（见下项理由）——Facade 的 `@BizMutation` 拦截器会把 Session flush 推迟到外层 mutation 作用域，导致过账异常（如 `mandatory-prop-is-null`）以 `CompletionException`/`invoke-listener-fail` 在外层事务提交时才抛出、逃出跨域调用方 `InvPostingDispatcher` 的 try/catch 并污染外层事务（purchase/sales 反审核端到端实测回归）。`@SingleSession` 钉在编排方法上，Session 作用域精确覆盖 ORM 工作并在编排方法返回时同步刷新，异常稳定落入 dispatch 的 try/catch（与重构前行为一致）。事务边界（`@Transactional`）仍钉 Facade，符合 ADR 硬规则 1。
+- [x] **Fix** `ErpFinPostingService` → `ErpFinPostingProcessor`：重命名；去 `@Transactional`；将 `post()`/`reverse()` 体内**内联步骤**（Provider 解析/Facts 生成/Validator 链/平衡校验）抽取为 `protected` 方法 + `IServiceContext` 末参；既有 `private` helper（`alreadyPosted`/`resolveOpenPeriod`/`persistVoucher`/`resolveSubjects`/`loadLines`/`findPostedVoucher`/`findBillLinks`/`buildVoucherCode`）改 `protected` + 加 `IServiceContext` 末参；finance 域内部 `daoFor(ErpFin{Voucher,VoucherLine,VoucherBillR,AccountingPeriod})` 按 1900-1 C 段保留（同聚合/同域内部），跨域读 `daoFor(ErpMdSubject)` 改 `IErpMdSubjectBiz`（接管 1900-1 S2 的 `ErpFinPostingService:322` 项）。
   - Skill: `nop-platform-conformance-audit-prompt`
-- [ ] **Fix** `InvPostingExecutor`：注入 `IErpFinVoucherBiz`（替代 `ErpFinPostingService` 具体类直注），调 `voucherBiz.post(...)`；**移除其 `@Transactional(REQUIRES_NEW)`（`:22`）——该传播已上移到 Facade `post()`**。同步订正 `erp-inv-service/pom.xml:32` 注释中的 `IErpFinPostingService`（不存在的接口名）→ `IErpFinVoucherBiz`。
+  - 执行结果：`ErpFinPostingProcessor`（finance-service），`process()`/`reverseProcess()` 主流程只编排步骤；全部步骤 + helper 为 `protected` + `IServiceContext` 末参（`resolveProvider`/`generateFacts`(含 Validator 链)/`balanceTotals`/`assertBalanced` 等内联步骤已抽取；新增 `prepareContext`/`prepareReversalContext`/`buildReversalDraft`(holder)）；`ErpMdSubject` 跨域读经 `IBizObjectManager.getBizObject("ErpMdSubject").asProxy()` 的 `IErpMdSubjectBiz.findByCode`（finance→erp-md 仅 test 作用域，非 BizModel 编排 bean 用 IBizObjectManager，承接重构前已落地的 S2）。**`@SingleSession` 保留在 `process()`/`reverseProcess()`（执行期修正，理由见上项）**，`@Transactional` 不带（跟随 Facade）。
+- [x] **Fix** `InvPostingExecutor`：注入 `IErpFinVoucherBiz`（替代 `ErpFinPostingService` 具体类直注），调 `voucherBiz.post(...)`；**移除其 `@Transactional(REQUIRES_NEW)`（`:22`）——该传播已上移到 Facade `post()`**。同步订正 `erp-inv-service/pom.xml:32` 注释中的 `IErpFinPostingService`（不存在的接口名）→ `IErpFinVoucherBiz`。
   - Skill: `nop-platform-conformance-audit-prompt`
-- [ ] **Fix** `app-service.beans.xml`（finance）：`ErpFinPostingService` bean → `ErpFinPostingProcessor`（id/class 同步）。
+  - 执行结果：`InvPostingExecutor` 注入 `IErpFinVoucherBiz`，`postEvent` 调 `voucherBiz.post(event, context)`（context 取 `IServiceContext.getCtx()` 兜底 `ServiceContextImpl`），移除 `@Transactional`；pom.xml 注释订正为 `IErpFinVoucherBiz`。
+- [x] **Fix** `app-service.beans.xml`（finance）：`ErpFinPostingService` bean → `ErpFinPostingProcessor`（id/class 同步）。
   - Skill: none
-- [ ] **Fix** `TestErpFinPostingService`：注入入口跟随重构（`IErpFinVoucherBiz` 或 `ErpFinPostingProcessor`），既有 6 个行为测试（happy/幂等/不平衡/期间结账/红冲成功/红冲未找到）断言不变、全绿。
+  - 执行结果：bean id/class 同步为 `ErpFinPostingProcessor`，注释更新为"编排层 Processor 被 Facade 内部调用"。
+- [x] **Fix** `TestErpFinPostingService`：注入入口跟随重构（`IErpFinVoucherBiz` 或 `ErpFinPostingProcessor`），既有 6 个行为测试（happy/幂等/不平衡/期间结账/红冲成功/红冲未找到）断言不变、全绿。
   - Skill: none
+  - 执行结果：测试改注 `IErpFinVoucherBiz voucherBiz`，调 `voucherBiz.post(event, CTX)` / `voucherBiz.reverse(..., CTX)`（CTX 为既有 `ServiceContextImpl`）；6 个行为断言不变、全绿（同时验证 Facade 的 `@BizMutation`+`@Transactional(REQUIRES_NEW)`+Processor `@SingleSession` 传播组合）。
 
 Exit Criteria:
 
-- [ ] `IErpFinVoucherBiz` 含 `post`/`reverse` 动作方法，末参 `IServiceContext`；`ErpFinVoucherBizModel` `@BizMutation` 实现二者并委托 Processor
-- [ ] `ErpFinPostingProcessor` 无 `@SingleSession`/`@Transactional`；公共/步骤方法带 `IServiceContext` 末参；步骤为 `protected`（可派生覆盖）
-- [ ] `InvPostingExecutor` 不再 `@Inject ErpFinPostingService`/`ErpFinPostingProcessor` 具体类，改 `IErpFinVoucherBiz`
-- [ ] `ErpFinPostingService` 类名在全仓 main 代码中不再存在（grep 零命中）
-- [ ] 既有 6 个过账行为测试全绿（断言不变，仅入口跟随）
+- [x] `IErpFinVoucherBiz` 含 `post`/`reverse` 动作方法，末参 `IServiceContext`；`ErpFinVoucherBizModel` `@BizMutation` 实现二者并委托 Processor
+- [x] `ErpFinPostingProcessor` 无 `@Transactional`；公共/步骤方法带 `IServiceContext` 末参；步骤为 `protected`（可派生覆盖）。**修订**：`@SingleSession` 保留在编排方法 `process()`/`reverseProcess()`（执行期发现：Facade 的 `@BizMutation` 会推迟 Session flush 至外层 mutation，导致过账异常逃出跨域调用方 try/catch；钉在编排方法上使 flush 同步、异常可捕获——事务 `@Transactional` 仍钉 Facade）
+- [x] `InvPostingExecutor` 不再 `@Inject ErpFinPostingService`/`ErpFinPostingProcessor` 具体类，改 `IErpFinVoucherBiz`
+- [x] `ErpFinPostingService` 类名在全仓 main 代码中不再存在（grep 零命中）
+- [x] 既有 6 个过账行为测试全绿（断言不变，仅入口跟随）
 
 ## Draft Review Record
 
@@ -110,18 +118,18 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（Facade + Processor 两层、跨域走 I*Biz、事务上移、配置余地）
-- [ ] `mvn test -pl module-finance/erp-fin-service -am` 全绿（含 6 个过账行为测试）
-- [ ] `mvn test -pl module-inventory/erp-inv-service -am` 全绿（`TestErpInvPosting` 3 个端到端不回归）
-- [ ] 根 `mvn test -fae` 全绿（146 reactor 模块无回归）
-- [ ] `nop-platform-conformance-audit-prompt` 自检：无跨域直注具体类、无事务下放编排层、无 private 无扩展点步骤、无缺 IServiceContext 末参
-- [ ] `docs/architecture/processor-extension-pattern.md` 已存在（前置 completed），本计划落地后过账引擎为其首个参照实例
-- [ ] 与 1900-1 边界已声明（S2 `ErpFinPostingService:322` 项由本计划接管；1900-1 执行 finance 时跳过该项或标注 successor）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：Plan Status / 阶段 Status / Exit Criteria / Closure Gates / logs 一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（Facade + Processor 两层、跨域走 I*Biz、事务上移、配置余地）
+- [x] `mvn test -pl module-finance/erp-fin-service -am` 全绿（含 6 个过账行为测试）— 13 tests green
+- [x] `mvn test -pl module-inventory/erp-inv-service -am` 全绿（`TestErpInvPosting` 3 个端到端不回归）— 21 tests green
+- [x] 根 `mvn test -fae` 全绿（146 reactor 模块无回归）— `mvn clean install -fae -T 1C` = BUILD SUCCESS，328 tests / 0 failures / 0 errors，含 app-erp-all
+- [x] `nop-platform-conformance-audit-prompt` 自检：无跨域直注具体类、无事务下放编排层、无 private 无扩展点步骤、无缺 IServiceContext 末参 — 独立审计逐项确认通过
+- [x] `docs/architecture/processor-extension-pattern.md` 已存在（前置 completed），本计划落地后过账引擎为其首个参照实例 — 已补充"ORM Session 作用域（事务/Session 分层）"段并以本引擎为参照实例
+- [x] 与 1900-1 边界已声明（S2 `ErpFinPostingService:322` 项由本计划接管；1900-1 执行 finance 时跳过该项或标注 successor）
+- [x] 无范围内项目降级为 deferred/follow-up — `IErpFinAcctDocProvider` SPI 模块归属卫生属独立 follow-up（计划前即裁定为 out-of-scope）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：Plan Status / 阶段 Status / Exit Criteria / Closure Gates / logs 一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计 — `ses_0e12cb407ffe4WeiuEcIndIrc4`，verdict `passes closure audit`
+- [x] 结束证据存在于文件中 — 见下 Closure Audit Evidence
 
 ## Deferred But Adjudicated
 
@@ -133,12 +141,14 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: pending（待执行与独立草案审查 + 结束审计）
+Status Note: passed closure audit（执行 + 独立结束审计均完成）
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立子代理填充>
-- Evidence: <task id / walkthrough record>
+- Auditor / Agent: 独立子代理 `ses_0e12cb407ffe4WeiuEcIndIrc4`（新会话，未参与执行）
+- Verdict: `passes closure audit`（无 BLOCKER / 无 MAJOR；2 项 MINOR 非阻塞：ADR doc-drift 已补 ADR "ORM Session 作用域"段闭合、closure 文本状态本节同步）
+- 证据：逐项核对 10 项检查单全 PASS（Facade 契约/实现、Processor 无 @Transactional + 全 protected + IServiceContext 末参、旧类 main 代码 grep 零命中、跨域注 IErpFinVoucherBiz、模块下沉、beans.xml/pom 订正、反模式全无、测试入口跟随）；@SingleSession-on-Processor 偏离经评估"justified & documented"（事务边界钉 Facade、ORM Session 刷新作用域钉编排方法，ADR 反模式限定语"且无 Facade 包裹"不触发）
+- 验证基线：`mvn clean install -fae -T 1C` = BUILD SUCCESS，328 tests / 0 failures / 0 errors / 146 模块全 SUCCESS；执行期捕获并修复一处回归（@SingleSession 归位详见上 Exit Criteria 修订 + 执行 Fix 项）
 
 Follow-up:
 

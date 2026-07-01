@@ -34,6 +34,8 @@
 **硬规则**：
 
 1. **事务入口钉在 Facade 的 `@BizMutation`，不下放到 Processor**。Processor 方法默认跟随外层事务；需要独立事务边界（如跨域失败隔离）时由 Facade 显式声明传播策略（`@Transactional(propagation=...)`），而非在编排层自行叠加 `@SingleSession`+`@Transactional`。
+
+   > **ORM Session 作用域（事务/Session 分层）**：事务边界（`@Transactional`）钉 Facade，但 **ORM Session 的刷新作用域（`@SingleSession`）应钉在编排方法（`process()`）上，而非 Facade**。原因：Facade 的 `@BizMutation` 拦截器会把 Session 的 flush 推迟到外层 mutation 作用域，导致编排方法抛出的异常（如落库前的强制属性校验）在外层事务提交时才以 `CompletionException`/`invoke-listener-fail` 形式抛出，逃出跨域调用方的 `try/catch` 并污染外层事务。`@SingleSession` 钉在编排方法上，使 Session 作用域精确覆盖 ORM 工作、在编排方法返回时同步刷新，异常稳定落入调用方的 `try/catch`。这是事务边界（`@Transactional`）与 ORM Session 刷新作用域（`@SingleSession`）的两个不同关注点，分别归属 Facade 与编排层。参照实例：业财过账引擎（`IErpFinVoucherBiz` + `ErpFinPostingProcessor`，见 `docs/plans/2026-07-01-2030-1-posting-engine-voucher-facade-processor.md`）。
 2. **跨域调用方注入 `IErpXxxBiz`（Facade 接口），不直接注入 Processor 具体类**。Processor 是 BizModel 内部的编排手段，不是跨域契约。直接注入编排具体类会绕过 `I*Biz` 管道，丢失数据权限并耦合实现细节。
 3. **Processor 内部优先调 `I*Biz` 或 `CrudBizModel` 安全能力**；直接 `dao()` 仅限同聚合子实体或域内部组件的标准用法（见 `service-layer-orchestration.md` 与平台 `implement-complex-business-flow.md`）。
 4. **命名遵守平台规范**：不创建 `*Service`/`*Controller` 类（`../nop-entropy/docs-for-ai/02-core-guides/service-layer.md`）；编排类用 `*Processor` 后缀，复用单步用 `*Step`。
