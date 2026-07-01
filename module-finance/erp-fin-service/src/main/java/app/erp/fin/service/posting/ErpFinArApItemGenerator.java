@@ -131,6 +131,10 @@ public class ErpFinArApItemGenerator {
                 return new SourceProfile(ErpFinConstants.DIRECTION_PAYABLE, ErpFinConstants.SOURCE_BILL_PAYMENT);
             case RECEIPT:
                 return new SourceProfile(ErpFinConstants.DIRECTION_RECEIVABLE, ErpFinConstants.SOURCE_BILL_RECEIPT);
+            case PURCHASE_RETURN:
+                // 采购退货冲减应付：DIRECTION_PAYABLE 方向 + 负 openAmount（标准 AP 贷项 credit memo 语义），
+                // 使 PartnerBalanceUpdater.sumOpen 自然减计 payableBalance（无侵入，零改动 sumOpen/方向枚举）。
+                return new SourceProfile(ErpFinConstants.DIRECTION_PAYABLE, ErpFinConstants.SOURCE_BILL_PUR_RETURN);
             default:
                 return null;
         }
@@ -175,6 +179,9 @@ public class ErpFinArApItemGenerator {
      * 解析本位币金额。发票项（AP_INVOICE/AR_INVOICE）取含税总额（应付/应收正项），
      * 回退 TOTAL→TOTAL_AMOUNT；收付款项（PAYMENT/RECEIPT）取 TOTAL，回退 AMOUNT。
      * 兼容 0300-1（Pur: TOTAL_AMOUNT_WITH_TAX/SUPPLIER_ID）与 0300-2（Sal: 同）的 billData 键。
+     *
+     * <p>采购退货（PUR_RETURN）：取 TOTAL_AMOUNT（不含税，对齐未开票暂估应付冲减口径），**取负**
+     * （AP 贷项 credit memo，使 sumOpen 减计应付余额）。进项税/含税属已开票红字发票 Non-Goal。
      */
     protected BigDecimal resolveAmountFunctional(Map<String, Object> data, String sourceBillType) {
         if (ErpFinConstants.SOURCE_BILL_AP_INVOICE.equals(sourceBillType)
@@ -184,7 +191,16 @@ public class ErpFinArApItemGenerator {
                             asAmount(data.get("TOTAL_AMOUNT"),
                                     asAmount(data.get("AMOUNT"), null))));
         }
-        return asAmount(data.get("TOTAL"), asAmount(data.get("AMOUNT"), null));
+        BigDecimal amount = asAmount(data.get("TOTAL"), asAmount(data.get("AMOUNT"), null));
+        if (ErpFinConstants.SOURCE_BILL_PUR_RETURN.equals(sourceBillType)) {
+            // 退货冲减：TOTAL_AMOUNT 正值取负；null 时回退 null（由调用方校验缺失）。
+            BigDecimal returnAmount = asAmount(data.get("TOTAL_AMOUNT"), null);
+            if (returnAmount != null) {
+                return returnAmount.negate();
+            }
+            return amount != null ? amount.negate() : null;
+        }
+        return amount;
     }
 
     private static BigDecimal asAmount(Object value, BigDecimal fallback) {

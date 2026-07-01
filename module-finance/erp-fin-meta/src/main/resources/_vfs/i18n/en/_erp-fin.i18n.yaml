@@ -501,6 +501,7 @@ dict.option.label:
     '110': Project Cost Accrual
     '120': Period-End Closing
     '130': FX Gain/Loss
+    '140': Purchase Return
   erp-fin/period-status:
     '10': Open
     '20': Closing

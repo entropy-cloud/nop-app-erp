@@ -57,3 +57,7 @@ options:
     value: 130
     description: 
   
+  - label: 采购退货冲减
+    value: 140
+    description: 
+  

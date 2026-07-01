@@ -12,6 +12,14 @@
     <bean id="app.erp.pur.service.entity.ReceiveStockMoveBuilder"
           class="app.erp.pur.service.entity.ReceiveStockMoveBuilder"/>
 
+    <!-- 采购域服务（非 BizModel）：退货出库移动单请求构造器（OUTGOING，sourceWarehouse=退货仓库） -->
+    <bean id="app.erp.pur.service.entity.ReturnStockMoveBuilder"
+          class="app.erp.pur.service.entity.ReturnStockMoveBuilder"/>
+
+    <!-- 采购域服务（非 BizModel）：退货数量上限校验器（按入库行聚合已审核退货量） -->
+    <bean id="app.erp.pur.service.entity.ReturnQtyValidator"
+          class="app.erp.pur.service.entity.ReturnQtyValidator"/>
+
     <!-- 采购域服务（非 BizModel）：请购→订单转化组装器 -->
     <bean id="app.erp.pur.service.entity.RequisitionToOrderConverter"
           class="app.erp.pur.service.entity.RequisitionToOrderConverter"/>
@@ -31,6 +39,10 @@
     <!-- 采购发票过账派发器（APPROVED→AP_INVOICE 凭证；失败吞异常保持终态 posted=false） -->
     <bean id="app.erp.pur.service.posting.PurInvoicePostingDispatcher"
           class="app.erp.pur.service.posting.PurInvoicePostingDispatcher"/>
+
+    <!-- 采购退货过账派发器（APPROVED→PURCHASE_RETURN 红字冲减凭证 借暂估应付/贷存货；失败吞异常保持终态 posted=false） -->
+    <bean id="app.erp.pur.service.posting.PurReturnPostingDispatcher"
+          class="app.erp.pur.service.posting.PurReturnPostingDispatcher"/>
 
     <!-- 付款单过账派发器（APPROVED→PAYMENT 凭证 借应付/贷银行存款；失败吞异常保持终态 posted=false） -->
     <bean id="app.erp.pur.service.posting.PurPaymentPostingDispatcher"

@@ -22,7 +22,8 @@ public enum ErpFinBusinessType {
     MANUFACTURING_COST_CLOSE(100),
     PROJECT_COST_COLLECTION(110),
     PERIOD_CLOSE(120),
-    EXCHANGE_GAIN_LOSS(130);
+    EXCHANGE_GAIN_LOSS(130),
+    PURCHASE_RETURN(140);
 
     private final int code;
 

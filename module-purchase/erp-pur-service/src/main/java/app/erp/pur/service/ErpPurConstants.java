@@ -34,15 +34,21 @@ public interface ErpPurConstants {
 
     // 库存作业类型（对齐 erp-inv/operation-type，调用方侧副本避免 main 代码依赖 inventory-service）
     int MOVE_TYPE_INCOMING = 10;
+    int MOVE_TYPE_OUTGOING = 20;
 
     // 入库联动标识（自由字符串，inventory 侧无字典约束）
     String RELATED_BILL_TYPE_PUR_RECEIVE = "ERP_PUR_RECEIVE";
+    String RELATED_BILL_TYPE_PUR_RETURN = "ERP_PUR_RETURN";
     String RELATED_BILL_TYPE_REVERSAL = "REVERSAL";
 
     // 三单匹配配置项（three-way-match.md §不匹配的处理策略，缺失走默认，无需 .env）
     String CONFIG_MATCH_QTY_TOLERANCE = "erp-pur.match-qty-tolerance";
     String CONFIG_MATCH_PRICE_TOLERANCE = "erp-pur.match-price-tolerance";
     String CONFIG_MATCH_STRICT_MODE = "erp-pur.match-strict-mode";
+
+    // 退货配置项（returns.md §配置项，缺失走默认，无需 .env）
+    String CONFIG_RETURN_REASON_REQUIRED = "erp-pur.return-reason-required";
+    String CONFIG_RETURN_APPROVAL_REQUIRED = "erp-pur.return-approval-required";
 
     // 已核销判定阈值：累计已核销 / 发票含税总额 ≥ 此比例视为 PAID，否则按是否 > 0 区分 PARTIAL/UNPAID。
     // 用 BigDecimal 比例避免浮点；1.0 即全额核销才 PAID。

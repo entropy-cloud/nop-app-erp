@@ -50,6 +50,7 @@
             <option code="PROJECT_COST" label="项目成本归集" value="110" i18n-en:label="Project Cost Accrual"/>
             <option code="PERIOD_CLOSING" label="期末结转" value="120" i18n-en:label="Period-End Closing"/>
             <option code="FX_REVALUATION" label="汇兑损益" value="130" i18n-en:label="FX Gain/Loss"/>
+            <option code="PURCHASE_RETURN" label="采购退货冲减" value="140" i18n-en:label="Purchase Return"/>
         </dict>
         <dict label="期间状态" name="erp-fin/period-status" valueType="int" i18n-en:label="Period Status">
             <option code="OPEN" label="开启" value="10" i18n-en:label="Open"/>
