@@ -313,4 +313,37 @@
         }
 
 
+        private Map<String,Object> _org;
+
+        public Map<String,Object> getOrg(){
+            return _org;
+        }
+
+        public void setOrg(Map<String,Object> value){
+            this._org = value;
+        }
+
+
+        private Map<String,Object> _warehouse;
+
+        public Map<String,Object> getWarehouse(){
+            return _warehouse;
+        }
+
+        public void setWarehouse(Map<String,Object> value){
+            this._warehouse = value;
+        }
+
+
+        private Map<String,Object> _location;
+
+        public Map<String,Object> getLocation(){
+            return _location;
+        }
+
+        public void setLocation(Map<String,Object> value){
+            this._location = value;
+        }
+
+
     }

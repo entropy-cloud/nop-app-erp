@@ -44,7 +44,7 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="locationId" displayName="库位" propId="7" i18n-en:displayName="Location" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="location">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="batchNo" displayName="批号" propId="8" i18n-en:displayName="Batch No" queryable="true" sortable="true"
@@ -60,7 +60,7 @@
             <schema domain="quantity" type="java.lang.String" precision="20" scale="4"/>
         </prop>
         <prop name="uomId" displayName="计量单位" propId="11" i18n-en:displayName="Uom" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="uom">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="sourceLineCode" displayName="来源行号" propId="12" i18n-en:displayName="Source Line Code"
@@ -110,6 +110,16 @@
               queryable="true" ext:joinLeftProp="warehouseId" ext:joinRightProp="id" biz:moduleId="erp/md"
               insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdWarehouse"/>
+        </prop>
+        <prop name="location" i18n-en:displayName="Location" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="locationId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdLocation"/>
+        </prop>
+        <prop name="uom" i18n-en:displayName="Uo M" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="uomId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              mandatory="true" lazy="true">
+            <schema bizObjName="ErpMdUoM"/>
         </prop>
     </props>
 </meta>

@@ -24,5 +24,7 @@
   "material": null,
   "sku": null,
   "uoM": null,
-  "currency": null
+  "currency": null,
+  "sourceLocation": null,
+  "destLocation": null
 }

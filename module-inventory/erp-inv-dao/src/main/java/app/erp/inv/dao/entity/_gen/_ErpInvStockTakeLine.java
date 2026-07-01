@@ -117,6 +117,9 @@ public class _ErpInvStockTakeLine extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_uoM = "uoM";
     
+    /* relation:  */
+    public static final String PROP_NAME_location = "location";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1214,6 +1217,29 @@ public class _ErpInvStockTakeLine extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_uoM, refEntity,()->{
            
                            this.setUoMId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdLocation getLocation(){
+       return (app.erp.md.dao.entity.ErpMdLocation)internalGetRefEntity(PROP_NAME_location);
+    }
+
+    public final void setLocation(app.erp.md.dao.entity.ErpMdLocation refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setLocationId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_location, refEntity,()->{
+           
+                           this.setLocationId(refEntity.getId());
                        
            });
            }

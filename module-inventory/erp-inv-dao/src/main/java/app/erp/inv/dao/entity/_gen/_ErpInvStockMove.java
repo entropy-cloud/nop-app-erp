@@ -73,7 +73,7 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     public static final String PROP_NAME_postedAt = "postedAt";
     public static final int PROP_ID_postedAt = 13;
     
-    /* 过账人: POSTED_BY BIGINT */
+    /* 过账人: POSTED_BY VARCHAR */
     public static final String PROP_NAME_postedBy = "postedBy";
     public static final int PROP_ID_postedBy = 14;
     
@@ -122,6 +122,15 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     
     /* relation:  */
     public static final String PROP_NAME_destWarehouse = "destWarehouse";
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
+    /* relation:  */
+    public static final String PROP_NAME_sourceLocation = "sourceLocation";
+    
+    /* relation:  */
+    public static final String PROP_NAME_destLocation = "destLocation";
     
     /* relation:  */
     public static final String PROP_NAME_lines = "lines";
@@ -246,7 +255,7 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     private java.time.LocalDateTime _postedAt;
     
     /* 过账人: POSTED_BY */
-    private java.lang.Long _postedBy;
+    private java.lang.String _postedBy;
     
     /* 关联单据类型: RELATED_BILL_TYPE */
     private java.lang.String _relatedBillType;
@@ -560,9 +569,9 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
             }
         
             case PROP_ID_postedBy:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_postedBy));
                }
                setPostedBy(typedValue);
@@ -761,7 +770,7 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
         
             case PROP_ID_postedBy:{
                onInitProp(propId);
-               this._postedBy = (java.lang.Long)value;
+               this._postedBy = (java.lang.String)value;
                
                break;
             }
@@ -1085,7 +1094,7 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     /**
      * 过账人: POSTED_BY
      */
-    public final java.lang.Long getPostedBy(){
+    public final java.lang.String getPostedBy(){
          onPropGet(PROP_ID_postedBy);
          return _postedBy;
     }
@@ -1093,7 +1102,7 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     /**
      * 过账人: POSTED_BY
      */
-    public final void setPostedBy(java.lang.Long value){
+    public final void setPostedBy(java.lang.String value){
         if(onPropSet(PROP_ID_postedBy,value)){
             this._postedBy = value;
             internalClearRefs(PROP_ID_postedBy);
@@ -1312,6 +1321,75 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_destWarehouse, refEntity,()->{
            
                            this.setDestWarehouseId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdLocation getSourceLocation(){
+       return (app.erp.md.dao.entity.ErpMdLocation)internalGetRefEntity(PROP_NAME_sourceLocation);
+    }
+
+    public final void setSourceLocation(app.erp.md.dao.entity.ErpMdLocation refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setSourceLocationId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_sourceLocation, refEntity,()->{
+           
+                           this.setSourceLocationId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdLocation getDestLocation(){
+       return (app.erp.md.dao.entity.ErpMdLocation)internalGetRefEntity(PROP_NAME_destLocation);
+    }
+
+    public final void setDestLocation(app.erp.md.dao.entity.ErpMdLocation refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setDestLocationId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_destLocation, refEntity,()->{
+           
+                           this.setDestLocationId(refEntity.getId());
                        
            });
            }

@@ -68,11 +68,11 @@
             <schema type="java.lang.String" precision="50"/>
         </prop>
         <prop name="sourceLocationId" displayName="源库位" propId="13" i18n-en:displayName="Source Location"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="sourceLocation">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="destLocationId" displayName="目标库位" propId="14" i18n-en:displayName="Dest Location" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="destLocation">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="remark" displayName="备注" propId="15" i18n-en:displayName="Remark" queryable="true" sortable="true"
@@ -127,6 +127,16 @@
               queryable="true" ext:joinLeftProp="currencyId" ext:joinRightProp="id" biz:moduleId="erp/md"
               insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdCurrency"/>
+        </prop>
+        <prop name="sourceLocation" i18n-en:displayName="Source Location" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="sourceLocationId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdLocation"/>
+        </prop>
+        <prop name="destLocation" i18n-en:displayName="Dest Location" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="destLocationId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdLocation"/>
         </prop>
     </props>
 </meta>

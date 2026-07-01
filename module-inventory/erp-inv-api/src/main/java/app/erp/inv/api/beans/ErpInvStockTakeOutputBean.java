@@ -190,16 +190,16 @@
         }
 
 
-        private Long _postedBy;
+        private String _postedBy;
 
     
         @PropMeta(propId=11)
     
-        public Long getPostedBy(){
+        public String getPostedBy(){
             return _postedBy;
         }
 
-        public void setPostedBy(Long value){
+        public void setPostedBy(String value){
             this._postedBy = value;
         }
 
@@ -310,6 +310,17 @@
 
         public void setWarehouse(Map<String,Object> value){
             this._warehouse = value;
+        }
+
+
+        private Map<String,Object> _org;
+
+        public Map<String,Object> getOrg(){
+            return _org;
+        }
+
+        public void setOrg(Map<String,Object> value){
+            this._org = value;
         }
 
 

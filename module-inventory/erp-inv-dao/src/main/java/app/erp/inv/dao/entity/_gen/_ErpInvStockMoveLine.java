@@ -124,6 +124,12 @@ public class _ErpInvStockMoveLine extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_currency = "currency";
     
+    /* relation:  */
+    public static final String PROP_NAME_sourceLocation = "sourceLocation";
+    
+    /* relation:  */
+    public static final String PROP_NAME_destLocation = "destLocation";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1289,6 +1295,52 @@ public class _ErpInvStockMoveLine extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_currency, refEntity,()->{
            
                            this.setCurrencyId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdLocation getSourceLocation(){
+       return (app.erp.md.dao.entity.ErpMdLocation)internalGetRefEntity(PROP_NAME_sourceLocation);
+    }
+
+    public final void setSourceLocation(app.erp.md.dao.entity.ErpMdLocation refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setSourceLocationId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_sourceLocation, refEntity,()->{
+           
+                           this.setSourceLocationId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdLocation getDestLocation(){
+       return (app.erp.md.dao.entity.ErpMdLocation)internalGetRefEntity(PROP_NAME_destLocation);
+    }
+
+    public final void setDestLocation(app.erp.md.dao.entity.ErpMdLocation refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setDestLocationId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_destLocation, refEntity,()->{
+           
+                           this.setDestLocationId(refEntity.getId());
                        
            });
            }

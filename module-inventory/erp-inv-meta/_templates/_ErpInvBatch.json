@@ -21,5 +21,6 @@
   "updateTime": "2000-01-01 14:00:00",
   "material": null,
   "sku": null,
-  "warehouse": null
+  "warehouse": null,
+  "org": null
 }

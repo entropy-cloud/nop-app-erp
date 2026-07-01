@@ -295,4 +295,15 @@
         }
 
 
+        private Map<String,Object> _sourceLocation;
+
+        public Map<String,Object> getSourceLocation(){
+            return _sourceLocation;
+        }
+
+        public void setSourceLocation(Map<String,Object> value){
+            this._sourceLocation = value;
+        }
+
+
     }

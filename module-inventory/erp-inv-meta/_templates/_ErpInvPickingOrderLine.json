@@ -19,5 +19,6 @@
   "picking": null,
   "material": null,
   "sku": null,
-  "uoM": null
+  "uoM": null,
+  "sourceLocation": null
 }

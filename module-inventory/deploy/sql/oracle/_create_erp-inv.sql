@@ -9,6 +9,25 @@ CREATE TABLE erp_md_warehouse(
   constraint PK_erp_md_warehouse primary key (ID)
 );
 
+CREATE TABLE erp_md_organization(
+  ID NUMBER(20)  ,
+  CODE VARCHAR2(50)  ,
+  NAME VARCHAR2(200)  ,
+  ORG_TYPE INTEGER  ,
+  PARENT_ID NUMBER(20)  ,
+  STATUS INTEGER  ,
+  constraint PK_erp_md_organization primary key (ID)
+);
+
+CREATE TABLE erp_md_location(
+  ID NUMBER(20)  ,
+  WAREHOUSE_ID NUMBER(20)  ,
+  CODE VARCHAR2(50)  ,
+  NAME VARCHAR2(200)  ,
+  PARENT_ID NUMBER(20)  ,
+  constraint PK_erp_md_location primary key (ID)
+);
+
 CREATE TABLE erp_md_material(
   ID NUMBER(20)  ,
   CODE VARCHAR2(50)  ,
@@ -45,25 +64,6 @@ CREATE TABLE erp_md_currency(
   constraint PK_erp_md_currency primary key (ID)
 );
 
-CREATE TABLE erp_md_location(
-  ID NUMBER(20)  ,
-  WAREHOUSE_ID NUMBER(20)  ,
-  CODE VARCHAR2(50)  ,
-  NAME VARCHAR2(200)  ,
-  PARENT_ID NUMBER(20)  ,
-  constraint PK_erp_md_location primary key (ID)
-);
-
-CREATE TABLE erp_md_organization(
-  ID NUMBER(20)  ,
-  CODE VARCHAR2(50)  ,
-  NAME VARCHAR2(200)  ,
-  ORG_TYPE INTEGER  ,
-  PARENT_ID NUMBER(20)  ,
-  STATUS INTEGER  ,
-  constraint PK_erp_md_organization primary key (ID)
-);
-
 CREATE TABLE erp_md_acct_schema(
   ID NUMBER(20)  ,
   CODE VARCHAR2(50)  ,
@@ -73,51 +73,19 @@ CREATE TABLE erp_md_acct_schema(
   constraint PK_erp_md_acct_schema primary key (ID)
 );
 
-CREATE TABLE erp_inv_reservation(
-  ID NUMBER(20) NOT NULL ,
-  CODE VARCHAR2(50) NOT NULL ,
-  ORG_ID NUMBER(20)  ,
-  BUSINESS_DATE DATE NOT NULL ,
-  SOURCE_BILL_TYPE VARCHAR2(50) NOT NULL ,
-  SOURCE_BILL_CODE VARCHAR2(50) NOT NULL ,
-  RESERVED_FOR_PARTNER_ID NUMBER(20)  ,
-  STATUS INTEGER NOT NULL ,
-  VALID_UNTIL DATE  ,
-  REMARK VARCHAR2(1000)  ,
-  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
-  VERSION INTEGER default 0  NOT NULL ,
-  CREATED_BY VARCHAR2(50) NOT NULL ,
-  CREATE_TIME TIMESTAMP NOT NULL ,
-  UPDATED_BY VARCHAR2(50) NOT NULL ,
-  UPDATE_TIME TIMESTAMP NOT NULL ,
-  constraint PK_erp_inv_reservation primary key (ID)
+CREATE TABLE erp_md_partner(
+  ID NUMBER(20)  ,
+  CODE VARCHAR2(50)  ,
+  NAME VARCHAR2(200)  ,
+  PARTNER_TYPE INTEGER  ,
+  constraint PK_erp_md_partner primary key (ID)
 );
 
-CREATE TABLE erp_inv_stock_move(
-  ID NUMBER(20) NOT NULL ,
-  CODE VARCHAR2(50) NOT NULL ,
-  MOVE_TYPE INTEGER NOT NULL ,
-  ORG_ID NUMBER(20)  ,
-  BUSINESS_DATE DATE NOT NULL ,
-  SOURCE_WAREHOUSE_ID NUMBER(20)  ,
-  SOURCE_LOCATION_ID NUMBER(20)  ,
-  DEST_WAREHOUSE_ID NUMBER(20)  ,
-  DEST_LOCATION_ID NUMBER(20)  ,
-  DOC_STATUS INTEGER NOT NULL ,
-  APPROVE_STATUS INTEGER NOT NULL ,
-  POSTED CHAR(1) default 0   ,
-  POSTED_AT DATE  ,
-  POSTED_BY NUMBER(20)  ,
-  RELATED_BILL_TYPE VARCHAR2(50)  ,
-  RELATED_BILL_CODE VARCHAR2(50)  ,
-  REMARK VARCHAR2(1000)  ,
-  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
-  VERSION INTEGER default 0  NOT NULL ,
-  CREATED_BY VARCHAR2(50) NOT NULL ,
-  CREATE_TIME TIMESTAMP NOT NULL ,
-  UPDATED_BY VARCHAR2(50) NOT NULL ,
-  UPDATE_TIME TIMESTAMP NOT NULL ,
-  constraint PK_erp_inv_stock_move primary key (ID)
+CREATE TABLE erp_md_employee(
+  ID NUMBER(20)  ,
+  CODE VARCHAR2(50)  ,
+  NAME VARCHAR2(200)  ,
+  constraint PK_erp_md_employee primary key (ID)
 );
 
 CREATE TABLE erp_inv_transfer_order(
@@ -132,8 +100,8 @@ CREATE TABLE erp_inv_transfer_order(
   APPROVE_STATUS INTEGER NOT NULL ,
   POSTED CHAR(1) default 0   ,
   POSTED_AT DATE  ,
-  POSTED_BY NUMBER(20)  ,
-  APPROVED_BY NUMBER(20)  ,
+  POSTED_BY VARCHAR2(36)  ,
+  APPROVED_BY VARCHAR2(36)  ,
   APPROVED_AT DATE  ,
   REMARK VARCHAR2(1000)  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
@@ -156,7 +124,7 @@ CREATE TABLE erp_inv_stock_take(
   APPROVE_STATUS INTEGER NOT NULL ,
   POSTED CHAR(1) default 0   ,
   POSTED_AT DATE  ,
-  POSTED_BY NUMBER(20)  ,
+  POSTED_BY VARCHAR2(36)  ,
   REMARK VARCHAR2(1000)  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,
@@ -167,14 +135,21 @@ CREATE TABLE erp_inv_stock_take(
   constraint PK_erp_inv_stock_take primary key (ID)
 );
 
-CREATE TABLE erp_inv_picking_order(
+CREATE TABLE erp_inv_stock_move(
   ID NUMBER(20) NOT NULL ,
   CODE VARCHAR2(50) NOT NULL ,
+  MOVE_TYPE INTEGER NOT NULL ,
   ORG_ID NUMBER(20)  ,
   BUSINESS_DATE DATE NOT NULL ,
-  WAREHOUSE_ID NUMBER(20) NOT NULL ,
-  PICKER_ID NUMBER(20)  ,
+  SOURCE_WAREHOUSE_ID NUMBER(20)  ,
+  SOURCE_LOCATION_ID NUMBER(20)  ,
+  DEST_WAREHOUSE_ID NUMBER(20)  ,
+  DEST_LOCATION_ID NUMBER(20)  ,
   DOC_STATUS INTEGER NOT NULL ,
+  APPROVE_STATUS INTEGER NOT NULL ,
+  POSTED CHAR(1) default 0   ,
+  POSTED_AT DATE  ,
+  POSTED_BY VARCHAR2(36)  ,
   RELATED_BILL_TYPE VARCHAR2(50)  ,
   RELATED_BILL_CODE VARCHAR2(50)  ,
   REMARK VARCHAR2(1000)  ,
@@ -184,7 +159,7 @@ CREATE TABLE erp_inv_picking_order(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
-  constraint PK_erp_inv_picking_order primary key (ID)
+  constraint PK_erp_inv_stock_move primary key (ID)
 );
 
 CREATE TABLE erp_inv_batch(
@@ -233,31 +208,6 @@ CREATE TABLE erp_inv_serial_number(
   constraint PK_erp_inv_serial_number primary key (ID)
 );
 
-CREATE TABLE erp_inv_cost_layer(
-  ID NUMBER(20) NOT NULL ,
-  ORG_ID NUMBER(20)  ,
-  MATERIAL_ID NUMBER(20) NOT NULL ,
-  SKU_ID NUMBER(20)  ,
-  WAREHOUSE_ID NUMBER(20) NOT NULL ,
-  BATCH_NO VARCHAR2(50)  ,
-  COST_METHOD INTEGER NOT NULL ,
-  INCOMING_QUANTITY NUMBER(20,4) NOT NULL ,
-  REMAINING_QUANTITY NUMBER(20,4) NOT NULL ,
-  UNIT_COST NUMBER(20,4) NOT NULL ,
-  TOTAL_COST NUMBER(20,4) NOT NULL ,
-  CURRENCY_ID NUMBER(20)  ,
-  INCOMING_DATE DATE  ,
-  INCOMING_MOVE_ID NUMBER(20)  ,
-  ACCT_SCHEMA_ID NUMBER(20)  ,
-  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
-  VERSION INTEGER default 0  NOT NULL ,
-  CREATED_BY VARCHAR2(50) NOT NULL ,
-  CREATE_TIME TIMESTAMP NOT NULL ,
-  UPDATED_BY VARCHAR2(50) NOT NULL ,
-  UPDATE_TIME TIMESTAMP NOT NULL ,
-  constraint PK_erp_inv_cost_layer primary key (ID)
-);
-
 CREATE TABLE erp_inv_stock_balance(
   ID NUMBER(20) NOT NULL ,
   ORG_ID NUMBER(20)  ,
@@ -283,43 +233,16 @@ CREATE TABLE erp_inv_stock_balance(
   constraint PK_erp_inv_stock_balance primary key (ID)
 );
 
-CREATE TABLE erp_inv_reservation_line(
+CREATE TABLE erp_inv_reservation(
   ID NUMBER(20) NOT NULL ,
-  RESERVATION_ID NUMBER(20) NOT NULL ,
-  LINE_NO INTEGER NOT NULL ,
-  MATERIAL_ID NUMBER(20) NOT NULL ,
-  SKU_ID NUMBER(20)  ,
-  WAREHOUSE_ID NUMBER(20) NOT NULL ,
-  LOCATION_ID NUMBER(20)  ,
-  BATCH_NO VARCHAR2(50)  ,
-  RESERVED_QUANTITY NUMBER(20,4) NOT NULL ,
-  CONSUMED_QUANTITY NUMBER(20,4) default 0   ,
-  UOM_ID NUMBER(20) NOT NULL ,
-  SOURCE_LINE_CODE VARCHAR2(50)  ,
-  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
-  VERSION INTEGER default 0  NOT NULL ,
-  CREATED_BY VARCHAR2(50) NOT NULL ,
-  CREATE_TIME TIMESTAMP NOT NULL ,
-  UPDATED_BY VARCHAR2(50) NOT NULL ,
-  UPDATE_TIME TIMESTAMP NOT NULL ,
-  constraint PK_erp_inv_reservation_line primary key (ID)
-);
-
-CREATE TABLE erp_inv_stock_move_line(
-  ID NUMBER(20) NOT NULL ,
-  MOVE_ID NUMBER(20) NOT NULL ,
-  LINE_NO INTEGER NOT NULL ,
-  MATERIAL_ID NUMBER(20) NOT NULL ,
-  SKU_ID NUMBER(20)  ,
-  UO_M_ID NUMBER(20) NOT NULL ,
-  QUANTITY NUMBER(20,4) NOT NULL ,
-  UNIT_COST NUMBER(20,4)  ,
-  TOTAL_COST NUMBER(20,4)  ,
-  CURRENCY_ID NUMBER(20)  ,
-  BATCH_NO VARCHAR2(50)  ,
-  SERIAL_NO VARCHAR2(50)  ,
-  SOURCE_LOCATION_ID NUMBER(20)  ,
-  DEST_LOCATION_ID NUMBER(20)  ,
+  CODE VARCHAR2(50) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  BUSINESS_DATE DATE NOT NULL ,
+  SOURCE_BILL_TYPE VARCHAR2(50) NOT NULL ,
+  SOURCE_BILL_CODE VARCHAR2(50) NOT NULL ,
+  RESERVED_FOR_PARTNER_ID NUMBER(20)  ,
+  STATUS INTEGER NOT NULL ,
+  VALID_UNTIL DATE  ,
   REMARK VARCHAR2(1000)  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,
@@ -327,7 +250,27 @@ CREATE TABLE erp_inv_stock_move_line(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
-  constraint PK_erp_inv_stock_move_line primary key (ID)
+  constraint PK_erp_inv_reservation primary key (ID)
+);
+
+CREATE TABLE erp_inv_picking_order(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  BUSINESS_DATE DATE NOT NULL ,
+  WAREHOUSE_ID NUMBER(20) NOT NULL ,
+  PICKER_ID NUMBER(20)  ,
+  DOC_STATUS INTEGER NOT NULL ,
+  RELATED_BILL_TYPE VARCHAR2(50)  ,
+  RELATED_BILL_CODE VARCHAR2(50)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_inv_picking_order primary key (ID)
 );
 
 CREATE TABLE erp_inv_transfer_order_line(
@@ -371,6 +314,78 @@ CREATE TABLE erp_inv_stock_take_line(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   constraint PK_erp_inv_stock_take_line primary key (ID)
+);
+
+CREATE TABLE erp_inv_stock_move_line(
+  ID NUMBER(20) NOT NULL ,
+  MOVE_ID NUMBER(20) NOT NULL ,
+  LINE_NO INTEGER NOT NULL ,
+  MATERIAL_ID NUMBER(20) NOT NULL ,
+  SKU_ID NUMBER(20)  ,
+  UO_M_ID NUMBER(20) NOT NULL ,
+  QUANTITY NUMBER(20,4) NOT NULL ,
+  UNIT_COST NUMBER(20,4)  ,
+  TOTAL_COST NUMBER(20,4)  ,
+  CURRENCY_ID NUMBER(20)  ,
+  BATCH_NO VARCHAR2(50)  ,
+  SERIAL_NO VARCHAR2(50)  ,
+  SOURCE_LOCATION_ID NUMBER(20)  ,
+  DEST_LOCATION_ID NUMBER(20)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_inv_stock_move_line primary key (ID)
+);
+
+CREATE TABLE erp_inv_cost_layer(
+  ID NUMBER(20) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  MATERIAL_ID NUMBER(20) NOT NULL ,
+  SKU_ID NUMBER(20)  ,
+  WAREHOUSE_ID NUMBER(20) NOT NULL ,
+  BATCH_NO VARCHAR2(50)  ,
+  COST_METHOD INTEGER NOT NULL ,
+  INCOMING_QUANTITY NUMBER(20,4) NOT NULL ,
+  REMAINING_QUANTITY NUMBER(20,4) NOT NULL ,
+  UNIT_COST NUMBER(20,4) NOT NULL ,
+  TOTAL_COST NUMBER(20,4) NOT NULL ,
+  CURRENCY_ID NUMBER(20)  ,
+  INCOMING_DATE DATE  ,
+  INCOMING_MOVE_ID NUMBER(20)  ,
+  ACCT_SCHEMA_ID NUMBER(20)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_inv_cost_layer primary key (ID)
+);
+
+CREATE TABLE erp_inv_reservation_line(
+  ID NUMBER(20) NOT NULL ,
+  RESERVATION_ID NUMBER(20) NOT NULL ,
+  LINE_NO INTEGER NOT NULL ,
+  MATERIAL_ID NUMBER(20) NOT NULL ,
+  SKU_ID NUMBER(20)  ,
+  WAREHOUSE_ID NUMBER(20) NOT NULL ,
+  LOCATION_ID NUMBER(20)  ,
+  BATCH_NO VARCHAR2(50)  ,
+  RESERVED_QUANTITY NUMBER(20,4) NOT NULL ,
+  CONSUMED_QUANTITY NUMBER(20,4) default 0   ,
+  UOM_ID NUMBER(20) NOT NULL ,
+  SOURCE_LINE_CODE VARCHAR2(50)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_inv_reservation_line primary key (ID)
 );
 
 CREATE TABLE erp_inv_picking_order_line(
@@ -427,6 +442,10 @@ CREATE TABLE erp_inv_stock_ledger(
 
       COMMENT ON TABLE erp_md_warehouse IS '仓库';
                 
+      COMMENT ON TABLE erp_md_organization IS '组织';
+                
+      COMMENT ON TABLE erp_md_location IS '库位';
+                
       COMMENT ON TABLE erp_md_material IS '物料';
                 
       COMMENT ON TABLE erp_md_material_sku IS '物料SKU';
@@ -435,94 +454,12 @@ CREATE TABLE erp_inv_stock_ledger(
                 
       COMMENT ON TABLE erp_md_currency IS '币种';
                 
-      COMMENT ON TABLE erp_md_location IS '库位';
-                
-      COMMENT ON TABLE erp_md_organization IS '组织';
-                
       COMMENT ON TABLE erp_md_acct_schema IS '会计核算表(账套)';
                 
-      COMMENT ON TABLE erp_inv_reservation IS '库存预留单';
+      COMMENT ON TABLE erp_md_partner IS '往来单位';
                 
-      COMMENT ON COLUMN erp_inv_reservation.ID IS 'ID';
-                    
-      COMMENT ON COLUMN erp_inv_reservation.CODE IS '单号';
-                    
-      COMMENT ON COLUMN erp_inv_reservation.ORG_ID IS '业务组织';
-                    
-      COMMENT ON COLUMN erp_inv_reservation.BUSINESS_DATE IS '业务日期';
-                    
-      COMMENT ON COLUMN erp_inv_reservation.SOURCE_BILL_TYPE IS '来源单据类型(如 SALES_ORDER/WORK_ORDER)';
-                    
-      COMMENT ON COLUMN erp_inv_reservation.SOURCE_BILL_CODE IS '来源单据号';
-                    
-      COMMENT ON COLUMN erp_inv_reservation.RESERVED_FOR_PARTNER_ID IS '为谁预留(往来单位)';
-                    
-      COMMENT ON COLUMN erp_inv_reservation.STATUS IS '状态';
-                    
-      COMMENT ON COLUMN erp_inv_reservation.VALID_UNTIL IS '预留有效期至';
-                    
-      COMMENT ON COLUMN erp_inv_reservation.REMARK IS '备注';
-                    
-      COMMENT ON COLUMN erp_inv_reservation.DEL_VERSION IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_inv_reservation.VERSION IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_inv_reservation.CREATED_BY IS '创建人';
-                    
-      COMMENT ON COLUMN erp_inv_reservation.CREATE_TIME IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_inv_reservation.UPDATED_BY IS '修改人';
-                    
-      COMMENT ON COLUMN erp_inv_reservation.UPDATE_TIME IS '修改时间';
-                    
-      COMMENT ON TABLE erp_inv_stock_move IS '库存移动单';
+      COMMENT ON TABLE erp_md_employee IS '员工';
                 
-      COMMENT ON COLUMN erp_inv_stock_move.ID IS 'ID';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move.CODE IS '单号';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move.MOVE_TYPE IS '作业类型';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move.ORG_ID IS '业务组织';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move.BUSINESS_DATE IS '业务日期';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move.SOURCE_WAREHOUSE_ID IS '源仓库';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move.SOURCE_LOCATION_ID IS '源库位';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move.DEST_WAREHOUSE_ID IS '目标仓库';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move.DEST_LOCATION_ID IS '目标库位';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move.DOC_STATUS IS '单据状态';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move.APPROVE_STATUS IS '审核状态';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move.POSTED IS '已过账';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move.POSTED_AT IS '过账时间';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move.POSTED_BY IS '过账人';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move.RELATED_BILL_TYPE IS '关联单据类型';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move.RELATED_BILL_CODE IS '关联单据号';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move.REMARK IS '备注';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move.DEL_VERSION IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move.VERSION IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move.CREATED_BY IS '创建人';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move.CREATE_TIME IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move.UPDATED_BY IS '修改人';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move.UPDATE_TIME IS '修改时间';
-                    
       COMMENT ON TABLE erp_inv_transfer_order IS '调拨单';
                 
       COMMENT ON COLUMN erp_inv_transfer_order.ID IS 'ID';
@@ -605,39 +542,53 @@ CREATE TABLE erp_inv_stock_ledger(
                     
       COMMENT ON COLUMN erp_inv_stock_take.UPDATE_TIME IS '修改时间';
                     
-      COMMENT ON TABLE erp_inv_picking_order IS '拣货单';
+      COMMENT ON TABLE erp_inv_stock_move IS '库存移动单';
                 
-      COMMENT ON COLUMN erp_inv_picking_order.ID IS 'ID';
+      COMMENT ON COLUMN erp_inv_stock_move.ID IS 'ID';
                     
-      COMMENT ON COLUMN erp_inv_picking_order.CODE IS '单号';
+      COMMENT ON COLUMN erp_inv_stock_move.CODE IS '单号';
                     
-      COMMENT ON COLUMN erp_inv_picking_order.ORG_ID IS '业务组织';
+      COMMENT ON COLUMN erp_inv_stock_move.MOVE_TYPE IS '作业类型';
                     
-      COMMENT ON COLUMN erp_inv_picking_order.BUSINESS_DATE IS '业务日期';
+      COMMENT ON COLUMN erp_inv_stock_move.ORG_ID IS '业务组织';
                     
-      COMMENT ON COLUMN erp_inv_picking_order.WAREHOUSE_ID IS '拣货仓库';
+      COMMENT ON COLUMN erp_inv_stock_move.BUSINESS_DATE IS '业务日期';
                     
-      COMMENT ON COLUMN erp_inv_picking_order.PICKER_ID IS '拣货人(职员)';
+      COMMENT ON COLUMN erp_inv_stock_move.SOURCE_WAREHOUSE_ID IS '源仓库';
                     
-      COMMENT ON COLUMN erp_inv_picking_order.DOC_STATUS IS '单据状态';
+      COMMENT ON COLUMN erp_inv_stock_move.SOURCE_LOCATION_ID IS '源库位';
                     
-      COMMENT ON COLUMN erp_inv_picking_order.RELATED_BILL_TYPE IS '关联单据类型(SALES_DELIVERY/WORK_ORDER_ISSUE)';
+      COMMENT ON COLUMN erp_inv_stock_move.DEST_WAREHOUSE_ID IS '目标仓库';
                     
-      COMMENT ON COLUMN erp_inv_picking_order.RELATED_BILL_CODE IS '关联单据号';
+      COMMENT ON COLUMN erp_inv_stock_move.DEST_LOCATION_ID IS '目标库位';
                     
-      COMMENT ON COLUMN erp_inv_picking_order.REMARK IS '备注';
+      COMMENT ON COLUMN erp_inv_stock_move.DOC_STATUS IS '单据状态';
                     
-      COMMENT ON COLUMN erp_inv_picking_order.DEL_VERSION IS '逻辑删除版本';
+      COMMENT ON COLUMN erp_inv_stock_move.APPROVE_STATUS IS '审核状态';
                     
-      COMMENT ON COLUMN erp_inv_picking_order.VERSION IS '数据版本';
+      COMMENT ON COLUMN erp_inv_stock_move.POSTED IS '已过账';
                     
-      COMMENT ON COLUMN erp_inv_picking_order.CREATED_BY IS '创建人';
+      COMMENT ON COLUMN erp_inv_stock_move.POSTED_AT IS '过账时间';
                     
-      COMMENT ON COLUMN erp_inv_picking_order.CREATE_TIME IS '创建时间';
+      COMMENT ON COLUMN erp_inv_stock_move.POSTED_BY IS '过账人';
                     
-      COMMENT ON COLUMN erp_inv_picking_order.UPDATED_BY IS '修改人';
+      COMMENT ON COLUMN erp_inv_stock_move.RELATED_BILL_TYPE IS '关联单据类型';
                     
-      COMMENT ON COLUMN erp_inv_picking_order.UPDATE_TIME IS '修改时间';
+      COMMENT ON COLUMN erp_inv_stock_move.RELATED_BILL_CODE IS '关联单据号';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_inv_batch IS '批次台账';
                 
@@ -719,50 +670,6 @@ CREATE TABLE erp_inv_stock_ledger(
                     
       COMMENT ON COLUMN erp_inv_serial_number.UPDATE_TIME IS '修改时间';
                     
-      COMMENT ON TABLE erp_inv_cost_layer IS '成本层';
-                
-      COMMENT ON COLUMN erp_inv_cost_layer.ID IS 'ID';
-                    
-      COMMENT ON COLUMN erp_inv_cost_layer.ORG_ID IS '业务组织';
-                    
-      COMMENT ON COLUMN erp_inv_cost_layer.MATERIAL_ID IS '物料';
-                    
-      COMMENT ON COLUMN erp_inv_cost_layer.SKU_ID IS 'SKU';
-                    
-      COMMENT ON COLUMN erp_inv_cost_layer.WAREHOUSE_ID IS '仓库';
-                    
-      COMMENT ON COLUMN erp_inv_cost_layer.BATCH_NO IS '批号';
-                    
-      COMMENT ON COLUMN erp_inv_cost_layer.COST_METHOD IS '计价方法';
-                    
-      COMMENT ON COLUMN erp_inv_cost_layer.INCOMING_QUANTITY IS '入库数量';
-                    
-      COMMENT ON COLUMN erp_inv_cost_layer.REMAINING_QUANTITY IS '剩余数量';
-                    
-      COMMENT ON COLUMN erp_inv_cost_layer.UNIT_COST IS '单位成本';
-                    
-      COMMENT ON COLUMN erp_inv_cost_layer.TOTAL_COST IS '总成本';
-                    
-      COMMENT ON COLUMN erp_inv_cost_layer.CURRENCY_ID IS '币种';
-                    
-      COMMENT ON COLUMN erp_inv_cost_layer.INCOMING_DATE IS '入库日期';
-                    
-      COMMENT ON COLUMN erp_inv_cost_layer.INCOMING_MOVE_ID IS '入库移动单';
-                    
-      COMMENT ON COLUMN erp_inv_cost_layer.ACCT_SCHEMA_ID IS '账套';
-                    
-      COMMENT ON COLUMN erp_inv_cost_layer.DEL_VERSION IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_inv_cost_layer.VERSION IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_inv_cost_layer.CREATED_BY IS '创建人';
-                    
-      COMMENT ON COLUMN erp_inv_cost_layer.CREATE_TIME IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_inv_cost_layer.UPDATED_BY IS '修改人';
-                    
-      COMMENT ON COLUMN erp_inv_cost_layer.UPDATE_TIME IS '修改时间';
-                    
       COMMENT ON TABLE erp_inv_stock_balance IS '库存余额';
                 
       COMMENT ON COLUMN erp_inv_stock_balance.ID IS 'ID';
@@ -807,87 +714,73 @@ CREATE TABLE erp_inv_stock_ledger(
                     
       COMMENT ON COLUMN erp_inv_stock_balance.UPDATE_TIME IS '修改时间';
                     
-      COMMENT ON TABLE erp_inv_reservation_line IS '库存预留单行';
+      COMMENT ON TABLE erp_inv_reservation IS '库存预留单';
                 
-      COMMENT ON COLUMN erp_inv_reservation_line.ID IS 'ID';
+      COMMENT ON COLUMN erp_inv_reservation.ID IS 'ID';
                     
-      COMMENT ON COLUMN erp_inv_reservation_line.RESERVATION_ID IS '预留单ID';
+      COMMENT ON COLUMN erp_inv_reservation.CODE IS '单号';
                     
-      COMMENT ON COLUMN erp_inv_reservation_line.LINE_NO IS '行号';
+      COMMENT ON COLUMN erp_inv_reservation.ORG_ID IS '业务组织';
                     
-      COMMENT ON COLUMN erp_inv_reservation_line.MATERIAL_ID IS '物料';
+      COMMENT ON COLUMN erp_inv_reservation.BUSINESS_DATE IS '业务日期';
                     
-      COMMENT ON COLUMN erp_inv_reservation_line.SKU_ID IS 'SKU';
+      COMMENT ON COLUMN erp_inv_reservation.SOURCE_BILL_TYPE IS '来源单据类型(如 SALES_ORDER/WORK_ORDER)';
                     
-      COMMENT ON COLUMN erp_inv_reservation_line.WAREHOUSE_ID IS '仓库';
+      COMMENT ON COLUMN erp_inv_reservation.SOURCE_BILL_CODE IS '来源单据号';
                     
-      COMMENT ON COLUMN erp_inv_reservation_line.LOCATION_ID IS '库位';
+      COMMENT ON COLUMN erp_inv_reservation.RESERVED_FOR_PARTNER_ID IS '为谁预留(往来单位)';
                     
-      COMMENT ON COLUMN erp_inv_reservation_line.BATCH_NO IS '批号';
+      COMMENT ON COLUMN erp_inv_reservation.STATUS IS '状态';
                     
-      COMMENT ON COLUMN erp_inv_reservation_line.RESERVED_QUANTITY IS '预留数量';
+      COMMENT ON COLUMN erp_inv_reservation.VALID_UNTIL IS '预留有效期至';
                     
-      COMMENT ON COLUMN erp_inv_reservation_line.CONSUMED_QUANTITY IS '已消耗数量';
+      COMMENT ON COLUMN erp_inv_reservation.REMARK IS '备注';
                     
-      COMMENT ON COLUMN erp_inv_reservation_line.UOM_ID IS '计量单位';
+      COMMENT ON COLUMN erp_inv_reservation.DEL_VERSION IS '逻辑删除版本';
                     
-      COMMENT ON COLUMN erp_inv_reservation_line.SOURCE_LINE_CODE IS '来源行号';
+      COMMENT ON COLUMN erp_inv_reservation.VERSION IS '数据版本';
                     
-      COMMENT ON COLUMN erp_inv_reservation_line.DEL_VERSION IS '逻辑删除版本';
+      COMMENT ON COLUMN erp_inv_reservation.CREATED_BY IS '创建人';
                     
-      COMMENT ON COLUMN erp_inv_reservation_line.VERSION IS '数据版本';
+      COMMENT ON COLUMN erp_inv_reservation.CREATE_TIME IS '创建时间';
                     
-      COMMENT ON COLUMN erp_inv_reservation_line.CREATED_BY IS '创建人';
+      COMMENT ON COLUMN erp_inv_reservation.UPDATED_BY IS '修改人';
                     
-      COMMENT ON COLUMN erp_inv_reservation_line.CREATE_TIME IS '创建时间';
+      COMMENT ON COLUMN erp_inv_reservation.UPDATE_TIME IS '修改时间';
                     
-      COMMENT ON COLUMN erp_inv_reservation_line.UPDATED_BY IS '修改人';
-                    
-      COMMENT ON COLUMN erp_inv_reservation_line.UPDATE_TIME IS '修改时间';
-                    
-      COMMENT ON TABLE erp_inv_stock_move_line IS '库存移动单行';
+      COMMENT ON TABLE erp_inv_picking_order IS '拣货单';
                 
-      COMMENT ON COLUMN erp_inv_stock_move_line.ID IS 'ID';
+      COMMENT ON COLUMN erp_inv_picking_order.ID IS 'ID';
                     
-      COMMENT ON COLUMN erp_inv_stock_move_line.MOVE_ID IS '移动单ID';
+      COMMENT ON COLUMN erp_inv_picking_order.CODE IS '单号';
                     
-      COMMENT ON COLUMN erp_inv_stock_move_line.LINE_NO IS '行号';
+      COMMENT ON COLUMN erp_inv_picking_order.ORG_ID IS '业务组织';
                     
-      COMMENT ON COLUMN erp_inv_stock_move_line.MATERIAL_ID IS '物料';
+      COMMENT ON COLUMN erp_inv_picking_order.BUSINESS_DATE IS '业务日期';
                     
-      COMMENT ON COLUMN erp_inv_stock_move_line.SKU_ID IS 'SKU';
+      COMMENT ON COLUMN erp_inv_picking_order.WAREHOUSE_ID IS '拣货仓库';
                     
-      COMMENT ON COLUMN erp_inv_stock_move_line.UO_M_ID IS '计量单位';
+      COMMENT ON COLUMN erp_inv_picking_order.PICKER_ID IS '拣货人(职员)';
                     
-      COMMENT ON COLUMN erp_inv_stock_move_line.QUANTITY IS '数量';
+      COMMENT ON COLUMN erp_inv_picking_order.DOC_STATUS IS '单据状态';
                     
-      COMMENT ON COLUMN erp_inv_stock_move_line.UNIT_COST IS '单位成本';
+      COMMENT ON COLUMN erp_inv_picking_order.RELATED_BILL_TYPE IS '关联单据类型(SALES_DELIVERY/WORK_ORDER_ISSUE)';
                     
-      COMMENT ON COLUMN erp_inv_stock_move_line.TOTAL_COST IS '总成本';
+      COMMENT ON COLUMN erp_inv_picking_order.RELATED_BILL_CODE IS '关联单据号';
                     
-      COMMENT ON COLUMN erp_inv_stock_move_line.CURRENCY_ID IS '币种';
+      COMMENT ON COLUMN erp_inv_picking_order.REMARK IS '备注';
                     
-      COMMENT ON COLUMN erp_inv_stock_move_line.BATCH_NO IS '批号';
+      COMMENT ON COLUMN erp_inv_picking_order.DEL_VERSION IS '逻辑删除版本';
                     
-      COMMENT ON COLUMN erp_inv_stock_move_line.SERIAL_NO IS '序列号';
+      COMMENT ON COLUMN erp_inv_picking_order.VERSION IS '数据版本';
                     
-      COMMENT ON COLUMN erp_inv_stock_move_line.SOURCE_LOCATION_ID IS '源库位';
+      COMMENT ON COLUMN erp_inv_picking_order.CREATED_BY IS '创建人';
                     
-      COMMENT ON COLUMN erp_inv_stock_move_line.DEST_LOCATION_ID IS '目标库位';
+      COMMENT ON COLUMN erp_inv_picking_order.CREATE_TIME IS '创建时间';
                     
-      COMMENT ON COLUMN erp_inv_stock_move_line.REMARK IS '备注';
+      COMMENT ON COLUMN erp_inv_picking_order.UPDATED_BY IS '修改人';
                     
-      COMMENT ON COLUMN erp_inv_stock_move_line.DEL_VERSION IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move_line.VERSION IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move_line.CREATED_BY IS '创建人';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move_line.CREATE_TIME IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move_line.UPDATED_BY IS '修改人';
-                    
-      COMMENT ON COLUMN erp_inv_stock_move_line.UPDATE_TIME IS '修改时间';
+      COMMENT ON COLUMN erp_inv_picking_order.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_inv_transfer_order_line IS '调拨单行';
                 
@@ -962,6 +855,132 @@ CREATE TABLE erp_inv_stock_ledger(
       COMMENT ON COLUMN erp_inv_stock_take_line.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_inv_stock_take_line.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_inv_stock_move_line IS '库存移动单行';
+                
+      COMMENT ON COLUMN erp_inv_stock_move_line.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move_line.MOVE_ID IS '移动单ID';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move_line.LINE_NO IS '行号';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move_line.MATERIAL_ID IS '物料';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move_line.SKU_ID IS 'SKU';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move_line.UO_M_ID IS '计量单位';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move_line.QUANTITY IS '数量';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move_line.UNIT_COST IS '单位成本';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move_line.TOTAL_COST IS '总成本';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move_line.CURRENCY_ID IS '币种';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move_line.BATCH_NO IS '批号';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move_line.SERIAL_NO IS '序列号';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move_line.SOURCE_LOCATION_ID IS '源库位';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move_line.DEST_LOCATION_ID IS '目标库位';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move_line.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move_line.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move_line.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move_line.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move_line.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move_line.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_inv_stock_move_line.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_inv_cost_layer IS '成本层';
+                
+      COMMENT ON COLUMN erp_inv_cost_layer.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_inv_cost_layer.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_inv_cost_layer.MATERIAL_ID IS '物料';
+                    
+      COMMENT ON COLUMN erp_inv_cost_layer.SKU_ID IS 'SKU';
+                    
+      COMMENT ON COLUMN erp_inv_cost_layer.WAREHOUSE_ID IS '仓库';
+                    
+      COMMENT ON COLUMN erp_inv_cost_layer.BATCH_NO IS '批号';
+                    
+      COMMENT ON COLUMN erp_inv_cost_layer.COST_METHOD IS '计价方法';
+                    
+      COMMENT ON COLUMN erp_inv_cost_layer.INCOMING_QUANTITY IS '入库数量';
+                    
+      COMMENT ON COLUMN erp_inv_cost_layer.REMAINING_QUANTITY IS '剩余数量';
+                    
+      COMMENT ON COLUMN erp_inv_cost_layer.UNIT_COST IS '单位成本';
+                    
+      COMMENT ON COLUMN erp_inv_cost_layer.TOTAL_COST IS '总成本';
+                    
+      COMMENT ON COLUMN erp_inv_cost_layer.CURRENCY_ID IS '币种';
+                    
+      COMMENT ON COLUMN erp_inv_cost_layer.INCOMING_DATE IS '入库日期';
+                    
+      COMMENT ON COLUMN erp_inv_cost_layer.INCOMING_MOVE_ID IS '入库移动单';
+                    
+      COMMENT ON COLUMN erp_inv_cost_layer.ACCT_SCHEMA_ID IS '账套';
+                    
+      COMMENT ON COLUMN erp_inv_cost_layer.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_inv_cost_layer.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_inv_cost_layer.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_inv_cost_layer.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_inv_cost_layer.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_inv_cost_layer.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_inv_reservation_line IS '库存预留单行';
+                
+      COMMENT ON COLUMN erp_inv_reservation_line.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_inv_reservation_line.RESERVATION_ID IS '预留单ID';
+                    
+      COMMENT ON COLUMN erp_inv_reservation_line.LINE_NO IS '行号';
+                    
+      COMMENT ON COLUMN erp_inv_reservation_line.MATERIAL_ID IS '物料';
+                    
+      COMMENT ON COLUMN erp_inv_reservation_line.SKU_ID IS 'SKU';
+                    
+      COMMENT ON COLUMN erp_inv_reservation_line.WAREHOUSE_ID IS '仓库';
+                    
+      COMMENT ON COLUMN erp_inv_reservation_line.LOCATION_ID IS '库位';
+                    
+      COMMENT ON COLUMN erp_inv_reservation_line.BATCH_NO IS '批号';
+                    
+      COMMENT ON COLUMN erp_inv_reservation_line.RESERVED_QUANTITY IS '预留数量';
+                    
+      COMMENT ON COLUMN erp_inv_reservation_line.CONSUMED_QUANTITY IS '已消耗数量';
+                    
+      COMMENT ON COLUMN erp_inv_reservation_line.UOM_ID IS '计量单位';
+                    
+      COMMENT ON COLUMN erp_inv_reservation_line.SOURCE_LINE_CODE IS '来源行号';
+                    
+      COMMENT ON COLUMN erp_inv_reservation_line.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_inv_reservation_line.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_inv_reservation_line.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_inv_reservation_line.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_inv_reservation_line.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_inv_reservation_line.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_inv_picking_order_line IS '拣货单行';
                 

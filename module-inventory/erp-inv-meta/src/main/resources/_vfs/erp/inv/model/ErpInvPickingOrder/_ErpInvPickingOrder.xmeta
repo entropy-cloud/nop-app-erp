@@ -28,7 +28,7 @@
             <schema domain="orderCode" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="businessDate" displayName="业务日期" propId="4" i18n-en:displayName="Business Date" mandatory="true"
@@ -40,7 +40,7 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="pickerId" displayName="拣货人(职员)" propId="6" i18n-en:displayName="Picker" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="picker">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="docStatus" displayName="单据状态" propId="7" i18n-en:displayName="Doc Status" mandatory="true"
@@ -88,6 +88,16 @@
               queryable="true" ext:joinLeftProp="warehouseId" ext:joinRightProp="id" biz:moduleId="erp/md"
               insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdWarehouse"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="picker" i18n-en:displayName="Picker" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="pickerId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpMdEmployee"/>
         </prop>
         <prop name="lines" i18n-en:displayName="Lines" tagSet="pub,cascade-delete,insertable,updatable"
               ext:kind="to-many" internal="true" ext:joinLeftProp="id" ext:joinRightProp="pickingId" insertable="true"

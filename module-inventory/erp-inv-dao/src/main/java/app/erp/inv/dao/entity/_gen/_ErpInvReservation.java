@@ -90,6 +90,12 @@ public class _ErpInvReservation extends DynamicOrmEntity{
 
     
     /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
+    /* relation:  */
+    public static final String PROP_NAME_reservedForPartner = "reservedForPartner";
+    
+    /* relation:  */
     public static final String PROP_NAME_lines = "lines";
     
 
@@ -923,6 +929,52 @@ public class _ErpInvReservation extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdPartner getReservedForPartner(){
+       return (app.erp.md.dao.entity.ErpMdPartner)internalGetRefEntity(PROP_NAME_reservedForPartner);
+    }
+
+    public final void setReservedForPartner(app.erp.md.dao.entity.ErpMdPartner refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setReservedForPartnerId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_reservedForPartner, refEntity,()->{
+           
+                           this.setReservedForPartnerId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
     private final OrmEntitySet<app.erp.inv.dao.entity.ErpInvReservationLine> _lines = new OrmEntitySet<>(this, PROP_NAME_lines,
         null, null,app.erp.inv.dao.entity.ErpInvReservationLine.class);
 

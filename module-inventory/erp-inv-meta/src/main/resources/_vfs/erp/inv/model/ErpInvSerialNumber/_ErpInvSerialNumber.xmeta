@@ -24,7 +24,7 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="2" i18n-en:displayName="Organization" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="serialNo" displayName="序列号" propId="3" i18n-en:displayName="Serial No" mandatory="true"
@@ -40,11 +40,11 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="warehouseId" displayName="当前仓库" propId="6" i18n-en:displayName="Warehouse" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="warehouse">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="locationId" displayName="当前库位" propId="7" i18n-en:displayName="Location" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="location">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="status" displayName="状态" propId="8" i18n-en:displayName="Status" mandatory="true" queryable="true"
@@ -104,6 +104,21 @@
               ext:joinLeftProp="skuId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
               lazy="true">
             <schema bizObjName="ErpMdMaterialSku"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="warehouse" i18n-en:displayName="Warehouse" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="warehouseId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdWarehouse"/>
+        </prop>
+        <prop name="location" i18n-en:displayName="Location" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="locationId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdLocation"/>
         </prop>
     </props>
 </meta>

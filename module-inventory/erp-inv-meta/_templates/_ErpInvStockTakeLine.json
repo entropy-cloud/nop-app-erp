@@ -22,5 +22,6 @@
   "take": null,
   "material": null,
   "sku": null,
-  "uoM": null
+  "uoM": null,
+  "location": null
 }

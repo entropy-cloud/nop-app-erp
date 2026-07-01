@@ -58,7 +58,7 @@
                 <col id="postedAt" sortable="true"/>
 
                 <!--过账人-->
-                <col id="postedBy" ui:number="true" sortable="true"/>
+                <col id="postedBy" sortable="true"/>
 
                 <!--关联单据类型-->
                 <col id="relatedBillType" sortable="true"/>

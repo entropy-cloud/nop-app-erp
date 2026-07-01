@@ -1,25 +1,27 @@
 
 drop table  if exists  erp_md_warehouse;
+drop table  if exists  erp_md_organization;
+drop table  if exists  erp_md_location;
 drop table  if exists  erp_md_material;
 drop table  if exists  erp_md_material_sku;
 drop table  if exists  erp_md_uom;
 drop table  if exists  erp_md_currency;
-drop table  if exists  erp_md_location;
-drop table  if exists  erp_md_organization;
 drop table  if exists  erp_md_acct_schema;
-drop table  if exists  erp_inv_reservation;
-drop table  if exists  erp_inv_stock_move;
+drop table  if exists  erp_md_partner;
+drop table  if exists  erp_md_employee;
 drop table  if exists  erp_inv_transfer_order;
 drop table  if exists  erp_inv_stock_take;
-drop table  if exists  erp_inv_picking_order;
+drop table  if exists  erp_inv_stock_move;
 drop table  if exists  erp_inv_batch;
 drop table  if exists  erp_inv_serial_number;
-drop table  if exists  erp_inv_cost_layer;
 drop table  if exists  erp_inv_stock_balance;
-drop table  if exists  erp_inv_reservation_line;
-drop table  if exists  erp_inv_stock_move_line;
+drop table  if exists  erp_inv_reservation;
+drop table  if exists  erp_inv_picking_order;
 drop table  if exists  erp_inv_transfer_order_line;
 drop table  if exists  erp_inv_stock_take_line;
+drop table  if exists  erp_inv_stock_move_line;
+drop table  if exists  erp_inv_cost_layer;
+drop table  if exists  erp_inv_reservation_line;
 drop table  if exists  erp_inv_picking_order_line;
 drop table  if exists  erp_inv_stock_ledger;
 

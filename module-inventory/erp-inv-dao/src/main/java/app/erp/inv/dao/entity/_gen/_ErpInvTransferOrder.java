@@ -65,11 +65,11 @@ public class _ErpInvTransferOrder extends DynamicOrmEntity{
     public static final String PROP_NAME_postedAt = "postedAt";
     public static final int PROP_ID_postedAt = 11;
     
-    /* 过账人: POSTED_BY BIGINT */
+    /* 过账人: POSTED_BY VARCHAR */
     public static final String PROP_NAME_postedBy = "postedBy";
     public static final int PROP_ID_postedBy = 12;
     
-    /* 审核人: APPROVED_BY BIGINT */
+    /* 审核人: APPROVED_BY VARCHAR */
     public static final String PROP_NAME_approvedBy = "approvedBy";
     public static final int PROP_ID_approvedBy = 13;
     
@@ -117,6 +117,9 @@ public class _ErpInvTransferOrder extends DynamicOrmEntity{
     
     /* relation:  */
     public static final String PROP_NAME_inTransitWarehouse = "inTransitWarehouse";
+    
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
     
     /* relation:  */
     public static final String PROP_NAME_lines = "lines";
@@ -229,10 +232,10 @@ public class _ErpInvTransferOrder extends DynamicOrmEntity{
     private java.time.LocalDateTime _postedAt;
     
     /* 过账人: POSTED_BY */
-    private java.lang.Long _postedBy;
+    private java.lang.String _postedBy;
     
     /* 审核人: APPROVED_BY */
-    private java.lang.Long _approvedBy;
+    private java.lang.String _approvedBy;
     
     /* 审核时间: APPROVED_AT */
     private java.time.LocalDateTime _approvedAt;
@@ -517,9 +520,9 @@ public class _ErpInvTransferOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_postedBy:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_postedBy));
                }
                setPostedBy(typedValue);
@@ -527,9 +530,9 @@ public class _ErpInvTransferOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_approvedBy:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_approvedBy));
                }
                setApprovedBy(typedValue);
@@ -704,14 +707,14 @@ public class _ErpInvTransferOrder extends DynamicOrmEntity{
         
             case PROP_ID_postedBy:{
                onInitProp(propId);
-               this._postedBy = (java.lang.Long)value;
+               this._postedBy = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_approvedBy:{
                onInitProp(propId);
-               this._approvedBy = (java.lang.Long)value;
+               this._approvedBy = (java.lang.String)value;
                
                break;
             }
@@ -990,7 +993,7 @@ public class _ErpInvTransferOrder extends DynamicOrmEntity{
     /**
      * 过账人: POSTED_BY
      */
-    public final java.lang.Long getPostedBy(){
+    public final java.lang.String getPostedBy(){
          onPropGet(PROP_ID_postedBy);
          return _postedBy;
     }
@@ -998,7 +1001,7 @@ public class _ErpInvTransferOrder extends DynamicOrmEntity{
     /**
      * 过账人: POSTED_BY
      */
-    public final void setPostedBy(java.lang.Long value){
+    public final void setPostedBy(java.lang.String value){
         if(onPropSet(PROP_ID_postedBy,value)){
             this._postedBy = value;
             internalClearRefs(PROP_ID_postedBy);
@@ -1009,7 +1012,7 @@ public class _ErpInvTransferOrder extends DynamicOrmEntity{
     /**
      * 审核人: APPROVED_BY
      */
-    public final java.lang.Long getApprovedBy(){
+    public final java.lang.String getApprovedBy(){
          onPropGet(PROP_ID_approvedBy);
          return _approvedBy;
     }
@@ -1017,7 +1020,7 @@ public class _ErpInvTransferOrder extends DynamicOrmEntity{
     /**
      * 审核人: APPROVED_BY
      */
-    public final void setApprovedBy(java.lang.Long value){
+    public final void setApprovedBy(java.lang.String value){
         if(onPropSet(PROP_ID_approvedBy,value)){
             this._approvedBy = value;
             internalClearRefs(PROP_ID_approvedBy);
@@ -1240,6 +1243,29 @@ public class _ErpInvTransferOrder extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_inTransitWarehouse, refEntity,()->{
            
                            this.setInTransitWarehouseId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
                        
            });
            }

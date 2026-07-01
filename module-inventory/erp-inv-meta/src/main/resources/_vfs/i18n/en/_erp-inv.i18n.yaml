@@ -41,6 +41,7 @@ prop:
       material: Material
       sku: Sku
       warehouse: Warehouse
+      org: Org
     ErpInvCostLayer:
       id: ID
       orgId: Organization
@@ -68,6 +69,9 @@ prop:
       sku: Sku
       warehouse: Warehouse
       currency: Currency
+      org: Org
+      incomingMove: Incoming Move
+      acctSchema: Acct Schema
     ErpInvPickingOrder:
       id: ID
       code: Code
@@ -87,6 +91,8 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       warehouse: Warehouse
+      org: Org
+      picker: Picker
       lines: Lines
     ErpInvPickingOrderLine:
       id: ID
@@ -110,6 +116,7 @@ prop:
       material: Material
       sku: Sku
       uoM: Uo M
+      sourceLocation: Source Location
     ErpInvReservation:
       id: ID
       code: Code
@@ -128,6 +135,8 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      org: Org
+      reservedForPartner: Reserved For Partner
       lines: Lines
     ErpInvReservationLine:
       id: ID
@@ -152,6 +161,8 @@ prop:
       material: Material
       sku: Sku
       warehouse: Warehouse
+      location: Location
+      uom: Uo M
     ErpInvSerialNumber:
       id: ID
       orgId: Organization
@@ -175,6 +186,9 @@ prop:
       updateTime: Update Time
       material: Material
       sku: Sku
+      org: Org
+      warehouse: Warehouse
+      location: Location
     ErpInvStockBalance:
       id: ID
       orgId: Organization
@@ -270,6 +284,9 @@ prop:
       updateTime: Update Time
       sourceWarehouse: Source Warehouse
       destWarehouse: Dest Warehouse
+      org: Org
+      sourceLocation: Source Location
+      destLocation: Dest Location
       lines: Lines
     ErpInvStockMoveLine:
       id: ID
@@ -298,6 +315,8 @@ prop:
       sku: Sku
       uoM: Uo M
       currency: Currency
+      sourceLocation: Source Location
+      destLocation: Dest Location
     ErpInvStockTake:
       id: ID
       code: Code
@@ -321,6 +340,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       warehouse: Warehouse
+      org: Org
       lines: Lines
     ErpInvStockTakeLine:
       id: ID
@@ -347,6 +367,7 @@ prop:
       material: Material
       sku: Sku
       uoM: Uo M
+      location: Location
     ErpInvTransferOrder:
       id: ID
       code: Code
@@ -374,6 +395,7 @@ prop:
       fromWarehouse: From Warehouse
       toWarehouse: To Warehouse
       inTransitWarehouse: In Transit Warehouse
+      org: Org
       lines: Lines
     ErpInvTransferOrderLine:
       id: ID

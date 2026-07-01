@@ -250,6 +250,28 @@
         }
 
 
+        private Map<String,Object> _org;
+
+        public Map<String,Object> getOrg(){
+            return _org;
+        }
+
+        public void setOrg(Map<String,Object> value){
+            this._org = value;
+        }
+
+
+        private Map<String,Object> _reservedForPartner;
+
+        public Map<String,Object> getReservedForPartner(){
+            return _reservedForPartner;
+        }
+
+        public void setReservedForPartner(Map<String,Object> value){
+            this._reservedForPartner = value;
+        }
+
+
         private List<Map<String,Object>> _lines;
 
         public List<Map<String,Object>> getLines(){

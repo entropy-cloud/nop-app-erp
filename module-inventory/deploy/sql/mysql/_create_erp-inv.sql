@@ -9,6 +9,25 @@ CREATE TABLE erp_md_warehouse(
   constraint PK_erp_md_warehouse primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_md_organization(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  ORG_TYPE INTEGER NULL    COMMENT 'null',
+  PARENT_ID BIGINT NULL    COMMENT 'null',
+  STATUS INTEGER NULL    COMMENT 'null',
+  constraint PK_erp_md_organization primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_location(
+  ID BIGINT NULL    COMMENT 'null',
+  WAREHOUSE_ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  PARENT_ID BIGINT NULL    COMMENT 'null',
+  constraint PK_erp_md_location primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_md_material(
   ID BIGINT NULL    COMMENT 'null',
   CODE VARCHAR(50) NULL    COMMENT 'null',
@@ -45,25 +64,6 @@ CREATE TABLE erp_md_currency(
   constraint PK_erp_md_currency primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_md_location(
-  ID BIGINT NULL    COMMENT 'null',
-  WAREHOUSE_ID BIGINT NULL    COMMENT 'null',
-  CODE VARCHAR(50) NULL    COMMENT 'null',
-  NAME VARCHAR(200) NULL    COMMENT 'null',
-  PARENT_ID BIGINT NULL    COMMENT 'null',
-  constraint PK_erp_md_location primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_md_organization(
-  ID BIGINT NULL    COMMENT 'null',
-  CODE VARCHAR(50) NULL    COMMENT 'null',
-  NAME VARCHAR(200) NULL    COMMENT 'null',
-  ORG_TYPE INTEGER NULL    COMMENT 'null',
-  PARENT_ID BIGINT NULL    COMMENT 'null',
-  STATUS INTEGER NULL    COMMENT 'null',
-  constraint PK_erp_md_organization primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
 CREATE TABLE erp_md_acct_schema(
   ID BIGINT NULL    COMMENT 'null',
   CODE VARCHAR(50) NULL    COMMENT 'null',
@@ -73,51 +73,19 @@ CREATE TABLE erp_md_acct_schema(
   constraint PK_erp_md_acct_schema primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_inv_reservation(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  CODE VARCHAR(50) NOT NULL    COMMENT '单号',
-  ORG_ID BIGINT NULL    COMMENT '业务组织',
-  BUSINESS_DATE DATE NOT NULL    COMMENT '业务日期',
-  SOURCE_BILL_TYPE VARCHAR(50) NOT NULL    COMMENT '来源单据类型(如 SALES_ORDER/WORK_ORDER)',
-  SOURCE_BILL_CODE VARCHAR(50) NOT NULL    COMMENT '来源单据号',
-  RESERVED_FOR_PARTNER_ID BIGINT NULL    COMMENT '为谁预留(往来单位)',
-  STATUS INTEGER NOT NULL    COMMENT '状态',
-  VALID_UNTIL DATETIME NULL    COMMENT '预留有效期至',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_inv_reservation primary key (ID)
+CREATE TABLE erp_md_partner(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  PARTNER_TYPE INTEGER NULL    COMMENT 'null',
+  constraint PK_erp_md_partner primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_inv_stock_move(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  CODE VARCHAR(50) NOT NULL    COMMENT '单号',
-  MOVE_TYPE INTEGER NOT NULL    COMMENT '作业类型',
-  ORG_ID BIGINT NULL    COMMENT '业务组织',
-  BUSINESS_DATE DATE NOT NULL    COMMENT '业务日期',
-  SOURCE_WAREHOUSE_ID BIGINT NULL    COMMENT '源仓库',
-  SOURCE_LOCATION_ID BIGINT NULL    COMMENT '源库位',
-  DEST_WAREHOUSE_ID BIGINT NULL    COMMENT '目标仓库',
-  DEST_LOCATION_ID BIGINT NULL    COMMENT '目标库位',
-  DOC_STATUS INTEGER NOT NULL    COMMENT '单据状态',
-  APPROVE_STATUS INTEGER NOT NULL    COMMENT '审核状态',
-  POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
-  POSTED_AT DATETIME NULL    COMMENT '过账时间',
-  POSTED_BY BIGINT NULL    COMMENT '过账人',
-  RELATED_BILL_TYPE VARCHAR(50) NULL    COMMENT '关联单据类型',
-  RELATED_BILL_CODE VARCHAR(50) NULL    COMMENT '关联单据号',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_inv_stock_move primary key (ID)
+CREATE TABLE erp_md_employee(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  constraint PK_erp_md_employee primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_inv_transfer_order(
@@ -132,8 +100,8 @@ CREATE TABLE erp_inv_transfer_order(
   APPROVE_STATUS INTEGER NOT NULL    COMMENT '审核状态',
   POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
   POSTED_AT DATETIME NULL    COMMENT '过账时间',
-  POSTED_BY BIGINT NULL    COMMENT '过账人',
-  APPROVED_BY BIGINT NULL    COMMENT '审核人',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
+  APPROVED_BY VARCHAR(36) NULL    COMMENT '审核人',
   APPROVED_AT DATETIME NULL    COMMENT '审核时间',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
@@ -156,7 +124,7 @@ CREATE TABLE erp_inv_stock_take(
   APPROVE_STATUS INTEGER NOT NULL    COMMENT '审核状态',
   POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
   POSTED_AT DATETIME NULL    COMMENT '过账时间',
-  POSTED_BY BIGINT NULL    COMMENT '过账人',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -167,15 +135,22 @@ CREATE TABLE erp_inv_stock_take(
   constraint PK_erp_inv_stock_take primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_inv_picking_order(
+CREATE TABLE erp_inv_stock_move(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '单号',
+  MOVE_TYPE INTEGER NOT NULL    COMMENT '作业类型',
   ORG_ID BIGINT NULL    COMMENT '业务组织',
   BUSINESS_DATE DATE NOT NULL    COMMENT '业务日期',
-  WAREHOUSE_ID BIGINT NOT NULL    COMMENT '拣货仓库',
-  PICKER_ID BIGINT NULL    COMMENT '拣货人(职员)',
+  SOURCE_WAREHOUSE_ID BIGINT NULL    COMMENT '源仓库',
+  SOURCE_LOCATION_ID BIGINT NULL    COMMENT '源库位',
+  DEST_WAREHOUSE_ID BIGINT NULL    COMMENT '目标仓库',
+  DEST_LOCATION_ID BIGINT NULL    COMMENT '目标库位',
   DOC_STATUS INTEGER NOT NULL    COMMENT '单据状态',
-  RELATED_BILL_TYPE VARCHAR(50) NULL    COMMENT '关联单据类型(SALES_DELIVERY/WORK_ORDER_ISSUE)',
+  APPROVE_STATUS INTEGER NOT NULL    COMMENT '审核状态',
+  POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
+  POSTED_AT DATETIME NULL    COMMENT '过账时间',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
+  RELATED_BILL_TYPE VARCHAR(50) NULL    COMMENT '关联单据类型',
   RELATED_BILL_CODE VARCHAR(50) NULL    COMMENT '关联单据号',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
@@ -184,7 +159,7 @@ CREATE TABLE erp_inv_picking_order(
   CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_inv_picking_order primary key (ID)
+  constraint PK_erp_inv_stock_move primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_inv_batch(
@@ -233,31 +208,6 @@ CREATE TABLE erp_inv_serial_number(
   constraint PK_erp_inv_serial_number primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_inv_cost_layer(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  ORG_ID BIGINT NULL    COMMENT '业务组织',
-  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
-  SKU_ID BIGINT NULL    COMMENT 'SKU',
-  WAREHOUSE_ID BIGINT NOT NULL    COMMENT '仓库',
-  BATCH_NO VARCHAR(50) NULL    COMMENT '批号',
-  COST_METHOD INTEGER NOT NULL    COMMENT '计价方法',
-  INCOMING_QUANTITY DECIMAL(20,4) NOT NULL    COMMENT '入库数量',
-  REMAINING_QUANTITY DECIMAL(20,4) NOT NULL    COMMENT '剩余数量',
-  UNIT_COST DECIMAL(20,4) NOT NULL    COMMENT '单位成本',
-  TOTAL_COST DECIMAL(20,4) NOT NULL    COMMENT '总成本',
-  CURRENCY_ID BIGINT NULL    COMMENT '币种',
-  INCOMING_DATE DATE NULL    COMMENT '入库日期',
-  INCOMING_MOVE_ID BIGINT NULL    COMMENT '入库移动单',
-  ACCT_SCHEMA_ID BIGINT NULL    COMMENT '账套',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_inv_cost_layer primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
 CREATE TABLE erp_inv_stock_balance(
   ID BIGINT NOT NULL    COMMENT 'ID',
   ORG_ID BIGINT NULL    COMMENT '业务组织',
@@ -283,43 +233,16 @@ CREATE TABLE erp_inv_stock_balance(
   constraint PK_erp_inv_stock_balance primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_inv_reservation_line(
+CREATE TABLE erp_inv_reservation(
   ID BIGINT NOT NULL    COMMENT 'ID',
-  RESERVATION_ID BIGINT NOT NULL    COMMENT '预留单ID',
-  LINE_NO INTEGER NOT NULL    COMMENT '行号',
-  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
-  SKU_ID BIGINT NULL    COMMENT 'SKU',
-  WAREHOUSE_ID BIGINT NOT NULL    COMMENT '仓库',
-  LOCATION_ID BIGINT NULL    COMMENT '库位',
-  BATCH_NO VARCHAR(50) NULL    COMMENT '批号',
-  RESERVED_QUANTITY DECIMAL(20,4) NOT NULL    COMMENT '预留数量',
-  CONSUMED_QUANTITY DECIMAL(20,4) default 0  NULL    COMMENT '已消耗数量',
-  UOM_ID BIGINT NOT NULL    COMMENT '计量单位',
-  SOURCE_LINE_CODE VARCHAR(50) NULL    COMMENT '来源行号',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_inv_reservation_line primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_inv_stock_move_line(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  MOVE_ID BIGINT NOT NULL    COMMENT '移动单ID',
-  LINE_NO INTEGER NOT NULL    COMMENT '行号',
-  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
-  SKU_ID BIGINT NULL    COMMENT 'SKU',
-  UO_M_ID BIGINT NOT NULL    COMMENT '计量单位',
-  QUANTITY DECIMAL(20,4) NOT NULL    COMMENT '数量',
-  UNIT_COST DECIMAL(20,4) NULL    COMMENT '单位成本',
-  TOTAL_COST DECIMAL(20,4) NULL    COMMENT '总成本',
-  CURRENCY_ID BIGINT NULL    COMMENT '币种',
-  BATCH_NO VARCHAR(50) NULL    COMMENT '批号',
-  SERIAL_NO VARCHAR(50) NULL    COMMENT '序列号',
-  SOURCE_LOCATION_ID BIGINT NULL    COMMENT '源库位',
-  DEST_LOCATION_ID BIGINT NULL    COMMENT '目标库位',
+  CODE VARCHAR(50) NOT NULL    COMMENT '单号',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  BUSINESS_DATE DATE NOT NULL    COMMENT '业务日期',
+  SOURCE_BILL_TYPE VARCHAR(50) NOT NULL    COMMENT '来源单据类型(如 SALES_ORDER/WORK_ORDER)',
+  SOURCE_BILL_CODE VARCHAR(50) NOT NULL    COMMENT '来源单据号',
+  RESERVED_FOR_PARTNER_ID BIGINT NULL    COMMENT '为谁预留(往来单位)',
+  STATUS INTEGER NOT NULL    COMMENT '状态',
+  VALID_UNTIL DATETIME NULL    COMMENT '预留有效期至',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -327,7 +250,27 @@ CREATE TABLE erp_inv_stock_move_line(
   CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  constraint PK_erp_inv_stock_move_line primary key (ID)
+  constraint PK_erp_inv_reservation primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_inv_picking_order(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '单号',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  BUSINESS_DATE DATE NOT NULL    COMMENT '业务日期',
+  WAREHOUSE_ID BIGINT NOT NULL    COMMENT '拣货仓库',
+  PICKER_ID BIGINT NULL    COMMENT '拣货人(职员)',
+  DOC_STATUS INTEGER NOT NULL    COMMENT '单据状态',
+  RELATED_BILL_TYPE VARCHAR(50) NULL    COMMENT '关联单据类型(SALES_DELIVERY/WORK_ORDER_ISSUE)',
+  RELATED_BILL_CODE VARCHAR(50) NULL    COMMENT '关联单据号',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_inv_picking_order primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_inv_transfer_order_line(
@@ -371,6 +314,78 @@ CREATE TABLE erp_inv_stock_take_line(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   constraint PK_erp_inv_stock_take_line primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_inv_stock_move_line(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  MOVE_ID BIGINT NOT NULL    COMMENT '移动单ID',
+  LINE_NO INTEGER NOT NULL    COMMENT '行号',
+  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
+  SKU_ID BIGINT NULL    COMMENT 'SKU',
+  UO_M_ID BIGINT NOT NULL    COMMENT '计量单位',
+  QUANTITY DECIMAL(20,4) NOT NULL    COMMENT '数量',
+  UNIT_COST DECIMAL(20,4) NULL    COMMENT '单位成本',
+  TOTAL_COST DECIMAL(20,4) NULL    COMMENT '总成本',
+  CURRENCY_ID BIGINT NULL    COMMENT '币种',
+  BATCH_NO VARCHAR(50) NULL    COMMENT '批号',
+  SERIAL_NO VARCHAR(50) NULL    COMMENT '序列号',
+  SOURCE_LOCATION_ID BIGINT NULL    COMMENT '源库位',
+  DEST_LOCATION_ID BIGINT NULL    COMMENT '目标库位',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_inv_stock_move_line primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_inv_cost_layer(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
+  SKU_ID BIGINT NULL    COMMENT 'SKU',
+  WAREHOUSE_ID BIGINT NOT NULL    COMMENT '仓库',
+  BATCH_NO VARCHAR(50) NULL    COMMENT '批号',
+  COST_METHOD INTEGER NOT NULL    COMMENT '计价方法',
+  INCOMING_QUANTITY DECIMAL(20,4) NOT NULL    COMMENT '入库数量',
+  REMAINING_QUANTITY DECIMAL(20,4) NOT NULL    COMMENT '剩余数量',
+  UNIT_COST DECIMAL(20,4) NOT NULL    COMMENT '单位成本',
+  TOTAL_COST DECIMAL(20,4) NOT NULL    COMMENT '总成本',
+  CURRENCY_ID BIGINT NULL    COMMENT '币种',
+  INCOMING_DATE DATE NULL    COMMENT '入库日期',
+  INCOMING_MOVE_ID BIGINT NULL    COMMENT '入库移动单',
+  ACCT_SCHEMA_ID BIGINT NULL    COMMENT '账套',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_inv_cost_layer primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_inv_reservation_line(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  RESERVATION_ID BIGINT NOT NULL    COMMENT '预留单ID',
+  LINE_NO INTEGER NOT NULL    COMMENT '行号',
+  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
+  SKU_ID BIGINT NULL    COMMENT 'SKU',
+  WAREHOUSE_ID BIGINT NOT NULL    COMMENT '仓库',
+  LOCATION_ID BIGINT NULL    COMMENT '库位',
+  BATCH_NO VARCHAR(50) NULL    COMMENT '批号',
+  RESERVED_QUANTITY DECIMAL(20,4) NOT NULL    COMMENT '预留数量',
+  CONSUMED_QUANTITY DECIMAL(20,4) default 0  NULL    COMMENT '已消耗数量',
+  UOM_ID BIGINT NOT NULL    COMMENT '计量单位',
+  SOURCE_LINE_CODE VARCHAR(50) NULL    COMMENT '来源行号',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_inv_reservation_line primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_inv_picking_order_line(
@@ -427,6 +442,10 @@ CREATE TABLE erp_inv_stock_ledger(
 
    ALTER TABLE erp_md_warehouse COMMENT '仓库';
                 
+   ALTER TABLE erp_md_organization COMMENT '组织';
+                
+   ALTER TABLE erp_md_location COMMENT '库位';
+                
    ALTER TABLE erp_md_material COMMENT '物料';
                 
    ALTER TABLE erp_md_material_sku COMMENT '物料SKU';
@@ -435,37 +454,37 @@ CREATE TABLE erp_inv_stock_ledger(
                 
    ALTER TABLE erp_md_currency COMMENT '币种';
                 
-   ALTER TABLE erp_md_location COMMENT '库位';
-                
-   ALTER TABLE erp_md_organization COMMENT '组织';
-                
    ALTER TABLE erp_md_acct_schema COMMENT '会计核算表(账套)';
                 
-   ALTER TABLE erp_inv_reservation COMMENT '库存预留单';
+   ALTER TABLE erp_md_partner COMMENT '往来单位';
                 
-   ALTER TABLE erp_inv_stock_move COMMENT '库存移动单';
+   ALTER TABLE erp_md_employee COMMENT '员工';
                 
    ALTER TABLE erp_inv_transfer_order COMMENT '调拨单';
                 
    ALTER TABLE erp_inv_stock_take COMMENT '盘点单';
                 
-   ALTER TABLE erp_inv_picking_order COMMENT '拣货单';
+   ALTER TABLE erp_inv_stock_move COMMENT '库存移动单';
                 
    ALTER TABLE erp_inv_batch COMMENT '批次台账';
                 
    ALTER TABLE erp_inv_serial_number COMMENT '序列号台账';
                 
-   ALTER TABLE erp_inv_cost_layer COMMENT '成本层';
-                
    ALTER TABLE erp_inv_stock_balance COMMENT '库存余额';
                 
-   ALTER TABLE erp_inv_reservation_line COMMENT '库存预留单行';
+   ALTER TABLE erp_inv_reservation COMMENT '库存预留单';
                 
-   ALTER TABLE erp_inv_stock_move_line COMMENT '库存移动单行';
+   ALTER TABLE erp_inv_picking_order COMMENT '拣货单';
                 
    ALTER TABLE erp_inv_transfer_order_line COMMENT '调拨单行';
                 
    ALTER TABLE erp_inv_stock_take_line COMMENT '盘点单行';
+                
+   ALTER TABLE erp_inv_stock_move_line COMMENT '库存移动单行';
+                
+   ALTER TABLE erp_inv_cost_layer COMMENT '成本层';
+                
+   ALTER TABLE erp_inv_reservation_line COMMENT '库存预留单行';
                 
    ALTER TABLE erp_inv_picking_order_line COMMENT '拣货单行';
                 

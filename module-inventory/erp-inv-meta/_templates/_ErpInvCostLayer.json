@@ -24,5 +24,8 @@
   "material": null,
   "sku": null,
   "warehouse": null,
-  "currency": null
+  "currency": null,
+  "org": null,
+  "incomingMove": null,
+  "acctSchema": null
 }

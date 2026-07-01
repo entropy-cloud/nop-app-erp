@@ -363,4 +363,37 @@
         }
 
 
+        private Map<String,Object> _org;
+
+        public Map<String,Object> getOrg(){
+            return _org;
+        }
+
+        public void setOrg(Map<String,Object> value){
+            this._org = value;
+        }
+
+
+        private Map<String,Object> _incomingMove;
+
+        public Map<String,Object> getIncomingMove(){
+            return _incomingMove;
+        }
+
+        public void setIncomingMove(Map<String,Object> value){
+            this._incomingMove = value;
+        }
+
+
+        private Map<String,Object> _acctSchema;
+
+        public Map<String,Object> getAcctSchema(){
+            return _acctSchema;
+        }
+
+        public void setAcctSchema(Map<String,Object> value){
+            this._acctSchema = value;
+        }
+
+
     }

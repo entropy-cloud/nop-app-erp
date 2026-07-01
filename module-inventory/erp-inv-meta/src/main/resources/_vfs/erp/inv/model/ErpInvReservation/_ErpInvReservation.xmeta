@@ -28,7 +28,7 @@
             <schema domain="orderCode" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="businessDate" displayName="业务日期" propId="4" i18n-en:displayName="Business Date" mandatory="true"
@@ -45,7 +45,7 @@
             <schema type="java.lang.String" precision="50"/>
         </prop>
         <prop name="reservedForPartnerId" displayName="为谁预留(往来单位)" propId="7" i18n-en:displayName="Reserved For Partner"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="reservedForPartner">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="status" displayName="状态" propId="8" i18n-en:displayName="Status" mandatory="true" queryable="true"
@@ -83,6 +83,16 @@
         <prop name="updateTime" displayName="修改时间" propId="16" i18n-en:displayName="Update Time" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="reservedForPartner" i18n-en:displayName="Reserved For Partner" tagSet="pub" ext:kind="to-one"
+              internal="true" queryable="true" ext:joinLeftProp="reservedForPartnerId" ext:joinRightProp="id"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdPartner"/>
         </prop>
         <prop name="lines" i18n-en:displayName="Lines" tagSet="pub,cascade-delete,insertable,updatable"
               ext:kind="to-many" internal="true" ext:joinLeftProp="id" ext:joinRightProp="reservationId"

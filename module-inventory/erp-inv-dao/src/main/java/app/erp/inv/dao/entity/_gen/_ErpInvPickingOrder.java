@@ -93,6 +93,12 @@ public class _ErpInvPickingOrder extends DynamicOrmEntity{
     public static final String PROP_NAME_warehouse = "warehouse";
     
     /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
+    /* relation:  */
+    public static final String PROP_NAME_picker = "picker";
+    
+    /* relation:  */
     public static final String PROP_NAME_lines = "lines";
     
 
@@ -943,6 +949,52 @@ public class _ErpInvPickingOrder extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_warehouse, refEntity,()->{
            
                            this.setWarehouseId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdEmployee getPicker(){
+       return (app.erp.md.dao.entity.ErpMdEmployee)internalGetRefEntity(PROP_NAME_picker);
+    }
+
+    public final void setPicker(app.erp.md.dao.entity.ErpMdEmployee refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setPickerId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_picker, refEntity,()->{
+           
+                           this.setPickerId(refEntity.getId());
                        
            });
            }

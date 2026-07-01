@@ -32,7 +32,7 @@
             <schema type="java.lang.Integer" dict="erp-inv/operation-type"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="4" i18n-en:displayName="Organization" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="businessDate" displayName="业务日期" propId="5" i18n-en:displayName="Business Date" mandatory="true"
@@ -44,7 +44,7 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="sourceLocationId" displayName="源库位" propId="7" i18n-en:displayName="Source Location"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="sourceLocation">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="destWarehouseId" displayName="目标仓库" propId="8" i18n-en:displayName="Dest Warehouse" queryable="true"
@@ -52,7 +52,7 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="destLocationId" displayName="目标库位" propId="9" i18n-en:displayName="Dest Location" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="destLocation">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="docStatus" displayName="单据状态" propId="10" i18n-en:displayName="Doc Status" mandatory="true"
@@ -73,7 +73,7 @@
         </prop>
         <prop name="postedBy" displayName="过账人" propId="14" i18n-en:displayName="Posted By" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String" precision="36"/>
         </prop>
         <prop name="relatedBillType" displayName="关联单据类型" propId="15" i18n-en:displayName="Related Bill Type"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -120,6 +120,21 @@
               queryable="true" ext:joinLeftProp="destWarehouseId" ext:joinRightProp="id" biz:moduleId="erp/md"
               insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdWarehouse"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="sourceLocation" i18n-en:displayName="Source Location" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="sourceLocationId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdLocation"/>
+        </prop>
+        <prop name="destLocation" i18n-en:displayName="Dest Location" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="destLocationId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdLocation"/>
         </prop>
         <prop name="lines" i18n-en:displayName="Lines" tagSet="pub,cascade-delete,insertable,updatable"
               ext:kind="to-many" internal="true" ext:joinLeftProp="id" ext:joinRightProp="moveId" insertable="true"
