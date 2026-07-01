@@ -26,7 +26,7 @@
 | 项 | 值 |
 |----|----|
 | Maven 工程 | `app-erp-maintenance` |
-| appName | `app-erp-mnt` |
+| appName | `erp-mnt` (两级) |
 | 权威模型 | `model/app-erp-maintenance.orm.xml` |
 | 实体包 | `app.erp.mnt.dao.entity` |
 | 表前缀 | `erp_mnt_` |

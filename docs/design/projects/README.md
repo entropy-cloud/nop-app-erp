@@ -15,7 +15,7 @@
 | 项 | 值 |
 |----|----|
 | Maven 工程 | `app-erp-projects` |
-| appName | `app-erp-prj` |
+| appName | `erp-prj` (两级) |
 | 权威模型 | `model/app-erp-projects.orm.xml` |
 | 实体包 | `app.erp.prj.dao.entity` |
 | 表前缀 | `erp_prj_` |

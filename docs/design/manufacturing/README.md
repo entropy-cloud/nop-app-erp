@@ -15,7 +15,7 @@
 | 项 | 值 |
 |----|----|
 | Maven 工程 | `app-erp-manufacturing` |
-| appName | `app-erp-mfg` |
+| appName | `erp-mfg` (两级) |
 | 权威模型 | `model/app-erp-manufacturing.orm.xml` |
 | 实体包 | `app.erp.mfg.dao.entity` |
 | 表前缀 | `erp_mfg_` |

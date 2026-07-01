@@ -14,12 +14,12 @@
 
 - `00-requirement-synthesis-guide.md`
 - `product-scope.md`
-- `mvp.md`
+- `product-baseline.md`
 - `feature-001-<name>.md`
 - `2026-05-21-0900-user-management.md`
 - `2026-05-21-0900-order-refund-flow.md`
 
 建议：
 
-- 对于长期基线文件（如 `product-scope.md` 和 `mvp.md`）使用稳定名称
+- 对于长期基线文件（如 `product-scope.md`）使用稳定名称
 - 对于与特定工作轮次相关的一次性需求综合文件使用日期文件名

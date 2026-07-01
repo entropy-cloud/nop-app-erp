@@ -1,0 +1,20 @@
+# 测试夹具加载顺序
+#
+# 本文件指定 _vfs/test-data/tables/ 下 CSV 夹具的加载顺序（按主数据依赖关系）。
+# 每行一个表名（不含 .csv 后缀），按从上到下顺序加载。
+# 空行与 # 开头的行忽略。
+#
+# 注意：
+# - 这是跨测试类共享的主数据夹具（物料/客户/供应商/科目/仓库等基础维度）。
+# - 单方法私有的库快照仍由 _cases/.../input/tables/*.csv 承载（见 testing-strategy.md）。
+# - 具体表名待首批夹具编写时按主数据依赖顺序补充。
+
+# 示例顺序（待补充实际表名）：
+# erp_md_organization
+# erp_md_currency
+# erp_md_uom
+# erp_md_material
+# erp_md_partner
+# erp_md_warehouse
+# erp_md_subject
+# erp_md_acct_schema

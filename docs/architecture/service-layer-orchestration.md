@@ -76,23 +76,53 @@ task.xml 中通过 `customType="rule:Execute"` 调用规则引擎，`rule:*` 前
 
 如需规则模型可被 Delta 替换，将 `rule:ruleModelPath` 指向 VFS 路径而非 `rule:ruleName`，使 delta 可通过覆写 model 文件更换规则逻辑。
 
-## 验证模式
+## 作用域与返回值
 
-在 `<step>` 的 `<source>` 中用 `<c:if>` + `<c:throw>`，纯 XPL 标签：
+`<source>` 中 XLang 脚本的返回值存放在父作用域的 `RESULT`（大写）变量中：
+
+```xml
+<step name="calc">
+    <source><![CDATA[
+        100;  // 返回值，父作用域中 RESULT = 100
+    ]]></source>
+</step>
+```
+
+通过 `<output>` 将 `RESULT` 或表达式提取到父作用域指定名称：
+
+```xml
+<step name="calc">
+    <output name="discount" value="${RESULT}"/>
+    <source><![CDATA[
+        100;  // RESULT = 100, 同时父作用域 discount = 100
+    ]]></source>
+</step>
+```
+
+也可在 source 中直接用 `$scope` 写父作用域：
+
+```xml
+<step name="calc">
+    <source><![CDATA[
+        $scope.discount = 100;
+    ]]></source>
+</step>
+```
+
+## 验证模式
 
 ```xml
 <step name="validate">
     <input name="order"/>
-    <source>
-        <c:if test="${order.status != 'SUBMITTED'}">
-            <c:throw errorCode="erp.purchase.order-not-submitted"
-                     params="${{orderId: order.id}}"/>
-        </c:if>
-    </source>
+    <source><![CDATA[
+        if (order.status != 'SUBMITTED')
+            throw new NopException("erp.purchase.order-not-submitted")
+                .param("orderId", order.id);
+    ]]></source>
 </step>
 ```
 
-`errorCode` 是字符串路径（如 `erp.purchase.order-not-submitted`），对应 `domain-design-guidelines.md §7` 的命名规范，不是 Java 常量名。`params` 传递错误消息模板中引用的参数。
+`errorCode` 是字符串路径（如 `erp.purchase.order-not-submitted`），对应 `domain-design-guidelines.md §7` 的命名规范。
 
 ## 示例：完整的 task.xml
 
@@ -105,25 +135,25 @@ task.xml 中通过 `customType="rule:Execute"` 调用规则引擎，`rule:*` 前
         <!-- 1. 校验 -->
         <step name="validate">
             <input name="order"/>
-            <source>
-                <c:if test="${order.status != 'SUBMITTED'}">
-                    <c:throw errorCode="erp.purchase.order-not-submitted"
-                             params="${{orderId: order.id}}"/>
-                </c:if>
-            </source>
+            <source><![CDATA[
+                if (order.status != 'SUBMITTED')
+                    throw new NopException("erp.purchase.order-not-submitted")
+                        .param("orderId", order.id);
+            ]]></source>
         </step>
 
-        <!-- 2. 调规则做审批路由 -->
+        <!-- 2. 调规则做审批路由，提取 route 和 approverId 到父作用域 -->
         <step name="checkApprovalRoute" customType="rule:Execute"
               rule:ruleName="pur-order-approval"
               rule:inputs="${{amount: order.totalAmount}}">
             <input name="order"/>
-            <output name="route"/>
+            <output name="route" value="${RESULT.route}"/>
+            <output name="approverId" value="${RESULT.approverId}"/>
         </step>
 
         <!-- 3. 按规则结果分支 -->
         <if name="routeByApproval">
-            <condition>route.route == 'auto'</condition>
+            <condition>route == 'auto'</condition>
             <then>
                 <invoke name="doAutoApprove" bean="erpPurOrderBiz" method="approve">
                     <input name="orderId" value="${order.id}"/>
@@ -131,24 +161,22 @@ task.xml 中通过 `customType="rule:Execute"` 调用规则引擎，`rule:*` 前
             </then>
             <else>
                 <suspend name="waitManual">
-                    <resume-when>stepRt.getContext().getUserId() == route.approverId</resume-when>
+                    <resume-when>stepRt.getContext().getUserId() == approverId</resume-when>
                 </suspend>
             </else>
         </if>
 
         <!-- 4. 后处理 -->
         <step name="postProcess">
-            <source>
-                <c:script>
-                    notifyService.notify('order.approved',
-                        route.approverId, {orderNo: order.orderNo});
-                </c:script>
-            </source>
+            <source><![CDATA[
+                notifyService.notify('order.approved',
+                    approverId, {orderNo: order.orderNo});
+            ]]></source>
         </step>
     </steps>
 
     <output name="finalStatus">
-        <source>route.route == 'auto' ? 'APPROVED' : 'PENDING_APPROVAL'</source>
+        <source>route == 'auto' ? 'APPROVED' : 'PENDING_APPROVAL'</source>
     </output>
 </task>
 ```

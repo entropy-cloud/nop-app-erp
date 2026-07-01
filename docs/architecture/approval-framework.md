@@ -42,4 +42,4 @@
 - WORKFLOW 模式使用 nop-wf 引擎
 - DIRECT 模式可使用 nop-wf 简单流程或直接状态变更
 - nop-wf 完成回调更新业务单据 approveStatus
-- approveStatus 只跟踪业务终态（APPROVED/REJECTED），不跟踪 wf 内部状态
+- `approveStatus` 只跟踪业务终态，严格限定为**四态**：`UNSUBMITTED`（未提交）/ `SUBMITTED`（已提交待审批）/ `APPROVED`（已批准）/ `REJECTED`（已驳回），不跟踪 wf 内部状态。`SUBMITTED` 表示单据已提交等待审批，审批过程中的场内进度（会签、转审、待阅等）完全由 nop-wf 引擎在 `NopWfStepInstance`/`NopWfWork` 表中管理，不污染业务表。**禁止**使用 `APPROVING`、`PENDING_APPROVAL` 等中间态值。

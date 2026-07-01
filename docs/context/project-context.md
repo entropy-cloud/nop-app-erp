@@ -31,6 +31,7 @@
 
 - codegen 产物是标准 CRUD 空壳（`CrudBizModel<T>` + 空 `I*Biz`），需深化业务逻辑
 - 后续模型变更用 `mvn clean install` 增量重新生成，**不要**重跑 `nop-cli gen`
+- **工程命名映射**：物理目录 `module-<domain>/` ↔ 逻辑工程名 `app-erp-<domain>` ↔ appName `erp-<简称>` ↔ moduleId `erp/<简称>` 的完整映射见 `docs/architecture/domain-module-split-analysis.md §2.0`
 - 当前重点：按 roadmap 依次深化 BizModel → ErrorCode → 页面定制 → 端到端验证
 - 详见 `docs/analysis/2026-06-25-1649-ai-automation-roadmap.md`
 

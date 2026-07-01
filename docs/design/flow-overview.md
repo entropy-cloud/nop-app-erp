@@ -539,7 +539,7 @@ IErpFinAcctDocProvider.createFacts()
 **审批流程与业务状态联动**：
 
 ```
-业务单据提交审核 → 启动审批流程 → 业务状态 APPROVING
+业务单据提交审核 → 启动审批流程 → approveStatus = SUBMITTED（审批中场内进度由 nop-wf 管理）
     ├─► 审批通过 → APPROVED → 触发后续业务流程
     └─► 审批拒绝 → REJECTED → 允许修改后重新提交
 ```

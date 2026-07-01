@@ -6,10 +6,10 @@
 
 ## 模块定位（Decision：独立扩展工程）
 
-> **裁决**：TMS 定位为**可选独立扩展工程 `module-logistics`**，**不纳入 product-scope 的 10 域基线**（`product-scope.md:49-52` 延迟范围），作为可选模块按需组装。
+> **裁决**：TMS 定位为**独立扩展工程 `module-logistics`**（逻辑工程名 `app-erp-logistics`），是 18 域正式基线之一（第二批扩展域，见 `product-scope.md`）。
 
 - 工程范式参考 `docs/design/l10n/cn-golden-tax.md`（独立工程 + 凭证指针反查核心域）。
-- 命名：实体 `ErpLog*`，表名 `erp_log_*`，字典 `erp-log/*`，appName `app-erp-log`。
+- 命名：实体 `ErpLog*`，表名 `erp_log_*`，字典 `erp-log/*`，appName `erp-log`（两级）。
 - **考虑的替代方案**：纳入核心域子模块（拒绝，因 product-scope 明确外部集成为延迟范围）。
 
 ## 边界
@@ -38,7 +38,7 @@
 | 项 | 值 |
 |----|----|
 | Maven 工程 | `app-erp-logistics` |
-| appName | `app-erp-log` |
+| appName | `erp-log` (两级) |
 | 权威模型 | `model/app-erp-logistics.orm.xml` |
 | 实体包 | `app.erp.log.dao.entity` |
 | 表前缀 | `erp_log_` |

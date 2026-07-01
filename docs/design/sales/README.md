@@ -16,7 +16,7 @@
 | 项 | 值 |
 |----|----|
 | Maven 工程 | `app-erp-sales` |
-| appName | `app-erp-sal` |
+| appName | `erp-sal` (两级) |
 | 权威模型 | `module-sales/model/app-erp-sales.orm.xml` |
 | 实体包 | `app.erp.sal.dao.entity` |
 | 表前缀 | `erp_sal_` |

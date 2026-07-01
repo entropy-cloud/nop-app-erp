@@ -10,6 +10,8 @@
 
 根 pom.xml 列出 19 个 reactor 模块：18 个 `module-<domain>` + 1 个 `app-erp-all`（子模块链合计 146 个 reactor 模块）。
 
+> **物理目录 ↔ 逻辑工程名 ↔ appName ↔ moduleId 映射**：完整 19 行映射表见 `docs/architecture/domain-module-split-analysis.md §2.0`（唯一规范）。物理目录 `module-<domain>/` 是 bootstrap 期别名，逻辑工程名为 `app-erp-<domain>`，聚合启动工程逻辑名 = 物理名 = `app-erp-all`。
+
 所有域 codegen 骨架已生成（1721 个 Java 文件），含实体类、DAO、I*Biz 接口、BizModel 空壳、XMeta、view.xml 骨架。后续模型变更用 `mvn clean install` 增量重新生成，**不要**重跑 `nop-cli gen`。
 
 ## 入口点

@@ -6,7 +6,9 @@
 
 ## 领域工程依赖方向（DAG）
 
-nop-app-erp 按 10 个业务域拆成独立 Maven 工程，依赖方向严格单向（DAG）。详细决策见 `domain-module-split-analysis.md`。
+nop-app-erp 按 18 个业务域拆成独立 Maven 工程，依赖方向严格单向（DAG）。详细决策见 `domain-module-split-analysis.md`。
+
+> **物理目录映射**：`module-<domain>/` 是物理顶层目录，对应逻辑工程名 `app-erp-<domain>`；聚合启动工程逻辑名 = 物理目录 = `app-erp-all`。完整 18 域 × 命名维度映射见 `domain-module-split-analysis.md §2.0`。
 
 ```
 app-erp-master-data（基础，无业务依赖）
@@ -18,10 +20,10 @@ app-erp-purchase / app-erp-sales（依赖 master-data + inventory）
 app-erp-finance（依赖 master-data + 各业务域的 I*Biz）
 
 扩展域：
-app-erp-assets（依赖 master-data + inventory；被 finance 引用）
-app-erp-projects（依赖 master-data；被 finance 引用）
-app-erp-manufacturing（依赖 master-data + inventory；被 finance/quality 引用）
-app-erp-quality（依赖 master-data；被 purchase/sales/manufacturing 引用）
+app-erp-assets（依赖 master-data + inventory；被 finance ORM 引用）
+app-erp-projects（依赖 master-data；被 finance ORM 引用；S 写 finance 凭证）
+app-erp-manufacturing（依赖 master-data + inventory；被 finance ORM 引用；事件触发 quality 检验）
+app-erp-quality（依赖 master-data；被 purchase/sales/manufacturing 事件触发检验，零业务域 ORM 引用）
 app-erp-maintenance（依赖 master-data + inventory + assets；被 manufacturing 引用）
 ```
 
@@ -40,11 +42,13 @@ app-erp-maintenance（依赖 master-data + inventory + assets；被 manufacturin
 | 领域工程 | 允许依赖 | 禁止依赖 |
 |----------|----------|----------|
 | `app-erp-assets` | master-data / inventory | finance（finance 引用 assets，不反向） |
-| `app-erp-projects` | master-data | finance / 其他扩展域 |
-| `app-erp-manufacturing` | master-data / inventory | finance / quality / maintenance |
-| `app-erp-quality` | master-data | 任何业务域（quality 被业务域引用，不反向依赖） |
-| `app-erp-maintenance` | master-data / inventory / assets | manufacturing / finance |
-| `app-erp-app`（聚合） | 所有领域工程的 `-service`/`-web` | — |
+| `app-erp-projects` | master-data | finance ORM 引用（finance→projects 单向合法，projects 不反向 ORM 引用 finance）；**S 写 finance 允许**（成本归集过账，见数据矩阵 §4.2） |
+| `app-erp-manufacturing` | master-data / inventory | finance / maintenance（ORM + S 写反向）；**quality 仅事件触发检验**（ORM 零引用，manufacturing→quality 单向业务触发允许） |
+| `app-erp-quality` | master-data | 任何业务域 ORM 引用（quality 被业务域事件触发检验，不反向 ORM 依赖） |
+| `app-erp-maintenance` | master-data / inventory / assets | manufacturing / finance（反向） |
+| `app-erp-all`（聚合） | 所有领域工程的 `-service`/`-web` | — |
+
+> **关于 projects ↔ finance 与 manufacturing → quality 的分层说明**（源自 `data-dependency-matrix.md §2.0` 裁决原则 5）：ORM 层 finance→projects 单向、S 写层 projects→finance 单向，两层各自无环即合法，不构成循环。manufacturing→quality 仅事件/I*Biz 触发检验，ORM 零引用，同样合法。
 
 ## 跨工程实体关系规则
 
@@ -58,23 +62,14 @@ app-erp-maintenance（依赖 master-data + inventory + assets；被 manufacturin
 
 **跨模块关联查询的两条路线**（完整机制见 `../nop-entropy/docs-for-ai/02-core-guides/cross-module-entity-reference.md`）：
 
-- **路线 1（机制 B，`notGenCode="true"` 外部实体引用）**：已在本工程 9 个业务域 orm.xml 落地（见 `data-dependency-matrix.md §5.6.2` 矩阵）。适用于高频多维关联查询（如 finance 凭证行按 subject/partner/project/warehouse/material 筛选）。
+- **路线 1（机制 B，`notGenCode="true"` 外部实体引用）**：已在本工程 17 个业务域 orm.xml 落地（约 369 个跨模块 to-one，见 `data-dependency-matrix.md §5.6.2` 矩阵）。适用于高频多维关联查询（如 finance 凭证行按 subject/partner/project/warehouse/material 筛选）。
 - **路线 2（机制 D，纯外键 + `I*Biz`）**：断开 ORM 关联，用冗余显示名（列表）+ `@BizLoader`/`requireBiz`（详情）+ EQL 子查询（报表）。适用于业务表之间的引用（凭证反查源单等弱指针场景）。
 
 > **例外**：业务模块需要给主数据实体加业务字段时（类比 nop-app-mall 扩展 `NopAuthUser`），通过 `app-erp-delta` 工程做 `ext:baseClass` Delta 扩展，不在业务域建新表或写跨模块 `<to-one>`。
 
 > **表级数据依赖明细**（哪些模块只读 R / 同步写 S / 弱指针 P 哪些表、跨域字段目录、`billType` 枚举）：见 `data-dependency-matrix.md`。本文只规定模块级依赖方向，数据层细化由该文档承载。
 
-## 跨模块引用准则 (Cross-Module Reference Rules)
-
-- Finance may reference master-data, projects, assets
-- Purchase/Sales/Inventory may reference master-data
-- Manufacturing may reference master-data, inventory, quality
-- Quality may reference master-data, manufacturing, inventory
-- Maintenance may reference master-data, assets
-- Projects may reference master-data, finance
-- Cross-domain I*Biz references are preferred over ORM hard references
-- No circular module dependencies allowed
+> **依赖方向冲突裁决**：当本文模块级摘要与 `data-dependency-matrix.md` 数据层清单冲突时，以数据层清单为准（裁决优先级见 `data-dependency-matrix.md §2.0`）。
 
 ## 业财打通跨工程协作
 
@@ -96,6 +91,14 @@ app-erp-maintenance（依赖 master-data + inventory + assets；被 manufacturin
 | 制造域业务规则 | `docs/design/manufacturing/README.md` |
 | 质量管理域业务规则 | `docs/design/quality/README.md` |
 | 设备维护域业务规则 | `docs/design/maintenance/README.md` |
+| 客户关系域业务规则 | `docs/design/crm/README.md` |
+| 客户服务域业务规则 | `docs/design/cs/`（待补 README） |
+| 人力资源域业务规则 | `docs/design/hr/`（待补 README） |
+| 高级排程域业务规则 | `docs/design/aps/README.md` |
+| 合同域业务规则 | `docs/design/contract/README.md` |
+| 分销资源域业务规则 | `docs/design/drp/README.md` |
+| 物流域业务规则 | `docs/design/logistics/README.md` |
+| B2B 域业务规则 | `docs/design/b2b/README.md` |
 | 模块拆分决策与命名 | `docs/architecture/domain-module-split-analysis.md` |
 | 数据依赖矩阵（表级只读/同步写/弱指针） | `docs/architecture/data-dependency-matrix.md` |
 

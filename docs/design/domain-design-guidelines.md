@@ -1,5 +1,10 @@
 # 域设计指南
 
+> **本文定位**：业务语义、状态命名、跨域业务规则的设计层规范。**技术实现规则**（ErrorCode 落位、删除策略实现、BizModel/xbiz/task.xml 选型、迁移策略等）归 `docs/architecture/`，本文只保留概要 + 指针，避免职责过宽。具体：
+> - ErrorCode 命名/编码规则 → 概要见 §七，技术落位归 architecture
+> - 删除策略实现 → 概要见 §九，技术落位归 architecture
+> - BizModel/xbiz 决策 → 概要见 §十八，权威规则见 `docs/architecture/service-layer-orchestration.md`
+
 ## 目的
 
 定义 nop-app-erp 各业务域的设计原则、边界划分、跨域协作模式与数据一致性策略。持久化字段、字典和 ORM 模型以 `model/app-erp-<domain>.orm.xml` 为准；技术实现细节见 `docs/architecture/`。
@@ -93,9 +98,17 @@
 
 ## 三、跨域协作规则
 
-### 3.1 主数据引用规则
+### 3.1 主数据引用分级规则
 
-所有域引用主数据必须通过 `IErpMd*Biz` 接口，禁止直接 ORM 跨工程引用。
+> 主数据引用按场景分级，采用平台原生机制（详见 `data-dependency-matrix.md §5.5-5.6` 与 `../nop-entropy/docs-for-ai/02-core-guides/cross-module-entity-reference.md §7`）。读引用按场景分别用机制 B 或机制 D。
+
+| 引用场景 | 采用机制 | 说明 |
+|----------|----------|------|
+| 读引用——列表显示名 | **机制 D**（纯外键 + 冗余显示名字段） | 零 join，主数据改名需同步刷新冗余字段 |
+| 读引用——详情带出完整对象 | **机制 D**（`@BizLoader` + `requireBiz`） | 懒加载，列表场景慎用（N+1） |
+| 读引用——高频多维筛选/报表/GraphQL 展开 | **机制 B**（`notGenCode="true"` + `<to-one>`） | EQL 可点导航、自动 LEFT JOIN；已在本工程 17 业务域落地（见数据矩阵 §5.6.2） |
+| 写引用 | **必须经 `IErpMd*Biz` 接口**（`@BizMutation`） | 跨域写强制走接口封装业务规则 |
+| 给主数据加业务字段 | **`app-erp-delta` 的 `ext:baseClass` Delta 扩展** | 禁止给 master-data 表生成新 `className` |
 
 ### 3.2 库存域协作规则
 
@@ -217,6 +230,8 @@
 
 ## 七、ErrorCode 错误码约定
 
+> **职责边界**：本节给出业务语义层的 ErrorCode 命名/编码规则（业务域命名空间约定）。技术落位（`ErrorCode` 接口实现、异常类生成、i18n 资源文件、错误响应格式）归 `docs/architecture/`（技术落位文档待建，暂以本节为参照）。
+
 所有业务异常必须扩展 `NopException` + `ErrorCode`，描述使用中文（平台 i18n 处理翻译）。
 
 ### 7.1 命名空间
@@ -288,6 +303,8 @@ throw new RuntimeException("订单不存在"); // 禁止
 ---
 
 ## 九、删除策略
+
+> **职责边界**：本节给出业务语义层的删除策略（哪些单据可删、用什么档位）。技术实现（`delFlag`/`delVersion` 字段机制、平台 `@BizMutation` 逻辑删除、归档迁移）归 `docs/architecture/`（技术落位文档待建，暂以本节 + `data-archival-strategy.md` 为参照）。
 
 ### 9.1 三档删除策略
 
@@ -523,7 +540,7 @@ NOT_OPENED → OPEN → CLOSING → CLOSED
 | finance | 会计期间 | `NOT_OPENED` / `OPEN` / `CLOSING` / `CLOSED` | 时间窗口状态机（见 §十） |
 | assets | 资产卡片 | `DRAFT` / `IN_SERVICE` / `IDLE` / `SCRAPPED` / `SOLD` | 资产生命周期 |
 | manufacturing | 工单 | `DRAFT` / `SUBMITTED` / `APPROVED` / `RELEASED` / `IN_PROGRESS` / `COMPLETED` / `INSPECTING` / `REJECTED` / `CANCELLED` / `CLOSED` | 制造执行链 |
-| projects | 项目/任务 | `DRAFT` / `OPEN` / `ON_HOLD` / `COMPLETED` / `CANCELLED` | 项目生命周期。`ON_HOLD` 为项目独有暂停态（可恢复），见 `projects/state-machine.md`。注：旧版指南曾用 `PLANNED`/`IN_PROGRESS`，已统一为 `OPEN`/`ON_HOLD`（与 `projects/state-machine.md` 一致） |
+| projects | 项目/任务 | `DRAFT` / `OPEN` / `ON_HOLD` / `COMPLETED` / `CANCELLED` | 项目生命周期。`ON_HOLD` 为项目独有暂停态（可恢复），见 `projects/state-machine.md` |
 | quality | 质检/NCR/CAPA | `DRAFT` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 质量流程 |
 | maintenance | 工单/请求 | `DRAFT` / `SCHEDULED` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 维护执行 |
 
@@ -536,8 +553,6 @@ NOT_OPENED → OPEN → CLOSING → CLOSED
 | `APPROVED` | 审批通过 |
 | `REJECTED` | 审批拒绝（可修改后重新提交） |
 
-> 注：旧版指南曾用 `PENDING` 描述"审批中"状态，经审计确认实际文档（purchase/state-machine.md、flow-overview.md 等）均使用 `SUBMITTED`，已统一。
-> 
 > inventory 的作业单（移动单/盘点单/拣货单）通常不经过审批流，`approveStatus` 可省略或保持 `UNSUBMITTED`。
 
 ### 16.4 反审核目标态
@@ -637,6 +652,8 @@ NOT_OPENED → OPEN → CLOSING → CLOSED
 ---
 
 ## 十八、BizModel 与 xbiz 决策规则
+
+> **职责边界**：本节是业务域视角的概要。**权威规则**（task.xml 编排、I*Biz 分工、步骤实现方式选择、映射约定、Delta 定制）见 `docs/architecture/service-layer-orchestration.md`，本节不重复其细节。
 
 > 依据 Nop Platform `Model → Delta → Java` 决策框架（`ai-defaults.md`）。
 

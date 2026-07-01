@@ -16,7 +16,7 @@
 | 项 | 值 |
 |----|----|
 | Maven 工程 | `app-erp-purchase` |
-| appName | `app-erp-pur` |
+| appName | `erp-pur` (两级) |
 | 权威模型 | `model/app-erp-purchase.orm.xml` |
 | 实体包 | `app.erp.pur.dao.entity` |
 | 表前缀 | `erp_pur_` |

@@ -19,7 +19,7 @@
 - `docs/design/`
 - `docs/references/`
 - `docs/skills/`
-- 长期需求基线文件，如 `docs/requirements/product-scope.md` 和 `docs/requirements/mvp.md`
+- 长期需求基线文件，如 `docs/requirements/product-scope.md` 和 `docs/requirements/product-baseline.md`
 
 示例：
 

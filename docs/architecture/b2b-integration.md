@@ -6,10 +6,10 @@
 
 ## 模块定位（Decision：独立扩展工程）
 
-> **裁决**：B2B 集成定位为**可选独立扩展工程 `module-b2b`**，**不纳入 product-scope 的 10 域基线**（`product-scope.md:49-52` 延迟范围），作为可选模块按需组装。
+> **裁决**：B2B 集成定位为**独立扩展工程 `module-b2b`**（逻辑工程名 `app-erp-b2b`），是 18 域正式基线之一（第二批扩展域，见 `product-scope.md`）。本文承载集成契约层（SPI/信封状态机/ASN 入站），业务语义见 `docs/design/b2b/README.md`。
 
 - 工程范式参考 `docs/design/l10n/cn-golden-tax.md`（独立工程 + 凭证指针反查核心域）。
-- 命名：实体 `ErpB2b*`，表名 `erp_b2b_*`，字典 `erp-b2b/*`，appName `app-erp-b2b`。
+- 命名：实体 `ErpB2b*`，表名 `erp_b2b_*`，字典 `erp-b2b/*`，appName `erp-b2b`（两级）。
 - **本文档位置**：本架构文档描述 B2B 集成契约（集成层语义）；ASN 等实体表前缀归 `module-b2b` 工程。
 - **考虑的替代方案**：纳入核心域子模块（拒绝，EDI 引擎烘焙进核心域是反模式，见下）。
 

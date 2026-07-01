@@ -16,7 +16,7 @@
 | 项 | 值 |
 |----|----|
 | Maven 工程 | `app-erp-assets` |
-| appName | `app-erp-ast` |
+| appName | `erp-ast` (两级) |
 | 权威模型 | `model/app-erp-assets.orm.xml` |
 | 实体包 | `app.erp.ast.dao.entity` |
 | 表前缀 | `erp_ast_` |

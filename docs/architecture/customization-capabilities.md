@@ -8,7 +8,7 @@
 
 nop-app-erp 是基于 Nop 平台架构的**产品化通用 ERP 产品**：
 
-- **通用**：内置 10 个业务域（主数据/库存/采购/销售/财务/资产/项目/制造/质量/维护）的标准能力，覆盖中等规模 ERP 的进销存+财务一体化+制造全链。
+- **通用**：内置 18 个业务域（主数据/库存/采购/销售/财务 + 资产/项目/制造/质量/维护 + CRM/CS/HR/APS/合同/DRP/物流/B2B）的标准能力，覆盖中等规模 ERP 的进销存+财务一体化+制造全链及外围协作域。
 - **产品化**：作为可发布的标准产品基线，不是一次性项目代码。基线通过 `nop-cli gen` 生成，遵循模型优先开发。
 - **可定制**：充分利用 Nop 平台的扩展能力（Delta 定制、扩展字段、动态实体、模块化组装等），快速适配零售、制造、贸易、医疗、教育等各领域的具体业务，**不改基线源码**。
 - **升级友好**：定制层与基线分离，基线升级时定制自动合并，不破坏客户化改动。
@@ -108,7 +108,7 @@ nop-app-erp 的定制能力按"改动成本从低到高、灵活度从高到低"
 **适用场景**：
 - BizModel：`ErpPurOrder.xbiz` 扩展 `_ErpPurOrder.xbiz`，加自定义业务方法。
 - 页面：`ErpSalOrder.view.xml` 扩展 `_gen/_ErpSalOrder.view.xml`，改列表列/表单布局/按钮。
-- beans：`app-erp-fin-service.beans.xml` 扩展生成 beans。
+- beans：`_vfs/erp/fin/beans/app-service.beans.xml` 扩展生成 beans（VFS 路径，moduleId=`erp/fin`）。
 
 **与 Delta 的区别**（重要）：
 - **非下划线扩展层**：在自己的模块里扩展自己的生成保留层——定制自己产出的代码。
@@ -142,13 +142,14 @@ AMIS JSON           (运行时输出)
 
 ## 能力五：模块化组装（按需引入/裁剪业务域）
 
-**用途**：nop-app-erp 的 10 个业务域各自独立成 Maven 工程，按需组装到具体客户的交付应用，裁剪不需要的域。
+**用途**：nop-app-erp 的 18 个业务域各自独立成 Maven 工程，按需组装到具体客户的交付应用，裁剪不需要的域。
 
-**机制**：每域独立工程（如 `app-erp-inventory`、`app-erp-finance`），由聚合工程 `app-erp-app` 选择依赖。DAG 依赖方向：master-data ← inventory ← purchase/sales ← finance；扩展域各自依赖核心域。
+**机制**：每域独立工程（如 `app-erp-inventory`、`app-erp-finance`），由聚合工程 `app-erp-all` 选择依赖。DAG 依赖方向：master-data ← inventory ← purchase/sales ← finance；扩展域各自依赖核心域。物理目录 ↔ 逻辑工程名映射见 `domain-module-split-analysis.md §2.0`。
 
 **适用场景**：
 - 纯商贸客户：只组装 master-data/inventory/purchase/sales/finance，不引入 manufacturing/quality/maintenance。
-- 制造客户：组装全部 10 域。
+- 制造客户：组装核心 5 域 + 第一批扩展 5 域。
+- 完整产品：组装全部 18 域。
 - 轻量客户：只组装 master-data/inventory/finance，不引入采购销售。
 
 **模块依赖方向**（不可反向，见 `module-boundaries.md`）：
@@ -219,7 +220,7 @@ nop-app-erp 的定制层设计确保基线升级时不破坏客户化：
 | `project-vision.md` | 产品定位（本文的"产品定位"节是其展开） |
 | `system-baseline.md` | 技术基线（模块结构、技术栈） |
 | `module-boundaries.md` | 模块依赖方向（模块化组装的约束） |
-| `domain-module-split-analysis.md` | 10 域拆分决策（模块化组装的基础） |
+| `domain-module-split-analysis.md` | 18 域拆分决策与命名映射（模块化组装的基础） |
 | `../nop-entropy/docs-for-ai/02-core-guides/delta-customization.md` | Delta 机制权威说明 |
 | `../nop-entropy/docs-for-ai/02-core-guides/view-and-page-customization.md` | 页面定制权威说明 |
 | `../nop-entropy/docs-for-ai/03-modules/nop-dyn.md` | 动态实体权威说明 |

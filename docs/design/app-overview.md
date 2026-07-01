@@ -7,7 +7,7 @@
 ## 主要界面或页面
 
 - 管理后台：主数据维护、采购管理、销售管理、库存管理、财务管理、报表与查询、系统配置
-- （前台商城/门户暂不在当前基线范围）
+- （前台商城/门户暂不在当前基线范围。详见 `portal/README.md` STATUS 横幅——portal 为 future extension placeholder，实施前需 plan-first + 人工批准）
 
 ## 主要导航模型
 
@@ -33,7 +33,7 @@
 - **生成产物**：代码生成会为每个域产出 `_{moduleName}.action-auth.xml`（下划线前缀），它从 `model/*.orm.xml` 的 `ext:icon` 自动推导出每个实体的菜单骨架（SUBM 的 `icon`、两个 FNPT `{objName}:query` 与 `{objName}:mutation`）。这是**代码生成产物而非测试用文件**，按平台规则禁止手工修改。
 - **三层文件链**：codegen 后每域实际形成三层（以采购域为例）：① `_erp-pur.action-auth.xml`（web 模块，生成产物，禁止手改）→ ② `erp-pur.action-auth.xml`（web 模块，手写定制层，`x:extends="_erp-pur.action-auth.xml"`）→ ③ `app.action-auth.xml`（app 模块，应用聚合层，`x:extends="erp-pur.action-auth.xml"`，最终加载入口）。
 - **本项目定制方式**：不为整棵菜单另起一份散文规划。在每域手写层（第②层 `{moduleName}.action-auth.xml`）做定制——通过 `x:extends` 继承生成产物，再对不需要的自动生成项用 `x:override="remove"` 删除（合并算子语义见 `nop-entropy/docs-for-ai/02-core-guides/xdef-and-xdsl.md` 的 `x:override` 表）。菜单图标、排序、路由等细节也在这份手写文件中沉淀，不在 `docs/design/` 中复述。
-- **与权限的衔接**：`FNPT` 资源声明的权限标识与 `roles-and-permissions.md` 的角色矩阵对接。操作权限检查默认关闭（`nop.auth.enable-action-auth=false`），启用后按角色过滤菜单并对未授权资源标记 DISABLED。
+- **与权限的衔接**：`FNPT` 资源声明的权限标识与 `roles-and-permissions.md` 的角色矩阵对接。操作权限检查的当前拦截状态与灰度启用步骤见 `roles-and-permissions.md §运行基线`（数据权限始终生效，不依赖操作级开关）。
 
 ## 主要用户角色
 

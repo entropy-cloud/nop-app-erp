@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <parent>
+        <artifactId>app-erp</artifactId>
+        <groupId>io.nop.app</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>app-erp-test-data</artifactId>
+    <packaging>jar</packaging>
+
+    <description>
+        跨测试类共享的主数据/业务夹具模块（测试资产，非部署资产）。
+        CSV 置于 src/main/resources/_vfs/test-data/tables/，由 VFS classpath 扫描发现。
+        各 -service 测试模块以 test-scope 依赖本模块。
+        与部署 seed（app-erp-seed，独立 follow-up）区分。
+    </description>
+
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
+</project>

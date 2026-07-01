@@ -81,12 +81,41 @@
 - 让步接收记录让步理由与审批人。
 - 红冲凭证摘要注明冲销原凭证号与原因。
 
-## 实现落位
+## 设计能力基线（已沉淀，始终生效）
 
-- 角色与权限通过 nop-auth 的 RBAC 体系实现（用户→角色→资源）。
-- 数据权限通过 nop-auth 的行级过滤实现。
-- 审批流通过 nop-wf 实现。
-- 审计日志通过 nop-auth 的操作日志实现。
+以下能力随模块定义落地，**始终生效**（其中数据权限不依赖操作级开关）：
+
+- **角色矩阵**：见本文"角色体系"——按业务职能划分，角色名与各域状态机迁移执行角色同源。
+- **操作权限资源点**：`*.action-auth.xml`（`TOPM`/`SUBM`/`FNPT`）由 codegen 自动产出，定义菜单与功能权限点。三层文件链与定制约定见 `app-overview.md §菜单权威源与定制约定`。
+- **数据权限规则**：`data-auth.xml` 行级过滤——**独立于操作级开关，始终附加到查询条件**（平台机制见 `nop-entropy/docs-for-ai/02-core-guides/auth-and-permissions.md` 数据权限节）。
+
+## 运行基线（当前拦截状态）
+
+> "已定义 ≠ 默认全部开启"。当前运行基线对**操作级拦截**默认关闭，灰度启用按下方步骤。
+
+| 项 | 当前值 | 说明 |
+|----|---------|------|
+| `nop.auth.enable-action-auth` | `false`（默认） | 操作级拦截关闭：菜单与 FNPT 全量可见可操作。**数据权限不受此开关影响，始终启用**。 |
+| `nop.auth.skip-check-for-admin` | `true`（默认） | 管理员跳过权限检查 |
+
+**灰度启用操作级拦截的步骤**：
+1. 在 `app-erp-all/application.yaml` 设 `nop.auth.enable-action-auth: true`。
+2. 按角色配置 `FNPT` 资源授权（`*.action-auth.xml` 已就绪，无需新增资源点）。
+3. 启用后菜单按角色过滤、未授权资源标记 DISABLED。
+4. 灰度范围建议：先对高危操作（反审核/作废/反结账/处置）开启，再逐步铺开。
+
+> **行业参照**：Axelor 等 ERP 的 portal/模块权限也是"权限定义随模块安装生效、默认非全开"（见 `docs/analysis/erp-survey/2026-06-30-0000-axelor-open-suite.md`），"已定义≠默认开启"是行业常态。
+
+## 实现机制（平台组件）
+
+- 角色与权限：nop-auth 的 RBAC 体系（用户→角色→资源）。
+- 数据权限：nop-auth 的行级过滤（`nopDataAuthChecker`）。
+- 审批流：nop-wf 引擎。
+- 审计日志：nop-auth 的操作日志。
+
+## 外部主体
+
+本文仅覆盖**内部 ERP 角色**。外部 portal 主体（客户/供应商自助）见 `docs/design/portal/identity-and-access.md`（future extension，非当前基线）。
 
 ## 与其他文档的关系
 

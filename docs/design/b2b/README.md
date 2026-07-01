@@ -4,14 +4,14 @@
 
 本设计文档描述 module-b2b 的业务语义、工作流、状态含义和跨域协作契约。B2B 集成模块提供电子数据交换（EDI）、提前发货通知（ASN）、代码映射和 EDI 日志功能。
 
-本模块定位为**可选独立扩展工程**，不纳入 10 域产品基线，按需组装。
+本模块定位为**独立扩展工程**（18 域产品基线第二批扩展域之一），按需组装。
 
 ## 模块定位
 
-- **决策**：独立扩展工程 `module-b2b`，不纳入 product-scope 核心 10 域。
-- **命名约定**：实体 `ErpB2b*`，表名 `erp_b2b_*`，字典 `erp-b2b/*`，appName `app-erp-b2b`。
+- **决策**：独立扩展工程 `module-b2b`（逻辑工程名 `app-erp-b2b`），是 `product-scope.md` 18 域正式基线之一（第二批扩展域）。
+- **命名约定**：实体 `ErpB2b*`，表名 `erp_b2b_*`，字典 `erp-b2b/*`，appName `erp-b2b`（两级）。
 - **核心零污染**：全程弱指针反查 purchase/sales/inventory，核心域零字段新增（凭证指针模式）。
-- **参考**：`docs/architecture/b2b-integration.md`（集成层契约和 SPI 技术细节）。
+- **双层分工**：本文拥有**业务语义**（状态机、用例、页面）；`docs/architecture/b2b-integration.md` 拥有**集成契约**（EDI SPI、Webhook、技术边界）。两者相互引用。
 
 ## 设计依据
 

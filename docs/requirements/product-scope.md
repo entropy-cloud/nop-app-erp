@@ -6,7 +6,7 @@ nop-app-erp 是基于 Nop 平台架构的**产品化通用 ERP 产品**，可快
 
 ## 业务域范围（已确定）
 
-产品内置 10 个业务域，覆盖中等规模 ERP 的进销存+财务一体化+制造全链：
+产品内置 18 个业务域，覆盖中等规模 ERP 的进销存+财务一体化+制造全链及外围协作域：
 
 ### 核心业务域（进销存+财务，5 个）
 
@@ -18,7 +18,9 @@ nop-app-erp 是基于 Nop 平台架构的**产品化通用 ERP 产品**，可快
 | 销售 | `app-erp-sales` | 销售订单、销售出库、销售发票、收款、销售退货 |
 | 财务 | `app-erp-finance` | 会计凭证、科目、业财打通、核销、期末结账、成本核算 |
 
-### 扩展业务域（资产/项目/制造/质量/维护，5 个）
+### 扩展业务域（13 个）
+
+#### 第一批扩展（资产/项目/制造/质量/维护，5 个）
 
 | 域 | 工程 | 核心能力 |
 |----|------|----------|
@@ -28,16 +30,31 @@ nop-app-erp 是基于 Nop 平台架构的**产品化通用 ERP 产品**，可快
 | 质量管理 | `app-erp-quality` | 质检、NCR 不符合项、CAPA 纠正预防 |
 | 设备维护 | `app-erp-maintenance` | 设备、维护计划、维护访问、维护请求、停机记录 |
 
-**模块组装**：交付时可按需裁剪——纯商贸客户只组装核心 5 域，制造客户组装全部 10 域。详见 `customization-capabilities.md` 的"模块化组装"。
+#### 第二批扩展（外围协作域，8 个）
+
+| 域 | 工程 | 核心能力 |
+|----|------|----------|
+| 客户关系 | `app-erp-crm` | 线索、商机、客户、CPQ 配置定价 |
+| 客户服务 | `app-erp-cs` | 服务工单、售后、客户反馈 |
+| 人力资源 | `app-erp-hr` | 员工、薪酬、考勤、招聘 |
+| 高级排程 | `app-erp-aps` | 排程优化、产能平衡、替代工艺 |
+| 合同 | `app-erp-contract` | 合同起草、审批、电子签、履约 |
+| 分销资源 | `app-erp-drp` | 分销网络、补货、跨仓调拨 |
+| 物流 | `app-erp-logistics` | 承运、运输、配送、签收 |
+| B2B | `app-erp-b2b` | EDI、订单协同、ASN、对账 |
+
+**模块组装**：交付时可按需裁剪——纯商贸客户只组装核心 5 域，制造客户组装核心 + 第一批扩展，完整产品组装全部 18 域。详见 `customization-capabilities.md` 的"模块化组装"。
+
+> **工程命名映射**：物理目录 `module-<domain>/` ↔ 逻辑工程名 `app-erp-<domain>` 的完整映射见 `docs/architecture/domain-module-split-analysis.md §2.0`。
 
 ## 当前里程碑（代码生成已完成 - Post-Codegen 阶段）
 
-- 产品摘要：10 域已全部通过 nop-cli 完成代码生成，共生成 1096 Java 文件、82 模块、145 实体，项目进入 post-codegen 阶段。
+- 产品摘要：18 域已全部通过 nop-cli 完成代码生成，共生成 1721 Java 文件、146 reactor 模块、279 实体，项目进入 post-codegen 阶段。
 - 用户：实施方（基于基线定制各领域 ERP）、开发人员（完善模型与生成链路、编写 BizModel 与 xbiz）
 - 当前已完成：
-  - 10 份 `<domain>/model/app-erp-<domain>.orm.xml` 权威源模型（145 实体）
-  - 10 域完整的代码生成工程骨架（model → codegen → dao → service → web → app）
-  - 10 域目录式设计文档（README + state-machine + 跨域协作等）
+  - 18 份 `module-<domain>/model/app-erp-<domain>.orm.xml` 权威源模型（279 实体）
+  - 18 域完整的代码生成工程骨架（model → codegen → dao → service → web → app）
+  - 18 域目录式设计文档（README + state-machine + 跨域协作等）
   - 全局设计文档（app-overview/flow-overview/domain-glossary/roles-and-permissions/feature-inventory）
   - 架构文档（system-baseline/module-boundaries/domain-module-split-analysis/customization-capabilities）
   - 多租户策略明确（按平台标准，不在 orm.xml 预置 tenantId）
@@ -51,7 +68,7 @@ nop-app-erp 是基于 Nop 平台架构的**产品化通用 ERP 产品**，可快
   - 垂直行业扩展工程（待具体客户需求）
   - 外部集成（税控/银行/物流/电商）
 - 成功指标：
-  - 所有 82 模块可独立编译通过
+  - 所有 146 模块可独立编译通过
   - 首域端到端 CRUD 流程测试通过
   - 第一个业务循环端到端测试通过
 - 约束：

@@ -9,7 +9,7 @@
 
 ## TL;DR
 
-nop-app-erp 共 **10 个业务域、145 个实体表**（见 `domain-module-split-analysis.md`）。跨域数据依赖遵循三条铁律：
+nop-app-erp 共 **18 个业务域、279 个实体表**（见 `domain-module-split-analysis.md §2.0` 与 `docs/context/codebase-map.md`）。跨域数据依赖遵循三条铁律：
 
 1. **只读依赖**：所有业务域对 `master-data` 表族（物料/往来单位/仓库/科目/币种等）是**只读引用**，通过纯字符串/ID 外键列承载，不做 ORM 强引用。
 2. **同步修改仅限业财一体闭环**：业务单据状态变迁时，**同事务内**写"本域单据表 + inventory 流水/余额表 + finance 凭证/回链表"。这是唯一的跨域写场景。
@@ -31,29 +31,44 @@ nop-app-erp 共 **10 个业务域、145 个实体表**（见 `domain-module-spli
 
 > 本节是**已定稿**的域级依赖关系，源自 `module-boundaries.md` 的 DAG。表中的"读/写"列指向本节后续的表级清单。
 
+### 2.0 裁决原则（依赖方向冲突时的优先级）
+
+当多份文档对同一依赖方向的描述出现冲突时，按以下 4 条优先级裁决（高层架构依据：`architecture-principles.md §二` 确认 DAG 按依赖类型分层校验）：
+
+1. **ORM 层引用**：以本文 §5.6.2 实测清单（`notGenCode` 外部实体 to-one）为**最高权威**——已 DAG 验证零循环，代码即真相。
+2. **S 写（同步修改）层**：以本文 §4.2 的 S 写表集矩阵为权威。
+3. **模块级摘要**：`module-boundaries.md` 中文表是模块级依赖摘要；当与本文数据层清单冲突时，回改 `module-boundaries.md` 以匹配本文（数据层更细）。
+4. **分层独立校验**：ORM 引用与 S 写/事件触发属不同依赖类型，允许跨层"看似双向"——只要每层内部单向无环即合法（如 ORM finance→projects + S 写 projects→finance 在不同层，不构成循环）。
+
 ### 2.1 依赖方向总览（DAG）
 
+> **完整 18 域的物理目录 × 逻辑工程名 × appName 映射见 `domain-module-split-analysis.md §2.0`**。本图按逻辑工程名标注依赖方向。下方 DAG 仅刻画**已稳定的核心依赖**（master-data 根 + 业财一体闭环）；第二批 8 个扩展域（crm/cs/hr/aps/contract/drp/logistics/b2b）在 ORM 层均只引用 master-data，业务层关联待各域设计深化后补充。
+
 ```
-                    app-erp-master-data（根，被所有域只读引用）
-                          ↑ R
-        ┌─────────────────┼─────────────────┐
-        │                 │                 │
-   app-erp-inventory  app-erp-projects  app-erp-quality
-        ↑ R+S            ↑ R                ↑ R
-        │                 │                 │
-   ┌────┴────┐            │            （被业务域 P 引用）
-   │         │            │
-app-erp-  app-erp-    app-erp-finance ← R+S（业财一体核心，被 nobody）
-purchase  sales            ↑ R+S
-   │         │             │
-   └────┬────┘             │
-        │                  │
-   （业财一体：purchase/sales 的过账 S 写 finance）
-        │
-   app-erp-assets ← R（被 finance 引用：折旧/处置过账）
-   app-erp-manufacturing ← R（被 finance/quality 引用）
-   app-erp-maintenance ← R（被 manufacturing 引用）
+L0 根域（被所有业务域 R 只读引用）：
+  app-erp-master-data ── 被全部 17 个业务域 R 引用（~120+ 处）
+
+L1 直接下游（R: master-data；无业务域间 ORM 引用）：
+  app-erp-inventory    app-erp-projects    app-erp-quality
+  app-erp-hr           app-erp-cs          app-erp-crm
+  app-erp-contract     app-erp-drp         app-erp-aps
+  app-erp-logistics    app-erp-b2b
+
+L2 业务域（R: master-data + inventory；S 写 finance 凭证 + inventory 库存）：
+  app-erp-purchase     app-erp-sales
+        │                     │
+        └──── 业财一体：过账同事务 S 写 finance ────┐
+                                                    ↓
+L3 顶域（业财一体核心，被多业务域 S 写，不反向写业务）：
+  app-erp-finance  ← R+S（被 purchase/sales/assets/projects/manufacturing/maintenance S 写）
+
+外围第一批扩展域（R: master-data + inventory/其他；S 写 finance；事件触发）：
+  app-erp-assets        （R: master-data + inventory；S 写 finance：折旧/处置过账）
+  app-erp-manufacturing （R: master-data + inventory；S 写 finance；事件触发 quality 检验）
+  app-erp-maintenance   （R: master-data + inventory + assets；S 写 finance）
 ```
+
+> **关于 8 个第二批扩展域的业务层关联**（crm/cs/hr/aps/contract/drp/logistics/b2b）：当前 ORM 层实测仅引用 master-data（详见 §5.6.2）。它们是否参与业财过账（S 写 finance）、是否与其他业务域有弱指针（P）关联，待各域业务设计深化后在 §2.2/§4.2/§5.1 补充。
 
 ### 2.2 域级依赖矩阵
 
@@ -69,6 +84,14 @@ purchase  sales            ↑ R+S
 | **manufacturing** | master-data / inventory | finance（工单完工过账 S 写凭证）/ quality | inventory（P：领料→stock_move） |
 | **quality** | master-data | （无 S 写，只被业务域引用） | purchase/sales/manufacturing（P：检验反查业务源） |
 | **maintenance** | master-data / inventory / assets | manufacturing（停机影响排产）/ finance（维修领料过账） | inventory（P：备件领用→stock_move） |
+| **crm** | master-data | （业务层 S/P 待深化） | （待业务设计补充） |
+| **cs** | master-data | （业务层 S/P 待深化） | （待业务设计补充） |
+| **hr** | master-data | （业务层 S/P 待深化，如薪资过账） | （待业务设计补充） |
+| **aps** | master-data | （业务层 S/P 待深化，与 manufacturing 协作） | （待业务设计补充） |
+| **contract** | master-data | （业务层 S/P 待深化） | （待业务设计补充） |
+| **drp** | master-data | （业务层 S/P 待深化） | （待业务设计补充） |
+| **logistics** | master-data | （业务层 S/P 待深化） | （待业务设计补充） |
+| **b2b** | master-data | （业务层 S/P 待深化） | （待业务设计补充） |
 
 ### 2.3 三类依赖计数
 
@@ -84,6 +107,14 @@ purchase  sales            ↑ R+S
 | manufacturing | 1（被 finance 查） | 3 类主数据 + inventory | **finance**/quality | 0 | 2 |
 | quality | 1（被业务域查） | 2 类主数据 | 0 | （被业务域触发检验，非 S 写） | 4 |
 | maintenance | 1（被 mfg 查） | 3 类主数据 + inventory + assets | **finance**/manufacturing | 0 | 0 |
+| crm | 待业务深化 | ~7 类主数据（实测 31 to-one） | 待深化 | 待深化 | 待深化 |
+| cs | 待业务深化 | ~3 类主数据（实测 5 to-one） | 待深化 | 待深化 | 待深化 |
+| hr | 待业务深化 | ~6 类主数据（实测 19 to-one） | 待深化 | 待深化 | 待深化 |
+| aps | 待业务深化 | ~3 类主数据（实测 6 to-one） | 待深化 | 待深化 | 待深化 |
+| contract | 待业务深化 | ~4 类主数据（实测 10 to-one） | 待深化 | 待深化 | 待深化 |
+| drp | 待业务深化 | ~3 类主数据（实测 7 to-one） | 待深化 | 待深化 | 待深化 |
+| logistics | 待业务深化 | ~4 类主数据（实测 9 to-one） | 待深化 | 待深化 | 待深化 |
+| b2b | 待业务深化 | ~5 类主数据（实测 15 to-one） | 待深化 | 待深化 | 待深化 |
 
 > **关键观察**：`master-data` 是唯一的高入向 R 域（~120 处引用），它是整个系统的根。`finance` 是唯一的入向 S 顶域（被 6 个业务域同步写过账）。这两个域的稳定性直接决定全局稳定性。
 
@@ -134,27 +165,36 @@ purchase  sales            ↑ R+S
 
 ### 4.1 业财一体闭环：以"采购入库过账"为例
 
+> **凭证层时序可配**：下图的"凭证生成"段（第②层）按 `(billType, acctSchemaId)` 可切 **SYNC 同事务**（默认）或 **ASYNC post-commit**（性能瓶颈时）。库存段（第①层）恒定 SYNC 强一致。详见 `posting.md §总体架构` 与 `§稳定约束 vs 可配置策略`。
+
 ```
 [app-erp-purchase] ErpPurReceiveBiz.confirmReceive()  @BizMutation
     │ 同一事务上下文（@BizMutation 自动 @Transactional）
+    │
+    │ ============ 第①层：业务单据 + 库存（强制 SYNC，不可配）============
     ├─ S 写 purchase：更新 erp_pur_receive.docStatus = CONFIRMED
     ├─ S 写 purchase：插入 erp_pur_receive_line（已存在，仅状态更新）
+    ├─ posted = false（与单据+库存同事务落盘）
     │
     ├─ @Inject IErpInvStockMoveBiz.saveFromReceive()
-    │   └─ S 写 inventory：
+    │   └─ S 写 inventory（强制 SYNC，物理库存正确性硬约束）：
     │       ├─ 插入 erp_inv_stock_move（移动单）
     │       ├─ 插入 erp_inv_stock_move_line（移动行）
     │       ├─ 插入 erp_inv_stock_ledger（不可变流水）
     │       └─ 更新 erp_inv_stock_balance（余额快照）
     │
-    └─ @Inject IErpFinAcctDocProvider（purchase 提供的 Provider Bean）
-        └─ finance ErpFinAcctDocRegistry 调用 purchase 的 Provider
-            └─ S 写 finance：
-                ├─ 插入 erp_fin_voucher（凭证头）
-                ├─ 插入 erp_fin_voucher_line（借贷分录）
-                └─ 插入 erp_fin_voucher_bill_r（业财回链：sourceBillType=INPUT）
-
-事务提交 → 全部原子：业务单据 / 库存 / 凭证三者强一致
+    │ ============ 第②层：凭证生成时序（按 billType 可配 SYNC/ASYNC）============
+    ├─ 方式 A（SYNC，默认）：同事务内立即生成凭证
+    │   └─ @Inject IErpFinAcctDocProvider → ErpFinAcctDocRegistry → Provider
+    │       ├─ S 写 finance：插入 erp_fin_voucher / voucher_line
+    │       ├─ S 写 finance：插入 erp_fin_voucher_bill_r（业财回链）
+    │       └─ 更新 posted = true（同事务）
+    │   事务提交 → 业务单据 / 库存 / 凭证三者强一致
+    │
+    └─ 方式 B（ASYNC，可选）：txn().afterCommit() 解耦
+        ├─ 主事务提交：单据 + 库存 + posted=false 落盘
+        └─ post-commit 异步：发布 PostingEvent → Provider 生成凭证 → posted=true
+            （由第③层 posted 兜底扫描保证最终一致）
 ```
 
 ### 4.2 同步修改表集矩阵（S 写清单）
@@ -206,7 +246,7 @@ finance 域定义接口 + 注册中心，业务域提供 Provider Bean（Metasfr
 - **禁止反向 S 写**：finance 不回写业务表，inventory 不回写业务单据表。S 写严格单向（业务→财务）。
 - **禁止跨域 private 字段**：`@Inject` 的 `I*Biz` 字段不能是 `private`（nop IoC 规则，见 `AGENTS.md`）。
 - **事务边界清晰**：所有 S 写必须在同一 `@BizMutation` 方法内，不依赖 `@Transactional` 显式传播（`@BizMutation` 自动包装）。
-- **异步过账是可选优化**：Metasfresh 把过账异步化到 `post-commit` EventBus（见 `integration-and-transaction-patterns.md`）。本工程默认同步，性能瓶颈出现时再异步化，但**保留 `posted` 字段兜底**。
+- **异步过账是可选优化**：Metasfresh 把过账异步化到 `post-commit` EventBus。本工程**默认 SYNC**（业务+库存+凭证同事务强一致），按 `(billType, acctSchemaId)` 可对个别高吞吐单据切 ASYNC（经 `txn().afterCommit()` 解耦），但**第①层库存写入恒定 SYNC、`posted` 字段兜底恒定生效**。完整可配边界见 `posting.md §稳定约束 vs 可配置策略`。
 
 ## 5. 弱指针（P）字段目录：跨业务域引用
 
@@ -228,6 +268,8 @@ finance 域定义接口 + 注册中心，业务域提供 Provider Bean（Metasfr
 | quality | `erp_qa_review` | `relatedBillType` + `relatedBillCode` | 不合格品 / 供应商评审 等 |
 
 ### 5.2 弱指针的枚举约定（`billType` / `relatedBillType` 取值）
+
+> **`billType` vs `businessType` 分工**：`billType` 只管源单识别/回链（对应具体 ORM 实体/表，承载于弱指针三元组）；过账模板路由用 `businessType`（见 `docs/design/finance/posting.md §业务类型映射`），两者**非 1:1**（一个 billType 可映射多个 businessType，如 `PUR_RECEIVE` 对应 `PURCHASE_INPUT` 与 `AP_INVOICE`）。回链表 `voucher_bill_r` 同时落两者。
 
 `billType` 是字符串枚举，在 `docs/design/domain-design-guidelines.md` 统一约定（见该文档"单据类型枚举"）。当前已出现的取值：
 
@@ -476,10 +518,18 @@ GROUP BY vl.subject.name
 | **manufacturing** | material / materialSku / uom / warehouse / location / organization / currency / partner | — |
 | **quality** | organization / material / partner / warehouse / employee | — |
 | **maintenance** | organization / location / materialCategory / employee / material / uom / warehouse | — |
+| **crm** | organization / partner / employee / material 等（实测 31 to-one） | — |
+| **cs** | organization / partner 等（实测 5 to-one） | — |
+| **hr** | organization / employee / partner 等（实测 19 to-one） | — |
+| **aps** | organization / material / warehouse 等（实测 6 to-one） | — |
+| **contract** | organization / partner / currency 等（实测 10 to-one） | — |
+| **drp** | organization / material / warehouse 等（实测 7 to-one） | — |
+| **logistics** | organization / partner / material 等（实测 9 to-one） | — |
+| **b2b** | organization / partner / material 等（实测 15 to-one） | — |
 
-> **终态统计**（全量核对）：9 个业务域 orm.xml 共建立 **267 个跨模块 to-one**，引用 **68 个外部实体声明**（含 quality 的 `ErpMdEmployee`），**零残留注释**。所有跨模块引用都有对应的外部实体声明（完整覆盖）。DAG 验证：10 条引用边全部单向合法，零循环依赖。
+> **终态统计**（全量核对）：17 个业务域（除 master-data 根域）orm.xml 共建立约 **369 个跨模块 to-one**（其中 inventory/purchase/sales/finance/assets/projects/manufacturing/quality/maintenance 共 267 个 + crm/cs/hr/aps/contract/drp/logistics/b2b 共约 102 个），引用约 68+ 个外部实体声明。所有业务域 ORM 层均**只引用 master-data**（跨业务域仅 finance→projects 单向合法），零循环依赖。全量 to-one 总数与外部实体声明数待 codegen 后跑脚本精确统一。DAG 验证：所有引用边单向合法，零循环依赖。
 >
-> **关于 finance → assets**：计划阶段曾列入，但实施时确认 assets 关联走 `voucher_bill_r` 弱指针（`billType=AST_DEPRECIATION` + `billHeadCode` 反查资产），不是固定 `assetId` 外键——因此 finance 不建到 assets 的 to-one，这是正确的（业务单据反查源单应用弱指针，见 §5.1）。
+> **关于 finance → assets**：assets 关联走 `voucher_bill_r` 弱指针（`billType=AST_DEPRECIATION` + `billHeadCode` 反查资产），不是固定 `assetId` 外键——因此 finance 不建到 assets 的 to-one（业务单据反查源单应用弱指针，见 §5.1）。
 >
 > master-data 共 15 张表被引用：material / materialSku / materialCategory / partner / warehouse / location / uom / currency / taxRate / settlementMethod / bankAccount / employee / organization / subject / acctSchema。其中 `material` 被所有持有明细的业务域引用，`organization` 被所有业务表引用（多公司核算维度）。
 
@@ -618,7 +668,7 @@ erp_md_partner ──┬─ partner_address (1:N)
 
 erp_md_acct_schema ── acct_schema_coa (1:N, 关联 subject)
 
-被以下域 R 引用：所有 9 个业务域（~120 处）
+被以下域 R 引用：所有 17 个业务域（合计 ~222 处 to-one）
 对外 R 引用：无（根域）
 对外 S 写：无
 ```
@@ -709,7 +759,9 @@ quotation → order → delivery → invoice → receipt
 被 P 反查：inventory（stock_move）/ finance（voucher_bill_r / ar_ap_item）/ quality（inspection）
 ```
 
-### 6.5 扩展域（assets / projects / manufacturing / maintenance / quality）
+### 6.5 扩展域
+
+#### 第一批（assets / projects / manufacturing / maintenance / quality）
 
 | 域 | 核心 R 引用 | 对外 S 写 | 被 P 反查入口 |
 |---|---|---|---|
@@ -718,6 +770,21 @@ quotation → order → delivery → invoice → receipt
 | manufacturing | md（material/sku/uom/org/currency/partner/warehouse） | finance（工单完工过账）+ quality | mrp_demand（sourceBillType 反查销售/生产单） |
 | maintenance | md（org/location/category/employee/warehouse/material）+ assets（equipment→asset，R） | finance（维修领料过账）+ manufacturing（停机影响排产） | 无（被 manufacturing 反查 equipment） |
 | quality | md（org/material/partner/warehouse） | 无（被业务域触发检验，非 S 写） | inspection / review（relatedBillType 反查采购/生产单） |
+
+#### 第二批（crm / cs / hr / aps / contract / drp / logistics / b2b）
+
+> 以下 8 域 ORM 层实测仅引用 master-data（见 §5.6.2）；业务层 S 写/P 关系待各域设计深化后补充。
+
+| 域 | 核心 R 引用（ORM 实测） | 对外 S 写 | 被 P 反查入口 |
+|---|---|---|---|
+| crm | md（organization/partner/employee/material 等，31 to-one） | 待深化（与 sales 协作：线索转客户） | 待深化 |
+| cs | md（organization/partner 等，5 to-one） | 待深化（与 sales 协作：售后工单） | 待深化 |
+| hr | md（organization/employee/partner 等，19 to-one） | 待深化（薪资过账 finance） | 待深化 |
+| aps | md（organization/material/warehouse 等，6 to-one） | 待深化（与 manufacturing 协作：排程→工单） | 待深化 |
+| contract | md（organization/partner/currency 等，10 to-one） | 待深化（合同关联 purchase/sales 单据） | 待深化 |
+| drp | md（organization/material/warehouse 等，7 to-one） | 待深化（分销网络与 inventory/sales） | 待深化 |
+| logistics | md（organization/partner/material 等，9 to-one） | 待深化（运输与 inventory/sales 发货） | 待深化 |
+| b2b | md（organization/partner/material 等，15 to-one） | 待深化（B2B 订单与 purchase/sales） | 待深化 |
 
 ## 7. 数据依赖的演进规则
 

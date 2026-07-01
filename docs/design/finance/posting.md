@@ -6,29 +6,42 @@
 
 本文件是 `flow-overview.md` L3 节"业财打通"的详细展开。
 
-## 总体架构
+## 总体架构（三层模型）
+
+业财打通采用**三层分层模型**，自下而上依次为"不可变的强一致底座 → 可配的凭证时序 → 强制不变的兜底约束"：
 
 ```
-[业务单据审核通过]
-      │
-      ▼
-[前置校验] posted=true → 直接跳过（幂等保证）
-      │ posted=false
-      ▼
-[发布 PostingEvent]
-      │ fields: businessType, billHeadCode, tenantId, acctSchemaId, billData
-      ▼ post-commit 异步
-[ErpFinAcctDocRegistry 查找 Provider]
-      │
-      ▼ 按 businessType 路由
-[IErpFinAcctDocProvider.createFacts()]
-      │
-      ▼ 读取凭证模板 + 科目映射
-[生成凭证分录行]
-      │
-      ▼ 校验借贷平衡
-[写入凭证 + 业财回链 + 更新 posted=true]
+┌─────────────────────────────────────────────────────────────────────┐
+│ 第①层 底座：业务单据 + 库存（强制 SYNC，不可配置）                       │
+│   同一 @BizMutation 事务内原子提交：                                    │
+│     ├─ 业务单据状态变更（docStatus / approveStatus）                    │
+│     ├─ 库存写入（stock_move / stock_ledger / stock_balance）           │
+│     └─ posted=false（待过账标志，与业务+库存同事务落盘）                 │
+│   约束：库存写入不参与"可配置时序"，永远是 SYNC。这是物理库存正确性的    │
+│         硬约束（iDempiere Doc.post / Metasfresh IPostingService 均如此）│
+└─────────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│ 第②层 凭证生成时序（按 (billType, acctSchemaId) 可配：SYNC / ASYNC）    │
+│   方式 A（SYNC，默认）：与第①层同事务，立即生成凭证，业务+库存+凭证三强一致│
+│   方式 B（ASYNC）：经 txn().afterCommit() 解耦，post-commit 异步过账：   │
+│     ├─ 发布 PostingEvent（businessType, billHeadCode, ...）            │
+│     ├─ ErpFinAcctDocRegistry 按 businessType 路由 Provider              │
+│     ├─ IErpFinAcctDocProvider.createFacts() 生成分录                    │
+│     └─ 写入凭证 + 业财回链 + 更新 posted=true                           │
+│   切换依据：性能瓶颈出现时再对个别 billType 切 ASYNC（见 §异步过账）      │
+└─────────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│ 第③层 兜底（跨 SYNC/ASYNC 强制不变，不可关闭）                           │
+│   posted 标志幂等 + 兜底扫描 + 业财回链 + 物理锁定 + 红字冲销 + 可审计    │
+│   详见 §稳定约束 vs 可配置策略                                          │
+└─────────────────────────────────────────────────────────────────────┘
 ```
+
+> **默认配置**：本项目默认全部 billType 走 **SYNC**（方式 A），保证业务+库存+凭证三者强一致。仅当性能压测证明个别高吞吐单据（如大批量销售出库）成为瓶颈时，才对该 billType 切 ASYNC（方式 B）。可配性仅作用于第②层的时序，第①层（库存强一致）与第③层（兜底约束）恒定不变。
 
 ### PostingEvent 契约
 
@@ -44,9 +57,22 @@
 
 过账操作前置检查 `posted=true` 时直接跳过，防止重复过账。兜底扫描与事件回调可能同时命中同一单据，posted 检查确保只处理一次。
 
+## businessType vs billType 分工
+
+`businessType` 与 `billType` 是**两个正交标识**，职责不同、非一对一，二者在业财回链表 `voucher_bill_r` 中同时落库：
+
+| 标识 | 职责 | 取值来源 | 典型值 | 承载位置 |
+|------|------|----------|--------|----------|
+| `billType` | **源单识别 / 回链反查**（对应具体 ORM 实体/表） | `data-dependency-matrix.md §5.2` 枚举 | `PUR_RECEIVE`、`SAL_DELIVERY` | 弱指针三元组 `(billType, billHeadCode, lineCode)` |
+| `businessType` | **过账语义 / 凭证模板路由**（会计事件分类） | 本节 §业务类型映射（唯一权威源） | `PURCHASE_INPUT`、`AR_INVOICE` | `PostingEvent.businessType`、凭证模板路由键 |
+
+> **非 1:1 关系**：一个 `billType` 可映射多个 `businessType`。例如 `billType=PUR_RECEIVE`（采购入库单）在不同环节触发不同会计事件——入库时 `businessType=PURCHASE_INPUT`（暂估应付），收到发票时 `businessType=AP_INVOICE`（进项税+应付）。回链表 `voucher_bill_r` 同时存两者，便于"按源单反查"（用 billType）与"按会计语义聚合"（用 businessType）。
+
+> **参考**：iDempiere 的 `C_DocTypeTarget_ID`/`DocBaseType`（单据类型/会计基类）与 `Fact_Acct.AD_Table_ID+Record_ID`（源单反查）正是这一分工的原型；Metasfresh 的 `AcctDocRegistry` 用 `docTableName`（识别实体）与 `Doc_Invoice.createFacts`（会计语义）同样分离。
+
 ## 业务类型映射（唯一权威源）
 
-> **重要**：本表是全部 `businessType` 的唯一权威来源。所有模块的业财过账必须使用本表定义的 businessType，新增业务类型时必须更新本表。
+> **重要**：本表是全部 `businessType` 的唯一权威来源（负责过账语义/凭证模板路由）。源单识别/回链用 `billType`（见 `data-dependency-matrix.md §5.2` 枚举），两者非 1:1。所有模块的业财过账必须使用本表定义的 businessType，新增业务类型时必须更新本表。
 
 每种业务单据对应一个 `businessType`，决定使用哪个凭证模板：
 
@@ -255,17 +281,27 @@ ErpFinAcctDocRegistry
 
 ## 异步过账与失败处理
 
-### 异步机制
+> 本节描述总体架构 §第②层的 ASYNC 模式（方式 B）及其失败恢复。**默认走 SYNC（方式 A）**，ASYNC 仅为可选优化。无论 SYNC/ASYNC，库存写入（第①层）恒定强一致，兜底约束（第③层）恒定生效。
 
-- 业务单据审核通过 → 主事务落单据 + `posted=false` + 发布过账事件。
-- 过账在 post-commit 异步执行（不阻塞业务单据审核响应）。
-- 过账失败可重试，不影响主单据状态。
+### 异步机制（方式 B，可选）
+
+- 业务单据审核通过 → 主事务落"单据 + 库存 + `posted=false`"（第①层，SYNC 强一致）。
+- 凭证生成经 `txn().afterCommit()` 解耦到 post-commit 异步执行（不阻塞业务单据审核响应）。
+- 凭证过账失败可重试，不影响已提交的单据+库存状态（业务与凭证在 ASYNC 模式下短暂解耦，由第③层兜底保证最终一致）。
 
 ### posted 标志兜底
 
-- 业务单据带 `posted` 字段（boolean）。
+- 业务单据带 `posted` 字段（boolean），与单据+库存同事务落盘。
 - 定期兜底扫描（定时任务）：扫描 `posted=false` 且已审核超过 N 分钟的单据，重新触发过账。
-- 处理异步事件丢失、服务重启等异常场景。
+- 处理异步事件丢失、服务重启等异常场景——兜底扫描对 SYNC/ASYNC 两种模式统一生效。
+
+### 同步测试缝（postNow）
+
+`IErpFinPostingBiz` 设计阶段即预留**同步直调入口** `postNow(billType, billHeadCode)`：
+
+- 测试场景下绕过 ASYNC 时序，直接在同事务内完成凭证生成，便于 `JunitAutoTestCase` 快照断言（见 `testing-strategy.md` 异步过账测试时序模型）。
+- 生产场景下若某 billType 配置为 SYNC，`postNow` 即是其实现路径；ASYNC 模式下 `postNow` 可作为兜底直调（不依赖事件时序）。
+- 该入口是"测试同步化 + 兜底直调"的统一缝，避免为测试单独开后门。
 
 ### 失败处理策略
 
@@ -276,6 +312,23 @@ ErpFinAcctDocRegistry
 | 借贷不平衡 | 报错（通常是模板配置错误），人工介入 |
 | 期间已结账 | 报错，需反结账或计入当前开启期间 |
 | 系统异常 | 自动重试（指数退避），超过阈值告警 |
+
+## 稳定约束 vs 可配置策略
+
+> 本节是三层模型（§总体架构）的**配置边界裁决表**：哪些恒定不变、哪些可调。修改过账机制时**禁止**触碰"稳定约束"列。
+
+| 维度 | 稳定约束（恒定不变，不可配置） | 可配置策略（按需调整） |
+|------|-------------------------------|------------------------|
+| **库存一致性** | 第①层：业务单据 + 库存写入（stock_move/ledger/balance）永远在同一 `@BizMutation` 事务强一致 | ❌ 不可配（物理库存正确性硬约束） |
+| **凭证时序** | 第②层最终一致（posted 标志 + 兜底保证） | ✅ 按 `(billType, acctSchemaId)` 切 SYNC 同事务 / ASYNC post-commit |
+| **幂等** | posted 标志前置检查，重复过账直接跳过 | ❌ 不可配 |
+| **业财回链** | `voucher_bill_r` 同时存 billType + businessType，双向可查 | ❌ 不可配 |
+| **物理锁定** | 过账中对单据加锁，防止并发过账 | ❌ 不可配 |
+| **可补偿** | 红字冲销（见 §冲销机制） | ❌ 不可配 |
+| **可审计** | 凭证 + 回链 + posted 翻转全程留痕 | ❌ 不可配 |
+| **默认模式** | — | ✅ 默认 SYNC；性能瓶颈时个别 billType 切 ASYNC |
+
+> **判定原则**：可配的**仅**"凭证生成时序"一项。任何声称"库存可异步""幂等可关闭""回链可省略"的设计都违反稳定约束。
 
 ## 冲销机制
 

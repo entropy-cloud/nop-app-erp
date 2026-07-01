@@ -16,7 +16,7 @@
 | 项 | 值 |
 |----|----|
 | Maven 工程 | `app-erp-finance` |
-| appName | `app-erp-fin` |
+| appName | `erp-fin` (两级) |
 | 权威模型 | `model/app-erp-finance.orm.xml` |
 | 实体包 | `app.erp.fin.dao.entity` |
 | 表前缀 | `erp_fin_` |

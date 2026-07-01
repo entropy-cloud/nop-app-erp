@@ -72,9 +72,9 @@
 | VMI/寄售/受托代销 | inventory | `inventory/consignment.md` | owner 库存维度、所有权转移单（物权变更，物理不变） |
 | 批次召回事件 | quality | `quality/recall.md` | 召回事件聚合（复用 trace-chain/NCR/退货）、NCR 升级 ESCALATED_TO_RECALL |
 
-## 完整业务域（此前标记骨架/P2，现为完整设计）
+## 第二批扩展业务域（独立模块）
 
-> 以下功能此前曾标记为"可选扩展/骨架/P2排除/延迟"，经开源调研确认（Axelor/AureusERP/IDURAR）均有成熟实现，现已升级为完整设计。nop-app-erp 覆盖全部开源 ERP 中存在的业务功能。
+> 以下域为独立扩展模块（开源调研 Axelor/AureusERP/IDURAR 均有成熟实现），覆盖全部开源 ERP 中存在的业务功能。
 
 | 功能 | 所属域 | Owner Doc | 说明 |
 |------|--------|-----------|------|
@@ -82,22 +82,12 @@
 | 售后服务/客服工单 | customer-service | `customer-service/README.md` | 客服工单（Ticket） + SLA 策略 + 团队分派 + 知识库 + 升级机制 |
 | 人力资源管理（HRMS） | human-resource | `human-resource/README.md` | 员工主数据、劳动合同、薪酬核算、考勤、休假/请假、招聘管理、社保/个税 |
 | 运输管理（TMS） | logistics | `logistics/README.md` | 发运单 + 三层承运商 SPI（Client/Factory/Registry） |
-| 工序级排产（APS） | manufacturing | `manufacturing/crp.md` | OperationOrder 工序工单 + 有限产能排产 + 前向/后向排产 |
-| 合同全生命周期 | purchase | `purchase/contract-management.md` | 合同版本、开票计划、用量计费、到期提醒 |
-| 分销需求计划（DRP） | manufacturing | `manufacturing/drp.md` | 多仓库净需求计算、补货建议（仓间调拨/采购） |
-| B2B 集成（EDI/ASN） | b2b | `architecture/b2b-integration.md` | EDI 格式 SPI + 信封状态机 + ASN 入站 |
-
-| 批次召回事件 | quality | `quality/recall.md` | 召回事件聚合（复用 trace-chain/NCR/退货）、NCR 升级 ESCALATED_TO_RECALL |
-| 客户关系管理（CRM） | crm（独立模块） | `crm/README.md` | 线索→商机→转化报价单，活动历史（Event/Meeting）、日历、查重、团队 |
-| 售后服务/客服工单 | customer-service（独立模块） | `customer-service/README.md` | 客服工单 + SLA 策略 + 团队分派 + 知识库 |
-| 人力资源管理（HRMS） | human-resource（独立模块） | `human-resource/README.md` | 员工、合同、薪酬、考勤、休假、招聘、社保/个税 |
-| 工序级排产（APS） | aps（独立模块） | `aps/README.md` | OperationOrder 工序工单 + 有限产能排产 + 前向/后向排产 |
-| 合同全生命周期 | contract（独立模块） | `contract/README.md` | 合同版本、开票计划、用量计费、到期提醒 |
-| 分销需求计划（DRP） | drp（独立模块） | `drp/README.md` | 多仓库净需求计算、补货建议（仓间调拨/采购） |
-| 运输管理（TMS） | logistics（独立模块） | `logistics/README.md` | 发运单 + 三层承运商 SPI 网关 |
-| B2B 集成（EDI/ASN） | b2b（独立模块） | `architecture/b2b-integration.md` | EDI 格式 SPI + 信封状态机 + ASN 入站 |
-| 条码/PDA 扫描 | inventory（集成） | `inventory/barcode-integration.md` | PDA 收发货/盘点/领料/质检扫码，条码规则配置 |
-| 客户/供应商门户 | portal（前端聚合） | `portal/README.md` | 客户自助查订单/发票/工单；供应商确认PO/提交ASN/发票 |
+| 工序级排产（APS） | aps | `aps/README.md` | OperationOrder 工序工单 + 有限产能排产 + 前向/后向排产 |
+| 合同全生命周期 | contract | `contract/README.md` | 合同版本、开票计划、用量计费、到期提醒 |
+| 分销需求计划（DRP） | drp | `drp/README.md` | 多仓库净需求计算、补货建议（仓间调拨/采购） |
+| B2B 集成（EDI/ASN） | b2b | `b2b/README.md`（业务语义）+ 辅助 `architecture/b2b-integration.md`（集成契约） | EDI 格式 SPI + 信封状态机 + ASN 入站 |
+| 条码/PDA 扫描 | inventory | `inventory/barcode-integration.md` | PDA 收发货/盘点/领料/质检扫码，条码规则配置 |
+| 客户/供应商门户 | portal | `portal/README.md`（**future extension**，非当前基线） | 客户自助查订单/发票/工单；供应商确认PO/提交ASN/发票 |
 
 ## 平台复用功能（非 ERP 自建）
 

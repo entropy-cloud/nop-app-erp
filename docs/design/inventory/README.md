@@ -16,7 +16,7 @@
 | 项 | 值 |
 |----|----|
 | Maven 工程 | `app-erp-inventory` |
-| appName | `app-erp-inv` |
+| appName | `erp-inv` (两级) |
 | 权威模型 | `model/app-erp-inventory.orm.xml` |
 | 实体包 | `app.erp.inv.dao.entity` |
 | 表前缀 | `erp_inv_` |

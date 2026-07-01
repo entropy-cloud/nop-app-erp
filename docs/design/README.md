@@ -32,7 +32,7 @@
 | 文档 | 职责 |
 |-----|------|
 | `app-overview.md` | 应用界面范围、角色、核心业务流程总览、关键领域区域 |
-| `domain-design-guidelines.md` | 10 个业务域的设计原则、归属映射、跨域协作规则与数据一致性策略 |
+| `domain-design-guidelines.md` | 18 个业务域的设计原则、归属映射、跨域协作规则与数据一致性策略 |
 | `domain-glossary.md` | 跨域核心术语统一词汇表 |
 | `flow-overview.md` | 全局业务流程编排（L1 宏观流程、L2 状态机映射、L3 跨域规则） |
 | `roles-and-permissions.md` | ERP 角色与权限模型 |
@@ -40,7 +40,7 @@
 
 ## 业务域设计文档（每域一个目录，结构因域而异）
 
-ERP 业务按 10 个独立领域工程组织（见 `docs/architecture/domain-module-split-analysis.md`），每个域对应 `docs/design/<domain>/` 目录。**不同域的文档结构不同**——按该域的业务复杂度与状态机重量决定包含哪些详细文档：
+ERP 业务按 18 个独立领域工程组织（见 `docs/architecture/domain-module-split-analysis.md §2.0` 映射表），每个域对应 `docs/design/<domain>/` 目录。**不同域的文档结构不同**——按该域的业务复杂度与状态机重量决定包含哪些详细文档：
 
 ### 核心业务域（进销存+财务）
 
@@ -62,9 +62,9 @@ ERP 业务按 10 个独立领域工程组织（见 `docs/architecture/domain-mod
 | `quality/` | `app-erp-quality` | `module-quality/model/app-erp-quality.orm.xml` | README + state-machine（质检+NCR） |
 | `maintenance/` | `app-erp-maintenance` | `module-maintenance/model/app-erp-maintenance.orm.xml` | README + state-machine（维护访问+请求） |
 
-### 新增强业务域（独立模块）
+### 第二批扩展业务域（独立模块）
 
-> 以下域此前曾被标记为"骨架/P2/延迟"，经开源调研确认（Axelor/AureusERP/IDURAR）均有成熟实现，现已纳入完整设计并各自独立成模块。
+> 以下域各自独立成模块（开源调研 Axelor/AureusERP/IDURAR 均有成熟实现）。
 
 | 域目录 | 工程 | 状态 | 文档 |
 |--------|------|------|------|
@@ -75,8 +75,15 @@ ERP 业务按 10 个独立领域工程组织（见 `docs/architecture/domain-mod
 | `contract/` | `module-contract` | 完整设计 | `contract/README.md`（合同版本/开票计划/用量计费/到期提醒） |
 | `drp/` | `module-drp` | 完整设计 | `drp/README.md`（多仓库净需求计算/补货建议/仓间调拨） |
 | `logistics/` | `module-logistics` | 完整设计 | `logistics/README.md`（TMS 发运单 + 三层承运商 SPI） |
+| `b2b/` | `module-b2b` | 完整设计 | `b2b/README.md`（业务语义、状态机、EDI/ASN 用例） |
 
-> B2B 集成（EDI/ASN）属集成层，owner doc 在 `docs/architecture/b2b-integration.md`（规划 `module-b2b`）。
+> **B2B 双层分工**：`docs/design/b2b/README.md` 拥有**业务语义**（状态机、用例、页面）；`docs/architecture/b2b-integration.md` 拥有**集成契约**（EDI SPI、Webhook、技术边界）。两者相互引用。
+
+### Portal（future extension，非当前基线）
+
+| 域目录 | 工程 | 状态 | 文档 |
+|--------|------|------|------|
+| `portal/` | （未建工程） | **future extension placeholder** | `portal/README.md`（STATUS 横幅标注非当前基线；外部主体模型见 `portal/identity-and-access.md`） |
 
 **结构选择原则**：
 - 状态机重的域（inventory/purchase/sales/finance）才有独立 `state-machine.md`。

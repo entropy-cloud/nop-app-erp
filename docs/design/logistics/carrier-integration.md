@@ -77,7 +77,7 @@ class ErpLogCarrierGatewayRegistry {
 
 ### 1.4 中立 DTO 模型包
 
-放 `app-erp-log-service` 的 `spi/model/` 包，承运商无关 POJO：
+放 `erp-log-service` 模块的 `spi/model/` 包，承运商无关 POJO：
 
 | DTO | 用途 |
 |-----|------|

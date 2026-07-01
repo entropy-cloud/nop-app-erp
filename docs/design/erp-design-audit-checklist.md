@@ -1,8 +1,6 @@
 # ERP 设计核对清单
 
-> 本清单用于核对 nop-app-erp 各子域设计的完善程度，作为**稳定的设计核对维度参考**。
->
-> **边界说明：** 本文件只承载"设计应核对哪些维度"的稳定 checklist。实现进度、完成率、数据库落地状态、roadmap 顺序属于时间敏感内容，归 `docs/backlog/` 与 `docs/logs/`，不再在此重复维护（避免每次 codegen 推进都要改"设计"文件）。功能是否已支持以 `feature-inventory.md` 为准；功能 owner 以各域 README/`docs/design/README.md` 索引为准。
+> **边界说明：** 本文件承载"设计应核对哪些维度"的稳定 checklist。实现进度、完成率、数据库落地状态、roadmap 顺序属于时间敏感内容，归 `docs/backlog/` 与 `docs/logs/`，不在此重复维护。功能是否已支持以 `feature-inventory.md` 为准；功能 owner 以各域 README/`docs/design/README.md` 索引为准。
 >
 > **公共字段约定：** 所有业务单据头统一携带 `orgId`（业务组织）、`businessDate`（业务日期）、`posted`（业财过账标志）、`postedAt/postedBy`、`version`（乐观锁）；所有金额类单据头/行统一携带 `currencyId` + `exchangeRate` + `amountSource`（源币金额）+ `amountFunctional`（本位币金额）。详见 `docs/design/domain-design-guidelines.md` 的"单据标准字段约定"小节。字段/类型/字典的真相源是各域 `model/app-erp-<domain>.orm.xml`。
 

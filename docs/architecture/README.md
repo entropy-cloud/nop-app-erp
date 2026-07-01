@@ -10,10 +10,10 @@ Use `docs/design/` for app-layer feature and business design. Use `docs/architec
 
 1. `project-vision.md` — 产品定位（产品化通用 ERP）
 2. `customization-capabilities.md` — 定制开发能力总览
-3. `system-baseline.md` — 技术基线与 10 域模块结构
+3. `system-baseline.md` — 技术基线与 18 域模块结构
 4. `module-boundaries.md` — 模块依赖方向（DAG）
 5. `data-dependency-matrix.md` — 数据依赖矩阵（模块间只读/同步写/弱指针）
-6. `domain-module-split-analysis.md` — 10 域拆分决策与命名方案
+6. `domain-module-split-analysis.md` — 18 域拆分决策与命名方案（含 §2.0 工程命名映射表）
 7. `competitive-comparison.md` — 竞品架构对标（vs Odoo/ERPNext/iDempiere/Tryton 等，超越点论证）
 8. `service-layer-orchestration.md` — 服务层编排架构（task.xml + I*Biz 分工与步骤实现选择）
 9. more specific owner docs as the project grows
@@ -36,10 +36,10 @@ Use `docs/design/` for app-layer feature and business design. Use `docs/architec
 
 - `project-vision.md` - 产品定位（产品化通用 ERP）、主要用户、不变约束、非目标、里程碑
 - `customization-capabilities.md` - 定制开发能力总览（Delta/扩展字段/nop-dyn/模块组装/扩展层/BizLoader + 决策矩阵 + 升级路径）
-- `system-baseline.md` - 技术基线、10 域模块结构、多租户策略、Stable Rules
+- `system-baseline.md` - 技术基线、18 域模块结构、多租户策略、Stable Rules
 - `module-boundaries.md` - 模块依赖方向（DAG）、跨工程实体关系硬规则
 - `data-dependency-matrix.md` - 数据依赖矩阵（模块间只读 R / 同步写 S / 弱指针 P 三类依赖、跨域字段目录、业财一体事务边界、billType 枚举）
-- `domain-module-split-analysis.md` - 10 域拆分决策（方案B）、命名与前缀方案、codegen 边界
+- `domain-module-split-analysis.md` - 18 域拆分决策（方案B）、命名与前缀方案（§2.0 映射表）、codegen 边界
 - `document-engine.md` - DocumentEngine 统一状态机设计（三轴状态、声明式转换规则、异步过账机制）
 - `doc-model-design.md` - 单据模型设计（双维度类型、进销存三单链、单据编号规则）
 - `l10n-strategy.md` - 本地化策略设计（中国本地化模块、金税接口、增值税发票）
@@ -47,5 +47,5 @@ Use `docs/design/` for app-layer feature and business design. Use `docs/architec
 - `service-layer-orchestration.md` - 服务层编排架构（task.xml + I*Biz 分工、步骤实现方式选择、映射约定、Delta 定制模式）
 - `integration-and-transaction-patterns.md` - 集成与事务模式
 - `integration-pattern.md` - 外部 API 集成模式（Webhook 出站/入站）
-- `b2b-integration.md` - B2B 集成 / EDI / ASN（集成层，可选 `module-b2b` 工程；EDI 格式 SPI 适用性派发 + 信封状态机 + ASN 入站）
+- `b2b-integration.md` - B2B **集成契约层**（EDI 格式 SPI 适用性派发 + 信封状态机 + ASN 入站、Webhook、技术边界）；**业务语义**（状态机业务含义、用例、页面）归 `docs/design/b2b/README.md`，两者相互引用
 - `competitive-comparison.md` - 竞品架构对标（Odoo/ERPNext/metasfresh/iDempiere/Tryton/Openbravo/MixERP），8 个"超越点"杠杆与汇总表、诚实声明
