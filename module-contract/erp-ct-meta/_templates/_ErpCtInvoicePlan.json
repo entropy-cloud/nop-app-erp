@@ -2,7 +2,7 @@
   "id": 0,
   "contractLineId": 0,
   "planDate": "2000-01-01",
-  "amount": "",
+  "amount": 0.0,
   "isInvoiced": false,
   "invoiceBillCode": "",
   "invoiceDate": "2000-01-01",

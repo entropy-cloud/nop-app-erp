@@ -5,8 +5,6 @@ drop table  if exists  erp_md_md_organization;
 drop table  if exists  erp_md_currency;
 drop table  if exists  erp_md_material;
 drop table  if exists  erp_ct_approval_matrix;
-drop table  if exists  erp_ct_signature_request;
-drop table  if exists  erp_ct_approval_matrix;
 drop table  if exists  erp_ct_contract;
 drop table  if exists  erp_ct_contract_line;
 drop table  if exists  erp_ct_contract_version;

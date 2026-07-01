@@ -253,7 +253,7 @@ public class _ErpCtContract extends DynamicOrmEntity{
     private java.lang.Long _currencyId;
     
     /* 合同总额: TOTAL_AMOUNT */
-    private java.lang.String _totalAmount;
+    private java.math.BigDecimal _totalAmount;
     
     /* 生效日期: START_DATE */
     private java.time.LocalDate _startDate;
@@ -538,9 +538,9 @@ public class _ErpCtContract extends DynamicOrmEntity{
             }
         
             case PROP_ID_totalAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_totalAmount));
                }
                setTotalAmount(typedValue);
@@ -764,7 +764,7 @@ public class _ErpCtContract extends DynamicOrmEntity{
         
             case PROP_ID_totalAmount:{
                onInitProp(propId);
-               this._totalAmount = (java.lang.String)value;
+               this._totalAmount = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1035,7 +1035,7 @@ public class _ErpCtContract extends DynamicOrmEntity{
     /**
      * 合同总额: TOTAL_AMOUNT
      */
-    public final java.lang.String getTotalAmount(){
+    public final java.math.BigDecimal getTotalAmount(){
          onPropGet(PROP_ID_totalAmount);
          return _totalAmount;
     }
@@ -1043,7 +1043,7 @@ public class _ErpCtContract extends DynamicOrmEntity{
     /**
      * 合同总额: TOTAL_AMOUNT
      */
-    public final void setTotalAmount(java.lang.String value){
+    public final void setTotalAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_totalAmount,value)){
             this._totalAmount = value;
             internalClearRefs(PROP_ID_totalAmount);

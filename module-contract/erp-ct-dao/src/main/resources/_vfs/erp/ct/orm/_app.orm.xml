@@ -118,7 +118,7 @@
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="8" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="TOTAL_AMOUNT" displayName="合同总额" domain="amount" name="totalAmount" precision="20"
-                        propId="9" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="9" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Total Amount"/>
                 <column code="START_DATE" displayName="生效日期" mandatory="true" name="startDate" propId="10"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Start Date"/>
@@ -218,11 +218,11 @@
                 <column code="DESCRIPTION" displayName="行描述" name="description" precision="500" propId="5"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Description"/>
                 <column code="QUANTITY" displayName="数量" domain="quantity" name="quantity" precision="20" propId="6"
-                        scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Quantity"/>
+                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Quantity"/>
                 <column code="UNIT_PRICE" displayName="单价" domain="unitPrice" name="unitPrice" precision="20" propId="7"
-                        scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Unit Price"/>
+                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Unit Price"/>
                 <column code="AMOUNT" displayName="金额" domain="amount" name="amount" precision="20" propId="8" scale="4"
-                        stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Amount"/>
+                        stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Amount"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="9"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -339,7 +339,7 @@
                 <column code="PLAN_DATE" displayName="计划开票日期" name="planDate" propId="3" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Plan Date"/>
                 <column code="AMOUNT" displayName="开票金额" domain="amount" name="amount" precision="20" propId="4"
-                        scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Amount"/>
+                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Amount"/>
                 <column code="IS_INVOICED" defaultValue="false" displayName="是否已开票" name="isInvoiced" propId="5"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Invoiced"/>
                 <column code="INVOICE_BILL_CODE" displayName="关联发票号" name="invoiceBillCode" precision="50" propId="6"
@@ -390,11 +390,11 @@
                 <column code="CONSUMPTION_DATE" displayName="消耗日期" mandatory="true" name="consumptionDate" propId="3"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Consumption Date"/>
                 <column code="QUANTITY" displayName="消耗数量" domain="quantity" name="quantity" precision="20" propId="4"
-                        scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Quantity"/>
+                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Quantity"/>
                 <column code="UNIT_PRICE" displayName="单价" domain="unitPrice" name="unitPrice" precision="20" propId="5"
-                        scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Unit Price"/>
+                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Unit Price"/>
                 <column code="AMOUNT" displayName="金额" domain="amount" name="amount" precision="20" propId="6" scale="4"
-                        stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Amount"/>
+                        stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Amount"/>
                 <column code="SOURCE_BILL_TYPE" displayName="来源单据类型" name="sourceBillType" precision="50" propId="7"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Source Bill Type"/>
                 <column code="SOURCE_BILL_CODE" displayName="来源单据号" name="sourceBillCode" precision="50" propId="8"
@@ -1052,28 +1052,6 @@
             <columns>
                 <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"
                         stdSqlType="BIGINT" tagSet="seq-default"/>
-            </columns>
-        </entity>
-        <entity className="app.erp.ct.dao.entity.ErpCtApprovalMatrix" displayName="审批矩阵"
-                name="app.erp.ct.dao.entity.ErpCtApprovalMatrix" notGenCode="true" tableName="erp_ct_approval_matrix"
-                biz:moduleId="erp/ct">
-            <columns>
-                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="ID"/>
-                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
-                        i18n-en:displayName="Code"/>
-                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"
-                        i18n-en:displayName="Name"/>
-            </columns>
-        </entity>
-        <entity className="app.erp.ct.dao.entity.ErpCtSignatureRequest" displayName="签名请求"
-                name="app.erp.ct.dao.entity.ErpCtSignatureRequest" notGenCode="true"
-                tableName="erp_ct_signature_request" biz:moduleId="erp/ct">
-            <columns>
-                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="ID"/>
-                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
-                        i18n-en:displayName="Code"/>
             </columns>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdCurrency" displayName="币种"

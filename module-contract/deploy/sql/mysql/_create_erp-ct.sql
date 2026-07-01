@@ -41,19 +41,6 @@ CREATE TABLE erp_md_material(
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_ct_approval_matrix(
-  ID BIGINT NULL    COMMENT 'null',
-  CODE VARCHAR(50) NULL    COMMENT 'null',
-  NAME VARCHAR(200) NULL    COMMENT 'null',
-  constraint PK_erp_ct_approval_matrix primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_ct_signature_request(
-  ID BIGINT NULL    COMMENT 'null',
-  CODE VARCHAR(50) NULL    COMMENT 'null',
-  constraint PK_erp_ct_signature_request primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_ct_approval_matrix(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '编码',
   ORG_ID BIGINT NULL    COMMENT '业务组织',
@@ -366,10 +353,6 @@ CREATE TABLE erp_ct_rebate_settlement(
    ALTER TABLE erp_md_currency COMMENT '币种';
                 
    ALTER TABLE erp_md_material COMMENT '物料';
-                
-   ALTER TABLE erp_ct_approval_matrix COMMENT '审批矩阵';
-                
-   ALTER TABLE erp_ct_signature_request COMMENT '签名请求';
                 
    ALTER TABLE erp_ct_approval_matrix COMMENT '审批矩阵';
                 

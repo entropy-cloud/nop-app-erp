@@ -11,10 +11,6 @@ alter table erp_md_material add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ct_approval_matrix add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
-alter table erp_ct_signature_request add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
-
-alter table erp_ct_approval_matrix add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
-
 alter table erp_ct_contract add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ct_contract_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
@@ -55,12 +51,6 @@ alter table erp_md_currency add constraint PK_erp_md_currency primary key (NOP_T
 
 alter table erp_md_material drop constraint PK_erp_md_material;
 alter table erp_md_material add constraint PK_erp_md_material primary key (NOP_TENANT_ID, ID);
-
-alter table erp_ct_approval_matrix drop constraint PK_erp_ct_approval_matrix;
-alter table erp_ct_approval_matrix add constraint PK_erp_ct_approval_matrix primary key (NOP_TENANT_ID, ID);
-
-alter table erp_ct_signature_request drop constraint PK_erp_ct_signature_request;
-alter table erp_ct_signature_request add constraint PK_erp_ct_signature_request primary key (NOP_TENANT_ID, ID);
 
 alter table erp_ct_approval_matrix drop constraint PK_erp_ct_approval_matrix;
 alter table erp_ct_approval_matrix add constraint PK_erp_ct_approval_matrix primary key (NOP_TENANT_ID, ID);

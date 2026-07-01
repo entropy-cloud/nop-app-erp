@@ -28,13 +28,13 @@
                 <col id="consumptionDate" mandatory="true" sortable="true"/>
 
                 <!--消耗数量-->
-                <col id="quantity" sortable="true"/>
+                <col id="quantity" ui:number="true" sortable="true"/>
 
                 <!--单价-->
-                <col id="unitPrice" sortable="true"/>
+                <col id="unitPrice" ui:number="true" sortable="true"/>
 
                 <!--金额-->
-                <col id="amount" sortable="true"/>
+                <col id="amount" ui:number="true" sortable="true"/>
 
                 <!--来源单据类型-->
                 <col id="sourceBillType" sortable="true"/>

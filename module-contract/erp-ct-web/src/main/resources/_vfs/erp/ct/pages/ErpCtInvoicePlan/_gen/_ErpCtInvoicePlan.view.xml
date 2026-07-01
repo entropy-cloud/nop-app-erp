@@ -28,7 +28,7 @@
                 <col id="planDate" sortable="true"/>
 
                 <!--开票金额-->
-                <col id="amount" sortable="true"/>
+                <col id="amount" ui:number="true" sortable="true"/>
 
                 <!--是否已开票-->
                 <col id="isInvoiced" sortable="true"/>

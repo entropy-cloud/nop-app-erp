@@ -41,19 +41,6 @@ CREATE TABLE erp_md_material(
 );
 
 CREATE TABLE erp_ct_approval_matrix(
-  id INT8  ,
-  code VARCHAR(50)  ,
-  name VARCHAR(200)  ,
-  constraint PK_erp_ct_approval_matrix primary key (id)
-);
-
-CREATE TABLE erp_ct_signature_request(
-  id INT8  ,
-  code VARCHAR(50)  ,
-  constraint PK_erp_ct_signature_request primary key (id)
-);
-
-CREATE TABLE erp_ct_approval_matrix(
   id INT8 NOT NULL ,
   code VARCHAR(50) NOT NULL ,
   org_id INT8  ,
@@ -392,10 +379,6 @@ CREATE TABLE erp_ct_rebate_settlement(
       COMMENT ON TABLE erp_md_currency IS '币种';
                 
       COMMENT ON TABLE erp_md_material IS '物料';
-                
-      COMMENT ON TABLE erp_ct_approval_matrix IS '审批矩阵';
-                
-      COMMENT ON TABLE erp_ct_signature_request IS '签名请求';
                 
       COMMENT ON TABLE erp_ct_approval_matrix IS '审批矩阵';
                 

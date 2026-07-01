@@ -33,7 +33,7 @@
         </prop>
         <prop name="amount" displayName="开票金额" propId="4" i18n-en:displayName="Amount" queryable="true" sortable="true"
               insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="isInvoiced" displayName="是否已开票" propId="5" i18n-en:displayName="Is Invoiced" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="false">

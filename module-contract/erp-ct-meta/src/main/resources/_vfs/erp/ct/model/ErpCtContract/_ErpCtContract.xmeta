@@ -53,7 +53,7 @@
         </prop>
         <prop name="totalAmount" displayName="合同总额" propId="9" i18n-en:displayName="Total Amount" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="startDate" displayName="生效日期" propId="10" i18n-en:displayName="Start Date" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">

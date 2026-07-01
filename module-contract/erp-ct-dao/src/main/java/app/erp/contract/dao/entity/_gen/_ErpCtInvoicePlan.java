@@ -154,7 +154,7 @@ public class _ErpCtInvoicePlan extends DynamicOrmEntity{
     private java.time.LocalDate _planDate;
     
     /* 开票金额: AMOUNT */
-    private java.lang.String _amount;
+    private java.math.BigDecimal _amount;
     
     /* 是否已开票: IS_INVOICED */
     private java.lang.Boolean _isInvoiced;
@@ -350,9 +350,9 @@ public class _ErpCtInvoicePlan extends DynamicOrmEntity{
             }
         
             case PROP_ID_amount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_amount));
                }
                setAmount(typedValue);
@@ -501,7 +501,7 @@ public class _ErpCtInvoicePlan extends DynamicOrmEntity{
         
             case PROP_ID_amount:{
                onInitProp(propId);
-               this._amount = (java.lang.String)value;
+               this._amount = (java.math.BigDecimal)value;
                
                break;
             }
@@ -649,7 +649,7 @@ public class _ErpCtInvoicePlan extends DynamicOrmEntity{
     /**
      * 开票金额: AMOUNT
      */
-    public final java.lang.String getAmount(){
+    public final java.math.BigDecimal getAmount(){
          onPropGet(PROP_ID_amount);
          return _amount;
     }
@@ -657,7 +657,7 @@ public class _ErpCtInvoicePlan extends DynamicOrmEntity{
     /**
      * 开票金额: AMOUNT
      */
-    public final void setAmount(java.lang.String value){
+    public final void setAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_amount,value)){
             this._amount = value;
             internalClearRefs(PROP_ID_amount);

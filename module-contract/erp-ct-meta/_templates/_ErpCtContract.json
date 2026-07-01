@@ -9,7 +9,7 @@
   "contractDirection_label": "",
   "partnerId": 0,
   "currencyId": 0,
-  "totalAmount": "",
+  "totalAmount": 0.0,
   "startDate": "2000-01-01",
   "endDate": "2000-01-01",
   "signDate": "2000-01-01",
