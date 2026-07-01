@@ -365,7 +365,8 @@ public class ErpFinPostingService {
 
     private String buildVoucherCode(ErpFinBusinessType type, boolean reversal) {
         String prefix = reversal ? "REV-" : "PST-";
-        String typePart = type != null ? type.name() : "VOUCHER";
+        // 用业务类型 int code（而非枚举名）以控制长度：PST-{code}-{32hex} ≤ 40 字符，适配 CODE VARCHAR(50)
+        String typePart = type != null ? String.valueOf(type.getCode()) : "0";
         return prefix + typePart + "-" + StringHelper.generateUUID();
     }
 }
