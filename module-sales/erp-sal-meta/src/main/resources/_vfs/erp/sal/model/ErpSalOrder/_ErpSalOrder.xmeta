@@ -32,11 +32,11 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="quotationId" displayName="报价单" propId="4" i18n-en:displayName="Quotation" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="quotation">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="contractId" displayName="销售合同" propId="5" i18n-en:displayName="Contract" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="true" updatable="true" ext:relation="contract">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="customerId" displayName="客户" propId="6" i18n-en:displayName="Customer" mandatory="true"
@@ -125,11 +125,11 @@
         </prop>
         <prop name="postedBy" displayName="过账人" propId="27" i18n-en:displayName="Posted By" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String" precision="36"/>
         </prop>
         <prop name="approvedBy" displayName="审核人" propId="28" i18n-en:displayName="Approved By" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String" precision="36"/>
         </prop>
         <prop name="approvedAt" displayName="审核时间" propId="29" i18n-en:displayName="Approved At" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -194,6 +194,16 @@
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
               lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="quotation" i18n-en:displayName="Quotation" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="quotationId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpSalQuotation"/>
+        </prop>
+        <prop name="contract" i18n-en:displayName="Contract" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="contractId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpSalContract"/>
         </prop>
     </props>
 </meta>

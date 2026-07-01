@@ -139,6 +139,9 @@ public class _ErpSalOrderLine extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_warehouse = "warehouse";
     
+    /* relation:  */
+    public static final String PROP_NAME_project = "project";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1462,6 +1465,29 @@ public class _ErpSalOrderLine extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_warehouse, refEntity,()->{
            
                            this.setWarehouseId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.prj.dao.entity.ErpPrjProject getProject(){
+       return (app.erp.prj.dao.entity.ErpPrjProject)internalGetRefEntity(PROP_NAME_project);
+    }
+
+    public final void setProject(app.erp.prj.dao.entity.ErpPrjProject refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setProjectId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_project, refEntity,()->{
+           
+                           this.setProjectId(refEntity.getId());
                        
            });
            }

@@ -19,6 +19,16 @@ CREATE TABLE erp_md_currency(
   constraint PK_erp_md_currency primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_md_organization(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  ORG_TYPE INTEGER NULL    COMMENT 'null',
+  PARENT_ID BIGINT NULL    COMMENT 'null',
+  STATUS INTEGER NULL    COMMENT 'null',
+  constraint PK_erp_md_organization primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_md_material(
   ID BIGINT NULL    COMMENT 'null',
   CODE VARCHAR(50) NULL    COMMENT 'null',
@@ -56,16 +66,6 @@ CREATE TABLE erp_md_settlement_method(
   constraint PK_erp_md_settlement_method primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_md_organization(
-  ID BIGINT NULL    COMMENT 'null',
-  CODE VARCHAR(50) NULL    COMMENT 'null',
-  NAME VARCHAR(200) NULL    COMMENT 'null',
-  ORG_TYPE INTEGER NULL    COMMENT 'null',
-  PARENT_ID BIGINT NULL    COMMENT 'null',
-  STATUS INTEGER NULL    COMMENT 'null',
-  constraint PK_erp_md_organization primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
 CREATE TABLE erp_md_material_sku(
   ID BIGINT NULL    COMMENT 'null',
   MATERIAL_ID BIGINT NULL    COMMENT 'null',
@@ -81,6 +81,14 @@ CREATE TABLE erp_md_tax_rate(
   TAX_TYPE INTEGER NULL    COMMENT 'null',
   RATE VARCHAR(50) NULL    COMMENT 'null',
   constraint PK_erp_md_tax_rate primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_prj_project(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  STATUS INTEGER NULL    COMMENT 'null',
+  constraint PK_erp_prj_project primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_md_bank_account(
@@ -166,8 +174,8 @@ CREATE TABLE erp_sal_invoice(
   RECEIVED_STATUS INTEGER NULL    COMMENT '收款进度',
   POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
   POSTED_AT DATETIME NULL    COMMENT '过账时间',
-  POSTED_BY BIGINT NULL    COMMENT '过账人',
-  APPROVED_BY BIGINT NULL    COMMENT '审核人',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
+  APPROVED_BY VARCHAR(36) NULL    COMMENT '审核人',
   APPROVED_AT DATETIME NULL    COMMENT '审核时间',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -199,8 +207,8 @@ CREATE TABLE erp_sal_receipt(
   WRITTEN_OFF_STATUS INTEGER NULL    COMMENT '核销状态',
   POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
   POSTED_AT DATETIME NULL    COMMENT '过账时间',
-  POSTED_BY BIGINT NULL    COMMENT '过账人',
-  APPROVED_BY BIGINT NULL    COMMENT '审核人',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
+  APPROVED_BY VARCHAR(36) NULL    COMMENT '审核人',
   APPROVED_AT DATETIME NULL    COMMENT '审核时间',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -210,6 +218,28 @@ CREATE TABLE erp_sal_receipt(
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
   constraint PK_erp_sal_receipt primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_sal_quotation_line(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  QUOTATION_ID BIGINT NOT NULL    COMMENT '报价单ID',
+  LINE_NO INTEGER NOT NULL    COMMENT '行号',
+  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
+  UOM_ID BIGINT NOT NULL    COMMENT '计量单位',
+  QUANTITY DECIMAL(20,4) NULL    COMMENT '数量',
+  UNIT_PRICE DECIMAL(20,4) NOT NULL    COMMENT '报价单价(不含税)',
+  TAX_RATE DECIMAL(10,4) NULL    COMMENT '税率(%)',
+  TAX_AMOUNT DECIMAL(20,4) NULL    COMMENT '税额',
+  AMOUNT DECIMAL(20,4) NULL    COMMENT '金额(不含税)',
+  AMOUNT_WITH_TAX DECIMAL(20,4) NULL    COMMENT '金额(含税)',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  constraint PK_erp_sal_quotation_line primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_sal_order(
@@ -239,8 +269,8 @@ CREATE TABLE erp_sal_order(
   DELIVERY_STATUS INTEGER NULL    COMMENT '发货进度',
   POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
   POSTED_AT DATETIME NULL    COMMENT '过账时间',
-  POSTED_BY BIGINT NULL    COMMENT '过账人',
-  APPROVED_BY BIGINT NULL    COMMENT '审核人',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
+  APPROVED_BY VARCHAR(36) NULL    COMMENT '审核人',
   APPROVED_AT DATETIME NULL    COMMENT '审核时间',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -250,50 +280,6 @@ CREATE TABLE erp_sal_order(
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
   constraint PK_erp_sal_order primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_sal_quotation_line(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  QUOTATION_ID BIGINT NOT NULL    COMMENT '报价单ID',
-  LINE_NO INTEGER NOT NULL    COMMENT '行号',
-  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
-  UOM_ID BIGINT NOT NULL    COMMENT '计量单位',
-  QUANTITY DECIMAL(20,4) NULL    COMMENT '数量',
-  UNIT_PRICE DECIMAL(20,4) NOT NULL    COMMENT '报价单价(不含税)',
-  TAX_RATE DECIMAL(10,4) NULL    COMMENT '税率(%)',
-  TAX_AMOUNT DECIMAL(20,4) NULL    COMMENT '税额',
-  AMOUNT DECIMAL(20,4) NULL    COMMENT '金额(不含税)',
-  AMOUNT_WITH_TAX DECIMAL(20,4) NULL    COMMENT '金额(含税)',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  constraint PK_erp_sal_quotation_line primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
-CREATE TABLE erp_sal_invoice_line(
-  ID BIGINT NOT NULL    COMMENT 'ID',
-  INVOICE_ID BIGINT NOT NULL    COMMENT '发票ID',
-  DELIVERY_LINE_ID BIGINT NULL    COMMENT '出库行ID',
-  LINE_NO INTEGER NOT NULL    COMMENT '行号',
-  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
-  UOM_ID BIGINT NOT NULL    COMMENT '计量单位',
-  QUANTITY DECIMAL(20,4) NOT NULL    COMMENT '数量',
-  UNIT_PRICE DECIMAL(20,4) NULL    COMMENT '单价(不含税)',
-  TAX_RATE DECIMAL(10,4) NULL    COMMENT '税率(%)',
-  TAX_AMOUNT DECIMAL(20,4) NULL    COMMENT '税额',
-  AMOUNT DECIMAL(20,4) NULL    COMMENT '金额(不含税)',
-  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
-  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
-  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
-  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
-  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
-  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
-  REMARK VARCHAR(1000) NULL    COMMENT '备注',
-  constraint PK_erp_sal_invoice_line primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_sal_receipt_line(
@@ -358,8 +344,8 @@ CREATE TABLE erp_sal_delivery(
   APPROVE_STATUS INTEGER NOT NULL    COMMENT '审核状态',
   POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
   POSTED_AT DATETIME NULL    COMMENT '过账时间',
-  POSTED_BY BIGINT NULL    COMMENT '过账人',
-  APPROVED_BY BIGINT NULL    COMMENT '审核人',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
+  APPROVED_BY VARCHAR(36) NULL    COMMENT '审核人',
   APPROVED_AT DATETIME NULL    COMMENT '审核时间',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -415,8 +401,8 @@ CREATE TABLE erp_sal_return(
   APPROVE_STATUS INTEGER NOT NULL    COMMENT '审核状态',
   POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
   POSTED_AT DATETIME NULL    COMMENT '过账时间',
-  POSTED_BY BIGINT NULL    COMMENT '过账人',
-  APPROVED_BY BIGINT NULL    COMMENT '审核人',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
+  APPROVED_BY VARCHAR(36) NULL    COMMENT '审核人',
   APPROVED_AT DATETIME NULL    COMMENT '审核时间',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -426,6 +412,28 @@ CREATE TABLE erp_sal_return(
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
   constraint PK_erp_sal_return primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_sal_invoice_line(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  INVOICE_ID BIGINT NOT NULL    COMMENT '发票ID',
+  DELIVERY_LINE_ID BIGINT NULL    COMMENT '出库行ID',
+  LINE_NO INTEGER NOT NULL    COMMENT '行号',
+  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
+  UOM_ID BIGINT NOT NULL    COMMENT '计量单位',
+  QUANTITY DECIMAL(20,4) NOT NULL    COMMENT '数量',
+  UNIT_PRICE DECIMAL(20,4) NULL    COMMENT '单价(不含税)',
+  TAX_RATE DECIMAL(10,4) NULL    COMMENT '税率(%)',
+  TAX_AMOUNT DECIMAL(20,4) NULL    COMMENT '税额',
+  AMOUNT DECIMAL(20,4) NULL    COMMENT '金额(不含税)',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  constraint PK_erp_sal_invoice_line primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_sal_return_line(
@@ -457,6 +465,8 @@ CREATE TABLE erp_sal_return_line(
                 
    ALTER TABLE erp_md_currency COMMENT '币种';
                 
+   ALTER TABLE erp_md_organization COMMENT '组织';
+                
    ALTER TABLE erp_md_material COMMENT '物料';
                 
    ALTER TABLE erp_md_uom COMMENT '计量单位';
@@ -465,11 +475,11 @@ CREATE TABLE erp_sal_return_line(
                 
    ALTER TABLE erp_md_settlement_method COMMENT '结算方式';
                 
-   ALTER TABLE erp_md_organization COMMENT '组织';
-                
    ALTER TABLE erp_md_material_sku COMMENT '物料SKU';
                 
    ALTER TABLE erp_md_tax_rate COMMENT '税率';
+                
+   ALTER TABLE erp_prj_project COMMENT '项目';
                 
    ALTER TABLE erp_md_bank_account COMMENT '银行账户';
                 
@@ -481,11 +491,9 @@ CREATE TABLE erp_sal_return_line(
                 
    ALTER TABLE erp_sal_receipt COMMENT '收款单';
                 
-   ALTER TABLE erp_sal_order COMMENT '销售订单';
-                
    ALTER TABLE erp_sal_quotation_line COMMENT '销售报价单行';
                 
-   ALTER TABLE erp_sal_invoice_line COMMENT '销售发票行';
+   ALTER TABLE erp_sal_order COMMENT '销售订单';
                 
    ALTER TABLE erp_sal_receipt_line COMMENT '收款核销行';
                 
@@ -496,6 +504,8 @@ CREATE TABLE erp_sal_return_line(
    ALTER TABLE erp_sal_delivery_line COMMENT '销售出库单行';
                 
    ALTER TABLE erp_sal_return COMMENT '销售退货单';
+                
+   ALTER TABLE erp_sal_invoice_line COMMENT '销售发票行';
                 
    ALTER TABLE erp_sal_return_line COMMENT '销售退货单行';
                 

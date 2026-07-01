@@ -43,6 +43,7 @@ prop:
       remark: Remark
       customer: Customer
       currency: Currency
+      org: Org
     ErpSalDelivery:
       id: ID
       code: Code
@@ -77,6 +78,8 @@ prop:
       order: Order
       customer: Customer
       warehouse: Warehouse
+      org: Org
+      currency: Currency
       lines: Lines
     ErpSalDeliveryLine:
       id: ID
@@ -104,6 +107,8 @@ prop:
       material: Material
       sku: Sku
       uoM: Uo M
+      orderLine: Order Line
+      warehouse: Warehouse
     ErpSalInvoice:
       id: ID
       code: Code
@@ -141,6 +146,7 @@ prop:
       remark: Remark
       customer: Customer
       currency: Currency
+      org: Org
       lines: Lines
     ErpSalInvoiceLine:
       id: ID
@@ -163,6 +169,8 @@ prop:
       remark: Remark
       invoice: Invoice
       material: Material
+      deliveryLine: Delivery Line
+      uoM: Uo M
     ErpSalOrder:
       id: ID
       code: Code
@@ -210,6 +218,8 @@ prop:
       settlementMethod: Settlement Method
       lines: Lines
       org: Org
+      quotation: Quotation
+      contract: Contract
     ErpSalOrderLine:
       id: ID
       orderId: Order
@@ -241,6 +251,7 @@ prop:
       uoM: Uo M
       taxRateMd: Tax Rate Md
       warehouse: Warehouse
+      project: Project
     ErpSalQuotation:
       id: ID
       code: Code
@@ -268,6 +279,7 @@ prop:
       remark: Remark
       customer: Customer
       currency: Currency
+      org: Org
       lines: Lines
     ErpSalQuotationLine:
       id: ID
@@ -327,6 +339,9 @@ prop:
       customer: Customer
       currency: Currency
       settlementMethod: Settlement Method
+      org: Org
+      bankAccount: Bank Account
+      partnerBankAccount: Partner Bank Account
       lines: Lines
     ErpSalReceiptLine:
       id: ID
@@ -376,6 +391,8 @@ prop:
       delivery: Delivery
       customer: Customer
       warehouse: Warehouse
+      org: Org
+      currency: Currency
       lines: Lines
     ErpSalReturnLine:
       id: ID
@@ -402,6 +419,7 @@ prop:
       material: Material
       sku: Sku
       uoM: Uo M
+      deliveryLine: Delivery Line
 dict:
   label:
     erp-sal/doc-status: Doc Status

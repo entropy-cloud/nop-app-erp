@@ -33,13 +33,6 @@
         <property name="bizObjName" value="ErpSalReceipt"/>
     </bean>
 
-    <bean id="app.erp.sal.service.entity.ErpSalOrderBizModel" ioc:type="@bean:id" ioc:default="true"/>
-
-    <bean id="biz_ErpSalOrder" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.sal.biz.IErpSalOrderBiz"
-          ioc:force-lazy-property="true" lazy-init="true" primary="true">
-        <property name="bizObjName" value="ErpSalOrder"/>
-    </bean>
-
     <bean id="app.erp.sal.service.entity.ErpSalQuotationLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpSalQuotationLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -48,12 +41,11 @@
         <property name="bizObjName" value="ErpSalQuotationLine"/>
     </bean>
 
-    <bean id="app.erp.sal.service.entity.ErpSalInvoiceLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+    <bean id="app.erp.sal.service.entity.ErpSalOrderBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
-    <bean id="biz_ErpSalInvoiceLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.sal.biz.IErpSalInvoiceLineBiz" ioc:force-lazy-property="true" lazy-init="true"
-          primary="true">
-        <property name="bizObjName" value="ErpSalInvoiceLine"/>
+    <bean id="biz_ErpSalOrder" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.sal.biz.IErpSalOrderBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpSalOrder"/>
     </bean>
 
     <bean id="app.erp.sal.service.entity.ErpSalReceiptLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
@@ -91,6 +83,14 @@
     <bean id="biz_ErpSalReturn" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.sal.biz.IErpSalReturnBiz"
           ioc:force-lazy-property="true" lazy-init="true" primary="true">
         <property name="bizObjName" value="ErpSalReturn"/>
+    </bean>
+
+    <bean id="app.erp.sal.service.entity.ErpSalInvoiceLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpSalInvoiceLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.sal.biz.IErpSalInvoiceLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpSalInvoiceLine"/>
     </bean>
 
     <bean id="app.erp.sal.service.entity.ErpSalReturnLineBizModel" ioc:type="@bean:id" ioc:default="true"/>

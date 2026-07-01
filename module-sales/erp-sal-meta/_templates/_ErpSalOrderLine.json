@@ -28,5 +28,6 @@
   "sku": null,
   "uoM": null,
   "taxRateMd": null,
-  "warehouse": null
+  "warehouse": null,
+  "project": null
 }

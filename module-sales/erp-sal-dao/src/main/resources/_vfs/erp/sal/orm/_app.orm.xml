@@ -136,20 +136,25 @@
             </columns>
             <relations>
                 <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
-                        i18n-en:displayName="Customer" ref-i18n-en:displayName="Sales Quotation">
+                        i18n-en:displayName="Customer">
                     <join>
                         <on leftProp="customerId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
-                        i18n-en:displayName="Currency" ref-i18n-en:displayName="Sales Quotation">
+                        i18n-en:displayName="Currency">
                     <join>
                         <on leftProp="currencyId" rightProp="id"/>
                     </join>
                 </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
                 <to-many cascadeDelete="true" name="lines" refEntityName="app.erp.sal.dao.entity.ErpSalQuotationLine"
-                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines"
-                         ref-i18n-en:displayName="Sales Quotation">
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines" ext:estRows="30">
                     <join>
                         <on leftProp="id" rightProp="quotationId"/>
                     </join>
@@ -207,19 +212,19 @@
             </columns>
             <relations>
                 <to-one name="quotation" refEntityName="app.erp.sal.dao.entity.ErpSalQuotation" tagSet="pub"
-                        i18n-en:displayName="Quotation" ref-i18n-en:displayName="Sales Quotation Line">
+                        i18n-en:displayName="Quotation">
                     <join>
                         <on leftProp="quotationId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
-                        i18n-en:displayName="Material" ref-i18n-en:displayName="Sales Quotation Line">
+                        i18n-en:displayName="Material">
                     <join>
                         <on leftProp="materialId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"
-                        i18n-en:displayName="Uo M" ref-i18n-en:displayName="Sales Quotation Line">
+                        i18n-en:displayName="Uo M">
                     <join>
                         <on leftProp="uoMId" rightProp="id"/>
                     </join>
@@ -290,15 +295,21 @@
             </columns>
             <relations>
                 <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
-                        i18n-en:displayName="Customer" ref-i18n-en:displayName="Sales Contract">
+                        i18n-en:displayName="Customer">
                     <join>
                         <on leftProp="customerId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
-                        i18n-en:displayName="Currency" ref-i18n-en:displayName="Sales Contract">
+                        i18n-en:displayName="Currency">
                     <join>
                         <on leftProp="currencyId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -372,10 +383,10 @@
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="26" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
-                <column code="POSTED_BY" displayName="过账人" name="postedBy" propId="27" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Posted By"/>
-                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" propId="28" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Approved By"/>
+                <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="27"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="28"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="29" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -398,40 +409,51 @@
             </columns>
             <relations>
                 <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
-                        i18n-en:displayName="Customer" ref-i18n-en:displayName="Sales Order">
+                        i18n-en:displayName="Customer">
                     <join>
                         <on leftProp="customerId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"
-                        i18n-en:displayName="Warehouse" ref-i18n-en:displayName="Sales Order">
+                        i18n-en:displayName="Warehouse">
                     <join>
                         <on leftProp="warehouseId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
-                        i18n-en:displayName="Currency" ref-i18n-en:displayName="Sales Order">
+                        i18n-en:displayName="Currency">
                     <join>
                         <on leftProp="currencyId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="settlementMethod" refEntityName="app.erp.md.dao.entity.ErpMdSettlementMethod" tagSet="pub"
-                        i18n-en:displayName="Settlement Method" ref-i18n-en:displayName="Sales Order">
+                        i18n-en:displayName="Settlement Method">
                     <join>
                         <on leftProp="settlementMethodId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-many cascadeDelete="true" name="lines" refEntityName="app.erp.sal.dao.entity.ErpSalOrderLine"
-                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines"
-                         ref-i18n-en:displayName="Sales Order">
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines" ext:estRows="30">
                     <join>
                         <on leftProp="id" rightProp="orderId"/>
                     </join>
                 </to-many>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
-                        i18n-en:displayName="Org" ref-i18n-en:displayName="Sales Order">
+                        i18n-en:displayName="Org">
                     <join>
                         <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="quotation" refEntityName="app.erp.sal.dao.entity.ErpSalQuotation" tagSet="pub"
+                        i18n-en:displayName="Quotation">
+                    <join>
+                        <on leftProp="quotationId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="contract" refEntityName="app.erp.sal.dao.entity.ErpSalContract" tagSet="pub"
+                        i18n-en:displayName="Contract">
+                    <join>
+                        <on leftProp="contractId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -503,39 +525,45 @@
             </columns>
             <relations>
                 <to-one name="order" refEntityName="app.erp.sal.dao.entity.ErpSalOrder" tagSet="pub"
-                        i18n-en:displayName="Order" ref-i18n-en:displayName="Sales Order Line">
+                        i18n-en:displayName="Order">
                     <join>
                         <on leftProp="orderId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
-                        i18n-en:displayName="Material" ref-i18n-en:displayName="Sales Order Line">
+                        i18n-en:displayName="Material">
                     <join>
                         <on leftProp="materialId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"
-                        i18n-en:displayName="Sku" ref-i18n-en:displayName="Sales Order Line">
+                        i18n-en:displayName="Sku">
                     <join>
                         <on leftProp="skuId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"
-                        i18n-en:displayName="Uo M" ref-i18n-en:displayName="Sales Order Line">
+                        i18n-en:displayName="Uo M">
                     <join>
                         <on leftProp="uoMId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="taxRateMd" refEntityName="app.erp.md.dao.entity.ErpMdTaxRate" tagSet="pub"
-                        i18n-en:displayName="Tax Rate Md" ref-i18n-en:displayName="Sales Order Line">
+                        i18n-en:displayName="Tax Rate Md">
                     <join>
                         <on leftProp="taxRateId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"
-                        i18n-en:displayName="Warehouse" ref-i18n-en:displayName="Sales Order Line">
+                        i18n-en:displayName="Warehouse">
                     <join>
                         <on leftProp="warehouseId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject"
+                        i18n-en:displayName="Project">
+                    <join>
+                        <on leftProp="projectId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -590,10 +618,10 @@
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="18" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
-                <column code="POSTED_BY" displayName="过账人" name="postedBy" propId="19" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Posted By"/>
-                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" propId="20" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Approved By"/>
+                <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="19"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="20"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="21" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -616,26 +644,37 @@
             </columns>
             <relations>
                 <to-one name="order" refEntityName="app.erp.sal.dao.entity.ErpSalOrder" tagSet="pub"
-                        i18n-en:displayName="Order" ref-i18n-en:displayName="Sales Delivery">
+                        i18n-en:displayName="Order">
                     <join>
                         <on leftProp="orderId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
-                        i18n-en:displayName="Customer" ref-i18n-en:displayName="Sales Delivery">
+                        i18n-en:displayName="Customer">
                     <join>
                         <on leftProp="customerId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"
-                        i18n-en:displayName="Warehouse" ref-i18n-en:displayName="Sales Delivery">
+                        i18n-en:displayName="Warehouse">
                     <join>
                         <on leftProp="warehouseId" rightProp="id"/>
                     </join>
                 </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
+                        i18n-en:displayName="Currency">
+                    <join>
+                        <on leftProp="currencyId" rightProp="id"/>
+                    </join>
+                </to-one>
                 <to-many cascadeDelete="true" name="lines" refEntityName="app.erp.sal.dao.entity.ErpSalDeliveryLine"
-                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines"
-                         ref-i18n-en:displayName="Sales Delivery">
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines" ext:estRows="30">
                     <join>
                         <on leftProp="id" rightProp="deliveryId"/>
                     </join>
@@ -699,27 +738,39 @@
             </columns>
             <relations>
                 <to-one name="delivery" refEntityName="app.erp.sal.dao.entity.ErpSalDelivery" tagSet="pub"
-                        i18n-en:displayName="Delivery" ref-i18n-en:displayName="Sales Delivery Line">
+                        i18n-en:displayName="Delivery">
                     <join>
                         <on leftProp="deliveryId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
-                        i18n-en:displayName="Material" ref-i18n-en:displayName="Sales Delivery Line">
+                        i18n-en:displayName="Material">
                     <join>
                         <on leftProp="materialId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"
-                        i18n-en:displayName="Sku" ref-i18n-en:displayName="Sales Delivery Line">
+                        i18n-en:displayName="Sku">
                     <join>
                         <on leftProp="skuId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"
-                        i18n-en:displayName="Uo M" ref-i18n-en:displayName="Sales Delivery Line">
+                        i18n-en:displayName="Uo M">
                     <join>
                         <on leftProp="uoMId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="orderLine" refEntityName="app.erp.sal.dao.entity.ErpSalOrderLine" tagSet="pub"
+                        i18n-en:displayName="Order Line">
+                    <join>
+                        <on leftProp="orderLineId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"
+                        i18n-en:displayName="Warehouse">
+                    <join>
+                        <on leftProp="warehouseId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -779,10 +830,10 @@
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="20" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
-                <column code="POSTED_BY" displayName="过账人" name="postedBy" propId="21" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Posted By"/>
-                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" propId="22" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Approved By"/>
+                <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="21"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="22"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="23" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -805,20 +856,25 @@
             </columns>
             <relations>
                 <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
-                        i18n-en:displayName="Customer" ref-i18n-en:displayName="Sales Invoice">
+                        i18n-en:displayName="Customer">
                     <join>
                         <on leftProp="customerId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
-                        i18n-en:displayName="Currency" ref-i18n-en:displayName="Sales Invoice">
+                        i18n-en:displayName="Currency">
                     <join>
                         <on leftProp="currencyId" rightProp="id"/>
                     </join>
                 </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
                 <to-many cascadeDelete="true" name="lines" refEntityName="app.erp.sal.dao.entity.ErpSalInvoiceLine"
-                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines"
-                         ref-i18n-en:displayName="Sales Invoice">
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines" ext:estRows="30">
                     <join>
                         <on leftProp="id" rightProp="invoiceId"/>
                     </join>
@@ -876,15 +932,27 @@
             </columns>
             <relations>
                 <to-one name="invoice" refEntityName="app.erp.sal.dao.entity.ErpSalInvoice" tagSet="pub"
-                        i18n-en:displayName="Invoice" ref-i18n-en:displayName="Sales Invoice Line">
+                        i18n-en:displayName="Invoice">
                     <join>
                         <on leftProp="invoiceId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
-                        i18n-en:displayName="Material" ref-i18n-en:displayName="Sales Invoice Line">
+                        i18n-en:displayName="Material">
                     <join>
                         <on leftProp="materialId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="deliveryLine" refEntityName="app.erp.sal.dao.entity.ErpSalDeliveryLine" tagSet="pub"
+                        i18n-en:displayName="Delivery Line">
+                    <join>
+                        <on leftProp="deliveryLineId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"
+                        i18n-en:displayName="Uo M">
+                    <join>
+                        <on leftProp="uoMId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -940,10 +1008,10 @@
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="19" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
-                <column code="POSTED_BY" displayName="过账人" name="postedBy" propId="20" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Posted By"/>
-                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" propId="21" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Approved By"/>
+                <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="20"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="21"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="22" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -966,26 +1034,43 @@
             </columns>
             <relations>
                 <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
-                        i18n-en:displayName="Customer" ref-i18n-en:displayName="Receipt">
+                        i18n-en:displayName="Customer">
                     <join>
                         <on leftProp="customerId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
-                        i18n-en:displayName="Currency" ref-i18n-en:displayName="Receipt">
+                        i18n-en:displayName="Currency">
                     <join>
                         <on leftProp="currencyId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="settlementMethod" refEntityName="app.erp.md.dao.entity.ErpMdSettlementMethod" tagSet="pub"
-                        i18n-en:displayName="Settlement Method" ref-i18n-en:displayName="Receipt">
+                        i18n-en:displayName="Settlement Method">
                     <join>
                         <on leftProp="settlementMethodId" rightProp="id"/>
                     </join>
                 </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="bankAccount" refEntityName="app.erp.md.dao.entity.ErpMdBankAccount" tagSet="pub"
+                        i18n-en:displayName="Bank Account">
+                    <join>
+                        <on leftProp="bankAccountId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="partnerBankAccount" refEntityName="app.erp.md.dao.entity.ErpMdBankAccount" tagSet="pub"
+                        i18n-en:displayName="Partner Bank Account">
+                    <join>
+                        <on leftProp="partnerBankAccountId" rightProp="id"/>
+                    </join>
+                </to-one>
                 <to-many cascadeDelete="true" name="lines" refEntityName="app.erp.sal.dao.entity.ErpSalReceiptLine"
-                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines"
-                         ref-i18n-en:displayName="Receipt">
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines" ext:estRows="10">
                     <join>
                         <on leftProp="id" rightProp="receiptId"/>
                     </join>
@@ -1027,13 +1112,13 @@
             </columns>
             <relations>
                 <to-one name="receipt" refEntityName="app.erp.sal.dao.entity.ErpSalReceipt" tagSet="pub"
-                        i18n-en:displayName="Receipt" ref-i18n-en:displayName="Receipt Settlement Line">
+                        i18n-en:displayName="Receipt">
                     <join>
                         <on leftProp="receiptId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="invoice" refEntityName="app.erp.sal.dao.entity.ErpSalInvoice" tagSet="pub"
-                        i18n-en:displayName="Invoice" ref-i18n-en:displayName="Receipt Settlement Line">
+                        i18n-en:displayName="Invoice">
                     <join>
                         <on leftProp="invoiceId" rightProp="id"/>
                     </join>
@@ -1090,10 +1175,10 @@
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="18" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
-                <column code="POSTED_BY" displayName="过账人" name="postedBy" propId="19" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Posted By"/>
-                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" propId="20" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Approved By"/>
+                <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="19"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="20"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="21" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -1116,26 +1201,37 @@
             </columns>
             <relations>
                 <to-one name="delivery" refEntityName="app.erp.sal.dao.entity.ErpSalDelivery" tagSet="pub"
-                        i18n-en:displayName="Delivery" ref-i18n-en:displayName="Sales Return">
+                        i18n-en:displayName="Delivery">
                     <join>
                         <on leftProp="deliveryId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
-                        i18n-en:displayName="Customer" ref-i18n-en:displayName="Sales Return">
+                        i18n-en:displayName="Customer">
                     <join>
                         <on leftProp="customerId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"
-                        i18n-en:displayName="Warehouse" ref-i18n-en:displayName="Sales Return">
+                        i18n-en:displayName="Warehouse">
                     <join>
                         <on leftProp="warehouseId" rightProp="id"/>
                     </join>
                 </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
+                        i18n-en:displayName="Currency">
+                    <join>
+                        <on leftProp="currencyId" rightProp="id"/>
+                    </join>
+                </to-one>
                 <to-many cascadeDelete="true" name="lines" refEntityName="app.erp.sal.dao.entity.ErpSalReturnLine"
-                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines"
-                         ref-i18n-en:displayName="Sales Return">
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines" ext:estRows="30">
                     <join>
                         <on leftProp="id" rightProp="returnId"/>
                     </join>
@@ -1196,27 +1292,33 @@
             </columns>
             <relations>
                 <to-one name="return" refEntityName="app.erp.sal.dao.entity.ErpSalReturn" tagSet="pub"
-                        i18n-en:displayName="Return" ref-i18n-en:displayName="Sales Return Line">
+                        i18n-en:displayName="Return">
                     <join>
                         <on leftProp="returnId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
-                        i18n-en:displayName="Material" ref-i18n-en:displayName="Sales Return Line">
+                        i18n-en:displayName="Material">
                     <join>
                         <on leftProp="materialId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub"
-                        i18n-en:displayName="Sku" ref-i18n-en:displayName="Sales Return Line">
+                        i18n-en:displayName="Sku">
                     <join>
                         <on leftProp="skuId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub"
-                        i18n-en:displayName="Uo M" ref-i18n-en:displayName="Sales Return Line">
+                        i18n-en:displayName="Uo M">
                     <join>
                         <on leftProp="uoMId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="deliveryLine" refEntityName="app.erp.sal.dao.entity.ErpSalDeliveryLine" tagSet="pub"
+                        i18n-en:displayName="Delivery Line">
+                    <join>
+                        <on leftProp="deliveryLineId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -1384,6 +1486,20 @@
                         stdSqlType="VARCHAR" i18n-en:displayName="Bank Account"/>
                 <column code="ACCOUNT_TYPE" name="accountType" propId="5" stdDataType="int" stdSqlType="INTEGER"
                         i18n-en:displayName="Account Type"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.prj.dao.entity.ErpPrjProject" displayName="项目"
+                name="app.erp.prj.dao.entity.ErpPrjProject" notGenCode="true" tableName="erp_prj_project"
+                biz:moduleId="erp/prj">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="ID"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Code"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Name"/>
+                <column code="STATUS" name="status" propId="4" stdDataType="int" stdSqlType="INTEGER"
+                        i18n-en:displayName="Status"/>
             </columns>
         </entity>
     </entities>

@@ -426,30 +426,30 @@
         }
 
 
-        private Long _postedBy;
+        private String _postedBy;
 
     
         @PropMeta(propId=27)
     
-        public Long getPostedBy(){
+        public String getPostedBy(){
             return _postedBy;
         }
 
-        public void setPostedBy(Long value){
+        public void setPostedBy(String value){
             this._postedBy = value;
         }
 
 
-        private Long _approvedBy;
+        private String _approvedBy;
 
     
         @PropMeta(propId=28)
     
-        public Long getApprovedBy(){
+        public String getApprovedBy(){
             return _approvedBy;
         }
 
-        public void setApprovedBy(Long value){
+        public void setApprovedBy(String value){
             this._approvedBy = value;
         }
 
@@ -629,6 +629,28 @@
 
         public void setOrg(Map<String,Object> value){
             this._org = value;
+        }
+
+
+        private Map<String,Object> _quotation;
+
+        public Map<String,Object> getQuotation(){
+            return _quotation;
+        }
+
+        public void setQuotation(Map<String,Object> value){
+            this._quotation = value;
+        }
+
+
+        private Map<String,Object> _contract;
+
+        public Map<String,Object> getContract(){
+            return _contract;
+        }
+
+        public void setContract(Map<String,Object> value){
+            this._contract = value;
         }
 
 

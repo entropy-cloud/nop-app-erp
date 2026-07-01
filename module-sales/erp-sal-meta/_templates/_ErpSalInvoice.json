@@ -23,8 +23,8 @@
   "receivedStatus_label": "",
   "posted": false,
   "postedAt": "2000-01-01 14:00:00",
-  "postedBy": 0,
-  "approvedBy": 0,
+  "postedBy": "",
+  "approvedBy": "",
   "approvedAt": "2000-01-01 14:00:00",
   "delVersion": 0,
   "version": 0,
@@ -35,5 +35,6 @@
   "remark": "",
   "customer": null,
   "currency": null,
+  "org": null,
   "lines": null
 }

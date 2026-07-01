@@ -351,4 +351,26 @@
         }
 
 
+        private Map<String,Object> _orderLine;
+
+        public Map<String,Object> getOrderLine(){
+            return _orderLine;
+        }
+
+        public void setOrderLine(Map<String,Object> value){
+            this._orderLine = value;
+        }
+
+
+        private Map<String,Object> _warehouse;
+
+        public Map<String,Object> getWarehouse(){
+            return _warehouse;
+        }
+
+        public void setWarehouse(Map<String,Object> value){
+            this._warehouse = value;
+        }
+
+
     }

@@ -368,6 +368,17 @@
         }
 
 
+        private Map<String,Object> _org;
+
+        public Map<String,Object> getOrg(){
+            return _org;
+        }
+
+        public void setOrg(Map<String,Object> value){
+            this._org = value;
+        }
+
+
         private List<Map<String,Object>> _lines;
 
         public List<Map<String,Object>> getLines(){

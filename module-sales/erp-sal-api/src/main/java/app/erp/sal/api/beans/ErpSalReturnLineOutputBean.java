@@ -337,4 +337,15 @@
         }
 
 
+        private Map<String,Object> _deliveryLine;
+
+        public Map<String,Object> getDeliveryLine(){
+            return _deliveryLine;
+        }
+
+        public void setDeliveryLine(Map<String,Object> value){
+            this._deliveryLine = value;
+        }
+
+
     }

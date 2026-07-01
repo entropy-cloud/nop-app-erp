@@ -287,4 +287,26 @@
         }
 
 
+        private Map<String,Object> _deliveryLine;
+
+        public Map<String,Object> getDeliveryLine(){
+            return _deliveryLine;
+        }
+
+        public void setDeliveryLine(Map<String,Object> value){
+            this._deliveryLine = value;
+        }
+
+
+        private Map<String,Object> _uoM;
+
+        public Map<String,Object> getUoM(){
+            return _uoM;
+        }
+
+        public void setUoM(Map<String,Object> value){
+            this._uoM = value;
+        }
+
+
     }

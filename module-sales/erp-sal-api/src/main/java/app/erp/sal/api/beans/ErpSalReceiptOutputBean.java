@@ -316,30 +316,30 @@
         }
 
 
-        private Long _postedBy;
+        private String _postedBy;
 
     
         @PropMeta(propId=20)
     
-        public Long getPostedBy(){
+        public String getPostedBy(){
             return _postedBy;
         }
 
-        public void setPostedBy(Long value){
+        public void setPostedBy(String value){
             this._postedBy = value;
         }
 
 
-        private Long _approvedBy;
+        private String _approvedBy;
 
     
         @PropMeta(propId=21)
     
-        public Long getApprovedBy(){
+        public String getApprovedBy(){
             return _approvedBy;
         }
 
-        public void setApprovedBy(Long value){
+        public void setApprovedBy(String value){
             this._approvedBy = value;
         }
 
@@ -486,6 +486,39 @@
 
         public void setSettlementMethod(Map<String,Object> value){
             this._settlementMethod = value;
+        }
+
+
+        private Map<String,Object> _org;
+
+        public Map<String,Object> getOrg(){
+            return _org;
+        }
+
+        public void setOrg(Map<String,Object> value){
+            this._org = value;
+        }
+
+
+        private Map<String,Object> _bankAccount;
+
+        public Map<String,Object> getBankAccount(){
+            return _bankAccount;
+        }
+
+        public void setBankAccount(Map<String,Object> value){
+            this._bankAccount = value;
+        }
+
+
+        private Map<String,Object> _partnerBankAccount;
+
+        public Map<String,Object> getPartnerBankAccount(){
+            return _partnerBankAccount;
+        }
+
+        public void setPartnerBankAccount(Map<String,Object> value){
+            this._partnerBankAccount = value;
         }
 
 

@@ -32,6 +32,7 @@ prop:
       docStatus_label: 单据状态
       exchangeRate: 汇率
       id: ID
+      org: null
       orgId: 业务组织
       remark: 备注
       signedBy: 签约人(职员)
@@ -54,6 +55,7 @@ prop:
       code: 单号
       createTime: 创建时间
       createdBy: 创建人
+      currency: null
       currencyId: 币种
       customer: null
       customerId: 客户
@@ -65,6 +67,7 @@ prop:
       lines: null
       order: null
       orderId: 销售订单
+      org: null
       orgId: 业务组织
       posted: 已过账
       postedAt: 过账时间
@@ -90,6 +93,7 @@ prop:
       lineNo: 行号
       material: null
       materialId: 物料
+      orderLine: null
       orderLineId: 订单行ID
       quantity: 实发数量
       remark: 备注
@@ -103,6 +107,7 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+      warehouse: null
       warehouseId: 出库库位
     ErpSalInvoice:
       amountFunctional: 合计金额(本位币)
@@ -128,6 +133,7 @@ prop:
       invoiceType: 发票类型
       invoiceType_label: 发票类型
       lines: null
+      org: null
       orgId: 业务组织
       posted: 已过账
       postedAt: 过账时间
@@ -147,6 +153,7 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
+      deliveryLine: null
       deliveryLineId: 出库行ID
       id: ID
       invoice: null
@@ -159,6 +166,7 @@ prop:
       taxAmount: 税额
       taxRate: 税率(%)
       unitPrice: 单价(不含税)
+      uoM: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
@@ -172,6 +180,7 @@ prop:
       approvedBy: 审核人
       businessDate: 订单日期
       code: 单号
+      contract: null
       contractId: 销售合同
       createTime: 创建时间
       createdBy: 创建人
@@ -195,6 +204,7 @@ prop:
       posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人
+      quotation: null
       quotationId: 报价单
       receivedAmount: 已收金额
       receivedStatus: 收款进度
@@ -224,6 +234,7 @@ prop:
       materialId: 物料
       order: null
       orderId: 订单ID
+      project: null
       projectId: 项目
       quantity: 数量
       remark: 备注
@@ -259,6 +270,7 @@ prop:
       id: ID
       isAccepted: 是否已转订单
       lines: null
+      org: null
       orgId: 业务组织
       remark: 备注
       totalAmount: 合计金额(不含税)
@@ -298,6 +310,7 @@ prop:
       approveStatus_label: 审核状态
       approvedAt: 审核时间
       approvedBy: 审核人
+      bankAccount: null
       bankAccountId: 收款账户(资金账户)
       businessDate: 收款日期
       code: 单号
@@ -313,7 +326,9 @@ prop:
       exchangeRate: 汇率
       id: ID
       lines: null
+      org: null
       orgId: 业务组织
+      partnerBankAccount: null
       partnerBankAccountId: 客户付款账户(银行账户主数据)
       posted: 已过账
       postedAt: 过账时间
@@ -353,6 +368,7 @@ prop:
       code: 单号
       createTime: 创建时间
       createdBy: 创建人
+      currency: null
       currencyId: 币种
       customer: null
       customerId: 客户
@@ -364,6 +380,7 @@ prop:
       exchangeRate: 汇率
       id: ID
       lines: null
+      org: null
       orgId: 业务组织
       posted: 已过账
       postedAt: 过账时间
@@ -382,6 +399,7 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
+      deliveryLine: null
       deliveryLineId: 出库行ID
       id: ID
       lineNo: 行号
