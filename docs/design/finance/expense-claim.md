@@ -10,6 +10,16 @@
 - 本模块不负责：员工主数据（master-data 域）；银行账户与对账（`bank-reconciliation.md`）；采购费用（purchase 域）。
 - 实体为**建议命名，待 ORM 计划落地**（`model/app-erp-finance.orm.xml` 是 ask-first 保护区域，本文件不复述 schema）。
 
+## 实现偏离补注（2026-07-02 计划 `2026-07-02-0700-2` 落地）
+
+落地时相对上文「设计依据」与「跨域协作」的偏离，已在此记录（plan Task Route Decision + Non-Goals）：
+
+1. **部门维度 `departmentId` → `ErpMdOrganization`**：本仓无独立部门实体（全仓无 `ErpMdDepartment`），部门维度复用组织实体 `ErpMdOrganization`（组织实体兼作部门）。残留风险：组织/部门语义混同，列为 Follow-up（需部门级成本中心细分时新增部门实体）。
+2. **预算控制钩子预留不实现**：`跨域协作` 表中「APPROVED 前同步调 `IErpFinBudgetControlBiz.check`」的前提（预算模块）未落地（无实体/无 biz）。本计划仅预留配置门控钩子点 `erp-fin.expense-budget-check-enabled`（默认 false，**不实现校验逻辑**），预算模块落地后再接。
+3. **现金/银行转账还款为 Non-Goal**：`设计依据 §5`/`跨域协作` 中「还款复用 `ErpFinPayment(partyType=EMPLOYEE)`」的前提不成立——本仓无通用 finance 付款实体（付款为域级 `ErpPurPayment`/`ErpSalReceipt`）。借款清算仅做「报销抵扣」净额核销（复用 `ErpFinReconciliation`）+ `EMPLOYEE_ADVANCE_SETTLE` GL 过账；现金还款/银行转账还款付款指令属资金面 Follow-up。
+4. **员工→partnerId 解析**：员工辅助账/核销单的 `partnerId` = **已解析的 `ErpMdEmployee.partnerId`**（即 `ErpMdPartner.id`），**非 `employee.id`**（员工与 partner 是不同 id 空间）。员工无 partner 记录时审核被拒（前置校验强制 `partnerId` 非空）。
+
+
 ## 设计依据
 
 > 来源 `docs/analysis/2026-06-30-0001-advanced-scenario-design-comparison.md` §1.1。
