@@ -34,7 +34,7 @@
                 <col id="capacityUnit" sortable="true"/>
 
                 <!--小时费率-->
-                <col id="hourlyRate" sortable="true"/>
+                <col id="hourlyRate" ui:number="true" sortable="true"/>
 
                 <!--日工时-->
                 <col id="workHoursPerDay" ui:number="true" sortable="true"/>

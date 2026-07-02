@@ -45,7 +45,7 @@
         </prop>
         <prop name="standardTime" displayName="标准工时" propId="7" i18n-en:displayName="Standard Time" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="timeInMins" type="java.time.LocalDateTime" precision="12" scale="2"/>
+            <schema domain="timeInMins" type="java.math.BigDecimal" precision="12" scale="2"/>
         </prop>
         <prop name="timeUnit" displayName="时间单位" propId="8" i18n-en:displayName="Time Unit" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -53,11 +53,11 @@
         </prop>
         <prop name="setupTime" displayName="准备时间" propId="9" i18n-en:displayName="Setup Time" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="timeInMins" type="java.time.LocalDateTime" precision="12" scale="2"/>
+            <schema domain="timeInMins" type="java.math.BigDecimal" precision="12" scale="2"/>
         </prop>
         <prop name="runTime" displayName="加工时间" propId="10" i18n-en:displayName="Run Time" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="timeInMins" type="java.time.LocalDateTime" precision="12" scale="2"/>
+            <schema domain="timeInMins" type="java.math.BigDecimal" precision="12" scale="2"/>
         </prop>
         <prop name="remark" displayName="备注" propId="11" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

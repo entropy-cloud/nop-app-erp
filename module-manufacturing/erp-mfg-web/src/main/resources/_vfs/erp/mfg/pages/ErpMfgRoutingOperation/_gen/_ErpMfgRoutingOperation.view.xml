@@ -37,16 +37,16 @@
                 <col id="workcenterId" ui:number="true" sortable="true"/>
 
                 <!--标准工时-->
-                <col id="standardTime" sortable="true"/>
+                <col id="standardTime" ui:number="true" sortable="true"/>
 
                 <!--时间单位-->
                 <col id="timeUnit" sortable="true"/>
 
                 <!--准备时间-->
-                <col id="setupTime" sortable="true"/>
+                <col id="setupTime" ui:number="true" sortable="true"/>
 
                 <!--加工时间-->
-                <col id="runTime" sortable="true"/>
+                <col id="runTime" ui:number="true" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

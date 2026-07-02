@@ -7,4 +7,12 @@
     <import resource="_dao.beans.xml"/>
 
     <import resource="_service.beans.xml"/>
+
+    <!-- BOM 多级展开服务（plan 2026-07-02-1538-2 Phase 2）：phantom/环/深度，供 ErpMfgBomBizModel.explode 调用 -->
+    <bean id="app.erp.mfg.service.bom.BomExpander"
+          class="app.erp.mfg.service.bom.BomExpander"/>
+
+    <!-- 成本卷算服务（plan 2026-07-02-1538-2 Phase 3）：采购件基础 + 制造件材料+工时 → ErpMfgCostRollup/Line -->
+    <bean id="app.erp.mfg.service.costing.CostRollupService"
+          class="app.erp.mfg.service.costing.CostRollupService"/>
 </beans>

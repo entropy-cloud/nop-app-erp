@@ -166,7 +166,7 @@ public class _ErpMfgBomOperation extends DynamicOrmEntity{
     private java.lang.Long _workcenterId;
     
     /* 标准工时: STANDARD_TIME */
-    private java.time.LocalDateTime _standardTime;
+    private java.math.BigDecimal _standardTime;
     
     /* 时间单位: TIME_UNIT */
     private java.lang.String _timeUnit;
@@ -376,9 +376,9 @@ public class _ErpMfgBomOperation extends DynamicOrmEntity{
             }
         
             case PROP_ID_standardTime:{
-               java.time.LocalDateTime typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_standardTime));
                }
                setStandardTime(typedValue);
@@ -521,7 +521,7 @@ public class _ErpMfgBomOperation extends DynamicOrmEntity{
         
             case PROP_ID_standardTime:{
                onInitProp(propId);
-               this._standardTime = (java.time.LocalDateTime)value;
+               this._standardTime = (java.math.BigDecimal)value;
                
                break;
             }
@@ -693,7 +693,7 @@ public class _ErpMfgBomOperation extends DynamicOrmEntity{
     /**
      * 标准工时: STANDARD_TIME
      */
-    public final java.time.LocalDateTime getStandardTime(){
+    public final java.math.BigDecimal getStandardTime(){
          onPropGet(PROP_ID_standardTime);
          return _standardTime;
     }
@@ -701,7 +701,7 @@ public class _ErpMfgBomOperation extends DynamicOrmEntity{
     /**
      * 标准工时: STANDARD_TIME
      */
-    public final void setStandardTime(java.time.LocalDateTime value){
+    public final void setStandardTime(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_standardTime,value)){
             this._standardTime = value;
             internalClearRefs(PROP_ID_standardTime);

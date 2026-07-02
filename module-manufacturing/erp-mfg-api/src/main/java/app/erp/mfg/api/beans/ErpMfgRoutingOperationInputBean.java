@@ -96,16 +96,16 @@
         }
 
 
-        private java.time.LocalDateTime _standardTime;
+        private java.math.BigDecimal _standardTime;
 
     
         @PropMeta(propId=7)
     
-        public java.time.LocalDateTime getStandardTime(){
+        public java.math.BigDecimal getStandardTime(){
             return _standardTime;
         }
 
-        public void setStandardTime(java.time.LocalDateTime value){
+        public void setStandardTime(java.math.BigDecimal value){
             this._standardTime = value;
         }
 
@@ -124,30 +124,30 @@
         }
 
 
-        private java.time.LocalDateTime _setupTime;
+        private java.math.BigDecimal _setupTime;
 
     
         @PropMeta(propId=9)
     
-        public java.time.LocalDateTime getSetupTime(){
+        public java.math.BigDecimal getSetupTime(){
             return _setupTime;
         }
 
-        public void setSetupTime(java.time.LocalDateTime value){
+        public void setSetupTime(java.math.BigDecimal value){
             this._setupTime = value;
         }
 
 
-        private java.time.LocalDateTime _runTime;
+        private java.math.BigDecimal _runTime;
 
     
         @PropMeta(propId=10)
     
-        public java.time.LocalDateTime getRunTime(){
+        public java.math.BigDecimal getRunTime(){
             return _runTime;
         }
 
-        public void setRunTime(java.time.LocalDateTime value){
+        public void setRunTime(java.math.BigDecimal value){
             this._runTime = value;
         }
 

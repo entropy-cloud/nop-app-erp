@@ -315,7 +315,7 @@
                 <column code="WORKCENTER_ID" displayName="工作中心" name="workcenterId" propId="5" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Workcenter"/>
                 <column code="STANDARD_TIME" displayName="标准工时" domain="timeInMins" name="standardTime" precision="12"
-                        propId="6" scale="2" stdDataType="datetime" stdSqlType="DECIMAL"
+                        propId="6" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Standard Time"/>
                 <column code="TIME_UNIT" displayName="时间单位" name="timeUnit" precision="20" propId="7"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Time Unit"/>
@@ -498,15 +498,14 @@
                 <column code="WORKCENTER_ID" displayName="工作中心" name="workcenterId" propId="6" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Workcenter"/>
                 <column code="STANDARD_TIME" displayName="标准工时" domain="timeInMins" name="standardTime" precision="12"
-                        propId="7" scale="2" stdDataType="datetime" stdSqlType="DECIMAL"
+                        propId="7" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Standard Time"/>
                 <column code="TIME_UNIT" displayName="时间单位" name="timeUnit" precision="20" propId="8"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Time Unit"/>
                 <column code="SETUP_TIME" displayName="准备时间" domain="timeInMins" name="setupTime" precision="12"
-                        propId="9" scale="2" stdDataType="datetime" stdSqlType="DECIMAL"
-                        i18n-en:displayName="Setup Time"/>
+                        propId="9" scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Setup Time"/>
                 <column code="RUN_TIME" displayName="加工时间" domain="timeInMins" name="runTime" precision="12" propId="10"
-                        scale="2" stdDataType="datetime" stdSqlType="DECIMAL" i18n-en:displayName="Run Time"/>
+                        scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Run Time"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="11"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -557,7 +556,8 @@
                 <column code="CAPACITY_UNIT" displayName="产能单位" name="capacityUnit" precision="20" propId="5"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Capacity Unit"/>
                 <column code="HOURLY_RATE" displayName="小时费率" domain="hourlyRate" name="hourlyRate" precision="16"
-                        propId="6" scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Hourly Rate"/>
+                        propId="6" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Hourly Rate"/>
                 <column code="WORK_HOURS_PER_DAY" displayName="日工时" name="workHoursPerDay" precision="8" propId="7"
                         scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Work Hours Per Day"/>
                 <column code="IS_EXTERNAL" defaultValue="false" displayName="是否外协" name="isExternal" propId="8"

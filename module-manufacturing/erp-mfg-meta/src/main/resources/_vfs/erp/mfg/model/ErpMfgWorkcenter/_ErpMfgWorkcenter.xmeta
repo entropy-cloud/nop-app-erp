@@ -41,7 +41,7 @@
         </prop>
         <prop name="hourlyRate" displayName="小时费率" propId="6" i18n-en:displayName="Hourly Rate" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="hourlyRate" type="java.lang.String" precision="16" scale="4"/>
+            <schema domain="hourlyRate" type="java.math.BigDecimal" precision="16" scale="4"/>
         </prop>
         <prop name="workHoursPerDay" displayName="日工时" propId="7" i18n-en:displayName="Work Hours Per Day"
               queryable="true" sortable="true" insertable="true" updatable="true">

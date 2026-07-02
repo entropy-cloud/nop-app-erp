@@ -157,7 +157,7 @@ public class _ErpMfgWorkcenter extends DynamicOrmEntity{
     private java.lang.String _capacityUnit;
     
     /* 小时费率: HOURLY_RATE */
-    private java.lang.String _hourlyRate;
+    private java.math.BigDecimal _hourlyRate;
     
     /* 日工时: WORK_HOURS_PER_DAY */
     private java.math.BigDecimal _workHoursPerDay;
@@ -367,9 +367,9 @@ public class _ErpMfgWorkcenter extends DynamicOrmEntity{
             }
         
             case PROP_ID_hourlyRate:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_hourlyRate));
                }
                setHourlyRate(typedValue);
@@ -512,7 +512,7 @@ public class _ErpMfgWorkcenter extends DynamicOrmEntity{
         
             case PROP_ID_hourlyRate:{
                onInitProp(propId);
-               this._hourlyRate = (java.lang.String)value;
+               this._hourlyRate = (java.math.BigDecimal)value;
                
                break;
             }
@@ -684,7 +684,7 @@ public class _ErpMfgWorkcenter extends DynamicOrmEntity{
     /**
      * 小时费率: HOURLY_RATE
      */
-    public final java.lang.String getHourlyRate(){
+    public final java.math.BigDecimal getHourlyRate(){
          onPropGet(PROP_ID_hourlyRate);
          return _hourlyRate;
     }
@@ -692,7 +692,7 @@ public class _ErpMfgWorkcenter extends DynamicOrmEntity{
     /**
      * 小时费率: HOURLY_RATE
      */
-    public final void setHourlyRate(java.lang.String value){
+    public final void setHourlyRate(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_hourlyRate,value)){
             this._hourlyRate = value;
             internalClearRefs(PROP_ID_hourlyRate);

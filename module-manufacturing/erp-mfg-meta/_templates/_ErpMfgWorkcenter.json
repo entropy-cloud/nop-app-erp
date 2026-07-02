@@ -4,7 +4,7 @@
   "name": "",
   "capacity": "",
   "capacityUnit": "",
-  "hourlyRate": "",
+  "hourlyRate": 0.0,
   "workHoursPerDay": 0.0,
   "isExternal": false,
   "remark": "",

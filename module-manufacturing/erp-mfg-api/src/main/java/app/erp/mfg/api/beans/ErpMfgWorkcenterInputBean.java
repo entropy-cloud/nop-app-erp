@@ -82,16 +82,16 @@
         }
 
 
-        private String _hourlyRate;
+        private java.math.BigDecimal _hourlyRate;
 
     
         @PropMeta(propId=6)
     
-        public String getHourlyRate(){
+        public java.math.BigDecimal getHourlyRate(){
             return _hourlyRate;
         }
 
-        public void setHourlyRate(String value){
+        public void setHourlyRate(java.math.BigDecimal value){
             this._hourlyRate = value;
         }
 

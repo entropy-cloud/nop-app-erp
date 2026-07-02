@@ -180,16 +180,16 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
     private java.lang.Long _workcenterId;
     
     /* 标准工时: STANDARD_TIME */
-    private java.time.LocalDateTime _standardTime;
+    private java.math.BigDecimal _standardTime;
     
     /* 时间单位: TIME_UNIT */
     private java.lang.String _timeUnit;
     
     /* 准备时间: SETUP_TIME */
-    private java.time.LocalDateTime _setupTime;
+    private java.math.BigDecimal _setupTime;
     
     /* 加工时间: RUN_TIME */
-    private java.time.LocalDateTime _runTime;
+    private java.math.BigDecimal _runTime;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -409,9 +409,9 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
             }
         
             case PROP_ID_standardTime:{
-               java.time.LocalDateTime typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_standardTime));
                }
                setStandardTime(typedValue);
@@ -429,9 +429,9 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
             }
         
             case PROP_ID_setupTime:{
-               java.time.LocalDateTime typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_setupTime));
                }
                setSetupTime(typedValue);
@@ -439,9 +439,9 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
             }
         
             case PROP_ID_runTime:{
-               java.time.LocalDateTime typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_runTime));
                }
                setRunTime(typedValue);
@@ -571,7 +571,7 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
         
             case PROP_ID_standardTime:{
                onInitProp(propId);
-               this._standardTime = (java.time.LocalDateTime)value;
+               this._standardTime = (java.math.BigDecimal)value;
                
                break;
             }
@@ -585,14 +585,14 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
         
             case PROP_ID_setupTime:{
                onInitProp(propId);
-               this._setupTime = (java.time.LocalDateTime)value;
+               this._setupTime = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_runTime:{
                onInitProp(propId);
-               this._runTime = (java.time.LocalDateTime)value;
+               this._runTime = (java.math.BigDecimal)value;
                
                break;
             }
@@ -769,7 +769,7 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
     /**
      * 标准工时: STANDARD_TIME
      */
-    public final java.time.LocalDateTime getStandardTime(){
+    public final java.math.BigDecimal getStandardTime(){
          onPropGet(PROP_ID_standardTime);
          return _standardTime;
     }
@@ -777,7 +777,7 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
     /**
      * 标准工时: STANDARD_TIME
      */
-    public final void setStandardTime(java.time.LocalDateTime value){
+    public final void setStandardTime(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_standardTime,value)){
             this._standardTime = value;
             internalClearRefs(PROP_ID_standardTime);
@@ -807,7 +807,7 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
     /**
      * 准备时间: SETUP_TIME
      */
-    public final java.time.LocalDateTime getSetupTime(){
+    public final java.math.BigDecimal getSetupTime(){
          onPropGet(PROP_ID_setupTime);
          return _setupTime;
     }
@@ -815,7 +815,7 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
     /**
      * 准备时间: SETUP_TIME
      */
-    public final void setSetupTime(java.time.LocalDateTime value){
+    public final void setSetupTime(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_setupTime,value)){
             this._setupTime = value;
             internalClearRefs(PROP_ID_setupTime);
@@ -826,7 +826,7 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
     /**
      * 加工时间: RUN_TIME
      */
-    public final java.time.LocalDateTime getRunTime(){
+    public final java.math.BigDecimal getRunTime(){
          onPropGet(PROP_ID_runTime);
          return _runTime;
     }
@@ -834,7 +834,7 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
     /**
      * 加工时间: RUN_TIME
      */
-    public final void setRunTime(java.time.LocalDateTime value){
+    public final void setRunTime(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_runTime,value)){
             this._runTime = value;
             internalClearRefs(PROP_ID_runTime);

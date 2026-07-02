@@ -34,7 +34,7 @@
                 <col id="workcenterId" ui:number="true" sortable="true"/>
 
                 <!--标准工时-->
-                <col id="standardTime" sortable="true"/>
+                <col id="standardTime" ui:number="true" sortable="true"/>
 
                 <!--时间单位-->
                 <col id="timeUnit" sortable="true"/>

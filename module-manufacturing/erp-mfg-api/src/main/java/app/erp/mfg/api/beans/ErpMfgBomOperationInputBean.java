@@ -82,16 +82,16 @@
         }
 
 
-        private java.time.LocalDateTime _standardTime;
+        private java.math.BigDecimal _standardTime;
 
     
         @PropMeta(propId=6)
     
-        public java.time.LocalDateTime getStandardTime(){
+        public java.math.BigDecimal getStandardTime(){
             return _standardTime;
         }
 
-        public void setStandardTime(java.time.LocalDateTime value){
+        public void setStandardTime(java.math.BigDecimal value){
             this._standardTime = value;
         }
 
