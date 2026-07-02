@@ -159,6 +159,41 @@ public interface _ErpFinDaoConstants {
     int BUSINESS_TYPE_EMPLOYEE_ADVANCE_SETTLE = 180;
                     
     /**
+     * 业务类型: 应收票据收到 
+     */
+    int BUSINESS_TYPE_NOTES_RECEIVABLE_RECEIVED = 190;
+                    
+    /**
+     * 业务类型: 票据贴现 
+     */
+    int BUSINESS_TYPE_NOTES_RECEIVABLE_DISCOUNTED = 200;
+                    
+    /**
+     * 业务类型: 票据背书转让 
+     */
+    int BUSINESS_TYPE_NOTES_RECEIVABLE_ENDORSED = 210;
+                    
+    /**
+     * 业务类型: 票据托收承兑 
+     */
+    int BUSINESS_TYPE_NOTES_RECEIVABLE_COLLECTION = 220;
+                    
+    /**
+     * 业务类型: 开出应付票据 
+     */
+    int BUSINESS_TYPE_NOTES_PAYABLE_ISSUED = 230;
+                    
+    /**
+     * 业务类型: 应付票据兑付 
+     */
+    int BUSINESS_TYPE_NOTES_PAYABLE_HONORED = 240;
+                    
+    /**
+     * 业务类型: 授信利息 
+     */
+    int BUSINESS_TYPE_CREDIT_FACILITY_INTEREST = 250;
+                    
+    /**
      * 期间状态: 开启 
      */
     int PERIOD_STATUS_OPEN = 10;
@@ -397,5 +432,90 @@ public interface _ErpFinDaoConstants {
      * 借款单状态: 已作废 
      */
     int ADVANCE_STATUS_CANCELLED = 50;
+                    
+    /**
+     * 票据类型: 银行承兑汇票 
+     */
+    int NOTES_TYPE_BANK_ACCEPTANCE = 10;
+                    
+    /**
+     * 票据类型: 商业承兑汇票 
+     */
+    int NOTES_TYPE_COMMERCIAL_ACCEPTANCE = 20;
+                    
+    /**
+     * 应收票据状态: 收到 
+     */
+    int NOTES_RECEIVABLE_STATUS_RECEIVED = 10;
+                    
+    /**
+     * 应收票据状态: 已贴现 
+     */
+    int NOTES_RECEIVABLE_STATUS_DISCOUNTED = 20;
+                    
+    /**
+     * 应收票据状态: 已背书 
+     */
+    int NOTES_RECEIVABLE_STATUS_ENDORSED = 30;
+                    
+    /**
+     * 应收票据状态: 托收中 
+     */
+    int NOTES_RECEIVABLE_STATUS_COLLECTION_PENDING = 40;
+                    
+    /**
+     * 应收票据状态: 已承兑 
+     */
+    int NOTES_RECEIVABLE_STATUS_HONORED = 50;
+                    
+    /**
+     * 应收票据状态: 已拒付 
+     */
+    int NOTES_RECEIVABLE_STATUS_DISHONORED = 60;
+                    
+    /**
+     * 应收票据状态: 已注销 
+     */
+    int NOTES_RECEIVABLE_STATUS_WRITE_OFF = 70;
+                    
+    /**
+     * 应付票据状态: 已开出 
+     */
+    int NOTES_PAYABLE_STATUS_ISSUED = 10;
+                    
+    /**
+     * 应付票据状态: 已兑付 
+     */
+    int NOTES_PAYABLE_STATUS_HONORED = 20;
+                    
+    /**
+     * 应付票据状态: 已拒付 
+     */
+    int NOTES_PAYABLE_STATUS_DISHONORED = 30;
+                    
+    /**
+     * 应付票据状态: 已注销 
+     */
+    int NOTES_PAYABLE_STATUS_WRITE_OFF = 40;
+                    
+    /**
+     * 授信额度类型: 银行承兑额度 
+     */
+    int CREDIT_FACILITY_TYPE_BANK_ACCEPTANCE_LINE = 10;
+                    
+    /**
+     * 授信额度类型: 贷款额度 
+     */
+    int CREDIT_FACILITY_TYPE_LOAN_LINE = 20;
+                    
+    /**
+     * 现金流方向: 流入 
+     */
+    int CASH_FLOW_DIRECTION_INFLOW = 10;
+                    
+    /**
+     * 现金流方向: 流出 
+     */
+    int CASH_FLOW_DIRECTION_OUTFLOW = 20;
                     
 }

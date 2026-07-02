@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 授信额度类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 银行承兑额度
+    value: 10
+    description: 
+  
+  - label: 贷款额度
+    value: 20
+    description: 
+  

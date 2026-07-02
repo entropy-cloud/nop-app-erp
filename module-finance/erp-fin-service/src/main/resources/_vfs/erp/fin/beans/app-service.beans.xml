@@ -60,4 +60,15 @@
     <!-- 报销抵扣借款编排器（报销过账后净额抵扣同员工未还借款 + EMPLOYEE_ADVANCE_SETTLE 清算凭证；反审核时反向）。 -->
     <bean id="app.erp.fin.service.posting.AdvanceOffsetOrchestrator"
           class="app.erp.fin.service.posting.AdvanceOffsetOrchestrator"/>
+
+    <!-- 票据业财过账 Provider（注册为 Bean 后由 ErpFinAcctDocRegistry 自动聚合，
+         处理 NOTES_RECEIVABLE_RECEIVED/DISCOUNTED/ENDORSED/COLLECTION + NOTES_PAYABLE_ISSUED/HONORED）。 -->
+    <bean id="app.erp.fin.service.posting.provider.NotesReceivableAcctDocProvider"
+          class="app.erp.fin.service.posting.provider.NotesReceivableAcctDocProvider"/>
+    <bean id="app.erp.fin.service.posting.provider.NotesPayableAcctDocProvider"
+          class="app.erp.fin.service.posting.provider.NotesPayableAcctDocProvider"/>
+
+    <!-- 票据过账派发器（状态迁移边界触发：收到/贴现/背书/托收/承兑 + 应付开出/兑付；失败吞异常保持原态 posted=false）。 -->
+    <bean id="app.erp.fin.service.posting.NotesPostingDispatcher"
+          class="app.erp.fin.service.posting.NotesPostingDispatcher"/>
 </beans>

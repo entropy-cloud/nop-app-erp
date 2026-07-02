@@ -7,11 +7,16 @@ entity:
     ErpFinBankReconciliationLine: 银行对账调整行
     ErpFinBankStatement: 银行对账单
     ErpFinBankStatementLine: 银行对账单行
+    ErpFinCashForecast: 现金预测
+    ErpFinCreditFacility: 银行授信额度
     ErpFinEmployeeAdvance: 员工借款单
     ErpFinExpenseClaim: 费用报销单
     ErpFinExpenseClaimLine: 费用报销单行
     ErpFinFundAccount: 资金账户
     ErpFinGlBalance: 总账余额
+    ErpFinNotesDiscount: 票据贴现明细
+    ErpFinNotesPayable: 应付票据
+    ErpFinNotesReceivable: 应收票据
     ErpFinReconciliation: 核销单
     ErpFinReconciliationLine: 核销单行
     ErpFinTrialBalance: 试算平衡表
@@ -196,6 +201,50 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+    ErpFinCashForecast:
+      amountFunctional: 本位币金额
+      amountSource: 源币种金额
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      direction: 现金流方向
+      direction_label: 现金流方向
+      forecastDate: 预测日期
+      fundAccount: null
+      fundAccountId: 资金账户
+      id: ID
+      orgId: 核算组织
+      partner: null
+      partnerId: 往来单位
+      remark: 备注
+      sourceBillCode: 来源单据号
+      sourceBillType: 来源单据类型
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpFinCreditFacility:
+      availableAmount: 可用额度
+      code: 单号
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      facilityType: 授信类型
+      facilityType_label: 授信类型
+      fundAccount: null
+      fundAccountId: 授信银行账户
+      id: ID
+      org: null
+      orgId: 核算组织
+      remark: 备注
+      status: 状态
+      status_label: 状态
+      totalAmount: 授信总额
+      updateTime: 修改时间
+      updatedBy: 修改人
+      usedAmount: 已用额度
+      validFrom: 生效日
+      validTo: 到期日
+      version: 数据版本
     ErpFinEmployeeAdvance:
       advanceType: 借款类型
       advanceType_label: 借款类型
@@ -355,6 +404,103 @@ prop:
       warehouseId: 辅助-仓库
       yearOpeningCredit: 年初贷方
       yearOpeningDebit: 年初借方
+    ErpFinNotesDiscount:
+      bank: null
+      bankId: 贴现银行账户
+      createTime: 创建时间
+      createdBy: 创建人
+      currencyId: 币种
+      delVersion: 逻辑删除版本
+      discountDate: 贴现日
+      discountInterest: 贴现息
+      exchangeGainLoss: 汇兑损益
+      exchangeRate: 汇率
+      faceAmount: 票面金额
+      id: ID
+      netAmount: 实得金额
+      notesReceivable: null
+      notesReceivableId: 应收票据
+      org: null
+      orgId: 核算组织
+      posted: 是否已过账
+      postedAt: 过账时间
+      postedBy: 过账人
+      remark: 备注
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpFinNotesPayable:
+      amountFunctional: 本位币票面金额
+      amountSource: 源币种票面金额
+      code: 单号
+      createTime: 创建时间
+      createdBy: 创建人
+      creditFacility: null
+      creditFacilityId: 占用授信额度
+      currency: null
+      currencyId: 币种
+      delVersion: 逻辑删除版本
+      dueDate: 到期日
+      exchangeRate: 汇率
+      id: ID
+      issueDate: 出票日
+      notesNo: 票据号
+      notesType: 票据类型
+      notesType_label: 票据类型
+      org: null
+      orgId: 核算组织
+      partner: null
+      partnerId: 收款方往来
+      payeeBank: 收款行
+      payeeName: 收款人
+      posted: 是否已过账
+      postedAt: 过账时间
+      postedBy: 过账人
+      remark: 备注
+      sourceBillCode: 来源单据号
+      sourceBillType: 来源单据类型
+      status: 票据状态
+      status_label: 票据状态
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpFinNotesReceivable:
+      amountFunctional: 本位币票面金额
+      amountSource: 源币种票面金额
+      code: 单号
+      createTime: 创建时间
+      createdBy: 创建人
+      currency: null
+      currencyId: 币种
+      delVersion: 逻辑删除版本
+      discountId: 贴现明细
+      drawerBank: 出票行
+      drawerName: 出票人
+      dueDate: 到期日
+      endorsementFrom: null
+      endorsementFromId: 背书来源票据
+      exchangeRate: 汇率
+      id: ID
+      issueDate: 出票日
+      notesNo: 票据号
+      notesType: 票据类型
+      notesType_label: 票据类型
+      org: null
+      orgId: 核算组织
+      partner: null
+      partnerId: 出票客户往来
+      payeeName: 收款人
+      posted: 是否已过账
+      postedAt: 过账时间
+      postedBy: 过账人
+      remark: 备注
+      sourceBillCode: 来源单据号
+      sourceBillType: 来源单据类型
+      status: 票据状态
+      status_label: 票据状态
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
     ErpFinReconciliation:
       acctSchema: null
       acctSchemaId: 账套

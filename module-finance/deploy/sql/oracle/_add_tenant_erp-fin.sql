@@ -29,6 +29,8 @@ alter table erp_fin_fund_account add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT 
 
 alter table erp_fin_reconciliation add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
+alter table erp_fin_notes_receivable add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
 alter table erp_fin_employee_advance add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_voucher_template_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
@@ -45,6 +47,12 @@ alter table erp_fin_trial_balance add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT
 
 alter table erp_fin_bank_statement add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
+alter table erp_fin_credit_facility add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
+alter table erp_fin_cash_forecast add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
+alter table erp_fin_notes_discount add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
 alter table erp_fin_expense_claim add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_voucher_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
@@ -54,6 +62,8 @@ alter table erp_fin_voucher_bill_r add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NO
 alter table erp_fin_reconciliation_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_bank_reconciliation add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
+alter table erp_fin_notes_payable add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_expense_claim_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
@@ -106,6 +116,9 @@ alter table erp_fin_fund_account add constraint PK_erp_fin_fund_account primary 
 alter table erp_fin_reconciliation drop constraint PK_erp_fin_reconciliation;
 alter table erp_fin_reconciliation add constraint PK_erp_fin_reconciliation primary key (NOP_TENANT_ID, ID);
 
+alter table erp_fin_notes_receivable drop constraint PK_erp_fin_notes_receivable;
+alter table erp_fin_notes_receivable add constraint PK_erp_fin_notes_receivable primary key (NOP_TENANT_ID, ID);
+
 alter table erp_fin_employee_advance drop constraint PK_erp_fin_employee_advance;
 alter table erp_fin_employee_advance add constraint PK_erp_fin_employee_advance primary key (NOP_TENANT_ID, ID);
 
@@ -130,6 +143,15 @@ alter table erp_fin_trial_balance add constraint PK_erp_fin_trial_balance primar
 alter table erp_fin_bank_statement drop constraint PK_erp_fin_bank_statement;
 alter table erp_fin_bank_statement add constraint PK_erp_fin_bank_statement primary key (NOP_TENANT_ID, ID);
 
+alter table erp_fin_credit_facility drop constraint PK_erp_fin_credit_facility;
+alter table erp_fin_credit_facility add constraint PK_erp_fin_credit_facility primary key (NOP_TENANT_ID, ID);
+
+alter table erp_fin_cash_forecast drop constraint PK_erp_fin_cash_forecast;
+alter table erp_fin_cash_forecast add constraint PK_erp_fin_cash_forecast primary key (NOP_TENANT_ID, ID);
+
+alter table erp_fin_notes_discount drop constraint PK_erp_fin_notes_discount;
+alter table erp_fin_notes_discount add constraint PK_erp_fin_notes_discount primary key (NOP_TENANT_ID, ID);
+
 alter table erp_fin_expense_claim drop constraint PK_erp_fin_expense_claim;
 alter table erp_fin_expense_claim add constraint PK_erp_fin_expense_claim primary key (NOP_TENANT_ID, ID);
 
@@ -144,6 +166,9 @@ alter table erp_fin_reconciliation_line add constraint PK_erp_fin_reconciliation
 
 alter table erp_fin_bank_reconciliation drop constraint PK_erp_fin_bank_reconciliation;
 alter table erp_fin_bank_reconciliation add constraint PK_erp_fin_bank_reconciliation primary key (NOP_TENANT_ID, ID);
+
+alter table erp_fin_notes_payable drop constraint PK_erp_fin_notes_payable;
+alter table erp_fin_notes_payable add constraint PK_erp_fin_notes_payable primary key (NOP_TENANT_ID, ID);
 
 alter table erp_fin_expense_claim_line drop constraint PK_erp_fin_expense_claim_line;
 alter table erp_fin_expense_claim_line add constraint PK_erp_fin_expense_claim_line primary key (NOP_TENANT_ID, ID);

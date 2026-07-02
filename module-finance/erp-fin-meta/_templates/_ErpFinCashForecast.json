@@ -1,0 +1,22 @@
+{
+  "id": 0,
+  "orgId": 0,
+  "fundAccountId": 0,
+  "forecastDate": "2000-01-01",
+  "sourceBillType": "",
+  "sourceBillCode": "",
+  "direction": 0,
+  "direction_label": "",
+  "partnerId": 0,
+  "amountSource": 0.0,
+  "amountFunctional": 0.0,
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "fundAccount": null,
+  "partner": null
+}

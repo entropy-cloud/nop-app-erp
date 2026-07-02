@@ -39,6 +39,15 @@ public interface ErpFinErrors {
     String ARG_LINE_TOTAL = "lineTotal";
     String ARG_ADVANCE_TYPE = "advanceType";
 
+    // --- 票据/资金作用域参数键 ---
+    String ARG_NOTES_CODE = "notesCode";
+    String ARG_NOTES_ID = "notesId";
+    String ARG_CREDIT_FACILITY_ID = "creditFacilityId";
+    String ARG_AVAILABLE_AMOUNT = "availableAmount";
+    String ARG_FACE_AMOUNT = "faceAmount";
+    String ARG_DISCOUNT_RATE = "discountRate";
+    String ARG_CONFIG_KEY = "configKey";
+
     ErrorCode ERR_AR_AP_ITEM_PARTNER_MISSING = ErrorCode.define("erp.err.fin.ar-ap.partner-missing",
             "来源单据 {sourceBillCode}（类型 {sourceBillType}）的 billData 缺少 partnerId，无法生成辅助账",
             ARG_SOURCE_BILL_CODE, ARG_SOURCE_BILL_TYPE);
@@ -134,4 +143,32 @@ public interface ErpFinErrors {
 
     ErrorCode ERR_EMPLOYEE_ADVANCE_NOT_REVERSED_BEFORE_CANCEL = ErrorCode.define("erp.err.fin.employee-advance.not-reversed-before-cancel",
             "员工借款单 {advanceCode} 已过账，须先反审核（红字冲销）再作废", ARG_ADVANCE_CODE);
+
+    // --- 票据（应收/应付）作用域 ---
+
+    ErrorCode ERR_NOTES_RECEIVABLE_NOT_FOUND = ErrorCode.define("erp.err.fin.notes-receivable.not-found",
+            "应收票据 {notesId} 不存在", ARG_NOTES_ID);
+
+    ErrorCode ERR_NOTES_RECEIVABLE_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.fin.notes-receivable.illegal-status-transition",
+            "应收票据 {notesCode} 当前状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_NOTES_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+
+    ErrorCode ERR_NOTES_PAYABLE_NOT_FOUND = ErrorCode.define("erp.err.fin.notes-payable.not-found",
+            "应付票据 {notesId} 不存在", ARG_NOTES_ID);
+
+    ErrorCode ERR_NOTES_PAYABLE_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.fin.notes-payable.illegal-status-transition",
+            "应付票据 {notesCode} 当前状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_NOTES_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+
+    ErrorCode ERR_NOTES_AMOUNT_INVALID = ErrorCode.define("erp.err.fin.notes.amount-invalid",
+            "票据 {notesCode} 票面金额必须大于 0", ARG_NOTES_CODE);
+
+    // --- 授信额度作用域 ---
+
+    ErrorCode ERR_CREDIT_FACILITY_NOT_FOUND = ErrorCode.define("erp.err.fin.credit-facility.not-found",
+            "授信额度 {creditFacilityId} 不存在", ARG_CREDIT_FACILITY_ID);
+
+    ErrorCode ERR_CREDIT_FACILITY_INSUFFICIENT = ErrorCode.define("erp.err.fin.credit-facility.insufficient",
+            "授信额度 {creditFacilityId} 可用额度 {availableAmount} 不足，无法开出银承票面 {faceAmount}",
+            ARG_CREDIT_FACILITY_ID, ARG_AVAILABLE_AMOUNT, ARG_FACE_AMOUNT);
 }

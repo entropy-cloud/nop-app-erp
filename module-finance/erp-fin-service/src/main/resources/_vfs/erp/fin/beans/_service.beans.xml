@@ -37,6 +37,14 @@
         <property name="bizObjName" value="ErpFinReconciliation"/>
     </bean>
 
+    <bean id="app.erp.fin.service.entity.ErpFinNotesReceivableBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinNotesReceivable" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinNotesReceivableBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinNotesReceivable"/>
+    </bean>
+
     <bean id="app.erp.fin.service.entity.ErpFinEmployeeAdvanceBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpFinEmployeeAdvance" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -98,6 +106,30 @@
         <property name="bizObjName" value="ErpFinBankStatement"/>
     </bean>
 
+    <bean id="app.erp.fin.service.entity.ErpFinCreditFacilityBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinCreditFacility" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinCreditFacilityBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinCreditFacility"/>
+    </bean>
+
+    <bean id="app.erp.fin.service.entity.ErpFinCashForecastBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinCashForecast" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinCashForecastBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinCashForecast"/>
+    </bean>
+
+    <bean id="app.erp.fin.service.entity.ErpFinNotesDiscountBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinNotesDiscount" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinNotesDiscountBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinNotesDiscount"/>
+    </bean>
+
     <bean id="app.erp.fin.service.entity.ErpFinExpenseClaimBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpFinExpenseClaim" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -136,6 +168,14 @@
           ioc:type="app.erp.fin.biz.IErpFinBankReconciliationBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
         <property name="bizObjName" value="ErpFinBankReconciliation"/>
+    </bean>
+
+    <bean id="app.erp.fin.service.entity.ErpFinNotesPayableBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinNotesPayable" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinNotesPayableBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinNotesPayable"/>
     </bean>
 
     <bean id="app.erp.fin.service.entity.ErpFinExpenseClaimLineBizModel" ioc:type="@bean:id" ioc:default="true"/>

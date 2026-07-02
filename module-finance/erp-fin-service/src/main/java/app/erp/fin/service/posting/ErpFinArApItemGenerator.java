@@ -153,6 +153,12 @@ public class ErpFinArApItemGenerator {
             case EMPLOYEE_ADVANCE_SETTLE:
                 // 借款清算（报销抵扣）：不生成新辅助账，由抵扣编排直接回写既有 advance 应收 / expense 应付 open item 状态。
                 return null;
+            case NOTES_RECEIVABLE_RECEIVED:
+                // 应收票据收到：生成应收侧辅助账（DIRECTION_RECEIVABLE），抵客户 AR_INVOICE 应收（同方向核销，见 plan Phase 3）。
+                return new SourceProfile(ErpFinConstants.DIRECTION_RECEIVABLE, ErpFinConstants.SOURCE_BILL_NOTES_RECEIVABLE);
+            case NOTES_RECEIVABLE_ENDORSED:
+                // 票据背书转让：生成应付侧辅助账（DIRECTION_PAYABLE），抵供应商 AP_INVOICE 应付（同方向核销）。
+                return new SourceProfile(ErpFinConstants.DIRECTION_PAYABLE, ErpFinConstants.SOURCE_BILL_NOTES_ENDORSED);
             default:
                 return null;
         }
@@ -241,6 +247,11 @@ public class ErpFinArApItemGenerator {
                                     asAmount(data.get("AMOUNT"), null))));
         }
         BigDecimal amount = asAmount(data.get("TOTAL"), asAmount(data.get("AMOUNT"), null));
+        if (ErpFinConstants.SOURCE_BILL_NOTES_RECEIVABLE.equals(sourceBillType)
+                || ErpFinConstants.SOURCE_BILL_NOTES_ENDORSED.equals(sourceBillType)) {
+            // 票据辅助账金额取票面（FACE_AMOUNT），回退 TOTAL/AMOUNT。
+            return asAmount(data.get("FACE_AMOUNT"), amount);
+        }
         if (ErpFinConstants.SOURCE_BILL_PUR_RETURN.equals(sourceBillType)) {
             // 退货冲减：TOTAL_AMOUNT 正值取负；null 时回退 null（由调用方校验缺失）。
             BigDecimal returnAmount = asAmount(data.get("TOTAL_AMOUNT"), null);

@@ -1,0 +1,35 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 应收票据状态
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 收到
+    value: 10
+    description: 
+  
+  - label: 已贴现
+    value: 20
+    description: 
+  
+  - label: 已背书
+    value: 30
+    description: 
+  
+  - label: 托收中
+    value: 40
+    description: 
+  
+  - label: 已承兑
+    value: 50
+    description: 
+  
+  - label: 已拒付
+    value: 60
+    description: 
+  
+  - label: 已注销
+    value: 70
+    description: 
+  

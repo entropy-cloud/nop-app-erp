@@ -195,6 +195,40 @@ CREATE TABLE erp_fin_reconciliation(
   constraint PK_erp_fin_reconciliation primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_fin_notes_receivable(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '单号',
+  ORG_ID BIGINT NOT NULL    COMMENT '核算组织',
+  NOTES_TYPE INTEGER NOT NULL    COMMENT '票据类型',
+  NOTES_NO VARCHAR(50) NULL    COMMENT '票据号',
+  DRAWER_NAME VARCHAR(200) NULL    COMMENT '出票人',
+  DRAWER_BANK VARCHAR(200) NULL    COMMENT '出票行',
+  PAYEE_NAME VARCHAR(200) NULL    COMMENT '收款人',
+  ISSUE_DATE DATE NULL    COMMENT '出票日',
+  DUE_DATE DATE NULL    COMMENT '到期日',
+  CURRENCY_ID BIGINT NOT NULL    COMMENT '币种',
+  EXCHANGE_RATE DECIMAL(20,8) default 1  NULL    COMMENT '汇率',
+  AMOUNT_SOURCE DECIMAL(20,4) default 0  NULL    COMMENT '源币种票面金额',
+  AMOUNT_FUNCTIONAL DECIMAL(20,4) default 0  NULL    COMMENT '本位币票面金额',
+  PARTNER_ID BIGINT NULL    COMMENT '出票客户往来',
+  ENDORSEMENT_FROM_ID BIGINT NULL    COMMENT '背书来源票据',
+  SOURCE_BILL_TYPE VARCHAR(50) NULL    COMMENT '来源单据类型',
+  SOURCE_BILL_CODE VARCHAR(50) NULL    COMMENT '来源单据号',
+  DISCOUNT_ID BIGINT NULL    COMMENT '贴现明细',
+  STATUS INTEGER NULL    COMMENT '票据状态',
+  POSTED BOOLEAN default 0  NULL    COMMENT '是否已过账',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
+  POSTED_AT DATETIME NULL    COMMENT '过账时间',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_fin_notes_receivable primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_fin_employee_advance(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '单号',
@@ -398,6 +432,74 @@ CREATE TABLE erp_fin_bank_statement(
   constraint PK_erp_fin_bank_statement primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_fin_credit_facility(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '单号',
+  ORG_ID BIGINT NOT NULL    COMMENT '核算组织',
+  FUND_ACCOUNT_ID BIGINT NULL    COMMENT '授信银行账户',
+  FACILITY_TYPE INTEGER NOT NULL    COMMENT '授信类型',
+  TOTAL_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '授信总额',
+  USED_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '已用额度',
+  AVAILABLE_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '可用额度',
+  VALID_FROM DATE NULL    COMMENT '生效日',
+  VALID_TO DATE NULL    COMMENT '到期日',
+  STATUS INTEGER NULL    COMMENT '状态',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_fin_credit_facility primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_fin_cash_forecast(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  ORG_ID BIGINT NULL    COMMENT '核算组织',
+  FUND_ACCOUNT_ID BIGINT NULL    COMMENT '资金账户',
+  FORECAST_DATE DATE NOT NULL    COMMENT '预测日期',
+  SOURCE_BILL_TYPE VARCHAR(50) NULL    COMMENT '来源单据类型',
+  SOURCE_BILL_CODE VARCHAR(50) NULL    COMMENT '来源单据号',
+  DIRECTION INTEGER NULL    COMMENT '现金流方向',
+  PARTNER_ID BIGINT NULL    COMMENT '往来单位',
+  AMOUNT_SOURCE DECIMAL(20,4) default 0  NULL    COMMENT '源币种金额',
+  AMOUNT_FUNCTIONAL DECIMAL(20,4) default 0  NULL    COMMENT '本位币金额',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_fin_cash_forecast primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_fin_notes_discount(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  NOTES_RECEIVABLE_ID BIGINT NOT NULL    COMMENT '应收票据',
+  ORG_ID BIGINT NOT NULL    COMMENT '核算组织',
+  DISCOUNT_DATE DATE NOT NULL    COMMENT '贴现日',
+  BANK_ID BIGINT NULL    COMMENT '贴现银行账户',
+  FACE_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '票面金额',
+  DISCOUNT_INTEREST DECIMAL(20,4) default 0  NULL    COMMENT '贴现息',
+  NET_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '实得金额',
+  CURRENCY_ID BIGINT NOT NULL    COMMENT '币种',
+  EXCHANGE_RATE DECIMAL(20,8) default 1  NULL    COMMENT '汇率',
+  EXCHANGE_GAIN_LOSS DECIMAL(20,4) default 0  NULL    COMMENT '汇兑损益',
+  POSTED BOOLEAN default 0  NULL    COMMENT '是否已过账',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
+  POSTED_AT DATETIME NULL    COMMENT '过账时间',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_fin_notes_discount primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_fin_expense_claim(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '单号',
@@ -523,6 +625,38 @@ CREATE TABLE erp_fin_bank_reconciliation(
   constraint PK_erp_fin_bank_reconciliation primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_fin_notes_payable(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '单号',
+  ORG_ID BIGINT NOT NULL    COMMENT '核算组织',
+  NOTES_TYPE INTEGER NOT NULL    COMMENT '票据类型',
+  NOTES_NO VARCHAR(50) NULL    COMMENT '票据号',
+  PAYEE_NAME VARCHAR(200) NULL    COMMENT '收款人',
+  PAYEE_BANK VARCHAR(200) NULL    COMMENT '收款行',
+  ISSUE_DATE DATE NULL    COMMENT '出票日',
+  DUE_DATE DATE NULL    COMMENT '到期日',
+  CURRENCY_ID BIGINT NOT NULL    COMMENT '币种',
+  EXCHANGE_RATE DECIMAL(20,8) default 1  NULL    COMMENT '汇率',
+  AMOUNT_SOURCE DECIMAL(20,4) default 0  NULL    COMMENT '源币种票面金额',
+  AMOUNT_FUNCTIONAL DECIMAL(20,4) default 0  NULL    COMMENT '本位币票面金额',
+  PARTNER_ID BIGINT NULL    COMMENT '收款方往来',
+  CREDIT_FACILITY_ID BIGINT NULL    COMMENT '占用授信额度',
+  SOURCE_BILL_TYPE VARCHAR(50) NULL    COMMENT '来源单据类型',
+  SOURCE_BILL_CODE VARCHAR(50) NULL    COMMENT '来源单据号',
+  STATUS INTEGER NULL    COMMENT '票据状态',
+  POSTED BOOLEAN default 0  NULL    COMMENT '是否已过账',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
+  POSTED_AT DATETIME NULL    COMMENT '过账时间',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_fin_notes_payable primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_fin_expense_claim_line(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CLAIM_ID BIGINT NOT NULL    COMMENT '报销单ID',
@@ -619,6 +753,8 @@ CREATE TABLE erp_fin_bank_reconciliation_line(
                 
    ALTER TABLE erp_fin_reconciliation COMMENT '核销单';
                 
+   ALTER TABLE erp_fin_notes_receivable COMMENT '应收票据';
+                
    ALTER TABLE erp_fin_employee_advance COMMENT '员工借款单';
                 
    ALTER TABLE erp_fin_voucher_template_line COMMENT '凭证模板行';
@@ -635,6 +771,12 @@ CREATE TABLE erp_fin_bank_reconciliation_line(
                 
    ALTER TABLE erp_fin_bank_statement COMMENT '银行对账单';
                 
+   ALTER TABLE erp_fin_credit_facility COMMENT '银行授信额度';
+                
+   ALTER TABLE erp_fin_cash_forecast COMMENT '现金预测';
+                
+   ALTER TABLE erp_fin_notes_discount COMMENT '票据贴现明细';
+                
    ALTER TABLE erp_fin_expense_claim COMMENT '费用报销单';
                 
    ALTER TABLE erp_fin_voucher_line COMMENT '凭证分录行';
@@ -644,6 +786,8 @@ CREATE TABLE erp_fin_bank_reconciliation_line(
    ALTER TABLE erp_fin_reconciliation_line COMMENT '核销单行';
                 
    ALTER TABLE erp_fin_bank_reconciliation COMMENT '银行对账(余额调节表)';
+                
+   ALTER TABLE erp_fin_notes_payable COMMENT '应付票据';
                 
    ALTER TABLE erp_fin_expense_claim_line COMMENT '费用报销单行';
                 

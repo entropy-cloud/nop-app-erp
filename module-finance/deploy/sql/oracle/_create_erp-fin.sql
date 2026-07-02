@@ -195,6 +195,40 @@ CREATE TABLE erp_fin_reconciliation(
   constraint PK_erp_fin_reconciliation primary key (ID)
 );
 
+CREATE TABLE erp_fin_notes_receivable(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  ORG_ID NUMBER(20) NOT NULL ,
+  NOTES_TYPE INTEGER NOT NULL ,
+  NOTES_NO VARCHAR2(50)  ,
+  DRAWER_NAME VARCHAR2(200)  ,
+  DRAWER_BANK VARCHAR2(200)  ,
+  PAYEE_NAME VARCHAR2(200)  ,
+  ISSUE_DATE DATE  ,
+  DUE_DATE DATE  ,
+  CURRENCY_ID NUMBER(20) NOT NULL ,
+  EXCHANGE_RATE NUMBER(20,8) default 1   ,
+  AMOUNT_SOURCE NUMBER(20,4) default 0   ,
+  AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
+  PARTNER_ID NUMBER(20)  ,
+  ENDORSEMENT_FROM_ID NUMBER(20)  ,
+  SOURCE_BILL_TYPE VARCHAR2(50)  ,
+  SOURCE_BILL_CODE VARCHAR2(50)  ,
+  DISCOUNT_ID NUMBER(20)  ,
+  STATUS INTEGER  ,
+  POSTED CHAR(1) default 0   ,
+  POSTED_BY VARCHAR2(36)  ,
+  POSTED_AT DATE  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_fin_notes_receivable primary key (ID)
+);
+
 CREATE TABLE erp_fin_employee_advance(
   ID NUMBER(20) NOT NULL ,
   CODE VARCHAR2(50) NOT NULL ,
@@ -398,6 +432,74 @@ CREATE TABLE erp_fin_bank_statement(
   constraint PK_erp_fin_bank_statement primary key (ID)
 );
 
+CREATE TABLE erp_fin_credit_facility(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  ORG_ID NUMBER(20) NOT NULL ,
+  FUND_ACCOUNT_ID NUMBER(20)  ,
+  FACILITY_TYPE INTEGER NOT NULL ,
+  TOTAL_AMOUNT NUMBER(20,4) default 0   ,
+  USED_AMOUNT NUMBER(20,4) default 0   ,
+  AVAILABLE_AMOUNT NUMBER(20,4) default 0   ,
+  VALID_FROM DATE  ,
+  VALID_TO DATE  ,
+  STATUS INTEGER  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_fin_credit_facility primary key (ID)
+);
+
+CREATE TABLE erp_fin_cash_forecast(
+  ID NUMBER(20) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  FUND_ACCOUNT_ID NUMBER(20)  ,
+  FORECAST_DATE DATE NOT NULL ,
+  SOURCE_BILL_TYPE VARCHAR2(50)  ,
+  SOURCE_BILL_CODE VARCHAR2(50)  ,
+  DIRECTION INTEGER  ,
+  PARTNER_ID NUMBER(20)  ,
+  AMOUNT_SOURCE NUMBER(20,4) default 0   ,
+  AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_fin_cash_forecast primary key (ID)
+);
+
+CREATE TABLE erp_fin_notes_discount(
+  ID NUMBER(20) NOT NULL ,
+  NOTES_RECEIVABLE_ID NUMBER(20) NOT NULL ,
+  ORG_ID NUMBER(20) NOT NULL ,
+  DISCOUNT_DATE DATE NOT NULL ,
+  BANK_ID NUMBER(20)  ,
+  FACE_AMOUNT NUMBER(20,4) default 0   ,
+  DISCOUNT_INTEREST NUMBER(20,4) default 0   ,
+  NET_AMOUNT NUMBER(20,4) default 0   ,
+  CURRENCY_ID NUMBER(20) NOT NULL ,
+  EXCHANGE_RATE NUMBER(20,8) default 1   ,
+  EXCHANGE_GAIN_LOSS NUMBER(20,4) default 0   ,
+  POSTED CHAR(1) default 0   ,
+  POSTED_BY VARCHAR2(36)  ,
+  POSTED_AT DATE  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_fin_notes_discount primary key (ID)
+);
+
 CREATE TABLE erp_fin_expense_claim(
   ID NUMBER(20) NOT NULL ,
   CODE VARCHAR2(50) NOT NULL ,
@@ -521,6 +623,38 @@ CREATE TABLE erp_fin_bank_reconciliation(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   constraint PK_erp_fin_bank_reconciliation primary key (ID)
+);
+
+CREATE TABLE erp_fin_notes_payable(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  ORG_ID NUMBER(20) NOT NULL ,
+  NOTES_TYPE INTEGER NOT NULL ,
+  NOTES_NO VARCHAR2(50)  ,
+  PAYEE_NAME VARCHAR2(200)  ,
+  PAYEE_BANK VARCHAR2(200)  ,
+  ISSUE_DATE DATE  ,
+  DUE_DATE DATE  ,
+  CURRENCY_ID NUMBER(20) NOT NULL ,
+  EXCHANGE_RATE NUMBER(20,8) default 1   ,
+  AMOUNT_SOURCE NUMBER(20,4) default 0   ,
+  AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
+  PARTNER_ID NUMBER(20)  ,
+  CREDIT_FACILITY_ID NUMBER(20)  ,
+  SOURCE_BILL_TYPE VARCHAR2(50)  ,
+  SOURCE_BILL_CODE VARCHAR2(50)  ,
+  STATUS INTEGER  ,
+  POSTED CHAR(1) default 0   ,
+  POSTED_BY VARCHAR2(36)  ,
+  POSTED_AT DATE  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_fin_notes_payable primary key (ID)
 );
 
 CREATE TABLE erp_fin_expense_claim_line(
@@ -770,6 +904,68 @@ CREATE TABLE erp_fin_bank_reconciliation_line(
       COMMENT ON COLUMN erp_fin_reconciliation.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_fin_reconciliation.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_fin_notes_receivable IS '应收票据';
+                
+      COMMENT ON COLUMN erp_fin_notes_receivable.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.CODE IS '单号';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.ORG_ID IS '核算组织';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.NOTES_TYPE IS '票据类型';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.NOTES_NO IS '票据号';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.DRAWER_NAME IS '出票人';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.DRAWER_BANK IS '出票行';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.PAYEE_NAME IS '收款人';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.ISSUE_DATE IS '出票日';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.DUE_DATE IS '到期日';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.CURRENCY_ID IS '币种';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.EXCHANGE_RATE IS '汇率';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.AMOUNT_SOURCE IS '源币种票面金额';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.AMOUNT_FUNCTIONAL IS '本位币票面金额';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.PARTNER_ID IS '出票客户往来';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.ENDORSEMENT_FROM_ID IS '背书来源票据';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.SOURCE_BILL_TYPE IS '来源单据类型';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.SOURCE_BILL_CODE IS '来源单据号';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.DISCOUNT_ID IS '贴现明细';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.STATUS IS '票据状态';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.POSTED IS '是否已过账';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.POSTED_BY IS '过账人';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.POSTED_AT IS '过账时间';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_notes_receivable.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_fin_employee_advance IS '员工借款单';
                 
@@ -1129,6 +1325,124 @@ CREATE TABLE erp_fin_bank_reconciliation_line(
                     
       COMMENT ON COLUMN erp_fin_bank_statement.UPDATE_TIME IS '修改时间';
                     
+      COMMENT ON TABLE erp_fin_credit_facility IS '银行授信额度';
+                
+      COMMENT ON COLUMN erp_fin_credit_facility.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_credit_facility.CODE IS '单号';
+                    
+      COMMENT ON COLUMN erp_fin_credit_facility.ORG_ID IS '核算组织';
+                    
+      COMMENT ON COLUMN erp_fin_credit_facility.FUND_ACCOUNT_ID IS '授信银行账户';
+                    
+      COMMENT ON COLUMN erp_fin_credit_facility.FACILITY_TYPE IS '授信类型';
+                    
+      COMMENT ON COLUMN erp_fin_credit_facility.TOTAL_AMOUNT IS '授信总额';
+                    
+      COMMENT ON COLUMN erp_fin_credit_facility.USED_AMOUNT IS '已用额度';
+                    
+      COMMENT ON COLUMN erp_fin_credit_facility.AVAILABLE_AMOUNT IS '可用额度';
+                    
+      COMMENT ON COLUMN erp_fin_credit_facility.VALID_FROM IS '生效日';
+                    
+      COMMENT ON COLUMN erp_fin_credit_facility.VALID_TO IS '到期日';
+                    
+      COMMENT ON COLUMN erp_fin_credit_facility.STATUS IS '状态';
+                    
+      COMMENT ON COLUMN erp_fin_credit_facility.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_fin_credit_facility.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_credit_facility.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_credit_facility.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_credit_facility.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_credit_facility.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_credit_facility.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_fin_cash_forecast IS '现金预测';
+                
+      COMMENT ON COLUMN erp_fin_cash_forecast.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_cash_forecast.ORG_ID IS '核算组织';
+                    
+      COMMENT ON COLUMN erp_fin_cash_forecast.FUND_ACCOUNT_ID IS '资金账户';
+                    
+      COMMENT ON COLUMN erp_fin_cash_forecast.FORECAST_DATE IS '预测日期';
+                    
+      COMMENT ON COLUMN erp_fin_cash_forecast.SOURCE_BILL_TYPE IS '来源单据类型';
+                    
+      COMMENT ON COLUMN erp_fin_cash_forecast.SOURCE_BILL_CODE IS '来源单据号';
+                    
+      COMMENT ON COLUMN erp_fin_cash_forecast.DIRECTION IS '现金流方向';
+                    
+      COMMENT ON COLUMN erp_fin_cash_forecast.PARTNER_ID IS '往来单位';
+                    
+      COMMENT ON COLUMN erp_fin_cash_forecast.AMOUNT_SOURCE IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_fin_cash_forecast.AMOUNT_FUNCTIONAL IS '本位币金额';
+                    
+      COMMENT ON COLUMN erp_fin_cash_forecast.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_fin_cash_forecast.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_cash_forecast.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_cash_forecast.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_cash_forecast.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_cash_forecast.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_cash_forecast.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_fin_notes_discount IS '票据贴现明细';
+                
+      COMMENT ON COLUMN erp_fin_notes_discount.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_notes_discount.NOTES_RECEIVABLE_ID IS '应收票据';
+                    
+      COMMENT ON COLUMN erp_fin_notes_discount.ORG_ID IS '核算组织';
+                    
+      COMMENT ON COLUMN erp_fin_notes_discount.DISCOUNT_DATE IS '贴现日';
+                    
+      COMMENT ON COLUMN erp_fin_notes_discount.BANK_ID IS '贴现银行账户';
+                    
+      COMMENT ON COLUMN erp_fin_notes_discount.FACE_AMOUNT IS '票面金额';
+                    
+      COMMENT ON COLUMN erp_fin_notes_discount.DISCOUNT_INTEREST IS '贴现息';
+                    
+      COMMENT ON COLUMN erp_fin_notes_discount.NET_AMOUNT IS '实得金额';
+                    
+      COMMENT ON COLUMN erp_fin_notes_discount.CURRENCY_ID IS '币种';
+                    
+      COMMENT ON COLUMN erp_fin_notes_discount.EXCHANGE_RATE IS '汇率';
+                    
+      COMMENT ON COLUMN erp_fin_notes_discount.EXCHANGE_GAIN_LOSS IS '汇兑损益';
+                    
+      COMMENT ON COLUMN erp_fin_notes_discount.POSTED IS '是否已过账';
+                    
+      COMMENT ON COLUMN erp_fin_notes_discount.POSTED_BY IS '过账人';
+                    
+      COMMENT ON COLUMN erp_fin_notes_discount.POSTED_AT IS '过账时间';
+                    
+      COMMENT ON COLUMN erp_fin_notes_discount.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_fin_notes_discount.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_notes_discount.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_notes_discount.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_notes_discount.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_notes_discount.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_notes_discount.UPDATE_TIME IS '修改时间';
+                    
       COMMENT ON TABLE erp_fin_expense_claim IS '费用报销单';
                 
       COMMENT ON COLUMN erp_fin_expense_claim.ID IS 'ID';
@@ -1348,6 +1662,64 @@ CREATE TABLE erp_fin_bank_reconciliation_line(
       COMMENT ON COLUMN erp_fin_bank_reconciliation.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_fin_bank_reconciliation.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_fin_notes_payable IS '应付票据';
+                
+      COMMENT ON COLUMN erp_fin_notes_payable.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.CODE IS '单号';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.ORG_ID IS '核算组织';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.NOTES_TYPE IS '票据类型';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.NOTES_NO IS '票据号';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.PAYEE_NAME IS '收款人';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.PAYEE_BANK IS '收款行';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.ISSUE_DATE IS '出票日';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.DUE_DATE IS '到期日';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.CURRENCY_ID IS '币种';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.EXCHANGE_RATE IS '汇率';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.AMOUNT_SOURCE IS '源币种票面金额';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.AMOUNT_FUNCTIONAL IS '本位币票面金额';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.PARTNER_ID IS '收款方往来';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.CREDIT_FACILITY_ID IS '占用授信额度';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.SOURCE_BILL_TYPE IS '来源单据类型';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.SOURCE_BILL_CODE IS '来源单据号';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.STATUS IS '票据状态';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.POSTED IS '是否已过账';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.POSTED_BY IS '过账人';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.POSTED_AT IS '过账时间';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_notes_payable.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_fin_expense_claim_line IS '费用报销单行';
                 

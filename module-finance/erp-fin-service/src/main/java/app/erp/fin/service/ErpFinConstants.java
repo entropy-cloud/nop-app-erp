@@ -70,6 +70,8 @@ public interface ErpFinConstants {
     String SOURCE_BILL_SAL_RETURN = "SAL_RETURN";
     String SOURCE_BILL_EXPENSE_CLAIM = "EXPENSE_CLAIM";
     String SOURCE_BILL_EMPLOYEE_ADVANCE = "EMPLOYEE_ADVANCE";
+    String SOURCE_BILL_NOTES_RECEIVABLE = "NOTES_RECEIVABLE";
+    String SOURCE_BILL_NOTES_ENDORSED = "NOTES_ENDORSED";
 
     // ---- PostingEvent.billData 键（员工→partnerId 解析，派发器填入已解析的 employee.partnerId） ----
     /** billData 键：携带已解析的 employee.partnerId（非 employee.id），供 ArApItemGenerator.resolvePartnerId 直接采用。 */
@@ -84,4 +86,42 @@ public interface ErpFinConstants {
     String BILL_DATA_PAYMENT_MODE = "PAYMENT_MODE";
     /** billData 键：部门 ID。 */
     String BILL_DATA_DEPARTMENT_ID = "DEPARTMENT_ID";
+
+    // ---- 资金/票据配置项（treasury.md §配置点），经 AppConfig.var 读取 ----
+    /** 开银承前是否强制校验授信可用额度，默认 true。 */
+    String CONFIG_CREDIT_CHECK_ON_ISSUE = "erp-fin.credit-check-on-issue";
+    /** 票据注销是否需审批门控，默认 true。 */
+    String CONFIG_NOTES_WRITEOFF_APPROVAL_REQUIRED = "erp-fin.notes-writeoff-approval-required";
+
+    // ---- notes-type ----
+    int NOTES_TYPE_BANK_ACCEPTANCE = 10;
+    int NOTES_TYPE_COMMERCIAL_ACCEPTANCE = 20;
+
+    // ---- notes-receivable-status（7 态状态机，treasury.md） ----
+    int NOTES_RECV_RECEIVED = 10;
+    int NOTES_RECV_DISCOUNTED = 20;
+    int NOTES_RECV_ENDORSED = 30;
+    int NOTES_RECV_COLLECTION_PENDING = 40;
+    int NOTES_RECV_HONORED = 50;
+    int NOTES_RECV_DISHONORED = 60;
+    int NOTES_RECV_WRITE_OFF = 70;
+
+    // ---- notes-payable-status ----
+    int NOTES_PAY_ISSUED = 10;
+    int NOTES_PAY_HONORED = 20;
+    int NOTES_PAY_DISHONORED = 30;
+    int NOTES_PAY_WRITE_OFF = 40;
+
+    // ---- cash-flow-direction ----
+    int CASH_FLOW_INFLOW = 10;
+    int CASH_FLOW_OUTFLOW = 20;
+
+    // ---- PostingEvent.billData 键（票据过账派发器填入） ----
+    String BILL_DATA_PARTNER_ID = "partnerId";
+    String BILL_DATA_FACE_AMOUNT = "FACE_AMOUNT";
+    String BILL_DATA_DISCOUNT_INTEREST = "DISCOUNT_INTEREST";
+    String BILL_DATA_NET_AMOUNT = "NET_AMOUNT";
+    String BILL_DATA_EXCHANGE_GAIN_LOSS = "EXCHANGE_GAIN_LOSS";
+    String BILL_DATA_BUSINESS_DATE = "businessDate";
+    String BILL_DATA_DUE_DATE = "dueDate";
 }

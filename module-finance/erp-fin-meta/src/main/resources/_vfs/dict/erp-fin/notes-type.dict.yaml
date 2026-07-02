@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 票据类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 银行承兑汇票
+    value: 10
+    description: 
+  
+  - label: 商业承兑汇票
+    value: 20
+    description: 
+  

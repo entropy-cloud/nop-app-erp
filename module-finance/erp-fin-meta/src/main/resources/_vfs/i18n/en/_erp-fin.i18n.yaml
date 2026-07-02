@@ -7,11 +7,16 @@ entity:
     ErpFinBankReconciliationLine: Bank Reconciliation Line
     ErpFinBankStatement: Bank Statement
     ErpFinBankStatementLine: Bank Statement Line
+    ErpFinCashForecast: Cash Forecast
+    ErpFinCreditFacility: Credit Facility
     ErpFinEmployeeAdvance: Employee Advance
     ErpFinExpenseClaim: Expense Claim
     ErpFinExpenseClaimLine: Expense Claim Line
     ErpFinFundAccount: Fund Account
     ErpFinGlBalance: GL Balance
+    ErpFinNotesDiscount: Notes Discount
+    ErpFinNotesPayable: Notes Payable
+    ErpFinNotesReceivable: Notes Receivable
     ErpFinReconciliation: Reconciliation
     ErpFinReconciliationLine: Reconciliation Line
     ErpFinTrialBalance: Trial Balance
@@ -196,6 +201,50 @@ prop:
       statement: Statement
       matchedLine: Matched Voucher Line
       currency: Currency
+    ErpFinCashForecast:
+      id: ID
+      orgId: Organization
+      fundAccountId: Fund Account
+      forecastDate: Forecast Date
+      sourceBillType: Source Bill Type
+      sourceBillCode: Source Bill Code
+      direction: Direction
+      direction_label: null
+      partnerId: Partner
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      fundAccount: Fund Account
+      partner: Partner
+    ErpFinCreditFacility:
+      id: ID
+      code: Code
+      orgId: Organization
+      fundAccountId: Fund Account
+      facilityType: Facility Type
+      facilityType_label: null
+      totalAmount: Total Amount
+      usedAmount: Used Amount
+      availableAmount: Available Amount
+      validFrom: Valid From
+      validTo: Valid To
+      status: Status
+      status_label: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      fundAccount: Fund Account
+      org: Org
     ErpFinEmployeeAdvance:
       id: ID
       code: Code
@@ -355,6 +404,103 @@ prop:
       department: null
       warehouse: null
       project: null
+    ErpFinNotesDiscount:
+      id: ID
+      notesReceivableId: Notes Receivable
+      orgId: Organization
+      discountDate: Discount Date
+      bankId: Bank Account
+      faceAmount: Face Amount
+      discountInterest: Discount Interest
+      netAmount: Net Amount
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      exchangeGainLoss: FX Gain/Loss
+      posted: Posted
+      postedBy: Posted By
+      postedAt: Posted At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      notesReceivable: Notes Receivable
+      bank: Bank Account
+      org: Org
+    ErpFinNotesPayable:
+      id: ID
+      code: Code
+      orgId: Organization
+      notesType: Notes Type
+      notesType_label: null
+      notesNo: Notes No
+      payeeName: Payee Name
+      payeeBank: Payee Bank
+      issueDate: Issue Date
+      dueDate: Due Date
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      amountSource: Face Amt (Source)
+      amountFunctional: Face Amt (Functional)
+      partnerId: Partner
+      creditFacilityId: Credit Facility
+      sourceBillType: Source Bill Type
+      sourceBillCode: Source Bill Code
+      status: Status
+      status_label: null
+      posted: Posted
+      postedBy: Posted By
+      postedAt: Posted At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      partner: Partner
+      currency: Currency
+      org: Org
+      creditFacility: Credit Facility
+    ErpFinNotesReceivable:
+      id: ID
+      code: Code
+      orgId: Organization
+      notesType: Notes Type
+      notesType_label: null
+      notesNo: Notes No
+      drawerName: Drawer Name
+      drawerBank: Drawer Bank
+      payeeName: Payee Name
+      issueDate: Issue Date
+      dueDate: Due Date
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      amountSource: Face Amt (Source)
+      amountFunctional: Face Amt (Functional)
+      partnerId: Partner
+      endorsementFromId: Endorsement From
+      sourceBillType: Source Bill Type
+      sourceBillCode: Source Bill Code
+      discountId: Discount
+      status: Status
+      status_label: null
+      posted: Posted
+      postedBy: Posted By
+      postedAt: Posted At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      partner: Partner
+      currency: Currency
+      org: Org
+      endorsementFrom: Endorsement From
     ErpFinReconciliation:
       id: ID
       code: Code
@@ -578,6 +724,11 @@ dict:
     erp-fin/advance-type: Advance Type
     erp-fin/expense-claim-status: Expense Claim Status
     erp-fin/advance-status: Advance Status
+    erp-fin/notes-type: Notes Type
+    erp-fin/notes-receivable-status: Notes Receivable Status
+    erp-fin/notes-payable-status: Notes Payable Status
+    erp-fin/credit-facility-type: Credit Facility Type
+    erp-fin/cash-flow-direction: Cash Flow Direction
 dict.option.label:
   erp-fin/voucher-type:
     '10': Receive
@@ -615,6 +766,13 @@ dict.option.label:
     '160': Expense Claim
     '170': Employee Advance
     '180': Advance Settlement
+    '190': Notes Receivable Received
+    '200': Notes Discounted
+    '210': Notes Endorsed
+    '220': Notes Collection
+    '230': Notes Payable Issued
+    '240': Notes Payable Honored
+    '250': Credit Facility Interest
   erp-fin/period-status:
     '10': Open
     '20': Closing
@@ -676,3 +834,25 @@ dict.option.label:
     '30': Approved
     '40': Rejected
     '50': Cancelled
+  erp-fin/notes-type:
+    '10': Bank Acceptance
+    '20': Commercial Acceptance
+  erp-fin/notes-receivable-status:
+    '10': Received
+    '20': Discounted
+    '30': Endorsed
+    '40': Collection Pending
+    '50': Honored
+    '60': Dishonored
+    '70': Written Off
+  erp-fin/notes-payable-status:
+    '10': Issued
+    '20': Honored
+    '30': Dishonored
+    '40': Written Off
+  erp-fin/credit-facility-type:
+    '10': Bank Acceptance Line
+    '20': Loan Line
+  erp-fin/cash-flow-direction:
+    '10': Inflow
+    '20': Outflow
