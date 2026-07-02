@@ -6,7 +6,7 @@
 
 本文件是 `flow-overview.md` L4 节"期末结算层"的详细展开。
 
-> **实现范围注记（计划 `2026-07-02-1000-3`）**：本流程已落地月度结账核心链路——期间状态机（OPEN→CLOSING→CLOSED→CLOSED_FINAL，含反结账）、前置检查、AR/AP/INV/AST/GL 模块按序关账、折旧集成门控、汇兑重估（承接 0300-3 deferred）、损益结转（收入/费用/成本三类）、试算平衡表快照、反结账红冲。以下子项为已裁定的 Non-Goal（详见计划 Deferred But Adjudicated）：成本核算（步骤2，inventory 域成本计算未落地，config-gated 跳过）、费用摊销/待摊费用（步骤4，模块未落地）、年度结转（本年利润→未分配利润+辅助账跨年+次年期间创建）、结账报告渲染（科目余额表/试算平衡表/账龄属 nop-report 报表面；本实现仅 populate TrialBalance 快照数据）。
+> **实现范围注记（计划 `2026-07-02-1000-3` + `2026-07-02-1538-1`）**：本流程已落地月度结账核心链路——期间状态机（OPEN→CLOSING→CLOSED→CLOSED_FINAL，含反结账）、前置检查、AR/AP/INV/AST/GL 模块按序关账、折旧集成门控、汇兑重估（承接 0300-3 deferred）、损益结转（收入/费用/成本三类）、试算平衡表快照、反结账红冲。**步骤2 存货成本核算已接线**：INV 模块关账经 `closeInvModule` 调 inventory `IErpInvCostingBiz.reclosePeriodCosts`（finance→inventory R，DAG 合法）兜底重算本期 FIFO 成本层/COGS 异常（config-gated `erp-fin.inv-costing-reclose-on-close`，单域无 inv-service 时 try/catch 告警跳过）；正常路径由 inventory 记账器在移动单 DONE 时按物料 costMethod 策略分派（MOVING_AVERAGE/FIFO）维护成本层与流水成本，关账仅兜底。以下子项为已裁定的 Non-Goal（详见计划 Deferred But Adjudicated）：BATCH/INDIVIDUAL/STANDARD/全月一次/LIFO 计价（inventory 域 successor）、费用摊销/待摊费用（步骤4，模块未落地）、年度结转（本年利润→未分配利润+辅助账跨年+次年期间创建）、结账报告渲染（科目余额表/试算平衡表/账龄属 nop-report 报表面；本实现仅 populate TrialBalance 快照数据）。
 
 ## 期末结账流程总览
 

@@ -134,3 +134,14 @@
 - **快照锁定**：工单创建后，即使 BOM 被修改，工单仍使用快照版本
 - **版本追溯**：工单记录 `snapshotBomVersion` 字段，用于追溯生产时使用的 BOM 版本
 - **策略配置**：`erp-mfg.bom-snapshot-strategy`（LOCK_AT_CREATION：创建时锁定 / AUTO_UPGRADE：自动升级到最新版本，按物料可配）
+
+## 实现注记（漂移补注，计划 2026-07-02-1538-2）
+
+> 以下为实现落地与本文档概念表述的偏离裁决，权威计划：`docs/plans/2026-07-02-1538-2-manufacturing-bom-routing-rollup.md`。
+
+- **卷算结果落地载体**：§多级成本卷算 步骤4 称「写入 `ErpMdProduct.standardCost`」为概念漂移——本仓无 `ErpMdProduct`，且按物料冗余单值会丢失版本/状态/成本分解。实现将卷算结果写入既有 `ErpMfgCostRollup`（status 门控 DRAFT/CALCULATED/FIRMED）+ `ErpMfgCostRollupLine`（materialCost/laborCost/overheadCost/subcontractCost/totalCost/unitCost），为标准成本权威载体（版本化 + FIRMED 门控 + 成本分解）。向 `ErpMdMaterial` 冗余发布 `standardCost` 仅作 N=1 STANDARD 高频读取去 join 优化（Follow-up，Non-Goal）。
+- **采购件/制造件判定**：本文档步骤1 称「物料类型=PURCHASE/MANUFACTURE」，但 `erp-md/material-type` 字典为 商品/原材料/半成品/产成品/服务/包装物/消耗品（无 PURCHASE/MANUFACTURE）。实现按 **BOM 存在性** 判定：物料有默认且有效 BOM → 制造件（卷算递归）；否则 → 采购件（取默认 SKU `purchasePrice` 为基础成本）。
+- **采购件基础成本源**：取默认 SKU 的 `ErpMdMaterialSku.purchasePrice`（DECIMAL 既有）；取最近入库 cost layer（跨 N=1 成本引擎耦合）为准确性增强（Follow-up，Non-Goal）。SKU 未配价时该采购件卷算抛 `ERR_ROLLUP_BASE_COST_MISSING`。
+- **工时/费率列类型修正**：`ErpMfgBomOperation.standardTime`、`ErpMfgRoutingOperation.standardTime`/`setupTime`/`runTime` 原列类型 DATETIME，`ErpMfgWorkcenter.hourlyRate` 原列类型 VARCHAR，与其 DECIMAL domain（`timeInMins`/`hourlyRate`）矛盾（存工时分钟数/费率却用 datetime/字符串，模型类型缺陷）。已修正列类型为 DECIMAL 对齐 domain，使工序成本 `standardTime/60 × workcenter.hourlyRate` 可数值计算。本文档工序行的 `time_in_mins`/`fixed_time`/`hour_rate`/`operating_cost` 为概念名，对应 ORM 列名 `standardTime`/`hourlyRate`。
+- **人工/制造费用分列**：工作中心仅有单一 `hourlyRate`（无独立人工/制造费率分列），故工序工时成本统一计入 `ErpMfgCostRollupLine.laborCost`，`overheadCost`=0；待工作中心费率拆分后细化（Follow-up）。`subcontractCost` 预留给外协工序（Non-Goal）。
+- **本期 Non-Goal**：WorkOrder/JobCard 状态机（2.2）、MRP（2.3）/CRP（2.8）、完工成本结转凭证（依赖 N=1 + WorkOrder）、联副产品分摊（步骤3）、外协工序成本、BOM 版本快照、AUTO_ON_BOM_CHANGE 自动重算、展开结果缓存表、`scrapRate` 纳入有效用量（损耗精细化）。卷算本期仅 MANUAL 触发 + 按标准用量计算。

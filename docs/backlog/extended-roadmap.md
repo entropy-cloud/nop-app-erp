@@ -10,7 +10,8 @@
 
 ### Milestone M2 — 扩展 5 域
 - 2.5：✅ done（资产折旧/处置/资本化 BizModel + 业财过账，2026-07-02，`docs/plans/2026-07-02-1000-2-assets-depreciation-disposal-capitalization.md`）
-- 2.1–2.4, 2.6–2.11：`todo`
+- 2.1：✅ done（BOM/工艺路线 BizModel：默认 BOM 选择 + 多级展开 phantom/环/深度 + 成本卷算 → ErpMfgCostRollup/Line；含工时/费率列类型修正，2026-07-02，`docs/plans/2026-07-02-1538-2-manufacturing-bom-routing-rollup.md`）
+- 2.2–2.4, 2.6–2.11：`todo`
 
 ### Milestone M3 — 新增 8 域
 - 3.1–3.21：`todo`

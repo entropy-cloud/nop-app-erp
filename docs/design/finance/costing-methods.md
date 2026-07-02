@@ -26,6 +26,19 @@
 - **成本追溯**：成本变化可追溯到具体移动单
 - **成本调整**：支持手工调整成本差异
 
+## 实现注记（计划 `2026-07-02-1538-1`）
+
+本设计已部分落地（MOVING_AVERAGE + FIFO），由 inventory 域记账器按物料 `costMethod` **策略分派**实现，权威源码：
+
+- **记账器分派**：`StockMoveBookkeeper.bookCompletion`（inventory DONE 同事务记账器）按物料 costMethod 分派到 `CostingStrategy`；`CostMethodResolver` 解析顺序：`ErpMdMaterial.costMethod` → `ErpMdAcctSchema.costingMethod` → 配置 `erp-inv.default-cost-method`（默认 MOVING_AVERAGE）；`erp-inv.costing-enabled=false` 时退化为既有硬编码移动加权平均行为（向后兼容总开关）。
+- **MOVING_AVERAGE（`MovingAverageCostingStrategy`）**：抽取既有记账逻辑（入库重算 `balance.avgCost`/出库 `unitCost=avgCost`/写 `ledger.unitCost+totalCost`），行为字节级不变——移动加权平均端到端既有套件全绿为回归门控。
+- **FIFO（`FifoCostingStrategy`）**：以 `ErpInvCostLayer` 表为 FIFO 队列——入库追加层（`incomingQuantity=remainingQuantity`、`unitCost`、`incomingDate`、`incomingMoveId`、`costMethod=FIFO`），余额 `avgCost` 置空（仅移动加权平均语义）、`totalCost` 累加；出库按 `incomingDate` 升序多层消耗各层 `remainingQuantity`，汇总加权出库 `unitCost`；首次出库无 `remainingQuantity>0` 的层抛 `ERR_COST_NOT_AVAILABLE`（对齐移动加权平均余额为 0 的同等语义）。
+- **COGS 通道**：FIFO 策略写 `ErpInvStockLedger.unitCost/totalCost`（与移动加权平均同一通道），既有 `InvPostingDispatcher` 读 `ledger.totalCost` 汇总为 `TOTAL_COST` 零改动拾取——FIFO 物料 COGS 经既有 SALES_OUTPUT/PURCHASE_INPUT 过账通道流动。
+- **FIFO 红冲**：`ErpInvStockMoveBizModel.reverse` 生成反向移动单重走正常 DONE 流程，反向入库按原出库刷新的加权 `unitCost` 追加新 cost layer（Decision (a)，避免直接恢复被消耗层致双计），保证红冲后成本不变量（Σ layer remaining×unitCost 恢复至原出库前）。
+- **期末成本兜底（period-close §步骤2）**：`IErpInvCostingBiz.reclosePeriodCosts(periodId,startDate,endDate)` 扫描本期 DONE 的 FIFO 移动单，对成本层缺失的入库补建、对 COGS 异常（`ledger.unitCost` 空/零）的出库按 FIFO 重算并刷新流水（正常路径补算数为 0；非 0 为历史/异常单据兜底修复）。finance 期末结账 INV 模块关账（`ErpFinAccountingPeriodBizModel.closeInvModule`）经 `IBizObjectManager` 跨模块调用（finance→inventory R，DAG 合法），config-gated `erp-fin.inv-costing-reclose-on-close`（默认 true），单域 finance 测试无 inv-service 时 try/catch 告警跳过。
+
+**Non-Goal（计划 `1538-1` Deferred But Adjudicated，已裁定留后继）**：BATCH（批次成本）/ INDIVIDUAL（个别计价，需出库指定批次 + FEFO 效期路由 + `ErpInvCostLayer.batchNo` 维度）、STANDARD（标准成本，依赖制造域 cost rollup N=2 产出到 `ErpMfgCostRollupLine.unitCost`）、全月一次加权平均（dict 20）/ LIFO（dict 40）、到岸成本（Landed Cost）分摊 + 成本调整单 + 成本差异凭证、默认最低价/折扣叠加规则（取较低值的保守估计）、成本报表（存货成本明细/FIFO 队列/差异表，属 nop-report 报表面）、多账套并行成本、存货减值（成本与可变现净值孰低）。各 Non-Goal 均已命名 successor 触发条件，见计划 Deferred 章节。
+
 ## 成本核算方法
 
 ### 方法类型
