@@ -79,6 +79,15 @@
               insertable="true" updatable="true">
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
+        <prop name="disposalGainLossSubjectId" displayName="清理损益科目" propId="16"
+              i18n-en:displayName="Disposal Gain/Loss Subject" queryable="true" sortable="true" insertable="true"
+              updatable="true" ext:relation="disposalGainLossSubject">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="cipSubjectId" displayName="在建工程科目" propId="17" i18n-en:displayName="CIP Subject" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="cipSubject">
+            <schema type="java.lang.Long"/>
+        </prop>
         <prop name="subject" i18n-en:displayName="Subject" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="subjectId" ext:joinRightProp="id" biz:moduleId="erp/md"
               insertable="false" updatable="false" lazy="true">
@@ -91,6 +100,16 @@
         </prop>
         <prop name="expenseSubject" i18n-en:displayName="Expense Subject" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="expenseSubjectId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdSubject"/>
+        </prop>
+        <prop name="disposalGainLossSubject" i18n-en:displayName="Disposal Gain/Loss Subject" tagSet="pub"
+              ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="disposalGainLossSubjectId"
+              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdSubject"/>
+        </prop>
+        <prop name="cipSubject" i18n-en:displayName="CIP Subject" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="cipSubjectId" ext:joinRightProp="id" biz:moduleId="erp/md"
               insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdSubject"/>
         </prop>

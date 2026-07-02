@@ -27,6 +27,8 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "remark": "",
+  "accumulatedDepreciation": 0.0,
+  "netBookValue": 0.0,
   "category": null,
   "department": null,
   "location": null,

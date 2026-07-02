@@ -235,6 +235,34 @@
         }
 
 
+        private Long _disposalGainLossSubjectId;
+
+    
+        @PropMeta(propId=16)
+    
+        public Long getDisposalGainLossSubjectId(){
+            return _disposalGainLossSubjectId;
+        }
+
+        public void setDisposalGainLossSubjectId(Long value){
+            this._disposalGainLossSubjectId = value;
+        }
+
+
+        private Long _cipSubjectId;
+
+    
+        @PropMeta(propId=17)
+    
+        public Long getCipSubjectId(){
+            return _cipSubjectId;
+        }
+
+        public void setCipSubjectId(Long value){
+            this._cipSubjectId = value;
+        }
+
+
         private Map<String,Object> _subject;
 
         public Map<String,Object> getSubject(){
@@ -265,6 +293,28 @@
 
         public void setExpenseSubject(Map<String,Object> value){
             this._expenseSubject = value;
+        }
+
+
+        private Map<String,Object> _disposalGainLossSubject;
+
+        public Map<String,Object> getDisposalGainLossSubject(){
+            return _disposalGainLossSubject;
+        }
+
+        public void setDisposalGainLossSubject(Map<String,Object> value){
+            this._disposalGainLossSubject = value;
+        }
+
+
+        private Map<String,Object> _cipSubject;
+
+        public Map<String,Object> getCipSubject(){
+            return _cipSubject;
+        }
+
+        public void setCipSubject(Map<String,Object> value){
+            this._cipSubject = value;
         }
 
 

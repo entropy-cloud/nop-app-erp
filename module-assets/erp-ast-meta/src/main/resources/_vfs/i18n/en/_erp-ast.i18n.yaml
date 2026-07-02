@@ -41,6 +41,8 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       remark: Remark
+      accumulatedDepreciation: Accumulated Depreciation
+      netBookValue: Net Book Value
       category: Category
       department: Department
       location: Location
@@ -101,9 +103,13 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       remark: Remark
+      disposalGainLossSubjectId: Disposal Gain/Loss Subject
+      cipSubjectId: CIP Subject
       subject: Subject
       depreciationSubject: Depreciation Subject
       expenseSubject: Expense Subject
+      disposalGainLossSubject: Disposal Gain/Loss Subject
+      cipSubject: CIP Subject
     ErpAstCip:
       id: ID
       code: Code
@@ -364,6 +370,7 @@ dict.option.label:
     '10': Pending
     '20': Executed
     '30': Reversed
+    '40': Cancelled
   erp-ast/adjustment-type:
     '10': Impairment
     '20': Revaluation
@@ -382,6 +389,7 @@ dict.option.label:
   erp-ast/capitalization-source-type:
     '10': Inventory
     '20': CIP
+    '30': Direct Purchase
   erp-ast/disposal-reason:
     '10': Scrap
     '20': Sale

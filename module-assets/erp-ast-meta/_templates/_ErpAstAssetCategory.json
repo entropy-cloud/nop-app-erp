@@ -15,7 +15,11 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "remark": "",
+  "disposalGainLossSubjectId": 0,
+  "cipSubjectId": 0,
   "subject": null,
   "depreciationSubject": null,
-  "expenseSubject": null
+  "expenseSubject": null,
+  "disposalGainLossSubject": null,
+  "cipSubject": null
 }

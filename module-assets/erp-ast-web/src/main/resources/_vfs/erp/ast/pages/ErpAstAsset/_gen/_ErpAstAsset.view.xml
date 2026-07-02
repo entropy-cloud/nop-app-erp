@@ -92,6 +92,12 @@
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>
+
+                <!--累计折旧-->
+                <col id="accumulatedDepreciation" ui:number="true" sortable="true"/>
+
+                <!--净值-->
+                <col id="netBookValue" ui:number="true" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -112,7 +118,8 @@
  status[资产状态] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- remark[备注] 
+ remark[备注] accumulatedDepreciation[累计折旧]
+ netBookValue[净值] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-固定资产" i18n-en:title="Add Fixed Asset">
@@ -127,6 +134,7 @@
  locationId[使用地点] employeeId[使用人(职员)]
  staffId[使用人(往来单位,旧字段保留)] brandModel[品牌型号]
  status[资产状态] remark[备注]
+ accumulatedDepreciation[累计折旧] netBookValue[净值]
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-固定资产" i18n-en:title="Edit Fixed Asset">
@@ -141,7 +149,8 @@
  locationId[使用地点] employeeId[使用人(职员)]
  staffId[使用人(往来单位,旧字段保留)] brandModel[品牌型号]
  status[资产状态] delVersion[逻辑删除版本]
- remark[备注] 
+ remark[备注] accumulatedDepreciation[累计折旧]
+ netBookValue[净值] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

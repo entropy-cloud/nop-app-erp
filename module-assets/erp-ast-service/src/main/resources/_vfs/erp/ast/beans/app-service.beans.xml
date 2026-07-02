@@ -7,4 +7,24 @@
     <import resource="_dao.beans.xml"/>
 
     <import resource="_service.beans.xml"/>
+
+    <!-- 资产业财过账：执行器 + 资本化派发器 + 资本化 Provider（Registry 容器级 collect-by-type 自动收录） -->
+    <bean id="app.erp.ast.service.posting.AssetPostingExecutor"
+          class="app.erp.ast.service.posting.AssetPostingExecutor"/>
+    <bean id="app.erp.ast.service.posting.CapitalizationPostingDispatcher"
+          class="app.erp.ast.service.posting.CapitalizationPostingDispatcher"/>
+    <bean id="app.erp.ast.service.posting.CapitalizationAcctDocProvider"
+          class="app.erp.ast.service.posting.CapitalizationAcctDocProvider"/>
+
+    <!-- 折旧业财过账：派发器 + Provider（复用 AssetPostingExecutor） -->
+    <bean id="app.erp.ast.service.posting.DepreciationPostingDispatcher"
+          class="app.erp.ast.service.posting.DepreciationPostingDispatcher"/>
+    <bean id="app.erp.ast.service.posting.DepreciationAcctDocProvider"
+          class="app.erp.ast.service.posting.DepreciationAcctDocProvider"/>
+
+    <!-- 处置业财过账：派发器 + Provider（复用 AssetPostingExecutor） -->
+    <bean id="app.erp.ast.service.posting.DisposalPostingDispatcher"
+          class="app.erp.ast.service.posting.DisposalPostingDispatcher"/>
+    <bean id="app.erp.ast.service.posting.DisposalAcctDocProvider"
+          class="app.erp.ast.service.posting.DisposalAcctDocProvider"/>
 </beans>

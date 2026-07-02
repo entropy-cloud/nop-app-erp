@@ -27,7 +27,9 @@
     "createTime": "@var:ErpAstAsset@createTime",
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpAstAsset@createTime",
-    "remark": null
+    "remark": null,
+    "accumulatedDepreciation": 0,
+    "netBookValue": 0
   },
   "status": 0
 }

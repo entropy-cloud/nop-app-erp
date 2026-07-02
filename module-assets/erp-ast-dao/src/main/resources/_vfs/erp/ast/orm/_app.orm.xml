@@ -32,6 +32,7 @@
             <option code="PENDING" label="待执行" value="10" i18n-en:label="Pending"/>
             <option code="EXECUTED" label="已执行" value="20" i18n-en:label="Executed"/>
             <option code="REVERSED" label="已冲销" value="30" i18n-en:label="Reversed"/>
+            <option code="CANCELLED" label="已取消" value="40" i18n-en:label="Cancelled"/>
         </dict>
         <dict label="价值调整类型" name="erp-ast/adjustment-type" valueType="int" i18n-en:label="Adjustment Type">
             <option code="IMPAIRMENT" label="减值" value="10" i18n-en:label="Impairment"/>
@@ -56,6 +57,7 @@
               i18n-en:label="Capitalization Source Type">
             <option code="INVENTORY" label="库存" value="10" i18n-en:label="Inventory"/>
             <option code="CIP" label="在建工程" value="20" i18n-en:label="CIP"/>
+            <option code="DIRECT_PURCHASE" label="直接购置" value="30" i18n-en:label="Direct Purchase"/>
         </dict>
         <dict label="处置原因" name="erp-ast/disposal-reason" valueType="int" i18n-en:label="Disposal Reason">
             <option code="OBSOLETE" label="报废" value="10" i18n-en:label="Scrap"/>
@@ -150,6 +152,12 @@
                         propId="25" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="26"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="ACCUMULATED_DEPRECIATION" defaultValue="0" displayName="累计折旧" domain="amount"
+                        name="accumulatedDepreciation" precision="20" propId="27" scale="4" stdDataType="decimal"
+                        stdSqlType="DECIMAL" i18n-en:displayName="Accumulated Depreciation"/>
+                <column code="NET_BOOK_VALUE" defaultValue="0" displayName="净值" domain="amount" name="netBookValue"
+                        precision="20" propId="28" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Net Book Value"/>
             </columns>
             <relations>
                 <to-one name="category" refEntityName="app.erp.ast.dao.entity.ErpAstAssetCategory" tagSet="pub"
@@ -237,6 +245,11 @@
                         propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="15"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DISPOSAL_GAIN_LOSS_SUBJECT_ID" displayName="清理损益科目" name="disposalGainLossSubjectId"
+                        propId="16" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Disposal Gain/Loss Subject"/>
+                <column code="CIP_SUBJECT_ID" displayName="在建工程科目" name="cipSubjectId" propId="17" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="CIP Subject"/>
             </columns>
             <relations>
                 <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"
@@ -255,6 +268,18 @@
                         i18n-en:displayName="Expense Subject">
                     <join>
                         <on leftProp="expenseSubjectId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="disposalGainLossSubject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"
+                        i18n-en:displayName="Disposal Gain/Loss Subject">
+                    <join>
+                        <on leftProp="disposalGainLossSubjectId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="cipSubject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"
+                        i18n-en:displayName="CIP Subject">
+                    <join>
+                        <on leftProp="cipSubjectId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>

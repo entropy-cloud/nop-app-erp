@@ -27,7 +27,9 @@
     "createTime": "@var:ErpAstAsset@createTime",
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpAstAsset@updateTime_1",
-    "remark": "冒烟-已修改"
+    "remark": "冒烟-已修改",
+    "accumulatedDepreciation": 0.0000,
+    "netBookValue": 0.0000
   },
   "status": 0
 }

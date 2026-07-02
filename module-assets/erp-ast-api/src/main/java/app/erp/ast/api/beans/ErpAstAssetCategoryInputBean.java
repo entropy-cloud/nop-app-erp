@@ -152,4 +152,32 @@
         }
 
 
+        private Long _disposalGainLossSubjectId;
+
+    
+        @PropMeta(propId=16)
+    
+        public Long getDisposalGainLossSubjectId(){
+            return _disposalGainLossSubjectId;
+        }
+
+        public void setDisposalGainLossSubjectId(Long value){
+            this._disposalGainLossSubjectId = value;
+        }
+
+
+        private Long _cipSubjectId;
+
+    
+        @PropMeta(propId=17)
+    
+        public Long getCipSubjectId(){
+            return _cipSubjectId;
+        }
+
+        public void setCipSubjectId(Long value){
+            this._cipSubjectId = value;
+        }
+
+
     }

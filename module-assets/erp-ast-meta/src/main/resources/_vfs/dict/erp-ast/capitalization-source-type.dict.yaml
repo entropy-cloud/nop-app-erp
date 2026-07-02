@@ -13,3 +13,7 @@ options:
     value: 20
     description: 
   
+  - label: 直接购置
+    value: 30
+    description: 
+  

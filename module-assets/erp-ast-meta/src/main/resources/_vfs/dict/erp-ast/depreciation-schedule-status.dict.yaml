@@ -17,3 +17,7 @@ options:
     value: 30
     description: 
   
+  - label: 已取消
+    value: 40
+    description: 
+  

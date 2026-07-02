@@ -81,8 +81,16 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
     public static final String PROP_NAME_remark = "remark";
     public static final int PROP_ID_remark = 15;
     
+    /* 清理损益科目: DISPOSAL_GAIN_LOSS_SUBJECT_ID BIGINT */
+    public static final String PROP_NAME_disposalGainLossSubjectId = "disposalGainLossSubjectId";
+    public static final int PROP_ID_disposalGainLossSubjectId = 16;
+    
+    /* 在建工程科目: CIP_SUBJECT_ID BIGINT */
+    public static final String PROP_NAME_cipSubjectId = "cipSubjectId";
+    public static final int PROP_ID_cipSubjectId = 17;
+    
 
-    private static int _PROP_ID_BOUND = 16;
+    private static int _PROP_ID_BOUND = 18;
 
     
     /* relation:  */
@@ -94,11 +102,17 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_expenseSubject = "expenseSubject";
     
+    /* relation:  */
+    public static final String PROP_NAME_disposalGainLossSubject = "disposalGainLossSubject";
+    
+    /* relation:  */
+    public static final String PROP_NAME_cipSubject = "cipSubject";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[16];
+    private static final String[] PROP_ID_TO_NAME = new String[18];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -147,6 +161,12 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
           PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
       
+          PROP_ID_TO_NAME[PROP_ID_disposalGainLossSubjectId] = PROP_NAME_disposalGainLossSubjectId;
+          PROP_NAME_TO_ID.put(PROP_NAME_disposalGainLossSubjectId, PROP_ID_disposalGainLossSubjectId);
+      
+          PROP_ID_TO_NAME[PROP_ID_cipSubjectId] = PROP_NAME_cipSubjectId;
+          PROP_NAME_TO_ID.put(PROP_NAME_cipSubjectId, PROP_ID_cipSubjectId);
+      
     }
 
     
@@ -194,6 +214,12 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
     
     /* 备注: REMARK */
     private java.lang.String _remark;
+    
+    /* 清理损益科目: DISPOSAL_GAIN_LOSS_SUBJECT_ID */
+    private java.lang.Long _disposalGainLossSubjectId;
+    
+    /* 在建工程科目: CIP_SUBJECT_ID */
+    private java.lang.Long _cipSubjectId;
     
 
     public _ErpAstAssetCategory(){
@@ -313,6 +339,12 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
         
             case PROP_ID_remark:
                return getRemark();
+        
+            case PROP_ID_disposalGainLossSubjectId:
+               return getDisposalGainLossSubjectId();
+        
+            case PROP_ID_cipSubjectId:
+               return getCipSubjectId();
         
            default:
               return super.orm_propValue(propId);
@@ -475,6 +507,26 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_disposalGainLossSubjectId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_disposalGainLossSubjectId));
+               }
+               setDisposalGainLossSubjectId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_cipSubjectId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_cipSubjectId));
+               }
+               setCipSubjectId(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -585,6 +637,20 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
             case PROP_ID_remark:{
                onInitProp(propId);
                this._remark = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_disposalGainLossSubjectId:{
+               onInitProp(propId);
+               this._disposalGainLossSubjectId = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_cipSubjectId:{
+               onInitProp(propId);
+               this._cipSubjectId = (java.lang.Long)value;
                
                break;
             }
@@ -881,6 +947,44 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
     }
     
     /**
+     * 清理损益科目: DISPOSAL_GAIN_LOSS_SUBJECT_ID
+     */
+    public final java.lang.Long getDisposalGainLossSubjectId(){
+         onPropGet(PROP_ID_disposalGainLossSubjectId);
+         return _disposalGainLossSubjectId;
+    }
+
+    /**
+     * 清理损益科目: DISPOSAL_GAIN_LOSS_SUBJECT_ID
+     */
+    public final void setDisposalGainLossSubjectId(java.lang.Long value){
+        if(onPropSet(PROP_ID_disposalGainLossSubjectId,value)){
+            this._disposalGainLossSubjectId = value;
+            internalClearRefs(PROP_ID_disposalGainLossSubjectId);
+            
+        }
+    }
+    
+    /**
+     * 在建工程科目: CIP_SUBJECT_ID
+     */
+    public final java.lang.Long getCipSubjectId(){
+         onPropGet(PROP_ID_cipSubjectId);
+         return _cipSubjectId;
+    }
+
+    /**
+     * 在建工程科目: CIP_SUBJECT_ID
+     */
+    public final void setCipSubjectId(java.lang.Long value){
+        if(onPropSet(PROP_ID_cipSubjectId,value)){
+            this._cipSubjectId = value;
+            internalClearRefs(PROP_ID_cipSubjectId);
+            
+        }
+    }
+    
+    /**
      * 
      */
     public final app.erp.md.dao.entity.ErpMdSubject getSubject(){
@@ -943,6 +1047,52 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_expenseSubject, refEntity,()->{
            
                            this.setExpenseSubjectId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdSubject getDisposalGainLossSubject(){
+       return (app.erp.md.dao.entity.ErpMdSubject)internalGetRefEntity(PROP_NAME_disposalGainLossSubject);
+    }
+
+    public final void setDisposalGainLossSubject(app.erp.md.dao.entity.ErpMdSubject refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setDisposalGainLossSubjectId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_disposalGainLossSubject, refEntity,()->{
+           
+                           this.setDisposalGainLossSubjectId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdSubject getCipSubject(){
+       return (app.erp.md.dao.entity.ErpMdSubject)internalGetRefEntity(PROP_NAME_cipSubject);
+    }
+
+    public final void setCipSubject(app.erp.md.dao.entity.ErpMdSubject refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCipSubjectId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_cipSubject, refEntity,()->{
+           
+                           this.setCipSubjectId(refEntity.getId());
                        
            });
            }

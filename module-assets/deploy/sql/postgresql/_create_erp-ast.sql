@@ -77,6 +77,8 @@ CREATE TABLE erp_ast_asset_category(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
+  disposal_gain_loss_subject_id INT8  ,
+  cip_subject_id INT8  ,
   constraint PK_erp_ast_asset_category primary key (id)
 );
 
@@ -107,6 +109,8 @@ CREATE TABLE erp_ast_asset(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
+  accumulated_depreciation NUMERIC(20,4) default 0   ,
+  net_book_value NUMERIC(20,4) default 0   ,
   constraint PK_erp_ast_asset primary key (id)
 );
 
@@ -400,6 +404,10 @@ CREATE TABLE erp_ast_merge(
                     
       COMMENT ON COLUMN erp_ast_asset_category.remark IS '备注';
                     
+      COMMENT ON COLUMN erp_ast_asset_category.disposal_gain_loss_subject_id IS '清理损益科目';
+                    
+      COMMENT ON COLUMN erp_ast_asset_category.cip_subject_id IS '在建工程科目';
+                    
       COMMENT ON TABLE erp_ast_asset IS '固定资产';
                 
       COMMENT ON COLUMN erp_ast_asset.id IS 'ID';
@@ -453,6 +461,10 @@ CREATE TABLE erp_ast_merge(
       COMMENT ON COLUMN erp_ast_asset.update_time IS '修改时间';
                     
       COMMENT ON COLUMN erp_ast_asset.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_ast_asset.accumulated_depreciation IS '累计折旧';
+                    
+      COMMENT ON COLUMN erp_ast_asset.net_book_value IS '净值';
                     
       COMMENT ON TABLE erp_ast_asset_capitalization IS '资产资本化';
                 

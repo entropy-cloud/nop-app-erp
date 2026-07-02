@@ -13,6 +13,7 @@ entity:
 prop:
   label:
     ErpAstAsset:
+      accumulatedDepreciation: 累计折旧
       acquisitionDate: 取得日期
       brandModel: 品牌型号
       category: null
@@ -35,6 +36,7 @@ prop:
       location: null
       locationId: 使用地点
       name: 资产名称
+      netBookValue: 净值
       org: null
       orgId: 所属组织
       originalValue: 原值
@@ -85,6 +87,8 @@ prop:
       updatedBy: 修改人
       version: 数据版本
     ErpAstAssetCategory:
+      cipSubject: null
+      cipSubjectId: 在建工程科目
       code: 类别编码
       createTime: 创建时间
       createdBy: 创建人
@@ -93,6 +97,8 @@ prop:
       depreciationMethod_label: 默认折旧方法
       depreciationSubject: null
       depreciationSubjectId: 累计折旧科目
+      disposalGainLossSubject: null
+      disposalGainLossSubjectId: 清理损益科目
       expenseSubject: null
       expenseSubjectId: 折旧费用科目
       id: ID

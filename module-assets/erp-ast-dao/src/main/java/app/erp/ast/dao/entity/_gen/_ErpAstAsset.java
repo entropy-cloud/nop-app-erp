@@ -125,8 +125,16 @@ public class _ErpAstAsset extends DynamicOrmEntity{
     public static final String PROP_NAME_remark = "remark";
     public static final int PROP_ID_remark = 26;
     
+    /* 累计折旧: ACCUMULATED_DEPRECIATION DECIMAL */
+    public static final String PROP_NAME_accumulatedDepreciation = "accumulatedDepreciation";
+    public static final int PROP_ID_accumulatedDepreciation = 27;
+    
+    /* 净值: NET_BOOK_VALUE DECIMAL */
+    public static final String PROP_NAME_netBookValue = "netBookValue";
+    public static final int PROP_ID_netBookValue = 28;
+    
 
-    private static int _PROP_ID_BOUND = 27;
+    private static int _PROP_ID_BOUND = 29;
 
     
     /* relation:  */
@@ -154,7 +162,7 @@ public class _ErpAstAsset extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[27];
+    private static final String[] PROP_ID_TO_NAME = new String[29];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -236,6 +244,12 @@ public class _ErpAstAsset extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
           PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
       
+          PROP_ID_TO_NAME[PROP_ID_accumulatedDepreciation] = PROP_NAME_accumulatedDepreciation;
+          PROP_NAME_TO_ID.put(PROP_NAME_accumulatedDepreciation, PROP_ID_accumulatedDepreciation);
+      
+          PROP_ID_TO_NAME[PROP_ID_netBookValue] = PROP_NAME_netBookValue;
+          PROP_NAME_TO_ID.put(PROP_NAME_netBookValue, PROP_ID_netBookValue);
+      
     }
 
     
@@ -316,6 +330,12 @@ public class _ErpAstAsset extends DynamicOrmEntity{
     
     /* 备注: REMARK */
     private java.lang.String _remark;
+    
+    /* 累计折旧: ACCUMULATED_DEPRECIATION */
+    private java.math.BigDecimal _accumulatedDepreciation;
+    
+    /* 净值: NET_BOOK_VALUE */
+    private java.math.BigDecimal _netBookValue;
     
 
     public _ErpAstAsset(){
@@ -468,6 +488,12 @@ public class _ErpAstAsset extends DynamicOrmEntity{
         
             case PROP_ID_remark:
                return getRemark();
+        
+            case PROP_ID_accumulatedDepreciation:
+               return getAccumulatedDepreciation();
+        
+            case PROP_ID_netBookValue:
+               return getNetBookValue();
         
            default:
               return super.orm_propValue(propId);
@@ -740,6 +766,26 @@ public class _ErpAstAsset extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_accumulatedDepreciation:{
+               java.math.BigDecimal typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBigDecimal(value,
+                       err-> newTypeConversionError(PROP_NAME_accumulatedDepreciation));
+               }
+               setAccumulatedDepreciation(typedValue);
+               break;
+            }
+        
+            case PROP_ID_netBookValue:{
+               java.math.BigDecimal typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBigDecimal(value,
+                       err-> newTypeConversionError(PROP_NAME_netBookValue));
+               }
+               setNetBookValue(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -927,6 +973,20 @@ public class _ErpAstAsset extends DynamicOrmEntity{
             case PROP_ID_remark:{
                onInitProp(propId);
                this._remark = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_accumulatedDepreciation:{
+               onInitProp(propId);
+               this._accumulatedDepreciation = (java.math.BigDecimal)value;
+               
+               break;
+            }
+        
+            case PROP_ID_netBookValue:{
+               onInitProp(propId);
+               this._netBookValue = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1427,6 +1487,44 @@ public class _ErpAstAsset extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_remark,value)){
             this._remark = value;
             internalClearRefs(PROP_ID_remark);
+            
+        }
+    }
+    
+    /**
+     * 累计折旧: ACCUMULATED_DEPRECIATION
+     */
+    public final java.math.BigDecimal getAccumulatedDepreciation(){
+         onPropGet(PROP_ID_accumulatedDepreciation);
+         return _accumulatedDepreciation;
+    }
+
+    /**
+     * 累计折旧: ACCUMULATED_DEPRECIATION
+     */
+    public final void setAccumulatedDepreciation(java.math.BigDecimal value){
+        if(onPropSet(PROP_ID_accumulatedDepreciation,value)){
+            this._accumulatedDepreciation = value;
+            internalClearRefs(PROP_ID_accumulatedDepreciation);
+            
+        }
+    }
+    
+    /**
+     * 净值: NET_BOOK_VALUE
+     */
+    public final java.math.BigDecimal getNetBookValue(){
+         onPropGet(PROP_ID_netBookValue);
+         return _netBookValue;
+    }
+
+    /**
+     * 净值: NET_BOOK_VALUE
+     */
+    public final void setNetBookValue(java.math.BigDecimal value){
+        if(onPropSet(PROP_ID_netBookValue,value)){
+            this._netBookValue = value;
+            internalClearRefs(PROP_ID_netBookValue);
             
         }
     }

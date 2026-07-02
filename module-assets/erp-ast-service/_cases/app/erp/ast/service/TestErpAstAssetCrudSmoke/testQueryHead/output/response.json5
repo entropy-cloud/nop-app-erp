@@ -32,7 +32,9 @@
         "createTime": "@var:ErpAstAsset@createTime",
         "updatedBy": "autotest-ref",
         "updateTime": "@var:ErpAstAsset@createTime",
-        "remark": null
+        "remark": null,
+        "accumulatedDepreciation": 0.0000,
+        "netBookValue": 0.0000
       }
     ],
     "limit": 10,

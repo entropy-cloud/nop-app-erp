@@ -59,6 +59,11 @@ public interface _ErpAstDaoConstants {
     int DEPRECIATION_SCHEDULE_STATUS_REVERSED = 30;
                     
     /**
+     * 折旧计划状态: 已取消 
+     */
+    int DEPRECIATION_SCHEDULE_STATUS_CANCELLED = 40;
+                    
+    /**
      * 价值调整类型: 减值 
      */
     int ADJUSTMENT_TYPE_IMPAIRMENT = 10;
@@ -122,6 +127,11 @@ public interface _ErpAstDaoConstants {
      * 资本化来源类型: 在建工程 
      */
     int CAPITALIZATION_SOURCE_TYPE_CIP = 20;
+                    
+    /**
+     * 资本化来源类型: 直接购置 
+     */
+    int CAPITALIZATION_SOURCE_TYPE_DIRECT_PURCHASE = 30;
                     
     /**
      * 处置原因: 报废 

@@ -306,4 +306,32 @@
         }
 
 
+        private java.math.BigDecimal _accumulatedDepreciation;
+
+    
+        @PropMeta(propId=27)
+    
+        public java.math.BigDecimal getAccumulatedDepreciation(){
+            return _accumulatedDepreciation;
+        }
+
+        public void setAccumulatedDepreciation(java.math.BigDecimal value){
+            this._accumulatedDepreciation = value;
+        }
+
+
+        private java.math.BigDecimal _netBookValue;
+
+    
+        @PropMeta(propId=28)
+    
+        public java.math.BigDecimal getNetBookValue(){
+            return _netBookValue;
+        }
+
+        public void setNetBookValue(java.math.BigDecimal value){
+            this._netBookValue = value;
+        }
+
+
     }
