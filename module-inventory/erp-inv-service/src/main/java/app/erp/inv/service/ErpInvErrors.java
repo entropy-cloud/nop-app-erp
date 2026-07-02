@@ -36,4 +36,8 @@ public interface ErpInvErrors {
     ErrorCode ERR_LEDGER_ALREADY_EXISTS = ErrorCode.define("erp.err.inv.ledger-already-exists",
             "移动单行 {moveLineId} 已存在库存流水，流水不可变",
             "moveLineId");
+
+    ErrorCode ERR_COST_NOT_AVAILABLE = ErrorCode.define("erp.err.inv.cost-not-available",
+            "物料 {materialId} / 仓库 {warehouseId} 无可用成本层，请先入库后再出库",
+            ARG_MATERIAL_ID, ARG_WAREHOUSE_ID);
 }

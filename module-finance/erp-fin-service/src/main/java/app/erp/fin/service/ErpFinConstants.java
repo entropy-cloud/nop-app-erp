@@ -102,6 +102,8 @@ public interface ErpFinConstants {
     String CONFIG_RETAINED_EARNINGS_SUBJECT_CODE = "erp-fin.retained-earnings-subject-code";
     /** 是否启用期末汇兑重估，默认 true。 */
     String CONFIG_EXCHANGE_REVALUATION_ENABLED = "erp-fin.exchange-revaluation-enabled";
+    /** 结账时是否触发存货成本兜底重算（引用 inventory 域 IErpInvCostingBiz，period-close.md §步骤2），默认 true。 */
+    String CONFIG_INV_COSTING_RECLOSE_ON_CLOSE = "erp-fin.inv-costing-reclose-on-close";
     /** 期末汇率（启用汇兑重估且有外币未核销项时必配）。 */
     String CONFIG_PERIOD_END_EXCHANGE_RATE = "erp-fin.period-end-exchange-rate";
     /** 应收科目编码（汇兑重估用）。 */

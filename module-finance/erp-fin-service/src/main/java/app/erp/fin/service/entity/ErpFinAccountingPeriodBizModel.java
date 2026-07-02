@@ -14,6 +14,8 @@ import app.erp.fin.dao.entity.ErpFinTrialBalance;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
+import app.erp.inv.biz.CostingRecloseReport;
+import app.erp.inv.biz.IErpInvCostingBiz;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.fx.ExchangeRevaluationService;
@@ -116,10 +118,10 @@ public class ErpFinAccountingPeriodBizModel extends CrudBizModel<ErpFinAccountin
         }
 
         ErpFinAccountingPeriodStatus status = findOrCreatePeriodStatus(period);
-        // 模块按序关账：AR→AP→INV→AST→GL。AST 内运行折旧，GL 内运行汇兑重估→损益结转（均在期间仍 OPEN 时）。
+        // 模块按序关账：AR→AP→INV→AST→GL。INV 内运行存货成本兜底重算，AST 内运行折旧，GL 内运行汇兑重估→损益结转（均在期间仍 OPEN 时）。
         advanceModule(status, Module.AR);
         advanceModule(status, Module.AP);
-        advanceModule(status, Module.INV);
+        closeInvModule(period, status, context);
         closeAssetModule(period, status, context);
         closeGlModule(period, status, context);
 
@@ -174,6 +176,13 @@ public class ErpFinAccountingPeriodBizModel extends CrudBizModel<ErpFinAccountin
 
     // ===================== 模块关账（AR→AP→INV→AST→GL） =====================
 
+    /** INV 模块关账：存货成本兜底重算（§步骤2，引用 inventory 域 IErpInvCostingBiz）→ 标记 invStatus=CLOSED。 */
+    protected void closeInvModule(ErpFinAccountingPeriod period, ErpFinAccountingPeriodStatus status,
+                                  IServiceContext context) {
+        recloseInvCosts(period, context);
+        advanceModule(status, Module.INV);
+    }
+
     /** AST 模块关账：折旧计提（配置门控，§步骤3）→ 标记 assetStatus=CLOSED。 */
     protected void closeAssetModule(ErpFinAccountingPeriod period, ErpFinAccountingPeriodStatus status,
                                     IServiceContext context) {
@@ -205,6 +214,27 @@ public class ErpFinAccountingPeriodBizModel extends CrudBizModel<ErpFinAccountin
         } catch (Exception e) {
             // assets 域 impl 未就绪或折旧失败：告警不阻断结账（§ Non-Goal 配置门控）。
             LOG.warn("期末结账：期间 {} 折旧集成跳过（{}）", period.getCode(), e.getMessage());
+        }
+    }
+
+    /**
+     * 存货成本兜底重算集成门控（§步骤2）：{@code erp-fin.inv-costing-reclose-on-close=true}（默认）时调
+     * inventory {@code IErpInvCostingBiz.reclosePeriodCosts}。finance→inventory R（DAG 合法，对齐折旧门控范式）。
+     * 单域 finance 测试无 inv-service 时经 IBizObjectManager 解析失败→告警不阻断。
+     */
+    protected void recloseInvCosts(ErpFinAccountingPeriod period, IServiceContext context) {
+        if (!isInvCostingRecloseOnClose()) {
+            return;
+        }
+        try {
+            IErpInvCostingBiz costingBiz = bizObjectManager.getBizObject("ErpInvCosting").asProxy();
+            CostingRecloseReport report = costingBiz.reclosePeriodCosts(period.getId(),
+                    period.getStartDate(), period.getEndDate(), context);
+            LOG.info("期末结账：期间 {} 存货成本兜底重算完成，扫描 {} 单，补算入库层 {} / 出库 COGS {}",
+                    period.getCode(), report.getScannedMoves(),
+                    report.getRecomputedIncomingLayers(), report.getRecomputedOutgoingLedgers());
+        } catch (Exception e) {
+            LOG.warn("期末结账：期间 {} 存货成本兜底重算跳过（{}）", period.getCode(), e.getMessage());
         }
     }
 
@@ -472,6 +502,11 @@ public class ErpFinAccountingPeriodBizModel extends CrudBizModel<ErpFinAccountin
 
     private boolean isAutoDepreciationOnClose() {
         Boolean flag = AppConfig.var(ErpFinConstants.CONFIG_AUTO_DEPRECIATION_ON_CLOSE, Boolean.TRUE);
+        return !Boolean.FALSE.equals(flag);
+    }
+
+    private boolean isInvCostingRecloseOnClose() {
+        Boolean flag = AppConfig.var(ErpFinConstants.CONFIG_INV_COSTING_RECLOSE_ON_CLOSE, Boolean.TRUE);
         return !Boolean.FALSE.equals(flag);
     }
 

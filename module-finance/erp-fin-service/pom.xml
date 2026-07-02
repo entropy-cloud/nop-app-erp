@@ -36,6 +36,10 @@
              DAG 合法 R：finance→assets 只读依赖，data-dependency-matrix.md）。运行期 impl 由 app-erp-all 注入，
              单域测试无 ast-service 时经 IBizObjectManager 解析失败→配置门控跳过。 -->
         <dependency><artifactId>app-erp-assets-dao</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version></dependency>
+        <!-- compile: 期末结账 INV 模块关账调 inventory 成本兜底重算（IErpInvCostingBiz 声明于 erp-inv-dao；
+             DAG 合法 R：finance→inventory 只读依赖，period-close.md §步骤2）。运行期 impl 由 app-erp-all 注入，
+             单域测试无 inv-service 时经 IBizObjectManager 解析失败→配置门控跳过。 -->
+        <dependency><artifactId>app-erp-inventory-dao</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version></dependency>
         <dependency><artifactId>app-erp-projects-dao</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version><scope>test</scope></dependency>
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>

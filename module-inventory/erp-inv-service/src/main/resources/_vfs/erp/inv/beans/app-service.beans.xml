@@ -12,6 +12,18 @@
     <bean id="app.erp.inv.service.stock.StockMoveBookkeeper"
           class="app.erp.inv.service.stock.StockMoveBookkeeper"/>
 
+    <!-- 成本方法策略分派（plan 2026-07-02-1538-1） -->
+    <bean id="app.erp.inv.service.costing.CostMethodResolver"
+          class="app.erp.inv.service.costing.CostMethodResolver"/>
+    <bean id="app.erp.inv.service.costing.MovingAverageCostingStrategy"
+          class="app.erp.inv.service.costing.MovingAverageCostingStrategy"/>
+    <bean id="app.erp.inv.service.costing.FifoCostingStrategy"
+          class="app.erp.inv.service.costing.FifoCostingStrategy"/>
+
+    <!-- 存货成本核算服务 BizModel（plan 2026-07-02-1538-1 Phase 3）：期末成本兜底重算，经 IBizObjectManager 跨模块调用 -->
+    <bean id="app.erp.inv.service.costing.ErpInvCostingBizModel"
+          class="app.erp.inv.service.costing.ErpInvCostingBizModel"/>
+
     <bean id="app.erp.inv.service.posting.InvPostingDispatcher"
           class="app.erp.inv.service.posting.InvPostingDispatcher"/>
 

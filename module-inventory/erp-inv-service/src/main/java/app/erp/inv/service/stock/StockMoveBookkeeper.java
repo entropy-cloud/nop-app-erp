@@ -5,6 +5,11 @@ import app.erp.inv.dao.entity.ErpInvStockLedger;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.inv.dao.entity.ErpInvStockMoveLine;
 import app.erp.inv.service.ErpInvConstants;
+import app.erp.inv.service.costing.BookingContext;
+import app.erp.inv.service.costing.CostMethodResolver;
+import app.erp.inv.service.costing.CostingStrategy;
+import app.erp.inv.service.costing.FifoCostingStrategy;
+import app.erp.inv.service.costing.MovingAverageCostingStrategy;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.commons.util.StringHelper;
 import io.nop.dao.api.IDaoProvider;
@@ -13,29 +18,27 @@ import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
 /**
- * 库存记账器：移动单 DONE 时写不可变库存流水（{@link ErpInvStockLedger}）并按移动加权平均更新库存余额
- * （{@link ErpInvStockBalance}）。同时提供余额维度的 upsert（供状态机预留量使用）。
+ * 库存记账器：移动单 DONE 时按 {@code ErpMdMaterial.costMethod} 分派到 {@link CostingStrategy} 写不可变库存流水
+ * （{@link ErpInvStockLedger}）并更新库存余额（{@link ErpInvStockBalance}）。同时提供余额维度的 upsert（供状态机预留量使用）。
  *
  * <p>权威：{@code docs/design/inventory/state-machine.md}（DONE 写流水+更新余额）、
- * {@code docs/design/inventory/cross-domain.md}（余额更新与流水写入同一事务、移动加权平均成本由流水维护）。
+ * {@code docs/design/inventory/cross-domain.md}（余额更新与流水写入同一事务）、
+ * {@code docs/design/finance/costing-methods.md}（按物料 costMethod 分派）。
  *
- * <p>成本计算（移动加权平均，{@code costMethod}=10）：
- * <ul>
- *   <li>入库：{@code avgCost=(旧totalCost+入库totalCost)/(旧totalQty+入库qty)}。</li>
- *   <li>出库：{@code unitCost=当前avgCost}（快照固化写入流水），{@code totalCost-=unitCost×qty}。</li>
- * </ul>
- * 入库增余额、出库扣余额、内部调拨扣源加目的（源按出库、目的按入库，成本沿用源 avgCost）。
- * 流水 quantity 按方向带符号（入库正/出库负），{@code balanceQuantity}/{@code balanceTotalCost} 记结存快照（不可变）。
+ * <p>分派来源（{@link CostMethodResolver}）：{@code ErpMdMaterial.costMethod} → {@code ErpMdAcctSchema.costingMethod}
+ * → {@code erp-inv.default-cost-method}；{@code erp-inv.costing-enabled=false} 时一律回退移动加权平均（兜底）。
+ *
+ * <p>流水 quantity 按方向带符号（入库正/出库负），{@code balanceQuantity}/{@code balanceTotalCost} 记结存快照（不可变）。
+ * 入库增余额、出库扣余额、内部调拨扣源加目的（源按出库、目的按入库，成本沿用源 unitCost）。
  */
-public class StockMoveBookkeeper {
-
-    static final int SCALE = 6;
+public class StockMoveBookkeeper implements BookingContext {
 
     @Inject
     IDaoProvider daoProvider;
@@ -43,29 +46,58 @@ public class StockMoveBookkeeper {
     @Inject
     IOrmTemplate ormTemplate;
 
+    @Inject
+    CostMethodResolver costMethodResolver;
+
+    @Inject
+    MovingAverageCostingStrategy movingAverageCostingStrategy;
+
+    @Inject
+    FifoCostingStrategy fifoCostingStrategy;
+
+    /** 其他策略（FIFO 等）按 costMethod 注册——Phase 2 注入 FifoCostingStrategy 后填充。 */
+    final Map<Integer, CostingStrategy> strategyByMethod = new HashMap<>();
+
+    @jakarta.annotation.PostConstruct
+    void initStrategyRegistry() {
+        register(movingAverageCostingStrategy);
+        register(fifoCostingStrategy);
+    }
+
+    public void register(CostingStrategy strategy) {
+        strategyByMethod.put(strategy.costMethod(), strategy);
+    }
+
     /**
-     * 按行写不可变库存流水（含结存快照 balanceQuantity/balanceTotalCost）并更新余额（移动加权平均成本）。
+     * 按行写不可变库存流水（含结存快照 balanceQuantity/balanceTotalCost）并按物料 costMethod 分派策略更新余额/成本层。
      * 入库增余额、出库扣余额、内部调拨扣源加目的。同一事务内完成（由调用方 {@code @Transactional} 保证）。
      */
     public void bookCompletion(ErpInvStockMove move, List<ErpInvStockMoveLine> lines, Long acctSchemaId) {
         for (ErpInvStockMoveLine line : lines) {
+            int method = costMethodResolver.resolve(line, acctSchemaId);
+            CostingStrategy strategy = resolveStrategy(method);
             if (move.getMoveType() != null && move.getMoveType() == ErpInvConstants.MOVE_TYPE_INTERNAL_TRANSFER) {
-                BigDecimal carriedCost = bookOutgoing(move, line, acctSchemaId);
-                bookIncoming(move, line, acctSchemaId, carriedCost);
+                BigDecimal carriedCost = strategy.onOutgoing(move, line, acctSchemaId, this);
+                strategy.onIncoming(move, line, acctSchemaId, carriedCost, this);
             } else if (move.getMoveType() != null && move.getMoveType() == ErpInvConstants.MOVE_TYPE_OUTGOING) {
-                bookOutgoing(move, line, acctSchemaId);
+                strategy.onOutgoing(move, line, acctSchemaId, this);
             } else {
                 BigDecimal unitCost = nz(line.getUnitCost());
-                bookIncoming(move, line, acctSchemaId, unitCost);
+                strategy.onIncoming(move, line, acctSchemaId, unitCost, this);
             }
         }
+    }
+
+    private CostingStrategy resolveStrategy(int method) {
+        CostingStrategy strategy = strategyByMethod.get(method);
+        return strategy != null ? strategy : movingAverageCostingStrategy;
     }
 
     /**
      * 按 物料 × 仓库 × 库位 × 批次 维度查找余额，不存在则初始化（totalQuantity=0、costMethod=移动加权平均）。
      */
     public ErpInvStockBalance upsertBalance(ErpInvStockMove move, ErpInvStockMoveLine line,
-                                            Long warehouseId, Long locationId) {
+                                             Long warehouseId, Long locationId) {
         // 同事务内可能已新建余额但未刷盘，查询前先 flush 使待落库的预留量/余额可见
         ormTemplate.flushSession();
         ErpInvStockBalance balance = findBalance(move.getOrgId(), line.getMaterialId(), line.getSkuId(),
@@ -93,63 +125,13 @@ public class StockMoveBookkeeper {
         return balance;
     }
 
-    // ---------- booking primitives ----------
+    // ---------- BookingContext: shared booking primitives exposed to strategies ----------
 
-    private BigDecimal bookIncoming(ErpInvStockMove move, ErpInvStockMoveLine line, Long acctSchemaId,
-                                    BigDecimal unitCost) {
-        Long warehouseId = move.getDestWarehouseId();
-        Long locationId = line.getDestLocationId() != null ? line.getDestLocationId() : move.getDestLocationId();
-        ErpInvStockBalance balance = upsertBalance(move, line, warehouseId, locationId);
-        BigDecimal qty = nz(line.getQuantity());
-        BigDecimal lineTotalCost = unitCost.multiply(qty);
-
-        BigDecimal oldTotal = nz(balance.getTotalQuantity());
-        BigDecimal oldTotalCost = nz(balance.getTotalCost());
-        BigDecimal newTotal = oldTotal.add(qty);
-        BigDecimal newTotalCost = oldTotalCost.add(lineTotalCost);
-        BigDecimal newAvg = newTotal.signum() != 0
-                ? newTotalCost.divide(newTotal, SCALE, RoundingMode.HALF_UP) : BigDecimal.ZERO;
-
-        balance.setTotalQuantity(newTotal);
-        balance.setTotalCost(newTotalCost);
-        balance.setAvgCost(newAvg);
-        recomputeAvailable(balance);
-        daoProvider.daoFor(ErpInvStockBalance.class).saveOrUpdateEntity(balance);
-
-        writeLedger(move, line, acctSchemaId, balance, warehouseId, locationId, qty, unitCost, lineTotalCost);
-        return unitCost;
-    }
-
-    private BigDecimal bookOutgoing(ErpInvStockMove move, ErpInvStockMoveLine line, Long acctSchemaId) {
-        Long warehouseId = move.getSourceWarehouseId();
-        Long locationId = line.getSourceLocationId() != null ? line.getSourceLocationId()
-                : move.getSourceLocationId();
-        ErpInvStockBalance balance = upsertBalance(move, line, warehouseId, locationId);
-        BigDecimal qty = nz(line.getQuantity());
-        BigDecimal unitCost = nz(balance.getAvgCost());
-        BigDecimal lineTotalCost = unitCost.multiply(qty);
-
-        BigDecimal oldTotal = nz(balance.getTotalQuantity());
-        BigDecimal oldTotalCost = nz(balance.getTotalCost());
-        BigDecimal newTotal = oldTotal.subtract(qty);
-        BigDecimal newTotalCost = oldTotalCost.subtract(lineTotalCost);
-        BigDecimal newAvg = newTotal.signum() != 0
-                ? newTotalCost.divide(newTotal, SCALE, RoundingMode.HALF_UP) : unitCost;
-
-        balance.setTotalQuantity(newTotal);
-        balance.setTotalCost(newTotalCost);
-        balance.setAvgCost(newAvg);
-        recomputeAvailable(balance);
-        daoProvider.daoFor(ErpInvStockBalance.class).saveOrUpdateEntity(balance);
-
-        writeLedger(move, line, acctSchemaId, balance, warehouseId, locationId, qty.negate(), unitCost,
-                lineTotalCost.negate());
-        return unitCost;
-    }
-
-    private void writeLedger(ErpInvStockMove move, ErpInvStockMoveLine line, Long acctSchemaId,
+    @Override
+    public void writeLedger(ErpInvStockMove move, ErpInvStockMoveLine line, Long acctSchemaId,
                              ErpInvStockBalance balance, Long warehouseId, Long locationId,
-                             BigDecimal signedQty, BigDecimal unitCost, BigDecimal signedTotalCost) {
+                             BigDecimal signedQty, BigDecimal unitCost, BigDecimal signedTotalCost,
+                             int costMethod) {
         IEntityDao<ErpInvStockLedger> dao = daoProvider.daoFor(ErpInvStockLedger.class);
         ErpInvStockLedger ledger = dao.newEntity();
         ledger.setCode("SL-" + StringHelper.generateUUID());
@@ -165,7 +147,7 @@ public class StockMoveBookkeeper {
         ledger.setTotalCost(signedTotalCost);
         ledger.setBalanceQuantity(balance.getTotalQuantity());
         ledger.setBalanceTotalCost(balance.getTotalCost());
-        ledger.setCostMethod(ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
+        ledger.setCostMethod(costMethod);
         ledger.setAcctSchemaId(acctSchemaId);
         ledger.setCurrencyId(line.getCurrencyId());
         ledger.setBusinessDate(move.getBusinessDate());
@@ -174,15 +156,26 @@ public class StockMoveBookkeeper {
         dao.saveEntity(ledger);
     }
 
-    private void recomputeAvailable(ErpInvStockBalance balance) {
+    @Override
+    public void recomputeAvailable(ErpInvStockBalance balance) {
         BigDecimal total = nz(balance.getTotalQuantity());
         BigDecimal reserved = nz(balance.getReservedQuantity());
         BigDecimal locked = nz(balance.getLockedQuantity());
         balance.setAvailableQuantity(total.subtract(reserved).subtract(locked));
     }
 
-    private ErpInvStockBalance findBalance(Long orgId, Long materialId, Long skuId, Long warehouseId,
-                                           Long locationId, String batchNo) {
+    @Override
+    public IDaoProvider daoProvider() {
+        return daoProvider;
+    }
+
+    @Override
+    public IOrmTemplate ormTemplate() {
+        return ormTemplate;
+    }
+
+    ErpInvStockBalance findBalance(Long orgId, Long materialId, Long skuId, Long warehouseId,
+                                   Long locationId, String batchNo) {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("orgId", orgId));

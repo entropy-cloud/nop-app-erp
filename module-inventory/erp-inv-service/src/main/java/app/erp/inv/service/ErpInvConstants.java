@@ -13,6 +13,13 @@ public interface ErpInvConstants {
     String CONFIG_TRACE_CHAIN_MAX_DEPTH = "erp-inv.trace-chain-max-depth";
     int TRACE_CHAIN_MAX_DEPTH_DEFAULT = 10;
 
+    // 成本核算配置项（costing-methods.md §配置项 / plan 2026-07-02-1538-1）
+    // costing-enabled=false 时记账器退化为既有硬编码移动加权平均行为（兜底开关）
+    String CONFIG_COSTING_ENABLED = "erp-inv.costing-enabled";
+    // 物料/账套均未配 costMethod 时的回退默认值（dict erp-md/cost-method 的 int 码）
+    String CONFIG_DEFAULT_COST_METHOD = "erp-inv.default-cost-method";
+    int DEFAULT_COST_METHOD = 10; // COST_METHOD_MOVING_AVERAGE
+
     // 追溯链 linkType 标识（TraceLink）
     String TRACE_LINK_FORWARD = "FORWARD";
     String TRACE_LINK_RETURN = "RETURN";
@@ -27,7 +34,14 @@ public interface ErpInvConstants {
     int MOVE_TYPE_INTERNAL_TRANSFER = 30;
     int MOVE_TYPE_MANUFACTURING = 40;
 
+    // 存货计价方法码值（字典 erp-md/cost-method）。本计划覆盖 10/30；20/40/50/60/70 为后续 successor。
     int COST_METHOD_MOVING_AVERAGE = 10;
+    int COST_METHOD_MONTHLY_WEIGHTED_AVERAGE = 20;
+    int COST_METHOD_FIFO = 30;
+    int COST_METHOD_LIFO = 40;
+    int COST_METHOD_STANDARD = 50;
+    int COST_METHOD_INDIVIDUAL = 60;
+    int COST_METHOD_BATCH = 70;
 
     // 业务联动源单类型（自由字符串）。采购退货出库移动 / 销售退货入库移动的存货估值过账分别由 purchase/sales 域独占
     // （PURCHASE_RETURN/SALES_RETURN），故 inventory 域对此类联动移动跳过默认估值过账，避免与之双计存货。
