@@ -505,7 +505,6 @@ prop:
       updatedBy: 修改人
       version: 数据版本
     ErpHrShiftSwapRequest:
-      approvedBy: null
       approvedById: 审批人
       code: 编号
       createTime: 创建时间

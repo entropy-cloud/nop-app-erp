@@ -527,7 +527,6 @@ prop:
       targetEmployee: Target Employee
       sourceAssignment: Source Assignment
       targetAssignment: Target Assignment
-      approvedBy: Approved By
       org: Org
     ErpHrSurvey:
       id: ID

@@ -65,7 +65,7 @@
         </prop>
         <prop name="closedBy" displayName="结账人" propId="12" i18n-en:displayName="Closed By" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="36"/>
+            <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
         <prop name="closedAt" displayName="结账时间" propId="13" i18n-en:displayName="Closed At" queryable="true"
               sortable="true" insertable="true" updatable="true">

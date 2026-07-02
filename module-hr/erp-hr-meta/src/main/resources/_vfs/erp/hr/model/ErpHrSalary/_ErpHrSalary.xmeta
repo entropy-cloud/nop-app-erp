@@ -37,55 +37,55 @@
         </prop>
         <prop name="basicSalary" displayName="基本工资" propId="5" i18n-en:displayName="Basic Salary" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="18" scale="2"/>
         </prop>
         <prop name="positionAllowance" displayName="岗位津贴" propId="6" i18n-en:displayName="Position Allowance"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="18" scale="2"/>
         </prop>
         <prop name="performanceBonus" displayName="绩效奖金" propId="7" i18n-en:displayName="Performance Bonus"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="18" scale="2"/>
         </prop>
         <prop name="overtimePay" displayName="加班费" propId="8" i18n-en:displayName="Overtime Pay" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="18" scale="2"/>
         </prop>
         <prop name="mealAllowance" displayName="餐补" propId="9" i18n-en:displayName="Meal Allowance" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="18" scale="2"/>
         </prop>
         <prop name="transportAllowance" displayName="交通补贴" propId="10" i18n-en:displayName="Transport Allowance"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="18" scale="2"/>
         </prop>
         <prop name="otherAllowance" displayName="其他补贴" propId="11" i18n-en:displayName="Other Allowance"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="18" scale="2"/>
         </prop>
         <prop name="grossSalary" displayName="应发合计" propId="12" i18n-en:displayName="Gross Salary" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="18" scale="2"/>
         </prop>
         <prop name="socialInsurance" displayName="社保个人部分" propId="13" i18n-en:displayName="Social Insurance"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="18" scale="2"/>
         </prop>
         <prop name="housingFund" displayName="公积金个人部分" propId="14" i18n-en:displayName="Housing Fund" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="18" scale="2"/>
         </prop>
         <prop name="taxAmount" displayName="个税" propId="15" i18n-en:displayName="Tax Amount" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="18" scale="2"/>
         </prop>
         <prop name="otherDeductions" displayName="其他扣款" propId="16" i18n-en:displayName="Other Deductions"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="18" scale="2"/>
         </prop>
         <prop name="netSalary" displayName="实发合计" propId="17" i18n-en:displayName="Net Salary" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="18" scale="2"/>
         </prop>
         <prop name="paymentStatus" displayName="支付状态" propId="18" i18n-en:displayName="Payment Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">

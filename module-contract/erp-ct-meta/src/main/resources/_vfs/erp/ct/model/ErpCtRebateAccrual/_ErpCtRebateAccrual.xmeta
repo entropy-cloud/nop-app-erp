@@ -42,11 +42,11 @@
         </prop>
         <prop name="billAmountSource" displayName="单据金额(源币种)" propId="6" i18n-en:displayName="Bill Amount Source"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="18" scale="2"/>
         </prop>
         <prop name="accruedRebate" displayName="计提返利金额" propId="7" i18n-en:displayName="Accrued Rebate" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="18" scale="2"/>
         </prop>
         <prop name="accrualDate" displayName="计提日期" propId="8" i18n-en:displayName="Accrual Date" queryable="true"
               sortable="true" insertable="true" updatable="true">

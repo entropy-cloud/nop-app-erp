@@ -61,8 +61,8 @@
             <schema type="java.lang.Integer" dict="erp-hr/swap-status"/>
         </prop>
         <prop name="approvedById" displayName="审批人" propId="11" i18n-en:displayName="Approved By" queryable="true"
-              sortable="true" insertable="true" updatable="true" ext:relation="approvedBy">
-            <schema type="java.lang.Long"/>
+              sortable="true" insertable="true" updatable="true">
+            <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="12" i18n-en:displayName="Del Flag" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
@@ -107,11 +107,6 @@
               internal="true" queryable="true" ext:joinLeftProp="targetAssignmentId" ext:joinRightProp="id"
               insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpHrShiftAssignment"/>
-        </prop>
-        <prop name="approvedBy" i18n-en:displayName="Approved By" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="approvedById" ext:joinRightProp="id" insertable="false"
-              updatable="false" lazy="true">
-            <schema bizObjName="ErpHrEmployee"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"

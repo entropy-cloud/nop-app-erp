@@ -57,7 +57,7 @@
         </prop>
         <prop name="approvedBy" displayName="审核人" propId="10" i18n-en:displayName="Approved By" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="36"/>
+            <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
         <prop name="approvedAt" displayName="审核时间" propId="11" i18n-en:displayName="Approved At" queryable="true"
               sortable="true" insertable="true" updatable="true">

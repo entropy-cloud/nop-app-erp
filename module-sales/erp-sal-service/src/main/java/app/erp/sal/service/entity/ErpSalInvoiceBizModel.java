@@ -102,7 +102,7 @@ public class ErpSalInvoiceBizModel extends CrudBizModel<ErpSalInvoice> implement
         boolean posted = postingDispatcher.tryPost(invoice);
 
         // 跨域 post 调用扰动会话脏跟踪，重新加载后置 posted 标志并显式持久化（对齐 ErpSalDeliveryBizModel）
-        invoice = dao().getEntityById(invoiceId);
+        invoice = requireEntity(String.valueOf(invoiceId), null, context);
         invoice.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
         invoice.setApprovedBy(currentUserId());
         invoice.setApprovedAt(CoreMetrics.currentDateTime());
@@ -145,7 +145,7 @@ public class ErpSalInvoiceBizModel extends CrudBizModel<ErpSalInvoice> implement
         if (Boolean.TRUE.equals(invoice.getPosted())) {
             postingDispatcher.reverse(invoice);
             // 跨域 reverse 调用扰动会话脏跟踪，重新加载后置 posted=false 并显式持久化。
-            invoice = dao().getEntityById(invoiceId);
+            invoice = requireEntity(String.valueOf(invoiceId), null, context);
             invoice.setPosted(false);
             invoice.setPostedAt(null);
             invoice.setPostedBy(null);
@@ -167,7 +167,7 @@ public class ErpSalInvoiceBizModel extends CrudBizModel<ErpSalInvoice> implement
         if (approveStatus != null && approveStatus == ErpSalConstants.APPROVE_STATUS_APPROVED
                 && Boolean.TRUE.equals(invoice.getPosted())) {
             postingDispatcher.reverse(invoice);
-            invoice = dao().getEntityById(invoiceId);
+            invoice = requireEntity(String.valueOf(invoiceId), null, context);
             invoice.setPosted(false);
             invoice.setPostedAt(null);
             invoice.setPostedBy(null);
@@ -212,6 +212,7 @@ public class ErpSalInvoiceBizModel extends CrudBizModel<ErpSalInvoice> implement
     // ---------- query helpers ----------
 
     List<ErpSalInvoiceLine> loadLines(Long invoiceId) {
+        // D2 边界场景：同聚合子表加载，父实体已由 requireEntity 经数据权限/Meta 管道授权，子行无独立权限规则。
         IEntityDao<ErpSalInvoiceLine> dao = daoFor(ErpSalInvoiceLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("invoiceId", invoiceId));

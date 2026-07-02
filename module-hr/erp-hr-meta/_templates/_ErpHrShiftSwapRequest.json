@@ -10,7 +10,7 @@
   "reason": "",
   "status": 0,
   "status_label": "",
-  "approvedById": 0,
+  "approvedById": "",
   "delVersion": 0,
   "version": 0,
   "createdBy": "",
@@ -21,6 +21,5 @@
   "targetEmployee": null,
   "sourceAssignment": null,
   "targetAssignment": null,
-  "approvedBy": null,
   "org": null
 }

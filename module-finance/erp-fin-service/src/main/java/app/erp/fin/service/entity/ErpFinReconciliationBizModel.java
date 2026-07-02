@@ -104,7 +104,7 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
     @BizMutation
     @SingleSession
     public ErpFinReconciliation post(@Name("reconciliationId") Long reconciliationId, IServiceContext context) {
-        ErpFinReconciliation head = requireHead(reconciliationId);
+        ErpFinReconciliation head = requireHead(reconciliationId, context);
         if (!Integer.valueOf(ErpFinConstants.RECON_STATUS_DRAFT).equals(head.getDocStatus())) {
             throw statusError(head);
         }
@@ -133,7 +133,7 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
     @BizMutation
     @SingleSession
     public ErpFinReconciliation reverse(@Name("reconciliationId") Long reconciliationId, IServiceContext context) {
-        ErpFinReconciliation head = requireHead(reconciliationId);
+        ErpFinReconciliation head = requireHead(reconciliationId, context);
         if (!Integer.valueOf(ErpFinConstants.RECON_STATUS_POSTED).equals(head.getDocStatus())) {
             throw statusError(head);
         }
@@ -200,9 +200,8 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
 
     // ---------- helpers ----------
 
-    protected ErpFinReconciliation requireHead(Long id) {
-        IEntityDao<ErpFinReconciliation> dao = daoProvider().daoFor(ErpFinReconciliation.class);
-        ErpFinReconciliation head = dao.getEntityById(id);
+    protected ErpFinReconciliation requireHead(Long id, IServiceContext context) {
+        ErpFinReconciliation head = get(String.valueOf(id), true, context);
         if (head == null) {
             throw new NopException(ErpFinErrors.ERR_RECONCILIATION_NOT_FOUND)
                     .param(ErpFinErrors.ARG_RECONCILIATION_ID, id);
@@ -211,6 +210,7 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
     }
 
     protected List<ErpFinReconciliationLine> loadLines(Long reconciliationId) {
+        // D2 边界场景：同聚合子表加载，父实体已由 requireHead/get 经数据权限/Meta 管道授权，子行无独立权限规则。
         IEntityDao<ErpFinReconciliationLine> dao = daoProvider().daoFor(ErpFinReconciliationLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("reconciliationId", reconciliationId));
@@ -222,6 +222,7 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
     }
 
     protected ErpFinArApItem loadItem(Long id) {
+        // D2 边界场景：跨实体只读加载辅助账项（核销内部实体，无独立 IBiz），数据权限由核销单聚合根访问控制覆盖。
         IEntityDao<ErpFinArApItem> dao = daoProvider().daoFor(ErpFinArApItem.class);
         ErpFinArApItem item = dao.getEntityById(id);
         if (item == null) {

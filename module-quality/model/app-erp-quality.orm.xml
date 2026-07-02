@@ -103,7 +103,7 @@
     </dicts>
 
     <domains>
-    <domain name="boolFlag" stdSqlType="TINYINT"/>
+    <domain name="boolFlag" stdSqlType="BOOLEAN" stdDataType="boolean"/>
     <domain name="delVersion" stdSqlType="BIGINT"/>
     <domain name="version" stdSqlType="INTEGER"/>
     <domain name="createTime" stdSqlType="TIMESTAMP"/>
@@ -113,7 +113,7 @@
     <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
     <domain name="code" precision="50" stdSqlType="VARCHAR"/>
     <domain name="name" precision="200" stdSqlType="VARCHAR"/>
-    <domain name="amount" stdSqlType="DECIMAL" precision="20" scale="4"/>
+    <domain name="amount" stdSqlType="DECIMAL" precision="18" scale="2"/>
     <domain name="quantity" stdSqlType="DECIMAL" precision="20" scale="4"/>
     <domain name="unitPrice" stdSqlType="DECIMAL" precision="20" scale="4"/>
     <domain name="exchangeRate" stdSqlType="DECIMAL" precision="20" scale="8"/>
@@ -150,8 +150,8 @@
                 <column name="approveStatus" displayName="审核状态" ext:dict="erp-qa/approve-status" mandatory="true" code="APPROVE_STATUS" propId="20" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Approve Status' />
                 <column name="posted" displayName="已过账(质量结论已回写业务单据)" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="21" stdDataType="boolean" i18n-en:displayName='Posted' />
                 <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="22" stdDataType="datetime" i18n-en:displayName='Posted At' />
-                <column name="postedBy" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="23" stdDataType="string" i18n-en:displayName='Posted By' />
-                <column name="approvedBy" displayName="审核人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="24" stdDataType="string" i18n-en:displayName='Approved By' />
+                <column name="postedBy" stdDomain="userId" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="23" stdDataType="string" i18n-en:displayName='Posted By' />
+                <column name="approvedBy" stdDomain="userId" displayName="审核人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="24" stdDataType="string" i18n-en:displayName='Approved By' />
                 <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="25" stdDataType="datetime" i18n-en:displayName='Approved At' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="26" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="27" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />

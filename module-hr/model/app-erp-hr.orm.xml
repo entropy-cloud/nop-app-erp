@@ -167,7 +167,7 @@
     </dicts>
 
     <domains>
-        <domain name="boolFlag" stdSqlType="TINYINT"/>
+        <domain name="boolFlag" stdSqlType="BOOLEAN" stdDataType="boolean"/>
         <domain name="delVersion" stdSqlType="BIGINT"/>
         <domain name="version" stdSqlType="INTEGER"/>
         <domain name="createTime" stdSqlType="TIMESTAMP"/>
@@ -177,7 +177,7 @@
         <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
         <domain name="code" precision="50" stdSqlType="VARCHAR"/>
         <domain name="name" precision="200" stdSqlType="VARCHAR"/>
-        <domain name="amount" stdSqlType="DECIMAL" precision="20" scale="4"/>
+        <domain name="amount" stdSqlType="DECIMAL" precision="18" scale="2"/>
         <domain name="quantity" stdSqlType="DECIMAL" precision="20" scale="4"/>
         <domain name="orderCode" precision="50" stdSqlType="VARCHAR"/>
         <domain name="phone" precision="20" stdSqlType="VARCHAR"/>
@@ -682,7 +682,7 @@
                 <column name="swapDate" displayName="调换日期" stdSqlType="DATE" mandatory="true" code="SWAP_DATE" propId="8" stdDataType="date" i18n-en:displayName='Swap Date' />
                 <column name="reason" displayName="调换原因" stdSqlType="VARCHAR" precision="500" code="REASON" propId="9" stdDataType="string" i18n-en:displayName='Reason' />
                 <column name="status" displayName="状态" ext:dict="erp-hr/swap-status" mandatory="true" code="STATUS" propId="10" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
-                <column name="approvedById" displayName="审批人" stdSqlType="BIGINT" code="APPROVED_BY_ID" propId="11" stdDataType="long" i18n-en:displayName='Approved By' />
+                <column name="approvedById" displayName="审批人" stdDomain="userId" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY_ID" propId="11" stdDataType="string" i18n-en:displayName='Approved By' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="12" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="13" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="14" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
@@ -695,7 +695,6 @@
                 <to-one name="targetEmployee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub" i18n-en:displayName='Target Employee'><join><on leftProp="targetEmployeeId" rightProp="id"/></join></to-one>
                 <to-one name="sourceAssignment" refEntityName="app.erp.hr.dao.entity.ErpHrShiftAssignment" tagSet="pub" i18n-en:displayName='Source Assignment'><join><on leftProp="sourceAssignmentId" rightProp="id"/></join></to-one>
                 <to-one name="targetAssignment" refEntityName="app.erp.hr.dao.entity.ErpHrShiftAssignment" tagSet="pub" i18n-en:displayName='Target Assignment'><join><on leftProp="targetAssignmentId" rightProp="id"/></join></to-one>
-                <to-one name="approvedBy" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub" i18n-en:displayName='Approved By'><join><on leftProp="approvedById" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
         </entity>

@@ -103,7 +103,7 @@ public class ErpFinExpenseClaimBizModel extends CrudBizModel<ErpFinExpenseClaim>
 
         boolean posted = postingDispatcher.tryPost(claim);
         // 跨域 post 扰动会话脏跟踪，重新加载后置标志并显式持久化（对齐 ErpSalReceiptBizModel）
-        claim = dao().getEntityById(claimId);
+        claim = requireEntity(String.valueOf(claimId), null, context);
         claim.setApproveStatus(ErpFinConstants.APPROVE_STATUS_APPROVED);
         claim.setApprovedBy(currentUserId());
         claim.setApprovedAt(CoreMetrics.currentDateTime());
@@ -113,7 +113,7 @@ public class ErpFinExpenseClaimBizModel extends CrudBizModel<ErpFinExpenseClaim>
             claim.setPostedBy(currentUserId());
             // 过账生成辅助账后、同事务抵扣同员工未还借款
             offsetOrchestrator.offset(claim);
-            claim = dao().getEntityById(claimId);
+            claim = requireEntity(String.valueOf(claimId), null, context);
         }
         dao().updateEntity(claim);
         return claim;
@@ -150,7 +150,7 @@ public class ErpFinExpenseClaimBizModel extends CrudBizModel<ErpFinExpenseClaim>
             // 先反向抵扣（恢复借款应收 + 红冲 SETTLE 凭证），再红冲 EXPENSE_CLAIM（取消报销应付辅助账）
             offsetOrchestrator.reverseOffset(claim);
             postingDispatcher.reverse(claim);
-            claim = dao().getEntityById(claimId);
+            claim = requireEntity(String.valueOf(claimId), null, context);
             claim.setPosted(false);
             claim.setPostedAt(null);
             claim.setPostedBy(null);
@@ -175,7 +175,7 @@ public class ErpFinExpenseClaimBizModel extends CrudBizModel<ErpFinExpenseClaim>
                 && Boolean.TRUE.equals(claim.getPosted())) {
             offsetOrchestrator.reverseOffset(claim);
             postingDispatcher.reverse(claim);
-            claim = dao().getEntityById(claimId);
+            claim = requireEntity(String.valueOf(claimId), null, context);
             claim.setPosted(false);
             claim.setPostedAt(null);
             claim.setPostedBy(null);
@@ -261,6 +261,7 @@ public class ErpFinExpenseClaimBizModel extends CrudBizModel<ErpFinExpenseClaim>
     }
 
     private List<ErpFinExpenseClaimLine> loadLines(Long claimId) {
+        // D2 边界场景：同聚合子表加载，父实体已由 requireEntity 经数据权限/Meta 管道授权，子行无独立权限规则。
         IEntityDao<ErpFinExpenseClaimLine> dao = daoProvider().daoFor(ErpFinExpenseClaimLine.class);
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("claimId", claimId));

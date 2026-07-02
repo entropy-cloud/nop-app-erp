@@ -21,16 +21,13 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.dao.api.IEntityDao;
-import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import io.nop.core.context.IServiceContext;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
-import static io.nop.api.core.beans.FilterBeans.ne;
 
 /**
  * 采购订单 BizModel。在 {@link CrudBizModel} 标准 CRUD 之上实现三轴审批状态机
@@ -45,9 +42,6 @@ import static io.nop.api.core.beans.FilterBeans.ne;
  */
 @BizModel("ErpPurOrder")
 public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IErpPurOrderBiz {
-
-    @Inject
-    IOrmTemplate ormTemplate;
 
     @Inject
     IErpMdPartnerBiz mdPartnerBiz;
@@ -173,8 +167,6 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
                                              IServiceContext context) {
         ErpPurOrder order = converter.build(requisition, lines, supplierId, request);
         dao().saveEntity(order);
-        // flush 使订单 ID 落地，再保存行（行 orderId 依赖头 ID）
-        ormTemplate.flushSession();
         for (ErpPurOrderLine orderLine : converter.buildLines(order, lines, request)) {
             daoFor(ErpPurOrderLine.class).saveEntity(orderLine);
         }
@@ -187,11 +179,15 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
         if (requisitionId == null) {
             return false;
         }
-        ormTemplate.flushSession();
+        // docStatus 的 xmeta 仅允许 eq/in 过滤（不支持 ne），故按 requisitionId 经管道 findList 后于内存剔除已作废单。
         QueryBean q = new QueryBean();
-        q.addFilter(and(eq("requisitionId", requisitionId),
-                ne("docStatus", ErpPurConstants.DOC_STATUS_CANCELLED)));
-        return !dao().findAllByQuery(q).isEmpty();
+        q.addFilter(eq("requisitionId", requisitionId));
+        for (ErpPurOrder order : findList(q, null, context)) {
+            if (!Integer.valueOf(ErpPurConstants.DOC_STATUS_CANCELLED).equals(order.getDocStatus())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -202,7 +198,7 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
         if (orderId == null) {
             return;
         }
-        ErpPurOrder order = dao().getEntityById(orderId);
+        ErpPurOrder order = get(String.valueOf(orderId), true, context);
         if (order == null) {
             return;
         }
@@ -245,6 +241,7 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
     // ---------- query helpers ----------
 
     List<ErpPurOrderLine> loadLines(Long orderId) {
+        // D2 边界场景：同聚合子表加载，父实体已由 requireEntity 经数据权限/Meta 管道授权，子行无独立权限规则。
         IEntityDao<ErpPurOrderLine> dao = daoFor(ErpPurOrderLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("orderId", orderId));

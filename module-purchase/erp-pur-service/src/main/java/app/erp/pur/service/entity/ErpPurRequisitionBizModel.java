@@ -219,6 +219,7 @@ public class ErpPurRequisitionBizModel extends CrudBizModel<ErpPurRequisition> i
     // ---------- query helpers ----------
 
     List<ErpPurRequisitionLine> loadLines(Long requisitionId) {
+        // D2 边界场景：同聚合子表加载，父实体已由 requireEntity 经数据权限/Meta 管道授权，子行无独立权限规则。
         IEntityDao<ErpPurRequisitionLine> dao = daoFor(ErpPurRequisitionLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("requisitionId", requisitionId));

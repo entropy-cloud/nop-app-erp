@@ -151,7 +151,7 @@
     </dicts>
 
     <domains>
-        <domain name="boolFlag" stdSqlType="TINYINT"/>
+        <domain name="boolFlag" stdDataType="boolean" stdSqlType="BOOLEAN"/>
         <domain name="delVersion" stdSqlType="BIGINT"/>
         <domain name="version" stdSqlType="INTEGER"/>
         <domain name="createTime" stdSqlType="TIMESTAMP"/>
@@ -161,7 +161,7 @@
         <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
         <domain name="code" precision="50" stdSqlType="VARCHAR"/>
         <domain name="name" precision="200" stdSqlType="VARCHAR"/>
-        <domain name="amount" precision="20" scale="4" stdSqlType="DECIMAL"/>
+        <domain name="amount" precision="18" scale="2" stdSqlType="DECIMAL"/>
         <domain name="quantity" precision="20" scale="4" stdSqlType="DECIMAL"/>
         <domain name="unitPrice" precision="20" scale="4" stdSqlType="DECIMAL"/>
         <domain name="exchangeRate" precision="20" scale="8" stdSqlType="DECIMAL"/>

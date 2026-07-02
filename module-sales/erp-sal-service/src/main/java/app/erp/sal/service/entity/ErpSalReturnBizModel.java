@@ -24,7 +24,6 @@ import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.dao.api.IEntityDao;
 import io.nop.core.context.IServiceContext;
-import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 
 import java.util.ArrayList;
@@ -65,9 +64,6 @@ public class ErpSalReturnBizModel extends CrudBizModel<ErpSalReturn> implements 
 
     @Inject
     ReturnRefundOrchestrator refundOrchestrator;
-
-    @Inject
-    IOrmTemplate ormTemplate;
 
     public ErpSalReturnBizModel() {
         setEntityName(ErpSalReturn.class.getName());
@@ -130,7 +126,7 @@ public class ErpSalReturnBizModel extends CrudBizModel<ErpSalReturn> implements 
         ErpInvStockMove move = triggerIncomingMove(returnOrder, lines, context);
         // 跨域 generateMove 将移动单推进至 DONE 并更新库存余额；先刷盘使 DONE 状态与余额变动落地到当前事务的 DB 连接，
         // 避免后续 REQUIRES_NEW 过账（独立会话）挂起当前会话时丢失会话内暂存的 DONE 暂态（跨域会话交互，对齐 lessons 经验）。
-        ormTemplate.flushSession();
+        orm().flushSession();
 
         // SALES_RETURN 过账（跨域 REQUIRES_NEW 由 Facade 承接，失败吞异常保持终态 posted=false）。
         boolean posted = triggerPosting(returnOrder);
@@ -140,7 +136,7 @@ public class ErpSalReturnBizModel extends CrudBizModel<ErpSalReturn> implements 
         refundOrchestrator.orchestrateRefund(returnOrder);
 
         // 跨域调用可能扰动会话脏跟踪，故重新加载并以 updateEntity 显式持久化（对齐 ErpSalDeliveryBizModel.approve）。
-        returnOrder = dao().getEntityById(returnId);
+        returnOrder = requireEntity(String.valueOf(returnId), null, context);
         returnOrder.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
         returnOrder.setApprovedBy(currentUserId());
         returnOrder.setApprovedAt(CoreMetrics.currentDateTime());
@@ -176,7 +172,7 @@ public class ErpSalReturnBizModel extends CrudBizModel<ErpSalReturn> implements 
             throw illegalTransition(returnOrder, status, "APPROVED");
         }
         ensureReversed(returnOrder, context);
-        returnOrder = dao().getEntityById(returnId);
+        returnOrder = requireEntity(String.valueOf(returnId), null, context);
         returnOrder.setApproveStatus(ErpSalConstants.APPROVE_STATUS_REJECTED);
         dao().updateEntity(returnOrder);
         return returnOrder;
@@ -193,7 +189,7 @@ public class ErpSalReturnBizModel extends CrudBizModel<ErpSalReturn> implements 
         Integer approveStatus = returnOrder.getApproveStatus();
         if (approveStatus != null && approveStatus == ErpSalConstants.APPROVE_STATUS_APPROVED) {
             ensureReversed(returnOrder, context);
-            returnOrder = dao().getEntityById(returnId);
+            returnOrder = requireEntity(String.valueOf(returnId), null, context);
         }
         returnOrder.setDocStatus(ErpSalConstants.DOC_STATUS_CANCELLED);
         dao().updateEntity(returnOrder);
@@ -259,7 +255,7 @@ public class ErpSalReturnBizModel extends CrudBizModel<ErpSalReturn> implements 
      * </ol>
      */
     void ensureReversed(ErpSalReturn returnOrder, IServiceContext context) {
-        reversePostingIfAny(returnOrder);
+        reversePostingIfAny(returnOrder, context);
         ErpInvStockMove original = stockMoveBiz.findByRelatedBill(
                 ErpSalConstants.RELATED_BILL_TYPE_SAL_RETURN, returnOrder.getCode(), context);
         if (original == null) {
@@ -278,10 +274,10 @@ public class ErpSalReturnBizModel extends CrudBizModel<ErpSalReturn> implements 
      * 红字冲销已过账 SALES_RETURN 凭证（幂等：未过账则跳过）+ 退款红冲恢复占位。
      * 红冲同事务内由 finance cancelOnReverse 取消退货自身的负 AR 辅助账，receivableBalance 恢复。
      */
-    void reversePostingIfAny(ErpSalReturn returnOrder) {
+    void reversePostingIfAny(ErpSalReturn returnOrder, IServiceContext context) {
         if (Boolean.TRUE.equals(returnOrder.getPosted())) {
             postingDispatcher.reverse(returnOrder);
-            returnOrder = dao().getEntityById(returnOrder.getId());
+            returnOrder = requireEntity(String.valueOf(returnOrder.getId()), null, context);
             returnOrder.setPosted(false);
             returnOrder.setPostedAt(null);
             returnOrder.setPostedBy(null);
@@ -372,6 +368,7 @@ public class ErpSalReturnBizModel extends CrudBizModel<ErpSalReturn> implements 
     // ---------- query helpers ----------
 
     List<ErpSalReturnLine> loadLines(Long returnId) {
+        // D2 边界场景：同聚合子表加载，父实体已由 requireEntity 经数据权限/Meta 管道授权，子行无独立权限规则。
         IEntityDao<ErpSalReturnLine> dao = daoFor(ErpSalReturnLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("returnId", returnId));

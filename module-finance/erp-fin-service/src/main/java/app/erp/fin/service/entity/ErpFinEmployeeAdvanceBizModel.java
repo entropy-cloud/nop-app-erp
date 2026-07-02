@@ -98,7 +98,7 @@ public class ErpFinEmployeeAdvanceBizModel extends CrudBizModel<ErpFinEmployeeAd
 
         boolean posted = postingDispatcher.tryPost(advance);
 
-        advance = dao().getEntityById(advanceId);
+        advance = requireEntity(String.valueOf(advanceId), null, context);
         advance.setApproveStatus(ErpFinConstants.APPROVE_STATUS_APPROVED);
         advance.setApprovedBy(currentUserId());
         advance.setApprovedAt(CoreMetrics.currentDateTime());
@@ -140,7 +140,7 @@ public class ErpFinEmployeeAdvanceBizModel extends CrudBizModel<ErpFinEmployeeAd
         }
         if (Boolean.TRUE.equals(advance.getPosted())) {
             postingDispatcher.reverse(advance);
-            advance = dao().getEntityById(advanceId);
+            advance = requireEntity(String.valueOf(advanceId), null, context);
             advance.setPosted(false);
             advance.setPostedAt(null);
             advance.setPostedBy(null);
@@ -163,7 +163,7 @@ public class ErpFinEmployeeAdvanceBizModel extends CrudBizModel<ErpFinEmployeeAd
         if (approveStatus == ErpFinConstants.APPROVE_STATUS_APPROVED
                 && Boolean.TRUE.equals(advance.getPosted())) {
             postingDispatcher.reverse(advance);
-            advance = dao().getEntityById(advanceId);
+            advance = requireEntity(String.valueOf(advanceId), null, context);
             advance.setPosted(false);
             advance.setPostedAt(null);
             advance.setPostedBy(null);

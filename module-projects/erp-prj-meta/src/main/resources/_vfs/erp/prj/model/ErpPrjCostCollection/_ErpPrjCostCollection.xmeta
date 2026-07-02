@@ -65,7 +65,7 @@
         </prop>
         <prop name="postedBy" displayName="过账人" propId="12" i18n-en:displayName="Posted By" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="36"/>
+            <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
         <prop name="remark" displayName="备注" propId="13" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

@@ -22,6 +22,7 @@ public class ErpMdPartnerBizModel extends CrudBizModel<ErpMdPartner> implements 
         if (id == null) {
             return null;
         }
-        return dao().getEntityById(id);
+        // 经 get() 走数据权限 + Meta 管道（回归默认读取行为，对齐审计 D2 裁决）。
+        return get(String.valueOf(id), true, context);
     }
 }

@@ -112,7 +112,7 @@ public class ErpPurInvoiceBizModel extends CrudBizModel<ErpPurInvoice> implement
 
         // 跨域 generateMove/post 调用可能扰动会话脏跟踪，故重新加载并以 updateEntity 显式持久化
         // （对齐 ErpPurReceiveBizModel.approve）。
-        invoice = dao().getEntityById(invoiceId);
+        invoice = requireEntity(String.valueOf(invoiceId), null, context);
         invoice.setApproveStatus(ErpPurConstants.APPROVE_STATUS_APPROVED);
         invoice.setApprovedBy(currentUserId());
         invoice.setApprovedAt(CoreMetrics.currentDateTime());
@@ -155,7 +155,7 @@ public class ErpPurInvoiceBizModel extends CrudBizModel<ErpPurInvoice> implement
         if (Boolean.TRUE.equals(invoice.getPosted())) {
             postingDispatcher.reverse(invoice);
             // 跨域 reverse 调用扰动会话脏跟踪，重新加载后置 posted=false 并显式持久化。
-            invoice = dao().getEntityById(invoiceId);
+            invoice = requireEntity(String.valueOf(invoiceId), null, context);
             invoice.setPosted(false);
             invoice.setPostedAt(null);
             invoice.setPostedBy(null);
@@ -177,7 +177,7 @@ public class ErpPurInvoiceBizModel extends CrudBizModel<ErpPurInvoice> implement
         if (approveStatus != null && approveStatus == ErpPurConstants.APPROVE_STATUS_APPROVED
                 && Boolean.TRUE.equals(invoice.getPosted())) {
             postingDispatcher.reverse(invoice);
-            invoice = dao().getEntityById(invoiceId);
+            invoice = requireEntity(String.valueOf(invoiceId), null, context);
             invoice.setPosted(false);
             invoice.setPostedAt(null);
             invoice.setPostedBy(null);
@@ -222,6 +222,7 @@ public class ErpPurInvoiceBizModel extends CrudBizModel<ErpPurInvoice> implement
     // ---------- query helpers ----------
 
     List<ErpPurInvoiceLine> loadLines(Long invoiceId) {
+        // D2 边界场景：同聚合子表加载，父实体已由 requireEntity 经数据权限/Meta 管道授权，子行无独立权限规则。
         IEntityDao<ErpPurInvoiceLine> dao = daoFor(ErpPurInvoiceLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("invoiceId", invoiceId));

@@ -149,7 +149,7 @@
     </dicts>
 
     <domains>
-    <domain name="boolFlag" stdSqlType="TINYINT"/>
+    <domain name="boolFlag" stdSqlType="BOOLEAN" stdDataType="boolean"/>
     <domain name="delVersion" stdSqlType="BIGINT"/>
     <domain name="version" stdSqlType="INTEGER"/>
     <domain name="createTime" stdSqlType="TIMESTAMP"/>
@@ -159,7 +159,7 @@
     <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
     <domain name="code" precision="50" stdSqlType="VARCHAR"/>
     <domain name="name" precision="200" stdSqlType="VARCHAR"/>
-    <domain name="amount" stdSqlType="DECIMAL" precision="20" scale="4"/>
+    <domain name="amount" stdSqlType="DECIMAL" precision="18" scale="2"/>
     <domain name="quantity" stdSqlType="DECIMAL" precision="20" scale="4"/>
     <domain name="unitPrice" stdSqlType="DECIMAL" precision="20" scale="4"/>
     <domain name="exchangeRate" stdSqlType="DECIMAL" precision="20" scale="8"/>
@@ -192,7 +192,7 @@
                 <column name="isReversed" displayName="是否红字冲销凭证" stdSqlType="BOOLEAN" defaultValue="false" code="IS_REVERSED" propId="12" stdDataType="boolean" i18n-en:displayName='Is Reversed' />
                 <column name="reversalOfVoucherId" displayName="原冲销凭证ID" stdSqlType="BIGINT" code="REVERSAL_OF_VOUCHER_ID" propId="13" stdDataType="long" i18n-en:displayName='Reversal Of Voucher' />
                 <column name="docStatus" displayName="凭证状态" ext:dict="erp-fin/voucher-status" mandatory="true" code="DOC_STATUS" propId="14" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
-                <column name="postedBy" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="15" stdDataType="string" i18n-en:displayName='Posted By' />
+                <column name="postedBy" stdDomain="userId" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="15" stdDataType="string" i18n-en:displayName='Posted By' />
                 <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="16" stdDataType="datetime" i18n-en:displayName='Posted At' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="17" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="18" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
@@ -360,7 +360,7 @@
                 <column name="quarter" displayName="季度" stdSqlType="INTEGER" code="QUARTER" propId="9" stdDataType="int" i18n-en:displayName='Quarter' />
                 <column name="isAdjustment" displayName="是否调整期" stdSqlType="BOOLEAN" defaultValue="false" code="IS_ADJUSTMENT" propId="10" stdDataType="boolean" i18n-en:displayName='Is Adjustment' />
                 <column name="status" displayName="期间状态" ext:dict="erp-fin/period-status" mandatory="true" code="STATUS" propId="11" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
-                <column name="closedBy" displayName="结账人" stdSqlType="VARCHAR" precision="36" code="CLOSED_BY" propId="12" stdDataType="string" i18n-en:displayName='Closed By' />
+                <column name="closedBy" stdDomain="userId" displayName="结账人" stdSqlType="VARCHAR" precision="36" code="CLOSED_BY" propId="12" stdDataType="string" i18n-en:displayName='Closed By' />
                 <column name="closedAt" displayName="结账时间" stdSqlType="DATETIME" code="CLOSED_AT" propId="13" stdDataType="datetime" i18n-en:displayName='Closed At' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="14" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="15" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -470,7 +470,7 @@
                 <column name="totalAmountFunctional" displayName="核销总额(本位币)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT_FUNCTIONAL" propId="11" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Amount Functional' />
                 <column name="fxGainLoss" displayName="汇兑损益" domain="amount" defaultValue="0" code="FX_GAIN_LOSS" propId="12" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Fx Gain Loss' />
                 <column name="docStatus" displayName="状态" ext:dict="erp-fin/reconciliation-status" mandatory="true" code="DOC_STATUS" propId="13" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
-                <column name="postedBy" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="14" stdDataType="string" i18n-en:displayName='Posted By' />
+                <column name="postedBy" stdDomain="userId" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="14" stdDataType="string" i18n-en:displayName='Posted By' />
                 <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="15" stdDataType="datetime" i18n-en:displayName='Posted At' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="16" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="17" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
@@ -795,10 +795,10 @@
                 <column name="reason" displayName="报销事由" domain="memo" code="REASON" propId="16" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Reason' />
                 <column name="docStatus" displayName="单据状态" ext:dict="erp-fin/expense-claim-status" mandatory="true" code="DOC_STATUS" propId="17" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
                 <column name="approveStatus" displayName="审核状态" ext:dict="erp-fin/approve-status" mandatory="true" code="APPROVE_STATUS" propId="18" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Approve Status' />
-                <column name="approvedBy" displayName="审核人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="19" stdDataType="string" i18n-en:displayName='Approved By' />
+                <column name="approvedBy" stdDomain="userId" displayName="审核人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="19" stdDataType="string" i18n-en:displayName='Approved By' />
                 <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="20" stdDataType="datetime" i18n-en:displayName='Approved At' />
                 <column name="posted" displayName="是否已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="21" stdDataType="boolean" i18n-en:displayName='Posted' />
-                <column name="postedBy" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="22" stdDataType="string" i18n-en:displayName='Posted By' />
+                <column name="postedBy" stdDomain="userId" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="22" stdDataType="string" i18n-en:displayName='Posted By' />
                 <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="23" stdDataType="datetime" i18n-en:displayName='Posted At' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="24" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="25" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
@@ -871,10 +871,10 @@
                 <column name="projectId" displayName="关联项目" stdSqlType="BIGINT" code="PROJECT_ID" propId="13" stdDataType="long" i18n-en:displayName='Project' />
                 <column name="docStatus" displayName="单据状态" ext:dict="erp-fin/advance-status" mandatory="true" code="DOC_STATUS" propId="14" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
                 <column name="approveStatus" displayName="审核状态" ext:dict="erp-fin/approve-status" mandatory="true" code="APPROVE_STATUS" propId="15" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Approve Status' />
-                <column name="approvedBy" displayName="审核人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="16" stdDataType="string" i18n-en:displayName='Approved By' />
+                <column name="approvedBy" stdDomain="userId" displayName="审核人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="16" stdDataType="string" i18n-en:displayName='Approved By' />
                 <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="17" stdDataType="datetime" i18n-en:displayName='Approved At' />
                 <column name="posted" displayName="是否已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="18" stdDataType="boolean" i18n-en:displayName='Posted' />
-                <column name="postedBy" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="19" stdDataType="string" i18n-en:displayName='Posted By' />
+                <column name="postedBy" stdDomain="userId" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="19" stdDataType="string" i18n-en:displayName='Posted By' />
                 <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="20" stdDataType="datetime" i18n-en:displayName='Posted At' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="21" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="22" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />

@@ -46,7 +46,7 @@
     </dicts>
 
     <domains>
-        <domain name="boolFlag" stdSqlType="TINYINT"/>
+        <domain name="boolFlag" stdDataType="boolean" stdSqlType="BOOLEAN"/>
         <domain name="delVersion" stdSqlType="BIGINT"/>
         <domain name="version" stdSqlType="INTEGER"/>
         <domain name="createTime" stdSqlType="TIMESTAMP"/>

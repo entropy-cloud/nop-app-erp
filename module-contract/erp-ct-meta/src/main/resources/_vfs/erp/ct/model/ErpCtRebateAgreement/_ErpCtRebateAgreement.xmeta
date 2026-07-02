@@ -66,12 +66,12 @@
         <prop name="totalAccumulatedAmount" displayName="当前累计金额" propId="12"
               i18n-en:displayName="Total Accumulated Amount" queryable="true" sortable="true" insertable="true"
               updatable="true">
-            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="18" scale="2"/>
         </prop>
         <prop name="estimatedRebateAmount" displayName="预估返利金额" propId="13"
               i18n-en:displayName="Estimated Rebate Amount" queryable="true" sortable="true" insertable="true"
               updatable="true">
-            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="18" scale="2"/>
         </prop>
         <prop name="remark" displayName="备注" propId="14" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

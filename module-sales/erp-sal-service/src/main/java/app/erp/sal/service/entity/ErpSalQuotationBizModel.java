@@ -182,7 +182,7 @@ public class ErpSalQuotationBizModel extends CrudBizModel<ErpSalQuotation> imple
         ErpSalOrder order = orderBiz.createFromQuotation(quotation, quotationLines, context);
 
         // 回链：置 quotation.isAccepted=true（纯标记，无 ORM FK 改动；quotationId 列已存在于订单）。
-        quotation = dao().getEntityById(quotationId);
+        quotation = requireEntity(String.valueOf(quotationId), null, context);
         quotation.setIsAccepted(true);
         dao().updateEntity(quotation);
         return order;
@@ -223,6 +223,7 @@ public class ErpSalQuotationBizModel extends CrudBizModel<ErpSalQuotation> imple
     // ---------- query helpers ----------
 
     List<ErpSalQuotationLine> loadLines(Long quotationId) {
+        // D2 边界场景：同聚合子表加载，父实体已由 requireEntity 经数据权限/Meta 管道授权，子行无独立权限规则。
         IEntityDao<ErpSalQuotationLine> dao = daoFor(ErpSalQuotationLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("quotationId", quotationId));

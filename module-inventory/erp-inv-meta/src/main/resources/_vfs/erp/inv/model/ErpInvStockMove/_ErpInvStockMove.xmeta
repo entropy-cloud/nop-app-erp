@@ -73,7 +73,7 @@
         </prop>
         <prop name="postedBy" displayName="过账人" propId="14" i18n-en:displayName="Posted By" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="36"/>
+            <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
         <prop name="relatedBillType" displayName="关联单据类型" propId="15" i18n-en:displayName="Related Bill Type"
               queryable="true" sortable="true" insertable="true" updatable="true">

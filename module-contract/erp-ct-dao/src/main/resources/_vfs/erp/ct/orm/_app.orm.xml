@@ -74,7 +74,7 @@
     </dicts>
 
     <domains>
-        <domain name="boolFlag" stdSqlType="TINYINT"/>
+        <domain name="boolFlag" stdDataType="boolean" stdSqlType="BOOLEAN"/>
         <domain name="delVersion" stdSqlType="BIGINT"/>
         <domain name="version" stdSqlType="INTEGER"/>
         <domain name="createTime" stdSqlType="TIMESTAMP"/>
@@ -84,7 +84,7 @@
         <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
         <domain name="code" precision="50" stdSqlType="VARCHAR"/>
         <domain name="name" precision="200" stdSqlType="VARCHAR"/>
-        <domain name="amount" precision="20" scale="4" stdSqlType="DECIMAL"/>
+        <domain name="amount" precision="18" scale="2" stdSqlType="DECIMAL"/>
         <domain name="quantity" precision="20" scale="4" stdSqlType="DECIMAL"/>
         <domain name="unitPrice" precision="20" scale="4" stdSqlType="DECIMAL"/>
         <domain name="exchangeRate" precision="20" scale="8" stdSqlType="DECIMAL"/>
@@ -295,7 +295,7 @@
                 <column code="STATUS" displayName="版本状态" mandatory="true" name="status" propId="8" stdDataType="int"
                         stdSqlType="INTEGER" ext:dict="erp-ct/version-status" i18n-en:displayName="Status"/>
                 <column code="APPROVED_BY" displayName="批准人" name="approvedBy" precision="36" propId="9"
-                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
                 <column code="APPROVED_AT" displayName="批准时间" name="approvedAt" propId="10" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="11"
@@ -478,10 +478,10 @@
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
-                <column code="MIN_AMOUNT" displayName="最小金额" domain="amount" name="minAmount" precision="20" propId="4"
-                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Min Amount"/>
-                <column code="MAX_AMOUNT" displayName="最大金额" domain="amount" name="maxAmount" precision="20" propId="5"
-                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Max Amount"/>
+                <column code="MIN_AMOUNT" displayName="最小金额" domain="amount" name="minAmount" precision="18" propId="4"
+                        scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Min Amount"/>
+                <column code="MAX_AMOUNT" displayName="最大金额" domain="amount" name="maxAmount" precision="18" propId="5"
+                        scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Max Amount"/>
                 <column code="APPROVER_ROLE" displayName="审批角色" mandatory="true" name="approverRole" precision="50"
                         propId="6" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Approver Role"/>
                 <column code="APPROVAL_ORDER" displayName="审批顺序" mandatory="true" name="approvalOrder" propId="7"
@@ -674,10 +674,10 @@
                 <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="11" stdDataType="int"
                         stdSqlType="INTEGER" ext:dict="erp-ct/rebate-agreement-status" i18n-en:displayName="Status"/>
                 <column code="TOTAL_ACCUMULATED_AMOUNT" displayName="当前累计金额" domain="amount"
-                        name="totalAccumulatedAmount" precision="20" propId="12" scale="4" stdDataType="decimal"
+                        name="totalAccumulatedAmount" precision="18" propId="12" scale="2" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Total Accumulated Amount"/>
                 <column code="ESTIMATED_REBATE_AMOUNT" displayName="预估返利金额" domain="amount" name="estimatedRebateAmount"
-                        precision="20" propId="13" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        precision="18" propId="13" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Estimated Rebate Amount"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="14"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
@@ -729,14 +729,14 @@
                 <column code="REBATE_AGREEMENT_ID" displayName="返利协议" mandatory="true" name="rebateAgreementId"
                         propId="2" stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Rebate Agreement"/>
                 <column code="FROM_AMOUNT" displayName="起始金额" domain="amount" mandatory="true" name="fromAmount"
-                        precision="20" propId="3" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        precision="18" propId="3" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="From Amount"/>
-                <column code="TO_AMOUNT" displayName="截止金额" domain="amount" name="toAmount" precision="20" propId="4"
-                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="To Amount"/>
+                <column code="TO_AMOUNT" displayName="截止金额" domain="amount" name="toAmount" precision="18" propId="4"
+                        scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="To Amount"/>
                 <column code="REBATE_PERCENT" displayName="返利比例" name="rebatePercent" precision="10" propId="5"
                         scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Rebate Percent"/>
-                <column code="REBATE_AMOUNT" displayName="固定返利金额" domain="amount" name="rebateAmount" precision="20"
-                        propId="6" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                <column code="REBATE_AMOUNT" displayName="固定返利金额" domain="amount" name="rebateAmount" precision="18"
+                        propId="6" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Rebate Amount"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="7"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
@@ -783,10 +783,10 @@
                 <column code="SOURCE_BILL_CODE" displayName="来源单据号" name="sourceBillCode" precision="50" propId="5"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Source Bill Code"/>
                 <column code="BILL_AMOUNT_SOURCE" displayName="单据金额(源币种)" domain="amount" name="billAmountSource"
-                        precision="20" propId="6" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        precision="18" propId="6" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Bill Amount Source"/>
-                <column code="ACCRUED_REBATE" displayName="计提返利金额" domain="amount" name="accruedRebate" precision="20"
-                        propId="7" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                <column code="ACCRUED_REBATE" displayName="计提返利金额" domain="amount" name="accruedRebate" precision="18"
+                        propId="7" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Accrued Rebate"/>
                 <column code="ACCRUAL_DATE" displayName="计提日期" name="accrualDate" propId="8" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Accrual Date"/>
@@ -843,7 +843,7 @@
                 <column code="SETTLEMENT_DATE" displayName="结算日期" mandatory="true" name="settlementDate" propId="4"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Settlement Date"/>
                 <column code="TOTAL_REBATE_AMOUNT" displayName="结算返利总额" domain="amount" name="totalRebateAmount"
-                        precision="20" propId="5" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        precision="18" propId="5" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Total Rebate Amount"/>
                 <column code="CREDIT_MEMO_BILL_TYPE" displayName="信用单类型" name="creditMemoBillType" precision="50"
                         propId="6" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Credit Memo Bill Type"/>
@@ -854,7 +854,7 @@
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="9" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
                 <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="50" propId="10"
-                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="11"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"

@@ -22,7 +22,6 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.dao.api.IEntityDao;
-import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import io.nop.core.context.IServiceContext;
 
@@ -59,9 +58,6 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
 
     @Inject
     IErpMdPartnerBiz mdPartnerBiz;
-
-    @Inject
-    IOrmTemplate ormTemplate;
 
     public ErpSalDeliveryBizModel() {
         setEntityName(ErpSalDelivery.class.getName());
@@ -118,7 +114,7 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
 
         ErpInvStockMove move = triggerOutgoingMove(delivery, context);
         // 跨域 generateMove 调用可能扰动会话脏跟踪，故重新加载并以 updateEntity 显式持久化。
-        delivery = dao().getEntityById(deliveryId);
+        delivery = requireEntity(String.valueOf(deliveryId), null, context);
         delivery.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
         delivery.setApprovedBy(currentUserId());
         delivery.setApprovedAt(CoreMetrics.currentDateTime());
@@ -155,7 +151,7 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
             throw illegalTransition(delivery, status, "APPROVED");
         }
         ensureReversed(delivery, context);
-        delivery = dao().getEntityById(deliveryId);
+        delivery = requireEntity(String.valueOf(deliveryId), null, context);
         delivery.setApproveStatus(ErpSalConstants.APPROVE_STATUS_REJECTED);
         dao().updateEntity(delivery);
         return delivery;
@@ -172,7 +168,7 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
         Integer approveStatus = delivery.getApproveStatus();
         if (approveStatus != null && approveStatus == ErpSalConstants.APPROVE_STATUS_APPROVED) {
             ensureReversed(delivery, context);
-            delivery = dao().getEntityById(deliveryId);
+            delivery = requireEntity(String.valueOf(deliveryId), null, context);
         }
         delivery.setDocStatus(ErpSalConstants.DOC_STATUS_CANCELLED);
         dao().updateEntity(delivery);
@@ -238,7 +234,7 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
 
         Map<Long, BigDecimal> deliveredByOrderLine = new HashMap<>();
         addLineQuantities(deliveredByOrderLine, loadLines(currentDelivery.getId()));
-        for (ErpSalDelivery d : findApprovedDeliveries(orderId)) {
+        for (ErpSalDelivery d : findApprovedDeliveries(orderId, context)) {
             if (d.getId().equals(currentDelivery.getId())) {
                 continue;
             }
@@ -278,12 +274,10 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
         }
     }
 
-    private List<ErpSalDelivery> findApprovedDeliveries(Long orderId) {
-        ormTemplate.flushSession();
-        IEntityDao<ErpSalDelivery> deliveryDao = dao();
+    private List<ErpSalDelivery> findApprovedDeliveries(Long orderId, IServiceContext context) {
         QueryBean rq = new QueryBean();
         rq.addFilter(and(eq("orderId", orderId), eq("approveStatus", ErpSalConstants.APPROVE_STATUS_APPROVED)));
-        return deliveryDao.findAllByQuery(rq);
+        return findList(rq, null, context);
     }
 
     // ---------- validation helpers ----------
@@ -321,6 +315,7 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
     // ---------- query helpers ----------
 
     List<ErpSalDeliveryLine> loadLines(Long deliveryId) {
+        // D2 边界场景：同聚合子表加载，父实体已由 requireEntity 经数据权限/Meta 管道授权，子行无独立权限规则。
         IEntityDao<ErpSalDeliveryLine> dao = daoFor(ErpSalDeliveryLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("deliveryId", deliveryId));
@@ -328,6 +323,7 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
     }
 
     private List<ErpSalOrderLine> loadOrderLines(Long orderId) {
+        // D2 边界场景：跨聚合只读加载销售订单行（进度回写用），订单聚合经 orderBiz 跨聚合写时已校验存在性。
         IEntityDao<ErpSalOrderLine> dao = daoFor(ErpSalOrderLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("orderId", orderId));

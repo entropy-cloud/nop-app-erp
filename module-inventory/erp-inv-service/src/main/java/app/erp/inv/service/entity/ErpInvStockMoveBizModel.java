@@ -22,7 +22,6 @@ import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.commons.util.StringHelper;
 import io.nop.dao.api.IEntityDao;
-import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.orm.SingleSession;
@@ -60,9 +59,6 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
     @Inject
     app.erp.inv.service.trace.TraceChainQuery traceChainQuery;
 
-    @Inject
-    IOrmTemplate ormTemplate;
-
     public ErpInvStockMoveBizModel() {
         setEntityName(ErpInvStockMove.class.getName());
     }
@@ -71,7 +67,7 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
     @BizMutation
     public ErpInvStockMove generateMove(@Name("request") StockMoveRequest request, IServiceContext context) {
         if (request.isBusinessLinked()) {
-            ErpInvStockMove existing = findExisting(request.getRelatedBillType(), request.getRelatedBillCode());
+            ErpInvStockMove existing = findExisting(request.getRelatedBillType(), request.getRelatedBillCode(), context);
             if (existing != null) {
                 return existing;
             }
@@ -96,7 +92,7 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
     @Override
     @BizMutation
     public ErpInvStockMove confirm(@Name("moveId") Long moveId, IServiceContext context) {
-        ErpInvStockMove move = requireMove(moveId);
+        ErpInvStockMove move = requireMove(moveId, context);
         List<ErpInvStockMoveLine> lines = loadLines(move.getId());
         doConfirm(move, lines);
         return move;
@@ -105,7 +101,7 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
     @Override
     @BizMutation
     public ErpInvStockMove complete(@Name("moveId") Long moveId, IServiceContext context) {
-        ErpInvStockMove move = requireMove(moveId);
+        ErpInvStockMove move = requireMove(moveId, context);
         List<ErpInvStockMoveLine> lines = loadLines(move.getId());
         doComplete(move, lines, null);
         return move;
@@ -114,7 +110,7 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
     @Override
     @BizMutation
     public ErpInvStockMove cancel(@Name("moveId") Long moveId, IServiceContext context) {
-        ErpInvStockMove move = requireMove(moveId);
+        ErpInvStockMove move = requireMove(moveId, context);
         Integer status = move.getDocStatus();
         if (status == null
                 || (status != ErpInvConstants.DOC_STATUS_DRAFT && status != ErpInvConstants.DOC_STATUS_CONFIRMED)) {
@@ -135,7 +131,7 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
     @Override
     @BizMutation
     public ErpInvStockMove reverse(@Name("moveId") Long moveId, IServiceContext context) {
-        ErpInvStockMove original = requireMove(moveId);
+        ErpInvStockMove original = requireMove(moveId, context);
         if (original.getDocStatus() == null || original.getDocStatus() != ErpInvConstants.DOC_STATUS_DONE) {
             throw new NopException(ErpInvErrors.ERR_REVERSE_NOT_DONE)
                     .param(ErpInvErrors.ARG_MOVE_CODE, original.getCode())
@@ -183,7 +179,6 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
         if (relatedBillType == null || relatedBillCode == null) {
             return null;
         }
-        ormTemplate.flushSession();
         ErpInvStockMove example = dao().newEntity();
         example.setRelatedBillType(relatedBillType);
         example.setRelatedBillCode(relatedBillCode);
@@ -344,22 +339,22 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
 
     // ---------- helpers: queries ----------
 
-    private ErpInvStockMove requireMove(Long moveId) {
-        ErpInvStockMove move = dao().getEntityById(moveId);
+    private ErpInvStockMove requireMove(Long moveId, IServiceContext context) {
+        ErpInvStockMove move = get(String.valueOf(moveId), true, context);
         if (move == null) {
             throw new NopException(ErpInvErrors.ERR_MOVE_NOT_FOUND).param(ErpInvErrors.ARG_MOVE_ID, moveId);
         }
         return move;
     }
 
-    private ErpInvStockMove findExisting(String relatedBillType, String relatedBillCode) {
+    private ErpInvStockMove findExisting(String relatedBillType, String relatedBillCode, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("relatedBillType", relatedBillType), eq("relatedBillCode", relatedBillCode)));
-        List<ErpInvStockMove> list = dao().findAllByQuery(q);
-        return list.isEmpty() ? null : list.get(0);
+        return findFirst(q, null, context);
     }
 
     private List<ErpInvStockMoveLine> loadLines(Long moveId) {
+        // D2 边界场景：同聚合子表加载，父实体已由 requireEntity/get 经数据权限/Meta 管道授权，子行无独立权限规则。
         IEntityDao<ErpInvStockMoveLine> dao = daoFor(ErpInvStockMoveLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("moveId", moveId));

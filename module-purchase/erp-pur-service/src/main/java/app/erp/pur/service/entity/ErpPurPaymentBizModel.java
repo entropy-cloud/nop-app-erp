@@ -99,7 +99,7 @@ public class ErpPurPaymentBizModel extends CrudBizModel<ErpPurPayment> implement
         boolean posted = postingDispatcher.tryPost(payment);
 
         // 跨域 post 调用扰动会话脏跟踪，重新加载后置 posted 标志并显式持久化（对齐 ErpPurInvoiceBizModel）
-        payment = dao().getEntityById(paymentId);
+        payment = requireEntity(String.valueOf(paymentId), null, context);
         payment.setApproveStatus(ErpPurConstants.APPROVE_STATUS_APPROVED);
         payment.setApprovedBy(currentUserId());
         payment.setApprovedAt(CoreMetrics.currentDateTime());
@@ -139,7 +139,7 @@ public class ErpPurPaymentBizModel extends CrudBizModel<ErpPurPayment> implement
         }
         if (Boolean.TRUE.equals(payment.getPosted())) {
             postingDispatcher.reverse(payment);
-            payment = dao().getEntityById(paymentId);
+            payment = requireEntity(String.valueOf(paymentId), null, context);
             payment.setPosted(false);
             payment.setPostedAt(null);
             payment.setPostedBy(null);
@@ -161,7 +161,7 @@ public class ErpPurPaymentBizModel extends CrudBizModel<ErpPurPayment> implement
         if (approveStatus != null && approveStatus == ErpPurConstants.APPROVE_STATUS_APPROVED
                 && Boolean.TRUE.equals(payment.getPosted())) {
             postingDispatcher.reverse(payment);
-            payment = dao().getEntityById(paymentId);
+            payment = requireEntity(String.valueOf(paymentId), null, context);
             payment.setPosted(false);
             payment.setPostedAt(null);
             payment.setPostedBy(null);

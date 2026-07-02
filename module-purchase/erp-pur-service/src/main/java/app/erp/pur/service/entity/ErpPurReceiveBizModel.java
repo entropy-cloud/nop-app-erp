@@ -22,7 +22,6 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.dao.api.IEntityDao;
-import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import io.nop.core.context.IServiceContext;
 
@@ -59,9 +58,6 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
 
     @Inject
     IErpMdPartnerBiz mdPartnerBiz;
-
-    @Inject
-    IOrmTemplate ormTemplate;
 
     public ErpPurReceiveBizModel() {
         setEntityName(ErpPurReceive.class.getName());
@@ -118,7 +114,7 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
 
         ErpInvStockMove move = triggerIncomingMove(receive, context);
         // 跨域 generateMove 调用可能扰动会话脏跟踪，故重新加载并以 updateEntity 显式持久化。
-        receive = dao().getEntityById(receiveId);
+        receive = requireEntity(String.valueOf(receiveId), null, context);
         receive.setApproveStatus(ErpPurConstants.APPROVE_STATUS_APPROVED);
         receive.setApprovedBy(currentUserId());
         receive.setApprovedAt(CoreMetrics.currentDateTime());
@@ -156,7 +152,7 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
             throw illegalTransition(receive, status, "APPROVED");
         }
         ensureReversed(receive, context);
-        receive = dao().getEntityById(receiveId);
+        receive = requireEntity(String.valueOf(receiveId), null, context);
         receive.setApproveStatus(ErpPurConstants.APPROVE_STATUS_REJECTED);
         dao().updateEntity(receive);
         return receive;
@@ -173,7 +169,7 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
         Integer approveStatus = receive.getApproveStatus();
         if (approveStatus != null && approveStatus == ErpPurConstants.APPROVE_STATUS_APPROVED) {
             ensureReversed(receive, context);
-            receive = dao().getEntityById(receiveId);
+            receive = requireEntity(String.valueOf(receiveId), null, context);
         }
         receive.setDocStatus(ErpPurConstants.DOC_STATUS_CANCELLED);
         dao().updateEntity(receive);
@@ -245,7 +241,7 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
 
         Map<Long, BigDecimal> receivedByOrderLine = new HashMap<>();
         addLineQuantities(receivedByOrderLine, loadLines(currentReceive.getId()));
-        for (ErpPurReceive r : findApprovedReceives(orderId)) {
+        for (ErpPurReceive r : findApprovedReceives(orderId, context)) {
             if (r.getId().equals(currentReceive.getId())) {
                 continue;
             }
@@ -285,12 +281,10 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
         }
     }
 
-    private List<ErpPurReceive> findApprovedReceives(Long orderId) {
-        ormTemplate.flushSession();
-        IEntityDao<ErpPurReceive> receiveDao = dao();
+    private List<ErpPurReceive> findApprovedReceives(Long orderId, IServiceContext context) {
         QueryBean rq = new QueryBean();
         rq.addFilter(and(eq("orderId", orderId), eq("approveStatus", ErpPurConstants.APPROVE_STATUS_APPROVED)));
-        return receiveDao.findAllByQuery(rq);
+        return findList(rq, null, context);
     }
 
     // ---------- validation helpers ----------
@@ -328,6 +322,7 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
     // ---------- query helpers ----------
 
     List<ErpPurReceiveLine> loadLines(Long receiveId) {
+        // D2 边界场景：同聚合子表加载，父实体已由 requireEntity 经数据权限/Meta 管道授权，子行无独立权限规则。
         IEntityDao<ErpPurReceiveLine> dao = daoFor(ErpPurReceiveLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("receiveId", receiveId));
@@ -335,6 +330,7 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
     }
 
     private List<ErpPurOrderLine> loadOrderLines(Long orderId) {
+        // D2 边界场景：跨聚合只读加载采购订单行（进度回写用），订单聚合经 orderBiz 跨聚合写时已校验存在性。
         IEntityDao<ErpPurOrderLine> dao = daoFor(ErpPurOrderLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("orderId", orderId));

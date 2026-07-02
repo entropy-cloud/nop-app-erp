@@ -38,7 +38,7 @@
         </prop>
         <prop name="totalRebateAmount" displayName="结算返利总额" propId="5" i18n-en:displayName="Total Rebate Amount"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="18" scale="2"/>
         </prop>
         <prop name="creditMemoBillType" displayName="信用单类型" propId="6" i18n-en:displayName="Credit Memo Bill Type"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -58,7 +58,7 @@
         </prop>
         <prop name="postedBy" displayName="过账人" propId="10" i18n-en:displayName="Posted By" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="50"/>
+            <schema stdDomain="userId" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="remark" displayName="备注" propId="11" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

@@ -57,11 +57,11 @@
         </prop>
         <prop name="annualSalary" displayName="年薪(税前)" propId="10" i18n-en:displayName="Annual Salary" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="18" scale="2"/>
         </prop>
         <prop name="monthlySalary" displayName="月薪(税前)" propId="11" i18n-en:displayName="Monthly Salary"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="18" scale="2"/>
         </prop>
         <prop name="salaryCurrencyId" displayName="薪资币种" propId="12" i18n-en:displayName="Salary Currency"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="salaryCurrency">
@@ -73,11 +73,11 @@
         </prop>
         <prop name="socialInsuranceBase" displayName="社保基数" propId="14" i18n-en:displayName="Social Insurance Base"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="18" scale="2"/>
         </prop>
         <prop name="housingFundBase" displayName="公积金基数" propId="15" i18n-en:displayName="Housing Fund Base"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+            <schema domain="amount" type="java.math.BigDecimal" precision="18" scale="2"/>
         </prop>
         <prop name="status" displayName="合同状态" propId="16" i18n-en:displayName="Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">

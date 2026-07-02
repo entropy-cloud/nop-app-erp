@@ -32,7 +32,7 @@
 
     <domains>
         <!-- 公共框架字段域（与 nop-entropy 内置惯例对齐） -->
-        <domain name="boolFlag" stdSqlType="TINYINT"/>
+        <domain name="boolFlag" stdSqlType="BOOLEAN" stdDataType="boolean"/>
         <domain name="delVersion" stdSqlType="BIGINT"/>
         <domain name="version" stdSqlType="INTEGER"/>
         <domain name="createTime" stdSqlType="TIMESTAMP"/>
@@ -43,7 +43,7 @@
         <!-- 业务通用域 -->
         <domain name="code" precision="50" stdSqlType="VARCHAR"/>
         <domain name="name" precision="200" stdSqlType="VARCHAR"/>
-        <domain name="amount" stdSqlType="DECIMAL" precision="20" scale="4"/>
+        <domain name="amount" stdSqlType="DECIMAL" precision="18" scale="2"/>
         <domain name="quantity" stdSqlType="DECIMAL" precision="20" scale="4"/>
         <domain name="unitPrice" stdSqlType="DECIMAL" precision="20" scale="4"/>
         <domain name="exchangeRate" stdSqlType="DECIMAL" precision="20" scale="8"/>
@@ -255,8 +255,8 @@
                 <column name="deliveryStatus" code="DELIVERY_STATUS" displayName="发货进度" propId="24" stdSqlType="INTEGER" stdDataType="int" ext:dict="erp-sal/delivery-status" i18n-en:displayName='Delivery Status' />
                 <column name="posted" code="POSTED" displayName="已过账" propId="25" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="false" i18n-en:displayName='Posted' />
                 <column name="postedAt" code="POSTED_AT" displayName="过账时间" propId="26" stdSqlType="DATETIME" stdDataType="datetime" i18n-en:displayName='Posted At' />
-                <column name="postedBy" code="POSTED_BY" displayName="过账人" propId="27" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Posted By' />
-                <column name="approvedBy" code="APPROVED_BY" displayName="审核人" propId="28" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Approved By' />
+                <column name="postedBy" stdDomain="userId" code="POSTED_BY" displayName="过账人" propId="27" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Posted By' />
+                <column name="approvedBy" stdDomain="userId" code="APPROVED_BY" displayName="审核人" propId="28" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Approved By' />
                 <column name="approvedAt" code="APPROVED_AT" displayName="审核时间" propId="29" stdSqlType="DATETIME" stdDataType="datetime" i18n-en:displayName='Approved At' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="30" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="31" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -366,8 +366,8 @@
                 <column name="approveStatus" code="APPROVE_STATUS" displayName="审核状态" propId="16" stdSqlType="INTEGER" stdDataType="int" mandatory="true" ext:dict="erp-sal/approve-status" i18n-en:displayName='Approve Status' />
                 <column name="posted" code="POSTED" displayName="已过账" propId="17" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="false" i18n-en:displayName='Posted' />
                 <column name="postedAt" code="POSTED_AT" displayName="过账时间" propId="18" stdSqlType="DATETIME" stdDataType="datetime" i18n-en:displayName='Posted At' />
-                <column name="postedBy" code="POSTED_BY" displayName="过账人" propId="19" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Posted By' />
-                <column name="approvedBy" code="APPROVED_BY" displayName="审核人" propId="20" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Approved By' />
+                <column name="postedBy" stdDomain="userId" code="POSTED_BY" displayName="过账人" propId="19" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Posted By' />
+                <column name="approvedBy" stdDomain="userId" code="APPROVED_BY" displayName="审核人" propId="20" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Approved By' />
                 <column name="approvedAt" code="APPROVED_AT" displayName="审核时间" propId="21" stdSqlType="DATETIME" stdDataType="datetime" i18n-en:displayName='Approved At' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="22" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="23" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -471,8 +471,8 @@
                 <column name="receivedStatus" code="RECEIVED_STATUS" displayName="收款进度" propId="18" stdSqlType="INTEGER" stdDataType="int" ext:dict="erp-sal/received-status" i18n-en:displayName='Received Status' />
                 <column name="posted" code="POSTED" displayName="已过账" propId="19" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="false" i18n-en:displayName='Posted' />
                 <column name="postedAt" code="POSTED_AT" displayName="过账时间" propId="20" stdSqlType="DATETIME" stdDataType="datetime" i18n-en:displayName='Posted At' />
-                <column name="postedBy" code="POSTED_BY" displayName="过账人" propId="21" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Posted By' />
-                <column name="approvedBy" code="APPROVED_BY" displayName="审核人" propId="22" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Approved By' />
+                <column name="postedBy" stdDomain="userId" code="POSTED_BY" displayName="过账人" propId="21" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Posted By' />
+                <column name="approvedBy" stdDomain="userId" code="APPROVED_BY" displayName="审核人" propId="22" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Approved By' />
                 <column name="approvedAt" code="APPROVED_AT" displayName="审核时间" propId="23" stdSqlType="DATETIME" stdDataType="datetime" i18n-en:displayName='Approved At' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="24" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="25" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -562,8 +562,8 @@
                 <column name="writtenOffStatus" code="WRITTEN_OFF_STATUS" displayName="核销状态" propId="17" stdSqlType="INTEGER" stdDataType="int" ext:dict="erp-sal/received-status" i18n-en:displayName='Written Off Status' />
                 <column name="posted" code="POSTED" displayName="已过账" propId="18" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="false" i18n-en:displayName='Posted' />
                 <column name="postedAt" code="POSTED_AT" displayName="过账时间" propId="19" stdSqlType="DATETIME" stdDataType="datetime" i18n-en:displayName='Posted At' />
-                <column name="postedBy" code="POSTED_BY" displayName="过账人" propId="20" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Posted By' />
-                <column name="approvedBy" code="APPROVED_BY" displayName="审核人" propId="21" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Approved By' />
+                <column name="postedBy" stdDomain="userId" code="POSTED_BY" displayName="过账人" propId="20" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Posted By' />
+                <column name="approvedBy" stdDomain="userId" code="APPROVED_BY" displayName="审核人" propId="21" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Approved By' />
                 <column name="approvedAt" code="APPROVED_AT" displayName="审核时间" propId="22" stdSqlType="DATETIME" stdDataType="datetime" i18n-en:displayName='Approved At' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="23" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="24" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -648,8 +648,8 @@
                 <column name="approveStatus" code="APPROVE_STATUS" displayName="审核状态" propId="16" stdSqlType="INTEGER" stdDataType="int" mandatory="true" ext:dict="erp-sal/approve-status" i18n-en:displayName='Approve Status' />
                 <column name="posted" code="POSTED" displayName="已过账" propId="17" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="false" i18n-en:displayName='Posted' />
                 <column name="postedAt" code="POSTED_AT" displayName="过账时间" propId="18" stdSqlType="DATETIME" stdDataType="datetime" i18n-en:displayName='Posted At' />
-                <column name="postedBy" code="POSTED_BY" displayName="过账人" propId="19" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Posted By' />
-                <column name="approvedBy" code="APPROVED_BY" displayName="审核人" propId="20" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Approved By' />
+                <column name="postedBy" stdDomain="userId" code="POSTED_BY" displayName="过账人" propId="19" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Posted By' />
+                <column name="approvedBy" stdDomain="userId" code="APPROVED_BY" displayName="审核人" propId="20" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Approved By' />
                 <column name="approvedAt" code="APPROVED_AT" displayName="审核时间" propId="21" stdSqlType="DATETIME" stdDataType="datetime" i18n-en:displayName='Approved At' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="22" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="23" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />

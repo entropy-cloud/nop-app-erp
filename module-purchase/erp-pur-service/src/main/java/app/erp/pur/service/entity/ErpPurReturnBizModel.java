@@ -24,7 +24,6 @@ import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.dao.api.IEntityDao;
 import io.nop.core.context.IServiceContext;
-import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 
 import java.util.ArrayList;
@@ -62,9 +61,6 @@ public class ErpPurReturnBizModel extends CrudBizModel<ErpPurReturn> implements 
 
     @Inject
     PurReturnPostingDispatcher postingDispatcher;
-
-    @Inject
-    IOrmTemplate ormTemplate;
 
     public ErpPurReturnBizModel() {
         setEntityName(ErpPurReturn.class.getName());
@@ -127,13 +123,13 @@ public class ErpPurReturnBizModel extends CrudBizModel<ErpPurReturn> implements 
         ErpInvStockMove move = triggerOutgoingMove(returnOrder, lines, context);
         // 跨域 generateMove 将移动单推进至 DONE 并更新库存余额；先刷盘使 DONE 状态与余额变动落地到当前事务的 DB 连接，
         // 避免后续 REQUIRES_NEW 过账（独立会话）挂起当前会话时丢失会话内暂存的 DONE 暂态（跨域会话交互，对齐 lessons 经验）。
-        ormTemplate.flushSession();
+        orm().flushSession();
 
         // PURCHASE_RETURN 过账（跨域 REQUIRES_NEW 由 Facade 承接，失败吞异常保持终态 posted=false）。
         boolean posted = postingDispatcher.tryPost(returnOrder);
 
         // 跨域调用可能扰动会话脏跟踪，故重新加载并以 updateEntity 显式持久化（对齐 ErpPurReceiveBizModel.approve）。
-        returnOrder = dao().getEntityById(returnId);
+        returnOrder = requireEntity(String.valueOf(returnId), null, context);
         returnOrder.setApproveStatus(ErpPurConstants.APPROVE_STATUS_APPROVED);
         returnOrder.setApprovedBy(currentUserId());
         returnOrder.setApprovedAt(CoreMetrics.currentDateTime());
@@ -173,7 +169,7 @@ public class ErpPurReturnBizModel extends CrudBizModel<ErpPurReturn> implements 
             throw illegalTransition(returnOrder, status, "APPROVED");
         }
         ensureReversed(returnOrder, context);
-        returnOrder = dao().getEntityById(returnId);
+        returnOrder = requireEntity(String.valueOf(returnId), null, context);
         returnOrder.setApproveStatus(ErpPurConstants.APPROVE_STATUS_REJECTED);
         dao().updateEntity(returnOrder);
         return returnOrder;
@@ -190,7 +186,7 @@ public class ErpPurReturnBizModel extends CrudBizModel<ErpPurReturn> implements 
         Integer approveStatus = returnOrder.getApproveStatus();
         if (approveStatus != null && approveStatus == ErpPurConstants.APPROVE_STATUS_APPROVED) {
             ensureReversed(returnOrder, context);
-            returnOrder = dao().getEntityById(returnId);
+            returnOrder = requireEntity(String.valueOf(returnId), null, context);
         }
         returnOrder.setDocStatus(ErpPurConstants.DOC_STATUS_CANCELLED);
         dao().updateEntity(returnOrder);
@@ -241,7 +237,7 @@ public class ErpPurReturnBizModel extends CrudBizModel<ErpPurReturn> implements 
     void ensureReversed(ErpPurReturn returnOrder, IServiceContext context) {
         if (Boolean.TRUE.equals(returnOrder.getPosted())) {
             postingDispatcher.reverse(returnOrder);
-            returnOrder = dao().getEntityById(returnOrder.getId());
+            returnOrder = requireEntity(String.valueOf(returnOrder.getId()), null, context);
             returnOrder.setPosted(false);
             returnOrder.setPostedAt(null);
             returnOrder.setPostedBy(null);
@@ -343,6 +339,7 @@ public class ErpPurReturnBizModel extends CrudBizModel<ErpPurReturn> implements 
     // ---------- query helpers ----------
 
     List<ErpPurReturnLine> loadLines(Long returnId) {
+        // D2 边界场景：同聚合子表加载，父实体已由 requireEntity 经数据权限/Meta 管道授权，子行无独立权限规则。
         IEntityDao<ErpPurReturnLine> dao = daoFor(ErpPurReturnLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("returnId", returnId));

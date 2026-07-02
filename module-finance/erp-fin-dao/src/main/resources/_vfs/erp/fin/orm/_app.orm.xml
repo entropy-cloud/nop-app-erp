@@ -133,7 +133,7 @@
     </dicts>
 
     <domains>
-        <domain name="boolFlag" stdSqlType="TINYINT"/>
+        <domain name="boolFlag" stdDataType="boolean" stdSqlType="BOOLEAN"/>
         <domain name="delVersion" stdSqlType="BIGINT"/>
         <domain name="version" stdSqlType="INTEGER"/>
         <domain name="createTime" stdSqlType="TIMESTAMP"/>
@@ -143,7 +143,7 @@
         <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
         <domain name="code" precision="50" stdSqlType="VARCHAR"/>
         <domain name="name" precision="200" stdSqlType="VARCHAR"/>
-        <domain name="amount" precision="20" scale="4" stdSqlType="DECIMAL"/>
+        <domain name="amount" precision="18" scale="2" stdSqlType="DECIMAL"/>
         <domain name="quantity" precision="20" scale="4" stdSqlType="DECIMAL"/>
         <domain name="unitPrice" precision="20" scale="4" stdSqlType="DECIMAL"/>
         <domain name="exchangeRate" precision="20" scale="8" stdSqlType="DECIMAL"/>
@@ -196,7 +196,7 @@
                         stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-fin/voucher-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="15"
-                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="16" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="17"
@@ -588,7 +588,7 @@
                 <column code="STATUS" displayName="期间状态" mandatory="true" name="status" propId="11" stdDataType="int"
                         stdSqlType="INTEGER" ext:dict="erp-fin/period-status" i18n-en:displayName="Status"/>
                 <column code="CLOSED_BY" displayName="结账人" name="closedBy" precision="36" propId="12"
-                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Closed By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Closed By"/>
                 <column code="CLOSED_AT" displayName="结账时间" name="closedAt" propId="13" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Closed At"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -833,7 +833,7 @@
                         stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-fin/reconciliation-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="14"
-                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="15" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="16"
@@ -1548,13 +1548,13 @@
                         stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-fin/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="19"
-                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="20" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
                 <column code="POSTED" defaultValue="false" displayName="是否已过账" name="posted" propId="21"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
                 <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="22"
-                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="23" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="24"
@@ -1740,13 +1740,13 @@
                         stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-fin/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="16"
-                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="17" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
                 <column code="POSTED" defaultValue="false" displayName="是否已过账" name="posted" propId="18"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
                 <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="19"
-                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="20" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="21"

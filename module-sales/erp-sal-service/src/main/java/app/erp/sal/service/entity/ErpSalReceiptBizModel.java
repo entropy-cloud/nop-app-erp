@@ -99,7 +99,7 @@ public class ErpSalReceiptBizModel extends CrudBizModel<ErpSalReceipt> implement
         boolean posted = postingDispatcher.tryPost(receipt);
 
         // 跨域 post 调用扰动会话脏跟踪，重新加载后置 posted 标志并显式持久化（对齐 ErpSalInvoiceBizModel）
-        receipt = dao().getEntityById(receiptId);
+        receipt = requireEntity(String.valueOf(receiptId), null, context);
         receipt.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
         receipt.setApprovedBy(currentUserId());
         receipt.setApprovedAt(CoreMetrics.currentDateTime());
@@ -139,7 +139,7 @@ public class ErpSalReceiptBizModel extends CrudBizModel<ErpSalReceipt> implement
         }
         if (Boolean.TRUE.equals(receipt.getPosted())) {
             postingDispatcher.reverse(receipt);
-            receipt = dao().getEntityById(receiptId);
+            receipt = requireEntity(String.valueOf(receiptId), null, context);
             receipt.setPosted(false);
             receipt.setPostedAt(null);
             receipt.setPostedBy(null);
@@ -161,7 +161,7 @@ public class ErpSalReceiptBizModel extends CrudBizModel<ErpSalReceipt> implement
         if (approveStatus != null && approveStatus == ErpSalConstants.APPROVE_STATUS_APPROVED
                 && Boolean.TRUE.equals(receipt.getPosted())) {
             postingDispatcher.reverse(receipt);
-            receipt = dao().getEntityById(receiptId);
+            receipt = requireEntity(String.valueOf(receiptId), null, context);
             receipt.setPosted(false);
             receipt.setPostedAt(null);
             receipt.setPostedBy(null);

@@ -82,7 +82,7 @@
     </dicts>
 
     <domains>
-        <domain name="boolFlag" stdSqlType="TINYINT"/>
+        <domain name="boolFlag" stdSqlType="BOOLEAN" stdDataType="boolean"/>
         <domain name="delVersion" stdSqlType="BIGINT"/>
         <domain name="version" stdSqlType="INTEGER"/>
         <domain name="createTime" stdSqlType="TIMESTAMP"/>
@@ -92,7 +92,7 @@
         <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
         <domain name="code" precision="50" stdSqlType="VARCHAR"/>
         <domain name="name" precision="200" stdSqlType="VARCHAR"/>
-        <domain name="amount" stdSqlType="DECIMAL" precision="20" scale="4"/>
+        <domain name="amount" stdSqlType="DECIMAL" precision="18" scale="2"/>
         <domain name="quantity" stdSqlType="DECIMAL" precision="20" scale="4"/>
         <domain name="unitPrice" stdSqlType="DECIMAL" precision="20" scale="4"/>
         <domain name="exchangeRate" stdSqlType="DECIMAL" precision="20" scale="8"/>
@@ -189,7 +189,7 @@
                 <column name="attachmentFileId" displayName="版本附件" stdSqlType="VARCHAR" precision="200" stdDataType="string" code="ATTACHMENT_FILE_ID" propId="6" i18n-en:displayName='Attachment' stdDomain="file"/>
                 <column name="isCurrent" displayName="是否当前版本" stdSqlType="BOOLEAN" defaultValue="false" code="IS_CURRENT" propId="7" stdDataType="boolean" i18n-en:displayName='Is Current' />
                 <column name="status" displayName="版本状态" ext:dict="erp-ct/version-status" mandatory="true" code="STATUS" propId="8" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
-                <column name="approvedBy" displayName="批准人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="9" stdDataType="string" i18n-en:displayName='Approved By' />
+                <column name="approvedBy" stdDomain="userId" displayName="批准人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="9" stdDataType="string" i18n-en:displayName='Approved By' />
                 <column name="approvedAt" displayName="批准时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="10" stdDataType="datetime" i18n-en:displayName='Approved At' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="12" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
@@ -466,7 +466,7 @@
                 <column name="creditMemoBillCode" displayName="信用单号" stdSqlType="VARCHAR" precision="50" code="CREDIT_MEMO_BILL_CODE" propId="7" stdDataType="string" i18n-en:displayName='Credit Memo Bill Code' />
                 <column name="status" displayName="状态" ext:dict="erp-ct/settlement-status" mandatory="true" code="STATUS" propId="8" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
                 <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="9" stdDataType="datetime" i18n-en:displayName='Posted At' />
-                <column name="postedBy" displayName="过账人" stdSqlType="VARCHAR" precision="50" code="POSTED_BY" propId="10" stdDataType="string" i18n-en:displayName='Posted By' />
+                <column name="postedBy" stdDomain="userId" displayName="过账人" stdSqlType="VARCHAR" precision="50" code="POSTED_BY" propId="10" stdDataType="string" i18n-en:displayName='Posted By' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="12" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="13" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />

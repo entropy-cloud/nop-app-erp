@@ -120,7 +120,7 @@
     </dicts>
 
     <domains>
-        <domain name="boolFlag" stdSqlType="TINYINT"/>
+        <domain name="boolFlag" stdDataType="boolean" stdSqlType="BOOLEAN"/>
         <domain name="delVersion" stdSqlType="BIGINT"/>
         <domain name="version" stdSqlType="INTEGER"/>
         <domain name="createTime" stdSqlType="TIMESTAMP"/>
@@ -130,7 +130,7 @@
         <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
         <domain name="code" precision="50" stdSqlType="VARCHAR"/>
         <domain name="name" precision="200" stdSqlType="VARCHAR"/>
-        <domain name="amount" precision="20" scale="4" stdSqlType="DECIMAL"/>
+        <domain name="amount" precision="18" scale="2" stdSqlType="DECIMAL"/>
         <domain name="quantity" precision="20" scale="4" stdSqlType="DECIMAL"/>
         <domain name="unitPrice" precision="20" scale="4" stdSqlType="DECIMAL"/>
         <domain name="exchangeRate" precision="20" scale="8" stdSqlType="DECIMAL"/>
@@ -672,8 +672,8 @@
                         stdSqlType="BIGINT" i18n-en:displayName="Agent"/>
                 <column code="SERVICE_TYPE" displayName="服务类型" name="serviceType" propId="4" stdDataType="int"
                         stdSqlType="INTEGER" ext:dict="erp-cs/service-type" i18n-en:displayName="Service Type"/>
-                <column code="RATE" displayName="费率(元/小时)" domain="amount" name="rate" precision="20" propId="5"
-                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Rate"/>
+                <column code="RATE" displayName="费率(元/小时)" domain="amount" name="rate" precision="18" propId="5"
+                        scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Rate"/>
                 <column code="EFFECTIVE_DATE" displayName="生效日期" name="effectiveDate" propId="6" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Effective Date"/>
                 <column code="IS_ACTIVE" defaultValue="true" displayName="是否启用" name="isActive" propId="7"
@@ -724,8 +724,8 @@
                         stdSqlType="DATE" i18n-en:displayName="Start Date"/>
                 <column code="END_DATE" displayName="到期日期" name="endDate" propId="8" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="End Date"/>
-                <column code="TOTAL_AMOUNT" displayName="合同总金额" domain="amount" name="totalAmount" precision="20"
-                        propId="9" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                <column code="TOTAL_AMOUNT" displayName="合同总金额" domain="amount" name="totalAmount" precision="18"
+                        propId="9" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Total Amount"/>
                 <column code="BILLING_CYCLE" displayName="计费周期" name="billingCycle" propId="10" stdDataType="int"
                         stdSqlType="INTEGER" ext:dict="erp-cs/billing-cycle" i18n-en:displayName="Billing Cycle"/>
@@ -1064,11 +1064,11 @@
                         stdSqlType="INTEGER" i18n-en:displayName="Duration"/>
                 <column code="IS_BILLABLE" defaultValue="true" displayName="是否可计费" name="isBillable" propId="8"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Billable"/>
-                <column code="BILLING_RATE" displayName="计费费率" domain="amount" name="billingRate" precision="20"
-                        propId="9" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                <column code="BILLING_RATE" displayName="计费费率" domain="amount" name="billingRate" precision="18"
+                        propId="9" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Billing Rate"/>
-                <column code="BILLABLE_AMOUNT" displayName="计费金额" domain="amount" name="billableAmount" precision="20"
-                        propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                <column code="BILLABLE_AMOUNT" displayName="计费金额" domain="amount" name="billableAmount" precision="18"
+                        propId="10" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Billable Amount"/>
                 <column code="DESCRIPTION" displayName="工作内容描述" name="description" precision="1000" propId="11"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Description"/>

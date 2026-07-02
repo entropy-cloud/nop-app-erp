@@ -61,7 +61,7 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 10;
     
-    /* 审批人: APPROVED_BY_ID BIGINT */
+    /* 审批人: APPROVED_BY_ID VARCHAR */
     public static final String PROP_NAME_approvedById = "approvedById";
     public static final int PROP_ID_approvedById = 11;
     
@@ -104,9 +104,6 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
     
     /* relation:  */
     public static final String PROP_NAME_targetAssignment = "targetAssignment";
-    
-    /* relation:  */
-    public static final String PROP_NAME_approvedBy = "approvedBy";
     
     /* relation:  */
     public static final String PROP_NAME_org = "org";
@@ -204,7 +201,7 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
     private java.lang.Integer _status;
     
     /* 审批人: APPROVED_BY_ID */
-    private java.lang.Long _approvedById;
+    private java.lang.String _approvedById;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -461,9 +458,9 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
             }
         
             case PROP_ID_approvedById:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_approvedById));
                }
                setApprovedById(typedValue);
@@ -611,7 +608,7 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
         
             case PROP_ID_approvedById:{
                onInitProp(propId);
-               this._approvedById = (java.lang.Long)value;
+               this._approvedById = (java.lang.String)value;
                
                break;
             }
@@ -857,7 +854,7 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
     /**
      * 审批人: APPROVED_BY_ID
      */
-    public final java.lang.Long getApprovedById(){
+    public final java.lang.String getApprovedById(){
          onPropGet(PROP_ID_approvedById);
          return _approvedById;
     }
@@ -865,7 +862,7 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
     /**
      * 审批人: APPROVED_BY_ID
      */
-    public final void setApprovedById(java.lang.Long value){
+    public final void setApprovedById(java.lang.String value){
         if(onPropSet(PROP_ID_approvedById,value)){
             this._approvedById = value;
             internalClearRefs(PROP_ID_approvedById);
@@ -1073,29 +1070,6 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_targetAssignment, refEntity,()->{
            
                            this.setTargetAssignmentId(refEntity.getId());
-                       
-           });
-           }
-       
-    }
-       
-    /**
-     * 
-     */
-    public final app.erp.hr.dao.entity.ErpHrEmployee getApprovedBy(){
-       return (app.erp.hr.dao.entity.ErpHrEmployee)internalGetRefEntity(PROP_NAME_approvedBy);
-    }
-
-    public final void setApprovedBy(app.erp.hr.dao.entity.ErpHrEmployee refEntity){
-   
-           if(refEntity == null){
-           
-                   this.setApprovedById(null);
-               
-           }else{
-           internalSetRefEntity(PROP_NAME_approvedBy, refEntity,()->{
-           
-                           this.setApprovedById(refEntity.getId());
                        
            });
            }

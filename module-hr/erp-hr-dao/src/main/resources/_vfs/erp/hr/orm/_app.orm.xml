@@ -177,7 +177,7 @@
     </dicts>
 
     <domains>
-        <domain name="boolFlag" stdSqlType="TINYINT"/>
+        <domain name="boolFlag" stdDataType="boolean" stdSqlType="BOOLEAN"/>
         <domain name="delVersion" stdSqlType="BIGINT"/>
         <domain name="version" stdSqlType="INTEGER"/>
         <domain name="createTime" stdSqlType="TIMESTAMP"/>
@@ -187,7 +187,7 @@
         <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
         <domain name="code" precision="50" stdSqlType="VARCHAR"/>
         <domain name="name" precision="200" stdSqlType="VARCHAR"/>
-        <domain name="amount" precision="20" scale="4" stdSqlType="DECIMAL"/>
+        <domain name="amount" precision="18" scale="2" stdSqlType="DECIMAL"/>
         <domain name="quantity" precision="20" scale="4" stdSqlType="DECIMAL"/>
         <domain name="orderCode" precision="50" stdSqlType="VARCHAR"/>
         <domain name="phone" precision="20" stdSqlType="VARCHAR"/>
@@ -475,21 +475,21 @@
                 <column code="WORKING_HOURS_PER_WEEK" displayName="每周工时" name="workingHoursPerWeek" precision="5"
                         propId="9" scale="1" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Working Hours Per Week"/>
-                <column code="ANNUAL_SALARY" displayName="年薪(税前)" domain="amount" name="annualSalary" precision="20"
-                        propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                <column code="ANNUAL_SALARY" displayName="年薪(税前)" domain="amount" name="annualSalary" precision="18"
+                        propId="10" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Annual Salary"/>
-                <column code="MONTHLY_SALARY" displayName="月薪(税前)" domain="amount" name="monthlySalary" precision="20"
-                        propId="11" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                <column code="MONTHLY_SALARY" displayName="月薪(税前)" domain="amount" name="monthlySalary" precision="18"
+                        propId="11" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Monthly Salary"/>
                 <column code="SALARY_CURRENCY_ID" displayName="薪资币种" name="salaryCurrencyId" propId="12"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Salary Currency"/>
                 <column code="SALARY_PAY_METHOD" displayName="发薪方式" name="salaryPayMethod" precision="50" propId="13"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Salary Pay Method"/>
                 <column code="SOCIAL_INSURANCE_BASE" displayName="社保基数" domain="amount" name="socialInsuranceBase"
-                        precision="20" propId="14" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        precision="18" propId="14" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Social Insurance Base"/>
                 <column code="HOUSING_FUND_BASE" displayName="公积金基数" domain="amount" name="housingFundBase"
-                        precision="20" propId="15" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        precision="18" propId="15" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Housing Fund Base"/>
                 <column code="STATUS" displayName="合同状态" mandatory="true" name="status" propId="16" stdDataType="int"
                         stdSqlType="INTEGER" ext:dict="erp-hr/contract-status" i18n-en:displayName="Status"/>
@@ -819,43 +819,43 @@
                         stdSqlType="INTEGER" i18n-en:displayName="Year"/>
                 <column code="MONTH" displayName="月份" mandatory="true" name="month" propId="4" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Month"/>
-                <column code="BASIC_SALARY" displayName="基本工资" domain="amount" name="basicSalary" precision="20"
-                        propId="5" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                <column code="BASIC_SALARY" displayName="基本工资" domain="amount" name="basicSalary" precision="18"
+                        propId="5" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Basic Salary"/>
                 <column code="POSITION_ALLOWANCE" displayName="岗位津贴" domain="amount" name="positionAllowance"
-                        precision="20" propId="6" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        precision="18" propId="6" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Position Allowance"/>
                 <column code="PERFORMANCE_BONUS" displayName="绩效奖金" domain="amount" name="performanceBonus"
-                        precision="20" propId="7" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        precision="18" propId="7" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Performance Bonus"/>
-                <column code="OVERTIME_PAY" displayName="加班费" domain="amount" name="overtimePay" precision="20"
-                        propId="8" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                <column code="OVERTIME_PAY" displayName="加班费" domain="amount" name="overtimePay" precision="18"
+                        propId="8" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Overtime Pay"/>
-                <column code="MEAL_ALLOWANCE" displayName="餐补" domain="amount" name="mealAllowance" precision="20"
-                        propId="9" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                <column code="MEAL_ALLOWANCE" displayName="餐补" domain="amount" name="mealAllowance" precision="18"
+                        propId="9" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Meal Allowance"/>
                 <column code="TRANSPORT_ALLOWANCE" displayName="交通补贴" domain="amount" name="transportAllowance"
-                        precision="20" propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        precision="18" propId="10" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Transport Allowance"/>
-                <column code="OTHER_ALLOWANCE" displayName="其他补贴" domain="amount" name="otherAllowance" precision="20"
-                        propId="11" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                <column code="OTHER_ALLOWANCE" displayName="其他补贴" domain="amount" name="otherAllowance" precision="18"
+                        propId="11" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Other Allowance"/>
-                <column code="GROSS_SALARY" displayName="应发合计" domain="amount" name="grossSalary" precision="20"
-                        propId="12" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                <column code="GROSS_SALARY" displayName="应发合计" domain="amount" name="grossSalary" precision="18"
+                        propId="12" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Gross Salary"/>
                 <column code="SOCIAL_INSURANCE" displayName="社保个人部分" domain="amount" name="socialInsurance"
-                        precision="20" propId="13" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        precision="18" propId="13" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Social Insurance"/>
-                <column code="HOUSING_FUND" displayName="公积金个人部分" domain="amount" name="housingFund" precision="20"
-                        propId="14" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                <column code="HOUSING_FUND" displayName="公积金个人部分" domain="amount" name="housingFund" precision="18"
+                        propId="14" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Housing Fund"/>
-                <column code="TAX_AMOUNT" displayName="个税" domain="amount" name="taxAmount" precision="20" propId="15"
-                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Tax Amount"/>
-                <column code="OTHER_DEDUCTIONS" displayName="其他扣款" domain="amount" name="otherDeductions" precision="20"
-                        propId="16" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                <column code="TAX_AMOUNT" displayName="个税" domain="amount" name="taxAmount" precision="18" propId="15"
+                        scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Tax Amount"/>
+                <column code="OTHER_DEDUCTIONS" displayName="其他扣款" domain="amount" name="otherDeductions" precision="18"
+                        propId="16" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Other Deductions"/>
-                <column code="NET_SALARY" displayName="实发合计" domain="amount" name="netSalary" precision="20" propId="17"
-                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Net Salary"/>
+                <column code="NET_SALARY" displayName="实发合计" domain="amount" name="netSalary" precision="18" propId="17"
+                        scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Net Salary"/>
                 <column code="PAYMENT_STATUS" displayName="支付状态" mandatory="true" name="paymentStatus" propId="18"
                         stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-hr/salary-payment-status"
                         i18n-en:displayName="Payment Status"/>
@@ -929,8 +929,8 @@
                         stdSqlType="BIGINT" i18n-en:displayName="Interviewer"/>
                 <column code="INTERVIEW_DATE" displayName="面试日期" name="interviewDate" propId="13" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Interview Date"/>
-                <column code="OFFER_SALARY" displayName="Offer薪资" domain="amount" name="offerSalary" precision="20"
-                        propId="14" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                <column code="OFFER_SALARY" displayName="Offer薪资" domain="amount" name="offerSalary" precision="18"
+                        propId="14" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Offer Salary"/>
                 <column code="HIRED_DATE" displayName="入职日期" name="hiredDate" propId="15" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Hired Date"/>
@@ -1306,8 +1306,8 @@
                         stdSqlType="VARCHAR" i18n-en:displayName="Reason"/>
                 <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="10" stdDataType="int"
                         stdSqlType="INTEGER" ext:dict="erp-hr/swap-status" i18n-en:displayName="Status"/>
-                <column code="APPROVED_BY_ID" displayName="审批人" name="approvedById" propId="11" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Approved By"/>
+                <column code="APPROVED_BY_ID" displayName="审批人" name="approvedById" precision="36" propId="11"
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="12" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Del Flag"/>
@@ -1347,12 +1347,6 @@
                         i18n-en:displayName="Target Assignment">
                     <join>
                         <on leftProp="targetAssignmentId" rightProp="id"/>
-                    </join>
-                </to-one>
-                <to-one name="approvedBy" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub"
-                        i18n-en:displayName="Approved By">
-                    <join>
-                        <on leftProp="approvedById" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
