@@ -52,7 +52,7 @@
 |---|--------|---------|
 | 4.1 | 采购到付款全链路测试（PO→Receive→Invoice→Pay） | purchase/finance |
 | 4.2 | 销售到收款全链路测试（SO→Delivery→Invoice→Receipt） | sales/finance |
-| 4.3 | 期末结账全流程（成本核算→汇兑重估→结转损益→关账） | finance |
+| 4.3 | 期末结账全流程（成本核算→汇兑重估→结转损益→关账） ✅ | finance |
 | 4.4 | 采购/销售退货到退款全链路 | purchase/sales/finance |
 
 ## Reference

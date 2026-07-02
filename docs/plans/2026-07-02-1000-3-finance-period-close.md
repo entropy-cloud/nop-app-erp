@@ -1,6 +1,6 @@
 # 2026-07-02-1000-3-finance-period-close 期末结账全流程（损益结转/期间状态/汇兑重估/反结账）
 
-> Plan Status: active
+> Plan Status: completed
 > > Last Reviewed: 2026-07-02
 > Source: `docs/backlog/core-business-roadmap.md` 工作项 4.3（期末结账全流程：成本核算→汇兑重估→结转损益→关账）；`docs/design/finance/period-close.md`
 > Related: `2026-07-02-1000-2-assets-depreciation-disposal-capitalization.md`（N=2 折旧能力，本计划 step3 调用其 executeBatchDepreciation）、`2026-07-02-0300-3-ar-ap-settlement-subledger.md`（辅助账/核销 + 显式 deferred 汇兑损益，本计划汇兑重估承接）、`2026-07-01-0811-1-finance-posting-engine-foundation.md`（过账引擎）、`2026-07-02-0900-1-audit-remediation.md`（active 审计整改，无冲突）
@@ -72,105 +72,113 @@
 
 ### Phase 1 — CLOSED_FINAL 字典增量 + 期间状态机 + 前置检查 + 模块关账编排
 
-Status: planned
+Status: completed
 Targets: `module-finance/model/app-erp-finance.orm.xml`（erp-fin/period-status 加 CLOSED_FINAL(50) 选项）、`module-finance/erp-fin-service/.../entity/ErpFinAccountingPeriodBizModel.java`(新/扩)、`.../biz/IErpFinPeriodCloseBiz.java`(新)、`.../biz/IErpFinAccountingPeriodStatusBiz.java`(新)、`.../ErpFinErrors.java`(扩)、`.../ErpFinConstants.java`(扩 PERIOD_STATUS_*/MODULE_CLOSE_*)
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix | Add | Decision | Proof`
 - Prereqs: **人工批准**（model/*.orm.xml ask-first，字典加值）+ 本计划草案审查通过。
 
-- [ ] `Fix`：向 `erp-fin/period-status` 字典加 `CLOSED_FINAL(50)`（label「已复核」），补齐 owner-doc 四态关账机契约漂移；重新 codegen 生成 period-status dict 产物。
+- [x] `Fix`：向 `erp-fin/period-status` 字典加 `CLOSED_FINAL(50)`（label「已复核」），补齐 owner-doc 四态关账机契约漂移；重新 codegen 生成 period-status dict 产物。
   - Skill: none
-- [ ] `Explore`：确认 `erp-fin/period-status`/`erp-fin/module-close-status` 码值（OPEN/CLOSING/CLOSED/CLOSED_FINAL/NEVER_OPENED + 模块关账态）与 subject-class 损益三类集合 {收入(40)/费用(50)/成本(60)}（已草案审查核实，此处固化映射供 Phase 2/3）。
+- [x] `Explore`：确认 `erp-fin/period-status`/`erp-fin/module-close-status` 码值（OPEN/CLOSING/CLOSED/CLOSED_FINAL/NEVER_OPENED + 模块关账态）与 subject-class 损益三类集合 {收入(40)/费用(50)/成本(60)}（已草案审查核实，此处固化映射供 Phase 2/3）。
   - Skill: none
-- [ ] `Add`：`IErpFinPeriodCloseBiz.preCheck(periodId)` —— 扫描本期 posted=false 业务单据（跨域查 purchase/sales/inventory/assets/finance 的 posted 字段）、未审核凭证（ErpFinVoucher）、未核销 AR/AP（ErpFinArApItem status!=SETTLED）；产出检查报告。配置 `erp-fin.auto-post-on-close` 决定 posted=false 为阻断(false→阻断)或提示。
+- [x] `Add`：`IErpFinPeriodCloseBiz.preCheck(periodId)` —— 扫描本期 posted=false 业务单据（跨域查 purchase/sales/inventory/assets/finance 的 posted 字段）、未审核凭证（ErpFinVoucher）、未核销 AR/AP（ErpFinArApItem status!=SETTLED）；产出检查报告。配置 `erp-fin.auto-post-on-close` 决定 posted=false 为阻断(false→阻断)或提示。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：期间状态机——`ErpFinAccountingPeriodBizModel` 实现 OPEN→CLOSING（closePeriod 开始锁定）→CLOSED（结账完成）→CLOSED_FINAL（finalizePeriod 最终锁定）；每迁移校验前置态，违例抛 `NopException`+`ErpFinErrors`。CLOSING/CLOSED/CLOSED_FINAL 期间禁止新增/修改凭证（`§期间控制`）。
+- [x] `Add`：期间状态机——`ErpFinAccountingPeriodBizModel` 实现 OPEN→CLOSING（closePeriod 开始锁定）→CLOSED（结账完成）→CLOSED_FINAL（finalizePeriod 最终锁定）；每迁移校验前置态，违例抛 `NopException`+`ErpFinErrors`。CLOSING/CLOSED/CLOSED_FINAL 期间禁止新增/修改凭证（`§期间控制`）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：模块关账编排——`closePeriod` 按 AR→AP→INV→AST→GL 顺序推进 `ErpFinAccountingPeriodStatus` 各模块 status（dict erp-fin/module-close-status），每模块关账前置（上一模块已关账）。**GL 模块内部运行顺序**：先汇兑重估（FX_REVALUATION）再损益结转（PERIOD_CLOSING），使汇兑损益进入当期结转（`§期末结账步骤` 模块顺序 + Phase 3 Decision 时序）。
+- [x] `Add`：模块关账编排——`closePeriod` 按 AR→AP→INV→AST→GL 顺序推进 `ErpFinAccountingPeriodStatus` 各模块 status（dict erp-fin/module-close-status），每模块关账前置（上一模块已关账）。**GL 模块内部运行顺序**：先汇兑重估（FX_REVALUATION）再损益结转（PERIOD_CLOSING），使汇兑损益进入当期结转（`§期末结账步骤` 模块顺序 + Phase 3 Decision 时序）。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：`TestErpFinPeriodStateMachine`（OPEN→CLOSING→CLOSED→CLOSED_FINAL 正向 + 非法迁移拒绝 + 凭证锁定）、`TestErpFinPeriodPreCheck`（posted=false/未审核/未核销清单 + 阻断/提示模式）、`TestErpFinModuleCloseOrder`（AR→AP→INV→AST→GL 顺序 + 跨序拒绝）。`mvn test -pl module-finance/erp-fin-service -am -Dtest=TestErpFinPeriod*`。
+- [x] `Proof`：`TestErpFinPeriodStateMachine`（OPEN→CLOSING→CLOSED→CLOSED_FINAL 正向 + 非法迁移拒绝 + 凭证锁定）、`TestErpFinPeriodPreCheck`（posted=false/未审核/未核销清单 + 阻断/提示模式）、`TestErpFinModuleCloseOrder`（AR→AP→INV→AST→GL 顺序 + 跨序拒绝）。`mvn test -pl module-finance/erp-fin-service -am -Dtest=TestErpFinPeriod*`。
   - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
 > Phase 1 交付期间状态机 + 前置检查 + 模块关账编排。解除 Phase 2/3 对期间锁定/模块顺序的阻塞。
 
-- [ ] 期间状态迁移 + 前置检查 + 模块关账顺序单测通过；subjectClass/period-status 码值映射已确认
+- [x] 期间状态迁移 + 前置检查 + 模块关账顺序单测通过；subjectClass/period-status 码值映射已确认
+
+> 实施记录（实现层裁决）：① 结账编排置于既有 `ErpFinAccountingPeriodBizModel`（xmeta 已注册、可注入），`IErpFinAccountingPeriodBiz extends IErpFinPeriodCloseBiz`，非另起无 xmeta 的 action Biz。② 过账引擎 `resolveOpenPeriod` 与资产折旧入口均要求期间 OPEN，故所有期末凭证生成步骤（折旧/汇兑/结转）在 `closePeriod` 改写期间状态**前**执行（期间仍 OPEN），状态迁移（CLOSING→CLOSED）作成功后簿记——@SingleSession + 改字段 + flush 落库（对齐 `ErpFinReconciliationBizModel.post` 既有模式，MANAGED 实体不调 saveEntity）。③ 折旧经 `IBizObjectManager` 运行期解析 `IErpAstDepreciationScheduleBiz`（DAG 合法 R），单域测试无 ast-service 时解析失败→配置门控告警跳过（对齐"未落地跳过不阻断"）。④ pom：finance-service 加 `app-erp-assets-dao` compile 依赖（`IErpAstDepreciationScheduleBiz`/`ErpAstDepreciationSchedule` 声明于 dao 层；erp-ast-api 未含该方法因 codegen 未传播）。
 
 ### Phase 2 — 损益结转（PERIOD_CLOSE 凭证）+ TrialBalance 快照
 
-Status: planned
+Status: completed
 Targets: `module-finance/erp-fin-service/.../entity/ErpFinPeriodCloseBizModel.java`(扩 closePeriod 损益结转段)、`.../service/ProfitLossClosingService.java`(新)
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: Phase 1（GL 模块关账阶段 + CLOSED_FINAL 字典 + subjectClass 损益三类映射确认）。
 
-- [ ] `Add`：`ProfitLossClosingService` —— 按 subjectClass 识别**收入类(40)**科目，聚合 `ErpFinGlBalance`（periodId + acctSchemaId）本期 periodCredit(收入贷方发生)，生成 PERIOD_CLOSE(120) 结转凭证（借各收入科目/贷本年利润科目），结转后收入科目余额清零。
+- [x] `Add`：`ProfitLossClosingService` —— 按 subjectClass 识别**收入类(40)**科目，聚合 `ErpFinGlBalance`（periodId + acctSchemaId）本期 periodCredit(收入贷方发生)，生成 PERIOD_CLOSE(120) 结转凭证（借各收入科目/贷本年利润科目），结转后收入科目余额清零。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：按 subjectClass 识别**费用类(50)+成本类(60)**科目（损益支出两类），聚合 periodDebit(借方发生)，生成 PERIOD_CLOSE(120) 结转凭证（借本年利润/贷各费用+成本科目），结转后费用+成本科目余额清零。
+- [x] `Add`：按 subjectClass 识别**费用类(50)+成本类(60)**科目（损益支出两类），聚合 periodDebit(借方发生)，生成 PERIOD_CLOSE(120) 结转凭证（借本年利润/贷各费用+成本科目），结转后费用+成本科目余额清零。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：结转凭证经 `IErpFinVoucherBiz.post`（businessType=PERIOD_CLOSE）入账；populate `ErpFinTrialBalance` 快照（结转后各科目期末余额）。
+- [x] `Add`：结转凭证经 `IErpFinVoucherBiz.post`（businessType=PERIOD_CLOSE）入账；populate `ErpFinTrialBalance` 快照（结转后各科目期末余额）。
   - Skill: `nop-backend-dev`
-- [ ] `Decision`：结转粒度——**选择**按科目逐行结转（保留科目级明细可追溯），汇总到本年利润单科目。**替代**：合并单行结转（丢失明细，rejected）。**残留风险**：凭证行数多（按科目数，期末一次可接受）。
+- [x] `Decision`：结转粒度——**选择**按科目逐行结转（保留科目级明细可追溯），汇总到本年利润单科目。**替代**：合并单行结转（丢失明细，rejected）。**残留风险**：凭证行数多（按科目数，期末一次可接受）。
   - Skill: none
-- [ ] `Proof`：`TestErpFinProfitLossClosing`（收入/费用/成本余额→本年利润 PERIOD_CLOSE 凭证 + 借贷平衡 + 结转后收入/费用/成本余额清零 + TrialBalance 快照 + 本年利润净额=收入−费用−成本）。`mvn test -pl module-finance/erp-fin-service -am -Dtest=TestErpFinProfitLoss*`。
+- [x] `Proof`：`TestErpFinProfitLossClosing`（收入/费用/成本余额→本年利润 PERIOD_CLOSE 凭证 + 借贷平衡 + 结转后收入/费用/成本余额清零 + TrialBalance 快照 + 本年利润净额=收入−费用−成本）。`mvn test -pl module-finance/erp-fin-service -am -Dtest=TestErpFinProfitLoss*`。
   - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
 > Phase 2 交付损益结转（收入/费用/成本三类）PERIOD_CLOSE 凭证 + TrialBalance 快照。解除 Phase 3 汇兑重估（同在 GL 关账段）的数据基础。
 
-- [ ] 损益结转凭证（含成本类）+ 收入/费用/成本清零 + TrialBalance 快照单测通过
+- [x] 损益结转凭证（含成本类）+ 收入/费用/成本清零 + TrialBalance 快照单测通过
+
+> 实施记录：① `ErpFinGlBalance` 未由过账引擎维护，故损益结转以 `ErpFinVoucherLine`（已过账非红冲分录，排除 close 类分录自身）为权威本期发生额来源——等价的期末活动聚合。② 结转凭证直接持久化（`CloseVoucherWriter`，Voucher+Lines+BillR），不经 `IErpFinVoucherBiz.post`：无 PERIOD_CLOSE AcctDocProvider，且 post 会触发 ArApItem 生成（非 AR/AP 类型不适用）；直接持久化结构与引擎产出一致，仍可经 `voucherBiz.reverse` 按 BillR 反查红冲。③ 干净期间（无收入/费用/成本发生额）跳过 CYP 解析，不强制要求 CYP 配置。
 
 ### Phase 3 — 汇兑重估（EXCHANGE_GAIN_LOSS 凭证，承接 0300-3 deferred）+ 折旧集成门控
 
-Status: planned
+Status: completed
 Targets: `module-finance/erp-fin-service/.../service/ExchangeRevaluationService.java`(新)、`.../entity/ErpFinPeriodCloseBizModel.java`(扩汇兑段 + 折旧门控)
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: Phase 1（期间锁定 + 折旧门控）。汇兑重估须在损益结转**之前**执行（GL 关账段运行顺序：FX 重估 → P&L 结转，使汇兑损益进入当期损益结转，见 Decision 时序）。
 
-- [ ] `Add`：`ExchangeRevaluationService` —— 查询外币 `ErpFinArApItem` 未核销项（status!=SETTLED/CANCELLED + currencyId!=本位币），按期末汇率重估：差额 = openAmountFunctional − (openAmountSource × 期末汇率)；正差额=汇兑收益，负=汇兑损失。生成 EXCHANGE_GAIN_LOSS(130) 凭证（借/贷往来科目 + 借/贷汇兑损益科目）。
+- [x] `Add`：`ExchangeRevaluationService` —— 查询外币 `ErpFinArApItem` 未核销项（status!=SETTLED/CANCELLED + currencyId!=本位币），按期末汇率重估：差额 = openAmountFunctional − (openAmountSource × 期末汇率)；正差额=汇兑收益，负=汇兑损失。生成 EXCHANGE_GAIN_LOSS(130) 凭证（借/贷往来科目 + 借/贷汇兑损益科目）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：折旧集成门控——GL 关账段前（AST 模块关账），`erp-ast.auto-depreciation-on-close=true` 时调折旧（SPI `IErpAstDepreciationTrigger.executeBatch(period)` 或直接 `IErpAstDepreciationScheduleBiz`，按 Phase 1 Decision）；1000-2 未落地时跳过并告警（记录 AccountingPeriodStatus.assetStatus 但不阻断）。
+- [x] `Add`：折旧集成门控——GL 关账段前（AST 模块关账），`erp-ast.auto-depreciation-on-close=true` 时调折旧（SPI `IErpAstDepreciationTrigger.executeBatch(period)` 或直接 `IErpAstDepreciationScheduleBiz`，按 Phase 1 Decision）；1000-2 未落地时跳过并告警（记录 AccountingPeriodStatus.assetStatus 但不阻断）。
   - Skill: `nop-backend-dev`
-- [ ] `Decision`：汇兑重估时序——**选择**结转损益**前**重估（重估产生的汇兑损益参与当期损益结转）。**替代**：结转后重估（汇兑损益留至下期，不符合配比，rejected）。**残留风险**：重估依赖期末汇率配置（缺失抛 NopException 提示）。
+- [x] `Decision`：汇兑重估时序——**选择**结转损益**前**重估（重估产生的汇兑损益参与当期损益结转）。**替代**：结转后重估（汇兑损益留至下期，不符合配比，rejected）。**残留风险**：重估依赖期末汇率配置（缺失抛 NopException 提示）。
   - Skill: none
-- [ ] `Proof`：`TestErpFinExchangeRevaluation`（外币 AR/AP 重估 + 正/负差额 + EXCHANGE_GAIN_LOSS 凭证 + 本位币项不重估）、`TestErpFinDepreciationIntegration`（auto-depreciation=true 调折旧 / 1000-2 未落地跳过告警不阻断）。`mvn test -pl module-finance/erp-fin-service -am -Dtest=TestErpFinExchange*,TestErpFinDepreciationIntegration*`。
+- [x] `Proof`：`TestErpFinExchangeRevaluation`（外币 AR/AP 重估 + 正/负差额 + EXCHANGE_GAIN_LOSS 凭证 + 本位币项不重估）、`TestErpFinDepreciationIntegration`（auto-depreciation=true 调折旧 / 1000-2 未落地跳过告警不阻断）。`mvn test -pl module-finance/erp-fin-service -am -Dtest=TestErpFinExchange*,TestErpFinDepreciationIntegration*`。
   - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
 > Phase 3 交付汇兑重估 EXCHANGE_GAIN_LOSS 凭证（承接 0300-3 deferred）+ 折旧集成门控。解除 Phase 4 反结账的凭证冲销对象。
 
-- [ ] 汇兑重估凭证 + 折旧门控单测通过
+- [x] 汇兑重估凭证 + 折旧门控单测通过
+
+> 实施记录：① 差额符号映射 `diff = openFunctional − revaluedFunctional`；应收(资产) revalued 升值(diff<0)=收益、应付(负债) revalued 降值(diff>0)=收益。② 期末汇率配置经 `AppConfig.var` 读取（yaml 数值可能解析为 Double，防御性转 BigDecimal）。③ 汇兑重估经 `CloseVoucherWriter` 直接持久化（同损益结转，不经 post）。④ 折旧门控已在 Phase 1 `runDepreciation` 落地（IBizObjectManager 运行期解析 + try/catch 告警跳过）。
 
 ### Phase 4 — 反结账（reverseClose）+ 端到端 + 红字冲减
 
-Status: planned
+Status: completed
 Targets: `module-finance/erp-fin-service/.../entity/ErpFinPeriodCloseBizModel.java`(扩 reverseClose)
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: Phase 1/2/3（结转/汇兑凭证已生成）。
 
-- [ ] `Add`：`reverseClose(periodId)` —— 校验 CLOSED_FINAL + 配置门控 `erp-fin.reverse-close-approval-required`；状态 CLOSED_FINAL→CLOSING→OPEN；调 `IErpFinVoucherBiz.reverse` 冲销本期 PERIOD_CLOSE(120) 结转凭证 + EXCHANGE_GAIN_LOSS(130) 汇兑凭证（+ 条件冲销 DEPRECIATION(70) 折旧凭证，若 `erp-ast.auto-depreciation-on-close=true` 已生成折旧凭证，`§反结账步骤4`）（红字）；恢复收入/费用/成本科目余额；解锁凭证编辑；记录审计（`§反结账步骤`）。
+- [x] `Add`：`reverseClose(periodId)` —— 校验 CLOSED_FINAL + 配置门控 `erp-fin.reverse-close-approval-required`；状态 CLOSED_FINAL→CLOSING→OPEN；调 `IErpFinVoucherBiz.reverse` 冲销本期 PERIOD_CLOSE(120) 结转凭证 + EXCHANGE_GAIN_LOSS(130) 汇兑凭证（+ 条件冲销 DEPRECIATION(70) 折旧凭证，若 `erp-ast.auto-depreciation-on-close=true` 已生成折旧凭证，`§反结账步骤4`）（红字）；恢复收入/费用/成本科目余额；解锁凭证编辑；记录审计（`§反结账步骤`）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：反结账后允许重新 closePeriod（幂等——重新结转生成新凭证，`§反结账 §步骤7`）。
+- [x] `Add`：反结账后允许重新 closePeriod（幂等——重新结转生成新凭证，`§反结账 §步骤7`）。
   - Skill: `nop-backend-dev`
-- [ ] `Decision`：反结账粒度——**选择**整体反结账（冲销全部结转/汇兑凭证 + 回开期间）。**替代**：按凭证逐笔选择冲销（复杂度高，运营低频，rejected）。**残留风险**：反结账影响已出具报表（`§反结账约束`，由配置门控审批兜底）。
+- [x] `Decision`：反结账粒度——**选择**整体反结账（冲销全部结转/汇兑凭证 + 回开期间）。**替代**：按凭证逐笔选择冲销（复杂度高，运营低频，rejected）。**残留风险**：反结账影响已出具报表（`§反结账约束`，由配置门控审批兜底）。
   - Skill: none
-- [ ] `Proof`：`TestErpFinReverseClose`（CLOSED_FINAL→OPEN + 结转/汇兑/折旧凭证红字冲销 + 收入/费用/成本余额恢复 + 凭证解锁 + 重新结账）、端到端 `TestErpFinPeriodCloseEndToEnd`（前置检查→模块关账→汇兑重估→损益结转→finalize→反结账→重新结账全链）。`mvn test -pl module-finance/erp-fin-service -am -Dtest=TestErpFinReverseClose*,TestErpFinPeriodCloseEndToEnd*`。
+- [x] `Proof`：`TestErpFinReverseClose`（CLOSED_FINAL→OPEN + 结转/汇兑/折旧凭证红字冲销 + 收入/费用/成本余额恢复 + 凭证解锁 + 重新结账）、端到端 `TestErpFinPeriodCloseEndToEnd`（前置检查→模块关账→汇兑重估→损益结转→finalize→反结账→重新结账全链）。`mvn test -pl module-finance/erp-fin-service -am -Dtest=TestErpFinReverseClose*,TestErpFinPeriodCloseEndToEnd*`。
   - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
 > Phase 4 交付反结账 + 端到端全链。完整仓库验证属 Closure Gates。
 
-- [ ] 反结账（结转/汇兑/折旧凭证红冲 + 余额恢复 + 期间回开 + 重新结账）+ 端到端全链单测通过
+- [x] 反结账（结转/汇兑/折旧凭证红冲 + 余额恢复 + 期间回开 + 重新结账）+ 端到端全链单测通过
+
+> 实施记录：① 反结账先回开期间为 OPEN（使 `voucherBiz.reverse` 的 `resolveOpenPeriod` 通过），再红冲结转/汇兑凭证（按 BillR 反查），最后回开模块。② 折旧红冲条件触发（auto-depreciation=true 时），finance 单域无 ast-service 时 try/catch 告警跳过。③ 余额恢复验证：红冲后收入科目净额恢复至结账前（凭证借贷经红字净额对冲）。
 
 ## Draft Review Record
 
@@ -182,15 +190,15 @@ Exit Criteria:
 
 > 仅在所有项目和每阶段退出标准都勾选 `[x]` 后关闭。完整仓库验证在此处运行一次。
 
-- [ ] 范围内行为完成：期间状态机 + 前置检查 + 模块关账编排 + 损益结转 + 汇兑重估 + 折旧门控 + 反结账 + 端到端，行为测试通过
-- [ ] 相关文档对齐：`core-business-roadmap.md` M4.3 标注 done；当日日志已记；`period-close.md` 偏离（成本核算/费用摊销/年度结转/报表 Non-Goal）补注；`ar-ap-reconciliation.md` 汇兑 deferred 标记承接完成
-- [ ] 已运行验证：`mvn clean install -DskipTests` + `mvn test -pl module-finance/erp-fin-service -am`（改动模块）
-- [ ] 无范围内项目静默降级（成本核算/费用摊销/年度结转/报表/自动核销/兜底重过账均为计划内 Non-Goal）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控、日志一致
-- [ ] 保护区域（erp-fin/period-status 字典加 CLOSED_FINAL）实施前已获人工批准
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：期间状态机 + 前置检查 + 模块关账编排 + 损益结转 + 汇兑重估 + 折旧门控 + 反结账 + 端到端，行为测试通过
+- [x] 相关文档对齐：`core-business-roadmap.md` M4.3 标注 done；当日日志已记；`period-close.md` 偏离（成本核算/费用摊销/年度结转/报表 Non-Goal）补注；`ar-ap-reconciliation.md` 汇兑 deferred 标记承接完成
+- [x] 已运行验证：`mvn clean install -DskipTests` + `mvn test -pl module-finance/erp-fin-service -am`（改动模块）
+- [x] 无范围内项目静默降级（成本核算/费用摊销/年度结转/报表/自动核销/兜底重过账均为计划内 Non-Goal）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控、日志一致
+- [x] 保护区域（erp-fin/period-status 字典加 CLOSED_FINAL）实施前已获人工批准
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -220,12 +228,17 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待草案审查 + 各阶段执行 + 独立结束审计后填写>
+Status Note: 四阶段全部完成并验证。期间状态机（OPEN→CLOSING→CLOSED→CLOSED_FINAL + 反结账）、前置检查、AR→AP→INV→AST→GL 模块关账编排、损益结转（收入/费用/成本三类 PERIOD_CLOSE 凭证）、汇兑重估（EXCHANGE_GAIN_LOSS 凭证，承接 0300-3 deferred）、折旧集成门控、反结账红冲、试算平衡表快照、端到端全链均已实现并通过单测。`mvn clean install -DskipTests`（全仓 146 模块）+ `mvn test -pl module-finance/erp-fin-service -am`（93 测试全绿）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立子代理>
-- Evidence: <task id / log link>
+- Auditor / Agent: 独立子代理 `ses_0de53a7baffeN99D3BRYyKREID`（fresh session，执行者未自我审计）
+- Verdict: **passes closure audit**（无 BLOCKER）
+- Evidence:
+  - 产物：`module-finance/model/app-erp-finance.orm.xml`（CLOSED_FINAL 字典项）、`ErpFinAccountingPeriodBizModel`（状态机+编排+反结账）、`IErpFinPeriodCloseBiz`/`PeriodPreCheckReport`、`ProfitLossClosingService`、`ExchangeRevaluationService`、`CloseVoucherWriter`、`ErpFinConstants`/`ErpFinErrors` 扩展、`app-service.beans.xml` bean 注册、`erp-fin-service/pom.xml`（erp-ast-dao compile）。
+  - 测试：`TestErpFinPeriodStateMachine`/`TestErpFinPeriodPreCheck`/`TestErpFinModuleCloseOrder`/`TestErpFinProfitLossClosing`/`TestErpFinExchangeRevaluation`/`TestErpFinDepreciationIntegration`/`TestErpFinReverseClose`/`TestErpFinPeriodCloseEndToEnd`（共 15 用例全绿）。
+  - 验证：全仓 `mvn clean install -DskipTests` BUILD SUCCESS（146 模块）；`mvn test -pl module-finance/erp-fin-service -am` = 93 测试 0 失败；独立审计复核 8 目标类 15/15 通过。
+  - 范围：ORM 唯一变更为 CLOSED_FINAL 字典选项（无新列/实体）；Non-Goal（成本核算/费用摊销/年度结转/报表渲染）未实现；TrialBalance 快照已 populate。
 
 Follow-up:
 
