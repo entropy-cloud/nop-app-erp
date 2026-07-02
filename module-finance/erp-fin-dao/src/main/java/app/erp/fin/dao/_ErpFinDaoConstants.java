@@ -214,6 +214,11 @@ public interface _ErpFinDaoConstants {
     int PERIOD_STATUS_NEVER_OPENED = 40;
                     
     /**
+     * 期间状态: 已复核 
+     */
+    int PERIOD_STATUS_CLOSED_FINAL = 50;
+                    
+    /**
      * 账户类型: 银行 
      */
     int FUND_ACCOUNT_TYPE_BANK = 10;

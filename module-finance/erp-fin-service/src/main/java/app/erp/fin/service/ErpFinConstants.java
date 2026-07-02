@@ -87,6 +87,55 @@ public interface ErpFinConstants {
     /** billData 键：部门 ID。 */
     String BILL_DATA_DEPARTMENT_ID = "DEPARTMENT_ID";
 
+    // ---- 期末结账配置项（period-close.md §配置项），经 AppConfig.var 读取 ----
+    /** 结账时 posted=false 单据阻断(false)/提示(true)，默认 false（阻断）。 */
+    String CONFIG_AUTO_POST_ON_CLOSE = "erp-fin.auto-post-on-close";
+    /** 结账时是否自动计提折旧（引用 assets 域），默认 true。 */
+    String CONFIG_AUTO_DEPRECIATION_ON_CLOSE = "erp-fin.auto-depreciation-on-close";
+    /** 结账提醒提前天数，默认 3。 */
+    String CONFIG_CLOSING_REMINDER_DAYS = "erp-fin.closing-reminder-days";
+    /** 反结账是否需审批门控，默认 true。 */
+    String CONFIG_REVERSE_CLOSE_APPROVAL_REQUIRED = "erp-fin.reverse-close-approval-required";
+    /** 本年利润科目编码（损益结转必配）。 */
+    String CONFIG_CURRENT_YEAR_PROFIT_SUBJECT_CODE = "erp-fin.current-year-profit-subject-code";
+    /** 未分配利润科目编码（年度结转预留）。 */
+    String CONFIG_RETAINED_EARNINGS_SUBJECT_CODE = "erp-fin.retained-earnings-subject-code";
+    /** 是否启用期末汇兑重估，默认 true。 */
+    String CONFIG_EXCHANGE_REVALUATION_ENABLED = "erp-fin.exchange-revaluation-enabled";
+    /** 期末汇率（启用汇兑重估且有外币未核销项时必配）。 */
+    String CONFIG_PERIOD_END_EXCHANGE_RATE = "erp-fin.period-end-exchange-rate";
+    /** 应收科目编码（汇兑重估用）。 */
+    String CONFIG_AR_SUBJECT_CODE = "erp-fin.ar-subject-code";
+    /** 应付科目编码（汇兑重估用）。 */
+    String CONFIG_AP_SUBJECT_CODE = "erp-fin.ap-subject-code";
+    /** 汇兑损益科目编码（汇兑重估用）。 */
+    String CONFIG_FX_GAIN_LOSS_SUBJECT_CODE = "erp-fin.exchange-gain-loss-subject-code";
+
+    // ---- period-status（erp-fin/period-status）四态关账机 ----
+    int PERIOD_STATUS_OPEN = 10;
+    int PERIOD_STATUS_CLOSING = 20;
+    int PERIOD_STATUS_CLOSED = 30;
+    int PERIOD_STATUS_NEVER_OPENED = 40;
+    int PERIOD_STATUS_CLOSED_FINAL = 50;
+
+    // ---- module-close-status（erp-fin/module-close-status） ----
+    int MODULE_CLOSE_OPEN = 10;
+    int MODULE_CLOSE_CLOSING = 20;
+    int MODULE_CLOSE_CLOSED = 30;
+
+    // ---- subject-class（erp-md/subject-class）损益结转识别三类 ----
+    int SUBJECT_CLASS_INCOME = 40;
+    int SUBJECT_CLASS_EXPENSE = 50;
+    int SUBJECT_CLASS_COST = 60;
+
+    // ---- 借贷方向 ----
+    int DC_DEBIT = 10;
+    int DC_CREDIT = 20;
+
+    // ---- 凭证状态 ----
+    int VOUCHER_STATUS_DRAFT = 10;
+    int VOUCHER_STATUS_POSTED = 20;
+
     // ---- 资金/票据配置项（treasury.md §配置点），经 AppConfig.var 读取 ----
     /** 开银承前是否强制校验授信可用额度，默认 true。 */
     String CONFIG_CREDIT_CHECK_ON_ISSUE = "erp-fin.credit-check-on-issue";

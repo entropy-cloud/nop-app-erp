@@ -71,4 +71,10 @@
     <!-- 票据过账派发器（状态迁移边界触发：收到/贴现/背书/托收/承兑 + 应付开出/兑付；失败吞异常保持原态 posted=false）。 -->
     <bean id="app.erp.fin.service.posting.NotesPostingDispatcher"
           class="app.erp.fin.service.posting.NotesPostingDispatcher"/>
+
+    <!-- 期末结账编排组件（被 ErpFinPeriodCloseBizModel 调用）：损益结转 + 汇兑重估。 -->
+    <bean id="app.erp.fin.service.profitloss.ProfitLossClosingService"
+          class="app.erp.fin.service.profitloss.ProfitLossClosingService"/>
+    <bean id="app.erp.fin.service.fx.ExchangeRevaluationService"
+          class="app.erp.fin.service.fx.ExchangeRevaluationService"/>
 </beans>

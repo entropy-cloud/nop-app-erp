@@ -1,0 +1,9 @@
+erp-fin:
+  current-year-profit-subject-code: "4103"
+  exchange-revaluation-enabled: true
+  period-end-exchange-rate: 8.5
+  ar-subject-code: "1122"
+  ap-subject-code: "2202"
+  exchange-gain-loss-subject-code: "6603"
+  auto-depreciation-on-close: false
+  auto-post-on-close: true

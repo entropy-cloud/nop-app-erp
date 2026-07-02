@@ -69,6 +69,7 @@
             <option code="CLOSING" label="结账中" value="20" i18n-en:label="Closing"/>
             <option code="CLOSED" label="已结账" value="30" i18n-en:label="Closed"/>
             <option code="NEVER_OPENED" label="未开启" value="40" i18n-en:label="Not Open"/>
+            <option code="CLOSED_FINAL" label="已复核" value="50" i18n-en:label="Closed Final"/>
         </dict>
         <dict label="账户类型" name="erp-fin/fund-account-type" valueType="int" i18n-en:label="Account Type">
             <option code="BANK" label="银行" value="10" i18n-en:label="Bank"/>

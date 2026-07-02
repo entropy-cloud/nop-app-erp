@@ -48,6 +48,15 @@ public interface ErpFinErrors {
     String ARG_DISCOUNT_RATE = "discountRate";
     String ARG_CONFIG_KEY = "configKey";
 
+    // --- 期末结账作用域参数键 ---
+    String ARG_PERIOD_ID = "periodId";
+    String ARG_PERIOD_CODE = "periodCode";
+    String ARG_MODULE = "module";
+    String ARG_PREV_MODULE = "prevModule";
+    String ARG_CURRENT_PERIOD_STATUS = "currentPeriodStatus";
+    String ARG_EXPECTED_PERIOD_STATUS = "expectedPeriodStatus";
+    String ARG_ISSUE_COUNT = "issueCount";
+
     ErrorCode ERR_AR_AP_ITEM_PARTNER_MISSING = ErrorCode.define("erp.err.fin.ar-ap.partner-missing",
             "来源单据 {sourceBillCode}（类型 {sourceBillType}）的 billData 缺少 partnerId，无法生成辅助账",
             ARG_SOURCE_BILL_CODE, ARG_SOURCE_BILL_TYPE);
@@ -171,4 +180,29 @@ public interface ErpFinErrors {
     ErrorCode ERR_CREDIT_FACILITY_INSUFFICIENT = ErrorCode.define("erp.err.fin.credit-facility.insufficient",
             "授信额度 {creditFacilityId} 可用额度 {availableAmount} 不足，无法开出银承票面 {faceAmount}",
             ARG_CREDIT_FACILITY_ID, ARG_AVAILABLE_AMOUNT, ARG_FACE_AMOUNT);
+
+    // --- 期末结账作用域 ---
+
+    ErrorCode ERR_PERIOD_NOT_FOUND = ErrorCode.define("erp.err.fin.period-close.period-not-found",
+            "会计期间 {periodId} 不存在", ARG_PERIOD_ID);
+
+    ErrorCode ERR_PERIOD_ILLEGAL_TRANSITION = ErrorCode.define("erp.err.fin.period-close.illegal-transition",
+            "会计期间 {periodCode} 当前状态={currentPeriodStatus}，不允许执行该操作（期望状态={expectedPeriodStatus}）",
+            ARG_PERIOD_CODE, ARG_CURRENT_PERIOD_STATUS, ARG_EXPECTED_PERIOD_STATUS);
+
+    ErrorCode ERR_MODULE_OUT_OF_ORDER = ErrorCode.define("erp.err.fin.period-close.module-out-of-order",
+            "模块 {module} 关账前置未满足：上一模块 {prevModule} 尚未关账",
+            ARG_MODULE, ARG_PREV_MODULE);
+
+    ErrorCode ERR_PRE_CHECK_BLOCKED = ErrorCode.define("erp.err.fin.period-close.pre-check-blocked",
+            "会计期间 {periodCode} 前置检查未通过（共 {issueCount} 项问题），阻止结账",
+            ARG_PERIOD_CODE, ARG_ISSUE_COUNT);
+
+    ErrorCode ERR_REVERSE_CLOSE_APPROVAL_REQUIRED = ErrorCode.define("erp.err.fin.period-close.reverse-approval-required",
+            "会计期间 {periodCode} 反结账需审批（配置 erp-fin.reverse-close-approval-required=true）",
+            ARG_PERIOD_CODE);
+
+    ErrorCode ERR_CLOSE_SUBJECT_NOT_CONFIGURED = ErrorCode.define("erp.err.fin.period-close.subject-not-configured",
+            "期末结账所需科目/汇率未配置：配置键 {configKey}",
+            ARG_CONFIG_KEY);
 }

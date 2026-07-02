@@ -778,6 +778,7 @@ dict.option.label:
     '20': Closing
     '30': Closed
     '40': Not Open
+    '50': Closed Final
   erp-fin/fund-account-type:
     '10': Bank
     '20': Cash

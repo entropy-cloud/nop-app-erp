@@ -1,0 +1,5 @@
+erp-fin:
+  reverse-close-approval-required: false
+  auto-post-on-close: true
+  auto-depreciation-on-close: false
+  exchange-revaluation-enabled: false
