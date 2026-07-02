@@ -1,6 +1,6 @@
 # Extended Domains Business Logic Roadmap
 
-> 最后更新：2026-06-30
+> 最后更新：2026-07-02
 > 本路线图覆盖**核心 5 域之外**的 13 域自定义 BizModel 方法与编排逻辑。
 > 前置条件：`crud-roadmap.md` 中对应域的 CRUD 已完成。
 
@@ -9,7 +9,8 @@
 > 状态在工作项上；Milestone 仅为分组。
 
 ### Milestone M2 — 扩展 5 域
-- 2.1–2.11：`todo`
+- 2.5：✅ done（资产折旧/处置/资本化 BizModel + 业财过账，2026-07-02，`docs/plans/2026-07-02-1000-2-assets-depreciation-disposal-capitalization.md`）
+- 2.1–2.4, 2.6–2.11：`todo`
 
 ### Milestone M3 — 新增 8 域
 - 3.1–3.21：`todo`
