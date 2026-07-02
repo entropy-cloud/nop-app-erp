@@ -37,6 +37,14 @@
         <property name="bizObjName" value="ErpFinReconciliation"/>
     </bean>
 
+    <bean id="app.erp.fin.service.entity.ErpFinEmployeeAdvanceBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinEmployeeAdvance" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinEmployeeAdvanceBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinEmployeeAdvance"/>
+    </bean>
+
     <bean id="app.erp.fin.service.entity.ErpFinVoucherTemplateLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpFinVoucherTemplateLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -90,6 +98,14 @@
         <property name="bizObjName" value="ErpFinBankStatement"/>
     </bean>
 
+    <bean id="app.erp.fin.service.entity.ErpFinExpenseClaimBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinExpenseClaim" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinExpenseClaimBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinExpenseClaim"/>
+    </bean>
+
     <bean id="app.erp.fin.service.entity.ErpFinVoucherLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpFinVoucherLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -120,6 +136,14 @@
           ioc:type="app.erp.fin.biz.IErpFinBankReconciliationBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
         <property name="bizObjName" value="ErpFinBankReconciliation"/>
+    </bean>
+
+    <bean id="app.erp.fin.service.entity.ErpFinExpenseClaimLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinExpenseClaimLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinExpenseClaimLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinExpenseClaimLine"/>
     </bean>
 
     <bean id="app.erp.fin.service.entity.ErpFinBankStatementLineBizModel" ioc:type="@bean:id" ioc:default="true"/>

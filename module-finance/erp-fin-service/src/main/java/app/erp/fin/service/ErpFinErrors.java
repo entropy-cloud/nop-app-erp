@@ -22,6 +22,23 @@ public interface ErpFinErrors {
     String ARG_DOC_STATUS = "docStatus";
     String ARG_ID = "id";
 
+    // --- 报销单 / 借款单作用域参数键 ---
+    String ARG_CLAIM_CODE = "claimCode";
+    String ARG_CLAIM_ID = "claimId";
+    String ARG_ADVANCE_CODE = "advanceCode";
+    String ARG_ADVANCE_ID = "advanceId";
+    String ARG_CLAIMANT_ID = "claimantId";
+    String ARG_EMPLOYEE_ID = "employeeId";
+    String ARG_CURRENT_STATUS = "currentStatus";
+    String ARG_EXPECTED_STATUS = "expectedStatus";
+    String ARG_CURRENT_DOC_STATUS = "currentDocStatus";
+    String ARG_EXPECTED_DOC_STATUS = "expectedDocStatus";
+    String ARG_LINE_NO = "lineNo";
+    String ARG_EXPENSE_TYPE = "expenseType";
+    String ARG_AMOUNT_WITH_TAX = "amountWithTax";
+    String ARG_LINE_TOTAL = "lineTotal";
+    String ARG_ADVANCE_TYPE = "advanceType";
+
     ErrorCode ERR_AR_AP_ITEM_PARTNER_MISSING = ErrorCode.define("erp.err.fin.ar-ap.partner-missing",
             "来源单据 {sourceBillCode}（类型 {sourceBillType}）的 billData 缺少 partnerId，无法生成辅助账",
             ARG_SOURCE_BILL_CODE, ARG_SOURCE_BILL_TYPE);
@@ -54,4 +71,67 @@ public interface ErpFinErrors {
 
     ErrorCode ERR_AR_AP_ITEM_NOT_FOUND = ErrorCode.define("erp.err.fin.ar-ap.not-found",
             "辅助账项 {id} 不存在", ARG_ID);
+
+    // --- 报销单作用域 ---
+
+    ErrorCode ERR_EXPENSE_CLAIM_NOT_FOUND = ErrorCode.define("erp.err.fin.expense-claim.not-found",
+            "费用报销单 {claimId} 不存在", ARG_CLAIM_ID);
+
+    ErrorCode ERR_EXPENSE_CLAIM_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.fin.expense-claim.illegal-status-transition",
+            "费用报销单 {claimCode} 当前审核状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_CLAIM_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+
+    ErrorCode ERR_EXPENSE_CLAIM_ILLEGAL_DOC_STATUS_TRANSITION = ErrorCode.define("erp.err.fin.expense-claim.illegal-doc-status-transition",
+            "费用报销单 {claimCode} 当前单据状态={currentDocStatus}，不允许执行该操作（期望状态={expectedDocStatus}）",
+            ARG_CLAIM_CODE, ARG_CURRENT_DOC_STATUS, ARG_EXPECTED_DOC_STATUS);
+
+    ErrorCode ERR_EXPENSE_CLAIM_LINES_EMPTY = ErrorCode.define("erp.err.fin.expense-claim.lines-empty",
+            "费用报销单 {claimCode} 无行明细，不可提交审核", ARG_CLAIM_CODE);
+
+    ErrorCode ERR_EXPENSE_CLAIM_CLAIMANT_INACTIVE = ErrorCode.define("erp.err.fin.expense-claim.claimant-inactive",
+            "报销人 {claimantId} 已停用，不可提交或审核", ARG_CLAIMANT_ID);
+
+    ErrorCode ERR_EXPENSE_CLAIM_CLAIMANT_PARTNER_MISSING = ErrorCode.define("erp.err.fin.expense-claim.claimant-partner-missing",
+            "报销人 {claimantId} 未配置内部往来单位（partnerId 为空），无法生成员工应付辅助账",
+            ARG_CLAIMANT_ID);
+
+    ErrorCode ERR_EXPENSE_CLAIM_AMOUNT_MISMATCH = ErrorCode.define("erp.err.fin.expense-claim.amount-mismatch",
+            "费用报销单 {claimCode} 价税合计 {amountWithTax} 不等于行明细合计 {lineTotal}",
+            ARG_CLAIM_CODE, ARG_AMOUNT_WITH_TAX, ARG_LINE_TOTAL);
+
+    ErrorCode ERR_EXPENSE_CLAIM_REASON_REQUIRED = ErrorCode.define("erp.err.fin.expense-claim.reason-required",
+            "费用报销单 {claimCode} 缺少报销事由（按配置必填）", ARG_CLAIM_CODE);
+
+    ErrorCode ERR_EXPENSE_CLAIM_EXPENSE_TYPE_REQUIRED = ErrorCode.define("erp.err.fin.expense-claim.expense-type-required",
+            "费用报销单 {claimCode} 第 {lineNo} 行缺少费用类型（按配置必填）",
+            ARG_CLAIM_CODE, ARG_LINE_NO);
+
+    ErrorCode ERR_EXPENSE_CLAIM_NOT_REVERSED_BEFORE_CANCEL = ErrorCode.define("erp.err.fin.expense-claim.not-reversed-before-cancel",
+            "费用报销单 {claimCode} 已过账，须先反审核（红字冲销）再作废", ARG_CLAIM_CODE);
+
+    // --- 借款单作用域 ---
+
+    ErrorCode ERR_EMPLOYEE_ADVANCE_NOT_FOUND = ErrorCode.define("erp.err.fin.employee-advance.not-found",
+            "员工借款单 {advanceId} 不存在", ARG_ADVANCE_ID);
+
+    ErrorCode ERR_EMPLOYEE_ADVANCE_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.fin.employee-advance.illegal-status-transition",
+            "员工借款单 {advanceCode} 当前审核状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_ADVANCE_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+
+    ErrorCode ERR_EMPLOYEE_ADVANCE_ILLEGAL_DOC_STATUS_TRANSITION = ErrorCode.define("erp.err.fin.employee-advance.illegal-doc-status-transition",
+            "员工借款单 {advanceCode} 当前单据状态={currentDocStatus}，不允许执行该操作（期望状态={expectedDocStatus}）",
+            ARG_ADVANCE_CODE, ARG_CURRENT_DOC_STATUS, ARG_EXPECTED_DOC_STATUS);
+
+    ErrorCode ERR_EMPLOYEE_ADVANCE_EMPLOYEE_INACTIVE = ErrorCode.define("erp.err.fin.employee-advance.employee-inactive",
+            "借款人 {employeeId} 已停用，不可提交或审核", ARG_EMPLOYEE_ID);
+
+    ErrorCode ERR_EMPLOYEE_ADVANCE_EMPLOYEE_PARTNER_MISSING = ErrorCode.define("erp.err.fin.employee-advance.employee-partner-missing",
+            "借款人 {employeeId} 未配置内部往来单位（partnerId 为空），无法生成员工预支应收辅助账",
+            ARG_EMPLOYEE_ID);
+
+    ErrorCode ERR_EMPLOYEE_ADVANCE_AMOUNT_INVALID = ErrorCode.define("erp.err.fin.employee-advance.amount-invalid",
+            "员工借款单 {advanceCode} 借款金额必须大于 0", ARG_ADVANCE_CODE);
+
+    ErrorCode ERR_EMPLOYEE_ADVANCE_NOT_REVERSED_BEFORE_CANCEL = ErrorCode.define("erp.err.fin.employee-advance.not-reversed-before-cancel",
+            "员工借款单 {advanceCode} 已过账，须先反审核（红字冲销）再作废", ARG_ADVANCE_CODE);
 }

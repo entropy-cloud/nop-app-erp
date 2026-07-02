@@ -17,6 +17,8 @@ alter table erp_prj_project add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_cost_center add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_md_employee add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_ast_asset add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_voucher_template add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -26,6 +28,8 @@ alter table erp_fin_accounting_period add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' 
 alter table erp_fin_fund_account add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_reconciliation add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_fin_employee_advance add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_voucher_template_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -41,6 +45,8 @@ alter table erp_fin_trial_balance add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT 
 
 alter table erp_fin_bank_statement add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_fin_expense_claim add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_fin_voucher_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_voucher_bill_r add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -48,6 +54,8 @@ alter table erp_fin_voucher_bill_r add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT
 alter table erp_fin_reconciliation_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_bank_reconciliation add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_fin_expense_claim_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_bank_statement_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -80,6 +88,9 @@ alter table erp_prj_project add primary key (NOP_TENANT_ID, ID);
 alter table erp_md_cost_center drop primary key;
 alter table erp_md_cost_center add primary key (NOP_TENANT_ID, ID);
 
+alter table erp_md_employee drop primary key;
+alter table erp_md_employee add primary key (NOP_TENANT_ID, ID);
+
 alter table erp_ast_asset drop primary key;
 alter table erp_ast_asset add primary key (NOP_TENANT_ID, ID);
 
@@ -94,6 +105,9 @@ alter table erp_fin_fund_account add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_fin_reconciliation drop primary key;
 alter table erp_fin_reconciliation add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_fin_employee_advance drop primary key;
+alter table erp_fin_employee_advance add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_fin_voucher_template_line drop primary key;
 alter table erp_fin_voucher_template_line add primary key (NOP_TENANT_ID, ID);
@@ -116,6 +130,9 @@ alter table erp_fin_trial_balance add primary key (NOP_TENANT_ID, ID);
 alter table erp_fin_bank_statement drop primary key;
 alter table erp_fin_bank_statement add primary key (NOP_TENANT_ID, ID);
 
+alter table erp_fin_expense_claim drop primary key;
+alter table erp_fin_expense_claim add primary key (NOP_TENANT_ID, ID);
+
 alter table erp_fin_voucher_line drop primary key;
 alter table erp_fin_voucher_line add primary key (NOP_TENANT_ID, ID);
 
@@ -127,6 +144,9 @@ alter table erp_fin_reconciliation_line add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_fin_bank_reconciliation drop primary key;
 alter table erp_fin_bank_reconciliation add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_fin_expense_claim_line drop primary key;
+alter table erp_fin_expense_claim_line add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_fin_bank_statement_line drop primary key;
 alter table erp_fin_bank_statement_line add primary key (NOP_TENANT_ID, ID);

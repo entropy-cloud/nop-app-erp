@@ -53,6 +53,11 @@ public class ErpFinArApItemGenerator {
         if (profile == null) {
             return null;
         }
+        // 公司直付（paymentMode=COMPANY_ACCOUNT）的报销直接贷银行存款，不挂应付-员工，不生成员工应付辅助账。
+        if (event.getBusinessType() == ErpFinBusinessType.EXPENSE_CLAIM
+                && isCompanyAccountPayment(event.getBillData())) {
+            return null;
+        }
         if (existsItem(profile.sourceBillType, event.getBillHeadCode(), context)) {
             return null;
         }
@@ -139,6 +144,15 @@ public class ErpFinArApItemGenerator {
                 // 销售退货冲减应收：DIRECTION_RECEIVABLE 方向 + 负 openAmount（标准 AR 贷项 credit memo 语义），
                 // 使 PartnerBalanceUpdater.sumOpen 自然减计 receivableBalance（无侵入，零改动 sumOpen/方向枚举）。
                 return new SourceProfile(ErpFinConstants.DIRECTION_RECEIVABLE, ErpFinConstants.SOURCE_BILL_SAL_RETURN);
+            case EXPENSE_CLAIM:
+                // 费用报销：应付-员工（正 openAmount），partnerId = 已解析的 employee.partnerId（billData.EMPLOYEE_ID）。
+                return new SourceProfile(ErpFinConstants.DIRECTION_PAYABLE, ErpFinConstants.SOURCE_BILL_EXPENSE_CLAIM);
+            case EMPLOYEE_ADVANCE:
+                // 员工借款：其他应收-员工预支（正 openAmount），partnerId = 已解析的 employee.partnerId。
+                return new SourceProfile(ErpFinConstants.DIRECTION_RECEIVABLE, ErpFinConstants.SOURCE_BILL_EMPLOYEE_ADVANCE);
+            case EMPLOYEE_ADVANCE_SETTLE:
+                // 借款清算（报销抵扣）：不生成新辅助账，由抵扣编排直接回写既有 advance 应收 / expense 应付 open item 状态。
+                return null;
             default:
                 return null;
         }
@@ -146,6 +160,23 @@ public class ErpFinArApItemGenerator {
 
     protected boolean existsItem(String sourceBillType, String sourceBillCode, IServiceContext context) {
         return !findItems(sourceBillType, sourceBillCode, context).isEmpty();
+    }
+
+    /** 报销公司直付（paymentMode=COMPANY_ACCOUNT）：贷银行存款，不挂应付-员工辅助账。 */
+    protected boolean isCompanyAccountPayment(Map<String, Object> data) {
+        Object mode = data.get(ErpFinConstants.BILL_DATA_PAYMENT_MODE);
+        if (mode == null) {
+            return false;
+        }
+        if (mode instanceof Number) {
+            return ((Number) mode).intValue() == ErpFinConstants.PAYMENT_MODE_COMPANY_ACCOUNT;
+        }
+        try {
+            return new BigDecimal(mode.toString().trim()).intValue()
+                    == ErpFinConstants.PAYMENT_MODE_COMPANY_ACCOUNT;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     protected List<ErpFinArApItem> findItems(String sourceBillType, String sourceBillCode, IServiceContext context) {
@@ -166,9 +197,17 @@ public class ErpFinArApItemGenerator {
     /**
      * 解析往来单位 ID。优先 `partnerId`，兼容 0300-1/0300-2 派发器使用的 `SUPPLIER_ID`/`CUSTOMER_ID`
      * （这些派发器构造 billData 时按业务域命名，未统一为 partnerId）。
+     *
+     * <p>员工方（EXPENSE_CLAIM/EMPLOYEE_ADVANCE）：派发器在 billData 的 {@code EMPLOYEE_ID} 键携带
+     * <b>已解析的 {@code employee.partnerId}</b>（即 ErpMdPartner.id，非 employee.id——员工与 partner 是不同
+     * id 空间），本生成器直接采用，不二次反查 master-data（finance 为 DAG 顶，生成器只读 billData）。
      */
     protected Long resolvePartnerId(Map<String, Object> data) {
         Long partnerId = asLong(data.get("partnerId"));
+        if (partnerId != null) {
+            return partnerId;
+        }
+        partnerId = asLong(data.get(ErpFinConstants.BILL_DATA_EMPLOYEE_ID));
         if (partnerId != null) {
             return partnerId;
         }
@@ -193,7 +232,9 @@ public class ErpFinArApItemGenerator {
      */
     protected BigDecimal resolveAmountFunctional(Map<String, Object> data, String sourceBillType) {
         if (ErpFinConstants.SOURCE_BILL_AP_INVOICE.equals(sourceBillType)
-                || ErpFinConstants.SOURCE_BILL_AR_INVOICE.equals(sourceBillType)) {
+                || ErpFinConstants.SOURCE_BILL_AR_INVOICE.equals(sourceBillType)
+                || ErpFinConstants.SOURCE_BILL_EXPENSE_CLAIM.equals(sourceBillType)) {
+            // EXPENSE_CLAIM 同发票口径：取含税总额（应付-员工正项），回退 TOTAL→TOTAL_AMOUNT→AMOUNT。
             return asAmount(data.get("TOTAL_AMOUNT_WITH_TAX"),
                     asAmount(data.get("TOTAL"),
                             asAmount(data.get("TOTAL_AMOUNT"),

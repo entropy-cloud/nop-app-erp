@@ -7,6 +7,9 @@ entity:
     ErpFinBankReconciliationLine: Bank Reconciliation Line
     ErpFinBankStatement: Bank Statement
     ErpFinBankStatementLine: Bank Statement Line
+    ErpFinEmployeeAdvance: Employee Advance
+    ErpFinExpenseClaim: Expense Claim
+    ErpFinExpenseClaimLine: Expense Claim Line
     ErpFinFundAccount: Fund Account
     ErpFinGlBalance: GL Balance
     ErpFinReconciliation: Reconciliation
@@ -193,6 +196,106 @@ prop:
       statement: Statement
       matchedLine: Matched Voucher Line
       currency: Currency
+    ErpFinEmployeeAdvance:
+      id: ID
+      code: Code
+      orgId: Organization
+      employeeId: Employee
+      advanceType: Advance Type
+      advanceType_label: null
+      businessDate: Business Date
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      settledAmount: Settled Amount
+      outstandingAmount: Outstanding Amount
+      projectId: Project
+      docStatus: Doc Status
+      docStatus_label: null
+      approveStatus: Approve Status
+      approveStatus_label: null
+      approvedBy: Approved By
+      approvedAt: Approved At
+      posted: Posted
+      postedBy: Posted By
+      postedAt: Posted At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      employee: Employee
+      currency: Currency
+      project: Project
+      org: Org
+    ErpFinExpenseClaim:
+      id: ID
+      code: Code
+      orgId: Organization
+      claimantId: Claimant
+      departmentId: Department
+      businessDate: Business Date
+      paymentMode: Payment Mode
+      paymentMode_label: null
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      amountWithoutTax: Amt Without Tax
+      taxAmount: Tax Amount
+      amountWithTax: Amt With Tax
+      settleAdvanceId: Settle Advance
+      reason: Reason
+      docStatus: Doc Status
+      docStatus_label: null
+      approveStatus: Approve Status
+      approveStatus_label: null
+      approvedBy: Approved By
+      approvedAt: Approved At
+      posted: Posted
+      postedBy: Posted By
+      postedAt: Posted At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      claimant: Claimant
+      department: Department
+      currency: Currency
+      org: Org
+      settleAdvance: Settle Advance
+      lines: Lines
+    ErpFinExpenseClaimLine:
+      id: ID
+      claimId: Claim
+      lineNo: Line No
+      expenseType: Expense Type
+      expenseType_label: null
+      projectId: Project
+      costCenterId: Cost Center
+      subjectId: Subject
+      subjectCode: Subject Code
+      amountWithoutTax: Amt Without Tax
+      taxRate: Tax Rate
+      taxAmount: Tax Amount
+      amountWithTax: Amt With Tax
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      claim: Claim
+      project: Project
+      costCenter: Cost Center
+      subject: Subject
     ErpFinFundAccount:
       id: ID
       code: Code
@@ -469,6 +572,12 @@ dict:
     erp-fin/ar-ap-status: AR/AP Status
     erp-fin/reconciliation-status: Reconciliation Status
     erp-fin/module-close-status: Module Close Status
+    erp-fin/approve-status: Approval Status
+    erp-fin/expense-payment-mode: Expense Payment Mode
+    erp-fin/expense-type: Expense Type
+    erp-fin/advance-type: Advance Type
+    erp-fin/expense-claim-status: Expense Claim Status
+    erp-fin/advance-status: Advance Status
 dict.option.label:
   erp-fin/voucher-type:
     '10': Receive
@@ -503,6 +612,9 @@ dict.option.label:
     '130': FX Gain/Loss
     '140': Purchase Return
     '150': Sales Return
+    '160': Expense Claim
+    '170': Employee Advance
+    '180': Advance Settlement
   erp-fin/period-status:
     '10': Open
     '20': Closing
@@ -533,3 +645,34 @@ dict.option.label:
     '10': Unsettled
     '20': Closing
     '30': Settled
+  erp-fin/approve-status:
+    '10': Unsubmitted
+    '20': Submitted
+    '30': Approved
+    '40': Rejected
+  erp-fin/expense-payment-mode:
+    '10': Own Account
+    '20': Company Account
+  erp-fin/expense-type:
+    '10': Travel
+    '20': Entertainment
+    '30': Office
+    '40': Communication
+    '50': Transportation
+    '60': Other
+  erp-fin/advance-type:
+    '10': Expense Advance
+    '20': Imprest
+    '30': Travel Advance
+  erp-fin/expense-claim-status:
+    '10': Draft
+    '20': Submitted
+    '30': Approved
+    '40': Rejected
+    '50': Cancelled
+  erp-fin/advance-status:
+    '10': Draft
+    '20': Submitted
+    '30': Approved
+    '40': Rejected
+    '50': Cancelled

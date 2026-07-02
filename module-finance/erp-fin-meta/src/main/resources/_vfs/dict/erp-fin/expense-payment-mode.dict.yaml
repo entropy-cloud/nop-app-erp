@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 报销付款方式
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 员工垫付
+    value: 10
+    description: 
+  
+  - label: 公司直付
+    value: 20
+    description: 
+  

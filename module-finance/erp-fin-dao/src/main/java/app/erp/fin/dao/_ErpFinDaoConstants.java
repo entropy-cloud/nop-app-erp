@@ -144,6 +144,21 @@ public interface _ErpFinDaoConstants {
     int BUSINESS_TYPE_SALES_RETURN = 150;
                     
     /**
+     * 业务类型: 费用报销 
+     */
+    int BUSINESS_TYPE_EXPENSE_CLAIM = 160;
+                    
+    /**
+     * 业务类型: 员工借款 
+     */
+    int BUSINESS_TYPE_EMPLOYEE_ADVANCE = 170;
+                    
+    /**
+     * 业务类型: 借款清算 
+     */
+    int BUSINESS_TYPE_EMPLOYEE_ADVANCE_SETTLE = 180;
+                    
+    /**
      * 期间状态: 开启 
      */
     int PERIOD_STATUS_OPEN = 10;
@@ -257,5 +272,130 @@ public interface _ErpFinDaoConstants {
      * 模块结账状态: 已结 
      */
     int MODULE_CLOSE_STATUS_CLOSED = 30;
+                    
+    /**
+     * 审核状态: 未提交 
+     */
+    int APPROVE_STATUS_UNSUBMITTED = 10;
+                    
+    /**
+     * 审核状态: 已提交 
+     */
+    int APPROVE_STATUS_SUBMITTED = 20;
+                    
+    /**
+     * 审核状态: 已审核 
+     */
+    int APPROVE_STATUS_APPROVED = 30;
+                    
+    /**
+     * 审核状态: 已驳回 
+     */
+    int APPROVE_STATUS_REJECTED = 40;
+                    
+    /**
+     * 报销付款方式: 员工垫付 
+     */
+    int EXPENSE_PAYMENT_MODE_OWN_ACCOUNT = 10;
+                    
+    /**
+     * 报销付款方式: 公司直付 
+     */
+    int EXPENSE_PAYMENT_MODE_COMPANY_ACCOUNT = 20;
+                    
+    /**
+     * 费用类型: 差旅 
+     */
+    int EXPENSE_TYPE_TRAVEL = 10;
+                    
+    /**
+     * 费用类型: 业务招待 
+     */
+    int EXPENSE_TYPE_ENTERTAINMENT = 20;
+                    
+    /**
+     * 费用类型: 办公 
+     */
+    int EXPENSE_TYPE_OFFICE = 30;
+                    
+    /**
+     * 费用类型: 通讯 
+     */
+    int EXPENSE_TYPE_COMMUNICATION = 40;
+                    
+    /**
+     * 费用类型: 交通 
+     */
+    int EXPENSE_TYPE_TRANSPORTATION = 50;
+                    
+    /**
+     * 费用类型: 其他 
+     */
+    int EXPENSE_TYPE_OTHER = 60;
+                    
+    /**
+     * 借款类型: 费用预支 
+     */
+    int ADVANCE_TYPE_EXPENSE_ADVANCE = 10;
+                    
+    /**
+     * 借款类型: 备用金 
+     */
+    int ADVANCE_TYPE_IMPREST = 20;
+                    
+    /**
+     * 借款类型: 差旅借款 
+     */
+    int ADVANCE_TYPE_TRAVEL = 30;
+                    
+    /**
+     * 报销单状态: 草稿 
+     */
+    int EXPENSE_CLAIM_STATUS_DRAFT = 10;
+                    
+    /**
+     * 报销单状态: 已提交 
+     */
+    int EXPENSE_CLAIM_STATUS_SUBMITTED = 20;
+                    
+    /**
+     * 报销单状态: 已审核 
+     */
+    int EXPENSE_CLAIM_STATUS_APPROVED = 30;
+                    
+    /**
+     * 报销单状态: 已驳回 
+     */
+    int EXPENSE_CLAIM_STATUS_REJECTED = 40;
+                    
+    /**
+     * 报销单状态: 已作废 
+     */
+    int EXPENSE_CLAIM_STATUS_CANCELLED = 50;
+                    
+    /**
+     * 借款单状态: 草稿 
+     */
+    int ADVANCE_STATUS_DRAFT = 10;
+                    
+    /**
+     * 借款单状态: 已提交 
+     */
+    int ADVANCE_STATUS_SUBMITTED = 20;
+                    
+    /**
+     * 借款单状态: 已审核 
+     */
+    int ADVANCE_STATUS_APPROVED = 30;
+                    
+    /**
+     * 借款单状态: 已驳回 
+     */
+    int ADVANCE_STATUS_REJECTED = 40;
+                    
+    /**
+     * 借款单状态: 已作废 
+     */
+    int ADVANCE_STATUS_CANCELLED = 50;
                     
 }

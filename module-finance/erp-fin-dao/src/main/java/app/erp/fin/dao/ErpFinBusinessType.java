@@ -24,7 +24,10 @@ public enum ErpFinBusinessType {
     PERIOD_CLOSE(120),
     EXCHANGE_GAIN_LOSS(130),
     PURCHASE_RETURN(140),
-    SALES_RETURN(150);
+    SALES_RETURN(150),
+    EXPENSE_CLAIM(160),
+    EMPLOYEE_ADVANCE(170),
+    EMPLOYEE_ADVANCE_SETTLE(180);
 
     private final int code;
 

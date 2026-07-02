@@ -37,4 +37,27 @@
           class="app.erp.fin.service.reconciliation.ReconciliationSettler"/>
     <bean id="app.erp.fin.service.reconciliation.PartnerBalanceUpdater"
           class="app.erp.fin.service.reconciliation.PartnerBalanceUpdater"/>
+
+    <!-- 报销/借款业财过账 Provider（注册为 Bean 后由 ErpFinAcctDocRegistry 自动聚合，
+         处理 EXPENSE_CLAIM / EMPLOYEE_ADVANCE / EMPLOYEE_ADVANCE_SETTLE）。 -->
+    <bean id="app.erp.fin.service.posting.provider.ExpenseClaimAcctDocProvider"
+          class="app.erp.fin.service.posting.provider.ExpenseClaimAcctDocProvider"/>
+    <bean id="app.erp.fin.service.posting.provider.EmployeeAdvanceAcctDocProvider"
+          class="app.erp.fin.service.posting.provider.EmployeeAdvanceAcctDocProvider"/>
+
+    <!-- finance 自有域过账执行器（跨域经 IErpFinVoucherBiz Facade，REQUIRES_NEW 由 Facade 承接，自身无 @Transactional）。 -->
+    <bean id="app.erp.fin.service.posting.FinPostingExecutor"
+          class="app.erp.fin.service.posting.FinPostingExecutor"/>
+
+    <!-- 报销单过账派发器（APPROVED→EXPENSE_CLAIM 凭证 借费用/进项税/贷方按 paymentMode；失败吞异常保持终态 posted=false）。 -->
+    <bean id="app.erp.fin.service.posting.ExpenseClaimPostingDispatcher"
+          class="app.erp.fin.service.posting.ExpenseClaimPostingDispatcher"/>
+
+    <!-- 借款单过账派发器（APPROVED→EMPLOYEE_ADVANCE 凭证 借其他应收-员工预支/贷银行存款；失败吞异常保持终态 posted=false）。 -->
+    <bean id="app.erp.fin.service.posting.EmployeeAdvancePostingDispatcher"
+          class="app.erp.fin.service.posting.EmployeeAdvancePostingDispatcher"/>
+
+    <!-- 报销抵扣借款编排器（报销过账后净额抵扣同员工未还借款 + EMPLOYEE_ADVANCE_SETTLE 清算凭证；反审核时反向）。 -->
+    <bean id="app.erp.fin.service.posting.AdvanceOffsetOrchestrator"
+          class="app.erp.fin.service.posting.AdvanceOffsetOrchestrator"/>
 </beans>

@@ -84,6 +84,16 @@ CREATE TABLE erp_md_cost_center(
   constraint PK_erp_md_cost_center primary key (ID)
 );
 
+CREATE TABLE erp_md_employee(
+  ID NUMBER(20)  ,
+  CODE VARCHAR2(50)  ,
+  NAME VARCHAR2(200)  ,
+  ORG_ID NUMBER(20)  ,
+  PARTNER_ID NUMBER(20)  ,
+  STATUS INTEGER  ,
+  constraint PK_erp_md_employee primary key (ID)
+);
+
 CREATE TABLE erp_ast_asset(
   ID NUMBER(20)  ,
   CODE VARCHAR2(50)  ,
@@ -183,6 +193,37 @@ CREATE TABLE erp_fin_reconciliation(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   constraint PK_erp_fin_reconciliation primary key (ID)
+);
+
+CREATE TABLE erp_fin_employee_advance(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  ORG_ID NUMBER(20) NOT NULL ,
+  EMPLOYEE_ID NUMBER(20) NOT NULL ,
+  ADVANCE_TYPE INTEGER NOT NULL ,
+  BUSINESS_DATE DATE NOT NULL ,
+  CURRENCY_ID NUMBER(20) NOT NULL ,
+  EXCHANGE_RATE NUMBER(20,8) default 1   ,
+  AMOUNT_SOURCE NUMBER(20,4) default 0   ,
+  AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
+  SETTLED_AMOUNT NUMBER(20,4) default 0   ,
+  OUTSTANDING_AMOUNT NUMBER(20,4) default 0   ,
+  PROJECT_ID NUMBER(20)  ,
+  DOC_STATUS INTEGER NOT NULL ,
+  APPROVE_STATUS INTEGER NOT NULL ,
+  APPROVED_BY VARCHAR2(36)  ,
+  APPROVED_AT DATE  ,
+  POSTED CHAR(1) default 0   ,
+  POSTED_BY VARCHAR2(36)  ,
+  POSTED_AT DATE  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_fin_employee_advance primary key (ID)
 );
 
 CREATE TABLE erp_fin_voucher_template_line(
@@ -357,6 +398,40 @@ CREATE TABLE erp_fin_bank_statement(
   constraint PK_erp_fin_bank_statement primary key (ID)
 );
 
+CREATE TABLE erp_fin_expense_claim(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  ORG_ID NUMBER(20) NOT NULL ,
+  CLAIMANT_ID NUMBER(20) NOT NULL ,
+  DEPARTMENT_ID NUMBER(20)  ,
+  BUSINESS_DATE DATE NOT NULL ,
+  PAYMENT_MODE INTEGER NOT NULL ,
+  CURRENCY_ID NUMBER(20) NOT NULL ,
+  EXCHANGE_RATE NUMBER(20,8) default 1   ,
+  AMOUNT_SOURCE NUMBER(20,4) default 0   ,
+  AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
+  AMOUNT_WITHOUT_TAX NUMBER(20,4) default 0   ,
+  TAX_AMOUNT NUMBER(20,4) default 0   ,
+  AMOUNT_WITH_TAX NUMBER(20,4) default 0   ,
+  SETTLE_ADVANCE_ID NUMBER(20)  ,
+  REASON VARCHAR2(1000)  ,
+  DOC_STATUS INTEGER NOT NULL ,
+  APPROVE_STATUS INTEGER NOT NULL ,
+  APPROVED_BY VARCHAR2(36)  ,
+  APPROVED_AT DATE  ,
+  POSTED CHAR(1) default 0   ,
+  POSTED_BY VARCHAR2(36)  ,
+  POSTED_AT DATE  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_fin_expense_claim primary key (ID)
+);
+
 CREATE TABLE erp_fin_voucher_line(
   ID NUMBER(20) NOT NULL ,
   VOUCHER_ID NUMBER(20) NOT NULL ,
@@ -448,6 +523,29 @@ CREATE TABLE erp_fin_bank_reconciliation(
   constraint PK_erp_fin_bank_reconciliation primary key (ID)
 );
 
+CREATE TABLE erp_fin_expense_claim_line(
+  ID NUMBER(20) NOT NULL ,
+  CLAIM_ID NUMBER(20) NOT NULL ,
+  LINE_NO INTEGER NOT NULL ,
+  EXPENSE_TYPE INTEGER NOT NULL ,
+  PROJECT_ID NUMBER(20)  ,
+  COST_CENTER_ID NUMBER(20)  ,
+  SUBJECT_ID NUMBER(20)  ,
+  SUBJECT_CODE VARCHAR2(50)  ,
+  AMOUNT_WITHOUT_TAX NUMBER(20,4) default 0   ,
+  TAX_RATE NUMBER(20,8)  ,
+  TAX_AMOUNT NUMBER(20,4) default 0   ,
+  AMOUNT_WITH_TAX NUMBER(20,4) default 0   ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_fin_expense_claim_line primary key (ID)
+);
+
 CREATE TABLE erp_fin_bank_statement_line(
   ID NUMBER(20) NOT NULL ,
   STATEMENT_ID NUMBER(20) NOT NULL ,
@@ -508,6 +606,8 @@ CREATE TABLE erp_fin_bank_reconciliation_line(
       COMMENT ON TABLE erp_prj_project IS '项目';
                 
       COMMENT ON TABLE erp_md_cost_center IS '成本中心';
+                
+      COMMENT ON TABLE erp_md_employee IS '职员';
                 
       COMMENT ON TABLE erp_ast_asset IS '固定资产';
                 
@@ -670,6 +770,62 @@ CREATE TABLE erp_fin_bank_reconciliation_line(
       COMMENT ON COLUMN erp_fin_reconciliation.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_fin_reconciliation.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_fin_employee_advance IS '员工借款单';
+                
+      COMMENT ON COLUMN erp_fin_employee_advance.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.CODE IS '单号';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.ORG_ID IS '核算组织';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.EMPLOYEE_ID IS '借款人';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.ADVANCE_TYPE IS '借款类型';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.BUSINESS_DATE IS '借款日期';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.CURRENCY_ID IS '币种';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.EXCHANGE_RATE IS '汇率';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.AMOUNT_SOURCE IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.AMOUNT_FUNCTIONAL IS '本位币金额';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.SETTLED_AMOUNT IS '已清算金额';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.OUTSTANDING_AMOUNT IS '未还金额';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.PROJECT_ID IS '关联项目';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.DOC_STATUS IS '单据状态';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.APPROVE_STATUS IS '审核状态';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.APPROVED_BY IS '审核人';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.APPROVED_AT IS '审核时间';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.POSTED IS '是否已过账';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.POSTED_BY IS '过账人';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.POSTED_AT IS '过账时间';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_fin_voucher_template_line IS '凭证模板行';
                 
@@ -973,6 +1129,68 @@ CREATE TABLE erp_fin_bank_reconciliation_line(
                     
       COMMENT ON COLUMN erp_fin_bank_statement.UPDATE_TIME IS '修改时间';
                     
+      COMMENT ON TABLE erp_fin_expense_claim IS '费用报销单';
+                
+      COMMENT ON COLUMN erp_fin_expense_claim.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.CODE IS '单号';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.ORG_ID IS '核算组织';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.CLAIMANT_ID IS '报销人';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.DEPARTMENT_ID IS '部门';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.BUSINESS_DATE IS '业务日期';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.PAYMENT_MODE IS '付款方式';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.CURRENCY_ID IS '币种';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.EXCHANGE_RATE IS '汇率';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.AMOUNT_SOURCE IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.AMOUNT_FUNCTIONAL IS '本位币金额';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.AMOUNT_WITHOUT_TAX IS '不含税金额';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.TAX_AMOUNT IS '税额';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.AMOUNT_WITH_TAX IS '价税合计';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.SETTLE_ADVANCE_ID IS '抵扣借款单';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.REASON IS '报销事由';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.DOC_STATUS IS '单据状态';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.APPROVE_STATUS IS '审核状态';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.APPROVED_BY IS '审核人';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.APPROVED_AT IS '审核时间';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.POSTED IS '是否已过账';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.POSTED_BY IS '过账人';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.POSTED_AT IS '过账时间';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim.UPDATE_TIME IS '修改时间';
+                    
       COMMENT ON TABLE erp_fin_voucher_line IS '凭证分录行';
                 
       COMMENT ON COLUMN erp_fin_voucher_line.ID IS 'ID';
@@ -1130,6 +1348,46 @@ CREATE TABLE erp_fin_bank_reconciliation_line(
       COMMENT ON COLUMN erp_fin_bank_reconciliation.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_fin_bank_reconciliation.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_fin_expense_claim_line IS '费用报销单行';
+                
+      COMMENT ON COLUMN erp_fin_expense_claim_line.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim_line.CLAIM_ID IS '报销单ID';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim_line.LINE_NO IS '行号';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim_line.EXPENSE_TYPE IS '费用类型';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim_line.PROJECT_ID IS '项目';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim_line.COST_CENTER_ID IS '成本中心';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim_line.SUBJECT_ID IS '费用科目';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim_line.SUBJECT_CODE IS '科目编码';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim_line.AMOUNT_WITHOUT_TAX IS '不含税金额';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim_line.TAX_RATE IS '税率';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim_line.TAX_AMOUNT IS '税额';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim_line.AMOUNT_WITH_TAX IS '价税合计';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim_line.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim_line.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim_line.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim_line.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim_line.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim_line.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_expense_claim_line.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_fin_bank_statement_line IS '银行对账单行';
                 

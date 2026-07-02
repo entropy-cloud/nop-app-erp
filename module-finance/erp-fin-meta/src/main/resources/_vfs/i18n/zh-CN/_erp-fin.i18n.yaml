@@ -7,6 +7,9 @@ entity:
     ErpFinBankReconciliationLine: 银行对账调整行
     ErpFinBankStatement: 银行对账单
     ErpFinBankStatementLine: 银行对账单行
+    ErpFinEmployeeAdvance: 员工借款单
+    ErpFinExpenseClaim: 费用报销单
+    ErpFinExpenseClaimLine: 费用报销单行
     ErpFinFundAccount: 资金账户
     ErpFinGlBalance: 总账余额
     ErpFinReconciliation: 核销单
@@ -190,6 +193,106 @@ prop:
       statement: null
       statementId: 对账单ID
       transactionDate: 交易日期
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpFinEmployeeAdvance:
+      advanceType: 借款类型
+      advanceType_label: 借款类型
+      amountFunctional: 本位币金额
+      amountSource: 源币种金额
+      approveStatus: 审核状态
+      approveStatus_label: 审核状态
+      approvedAt: 审核时间
+      approvedBy: 审核人
+      businessDate: 借款日期
+      code: 单号
+      createTime: 创建时间
+      createdBy: 创建人
+      currency: null
+      currencyId: 币种
+      delVersion: 逻辑删除版本
+      docStatus: 单据状态
+      docStatus_label: 单据状态
+      employee: null
+      employeeId: 借款人
+      exchangeRate: 汇率
+      id: ID
+      org: null
+      orgId: 核算组织
+      outstandingAmount: 未还金额
+      posted: 是否已过账
+      postedAt: 过账时间
+      postedBy: 过账人
+      project: null
+      projectId: 关联项目
+      remark: 备注
+      settledAmount: 已清算金额
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpFinExpenseClaim:
+      amountFunctional: 本位币金额
+      amountSource: 源币种金额
+      amountWithTax: 价税合计
+      amountWithoutTax: 不含税金额
+      approveStatus: 审核状态
+      approveStatus_label: 审核状态
+      approvedAt: 审核时间
+      approvedBy: 审核人
+      businessDate: 业务日期
+      claimant: null
+      claimantId: 报销人
+      code: 单号
+      createTime: 创建时间
+      createdBy: 创建人
+      currency: null
+      currencyId: 币种
+      delVersion: 逻辑删除版本
+      department: null
+      departmentId: 部门
+      docStatus: 单据状态
+      docStatus_label: 单据状态
+      exchangeRate: 汇率
+      id: ID
+      lines: null
+      org: null
+      orgId: 核算组织
+      paymentMode: 付款方式
+      paymentMode_label: 付款方式
+      posted: 是否已过账
+      postedAt: 过账时间
+      postedBy: 过账人
+      reason: 报销事由
+      remark: 备注
+      settleAdvance: null
+      settleAdvanceId: 抵扣借款单
+      taxAmount: 税额
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpFinExpenseClaimLine:
+      amountWithTax: 价税合计
+      amountWithoutTax: 不含税金额
+      claim: null
+      claimId: 报销单ID
+      costCenter: null
+      costCenterId: 成本中心
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      expenseType: 费用类型
+      expenseType_label: 费用类型
+      id: ID
+      lineNo: 行号
+      project: null
+      projectId: 项目
+      remark: 备注
+      subject: null
+      subjectCode: 科目编码
+      subjectId: 费用科目
+      taxAmount: 税额
+      taxRate: 税率
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本

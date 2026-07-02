@@ -1,0 +1,31 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 费用类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 差旅
+    value: 10
+    description: 
+  
+  - label: 业务招待
+    value: 20
+    description: 
+  
+  - label: 办公
+    value: 30
+    description: 
+  
+  - label: 通讯
+    value: 40
+    description: 
+  
+  - label: 交通
+    value: 50
+    description: 
+  
+  - label: 其他
+    value: 60
+    description: 
+  
