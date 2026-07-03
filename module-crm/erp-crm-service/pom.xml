@@ -74,6 +74,66 @@
             <artifactId>mysql-connector-j</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- test-only: 转化闭环测试需注入 IErpMdPartnerBiz / IErpSalQuotationBiz 的 Bean 实现（app-erp-all 聚合时由 app 层提供）。
+             crm→md/sal 单向无环。核心零污染：sales/master-data 实体零字段新增（仅运行期 Bean 注册）。 -->
+        <dependency>
+            <artifactId>app-erp-master-data-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <artifactId>app-erp-sales-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- test-only: sales-service 的 Bean（ErpSalReturnProcessor 等）注入 IErpInvStockMoveBiz/IErpQaInspectionBiz，
+             须在测试 classpath 提供这些 Bean 实现（与 sales-service 自身测试依赖一致） -->
+        <dependency>
+            <artifactId>app-erp-inventory-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <artifactId>app-erp-quality-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- test-only: sales/finance-service 跨域引用 inventory/quality/finance/projects/assets 模型，
+             须在测试 classpath 提供这些 DAO 实体类（与 sales-service 自身测试依赖一致） -->
+        <dependency>
+            <artifactId>app-erp-inventory-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <artifactId>app-erp-quality-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <artifactId>app-erp-finance-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <artifactId>app-erp-projects-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <artifactId>app-erp-assets-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

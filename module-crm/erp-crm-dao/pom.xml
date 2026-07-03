@@ -18,6 +18,13 @@
             <artifactId>app-erp-master-data-dao</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- compile: 转化闭环契约 IErpCrmConversionBiz 返回/参数引用 ErpSalQuotation（跨域 I*Biz 经 sales dao）。
+             crm→sal 单向无环（sales 不依赖 crm）。核心零污染：sales 实体零字段新增。 -->
+        <dependency>
+            <groupId>io.nop.app</groupId>
+            <artifactId>app-erp-sales-dao</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-auth-dao</artifactId>

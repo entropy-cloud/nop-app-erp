@@ -7,4 +7,16 @@
     <import resource="_dao.beans.xml"/>
 
     <import resource="_service.beans.xml"/>
+
+    <!-- CRM 线索/商机 docStatus 状态机 + 漏斗阶段流转编排 Processor（Facade + Processor 两层，protected step 方法供下游覆盖） -->
+    <bean id="app.erp.crm.service.processor.ErpCrmLeadProcessor"
+          class="app.erp.crm.service.processor.ErpCrmLeadProcessor"/>
+
+    <!-- CRM 线索查重器（companyName/contactEmail/contactPhone 命中既有非终态线索，默认仅提示不阻断） -->
+    <bean id="app.erp.crm.service.support.LeadDuplicateChecker"
+          class="app.erp.crm.service.support.LeadDuplicateChecker"/>
+
+    <!-- CRM 转化闭环 Processor（LEAD→客户+商机、OPPORTUNITY→报价单，跨域经 IErpMdPartnerBiz/IErpSalQuotationBiz） -->
+    <bean id="app.erp.crm.service.processor.ErpCrmConversionProcessor"
+          class="app.erp.crm.service.processor.ErpCrmConversionProcessor"/>
 </beans>
