@@ -1,6 +1,6 @@
 # Extended Domains Business Logic Roadmap
 
-> 最后更新：2026-07-03
+> 最后更新：2026-07-04
 > 本路线图覆盖**核心 5 域之外**的 13 域自定义 BizModel 方法与编排逻辑。
 > 前置条件：`crud-roadmap.md` 中对应域的 CRUD 已完成。
 
@@ -19,7 +19,7 @@
 - 2.8：✅ done（CRP 负荷计算：工作中心日历/班次 + 按产品产能子实体(取代标量 capacity 反模式) + 负荷快照行 + calculateLoad(workcenter×date 聚合 loadHours+setupHours, 重算清旧快照) + getLoadReport(loadHours/capacityHours×efficiency/loadRate/overloaded) + 超负荷阈值门控(erp-mfg.crp-overload-threshold 默认1.0)；APS fallback WorkOrder 计划日期均匀分派，2026-07-03，`docs/plans/2026-07-03-1707-1-manufacturing-crp-load-engine.md`）
 - 2.9：✅ done（供应商评分卡周期评分 + AVL 准入联动：AVL 准入 6 态状态机(APPLIED→APPROVED→PROBATION→SUSPENDED→REJECTED) + 评分卡周期/维度/变量三实体 + finalizeScorecard 引擎(criteria×formula×weight→totalScore→standing, 公式经 XLang 表达式非硬编码) + standing=RED→AVL SUSPENDED 跨域联动 + RFQ 收件人校验(prevent/warn/hold config-gated), 2026-07-03, `docs/plans/2026-07-03-1707-2-supplier-scorecard-avl.md`）
 - 2.11：✅ done（批次召回事件：召回事件头/目标实体 + 5 态状态机(OPEN→APPROVED→IN_PROGRESS→CLOSED/CANCELLED) + 强制审批(erp-qua.recall-require-approval) + 目标定位(IErpInvStockMoveBiz.batchTrace 批次聚合查询 + batchId→batchNo 类型桥 + 追溯未启用报错) + 客户通知门控(close 前全 target returnStatus≠PENDING + notifyCustomer=true) + 批量退货编排(IErpSalReturnBiz 同步调，召回只登记不直接改余额) + NCR 升级召回(upgradeToRecall→ESCALATED_TO_RECALL + 建召回继承物料/严重程度)，2026-07-03，`docs/plans/2026-07-03-1707-3-quality-recall-event.md`）
-- 2.10：`todo`
+- 2.10：✅ done（VMI 所有权转移：StockBalance/Ledger 加 ownerId/ownershipType 维度(config-gated, ownership-tracking-enabled 默认关) + ErpInvOwnershipTransfer/Line 三态状态机(DRAFT→CONFIRMED→DONE/CANCELLED) + 同库位余额重分类(sourceLocId=destLocId 物理不变) + OWNERSHIP_TRANSFER 业财过账(借存货/贷应付-供应商) + DIRECTION_PAYABLE 辅助账(待供应商采购发票核销) + vmi-auto-generate-ap config 门控，2026-07-04，`docs/plans/2026-07-04-0549-1-inventory-vmi-ownership-transfer.md`）
 
 ### Milestone M3 — 新增 8 域
 - 3.1–3.21：`todo`
