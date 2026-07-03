@@ -1,7 +1,7 @@
 # 2026-07-02-2237-2-manufacturing-mrp-engine MRP 计算引擎（需求整合 + BOM 展开 + 净需求 + 计划订单 + 释放）
 
-> Plan Status: active
-> Last Reviewed: 2026-07-02
+> Plan Status: completed
+> Last Reviewed: 2026-07-03
 > Source: `docs/backlog/extended-roadmap.md` 工作项 2.3（MRP 计算引擎）；`docs/design/manufacturing/mrp.md`
 > Related: `2026-07-02-2237-1-manufacturing-workorder-jobcard-state-machine.md`（N=1 工单，MRP 释放 orderType=WORK_ORDER_REQUEST 的前置）、`2026-07-02-1538-2-manufacturing-bom-routing-rollup.md`（BOM 展开基线 BomExpander）
 > Mission: erp
@@ -65,51 +65,51 @@
 
 ### Phase 1 — 需求整合 + 库存可用量 + BOM 多级展开净需求 + 测试
 
-Status: planned
+Status: completed
 Targets: `module-manufacturing/erp-mfg-service/.../entity/ErpMfgMrpPlanBizModel.java`(扩)、`IErpMfgMrpPlanBiz.java`(扩)、`MrpEngine.java`(新)、`DemandAggregator.java`(新)、`erp-mfg-service/pom.xml`(加 sales-dao 依赖)、`ErpMfgErrors.java`(扩)、`ErpMfgConstants.java`(扩)、beans.xml
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: BOM 展开基线（1538-2 done）。N=1 工单非此阶段前置（释放才需）。
 
-- [ ] `Add`：`DemandAggregator.aggregate(planId)` —— 整合独立需求：销售订单行（未交量，经 `IErpSalOrderBiz` 只读 `ErpSalOrder`/`ErpSalOrderLine`）+ 安全库存补货（ErpMdMaterial.safetyStock − 当前余额 availableQuantity < 0 时补货）+ 手工 ErpMfgMrpDemand；合并同物料同期毛需求；写入 ErpMfgMrpDemand（demandSource/sourceBillType/sourceBillCode/quantity）。
+- [x] `Add`：`DemandAggregator.aggregate(planId)` —— 整合独立需求：销售订单行（未交量，经 `IErpSalOrderBiz` 只读 `ErpSalOrder`/`ErpSalOrderLine`）+ 安全库存补货（ErpMdMaterial.safetyStock − 当前余额 availableQuantity < 0 时补货）+ 手工 ErpMfgMrpDemand；合并同物料同期毛需求；写入 ErpMfgMrpDemand（demandSource/sourceBillType/sourceBillCode/quantity）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`MrpEngine.runMrp(planId)` —— MrpPlan.status DRAFT→RUNNING；按需求物料，制造件经 `BomExpander.explode` 多级展开（DFS 层级标记，同物料取最低层级避免重复计算）；各物料净需求 = 毛需求 − 可用量（`availableQuantity` + scheduledReceipt，负值归零）；计划订单类型判定（`BomExplosionNode.manufactured` 或 active BOM 存在 → WORK_ORDER_REQUEST；无 → PURCHASE_REQUEST）；提前期偏移（采购件 leadTimeDays / 制造件 routing 累计工时换算）；lot-for-lot + `erp-mfg.default-lot-size` 取整；写入 ErpMfgMrpPlanLine（全列 + parentLineId pegging）；MrpPlan.status→COMPLETED。
+- [x] `Add`：`MrpEngine.runMrp(planId)` —— MrpPlan.status DRAFT→RUNNING；按需求物料，制造件经 `BomExpander.explode` 多级展开（DFS 层级标记，同物料取最低层级避免重复计算）；各物料净需求 = 毛需求 − 可用量（`availableQuantity` + scheduledReceipt，负值归零）；计划订单类型判定（`BomExplosionNode.manufactured` 或 active BOM 存在 → WORK_ORDER_REQUEST；无 → PURCHASE_REQUEST）；提前期偏移（采购件 leadTimeDays / 制造件 routing 累计工时换算）；lot-for-lot + `erp-mfg.default-lot-size` 取整；写入 ErpMfgMrpPlanLine（全列 + parentLineId pegging）；MrpPlan.status→COMPLETED。
   - Skill: `nop-backend-dev`
-- [ ] `Decision`：FORECAST 缺失（本期不支持）+ lot sizing 简化（lot-for-lot + 全局配置）+ 低层码（DFS 层级标记非物化列）+ 可用量来源，见 Task Route Decision。
+- [x] `Decision`：FORECAST 缺失（本期不支持）+ lot sizing 简化（lot-for-lot + 全局配置）+ 低层码（DFS 层级标记非物化列）+ 可用量来源，见 Task Route Decision。
   - Skill: none
-- [ ] `Proof`：`TestErpMfgMrpEngine`（需求整合销售订单+安全库存+手工；制造件多级展开净需求；采购件不展开直接净需求；计划订单类型判定；lot-for-lot + fixed-lot 取整；提前期偏移；负净需求归零；pegging parentLineId 链）。`mvn test -pl module-manufacturing/erp-mfg-service -am -Dtest=TestErpMfgMrpEngine*`。
+- [x] `Proof`：`TestErpMfgMrpEngine`（需求整合销售订单+安全库存+手工；制造件多级展开净需求；采购件不展开直接净需求；计划订单类型判定；lot-for-lot + fixed-lot 取整；提前期偏移；负净需求归零；pegging parentLineId 链）。`mvn test -pl module-manufacturing/erp-mfg-service -am -Dtest=TestErpMfgMrpEngine*`。
   - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
 > Phase 1 交付 MRP 运行（需求整合 + 净需求 + 计划订单生成）。解除 Phase 2 释放的 PlanLine 基线。
 
-- [ ] MRP 运行（需求整合 + BOM 展开 + 净需求 + 计划订单类型判定 + lot sizing）单测通过
+- [x] MRP 运行（需求整合 + BOM 展开 + 净需求 + 计划订单类型判定 + lot sizing）单测通过
 
 ### Phase 2 — 计划订单释放（转采购订单 + 转工单）+ 端到端 + 文档/日志
 
-Status: planned
+Status: completed
 Targets: `module-manufacturing/erp-mfg-service/.../entity/ErpMfgMrpPlanLineBizModel.java`(扩)、`IErpMfgMrpPlanLineBiz.java`(扩)、`MrpReleaseService.java`(新)、`erp-mfg-service/pom.xml`(加 purchase-dao 依赖)、`docs/logs/2026/{执行当日}.md`、`docs/backlog/extended-roadmap.md`、`docs/design/manufacturing/mrp.md`(偏离补注)
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: Phase 1（PlanLine 生成）+ N=1 工单（WORK_ORDER_REQUEST 释放前置）+ purchase 域 CRUD done（PURCHASE_REQUEST 释放前置）。
 
-- [ ] `Add`：`MrpReleaseService.releasePlanLine(planLineId)` —— PURCHASE_REQUEST → 调 `IErpPurOrderBiz` 生成采购订单（`ErpPurOrder`，物料/数量/提前期偏移日期）；WORK_ORDER_REQUEST → 调 `IErpMfgWorkOrderBiz` 生成工单（productId=物料/bomId/plannedQuantity/plannedStartDate）；释放后 isFirmed=true + convertedBillCode 回写；MrpPlan 全部行 firmed 后 status→FIRMED。幂等（已 firmed 拒绝 + 抛 `ErpMfgErrors.ERR_MRP_LINE_ALREADY_FIRMED`）。
+- [x] `Add`：`MrpReleaseService.releasePlanLine(planLineId)` —— PURCHASE_REQUEST → 调 `IErpPurOrderBiz` 生成采购订单（`ErpPurOrder`，物料/数量/提前期偏移日期）；WORK_ORDER_REQUEST → 调 `IErpMfgWorkOrderBiz` 生成工单（productId=物料/bomId/plannedQuantity/plannedStartDate）；释放后 isFirmed=true + convertedBillCode 回写；MrpPlan 全部行 firmed 后 status→FIRMED。幂等（已 firmed 拒绝 + 抛 `ErpMfgErrors.ERR_MRP_LINE_ALREADY_FIRMED`）。
   - Skill: `nop-backend-dev`
-- [ ] `Decision`：释放耦合度（跨域 I*Biz 生成 + isFirmed/convertedBillCode 回写），见 Task Route Decision。
+- [x] `Decision`：释放耦合度（跨域 I*Biz 生成 + isFirmed/convertedBillCode 回写），见 Task Route Decision。
   - Skill: none
-- [ ] `Proof`：端到端 `TestErpMfgMrpEndToEnd`（销售订单需求→MRP 运行→制造件展开+采购件净需求→PlanLine 生成→释放 PURCHASE_REQUEST 转采购订单 + WORK_ORDER_REQUEST 转工单→isFirmed/convertedBillCode 回写→MrpPlan FIRMED；重复释放幂等拒绝）。`mvn test -pl module-manufacturing/erp-mfg-service -am -Dtest=TestErpMfgMrpEndToEnd*`。
+- [x] `Proof`：端到端 `TestErpMfgMrpEndToEnd`（销售订单需求→MRP 运行→制造件展开+采购件净需求→PlanLine 生成→释放 PURCHASE_REQUEST 转采购订单 + WORK_ORDER_REQUEST 转工单→isFirmed/convertedBillCode 回写→MrpPlan FIRMED；重复释放幂等拒绝）。`mvn test -pl module-manufacturing/erp-mfg-service -am -Dtest=TestErpMfgMrpEndToEnd*`。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`docs/logs/2026/{执行当日 month-day}.md` 新增本计划条目（含验证状态）；`extended-roadmap.md` 工作项 2.3 标注 done；`mrp.md` 偏离（FORECAST 无实体 Non-Goal + lot sizing 简化 + 低层码 DFS 非物化 + scheduledReceipt 粗估 + 委外 Non-Goal）补注。
+- [x] `Add`：`docs/logs/2026/{执行当日 month-day}.md` 新增本计划条目（含验证状态）；`extended-roadmap.md` 工作项 2.3 标注 done；`mrp.md` 偏离（FORECAST 无实体 Non-Goal + lot sizing 简化 + 低层码 DFS 非物化 + scheduledReceipt 粗估 + 委外 Non-Goal）补注。
   - Skill: none
 
 Exit Criteria:
 
 > Phase 2 交付释放 + 端到端全链。完整仓库验证属 Closure Gates。
 
-- [ ] 释放（转采购订单 + 转工单 + isFirmed 回写）+ 端到端单测通过
+- [x] 释放（转采购订单 + 转工单 + isFirmed 回写）+ 端到端单测通过
 
 ## Draft Review Record
 
@@ -121,14 +121,14 @@ Exit Criteria:
 
 > 仅在所有项目和每阶段退出标准都勾选 `[x]` 后关闭。完整仓库验证在此处运行一次。
 
-- [ ] 范围内行为完成：MRP 运行（需求整合 + BOM 展开 + 净需求 + 计划订单 + lot sizing + 提前期偏移）+ 释放（转采购订单/工单），行为测试通过
-- [ ] 相关文档对齐：`extended-roadmap.md` 2.3 done 标注；当日日志已记；`mrp.md` Non-Goal 偏离补注
-- [ ] 已运行验证：`mvn test -pl module-manufacturing/erp-mfg-service -am`（CRUD 0 回归 + 新增 MRP 运行/释放）；根 `mvn clean install -DskipTests`
-- [ ] 无范围内项目静默降级（FORECAST/物料批量字段/CRP/AUTO_SCHEDULED/需求时界/委外/scrapRate 均为计划内 Non-Goal）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控、日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：MRP 运行（需求整合 + BOM 展开 + 净需求 + 计划订单 + lot sizing + 提前期偏移）+ 释放（转采购订单/工单），行为测试通过
+- [x] 相关文档对齐：`extended-roadmap.md` 2.3 done 标注；当日日志已记；`mrp.md` Non-Goal 偏离补注
+- [x] 已运行验证：`mvn test -pl module-manufacturing/erp-mfg-service -am`（CRUD 0 回归 + 新增 MRP 运行/释放）；根 `mvn clean install -DskipTests`
+- [x] 无范围内项目静默降级（FORECAST/物料批量字段/CRP/AUTO_SCHEDULED/需求时界/委外/scrapRate 均为计划内 Non-Goal）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控、日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -152,11 +152,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行完成后填写>
+Status Note: 两个 Phase 均已完成并通过本地验证（mfg-service 36 tests / 0 Failures；根 `mvn clean install -DskipTests` BUILD SUCCESS）。范围内行为（MRP 运行全链 + 释放转单）由 7 个新增行为测试覆盖；所有 Non-Goal（FORECAST/物料批量字段/CRP/AUTO_SCHEDULED/需求时界/委外/scrapRate）已在计划 Deferred + mrp.md 显式记录。释放实现的两个必要偏离（直接持久化目标域实体、拆分为两个 purpose-built 释放方法）已在 Task Route Decision + mrp.md + 日志记录。独立结束审计（新会话子代理）已通过（PASS，无 BLOCKER），Plan Status 置 `completed`。
 
 Closure Audit Evidence:
 
-<待独立结束审计后填写>
+- Auditor: independent general subagent（新会话 `ses_0da953b4affe0Czccz6tvUnTxj`，无执行者上下文，冷重播审计）。
+- Evidence: 逐项核对 Phase 1/2 交付物与实时代码——`DemandAggregator`（SO 未交量 + 安全库存缺口 + 保留 MANUAL）、`MrpEngine`（DRAFT→RUNNING→COMPLETED、BomExpander 多级展开+自递归、净需求=毛−可用负值归零、WORK_ORDER_REQUEST/PURCHASE_REQUEST 类型判定、提前期偏移、lot-for-lot+default-lot-size、parentLineId pegging）、`MrpReleaseService`（PURCHASE_REQUEST→ErpPurOrder(+行)/WORK_ORDER_REQUEST→ErpMfgWorkOrder、isFirmed/convertedBillCode 回写、plan→FIRMED、幂等 ERR_MRP_LINE_ALREADY_FIRMED）、`IErpMfgMrpPlanBiz.runMrp` + `IErpMfgMrpPlanLineBiz` 两个 @BizMutation 释放方法 声明并实现、ErpMfgErrors MRP 错误码 + ErpMfgConstants MRP 常量、beans.xml 注册三个服务、pom.xml sales-dao+purchase-dao 依赖。Nop 约定达标（包级 @Inject、@BizMutation、NopException+ErrorCode、CrudBizModel、IDaoProvider service-helper 范式有文档化理由）。验证：`mvn test -pl module-manufacturing/erp-mfg-service -am` = **36 tests / 0 Failures / 0 Errors / 0 Skipped**，BUILD SUCCESS；`mvn clean install -DskipTests` = BUILD SUCCESS。文档对齐（07-03.md 全绿条目、extended-roadmap.md 2.3 ✅ done、mrp.md 偏离补注完整）。所有 Non-Goal（FORECAST/物料批量/CRP/AUTO_SCHEDULED/需求时界/委外/scrapRate）在计划 Deferred + mrp.md 显式记录。文本一致性成立——仅独立审计门控曾为 `[ ]`，本次审计后置 `[x]`。无 BLOCKER；2 个文档化非阻塞 NIT（releasePlanLine→两方法拆分；多级展开自递归驱动）。
+- Verdict: **PASS**（独立审计门控可置 `[x]`）。
 
 Follow-up:
 
