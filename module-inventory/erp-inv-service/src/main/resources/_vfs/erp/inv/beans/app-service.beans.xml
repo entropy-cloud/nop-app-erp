@@ -36,4 +36,8 @@
     <!-- 库存追溯链查询助手（只读，基于移动单自追溯上链） -->
     <bean id="app.erp.inv.service.trace.TraceChainQuery"
           class="app.erp.inv.service.trace.TraceChainQuery"/>
+
+    <!-- 库存移动单状态机/跨域契约编排 Processor（processor-extension-pattern Facade + Processor） -->
+    <bean id="app.erp.inv.service.processor.ErpInvStockMoveProcessor"
+          class="app.erp.inv.service.processor.ErpInvStockMoveProcessor"/>
 </beans>
