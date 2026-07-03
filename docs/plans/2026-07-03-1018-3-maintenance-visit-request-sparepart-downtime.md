@@ -61,54 +61,55 @@
 
 ### Phase 1 — 维护访问状态机 + 设备状态联动 + 维护请求状态机（受理生成访问）+ 测试
 
-Status: planned
+Status: completed
 Targets: `module-maintenance/erp-mnt-service/.../entity/ErpMntVisitBizModel.java`(扩)、`IErpMntVisitBiz.java`(扩)、`ErpMntRequestBizModel.java`(扩)、`IErpMntRequestBiz.java`(扩)、`ErpMntEquipmentBizModel.java`(扩, 状态联动)、`EquipmentStatusLinker.java`(新)、`ErpMntErrors.java`(扩)、`ErpMntConstants.java`(扩)、beans.xml
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: 既有 maintenance 实体 + master-data（职员/设备）。
 
-- [ ] `Add`：`IErpMntVisitBiz` 5 态——`schedule`（DRAFT→SCHEDULED，校验 assignedTo+计划时间，排程冲突提示）、`start`（SCHEDULED→IN_PROGRESS + `EquipmentStatusLinker` 设备→UNDER_MAINTENANCE）、`complete`（IN_PROGRESS→COMPLETED + 设备恢复 + completedBy/completedAt/totalMinutes）、`cancel`（非终态→CANCELLED + 设备恢复）。
+- [x] `Add`：`IErpMntVisitBiz` 5 态——`schedule`（DRAFT→SCHEDULED，校验 assignedTo+计划时间，排程冲突提示）、`start`（SCHEDULED→IN_PROGRESS + `EquipmentStatusLinker` 设备→UNDER_MAINTENANCE）、`complete`（IN_PROGRESS→COMPLETED + 设备恢复 + completedBy/completedAt/totalMinutes）、`cancel`（非终态→CANCELLED + 设备恢复）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`IErpMntRequestBiz` 6 态——`accept`（OPEN→ACCEPTED + 生成访问 DRAFT visitType=RESPONSIVE + acceptedBy）、`startRepair`（ACCEPTED→IN_PROGRESS）、`complete`（IN_PROGRESS→COMPLETED）、`reject`（OPEN/ACCEPTED→REJECTED）、`cancel`（OPEN/ACCEPTED→CANCELLED）。
+- [x] `Add`：`IErpMntRequestBiz` 6 态——`accept`（OPEN→ACCEPTED + 生成访问 DRAFT visitType=RESPONSIVE + acceptedBy）、`startRepair`（ACCEPTED→IN_PROGRESS）、`complete`（IN_PROGRESS→COMPLETED）、`reject`（OPEN/ACCEPTED→REJECTED）、`cancel`（OPEN/ACCEPTED→CANCELLED）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`EquipmentStatusLinker`——设备状态联动（start→UNDER_MAINTENANCE / complete→恢复前置快照；config-gated `erp-mnt.equipment-status-link-enabled`）。
+- [x] `Add`：`EquipmentStatusLinker`——设备状态联动（start→UNDER_MAINTENANCE / complete→恢复前置快照；config-gated `erp-mnt.equipment-status-link-enabled`）。
   - Skill: `nop-backend-dev`
-- [ ] `Decision`：设备状态联动范围 + 请求受理生成访问 visitType，见 Task Route Decision。
+- [x] `Decision`：设备状态联动范围 + 请求受理生成访问 visitType，见 Task Route Decision。
   - Skill: none
-- [ ] `Proof`：`TestErpMntVisitRequestStateMachine`（访问 happy path DRAFT→SCHEDULED→IN_PROGRESS(设备UNDER_MAINTENANCE)→COMPLETED(设备恢复)；排程冲突提示；cancel 设备恢复；终态不可恢复；请求 accept 生成访问 RESPONSIVE；请求 reject/cancel；非法迁移抛错）。`mvn test -pl module-maintenance/erp-mnt-service -am -Dtest=TestErpMntVisitRequestStateMachine*`。
+- [x] `Proof`：`TestErpMntVisitRequestStateMachine`（访问 happy path DRAFT→SCHEDULED→IN_PROGRESS(设备UNDER_MAINTENANCE)→COMPLETED(设备恢复)；排程冲突提示；cancel 设备恢复；终态不可恢复；请求 accept 生成访问 RESPONSIVE；请求 reject/cancel；非法迁移抛错）。`mvn test -pl module-maintenance/erp-mnt-service -am -Dtest=TestErpMntVisitRequestStateMachine*`。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
 > Phase 1 交付访问/请求状态机 + 设备状态联动。解除 Phase 2 备件消耗（访问关联）+ 计划到期生成（visitType=PLANNED）基线。
 
-- [ ] 访问 5 态 + 请求 6 态（受理生成访问）+ 设备状态联动单测通过
+- [x] 访问 5 态 + 请求 6 态（受理生成访问）+ 设备状态联动单测通过
 
 ### Phase 2 — 备件消耗→inventory 出库 + 维护计划到期生成访问 + 测试
 
-Status: planned
+Status: completed
 Targets: `ErpMntSparePartUsageBizModel.java`(扩)、`IErpMntSparePartUsageBiz.java`(扩)、`ErpMntScheduleBizModel.java`(扩)、`IErpMntScheduleBiz.java`(扩)、`SparePartIssueService.java`(新)、`ScheduleDueGenerator.java`(新)、`erp-mnt-service/pom.xml`(新 inv-dao 依赖)、beans.xml
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: Phase 1（访问关联）；**新增 erp-mnt-service→erp-inv-dao compile 依赖**（pom，起步落实）；StockMove done（1.3）。
 
-- [ ] `Add`：`erp-mnt-service/pom.xml` 新增 `app-erp-inventory-dao` 依赖。
+- [x] `Add`：`erp-mnt-service/pom.xml` 新增 `app-erp-inventory-dao` 依赖。
   - Skill: none
-- [ ] `Add`：`IErpMntSparePartUsageBiz.confirm(usageId)`——推进头 docStatus(DRAFT→ACTIVE)/approveStatus 后，`SparePartIssueService` 按行调 `IErpInvStockMoveBiz.generateMove(StockMoveRequest{relatedBillType, relatedBillCode=备件消耗单号, 出库})`（自动 DONE，写流水 + 扣余额）+ posted=true + totalAmount 聚合；可用量不足回滚抛错。
+- [x] `Add`：`IErpMntSparePartUsageBiz.confirm(usageId)`——推进头 docStatus(DRAFT→ACTIVE)/approveStatus 后，`SparePartIssueService` 按行调 `IErpInvStockMoveBiz.generateMove(StockMoveRequest{relatedBillType, relatedBillCode=备件消耗单号, 出库})`（自动 DONE，写流水 + 扣余额）+ posted=true + totalAmount 聚合；可用量不足回滚抛错。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`IErpMntScheduleBiz.generateDueVisits(asOfDate)`——`ScheduleDueGenerator` 扫描 active 计划 nextDueDate ≤ asOfDate 生成 DRAFT 访问（visitType=PLANNED + scheduleId 关联）+ 按 recurrenceType/frequency 推进 nextDueDate；`erp-mnt.auto-generate-due-visits` 门控。
+  - **Fix（posted 语义回归）**：原 `usage.setPosted(move.getPosted())` 误取 inventory 的财务过账标记（维修费用过账 MAINTENANCE_ISSUE 为本期 Non-Goal，inventory 侧对 `ERP_MNT_SPARE_PART` 联动跳过 SALES_OUTPUT 派发→`move.posted` 恒 false）。修正为 `posted = (move.docStatus == DONE)`（「库存已出库」语义，对齐 plan Non-Goal）；`ErpMntConstants` 补 `STOCK_MOVE_DOC_STATUS_DONE=30` 调用方副本（main 代码不依赖 inventory-service）；inventory 域 `ErpInvConstants` 补 `RELATED_BILL_TYPE_MNT_SPARE_PART` + `InvPostingDispatcher.resolveBusinessType` 跳过该联动（与 PUR_RETURN/SAL_RETURN 同模式，避免误派 SALES_OUTPUT 凭证）。
+- [x] `Add`：`IErpMntScheduleBiz.generateDueVisits(asOfDate)`——`ScheduleDueGenerator` 扫描 active 计划 nextDueDate ≤ asOfDate 生成 DRAFT 访问（visitType=PLANNED + scheduleId 关联）+ 按 recurrenceType/frequency 推进 nextDueDate；`erp-mnt.auto-generate-due-visits` 门控。
   - Skill: `nop-backend-dev`
-- [ ] `Decision`：备件消耗出库耦合度（同步 I*Biz R）+ 计划到期生成触发（暴露入口 + 门控），见 Task Route Decision。
+- [x] `Decision`：备件消耗出库耦合度（同步 I*Biz R）+ 计划到期生成触发（暴露入口 + 门控），见 Task Route Decision。
   - Skill: none
-- [ ] `Proof`：`TestErpMntSparePartAndSchedule`（备件消耗 confirm→`generateMove` 出库移动单 DONE + 余额扣减 + posted + 头 docStatus/approveStatus 推进；可用量不足回滚；计划到期 generateDueVisits 生成 PLANNED 访问 + nextDueDate 推进；门控关闭不生成）。`mvn test -pl module-maintenance/erp-mnt-service -am -Dtest=TestErpMntSparePartAndSchedule*`。
+- [x] `Proof`：`TestErpMntSparePartAndSchedule`（备件消耗 confirm→`generateMove` 出库移动单 DONE + 余额扣减 + posted + 头 docStatus/approveStatus 推进；可用量不足回滚；计划到期 generateDueVisits 生成 PLANNED 访问 + nextDueDate 推进；门控关闭不生成）。`mvn test -pl module-maintenance/erp-mnt-service -am -Dtest=TestErpMntSparePartAndSchedule*`。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 备件消耗出库（+余额扣减/+可用量不足回滚）+ 计划到期生成（+nextDueDate 推进）单测通过
-- [ ] erp-mnt-service→erp-inv-dao 依赖已落实且 inventory 既有套件无回归
+- [x] 备件消耗出库（+余额扣减/+可用量不足回滚）+ 计划到期生成（+nextDueDate 推进）单测通过
+- [x] erp-mnt-service→erp-inv-dao 依赖已落实且 inventory 既有套件无回归
 
 ### Phase 3 — 停机记录（totalMinutes + 设备 DOWN 联动）+ 端到端 + 文档/日志
 

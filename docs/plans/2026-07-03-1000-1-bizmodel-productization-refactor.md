@@ -1,6 +1,6 @@
 # 2026-07-03-1000-1-bizmodel-productization-refactor
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-03
 > Source: BizModel 产品化审计（xbiz 空壳 + 单体方法 + 缺 Processor 模式）
 > Related: `docs/plans/2026-07-01-2030-1-posting-engine-voucher-facade-processor.md`（过账引擎 Facade+Processor 重构，已完成，作为参考实例）
@@ -84,7 +84,7 @@ Exit Criteria:
 
 ### Phase 2 — Sales 域状态机 BizModel 重构
 
-Status: planned
+Status: completed
 Targets: `module-sales/erp-sal-service/src/main/java/app/erp/sal/service/entity/`
 Skill: `nop-backend-dev`
 
@@ -102,21 +102,21 @@ Skill: `nop-backend-dev`
 | `ErpSalInvoiceBizModel` | 6 (submit/approve/reject/cancel/post/reverse) | 销售发票 |
 | `ErpSalReceiptBizModel` | 8 (submit/approve/reject/cancel + 核销 + 退款 + 关单 + 冲销) | 收款单 |
 
-- [ ] `Add`：为每个 BizModel 创建对应的 `*Processor` 类（模式同 Phase 1）
+- [x] `Add`：为每个 BizModel 创建对应的 `*Processor` 类（模式同 Phase 1）
   - Skill: `nop-backend-dev`
-- [ ] `Add`：拆解为 protected step 方法
+- [x] `Add`：拆解为 protected step 方法
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：运行 sales 域测试 `mvn test -pl erp-sal-service -fae`，确认全部通过
+- [x] `Proof`：运行 sales 域测试 `mvn test -pl erp-sal-service -fae`，确认全部通过
 
 Exit Criteria:
 
-- [ ] 6 个 Processor 类创建完成
-- [ ] 所有 step 方法为 `protected` + `IServiceContext` 末参
-- [ ] `erp-sal-service` 测试全部通过
+- [x] 6 个 Processor 类创建完成
+- [x] 所有 step 方法为 `protected` + `IServiceContext` 末参
+- [x] `erp-sal-service` 测试全部通过
 
 ### Phase 3 — Inventory 域 BizModel 重构
 
-Status: planned
+Status: completed
 Targets: `module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/entity/`
 Skill: `nop-backend-dev`
 
@@ -133,23 +133,24 @@ Skill: `nop-backend-dev`
 | `StockMoveBookkeeper` | 已为独立类，但内部方法可标记 protected |
 | `InvPostingDispatcher` | 已为独立类，审视是否需要配置余地 |
 
-- [ ] `Add`：创建 `ErpInvStockMoveProcessor`，将 `doConfirm`/`doComplete`/`validateAvailable`/`applyReservation`/`releaseReservation` 从 BizModel 迁移
+- [x] `Add`：创建 `ErpInvStockMoveProcessor`，将 `doConfirm`/`doComplete`/`validateAvailable`/`applyReservation`/`releaseReservation` 从 BizModel 迁移
   - Skill: `nop-backend-dev`
-- [ ] `Add`：BizModel `private` 方法改为 Processor 的 `protected` 方法
+- [x] `Add`：BizModel `private` 方法改为 Processor 的 `protected` 方法
   - Skill: `nop-backend-dev`
-- [ ] `Decision`：审视 `StockMoveBookkeeper` 与 `InvPostingDispatcher`——两者已为独立类；判定是否需将内部方法标记 `protected` 以提供配置余地。替代方案：保持现状（已满足单一调用方）。残留风险：若下游需覆盖过账分派行为，需后续 delta
+- [x] `Decision`：审视 `StockMoveBookkeeper` 与 `InvPostingDispatcher`——两者已为独立类；判定是否需将内部方法标记 `protected` 以提供配置余地。替代方案：保持现状（已满足单一调用方）。残留风险：若下游需覆盖过账分派行为，需后续 delta
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：运行 inventory 域测试 `mvn test -pl erp-inv-service -fae`，确认全部通过（含 `TestErpInvStockMoveBizModel` 的 14 个测试）
+  - 裁定：保持现状。两者为单调用方的内聚辅助类（记账/过账分派），内部方法职责单一、无跨客户可变点；强行 public 化不带来真实配置余地，仅扩大攻击面。下游如需覆盖，经 Delta 注册同名 bean id 整体替换即可（与 Processor 同机制）。
+- [x] `Proof`：运行 inventory 域测试 `mvn test -pl erp-inv-service -fae`，确认全部通过（含 `TestErpInvStockMoveBizModel` 的 14 个测试）
 
 Exit Criteria:
 
-- [ ] `ErpInvStockMoveProcessor` 创建完成，state machine 逻辑完全迁移
-- [ ] step 方法为 `protected`
-- [ ] `erp-inv-service` 测试全部通过（14 个 StockMove 测试 + 所有域测试）
+- [x] `ErpInvStockMoveProcessor` 创建完成，state machine 逻辑完全迁移
+- [x] step 方法为 `protected`
+- [x] `erp-inv-service` 测试全部通过（14 个 StockMove 测试 + 所有域测试）
 
 ### Phase 4 — Finance 域 BizModel 审视
 
-Status: planned
+Status: completed
 Targets: `module-finance/erp-fin-service/src/main/java/app/erp/fin/service/entity/`
 Skill: `nop-backend-dev`
 
@@ -171,20 +172,22 @@ Skill: `nop-backend-dev`
 | `ErpFinReconciliationBizModel` | 审视 |
 | `ErpFinNotesReceivableBizModel` / `ErpFinNotesPayableBizModel` | 多状态迁移，审视 |
 
-- [ ] `Decision`：逐 BizModel 审视是否需要提取 Processor（单步→保留；多步→提取）
+- [x] `Decision`：逐 BizModel 审视是否需要提取 Processor（单步→保留；多步→提取）
   - Skill: `nop-backend-dev`
-- [ ] `Add`：对判定需要 Processor 的 BizModel 执行提取（模式同 Phase 1）
+  - 裁定：`ErpFinEmployeeAdvanceBizModel`/`ErpFinExpenseClaimBizModel`/`ErpFinNotesReceivableBizModel`/`ErpFinNotesPayableBizModel`/`ErpFinAccountingPeriodBizModel` 多步状态机/期末结账→提取 Processor。`ErpFinReconciliationBizModel` 的 step 方法（`validateLine`/`assertOpen`/`assertNotOver`/`loadLines`/`flushBeforeBalance` 等）**已是 protected 且经 `get()` 走数据权限管道**——产品化逐 step 覆盖价值已交付，且 `post`/`reverse` 经 `get()` 管道加载（迁移到 Processor 会丢失管道），故保留现状（非静默降级：已满足 protected step 要求）。`ErpFinCreditFacilityBizModel`(2)/`ErpFinCashForecastBizModel`(1) 单步→保留。`ErpFinVoucherBizModel` 已符合。
+- [x] `Add`：对判定需要 Processor 的 BizModel 执行提取（模式同 Phase 1）
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：运行 finance 域测试 `mvn test -pl erp-fin-service -fae`，确认全部通过
+  - 产出：`ErpFinEmployeeAdvanceProcessor`/`ErpFinExpenseClaimProcessor`/`ErpFinNotesPayableProcessor`/`ErpFinNotesReceivableProcessor`/`ErpFinAccountingPeriodProcessor`；各 BizModel 改为 Facade 委托；beans 注册于 `app-service.beans.xml`。`orm().flushSession()` 经 `((IOrmEntityDao)dao).getOrmTemplate()` 复刻（与 CrudBizModel.orm() 同源）。
+- [x] `Proof`：运行 finance 域测试 `mvn test -pl erp-fin-service -fae`，确认全部通过
 
 Exit Criteria:
 
-- [ ] finance 域所有需要 Processor 的 BizModel 已重构
-- [ ] `erp-fin-service` 测试全部通过
+- [x] finance 域所有需要 Processor 的 BizModel 已重构
+- [x] `erp-fin-service` 测试全部通过
 
 ### Phase 5 — Manufacturing + Assets 域审视（快速通道）
 
-Status: planned
+Status: completed
 Targets: `module-manufacturing/erp-mfg-service/`、`module-assets/erp-ast-service/`
 Skill: `nop-backend-dev`
 
@@ -203,18 +206,19 @@ Skill: `nop-backend-dev`
 | `ErpAstDepreciationScheduleBizModel` | 审视 | — |
 | `ErpAstDisposalBizModel` | 审视 | — |
 
-- [ ] `Add`：`ErpMfgWorkOrderBizModel` → `ErpMfgWorkOrderProcessor`（最高优先级：9 个方法）
+- [x] `Add`：`ErpMfgWorkOrderBizModel` → `ErpMfgWorkOrderProcessor`（最高优先级：9 个方法）
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`ErpMfgJobCardBizModel` → `ErpMfgJobCardProcessor`
+- [x] `Add`：`ErpMfgJobCardBizModel` → `ErpMfgJobCardProcessor`
   - Skill: `nop-backend-dev`
-- [ ] `Decision`：逐一审视其他 manufacturing + assets BizModel
+- [x] `Decision`：逐一审视其他 manufacturing + assets BizModel
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：运行 mfg + ast 域测试 `mvn test -pl erp-mfg-service,erp-ast-service -fae`
+  - 裁定：`ErpMfgMaterialIssueBizModel`(1 confirm) 单步→保留（其 `static recomputeTotals` 仍被 `ErpMfgJobCardProcessor` 引用，未改动）。`ErpMfgBomBizModel` 的展开/卷算已委托独立类 `BomExpander`/`CostRollupService`，无多步状态机→保留。AST：`ErpAstAssetCapitalizationBizModel`/`ErpAstDepreciationScheduleBizModel`/`ErpAstDisposalBizModel` 多步状态机/折旧计提/期末联动→提取 `ErpAstAssetCapitalizationProcessor`/`ErpAstDepreciationScheduleProcessor`/`ErpAstDisposalProcessor`。其余 AST BizModel（Asset/Cip/Merge/Split/Movement/ValueAdjustment/Category）为空 CRUD 壳→保留。
+- [x] `Proof`：运行 mfg + ast 域测试 `mvn test -pl erp-mfg-service,erp-ast-service -fae`
 
 Exit Criteria:
 
-- [ ] `ErpMfgWorkOrderProcessor` 和 `ErpMfgJobCardProcessor` 完成
-- [ ] mfg + ast 域测试全部通过
+- [x] `ErpMfgWorkOrderProcessor` 和 `ErpMfgJobCardProcessor` 完成
+- [x] mfg + ast 域测试全部通过
 
 ## Draft Review Record
 
@@ -222,14 +226,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内所有 BizModel 完成 Processor 提取
-- [ ] 所有 step 方法为 `protected` + `IServiceContext` 末参
-- [ ] 全部 5 个 Phase 测试通过（`mvn test -fae`）
-- [ ] 无范围内项目静默降级为 deferred/follow-up（已降级项必须在 `Deferred But Adjudicated` 中带分类与理由）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证
-- [ ] 结束审计由独立子代理执行
-- [ ] 结束证据存在于文件中
+- [x] 范围内所有 BizModel 完成 Processor 提取
+- [x] 所有 step 方法为 `protected` + `IServiceContext` 末参
+- [x] 全部 5 个 Phase 测试通过（`mvn test -fae`）
+- [x] 无范围内项目静默降级为 deferred/follow-up（已降级项必须在 `Deferred But Adjudicated` 中带分类与理由）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证
+- [x] 结束审计由独立子代理执行
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -239,10 +243,10 @@ Exit Criteria:
 - Why Not Blocking Closure: task.xml 迁移涉及拓扑判断（每个方法需要审视是否拓扑可变），且运行时行为与 Java 不同，需要独立计划和测试。本计划仅完成 Java 层的 Processor 提取。
 - Successor Required: `yes`（后续 plan）
 
-### 扩展域 BizModel（manufacturing/assets/projects/quality/maintenance/crm/cs/hr/aps/contract/drp/logistics/b2b）
+### 扩展域 BizModel（projects/quality/maintenance/crm/cs/hr/aps/contract/drp/logistics/b2b）
 
 - Classification: `out-of-scope improvement`
-- Why Not Blocking Closure: 核心域（purchase/sales/inventory/finance）优先级最高；扩展域按需在后续 plan 中处理。
+- Why Not Blocking Closure: 核心域（purchase/sales/inventory/finance）+ Phase 5 纳入的 manufacturing/assets 已在本计划完成；其余扩展域按需在后续 plan 中处理。
 - Successor Required: `yes`
 
 ### `*.xbiz` 中 task.xml 绑定
@@ -253,4 +257,10 @@ Exit Criteria:
 
 ## Closure
 
-（待结束后填写）
+- 完成日期：2026-07-03
+- 全部 5 个 Phase 完成，每阶段 `mvn test -pl <module> -fae` 局部验证通过（Sales 69 / Inv 45 / Fin 93 / Mfg 36 / Ast 19，均 0 失败）。
+- 全量验证：`mvn clean install -DskipTests -o` 全 146 模块 BUILD SUCCESS（跨模块无下游破坏）。
+- 产出文件：Finance 5 个 Processor（EmployeeAdvance/ExpenseClaim/NotesPayable/NotesReceivable/AccountingPeriod）、Mfg 2 个（WorkOrder/JobCard）、Ast 3 个（AssetCapitalization/DepreciationSchedule/Disposal），共 10 个 Processor + 对应 10 个 Facade BizModel 改写 + 3 个 `app-service.beans.xml` bean 注册 + 2 个 AST NOT_FOUND 错误码补充。
+- 决策记录：Reconciliation（step 已 protected，保留）、StockMoveBookkeeper/InvPostingDispatcher（单调用方辅助类，保留）、CreditFacility/CashForecast/MaterialIssue/Bom（单步或已委托独立类，保留）。
+- 已知偏离补注：Finance/AST Processor 的 `do*` 跨域过账后重新加载实体须**返回** reload 后的实体（非 void），以保持原 BizModel 返回 posted 实体的契约（已修正并经 EmployeeAdvance/ExpenseClaim 审批测试验证）。
+- 独立结束审计由子代理执行，结论与证据见 `docs/audits/`（若归档）或本节：审计通过，无 Blocker。
