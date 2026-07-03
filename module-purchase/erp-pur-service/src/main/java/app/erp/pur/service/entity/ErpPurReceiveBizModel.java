@@ -1,68 +1,25 @@
 
 package app.erp.pur.service.entity;
 
-import app.erp.inv.biz.IErpInvStockMoveBiz;
-import app.erp.inv.biz.StockMoveRequest;
-import app.erp.inv.dao.entity.ErpInvStockMove;
-import app.erp.md.biz.IErpMdPartnerBiz;
-import app.erp.md.dao.entity.ErpMdPartner;
-import app.erp.pur.biz.IErpPurOrderBiz;
 import app.erp.pur.biz.IErpPurReceiveBiz;
-import app.erp.pur.dao.entity.ErpPurOrderLine;
 import app.erp.pur.dao.entity.ErpPurReceive;
-import app.erp.pur.dao.entity.ErpPurReceiveLine;
-import app.erp.pur.service.ErpPurConstants;
-import app.erp.pur.service.ErpPurErrors;
-import app.erp.qa.biz.IErpQaInspectionBiz;
-import app.erp.qa.biz.InspectionTrigger;
+import app.erp.pur.service.processor.ErpPurReceiveProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.auth.IUserContext;
-import io.nop.api.core.beans.query.QueryBean;
-import io.nop.api.core.exceptions.NopException;
-import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
-import io.nop.dao.api.IEntityDao;
-import jakarta.inject.Inject;
 import io.nop.core.context.IServiceContext;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static io.nop.api.core.beans.FilterBeans.and;
-import static io.nop.api.core.beans.FilterBeans.eq;
+import jakarta.inject.Inject;
 
 /**
- * 采购入库单 BizModel。在 {@link CrudBizModel} 标准 CRUD 之上实现三轴审批状态机（对齐
- * {@code docs/design/purchase/state-machine.md}）+ 入库审核触发库存移动（对齐
- * {@code docs/design/inventory/cross-domain.md} 的 {@code generateMove} 调用方契约）。
- *
- * <p>跨实体访问对齐 {@code ai-defaults.md}：供应商启用校验经 {@link IErpMdPartnerBiz}；
- * 收货进度回写源订单经 {@link IErpPurOrderBiz}；冲销时定位入库移动单经 {@link IErpInvStockMoveBiz}。
- *
- * <p>状态机迁移校验前置 {@code approveStatus}/{@code docStatus}，违反抛 {@link NopException}。
+ * 采购入库单 BizModel（Facade）。审批状态机 + 入库审核触发库存移动编排委托
+ * {@link ErpPurReceiveProcessor}（protected step 方法，下游可逐 step 覆盖）。
  */
 @BizModel("ErpPurReceive")
 public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implements IErpPurReceiveBiz {
 
     @Inject
-    IErpInvStockMoveBiz stockMoveBiz;
-
-    @Inject
-    ReceiveStockMoveBuilder stockMoveBuilder;
-
-    @Inject
-    IErpPurOrderBiz orderBiz;
-
-    @Inject
-    IErpMdPartnerBiz mdPartnerBiz;
-
-    @Inject
-    IErpQaInspectionBiz inspectionBiz;
+    ErpPurReceiveProcessor receiveProcessor;
 
     public ErpPurReceiveBizModel() {
         setEntityName(ErpPurReceive.class.getName());
@@ -71,329 +28,36 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
     @Override
     @BizMutation
     public ErpPurReceive submit(@Name("receiveId") Long receiveId, IServiceContext context) {
-        ErpPurReceive receive = requireReceive(receiveId, context);
-        requireNotCancelled(receive);
-        Integer status = receive.getApproveStatus();
-        if (status == null) {
-            status = ErpPurConstants.APPROVE_STATUS_UNSUBMITTED;
-        }
-        if (status != ErpPurConstants.APPROVE_STATUS_UNSUBMITTED
-                && status != ErpPurConstants.APPROVE_STATUS_REJECTED) {
-            throw illegalTransition(receive, status, "UNSUBMITTED 或 REJECTED");
-        }
-        requireLinesNonEmpty(receive);
-        requireSupplierActive(receive, context);
-        receive.setApproveStatus(ErpPurConstants.APPROVE_STATUS_SUBMITTED);
-        dao().updateEntity(receive);
-        return receive;
+        return receiveProcessor.submit(receiveId, context);
     }
 
     @Override
     @BizMutation
     public ErpPurReceive withdrawSubmit(@Name("receiveId") Long receiveId, IServiceContext context) {
-        ErpPurReceive receive = requireReceive(receiveId, context);
-        requireNotCancelled(receive);
-        Integer status = receive.getApproveStatus();
-        if (status == null || status != ErpPurConstants.APPROVE_STATUS_SUBMITTED) {
-            throw illegalTransition(receive, status, "SUBMITTED");
-        }
-        receive.setApproveStatus(ErpPurConstants.APPROVE_STATUS_UNSUBMITTED);
-        dao().updateEntity(receive);
-        return receive;
+        return receiveProcessor.withdrawSubmit(receiveId, context);
     }
 
     @Override
     @BizMutation
     public ErpPurReceive approve(@Name("receiveId") Long receiveId, IServiceContext context) {
-        ErpPurReceive receive = requireReceive(receiveId, context);
-        Integer status = receive.getApproveStatus();
-        // 幂等：已审核单据再次审核为空操作（state-machine §4），库存移动单已存在，不重复触发。
-        if (status != null && status == ErpPurConstants.APPROVE_STATUS_APPROVED) {
-            return receive;
-        }
-        requireNotCancelled(receive);
-        if (status == null || status != ErpPurConstants.APPROVE_STATUS_SUBMITTED) {
-            throw illegalTransition(receive, status, "SUBMITTED");
-        }
-        requireSupplierActive(receive, context);
-
-        // 强制质检门控（plan 2026-07-02-2237-3 Phase 2）：erp-qua.mandatory-inspection-bill-types 配置门控，
-        // 默认空=不强制（无副作用）。属强制类型时：首次审核生成 PENDING 质检单并阻塞，质检合格/让步后再次审核放行。
-        enforceInspectionGate(receive, context);
-
-        ErpInvStockMove move = triggerIncomingMove(receive, context);
-        // 跨域 generateMove 调用可能扰动会话脏跟踪，故重新加载并以 updateEntity 显式持久化。
-        receive = requireEntity(String.valueOf(receiveId), null, context);
-        receive.setApproveStatus(ErpPurConstants.APPROVE_STATUS_APPROVED);
-        receive.setApprovedBy(currentUserId());
-        receive.setApprovedAt(CoreMetrics.currentDateTime());
-        applyPostingResult(receive, move);
-        receive.setReceiveStatus(ErpPurConstants.RECEIVE_STATUS_RECEIVED);
-        dao().updateEntity(receive);
-        rollupOrderReceiveStatus(receive, context);
-        return receive;
+        return receiveProcessor.approve(receiveId, context);
     }
 
     @Override
     @BizMutation
     public ErpPurReceive reject(@Name("receiveId") Long receiveId, IServiceContext context) {
-        ErpPurReceive receive = requireReceive(receiveId, context);
-        requireNotCancelled(receive);
-        Integer status = receive.getApproveStatus();
-        if (status == null || status != ErpPurConstants.APPROVE_STATUS_SUBMITTED) {
-            throw illegalTransition(receive, status, "SUBMITTED");
-        }
-        receive.setApproveStatus(ErpPurConstants.APPROVE_STATUS_REJECTED);
-        dao().updateEntity(receive);
-        return receive;
+        return receiveProcessor.reject(receiveId, context);
     }
 
     @Override
     @BizMutation
     public ErpPurReceive reverseApprove(@Name("receiveId") Long receiveId, IServiceContext context) {
-        ErpPurReceive receive = requireReceive(receiveId, context);
-        Integer status = receive.getApproveStatus();
-        // 幂等：已 REJECTED（曾驳回或已反审核）无更多可冲销，直接返回。
-        if (status != null && status == ErpPurConstants.APPROVE_STATUS_REJECTED) {
-            return receive;
-        }
-        if (status == null || status != ErpPurConstants.APPROVE_STATUS_APPROVED) {
-            throw illegalTransition(receive, status, "APPROVED");
-        }
-        ensureReversed(receive, context);
-        receive = requireEntity(String.valueOf(receiveId), null, context);
-        receive.setApproveStatus(ErpPurConstants.APPROVE_STATUS_REJECTED);
-        dao().updateEntity(receive);
-        return receive;
+        return receiveProcessor.reverseApprove(receiveId, context);
     }
 
     @Override
     @BizMutation
     public ErpPurReceive cancel(@Name("receiveId") Long receiveId, IServiceContext context) {
-        ErpPurReceive receive = requireReceive(receiveId, context);
-        Integer docStatus = receive.getDocStatus();
-        if (docStatus != null && docStatus == ErpPurConstants.DOC_STATUS_CANCELLED) {
-            throw illegalDocTransition(receive, docStatus, "非已作废");
-        }
-        Integer approveStatus = receive.getApproveStatus();
-        if (approveStatus != null && approveStatus == ErpPurConstants.APPROVE_STATUS_APPROVED) {
-            ensureReversed(receive, context);
-            receive = requireEntity(String.valueOf(receiveId), null, context);
-        }
-        receive.setDocStatus(ErpPurConstants.DOC_STATUS_CANCELLED);
-        dao().updateEntity(receive);
-        return receive;
-    }
-
-    // ---------- Phase 2: 库存触发 + 过账接线 + 冲销 ----------
-
-    /**
-     * 审核通过后构造 {@link StockMoveRequest}(INCOMING) 调 {@link IErpInvStockMoveBiz#generateMove}（业务联动自动 DONE、幂等），
-     * 返回生成的入库移动单。移动单 DONE 后库存域内部触发存货过账（PURCHASE_INPUT），{@code billHeadCode}=移动单 code。
-     */
-    ErpInvStockMove triggerIncomingMove(ErpPurReceive receive, IServiceContext context) {
-        List<ErpPurReceiveLine> lines = loadLines(receive.getId());
-        StockMoveRequest request = stockMoveBuilder.build(receive, lines, context);
-        return stockMoveBiz.generateMove(request, context);
-    }
-
-    /**
-     * 将移动单过账结果接线到入库单：{@code receive.posted = move.posted}、{@code postedAt}/{@code postedBy} 落地。
-     * 存货估值过账由库存域独占（InvAcctDocProvider，PURCHASE_INPUT 非 Provider 冲突），purchase 不注册过账 Provider。
-     */
-    private void applyPostingResult(ErpPurReceive receive, ErpInvStockMove move) {
-        receive.setPosted(Boolean.TRUE.equals(move.getPosted()));
-        if (Boolean.TRUE.equals(receive.getPosted())) {
-            receive.setPostedAt(CoreMetrics.currentDateTime());
-            receive.setPostedBy(currentUserId());
-        }
-    }
-
-    /**
-     * 反审核/作废前的内部冲销（Design A）：
-     * <ol>
-     *   <li>按 {@code (ERP_PUR_RECEIVE, receive.code)} 反查原入库移动单（经 {@link IErpInvStockMoveBiz}）；缺失抛
-     *       {@link ErpPurErrors#ERR_MOVE_NOT_FOUND}（APPROVED 却无移动单为数据不一致）。</li>
-     *   <li>按 {@code (REVERSAL, 原单.code)} 查是否已存在反向冲销移动单——已存在则跳过（幂等防双冲销）；
-     *       不存在则调 {@link IErpInvStockMoveBiz#reverse}（库存域 DONE 时冲销流水/余额/红字凭证）。</li>
-     * </ol>
-     */
-    void ensureReversed(ErpPurReceive receive, IServiceContext context) {
-        ErpInvStockMove original = stockMoveBiz.findByRelatedBill(
-                ErpPurConstants.RELATED_BILL_TYPE_PUR_RECEIVE, receive.getCode(), context);
-        if (original == null) {
-            throw new NopException(ErpPurErrors.ERR_MOVE_NOT_FOUND)
-                    .param(ErpPurErrors.ARG_RECEIVE_CODE, receive.getCode());
-        }
-        ErpInvStockMove existingReversal = stockMoveBiz.findByRelatedBill(
-                ErpPurConstants.RELATED_BILL_TYPE_REVERSAL, original.getCode(), context);
-        if (existingReversal != null) {
-            return;
-        }
-        stockMoveBiz.reverse(original.getId(), context);
-    }
-
-    /**
-     * 回写源订单 {@code receiveStatus}：按「累计已收 / 订单数量」按行比较（BigDecimal），全收清→RECEIVED、
-     * 部分收→PARTIAL、未收→UNRECEIVED。当前入库单（正在审核）的行始终计入（避免依赖同事务内查询可见性）；
-     * 其他已审核入库单经查询累加。进度回写经 {@link IErpPurOrderBiz}（跨聚合写）。
-     */
-    void rollupOrderReceiveStatus(ErpPurReceive currentReceive, IServiceContext context) {
-        Long orderId = currentReceive.getOrderId();
-        if (orderId == null) {
-            return;
-        }
-        List<ErpPurOrderLine> orderLines = loadOrderLines(orderId);
-        if (orderLines.isEmpty()) {
-            return;
-        }
-
-        Map<Long, BigDecimal> receivedByOrderLine = new HashMap<>();
-        addLineQuantities(receivedByOrderLine, loadLines(currentReceive.getId()));
-        for (ErpPurReceive r : findApprovedReceives(orderId, context)) {
-            if (r.getId().equals(currentReceive.getId())) {
-                continue;
-            }
-            addLineQuantities(receivedByOrderLine, loadLines(r.getId()));
-        }
-
-        boolean anyReceived = false;
-        boolean allFullyReceived = true;
-        for (ErpPurOrderLine ol : orderLines) {
-            BigDecimal ordered = ol.getQuantity() == null ? BigDecimal.ZERO : ol.getQuantity();
-            BigDecimal received = receivedByOrderLine.getOrDefault(ol.getId(), BigDecimal.ZERO);
-            if (received.signum() > 0) {
-                anyReceived = true;
-            }
-            if (received.compareTo(ordered) < 0) {
-                allFullyReceived = false;
-            }
-        }
-        int rolled;
-        if (allFullyReceived) {
-            rolled = ErpPurConstants.RECEIVE_STATUS_RECEIVED;
-        } else if (anyReceived) {
-            rolled = ErpPurConstants.RECEIVE_STATUS_PARTIAL;
-        } else {
-            rolled = ErpPurConstants.RECEIVE_STATUS_UNRECEIVED;
-        }
-        orderBiz.updateReceiveStatus(orderId, rolled, context);
-    }
-
-    private void addLineQuantities(Map<Long, BigDecimal> map, List<ErpPurReceiveLine> lines) {
-        for (ErpPurReceiveLine rl : lines) {
-            if (rl.getOrderLineId() == null) {
-                continue;
-            }
-            BigDecimal qty = rl.getQuantity() == null ? BigDecimal.ZERO : rl.getQuantity();
-            map.merge(rl.getOrderLineId(), qty, BigDecimal::add);
-        }
-    }
-
-    private List<ErpPurReceive> findApprovedReceives(Long orderId, IServiceContext context) {
-        QueryBean rq = new QueryBean();
-        rq.addFilter(and(eq("orderId", orderId), eq("approveStatus", ErpPurConstants.APPROVE_STATUS_APPROVED)));
-        return findList(rq, null, context);
-    }
-
-    // ---------- validation helpers ----------
-
-    private ErpPurReceive requireReceive(Long receiveId, IServiceContext context) {
-        return requireEntity(String.valueOf(receiveId), null, context);
-    }
-
-    private void requireNotCancelled(ErpPurReceive receive) {
-        Integer docStatus = receive.getDocStatus();
-        if (docStatus != null && docStatus == ErpPurConstants.DOC_STATUS_CANCELLED) {
-            throw illegalDocTransition(receive, docStatus, "非已作废");
-        }
-    }
-
-    private void requireLinesNonEmpty(ErpPurReceive receive) {
-        if (loadLines(receive.getId()).isEmpty()) {
-            throw new NopException(ErpPurErrors.ERR_RECEIVE_LINES_EMPTY)
-                    .param(ErpPurErrors.ARG_RECEIVE_CODE, receive.getCode());
-        }
-    }
-
-    private void requireSupplierActive(ErpPurReceive receive, IServiceContext context) {
-        if (receive.getSupplierId() == null) {
-            return;
-        }
-        ErpMdPartner partner = mdPartnerBiz.findById(receive.getSupplierId(), context);
-        if (partner == null || partner.getStatus() == null
-                || partner.getStatus() != ErpPurConstants.PARTNER_STATUS_ACTIVE) {
-            throw new NopException(ErpPurErrors.ERR_PARTNER_INACTIVE)
-                    .param(ErpPurErrors.ARG_SUPPLIER_ID, receive.getSupplierId());
-        }
-    }
-
-    // ---------- query helpers ----------
-
-    /**
-     * 强制质检门控（config-gated，默认空=不强制）。属强制类型时按入库单行物料逐行触发：首次生成 PENDING 质检单并阻塞，
-     * 质检合格/让步后再次审核放行。billType=ERP_PUR_RECEIPT，inspectionType=INCOMING。
-     */
-    private void enforceInspectionGate(ErpPurReceive receive, IServiceContext context) {
-        String billType = ErpPurConstants.RELATED_BILL_TYPE_PUR_RECEIVE;
-        if (!InspectionTrigger.isMandatoryBillType(billType)) {
-            return;
-        }
-        for (ErpPurReceiveLine line : loadLines(receive.getId())) {
-            if (line.getMaterialId() == null) {
-                continue;
-            }
-            int gate = InspectionTrigger.enforceGate(inspectionBiz, billType, receive.getCode(),
-                    line.getMaterialId(), 10 /* erp-qa/inspection-type INCOMING */,
-                    line.getQuantity(), receive.getSupplierId(), receive.getWarehouseId(), null, context);
-            if (gate == InspectionTrigger.BLOCKED) {
-                throw new NopException(ErpPurErrors.ERR_RECEIVE_INSPECTION_BLOCKED)
-                        .param(ErpPurErrors.ARG_RECEIVE_CODE, receive.getCode());
-            }
-        }
-    }
-
-    List<ErpPurReceiveLine> loadLines(Long receiveId) {
-        // D2 边界场景：同聚合子表加载，父实体已由 requireEntity 经数据权限/Meta 管道授权，子行无独立权限规则。
-        IEntityDao<ErpPurReceiveLine> dao = daoFor(ErpPurReceiveLine.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("receiveId", receiveId));
-        return new ArrayList<>(dao.findAllByQuery(q));
-    }
-
-    private List<ErpPurOrderLine> loadOrderLines(Long orderId) {
-        // D2 边界场景：跨聚合只读加载采购订单行（进度回写用），订单聚合经 orderBiz 跨聚合写时已校验存在性。
-        IEntityDao<ErpPurOrderLine> dao = daoFor(ErpPurOrderLine.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("orderId", orderId));
-        return new ArrayList<>(dao.findAllByQuery(q));
-    }
-
-    // ---------- misc helpers ----------
-
-    private String currentUserId() {
-        try {
-            IUserContext ctx = IUserContext.get();
-            if (ctx == null) {
-                return null;
-            }
-            return ctx.getUserId();
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private NopException illegalTransition(ErpPurReceive receive, Integer current, String expected) {
-        return new NopException(ErpPurErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpPurErrors.ARG_RECEIVE_CODE, receive.getCode())
-                .param(ErpPurErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpPurErrors.ARG_EXPECTED_STATUS, expected);
-    }
-
-    private NopException illegalDocTransition(ErpPurReceive receive, Integer current, String expected) {
-        return new NopException(ErpPurErrors.ERR_ILLEGAL_DOC_STATUS_TRANSITION)
-                .param(ErpPurErrors.ARG_RECEIVE_CODE, receive.getCode())
-                .param(ErpPurErrors.ARG_CURRENT_DOC_STATUS, current)
-                .param(ErpPurErrors.ARG_EXPECTED_DOC_STATUS, expected);
+        return receiveProcessor.cancel(receiveId, context);
     }
 }

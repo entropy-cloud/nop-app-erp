@@ -129,6 +129,12 @@ public interface ErpPurErrors {
             "采购发票 {invoiceCode} 无行明细，不可提交审核",
             ARG_INVOICE_CODE);
 
+    ErrorCode ERR_INVOICE_NOT_FOUND = ErrorCode.define("erp.err.pur.invoice-not-found",
+            "采购发票 {invoiceId} 不存在", ARG_INVOICE_ID);
+
+    ErrorCode ERR_PAYMENT_NOT_FOUND = ErrorCode.define("erp.err.pur.payment-not-found",
+            "付款单 {paymentId} 不存在", ARG_PAYMENT_ID);
+
     ErrorCode ERR_INVOICE_QTY_MISMATCH = ErrorCode.define("erp.err.pur.invoice-qty-mismatch",
             "采购发票 {invoiceCode} 第 {lineNo} 行发票数量 {invoiceQty} 超过入库数量 {receivedQty}，三单匹配失败",
             ARG_INVOICE_CODE, ARG_LINE_NO, ARG_INVOICE_QTY, ARG_RECEIVED_QTY);

@@ -51,4 +51,18 @@
     <!-- 付款→发票域级核销器（ErpPurPaymentLine 多对多，回写 paidStatus/paidAmount/writtenOffStatus） -->
     <bean id="app.erp.pur.service.entity.PaymentSettler"
           class="app.erp.pur.service.entity.PaymentSettler"/>
+
+    <!-- 采购域审批状态机编排 Processor（Facade + Processor 两层结构，protected step 方法供下游覆盖） -->
+    <bean id="app.erp.pur.service.processor.ErpPurOrderProcessor"
+          class="app.erp.pur.service.processor.ErpPurOrderProcessor"/>
+    <bean id="app.erp.pur.service.processor.ErpPurRequisitionProcessor"
+          class="app.erp.pur.service.processor.ErpPurRequisitionProcessor"/>
+    <bean id="app.erp.pur.service.processor.ErpPurReceiveProcessor"
+          class="app.erp.pur.service.processor.ErpPurReceiveProcessor"/>
+    <bean id="app.erp.pur.service.processor.ErpPurReturnProcessor"
+          class="app.erp.pur.service.processor.ErpPurReturnProcessor"/>
+    <bean id="app.erp.pur.service.processor.ErpPurInvoiceProcessor"
+          class="app.erp.pur.service.processor.ErpPurInvoiceProcessor"/>
+    <bean id="app.erp.pur.service.processor.ErpPurPaymentProcessor"
+          class="app.erp.pur.service.processor.ErpPurPaymentProcessor"/>
 </beans>
