@@ -55,4 +55,18 @@
     <!-- 退货退款编排器（已收款退货→反向收款核销行 + 发票 receivedStatus 回写；复用 ReceiptSettler） -->
     <bean id="app.erp.sal.service.entity.ReturnRefundOrchestrator"
           class="app.erp.sal.service.entity.ReturnRefundOrchestrator"/>
+
+    <!-- 销售域审批状态机编排 Processor（Facade + Processor 两层结构，protected step 方法供下游覆盖） -->
+    <bean id="app.erp.sal.service.processor.ErpSalOrderProcessor"
+          class="app.erp.sal.service.processor.ErpSalOrderProcessor"/>
+    <bean id="app.erp.sal.service.processor.ErpSalQuotationProcessor"
+          class="app.erp.sal.service.processor.ErpSalQuotationProcessor"/>
+    <bean id="app.erp.sal.service.processor.ErpSalDeliveryProcessor"
+          class="app.erp.sal.service.processor.ErpSalDeliveryProcessor"/>
+    <bean id="app.erp.sal.service.processor.ErpSalReturnProcessor"
+          class="app.erp.sal.service.processor.ErpSalReturnProcessor"/>
+    <bean id="app.erp.sal.service.processor.ErpSalInvoiceProcessor"
+          class="app.erp.sal.service.processor.ErpSalInvoiceProcessor"/>
+    <bean id="app.erp.sal.service.processor.ErpSalReceiptProcessor"
+          class="app.erp.sal.service.processor.ErpSalReceiptProcessor"/>
 </beans>

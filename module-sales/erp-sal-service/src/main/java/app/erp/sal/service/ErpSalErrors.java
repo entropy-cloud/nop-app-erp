@@ -117,6 +117,9 @@ public interface ErpSalErrors {
 
     // --- 发票作用域错误码（消息文案绑定发票参数，避免复用出库单文案产生误导） ---
 
+    ErrorCode ERR_INVOICE_NOT_FOUND = ErrorCode.define("erp.err.sal.invoice-not-found",
+            "销售发票 {invoiceId} 不存在", ARG_INVOICE_ID);
+
     ErrorCode ERR_INVOICE_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.sal.invoice-illegal-status-transition",
             "销售发票 {invoiceCode} 当前审核状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
             ARG_INVOICE_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
@@ -130,6 +133,9 @@ public interface ErpSalErrors {
             ARG_INVOICE_CODE);
 
     // --- 收款作用域错误码 ---
+
+    ErrorCode ERR_RECEIPT_NOT_FOUND = ErrorCode.define("erp.err.sal.receipt-not-found",
+            "收款单 {receiptId} 不存在", ARG_RECEIPT_ID);
 
     ErrorCode ERR_RECEIPT_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.sal.receipt-illegal-status-transition",
             "收款单 {receiptCode} 当前审核状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",

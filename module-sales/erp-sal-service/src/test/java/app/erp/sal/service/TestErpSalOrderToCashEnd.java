@@ -1,8 +1,15 @@
 package app.erp.sal.service;
 
+import app.erp.fin.biz.IErpFinArApItemBiz;
+import app.erp.fin.biz.IErpFinReconciliationBiz;
+import app.erp.fin.dao.dto.ArApAgingRow;
+import app.erp.fin.dao.dto.ReconciliationLineInput;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
+import app.erp.fin.dao.entity.ErpFinArApItem;
+import app.erp.fin.dao.entity.ErpFinReconciliation;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
+import app.erp.fin.service.ErpFinConstants;
 import app.erp.inv.service.ErpInvConstants;
 import app.erp.md.dao.entity.ErpMdAcctSchema;
 import app.erp.md.dao.entity.ErpMdPartner;
@@ -19,7 +26,10 @@ import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.exceptions.NopException;
 import io.nop.autotest.junit.JunitAutoTestCase;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import io.nop.graphql.core.IGraphQLExecutionContext;
@@ -31,15 +41,21 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
+import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.notIn;
 import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -70,6 +86,12 @@ public class TestErpSalOrderToCashEnd extends JunitAutoTestCase {
     IOrmTemplate ormTemplate;
     @Inject
     IGraphQLEngine graphQLEngine;
+    @Inject
+    IErpFinReconciliationBiz reconciliationBiz;
+    @Inject
+    IErpFinArApItemBiz arApItemBiz;
+
+    private static final IServiceContext CTX = new ServiceContextImpl();
 
     @Test
     public void testOrderToCashEndPartialReceipt() {
@@ -199,6 +221,214 @@ public class TestErpSalOrderToCashEnd extends JunitAutoTestCase {
         assertEquals(ErpSalConstants.APPROVE_STATUS_REJECTED, recRev.getApproveStatus());
         assertFalse(Boolean.TRUE.equals(recRev.getPosted()), "收款 posted 反转 false");
         assertTrue(countVoucherLinks("SR-CASH-002") > rcLinksBefore, "生成红字 RECEIPT 冲销凭证");
+    }
+
+    // ---------- finance reconciliation layer (4.2) ----------
+
+    /**
+     * 4.2 财务核销层补全：在既有 O2C 全链基础上断言 AR_INVOICE/RECEIPT 过账生成应收辅助账
+     * (DIRECTION_RECEIVABLE，openAmount 生命周期)，经财务正式核销单 {@link ErpFinReconciliation}
+     * 核销后辅助账 openAmount 回减至零，账龄查询与核销结果一致。
+     */
+    @Test
+    public void testFinanceReconciliationLayerReceivable() {
+        seedPrereqs();
+        long orderLine = 9431L;
+        long deliveryId = 9432L;
+        long deliveryLineId = 9433L;
+        long invoiceId = 9434L;
+        long invoiceLineId = 9435L;
+        long receiptId = 9436L;
+
+        ormTemplate.runInSession(session -> {
+            seedActiveCustomer();
+            Long orderId = newOrder("SO-FIN-001");
+            newOrderLine(orderId, orderLine, 1, new BigDecimal("10"));
+            newDelivery("SD-FIN-001", deliveryId, orderId);
+            newDeliveryLine(deliveryLineId, deliveryId, orderLine, new BigDecimal("10"));
+            return null;
+        });
+        seedStock("SEED-FIN-001", new BigDecimal("20"), new BigDecimal("5"));
+        assertEquals(0, submitDelivery(deliveryId).getStatus());
+        assertEquals(0, approveDelivery(deliveryId).getStatus());
+
+        // 发票审核 → AR_INVOICE 过账生成应收辅助账（openAmount=含税总额 113）
+        ormTemplate.runInSession(session -> {
+            newInvoice("SI-FIN-001", invoiceId);
+            newInvoiceLine(invoiceLineId, invoiceId, deliveryLineId);
+            return null;
+        });
+        assertEquals(0, submitInvoice(invoiceId).getStatus());
+        assertEquals(0, approveInvoice(invoiceId).getStatus());
+
+        ErpFinArApItem invoiceItem = findArItem(ErpFinConstants.SOURCE_BILL_AR_INVOICE, "SI-FIN-001");
+        assertNotNull(invoiceItem, "AR_INVOICE 过账应生成应收辅助账项");
+        assertEquals(ErpFinConstants.DIRECTION_RECEIVABLE, invoiceItem.getDirection(), "方向=应收");
+        assertEquals(ErpFinConstants.AR_AP_STATUS_OPEN, invoiceItem.getStatus(), "初始 OPEN");
+        assertEquals(0, new BigDecimal("113").compareTo(invoiceItem.getOpenAmountFunctional()),
+                "发票辅助账 openAmount=含税总额 113");
+
+        // 收款审核 → RECEIPT 过账生成应收辅助账（openAmount=收款总额 113）
+        ormTemplate.runInSession(session -> {
+            newReceipt("SR-FIN-001", receiptId, new BigDecimal("113"));
+            return null;
+        });
+        assertEquals(0, submitReceipt(receiptId).getStatus());
+        assertEquals(0, approveReceipt(receiptId).getStatus());
+
+        ErpFinArApItem receiptItem = findArItem(ErpFinConstants.SOURCE_BILL_RECEIPT, "SR-FIN-001");
+        assertNotNull(receiptItem, "RECEIPT 过账应生成收款辅助账项");
+        assertEquals(ErpFinConstants.DIRECTION_RECEIVABLE, receiptItem.getDirection());
+        assertEquals(0, new BigDecimal("113").compareTo(receiptItem.getOpenAmountFunctional()),
+                "收款辅助账 openAmount=113");
+
+        // 核销前未核销合计 = 226（两笔 113）
+        assertEquals(0, new BigDecimal("226").compareTo(sumOpenByDirection(ErpFinConstants.DIRECTION_RECEIVABLE)),
+                "核销前 RECEIVABLE 方向未核销合计=226");
+
+        // 经财务正式核销单 ErpFinReconciliation 核销（收款项↔发票项，全额 113）
+        ErpFinReconciliation head = reconciliationBiz.create(
+                ErpFinConstants.DIRECTION_RECEIVABLE, CUSTOMER_ID, LocalDate.of(2026, 7, 5),
+                Collections.singletonList(reconLine(receiptItem.getId(), invoiceItem.getId(), "113")), CTX);
+        reconciliationBiz.post(head.getId(), CTX);
+
+        // 核销后：双方 openAmount 回减至零，status=SETTLED
+        ErpFinArApItem settledInvoice = reloadItem(invoiceItem.getId());
+        ErpFinArApItem settledReceipt = reloadItem(receiptItem.getId());
+        assertEquals(0, BigDecimal.ZERO.compareTo(settledInvoice.getOpenAmountFunctional()),
+                "核销后发票辅助账 openAmount=0");
+        assertEquals(ErpFinConstants.AR_AP_STATUS_SETTLED, settledInvoice.getStatus(), "发票辅助账 SETTLED");
+        assertEquals(0, new BigDecimal("113").compareTo(settledInvoice.getSettledAmountFunctional()),
+                "发票辅助账 settledAmount=113");
+        assertEquals(0, BigDecimal.ZERO.compareTo(settledReceipt.getOpenAmountFunctional()),
+                "核销后收款辅助账 openAmount=0");
+        assertEquals(ErpFinConstants.AR_AP_STATUS_SETTLED, settledReceipt.getStatus(), "收款辅助账 SETTLED");
+
+        ErpFinReconciliation postedHead = daoProvider.daoFor(ErpFinReconciliation.class).getEntityById(head.getId());
+        assertEquals(ErpFinConstants.RECON_STATUS_POSTED, postedHead.getDocStatus(), "核销单 POSTED");
+        assertEquals(0, new BigDecimal("113").compareTo(postedHead.getTotalAmountFunctional()),
+                "核销单总额=113");
+
+        // 核销后未核销合计归零
+        assertEquals(0, BigDecimal.ZERO.compareTo(sumOpenByDirection(ErpFinConstants.DIRECTION_RECEIVABLE)),
+                "核销后 RECEIVABLE 方向未核销合计=0");
+
+        // 账龄查询与核销结果一致（已全额核销 → totalOpen=0）
+        List<ArApAgingRow> aging = arApItemBiz.aging(ErpFinConstants.DIRECTION_RECEIVABLE,
+                LocalDate.of(2026, 7, 31), CTX);
+        BigDecimal agingTotal = aging.stream().map(ArApAgingRow::getTotalOpen)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        assertEquals(0, BigDecimal.ZERO.compareTo(agingTotal), "账龄 totalOpen=0（已全额核销）");
+
+        // 财务核销单独立于域级 __settle（未调 __settle，发票 receivedStatus 仍 UNRECEIVED）
+        assertEquals(ErpSalConstants.RECEIVED_STATUS_UNRECEIVED,
+                daoProvider.daoFor(ErpSalInvoice.class).getEntityById(invoiceId).getReceivedStatus(),
+                "未调域级 settle，发票 receivedStatus 仍 UNRECEIVED（财务核销层独立）");
+    }
+
+    /**
+     * 4.2 异常路径：(a) 核销金额超过 openAmount 拒绝；(b) 已核销辅助账不可重复核销（核销单状态门控 + 辅助账 SETTLED）。
+     */
+    @Test
+    public void testFinanceReconciliationLayerExceptions() {
+        seedPrereqs();
+        long orderLine = 9451L;
+        long deliveryId = 9452L;
+        long deliveryLineId = 9453L;
+        long invoiceId = 9454L;
+        long invoiceLineId = 9455L;
+        long receiptId = 9456L;
+
+        ormTemplate.runInSession(session -> {
+            seedActiveCustomer();
+            Long orderId = newOrder("SO-FEX-001");
+            newOrderLine(orderId, orderLine, 1, new BigDecimal("10"));
+            newDelivery("SD-FEX-001", deliveryId, orderId);
+            newDeliveryLine(deliveryLineId, deliveryId, orderLine, new BigDecimal("10"));
+            return null;
+        });
+        seedStock("SEED-FEX-001", new BigDecimal("20"), new BigDecimal("5"));
+        assertEquals(0, submitDelivery(deliveryId).getStatus());
+        assertEquals(0, approveDelivery(deliveryId).getStatus());
+
+        ormTemplate.runInSession(session -> {
+            newInvoice("SI-FEX-001", invoiceId);
+            newInvoiceLine(invoiceLineId, invoiceId, deliveryLineId);
+            return null;
+        });
+        assertEquals(0, submitInvoice(invoiceId).getStatus());
+        assertEquals(0, approveInvoice(invoiceId).getStatus());
+        ormTemplate.runInSession(session -> {
+            newReceipt("SR-FEX-001", receiptId, new BigDecimal("113"));
+            return null;
+        });
+        assertEquals(0, submitReceipt(receiptId).getStatus());
+        assertEquals(0, approveReceipt(receiptId).getStatus());
+
+        ErpFinArApItem invoiceItem = findArItem(ErpFinConstants.SOURCE_BILL_AR_INVOICE, "SI-FEX-001");
+        ErpFinArApItem receiptItem = findArItem(ErpFinConstants.SOURCE_BILL_RECEIPT, "SR-FEX-001");
+        assertNotNull(invoiceItem);
+        assertNotNull(receiptItem);
+
+        // (a) 核销金额超过 openAmount 拒绝
+        ErpFinReconciliation over = reconciliationBiz.create(
+                ErpFinConstants.DIRECTION_RECEIVABLE, CUSTOMER_ID, LocalDate.of(2026, 7, 5),
+                Collections.singletonList(reconLine(receiptItem.getId(), invoiceItem.getId(), "999")), CTX);
+        assertThrows(NopException.class, () -> reconciliationBiz.post(over.getId(), CTX),
+                "核销金额超过未核销余额应拒绝");
+        assertEquals(ErpFinConstants.RECON_STATUS_DRAFT,
+                daoProvider.daoFor(ErpFinReconciliation.class).getEntityById(over.getId()).getDocStatus());
+
+        // (b) 全额核销后，再创建第二张核销单引用同一对已 SETTLED 辅助账 → 过账被拒（item 不再 OPEN）
+        ErpFinReconciliation first = reconciliationBiz.create(
+                ErpFinConstants.DIRECTION_RECEIVABLE, CUSTOMER_ID, LocalDate.of(2026, 7, 5),
+                Collections.singletonList(reconLine(receiptItem.getId(), invoiceItem.getId(), "113")), CTX);
+        reconciliationBiz.post(first.getId(), CTX);
+        assertEquals(ErpFinConstants.AR_AP_STATUS_SETTLED, reloadItem(invoiceItem.getId()).getStatus());
+
+        ErpFinReconciliation second = reconciliationBiz.create(
+                ErpFinConstants.DIRECTION_RECEIVABLE, CUSTOMER_ID, LocalDate.of(2026, 7, 5),
+                Collections.singletonList(reconLine(receiptItem.getId(), invoiceItem.getId(), "113")), CTX);
+        assertThrows(NopException.class, () -> reconciliationBiz.post(second.getId(), CTX),
+                "已核销辅助账不应被重复核销");
+    }
+
+    // ---------- finance helpers ----------
+
+    private ErpFinArApItem findArItem(String sourceBillType, String sourceBillCode) {
+        IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(and(eq("sourceBillType", sourceBillType), eq("sourceBillCode", sourceBillCode)));
+        return dao.findAllByQuery(q).stream().findFirst().orElse(null);
+    }
+
+    private ErpFinArApItem reloadItem(Long id) {
+        return daoProvider.daoFor(ErpFinArApItem.class).getEntityById(id);
+    }
+
+    private BigDecimal sumOpenByDirection(int direction) {
+        IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("direction", direction));
+        q.addFilter(notIn("status", Arrays.asList(ErpFinConstants.AR_AP_STATUS_SETTLED,
+                ErpFinConstants.AR_AP_STATUS_CANCELLED)));
+        BigDecimal sum = BigDecimal.ZERO;
+        for (ErpFinArApItem it : dao.findAllByQuery(q)) {
+            if (it.getOpenAmountFunctional() != null) {
+                sum = sum.add(it.getOpenAmountFunctional());
+            }
+        }
+        return sum;
+    }
+
+    private ReconciliationLineInput reconLine(Long paymentItemId, Long invoiceItemId, String amount) {
+        BigDecimal amt = new BigDecimal(amount);
+        ReconciliationLineInput in = new ReconciliationLineInput();
+        in.setPaymentItemId(paymentItemId);
+        in.setInvoiceItemId(invoiceItemId);
+        in.setSettledAmountSource(amt);
+        in.setSettledAmountFunctional(amt);
+        return in;
     }
 
     // ---------- rpc helpers ----------
