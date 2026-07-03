@@ -49,7 +49,7 @@
                 <col id="importTime" sortable="true"/>
 
                 <!--状态-->
-                <col id="docStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="docStatus" mandatory="true" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

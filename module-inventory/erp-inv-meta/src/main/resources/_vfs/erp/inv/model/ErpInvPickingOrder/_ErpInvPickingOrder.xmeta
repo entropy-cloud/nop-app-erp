@@ -45,7 +45,7 @@
         </prop>
         <prop name="docStatus" displayName="单据状态" propId="7" i18n-en:displayName="Doc Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-inv/picking-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-inv/picking-status"/>
         </prop>
         <prop name="relatedBillType" displayName="关联单据类型(SALES_DELIVERY/WORK_ORDER_ISSUE)" propId="8"
               i18n-en:displayName="Related Bill Type" queryable="true" sortable="true" insertable="true"

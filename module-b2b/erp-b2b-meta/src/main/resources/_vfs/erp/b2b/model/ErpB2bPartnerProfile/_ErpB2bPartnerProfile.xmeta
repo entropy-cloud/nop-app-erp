@@ -41,11 +41,11 @@
         </prop>
         <prop name="status" displayName="状态" propId="6" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-b2b/partner-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-b2b/partner-status"/>
         </prop>
         <prop name="protocol" displayName="传输协议" propId="7" i18n-en:displayName="Protocol" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-b2b/protocol"/>
+            <schema type="java.lang.String" precision="20" dict="erp-b2b/protocol"/>
         </prop>
         <prop name="transportEndpoint" displayName="传输端点" propId="8" i18n-en:displayName="Transport Endpoint"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -53,7 +53,7 @@
         </prop>
         <prop name="authMethod" displayName="认证方式" propId="9" i18n-en:displayName="Auth Method" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-b2b/auth-method"/>
+            <schema type="java.lang.String" precision="20" dict="erp-b2b/auth-method"/>
         </prop>
         <prop name="webhookSecret" displayName="Webhook密钥" propId="10" i18n-en:displayName="Webhook Secret"
               queryable="true" sortable="true" insertable="true" updatable="true">

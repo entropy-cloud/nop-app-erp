@@ -151,7 +151,7 @@ public class _ErpMfgWorkcenter extends DynamicOrmEntity{
     private java.lang.String _name;
     
     /* 产能: CAPACITY */
-    private java.lang.String _capacity;
+    private java.math.BigDecimal _capacity;
     
     /* 产能单位: CAPACITY_UNIT */
     private java.lang.String _capacityUnit;
@@ -347,9 +347,9 @@ public class _ErpMfgWorkcenter extends DynamicOrmEntity{
             }
         
             case PROP_ID_capacity:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_capacity));
                }
                setCapacity(typedValue);
@@ -498,7 +498,7 @@ public class _ErpMfgWorkcenter extends DynamicOrmEntity{
         
             case PROP_ID_capacity:{
                onInitProp(propId);
-               this._capacity = (java.lang.String)value;
+               this._capacity = (java.math.BigDecimal)value;
                
                break;
             }
@@ -646,7 +646,7 @@ public class _ErpMfgWorkcenter extends DynamicOrmEntity{
     /**
      * 产能: CAPACITY
      */
-    public final java.lang.String getCapacity(){
+    public final java.math.BigDecimal getCapacity(){
          onPropGet(PROP_ID_capacity);
          return _capacity;
     }
@@ -654,7 +654,7 @@ public class _ErpMfgWorkcenter extends DynamicOrmEntity{
     /**
      * 产能: CAPACITY
      */
-    public final void setCapacity(java.lang.String value){
+    public final void setCapacity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_capacity,value)){
             this._capacity = value;
             internalClearRefs(PROP_ID_capacity);

@@ -357,42 +357,42 @@ dict:
     erp-ast/disposal-reason: Disposal Reason
 dict.option.label:
   erp-ast/asset-status:
-    '10': Draft
-    '20': In Use
-    '30': Idle
-    '40': Scrapped
-    '50': Sold
+    DRAFT: Draft
+    IN_SERVICE: In Use
+    IDLE: Idle
+    SCRAPPED: Scrapped
+    SOLD: Sold
   erp-ast/depreciation-method:
-    '10': Straight-Line
-    '20': Double Declining Balance
-    '30': Units of Production
+    STRAIGHT_LINE: Straight-Line
+    DECLINING: Double Declining Balance
+    UNITS: Units of Production
   erp-ast/depreciation-schedule-status:
-    '10': Pending
-    '20': Executed
-    '30': Reversed
-    '40': Cancelled
+    PENDING: Pending
+    EXECUTED: Executed
+    REVERSED: Reversed
+    CANCELLED: Cancelled
   erp-ast/adjustment-type:
-    '10': Impairment
-    '20': Revaluation
+    IMPAIRMENT: Impairment
+    REVALUATION: Revaluation
   erp-ast/disposal-type:
-    '10': Scrap
-    '20': Sale
+    SCRAPPED: Scrap
+    SOLD: Sale
   erp-ast/doc-status:
-    '10': Draft
-    '20': Effective
-    '30': Voided
+    DRAFT: Draft
+    ACTIVE: Effective
+    CANCELLED: Voided
   erp-ast/approve-status:
-    '10': Unsubmitted
-    '20': Submitted
-    '30': Approved
-    '40': Rejected
+    UNSUBMITTED: Unsubmitted
+    SUBMITTED: Submitted
+    APPROVED: Approved
+    REJECTED: Rejected
   erp-ast/capitalization-source-type:
-    '10': Inventory
-    '20': CIP
-    '30': Direct Purchase
+    INVENTORY: Inventory
+    CIP: CIP
+    DIRECT_PURCHASE: Direct Purchase
   erp-ast/disposal-reason:
-    '10': Scrap
-    '20': Sale
-    '30': Donation
-    '40': Stolen
-    '50': Other
+    OBSOLETE: Scrap
+    SOLD: Sale
+    DONATED: Donation
+    STOLEN: Stolen
+    OTHER: Other

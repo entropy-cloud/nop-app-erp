@@ -46,7 +46,7 @@
                 <col id="notifiedBy" sortable="true"/>
 
                 <!--退货状态-->
-                <col id="returnStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="returnStatus" mandatory="true" sortable="true"/>
 
                 <!--已生成退货单(弱指针)-->
                 <col id="generatedReturnId" ui:number="true" sortable="true"/>

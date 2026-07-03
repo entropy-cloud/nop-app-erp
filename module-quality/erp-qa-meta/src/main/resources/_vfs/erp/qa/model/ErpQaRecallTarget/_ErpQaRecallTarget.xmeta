@@ -57,7 +57,7 @@
         </prop>
         <prop name="returnStatus" displayName="退货状态" propId="10" i18n-en:displayName="Return Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-qa/recall-target-return-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-qa/recall-target-return-status"/>
         </prop>
         <prop name="generatedReturnId" displayName="已生成退货单(弱指针)" propId="11" i18n-en:displayName="Generated Return"
               queryable="true" sortable="true" insertable="true" updatable="true">

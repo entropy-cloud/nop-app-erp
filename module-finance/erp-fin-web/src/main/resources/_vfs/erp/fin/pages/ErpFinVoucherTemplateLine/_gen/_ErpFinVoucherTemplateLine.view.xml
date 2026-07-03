@@ -31,7 +31,7 @@
                 <col id="subjectCode" mandatory="true" sortable="true"/>
 
                 <!--借贷方向-->
-                <col id="dcDirection" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="dcDirection" mandatory="true" sortable="true"/>
 
                 <!--金额表达式-->
                 <col id="amountExpression" sortable="true"/>

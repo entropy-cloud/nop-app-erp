@@ -45,7 +45,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
     public static final String PROP_NAME_businessDate = "businessDate";
     public static final int PROP_ID_businessDate = 6;
     
-    /* 付款方式: PAYMENT_MODE INTEGER */
+    /* 付款方式: PAYMENT_MODE VARCHAR */
     public static final String PROP_NAME_paymentMode = "paymentMode";
     public static final int PROP_ID_paymentMode = 7;
     
@@ -85,11 +85,11 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
     public static final String PROP_NAME_reason = "reason";
     public static final int PROP_ID_reason = 16;
     
-    /* 单据状态: DOC_STATUS INTEGER */
+    /* 单据状态: DOC_STATUS VARCHAR */
     public static final String PROP_NAME_docStatus = "docStatus";
     public static final int PROP_ID_docStatus = 17;
     
-    /* 审核状态: APPROVE_STATUS INTEGER */
+    /* 审核状态: APPROVE_STATUS VARCHAR */
     public static final String PROP_NAME_approveStatus = "approveStatus";
     public static final int PROP_ID_approveStatus = 18;
     
@@ -283,7 +283,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
     private java.time.LocalDate _businessDate;
     
     /* 付款方式: PAYMENT_MODE */
-    private java.lang.Integer _paymentMode;
+    private java.lang.String _paymentMode;
     
     /* 币种: CURRENCY_ID */
     private java.lang.Long _currencyId;
@@ -313,10 +313,10 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
     private java.lang.String _reason;
     
     /* 单据状态: DOC_STATUS */
-    private java.lang.Integer _docStatus;
+    private java.lang.String _docStatus;
     
     /* 审核状态: APPROVE_STATUS */
-    private java.lang.Integer _approveStatus;
+    private java.lang.String _approveStatus;
     
     /* 审核人: APPROVED_BY */
     private java.lang.String _approvedBy;
@@ -590,9 +590,9 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
             }
         
             case PROP_ID_paymentMode:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_paymentMode));
                }
                setPaymentMode(typedValue);
@@ -690,9 +690,9 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
             }
         
             case PROP_ID_docStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_docStatus));
                }
                setDocStatus(typedValue);
@@ -700,9 +700,9 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
             }
         
             case PROP_ID_approveStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_approveStatus));
                }
                setApproveStatus(typedValue);
@@ -882,7 +882,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
         
             case PROP_ID_paymentMode:{
                onInitProp(propId);
-               this._paymentMode = (java.lang.Integer)value;
+               this._paymentMode = (java.lang.String)value;
                
                break;
             }
@@ -952,14 +952,14 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
         
             case PROP_ID_docStatus:{
                onInitProp(propId);
-               this._docStatus = (java.lang.Integer)value;
+               this._docStatus = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_approveStatus:{
                onInitProp(propId);
-               this._approveStatus = (java.lang.Integer)value;
+               this._approveStatus = (java.lang.String)value;
                
                break;
             }
@@ -1171,7 +1171,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
     /**
      * 付款方式: PAYMENT_MODE
      */
-    public final java.lang.Integer getPaymentMode(){
+    public final java.lang.String getPaymentMode(){
          onPropGet(PROP_ID_paymentMode);
          return _paymentMode;
     }
@@ -1179,7 +1179,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
     /**
      * 付款方式: PAYMENT_MODE
      */
-    public final void setPaymentMode(java.lang.Integer value){
+    public final void setPaymentMode(java.lang.String value){
         if(onPropSet(PROP_ID_paymentMode,value)){
             this._paymentMode = value;
             internalClearRefs(PROP_ID_paymentMode);
@@ -1361,7 +1361,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
     /**
      * 单据状态: DOC_STATUS
      */
-    public final java.lang.Integer getDocStatus(){
+    public final java.lang.String getDocStatus(){
          onPropGet(PROP_ID_docStatus);
          return _docStatus;
     }
@@ -1369,7 +1369,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
     /**
      * 单据状态: DOC_STATUS
      */
-    public final void setDocStatus(java.lang.Integer value){
+    public final void setDocStatus(java.lang.String value){
         if(onPropSet(PROP_ID_docStatus,value)){
             this._docStatus = value;
             internalClearRefs(PROP_ID_docStatus);
@@ -1380,7 +1380,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
     /**
      * 审核状态: APPROVE_STATUS
      */
-    public final java.lang.Integer getApproveStatus(){
+    public final java.lang.String getApproveStatus(){
          onPropGet(PROP_ID_approveStatus);
          return _approveStatus;
     }
@@ -1388,7 +1388,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
     /**
      * 审核状态: APPROVE_STATUS
      */
-    public final void setApproveStatus(java.lang.Integer value){
+    public final void setApproveStatus(java.lang.String value){
         if(onPropSet(PROP_ID_approveStatus,value)){
             this._approveStatus = value;
             internalClearRefs(PROP_ID_approveStatus);

@@ -77,11 +77,11 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     public static final String PROP_NAME_totalAmount = "totalAmount";
     public static final int PROP_ID_totalAmount = 14;
     
-    /* 单据状态: DOC_STATUS INTEGER */
+    /* 单据状态: DOC_STATUS VARCHAR */
     public static final String PROP_NAME_docStatus = "docStatus";
     public static final int PROP_ID_docStatus = 15;
     
-    /* 审核状态: APPROVE_STATUS INTEGER */
+    /* 审核状态: APPROVE_STATUS VARCHAR */
     public static final String PROP_NAME_approveStatus = "approveStatus";
     public static final int PROP_ID_approveStatus = 16;
     
@@ -309,10 +309,10 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     private java.math.BigDecimal _totalAmount;
     
     /* 单据状态: DOC_STATUS */
-    private java.lang.Integer _docStatus;
+    private java.lang.String _docStatus;
     
     /* 审核状态: APPROVE_STATUS */
-    private java.lang.Integer _approveStatus;
+    private java.lang.String _approveStatus;
     
     /* 已过账: POSTED */
     private java.lang.Boolean _posted;
@@ -666,9 +666,9 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_docStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_docStatus));
                }
                setDocStatus(typedValue);
@@ -676,9 +676,9 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_approveStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_approveStatus));
                }
                setApproveStatus(typedValue);
@@ -924,14 +924,14 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
         
             case PROP_ID_docStatus:{
                onInitProp(propId);
-               this._docStatus = (java.lang.Integer)value;
+               this._docStatus = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_approveStatus:{
                onInitProp(propId);
-               this._approveStatus = (java.lang.Integer)value;
+               this._approveStatus = (java.lang.String)value;
                
                break;
             }
@@ -1302,7 +1302,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 单据状态: DOC_STATUS
      */
-    public final java.lang.Integer getDocStatus(){
+    public final java.lang.String getDocStatus(){
          onPropGet(PROP_ID_docStatus);
          return _docStatus;
     }
@@ -1310,7 +1310,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 单据状态: DOC_STATUS
      */
-    public final void setDocStatus(java.lang.Integer value){
+    public final void setDocStatus(java.lang.String value){
         if(onPropSet(PROP_ID_docStatus,value)){
             this._docStatus = value;
             internalClearRefs(PROP_ID_docStatus);
@@ -1321,7 +1321,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 审核状态: APPROVE_STATUS
      */
-    public final java.lang.Integer getApproveStatus(){
+    public final java.lang.String getApproveStatus(){
          onPropGet(PROP_ID_approveStatus);
          return _approveStatus;
     }
@@ -1329,7 +1329,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 审核状态: APPROVE_STATUS
      */
-    public final void setApproveStatus(java.lang.Integer value){
+    public final void setApproveStatus(java.lang.String value){
         if(onPropSet(PROP_ID_approveStatus,value)){
             this._approveStatus = value;
             internalClearRefs(PROP_ID_approveStatus);

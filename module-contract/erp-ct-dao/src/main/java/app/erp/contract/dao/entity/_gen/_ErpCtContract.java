@@ -37,11 +37,11 @@ public class _ErpCtContract extends DynamicOrmEntity{
     public static final String PROP_NAME_contractName = "contractName";
     public static final int PROP_ID_contractName = 4;
     
-    /* 合同类型: CONTRACT_TYPE INTEGER */
+    /* 合同类型: CONTRACT_TYPE VARCHAR */
     public static final String PROP_NAME_contractType = "contractType";
     public static final int PROP_ID_contractType = 5;
     
-    /* 合同方向: CONTRACT_DIRECTION INTEGER */
+    /* 合同方向: CONTRACT_DIRECTION VARCHAR */
     public static final String PROP_NAME_contractDirection = "contractDirection";
     public static final int PROP_ID_contractDirection = 6;
     
@@ -69,7 +69,7 @@ public class _ErpCtContract extends DynamicOrmEntity{
     public static final String PROP_NAME_signDate = "signDate";
     public static final int PROP_ID_signDate = 12;
     
-    /* 合同状态: STATUS INTEGER */
+    /* 合同状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 13;
     
@@ -241,10 +241,10 @@ public class _ErpCtContract extends DynamicOrmEntity{
     private java.lang.String _contractName;
     
     /* 合同类型: CONTRACT_TYPE */
-    private java.lang.Integer _contractType;
+    private java.lang.String _contractType;
     
     /* 合同方向: CONTRACT_DIRECTION */
-    private java.lang.Integer _contractDirection;
+    private java.lang.String _contractDirection;
     
     /* 合作方: PARTNER_ID */
     private java.lang.Long _partnerId;
@@ -265,7 +265,7 @@ public class _ErpCtContract extends DynamicOrmEntity{
     private java.time.LocalDate _signDate;
     
     /* 合同状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 合同模板: TEMPLATE_ID */
     private java.lang.Long _templateId;
@@ -498,9 +498,9 @@ public class _ErpCtContract extends DynamicOrmEntity{
             }
         
             case PROP_ID_contractType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_contractType));
                }
                setContractType(typedValue);
@@ -508,9 +508,9 @@ public class _ErpCtContract extends DynamicOrmEntity{
             }
         
             case PROP_ID_contractDirection:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_contractDirection));
                }
                setContractDirection(typedValue);
@@ -578,9 +578,9 @@ public class _ErpCtContract extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -736,14 +736,14 @@ public class _ErpCtContract extends DynamicOrmEntity{
         
             case PROP_ID_contractType:{
                onInitProp(propId);
-               this._contractType = (java.lang.Integer)value;
+               this._contractType = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_contractDirection:{
                onInitProp(propId);
-               this._contractDirection = (java.lang.Integer)value;
+               this._contractDirection = (java.lang.String)value;
                
                break;
             }
@@ -792,7 +792,7 @@ public class _ErpCtContract extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -959,7 +959,7 @@ public class _ErpCtContract extends DynamicOrmEntity{
     /**
      * 合同类型: CONTRACT_TYPE
      */
-    public final java.lang.Integer getContractType(){
+    public final java.lang.String getContractType(){
          onPropGet(PROP_ID_contractType);
          return _contractType;
     }
@@ -967,7 +967,7 @@ public class _ErpCtContract extends DynamicOrmEntity{
     /**
      * 合同类型: CONTRACT_TYPE
      */
-    public final void setContractType(java.lang.Integer value){
+    public final void setContractType(java.lang.String value){
         if(onPropSet(PROP_ID_contractType,value)){
             this._contractType = value;
             internalClearRefs(PROP_ID_contractType);
@@ -978,7 +978,7 @@ public class _ErpCtContract extends DynamicOrmEntity{
     /**
      * 合同方向: CONTRACT_DIRECTION
      */
-    public final java.lang.Integer getContractDirection(){
+    public final java.lang.String getContractDirection(){
          onPropGet(PROP_ID_contractDirection);
          return _contractDirection;
     }
@@ -986,7 +986,7 @@ public class _ErpCtContract extends DynamicOrmEntity{
     /**
      * 合同方向: CONTRACT_DIRECTION
      */
-    public final void setContractDirection(java.lang.Integer value){
+    public final void setContractDirection(java.lang.String value){
         if(onPropSet(PROP_ID_contractDirection,value)){
             this._contractDirection = value;
             internalClearRefs(PROP_ID_contractDirection);
@@ -1111,7 +1111,7 @@ public class _ErpCtContract extends DynamicOrmEntity{
     /**
      * 合同状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -1119,7 +1119,7 @@ public class _ErpCtContract extends DynamicOrmEntity{
     /**
      * 合同状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

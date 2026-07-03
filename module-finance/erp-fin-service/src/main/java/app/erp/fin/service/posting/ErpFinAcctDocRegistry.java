@@ -27,8 +27,6 @@ import java.util.Map;
  */
 public class ErpFinAcctDocRegistry {
 
-    static final int DC_DEBIT = 10;
-
     private List<IErpFinAcctDocProvider> providers = Collections.emptyList();
     private List<IErpFinFactsValidator> validators = Collections.emptyList();
 

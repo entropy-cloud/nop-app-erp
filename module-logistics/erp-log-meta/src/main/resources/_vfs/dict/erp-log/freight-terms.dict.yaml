@@ -1,15 +1,15 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 运费条款
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 预付
-    value: 10
+    value: PREPAID
     description: 
   
   - label: 到付
-    value: 20
+    value: COLLECT
     description: 
   

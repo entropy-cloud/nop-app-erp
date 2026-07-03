@@ -43,13 +43,13 @@ public abstract class PeriodCloseTestSupport extends JunitAutoTestCase {
         return ormTemplate.runInSession(session -> {
             Long pid = seedOpenPeriod(code, year, month);
             Map<String, ErpMdSubject> subjects = new HashMap<>();
-            subjects.put("1001", seedSubject("1001", "库存现金", 10, 10));
-            subjects.put("6001", seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, 20));
-            subjects.put("6601", seedSubject("6601", "销售费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, 10));
-            subjects.put("4103", seedSubject("4103", "本年利润", 30, 20));
-            subjects.put("1122", seedSubject("1122", "应收账款", 10, 10));
-            subjects.put("2202", seedSubject("2202", "应付账款", 20, 20));
-            subjects.put("6603", seedSubject("6603", "汇兑损益", 50, 10));
+            subjects.put("1001", seedSubject("1001", "库存现金", "ASSET", ErpFinConstants.DC_DEBIT));
+            subjects.put("6001", seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT));
+            subjects.put("6601", seedSubject("6601", "销售费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT));
+            subjects.put("4103", seedSubject("4103", "本年利润", "EQUITY", ErpFinConstants.DC_CREDIT));
+            subjects.put("1122", seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT));
+            subjects.put("2202", seedSubject("2202", "应付账款", "LIABILITY", ErpFinConstants.DC_CREDIT));
+            subjects.put("6603", seedSubject("6603", "汇兑损益", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT));
             seedCurrency(1L, "CNY", true);
             seedCurrency(2L, "EUR", false);
             seedPostedVoucher("V-" + code + "-INC", pid, LocalDate.of(year, month, 10), subjects,
@@ -76,14 +76,14 @@ public abstract class PeriodCloseTestSupport extends JunitAutoTestCase {
         return p.getId();
     }
 
-    protected ErpMdSubject seedSubject(String code, String name, int subjectClass, int direction) {
+    protected ErpMdSubject seedSubject(String code, String name, String subjectClass, String direction) {
         IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
         ErpMdSubject s = new ErpMdSubject();
         s.setCode(code);
         s.setName(name);
         s.setSubjectClass(subjectClass);
         s.setDirection(direction);
-        s.setStatus(10);
+        s.setStatus("ACTIVE");
         dao.saveEntity(s);
         return s;
     }
@@ -107,7 +107,7 @@ public abstract class PeriodCloseTestSupport extends JunitAutoTestCase {
         }
         ErpFinVoucher v = new ErpFinVoucher();
         v.setCode(vcode);
-        v.setVoucherType(30);
+        v.setVoucherType("TRANSFER");
         v.setVoucherDate(date);
         v.setOrgId(1L);
         v.setAcctSchemaId(1L);
@@ -121,7 +121,7 @@ public abstract class PeriodCloseTestSupport extends JunitAutoTestCase {
         int lineNo = 1;
         for (Object[] l : lines) {
             ErpMdSubject subj = subjects.get((String) l[0]);
-            int dc = (int) l[2];
+            String dc = (String) l[2];
             BigDecimal amt = (BigDecimal) l[3];
             ErpFinVoucherLine line = new ErpFinVoucherLine();
             line.setVoucherId(v.getId());
@@ -130,8 +130,8 @@ public abstract class PeriodCloseTestSupport extends JunitAutoTestCase {
             line.setSubjectCode((String) l[0]);
             line.setSubjectName((String) l[1]);
             line.setDcDirection(dc);
-            line.setDebitAmount(dc == ErpFinConstants.DC_DEBIT ? amt : BigDecimal.ZERO);
-            line.setCreditAmount(dc == ErpFinConstants.DC_CREDIT ? amt : BigDecimal.ZERO);
+            line.setDebitAmount(ErpFinConstants.DC_DEBIT.equals(dc) ? amt : BigDecimal.ZERO);
+            line.setCreditAmount(ErpFinConstants.DC_CREDIT.equals(dc) ? amt : BigDecimal.ZERO);
             line.setCurrencyId(1L);
             line.setExchangeRate(BigDecimal.ONE);
             line.setAmountSource(amt);
@@ -141,7 +141,7 @@ public abstract class PeriodCloseTestSupport extends JunitAutoTestCase {
         }
     }
 
-    protected void seedOpenArAp(String code, Long periodId, LocalDate date, int direction,
+    protected void seedOpenArAp(String code, Long periodId, LocalDate date, String direction,
                                 Long currencyId, BigDecimal openSource, BigDecimal openFunctional) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem item = new ErpFinArApItem();
@@ -195,7 +195,7 @@ public abstract class PeriodCloseTestSupport extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpFinAccountingPeriodStatus.class).findAllByQuery(q).get(0);
     }
 
-    protected int countVouchersByBillCode(String billCode, int businessType) {
+    protected int countVouchersByBillCode(String billCode, String businessType) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("billCode", billCode));
         q.addFilter(eq("businessType", businessType));

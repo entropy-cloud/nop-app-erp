@@ -6,7 +6,7 @@
   "sourceBillType": "",
   "sourceBillCode": "",
   "reservedForPartnerId": 0,
-  "status": 0,
+  "status": "",
   "status_label": "",
   "validUntil": "2000-01-01 14:00:00",
   "remark": "",

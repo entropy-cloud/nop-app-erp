@@ -37,7 +37,7 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
     public static final String PROP_NAME_equipmentId = "equipmentId";
     public static final int PROP_ID_equipmentId = 4;
     
-    /* 计划类型: SCHEDULE_TYPE INTEGER */
+    /* 计划类型: SCHEDULE_TYPE VARCHAR */
     public static final String PROP_NAME_scheduleType = "scheduleType";
     public static final int PROP_ID_scheduleType = 5;
     
@@ -45,7 +45,7 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
     public static final String PROP_NAME_frequency = "frequency";
     public static final int PROP_ID_frequency = 6;
     
-    /* 重复类型: RECURRENCE_TYPE INTEGER */
+    /* 重复类型: RECURRENCE_TYPE VARCHAR */
     public static final String PROP_NAME_recurrenceType = "recurrenceType";
     public static final int PROP_ID_recurrenceType = 7;
     
@@ -185,13 +185,13 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
     private java.lang.Long _equipmentId;
     
     /* 计划类型: SCHEDULE_TYPE */
-    private java.lang.Integer _scheduleType;
+    private java.lang.String _scheduleType;
     
     /* 频率: FREQUENCY */
     private java.lang.Integer _frequency;
     
     /* 重复类型: RECURRENCE_TYPE */
-    private java.lang.Integer _recurrenceType;
+    private java.lang.String _recurrenceType;
     
     /* 星期几: DAYS_OF_WEEK */
     private java.lang.String _daysOfWeek;
@@ -412,9 +412,9 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
             }
         
             case PROP_ID_scheduleType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_scheduleType));
                }
                setScheduleType(typedValue);
@@ -432,9 +432,9 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
             }
         
             case PROP_ID_recurrenceType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_recurrenceType));
                }
                setRecurrenceType(typedValue);
@@ -600,7 +600,7 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
         
             case PROP_ID_scheduleType:{
                onInitProp(propId);
-               this._scheduleType = (java.lang.Integer)value;
+               this._scheduleType = (java.lang.String)value;
                
                break;
             }
@@ -614,7 +614,7 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
         
             case PROP_ID_recurrenceType:{
                onInitProp(propId);
-               this._recurrenceType = (java.lang.Integer)value;
+               this._recurrenceType = (java.lang.String)value;
                
                break;
             }
@@ -788,7 +788,7 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
     /**
      * 计划类型: SCHEDULE_TYPE
      */
-    public final java.lang.Integer getScheduleType(){
+    public final java.lang.String getScheduleType(){
          onPropGet(PROP_ID_scheduleType);
          return _scheduleType;
     }
@@ -796,7 +796,7 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
     /**
      * 计划类型: SCHEDULE_TYPE
      */
-    public final void setScheduleType(java.lang.Integer value){
+    public final void setScheduleType(java.lang.String value){
         if(onPropSet(PROP_ID_scheduleType,value)){
             this._scheduleType = value;
             internalClearRefs(PROP_ID_scheduleType);
@@ -826,7 +826,7 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
     /**
      * 重复类型: RECURRENCE_TYPE
      */
-    public final java.lang.Integer getRecurrenceType(){
+    public final java.lang.String getRecurrenceType(){
          onPropGet(PROP_ID_recurrenceType);
          return _recurrenceType;
     }
@@ -834,7 +834,7 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
     /**
      * 重复类型: RECURRENCE_TYPE
      */
-    public final void setRecurrenceType(java.lang.Integer value){
+    public final void setRecurrenceType(java.lang.String value){
         if(onPropSet(PROP_ID_recurrenceType,value)){
             this._recurrenceType = value;
             internalClearRefs(PROP_ID_recurrenceType);

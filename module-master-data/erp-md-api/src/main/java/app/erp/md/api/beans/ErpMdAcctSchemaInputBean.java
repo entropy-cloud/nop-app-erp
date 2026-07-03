@@ -69,16 +69,16 @@
         }
 
 
-        private Integer _nature;
+        private String _nature;
 
     
         @PropMeta(propId=5)
     
-        public Integer getNature(){
+        public String getNature(){
             return _nature;
         }
 
-        public void setNature(Integer value){
+        public void setNature(String value){
             this._nature = value;
         }
 
@@ -97,16 +97,16 @@
         }
 
 
-        private Integer _costingMethod;
+        private String _costingMethod;
 
     
         @PropMeta(propId=7)
     
-        public Integer getCostingMethod(){
+        public String getCostingMethod(){
             return _costingMethod;
         }
 
-        public void setCostingMethod(Integer value){
+        public void setCostingMethod(String value){
             this._costingMethod = value;
         }
 
@@ -139,16 +139,16 @@
         }
 
 
-        private Integer _status;
+        private String _status;
 
     
         @PropMeta(propId=10)
     
-        public Integer getStatus(){
+        public String getStatus(){
             return _status;
         }
 
-        public void setStatus(Integer value){
+        public void setStatus(String value){
             this._status = value;
         }
 

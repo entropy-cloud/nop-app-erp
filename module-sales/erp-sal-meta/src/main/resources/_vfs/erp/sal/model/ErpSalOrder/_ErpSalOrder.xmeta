@@ -101,19 +101,19 @@
         </prop>
         <prop name="docStatus" displayName="单据状态" propId="21" i18n-en:displayName="Doc Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-sal/doc-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-sal/doc-status"/>
         </prop>
         <prop name="approveStatus" displayName="审核状态" propId="22" i18n-en:displayName="Approve Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-sal/approve-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-sal/approve-status"/>
         </prop>
         <prop name="receivedStatus" displayName="收款进度" propId="23" i18n-en:displayName="Received Status"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-sal/received-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-sal/received-status"/>
         </prop>
         <prop name="deliveryStatus" displayName="发货进度" propId="24" i18n-en:displayName="Delivery Status"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-sal/delivery-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-sal/delivery-status"/>
         </prop>
         <prop name="posted" displayName="已过账" propId="25" i18n-en:displayName="Posted" queryable="true" sortable="true"
               insertable="true" updatable="true" defaultValue="false">

@@ -1,23 +1,23 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 派工类型
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 自动派工
-    value: 10
+    value: AUTO
     description: 
   
   - label: 手动派工
-    value: 20
+    value: MANUAL
     description: 
   
   - label: 保持
-    value: 30
+    value: HOLD
     description: 
   
   - label: 解除保持
-    value: 40
+    value: UNHOLD
     description: 
   

@@ -14,6 +14,6 @@ public interface IErpMntEquipmentBiz extends ICrudBiz<ErpMntEquipment> {
 
     @BizMutation
     ErpMntEquipment changeStatus(@Name("equipmentId") Long equipmentId,
-                                 @Name("newStatus") Integer newStatus,
+                                 @Name("newStatus") String newStatus,
                                  IServiceContext context);
 }

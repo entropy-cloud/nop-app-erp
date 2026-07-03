@@ -82,30 +82,30 @@
         }
 
 
-        private Integer _priority;
+        private String _priority;
 
     
         @PropMeta(propId=6)
     
-        public Integer getPriority(){
+        public String getPriority(){
             return _priority;
         }
 
-        public void setPriority(Integer value){
+        public void setPriority(String value){
             this._priority = value;
         }
 
 
-        private Integer _status;
+        private String _status;
 
     
         @PropMeta(propId=7)
     
-        public Integer getStatus(){
+        public String getStatus(){
             return _status;
         }
 
-        public void setStatus(Integer value){
+        public void setStatus(String value){
             this._status = value;
         }
 

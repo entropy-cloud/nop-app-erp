@@ -6,321 +6,321 @@ public interface _ErpMfgDaoConstants {
     /**
      * 工单状态: 草稿 
      */
-    int WORK_ORDER_STATUS_DRAFT = 10;
+    String WORK_ORDER_STATUS_DRAFT = "DRAFT";
                     
     /**
      * 工单状态: 已提交 
      */
-    int WORK_ORDER_STATUS_SUBMITTED = 20;
+    String WORK_ORDER_STATUS_SUBMITTED = "SUBMITTED";
                     
     /**
      * 工单状态: 未开始 
      */
-    int WORK_ORDER_STATUS_NOT_STARTED = 30;
+    String WORK_ORDER_STATUS_NOT_STARTED = "NOT_STARTED";
                     
     /**
      * 工单状态: 生产中 
      */
-    int WORK_ORDER_STATUS_IN_PROCESS = 40;
+    String WORK_ORDER_STATUS_IN_PROCESS = "IN_PROCESS";
                     
     /**
      * 工单状态: 已齐套 
      */
-    int WORK_ORDER_STATUS_STOCK_RESERVED = 50;
+    String WORK_ORDER_STATUS_STOCK_RESERVED = "STOCK_RESERVED";
                     
     /**
      * 工单状态: 部分齐套 
      */
-    int WORK_ORDER_STATUS_STOCK_PARTIAL = 60;
+    String WORK_ORDER_STATUS_STOCK_PARTIAL = "STOCK_PARTIAL";
                     
     /**
      * 工单状态: 已完工 
      */
-    int WORK_ORDER_STATUS_COMPLETED = 70;
+    String WORK_ORDER_STATUS_COMPLETED = "COMPLETED";
                     
     /**
      * 工单状态: 已停工 
      */
-    int WORK_ORDER_STATUS_STOPPED = 80;
+    String WORK_ORDER_STATUS_STOPPED = "STOPPED";
                     
     /**
      * 工单状态: 已关闭 
      */
-    int WORK_ORDER_STATUS_CLOSED = 90;
+    String WORK_ORDER_STATUS_CLOSED = "CLOSED";
                     
     /**
      * 工单状态: 已取消 
      */
-    int WORK_ORDER_STATUS_CANCELLED = 100;
+    String WORK_ORDER_STATUS_CANCELLED = "CANCELLED";
                     
     /**
      * 作业卡状态: 待开始 
      */
-    int JOB_CARD_STATUS_OPEN = 10;
+    String JOB_CARD_STATUS_OPEN = "OPEN";
                     
     /**
      * 作业卡状态: 作业中 
      */
-    int JOB_CARD_STATUS_WORK_IN_PROGRESS = 20;
+    String JOB_CARD_STATUS_WORK_IN_PROGRESS = "WORK_IN_PROGRESS";
                     
     /**
      * 作业卡状态: 部分转序 
      */
-    int JOB_CARD_STATUS_PARTIALLY_TRANSFERRED = 30;
+    String JOB_CARD_STATUS_PARTIALLY_TRANSFERRED = "PARTIALLY_TRANSFERRED";
                     
     /**
      * 作业卡状态: 已转序 
      */
-    int JOB_CARD_STATUS_MATERIAL_TRANSFERRED = 40;
+    String JOB_CARD_STATUS_MATERIAL_TRANSFERRED = "MATERIAL_TRANSFERRED";
                     
     /**
      * 作业卡状态: 暂停 
      */
-    int JOB_CARD_STATUS_ON_HOLD = 50;
+    String JOB_CARD_STATUS_ON_HOLD = "ON_HOLD";
                     
     /**
      * 作业卡状态: 已提交 
      */
-    int JOB_CARD_STATUS_SUBMITTED = 60;
+    String JOB_CARD_STATUS_SUBMITTED = "SUBMITTED";
                     
     /**
      * 作业卡状态: 已完成 
      */
-    int JOB_CARD_STATUS_COMPLETED = 70;
+    String JOB_CARD_STATUS_COMPLETED = "COMPLETED";
                     
     /**
      * 作业卡状态: 已取消 
      */
-    int JOB_CARD_STATUS_CANCELLED = 80;
+    String JOB_CARD_STATUS_CANCELLED = "CANCELLED";
                     
     /**
      * BOM 类型: 制造 
      */
-    int BOM_TYPE_NORMAL = 10;
+    String BOM_TYPE_NORMAL = "NORMAL";
                     
     /**
      * BOM 类型: 虚拟件/Kit 
      */
-    int BOM_TYPE_PHANTOM = 20;
+    String BOM_TYPE_PHANTOM = "PHANTOM";
                     
     /**
      * 消耗控制: 允许超耗 
      */
-    int CONSUMPTION_FLEXIBLE = 10;
+    String CONSUMPTION_FLEXIBLE = "FLEXIBLE";
                     
     /**
      * 消耗控制: 超耗警告 
      */
-    int CONSUMPTION_WARNING = 20;
+    String CONSUMPTION_WARNING = "WARNING";
                     
     /**
      * 消耗控制: 严格按 BOM 
      */
-    int CONSUMPTION_STRICT = 30;
+    String CONSUMPTION_STRICT = "STRICT";
                     
     /**
      * 审核状态: 未提交 
      */
-    int APPROVE_STATUS_UNSUBMITTED = 10;
+    String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
                     
     /**
      * 审核状态: 已提交 
      */
-    int APPROVE_STATUS_SUBMITTED = 20;
+    String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
                     
     /**
      * 审核状态: 已审核 
      */
-    int APPROVE_STATUS_APPROVED = 30;
+    String APPROVE_STATUS_APPROVED = "APPROVED";
                     
     /**
      * 审核状态: 已驳回 
      */
-    int APPROVE_STATUS_REJECTED = 40;
+    String APPROVE_STATUS_REJECTED = "REJECTED";
                     
     /**
      * 工单优先级: 低 
      */
-    int PRIORITY_LOW = 10;
+    String PRIORITY_LOW = "LOW";
                     
     /**
      * 工单优先级: 普通 
      */
-    int PRIORITY_NORMAL = 20;
+    String PRIORITY_NORMAL = "NORMAL";
                     
     /**
      * 工单优先级: 高 
      */
-    int PRIORITY_HIGH = 30;
+    String PRIORITY_HIGH = "HIGH";
                     
     /**
      * 工单优先级: 紧急 
      */
-    int PRIORITY_URGENT = 40;
+    String PRIORITY_URGENT = "URGENT";
                     
     /**
      * MRP 计划状态: 草稿 
      */
-    int MRP_STATUS_DRAFT = 10;
+    String MRP_STATUS_DRAFT = "DRAFT";
                     
     /**
      * MRP 计划状态: 运算中 
      */
-    int MRP_STATUS_RUNNING = 20;
+    String MRP_STATUS_RUNNING = "RUNNING";
                     
     /**
      * MRP 计划状态: 运算完成 
      */
-    int MRP_STATUS_COMPLETED = 30;
+    String MRP_STATUS_COMPLETED = "COMPLETED";
                     
     /**
      * MRP 计划状态: 已确认(转工单) 
      */
-    int MRP_STATUS_FIRMED = 40;
+    String MRP_STATUS_FIRMED = "FIRMED";
                     
     /**
      * MRP 计划状态: 已取消 
      */
-    int MRP_STATUS_CANCELLED = 50;
+    String MRP_STATUS_CANCELLED = "CANCELLED";
                     
     /**
      * MRP 计划订单类型: 计划订单 
      */
-    int MRP_ORDER_TYPE_PLANNED_ORDER = 10;
+    String MRP_ORDER_TYPE_PLANNED_ORDER = "PLANNED_ORDER";
                     
     /**
      * MRP 计划订单类型: 请购建议 
      */
-    int MRP_ORDER_TYPE_PURCHASE_REQUEST = 20;
+    String MRP_ORDER_TYPE_PURCHASE_REQUEST = "PURCHASE_REQUEST";
                     
     /**
      * MRP 计划订单类型: 工单建议 
      */
-    int MRP_ORDER_TYPE_WORK_ORDER_REQUEST = 30;
+    String MRP_ORDER_TYPE_WORK_ORDER_REQUEST = "WORK_ORDER_REQUEST";
                     
     /**
      * MRP 计划订单类型: 委外建议 
      */
-    int MRP_ORDER_TYPE_SUBCONTRACT_REQUEST = 40;
+    String MRP_ORDER_TYPE_SUBCONTRACT_REQUEST = "SUBCONTRACT_REQUEST";
                     
     /**
      * MRP 需求来源: 销售订单 
      */
-    int MRP_DEMAND_SOURCE_SALES_ORDER = 10;
+    String MRP_DEMAND_SOURCE_SALES_ORDER = "SALES_ORDER";
                     
     /**
      * MRP 需求来源: 预测 
      */
-    int MRP_DEMAND_SOURCE_FORECAST = 20;
+    String MRP_DEMAND_SOURCE_FORECAST = "FORECAST";
                     
     /**
      * MRP 需求来源: 安全库存 
      */
-    int MRP_DEMAND_SOURCE_SAFETY_STOCK = 30;
+    String MRP_DEMAND_SOURCE_SAFETY_STOCK = "SAFETY_STOCK";
                     
     /**
      * MRP 需求来源: 手工录入 
      */
-    int MRP_DEMAND_SOURCE_MANUAL = 40;
+    String MRP_DEMAND_SOURCE_MANUAL = "MANUAL";
                     
     /**
      * 领料状态: 草稿 
      */
-    int ISSUE_STATUS_DRAFT = 10;
+    String ISSUE_STATUS_DRAFT = "DRAFT";
                     
     /**
      * 领料状态: 已确认 
      */
-    int ISSUE_STATUS_CONFIRMED = 20;
+    String ISSUE_STATUS_CONFIRMED = "CONFIRMED";
                     
     /**
      * 领料状态: 已出库 
      */
-    int ISSUE_STATUS_DONE = 30;
+    String ISSUE_STATUS_DONE = "DONE";
                     
     /**
      * 领料状态: 已取消 
      */
-    int ISSUE_STATUS_CANCELLED = 40;
+    String ISSUE_STATUS_CANCELLED = "CANCELLED";
                     
     /**
      * 委外单状态: 草稿 
      */
-    int SUBCONTRACT_STATUS_DRAFT = 10;
+    String SUBCONTRACT_STATUS_DRAFT = "DRAFT";
                     
     /**
      * 委外单状态: 已生效 
      */
-    int SUBCONTRACT_STATUS_ACTIVE = 20;
+    String SUBCONTRACT_STATUS_ACTIVE = "ACTIVE";
                     
     /**
      * 委外单状态: 已作废 
      */
-    int SUBCONTRACT_STATUS_CANCELLED = 30;
+    String SUBCONTRACT_STATUS_CANCELLED = "CANCELLED";
                     
     /**
      * 成本滚算状态: 草稿 
      */
-    int COST_ROLLUP_STATUS_DRAFT = 10;
+    String COST_ROLLUP_STATUS_DRAFT = "DRAFT";
                     
     /**
      * 成本滚算状态: 已计算 
      */
-    int COST_ROLLUP_STATUS_CALCULATED = 20;
+    String COST_ROLLUP_STATUS_CALCULATED = "CALCULATED";
                     
     /**
      * 成本滚算状态: 已发布 
      */
-    int COST_ROLLUP_STATUS_FIRMED = 30;
+    String COST_ROLLUP_STATUS_FIRMED = "FIRMED";
                     
     /**
      * 成本滚算状态: 已作废 
      */
-    int COST_ROLLUP_STATUS_CANCELLED = 40;
+    String COST_ROLLUP_STATUS_CANCELLED = "CANCELLED";
                     
     /**
      * 联副产品类型: 联产品 
      */
-    int BYPRODUCT_TYPE_CO_PRODUCT = 10;
+    String BYPRODUCT_TYPE_CO_PRODUCT = "CO_PRODUCT";
                     
     /**
      * 联副产品类型: 副产品 
      */
-    int BYPRODUCT_TYPE_BY_PRODUCT = 20;
+    String BYPRODUCT_TYPE_BY_PRODUCT = "BY_PRODUCT";
                     
     /**
      * 班次类型: 全天单班 
      */
-    int SHIFT_TYPE_ONE_SHIFT = 10;
+    String SHIFT_TYPE_ONE_SHIFT = "ONE_SHIFT";
                     
     /**
      * 班次类型: 早班 
      */
-    int SHIFT_TYPE_MORNING = 20;
+    String SHIFT_TYPE_MORNING = "MORNING";
                     
     /**
      * 班次类型: 中班 
      */
-    int SHIFT_TYPE_AFTERNOON = 30;
+    String SHIFT_TYPE_AFTERNOON = "AFTERNOON";
                     
     /**
      * 班次类型: 夜班 
      */
-    int SHIFT_TYPE_NIGHT = 40;
+    String SHIFT_TYPE_NIGHT = "NIGHT";
                     
     /**
      * 工作日模式: 全周 
      */
-    int WORK_DATE_PATTERN_ALL_WEEK = 10;
+    String WORK_DATE_PATTERN_ALL_WEEK = "ALL_WEEK";
                     
     /**
      * 工作日模式: 工作日(周一至周五) 
      */
-    int WORK_DATE_PATTERN_WEEKDAYS = 20;
+    String WORK_DATE_PATTERN_WEEKDAYS = "WEEKDAYS";
                     
     /**
      * 工作日模式: 仅周末 
      */
-    int WORK_DATE_PATTERN_WEEKEND = 30;
+    String WORK_DATE_PATTERN_WEEKEND = "WEEKEND";
                     
 }

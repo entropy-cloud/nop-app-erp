@@ -53,7 +53,7 @@
         </prop>
         <prop name="source" displayName="来源" propId="9" i18n-en:displayName="Source" queryable="true" sortable="true"
               insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-hr/recruitment-source"/>
+            <schema type="java.lang.String" precision="20" dict="erp-hr/recruitment-source"/>
         </prop>
         <prop name="resumeAttachmentFileId" displayName="简历附件" propId="10" i18n-en:displayName="Resume Attachment"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -61,7 +61,7 @@
         </prop>
         <prop name="status" displayName="状态" propId="11" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-hr/recruitment-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-hr/recruitment-status"/>
         </prop>
         <prop name="interviewerId" displayName="面试官" propId="12" i18n-en:displayName="Interviewer" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="interviewer">

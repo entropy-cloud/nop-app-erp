@@ -18,6 +18,7 @@ import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -66,8 +67,8 @@ public class ErpMntSparePartUsageBizModel extends CrudBizModel<ErpMntSparePartUs
         if (Boolean.TRUE.equals(usage.getPosted())) {
             return; // 幂等：已确认出库
         }
-        Integer docStatus = usage.getDocStatus();
-        if (docStatus != null && docStatus == ErpMntDaoConstants.DOC_STATUS_ACTIVE) {
+        String docStatus = usage.getDocStatus();
+        if (docStatus != null && Objects.equals(docStatus, ErpMntDaoConstants.DOC_STATUS_ACTIVE)) {
             return;
         }
     }
@@ -96,8 +97,8 @@ public class ErpMntSparePartUsageBizModel extends CrudBizModel<ErpMntSparePartUs
     }
 
     protected boolean isStockIssued(ErpInvStockMove move) {
-        Integer status = move.getDocStatus();
-        return status != null && status == ErpMntConstants.STOCK_MOVE_DOC_STATUS_DONE;
+        String status = move.getDocStatus();
+        return status != null && Objects.equals(status, ErpMntConstants.STOCK_MOVE_DOC_STATUS_DONE);
     }
 
     protected BigDecimal aggregateAmount(java.util.List<ErpMntSparePartUsageLine> lines) {

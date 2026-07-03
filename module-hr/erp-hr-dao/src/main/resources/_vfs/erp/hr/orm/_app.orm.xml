@@ -15,164 +15,165 @@
     </x:gen-extends>
 
     <dicts>
-        <dict label="雇佣状态" name="erp-hr/employment-status" valueType="int" i18n-en:label="Employment Status">
-            <option code="ACTIVE" label="在职" value="10" i18n-en:label="Active"/>
-            <option code="PROBATION" label="试用" value="20" i18n-en:label="Probation"/>
-            <option code="RESIGNED" label="已离职" value="30" i18n-en:label="Resigned"/>
-            <option code="TERMINATED" label="已解雇" value="40" i18n-en:label="Terminated"/>
-            <option code="RETIRED" label="已退休" value="50" i18n-en:label="Retired"/>
+        <dict label="雇佣状态" name="erp-hr/employment-status" valueType="string" i18n-en:label="Employment Status">
+            <option code="ACTIVE" label="在职" value="ACTIVE" i18n-en:label="Active"/>
+            <option code="PROBATION" label="试用" value="PROBATION" i18n-en:label="Probation"/>
+            <option code="RESIGNED" label="已离职" value="RESIGNED" i18n-en:label="Resigned"/>
+            <option code="TERMINATED" label="已解雇" value="TERMINATED" i18n-en:label="Terminated"/>
+            <option code="RETIRED" label="已退休" value="RETIRED" i18n-en:label="Retired"/>
         </dict>
-        <dict label="员工类型" name="erp-hr/employee-type" valueType="int" i18n-en:label="Employee Type">
-            <option code="FULL_TIME" label="全职" value="10" i18n-en:label="Full Time"/>
-            <option code="PART_TIME" label="兼职" value="20" i18n-en:label="Part Time"/>
-            <option code="CONTRACTOR" label="劳务" value="30" i18n-en:label="Contractor"/>
-            <option code="INTERN" label="实习" value="40" i18n-en:label="Intern"/>
+        <dict label="员工类型" name="erp-hr/employee-type" valueType="string" i18n-en:label="Employee Type">
+            <option code="FULL_TIME" label="全职" value="FULL_TIME" i18n-en:label="Full Time"/>
+            <option code="PART_TIME" label="兼职" value="PART_TIME" i18n-en:label="Part Time"/>
+            <option code="CONTRACTOR" label="劳务" value="CONTRACTOR" i18n-en:label="Contractor"/>
+            <option code="INTERN" label="实习" value="INTERN" i18n-en:label="Intern"/>
         </dict>
-        <dict label="性别" name="erp-hr/gender" valueType="int" i18n-en:label="Gender">
-            <option code="MALE" label="男" value="10" i18n-en:label="Male"/>
-            <option code="FEMALE" label="女" value="20" i18n-en:label="Female"/>
+        <dict label="性别" name="erp-hr/gender" valueType="string" i18n-en:label="Gender">
+            <option code="MALE" label="男" value="MALE" i18n-en:label="Male"/>
+            <option code="FEMALE" label="女" value="FEMALE" i18n-en:label="Female"/>
         </dict>
-        <dict label="婚姻状况" name="erp-hr/marital-status" valueType="int" i18n-en:label="Marital Status">
-            <option code="SINGLE" label="未婚" value="10" i18n-en:label="Single"/>
-            <option code="MARRIED" label="已婚" value="20" i18n-en:label="Married"/>
-            <option code="DIVORCED" label="离婚" value="30" i18n-en:label="Divorced"/>
+        <dict label="婚姻状况" name="erp-hr/marital-status" valueType="string" i18n-en:label="Marital Status">
+            <option code="SINGLE" label="未婚" value="SINGLE" i18n-en:label="Single"/>
+            <option code="MARRIED" label="已婚" value="MARRIED" i18n-en:label="Married"/>
+            <option code="DIVORCED" label="离婚" value="DIVORCED" i18n-en:label="Divorced"/>
         </dict>
-        <dict label="合同类型" name="erp-hr/contract-type" valueType="int" i18n-en:label="Contract Type">
-            <option code="FIXED_TERM" label="固定期限" value="10" i18n-en:label="Fixed Term"/>
-            <option code="OPEN_ENDED" label="无固定期限" value="20" i18n-en:label="Open Ended"/>
-            <option code="PROJECT" label="项目制" value="30" i18n-en:label="Project"/>
+        <dict label="合同类型" name="erp-hr/contract-type" valueType="string" i18n-en:label="Contract Type">
+            <option code="FIXED_TERM" label="固定期限" value="FIXED_TERM" i18n-en:label="Fixed Term"/>
+            <option code="OPEN_ENDED" label="无固定期限" value="OPEN_ENDED" i18n-en:label="Open Ended"/>
+            <option code="PROJECT" label="项目制" value="PROJECT" i18n-en:label="Project"/>
         </dict>
-        <dict label="合同状态" name="erp-hr/contract-status" valueType="int" i18n-en:label="Contract Status">
-            <option code="ACTIVE" label="生效中" value="10" i18n-en:label="Active"/>
-            <option code="EXPIRED" label="已到期" value="20" i18n-en:label="Expired"/>
-            <option code="TERMINATED" label="已解除" value="30" i18n-en:label="Terminated"/>
-            <option code="SUSPENDED" label="已中止" value="40" i18n-en:label="Suspended"/>
+        <dict label="合同状态" name="erp-hr/contract-status" valueType="string" i18n-en:label="Contract Status">
+            <option code="ACTIVE" label="生效中" value="ACTIVE" i18n-en:label="Active"/>
+            <option code="EXPIRED" label="已到期" value="EXPIRED" i18n-en:label="Expired"/>
+            <option code="TERMINATED" label="已解除" value="TERMINATED" i18n-en:label="Terminated"/>
+            <option code="SUSPENDED" label="已中止" value="SUSPENDED" i18n-en:label="Suspended"/>
         </dict>
-        <dict label="休假类型" name="erp-hr/leave-type" valueType="int" i18n-en:label="Leave Type">
-            <option code="ANNUAL" label="年假" value="10" i18n-en:label="Annual Leave"/>
-            <option code="SICK" label="病假" value="20" i18n-en:label="Sick Leave"/>
-            <option code="PERSONAL" label="事假" value="30" i18n-en:label="Personal Leave"/>
-            <option code="MARRIAGE" label="婚假" value="40" i18n-en:label="Marriage Leave"/>
-            <option code="MATERNITY" label="产假" value="50" i18n-en:label="Maternity Leave"/>
-            <option code="FUNERAL" label="丧假" value="60" i18n-en:label="Funeral Leave"/>
-            <option code="COMPENSATORY" label="调休" value="70" i18n-en:label="Compensatory Leave"/>
+        <dict label="休假类型" name="erp-hr/leave-type" valueType="string" i18n-en:label="Leave Type">
+            <option code="ANNUAL" label="年假" value="ANNUAL" i18n-en:label="Annual Leave"/>
+            <option code="SICK" label="病假" value="SICK" i18n-en:label="Sick Leave"/>
+            <option code="PERSONAL" label="事假" value="PERSONAL" i18n-en:label="Personal Leave"/>
+            <option code="MARRIAGE" label="婚假" value="MARRIAGE" i18n-en:label="Marriage Leave"/>
+            <option code="MATERNITY" label="产假" value="MATERNITY" i18n-en:label="Maternity Leave"/>
+            <option code="FUNERAL" label="丧假" value="FUNERAL" i18n-en:label="Funeral Leave"/>
+            <option code="COMPENSATORY" label="调休" value="COMPENSATORY" i18n-en:label="Compensatory Leave"/>
         </dict>
-        <dict label="休假状态" name="erp-hr/leave-status" valueType="int" i18n-en:label="Leave Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="SUBMITTED" label="已提交" value="20" i18n-en:label="Submitted"/>
-            <option code="APPROVED" label="已批准" value="30" i18n-en:label="Approved"/>
-            <option code="REJECTED" label="已驳回" value="40" i18n-en:label="Rejected"/>
-            <option code="CANCELLED" label="已取消" value="50" i18n-en:label="Cancelled"/>
+        <dict label="休假状态" name="erp-hr/leave-status" valueType="string" i18n-en:label="Leave Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label="Submitted"/>
+            <option code="APPROVED" label="已批准" value="APPROVED" i18n-en:label="Approved"/>
+            <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label="Rejected"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
         </dict>
-        <dict label="工时表状态" name="erp-hr/timesheet-status" valueType="int" i18n-en:label="Timesheet Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="SUBMITTED" label="已提交" value="20" i18n-en:label="Submitted"/>
-            <option code="APPROVED" label="已批准" value="30" i18n-en:label="Approved"/>
-            <option code="REJECTED" label="已驳回" value="40" i18n-en:label="Rejected"/>
+        <dict label="工时表状态" name="erp-hr/timesheet-status" valueType="string" i18n-en:label="Timesheet Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label="Submitted"/>
+            <option code="APPROVED" label="已批准" value="APPROVED" i18n-en:label="Approved"/>
+            <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label="Rejected"/>
         </dict>
-        <dict label="招聘状态" name="erp-hr/recruitment-status" valueType="int" i18n-en:label="Recruitment Status">
-            <option code="OPEN" label="待处理" value="10" i18n-en:label="Open"/>
-            <option code="SCREENING" label="简历筛选" value="20" i18n-en:label="Screening"/>
-            <option code="INTERVIEW" label="面试中" value="30" i18n-en:label="Interviewing"/>
-            <option code="OFFERED" label="已发Offer" value="40" i18n-en:label="Offered"/>
-            <option code="HIRED" label="已入职" value="50" i18n-en:label="Hired"/>
-            <option code="REJECTED" label="已拒绝" value="60" i18n-en:label="Rejected"/>
-            <option code="CLOSED" label="已关闭" value="70" i18n-en:label="Closed"/>
+        <dict label="招聘状态" name="erp-hr/recruitment-status" valueType="string" i18n-en:label="Recruitment Status">
+            <option code="OPEN" label="待处理" value="OPEN" i18n-en:label="Open"/>
+            <option code="SCREENING" label="简历筛选" value="SCREENING" i18n-en:label="Screening"/>
+            <option code="INTERVIEW" label="面试中" value="INTERVIEW" i18n-en:label="Interviewing"/>
+            <option code="OFFERED" label="已发Offer" value="OFFERED" i18n-en:label="Offered"/>
+            <option code="HIRED" label="已入职" value="HIRED" i18n-en:label="Hired"/>
+            <option code="REJECTED" label="已拒绝" value="REJECTED" i18n-en:label="Rejected"/>
+            <option code="CLOSED" label="已关闭" value="CLOSED" i18n-en:label="Closed"/>
         </dict>
-        <dict label="薪资支付状态" name="erp-hr/salary-payment-status" valueType="int" i18n-en:label="Payment Status">
-            <option code="PENDING" label="待支付" value="10" i18n-en:label="Pending"/>
-            <option code="PAID" label="已支付" value="20" i18n-en:label="Paid"/>
-            <option code="VOID" label="已作废" value="30" i18n-en:label="Void"/>
+        <dict label="薪资支付状态" name="erp-hr/salary-payment-status" valueType="string" i18n-en:label="Payment Status">
+            <option code="PENDING" label="待支付" value="PENDING" i18n-en:label="Pending"/>
+            <option code="PAID" label="已支付" value="PAID" i18n-en:label="Paid"/>
+            <option code="VOID" label="已作废" value="VOID" i18n-en:label="Void"/>
         </dict>
-        <dict label="考勤来源" name="erp-hr/attendance-source" valueType="int" i18n-en:label="Attendance Source">
-            <option code="CARD" label="打卡" value="10" i18n-en:label="Card"/>
-            <option code="BIOMETRIC" label="指纹" value="20" i18n-en:label="Biometric"/>
-            <option code="MOBILE" label="移动" value="30" i18n-en:label="Mobile"/>
+        <dict label="考勤来源" name="erp-hr/attendance-source" valueType="string" i18n-en:label="Attendance Source">
+            <option code="CARD" label="打卡" value="CARD" i18n-en:label="Card"/>
+            <option code="BIOMETRIC" label="指纹" value="BIOMETRIC" i18n-en:label="Biometric"/>
+            <option code="MOBILE" label="移动" value="MOBILE" i18n-en:label="Mobile"/>
         </dict>
-        <dict label="招聘来源" name="erp-hr/recruitment-source" valueType="int" i18n-en:label="Recruitment Source">
-            <option code="RECRUITMENT_WEBSITE" label="招聘网站" value="10" i18n-en:label="Recruitment Website"/>
-            <option code="AGENCY" label="猎头/中介" value="20" i18n-en:label="Agency"/>
-            <option code="REFERRAL" label="员工推荐" value="30" i18n-en:label="Referral"/>
-            <option code="CAMPUS" label="校园招聘" value="40" i18n-en:label="Campus"/>
+        <dict label="招聘来源" name="erp-hr/recruitment-source" valueType="string" i18n-en:label="Recruitment Source">
+            <option code="RECRUITMENT_WEBSITE" label="招聘网站" value="RECRUITMENT_WEBSITE"
+                    i18n-en:label="Recruitment Website"/>
+            <option code="AGENCY" label="猎头/中介" value="AGENCY" i18n-en:label="Agency"/>
+            <option code="REFERRAL" label="员工推荐" value="REFERRAL" i18n-en:label="Referral"/>
+            <option code="CAMPUS" label="校园招聘" value="CAMPUS" i18n-en:label="Campus"/>
         </dict>
-        <dict label="模拟状态" name="erp-hr/simulation-status" valueType="int" i18n-en:label="Simulation Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="IN_REVIEW" label="审核中" value="20" i18n-en:label="In Review"/>
-            <option code="APPROVED" label="已审批" value="30" i18n-en:label="Approved"/>
-            <option code="REJECTED" label="已驳回" value="40" i18n-en:label="Rejected"/>
-            <option code="CONVERTED" label="已转正式" value="50" i18n-en:label="Converted"/>
+        <dict label="模拟状态" name="erp-hr/simulation-status" valueType="string" i18n-en:label="Simulation Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="IN_REVIEW" label="审核中" value="IN_REVIEW" i18n-en:label="In Review"/>
+            <option code="APPROVED" label="已审批" value="APPROVED" i18n-en:label="Approved"/>
+            <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label="Rejected"/>
+            <option code="CONVERTED" label="已转正式" value="CONVERTED" i18n-en:label="Converted"/>
         </dict>
-        <dict label="班次类型" name="erp-hr/shift-type" valueType="int" i18n-en:label="Shift Type">
-            <option code="FIXED" label="固定班" value="10" i18n-en:label="Fixed"/>
-            <option code="ROTATING" label="倒班" value="20" i18n-en:label="Rotating"/>
-            <option code="FLEXIBLE" label="弹性班" value="30" i18n-en:label="Flexible"/>
+        <dict label="班次类型" name="erp-hr/shift-type" valueType="string" i18n-en:label="Shift Type">
+            <option code="FIXED" label="固定班" value="FIXED" i18n-en:label="Fixed"/>
+            <option code="ROTATING" label="倒班" value="ROTATING" i18n-en:label="Rotating"/>
+            <option code="FLEXIBLE" label="弹性班" value="FLEXIBLE" i18n-en:label="Flexible"/>
         </dict>
-        <dict label="调换状态" name="erp-hr/swap-status" valueType="int" i18n-en:label="Swap Status">
-            <option code="PENDING" label="待审批" value="10" i18n-en:label="Pending"/>
-            <option code="APPROVED" label="已批准" value="20" i18n-en:label="Approved"/>
-            <option code="REJECTED" label="已驳回" value="30" i18n-en:label="Rejected"/>
-            <option code="CANCELLED" label="已取消" value="40" i18n-en:label="Cancelled"/>
+        <dict label="调换状态" name="erp-hr/swap-status" valueType="string" i18n-en:label="Swap Status">
+            <option code="PENDING" label="待审批" value="PENDING" i18n-en:label="Pending"/>
+            <option code="APPROVED" label="已批准" value="APPROVED" i18n-en:label="Approved"/>
+            <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label="Rejected"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
         </dict>
-        <dict label="调研类型" name="erp-hr/survey-type" valueType="int" i18n-en:label="Survey Type">
-            <option code="ANNUAL_ENGAGEMENT" label="年度敬业度调研" value="10" i18n-en:label="Annual Engagement"/>
-            <option code="PULSE" label="脉搏调研" value="20" i18n-en:label="Pulse Survey"/>
-            <option code="ENPS" label="eNPS调研" value="30" i18n-en:label="eNPS Survey"/>
-            <option code="ADHOC" label="临时调研" value="40" i18n-en:label="Ad-hoc Survey"/>
+        <dict label="调研类型" name="erp-hr/survey-type" valueType="string" i18n-en:label="Survey Type">
+            <option code="ANNUAL_ENGAGEMENT" label="年度敬业度调研" value="ANNUAL_ENGAGEMENT" i18n-en:label="Annual Engagement"/>
+            <option code="PULSE" label="脉搏调研" value="PULSE" i18n-en:label="Pulse Survey"/>
+            <option code="ENPS" label="eNPS调研" value="ENPS" i18n-en:label="eNPS Survey"/>
+            <option code="ADHOC" label="临时调研" value="ADHOC" i18n-en:label="Ad-hoc Survey"/>
         </dict>
-        <dict label="调研状态" name="erp-hr/survey-status" valueType="int" i18n-en:label="Survey Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="OPEN" label="进行中" value="20" i18n-en:label="Open"/>
-            <option code="CLOSED" label="已截止" value="30" i18n-en:label="Closed"/>
-            <option code="ARCHIVED" label="已归档" value="40" i18n-en:label="Archived"/>
+        <dict label="调研状态" name="erp-hr/survey-status" valueType="string" i18n-en:label="Survey Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="OPEN" label="进行中" value="OPEN" i18n-en:label="Open"/>
+            <option code="CLOSED" label="已截止" value="CLOSED" i18n-en:label="Closed"/>
+            <option code="ARCHIVED" label="已归档" value="ARCHIVED" i18n-en:label="Archived"/>
         </dict>
-        <dict label="题目类型" name="erp-hr/question-type" valueType="int" i18n-en:label="Question Type">
-            <option code="RATING" label="评分题" value="10" i18n-en:label="Rating"/>
-            <option code="SINGLE_CHOICE" label="单选题" value="20" i18n-en:label="Single Choice"/>
-            <option code="MULTI_CHOICE" label="多选题" value="30" i18n-en:label="Multi Choice"/>
-            <option code="OPEN_TEXT" label="开放文本" value="40" i18n-en:label="Open Text"/>
-            <option code="ENPS" label="eNPS题" value="50" i18n-en:label="eNPS"/>
+        <dict label="题目类型" name="erp-hr/question-type" valueType="string" i18n-en:label="Question Type">
+            <option code="RATING" label="评分题" value="RATING" i18n-en:label="Rating"/>
+            <option code="SINGLE_CHOICE" label="单选题" value="SINGLE_CHOICE" i18n-en:label="Single Choice"/>
+            <option code="MULTI_CHOICE" label="多选题" value="MULTI_CHOICE" i18n-en:label="Multi Choice"/>
+            <option code="OPEN_TEXT" label="开放文本" value="OPEN_TEXT" i18n-en:label="Open Text"/>
+            <option code="ENPS" label="eNPS题" value="ENPS" i18n-en:label="eNPS"/>
         </dict>
-        <dict label="驱动因子分类" name="erp-hr/driver-category" valueType="int" i18n-en:label="Driver Category">
-            <option code="GROWTH" label="成长发展" value="10" i18n-en:label="Growth"/>
-            <option code="RECOGNITION" label="认可激励" value="20" i18n-en:label="Recognition"/>
-            <option code="MANAGEMENT" label="管理支持" value="30" i18n-en:label="Management"/>
-            <option code="WELLBEING" label="健康福祉" value="40" i18n-en:label="Wellbeing"/>
-            <option code="ALIGNMENT" label="文化认同" value="50" i18n-en:label="Alignment"/>
+        <dict label="驱动因子分类" name="erp-hr/driver-category" valueType="string" i18n-en:label="Driver Category">
+            <option code="GROWTH" label="成长发展" value="GROWTH" i18n-en:label="Growth"/>
+            <option code="RECOGNITION" label="认可激励" value="RECOGNITION" i18n-en:label="Recognition"/>
+            <option code="MANAGEMENT" label="管理支持" value="MANAGEMENT" i18n-en:label="Management"/>
+            <option code="WELLBEING" label="健康福祉" value="WELLBEING" i18n-en:label="Wellbeing"/>
+            <option code="ALIGNMENT" label="文化认同" value="ALIGNMENT" i18n-en:label="Alignment"/>
         </dict>
-        <dict label="胜任力分类" name="erp-hr/competency-category" valueType="int" i18n-en:label="Competency Category">
-            <option code="SKILL" label="技能" value="10" i18n-en:label="Skill"/>
-            <option code="BEHAVIOR" label="行为" value="20" i18n-en:label="Behavior"/>
-            <option code="KNOWLEDGE" label="知识" value="30" i18n-en:label="Knowledge"/>
+        <dict label="胜任力分类" name="erp-hr/competency-category" valueType="string" i18n-en:label="Competency Category">
+            <option code="SKILL" label="技能" value="SKILL" i18n-en:label="Skill"/>
+            <option code="BEHAVIOR" label="行为" value="BEHAVIOR" i18n-en:label="Behavior"/>
+            <option code="KNOWLEDGE" label="知识" value="KNOWLEDGE" i18n-en:label="Knowledge"/>
         </dict>
-        <dict label="评估类型" name="erp-hr/assessment-type" valueType="int" i18n-en:label="Assessment Type">
-            <option code="SELF" label="自评" value="10" i18n-en:label="Self"/>
-            <option code="MANAGER" label="上级评估" value="20" i18n-en:label="Manager"/>
-            <option code="PEER" label="同级评估" value="30" i18n-en:label="Peer"/>
-            <option code="SUBORDINATE" label="下级评估" value="40" i18n-en:label="Subordinate"/>
-            <option code="360" label="360评估" value="50" i18n-en:label="360 Assessment"/>
+        <dict label="评估类型" name="erp-hr/assessment-type" valueType="string" i18n-en:label="Assessment Type">
+            <option code="SELF" label="自评" value="SELF" i18n-en:label="Self"/>
+            <option code="MANAGER" label="上级评估" value="MANAGER" i18n-en:label="Manager"/>
+            <option code="PEER" label="同级评估" value="PEER" i18n-en:label="Peer"/>
+            <option code="SUBORDINATE" label="下级评估" value="SUBORDINATE" i18n-en:label="Subordinate"/>
+            <option code="360" label="360评估" value="360" i18n-en:label="360 Assessment"/>
         </dict>
-        <dict label="评估状态" name="erp-hr/assessment-status" valueType="int" i18n-en:label="Assessment Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="SUBMITTED" label="已提交" value="20" i18n-en:label="Submitted"/>
-            <option code="COMPLETED" label="已完成" value="30" i18n-en:label="Completed"/>
+        <dict label="评估状态" name="erp-hr/assessment-status" valueType="string" i18n-en:label="Assessment Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label="Submitted"/>
+            <option code="COMPLETED" label="已完成" value="COMPLETED" i18n-en:label="Completed"/>
         </dict>
-        <dict label="差距严重程度" name="erp-hr/gap-severity" valueType="int" i18n-en:label="Gap Severity">
-            <option code="NONE" label="无差距" value="10" i18n-en:label="None"/>
-            <option code="MINOR" label="轻微" value="20" i18n-en:label="Minor"/>
-            <option code="MODERATE" label="明显" value="30" i18n-en:label="Moderate"/>
-            <option code="CRITICAL" label="严重" value="40" i18n-en:label="Critical"/>
+        <dict label="差距严重程度" name="erp-hr/gap-severity" valueType="string" i18n-en:label="Gap Severity">
+            <option code="NONE" label="无差距" value="NONE" i18n-en:label="None"/>
+            <option code="MINOR" label="轻微" value="MINOR" i18n-en:label="Minor"/>
+            <option code="MODERATE" label="明显" value="MODERATE" i18n-en:label="Moderate"/>
+            <option code="CRITICAL" label="严重" value="CRITICAL" i18n-en:label="Critical"/>
         </dict>
-        <dict label="发展计划状态" name="erp-hr/devplan-status" valueType="int" i18n-en:label="Development Plan Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="IN_PROGRESS" label="进行中" value="20" i18n-en:label="In Progress"/>
-            <option code="COMPLETED" label="已完成" value="30" i18n-en:label="Completed"/>
-            <option code="CANCELLED" label="已取消" value="40" i18n-en:label="Cancelled"/>
+        <dict label="发展计划状态" name="erp-hr/devplan-status" valueType="string" i18n-en:label="Development Plan Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="IN_PROGRESS" label="进行中" value="IN_PROGRESS" i18n-en:label="In Progress"/>
+            <option code="COMPLETED" label="已完成" value="COMPLETED" i18n-en:label="Completed"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
         </dict>
-        <dict label="计划项状态" name="erp-hr/plan-item-status" valueType="int" i18n-en:label="Plan Item Status">
-            <option code="NOT_STARTED" label="未开始" value="10" i18n-en:label="Not Started"/>
-            <option code="IN_PROGRESS" label="进行中" value="20" i18n-en:label="In Progress"/>
-            <option code="ACHIEVED" label="已完成" value="30" i18n-en:label="Achieved"/>
-            <option code="OVERDUE" label="已逾期" value="40" i18n-en:label="Overdue"/>
+        <dict label="计划项状态" name="erp-hr/plan-item-status" valueType="string" i18n-en:label="Plan Item Status">
+            <option code="NOT_STARTED" label="未开始" value="NOT_STARTED" i18n-en:label="Not Started"/>
+            <option code="IN_PROGRESS" label="进行中" value="IN_PROGRESS" i18n-en:label="In Progress"/>
+            <option code="ACHIEVED" label="已完成" value="ACHIEVED" i18n-en:label="Achieved"/>
+            <option code="OVERDUE" label="已逾期" value="OVERDUE" i18n-en:label="Overdue"/>
         </dict>
     </dicts>
 
@@ -216,8 +217,8 @@
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Last Name"/>
                 <column code="FULL_NAME" displayName="全名" name="fullName" precision="200" propId="5"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Full Name"/>
-                <column code="GENDER" displayName="性别" mandatory="true" name="gender" propId="6" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-hr/gender" i18n-en:displayName="Gender"/>
+                <column code="GENDER" displayName="性别" mandatory="true" name="gender" precision="20" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/gender" i18n-en:displayName="Gender"/>
                 <column code="BIRTH_DATE" displayName="出生日期" name="birthDate" propId="7" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Birth Date"/>
                 <column code="ID_CARD_TYPE" displayName="证件类型" name="idCardType" precision="50" propId="8"
@@ -228,8 +229,9 @@
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Email"/>
                 <column code="MOBILE_PHONE" displayName="手机号" domain="phone" name="mobilePhone" precision="20"
                         propId="11" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Mobile Phone"/>
-                <column code="MARITAL_STATUS" displayName="婚姻状况" name="maritalStatus" propId="12" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-hr/marital-status" i18n-en:displayName="Marital Status"/>
+                <column code="MARITAL_STATUS" displayName="婚姻状况" name="maritalStatus" precision="20" propId="12"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/marital-status"
+                        i18n-en:displayName="Marital Status"/>
                 <column code="NATIONALITY" displayName="国籍" name="nationality" precision="50" propId="13"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Nationality"/>
                 <column code="EMERGENCY_CONTACT" displayName="紧急联系人" name="emergencyContact" precision="100" propId="14"
@@ -256,11 +258,11 @@
                         stdSqlType="DATE" i18n-en:displayName="Resignation Date"/>
                 <column code="RESIGNATION_REASON" displayName="离职原因" name="resignationReason" precision="500"
                         propId="25" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Resignation Reason"/>
-                <column code="EMPLOYMENT_STATUS" displayName="雇佣状态" mandatory="true" name="employmentStatus" propId="26"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-hr/employment-status"
-                        i18n-en:displayName="Employment Status"/>
-                <column code="EMPLOYEE_TYPE" displayName="员工类型" mandatory="true" name="employeeType" propId="27"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-hr/employee-type"
+                <column code="EMPLOYMENT_STATUS" displayName="雇佣状态" mandatory="true" name="employmentStatus"
+                        precision="20" propId="26" stdDataType="string" stdSqlType="VARCHAR"
+                        ext:dict="erp-hr/employment-status" i18n-en:displayName="Employment Status"/>
+                <column code="EMPLOYEE_TYPE" displayName="员工类型" mandatory="true" name="employeeType" precision="20"
+                        propId="27" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/employee-type"
                         i18n-en:displayName="Employee Type"/>
                 <column code="BANK_ACCOUNT_ID" displayName="工资卡账户" name="bankAccountId" propId="28" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Bank Account"/>
@@ -461,8 +463,8 @@
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
                 <column code="EMPLOYEE_ID" displayName="员工" mandatory="true" name="employeeId" propId="3"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Employee"/>
-                <column code="CONTRACT_TYPE" displayName="合同类型" mandatory="true" name="contractType" propId="4"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-hr/contract-type"
+                <column code="CONTRACT_TYPE" displayName="合同类型" mandatory="true" name="contractType" precision="20"
+                        propId="4" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/contract-type"
                         i18n-en:displayName="Contract Type"/>
                 <column code="SIGN_DATE" displayName="签订日期" mandatory="true" name="signDate" propId="5"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Sign Date"/>
@@ -491,8 +493,9 @@
                 <column code="HOUSING_FUND_BASE" displayName="公积金基数" domain="amount" name="housingFundBase"
                         precision="18" propId="15" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Housing Fund Base"/>
-                <column code="STATUS" displayName="合同状态" mandatory="true" name="status" propId="16" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-hr/contract-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="合同状态" mandatory="true" name="status" precision="20" propId="16"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/contract-status"
+                        i18n-en:displayName="Status"/>
                 <column code="ATTACHMENT_FILE_ID" displayName="合同文件" name="attachmentFileId" precision="200" propId="17"
                         stdDataType="string" stdDomain="file" stdSqlType="VARCHAR" i18n-en:displayName="Attachment"/>
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="18" stdDataType="long" stdSqlType="BIGINT"
@@ -548,8 +551,8 @@
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
                 <column code="EMPLOYEE_ID" displayName="员工" mandatory="true" name="employeeId" propId="3"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Employee"/>
-                <column code="LEAVE_TYPE" displayName="休假类型" mandatory="true" name="leaveType" propId="4"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-hr/leave-type"
+                <column code="LEAVE_TYPE" displayName="休假类型" mandatory="true" name="leaveType" precision="20" propId="4"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/leave-type"
                         i18n-en:displayName="Leave Type"/>
                 <column code="START_DATE" displayName="开始日期" mandatory="true" name="startDate" propId="5"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Start Date"/>
@@ -560,8 +563,9 @@
                         i18n-en:displayName="Duration Days"/>
                 <column code="REASON" displayName="请假原因" name="reason" precision="500" propId="8" stdDataType="string"
                         stdSqlType="VARCHAR" i18n-en:displayName="Reason"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="9" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-hr/leave-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="9"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/leave-status"
+                        i18n-en:displayName="Status"/>
                 <column code="APPROVER_ID" displayName="审批人" name="approverId" propId="10" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Approver"/>
                 <column code="APPROVED_AT" displayName="审批时间" name="approvedAt" propId="11" stdDataType="datetime"
@@ -625,8 +629,9 @@
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Period To"/>
                 <column code="TOTAL_HOURS" displayName="总工时" domain="hours" name="totalHours" precision="10" propId="6"
                         scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Total Hours"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="7" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-hr/timesheet-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="7"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/timesheet-status"
+                        i18n-en:displayName="Status"/>
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="8" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="9"
@@ -760,8 +765,8 @@
                         propId="8" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Early Leave Minutes"/>
                 <column code="IS_ABSENT" defaultValue="false" displayName="是否旷工" name="isAbsent" propId="9"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Absent"/>
-                <column code="SOURCE" displayName="来源" name="source" propId="10" stdDataType="int" stdSqlType="INTEGER"
-                        ext:dict="erp-hr/attendance-source" i18n-en:displayName="Source"/>
+                <column code="SOURCE" displayName="来源" name="source" precision="20" propId="10" stdDataType="string"
+                        stdSqlType="VARCHAR" ext:dict="erp-hr/attendance-source" i18n-en:displayName="Source"/>
                 <column code="LEAVE_REQUEST_ID" displayName="关联休假" name="leaveRequestId" propId="11" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Leave Request"/>
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="12" stdDataType="long" stdSqlType="BIGINT"
@@ -856,8 +861,8 @@
                         i18n-en:displayName="Other Deductions"/>
                 <column code="NET_SALARY" displayName="实发合计" domain="amount" name="netSalary" precision="18" propId="17"
                         scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Net Salary"/>
-                <column code="PAYMENT_STATUS" displayName="支付状态" mandatory="true" name="paymentStatus" propId="18"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-hr/salary-payment-status"
+                <column code="PAYMENT_STATUS" displayName="支付状态" mandatory="true" name="paymentStatus" precision="20"
+                        propId="18" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/salary-payment-status"
                         i18n-en:displayName="Payment Status"/>
                 <column code="PAYMENT_DATE" displayName="实发日期" name="paymentDate" propId="19" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Payment Date"/>
@@ -918,13 +923,14 @@
                         propId="7" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Candidate Phone"/>
                 <column code="CANDIDATE_EMAIL" displayName="电子邮箱" domain="email" name="candidateEmail" precision="200"
                         propId="8" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Candidate Email"/>
-                <column code="SOURCE" displayName="来源" name="source" propId="9" stdDataType="int" stdSqlType="INTEGER"
-                        ext:dict="erp-hr/recruitment-source" i18n-en:displayName="Source"/>
+                <column code="SOURCE" displayName="来源" name="source" precision="20" propId="9" stdDataType="string"
+                        stdSqlType="VARCHAR" ext:dict="erp-hr/recruitment-source" i18n-en:displayName="Source"/>
                 <column code="RESUME_ATTACHMENT_FILE_ID" displayName="简历附件" name="resumeAttachmentFileId"
                         precision="200" propId="10" stdDataType="string" stdDomain="file" stdSqlType="VARCHAR"
                         i18n-en:displayName="Resume Attachment"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="11" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-hr/recruitment-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="11"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/recruitment-status"
+                        i18n-en:displayName="Status"/>
                 <column code="INTERVIEWER_ID" displayName="面试官" name="interviewerId" propId="12" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Interviewer"/>
                 <column code="INTERVIEW_DATE" displayName="面试日期" name="interviewDate" propId="13" stdDataType="date"
@@ -1010,8 +1016,9 @@
                         propId="6" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Simulation Period Month"/>
                 <column code="SIMULATION_NAME" displayName="模拟名称" name="simulationName" precision="200" propId="7"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Simulation Name"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="8" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-hr/simulation-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/simulation-status"
+                        i18n-en:displayName="Status"/>
                 <column code="REVIEWER_ID" displayName="审批人" name="reviewerId" propId="9" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Reviewer"/>
                 <column code="REVIEWED_AT" displayName="审批时间" name="reviewedAt" propId="10" stdDataType="datetime"
@@ -1079,8 +1086,8 @@
                         i18n-en:displayName="Organization"/>
                 <column code="NAME" displayName="班次名称" domain="name" mandatory="true" name="name" precision="200"
                         propId="4" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
-                <column code="SHIFT_TYPE" displayName="班次类型" mandatory="true" name="shiftType" propId="5"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-hr/shift-type"
+                <column code="SHIFT_TYPE" displayName="班次类型" mandatory="true" name="shiftType" precision="20" propId="5"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/shift-type"
                         i18n-en:displayName="Shift Type"/>
                 <column code="START_TIME" displayName="上班时间" mandatory="true" name="startTime" precision="8" propId="6"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Start Time"/>
@@ -1304,8 +1311,9 @@
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Swap Date"/>
                 <column code="REASON" displayName="调换原因" name="reason" precision="500" propId="9" stdDataType="string"
                         stdSqlType="VARCHAR" i18n-en:displayName="Reason"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="10" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-hr/swap-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="10"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/swap-status"
+                        i18n-en:displayName="Status"/>
                 <column code="APPROVED_BY_ID" displayName="审批人" name="approvedById" precision="36" propId="11"
                         stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -1371,13 +1379,14 @@
                         propId="3" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Title"/>
                 <column code="DESCRIPTION" displayName="问卷说明" name="description" precision="2000" propId="4"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Description"/>
-                <column code="SURVEY_TYPE" displayName="调研类型" mandatory="true" name="surveyType" propId="5"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-hr/survey-type"
+                <column code="SURVEY_TYPE" displayName="调研类型" mandatory="true" name="surveyType" precision="20"
+                        propId="5" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/survey-type"
                         i18n-en:displayName="Survey Type"/>
                 <column code="IS_ANONYMOUS" defaultValue="true" displayName="是否匿名" name="isAnonymous" propId="6"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Anonymous"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="7" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-hr/survey-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="7"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/survey-status"
+                        i18n-en:displayName="Status"/>
                 <column code="START_DATE" displayName="开始日期" name="startDate" propId="8" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Start Date"/>
                 <column code="END_DATE" displayName="截止日期" name="endDate" propId="9" stdDataType="date"
@@ -1464,8 +1473,8 @@
                         stdSqlType="INTEGER" i18n-en:displayName="Sort Order"/>
                 <column code="QUESTION_TEXT" displayName="题目内容" mandatory="true" name="questionText" precision="2000"
                         propId="4" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Question Text"/>
-                <column code="QUESTION_TYPE" displayName="题型" mandatory="true" name="questionType" propId="5"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-hr/question-type"
+                <column code="QUESTION_TYPE" displayName="题型" mandatory="true" name="questionType" precision="20"
+                        propId="5" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/question-type"
                         i18n-en:displayName="Question Type"/>
                 <column code="RATING_SCALE_MIN" defaultValue="1" displayName="评分最低分" name="ratingScaleMin" propId="6"
                         stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Rating Scale Min"/>
@@ -1477,8 +1486,9 @@
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Rating Label Max"/>
                 <column code="OPTIONS" displayName="选项列表" name="options" precision="2000" propId="10"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Options"/>
-                <column code="DRIVER_CATEGORY" displayName="驱动因子分类" name="driverCategory" propId="11" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-hr/driver-category" i18n-en:displayName="Driver Category"/>
+                <column code="DRIVER_CATEGORY" displayName="驱动因子分类" name="driverCategory" precision="20" propId="11"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/driver-category"
+                        i18n-en:displayName="Driver Category"/>
                 <column code="IS_REQUIRED" defaultValue="true" displayName="是否必填" name="isRequired" propId="12"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Required"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -1692,8 +1702,9 @@
                         propId="3" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
                 <column code="DESCRIPTION" displayName="描述" name="description" precision="1000" propId="4"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Description"/>
-                <column code="CATEGORY" displayName="分类" mandatory="true" name="category" propId="5" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-hr/competency-category" i18n-en:displayName="Category"/>
+                <column code="CATEGORY" displayName="分类" mandatory="true" name="category" precision="20" propId="5"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/competency-category"
+                        i18n-en:displayName="Category"/>
                 <column code="COMPETENCY_GROUP" displayName="能力组" name="competencyGroup" precision="100" propId="6"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Competency Group"/>
                 <column code="IS_TECHNICAL" defaultValue="false" displayName="是否技术能力" name="isTechnical" propId="7"
@@ -1846,15 +1857,16 @@
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="EMPLOYEE_ID" displayName="被评估员工" mandatory="true" name="employeeId" propId="2"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Employee"/>
-                <column code="ASSESSMENT_TYPE" displayName="评估类型" mandatory="true" name="assessmentType" propId="3"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-hr/assessment-type"
+                <column code="ASSESSMENT_TYPE" displayName="评估类型" mandatory="true" name="assessmentType" precision="20"
+                        propId="3" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/assessment-type"
                         i18n-en:displayName="Assessment Type"/>
                 <column code="ASSESSOR_ID" displayName="评估人" name="assessorId" propId="4" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Assessor"/>
                 <column code="ASSESSMENT_DATE" displayName="评估日期" name="assessmentDate" propId="5" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Assessment Date"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="6" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-hr/assessment-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/assessment-status"
+                        i18n-en:displayName="Status"/>
                 <column code="OVERALL_SCORE" displayName="综合评分" name="overallScore" precision="5" propId="7" scale="2"
                         stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Overall Score"/>
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="8" stdDataType="long" stdSqlType="BIGINT"
@@ -1921,8 +1933,9 @@
                         stdSqlType="INTEGER" i18n-en:displayName="Actual Level"/>
                 <column code="COMMENT" displayName="评语" name="comment" precision="1000" propId="5" stdDataType="string"
                         stdSqlType="VARCHAR" i18n-en:displayName="Comment"/>
-                <column code="SOURCE_TYPE" displayName="来源类型" name="sourceType" propId="6" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-hr/assessment-type" i18n-en:displayName="Source Type"/>
+                <column code="SOURCE_TYPE" displayName="来源类型" name="sourceType" precision="20" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/assessment-type"
+                        i18n-en:displayName="Source Type"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="7" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Del Flag"/>
@@ -1972,8 +1985,9 @@
                         stdSqlType="INTEGER" i18n-en:displayName="Actual Level"/>
                 <column code="GAP_VALUE" displayName="差距值" name="gapValue" propId="6" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Gap Value"/>
-                <column code="GAP_SEVERITY" displayName="差距严重程度" name="gapSeverity" propId="7" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-hr/gap-severity" i18n-en:displayName="Gap Severity"/>
+                <column code="GAP_SEVERITY" displayName="差距严重程度" name="gapSeverity" precision="20" propId="7"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/gap-severity"
+                        i18n-en:displayName="Gap Severity"/>
                 <column code="ASSESSMENT_DATE" displayName="评估日期" name="assessmentDate" propId="8" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Assessment Date"/>
                 <column code="ANALYSIS_DATE" displayName="分析日期" name="analysisDate" propId="9" stdDataType="datetime"
@@ -2024,8 +2038,9 @@
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Plan Name"/>
                 <column code="TARGET_DATE" displayName="目标完成日期" name="targetDate" propId="4" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Target Date"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="5" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-hr/devplan-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="5"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/devplan-status"
+                        i18n-en:displayName="Status"/>
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="6" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="7"
@@ -2093,8 +2108,9 @@
                         stdSqlType="DATE" i18n-en:displayName="Start Date"/>
                 <column code="END_DATE" displayName="预计完成日期" name="endDate" propId="9" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="End Date"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="10" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-hr/plan-item-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="10"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/plan-item-status"
+                        i18n-en:displayName="Status"/>
                 <column code="PROGRESS_NOTE" displayName="进度说明" name="progressNote" precision="1000" propId="11"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Progress Note"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"

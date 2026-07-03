@@ -1,15 +1,15 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 单据方向
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 入库
-    value: 10
+    value: INBOUND
     description: 
   
   - label: 出库
-    value: 20
+    value: OUTBOUND
     description: 
   

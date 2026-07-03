@@ -111,16 +111,16 @@
         }
 
 
-        private String _rate;
+        private java.math.BigDecimal _rate;
 
     
         @PropMeta(propId=8)
     
-        public String getRate(){
+        public java.math.BigDecimal getRate(){
             return _rate;
         }
 
-        public void setRate(String value){
+        public void setRate(java.math.BigDecimal value){
             this._rate = value;
         }
 

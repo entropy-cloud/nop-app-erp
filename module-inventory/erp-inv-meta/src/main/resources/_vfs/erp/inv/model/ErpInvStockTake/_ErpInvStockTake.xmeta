@@ -37,7 +37,7 @@
         </prop>
         <prop name="takeType" displayName="盘点类型" propId="5" i18n-en:displayName="Take Type" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-inv/take-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-inv/take-type"/>
         </prop>
         <prop name="warehouseId" displayName="盘点仓库" propId="6" i18n-en:displayName="Warehouse" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="warehouse">
@@ -45,11 +45,11 @@
         </prop>
         <prop name="docStatus" displayName="单据状态" propId="7" i18n-en:displayName="Doc Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-inv/move-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-inv/move-status"/>
         </prop>
         <prop name="approveStatus" displayName="审核状态" propId="8" i18n-en:displayName="Approve Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-inv/approve-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-inv/approve-status"/>
         </prop>
         <prop name="posted" displayName="已过账" propId="9" i18n-en:displayName="Posted" queryable="true" sortable="true"
               insertable="true" updatable="true" defaultValue="false">

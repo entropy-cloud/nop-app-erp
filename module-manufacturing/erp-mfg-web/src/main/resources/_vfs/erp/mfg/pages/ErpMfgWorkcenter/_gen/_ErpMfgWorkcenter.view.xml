@@ -28,7 +28,7 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--产能-->
-                <col id="capacity" sortable="true"/>
+                <col id="capacity" ui:number="true" sortable="true"/>
 
                 <!--产能单位-->
                 <col id="capacityUnit" sortable="true"/>

@@ -33,7 +33,7 @@
         </prop>
         <prop name="triggerType" displayName="触发类型" propId="4" i18n-en:displayName="Trigger Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-qa/recall-trigger-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-qa/recall-trigger-type"/>
         </prop>
         <prop name="sourceNcrId" displayName="来源NCR(弱指针)" propId="5" i18n-en:displayName="Source NCR" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="sourceNcr">
@@ -57,7 +57,7 @@
         </prop>
         <prop name="severityLevel" displayName="严重程度" propId="10" i18n-en:displayName="Severity Level" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-qa/recall-severity"/>
+            <schema type="java.lang.String" precision="20" dict="erp-qa/recall-severity"/>
         </prop>
         <prop name="businessDate" displayName="业务日期" propId="11" i18n-en:displayName="Business Date" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -69,11 +69,11 @@
         </prop>
         <prop name="status" displayName="召回状态" propId="13" i18n-en:displayName="Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-qa/recall-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-qa/recall-status"/>
         </prop>
         <prop name="approveStatus" displayName="审核状态" propId="14" i18n-en:displayName="Approve Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-qa/approve-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-qa/approve-status"/>
         </prop>
         <prop name="approvedBy" displayName="审批人" propId="15" i18n-en:displayName="Approved By" queryable="true"
               sortable="true" insertable="true" updatable="true">

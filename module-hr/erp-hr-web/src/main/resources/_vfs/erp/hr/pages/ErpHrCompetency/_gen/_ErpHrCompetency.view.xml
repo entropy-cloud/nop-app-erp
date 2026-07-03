@@ -31,7 +31,7 @@
                 <col id="description" sortable="true"/>
 
                 <!--分类-->
-                <col id="category" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="category" mandatory="true" sortable="true"/>
 
                 <!--能力组-->
                 <col id="competencyGroup" sortable="true"/>

@@ -94,13 +94,13 @@
                 <col id="unitCost" ui:number="true" sortable="true"/>
 
                 <!--单据状态-->
-                <col id="docStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="docStatus" mandatory="true" sortable="true"/>
 
                 <!--审核状态-->
-                <col id="approveStatus" ui:number="true" sortable="true"/>
+                <col id="approveStatus" sortable="true"/>
 
                 <!--优先级-->
-                <col id="priority" ui:number="true" sortable="true"/>
+                <col id="priority" sortable="true"/>
 
                 <!--已过账-->
                 <col id="posted" sortable="true"/>

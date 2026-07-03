@@ -46,13 +46,13 @@
                 <col id="description" sortable="true"/>
 
                 <!--严重程度-->
-                <col id="severity" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="severity" mandatory="true" sortable="true"/>
 
                 <!--处理决定-->
-                <col id="dispositionType" ui:number="true" sortable="true"/>
+                <col id="dispositionType" sortable="true"/>
 
                 <!--状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--供应商-->
                 <col id="supplierId" ui:number="true" sortable="true"/>
@@ -64,10 +64,10 @@
                 <col id="measuredValue" sortable="true"/>
 
                 <!--规格下限-->
-                <col id="specMin" sortable="true"/>
+                <col id="specMin" ui:number="true" sortable="true"/>
 
                 <!--规格上限-->
-                <col id="specMax" sortable="true"/>
+                <col id="specMax" ui:number="true" sortable="true"/>
 
                 <!--责任人-->
                 <col id="assignedTo" ui:number="true" sortable="true"/>

@@ -29,11 +29,11 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
     public static final String PROP_NAME_code = "code";
     public static final int PROP_ID_code = 2;
     
-    /* 凭证字: VOUCHER_TYPE INTEGER */
+    /* 凭证字: VOUCHER_TYPE VARCHAR */
     public static final String PROP_NAME_voucherType = "voucherType";
     public static final int PROP_ID_voucherType = 3;
     
-    /* 过账类型: POSTING_TYPE INTEGER */
+    /* 过账类型: POSTING_TYPE VARCHAR */
     public static final String PROP_NAME_postingType = "postingType";
     public static final int PROP_ID_postingType = 4;
     
@@ -73,7 +73,7 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
     public static final String PROP_NAME_reversalOfVoucherId = "reversalOfVoucherId";
     public static final int PROP_ID_reversalOfVoucherId = 13;
     
-    /* 凭证状态: DOC_STATUS INTEGER */
+    /* 凭证状态: DOC_STATUS VARCHAR */
     public static final String PROP_NAME_docStatus = "docStatus";
     public static final int PROP_ID_docStatus = 14;
     
@@ -222,10 +222,10 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
     private java.lang.String _code;
     
     /* 凭证字: VOUCHER_TYPE */
-    private java.lang.Integer _voucherType;
+    private java.lang.String _voucherType;
     
     /* 过账类型: POSTING_TYPE */
-    private java.lang.Integer _postingType;
+    private java.lang.String _postingType;
     
     /* 凭证日期: VOUCHER_DATE */
     private java.time.LocalDate _voucherDate;
@@ -255,7 +255,7 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
     private java.lang.Long _reversalOfVoucherId;
     
     /* 凭证状态: DOC_STATUS */
-    private java.lang.Integer _docStatus;
+    private java.lang.String _docStatus;
     
     /* 过账人: POSTED_BY */
     private java.lang.String _postedBy;
@@ -459,9 +459,9 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
             }
         
             case PROP_ID_voucherType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_voucherType));
                }
                setVoucherType(typedValue);
@@ -469,9 +469,9 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
             }
         
             case PROP_ID_postingType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_postingType));
                }
                setPostingType(typedValue);
@@ -569,9 +569,9 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
             }
         
             case PROP_ID_docStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_docStatus));
                }
                setDocStatus(typedValue);
@@ -693,14 +693,14 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
         
             case PROP_ID_voucherType:{
                onInitProp(propId);
-               this._voucherType = (java.lang.Integer)value;
+               this._voucherType = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_postingType:{
                onInitProp(propId);
-               this._postingType = (java.lang.Integer)value;
+               this._postingType = (java.lang.String)value;
                
                break;
             }
@@ -770,7 +770,7 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
         
             case PROP_ID_docStatus:{
                onInitProp(propId);
-               this._docStatus = (java.lang.Integer)value;
+               this._docStatus = (java.lang.String)value;
                
                break;
             }
@@ -885,7 +885,7 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
     /**
      * 凭证字: VOUCHER_TYPE
      */
-    public final java.lang.Integer getVoucherType(){
+    public final java.lang.String getVoucherType(){
          onPropGet(PROP_ID_voucherType);
          return _voucherType;
     }
@@ -893,7 +893,7 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
     /**
      * 凭证字: VOUCHER_TYPE
      */
-    public final void setVoucherType(java.lang.Integer value){
+    public final void setVoucherType(java.lang.String value){
         if(onPropSet(PROP_ID_voucherType,value)){
             this._voucherType = value;
             internalClearRefs(PROP_ID_voucherType);
@@ -904,7 +904,7 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
     /**
      * 过账类型: POSTING_TYPE
      */
-    public final java.lang.Integer getPostingType(){
+    public final java.lang.String getPostingType(){
          onPropGet(PROP_ID_postingType);
          return _postingType;
     }
@@ -912,7 +912,7 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
     /**
      * 过账类型: POSTING_TYPE
      */
-    public final void setPostingType(java.lang.Integer value){
+    public final void setPostingType(java.lang.String value){
         if(onPropSet(PROP_ID_postingType,value)){
             this._postingType = value;
             internalClearRefs(PROP_ID_postingType);
@@ -1094,7 +1094,7 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
     /**
      * 凭证状态: DOC_STATUS
      */
-    public final java.lang.Integer getDocStatus(){
+    public final java.lang.String getDocStatus(){
          onPropGet(PROP_ID_docStatus);
          return _docStatus;
     }
@@ -1102,7 +1102,7 @@ public class _ErpFinVoucher extends DynamicOrmEntity{
     /**
      * 凭证状态: DOC_STATUS
      */
-    public final void setDocStatus(java.lang.Integer value){
+    public final void setDocStatus(java.lang.String value){
         if(onPropSet(PROP_ID_docStatus,value)){
             this._docStatus = value;
             internalClearRefs(PROP_ID_docStatus);

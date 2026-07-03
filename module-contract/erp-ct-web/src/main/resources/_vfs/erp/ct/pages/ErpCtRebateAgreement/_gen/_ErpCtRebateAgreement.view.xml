@@ -34,7 +34,7 @@
                 <col id="partnerId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--返利类型-->
-                <col id="rebateType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="rebateType" mandatory="true" sortable="true"/>
 
                 <!--签订日期-->
                 <col id="agreementDate" sortable="true"/>
@@ -46,10 +46,10 @@
                 <col id="endDate" mandatory="true" sortable="true"/>
 
                 <!--计提方法-->
-                <col id="accrualMethod" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="accrualMethod" mandatory="true" sortable="true"/>
 
                 <!--状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--当前累计金额-->
                 <col id="totalAccumulatedAmount" ui:number="true" sortable="true"/>

@@ -2,9 +2,11 @@ package app.erp.prj.service;
 
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
+import app.erp.fin.service.ErpFinConstants;
 import app.erp.md.dao.entity.ErpMdAcctSchema;
 import app.erp.md.dao.entity.ErpMdEmployee;
 import app.erp.md.dao.entity.ErpMdSubject;
+import app.erp.md.service.ErpMdConstants;
 import app.erp.prj.biz.IErpPrjProjectBiz;
 import app.erp.prj.biz.IErpPrjTimesheetBiz;
 import app.erp.prj.dao.entity.ErpPrjActivityType;
@@ -255,7 +257,7 @@ public class TestErpPrjBudgetAndCollection extends JunitAutoTestCase {
     // ---------- seed helpers ----------
 
     private Long seedTimesheet(String code, Long projectId, Long taskId, Long activityTypeId,
-                               String hours, String costRate, int status) {
+                               String hours, String costRate, String status) {
         IEntityDao<ErpPrjTimesheet> dao = daoProvider.daoFor(ErpPrjTimesheet.class);
         ErpPrjTimesheet ts = new ErpPrjTimesheet();
         ts.setCode(code);
@@ -265,8 +267,8 @@ public class TestErpPrjBudgetAndCollection extends JunitAutoTestCase {
         ts.setUserId(seedEmployee());
         ts.setActivityTypeId(activityTypeId);
         ts.setWorkDate(LocalDate.of(2026, 7, 15));
-        ts.setHours(hours);
-        ts.setCostRate(costRate);
+        ts.setHours(hours != null ? new BigDecimal(hours) : null);
+        ts.setCostRate(costRate != null ? new BigDecimal(costRate) : null);
         ts.setCurrencyId(1L);
         ts.setStatus(status);
         dao.saveEntity(ts);
@@ -279,12 +281,12 @@ public class TestErpPrjBudgetAndCollection extends JunitAutoTestCase {
         emp.setCode("EMP-" + System.nanoTime());
         emp.setName("测试员工");
         emp.setOrgId(1L);
-        emp.setStatus(10);
+        emp.setStatus(ErpMdConstants.ACTIVE_STATUS_ACTIVE);
         dao.saveEntity(emp);
         return emp.getId();
     }
 
-    private Long seedProject(String code, String name, Long projectTypeId, int status, BigDecimal budget) {
+    private Long seedProject(String code, String name, Long projectTypeId, String status, BigDecimal budget) {
         IEntityDao<ErpPrjProject> dao = daoProvider.daoFor(ErpPrjProject.class);
         ErpPrjProject p = new ErpPrjProject();
         p.setCode(code);
@@ -293,7 +295,7 @@ public class TestErpPrjBudgetAndCollection extends JunitAutoTestCase {
         p.setProjectTypeId(projectTypeId);
         p.setCurrencyId(1L);
         p.setStatus(status);
-        p.setBudget(budget != null ? budget.toPlainString() : null);
+        p.setBudget(budget);
         p.setActualCost(BigDecimal.ZERO);
         dao.saveEntity(p);
         return p.getId();
@@ -309,7 +311,7 @@ public class TestErpPrjBudgetAndCollection extends JunitAutoTestCase {
         return t.getId();
     }
 
-    private Long seedTask(Long projectId, String title, int status) {
+    private Long seedTask(Long projectId, String title, String status) {
         IEntityDao<ErpPrjTask> dao = daoProvider.daoFor(ErpPrjTask.class);
         ErpPrjTask task = new ErpPrjTask();
         task.setProjectId(projectId);
@@ -324,7 +326,7 @@ public class TestErpPrjBudgetAndCollection extends JunitAutoTestCase {
         ErpPrjActivityType a = new ErpPrjActivityType();
         a.setCode(code);
         a.setName(name);
-        a.setCostRate(costRate);
+        a.setCostRate(costRate != null ? new BigDecimal(costRate) : null);
         a.setSubjectId(subjectId);
         dao.saveEntity(a);
         return a.getId();
@@ -335,9 +337,9 @@ public class TestErpPrjBudgetAndCollection extends JunitAutoTestCase {
         ErpMdSubject s = new ErpMdSubject();
         s.setCode(code);
         s.setName(name);
-        s.setSubjectClass(10);
-        s.setDirection(10);
-        s.setStatus(10);
+        s.setSubjectClass("ASSET");
+        s.setDirection(ErpFinConstants.DC_DEBIT);
+        s.setStatus(ErpMdConstants.ACTIVE_STATUS_ACTIVE);
         dao.saveEntity(s);
         return s.getId();
     }
@@ -348,9 +350,9 @@ public class TestErpPrjBudgetAndCollection extends JunitAutoTestCase {
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
-        schema.setNature(10);
+        schema.setNature("FINANCIAL");
         schema.setFunctionalCurrencyId(1L);
-        schema.setStatus(10);
+        schema.setStatus(ErpMdConstants.ACTIVE_STATUS_ACTIVE);
         dao.saveEntity(schema);
     }
 
@@ -364,7 +366,7 @@ public class TestErpPrjBudgetAndCollection extends JunitAutoTestCase {
         period.setMonth(7);
         period.setStartDate(LocalDate.of(2026, 7, 1));
         period.setEndDate(LocalDate.of(2026, 7, 31));
-        period.setStatus(10);
+        period.setStatus(ErpFinConstants.PERIOD_STATUS_OPEN);
         dao.saveEntity(period);
     }
 

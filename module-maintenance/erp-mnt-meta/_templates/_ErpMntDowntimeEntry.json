@@ -3,7 +3,7 @@
   "equipmentId": 0,
   "startTime": "2000-01-01 14:00:00",
   "endTime": "2000-01-01 14:00:00",
-  "totalMinutes": "",
+  "totalMinutes": 0.0,
   "reason": "",
   "relatedJobOrderId": 0,
   "remark": "",

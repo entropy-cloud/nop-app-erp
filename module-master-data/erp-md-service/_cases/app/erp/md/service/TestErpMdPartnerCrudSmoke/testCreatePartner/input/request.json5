@@ -3,8 +3,8 @@
     data: {
       code: "P-SMOKE-CREATE",
       name: "冒烟测试-新建往来单位",
-      partnerType: 10,
-      status: 10
+      partnerType: "CUSTOMER",
+      status: "ACTIVE"
     }
   }
 }

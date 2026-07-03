@@ -33,7 +33,7 @@ public class _ErpMdSettlementMethod extends DynamicOrmEntity{
     public static final String PROP_NAME_name = "name";
     public static final int PROP_ID_name = 3;
     
-    /* 结算类型: SETTLEMENT_TYPE INTEGER */
+    /* 结算类型: SETTLEMENT_TYPE VARCHAR */
     public static final String PROP_NAME_settlementType = "settlementType";
     public static final int PROP_ID_settlementType = 4;
     
@@ -45,7 +45,7 @@ public class _ErpMdSettlementMethod extends DynamicOrmEntity{
     public static final String PROP_NAME_defaultDays = "defaultDays";
     public static final int PROP_ID_defaultDays = 6;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 7;
     
@@ -137,7 +137,7 @@ public class _ErpMdSettlementMethod extends DynamicOrmEntity{
     private java.lang.String _name;
     
     /* 结算类型: SETTLEMENT_TYPE */
-    private java.lang.Integer _settlementType;
+    private java.lang.String _settlementType;
     
     /* 默认资金账户: DEFAULT_FUND_ACCOUNT_ID */
     private java.lang.Long _defaultFundAccountId;
@@ -146,7 +146,7 @@ public class _ErpMdSettlementMethod extends DynamicOrmEntity{
     private java.lang.Integer _defaultDays;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -321,9 +321,9 @@ public class _ErpMdSettlementMethod extends DynamicOrmEntity{
             }
         
             case PROP_ID_settlementType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_settlementType));
                }
                setSettlementType(typedValue);
@@ -351,9 +351,9 @@ public class _ErpMdSettlementMethod extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -452,7 +452,7 @@ public class _ErpMdSettlementMethod extends DynamicOrmEntity{
         
             case PROP_ID_settlementType:{
                onInitProp(propId);
-               this._settlementType = (java.lang.Integer)value;
+               this._settlementType = (java.lang.String)value;
                
                break;
             }
@@ -473,7 +473,7 @@ public class _ErpMdSettlementMethod extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -586,7 +586,7 @@ public class _ErpMdSettlementMethod extends DynamicOrmEntity{
     /**
      * 结算类型: SETTLEMENT_TYPE
      */
-    public final java.lang.Integer getSettlementType(){
+    public final java.lang.String getSettlementType(){
          onPropGet(PROP_ID_settlementType);
          return _settlementType;
     }
@@ -594,7 +594,7 @@ public class _ErpMdSettlementMethod extends DynamicOrmEntity{
     /**
      * 结算类型: SETTLEMENT_TYPE
      */
-    public final void setSettlementType(java.lang.Integer value){
+    public final void setSettlementType(java.lang.String value){
         if(onPropSet(PROP_ID_settlementType,value)){
             this._settlementType = value;
             internalClearRefs(PROP_ID_settlementType);
@@ -643,7 +643,7 @@ public class _ErpMdSettlementMethod extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -651,7 +651,7 @@ public class _ErpMdSettlementMethod extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

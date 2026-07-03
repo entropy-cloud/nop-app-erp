@@ -91,7 +91,7 @@ public class TestErpAstDisposal extends JunitAutoTestCase {
         }
 
         // DISPOSAL(90) 凭证回链
-        assertTrue(!findBillLinks("DISP-SCRAP-001", 90).isEmpty(), "DISPOSAL 凭证回链已落库");
+        assertTrue(!findBillLinks("DISP-SCRAP-001", "DISPOSAL").isEmpty(), "DISPOSAL 凭证回链已落库");
     }
 
     @Test
@@ -130,7 +130,7 @@ public class TestErpAstDisposal extends JunitAutoTestCase {
         assertEquals(0, disposal.getGainLoss().compareTo(new BigDecimal("2000")), "出售清理收益=2000");
         ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetIdHolder[0]);
         assertEquals(ErpAstConstants.ASSET_STATUS_SOLD, asset.getStatus(), "资产终态=SOLD");
-        assertTrue(!findBillLinks("DISP-SALE-001", 90).isEmpty(), "DISPOSAL 凭证回链已落库");
+        assertTrue(!findBillLinks("DISP-SALE-001", "DISPOSAL").isEmpty(), "DISPOSAL 凭证回链已落库");
     }
 
     // ---------- helpers ----------
@@ -140,7 +140,7 @@ public class TestErpAstDisposal extends JunitAutoTestCase {
         AstTestSupport.seedSubject(daoProvider, "1002", "银行存款");
     }
 
-    private Long seedDisposal(String code, Long assetId, int disposalType, BigDecimal disposalAmount,
+    private Long seedDisposal(String code, Long assetId, String disposalType, BigDecimal disposalAmount,
                               LocalDate businessDate) {
         IEntityDao<ErpAstDisposal> dao = daoProvider.daoFor(ErpAstDisposal.class);
         ErpAstDisposal disposal = new ErpAstDisposal();
@@ -165,7 +165,7 @@ public class TestErpAstDisposal extends JunitAutoTestCase {
         return dao.findAllByQuery(q);
     }
 
-    private List<ErpFinVoucherBillR> findBillLinks(String billCode, int businessType) {
+    private List<ErpFinVoucherBillR> findBillLinks(String billCode, String businessType) {
         IEntityDao<ErpFinVoucherBillR> dao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("billCode", billCode), eq("businessType", businessType)));

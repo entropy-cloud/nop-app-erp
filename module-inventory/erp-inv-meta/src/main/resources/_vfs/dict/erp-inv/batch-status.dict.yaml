@@ -1,27 +1,27 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 批次状态
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 在用
-    value: 10
+    value: OPEN
     description: 
   
   - label: 锁定
-    value: 20
+    value: LOCKED
     description: 
   
   - label: 已过期
-    value: 30
+    value: EXPIRED
     description: 
   
   - label: 已耗尽
-    value: 40
+    value: CONSUMED
     description: 
   
   - label: 质量冻结
-    value: 50
+    value: BLOCKED
     description: 
   

@@ -69,16 +69,16 @@
         }
 
 
-        private Integer _disposalType;
+        private String _disposalType;
 
     
         @PropMeta(propId=5)
     
-        public Integer getDisposalType(){
+        public String getDisposalType(){
             return _disposalType;
         }
 
-        public void setDisposalType(Integer value){
+        public void setDisposalType(String value){
             this._disposalType = value;
         }
 
@@ -165,16 +165,16 @@
         }
 
 
-        private Integer _reason;
+        private String _reason;
 
     
         @PropMeta(propId=11)
     
-        public Integer getReason(){
+        public String getReason(){
             return _reason;
         }
 
-        public void setReason(Integer value){
+        public void setReason(String value){
             this._reason = value;
         }
 
@@ -191,16 +191,16 @@
         }
 
 
-        private Integer _docStatus;
+        private String _docStatus;
 
     
         @PropMeta(propId=12)
     
-        public Integer getDocStatus(){
+        public String getDocStatus(){
             return _docStatus;
         }
 
-        public void setDocStatus(Integer value){
+        public void setDocStatus(String value){
             this._docStatus = value;
         }
 
@@ -217,16 +217,16 @@
         }
 
 
-        private Integer _approveStatus;
+        private String _approveStatus;
 
     
         @PropMeta(propId=13)
     
-        public Integer getApproveStatus(){
+        public String getApproveStatus(){
             return _approveStatus;
         }
 
-        public void setApproveStatus(Integer value){
+        public void setApproveStatus(String value){
             this._approveStatus = value;
         }
 

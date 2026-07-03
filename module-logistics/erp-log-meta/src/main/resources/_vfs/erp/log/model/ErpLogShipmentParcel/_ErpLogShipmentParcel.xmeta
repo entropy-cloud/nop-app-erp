@@ -41,19 +41,19 @@
         </prop>
         <prop name="weight" displayName="重量(kg)" propId="6" i18n-en:displayName="Weight" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="weight" type="java.lang.String" precision="12" scale="3"/>
+            <schema domain="weight" type="java.math.BigDecimal" precision="12" scale="3"/>
         </prop>
         <prop name="length" displayName="长(cm)" propId="7" i18n-en:displayName="Length" queryable="true" sortable="true"
               insertable="true" updatable="true">
-            <schema domain="dimension" type="java.lang.String" precision="12" scale="2"/>
+            <schema domain="dimension" type="java.math.BigDecimal" precision="12" scale="2"/>
         </prop>
         <prop name="width" displayName="宽(cm)" propId="8" i18n-en:displayName="Width" queryable="true" sortable="true"
               insertable="true" updatable="true">
-            <schema domain="dimension" type="java.lang.String" precision="12" scale="2"/>
+            <schema domain="dimension" type="java.math.BigDecimal" precision="12" scale="2"/>
         </prop>
         <prop name="height" displayName="高(cm)" propId="9" i18n-en:displayName="Height" queryable="true" sortable="true"
               insertable="true" updatable="true">
-            <schema domain="dimension" type="java.lang.String" precision="12" scale="2"/>
+            <schema domain="dimension" type="java.math.BigDecimal" precision="12" scale="2"/>
         </prop>
         <prop name="declaredValue" displayName="申报价值" propId="10" i18n-en:displayName="Declared Value" queryable="true"
               sortable="true" insertable="true" updatable="true">

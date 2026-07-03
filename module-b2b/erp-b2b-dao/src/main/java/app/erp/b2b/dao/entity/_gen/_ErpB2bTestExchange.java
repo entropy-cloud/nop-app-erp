@@ -29,7 +29,7 @@ public class _ErpB2bTestExchange extends DynamicOrmEntity{
     public static final String PROP_NAME_partnerProfileId = "partnerProfileId";
     public static final int PROP_ID_partnerProfileId = 2;
     
-    /* 方向: DIRECTION INTEGER */
+    /* 方向: DIRECTION VARCHAR */
     public static final String PROP_NAME_direction = "direction";
     public static final int PROP_ID_direction = 3;
     
@@ -179,7 +179,7 @@ public class _ErpB2bTestExchange extends DynamicOrmEntity{
     private java.lang.Long _partnerProfileId;
     
     /* 方向: DIRECTION */
-    private java.lang.Integer _direction;
+    private java.lang.String _direction;
     
     /* EDI格式: FORMAT_CODE */
     private java.lang.String _formatCode;
@@ -392,9 +392,9 @@ public class _ErpB2bTestExchange extends DynamicOrmEntity{
             }
         
             case PROP_ID_direction:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_direction));
                }
                setDirection(typedValue);
@@ -586,7 +586,7 @@ public class _ErpB2bTestExchange extends DynamicOrmEntity{
         
             case PROP_ID_direction:{
                onInitProp(propId);
-               this._direction = (java.lang.Integer)value;
+               this._direction = (java.lang.String)value;
                
                break;
             }
@@ -750,7 +750,7 @@ public class _ErpB2bTestExchange extends DynamicOrmEntity{
     /**
      * 方向: DIRECTION
      */
-    public final java.lang.Integer getDirection(){
+    public final java.lang.String getDirection(){
          onPropGet(PROP_ID_direction);
          return _direction;
     }
@@ -758,7 +758,7 @@ public class _ErpB2bTestExchange extends DynamicOrmEntity{
     /**
      * 方向: DIRECTION
      */
-    public final void setDirection(java.lang.Integer value){
+    public final void setDirection(java.lang.String value){
         if(onPropSet(PROP_ID_direction,value)){
             this._direction = value;
             internalClearRefs(PROP_ID_direction);

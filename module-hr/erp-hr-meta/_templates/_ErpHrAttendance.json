@@ -8,7 +8,7 @@
   "lateMinutes": 0,
   "earlyLeaveMinutes": 0,
   "isAbsent": false,
-  "source": 0,
+  "source": "",
   "source_label": "",
   "leaveRequestId": 0,
   "orgId": 0,

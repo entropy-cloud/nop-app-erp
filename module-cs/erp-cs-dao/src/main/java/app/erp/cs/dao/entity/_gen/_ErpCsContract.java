@@ -41,7 +41,7 @@ public class _ErpCsContract extends DynamicOrmEntity{
     public static final String PROP_NAME_partnerId = "partnerId";
     public static final int PROP_ID_partnerId = 5;
     
-    /* 合同类型: CONTRACT_TYPE INTEGER */
+    /* 合同类型: CONTRACT_TYPE VARCHAR */
     public static final String PROP_NAME_contractType = "contractType";
     public static final int PROP_ID_contractType = 6;
     
@@ -57,11 +57,11 @@ public class _ErpCsContract extends DynamicOrmEntity{
     public static final String PROP_NAME_totalAmount = "totalAmount";
     public static final int PROP_ID_totalAmount = 9;
     
-    /* 计费周期: BILLING_CYCLE INTEGER */
+    /* 计费周期: BILLING_CYCLE VARCHAR */
     public static final String PROP_NAME_billingCycle = "billingCycle";
     public static final int PROP_ID_billingCycle = 10;
     
-    /* 合同状态: STATUS INTEGER */
+    /* 合同状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 11;
     
@@ -187,7 +187,7 @@ public class _ErpCsContract extends DynamicOrmEntity{
     private java.lang.Long _partnerId;
     
     /* 合同类型: CONTRACT_TYPE */
-    private java.lang.Integer _contractType;
+    private java.lang.String _contractType;
     
     /* 生效日期: START_DATE */
     private java.time.LocalDate _startDate;
@@ -199,10 +199,10 @@ public class _ErpCsContract extends DynamicOrmEntity{
     private java.math.BigDecimal _totalAmount;
     
     /* 计费周期: BILLING_CYCLE */
-    private java.lang.Integer _billingCycle;
+    private java.lang.String _billingCycle;
     
     /* 合同状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 合同附件: ATTACHMENT_FILE_ID */
     private java.lang.String _attachmentFileId;
@@ -415,9 +415,9 @@ public class _ErpCsContract extends DynamicOrmEntity{
             }
         
             case PROP_ID_contractType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_contractType));
                }
                setContractType(typedValue);
@@ -455,9 +455,9 @@ public class _ErpCsContract extends DynamicOrmEntity{
             }
         
             case PROP_ID_billingCycle:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_billingCycle));
                }
                setBillingCycle(typedValue);
@@ -465,9 +465,9 @@ public class _ErpCsContract extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -590,7 +590,7 @@ public class _ErpCsContract extends DynamicOrmEntity{
         
             case PROP_ID_contractType:{
                onInitProp(propId);
-               this._contractType = (java.lang.Integer)value;
+               this._contractType = (java.lang.String)value;
                
                break;
             }
@@ -618,14 +618,14 @@ public class _ErpCsContract extends DynamicOrmEntity{
         
             case PROP_ID_billingCycle:{
                onInitProp(propId);
-               this._billingCycle = (java.lang.Integer)value;
+               this._billingCycle = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -783,7 +783,7 @@ public class _ErpCsContract extends DynamicOrmEntity{
     /**
      * 合同类型: CONTRACT_TYPE
      */
-    public final java.lang.Integer getContractType(){
+    public final java.lang.String getContractType(){
          onPropGet(PROP_ID_contractType);
          return _contractType;
     }
@@ -791,7 +791,7 @@ public class _ErpCsContract extends DynamicOrmEntity{
     /**
      * 合同类型: CONTRACT_TYPE
      */
-    public final void setContractType(java.lang.Integer value){
+    public final void setContractType(java.lang.String value){
         if(onPropSet(PROP_ID_contractType,value)){
             this._contractType = value;
             internalClearRefs(PROP_ID_contractType);
@@ -859,7 +859,7 @@ public class _ErpCsContract extends DynamicOrmEntity{
     /**
      * 计费周期: BILLING_CYCLE
      */
-    public final java.lang.Integer getBillingCycle(){
+    public final java.lang.String getBillingCycle(){
          onPropGet(PROP_ID_billingCycle);
          return _billingCycle;
     }
@@ -867,7 +867,7 @@ public class _ErpCsContract extends DynamicOrmEntity{
     /**
      * 计费周期: BILLING_CYCLE
      */
-    public final void setBillingCycle(java.lang.Integer value){
+    public final void setBillingCycle(java.lang.String value){
         if(onPropSet(PROP_ID_billingCycle,value)){
             this._billingCycle = value;
             internalClearRefs(PROP_ID_billingCycle);
@@ -878,7 +878,7 @@ public class _ErpCsContract extends DynamicOrmEntity{
     /**
      * 合同状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -886,7 +886,7 @@ public class _ErpCsContract extends DynamicOrmEntity{
     /**
      * 合同状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

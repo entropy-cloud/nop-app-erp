@@ -45,8 +45,8 @@ public class TestErpSalQuotationCrudSmoke extends JunitAutoTestCase {
         headData.put("customerId", pre.get("partner"));
         headData.put("businessDate", "2026-07-01");
         headData.put("currencyId", pre.get("currency"));
-        headData.put("docStatus", 10);
-        headData.put("approveStatus", 10);
+        headData.put("docStatus", "DRAFT");
+        headData.put("approveStatus", "UNSUBMITTED");
         ApiResponse<?> result = executeRpc(GraphQLOperationType.mutation, "ErpSalQuotation__save",
                 ApiRequest.build(Map.of("data", headData)));
 
@@ -63,8 +63,8 @@ public class TestErpSalQuotationCrudSmoke extends JunitAutoTestCase {
         headData.put("customerId", pre.get("partner"));
         headData.put("businessDate", "2026-07-01");
         headData.put("currencyId", pre.get("currency"));
-        headData.put("docStatus", 10);
-        headData.put("approveStatus", 10);
+        headData.put("docStatus", "DRAFT");
+        headData.put("approveStatus", "UNSUBMITTED");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpSalQuotation__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -84,8 +84,8 @@ public class TestErpSalQuotationCrudSmoke extends JunitAutoTestCase {
         headData.put("customerId", pre.get("partner"));
         headData.put("businessDate", "2026-07-01");
         headData.put("currencyId", pre.get("currency"));
-        headData.put("docStatus", 10);
-        headData.put("approveStatus", 10);
+        headData.put("docStatus", "DRAFT");
+        headData.put("approveStatus", "UNSUBMITTED");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpSalQuotation__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -109,8 +109,8 @@ public class TestErpSalQuotationCrudSmoke extends JunitAutoTestCase {
         headData.put("customerId", pre.get("partner"));
         headData.put("businessDate", "2026-07-01");
         headData.put("currencyId", pre.get("currency"));
-        headData.put("docStatus", 10);
-        headData.put("approveStatus", 10);
+        headData.put("docStatus", "DRAFT");
+        headData.put("approveStatus", "UNSUBMITTED");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpSalQuotation__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -135,8 +135,8 @@ public class TestErpSalQuotationCrudSmoke extends JunitAutoTestCase {
         headData.put("customerId", pre.get("partner"));
         headData.put("businessDate", "2026-07-01");
         headData.put("currencyId", pre.get("currency"));
-        headData.put("docStatus", 10);
-        headData.put("approveStatus", 10);
+        headData.put("docStatus", "DRAFT");
+        headData.put("approveStatus", "UNSUBMITTED");
         ApiResponse<?> head = executeRpc(GraphQLOperationType.mutation, "ErpSalQuotation__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_saveHead_response.json5", head);
@@ -172,8 +172,8 @@ Map<String, Object> d_currency = new LinkedHashMap<>();
         Map<String, Object> d_partner = new LinkedHashMap<>();
         d_partner.put("code", "SMOKE-PARTNER");
         d_partner.put("name", "冒烟客户");
-        d_partner.put("partnerType", 10);
-        d_partner.put("status", 10);
+        d_partner.put("partnerType", "CUSTOMER");
+        d_partner.put("status", "ACTIVE");
         ids.put("partner", String.valueOf(((Map<?, ?>) executeRpc(GraphQLOperationType.mutation, "ErpMdPartner__save", ApiRequest.build(Map.of("data", d_partner))).getData()).get("id")));
         Map<String, Object> d_uom = new LinkedHashMap<>();
         d_uom.put("code", "PCS");
@@ -182,9 +182,9 @@ Map<String, Object> d_currency = new LinkedHashMap<>();
         Map<String, Object> d_material = new LinkedHashMap<>();
         d_material.put("code", "SMOKE-MAT");
         d_material.put("name", "冒烟物料");
-        d_material.put("materialType", 10);
+        d_material.put("materialType", "GOODS");
         d_material.put("uoMId", ids.get("uom"));
-        d_material.put("status", 10);
+        d_material.put("status", "ACTIVE");
         ids.put("material", String.valueOf(((Map<?, ?>) executeRpc(GraphQLOperationType.mutation, "ErpMdMaterial__save", ApiRequest.build(Map.of("data", d_material))).getData()).get("id")));
         return ids;
     }

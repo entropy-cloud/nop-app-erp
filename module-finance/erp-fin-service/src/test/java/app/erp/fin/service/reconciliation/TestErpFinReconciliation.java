@@ -194,14 +194,14 @@ public class TestErpFinReconciliation extends JunitAutoTestCase {
         partner.orm_propValue(1, partnerId);
         partner.setCode("P-" + partnerId);
         partner.setName("Partner " + partnerId);
-        partner.setPartnerType(10);
-        partner.setStatus(10);
+        partner.setPartnerType("CUSTOMER");
+        partner.setStatus("ACTIVE");
         partner.setReceivableBalance(BigDecimal.ZERO);
         partner.setPayableBalance(BigDecimal.ZERO);
         dao.saveEntity(partner);
     }
 
-    private ErpFinArApItem newItem(int direction, long partnerId, String sourceBillType, String sourceBillCode,
+    private ErpFinArApItem newItem(String direction, long partnerId, String sourceBillType, String sourceBillCode,
                                    BigDecimal amount, LocalDate businessDate) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem item = dao.newEntity();

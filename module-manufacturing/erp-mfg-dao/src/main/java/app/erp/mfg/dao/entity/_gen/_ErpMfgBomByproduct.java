@@ -53,7 +53,7 @@ public class _ErpMfgBomByproduct extends DynamicOrmEntity{
     public static final String PROP_NAME_remark = "remark";
     public static final int PROP_ID_remark = 8;
     
-    /* 联副产品类型: BYPRODUCT_TYPE INTEGER */
+    /* 联副产品类型: BYPRODUCT_TYPE VARCHAR */
     public static final String PROP_NAME_byproductType = "byproductType";
     public static final int PROP_ID_byproductType = 9;
     
@@ -192,13 +192,13 @@ public class _ErpMfgBomByproduct extends DynamicOrmEntity{
     private java.lang.String _remark;
     
     /* 联副产品类型: BYPRODUCT_TYPE */
-    private java.lang.Integer _byproductType;
+    private java.lang.String _byproductType;
     
     /* 产出率(%): YIELD_RATE */
-    private java.lang.String _yieldRate;
+    private java.math.BigDecimal _yieldRate;
     
     /* 成本分摊比例(%): COST_ALLOCATION_PERCENT */
-    private java.lang.String _costAllocationPercent;
+    private java.math.BigDecimal _costAllocationPercent;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -435,9 +435,9 @@ public class _ErpMfgBomByproduct extends DynamicOrmEntity{
             }
         
             case PROP_ID_byproductType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_byproductType));
                }
                setByproductType(typedValue);
@@ -445,9 +445,9 @@ public class _ErpMfgBomByproduct extends DynamicOrmEntity{
             }
         
             case PROP_ID_yieldRate:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_yieldRate));
                }
                setYieldRate(typedValue);
@@ -455,9 +455,9 @@ public class _ErpMfgBomByproduct extends DynamicOrmEntity{
             }
         
             case PROP_ID_costAllocationPercent:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_costAllocationPercent));
                }
                setCostAllocationPercent(typedValue);
@@ -591,21 +591,21 @@ public class _ErpMfgBomByproduct extends DynamicOrmEntity{
         
             case PROP_ID_byproductType:{
                onInitProp(propId);
-               this._byproductType = (java.lang.Integer)value;
+               this._byproductType = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_yieldRate:{
                onInitProp(propId);
-               this._yieldRate = (java.lang.String)value;
+               this._yieldRate = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_costAllocationPercent:{
                onInitProp(propId);
-               this._costAllocationPercent = (java.lang.String)value;
+               this._costAllocationPercent = (java.math.BigDecimal)value;
                
                break;
             }
@@ -813,7 +813,7 @@ public class _ErpMfgBomByproduct extends DynamicOrmEntity{
     /**
      * 联副产品类型: BYPRODUCT_TYPE
      */
-    public final java.lang.Integer getByproductType(){
+    public final java.lang.String getByproductType(){
          onPropGet(PROP_ID_byproductType);
          return _byproductType;
     }
@@ -821,7 +821,7 @@ public class _ErpMfgBomByproduct extends DynamicOrmEntity{
     /**
      * 联副产品类型: BYPRODUCT_TYPE
      */
-    public final void setByproductType(java.lang.Integer value){
+    public final void setByproductType(java.lang.String value){
         if(onPropSet(PROP_ID_byproductType,value)){
             this._byproductType = value;
             internalClearRefs(PROP_ID_byproductType);
@@ -832,7 +832,7 @@ public class _ErpMfgBomByproduct extends DynamicOrmEntity{
     /**
      * 产出率(%): YIELD_RATE
      */
-    public final java.lang.String getYieldRate(){
+    public final java.math.BigDecimal getYieldRate(){
          onPropGet(PROP_ID_yieldRate);
          return _yieldRate;
     }
@@ -840,7 +840,7 @@ public class _ErpMfgBomByproduct extends DynamicOrmEntity{
     /**
      * 产出率(%): YIELD_RATE
      */
-    public final void setYieldRate(java.lang.String value){
+    public final void setYieldRate(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_yieldRate,value)){
             this._yieldRate = value;
             internalClearRefs(PROP_ID_yieldRate);
@@ -851,7 +851,7 @@ public class _ErpMfgBomByproduct extends DynamicOrmEntity{
     /**
      * 成本分摊比例(%): COST_ALLOCATION_PERCENT
      */
-    public final java.lang.String getCostAllocationPercent(){
+    public final java.math.BigDecimal getCostAllocationPercent(){
          onPropGet(PROP_ID_costAllocationPercent);
          return _costAllocationPercent;
     }
@@ -859,7 +859,7 @@ public class _ErpMfgBomByproduct extends DynamicOrmEntity{
     /**
      * 成本分摊比例(%): COST_ALLOCATION_PERCENT
      */
-    public final void setCostAllocationPercent(java.lang.String value){
+    public final void setCostAllocationPercent(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_costAllocationPercent,value)){
             this._costAllocationPercent = value;
             internalClearRefs(PROP_ID_costAllocationPercent);

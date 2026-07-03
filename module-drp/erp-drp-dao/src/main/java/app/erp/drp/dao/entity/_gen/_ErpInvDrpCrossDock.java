@@ -77,7 +77,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     public static final String PROP_NAME_dockSlotTime = "dockSlotTime";
     public static final int PROP_ID_dockSlotTime = 14;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 15;
     
@@ -265,7 +265,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     private java.time.LocalDateTime _dockSlotTime;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 匹配时间: MATCHED_AT */
     private java.time.LocalDateTime _matchedAt;
@@ -592,9 +592,9 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -800,7 +800,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -1143,7 +1143,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -1151,7 +1151,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

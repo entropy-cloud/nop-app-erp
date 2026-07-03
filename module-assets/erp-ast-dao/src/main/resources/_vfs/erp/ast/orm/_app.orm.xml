@@ -15,56 +15,56 @@
     </x:gen-extends>
 
     <dicts>
-        <dict label="资产状态" name="erp-ast/asset-status" valueType="int" i18n-en:label="Asset Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="IN_SERVICE" label="使用中" value="20" i18n-en:label="In Use"/>
-            <option code="IDLE" label="闲置" value="30" i18n-en:label="Idle"/>
-            <option code="SCRAPPED" label="已报废" value="40" i18n-en:label="Scrapped"/>
-            <option code="SOLD" label="已出售" value="50" i18n-en:label="Sold"/>
+        <dict label="资产状态" name="erp-ast/asset-status" valueType="string" i18n-en:label="Asset Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="IN_SERVICE" label="使用中" value="IN_SERVICE" i18n-en:label="In Use"/>
+            <option code="IDLE" label="闲置" value="IDLE" i18n-en:label="Idle"/>
+            <option code="SCRAPPED" label="已报废" value="SCRAPPED" i18n-en:label="Scrapped"/>
+            <option code="SOLD" label="已出售" value="SOLD" i18n-en:label="Sold"/>
         </dict>
-        <dict label="折旧方法" name="erp-ast/depreciation-method" valueType="int" i18n-en:label="Depreciation Method">
-            <option code="STRAIGHT_LINE" label="直线法" value="10" i18n-en:label="Straight-Line"/>
-            <option code="DECLINING" label="双倍余额递减" value="20" i18n-en:label="Double Declining Balance"/>
-            <option code="UNITS" label="工作量法" value="30" i18n-en:label="Units of Production"/>
+        <dict label="折旧方法" name="erp-ast/depreciation-method" valueType="string" i18n-en:label="Depreciation Method">
+            <option code="STRAIGHT_LINE" label="直线法" value="STRAIGHT_LINE" i18n-en:label="Straight-Line"/>
+            <option code="DECLINING" label="双倍余额递减" value="DECLINING" i18n-en:label="Double Declining Balance"/>
+            <option code="UNITS" label="工作量法" value="UNITS" i18n-en:label="Units of Production"/>
         </dict>
-        <dict label="折旧计划状态" name="erp-ast/depreciation-schedule-status" valueType="int"
+        <dict label="折旧计划状态" name="erp-ast/depreciation-schedule-status" valueType="string"
               i18n-en:label="Depreciation Schedule Status">
-            <option code="PENDING" label="待执行" value="10" i18n-en:label="Pending"/>
-            <option code="EXECUTED" label="已执行" value="20" i18n-en:label="Executed"/>
-            <option code="REVERSED" label="已冲销" value="30" i18n-en:label="Reversed"/>
-            <option code="CANCELLED" label="已取消" value="40" i18n-en:label="Cancelled"/>
+            <option code="PENDING" label="待执行" value="PENDING" i18n-en:label="Pending"/>
+            <option code="EXECUTED" label="已执行" value="EXECUTED" i18n-en:label="Executed"/>
+            <option code="REVERSED" label="已冲销" value="REVERSED" i18n-en:label="Reversed"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
         </dict>
-        <dict label="价值调整类型" name="erp-ast/adjustment-type" valueType="int" i18n-en:label="Adjustment Type">
-            <option code="IMPAIRMENT" label="减值" value="10" i18n-en:label="Impairment"/>
-            <option code="REVALUATION" label="重估" value="20" i18n-en:label="Revaluation"/>
+        <dict label="价值调整类型" name="erp-ast/adjustment-type" valueType="string" i18n-en:label="Adjustment Type">
+            <option code="IMPAIRMENT" label="减值" value="IMPAIRMENT" i18n-en:label="Impairment"/>
+            <option code="REVALUATION" label="重估" value="REVALUATION" i18n-en:label="Revaluation"/>
         </dict>
-        <dict label="处置类型" name="erp-ast/disposal-type" valueType="int" i18n-en:label="Disposal Type">
-            <option code="SCRAPPED" label="报废" value="10" i18n-en:label="Scrap"/>
-            <option code="SOLD" label="出售" value="20" i18n-en:label="Sale"/>
+        <dict label="处置类型" name="erp-ast/disposal-type" valueType="string" i18n-en:label="Disposal Type">
+            <option code="SCRAPPED" label="报废" value="SCRAPPED" i18n-en:label="Scrap"/>
+            <option code="SOLD" label="出售" value="SOLD" i18n-en:label="Sale"/>
         </dict>
-        <dict label="单据状态" name="erp-ast/doc-status" valueType="int" i18n-en:label="Doc Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="ACTIVE" label="已生效" value="20" i18n-en:label="Effective"/>
-            <option code="CANCELLED" label="已作废" value="30" i18n-en:label="Voided"/>
+        <dict label="单据状态" name="erp-ast/doc-status" valueType="string" i18n-en:label="Doc Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="ACTIVE" label="已生效" value="ACTIVE" i18n-en:label="Effective"/>
+            <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label="Voided"/>
         </dict>
-        <dict label="审核状态" name="erp-ast/approve-status" valueType="int" i18n-en:label="Approve Status">
-            <option code="UNSUBMITTED" label="未提交" value="10" i18n-en:label="Unsubmitted"/>
-            <option code="SUBMITTED" label="已提交" value="20" i18n-en:label="Submitted"/>
-            <option code="APPROVED" label="已审核" value="30" i18n-en:label="Approved"/>
-            <option code="REJECTED" label="已驳回" value="40" i18n-en:label="Rejected"/>
+        <dict label="审核状态" name="erp-ast/approve-status" valueType="string" i18n-en:label="Approve Status">
+            <option code="UNSUBMITTED" label="未提交" value="UNSUBMITTED" i18n-en:label="Unsubmitted"/>
+            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label="Submitted"/>
+            <option code="APPROVED" label="已审核" value="APPROVED" i18n-en:label="Approved"/>
+            <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label="Rejected"/>
         </dict>
-        <dict label="资本化来源类型" name="erp-ast/capitalization-source-type" valueType="int"
+        <dict label="资本化来源类型" name="erp-ast/capitalization-source-type" valueType="string"
               i18n-en:label="Capitalization Source Type">
-            <option code="INVENTORY" label="库存" value="10" i18n-en:label="Inventory"/>
-            <option code="CIP" label="在建工程" value="20" i18n-en:label="CIP"/>
-            <option code="DIRECT_PURCHASE" label="直接购置" value="30" i18n-en:label="Direct Purchase"/>
+            <option code="INVENTORY" label="库存" value="INVENTORY" i18n-en:label="Inventory"/>
+            <option code="CIP" label="在建工程" value="CIP" i18n-en:label="CIP"/>
+            <option code="DIRECT_PURCHASE" label="直接购置" value="DIRECT_PURCHASE" i18n-en:label="Direct Purchase"/>
         </dict>
-        <dict label="处置原因" name="erp-ast/disposal-reason" valueType="int" i18n-en:label="Disposal Reason">
-            <option code="OBSOLETE" label="报废" value="10" i18n-en:label="Scrap"/>
-            <option code="SOLD" label="出售" value="20" i18n-en:label="Sale"/>
-            <option code="DONATED" label="捐赠" value="30" i18n-en:label="Donation"/>
-            <option code="STOLEN" label="被盗" value="40" i18n-en:label="Stolen"/>
-            <option code="OTHER" label="其他" value="50" i18n-en:label="Other"/>
+        <dict label="处置原因" name="erp-ast/disposal-reason" valueType="string" i18n-en:label="Disposal Reason">
+            <option code="OBSOLETE" label="报废" value="OBSOLETE" i18n-en:label="Scrap"/>
+            <option code="SOLD" label="出售" value="SOLD" i18n-en:label="Sale"/>
+            <option code="DONATED" label="捐赠" value="DONATED" i18n-en:label="Donation"/>
+            <option code="STOLEN" label="被盗" value="STOLEN" i18n-en:label="Stolen"/>
+            <option code="OTHER" label="其他" value="OTHER" i18n-en:label="Other"/>
         </dict>
     </dicts>
 
@@ -115,8 +115,8 @@
                 <column code="RESIDUAL_VALUE" defaultValue="0" displayName="残值" domain="amount" name="residualValue"
                         precision="20" propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Residual Value"/>
-                <column code="DEPRECIATION_METHOD" displayName="折旧方法" name="depreciationMethod" propId="11"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ast/depreciation-method"
+                <column code="DEPRECIATION_METHOD" displayName="折旧方法" name="depreciationMethod" precision="20"
+                        propId="11" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/depreciation-method"
                         i18n-en:displayName="Depreciation Method"/>
                 <column code="DEPRECIATION_RATE" displayName="折旧率" domain="depreciationRate" name="depreciationRate"
                         precision="10" propId="12" scale="6" stdDataType="decimal" stdSqlType="DECIMAL"
@@ -133,8 +133,9 @@
                         stdSqlType="BIGINT" i18n-en:displayName="Staff"/>
                 <column code="BRAND_MODEL" displayName="品牌型号" name="brandModel" precision="200" propId="18"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Brand / Model"/>
-                <column code="STATUS" displayName="资产状态" mandatory="true" name="status" propId="19" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-ast/asset-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="资产状态" mandatory="true" name="status" precision="20" propId="19"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/asset-status"
+                        i18n-en:displayName="Status"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="20" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Del Flag"/>
@@ -217,8 +218,8 @@
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
                 <column code="NAME" displayName="类别名称" domain="name" mandatory="true" name="name" precision="200"
                         propId="3" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
-                <column code="DEPRECIATION_METHOD" displayName="默认折旧方法" name="depreciationMethod" propId="4"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ast/depreciation-method"
+                <column code="DEPRECIATION_METHOD" displayName="默认折旧方法" name="depreciationMethod" precision="20"
+                        propId="4" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/depreciation-method"
                         i18n-en:displayName="Depreciation Method"/>
                 <column code="USEFUL_LIFE_MONTHS" displayName="默认使用年限(月)" name="usefulLifeMonths" propId="5"
                         stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Useful Life Months"/>
@@ -311,8 +312,8 @@
                 <column code="NET_BOOK_VALUE" displayName="净值" domain="amount" name="netBookValue" precision="20"
                         propId="8" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Net Book Value"/>
-                <column code="STATUS" displayName="执行状态" mandatory="true" name="status" propId="9" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-ast/depreciation-schedule-status"
+                <column code="STATUS" displayName="执行状态" mandatory="true" name="status" precision="20" propId="9"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/depreciation-schedule-status"
                         i18n-en:displayName="Status"/>
                 <column code="EXECUTED_AT" displayName="执行时间" name="executedAt" propId="10" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Executed At"/>
@@ -414,11 +415,11 @@
                         stdSqlType="BIGINT" i18n-en:displayName="To Location"/>
                 <column code="HANDLER_ID" displayName="经办人" name="handlerId" propId="14" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Handler"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="15"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ast/doc-status"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
+                        propId="15" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/doc-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="16"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ast/approve-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="16" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="17"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
@@ -543,19 +544,19 @@
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
                         precision="20" propId="7" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
-                <column code="ADJUSTMENT_TYPE" displayName="调整类型" mandatory="true" name="adjustmentType" propId="8"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ast/adjustment-type"
+                <column code="ADJUSTMENT_TYPE" displayName="调整类型" mandatory="true" name="adjustmentType" precision="20"
+                        propId="8" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/adjustment-type"
                         i18n-en:displayName="Adjustment Type"/>
                 <column code="ADJUSTMENT_AMOUNT" displayName="调整金额" domain="amount" mandatory="true"
                         name="adjustmentAmount" precision="20" propId="9" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Adjustment Amount"/>
                 <column code="REASON" displayName="调整原因" name="reason" precision="500" propId="10" stdDataType="string"
                         stdSqlType="VARCHAR" i18n-en:displayName="Reason"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="11"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ast/doc-status"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
+                        propId="11" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/doc-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="12"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ast/approve-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="12" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="13"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
@@ -626,8 +627,8 @@
                         i18n-en:displayName="Organization"/>
                 <column code="ASSET_ID" displayName="资产ID" mandatory="true" name="assetId" propId="4" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Asset"/>
-                <column code="DISPOSAL_TYPE" displayName="处置类型" mandatory="true" name="disposalType" propId="5"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ast/disposal-type"
+                <column code="DISPOSAL_TYPE" displayName="处置类型" mandatory="true" name="disposalType" precision="20"
+                        propId="5" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/disposal-type"
                         i18n-en:displayName="Disposal Type"/>
                 <column code="DISPOSAL_AMOUNT" displayName="处置金额" domain="amount" name="disposalAmount" precision="20"
                         propId="6" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
@@ -641,13 +642,13 @@
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
                 <column code="GAIN_LOSS" displayName="损益" domain="amount" name="gainLoss" precision="20" propId="10"
                         scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Gain Loss"/>
-                <column code="REASON" displayName="处置原因" name="reason" propId="11" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-ast/disposal-reason" i18n-en:displayName="Reason"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="12"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ast/doc-status"
+                <column code="REASON" displayName="处置原因" name="reason" precision="20" propId="11" stdDataType="string"
+                        stdSqlType="VARCHAR" ext:dict="erp-ast/disposal-reason" i18n-en:displayName="Reason"/>
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
+                        propId="12" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/doc-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="13"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ast/approve-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="13" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="14"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
@@ -730,16 +731,16 @@
                 <column code="ORIGINAL_VALUE" displayName="原值" domain="amount" mandatory="true" name="originalValue"
                         precision="20" propId="9" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Original Value"/>
-                <column code="SOURCE_TYPE" displayName="来源类型" mandatory="true" name="sourceType" propId="10"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ast/capitalization-source-type"
-                        i18n-en:displayName="Source Type"/>
+                <column code="SOURCE_TYPE" displayName="来源类型" mandatory="true" name="sourceType" precision="20"
+                        propId="10" stdDataType="string" stdSqlType="VARCHAR"
+                        ext:dict="erp-ast/capitalization-source-type" i18n-en:displayName="Source Type"/>
                 <column code="SOURCE_CODE" displayName="来源单号" name="sourceCode" precision="50" propId="11"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Source Code"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="12"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ast/doc-status"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
+                        propId="12" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/doc-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="13"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ast/approve-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="13" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="14"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
@@ -830,8 +831,9 @@
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Completed"/>
                 <column code="COMPLETED_ASSET_ID" displayName="完工转出资产" name="completedAssetId" propId="11"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Completed Asset"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="12" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-ast/asset-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="12"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/asset-status"
+                        i18n-en:displayName="Status"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="13" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Del Flag"/>
@@ -912,11 +914,11 @@
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="SPLIT_REASON" displayName="拆分原因" name="splitReason" precision="500" propId="7"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Split Reason"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="8"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ast/doc-status"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/doc-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="9"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ast/approve-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="9" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="10"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
@@ -996,11 +998,11 @@
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="MERGE_REASON" displayName="合并原因" name="mergeReason" precision="500" propId="7"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Merge Reason"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="8"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ast/doc-status"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/doc-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="9"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ast/approve-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="9" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="10"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>

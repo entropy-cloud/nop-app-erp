@@ -220,7 +220,7 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
         assertEquals(0, resp.getStatus(), "runMrp 应成功: " + resp);
     }
 
-    private BigDecimal sumDemand(Long planId, Long materialId, int demandSource) {
+    private BigDecimal sumDemand(Long planId, Long materialId, String demandSource) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("mrpPlanId", planId));
         q.addFilter(eq("materialId", materialId));
@@ -305,8 +305,8 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
             o.setCurrencyId(CURRENCY_ID);
             o.setBusinessDate(LocalDate.of(2026, 7, 1));
             o.setDeliveryDate(deliveryDate);
-            o.setDocStatus(20);
-            o.setApproveStatus(30);
+            o.setDocStatus("ACTIVE");
+            o.setApproveStatus("APPROVED");
             odao.saveEntity(o);
 
             IEntityDao<ErpSalOrderLine> ldao = daoProvider.daoFor(ErpSalOrderLine.class);
@@ -345,9 +345,9 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
             m.orm_propValueByName("id", id);
             m.setCode("MAT-" + id);
             m.setName("Material " + id);
-            m.orm_propValueByName("materialType", 10);
+            m.orm_propValueByName("materialType", "GOODS");
             m.setUoMId(UOM_ID);
-            m.setStatus(10);
+            m.setStatus("ACTIVE");
             if (leadTimeDays != null) {
                 m.setLeadTimeDays(leadTimeDays);
             }

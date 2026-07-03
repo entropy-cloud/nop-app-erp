@@ -430,31 +430,31 @@ dict:
     erp-sal/invoice-type: Invoice Type
 dict.option.label:
   erp-sal/doc-status:
-    '10': Draft
-    '20': Effective
-    '30': Voided
+    DRAFT: Draft
+    ACTIVE: Effective
+    CANCELLED: Voided
   erp-sal/approve-status:
-    '10': Unsubmitted
-    '20': Submitted
-    '30': Approved
-    '40': Rejected
+    UNSUBMITTED: Unsubmitted
+    SUBMITTED: Submitted
+    APPROVED: Approved
+    REJECTED: Rejected
   erp-sal/received-status:
-    '10': Unreceived
-    '20': Partially Received
-    '30': Fully Received
+    UNRECEIVED: Unreceived
+    PARTIAL: Partially Received
+    RECEIVED: Fully Received
   erp-sal/delivery-status:
-    '10': Unshipped
-    '20': Partially Shipped
-    '30': Fully Shipped
+    UNDELIVERED: Unshipped
+    PARTIAL: Partially Shipped
+    DELIVERED: Fully Shipped
   erp-sal/biz-type:
-    '10': Sales Quotation
-    '20': Sales Contract
-    '30': Sales Order
-    '40': Sales Issue
-    '50': Sales Invoice
-    '60': Receipt
-    '70': Sales Return
+    QUOTATION: Sales Quotation
+    CONTRACT: Sales Contract
+    ORDER: Sales Order
+    DELIVERY: Sales Issue
+    INVOICE: Sales Invoice
+    RECEIPT: Receipt
+    RETURN: Sales Return
   erp-sal/invoice-type:
-    '10': VAT Special
-    '20': VAT General
-    '30': Receipt Note
+    VAT_SPECIAL: VAT Special
+    VAT_NORMAL: VAT General
+    RECEIPT: Receipt Note

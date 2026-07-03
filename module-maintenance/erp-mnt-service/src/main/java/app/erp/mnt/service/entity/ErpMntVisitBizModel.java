@@ -13,7 +13,10 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+
+import java.math.BigDecimal;
 import io.nop.core.context.IServiceContext;
+import java.util.Objects;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -83,17 +86,17 @@ public class ErpMntVisitBizModel extends CrudBizModel<ErpMntVisit> implements IE
         return visit;
     }
 
-    protected void validateTransition(ErpMntVisit visit, int expected, String expectedName, IServiceContext context) {
-        Integer status = visit.getStatus();
-        if (status == null || status != expected) {
+    protected void validateTransition(ErpMntVisit visit, String expected, String expectedName, IServiceContext context) {
+        String status = visit.getStatus();
+        if (status == null || !Objects.equals(status, expected)) {
             throw illegalVisitTransition(visit, status, expectedName);
         }
     }
 
     protected void validateNotTerminal(ErpMntVisit visit, IServiceContext context) {
-        Integer status = visit.getStatus();
-        if (status != null && (status == ErpMntDaoConstants.VISIT_STATUS_COMPLETED
-                || status == ErpMntDaoConstants.VISIT_STATUS_CANCELLED)) {
+        String status = visit.getStatus();
+        if (status != null && (Objects.equals(status, ErpMntDaoConstants.VISIT_STATUS_COMPLETED)
+                || Objects.equals(status, ErpMntDaoConstants.VISIT_STATUS_CANCELLED))) {
             throw illegalVisitTransition(visit, status, "非终态");
         }
     }
@@ -152,8 +155,7 @@ public class ErpMntVisitBizModel extends CrudBizModel<ErpMntVisit> implements IE
         visit.setEndTime(endTime);
         if (visit.getStartTime() != null) {
             long minutes = Duration.between(visit.getStartTime(), endTime).toMinutes();
-            // totalMinutes 列为 VARCHAR（基线类型异常），数值以字符串写入
-            visit.setTotalMinutes(String.valueOf(minutes));
+            visit.setTotalMinutes(BigDecimal.valueOf(minutes));
         }
         visit.setCompletedAt(CoreMetrics.currentDateTime());
         updateEntity(visit, null, context);
@@ -164,7 +166,7 @@ public class ErpMntVisitBizModel extends CrudBizModel<ErpMntVisit> implements IE
         updateEntity(visit, null, context);
     }
 
-    protected NopException illegalVisitTransition(ErpMntVisit visit, Integer current, String expected) {
+    protected NopException illegalVisitTransition(ErpMntVisit visit, String current, String expected) {
         return new NopException(ErpMntErrors.ERR_INVALID_VISIT_STATUS_TRANSITION)
                 .param(ErpMntErrors.ARG_VISIT_CODE, visit.getCode())
                 .param(ErpMntErrors.ARG_CURRENT_STATUS, current)

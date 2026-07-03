@@ -15,6 +15,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.util.List;
 
@@ -97,8 +98,8 @@ public class ErpPurPaymentProcessor {
     public ErpPurPayment cancel(Long paymentId, IServiceContext context) {
         ErpPurPayment payment = requirePayment(paymentId, context);
         validateTransitionForCancel(payment, context);
-        Integer approveStatus = payment.getApproveStatus();
-        if (approveStatus != null && approveStatus == ErpPurConstants.APPROVE_STATUS_APPROVED
+        String approveStatus = payment.getApproveStatus();
+        if (approveStatus != null && Objects.equals(approveStatus, ErpPurConstants.APPROVE_STATUS_APPROVED)
                 && Boolean.TRUE.equals(payment.getPosted())) {
             postingDispatcher.reverse(payment);
             payment = paymentDao().getEntityById(paymentId);
@@ -124,47 +125,47 @@ public class ErpPurPaymentProcessor {
 
     protected void validateTransitionForSubmit(ErpPurPayment payment, IServiceContext context) {
         validateNotCancelled(payment, context);
-        Integer status = payment.getApproveStatus();
+        String status = payment.getApproveStatus();
         if (status == null) {
             status = ErpPurConstants.APPROVE_STATUS_UNSUBMITTED;
         }
-        if (status != ErpPurConstants.APPROVE_STATUS_UNSUBMITTED
-                && status != ErpPurConstants.APPROVE_STATUS_REJECTED) {
+        if (!Objects.equals(status, ErpPurConstants.APPROVE_STATUS_UNSUBMITTED)
+                && !Objects.equals(status, ErpPurConstants.APPROVE_STATUS_REJECTED)) {
             throw illegalTransition(payment, status, "UNSUBMITTED 或 REJECTED");
         }
     }
 
     protected void validateTransitionForWithdraw(ErpPurPayment payment, IServiceContext context) {
-        Integer status = payment.getApproveStatus();
-        if (status == null || status != ErpPurConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = payment.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpPurConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(payment, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForApprove(ErpPurPayment payment, IServiceContext context) {
-        Integer status = payment.getApproveStatus();
-        if (status == null || status != ErpPurConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = payment.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpPurConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(payment, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForReject(ErpPurPayment payment, IServiceContext context) {
-        Integer status = payment.getApproveStatus();
-        if (status == null || status != ErpPurConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = payment.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpPurConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(payment, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpPurPayment payment, IServiceContext context) {
-        Integer status = payment.getApproveStatus();
-        if (status == null || status != ErpPurConstants.APPROVE_STATUS_APPROVED) {
+        String status = payment.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpPurConstants.APPROVE_STATUS_APPROVED)) {
             throw illegalTransition(payment, status, "APPROVED");
         }
     }
 
     protected void validateTransitionForCancel(ErpPurPayment payment, IServiceContext context) {
-        Integer docStatus = payment.getDocStatus();
-        if (docStatus != null && docStatus == ErpPurConstants.DOC_STATUS_CANCELLED) {
+        String docStatus = payment.getDocStatus();
+        if (docStatus != null && Objects.equals(docStatus, ErpPurConstants.DOC_STATUS_CANCELLED)) {
             throw illegalDocTransition(payment, docStatus, "非已作废");
         }
     }
@@ -234,20 +235,20 @@ public class ErpPurPaymentProcessor {
     }
 
     protected void validateNotCancelled(ErpPurPayment payment, IServiceContext context) {
-        Integer docStatus = payment.getDocStatus();
-        if (docStatus != null && docStatus == ErpPurConstants.DOC_STATUS_CANCELLED) {
+        String docStatus = payment.getDocStatus();
+        if (docStatus != null && Objects.equals(docStatus, ErpPurConstants.DOC_STATUS_CANCELLED)) {
             throw illegalDocTransition(payment, docStatus, "非已作废");
         }
     }
 
     protected boolean isAlreadyApproved(ErpPurPayment payment) {
-        Integer status = payment.getApproveStatus();
-        return status != null && status == ErpPurConstants.APPROVE_STATUS_APPROVED;
+        String status = payment.getApproveStatus();
+        return status != null && Objects.equals(status, ErpPurConstants.APPROVE_STATUS_APPROVED);
     }
 
     protected boolean isAlreadyRejected(ErpPurPayment payment) {
-        Integer status = payment.getApproveStatus();
-        return status != null && status == ErpPurConstants.APPROVE_STATUS_REJECTED;
+        String status = payment.getApproveStatus();
+        return status != null && Objects.equals(status, ErpPurConstants.APPROVE_STATUS_REJECTED);
     }
 
     protected void requireSupplierActive(ErpPurPayment payment, IServiceContext context) {
@@ -256,7 +257,7 @@ public class ErpPurPaymentProcessor {
         }
         ErpMdPartner partner = mdPartnerBiz.findById(payment.getSupplierId(), context);
         if (partner == null || partner.getStatus() == null
-                || partner.getStatus() != ErpPurConstants.PARTNER_STATUS_ACTIVE) {
+                || !Objects.equals(partner.getStatus(), ErpPurConstants.PARTNER_STATUS_ACTIVE)) {
             throw new NopException(ErpPurErrors.ERR_PARTNER_INACTIVE)
                     .param(ErpPurErrors.ARG_SUPPLIER_ID, payment.getSupplierId());
         }
@@ -280,14 +281,14 @@ public class ErpPurPaymentProcessor {
         }
     }
 
-    protected NopException illegalTransition(ErpPurPayment payment, Integer current, String expected) {
+    protected NopException illegalTransition(ErpPurPayment payment, String current, String expected) {
         return new NopException(ErpPurErrors.ERR_PAYMENT_ILLEGAL_STATUS_TRANSITION)
                 .param(ErpPurErrors.ARG_PAYMENT_CODE, payment.getCode())
                 .param(ErpPurErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpPurErrors.ARG_EXPECTED_STATUS, expected);
     }
 
-    protected NopException illegalDocTransition(ErpPurPayment payment, Integer current, String expected) {
+    protected NopException illegalDocTransition(ErpPurPayment payment, String current, String expected) {
         return new NopException(ErpPurErrors.ERR_PAYMENT_ILLEGAL_DOC_STATUS_TRANSITION)
                 .param(ErpPurErrors.ARG_PAYMENT_CODE, payment.getCode())
                 .param(ErpPurErrors.ARG_CURRENT_DOC_STATUS, current)

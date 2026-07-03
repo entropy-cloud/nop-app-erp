@@ -25,7 +25,7 @@
                 <col id="orgId" ui:number="true" sortable="true"/>
 
                 <!--映射类型-->
-                <col id="mappingType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="mappingType" mandatory="true" sortable="true"/>
 
                 <!--内部代码-->
                 <col id="internalCode" mandatory="true" sortable="true"/>

@@ -5,7 +5,7 @@
   "periodFrom": "2000-01-01",
   "periodTo": "2000-01-01",
   "totalHours": 0.0,
-  "status": 0,
+  "status": "",
   "status_label": "",
   "orgId": 0,
   "remark": "",

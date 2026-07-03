@@ -40,7 +40,7 @@
                 <col id="workDate" mandatory="true" sortable="true"/>
 
                 <!--工时-->
-                <col id="hours" mandatory="true" sortable="true"/>
+                <col id="hours" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--活动类型-->
                 <col id="activityTypeId" ui:number="true" sortable="true"/>
@@ -49,13 +49,13 @@
                 <col id="currencyId" ui:number="true" sortable="true"/>
 
                 <!--成本费率-->
-                <col id="costRate" sortable="true"/>
+                <col id="costRate" ui:number="true" sortable="true"/>
 
                 <!--成本金额-->
-                <col id="costAmount" sortable="true"/>
+                <col id="costAmount" ui:number="true" sortable="true"/>
 
                 <!--状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--已过账(已转成本凭证)-->
                 <col id="posted" sortable="true"/>

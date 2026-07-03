@@ -89,7 +89,7 @@ public class _ErpHrSalary extends DynamicOrmEntity{
     public static final String PROP_NAME_netSalary = "netSalary";
     public static final int PROP_ID_netSalary = 17;
     
-    /* 支付状态: PAYMENT_STATUS INTEGER */
+    /* 支付状态: PAYMENT_STATUS VARCHAR */
     public static final String PROP_NAME_paymentStatus = "paymentStatus";
     public static final int PROP_ID_paymentStatus = 18;
     
@@ -283,7 +283,7 @@ public class _ErpHrSalary extends DynamicOrmEntity{
     private java.math.BigDecimal _netSalary;
     
     /* 支付状态: PAYMENT_STATUS */
-    private java.lang.Integer _paymentStatus;
+    private java.lang.String _paymentStatus;
     
     /* 实发日期: PAYMENT_DATE */
     private java.time.LocalDate _paymentDate;
@@ -649,9 +649,9 @@ public class _ErpHrSalary extends DynamicOrmEntity{
             }
         
             case PROP_ID_paymentStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_paymentStatus));
                }
                setPaymentStatus(typedValue);
@@ -878,7 +878,7 @@ public class _ErpHrSalary extends DynamicOrmEntity{
         
             case PROP_ID_paymentStatus:{
                onInitProp(propId);
-               this._paymentStatus = (java.lang.Integer)value;
+               this._paymentStatus = (java.lang.String)value;
                
                break;
             }
@@ -1278,7 +1278,7 @@ public class _ErpHrSalary extends DynamicOrmEntity{
     /**
      * 支付状态: PAYMENT_STATUS
      */
-    public final java.lang.Integer getPaymentStatus(){
+    public final java.lang.String getPaymentStatus(){
          onPropGet(PROP_ID_paymentStatus);
          return _paymentStatus;
     }
@@ -1286,7 +1286,7 @@ public class _ErpHrSalary extends DynamicOrmEntity{
     /**
      * 支付状态: PAYMENT_STATUS
      */
-    public final void setPaymentStatus(java.lang.Integer value){
+    public final void setPaymentStatus(java.lang.String value){
         if(onPropSet(PROP_ID_paymentStatus,value)){
             this._paymentStatus = value;
             internalClearRefs(PROP_ID_paymentStatus);

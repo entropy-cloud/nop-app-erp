@@ -11,6 +11,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
+import java.util.Objects;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -58,9 +59,9 @@ public class ErpQaActionBizModel extends CrudBizModel<ErpQaAction> implements IE
                                     @Name("verificationDate") LocalDate verificationDate,
                                     IServiceContext context) {
         ErpQaAction action = requireAction(actionId, context);
-        Integer current = action.getStatus();
+        String current = action.getStatus();
         // 验证须在 COMPLETED（或已含验证的 COMPLETED）上进行
-        if (current == null || current != ErpQaConstants.ACTION_STATUS_COMPLETED) {
+        if (current == null || !Objects.equals(current, ErpQaConstants.ACTION_STATUS_COMPLETED)) {
             throw new NopException(ErpQaErrors.ERR_ACTION_VERIFY_REQUIRES_COMPLETED)
                     .param(ErpQaErrors.ARG_ACTION_ID, actionId);
         }
@@ -83,14 +84,14 @@ public class ErpQaActionBizModel extends CrudBizModel<ErpQaAction> implements IE
         return requireEntity(String.valueOf(actionId), null, context);
     }
 
-    private void requireActionStatus(ErpQaAction action, int expected, String expectedLabel) {
-        Integer current = action.getStatus();
-        if (current == null || current != expected) {
+    private void requireActionStatus(ErpQaAction action, String expected, String expectedLabel) {
+        String current = action.getStatus();
+        if (current == null || !Objects.equals(current, expected)) {
             throw illegalActionTransition(action, current, expectedLabel);
         }
     }
 
-    private NopException illegalActionTransition(ErpQaAction action, Integer current, String expected) {
+    private NopException illegalActionTransition(ErpQaAction action, String current, String expected) {
         return new NopException(ErpQaErrors.ERR_INVALID_ACTION_STATUS_TRANSITION)
                 .param(ErpQaErrors.ARG_ACTION_ID, action.getId())
                 .param(ErpQaErrors.ARG_CURRENT_STATUS, current)

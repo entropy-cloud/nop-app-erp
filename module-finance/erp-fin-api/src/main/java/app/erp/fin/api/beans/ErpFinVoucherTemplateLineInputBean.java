@@ -68,16 +68,16 @@
         }
 
 
-        private Integer _dcDirection;
+        private String _dcDirection;
 
     
         @PropMeta(propId=5)
     
-        public Integer getDcDirection(){
+        public String getDcDirection(){
             return _dcDirection;
         }
 
-        public void setDcDirection(Integer value){
+        public void setDcDirection(String value){
             this._dcDirection = value;
         }
 

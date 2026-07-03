@@ -45,7 +45,7 @@
         </prop>
         <prop name="gapSeverity" displayName="差距严重程度" propId="7" i18n-en:displayName="Gap Severity" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-hr/gap-severity"/>
+            <schema type="java.lang.String" precision="20" dict="erp-hr/gap-severity"/>
         </prop>
         <prop name="assessmentDate" displayName="评估日期" propId="8" i18n-en:displayName="Assessment Date" queryable="true"
               sortable="true" insertable="true" updatable="true">

@@ -42,7 +42,7 @@ public class TestErpInvStockMoveGraphQL extends JunitAutoTestCase {
         line.put("quantity", 10);
 
         Map<String, Object> req = new LinkedHashMap<>();
-        req.put("moveType", 10);
+        req.put("moveType", "INCOMING");
         req.put("orgId", 1001);
         req.put("businessDate", "2026-07-01");
         req.put("destWarehouseId", 3001);
@@ -74,7 +74,7 @@ public class TestErpInvStockMoveGraphQL extends JunitAutoTestCase {
         line.put("unitCost", 5);
 
         Map<String, Object> req = new LinkedHashMap<>();
-        req.put("moveType", 10);
+        req.put("moveType", "INCOMING");
         req.put("orgId", 1001);
         req.put("businessDate", "2026-07-01");
         req.put("destWarehouseId", 3001);
@@ -106,9 +106,9 @@ public class TestErpInvStockMoveGraphQL extends JunitAutoTestCase {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("code", "M-GQL");
         d.put("name", "graphQL验证物料");
-        d.put("materialType", 10);
+        d.put("materialType", "GOODS");
         d.put("uoMId", uomId);
-        d.put("status", 10);
+        d.put("status", "ACTIVE");
         return idOf(executeRpc(mutation, "ErpMdMaterial__save", ApiRequest.build(Map.of("data", d))));
     }
 

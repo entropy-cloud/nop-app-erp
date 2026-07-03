@@ -37,19 +37,19 @@
                 <col id="unpostedVouchers" ui:number="true" sortable="true"/>
 
                 <!--应收模块状态-->
-                <col id="arStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="arStatus" mandatory="true" sortable="true"/>
 
                 <!--应付模块状态-->
-                <col id="apStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="apStatus" mandatory="true" sortable="true"/>
 
                 <!--存货模块状态-->
-                <col id="invStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="invStatus" mandatory="true" sortable="true"/>
 
                 <!--总账模块状态-->
-                <col id="glStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="glStatus" mandatory="true" sortable="true"/>
 
                 <!--资产模块状态-->
-                <col id="assetStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="assetStatus" mandatory="true" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>

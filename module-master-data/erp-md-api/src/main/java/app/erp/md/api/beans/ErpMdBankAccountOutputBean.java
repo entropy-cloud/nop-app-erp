@@ -83,16 +83,16 @@
         }
 
 
-        private Integer _accountType;
+        private String _accountType;
 
     
         @PropMeta(propId=6)
     
-        public Integer getAccountType(){
+        public String getAccountType(){
             return _accountType;
         }
 
-        public void setAccountType(Integer value){
+        public void setAccountType(String value){
             this._accountType = value;
         }
 

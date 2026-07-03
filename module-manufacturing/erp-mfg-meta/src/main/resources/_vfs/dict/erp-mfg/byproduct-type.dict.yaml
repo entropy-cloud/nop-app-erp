@@ -1,15 +1,15 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 联副产品类型
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 联产品
-    value: 10
+    value: CO_PRODUCT
     description: 
   
   - label: 副产品
-    value: 20
+    value: BY_PRODUCT
     description: 
   

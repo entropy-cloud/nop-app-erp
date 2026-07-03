@@ -37,7 +37,7 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
     public static final String PROP_NAME_ticketTypeId = "ticketTypeId";
     public static final int PROP_ID_ticketTypeId = 4;
     
-    /* 最低触发优先级: MIN_PRIORITY INTEGER */
+    /* 最低触发优先级: MIN_PRIORITY VARCHAR */
     public static final String PROP_NAME_minPriority = "minPriority";
     public static final int PROP_ID_minPriority = 5;
     
@@ -174,7 +174,7 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
     private java.lang.Long _ticketTypeId;
     
     /* 最低触发优先级: MIN_PRIORITY */
-    private java.lang.Integer _minPriority;
+    private java.lang.String _minPriority;
     
     /* 适用团队: TEAM_ID */
     private java.lang.Long _teamId;
@@ -389,9 +389,9 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
             }
         
             case PROP_ID_minPriority:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_minPriority));
                }
                setMinPriority(typedValue);
@@ -557,7 +557,7 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
         
             case PROP_ID_minPriority:{
                onInitProp(propId);
-               this._minPriority = (java.lang.Integer)value;
+               this._minPriority = (java.lang.String)value;
                
                break;
             }
@@ -731,7 +731,7 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
     /**
      * 最低触发优先级: MIN_PRIORITY
      */
-    public final java.lang.Integer getMinPriority(){
+    public final java.lang.String getMinPriority(){
          onPropGet(PROP_ID_minPriority);
          return _minPriority;
     }
@@ -739,7 +739,7 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
     /**
      * 最低触发优先级: MIN_PRIORITY
      */
-    public final void setMinPriority(java.lang.Integer value){
+    public final void setMinPriority(java.lang.String value){
         if(onPropSet(PROP_ID_minPriority,value)){
             this._minPriority = value;
             internalClearRefs(PROP_ID_minPriority);

@@ -15,58 +15,58 @@
     </x:gen-extends>
 
     <dicts>
-        <dict label="库存移动状态" name="erp-inv/move-status" valueType="int" i18n-en:label="Inventory Move Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="CONFIRMED" label="已确认" value="20" i18n-en:label="Confirmed"/>
-            <option code="DONE" label="已完成" value="30" i18n-en:label="Completed"/>
-            <option code="CANCELLED" label="已取消" value="40" i18n-en:label="Cancelled"/>
+        <dict label="库存移动状态" name="erp-inv/move-status" valueType="string" i18n-en:label="Inventory Move Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="CONFIRMED" label="已确认" value="CONFIRMED" i18n-en:label="Confirmed"/>
+            <option code="DONE" label="已完成" value="DONE" i18n-en:label="Completed"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
         </dict>
-        <dict label="库存作业类型" name="erp-inv/operation-type" valueType="int" i18n-en:label="Inventory Operation Type">
-            <option code="INCOMING" label="入库" value="10" i18n-en:label="Receipt"/>
-            <option code="OUTGOING" label="出库" value="20" i18n-en:label="Issue"/>
-            <option code="INTERNAL" label="内部调拨" value="30" i18n-en:label="Internal Transfer"/>
-            <option code="MANUFACTURE" label="制造" value="40" i18n-en:label="Manufactured"/>
+        <dict label="库存作业类型" name="erp-inv/operation-type" valueType="string" i18n-en:label="Inventory Operation Type">
+            <option code="INCOMING" label="入库" value="INCOMING" i18n-en:label="Receipt"/>
+            <option code="OUTGOING" label="出库" value="OUTGOING" i18n-en:label="Issue"/>
+            <option code="INTERNAL" label="内部调拨" value="INTERNAL" i18n-en:label="Internal Transfer"/>
+            <option code="MANUFACTURE" label="制造" value="MANUFACTURE" i18n-en:label="Manufactured"/>
         </dict>
-        <dict label="库存移动方向" name="erp-inv/move-direction" valueType="int" i18n-en:label="Move Direction">
-            <option code="INBOUND" label="入库" value="10" i18n-en:label="Receipt"/>
-            <option code="OUTBOUND" label="出库" value="20" i18n-en:label="Issue"/>
+        <dict label="库存移动方向" name="erp-inv/move-direction" valueType="string" i18n-en:label="Move Direction">
+            <option code="INBOUND" label="入库" value="INBOUND" i18n-en:label="Receipt"/>
+            <option code="OUTBOUND" label="出库" value="OUTBOUND" i18n-en:label="Issue"/>
         </dict>
-        <dict label="审核状态" name="erp-inv/approve-status" valueType="int" i18n-en:label="Approve Status">
-            <option code="UNSUBMITTED" label="未提交" value="10" i18n-en:label="Unsubmitted"/>
-            <option code="SUBMITTED" label="已提交" value="20" i18n-en:label="Submitted"/>
-            <option code="APPROVED" label="已审核" value="30" i18n-en:label="Approved"/>
-            <option code="REJECTED" label="已驳回" value="40" i18n-en:label="Rejected"/>
+        <dict label="审核状态" name="erp-inv/approve-status" valueType="string" i18n-en:label="Approve Status">
+            <option code="UNSUBMITTED" label="未提交" value="UNSUBMITTED" i18n-en:label="Unsubmitted"/>
+            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label="Submitted"/>
+            <option code="APPROVED" label="已审核" value="APPROVED" i18n-en:label="Approved"/>
+            <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label="Rejected"/>
         </dict>
-        <dict label="批次状态" name="erp-inv/batch-status" valueType="int" i18n-en:label="Batch Status">
-            <option code="OPEN" label="在用" value="10" i18n-en:label="In Use"/>
-            <option code="LOCKED" label="锁定" value="20" i18n-en:label="Locked"/>
-            <option code="EXPIRED" label="已过期" value="30" i18n-en:label="Expired"/>
-            <option code="CONSUMED" label="已耗尽" value="40" i18n-en:label="Depleted"/>
-            <option code="BLOCKED" label="质量冻结" value="50" i18n-en:label="Quality Frozen"/>
+        <dict label="批次状态" name="erp-inv/batch-status" valueType="string" i18n-en:label="Batch Status">
+            <option code="OPEN" label="在用" value="OPEN" i18n-en:label="In Use"/>
+            <option code="LOCKED" label="锁定" value="LOCKED" i18n-en:label="Locked"/>
+            <option code="EXPIRED" label="已过期" value="EXPIRED" i18n-en:label="Expired"/>
+            <option code="CONSUMED" label="已耗尽" value="CONSUMED" i18n-en:label="Depleted"/>
+            <option code="BLOCKED" label="质量冻结" value="BLOCKED" i18n-en:label="Quality Frozen"/>
         </dict>
-        <dict label="序列号状态" name="erp-inv/serial-status" valueType="int" i18n-en:label="Serial Status">
-            <option code="IN_STOCK" label="在库" value="10" i18n-en:label="In Stock"/>
-            <option code="OUT" label="已出库" value="20" i18n-en:label="Delivered"/>
-            <option code="RESERVED" label="已预留" value="30" i18n-en:label="Reserved"/>
-            <option code="BLOCKED" label="冻结" value="40" i18n-en:label="Frozen"/>
+        <dict label="序列号状态" name="erp-inv/serial-status" valueType="string" i18n-en:label="Serial Status">
+            <option code="IN_STOCK" label="在库" value="IN_STOCK" i18n-en:label="In Stock"/>
+            <option code="OUT" label="已出库" value="OUT" i18n-en:label="Delivered"/>
+            <option code="RESERVED" label="已预留" value="RESERVED" i18n-en:label="Reserved"/>
+            <option code="BLOCKED" label="冻结" value="BLOCKED" i18n-en:label="Frozen"/>
         </dict>
-        <dict label="预留状态" name="erp-inv/reservation-status" valueType="int" i18n-en:label="Reservation Status">
-            <option code="OPEN" label="生效中" value="10" i18n-en:label="Active"/>
-            <option code="PARTIALLY_CONSUMED" label="部分消耗" value="20" i18n-en:label="Partially Consumed"/>
-            <option code="CONSUMED" label="已全部消耗" value="30" i18n-en:label="Fully Consumed"/>
-            <option code="CANCELLED" label="已取消" value="40" i18n-en:label="Cancelled"/>
-            <option code="EXPIRED" label="已过期" value="50" i18n-en:label="Expired"/>
+        <dict label="预留状态" name="erp-inv/reservation-status" valueType="string" i18n-en:label="Reservation Status">
+            <option code="OPEN" label="生效中" value="OPEN" i18n-en:label="Active"/>
+            <option code="PARTIALLY_CONSUMED" label="部分消耗" value="PARTIALLY_CONSUMED" i18n-en:label="Partially Consumed"/>
+            <option code="CONSUMED" label="已全部消耗" value="CONSUMED" i18n-en:label="Fully Consumed"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
+            <option code="EXPIRED" label="已过期" value="EXPIRED" i18n-en:label="Expired"/>
         </dict>
-        <dict label="拣货状态" name="erp-inv/picking-status" valueType="int" i18n-en:label="Picking Status">
-            <option code="PENDING" label="待拣货" value="10" i18n-en:label="Pending Pick"/>
-            <option code="PICKING" label="拣货中" value="20" i18n-en:label="Picking"/>
-            <option code="PICKED" label="已拣货" value="30" i18n-en:label="Picked"/>
-            <option code="CANCELLED" label="已取消" value="40" i18n-en:label="Cancelled"/>
+        <dict label="拣货状态" name="erp-inv/picking-status" valueType="string" i18n-en:label="Picking Status">
+            <option code="PENDING" label="待拣货" value="PENDING" i18n-en:label="Pending Pick"/>
+            <option code="PICKING" label="拣货中" value="PICKING" i18n-en:label="Picking"/>
+            <option code="PICKED" label="已拣货" value="PICKED" i18n-en:label="Picked"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
         </dict>
-        <dict label="盘点类型" name="erp-inv/take-type" valueType="int" i18n-en:label="Take Type">
-            <option code="FULL" label="全面盘点" value="10" i18n-en:label="Full Count"/>
-            <option code="SAMPLE" label="抽样盘点" value="20" i18n-en:label="Sample Count"/>
-            <option code="CYCLE" label="循环盘点" value="30" i18n-en:label="Cycle Count"/>
+        <dict label="盘点类型" name="erp-inv/take-type" valueType="string" i18n-en:label="Take Type">
+            <option code="FULL" label="全面盘点" value="FULL" i18n-en:label="Full Count"/>
+            <option code="SAMPLE" label="抽样盘点" value="SAMPLE" i18n-en:label="Sample Count"/>
+            <option code="CYCLE" label="循环盘点" value="CYCLE" i18n-en:label="Cycle Count"/>
         </dict>
     </dicts>
 
@@ -99,8 +99,8 @@
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="单号" domain="orderCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
-                <column code="MOVE_TYPE" displayName="作业类型" mandatory="true" name="moveType" propId="3"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-inv/operation-type"
+                <column code="MOVE_TYPE" displayName="作业类型" mandatory="true" name="moveType" precision="20" propId="3"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/operation-type"
                         i18n-en:displayName="Move Type"/>
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="4" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
@@ -114,11 +114,11 @@
                         stdSqlType="BIGINT" i18n-en:displayName="Dest Warehouse"/>
                 <column code="DEST_LOCATION_ID" displayName="目标库位" name="destLocationId" propId="9" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Dest Location"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="10"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-inv/move-status"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
+                        propId="10" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/move-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="11"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-inv/approve-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="11" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="12"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
@@ -340,8 +340,9 @@
                 <column code="BALANCE_TOTAL_COST" displayName="结存总成本" domain="amount" mandatory="true"
                         name="balanceTotalCost" precision="20" propId="14" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Balance Total Cost"/>
-                <column code="COST_METHOD" displayName="计价方法" name="costMethod" propId="15" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-md/cost-method" i18n-en:displayName="Cost Method"/>
+                <column code="COST_METHOD" displayName="计价方法" name="costMethod" precision="20" propId="15"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-md/cost-method"
+                        i18n-en:displayName="Cost Method"/>
                 <column code="ACCT_SCHEMA_ID" displayName="账套" name="acctSchemaId" propId="16" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="17" stdDataType="long"
@@ -458,8 +459,9 @@
                 <column code="AVAILABLE_QUANTITY" displayName="可用数量" domain="quantity" mandatory="true"
                         name="availableQuantity" precision="20" propId="11" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Available Quantity"/>
-                <column code="COST_METHOD" displayName="计价方法" name="costMethod" propId="12" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-md/cost-method" i18n-en:displayName="Cost Method"/>
+                <column code="COST_METHOD" displayName="计价方法" name="costMethod" precision="20" propId="12"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-md/cost-method"
+                        i18n-en:displayName="Cost Method"/>
                 <column code="AVG_COST" displayName="平均成本" domain="unitPrice" name="avgCost" precision="20" propId="13"
                         scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Avg Cost"/>
                 <column code="TOTAL_COST" displayName="总成本" domain="amount" name="totalCost" precision="20" propId="14"
@@ -543,8 +545,9 @@
                         i18n-en:displayName="Source Bill Code"/>
                 <column code="RESERVED_FOR_PARTNER_ID" displayName="为谁预留(往来单位)" name="reservedForPartnerId" propId="7"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Reserved For Partner"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="8" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-inv/reservation-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/reservation-status"
+                        i18n-en:displayName="Status"/>
                 <column code="VALID_UNTIL" displayName="预留有效期至" name="validUntil" propId="9" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Valid Until"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="10"
@@ -692,8 +695,8 @@
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
                 <column code="BATCH_NO" displayName="批号" name="batchNo" precision="50" propId="6" stdDataType="string"
                         stdSqlType="VARCHAR" i18n-en:displayName="Batch No"/>
-                <column code="COST_METHOD" displayName="计价方法" mandatory="true" name="costMethod" propId="7"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-md/cost-method"
+                <column code="COST_METHOD" displayName="计价方法" mandatory="true" name="costMethod" precision="20"
+                        propId="7" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-md/cost-method"
                         i18n-en:displayName="Cost Method"/>
                 <column code="INCOMING_QUANTITY" displayName="入库数量" domain="quantity" mandatory="true"
                         name="incomingQuantity" precision="20" propId="8" scale="4" stdDataType="decimal"
@@ -797,11 +800,11 @@
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="To Warehouse"/>
                 <column code="IN_TRANSIT_WAREHOUSE_ID" displayName="在途仓库" name="inTransitWarehouseId" propId="7"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="In Transit Warehouse"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="8"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-inv/move-status"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/move-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="9"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-inv/approve-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="9" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="10"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
@@ -948,15 +951,16 @@
                         i18n-en:displayName="Organization"/>
                 <column code="BUSINESS_DATE" displayName="盘点日期" mandatory="true" name="businessDate" propId="4"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
-                <column code="TAKE_TYPE" displayName="盘点类型" name="takeType" propId="5" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-inv/take-type" i18n-en:displayName="Take Type"/>
+                <column code="TAKE_TYPE" displayName="盘点类型" name="takeType" precision="20" propId="5"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/take-type"
+                        i18n-en:displayName="Take Type"/>
                 <column code="WAREHOUSE_ID" displayName="盘点仓库" mandatory="true" name="warehouseId" propId="6"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="7"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-inv/move-status"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20" propId="7"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/move-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="8"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-inv/approve-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="8" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="9"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
@@ -1110,8 +1114,8 @@
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
                 <column code="PICKER_ID" displayName="拣货人(职员)" name="pickerId" propId="6" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Picker"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="7"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-inv/picking-status"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20" propId="7"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/picking-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="RELATED_BILL_TYPE" displayName="关联单据类型(SALES_DELIVERY/WORK_ORDER_ISSUE)"
                         name="relatedBillType" precision="50" propId="8" stdDataType="string" stdSqlType="VARCHAR"
@@ -1273,8 +1277,9 @@
                         stdSqlType="DATE" i18n-en:displayName="Expiry Date"/>
                 <column code="SHELF_LIFE_DAYS" displayName="保质期(天)" name="shelfLifeDays" propId="11" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Shelf Life Days"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="12" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-inv/batch-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="12"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/batch-status"
+                        i18n-en:displayName="Status"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="13"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -1341,8 +1346,9 @@
                         stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
                 <column code="LOCATION_ID" displayName="当前库位" name="locationId" propId="7" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Location"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="8" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-inv/serial-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/serial-status"
+                        i18n-en:displayName="Status"/>
                 <column code="IN_BILL_TYPE" displayName="入库单类型" name="inBillType" precision="50" propId="9"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="In Bill Type"/>
                 <column code="IN_BILL_CODE" displayName="入库单号" name="inBillCode" precision="50" propId="10"

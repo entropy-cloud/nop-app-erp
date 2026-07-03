@@ -31,13 +31,13 @@
                 <col id="description" sortable="true"/>
 
                 <!--调研类型-->
-                <col id="surveyType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="surveyType" mandatory="true" sortable="true"/>
 
                 <!--是否匿名-->
                 <col id="isAnonymous" sortable="true"/>
 
                 <!--状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--开始日期-->
                 <col id="startDate" sortable="true"/>

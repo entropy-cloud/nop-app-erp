@@ -61,7 +61,7 @@
         </prop>
         <prop name="variancePercent" displayName="差异百分比" propId="11" i18n-en:displayName="Variance Percent"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="rate" type="java.lang.String" precision="10" scale="4"/>
+            <schema domain="rate" type="java.math.BigDecimal" precision="10" scale="4"/>
         </prop>
         <prop name="standardQty" displayName="标准数量" propId="12" i18n-en:displayName="Standard Qty" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">

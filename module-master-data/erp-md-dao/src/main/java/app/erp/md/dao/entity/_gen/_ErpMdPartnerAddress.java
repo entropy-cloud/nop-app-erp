@@ -29,7 +29,7 @@ public class _ErpMdPartnerAddress extends DynamicOrmEntity{
     public static final String PROP_NAME_partnerId = "partnerId";
     public static final int PROP_ID_partnerId = 2;
     
-    /* 地址类型: ADDRESS_TYPE INTEGER */
+    /* 地址类型: ADDRESS_TYPE VARCHAR */
     public static final String PROP_NAME_addressType = "addressType";
     public static final int PROP_ID_addressType = 3;
     
@@ -137,7 +137,7 @@ public class _ErpMdPartnerAddress extends DynamicOrmEntity{
     private java.lang.Long _partnerId;
     
     /* 地址类型: ADDRESS_TYPE */
-    private java.lang.Integer _addressType;
+    private java.lang.String _addressType;
     
     /* 联系人: CONTACT_PERSON */
     private java.lang.String _contactPerson;
@@ -314,9 +314,9 @@ public class _ErpMdPartnerAddress extends DynamicOrmEntity{
             }
         
             case PROP_ID_addressType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_addressType));
                }
                setAddressType(typedValue);
@@ -448,7 +448,7 @@ public class _ErpMdPartnerAddress extends DynamicOrmEntity{
         
             case PROP_ID_addressType:{
                onInitProp(propId);
-               this._addressType = (java.lang.Integer)value;
+               this._addressType = (java.lang.String)value;
                
                break;
             }
@@ -570,7 +570,7 @@ public class _ErpMdPartnerAddress extends DynamicOrmEntity{
     /**
      * 地址类型: ADDRESS_TYPE
      */
-    public final java.lang.Integer getAddressType(){
+    public final java.lang.String getAddressType(){
          onPropGet(PROP_ID_addressType);
          return _addressType;
     }
@@ -578,7 +578,7 @@ public class _ErpMdPartnerAddress extends DynamicOrmEntity{
     /**
      * 地址类型: ADDRESS_TYPE
      */
-    public final void setAddressType(java.lang.Integer value){
+    public final void setAddressType(java.lang.String value){
         if(onPropSet(PROP_ID_addressType,value)){
             this._addressType = value;
             internalClearRefs(PROP_ID_addressType);

@@ -1,7 +1,7 @@
 {
   "id": 0,
   "partnerProfileId": 0,
-  "direction": 0,
+  "direction": "",
   "direction_label": "",
   "formatCode": "",
   "testCaseCode": "",

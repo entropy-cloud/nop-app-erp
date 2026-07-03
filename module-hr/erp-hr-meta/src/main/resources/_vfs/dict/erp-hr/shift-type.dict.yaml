@@ -1,19 +1,19 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 班次类型
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 固定班
-    value: 10
+    value: FIXED
     description: 
   
   - label: 倒班
-    value: 20
+    value: ROTATING
     description: 
   
   - label: 弹性班
-    value: 30
+    value: FLEXIBLE
     description: 
   

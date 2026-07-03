@@ -57,7 +57,7 @@ public class _ErpAstAssetCapitalization extends DynamicOrmEntity{
     public static final String PROP_NAME_originalValue = "originalValue";
     public static final int PROP_ID_originalValue = 9;
     
-    /* 来源类型: SOURCE_TYPE INTEGER */
+    /* 来源类型: SOURCE_TYPE VARCHAR */
     public static final String PROP_NAME_sourceType = "sourceType";
     public static final int PROP_ID_sourceType = 10;
     
@@ -65,11 +65,11 @@ public class _ErpAstAssetCapitalization extends DynamicOrmEntity{
     public static final String PROP_NAME_sourceCode = "sourceCode";
     public static final int PROP_ID_sourceCode = 11;
     
-    /* 单据状态: DOC_STATUS INTEGER */
+    /* 单据状态: DOC_STATUS VARCHAR */
     public static final String PROP_NAME_docStatus = "docStatus";
     public static final int PROP_ID_docStatus = 12;
     
-    /* 审核状态: APPROVE_STATUS INTEGER */
+    /* 审核状态: APPROVE_STATUS VARCHAR */
     public static final String PROP_NAME_approveStatus = "approveStatus";
     public static final int PROP_ID_approveStatus = 13;
     
@@ -276,16 +276,16 @@ public class _ErpAstAssetCapitalization extends DynamicOrmEntity{
     private java.math.BigDecimal _originalValue;
     
     /* 来源类型: SOURCE_TYPE */
-    private java.lang.Integer _sourceType;
+    private java.lang.String _sourceType;
     
     /* 来源单号: SOURCE_CODE */
     private java.lang.String _sourceCode;
     
     /* 单据状态: DOC_STATUS */
-    private java.lang.Integer _docStatus;
+    private java.lang.String _docStatus;
     
     /* 审核状态: APPROVE_STATUS */
-    private java.lang.Integer _approveStatus;
+    private java.lang.String _approveStatus;
     
     /* 已过账: POSTED */
     private java.lang.Boolean _posted;
@@ -598,9 +598,9 @@ public class _ErpAstAssetCapitalization extends DynamicOrmEntity{
             }
         
             case PROP_ID_sourceType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_sourceType));
                }
                setSourceType(typedValue);
@@ -618,9 +618,9 @@ public class _ErpAstAssetCapitalization extends DynamicOrmEntity{
             }
         
             case PROP_ID_docStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_docStatus));
                }
                setDocStatus(typedValue);
@@ -628,9 +628,9 @@ public class _ErpAstAssetCapitalization extends DynamicOrmEntity{
             }
         
             case PROP_ID_approveStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_approveStatus));
                }
                setApproveStatus(typedValue);
@@ -871,7 +871,7 @@ public class _ErpAstAssetCapitalization extends DynamicOrmEntity{
         
             case PROP_ID_sourceType:{
                onInitProp(propId);
-               this._sourceType = (java.lang.Integer)value;
+               this._sourceType = (java.lang.String)value;
                
                break;
             }
@@ -885,14 +885,14 @@ public class _ErpAstAssetCapitalization extends DynamicOrmEntity{
         
             case PROP_ID_docStatus:{
                onInitProp(propId);
-               this._docStatus = (java.lang.Integer)value;
+               this._docStatus = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_approveStatus:{
                onInitProp(propId);
-               this._approveStatus = (java.lang.Integer)value;
+               this._approveStatus = (java.lang.String)value;
                
                break;
             }
@@ -1189,7 +1189,7 @@ public class _ErpAstAssetCapitalization extends DynamicOrmEntity{
     /**
      * 来源类型: SOURCE_TYPE
      */
-    public final java.lang.Integer getSourceType(){
+    public final java.lang.String getSourceType(){
          onPropGet(PROP_ID_sourceType);
          return _sourceType;
     }
@@ -1197,7 +1197,7 @@ public class _ErpAstAssetCapitalization extends DynamicOrmEntity{
     /**
      * 来源类型: SOURCE_TYPE
      */
-    public final void setSourceType(java.lang.Integer value){
+    public final void setSourceType(java.lang.String value){
         if(onPropSet(PROP_ID_sourceType,value)){
             this._sourceType = value;
             internalClearRefs(PROP_ID_sourceType);
@@ -1227,7 +1227,7 @@ public class _ErpAstAssetCapitalization extends DynamicOrmEntity{
     /**
      * 单据状态: DOC_STATUS
      */
-    public final java.lang.Integer getDocStatus(){
+    public final java.lang.String getDocStatus(){
          onPropGet(PROP_ID_docStatus);
          return _docStatus;
     }
@@ -1235,7 +1235,7 @@ public class _ErpAstAssetCapitalization extends DynamicOrmEntity{
     /**
      * 单据状态: DOC_STATUS
      */
-    public final void setDocStatus(java.lang.Integer value){
+    public final void setDocStatus(java.lang.String value){
         if(onPropSet(PROP_ID_docStatus,value)){
             this._docStatus = value;
             internalClearRefs(PROP_ID_docStatus);
@@ -1246,7 +1246,7 @@ public class _ErpAstAssetCapitalization extends DynamicOrmEntity{
     /**
      * 审核状态: APPROVE_STATUS
      */
-    public final java.lang.Integer getApproveStatus(){
+    public final java.lang.String getApproveStatus(){
          onPropGet(PROP_ID_approveStatus);
          return _approveStatus;
     }
@@ -1254,7 +1254,7 @@ public class _ErpAstAssetCapitalization extends DynamicOrmEntity{
     /**
      * 审核状态: APPROVE_STATUS
      */
-    public final void setApproveStatus(java.lang.Integer value){
+    public final void setApproveStatus(java.lang.String value){
         if(onPropSet(PROP_ID_approveStatus,value)){
             this._approveStatus = value;
             internalClearRefs(PROP_ID_approveStatus);

@@ -41,7 +41,7 @@ public class _ErpCsCatalogFulfillment extends DynamicOrmEntity{
     public static final String PROP_NAME_sequence = "sequence";
     public static final int PROP_ID_sequence = 5;
     
-    /* 动作类型: ACTION_TYPE INTEGER */
+    /* 动作类型: ACTION_TYPE VARCHAR */
     public static final String PROP_NAME_actionType = "actionType";
     public static final int PROP_ID_actionType = 6;
     
@@ -170,7 +170,7 @@ public class _ErpCsCatalogFulfillment extends DynamicOrmEntity{
     private java.lang.Integer _sequence;
     
     /* 动作类型: ACTION_TYPE */
-    private java.lang.Integer _actionType;
+    private java.lang.String _actionType;
     
     /* 动作配置: ACTION_CONFIG */
     private java.lang.String _actionConfig;
@@ -386,9 +386,9 @@ public class _ErpCsCatalogFulfillment extends DynamicOrmEntity{
             }
         
             case PROP_ID_actionType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_actionType));
                }
                setActionType(typedValue);
@@ -541,7 +541,7 @@ public class _ErpCsCatalogFulfillment extends DynamicOrmEntity{
         
             case PROP_ID_actionType:{
                onInitProp(propId);
-               this._actionType = (java.lang.Integer)value;
+               this._actionType = (java.lang.String)value;
                
                break;
             }
@@ -720,7 +720,7 @@ public class _ErpCsCatalogFulfillment extends DynamicOrmEntity{
     /**
      * 动作类型: ACTION_TYPE
      */
-    public final java.lang.Integer getActionType(){
+    public final java.lang.String getActionType(){
          onPropGet(PROP_ID_actionType);
          return _actionType;
     }
@@ -728,7 +728,7 @@ public class _ErpCsCatalogFulfillment extends DynamicOrmEntity{
     /**
      * 动作类型: ACTION_TYPE
      */
-    public final void setActionType(java.lang.Integer value){
+    public final void setActionType(java.lang.String value){
         if(onPropSet(PROP_ID_actionType,value)){
             this._actionType = value;
             internalClearRefs(PROP_ID_actionType);

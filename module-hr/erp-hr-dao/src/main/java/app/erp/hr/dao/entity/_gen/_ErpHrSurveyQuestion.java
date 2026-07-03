@@ -37,7 +37,7 @@ public class _ErpHrSurveyQuestion extends DynamicOrmEntity{
     public static final String PROP_NAME_questionText = "questionText";
     public static final int PROP_ID_questionText = 4;
     
-    /* 题型: QUESTION_TYPE INTEGER */
+    /* 题型: QUESTION_TYPE VARCHAR */
     public static final String PROP_NAME_questionType = "questionType";
     public static final int PROP_ID_questionType = 5;
     
@@ -61,7 +61,7 @@ public class _ErpHrSurveyQuestion extends DynamicOrmEntity{
     public static final String PROP_NAME_options = "options";
     public static final int PROP_ID_options = 10;
     
-    /* 驱动因子分类: DRIVER_CATEGORY INTEGER */
+    /* 驱动因子分类: DRIVER_CATEGORY VARCHAR */
     public static final String PROP_NAME_driverCategory = "driverCategory";
     public static final int PROP_ID_driverCategory = 11;
     
@@ -178,7 +178,7 @@ public class _ErpHrSurveyQuestion extends DynamicOrmEntity{
     private java.lang.String _questionText;
     
     /* 题型: QUESTION_TYPE */
-    private java.lang.Integer _questionType;
+    private java.lang.String _questionType;
     
     /* 评分最低分: RATING_SCALE_MIN */
     private java.lang.Integer _ratingScaleMin;
@@ -196,7 +196,7 @@ public class _ErpHrSurveyQuestion extends DynamicOrmEntity{
     private java.lang.String _options;
     
     /* 驱动因子分类: DRIVER_CATEGORY */
-    private java.lang.Integer _driverCategory;
+    private java.lang.String _driverCategory;
     
     /* 是否必填: IS_REQUIRED */
     private java.lang.Boolean _isRequired;
@@ -399,9 +399,9 @@ public class _ErpHrSurveyQuestion extends DynamicOrmEntity{
             }
         
             case PROP_ID_questionType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_questionType));
                }
                setQuestionType(typedValue);
@@ -459,9 +459,9 @@ public class _ErpHrSurveyQuestion extends DynamicOrmEntity{
             }
         
             case PROP_ID_driverCategory:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_driverCategory));
                }
                setDriverCategory(typedValue);
@@ -577,7 +577,7 @@ public class _ErpHrSurveyQuestion extends DynamicOrmEntity{
         
             case PROP_ID_questionType:{
                onInitProp(propId);
-               this._questionType = (java.lang.Integer)value;
+               this._questionType = (java.lang.String)value;
                
                break;
             }
@@ -619,7 +619,7 @@ public class _ErpHrSurveyQuestion extends DynamicOrmEntity{
         
             case PROP_ID_driverCategory:{
                onInitProp(propId);
-               this._driverCategory = (java.lang.Integer)value;
+               this._driverCategory = (java.lang.String)value;
                
                break;
             }
@@ -758,7 +758,7 @@ public class _ErpHrSurveyQuestion extends DynamicOrmEntity{
     /**
      * 题型: QUESTION_TYPE
      */
-    public final java.lang.Integer getQuestionType(){
+    public final java.lang.String getQuestionType(){
          onPropGet(PROP_ID_questionType);
          return _questionType;
     }
@@ -766,7 +766,7 @@ public class _ErpHrSurveyQuestion extends DynamicOrmEntity{
     /**
      * 题型: QUESTION_TYPE
      */
-    public final void setQuestionType(java.lang.Integer value){
+    public final void setQuestionType(java.lang.String value){
         if(onPropSet(PROP_ID_questionType,value)){
             this._questionType = value;
             internalClearRefs(PROP_ID_questionType);
@@ -872,7 +872,7 @@ public class _ErpHrSurveyQuestion extends DynamicOrmEntity{
     /**
      * 驱动因子分类: DRIVER_CATEGORY
      */
-    public final java.lang.Integer getDriverCategory(){
+    public final java.lang.String getDriverCategory(){
          onPropGet(PROP_ID_driverCategory);
          return _driverCategory;
     }
@@ -880,7 +880,7 @@ public class _ErpHrSurveyQuestion extends DynamicOrmEntity{
     /**
      * 驱动因子分类: DRIVER_CATEGORY
      */
-    public final void setDriverCategory(java.lang.Integer value){
+    public final void setDriverCategory(java.lang.String value){
         if(onPropSet(PROP_ID_driverCategory,value)){
             this._driverCategory = value;
             internalClearRefs(PROP_ID_driverCategory);

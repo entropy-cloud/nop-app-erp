@@ -97,16 +97,16 @@
         }
 
 
-        private Integer _arStatus;
+        private String _arStatus;
 
     
         @PropMeta(propId=7)
     
-        public Integer getArStatus(){
+        public String getArStatus(){
             return _arStatus;
         }
 
-        public void setArStatus(Integer value){
+        public void setArStatus(String value){
             this._arStatus = value;
         }
 
@@ -123,16 +123,16 @@
         }
 
 
-        private Integer _apStatus;
+        private String _apStatus;
 
     
         @PropMeta(propId=8)
     
-        public Integer getApStatus(){
+        public String getApStatus(){
             return _apStatus;
         }
 
-        public void setApStatus(Integer value){
+        public void setApStatus(String value){
             this._apStatus = value;
         }
 
@@ -149,16 +149,16 @@
         }
 
 
-        private Integer _invStatus;
+        private String _invStatus;
 
     
         @PropMeta(propId=9)
     
-        public Integer getInvStatus(){
+        public String getInvStatus(){
             return _invStatus;
         }
 
-        public void setInvStatus(Integer value){
+        public void setInvStatus(String value){
             this._invStatus = value;
         }
 
@@ -175,16 +175,16 @@
         }
 
 
-        private Integer _glStatus;
+        private String _glStatus;
 
     
         @PropMeta(propId=10)
     
-        public Integer getGlStatus(){
+        public String getGlStatus(){
             return _glStatus;
         }
 
-        public void setGlStatus(Integer value){
+        public void setGlStatus(String value){
             this._glStatus = value;
         }
 
@@ -201,16 +201,16 @@
         }
 
 
-        private Integer _assetStatus;
+        private String _assetStatus;
 
     
         @PropMeta(propId=11)
     
-        public Integer getAssetStatus(){
+        public String getAssetStatus(){
             return _assetStatus;
         }
 
-        public void setAssetStatus(Integer value){
+        public void setAssetStatus(String value){
             this._assetStatus = value;
         }
 

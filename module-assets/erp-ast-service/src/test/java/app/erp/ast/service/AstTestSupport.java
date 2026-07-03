@@ -25,9 +25,9 @@ final class AstTestSupport {
         ErpMdSubject subject = new ErpMdSubject();
         subject.setCode(code);
         subject.setName(name);
-        subject.setSubjectClass(10);
-        subject.setDirection(10);
-        subject.setStatus(10);
+        subject.setSubjectClass("ASSET");
+        subject.setDirection("DEBIT");
+        subject.setStatus("ACTIVE");
         dao.saveEntity(subject);
         return subject.getId();
     }
@@ -38,13 +38,13 @@ final class AstTestSupport {
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
-        schema.setNature(10);
+        schema.setNature("FINANCIAL");
         schema.setFunctionalCurrencyId(1L);
-        schema.setStatus(10);
+        schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
 
-    static void seedPeriod(IDaoProvider daoProvider, String code, int year, int month, int status) {
+    static void seedPeriod(IDaoProvider daoProvider, String code, int year, int month, String status) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
@@ -59,7 +59,7 @@ final class AstTestSupport {
         dao.saveEntity(period);
     }
 
-    static Long seedCategory(IDaoProvider daoProvider, String code, String name, int method, int months,
+    static Long seedCategory(IDaoProvider daoProvider, String code, String name, String method, int months,
                              Long subjectId, Long depreciationSubjectId, Long expenseSubjectId) {
         IEntityDao<ErpAstAssetCategory> dao = daoProvider.daoFor(ErpAstAssetCategory.class);
         ErpAstAssetCategory category = new ErpAstAssetCategory();
@@ -75,8 +75,8 @@ final class AstTestSupport {
     }
 
     static Long seedAsset(IDaoProvider daoProvider, String code, String name, Long categoryId, long orgId,
-                          BigDecimal originalValue, BigDecimal residualValue, int method, int months,
-                          int status) {
+                          BigDecimal originalValue, BigDecimal residualValue, String method, int months,
+                          String status) {
         IEntityDao<ErpAstAsset> dao = daoProvider.daoFor(ErpAstAsset.class);
         ErpAstAsset asset = new ErpAstAsset();
         asset.setCode(code);

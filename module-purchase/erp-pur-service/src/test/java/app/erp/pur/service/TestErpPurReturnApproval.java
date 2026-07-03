@@ -238,7 +238,7 @@ public class TestErpPurReturnApproval extends JunitAutoTestCase {
 
     private void seedPeriodAndSubjects() {
         ormTemplate.runInSession(session -> {
-            seedOpenPeriod("2026-07", 2026, 7, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31), 10);
+            seedOpenPeriod("2026-07", 2026, 7, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31), "OPEN");
             seedSubject("1401", "库存商品");
             seedSubject("2202", "应付账款-暂估");
             seedAcctSchema();
@@ -253,9 +253,9 @@ public class TestErpPurReturnApproval extends JunitAutoTestCase {
         schema.setCode("AS-" + ORG_ID);
         schema.setName("账套" + ORG_ID);
         schema.setOrgId(ORG_ID);
-        schema.setNature(10);
+        schema.setNature("FINANCIAL");
         schema.setFunctionalCurrencyId(CURRENCY_ID);
-        schema.setStatus(10);
+        schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
 
@@ -264,21 +264,21 @@ public class TestErpPurReturnApproval extends JunitAutoTestCase {
     }
 
     private void seedInactiveSupplier(Long id) {
-        seedSupplier(id, 20);
+        seedSupplier(id, "INACTIVE");
     }
 
-    private void seedSupplier(Long id, int status) {
+    private void seedSupplier(Long id, String status) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);
         partner.setCode("SUP-" + id);
         partner.setName("供应商" + id);
-        partner.setPartnerType(10);
+        partner.setPartnerType("CUSTOMER");
         partner.setStatus(status);
         dao.saveEntity(partner);
     }
 
-    private void seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, int status) {
+    private void seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, String status) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
@@ -297,9 +297,9 @@ public class TestErpPurReturnApproval extends JunitAutoTestCase {
         ErpMdSubject subject = new ErpMdSubject();
         subject.setCode(code);
         subject.setName(name);
-        subject.setSubjectClass(10);
-        subject.setDirection(10);
-        subject.setStatus(10);
+        subject.setSubjectClass("ASSET");
+        subject.setDirection("DEBIT");
+        subject.setStatus("ACTIVE");
         dao.saveEntity(subject);
     }
 

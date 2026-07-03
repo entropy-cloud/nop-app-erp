@@ -3,8 +3,8 @@
     data: {
       code: "P-SMOKE-REL",
       name: "冒烟测试-关系导航头实体",
-      partnerType: 10,
-      status: 10
+      partnerType: "CUSTOMER",
+      status: "ACTIVE"
     }
   }
 }

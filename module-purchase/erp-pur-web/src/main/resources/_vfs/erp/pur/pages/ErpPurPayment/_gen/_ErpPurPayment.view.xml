@@ -61,13 +61,13 @@
                 <col id="partnerBankAccountId" ui:number="true" sortable="true"/>
 
                 <!--单据状态-->
-                <col id="docStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="docStatus" mandatory="true" sortable="true"/>
 
                 <!--审核状态-->
-                <col id="approveStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="approveStatus" mandatory="true" sortable="true"/>
 
                 <!--核销状态-->
-                <col id="writtenOffStatus" ui:number="true" sortable="true"/>
+                <col id="writtenOffStatus" sortable="true"/>
 
                 <!--已过账-->
                 <col id="posted" sortable="true"/>

@@ -29,7 +29,7 @@ public class _ErpHrEmployeeAssessment extends DynamicOrmEntity{
     public static final String PROP_NAME_employeeId = "employeeId";
     public static final int PROP_ID_employeeId = 2;
     
-    /* 评估类型: ASSESSMENT_TYPE INTEGER */
+    /* 评估类型: ASSESSMENT_TYPE VARCHAR */
     public static final String PROP_NAME_assessmentType = "assessmentType";
     public static final int PROP_ID_assessmentType = 3;
     
@@ -41,7 +41,7 @@ public class _ErpHrEmployeeAssessment extends DynamicOrmEntity{
     public static final String PROP_NAME_assessmentDate = "assessmentDate";
     public static final int PROP_ID_assessmentDate = 5;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 6;
     
@@ -160,7 +160,7 @@ public class _ErpHrEmployeeAssessment extends DynamicOrmEntity{
     private java.lang.Long _employeeId;
     
     /* 评估类型: ASSESSMENT_TYPE */
-    private java.lang.Integer _assessmentType;
+    private java.lang.String _assessmentType;
     
     /* 评估人: ASSESSOR_ID */
     private java.lang.Long _assessorId;
@@ -169,7 +169,7 @@ public class _ErpHrEmployeeAssessment extends DynamicOrmEntity{
     private java.time.LocalDate _assessmentDate;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 综合评分: OVERALL_SCORE */
     private java.math.BigDecimal _overallScore;
@@ -349,9 +349,9 @@ public class _ErpHrEmployeeAssessment extends DynamicOrmEntity{
             }
         
             case PROP_ID_assessmentType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_assessmentType));
                }
                setAssessmentType(typedValue);
@@ -379,9 +379,9 @@ public class _ErpHrEmployeeAssessment extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -503,7 +503,7 @@ public class _ErpHrEmployeeAssessment extends DynamicOrmEntity{
         
             case PROP_ID_assessmentType:{
                onInitProp(propId);
-               this._assessmentType = (java.lang.Integer)value;
+               this._assessmentType = (java.lang.String)value;
                
                break;
             }
@@ -524,7 +524,7 @@ public class _ErpHrEmployeeAssessment extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -639,7 +639,7 @@ public class _ErpHrEmployeeAssessment extends DynamicOrmEntity{
     /**
      * 评估类型: ASSESSMENT_TYPE
      */
-    public final java.lang.Integer getAssessmentType(){
+    public final java.lang.String getAssessmentType(){
          onPropGet(PROP_ID_assessmentType);
          return _assessmentType;
     }
@@ -647,7 +647,7 @@ public class _ErpHrEmployeeAssessment extends DynamicOrmEntity{
     /**
      * 评估类型: ASSESSMENT_TYPE
      */
-    public final void setAssessmentType(java.lang.Integer value){
+    public final void setAssessmentType(java.lang.String value){
         if(onPropSet(PROP_ID_assessmentType,value)){
             this._assessmentType = value;
             internalClearRefs(PROP_ID_assessmentType);
@@ -696,7 +696,7 @@ public class _ErpHrEmployeeAssessment extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -704,7 +704,7 @@ public class _ErpHrEmployeeAssessment extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

@@ -1,39 +1,39 @@
 # __XGEN_FORCE_OVERRIDE__
 label: EDI 文档状态
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 待发送
-    value: 10
+    value: TO_SEND
     description: 
   
   - label: 已发送
-    value: 20
+    value: SENT
     description: 
   
   - label: 待取消
-    value: 25
+    value: TO_CANCEL
     description: 
   
   - label: 已取消
-    value: 30
+    value: CANCELLED
     description: 
   
   - label: 错误
-    value: 40
+    value: ERROR
     description: 
   
   - label: 已接收
-    value: 50
+    value: RECEIVED
     description: 
   
   - label: 已确认
-    value: 60
+    value: ACKNOWLEDGED
     description: 
   
   - label: 已归档
-    value: 70
+    value: ARCHIVED
     description: 
   

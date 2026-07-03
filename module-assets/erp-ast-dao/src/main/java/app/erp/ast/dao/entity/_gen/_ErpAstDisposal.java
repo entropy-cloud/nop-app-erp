@@ -37,7 +37,7 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
     public static final String PROP_NAME_assetId = "assetId";
     public static final int PROP_ID_assetId = 4;
     
-    /* 处置类型: DISPOSAL_TYPE INTEGER */
+    /* 处置类型: DISPOSAL_TYPE VARCHAR */
     public static final String PROP_NAME_disposalType = "disposalType";
     public static final int PROP_ID_disposalType = 5;
     
@@ -61,15 +61,15 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
     public static final String PROP_NAME_gainLoss = "gainLoss";
     public static final int PROP_ID_gainLoss = 10;
     
-    /* 处置原因: REASON INTEGER */
+    /* 处置原因: REASON VARCHAR */
     public static final String PROP_NAME_reason = "reason";
     public static final int PROP_ID_reason = 11;
     
-    /* 单据状态: DOC_STATUS INTEGER */
+    /* 单据状态: DOC_STATUS VARCHAR */
     public static final String PROP_NAME_docStatus = "docStatus";
     public static final int PROP_ID_docStatus = 12;
     
-    /* 审核状态: APPROVE_STATUS INTEGER */
+    /* 审核状态: APPROVE_STATUS VARCHAR */
     public static final String PROP_NAME_approveStatus = "approveStatus";
     public static final int PROP_ID_approveStatus = 13;
     
@@ -247,7 +247,7 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
     private java.lang.Long _assetId;
     
     /* 处置类型: DISPOSAL_TYPE */
-    private java.lang.Integer _disposalType;
+    private java.lang.String _disposalType;
     
     /* 处置金额: DISPOSAL_AMOUNT */
     private java.math.BigDecimal _disposalAmount;
@@ -265,13 +265,13 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
     private java.math.BigDecimal _gainLoss;
     
     /* 处置原因: REASON */
-    private java.lang.Integer _reason;
+    private java.lang.String _reason;
     
     /* 单据状态: DOC_STATUS */
-    private java.lang.Integer _docStatus;
+    private java.lang.String _docStatus;
     
     /* 审核状态: APPROVE_STATUS */
-    private java.lang.Integer _approveStatus;
+    private java.lang.String _approveStatus;
     
     /* 已过账: POSTED */
     private java.lang.Boolean _posted;
@@ -522,9 +522,9 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
             }
         
             case PROP_ID_disposalType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_disposalType));
                }
                setDisposalType(typedValue);
@@ -582,9 +582,9 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
             }
         
             case PROP_ID_reason:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_reason));
                }
                setReason(typedValue);
@@ -592,9 +592,9 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
             }
         
             case PROP_ID_docStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_docStatus));
                }
                setDocStatus(typedValue);
@@ -602,9 +602,9 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
             }
         
             case PROP_ID_approveStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_approveStatus));
                }
                setApproveStatus(typedValue);
@@ -790,7 +790,7 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
         
             case PROP_ID_disposalType:{
                onInitProp(propId);
-               this._disposalType = (java.lang.Integer)value;
+               this._disposalType = (java.lang.String)value;
                
                break;
             }
@@ -832,21 +832,21 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
         
             case PROP_ID_reason:{
                onInitProp(propId);
-               this._reason = (java.lang.Integer)value;
+               this._reason = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_docStatus:{
                onInitProp(propId);
-               this._docStatus = (java.lang.Integer)value;
+               this._docStatus = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_approveStatus:{
                onInitProp(propId);
-               this._approveStatus = (java.lang.Integer)value;
+               this._approveStatus = (java.lang.String)value;
                
                break;
             }
@@ -1034,7 +1034,7 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
     /**
      * 处置类型: DISPOSAL_TYPE
      */
-    public final java.lang.Integer getDisposalType(){
+    public final java.lang.String getDisposalType(){
          onPropGet(PROP_ID_disposalType);
          return _disposalType;
     }
@@ -1042,7 +1042,7 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
     /**
      * 处置类型: DISPOSAL_TYPE
      */
-    public final void setDisposalType(java.lang.Integer value){
+    public final void setDisposalType(java.lang.String value){
         if(onPropSet(PROP_ID_disposalType,value)){
             this._disposalType = value;
             internalClearRefs(PROP_ID_disposalType);
@@ -1148,7 +1148,7 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
     /**
      * 处置原因: REASON
      */
-    public final java.lang.Integer getReason(){
+    public final java.lang.String getReason(){
          onPropGet(PROP_ID_reason);
          return _reason;
     }
@@ -1156,7 +1156,7 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
     /**
      * 处置原因: REASON
      */
-    public final void setReason(java.lang.Integer value){
+    public final void setReason(java.lang.String value){
         if(onPropSet(PROP_ID_reason,value)){
             this._reason = value;
             internalClearRefs(PROP_ID_reason);
@@ -1167,7 +1167,7 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
     /**
      * 单据状态: DOC_STATUS
      */
-    public final java.lang.Integer getDocStatus(){
+    public final java.lang.String getDocStatus(){
          onPropGet(PROP_ID_docStatus);
          return _docStatus;
     }
@@ -1175,7 +1175,7 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
     /**
      * 单据状态: DOC_STATUS
      */
-    public final void setDocStatus(java.lang.Integer value){
+    public final void setDocStatus(java.lang.String value){
         if(onPropSet(PROP_ID_docStatus,value)){
             this._docStatus = value;
             internalClearRefs(PROP_ID_docStatus);
@@ -1186,7 +1186,7 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
     /**
      * 审核状态: APPROVE_STATUS
      */
-    public final java.lang.Integer getApproveStatus(){
+    public final java.lang.String getApproveStatus(){
          onPropGet(PROP_ID_approveStatus);
          return _approveStatus;
     }
@@ -1194,7 +1194,7 @@ public class _ErpAstDisposal extends DynamicOrmEntity{
     /**
      * 审核状态: APPROVE_STATUS
      */
-    public final void setApproveStatus(java.lang.Integer value){
+    public final void setApproveStatus(java.lang.String value){
         if(onPropSet(PROP_ID_approveStatus,value)){
             this._approveStatus = value;
             internalClearRefs(PROP_ID_approveStatus);

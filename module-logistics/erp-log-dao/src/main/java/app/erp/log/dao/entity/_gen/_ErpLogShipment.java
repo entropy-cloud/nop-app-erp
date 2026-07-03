@@ -69,11 +69,11 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     public static final String PROP_NAME_freightCurrencyId = "freightCurrencyId";
     public static final int PROP_ID_freightCurrencyId = 12;
     
-    /* 运费条款: FREIGHT_TERMS INTEGER */
+    /* 运费条款: FREIGHT_TERMS VARCHAR */
     public static final String PROP_NAME_freightTerms = "freightTerms";
     public static final int PROP_ID_freightTerms = 13;
     
-    /* 运费结算状态: FREIGHT_SETTLEMENT_STATUS INTEGER */
+    /* 运费结算状态: FREIGHT_SETTLEMENT_STATUS VARCHAR */
     public static final String PROP_NAME_freightSettlementStatus = "freightSettlementStatus";
     public static final int PROP_ID_freightSettlementStatus = 14;
     
@@ -145,7 +145,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     public static final String PROP_NAME_shipperId = "shipperId";
     public static final int PROP_ID_shipperId = 31;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 32;
     
@@ -370,16 +370,16 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     private java.lang.Long _freightCurrencyId;
     
     /* 运费条款: FREIGHT_TERMS */
-    private java.lang.Integer _freightTerms;
+    private java.lang.String _freightTerms;
     
     /* 运费结算状态: FREIGHT_SETTLEMENT_STATUS */
-    private java.lang.Integer _freightSettlementStatus;
+    private java.lang.String _freightSettlementStatus;
     
     /* 总重量(kg): TOTAL_WEIGHT */
-    private java.lang.String _totalWeight;
+    private java.math.BigDecimal _totalWeight;
     
     /* 总体积(m³): TOTAL_VOLUME */
-    private java.lang.String _totalVolume;
+    private java.math.BigDecimal _totalVolume;
     
     /* 总包裹数: TOTAL_PARCELS */
     private java.lang.Integer _totalParcels;
@@ -427,7 +427,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     private java.lang.Long _shipperId;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -773,9 +773,9 @@ public class _ErpLogShipment extends DynamicOrmEntity{
             }
         
             case PROP_ID_freightTerms:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_freightTerms));
                }
                setFreightTerms(typedValue);
@@ -783,9 +783,9 @@ public class _ErpLogShipment extends DynamicOrmEntity{
             }
         
             case PROP_ID_freightSettlementStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_freightSettlementStatus));
                }
                setFreightSettlementStatus(typedValue);
@@ -793,9 +793,9 @@ public class _ErpLogShipment extends DynamicOrmEntity{
             }
         
             case PROP_ID_totalWeight:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_totalWeight));
                }
                setTotalWeight(typedValue);
@@ -803,9 +803,9 @@ public class _ErpLogShipment extends DynamicOrmEntity{
             }
         
             case PROP_ID_totalVolume:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_totalVolume));
                }
                setTotalVolume(typedValue);
@@ -963,9 +963,9 @@ public class _ErpLogShipment extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -1137,28 +1137,28 @@ public class _ErpLogShipment extends DynamicOrmEntity{
         
             case PROP_ID_freightTerms:{
                onInitProp(propId);
-               this._freightTerms = (java.lang.Integer)value;
+               this._freightTerms = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_freightSettlementStatus:{
                onInitProp(propId);
-               this._freightSettlementStatus = (java.lang.Integer)value;
+               this._freightSettlementStatus = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_totalWeight:{
                onInitProp(propId);
-               this._totalWeight = (java.lang.String)value;
+               this._totalWeight = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_totalVolume:{
                onInitProp(propId);
-               this._totalVolume = (java.lang.String)value;
+               this._totalVolume = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1270,7 +1270,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -1561,7 +1561,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     /**
      * 运费条款: FREIGHT_TERMS
      */
-    public final java.lang.Integer getFreightTerms(){
+    public final java.lang.String getFreightTerms(){
          onPropGet(PROP_ID_freightTerms);
          return _freightTerms;
     }
@@ -1569,7 +1569,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     /**
      * 运费条款: FREIGHT_TERMS
      */
-    public final void setFreightTerms(java.lang.Integer value){
+    public final void setFreightTerms(java.lang.String value){
         if(onPropSet(PROP_ID_freightTerms,value)){
             this._freightTerms = value;
             internalClearRefs(PROP_ID_freightTerms);
@@ -1580,7 +1580,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     /**
      * 运费结算状态: FREIGHT_SETTLEMENT_STATUS
      */
-    public final java.lang.Integer getFreightSettlementStatus(){
+    public final java.lang.String getFreightSettlementStatus(){
          onPropGet(PROP_ID_freightSettlementStatus);
          return _freightSettlementStatus;
     }
@@ -1588,7 +1588,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     /**
      * 运费结算状态: FREIGHT_SETTLEMENT_STATUS
      */
-    public final void setFreightSettlementStatus(java.lang.Integer value){
+    public final void setFreightSettlementStatus(java.lang.String value){
         if(onPropSet(PROP_ID_freightSettlementStatus,value)){
             this._freightSettlementStatus = value;
             internalClearRefs(PROP_ID_freightSettlementStatus);
@@ -1599,7 +1599,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     /**
      * 总重量(kg): TOTAL_WEIGHT
      */
-    public final java.lang.String getTotalWeight(){
+    public final java.math.BigDecimal getTotalWeight(){
          onPropGet(PROP_ID_totalWeight);
          return _totalWeight;
     }
@@ -1607,7 +1607,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     /**
      * 总重量(kg): TOTAL_WEIGHT
      */
-    public final void setTotalWeight(java.lang.String value){
+    public final void setTotalWeight(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_totalWeight,value)){
             this._totalWeight = value;
             internalClearRefs(PROP_ID_totalWeight);
@@ -1618,7 +1618,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     /**
      * 总体积(m³): TOTAL_VOLUME
      */
-    public final java.lang.String getTotalVolume(){
+    public final java.math.BigDecimal getTotalVolume(){
          onPropGet(PROP_ID_totalVolume);
          return _totalVolume;
     }
@@ -1626,7 +1626,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     /**
      * 总体积(m³): TOTAL_VOLUME
      */
-    public final void setTotalVolume(java.lang.String value){
+    public final void setTotalVolume(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_totalVolume,value)){
             this._totalVolume = value;
             internalClearRefs(PROP_ID_totalVolume);
@@ -1922,7 +1922,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -1930,7 +1930,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

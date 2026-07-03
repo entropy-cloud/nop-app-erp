@@ -13,7 +13,7 @@
   "totalCost": 0.0,
   "balanceQuantity": 0.0,
   "balanceTotalCost": 0.0,
-  "costMethod": 0,
+  "costMethod": "",
   "costMethod_label": "",
   "acctSchemaId": 0,
   "currencyId": 0,

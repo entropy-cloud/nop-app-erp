@@ -57,7 +57,7 @@
         </prop>
         <prop name="budget" displayName="预算总额" propId="10" i18n-en:displayName="Budget" queryable="true" sortable="true"
               insertable="true" updatable="true" defaultValue="0">
-            <schema domain="budget" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="budget" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="committedCost" displayName="已承诺成本" propId="11" i18n-en:displayName="Committed Cost" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
@@ -73,7 +73,7 @@
         </prop>
         <prop name="status" displayName="状态" propId="14" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-prj/project-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-prj/project-status"/>
         </prop>
         <prop name="managerId" displayName="项目经理(职员)" propId="15" i18n-en:displayName="Manager" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="manager">

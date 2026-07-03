@@ -29,7 +29,7 @@ public class _ErpB2bCodeMapping extends DynamicOrmEntity{
     public static final String PROP_NAME_orgId = "orgId";
     public static final int PROP_ID_orgId = 2;
     
-    /* 映射类型: MAPPING_TYPE INTEGER */
+    /* 映射类型: MAPPING_TYPE VARCHAR */
     public static final String PROP_NAME_mappingType = "mappingType";
     public static final int PROP_ID_mappingType = 3;
     
@@ -140,7 +140,7 @@ public class _ErpB2bCodeMapping extends DynamicOrmEntity{
     private java.lang.Long _orgId;
     
     /* 映射类型: MAPPING_TYPE */
-    private java.lang.Integer _mappingType;
+    private java.lang.String _mappingType;
     
     /* 内部代码: INTERNAL_CODE */
     private java.lang.String _internalCode;
@@ -317,9 +317,9 @@ public class _ErpB2bCodeMapping extends DynamicOrmEntity{
             }
         
             case PROP_ID_mappingType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_mappingType));
                }
                setMappingType(typedValue);
@@ -451,7 +451,7 @@ public class _ErpB2bCodeMapping extends DynamicOrmEntity{
         
             case PROP_ID_mappingType:{
                onInitProp(propId);
-               this._mappingType = (java.lang.Integer)value;
+               this._mappingType = (java.lang.String)value;
                
                break;
             }
@@ -573,7 +573,7 @@ public class _ErpB2bCodeMapping extends DynamicOrmEntity{
     /**
      * 映射类型: MAPPING_TYPE
      */
-    public final java.lang.Integer getMappingType(){
+    public final java.lang.String getMappingType(){
          onPropGet(PROP_ID_mappingType);
          return _mappingType;
     }
@@ -581,7 +581,7 @@ public class _ErpB2bCodeMapping extends DynamicOrmEntity{
     /**
      * 映射类型: MAPPING_TYPE
      */
-    public final void setMappingType(java.lang.Integer value){
+    public final void setMappingType(java.lang.String value){
         if(onPropSet(PROP_ID_mappingType,value)){
             this._mappingType = value;
             internalClearRefs(PROP_ID_mappingType);

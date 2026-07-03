@@ -65,7 +65,7 @@
         </prop>
         <prop name="approvalStatus" displayName="审批状态" propId="12" i18n-en:displayName="Approval Status"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-cs/time-entry-approve-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-cs/time-entry-approve-status"/>
         </prop>
         <prop name="approvedById" displayName="审批人" propId="13" i18n-en:displayName="Approved By" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -85,7 +85,7 @@
         </prop>
         <prop name="source" displayName="来源" propId="17" i18n-en:displayName="Source" queryable="true" sortable="true"
               insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-cs/time-entry-source"/>
+            <schema type="java.lang.String" precision="20" dict="erp-cs/time-entry-source"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="18" i18n-en:displayName="Del Flag" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">

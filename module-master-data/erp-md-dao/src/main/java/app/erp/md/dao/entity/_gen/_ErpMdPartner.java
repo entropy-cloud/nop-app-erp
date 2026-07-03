@@ -33,11 +33,11 @@ public class _ErpMdPartner extends DynamicOrmEntity{
     public static final String PROP_NAME_name = "name";
     public static final int PROP_ID_name = 3;
     
-    /* 类型: PARTNER_TYPE INTEGER */
+    /* 类型: PARTNER_TYPE VARCHAR */
     public static final String PROP_NAME_partnerType = "partnerType";
     public static final int PROP_ID_partnerType = 4;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 5;
     
@@ -202,10 +202,10 @@ public class _ErpMdPartner extends DynamicOrmEntity{
     private java.lang.String _name;
     
     /* 类型: PARTNER_TYPE */
-    private java.lang.Integer _partnerType;
+    private java.lang.String _partnerType;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 联系人: CONTACT_PERSON */
     private java.lang.String _contactPerson;
@@ -434,9 +434,9 @@ public class _ErpMdPartner extends DynamicOrmEntity{
             }
         
             case PROP_ID_partnerType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_partnerType));
                }
                setPartnerType(typedValue);
@@ -444,9 +444,9 @@ public class _ErpMdPartner extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -645,14 +645,14 @@ public class _ErpMdPartner extends DynamicOrmEntity{
         
             case PROP_ID_partnerType:{
                onInitProp(propId);
-               this._partnerType = (java.lang.Integer)value;
+               this._partnerType = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -835,7 +835,7 @@ public class _ErpMdPartner extends DynamicOrmEntity{
     /**
      * 类型: PARTNER_TYPE
      */
-    public final java.lang.Integer getPartnerType(){
+    public final java.lang.String getPartnerType(){
          onPropGet(PROP_ID_partnerType);
          return _partnerType;
     }
@@ -843,7 +843,7 @@ public class _ErpMdPartner extends DynamicOrmEntity{
     /**
      * 类型: PARTNER_TYPE
      */
-    public final void setPartnerType(java.lang.Integer value){
+    public final void setPartnerType(java.lang.String value){
         if(onPropSet(PROP_ID_partnerType,value)){
             this._partnerType = value;
             internalClearRefs(PROP_ID_partnerType);
@@ -854,7 +854,7 @@ public class _ErpMdPartner extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -862,7 +862,7 @@ public class _ErpMdPartner extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

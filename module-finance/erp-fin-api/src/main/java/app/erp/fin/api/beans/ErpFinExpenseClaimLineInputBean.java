@@ -54,16 +54,16 @@
         }
 
 
-        private Integer _expenseType;
+        private String _expenseType;
 
     
         @PropMeta(propId=4)
     
-        public Integer getExpenseType(){
+        public String getExpenseType(){
             return _expenseType;
         }
 
-        public void setExpenseType(Integer value){
+        public void setExpenseType(String value){
             this._expenseType = value;
         }
 

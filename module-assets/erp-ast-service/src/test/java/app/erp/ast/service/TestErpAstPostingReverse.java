@@ -87,7 +87,7 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
             assertEquals(ErpAstConstants.SCHEDULE_STATUS_CANCELLED, s.getStatus());
         }
         // CAPITALIZATION 凭证已红冲
-        assertTrue(isAllVouchersReversed("CAP-REV-001", 80), "资本化凭证已红字冲销");
+        assertTrue(isAllVouchersReversed("CAP-REV-001", "CAPITALIZATION"), "资本化凭证已红字冲销");
     }
 
     @Test
@@ -116,7 +116,7 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
         ErpAstAsset afterReverse = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetId);
         assertEquals(0, nz(afterReverse.getAccumulatedDepreciation()).compareTo(BigDecimal.ZERO), "回滚后累计折旧=0");
         assertEquals(0, nz(afterReverse.getNetBookValue()).compareTo(new BigDecimal("12000")), "回滚后净值=原值");
-        assertTrue(isAllVouchersReversed("AST-REV-DEP#2026-07", 70), "折旧凭证已红字冲销");
+        assertTrue(isAllVouchersReversed("AST-REV-DEP#2026-07", "DEPRECIATION"), "折旧凭证已红字冲销");
     }
 
     @Test
@@ -159,7 +159,7 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
         for (ErpAstDepreciationSchedule s : schedules) {
             assertEquals(ErpAstConstants.SCHEDULE_STATUS_PENDING, s.getStatus(), "折旧计划恢复 PENDING");
         }
-        assertTrue(isAllVouchersReversed("DISP-REV-001", 90), "处置凭证已红字冲销");
+        assertTrue(isAllVouchersReversed("DISP-REV-001", "DISPOSAL"), "处置凭证已红字冲销");
     }
 
     // ---------- helpers ----------
@@ -226,7 +226,7 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
         return q;
     }
 
-    private Long seedCapitalization(String code, Long categoryId, int sourceType, BigDecimal originalValue,
+    private Long seedCapitalization(String code, Long categoryId, String sourceType, BigDecimal originalValue,
                                     LocalDate capitalizationDate, String assetCode) {
         IEntityDao<ErpAstAssetCapitalization> dao = daoProvider.daoFor(ErpAstAssetCapitalization.class);
         ErpAstAssetCapitalization cap = new ErpAstAssetCapitalization();
@@ -246,7 +246,7 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
         return cap.getId();
     }
 
-    private Long seedDisposal(String code, Long assetId, int disposalType, BigDecimal disposalAmount,
+    private Long seedDisposal(String code, Long assetId, String disposalType, BigDecimal disposalAmount,
                               LocalDate businessDate) {
         IEntityDao<ErpAstDisposal> dao = daoProvider.daoFor(ErpAstDisposal.class);
         ErpAstDisposal disposal = new ErpAstDisposal();
@@ -279,7 +279,7 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
         return dao.findAllByQuery(q);
     }
 
-    private boolean isAllVouchersReversed(String billCode, int businessType) {
+    private boolean isAllVouchersReversed(String billCode, String businessType) {
         IEntityDao<ErpFinVoucherBillR> linkDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("billCode", billCode), eq("businessType", businessType)));
@@ -292,7 +292,7 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
             ErpFinVoucher v = voucherDao.getEntityById(link.getVoucherId());
             // 正常凭证（非红字 REVERSAL）须 isReversed=true；红字凭证自身 isReversed=true
             if (v != null && !Boolean.TRUE.equals(v.getIsReversed())
-                    && (v.getPostingType() == null || v.getPostingType() == 10)) {
+                    && (v.getPostingType() == null || "NORMAL".equals(v.getPostingType()))) {
                 return false;
             }
         }

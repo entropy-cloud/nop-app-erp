@@ -42,7 +42,7 @@ public class TestErpLogShipmentCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-LOG");
         headData.put("carrierId", pre.get("carrier"));
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> result = executeRpc(GraphQLOperationType.mutation, "ErpLogShipment__save",
                 ApiRequest.build(Map.of("data", headData)));
 
@@ -57,7 +57,7 @@ public class TestErpLogShipmentCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-LOG");
         headData.put("carrierId", pre.get("carrier"));
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpLogShipment__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -75,7 +75,7 @@ public class TestErpLogShipmentCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-LOG");
         headData.put("carrierId", pre.get("carrier"));
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpLogShipment__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -97,7 +97,7 @@ public class TestErpLogShipmentCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-LOG");
         headData.put("carrierId", pre.get("carrier"));
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpLogShipment__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -120,7 +120,7 @@ public class TestErpLogShipmentCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-LOG");
         headData.put("carrierId", pre.get("carrier"));
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> head = executeRpc(GraphQLOperationType.mutation, "ErpLogShipment__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_saveHead_response.json5", head);
@@ -149,7 +149,7 @@ public class TestErpLogShipmentCrudSmoke extends JunitAutoTestCase {
 Map<String, Object> d_carrier = new LinkedHashMap<>();
         d_carrier.put("code", "SMOKE-CAR");
         d_carrier.put("carrierName", "冒烟承运商");
-        d_carrier.put("carrierType", 10);
+        d_carrier.put("carrierType", "EXPRESS");
         d_carrier.put("gatewayId", "1");
         d_carrier.put("isActive", 1);
         ids.put("carrier", String.valueOf(((Map<?, ?>) executeRpc(GraphQLOperationType.mutation, "ErpLogCarrier__save", ApiRequest.build(Map.of("data", d_carrier))).getData()).get("id")));

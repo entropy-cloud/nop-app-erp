@@ -40,7 +40,7 @@
         </prop>
         <prop name="gender" displayName="性别" propId="6" i18n-en:displayName="Gender" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-hr/gender"/>
+            <schema type="java.lang.String" precision="20" dict="erp-hr/gender"/>
         </prop>
         <prop name="birthDate" displayName="出生日期" propId="7" i18n-en:displayName="Birth Date" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -64,7 +64,7 @@
         </prop>
         <prop name="maritalStatus" displayName="婚姻状况" propId="12" i18n-en:displayName="Marital Status" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-hr/marital-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-hr/marital-status"/>
         </prop>
         <prop name="nationality" displayName="国籍" propId="13" i18n-en:displayName="Nationality" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -120,11 +120,11 @@
         </prop>
         <prop name="employmentStatus" displayName="雇佣状态" propId="26" i18n-en:displayName="Employment Status"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-hr/employment-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-hr/employment-status"/>
         </prop>
         <prop name="employeeType" displayName="员工类型" propId="27" i18n-en:displayName="Employee Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-hr/employee-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-hr/employee-type"/>
         </prop>
         <prop name="bankAccountId" displayName="工资卡账户" propId="28" i18n-en:displayName="Bank Account" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="bankAccount">

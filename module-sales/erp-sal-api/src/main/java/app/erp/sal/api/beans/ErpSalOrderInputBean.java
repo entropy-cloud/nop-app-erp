@@ -293,58 +293,58 @@
         }
 
 
-        private Integer _docStatus;
+        private String _docStatus;
 
     
         @PropMeta(propId=21)
     
-        public Integer getDocStatus(){
+        public String getDocStatus(){
             return _docStatus;
         }
 
-        public void setDocStatus(Integer value){
+        public void setDocStatus(String value){
             this._docStatus = value;
         }
 
 
-        private Integer _approveStatus;
+        private String _approveStatus;
 
     
         @PropMeta(propId=22)
     
-        public Integer getApproveStatus(){
+        public String getApproveStatus(){
             return _approveStatus;
         }
 
-        public void setApproveStatus(Integer value){
+        public void setApproveStatus(String value){
             this._approveStatus = value;
         }
 
 
-        private Integer _receivedStatus;
+        private String _receivedStatus;
 
     
         @PropMeta(propId=23)
     
-        public Integer getReceivedStatus(){
+        public String getReceivedStatus(){
             return _receivedStatus;
         }
 
-        public void setReceivedStatus(Integer value){
+        public void setReceivedStatus(String value){
             this._receivedStatus = value;
         }
 
 
-        private Integer _deliveryStatus;
+        private String _deliveryStatus;
 
     
         @PropMeta(propId=24)
     
-        public Integer getDeliveryStatus(){
+        public String getDeliveryStatus(){
             return _deliveryStatus;
         }
 
-        public void setDeliveryStatus(Integer value){
+        public void setDeliveryStatus(String value){
             this._deliveryStatus = value;
         }
 

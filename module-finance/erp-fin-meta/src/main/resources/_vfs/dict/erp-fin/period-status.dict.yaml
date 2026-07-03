@@ -1,27 +1,27 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 期间状态
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 开启
-    value: 10
+    value: OPEN
     description: 
   
   - label: 结账中
-    value: 20
+    value: CLOSING
     description: 
   
   - label: 已结账
-    value: 30
+    value: CLOSED
     description: 
   
   - label: 未开启
-    value: 40
+    value: NEVER_OPENED
     description: 
   
   - label: 已复核
-    value: 50
+    value: CLOSED_FINAL
     description: 
   

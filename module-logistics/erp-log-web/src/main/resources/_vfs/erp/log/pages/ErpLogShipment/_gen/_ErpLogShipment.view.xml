@@ -55,16 +55,16 @@
                 <col id="freightCurrencyId" ui:number="true" sortable="true"/>
 
                 <!--运费条款-->
-                <col id="freightTerms" ui:number="true" sortable="true"/>
+                <col id="freightTerms" sortable="true"/>
 
                 <!--运费结算状态-->
-                <col id="freightSettlementStatus" ui:number="true" sortable="true"/>
+                <col id="freightSettlementStatus" sortable="true"/>
 
                 <!--总重量(kg)-->
-                <col id="totalWeight" sortable="true"/>
+                <col id="totalWeight" ui:number="true" sortable="true"/>
 
                 <!--总体积(m³)-->
-                <col id="totalVolume" sortable="true"/>
+                <col id="totalVolume" ui:number="true" sortable="true"/>
 
                 <!--总包裹数-->
                 <col id="totalParcels" ui:number="true" sortable="true"/>
@@ -112,7 +112,7 @@
                 <col id="shipperId" ui:number="true" sortable="true"/>
 
                 <!--状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

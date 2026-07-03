@@ -29,7 +29,7 @@
         </prop>
         <prop name="addressType" displayName="地址类型" propId="3" i18n-en:displayName="Address Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-md/address-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-md/address-type"/>
         </prop>
         <prop name="contactPerson" displayName="联系人" propId="4" i18n-en:displayName="Contact Person" queryable="true"
               sortable="true" insertable="true" updatable="true">

@@ -15,99 +15,100 @@
     </x:gen-extends>
 
     <dicts>
-        <dict label="检验类型" name="erp-qa/inspection-type" valueType="int" i18n-en:label="Inspection Type">
-            <option code="INCOMING" label="来料检验" value="10" i18n-en:label="Incoming Inspection"/>
-            <option code="IN_PROCESS" label="制程检验" value="20" i18n-en:label="In-Process Inspection"/>
-            <option code="FINAL" label="完工检验" value="30" i18n-en:label="Final Inspection"/>
-            <option code="OUTGOING" label="出货检验" value="40" i18n-en:label="Outgoing Inspection"/>
+        <dict label="检验类型" name="erp-qa/inspection-type" valueType="string" i18n-en:label="Inspection Type">
+            <option code="INCOMING" label="来料检验" value="INCOMING" i18n-en:label="Incoming Inspection"/>
+            <option code="IN_PROCESS" label="制程检验" value="IN_PROCESS" i18n-en:label="In-Process Inspection"/>
+            <option code="FINAL" label="完工检验" value="FINAL" i18n-en:label="Final Inspection"/>
+            <option code="OUTGOING" label="出货检验" value="OUTGOING" i18n-en:label="Outgoing Inspection"/>
         </dict>
-        <dict label="质检结果" name="erp-qa/inspection-result" valueType="int" i18n-en:label="Inspection Result">
-            <option code="PENDING" label="待检" value="10" i18n-en:label="Pending Inspection"/>
-            <option code="ACCEPTED" label="合格" value="20" i18n-en:label="Conforming"/>
-            <option code="CONDITIONAL" label="让步接收" value="30" i18n-en:label="Waiver Accept"/>
-            <option code="REJECTED" label="不合格" value="40" i18n-en:label="Non-conforming"/>
+        <dict label="质检结果" name="erp-qa/inspection-result" valueType="string" i18n-en:label="Inspection Result">
+            <option code="PENDING" label="待检" value="PENDING" i18n-en:label="Pending Inspection"/>
+            <option code="ACCEPTED" label="合格" value="ACCEPTED" i18n-en:label="Conforming"/>
+            <option code="CONDITIONAL" label="让步接收" value="CONDITIONAL" i18n-en:label="Waiver Accept"/>
+            <option code="REJECTED" label="不合格" value="REJECTED" i18n-en:label="Non-conforming"/>
         </dict>
-        <dict label="不符合项状态" name="erp-qa/ncr-status" valueType="int" i18n-en:label="NCR Status">
-            <option code="OPEN" label="待处理" value="10" i18n-en:label="Pending"/>
-            <option code="IN_REVIEW" label="评审中" value="20" i18n-en:label="Reviewing"/>
-            <option code="RESOLVED" label="已解决" value="30" i18n-en:label="Resolved"/>
-            <option code="ESCALATED_TO_RECALL" label="已升级为召回" value="35" i18n-en:label="Escalated to Recall"/>
-            <option code="CANCELLED" label="已取消" value="40" i18n-en:label="Cancelled"/>
+        <dict label="不符合项状态" name="erp-qa/ncr-status" valueType="string" i18n-en:label="NCR Status">
+            <option code="OPEN" label="待处理" value="OPEN" i18n-en:label="Pending"/>
+            <option code="IN_REVIEW" label="评审中" value="IN_REVIEW" i18n-en:label="Reviewing"/>
+            <option code="RESOLVED" label="已解决" value="RESOLVED" i18n-en:label="Resolved"/>
+            <option code="ESCALATED_TO_RECALL" label="已升级为召回" value="ESCALATED_TO_RECALL"
+                    i18n-en:label="Escalated to Recall"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
         </dict>
-        <dict label="纠正措施类型" name="erp-qa/action-type" valueType="int" i18n-en:label="Corrective Action Type">
-            <option code="CORRECTIVE" label="纠正" value="10" i18n-en:label="Correction"/>
-            <option code="PREVENTIVE" label="预防" value="20" i18n-en:label="Preventive"/>
-            <option code="CAPA" label="纠正预防" value="30" i18n-en:label="Corrective &amp; Preventive"/>
+        <dict label="纠正措施类型" name="erp-qa/action-type" valueType="string" i18n-en:label="Corrective Action Type">
+            <option code="CORRECTIVE" label="纠正" value="CORRECTIVE" i18n-en:label="Correction"/>
+            <option code="PREVENTIVE" label="预防" value="PREVENTIVE" i18n-en:label="Preventive"/>
+            <option code="CAPA" label="纠正预防" value="CAPA" i18n-en:label="Corrective &amp; Preventive"/>
         </dict>
-        <dict label="单据状态" name="erp-qa/doc-status" valueType="int" i18n-en:label="Doc Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="ACTIVE" label="已生效" value="20" i18n-en:label="Effective"/>
-            <option code="CANCELLED" label="已作废" value="30" i18n-en:label="Voided"/>
+        <dict label="单据状态" name="erp-qa/doc-status" valueType="string" i18n-en:label="Doc Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="ACTIVE" label="已生效" value="ACTIVE" i18n-en:label="Effective"/>
+            <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label="Voided"/>
         </dict>
-        <dict label="审核状态" name="erp-qa/approve-status" valueType="int" i18n-en:label="Approve Status">
-            <option code="UNSUBMITTED" label="未提交" value="10" i18n-en:label="Unsubmitted"/>
-            <option code="SUBMITTED" label="已提交" value="20" i18n-en:label="Submitted"/>
-            <option code="APPROVED" label="已审核" value="30" i18n-en:label="Approved"/>
-            <option code="REJECTED" label="已驳回" value="40" i18n-en:label="Rejected"/>
+        <dict label="审核状态" name="erp-qa/approve-status" valueType="string" i18n-en:label="Approve Status">
+            <option code="UNSUBMITTED" label="未提交" value="UNSUBMITTED" i18n-en:label="Unsubmitted"/>
+            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label="Submitted"/>
+            <option code="APPROVED" label="已审核" value="APPROVED" i18n-en:label="Approved"/>
+            <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label="Rejected"/>
         </dict>
-        <dict label="不合格严重程度" name="erp-qa/severity" valueType="int" i18n-en:label="Non-conformance Severity">
-            <option code="LOW" label="低" value="10" i18n-en:label="Low"/>
-            <option code="NORMAL" label="一般" value="20" i18n-en:label="General"/>
-            <option code="HIGH" label="高" value="30" i18n-en:label="High"/>
-            <option code="CRITICAL" label="严重" value="40" i18n-en:label="Critical"/>
+        <dict label="不合格严重程度" name="erp-qa/severity" valueType="string" i18n-en:label="Non-conformance Severity">
+            <option code="LOW" label="低" value="LOW" i18n-en:label="Low"/>
+            <option code="NORMAL" label="一般" value="NORMAL" i18n-en:label="General"/>
+            <option code="HIGH" label="高" value="HIGH" i18n-en:label="High"/>
+            <option code="CRITICAL" label="严重" value="CRITICAL" i18n-en:label="Critical"/>
         </dict>
-        <dict label="纠正措施状态" name="erp-qa/action-status" valueType="int" i18n-en:label="Corrective Action Status">
-            <option code="PENDING" label="待执行" value="10" i18n-en:label="Pending"/>
-            <option code="IN_PROGRESS" label="执行中" value="20" i18n-en:label="Executing"/>
-            <option code="COMPLETED" label="已完成" value="30" i18n-en:label="Completed"/>
-            <option code="OVERDUE" label="已逾期" value="40" i18n-en:label="Overdue"/>
+        <dict label="纠正措施状态" name="erp-qa/action-status" valueType="string" i18n-en:label="Corrective Action Status">
+            <option code="PENDING" label="待执行" value="PENDING" i18n-en:label="Pending"/>
+            <option code="IN_PROGRESS" label="执行中" value="IN_PROGRESS" i18n-en:label="Executing"/>
+            <option code="COMPLETED" label="已完成" value="COMPLETED" i18n-en:label="Completed"/>
+            <option code="OVERDUE" label="已逾期" value="OVERDUE" i18n-en:label="Overdue"/>
         </dict>
-        <dict label="风险状态" name="erp-qa/risk-status" valueType="int" i18n-en:label="Risk Status">
-            <option code="OPEN" label="待处理" value="10" i18n-en:label="Pending"/>
-            <option code="MITIGATED" label="已缓解" value="20" i18n-en:label="Mitigated"/>
-            <option code="CLOSED" label="已关闭" value="30" i18n-en:label="Closed"/>
+        <dict label="风险状态" name="erp-qa/risk-status" valueType="string" i18n-en:label="Risk Status">
+            <option code="OPEN" label="待处理" value="OPEN" i18n-en:label="Pending"/>
+            <option code="MITIGATED" label="已缓解" value="MITIGATED" i18n-en:label="Mitigated"/>
+            <option code="CLOSED" label="已关闭" value="CLOSED" i18n-en:label="Closed"/>
         </dict>
-        <dict label="质量目标状态" name="erp-qa/goal-status" valueType="int" i18n-en:label="Quality Goal Status">
-            <option code="ACTIVE" label="进行中" value="10" i18n-en:label="In Progress"/>
-            <option code="ACHIEVED" label="已达成" value="20" i18n-en:label="Achieved"/>
-            <option code="FAILED" label="未达成" value="30" i18n-en:label="Not Achieved"/>
-            <option code="CANCELLED" label="已取消" value="40" i18n-en:label="Cancelled"/>
+        <dict label="质量目标状态" name="erp-qa/goal-status" valueType="string" i18n-en:label="Quality Goal Status">
+            <option code="ACTIVE" label="进行中" value="ACTIVE" i18n-en:label="In Progress"/>
+            <option code="ACHIEVED" label="已达成" value="ACHIEVED" i18n-en:label="Achieved"/>
+            <option code="FAILED" label="未达成" value="FAILED" i18n-en:label="Not Achieved"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
         </dict>
-        <dict label="评审类型" name="erp-qa/review-type" valueType="int" i18n-en:label="Review Type">
-            <option code="INTERNAL" label="内部评审" value="10" i18n-en:label="Internal Review"/>
-            <option code="EXTERNAL" label="外部评审" value="20" i18n-en:label="External Review"/>
-            <option code="SUPPLIER" label="供应商评审" value="30" i18n-en:label="Supplier Review"/>
+        <dict label="评审类型" name="erp-qa/review-type" valueType="string" i18n-en:label="Review Type">
+            <option code="INTERNAL" label="内部评审" value="INTERNAL" i18n-en:label="Internal Review"/>
+            <option code="EXTERNAL" label="外部评审" value="EXTERNAL" i18n-en:label="External Review"/>
+            <option code="SUPPLIER" label="供应商评审" value="SUPPLIER" i18n-en:label="Supplier Review"/>
         </dict>
-        <dict label="处理决定" name="erp-qa/disposition-type" valueType="int" i18n-en:label="Disposition Type">
-            <option code="SCRAP" label="报废" value="10" i18n-en:label="Scrap"/>
-            <option code="RETURN" label="退货" value="20" i18n-en:label="Return"/>
-            <option code="CONCESSION" label="让步接收" value="30" i18n-en:label="Waiver Accept"/>
-            <option code="DOWNGRADE" label="降级使用" value="40" i18n-en:label="Downgrade Use"/>
+        <dict label="处理决定" name="erp-qa/disposition-type" valueType="string" i18n-en:label="Disposition Type">
+            <option code="SCRAP" label="报废" value="SCRAP" i18n-en:label="Scrap"/>
+            <option code="RETURN" label="退货" value="RETURN" i18n-en:label="Return"/>
+            <option code="CONCESSION" label="让步接收" value="CONCESSION" i18n-en:label="Waiver Accept"/>
+            <option code="DOWNGRADE" label="降级使用" value="DOWNGRADE" i18n-en:label="Downgrade Use"/>
         </dict>
-        <dict label="召回触发类型" name="erp-qa/recall-trigger-type" valueType="int" i18n-en:label="Recall Trigger Type">
-            <option code="MANUAL" label="手动发起" value="10" i18n-en:label="Manual"/>
-            <option code="GAUGE_NCR_UPGRADE" label="量具NCR升级" value="20" i18n-en:label="Gauge NCR Upgrade"/>
-            <option code="BATCH_NCR_UPGRADE" label="批次NCR升级" value="30" i18n-en:label="Batch NCR Upgrade"/>
-            <option code="REGULATORY" label="监管要求" value="40" i18n-en:label="Regulatory"/>
+        <dict label="召回触发类型" name="erp-qa/recall-trigger-type" valueType="string" i18n-en:label="Recall Trigger Type">
+            <option code="MANUAL" label="手动发起" value="MANUAL" i18n-en:label="Manual"/>
+            <option code="GAUGE_NCR_UPGRADE" label="量具NCR升级" value="GAUGE_NCR_UPGRADE" i18n-en:label="Gauge NCR Upgrade"/>
+            <option code="BATCH_NCR_UPGRADE" label="批次NCR升级" value="BATCH_NCR_UPGRADE" i18n-en:label="Batch NCR Upgrade"/>
+            <option code="REGULATORY" label="监管要求" value="REGULATORY" i18n-en:label="Regulatory"/>
         </dict>
-        <dict label="召回严重程度" name="erp-qa/recall-severity" valueType="int" i18n-en:label="Recall Severity">
-            <option code="LOW" label="低" value="10" i18n-en:label="Low"/>
-            <option code="MEDIUM" label="中" value="20" i18n-en:label="Medium"/>
-            <option code="HIGH" label="高" value="30" i18n-en:label="High"/>
-            <option code="CRITICAL" label="严重" value="40" i18n-en:label="Critical"/>
+        <dict label="召回严重程度" name="erp-qa/recall-severity" valueType="string" i18n-en:label="Recall Severity">
+            <option code="LOW" label="低" value="LOW" i18n-en:label="Low"/>
+            <option code="MEDIUM" label="中" value="MEDIUM" i18n-en:label="Medium"/>
+            <option code="HIGH" label="高" value="HIGH" i18n-en:label="High"/>
+            <option code="CRITICAL" label="严重" value="CRITICAL" i18n-en:label="Critical"/>
         </dict>
-        <dict label="召回状态" name="erp-qa/recall-status" valueType="int" i18n-en:label="Recall Status">
-            <option code="OPEN" label="待处理" value="10" i18n-en:label="Open"/>
-            <option code="APPROVED" label="已审批" value="20" i18n-en:label="Approved"/>
-            <option code="IN_PROGRESS" label="执行中" value="30" i18n-en:label="In Progress"/>
-            <option code="CLOSED" label="已关闭" value="40" i18n-en:label="Closed"/>
-            <option code="CANCELLED" label="已取消" value="50" i18n-en:label="Cancelled"/>
+        <dict label="召回状态" name="erp-qa/recall-status" valueType="string" i18n-en:label="Recall Status">
+            <option code="OPEN" label="待处理" value="OPEN" i18n-en:label="Open"/>
+            <option code="APPROVED" label="已审批" value="APPROVED" i18n-en:label="Approved"/>
+            <option code="IN_PROGRESS" label="执行中" value="IN_PROGRESS" i18n-en:label="In Progress"/>
+            <option code="CLOSED" label="已关闭" value="CLOSED" i18n-en:label="Closed"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
         </dict>
-        <dict label="召回目标退货状态" name="erp-qa/recall-target-return-status" valueType="int"
+        <dict label="召回目标退货状态" name="erp-qa/recall-target-return-status" valueType="string"
               i18n-en:label="Recall Target Return Status">
-            <option code="PENDING" label="待通知" value="10" i18n-en:label="Pending"/>
-            <option code="NOTIFIED" label="已通知" value="20" i18n-en:label="Notified"/>
-            <option code="RETURNED" label="已退货" value="30" i18n-en:label="Returned"/>
+            <option code="PENDING" label="待通知" value="PENDING" i18n-en:label="Pending"/>
+            <option code="NOTIFIED" label="已通知" value="NOTIFIED" i18n-en:label="Notified"/>
+            <option code="RETURNED" label="已退货" value="RETURNED" i18n-en:label="Returned"/>
         </dict>
     </dicts>
 
@@ -127,7 +128,7 @@
         <domain name="unitPrice" precision="20" scale="4" stdSqlType="DECIMAL"/>
         <domain name="exchangeRate" precision="20" scale="8" stdSqlType="DECIMAL"/>
         <domain name="orderCode" precision="50" stdSqlType="VARCHAR"/>
-        <domain name="measuredValue" precision="20" scale="6" stdSqlType="DECIMAL"/>
+        <domain name="measuredValue" precision="100" stdSqlType="VARCHAR"/>
         <domain name="specLimit" precision="20" scale="6" stdSqlType="DECIMAL"/>
     </domains>
 
@@ -144,8 +145,8 @@
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
-                <column code="INSPECTION_TYPE" displayName="检验类型" mandatory="true" name="inspectionType" propId="4"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-qa/inspection-type"
+                <column code="INSPECTION_TYPE" displayName="检验类型" mandatory="true" name="inspectionType" precision="20"
+                        propId="4" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/inspection-type"
                         i18n-en:displayName="Inspection Type"/>
                 <column code="RELATED_BILL_TYPE" displayName="关联单据类型" name="relatedBillType" precision="50" propId="5"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Related Bill Type"/>
@@ -173,13 +174,14 @@
                         i18n-en:displayName="Sample Quantity"/>
                 <column code="INSPECTOR_ID" displayName="检验员(职员)" name="inspectorId" propId="17" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Inspector"/>
-                <column code="RESULT" displayName="质检结果" mandatory="true" name="result" propId="18" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-qa/inspection-result" i18n-en:displayName="Result"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="19"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-qa/doc-status"
+                <column code="RESULT" displayName="质检结果" mandatory="true" name="result" precision="20" propId="18"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/inspection-result"
+                        i18n-en:displayName="Result"/>
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
+                        propId="19" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/doc-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="20"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-qa/approve-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="20" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账(质量结论已回写业务单据)" name="posted" propId="21"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
@@ -274,16 +276,17 @@
                 <column code="PARAMETER_NAME" displayName="检验参数名称" name="parameterName" precision="200" propId="5"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Parameter Name"/>
                 <column code="SPEC_MIN" displayName="规格下限" domain="specLimit" name="specMin" precision="20" propId="6"
-                        scale="6" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Spec Min"/>
+                        scale="6" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Spec Min"/>
                 <column code="SPEC_MAX" displayName="规格上限" domain="specLimit" name="specMax" precision="20" propId="7"
-                        scale="6" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Spec Max"/>
+                        scale="6" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Spec Max"/>
                 <column code="MEASURED_VALUE" displayName="实测值" domain="measuredValue" name="measuredValue"
-                        precision="20" propId="8" scale="6" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="100" propId="8" stdDataType="string" stdSqlType="VARCHAR"
                         i18n-en:displayName="Measured Value"/>
                 <column code="UNIT" displayName="计量单位" name="unit" precision="50" propId="9" stdDataType="string"
                         stdSqlType="VARCHAR" i18n-en:displayName="Unit"/>
-                <column code="RESULT" displayName="行结果" mandatory="true" name="result" propId="10" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-qa/inspection-result" i18n-en:displayName="Result"/>
+                <column code="RESULT" displayName="行结果" mandatory="true" name="result" precision="20" propId="10"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/inspection-result"
+                        i18n-en:displayName="Result"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="11"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -324,8 +327,8 @@
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
                 <column code="NAME" displayName="名称" mandatory="true" name="name" precision="200" propId="3"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
-                <column code="INSPECTION_TYPE" displayName="检验类型" mandatory="true" name="inspectionType" propId="4"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-qa/inspection-type"
+                <column code="INSPECTION_TYPE" displayName="检验类型" mandatory="true" name="inspectionType" precision="20"
+                        propId="4" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/inspection-type"
                         i18n-en:displayName="Inspection Type"/>
                 <column code="MATERIAL_ID" displayName="适用物料" name="materialId" propId="5" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Material"/>
@@ -380,9 +383,9 @@
                 <column code="PARAMETER_NAME" displayName="检验参数名称" mandatory="true" name="parameterName" precision="200"
                         propId="4" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Parameter Name"/>
                 <column code="SPEC_MIN" displayName="规格下限" domain="specLimit" name="specMin" precision="20" propId="5"
-                        scale="6" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Spec Min"/>
+                        scale="6" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Spec Min"/>
                 <column code="SPEC_MAX" displayName="规格上限" domain="specLimit" name="specMax" precision="20" propId="6"
-                        scale="6" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Spec Max"/>
+                        scale="6" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Spec Max"/>
                 <column code="UNIT" displayName="计量单位" name="unit" precision="50" propId="7" stdDataType="string"
                         stdSqlType="VARCHAR" i18n-en:displayName="Unit"/>
                 <column code="IS_REQUIRED" defaultValue="1" displayName="是否必检" mandatory="true" name="isRequired"
@@ -441,23 +444,26 @@
                         scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Quantity"/>
                 <column code="DESCRIPTION" displayName="问题描述" name="description" precision="2000" propId="9"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Description"/>
-                <column code="SEVERITY" displayName="严重程度" mandatory="true" name="severity" propId="10"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-qa/severity" i18n-en:displayName="Severity"/>
-                <column code="DISPOSITION_TYPE" displayName="处理决定" name="dispositionType" propId="11" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-qa/disposition-type" i18n-en:displayName="Disposition Type"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="12" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-qa/ncr-status" i18n-en:displayName="Status"/>
+                <column code="SEVERITY" displayName="严重程度" mandatory="true" name="severity" precision="20" propId="10"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/severity"
+                        i18n-en:displayName="Severity"/>
+                <column code="DISPOSITION_TYPE" displayName="处理决定" name="dispositionType" precision="20" propId="11"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/disposition-type"
+                        i18n-en:displayName="Disposition Type"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="12"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/ncr-status"
+                        i18n-en:displayName="Status"/>
                 <column code="SUPPLIER_ID" displayName="供应商" name="supplierId" propId="13" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Supplier"/>
                 <column code="PARAMETER_NAME" displayName="不合格参数" name="parameterName" precision="200" propId="14"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Parameter Name"/>
                 <column code="MEASURED_VALUE" displayName="实测值" domain="measuredValue" name="measuredValue"
-                        precision="20" propId="15" scale="6" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="100" propId="15" stdDataType="string" stdSqlType="VARCHAR"
                         i18n-en:displayName="Measured Value"/>
                 <column code="SPEC_MIN" displayName="规格下限" domain="specLimit" name="specMin" precision="20" propId="16"
-                        scale="6" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Spec Min"/>
+                        scale="6" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Spec Min"/>
                 <column code="SPEC_MAX" displayName="规格上限" domain="specLimit" name="specMax" precision="20" propId="17"
-                        scale="6" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Spec Max"/>
+                        scale="6" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Spec Max"/>
                 <column code="ASSIGNED_TO" displayName="责任人" name="assignedTo" propId="18" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Assigned To"/>
                 <column code="RESOLVED_BY" displayName="解决人" name="resolvedBy" propId="19" stdDataType="long"
@@ -519,8 +525,8 @@
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="NCR_ID" displayName="不合格品报告ID" mandatory="true" name="ncrId" propId="2" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Ncr"/>
-                <column code="ACTION_TYPE" displayName="措施类型" mandatory="true" name="actionType" propId="3"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-qa/action-type"
+                <column code="ACTION_TYPE" displayName="措施类型" mandatory="true" name="actionType" precision="20"
+                        propId="3" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/action-type"
                         i18n-en:displayName="Action Type"/>
                 <column code="DESCRIPTION" displayName="措施描述" name="description" precision="2000" propId="4"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Description"/>
@@ -528,8 +534,9 @@
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Responsible Person"/>
                 <column code="DUE_DATE" displayName="计划完成日期" name="dueDate" propId="6" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Due Date"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="7" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-qa/action-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="7"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/action-status"
+                        i18n-en:displayName="Status"/>
                 <column code="COMPLETED_BY" displayName="完成人" name="completedBy" propId="8" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Completed By"/>
                 <column code="COMPLETED_AT" displayName="完成时间" name="completedAt" propId="9" stdDataType="datetime"
@@ -591,8 +598,9 @@
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Mitigation"/>
                 <column code="OWNER_ID" displayName="责任人" name="ownerId" precision="36" propId="10" stdDataType="string"
                         stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Owner"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="11" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-qa/risk-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="11"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/risk-status"
+                        i18n-en:displayName="Status"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="12"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -638,8 +646,9 @@
                         stdSqlType="DATE" i18n-en:displayName="Start Date"/>
                 <column code="END_DATE" displayName="结束日期" name="endDate" propId="10" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="End Date"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="11" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-qa/goal-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="11"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/goal-status"
+                        i18n-en:displayName="Status"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="12"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -681,8 +690,8 @@
                         i18n-en:displayName="Organization"/>
                 <column code="REVIEW_DATE" displayName="评审日期" mandatory="true" name="reviewDate" propId="4"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Review Date"/>
-                <column code="REVIEW_TYPE" displayName="评审类型" mandatory="true" name="reviewType" propId="5"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-qa/review-type"
+                <column code="REVIEW_TYPE" displayName="评审类型" mandatory="true" name="reviewType" precision="20"
+                        propId="5" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/review-type"
                         i18n-en:displayName="Review Type"/>
                 <column code="RELATED_BILL_TYPE" displayName="关联单据类型" name="relatedBillType" precision="50" propId="6"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Related Bill Type"/>
@@ -694,11 +703,11 @@
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Conclusion"/>
                 <column code="ACTION_REQUIRED" defaultValue="0" displayName="是否需要措施" name="actionRequired" propId="10"
                         stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Action Required"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="11"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-qa/doc-status"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
+                        propId="11" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/doc-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="12"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-qa/approve-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="12" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="13"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
@@ -796,24 +805,25 @@
                 <column code="STANDARD_REF" displayName="参考标准" name="standardRef" precision="200" propId="7"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Standard Ref"/>
                 <column code="MEASURED_VALUE" displayName="测量值" domain="measuredValue" name="measuredValue"
-                        precision="20" propId="8" scale="6" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="100" propId="8" stdDataType="string" stdSqlType="VARCHAR"
                         i18n-en:displayName="Measured Value"/>
                 <column code="TARGET_VALUE" displayName="目标值" domain="measuredValue" name="targetValue" precision="20"
-                        propId="9" scale="6" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="9" scale="6" stdDataType="decimal" stdSqlType="VARCHAR"
                         i18n-en:displayName="Target Value"/>
                 <column code="TOLERANCE" displayName="允差" domain="measuredValue" name="tolerance" precision="20"
-                        propId="10" scale="6" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Tolerance"/>
-                <column code="RESULT" displayName="校准结果" mandatory="true" name="result" propId="11" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-qa/inspection-result" i18n-en:displayName="Result"/>
+                        propId="10" scale="6" stdDataType="decimal" stdSqlType="VARCHAR" i18n-en:displayName="Tolerance"/>
+                <column code="RESULT" displayName="校准结果" mandatory="true" name="result" precision="20" propId="11"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/inspection-result"
+                        i18n-en:displayName="Result"/>
                 <column code="NEXT_CALIBRATION_DATE" displayName="下次校准日期" name="nextCalibrationDate" propId="12"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Next Calibration Date"/>
                 <column code="CALIBRATED_BY" displayName="校准人(职员)" name="calibratedBy" propId="13" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Calibrated By"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="14"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-qa/doc-status"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
+                        propId="14" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/doc-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="15"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-qa/approve-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="15" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="16"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
@@ -859,8 +869,8 @@
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
                 <column code="RECALL_NAME" displayName="召回名称" mandatory="true" name="recallName" precision="200"
                         propId="3" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Recall Name"/>
-                <column code="TRIGGER_TYPE" displayName="触发类型" mandatory="true" name="triggerType" propId="4"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-qa/recall-trigger-type"
+                <column code="TRIGGER_TYPE" displayName="触发类型" mandatory="true" name="triggerType" precision="20"
+                        propId="4" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/recall-trigger-type"
                         i18n-en:displayName="Trigger Type"/>
                 <column code="SOURCE_NCR_ID" displayName="来源NCR(弱指针)" name="sourceNcrId" propId="5" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Source NCR"/>
@@ -872,17 +882,18 @@
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Serial No"/>
                 <column code="ROOT_CAUSE" displayName="根本原因" name="rootCause" precision="2000" propId="9"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Root Cause"/>
-                <column code="SEVERITY_LEVEL" displayName="严重程度" mandatory="true" name="severityLevel" propId="10"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-qa/recall-severity"
+                <column code="SEVERITY_LEVEL" displayName="严重程度" mandatory="true" name="severityLevel" precision="20"
+                        propId="10" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/recall-severity"
                         i18n-en:displayName="Severity Level"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="11"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
                 <column code="NOTIFY_CUSTOMER" defaultValue="false" displayName="已通知客户" name="notifyCustomer"
                         propId="12" stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Notify Customer"/>
-                <column code="STATUS" displayName="召回状态" mandatory="true" name="status" propId="13" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-qa/recall-status" i18n-en:displayName="Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="14"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-qa/approve-status"
+                <column code="STATUS" displayName="召回状态" mandatory="true" name="status" precision="20" propId="13"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/recall-status"
+                        i18n-en:displayName="Status"/>
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="14" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="APPROVED_BY" displayName="审批人" name="approvedBy" precision="36" propId="15"
                         stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
@@ -952,9 +963,9 @@
                         stdSqlType="DATETIME" i18n-en:displayName="Notified At"/>
                 <column code="NOTIFIED_BY" displayName="通知人" name="notifiedBy" precision="36" propId="9"
                         stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Notified By"/>
-                <column code="RETURN_STATUS" displayName="退货状态" mandatory="true" name="returnStatus" propId="10"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-qa/recall-target-return-status"
-                        i18n-en:displayName="Return Status"/>
+                <column code="RETURN_STATUS" displayName="退货状态" mandatory="true" name="returnStatus" precision="20"
+                        propId="10" stdDataType="string" stdSqlType="VARCHAR"
+                        ext:dict="erp-qa/recall-target-return-status" i18n-en:displayName="Return Status"/>
                 <column code="GENERATED_RETURN_ID" displayName="已生成退货单(弱指针)" name="generatedReturnId" propId="11"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Generated Return"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="12"

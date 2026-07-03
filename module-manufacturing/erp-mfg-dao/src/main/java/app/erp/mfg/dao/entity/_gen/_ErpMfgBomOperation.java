@@ -172,7 +172,7 @@ public class _ErpMfgBomOperation extends DynamicOrmEntity{
     private java.lang.String _timeUnit;
     
     /* 效率系数: RATE */
-    private java.lang.String _rate;
+    private java.math.BigDecimal _rate;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -396,9 +396,9 @@ public class _ErpMfgBomOperation extends DynamicOrmEntity{
             }
         
             case PROP_ID_rate:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_rate));
                }
                setRate(typedValue);
@@ -535,7 +535,7 @@ public class _ErpMfgBomOperation extends DynamicOrmEntity{
         
             case PROP_ID_rate:{
                onInitProp(propId);
-               this._rate = (java.lang.String)value;
+               this._rate = (java.math.BigDecimal)value;
                
                break;
             }
@@ -731,7 +731,7 @@ public class _ErpMfgBomOperation extends DynamicOrmEntity{
     /**
      * 效率系数: RATE
      */
-    public final java.lang.String getRate(){
+    public final java.math.BigDecimal getRate(){
          onPropGet(PROP_ID_rate);
          return _rate;
     }
@@ -739,7 +739,7 @@ public class _ErpMfgBomOperation extends DynamicOrmEntity{
     /**
      * 效率系数: RATE
      */
-    public final void setRate(java.lang.String value){
+    public final void setRate(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_rate,value)){
             this._rate = value;
             internalClearRefs(PROP_ID_rate);

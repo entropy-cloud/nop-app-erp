@@ -9,6 +9,7 @@ import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.fin.dao.entity.ErpFinVoucherTemplate;
 import app.erp.fin.dao.entity.ErpFinVoucherTemplateLine;
+import app.erp.fin.service.ErpFinConstants;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
@@ -52,13 +53,13 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
     private static final IServiceContext CTX = new ServiceContextImpl();
 
 
-    static final int DC_DEBIT = 10;
-    static final int DC_CREDIT = 20;
-    static final int BUSINESS_TYPE_AP_INVOICE = ErpFinBusinessType.AP_INVOICE.getCode();
-    static final int VOUCHER_TYPE_TRANSFER = 30;
-    static final int PERIOD_STATUS_OPEN = 10;
-    static final int PERIOD_STATUS_CLOSED = 30;
-    static final int VOUCHER_STATUS_POSTED = 20;
+    static final String DC_DEBIT = ErpFinConstants.DC_DEBIT;
+    static final String DC_CREDIT = ErpFinConstants.DC_CREDIT;
+    static final String BUSINESS_TYPE_AP_INVOICE = ErpFinBusinessType.AP_INVOICE.name();
+    static final String VOUCHER_TYPE_TRANSFER = "TRANSFER";
+    static final String PERIOD_STATUS_OPEN = ErpFinConstants.PERIOD_STATUS_OPEN;
+    static final String PERIOD_STATUS_CLOSED = ErpFinConstants.PERIOD_STATUS_CLOSED;
+    static final String VOUCHER_STATUS_POSTED = ErpFinConstants.VOUCHER_STATUS_POSTED;
 
     @Inject
     IDaoProvider daoProvider;
@@ -263,7 +264,7 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
     }
 
     private ErpFinVoucherTemplateLine templateLine(Long templateId, int lineNo, String subjectCode,
-                                                   int dcDirection, String amountKey, String accountKey) {
+                                                   String dcDirection, String amountKey, String accountKey) {
         ErpFinVoucherTemplateLine line = new ErpFinVoucherTemplateLine();
         line.setTemplateId(templateId);
         line.setLineNo(lineNo);
@@ -279,13 +280,13 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         ErpMdSubject subject = new ErpMdSubject();
         subject.setCode(code);
         subject.setName(name);
-        subject.setSubjectClass(10);
-        subject.setDirection(10);
-        subject.setStatus(10);
+        subject.setSubjectClass("ASSET");
+        subject.setDirection("DEBIT");
+        subject.setStatus("ACTIVE");
         dao.saveEntity(subject);
     }
 
-    private void seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, int status) {
+    private void seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, String status) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
@@ -306,7 +307,7 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         return dao.findAllByQuery(q).size();
     }
 
-    private long countBillLinks(String billCode, int businessType) {
+    private long countBillLinks(String billCode, String businessType) {
         IEntityDao<ErpFinVoucherBillR> dao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("billCode", billCode));

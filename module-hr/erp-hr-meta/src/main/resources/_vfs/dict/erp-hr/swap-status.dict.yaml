@@ -1,23 +1,23 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 调换状态
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 待审批
-    value: 10
+    value: PENDING
     description: 
   
   - label: 已批准
-    value: 20
+    value: APPROVED
     description: 
   
   - label: 已驳回
-    value: 30
+    value: REJECTED
     description: 
   
   - label: 已取消
-    value: 40
+    value: CANCELLED
     description: 
   

@@ -354,47 +354,47 @@ dict:
     erp-ct/accrual-method: Accrual Method
 dict.option.label:
   erp-ct/contract-status:
-    '10': Draft
-    '20': Negotiation
-    '30': Active
-    '40': Suspended
-    '50': Expired
-    '60': Terminated
+    DRAFT: Draft
+    NEGOTIATION: Negotiation
+    ACTIVE: Active
+    SUSPENDED: Suspended
+    EXPIRED: Expired
+    TERMINATED: Terminated
   erp-ct/contract-type:
-    '10': Purchase
-    '20': Sales
-    '30': Employment
-    '40': Service
+    PURCHASE: Purchase
+    SALES: Sales
+    EMPLOYMENT: Employment
+    SERVICE: Service
   erp-ct/contract-direction:
-    '10': Inbound (Pay)
-    '20': Outbound (Receive)
+    INBOUND: Inbound (Pay)
+    OUTBOUND: Outbound (Receive)
   erp-ct/invoice-term:
-    '10': Advance
-    '20': Milestone
-    '30': Monthly
-    '40': Completion
+    ADVANCE: Advance
+    MILESTONE: Milestone
+    MONTHLY: Monthly
+    COMPLETION: Completion
   erp-ct/version-status:
-    '10': Draft
-    '20': Finalized
-    '30': Signed
+    DRAFT: Draft
+    FINALIZED: Finalized
+    SIGNED: Signed
   erp-ct/approval-status:
-    '10': Waiting
-    '20': Pending
-    '30': Approved
-    '40': Rejected
-    '50': Skipped
+    WAITING: Waiting
+    PENDING: Pending
+    APPROVED: Approved
+    REJECTED: Rejected
+    SKIPPED: Skipped
   erp-ct/rebate-type:
-    '10': Purchase
-    '20': Sales
+    PURCHASE: Purchase
+    SALES: Sales
   erp-ct/rebate-agreement-status:
-    '10': Draft
-    '20': Active
-    '30': Expired
-    '40': Settled
+    DRAFT: Draft
+    ACTIVE: Active
+    EXPIRED: Expired
+    SETTLED: Settled
   erp-ct/settlement-status:
-    '10': Draft
-    '20': Posted
-    '30': Cancelled
+    DRAFT: Draft
+    POSTED: Posted
+    CANCELLED: Cancelled
   erp-ct/accrual-method:
-    '10': Period End
-    '20': Progressive
+    PERIOD_END: Period End
+    PROGRESSIVE: Progressive

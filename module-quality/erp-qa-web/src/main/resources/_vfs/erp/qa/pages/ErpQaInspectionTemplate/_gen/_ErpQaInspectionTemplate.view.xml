@@ -28,7 +28,7 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--检验类型-->
-                <col id="inspectionType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="inspectionType" mandatory="true" sortable="true"/>
 
                 <!--适用物料-->
                 <col id="materialId" ui:number="true" sortable="true"/>

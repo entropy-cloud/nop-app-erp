@@ -3,8 +3,8 @@
     data: {
       code: "P-SMOKE-QUERY",
       name: "冒烟测试-查询往来单位",
-      partnerType: 10,
-      status: 10
+      partnerType: "CUSTOMER",
+      status: "ACTIVE"
     }
   }
 }

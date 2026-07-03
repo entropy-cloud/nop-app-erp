@@ -15,33 +15,33 @@
     </x:gen-extends>
 
     <dicts>
-        <dict label="工序工单状态" name="erp-aps/operation-order-status" valueType="int"
+        <dict label="工序工单状态" name="erp-aps/operation-order-status" valueType="string"
               i18n-en:label="Operation Order Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="PLANNED" label="已排程" value="20" i18n-en:label="Planned"/>
-            <option code="IN_PROGRESS" label="执行中" value="30" i18n-en:label="In Progress"/>
-            <option code="FINISHED" label="已完成" value="40" i18n-en:label="Finished"/>
-            <option code="CANCELLED" label="已取消" value="50" i18n-en:label="Cancelled"/>
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="PLANNED" label="已排程" value="PLANNED" i18n-en:label="Planned"/>
+            <option code="IN_PROGRESS" label="执行中" value="IN_PROGRESS" i18n-en:label="In Progress"/>
+            <option code="FINISHED" label="已完成" value="FINISHED" i18n-en:label="Finished"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
         </dict>
-        <dict label="排产方案状态" name="erp-aps/schedule-status" valueType="int" i18n-en:label="Schedule Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="PUBLISHED" label="已发布" value="20" i18n-en:label="Published"/>
-            <option code="ARCHIVED" label="已归档" value="30" i18n-en:label="Archived"/>
+        <dict label="排产方案状态" name="erp-aps/schedule-status" valueType="string" i18n-en:label="Schedule Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="PUBLISHED" label="已发布" value="PUBLISHED" i18n-en:label="Published"/>
+            <option code="ARCHIVED" label="已归档" value="ARCHIVED" i18n-en:label="Archived"/>
         </dict>
-        <dict label="约束类型" name="erp-aps/constraint-type" valueType="int" i18n-en:label="Constraint Type">
-            <option code="MAINTENANCE" label="维护停机" value="10" i18n-en:label="Maintenance"/>
-            <option code="TOOL" label="刀具寿命" value="20" i18n-en:label="Tool Life"/>
-            <option code="PERSONNEL" label="人员约束" value="30" i18n-en:label="Personnel"/>
+        <dict label="约束类型" name="erp-aps/constraint-type" valueType="string" i18n-en:label="Constraint Type">
+            <option code="MAINTENANCE" label="维护停机" value="MAINTENANCE" i18n-en:label="Maintenance"/>
+            <option code="TOOL" label="刀具寿命" value="TOOL" i18n-en:label="Tool Life"/>
+            <option code="PERSONNEL" label="人员约束" value="PERSONNEL" i18n-en:label="Personnel"/>
         </dict>
-        <dict label="排产模式" name="erp-aps/scheduling-mode" valueType="int" i18n-en:label="Scheduling Mode">
-            <option code="FORWARD" label="前向排产" value="10" i18n-en:label="Forward"/>
-            <option code="BACKWARD" label="后向排产" value="20" i18n-en:label="Backward"/>
+        <dict label="排产模式" name="erp-aps/scheduling-mode" valueType="string" i18n-en:label="Scheduling Mode">
+            <option code="FORWARD" label="前向排产" value="FORWARD" i18n-en:label="Forward"/>
+            <option code="BACKWARD" label="后向排产" value="BACKWARD" i18n-en:label="Backward"/>
         </dict>
-        <dict label="派工类型" name="erp-aps/dispatch-type" valueType="int" i18n-en:label="Dispatch Type">
-            <option code="AUTO" label="自动派工" value="10" i18n-en:label="Auto"/>
-            <option code="MANUAL" label="手动派工" value="20" i18n-en:label="Manual"/>
-            <option code="HOLD" label="保持" value="30" i18n-en:label="Hold"/>
-            <option code="UNHOLD" label="解除保持" value="40" i18n-en:label="Unhold"/>
+        <dict label="派工类型" name="erp-aps/dispatch-type" valueType="string" i18n-en:label="Dispatch Type">
+            <option code="AUTO" label="自动派工" value="AUTO" i18n-en:label="Auto"/>
+            <option code="MANUAL" label="手动派工" value="MANUAL" i18n-en:label="Manual"/>
+            <option code="HOLD" label="保持" value="HOLD" i18n-en:label="Hold"/>
+            <option code="UNHOLD" label="解除保持" value="UNHOLD" i18n-en:label="Unhold"/>
         </dict>
     </dicts>
 
@@ -106,8 +106,9 @@
                         stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Assigned To"/>
                 <column code="IS_OUTSOURCED" defaultValue="false" displayName="是否外协" name="isOutsourced" propId="17"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Outsourced"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="18" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-aps/operation-order-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="18"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-aps/operation-order-status"
+                        i18n-en:displayName="Status"/>
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="19" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="20"
@@ -151,15 +152,16 @@
                         propId="3" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
                 <column code="SCHEDULE_DATE" displayName="排产日期" mandatory="true" name="scheduleDate" propId="4"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Schedule Date"/>
-                <column code="SCHEDULING_MODE" displayName="排产模式" mandatory="true" name="schedulingMode" propId="5"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-aps/scheduling-mode"
+                <column code="SCHEDULING_MODE" displayName="排产模式" mandatory="true" name="schedulingMode" precision="20"
+                        propId="5" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-aps/scheduling-mode"
                         i18n-en:displayName="Scheduling Mode"/>
                 <column code="HORIZON_START" displayName="展望期开始" mandatory="true" name="horizonStart" propId="6"
                         stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Horizon Start"/>
                 <column code="HORIZON_END" displayName="展望期结束" mandatory="true" name="horizonEnd" propId="7"
                         stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Horizon End"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="8" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-aps/schedule-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-aps/schedule-status"
+                        i18n-en:displayName="Status"/>
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="9" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="10"
@@ -199,8 +201,8 @@
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="MACHINE_ID" displayName="工作中心/设备" mandatory="true" name="machineId" propId="2"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Machine"/>
-                <column code="CONSTRAINT_TYPE" displayName="约束类型" mandatory="true" name="constraintType" propId="3"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-aps/constraint-type"
+                <column code="CONSTRAINT_TYPE" displayName="约束类型" mandatory="true" name="constraintType" precision="20"
+                        propId="3" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-aps/constraint-type"
                         i18n-en:displayName="Constraint Type"/>
                 <column code="START_TIME" displayName="开始时间" mandatory="true" name="startTime" propId="4"
                         stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Start Time"/>
@@ -385,8 +387,8 @@
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Operation Order"/>
                 <column code="WORKCENTER_ID" displayName="工作中心" name="workcenterId" propId="4" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Workcenter"/>
-                <column code="DISPATCH_TYPE" displayName="派工类型" mandatory="true" name="dispatchType" propId="5"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-aps/dispatch-type"
+                <column code="DISPATCH_TYPE" displayName="派工类型" mandatory="true" name="dispatchType" precision="20"
+                        propId="5" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-aps/dispatch-type"
                         i18n-en:displayName="Dispatch Type"/>
                 <column code="PREVIOUS_STATUS" displayName="派工前状态" name="previousStatus" precision="50" propId="6"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Previous Status"/>

@@ -190,10 +190,9 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private int statusOf(Long woId) {
+    private String statusOf(Long woId) {
         ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
-        Integer s = wo.getDocStatus();
-        return s == null ? -1 : s;
+        return wo.getDocStatus();
     }
 
     private void moveToInProcess(Long woId) {
@@ -252,9 +251,9 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
             m.orm_propValueByName("id", id);
             m.setCode("MAT-" + id);
             m.setName("Material " + id);
-            m.orm_propValueByName("materialType", 10);
+            m.orm_propValueByName("materialType", "GOODS");
             m.setUoMId(UOM_ID);
-            m.setStatus(10);
+            m.setStatus("ACTIVE");
             dao.saveEntity(m);
         });
     }

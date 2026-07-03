@@ -25,7 +25,7 @@
                 <col id="partnerProfileId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--方向-->
-                <col id="direction" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="direction" mandatory="true" sortable="true"/>
 
                 <!--EDI格式-->
                 <col id="formatCode" mandatory="true" sortable="true"/>

@@ -101,19 +101,19 @@ public class _ErpSalOrder extends DynamicOrmEntity{
     public static final String PROP_NAME_settlementMethodId = "settlementMethodId";
     public static final int PROP_ID_settlementMethodId = 20;
     
-    /* 单据状态: DOC_STATUS INTEGER */
+    /* 单据状态: DOC_STATUS VARCHAR */
     public static final String PROP_NAME_docStatus = "docStatus";
     public static final int PROP_ID_docStatus = 21;
     
-    /* 审核状态: APPROVE_STATUS INTEGER */
+    /* 审核状态: APPROVE_STATUS VARCHAR */
     public static final String PROP_NAME_approveStatus = "approveStatus";
     public static final int PROP_ID_approveStatus = 22;
     
-    /* 收款进度: RECEIVED_STATUS INTEGER */
+    /* 收款进度: RECEIVED_STATUS VARCHAR */
     public static final String PROP_NAME_receivedStatus = "receivedStatus";
     public static final int PROP_ID_receivedStatus = 23;
     
-    /* 发货进度: DELIVERY_STATUS INTEGER */
+    /* 发货进度: DELIVERY_STATUS VARCHAR */
     public static final String PROP_NAME_deliveryStatus = "deliveryStatus";
     public static final int PROP_ID_deliveryStatus = 24;
     
@@ -373,16 +373,16 @@ public class _ErpSalOrder extends DynamicOrmEntity{
     private java.lang.Long _settlementMethodId;
     
     /* 单据状态: DOC_STATUS */
-    private java.lang.Integer _docStatus;
+    private java.lang.String _docStatus;
     
     /* 审核状态: APPROVE_STATUS */
-    private java.lang.Integer _approveStatus;
+    private java.lang.String _approveStatus;
     
     /* 收款进度: RECEIVED_STATUS */
-    private java.lang.Integer _receivedStatus;
+    private java.lang.String _receivedStatus;
     
     /* 发货进度: DELIVERY_STATUS */
-    private java.lang.Integer _deliveryStatus;
+    private java.lang.String _deliveryStatus;
     
     /* 已过账: POSTED */
     private java.lang.Boolean _posted;
@@ -814,9 +814,9 @@ public class _ErpSalOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_docStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_docStatus));
                }
                setDocStatus(typedValue);
@@ -824,9 +824,9 @@ public class _ErpSalOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_approveStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_approveStatus));
                }
                setApproveStatus(typedValue);
@@ -834,9 +834,9 @@ public class _ErpSalOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_receivedStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_receivedStatus));
                }
                setReceivedStatus(typedValue);
@@ -844,9 +844,9 @@ public class _ErpSalOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_deliveryStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_deliveryStatus));
                }
                setDeliveryStatus(typedValue);
@@ -1124,28 +1124,28 @@ public class _ErpSalOrder extends DynamicOrmEntity{
         
             case PROP_ID_docStatus:{
                onInitProp(propId);
-               this._docStatus = (java.lang.Integer)value;
+               this._docStatus = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_approveStatus:{
                onInitProp(propId);
-               this._approveStatus = (java.lang.Integer)value;
+               this._approveStatus = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_receivedStatus:{
                onInitProp(propId);
-               this._receivedStatus = (java.lang.Integer)value;
+               this._receivedStatus = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_deliveryStatus:{
                onInitProp(propId);
-               this._deliveryStatus = (java.lang.Integer)value;
+               this._deliveryStatus = (java.lang.String)value;
                
                break;
             }
@@ -1623,7 +1623,7 @@ public class _ErpSalOrder extends DynamicOrmEntity{
     /**
      * 单据状态: DOC_STATUS
      */
-    public final java.lang.Integer getDocStatus(){
+    public final java.lang.String getDocStatus(){
          onPropGet(PROP_ID_docStatus);
          return _docStatus;
     }
@@ -1631,7 +1631,7 @@ public class _ErpSalOrder extends DynamicOrmEntity{
     /**
      * 单据状态: DOC_STATUS
      */
-    public final void setDocStatus(java.lang.Integer value){
+    public final void setDocStatus(java.lang.String value){
         if(onPropSet(PROP_ID_docStatus,value)){
             this._docStatus = value;
             internalClearRefs(PROP_ID_docStatus);
@@ -1642,7 +1642,7 @@ public class _ErpSalOrder extends DynamicOrmEntity{
     /**
      * 审核状态: APPROVE_STATUS
      */
-    public final java.lang.Integer getApproveStatus(){
+    public final java.lang.String getApproveStatus(){
          onPropGet(PROP_ID_approveStatus);
          return _approveStatus;
     }
@@ -1650,7 +1650,7 @@ public class _ErpSalOrder extends DynamicOrmEntity{
     /**
      * 审核状态: APPROVE_STATUS
      */
-    public final void setApproveStatus(java.lang.Integer value){
+    public final void setApproveStatus(java.lang.String value){
         if(onPropSet(PROP_ID_approveStatus,value)){
             this._approveStatus = value;
             internalClearRefs(PROP_ID_approveStatus);
@@ -1661,7 +1661,7 @@ public class _ErpSalOrder extends DynamicOrmEntity{
     /**
      * 收款进度: RECEIVED_STATUS
      */
-    public final java.lang.Integer getReceivedStatus(){
+    public final java.lang.String getReceivedStatus(){
          onPropGet(PROP_ID_receivedStatus);
          return _receivedStatus;
     }
@@ -1669,7 +1669,7 @@ public class _ErpSalOrder extends DynamicOrmEntity{
     /**
      * 收款进度: RECEIVED_STATUS
      */
-    public final void setReceivedStatus(java.lang.Integer value){
+    public final void setReceivedStatus(java.lang.String value){
         if(onPropSet(PROP_ID_receivedStatus,value)){
             this._receivedStatus = value;
             internalClearRefs(PROP_ID_receivedStatus);
@@ -1680,7 +1680,7 @@ public class _ErpSalOrder extends DynamicOrmEntity{
     /**
      * 发货进度: DELIVERY_STATUS
      */
-    public final java.lang.Integer getDeliveryStatus(){
+    public final java.lang.String getDeliveryStatus(){
          onPropGet(PROP_ID_deliveryStatus);
          return _deliveryStatus;
     }
@@ -1688,7 +1688,7 @@ public class _ErpSalOrder extends DynamicOrmEntity{
     /**
      * 发货进度: DELIVERY_STATUS
      */
-    public final void setDeliveryStatus(java.lang.Integer value){
+    public final void setDeliveryStatus(java.lang.String value){
         if(onPropSet(PROP_ID_deliveryStatus,value)){
             this._deliveryStatus = value;
             internalClearRefs(PROP_ID_deliveryStatus);

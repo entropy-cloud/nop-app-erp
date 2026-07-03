@@ -9,6 +9,7 @@ import io.nop.api.core.time.CoreMetrics;
 import io.nop.commons.util.StringHelper;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -23,8 +24,8 @@ import java.util.List;
  */
 public final class CloseVoucherWriter {
 
-    public static final int POSTING_TYPE_NORMAL = 10;
-    public static final int VOUCHER_TYPE_TRANSFER = 30;
+    public static final String POSTING_TYPE_NORMAL = "NORMAL";
+    public static final String VOUCHER_TYPE_TRANSFER = "TRANSFER";
 
     private CloseVoucherWriter() {
     }
@@ -34,11 +35,11 @@ public final class CloseVoucherWriter {
         public final Long subjectId;
         public final String subjectCode;
         public final String subjectName;
-        public final int dcDirection;
+        public final String dcDirection;
         public final BigDecimal amount;
         public final Long partnerId;
 
-        public Line(Long subjectId, String subjectCode, String subjectName, int dcDirection,
+        public Line(Long subjectId, String subjectCode, String subjectName, String dcDirection,
                     BigDecimal amount, Long partnerId) {
             this.subjectId = subjectId;
             this.subjectCode = subjectCode;
@@ -58,7 +59,7 @@ public final class CloseVoucherWriter {
      * @param businessTypeName 业财类型名（ErpFinBusinessType.name，写入 BillR.billType）
      */
     public static Long writeVoucher(IDaoProvider daoProvider, String codePrefix, String billHeadCode,
-                                    int businessTypeCode, String businessTypeName,
+                                    String businessTypeCode, String businessTypeName,
                                     Long orgId, Long acctSchemaId, Long periodId, Long currencyId,
                                     BigDecimal exchangeRate, LocalDate voucherDate,
                                     List<Line> lines, String memo) {
@@ -68,7 +69,7 @@ public final class CloseVoucherWriter {
         BigDecimal totalDebit = BigDecimal.ZERO;
         BigDecimal totalCredit = BigDecimal.ZERO;
         for (Line l : lines) {
-            if (l.dcDirection == ErpFinConstants.DC_CREDIT) {
+            if (Objects.equals(l.dcDirection, ErpFinConstants.DC_CREDIT)) {
                 totalCredit = totalCredit.add(l.amount);
             } else {
                 totalDebit = totalDebit.add(l.amount);
@@ -113,7 +114,7 @@ public final class CloseVoucherWriter {
             line.setSubjectCode(l.subjectCode);
             line.setSubjectName(l.subjectName);
             line.setDcDirection(l.dcDirection);
-            boolean isCredit = l.dcDirection == ErpFinConstants.DC_CREDIT;
+            boolean isCredit = Objects.equals(l.dcDirection, ErpFinConstants.DC_CREDIT);
             line.setDebitAmount(isCredit ? BigDecimal.ZERO : l.amount);
             line.setCreditAmount(isCredit ? l.amount : BigDecimal.ZERO);
             line.setCurrencyId(currencyId);

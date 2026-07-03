@@ -125,8 +125,7 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
 
         assertEquals(0, completeDowntime(downtimeId).getStatus(), "complete 应成功");
         ErpMntDowntimeEntry completed = loadDowntime(downtimeId);
-        // totalMinutes 列 stdSqlType=VARCHAR/stdDataType=string（domain 标注 DECIMAL，基线类型异常），读回形如 "120.00"
-        long minutes = new BigDecimal(completed.getTotalMinutes()).longValue();
+        long minutes = completed.getTotalMinutes().longValue();
         assertTrue(minutes >= 119, "totalMinutes 反映 2 小时停机（>=119）: " + minutes);
         assertEquals(ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING, equipmentStatus(),
                 "complete 恢复设备 RUNNING");
@@ -270,7 +269,7 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
 
     private void seedPeriodAndSubjects() {
         ormTemplate.runInSession(session -> {
-            seedOpenPeriod("2026-07", 2026, 7, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31), 10);
+            seedOpenPeriod("2026-07", 2026, 7, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31), "OPEN");
             seedSubject("1401", "库存商品");
             seedSubject("2202", "应付账款-暂估");
             seedSubject("6401", "主营业务成本");
@@ -286,13 +285,13 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
         schema.setCode("AS-" + ORG_ID);
         schema.setName("账套" + ORG_ID);
         schema.setOrgId(ORG_ID);
-        schema.setNature(10);
+        schema.setNature("FINANCIAL");
         schema.setFunctionalCurrencyId(CURRENCY_ID);
-        schema.setStatus(10);
+        schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
 
-    private void seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, int status) {
+    private void seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, String status) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
@@ -311,9 +310,9 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
         ErpMdSubject subject = new ErpMdSubject();
         subject.setCode(code);
         subject.setName(name);
-        subject.setSubjectClass(10);
-        subject.setDirection(10);
-        subject.setStatus(10);
+        subject.setSubjectClass("ASSET");
+        subject.setDirection("DEBIT");
+        subject.setStatus("ACTIVE");
         dao.saveEntity(subject);
     }
 
@@ -343,7 +342,7 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
 
     // ---------- maintenance seed ----------
 
-    private void seedEquipment(Long id, int status) {
+    private void seedEquipment(Long id, String status) {
         IEntityDao<ErpMntEquipment> dao = daoProvider.daoFor(ErpMntEquipment.class);
         ErpMntEquipment equipment = new ErpMntEquipment();
         equipment.setId(id);
@@ -365,7 +364,7 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
     }
 
     private void seedSchedule(Long id, Long equipmentId, LocalDate nextDueDate,
-                              int recurrenceType, int frequency, String code) {
+                              String recurrenceType, int frequency, String code) {
         IEntityDao<ErpMntSchedule> dao = daoProvider.daoFor(ErpMntSchedule.class);
         ErpMntSchedule schedule = new ErpMntSchedule();
         schedule.setId(id);
@@ -411,7 +410,7 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void seedRequest(Long id, Long equipmentId, int status, String code) {
+    private void seedRequest(Long id, Long equipmentId, String status, String code) {
         IEntityDao<ErpMntRequest> dao = daoProvider.daoFor(ErpMntRequest.class);
         ErpMntRequest request = new ErpMntRequest();
         request.setId(id);
@@ -441,15 +440,15 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpMntDowntimeEntry.class).getEntityById(downtimeId);
     }
 
-    private int visitStatus(Long visitId) {
+    private String visitStatus(Long visitId) {
         return daoProvider.daoFor(ErpMntVisit.class).getEntityById(visitId).getStatus();
     }
 
-    private int requestStatus(Long requestId) {
+    private String requestStatus(Long requestId) {
         return daoProvider.daoFor(ErpMntRequest.class).getEntityById(requestId).getStatus();
     }
 
-    private int equipmentStatus() {
+    private String equipmentStatus() {
         return daoProvider.daoFor(ErpMntEquipment.class).getEntityById(EQUIPMENT_ID).getStatus();
     }
 

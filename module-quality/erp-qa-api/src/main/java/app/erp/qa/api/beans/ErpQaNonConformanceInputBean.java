@@ -139,44 +139,44 @@
         }
 
 
-        private Integer _severity;
+        private String _severity;
 
     
         @PropMeta(propId=10)
     
-        public Integer getSeverity(){
+        public String getSeverity(){
             return _severity;
         }
 
-        public void setSeverity(Integer value){
+        public void setSeverity(String value){
             this._severity = value;
         }
 
 
-        private Integer _dispositionType;
+        private String _dispositionType;
 
     
         @PropMeta(propId=11)
     
-        public Integer getDispositionType(){
+        public String getDispositionType(){
             return _dispositionType;
         }
 
-        public void setDispositionType(Integer value){
+        public void setDispositionType(String value){
             this._dispositionType = value;
         }
 
 
-        private Integer _status;
+        private String _status;
 
     
         @PropMeta(propId=12)
     
-        public Integer getStatus(){
+        public String getStatus(){
             return _status;
         }
 
-        public void setStatus(Integer value){
+        public void setStatus(String value){
             this._status = value;
         }
 
@@ -223,30 +223,30 @@
         }
 
 
-        private String _specMin;
+        private java.math.BigDecimal _specMin;
 
     
         @PropMeta(propId=16)
     
-        public String getSpecMin(){
+        public java.math.BigDecimal getSpecMin(){
             return _specMin;
         }
 
-        public void setSpecMin(String value){
+        public void setSpecMin(java.math.BigDecimal value){
             this._specMin = value;
         }
 
 
-        private String _specMax;
+        private java.math.BigDecimal _specMax;
 
     
         @PropMeta(propId=17)
     
-        public String getSpecMax(){
+        public java.math.BigDecimal getSpecMax(){
             return _specMax;
         }
 
-        public void setSpecMax(String value){
+        public void setSpecMax(java.math.BigDecimal value){
             this._specMax = value;
         }
 

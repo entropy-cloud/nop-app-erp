@@ -104,13 +104,13 @@ public class TestErpInvCostingDispatch extends JunitAutoTestCase {
     @Test
     public void testDictionaryCodeMappingMovingAverage() {
         // 字典 erp-md/cost-method: 10=移动加权平均、20=全月一次、30=FIFO、40=LIFO、50=标准、60=个别、70=批次
-        assertEquals(10, ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
-        assertEquals(30, ErpInvConstants.COST_METHOD_FIFO);
-        assertEquals(40, ErpInvConstants.COST_METHOD_LIFO);
-        assertEquals(50, ErpInvConstants.COST_METHOD_STANDARD);
-        assertEquals(20, ErpInvConstants.COST_METHOD_MONTHLY_WEIGHTED_AVERAGE);
-        assertEquals(60, ErpInvConstants.COST_METHOD_INDIVIDUAL);
-        assertEquals(70, ErpInvConstants.COST_METHOD_BATCH);
+        assertEquals("MOVING_AVERAGE", ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
+        assertEquals("FIFO", ErpInvConstants.COST_METHOD_FIFO);
+        assertEquals("LIFO", ErpInvConstants.COST_METHOD_LIFO);
+        assertEquals("STANDARD", ErpInvConstants.COST_METHOD_STANDARD);
+        assertEquals("WEIGHTED_AVERAGE", ErpInvConstants.COST_METHOD_MONTHLY_WEIGHTED_AVERAGE);
+        assertEquals("SPECIFIC", ErpInvConstants.COST_METHOD_INDIVIDUAL);
+        assertEquals("BATCH", ErpInvConstants.COST_METHOD_BATCH);
     }
 
     @Test
@@ -164,7 +164,7 @@ public class TestErpInvCostingDispatch extends JunitAutoTestCase {
         return executeRpc(mutation, "ErpInvStockMove__generateMove", ApiRequest.build(Map.of("request", req)));
     }
 
-    private Map<String, Object> baseReq(Long materialId, Integer moveType) {
+    private Map<String, Object> baseReq(Long materialId, String moveType) {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("moveType", moveType);
         req.put("orgId", ORG_ID);
@@ -200,22 +200,22 @@ public class TestErpInvCostingDispatch extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private void seedMaterial(Long id, Integer costMethod) {
+    private void seedMaterial(Long id, String costMethod) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial material = new ErpMdMaterial();
             material.orm_propValueByName("id", id);
             material.setCode("MAT-" + id);
             material.setName("Material " + id);
-            material.orm_propValueByName("materialType", 10);
+            material.orm_propValueByName("materialType", "GOODS");
             material.setUoMId(UOM_ID);
-            material.setStatus(10);
+            material.setStatus("ACTIVE");
             material.setCostMethod(costMethod);
             dao.saveEntity(material);
         });
     }
 
-    private void seedAcctSchema(Long id, Integer costingMethod) {
+    private void seedAcctSchema(Long id, String costingMethod) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
             ErpMdAcctSchema schema = new ErpMdAcctSchema();
@@ -223,9 +223,9 @@ public class TestErpInvCostingDispatch extends JunitAutoTestCase {
             schema.setCode("AS-" + id);
             schema.setName("AcctSchema " + id);
             schema.setOrgId(ORG_ID);
-            schema.orm_propValueByName("nature", 10);
+            schema.orm_propValueByName("nature", "FINANCIAL");
             schema.orm_propValueByName("functionalCurrencyId", CURRENCY_ID);
-            schema.setStatus(10);
+            schema.setStatus("ACTIVE");
             schema.setCostingMethod(costingMethod);
             dao.saveEntity(schema);
         });

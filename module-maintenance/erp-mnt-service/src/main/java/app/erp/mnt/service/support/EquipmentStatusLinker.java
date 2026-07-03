@@ -42,7 +42,7 @@ public class EquipmentStatusLinker {
         changeEquipmentStatus(equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING, context);
     }
 
-    protected void changeEquipmentStatus(Long equipmentId, Integer newStatus, IServiceContext context) {
+    protected void changeEquipmentStatus(Long equipmentId, String newStatus, IServiceContext context) {
         ErpMntEquipment equipment = equipmentBiz.get(String.valueOf(equipmentId), false, context);
         if (equipment == null) {
             throw new NopException(ErpMntErrors.ERR_EQUIPMENT_NOT_FOUND)

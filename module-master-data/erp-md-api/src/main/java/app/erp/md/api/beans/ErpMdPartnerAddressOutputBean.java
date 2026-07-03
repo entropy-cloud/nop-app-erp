@@ -41,16 +41,16 @@
         }
 
 
-        private Integer _addressType;
+        private String _addressType;
 
     
         @PropMeta(propId=3)
     
-        public Integer getAddressType(){
+        public String getAddressType(){
             return _addressType;
         }
 
-        public void setAddressType(Integer value){
+        public void setAddressType(String value){
             this._addressType = value;
         }
 

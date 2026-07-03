@@ -37,7 +37,7 @@ public class _ErpInvStockTake extends DynamicOrmEntity{
     public static final String PROP_NAME_businessDate = "businessDate";
     public static final int PROP_ID_businessDate = 4;
     
-    /* 盘点类型: TAKE_TYPE INTEGER */
+    /* 盘点类型: TAKE_TYPE VARCHAR */
     public static final String PROP_NAME_takeType = "takeType";
     public static final int PROP_ID_takeType = 5;
     
@@ -45,11 +45,11 @@ public class _ErpInvStockTake extends DynamicOrmEntity{
     public static final String PROP_NAME_warehouseId = "warehouseId";
     public static final int PROP_ID_warehouseId = 6;
     
-    /* 单据状态: DOC_STATUS INTEGER */
+    /* 单据状态: DOC_STATUS VARCHAR */
     public static final String PROP_NAME_docStatus = "docStatus";
     public static final int PROP_ID_docStatus = 7;
     
-    /* 审核状态: APPROVE_STATUS INTEGER */
+    /* 审核状态: APPROVE_STATUS VARCHAR */
     public static final String PROP_NAME_approveStatus = "approveStatus";
     public static final int PROP_ID_approveStatus = 8;
     
@@ -184,16 +184,16 @@ public class _ErpInvStockTake extends DynamicOrmEntity{
     private java.time.LocalDate _businessDate;
     
     /* 盘点类型: TAKE_TYPE */
-    private java.lang.Integer _takeType;
+    private java.lang.String _takeType;
     
     /* 盘点仓库: WAREHOUSE_ID */
     private java.lang.Long _warehouseId;
     
     /* 单据状态: DOC_STATUS */
-    private java.lang.Integer _docStatus;
+    private java.lang.String _docStatus;
     
     /* 审核状态: APPROVE_STATUS */
-    private java.lang.Integer _approveStatus;
+    private java.lang.String _approveStatus;
     
     /* 已过账: POSTED */
     private java.lang.Boolean _posted;
@@ -405,9 +405,9 @@ public class _ErpInvStockTake extends DynamicOrmEntity{
             }
         
             case PROP_ID_takeType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_takeType));
                }
                setTakeType(typedValue);
@@ -425,9 +425,9 @@ public class _ErpInvStockTake extends DynamicOrmEntity{
             }
         
             case PROP_ID_docStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_docStatus));
                }
                setDocStatus(typedValue);
@@ -435,9 +435,9 @@ public class _ErpInvStockTake extends DynamicOrmEntity{
             }
         
             case PROP_ID_approveStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_approveStatus));
                }
                setApproveStatus(typedValue);
@@ -583,7 +583,7 @@ public class _ErpInvStockTake extends DynamicOrmEntity{
         
             case PROP_ID_takeType:{
                onInitProp(propId);
-               this._takeType = (java.lang.Integer)value;
+               this._takeType = (java.lang.String)value;
                
                break;
             }
@@ -597,14 +597,14 @@ public class _ErpInvStockTake extends DynamicOrmEntity{
         
             case PROP_ID_docStatus:{
                onInitProp(propId);
-               this._docStatus = (java.lang.Integer)value;
+               this._docStatus = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_approveStatus:{
                onInitProp(propId);
-               this._approveStatus = (java.lang.Integer)value;
+               this._approveStatus = (java.lang.String)value;
                
                break;
             }
@@ -764,7 +764,7 @@ public class _ErpInvStockTake extends DynamicOrmEntity{
     /**
      * 盘点类型: TAKE_TYPE
      */
-    public final java.lang.Integer getTakeType(){
+    public final java.lang.String getTakeType(){
          onPropGet(PROP_ID_takeType);
          return _takeType;
     }
@@ -772,7 +772,7 @@ public class _ErpInvStockTake extends DynamicOrmEntity{
     /**
      * 盘点类型: TAKE_TYPE
      */
-    public final void setTakeType(java.lang.Integer value){
+    public final void setTakeType(java.lang.String value){
         if(onPropSet(PROP_ID_takeType,value)){
             this._takeType = value;
             internalClearRefs(PROP_ID_takeType);
@@ -802,7 +802,7 @@ public class _ErpInvStockTake extends DynamicOrmEntity{
     /**
      * 单据状态: DOC_STATUS
      */
-    public final java.lang.Integer getDocStatus(){
+    public final java.lang.String getDocStatus(){
          onPropGet(PROP_ID_docStatus);
          return _docStatus;
     }
@@ -810,7 +810,7 @@ public class _ErpInvStockTake extends DynamicOrmEntity{
     /**
      * 单据状态: DOC_STATUS
      */
-    public final void setDocStatus(java.lang.Integer value){
+    public final void setDocStatus(java.lang.String value){
         if(onPropSet(PROP_ID_docStatus,value)){
             this._docStatus = value;
             internalClearRefs(PROP_ID_docStatus);
@@ -821,7 +821,7 @@ public class _ErpInvStockTake extends DynamicOrmEntity{
     /**
      * 审核状态: APPROVE_STATUS
      */
-    public final java.lang.Integer getApproveStatus(){
+    public final java.lang.String getApproveStatus(){
          onPropGet(PROP_ID_approveStatus);
          return _approveStatus;
     }
@@ -829,7 +829,7 @@ public class _ErpInvStockTake extends DynamicOrmEntity{
     /**
      * 审核状态: APPROVE_STATUS
      */
-    public final void setApproveStatus(java.lang.Integer value){
+    public final void setApproveStatus(java.lang.String value){
         if(onPropSet(PROP_ID_approveStatus,value)){
             this._approveStatus = value;
             internalClearRefs(PROP_ID_approveStatus);

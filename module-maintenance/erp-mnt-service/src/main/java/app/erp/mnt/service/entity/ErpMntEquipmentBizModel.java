@@ -17,7 +17,7 @@ public class ErpMntEquipmentBizModel extends CrudBizModel<ErpMntEquipment> imple
     @Override
     @BizMutation
     public ErpMntEquipment changeStatus(@Name("equipmentId") Long equipmentId,
-                                        @Name("newStatus") Integer newStatus,
+                                        @Name("newStatus") String newStatus,
                                         IServiceContext context) {
         ErpMntEquipment equipment = requireEntity(String.valueOf(equipmentId), null, context);
         equipment.setStatus(newStatus);

@@ -16,6 +16,7 @@ import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
+import java.util.Objects;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -44,8 +45,8 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
     @BizMutation
     public ErpMdSupplierApproval apply(@Name("approvalId") Long approvalId, IServiceContext context) {
         ErpMdSupplierApproval approval = requireApproval(approvalId);
-        Integer status = currentStatus(approval);
-        if (status != null && status != ErpMdConstants.APPROVAL_STATUS_REJECTED) {
+        String status = currentStatus(approval);
+        if (status != null && !Objects.equals(status, ErpMdConstants.APPROVAL_STATUS_REJECTED)) {
             throw illegalTransition(approval, status, "空 或 REJECTED");
         }
         approval.setStatus(ErpMdConstants.APPROVAL_STATUS_APPLIED);
@@ -57,9 +58,9 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
     @BizMutation
     public ErpMdSupplierApproval approve(@Name("approvalId") Long approvalId, IServiceContext context) {
         ErpMdSupplierApproval approval = requireApproval(approvalId);
-        Integer status = currentStatus(approval);
-        if (status == null || (status != ErpMdConstants.APPROVAL_STATUS_APPLIED
-                && status != ErpMdConstants.APPROVAL_STATUS_PROBATION)) {
+        String status = currentStatus(approval);
+        if (status == null || (!Objects.equals(status, ErpMdConstants.APPROVAL_STATUS_APPLIED)
+                && !Objects.equals(status, ErpMdConstants.APPROVAL_STATUS_PROBATION))) {
             throw illegalTransition(approval, status, "APPLIED 或 PROBATION");
         }
         requireQualificationValid(approval);
@@ -74,8 +75,8 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
     @BizMutation
     public ErpMdSupplierApproval probate(@Name("approvalId") Long approvalId, IServiceContext context) {
         ErpMdSupplierApproval approval = requireApproval(approvalId);
-        Integer status = currentStatus(approval);
-        if (status == null || status != ErpMdConstants.APPROVAL_STATUS_APPROVED) {
+        String status = currentStatus(approval);
+        if (status == null || !Objects.equals(status, ErpMdConstants.APPROVAL_STATUS_APPROVED)) {
             throw illegalTransition(approval, status, "APPROVED");
         }
         approval.setStatus(ErpMdConstants.APPROVAL_STATUS_PROBATION);
@@ -107,8 +108,8 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
     @BizMutation
     public ErpMdSupplierApproval reinstate(@Name("approvalId") Long approvalId, IServiceContext context) {
         ErpMdSupplierApproval approval = requireApproval(approvalId);
-        Integer status = currentStatus(approval);
-        if (status == null || status != ErpMdConstants.APPROVAL_STATUS_SUSPENDED) {
+        String status = currentStatus(approval);
+        if (status == null || !Objects.equals(status, ErpMdConstants.APPROVAL_STATUS_SUSPENDED)) {
             throw illegalTransition(approval, status, "SUSPENDED");
         }
         approval.setStatus(ErpMdConstants.APPROVAL_STATUS_APPROVED);
@@ -122,8 +123,8 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
     @BizMutation
     public ErpMdSupplierApproval reject(@Name("approvalId") Long approvalId, IServiceContext context) {
         ErpMdSupplierApproval approval = requireApproval(approvalId);
-        Integer status = currentStatus(approval);
-        if (status == null || status != ErpMdConstants.APPROVAL_STATUS_APPLIED) {
+        String status = currentStatus(approval);
+        if (status == null || !Objects.equals(status, ErpMdConstants.APPROVAL_STATUS_APPLIED)) {
             throw illegalTransition(approval, status, "APPLIED");
         }
         approval.setStatus(ErpMdConstants.APPROVAL_STATUS_REJECTED);
@@ -142,8 +143,8 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
         QueryBean q = new QueryBean();
         q.addFilter(eq("partnerId", partnerId));
         for (ErpMdSupplierApproval approval : findList(q, null, context)) {
-            Integer status = currentStatus(approval);
-            if (status == null || status != ErpMdConstants.APPROVAL_STATUS_REJECTED) {
+            String status = currentStatus(approval);
+            if (status == null || !Objects.equals(status, ErpMdConstants.APPROVAL_STATUS_REJECTED)) {
                 return approval;
             }
         }
@@ -153,13 +154,13 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
     // ---------- 内部步骤 ----------
 
     protected ErpMdSupplierApproval doSuspend(ErpMdSupplierApproval approval) {
-        Integer status = currentStatus(approval);
-        if (status != null && status == ErpMdConstants.APPROVAL_STATUS_SUSPENDED) {
+        String status = currentStatus(approval);
+        if (status != null && Objects.equals(status, ErpMdConstants.APPROVAL_STATUS_SUSPENDED)) {
             return approval;
         }
-        if (status == null || (status != ErpMdConstants.APPROVAL_STATUS_APPLIED
-                && status != ErpMdConstants.APPROVAL_STATUS_APPROVED
-                && status != ErpMdConstants.APPROVAL_STATUS_PROBATION)) {
+        if (status == null || (!Objects.equals(status, ErpMdConstants.APPROVAL_STATUS_APPLIED)
+                && !Objects.equals(status, ErpMdConstants.APPROVAL_STATUS_APPROVED)
+                && !Objects.equals(status, ErpMdConstants.APPROVAL_STATUS_PROBATION))) {
             throw illegalTransition(approval, status, "APPLIED/APPROVED/PROBATION");
         }
         approval.setStatus(ErpMdConstants.APPROVAL_STATUS_SUSPENDED);
@@ -200,7 +201,7 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
         return approval;
     }
 
-    protected Integer currentStatus(ErpMdSupplierApproval approval) {
+    protected String currentStatus(ErpMdSupplierApproval approval) {
         return approval.getStatus();
     }
 
@@ -213,7 +214,7 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
         }
     }
 
-    protected NopException illegalTransition(ErpMdSupplierApproval approval, Integer current, String expected) {
+    protected NopException illegalTransition(ErpMdSupplierApproval approval, String current, String expected) {
         return new NopException(ErpMdErrors.ERR_INVALID_APPROVAL_STATUS_TRANSITION)
                 .param(ErpMdErrors.ARG_APPROVAL_ID, approval.getId())
                 .param(ErpMdErrors.ARG_CURRENT_STATUS, current)

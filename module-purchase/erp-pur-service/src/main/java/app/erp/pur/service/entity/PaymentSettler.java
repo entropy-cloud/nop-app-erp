@@ -12,6 +12,7 @@ import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class PaymentSettler {
      */
     public ErpPurPayment settle(ErpPurPayment payment, List<SettlementAllocation> allocations) {
         if (payment.getApproveStatus() == null
-                || payment.getApproveStatus() != ErpPurConstants.APPROVE_STATUS_APPROVED) {
+                || !Objects.equals(payment.getApproveStatus(), ErpPurConstants.APPROVE_STATUS_APPROVED)) {
             throw new NopException(ErpPurErrors.ERR_SETTLE_PAYMENT_NOT_APPROVED)
                     .param(ErpPurErrors.ARG_PAYMENT_CODE, payment.getCode())
                     .param(ErpPurErrors.ARG_CURRENT_STATUS, payment.getApproveStatus());
@@ -149,7 +150,7 @@ public class PaymentSettler {
                     .param(ErpPurErrors.ARG_INVOICE_CODE, invoice.getCode());
         }
         if (invoice.getApproveStatus() == null
-                || invoice.getApproveStatus() != ErpPurConstants.APPROVE_STATUS_APPROVED) {
+                || !Objects.equals(invoice.getApproveStatus(), ErpPurConstants.APPROVE_STATUS_APPROVED)) {
             throw new NopException(ErpPurErrors.ERR_SETTLE_INVOICE_NOT_APPROVED)
                     .param(ErpPurErrors.ARG_INVOICE_CODE, invoice.getCode())
                     .param(ErpPurErrors.ARG_CURRENT_STATUS, invoice.getApproveStatus());
@@ -163,7 +164,7 @@ public class PaymentSettler {
         BigDecimal paid = sumInvoiceLines(invoiceId);
         invoice.setPaidAmount(paid);
         BigDecimal withTax = nz(invoice.getTotalAmountWithTax());
-        int status;
+        String status;
         if (paid.signum() <= 0) {
             status = ErpPurConstants.PAID_STATUS_UNPAID;
         } else if (paid.compareTo(withTax) >= 0) {
@@ -180,7 +181,7 @@ public class PaymentSettler {
         ErpPurPayment payment = daoProvider.daoFor(ErpPurPayment.class).getEntityById(paymentId);
         BigDecimal settled = sumPaymentLines(paymentId);
         BigDecimal total = nz(payment.getTotalAmount());
-        int status;
+        String status;
         if (settled.signum() <= 0) {
             status = ErpPurConstants.PAID_STATUS_UNPAID;
         } else if (settled.compareTo(total) >= 0) {

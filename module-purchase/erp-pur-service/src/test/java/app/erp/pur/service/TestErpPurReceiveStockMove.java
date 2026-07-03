@@ -59,7 +59,7 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
     static final Long UOM_ID = 5201L;
     static final Long CURRENCY_ID = 6201L;
     static final Long ACCT_SCHEMA_ID = 7201L;
-    static final int VOUCHER_STATUS_POSTED = 20;
+    static final String VOUCHER_STATUS_POSTED = "POSTED";
 
     @Inject
     IDaoProvider daoProvider;
@@ -232,7 +232,7 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
 
     private void seedPeriodAndSubjects() {
         ormTemplate.runInSession(session -> {
-            seedOpenPeriod("2026-07", 2026, 7, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31), 10);
+            seedOpenPeriod("2026-07", 2026, 7, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31), "OPEN");
             seedSubject("1401", "库存商品");
             seedSubject("2202", "应付账款-暂估");
             seedSubject("6401", "主营业务成本");
@@ -248,9 +248,9 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
         schema.setCode("AS-" + ORG_ID);
         schema.setName("账套" + ORG_ID);
         schema.setOrgId(ORG_ID);
-        schema.setNature(10);
+        schema.setNature("FINANCIAL");
         schema.setFunctionalCurrencyId(CURRENCY_ID);
-        schema.setStatus(10);
+        schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
 
@@ -260,12 +260,12 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
         partner.setId(SUPPLIER_ID);
         partner.setCode("SUP-" + SUPPLIER_ID);
         partner.setName("供应商" + SUPPLIER_ID);
-        partner.setPartnerType(10);
+        partner.setPartnerType("CUSTOMER");
         partner.setStatus(ErpPurConstants.PARTNER_STATUS_ACTIVE);
         dao.saveEntity(partner);
     }
 
-    private void seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, int status) {
+    private void seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, String status) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
@@ -284,9 +284,9 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
         ErpMdSubject subject = new ErpMdSubject();
         subject.setCode(code);
         subject.setName(name);
-        subject.setSubjectClass(10);
-        subject.setDirection(10);
-        subject.setStatus(10);
+        subject.setSubjectClass("ASSET");
+        subject.setDirection("DEBIT");
+        subject.setStatus("ACTIVE");
         dao.saveEntity(subject);
     }
 

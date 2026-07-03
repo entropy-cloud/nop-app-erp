@@ -37,7 +37,7 @@
         </prop>
         <prop name="status" displayName="状态" propId="5" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-hr/devplan-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-hr/devplan-status"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="6" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">

@@ -33,11 +33,11 @@
         </prop>
         <prop name="bomType" displayName="BOM类型" propId="4" i18n-en:displayName="Bom Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-mfg/bom-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-mfg/bom-type"/>
         </prop>
         <prop name="consumption" displayName="消耗控制" propId="5" i18n-en:displayName="Consumption" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-mfg/consumption"/>
+            <schema type="java.lang.String" precision="20" dict="erp-mfg/consumption"/>
         </prop>
         <prop name="isActive" displayName="是否有效" propId="6" i18n-en:displayName="Active" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="true">

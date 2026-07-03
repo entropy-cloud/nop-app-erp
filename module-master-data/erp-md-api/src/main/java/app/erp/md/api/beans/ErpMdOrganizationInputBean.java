@@ -69,16 +69,16 @@
         }
 
 
-        private Integer _orgType;
+        private String _orgType;
 
     
         @PropMeta(propId=5)
     
-        public Integer getOrgType(){
+        public String getOrgType(){
             return _orgType;
         }
 
-        public void setOrgType(Integer value){
+        public void setOrgType(String value){
             this._orgType = value;
         }
 
@@ -97,16 +97,16 @@
         }
 
 
-        private Integer _status;
+        private String _status;
 
     
         @PropMeta(propId=7)
     
-        public Integer getStatus(){
+        public String getStatus(){
             return _status;
         }
 
-        public void setStatus(Integer value){
+        public void setStatus(String value){
             this._status = value;
         }
 

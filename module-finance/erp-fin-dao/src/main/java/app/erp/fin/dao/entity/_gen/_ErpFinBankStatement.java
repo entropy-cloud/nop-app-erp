@@ -61,7 +61,7 @@ public class _ErpFinBankStatement extends DynamicOrmEntity{
     public static final String PROP_NAME_importTime = "importTime";
     public static final int PROP_ID_importTime = 10;
     
-    /* 状态: DOC_STATUS INTEGER */
+    /* 状态: DOC_STATUS VARCHAR */
     public static final String PROP_NAME_docStatus = "docStatus";
     public static final int PROP_ID_docStatus = 11;
     
@@ -199,7 +199,7 @@ public class _ErpFinBankStatement extends DynamicOrmEntity{
     private java.time.LocalDateTime _importTime;
     
     /* 状态: DOC_STATUS */
-    private java.lang.Integer _docStatus;
+    private java.lang.String _docStatus;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -462,9 +462,9 @@ public class _ErpFinBankStatement extends DynamicOrmEntity{
             }
         
             case PROP_ID_docStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_docStatus));
                }
                setDocStatus(typedValue);
@@ -622,7 +622,7 @@ public class _ErpFinBankStatement extends DynamicOrmEntity{
         
             case PROP_ID_docStatus:{
                onInitProp(propId);
-               this._docStatus = (java.lang.Integer)value;
+               this._docStatus = (java.lang.String)value;
                
                break;
             }
@@ -875,7 +875,7 @@ public class _ErpFinBankStatement extends DynamicOrmEntity{
     /**
      * 状态: DOC_STATUS
      */
-    public final java.lang.Integer getDocStatus(){
+    public final java.lang.String getDocStatus(){
          onPropGet(PROP_ID_docStatus);
          return _docStatus;
     }
@@ -883,7 +883,7 @@ public class _ErpFinBankStatement extends DynamicOrmEntity{
     /**
      * 状态: DOC_STATUS
      */
-    public final void setDocStatus(java.lang.Integer value){
+    public final void setDocStatus(java.lang.String value){
         if(onPropSet(PROP_ID_docStatus,value)){
             this._docStatus = value;
             internalClearRefs(PROP_ID_docStatus);

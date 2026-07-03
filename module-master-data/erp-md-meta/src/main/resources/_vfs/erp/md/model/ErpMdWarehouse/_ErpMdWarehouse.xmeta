@@ -33,7 +33,7 @@
         </prop>
         <prop name="warehouseType" displayName="仓库类型" propId="4" i18n-en:displayName="Warehouse Type" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-md/warehouse-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-md/warehouse-type"/>
         </prop>
         <prop name="orgId" displayName="所属组织" propId="5" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="organization">
@@ -49,7 +49,7 @@
         </prop>
         <prop name="status" displayName="状态" propId="8" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-md/active-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-md/active-status"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="9" i18n-en:displayName="Del Flag" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">

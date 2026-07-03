@@ -140,30 +140,30 @@
         }
 
 
-        private String _estimatedHours;
+        private java.math.BigDecimal _estimatedHours;
 
     
         @PropMeta(propId=10)
     
-        public String getEstimatedHours(){
+        public java.math.BigDecimal getEstimatedHours(){
             return _estimatedHours;
         }
 
-        public void setEstimatedHours(String value){
+        public void setEstimatedHours(java.math.BigDecimal value){
             this._estimatedHours = value;
         }
 
 
-        private String _actualHours;
+        private java.math.BigDecimal _actualHours;
 
     
         @PropMeta(propId=11)
     
-        public String getActualHours(){
+        public java.math.BigDecimal getActualHours(){
             return _actualHours;
         }
 
-        public void setActualHours(String value){
+        public void setActualHours(java.math.BigDecimal value){
             this._actualHours = value;
         }
 
@@ -182,16 +182,16 @@
         }
 
 
-        private Integer _status;
+        private String _status;
 
     
         @PropMeta(propId=13)
     
-        public Integer getStatus(){
+        public String getStatus(){
             return _status;
         }
 
-        public void setStatus(Integer value){
+        public void setStatus(String value){
             this._status = value;
         }
 
@@ -208,16 +208,16 @@
         }
 
 
-        private Integer _priority;
+        private String _priority;
 
     
         @PropMeta(propId=14)
     
-        public Integer getPriority(){
+        public String getPriority(){
             return _priority;
         }
 
-        public void setPriority(Integer value){
+        public void setPriority(String value){
             this._priority = value;
         }
 

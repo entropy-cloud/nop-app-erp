@@ -29,15 +29,15 @@ public class _ErpCsTicketAction extends DynamicOrmEntity{
     public static final String PROP_NAME_ticketId = "ticketId";
     public static final int PROP_ID_ticketId = 2;
     
-    /* 操作类型: ACTION_TYPE INTEGER */
+    /* 操作类型: ACTION_TYPE VARCHAR */
     public static final String PROP_NAME_actionType = "actionType";
     public static final int PROP_ID_actionType = 3;
     
-    /* 起始状态: FROM_STATUS INTEGER */
+    /* 起始状态: FROM_STATUS VARCHAR */
     public static final String PROP_NAME_fromStatus = "fromStatus";
     public static final int PROP_ID_fromStatus = 4;
     
-    /* 目标状态: TO_STATUS INTEGER */
+    /* 目标状态: TO_STATUS VARCHAR */
     public static final String PROP_NAME_toStatus = "toStatus";
     public static final int PROP_ID_toStatus = 5;
     
@@ -137,13 +137,13 @@ public class _ErpCsTicketAction extends DynamicOrmEntity{
     private java.lang.Long _ticketId;
     
     /* 操作类型: ACTION_TYPE */
-    private java.lang.Integer _actionType;
+    private java.lang.String _actionType;
     
     /* 起始状态: FROM_STATUS */
-    private java.lang.Integer _fromStatus;
+    private java.lang.String _fromStatus;
     
     /* 目标状态: TO_STATUS */
-    private java.lang.Integer _toStatus;
+    private java.lang.String _toStatus;
     
     /* 操作人: OPERATOR_ID */
     private java.lang.String _operatorId;
@@ -314,9 +314,9 @@ public class _ErpCsTicketAction extends DynamicOrmEntity{
             }
         
             case PROP_ID_actionType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_actionType));
                }
                setActionType(typedValue);
@@ -324,9 +324,9 @@ public class _ErpCsTicketAction extends DynamicOrmEntity{
             }
         
             case PROP_ID_fromStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_fromStatus));
                }
                setFromStatus(typedValue);
@@ -334,9 +334,9 @@ public class _ErpCsTicketAction extends DynamicOrmEntity{
             }
         
             case PROP_ID_toStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_toStatus));
                }
                setToStatus(typedValue);
@@ -448,21 +448,21 @@ public class _ErpCsTicketAction extends DynamicOrmEntity{
         
             case PROP_ID_actionType:{
                onInitProp(propId);
-               this._actionType = (java.lang.Integer)value;
+               this._actionType = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_fromStatus:{
                onInitProp(propId);
-               this._fromStatus = (java.lang.Integer)value;
+               this._fromStatus = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_toStatus:{
                onInitProp(propId);
-               this._toStatus = (java.lang.Integer)value;
+               this._toStatus = (java.lang.String)value;
                
                break;
             }
@@ -570,7 +570,7 @@ public class _ErpCsTicketAction extends DynamicOrmEntity{
     /**
      * 操作类型: ACTION_TYPE
      */
-    public final java.lang.Integer getActionType(){
+    public final java.lang.String getActionType(){
          onPropGet(PROP_ID_actionType);
          return _actionType;
     }
@@ -578,7 +578,7 @@ public class _ErpCsTicketAction extends DynamicOrmEntity{
     /**
      * 操作类型: ACTION_TYPE
      */
-    public final void setActionType(java.lang.Integer value){
+    public final void setActionType(java.lang.String value){
         if(onPropSet(PROP_ID_actionType,value)){
             this._actionType = value;
             internalClearRefs(PROP_ID_actionType);
@@ -589,7 +589,7 @@ public class _ErpCsTicketAction extends DynamicOrmEntity{
     /**
      * 起始状态: FROM_STATUS
      */
-    public final java.lang.Integer getFromStatus(){
+    public final java.lang.String getFromStatus(){
          onPropGet(PROP_ID_fromStatus);
          return _fromStatus;
     }
@@ -597,7 +597,7 @@ public class _ErpCsTicketAction extends DynamicOrmEntity{
     /**
      * 起始状态: FROM_STATUS
      */
-    public final void setFromStatus(java.lang.Integer value){
+    public final void setFromStatus(java.lang.String value){
         if(onPropSet(PROP_ID_fromStatus,value)){
             this._fromStatus = value;
             internalClearRefs(PROP_ID_fromStatus);
@@ -608,7 +608,7 @@ public class _ErpCsTicketAction extends DynamicOrmEntity{
     /**
      * 目标状态: TO_STATUS
      */
-    public final java.lang.Integer getToStatus(){
+    public final java.lang.String getToStatus(){
          onPropGet(PROP_ID_toStatus);
          return _toStatus;
     }
@@ -616,7 +616,7 @@ public class _ErpCsTicketAction extends DynamicOrmEntity{
     /**
      * 目标状态: TO_STATUS
      */
-    public final void setToStatus(java.lang.Integer value){
+    public final void setToStatus(java.lang.String value){
         if(onPropSet(PROP_ID_toStatus,value)){
             this._toStatus = value;
             internalClearRefs(PROP_ID_toStatus);

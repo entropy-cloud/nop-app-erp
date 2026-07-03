@@ -31,13 +31,13 @@
                 <col id="parentId" ui:number="true" sortable="true"/>
 
                 <!--科目类别-->
-                <col id="subjectClass" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="subjectClass" mandatory="true" sortable="true"/>
 
                 <!--余额方向-->
-                <col id="direction" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="direction" mandatory="true" sortable="true"/>
 
                 <!--余额类型-->
-                <col id="balanceType" ui:number="true" sortable="true"/>
+                <col id="balanceType" sortable="true"/>
 
                 <!--核算币种-->
                 <col id="currencyId" ui:number="true" sortable="true"/>
@@ -67,7 +67,7 @@
                 <col id="isLeaf" sortable="true"/>
 
                 <!--状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>

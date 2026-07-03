@@ -1,19 +1,19 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 维护计划类型
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 预防性维护
-    value: 10
+    value: PREVENTIVE
     description: 
   
   - label: 预测性维护
-    value: 20
+    value: PREDICTIVE
     description: 
   
   - label: 校准
-    value: 30
+    value: CALIBRATION
     description: 
   

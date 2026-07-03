@@ -47,11 +47,11 @@
         </prop>
         <prop name="state" displayName="状态" propId="7" i18n-en:displayName="State" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-b2b/edi-doc-state"/>
+            <schema type="java.lang.String" precision="20" dict="erp-b2b/edi-doc-state"/>
         </prop>
         <prop name="blockingLevel" displayName="阻断级别" propId="8" i18n-en:displayName="Blocking Level" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="10">
-            <schema type="java.lang.Integer" dict="erp-b2b/blocking-level"/>
+            <schema type="java.lang.String" precision="20" dict="erp-b2b/blocking-level"/>
         </prop>
         <prop name="error" displayName="错误信息" propId="9" i18n-en:displayName="Error Message" queryable="true"
               sortable="true" insertable="true" updatable="true">

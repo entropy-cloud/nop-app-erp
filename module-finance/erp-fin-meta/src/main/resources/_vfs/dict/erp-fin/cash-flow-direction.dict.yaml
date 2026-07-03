@@ -1,15 +1,15 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 现金流方向
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 流入
-    value: 10
+    value: INFLOW
     description: 
   
   - label: 流出
-    value: 20
+    value: OUTFLOW
     description: 
   

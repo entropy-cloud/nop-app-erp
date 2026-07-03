@@ -1,19 +1,19 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 科目余额类型
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 借余
-    value: 10
+    value: DEBIT
     description: 
   
   - label: 贷余
-    value: 20
+    value: CREDIT
     description: 
   
   - label: 借贷双余
-    value: 30
+    value: BOTH
     description: 
   

@@ -41,16 +41,16 @@
         }
 
 
-        private Integer _actionType;
+        private String _actionType;
 
     
         @PropMeta(propId=3)
     
-        public Integer getActionType(){
+        public String getActionType(){
             return _actionType;
         }
 
-        public void setActionType(Integer value){
+        public void setActionType(String value){
             this._actionType = value;
         }
 
@@ -109,16 +109,16 @@
         }
 
 
-        private Integer _status;
+        private String _status;
 
     
         @PropMeta(propId=7)
     
-        public Integer getStatus(){
+        public String getStatus(){
             return _status;
         }
 
-        public void setStatus(Integer value){
+        public void setStatus(String value){
             this._status = value;
         }
 

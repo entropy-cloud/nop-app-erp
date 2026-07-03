@@ -68,16 +68,16 @@
         }
 
 
-        private Integer _advanceType;
+        private String _advanceType;
 
     
         @PropMeta(propId=5)
     
-        public Integer getAdvanceType(){
+        public String getAdvanceType(){
             return _advanceType;
         }
 
-        public void setAdvanceType(Integer value){
+        public void setAdvanceType(String value){
             this._advanceType = value;
         }
 
@@ -194,30 +194,30 @@
         }
 
 
-        private Integer _docStatus;
+        private String _docStatus;
 
     
         @PropMeta(propId=14)
     
-        public Integer getDocStatus(){
+        public String getDocStatus(){
             return _docStatus;
         }
 
-        public void setDocStatus(Integer value){
+        public void setDocStatus(String value){
             this._docStatus = value;
         }
 
 
-        private Integer _approveStatus;
+        private String _approveStatus;
 
     
         @PropMeta(propId=15)
     
-        public Integer getApproveStatus(){
+        public String getApproveStatus(){
             return _approveStatus;
         }
 
-        public void setApproveStatus(Integer value){
+        public void setApproveStatus(String value){
             this._approveStatus = value;
         }
 

@@ -1,23 +1,23 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 检验类型
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 来料检验
-    value: 10
+    value: INCOMING
     description: 
   
   - label: 制程检验
-    value: 20
+    value: IN_PROCESS
     description: 
   
   - label: 完工检验
-    value: 30
+    value: FINAL
     description: 
   
   - label: 出货检验
-    value: 40
+    value: OUTGOING
     description: 
   

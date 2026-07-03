@@ -3,6 +3,7 @@ package app.erp.prj.service.cost;
 import app.erp.fin.biz.IErpFinExpenseClaimBiz;
 import app.erp.fin.dao.entity.ErpFinExpenseClaim;
 import app.erp.fin.dao.entity.ErpFinExpenseClaimLine;
+import app.erp.fin.service.ErpFinConstants;
 import app.erp.prj.dao.entity.ErpPrjCostCollection;
 import app.erp.prj.dao.entity.ErpPrjCostCollectionLine;
 import app.erp.prj.dao.entity.ErpPrjProject;
@@ -19,6 +20,7 @@ import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
@@ -37,10 +39,10 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  */
 public class ExpenseCostAggregator {
 
-    /** finance 域审核通过状态值（对齐 ErpFinConstants.APPROVE_STATUS_APPROVED=30）。 */
-    private static final int FIN_APPROVE_STATUS_APPROVED = 30;
-    /** finance 域单据作废状态值（对齐 ErpFinConstants.DOC_STATUS_CANCELLED=50）。 */
-    private static final int FIN_DOC_STATUS_CANCELLED = 50;
+    /** finance 域审核通过状态值（对齐 ErpFinConstants.APPROVE_STATUS_APPROVED）。 */
+    private static final String FIN_APPROVE_STATUS_APPROVED = ErpFinConstants.APPROVE_STATUS_APPROVED;
+    /** finance 域单据作废状态值（对齐 ErpFinConstants.DOC_STATUS_CANCELLED）。 */
+    private static final String FIN_DOC_STATUS_CANCELLED = ErpFinConstants.DOC_STATUS_CANCELLED;
 
     @Inject
     IDaoProvider daoProvider;
@@ -148,7 +150,7 @@ public class ExpenseCostAggregator {
         List<ErpFinExpenseClaim> all = expenseClaimBiz.findList(q, null, context);
         List<ErpFinExpenseClaim> result = new java.util.ArrayList<>(all.size());
         for (ErpFinExpenseClaim c : all) {
-            if (c.getDocStatus() == null || c.getDocStatus() != FIN_DOC_STATUS_CANCELLED) {
+            if (c.getDocStatus() == null || !Objects.equals(c.getDocStatus(), FIN_DOC_STATUS_CANCELLED)) {
                 result.add(c);
             }
         }

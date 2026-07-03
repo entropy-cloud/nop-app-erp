@@ -13,6 +13,7 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 /**
  * 供应商评分卡 BizModel。承载周期评分定稿引擎（{@code docs/design/purchase/supplier-evaluation.md §业务规则2/3/4}）。
@@ -40,7 +41,7 @@ public class ErpPurSupplierScorecardBizModel extends CrudBizModel<ErpPurSupplier
     @BizMutation
     public ErpPurSupplierScorecard finalizeScorecard(@Name("scorecardId") Long scorecardId, IServiceContext context) {
         ErpPurSupplierScorecard scorecard = requireScorecard(scorecardId);
-        if (scorecard.getStatus() != null && scorecard.getStatus() == ErpPurConstants.SCORECARD_STATUS_FINALIZED) {
+        if (scorecard.getStatus() != null && Objects.equals(scorecard.getStatus(), ErpPurConstants.SCORECARD_STATUS_FINALIZED)) {
             throw new NopException(ErpPurErrors.ERR_SCORECARD_ALREADY_FINALIZED)
                     .param(ErpPurErrors.ARG_SCORECARD_ID, scorecardId);
         }
@@ -50,7 +51,7 @@ public class ErpPurSupplierScorecardBizModel extends CrudBizModel<ErpPurSupplier
         dao().updateEntity(scorecard);
 
         // standing=RED → 跨域 AVL SUSPENDED 联动（Phase 3）。Linker 单事务跟随 @BizMutation。
-        if (scorecard.getStanding() != null && scorecard.getStanding() == ErpPurConstants.STANDING_RED) {
+        if (scorecard.getStanding() != null && Objects.equals(scorecard.getStanding(), ErpPurConstants.STANDING_RED)) {
             standingLinker.onScorecardRed(scorecard, context);
         }
         return scorecard;

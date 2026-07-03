@@ -73,7 +73,7 @@ public class ErpFinTemplateAcctDocProvider implements IErpFinAcctDocProvider {
                     .param(ErpFinPostingErrors.ARG_BUSINESS_TYPE, event.getBusinessType());
         }
 
-        Integer voucherType = template.getVoucherType();
+        String voucherType = template.getVoucherType();
         if (voucherType != null) {
             ctx.setVoucherType(voucherType);
         }
@@ -89,7 +89,7 @@ public class ErpFinTemplateAcctDocProvider implements IErpFinAcctDocProvider {
             fact.setAccountKey(line.getAccountKey());
             fact.setAmountKey(line.getAmountKey());
             fact.setMemo(line.getMemoTemplate());
-            fact.setBusinessType(event.getBusinessType().getCode());
+            fact.setBusinessType(event.getBusinessType().name());
             facts.add(fact);
         }
         return facts;
@@ -97,7 +97,7 @@ public class ErpFinTemplateAcctDocProvider implements IErpFinAcctDocProvider {
 
     private ErpFinVoucherTemplate findTemplate(PostingEvent event) {
         IEntityDao<ErpFinVoucherTemplate> dao = daoProvider.daoFor(ErpFinVoucherTemplate.class);
-        int code = event.getBusinessType().getCode();
+        String code = event.getBusinessType().name();
         Long acctSchemaId = event.getAcctSchemaId();
 
         QueryBean q = new QueryBean();

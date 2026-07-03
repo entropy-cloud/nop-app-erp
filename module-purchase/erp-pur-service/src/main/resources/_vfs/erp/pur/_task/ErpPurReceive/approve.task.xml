@@ -77,7 +77,7 @@
                 }
 
                 let allReceived = purOrder.lines.every(l => l.receivedQty >= l.quantity);
-                purOrder.receiveStatus = allReceived ? 'FULLY_RECEIVED' : 'PARTIALLY_RECEIVED';
+                purOrder.receiveStatus = allReceived ? 'RECEIVED' : 'PARTIAL';
                 erpPurOrderBiz.update(purOrder);
 
                 receive.approveStatus = 'APPROVED';

@@ -11,6 +11,7 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -102,7 +103,7 @@ public class BomExpander {
                 BigDecimal effQty = nz(line.getQuantity()).multiply(scale);
                 ErpMfgBom childBom = findDefaultBomOrNull(line.getMaterialId());
                 if (childBom != null && childBom.getBomType() != null
-                        && childBom.getBomType() == ErpMfgConstants.BOM_TYPE_PHANTOM) {
+                        && Objects.equals(childBom.getBomType(), ErpMfgConstants.BOM_TYPE_PHANTOM)) {
                     // phantom：展开其子件并入当前层级，不产生独立节点
                     expandLines(childBom, effQty, level, path, recurseMfg, nodes);
                 } else if (childBom != null && recurseMfg) {

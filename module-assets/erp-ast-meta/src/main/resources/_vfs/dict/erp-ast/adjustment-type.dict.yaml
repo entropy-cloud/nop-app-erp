@@ -1,15 +1,15 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 价值调整类型
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 减值
-    value: 10
+    value: IMPAIRMENT
     description: 
   
   - label: 重估
-    value: 20
+    value: REVALUATION
     description: 
   

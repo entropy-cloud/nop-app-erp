@@ -21,27 +21,27 @@ public interface ErpPrjConstants {
     String BUDGET_MODE_STRICT = "STRICT";
 
     // ---- project-status ----
-    int PROJECT_STATUS_DRAFT = 10;
-    int PROJECT_STATUS_OPEN = 20;
-    int PROJECT_STATUS_ON_HOLD = 30;
-    int PROJECT_STATUS_COMPLETED = 40;
-    int PROJECT_STATUS_CANCELLED = 50;
+    String PROJECT_STATUS_DRAFT = "DRAFT";
+    String PROJECT_STATUS_OPEN = "OPEN";
+    String PROJECT_STATUS_ON_HOLD = "ON_HOLD";
+    String PROJECT_STATUS_COMPLETED = "COMPLETED";
+    String PROJECT_STATUS_CANCELLED = "CANCELLED";
 
     // ---- task-status ----
-    int TASK_STATUS_TODO = 10;
-    int TASK_STATUS_IN_PROGRESS = 20;
-    int TASK_STATUS_DONE = 30;
-    int TASK_STATUS_BLOCKED = 40;
+    String TASK_STATUS_TODO = "TODO";
+    String TASK_STATUS_IN_PROGRESS = "IN_PROGRESS";
+    String TASK_STATUS_DONE = "DONE";
+    String TASK_STATUS_BLOCKED = "BLOCKED";
 
     // ---- timesheet-status ----
-    int TIMESHEET_STATUS_DRAFT = 10;
-    int TIMESHEET_STATUS_SUBMITTED = 20;
-    int TIMESHEET_STATUS_APPROVED = 30;
+    String TIMESHEET_STATUS_DRAFT = "DRAFT";
+    String TIMESHEET_STATUS_SUBMITTED = "SUBMITTED";
+    String TIMESHEET_STATUS_APPROVED = "APPROVED";
 
     // ---- erp-fin/doc-status（归集头/预算头沿用 finance 单据状态语义） ----
-    int DOC_STATUS_DRAFT = 10;
-    int DOC_STATUS_APPROVED = 20;
-    int DOC_STATUS_CANCELLED = 50;
+    String DOC_STATUS_DRAFT = "DRAFT";
+    String DOC_STATUS_APPROVED = "APPROVED";
+    String DOC_STATUS_CANCELLED = "CANCELLED";
 
     // ---- 成本分类（cost-collection.md §1.3，ErpPrjCostCollectionLine.costCategory 文本） ----
     String COST_CATEGORY_LABOR = "LABOR";

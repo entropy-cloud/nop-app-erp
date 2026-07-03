@@ -3,7 +3,7 @@
   "employeeId": 0,
   "planName": "",
   "targetDate": "2000-01-01",
-  "status": 0,
+  "status": "",
   "status_label": "",
   "orgId": 0,
   "remark": "",

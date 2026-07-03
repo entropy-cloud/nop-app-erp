@@ -37,11 +37,11 @@ public class _ErpB2bEdiFormat extends DynamicOrmEntity{
     public static final String PROP_NAME_formatName = "formatName";
     public static final int PROP_ID_formatName = 4;
     
-    /* EDI 标准: FORMAT_STANDARD INTEGER */
+    /* EDI 标准: FORMAT_STANDARD VARCHAR */
     public static final String PROP_NAME_formatStandard = "formatStandard";
     public static final int PROP_ID_formatStandard = 5;
     
-    /* 方向: DIRECTION INTEGER */
+    /* 方向: DIRECTION VARCHAR */
     public static final String PROP_NAME_direction = "direction";
     public static final int PROP_ID_direction = 6;
     
@@ -157,10 +157,10 @@ public class _ErpB2bEdiFormat extends DynamicOrmEntity{
     private java.lang.String _formatName;
     
     /* EDI 标准: FORMAT_STANDARD */
-    private java.lang.Integer _formatStandard;
+    private java.lang.String _formatStandard;
     
     /* 方向: DIRECTION */
-    private java.lang.Integer _direction;
+    private java.lang.String _direction;
     
     /* 需要 WebService: NEEDS_WEB_SERVICE */
     private java.lang.Integer _needsWebService;
@@ -360,9 +360,9 @@ public class _ErpB2bEdiFormat extends DynamicOrmEntity{
             }
         
             case PROP_ID_formatStandard:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_formatStandard));
                }
                setFormatStandard(typedValue);
@@ -370,9 +370,9 @@ public class _ErpB2bEdiFormat extends DynamicOrmEntity{
             }
         
             case PROP_ID_direction:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_direction));
                }
                setDirection(typedValue);
@@ -508,14 +508,14 @@ public class _ErpB2bEdiFormat extends DynamicOrmEntity{
         
             case PROP_ID_formatStandard:{
                onInitProp(propId);
-               this._formatStandard = (java.lang.Integer)value;
+               this._formatStandard = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_direction:{
                onInitProp(propId);
-               this._direction = (java.lang.Integer)value;
+               this._direction = (java.lang.String)value;
                
                break;
             }
@@ -668,7 +668,7 @@ public class _ErpB2bEdiFormat extends DynamicOrmEntity{
     /**
      * EDI 标准: FORMAT_STANDARD
      */
-    public final java.lang.Integer getFormatStandard(){
+    public final java.lang.String getFormatStandard(){
          onPropGet(PROP_ID_formatStandard);
          return _formatStandard;
     }
@@ -676,7 +676,7 @@ public class _ErpB2bEdiFormat extends DynamicOrmEntity{
     /**
      * EDI 标准: FORMAT_STANDARD
      */
-    public final void setFormatStandard(java.lang.Integer value){
+    public final void setFormatStandard(java.lang.String value){
         if(onPropSet(PROP_ID_formatStandard,value)){
             this._formatStandard = value;
             internalClearRefs(PROP_ID_formatStandard);
@@ -687,7 +687,7 @@ public class _ErpB2bEdiFormat extends DynamicOrmEntity{
     /**
      * 方向: DIRECTION
      */
-    public final java.lang.Integer getDirection(){
+    public final java.lang.String getDirection(){
          onPropGet(PROP_ID_direction);
          return _direction;
     }
@@ -695,7 +695,7 @@ public class _ErpB2bEdiFormat extends DynamicOrmEntity{
     /**
      * 方向: DIRECTION
      */
-    public final void setDirection(java.lang.Integer value){
+    public final void setDirection(java.lang.String value){
         if(onPropSet(PROP_ID_direction,value)){
             this._direction = value;
             internalClearRefs(PROP_ID_direction);

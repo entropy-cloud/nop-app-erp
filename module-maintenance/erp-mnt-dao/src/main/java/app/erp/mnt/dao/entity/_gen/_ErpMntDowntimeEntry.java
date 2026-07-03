@@ -153,7 +153,7 @@ public class _ErpMntDowntimeEntry extends DynamicOrmEntity{
     private java.time.LocalDateTime _endTime;
     
     /* 总分钟数: TOTAL_MINUTES */
-    private java.lang.String _totalMinutes;
+    private java.math.BigDecimal _totalMinutes;
     
     /* 原因: REASON */
     private java.lang.String _reason;
@@ -350,9 +350,9 @@ public class _ErpMntDowntimeEntry extends DynamicOrmEntity{
             }
         
             case PROP_ID_totalMinutes:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_totalMinutes));
                }
                setTotalMinutes(typedValue);
@@ -488,7 +488,7 @@ public class _ErpMntDowntimeEntry extends DynamicOrmEntity{
         
             case PROP_ID_totalMinutes:{
                onInitProp(propId);
-               this._totalMinutes = (java.lang.String)value;
+               this._totalMinutes = (java.math.BigDecimal)value;
                
                break;
             }
@@ -641,7 +641,7 @@ public class _ErpMntDowntimeEntry extends DynamicOrmEntity{
     /**
      * 总分钟数: TOTAL_MINUTES
      */
-    public final java.lang.String getTotalMinutes(){
+    public final java.math.BigDecimal getTotalMinutes(){
          onPropGet(PROP_ID_totalMinutes);
          return _totalMinutes;
     }
@@ -649,7 +649,7 @@ public class _ErpMntDowntimeEntry extends DynamicOrmEntity{
     /**
      * 总分钟数: TOTAL_MINUTES
      */
-    public final void setTotalMinutes(java.lang.String value){
+    public final void setTotalMinutes(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_totalMinutes,value)){
             this._totalMinutes = value;
             internalClearRefs(PROP_ID_totalMinutes);

@@ -43,7 +43,7 @@
                 <col id="macroTicketTypeId" ui:number="true" sortable="true"/>
 
                 <!--自动匹配优先级-->
-                <col id="macroPriority" ui:number="true" sortable="true"/>
+                <col id="macroPriority" sortable="true"/>
 
                 <!--排序-->
                 <col id="sequence" ui:number="true" sortable="true"/>

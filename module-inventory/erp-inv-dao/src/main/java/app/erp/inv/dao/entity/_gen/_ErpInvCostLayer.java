@@ -45,7 +45,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     public static final String PROP_NAME_batchNo = "batchNo";
     public static final int PROP_ID_batchNo = 6;
     
-    /* 计价方法: COST_METHOD INTEGER */
+    /* 计价方法: COST_METHOD VARCHAR */
     public static final String PROP_NAME_costMethod = "costMethod";
     public static final int PROP_ID_costMethod = 7;
     
@@ -223,7 +223,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     private java.lang.String _batchNo;
     
     /* 计价方法: COST_METHOD */
-    private java.lang.Integer _costMethod;
+    private java.lang.String _costMethod;
     
     /* 入库数量: INCOMING_QUANTITY */
     private java.math.BigDecimal _incomingQuantity;
@@ -476,9 +476,9 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
             }
         
             case PROP_ID_costMethod:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_costMethod));
                }
                setCostMethod(typedValue);
@@ -678,7 +678,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
         
             case PROP_ID_costMethod:{
                onInitProp(propId);
-               this._costMethod = (java.lang.Integer)value;
+               this._costMethod = (java.lang.String)value;
                
                break;
             }
@@ -904,7 +904,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * 计价方法: COST_METHOD
      */
-    public final java.lang.Integer getCostMethod(){
+    public final java.lang.String getCostMethod(){
          onPropGet(PROP_ID_costMethod);
          return _costMethod;
     }
@@ -912,7 +912,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * 计价方法: COST_METHOD
      */
-    public final void setCostMethod(java.lang.Integer value){
+    public final void setCostMethod(java.lang.String value){
         if(onPropSet(PROP_ID_costMethod,value)){
             this._costMethod = value;
             internalClearRefs(PROP_ID_costMethod);

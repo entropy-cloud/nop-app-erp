@@ -3,8 +3,8 @@
     data: {
       code: "P-SMOKE-UPDATE",
       name: "冒烟-原始名称",
-      partnerType: 10,
-      status: 10
+      partnerType: "CUSTOMER",
+      status: "ACTIVE"
     }
   }
 }

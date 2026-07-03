@@ -41,7 +41,7 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
     public static final String PROP_NAME_invoiceNo = "invoiceNo";
     public static final int PROP_ID_invoiceNo = 5;
     
-    /* 发票类型: INVOICE_TYPE INTEGER */
+    /* 发票类型: INVOICE_TYPE VARCHAR */
     public static final String PROP_NAME_invoiceType = "invoiceType";
     public static final int PROP_ID_invoiceType = 6;
     
@@ -81,15 +81,15 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
     public static final String PROP_NAME_paidAmount = "paidAmount";
     public static final int PROP_ID_paidAmount = 15;
     
-    /* 单据状态: DOC_STATUS INTEGER */
+    /* 单据状态: DOC_STATUS VARCHAR */
     public static final String PROP_NAME_docStatus = "docStatus";
     public static final int PROP_ID_docStatus = 16;
     
-    /* 审核状态: APPROVE_STATUS INTEGER */
+    /* 审核状态: APPROVE_STATUS VARCHAR */
     public static final String PROP_NAME_approveStatus = "approveStatus";
     public static final int PROP_ID_approveStatus = 17;
     
-    /* 付款进度: PAID_STATUS INTEGER */
+    /* 付款进度: PAID_STATUS VARCHAR */
     public static final String PROP_NAME_paidStatus = "paidStatus";
     public static final int PROP_ID_paidStatus = 18;
     
@@ -274,7 +274,7 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
     private java.lang.String _invoiceNo;
     
     /* 发票类型: INVOICE_TYPE */
-    private java.lang.Integer _invoiceType;
+    private java.lang.String _invoiceType;
     
     /* 发票日期: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
@@ -304,13 +304,13 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
     private java.math.BigDecimal _paidAmount;
     
     /* 单据状态: DOC_STATUS */
-    private java.lang.Integer _docStatus;
+    private java.lang.String _docStatus;
     
     /* 审核状态: APPROVE_STATUS */
-    private java.lang.Integer _approveStatus;
+    private java.lang.String _approveStatus;
     
     /* 付款进度: PAID_STATUS */
-    private java.lang.Integer _paidStatus;
+    private java.lang.String _paidStatus;
     
     /* 已过账: POSTED */
     private java.lang.Boolean _posted;
@@ -574,9 +574,9 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
             }
         
             case PROP_ID_invoiceType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_invoiceType));
                }
                setInvoiceType(typedValue);
@@ -674,9 +674,9 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
             }
         
             case PROP_ID_docStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_docStatus));
                }
                setDocStatus(typedValue);
@@ -684,9 +684,9 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
             }
         
             case PROP_ID_approveStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_approveStatus));
                }
                setApproveStatus(typedValue);
@@ -694,9 +694,9 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
             }
         
             case PROP_ID_paidStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_paidStatus));
                }
                setPaidStatus(typedValue);
@@ -869,7 +869,7 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
         
             case PROP_ID_invoiceType:{
                onInitProp(propId);
-               this._invoiceType = (java.lang.Integer)value;
+               this._invoiceType = (java.lang.String)value;
                
                break;
             }
@@ -939,21 +939,21 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
         
             case PROP_ID_docStatus:{
                onInitProp(propId);
-               this._docStatus = (java.lang.Integer)value;
+               this._docStatus = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_approveStatus:{
                onInitProp(propId);
-               this._approveStatus = (java.lang.Integer)value;
+               this._approveStatus = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_paidStatus:{
                onInitProp(propId);
-               this._paidStatus = (java.lang.Integer)value;
+               this._paidStatus = (java.lang.String)value;
                
                break;
             }
@@ -1146,7 +1146,7 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
     /**
      * 发票类型: INVOICE_TYPE
      */
-    public final java.lang.Integer getInvoiceType(){
+    public final java.lang.String getInvoiceType(){
          onPropGet(PROP_ID_invoiceType);
          return _invoiceType;
     }
@@ -1154,7 +1154,7 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
     /**
      * 发票类型: INVOICE_TYPE
      */
-    public final void setInvoiceType(java.lang.Integer value){
+    public final void setInvoiceType(java.lang.String value){
         if(onPropSet(PROP_ID_invoiceType,value)){
             this._invoiceType = value;
             internalClearRefs(PROP_ID_invoiceType);
@@ -1336,7 +1336,7 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
     /**
      * 单据状态: DOC_STATUS
      */
-    public final java.lang.Integer getDocStatus(){
+    public final java.lang.String getDocStatus(){
          onPropGet(PROP_ID_docStatus);
          return _docStatus;
     }
@@ -1344,7 +1344,7 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
     /**
      * 单据状态: DOC_STATUS
      */
-    public final void setDocStatus(java.lang.Integer value){
+    public final void setDocStatus(java.lang.String value){
         if(onPropSet(PROP_ID_docStatus,value)){
             this._docStatus = value;
             internalClearRefs(PROP_ID_docStatus);
@@ -1355,7 +1355,7 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
     /**
      * 审核状态: APPROVE_STATUS
      */
-    public final java.lang.Integer getApproveStatus(){
+    public final java.lang.String getApproveStatus(){
          onPropGet(PROP_ID_approveStatus);
          return _approveStatus;
     }
@@ -1363,7 +1363,7 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
     /**
      * 审核状态: APPROVE_STATUS
      */
-    public final void setApproveStatus(java.lang.Integer value){
+    public final void setApproveStatus(java.lang.String value){
         if(onPropSet(PROP_ID_approveStatus,value)){
             this._approveStatus = value;
             internalClearRefs(PROP_ID_approveStatus);
@@ -1374,7 +1374,7 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
     /**
      * 付款进度: PAID_STATUS
      */
-    public final java.lang.Integer getPaidStatus(){
+    public final java.lang.String getPaidStatus(){
          onPropGet(PROP_ID_paidStatus);
          return _paidStatus;
     }
@@ -1382,7 +1382,7 @@ public class _ErpPurInvoice extends DynamicOrmEntity{
     /**
      * 付款进度: PAID_STATUS
      */
-    public final void setPaidStatus(java.lang.Integer value){
+    public final void setPaidStatus(java.lang.String value){
         if(onPropSet(PROP_ID_paidStatus,value)){
             this._paidStatus = value;
             internalClearRefs(PROP_ID_paidStatus);

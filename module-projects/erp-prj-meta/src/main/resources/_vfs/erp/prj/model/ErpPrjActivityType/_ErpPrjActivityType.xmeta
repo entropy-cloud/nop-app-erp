@@ -33,7 +33,7 @@
         </prop>
         <prop name="costRate" displayName="成本费率" propId="4" i18n-en:displayName="Cost Rate" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="costRate" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="costRate" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="subjectId" displayName="科目" propId="5" i18n-en:displayName="Subject" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="subject">

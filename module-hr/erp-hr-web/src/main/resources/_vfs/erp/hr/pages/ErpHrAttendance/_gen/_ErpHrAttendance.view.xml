@@ -46,7 +46,7 @@
                 <col id="isAbsent" sortable="true"/>
 
                 <!--来源-->
-                <col id="source" ui:number="true" sortable="true"/>
+                <col id="source" sortable="true"/>
 
                 <!--关联休假-->
                 <col id="leaveRequestId" ui:number="true" sortable="true"/>

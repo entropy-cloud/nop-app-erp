@@ -40,7 +40,7 @@
                 <col id="invoiceDate" sortable="true"/>
 
                 <!--开票条款-->
-                <col id="invoiceTerm" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="invoiceTerm" mandatory="true" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

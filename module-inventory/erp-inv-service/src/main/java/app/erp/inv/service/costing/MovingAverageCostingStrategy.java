@@ -29,7 +29,7 @@ public class MovingAverageCostingStrategy implements CostingStrategy {
     IDaoProvider daoProvider;
 
     @Override
-    public int costMethod() {
+    public String costMethod() {
         return ErpInvConstants.COST_METHOD_MOVING_AVERAGE;
     }
 

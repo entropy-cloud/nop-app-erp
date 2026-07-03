@@ -28,7 +28,7 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--默认折旧方法-->
-                <col id="depreciationMethod" ui:number="true" sortable="true"/>
+                <col id="depreciationMethod" sortable="true"/>
 
                 <!--默认使用年限(月)-->
                 <col id="usefulLifeMonths" ui:number="true" sortable="true"/>

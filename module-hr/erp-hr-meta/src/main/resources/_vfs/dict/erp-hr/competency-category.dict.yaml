@@ -1,19 +1,19 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 胜任力分类
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 技能
-    value: 10
+    value: SKILL
     description: 
   
   - label: 行为
-    value: 20
+    value: BEHAVIOR
     description: 
   
   - label: 知识
-    value: 30
+    value: KNOWLEDGE
     description: 
   

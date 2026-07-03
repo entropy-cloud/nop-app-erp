@@ -40,7 +40,7 @@
                 <col id="timeUnit" sortable="true"/>
 
                 <!--效率系数-->
-                <col id="rate" sortable="true"/>
+                <col id="rate" ui:number="true" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

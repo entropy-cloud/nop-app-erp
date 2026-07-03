@@ -1,35 +1,35 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 休假类型
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 年假
-    value: 10
+    value: ANNUAL
     description: 
   
   - label: 病假
-    value: 20
+    value: SICK
     description: 
   
   - label: 事假
-    value: 30
+    value: PERSONAL
     description: 
   
   - label: 婚假
-    value: 40
+    value: MARRIAGE
     description: 
   
   - label: 产假
-    value: 50
+    value: MATERNITY
     description: 
   
   - label: 丧假
-    value: 60
+    value: FUNERAL
     description: 
   
   - label: 调休
-    value: 70
+    value: COMPENSATORY
     description: 
   

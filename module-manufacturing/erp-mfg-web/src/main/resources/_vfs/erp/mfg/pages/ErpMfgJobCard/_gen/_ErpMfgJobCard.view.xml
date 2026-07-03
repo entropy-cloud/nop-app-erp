@@ -40,7 +40,7 @@
                 <col id="scrappedQuantity" ui:number="true" sortable="true"/>
 
                 <!--状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--工作中心-->
                 <col id="workcenterId" ui:number="true" sortable="true"/>

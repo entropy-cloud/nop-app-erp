@@ -9,7 +9,7 @@
   "endDate": "2000-01-01",
   "quarter": 0,
   "isAdjustment": false,
-  "status": 0,
+  "status": "",
   "status_label": "",
   "closedBy": "",
   "closedAt": "2000-01-01 14:00:00",

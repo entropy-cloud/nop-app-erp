@@ -68,16 +68,16 @@
         }
 
 
-        private Integer _direction;
+        private String _direction;
 
     
         @PropMeta(propId=5)
     
-        public Integer getDirection(){
+        public String getDirection(){
             return _direction;
         }
 
-        public void setDirection(Integer value){
+        public void setDirection(String value){
             this._direction = value;
         }
 
@@ -264,16 +264,16 @@
         }
 
 
-        private Integer _status;
+        private String _status;
 
     
         @PropMeta(propId=19)
     
-        public Integer getStatus(){
+        public String getStatus(){
             return _status;
         }
 
-        public void setStatus(Integer value){
+        public void setStatus(String value){
             this._status = value;
         }
 

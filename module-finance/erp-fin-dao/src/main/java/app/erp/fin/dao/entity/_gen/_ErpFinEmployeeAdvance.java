@@ -37,7 +37,7 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
     public static final String PROP_NAME_employeeId = "employeeId";
     public static final int PROP_ID_employeeId = 4;
     
-    /* 借款类型: ADVANCE_TYPE INTEGER */
+    /* 借款类型: ADVANCE_TYPE VARCHAR */
     public static final String PROP_NAME_advanceType = "advanceType";
     public static final int PROP_ID_advanceType = 5;
     
@@ -73,11 +73,11 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
     public static final String PROP_NAME_projectId = "projectId";
     public static final int PROP_ID_projectId = 13;
     
-    /* 单据状态: DOC_STATUS INTEGER */
+    /* 单据状态: DOC_STATUS VARCHAR */
     public static final String PROP_NAME_docStatus = "docStatus";
     public static final int PROP_ID_docStatus = 14;
     
-    /* 审核状态: APPROVE_STATUS INTEGER */
+    /* 审核状态: APPROVE_STATUS VARCHAR */
     public static final String PROP_NAME_approveStatus = "approveStatus";
     public static final int PROP_ID_approveStatus = 15;
     
@@ -250,7 +250,7 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
     private java.lang.Long _employeeId;
     
     /* 借款类型: ADVANCE_TYPE */
-    private java.lang.Integer _advanceType;
+    private java.lang.String _advanceType;
     
     /* 借款日期: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
@@ -277,10 +277,10 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
     private java.lang.Long _projectId;
     
     /* 单据状态: DOC_STATUS */
-    private java.lang.Integer _docStatus;
+    private java.lang.String _docStatus;
     
     /* 审核状态: APPROVE_STATUS */
-    private java.lang.Integer _approveStatus;
+    private java.lang.String _approveStatus;
     
     /* 审核人: APPROVED_BY */
     private java.lang.String _approvedBy;
@@ -525,9 +525,9 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
             }
         
             case PROP_ID_advanceType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_advanceType));
                }
                setAdvanceType(typedValue);
@@ -615,9 +615,9 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
             }
         
             case PROP_ID_docStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_docStatus));
                }
                setDocStatus(typedValue);
@@ -625,9 +625,9 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
             }
         
             case PROP_ID_approveStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_approveStatus));
                }
                setApproveStatus(typedValue);
@@ -793,7 +793,7 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
         
             case PROP_ID_advanceType:{
                onInitProp(propId);
-               this._advanceType = (java.lang.Integer)value;
+               this._advanceType = (java.lang.String)value;
                
                break;
             }
@@ -856,14 +856,14 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
         
             case PROP_ID_docStatus:{
                onInitProp(propId);
-               this._docStatus = (java.lang.Integer)value;
+               this._docStatus = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_approveStatus:{
                onInitProp(propId);
-               this._approveStatus = (java.lang.Integer)value;
+               this._approveStatus = (java.lang.String)value;
                
                break;
             }
@@ -1037,7 +1037,7 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
     /**
      * 借款类型: ADVANCE_TYPE
      */
-    public final java.lang.Integer getAdvanceType(){
+    public final java.lang.String getAdvanceType(){
          onPropGet(PROP_ID_advanceType);
          return _advanceType;
     }
@@ -1045,7 +1045,7 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
     /**
      * 借款类型: ADVANCE_TYPE
      */
-    public final void setAdvanceType(java.lang.Integer value){
+    public final void setAdvanceType(java.lang.String value){
         if(onPropSet(PROP_ID_advanceType,value)){
             this._advanceType = value;
             internalClearRefs(PROP_ID_advanceType);
@@ -1208,7 +1208,7 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
     /**
      * 单据状态: DOC_STATUS
      */
-    public final java.lang.Integer getDocStatus(){
+    public final java.lang.String getDocStatus(){
          onPropGet(PROP_ID_docStatus);
          return _docStatus;
     }
@@ -1216,7 +1216,7 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
     /**
      * 单据状态: DOC_STATUS
      */
-    public final void setDocStatus(java.lang.Integer value){
+    public final void setDocStatus(java.lang.String value){
         if(onPropSet(PROP_ID_docStatus,value)){
             this._docStatus = value;
             internalClearRefs(PROP_ID_docStatus);
@@ -1227,7 +1227,7 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
     /**
      * 审核状态: APPROVE_STATUS
      */
-    public final java.lang.Integer getApproveStatus(){
+    public final java.lang.String getApproveStatus(){
          onPropGet(PROP_ID_approveStatus);
          return _approveStatus;
     }
@@ -1235,7 +1235,7 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
     /**
      * 审核状态: APPROVE_STATUS
      */
-    public final void setApproveStatus(java.lang.Integer value){
+    public final void setApproveStatus(java.lang.String value){
         if(onPropSet(PROP_ID_approveStatus,value)){
             this._approveStatus = value;
             internalClearRefs(PROP_ID_approveStatus);

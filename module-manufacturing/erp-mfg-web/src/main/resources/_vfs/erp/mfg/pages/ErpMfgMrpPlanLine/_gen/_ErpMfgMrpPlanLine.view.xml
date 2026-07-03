@@ -34,7 +34,7 @@
                 <col id="uoMId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--建议类型-->
-                <col id="orderType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orderType" mandatory="true" sortable="true"/>
 
                 <!--毛需求-->
                 <col id="grossRequirement" mandatory="true" ui:number="true" sortable="true"/>

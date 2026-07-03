@@ -42,14 +42,14 @@ public class TestErpFinReverseClose extends PeriodCloseTestSupport {
         assertEquals(ErpFinConstants.MODULE_CLOSE_OPEN, status.getGlStatus(), "GL 模块回开");
         assertEquals(ErpFinConstants.MODULE_CLOSE_OPEN, status.getAssetStatus(), "AST 模块回开");
 
-        assertTrue(hasReversalVoucher("PERIOD-CLOSE-2024-12", ErpFinBusinessType.PERIOD_CLOSE.getCode()),
+        assertTrue(hasReversalVoucher("PERIOD-CLOSE-2024-12", ErpFinBusinessType.PERIOD_CLOSE.name()),
                 "结转凭证已红冲");
 
         period = periodBiz.closePeriod(periodId, CTX);
         assertEquals(ErpFinConstants.PERIOD_STATUS_CLOSED, period.getStatus(), "重新结账成功");
     }
 
-    private boolean hasReversalVoucher(String billCode, int businessType) {
+    private boolean hasReversalVoucher(String billCode, String businessType) {
         return countVouchersByBillCode(billCode, businessType) >= 2;
     }
 }

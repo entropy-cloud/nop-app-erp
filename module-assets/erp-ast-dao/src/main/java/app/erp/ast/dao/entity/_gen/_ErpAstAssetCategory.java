@@ -33,7 +33,7 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
     public static final String PROP_NAME_name = "name";
     public static final int PROP_ID_name = 3;
     
-    /* 默认折旧方法: DEPRECIATION_METHOD INTEGER */
+    /* 默认折旧方法: DEPRECIATION_METHOD VARCHAR */
     public static final String PROP_NAME_depreciationMethod = "depreciationMethod";
     public static final int PROP_ID_depreciationMethod = 4;
     
@@ -180,7 +180,7 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
     private java.lang.String _name;
     
     /* 默认折旧方法: DEPRECIATION_METHOD */
-    private java.lang.Integer _depreciationMethod;
+    private java.lang.String _depreciationMethod;
     
     /* 默认使用年限(月): USEFUL_LIFE_MONTHS */
     private java.lang.Integer _usefulLifeMonths;
@@ -388,9 +388,9 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
             }
         
             case PROP_ID_depreciationMethod:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_depreciationMethod));
                }
                setDepreciationMethod(typedValue);
@@ -559,7 +559,7 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
         
             case PROP_ID_depreciationMethod:{
                onInitProp(propId);
-               this._depreciationMethod = (java.lang.Integer)value;
+               this._depreciationMethod = (java.lang.String)value;
                
                break;
             }
@@ -721,7 +721,7 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
     /**
      * 默认折旧方法: DEPRECIATION_METHOD
      */
-    public final java.lang.Integer getDepreciationMethod(){
+    public final java.lang.String getDepreciationMethod(){
          onPropGet(PROP_ID_depreciationMethod);
          return _depreciationMethod;
     }
@@ -729,7 +729,7 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
     /**
      * 默认折旧方法: DEPRECIATION_METHOD
      */
-    public final void setDepreciationMethod(java.lang.Integer value){
+    public final void setDepreciationMethod(java.lang.String value){
         if(onPropSet(PROP_ID_depreciationMethod,value)){
             this._depreciationMethod = value;
             internalClearRefs(PROP_ID_depreciationMethod);

@@ -257,7 +257,7 @@ public class TestErpInvFifoCosting extends JunitAutoTestCase {
         return req;
     }
 
-    private Map<String, Object> baseReq(Long materialId, Integer moveType) {
+    private Map<String, Object> baseReq(Long materialId, String moveType) {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("moveType", moveType);
         req.put("orgId", ORG_ID);
@@ -339,9 +339,9 @@ public class TestErpInvFifoCosting extends JunitAutoTestCase {
             material.orm_propValueByName("id", id);
             material.setCode("MATF-" + id);
             material.setName("FIFO Material " + id);
-            material.orm_propValueByName("materialType", 10);
+            material.orm_propValueByName("materialType", "GOODS");
             material.setUoMId(UOM_ID);
-            material.setStatus(10);
+            material.setStatus("ACTIVE");
             material.setCostMethod(ErpInvConstants.COST_METHOD_FIFO);
             dao.saveEntity(material);
         });

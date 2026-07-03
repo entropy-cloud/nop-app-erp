@@ -10,7 +10,7 @@ public class InspectionLineResultInput {
     private Long lineId;
     private Integer lineNo;
     private String measuredValue;
-    private Integer result;
+    private String result;
 
     public Long getLineId() {
         return lineId;
@@ -36,11 +36,11 @@ public class InspectionLineResultInput {
         this.measuredValue = measuredValue;
     }
 
-    public Integer getResult() {
+    public String getResult() {
         return result;
     }
 
-    public void setResult(Integer result) {
+    public void setResult(String result) {
         this.result = result;
     }
 

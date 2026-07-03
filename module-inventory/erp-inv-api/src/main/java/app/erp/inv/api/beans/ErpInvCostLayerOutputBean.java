@@ -97,16 +97,16 @@
         }
 
 
-        private Integer _costMethod;
+        private String _costMethod;
 
     
         @PropMeta(propId=7)
     
-        public Integer getCostMethod(){
+        public String getCostMethod(){
             return _costMethod;
         }
 
-        public void setCostMethod(Integer value){
+        public void setCostMethod(String value){
             this._costMethod = value;
         }
 

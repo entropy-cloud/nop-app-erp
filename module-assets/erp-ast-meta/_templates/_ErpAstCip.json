@@ -10,7 +10,7 @@
   "accumulatedCost": 0.0,
   "isCompleted": false,
   "completedAssetId": 0,
-  "status": 0,
+  "status": "",
   "status_label": "",
   "delVersion": 0,
   "version": 0,

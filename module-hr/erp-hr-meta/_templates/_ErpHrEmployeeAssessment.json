@@ -1,11 +1,11 @@
 {
   "id": 0,
   "employeeId": 0,
-  "assessmentType": 0,
+  "assessmentType": "",
   "assessmentType_label": "",
   "assessorId": 0,
   "assessmentDate": "2000-01-01",
-  "status": 0,
+  "status": "",
   "status_label": "",
   "overallScore": 0.0,
   "orgId": 0,

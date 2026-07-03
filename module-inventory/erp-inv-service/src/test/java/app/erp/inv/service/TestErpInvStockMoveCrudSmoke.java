@@ -42,10 +42,10 @@ public class TestErpInvStockMoveCrudSmoke extends JunitAutoTestCase {
         Map<String, String> pre = createPrereqs();
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-INV");
-        headData.put("moveType", 10);
+        headData.put("moveType", "INCOMING");
         headData.put("businessDate", "2026-07-01");
-        headData.put("docStatus", 10);
-        headData.put("approveStatus", 10);
+        headData.put("docStatus", "DRAFT");
+        headData.put("approveStatus", "UNSUBMITTED");
         ApiResponse<?> result = executeRpc(GraphQLOperationType.mutation, "ErpInvStockMove__save",
                 ApiRequest.build(Map.of("data", headData)));
 
@@ -59,10 +59,10 @@ public class TestErpInvStockMoveCrudSmoke extends JunitAutoTestCase {
         Map<String, String> pre = createPrereqs();
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-INV");
-        headData.put("moveType", 10);
+        headData.put("moveType", "INCOMING");
         headData.put("businessDate", "2026-07-01");
-        headData.put("docStatus", 10);
-        headData.put("approveStatus", 10);
+        headData.put("docStatus", "DRAFT");
+        headData.put("approveStatus", "UNSUBMITTED");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpInvStockMove__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -79,10 +79,10 @@ public class TestErpInvStockMoveCrudSmoke extends JunitAutoTestCase {
         Map<String, String> pre = createPrereqs();
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-INV");
-        headData.put("moveType", 10);
+        headData.put("moveType", "INCOMING");
         headData.put("businessDate", "2026-07-01");
-        headData.put("docStatus", 10);
-        headData.put("approveStatus", 10);
+        headData.put("docStatus", "DRAFT");
+        headData.put("approveStatus", "UNSUBMITTED");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpInvStockMove__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -103,10 +103,10 @@ public class TestErpInvStockMoveCrudSmoke extends JunitAutoTestCase {
         Map<String, String> pre = createPrereqs();
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-INV");
-        headData.put("moveType", 10);
+        headData.put("moveType", "INCOMING");
         headData.put("businessDate", "2026-07-01");
-        headData.put("docStatus", 10);
-        headData.put("approveStatus", 10);
+        headData.put("docStatus", "DRAFT");
+        headData.put("approveStatus", "UNSUBMITTED");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpInvStockMove__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -128,10 +128,10 @@ public class TestErpInvStockMoveCrudSmoke extends JunitAutoTestCase {
         Map<String, String> pre = createPrereqs();
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-INV");
-        headData.put("moveType", 10);
+        headData.put("moveType", "INCOMING");
         headData.put("businessDate", "2026-07-01");
-        headData.put("docStatus", 10);
-        headData.put("approveStatus", 10);
+        headData.put("docStatus", "DRAFT");
+        headData.put("approveStatus", "UNSUBMITTED");
         ApiResponse<?> head = executeRpc(GraphQLOperationType.mutation, "ErpInvStockMove__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_saveHead_response.json5", head);
@@ -167,9 +167,9 @@ Map<String, Object> d_uom = new LinkedHashMap<>();
         Map<String, Object> d_material = new LinkedHashMap<>();
         d_material.put("code", "SMOKE-MAT");
         d_material.put("name", "冒烟物料");
-        d_material.put("materialType", 10);
+        d_material.put("materialType", "GOODS");
         d_material.put("uoMId", ids.get("uom"));
-        d_material.put("status", 10);
+        d_material.put("status", "ACTIVE");
         ids.put("material", String.valueOf(((Map<?, ?>) executeRpc(GraphQLOperationType.mutation, "ErpMdMaterial__save", ApiRequest.build(Map.of("data", d_material))).getData()).get("id")));
         return ids;
     }

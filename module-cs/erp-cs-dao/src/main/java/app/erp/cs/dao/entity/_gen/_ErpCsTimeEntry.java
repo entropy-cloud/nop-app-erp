@@ -65,7 +65,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     public static final String PROP_NAME_description = "description";
     public static final int PROP_ID_description = 11;
     
-    /* 审批状态: APPROVAL_STATUS INTEGER */
+    /* 审批状态: APPROVAL_STATUS VARCHAR */
     public static final String PROP_NAME_approvalStatus = "approvalStatus";
     public static final int PROP_ID_approvalStatus = 12;
     
@@ -85,7 +85,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     public static final String PROP_NAME_taskId = "taskId";
     public static final int PROP_ID_taskId = 16;
     
-    /* 来源: SOURCE INTEGER */
+    /* 来源: SOURCE VARCHAR */
     public static final String PROP_NAME_source = "source";
     public static final int PROP_ID_source = 17;
     
@@ -237,7 +237,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     private java.lang.String _description;
     
     /* 审批状态: APPROVAL_STATUS */
-    private java.lang.Integer _approvalStatus;
+    private java.lang.String _approvalStatus;
     
     /* 审批人: APPROVED_BY_ID */
     private java.lang.String _approvedById;
@@ -252,7 +252,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     private java.lang.Long _taskId;
     
     /* 来源: SOURCE */
-    private java.lang.Integer _source;
+    private java.lang.String _source;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -537,9 +537,9 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
             }
         
             case PROP_ID_approvalStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_approvalStatus));
                }
                setApprovalStatus(typedValue);
@@ -587,9 +587,9 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
             }
         
             case PROP_ID_source:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_source));
                }
                setSource(typedValue);
@@ -744,7 +744,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
         
             case PROP_ID_approvalStatus:{
                onInitProp(propId);
-               this._approvalStatus = (java.lang.Integer)value;
+               this._approvalStatus = (java.lang.String)value;
                
                break;
             }
@@ -779,7 +779,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
         
             case PROP_ID_source:{
                onInitProp(propId);
-               this._source = (java.lang.Integer)value;
+               this._source = (java.lang.String)value;
                
                break;
             }
@@ -1044,7 +1044,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     /**
      * 审批状态: APPROVAL_STATUS
      */
-    public final java.lang.Integer getApprovalStatus(){
+    public final java.lang.String getApprovalStatus(){
          onPropGet(PROP_ID_approvalStatus);
          return _approvalStatus;
     }
@@ -1052,7 +1052,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     /**
      * 审批状态: APPROVAL_STATUS
      */
-    public final void setApprovalStatus(java.lang.Integer value){
+    public final void setApprovalStatus(java.lang.String value){
         if(onPropSet(PROP_ID_approvalStatus,value)){
             this._approvalStatus = value;
             internalClearRefs(PROP_ID_approvalStatus);
@@ -1139,7 +1139,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     /**
      * 来源: SOURCE
      */
-    public final java.lang.Integer getSource(){
+    public final java.lang.String getSource(){
          onPropGet(PROP_ID_source);
          return _source;
     }
@@ -1147,7 +1147,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     /**
      * 来源: SOURCE
      */
-    public final void setSource(java.lang.Integer value){
+    public final void setSource(java.lang.String value){
         if(onPropSet(PROP_ID_source,value)){
             this._source = value;
             internalClearRefs(PROP_ID_source);

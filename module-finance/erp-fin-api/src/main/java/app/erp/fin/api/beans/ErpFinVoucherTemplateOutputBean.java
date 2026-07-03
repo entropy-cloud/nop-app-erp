@@ -70,16 +70,16 @@
         }
 
 
-        private Integer _businessType;
+        private String _businessType;
 
     
         @PropMeta(propId=5)
     
-        public Integer getBusinessType(){
+        public String getBusinessType(){
             return _businessType;
         }
 
-        public void setBusinessType(Integer value){
+        public void setBusinessType(String value){
             this._businessType = value;
         }
 
@@ -96,16 +96,16 @@
         }
 
 
-        private Integer _voucherType;
+        private String _voucherType;
 
     
         @PropMeta(propId=6)
     
-        public Integer getVoucherType(){
+        public String getVoucherType(){
             return _voucherType;
         }
 
-        public void setVoucherType(Integer value){
+        public void setVoucherType(String value){
             this._voucherType = value;
         }
 

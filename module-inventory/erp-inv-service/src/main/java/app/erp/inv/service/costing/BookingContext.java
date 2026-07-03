@@ -21,7 +21,7 @@ public interface BookingContext {
 
     void writeLedger(ErpInvStockMove move, ErpInvStockMoveLine line, Long acctSchemaId,
                      ErpInvStockBalance balance, Long warehouseId, Long locationId,
-                     BigDecimal signedQty, BigDecimal unitCost, BigDecimal signedTotalCost, int costMethod);
+                     BigDecimal signedQty, BigDecimal unitCost, BigDecimal signedTotalCost, String costMethod);
 
     void recomputeAvailable(ErpInvStockBalance balance);
 

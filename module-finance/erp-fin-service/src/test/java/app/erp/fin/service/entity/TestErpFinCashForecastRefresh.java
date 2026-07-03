@@ -83,7 +83,7 @@ public class TestErpFinCashForecastRefresh extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private void seedArApItem(Long partnerId, int direction, String sourceBillType, String sourceBillCode,
+    private void seedArApItem(Long partnerId, String direction, String sourceBillType, String sourceBillCode,
                               LocalDate dueDate, BigDecimal amount) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem item = new ErpFinArApItem();
@@ -108,7 +108,7 @@ public class TestErpFinCashForecastRefresh extends JunitAutoTestCase {
         dao.saveEntity(item);
     }
 
-    private void seedReceivable(String code, Integer status, BigDecimal amount, LocalDate dueDate) {
+    private void seedReceivable(String code, String status, BigDecimal amount, LocalDate dueDate) {
         IEntityDao<ErpFinNotesReceivable> dao = daoProvider.daoFor(ErpFinNotesReceivable.class);
         ErpFinNotesReceivable note = new ErpFinNotesReceivable();
         note.setCode(code);
@@ -125,7 +125,7 @@ public class TestErpFinCashForecastRefresh extends JunitAutoTestCase {
         dao.saveEntity(note);
     }
 
-    private void seedPayable(String code, Integer status, BigDecimal amount, LocalDate dueDate) {
+    private void seedPayable(String code, String status, BigDecimal amount, LocalDate dueDate) {
         IEntityDao<ErpFinNotesPayable> dao = daoProvider.daoFor(ErpFinNotesPayable.class);
         ErpFinNotesPayable note = new ErpFinNotesPayable();
         note.setCode(code);
@@ -142,7 +142,7 @@ public class TestErpFinCashForecastRefresh extends JunitAutoTestCase {
         dao.saveEntity(note);
     }
 
-    private List<ErpFinCashForecast> findByDirection(int direction) {
+    private List<ErpFinCashForecast> findByDirection(String direction) {
         IEntityDao<ErpFinCashForecast> dao = daoProvider.daoFor(ErpFinCashForecast.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("direction", direction));

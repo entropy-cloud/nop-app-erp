@@ -73,7 +73,7 @@ public class _ErpPrjProject extends DynamicOrmEntity{
     public static final String PROP_NAME_billedAmount = "billedAmount";
     public static final int PROP_ID_billedAmount = 13;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 14;
     
@@ -248,7 +248,7 @@ public class _ErpPrjProject extends DynamicOrmEntity{
     private java.time.LocalDate _endDate;
     
     /* 预算总额: BUDGET */
-    private java.lang.String _budget;
+    private java.math.BigDecimal _budget;
     
     /* 已承诺成本: COMMITTED_COST */
     private java.math.BigDecimal _committedCost;
@@ -260,7 +260,7 @@ public class _ErpPrjProject extends DynamicOrmEntity{
     private java.math.BigDecimal _billedAmount;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 项目经理(职员): MANAGER_ID */
     private java.lang.Long _managerId;
@@ -528,9 +528,9 @@ public class _ErpPrjProject extends DynamicOrmEntity{
             }
         
             case PROP_ID_budget:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_budget));
                }
                setBudget(typedValue);
@@ -568,9 +568,9 @@ public class _ErpPrjProject extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -731,7 +731,7 @@ public class _ErpPrjProject extends DynamicOrmEntity{
         
             case PROP_ID_budget:{
                onInitProp(propId);
-               this._budget = (java.lang.String)value;
+               this._budget = (java.math.BigDecimal)value;
                
                break;
             }
@@ -759,7 +759,7 @@ public class _ErpPrjProject extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -1000,7 +1000,7 @@ public class _ErpPrjProject extends DynamicOrmEntity{
     /**
      * 预算总额: BUDGET
      */
-    public final java.lang.String getBudget(){
+    public final java.math.BigDecimal getBudget(){
          onPropGet(PROP_ID_budget);
          return _budget;
     }
@@ -1008,7 +1008,7 @@ public class _ErpPrjProject extends DynamicOrmEntity{
     /**
      * 预算总额: BUDGET
      */
-    public final void setBudget(java.lang.String value){
+    public final void setBudget(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_budget,value)){
             this._budget = value;
             internalClearRefs(PROP_ID_budget);
@@ -1076,7 +1076,7 @@ public class _ErpPrjProject extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -1084,7 +1084,7 @@ public class _ErpPrjProject extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

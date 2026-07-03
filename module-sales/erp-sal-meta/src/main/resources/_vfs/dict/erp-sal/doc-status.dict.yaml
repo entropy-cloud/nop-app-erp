@@ -1,19 +1,19 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 单据状态
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 草稿
-    value: 10
+    value: DRAFT
     description: 
   
   - label: 已生效
-    value: 20
+    value: ACTIVE
     description: 
   
   - label: 已作废
-    value: 30
+    value: CANCELLED
     description: 
   

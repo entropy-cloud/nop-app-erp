@@ -383,86 +383,86 @@ dict:
     erp-cs/time-entry-source: Time Entry Source
 dict.option.label:
   erp-cs/ticket-status:
-    '10': New
-    '20': Assigned
-    '30': In Progress
-    '40': Resolved
-    '50': Closed
-    '60': Cancelled
+    NEW: New
+    ASSIGNED: Assigned
+    IN_PROGRESS: In Progress
+    RESOLVED: Resolved
+    CLOSED: Closed
+    CANCELLED: Cancelled
   erp-cs/ticket-priority:
-    '10': Low
-    '20': Normal
-    '30': High
-    '40': Urgent
+    LOW: Low
+    NORMAL: Normal
+    HIGH: High
+    URGENT: Urgent
   erp-cs/ticket-source:
-    '10': Phone
-    '20': Email
-    '30': Portal
-    '40': Chat
-    '50': Social Media
+    PHONE: Phone
+    EMAIL: Email
+    PORTAL: Portal
+    CHAT: Chat
+    SOCIAL: Social Media
   erp-cs/ticket-type:
-    '10': Complaint
-    '20': Inquiry
-    '30': Repair
-    '40': Return/Exchange
-    '99': Other
+    COMPLAINT: Complaint
+    INQUIRY: Inquiry
+    REPAIR: Repair
+    RETURN: Return/Exchange
+    OTHER: Other
   erp-cs/sla-policy:
-    '10': Urgent 4H
-    '20': High 8H
-    '30': Normal 24H
-    '40': Low 48H
+    URGENT_4H: Urgent 4H
+    HIGH_8H: High 8H
+    NORMAL_24H: Normal 24H
+    LOW_48H: Low 48H
   erp-cs/action-type:
-    '10': Assign
-    '20': Note
-    '30': Attachment
-    '40': Escalate
-    '50': Close
-    '60': Cancel
+    ASSIGN: Assign
+    NOTE: Note
+    ATTACH: Attachment
+    ESCALATE: Escalate
+    CLOSE: Close
+    CANCEL: Cancel
   erp-cs/doc-status:
-    '10': Draft
-    '20': Effective
-    '30': Voided
+    DRAFT: Draft
+    ACTIVE: Effective
+    CANCELLED: Voided
   erp-cs/approve-status:
-    '10': Unsubmitted
-    '20': Submitted
-    '30': Approved
-    '40': Rejected
+    UNSUBMITTED: Unsubmitted
+    SUBMITTED: Submitted
+    APPROVED: Approved
+    REJECTED: Rejected
   erp-cs/survey-channel:
-    '10': Email
-    '20': Phone
-    '30': Portal
-    '40': Chat
+    EMAIL: Email
+    PHONE: Phone
+    PORTAL: Portal
+    CHAT: Chat
   erp-cs/service-type:
-    '10': Warranty
-    '20': Support Contract
-    '30': Pay Per Ticket
+    WARRANTY: Warranty
+    SUPPORT_CONTRACT: Support Contract
+    PAY_PER_TICKET: Pay Per Ticket
   erp-cs/contract-type:
-    '10': Annual
-    '20': Quarterly
-    '30': One Time
+    ANNUAL: Annual
+    QUARTERLY: Quarterly
+    ONE_TIME: One Time
   erp-cs/billing-cycle:
-    '10': Monthly
-    '20': Quarterly
-    '30': Yearly
+    MONTHLY: Monthly
+    QUARTERLY: Quarterly
+    YEARLY: Yearly
   erp-cs/contract-status:
-    '10': Draft
-    '20': Active
-    '30': Expired
-    '40': Cancelled
+    DRAFT: Draft
+    ACTIVE: Active
+    EXPIRED: Expired
+    CANCELLED: Cancelled
   erp-cs/fulfillment-action-type:
-    '10': Create Ticket
-    '20': Assign Team
-    '30': Assign Agent
-    '40': Request Approval
-    '50': Notify Customer
-    '60': Update Status
-    '70': Create Child Ticket
-    '80': Invoke Workflow
-    '90': Close Ticket
+    CREATE_TICKET: Create Ticket
+    ASSIGN_TEAM: Assign Team
+    ASSIGN_AGENT: Assign Agent
+    REQUEST_APPROVAL: Request Approval
+    NOTIFY_CUSTOMER: Notify Customer
+    UPDATE_STATUS: Update Status
+    CREATE_CHILD_TICKET: Create Child Ticket
+    INVOKE_WORKFLOW: Invoke Workflow
+    CLOSE_TICKET: Close Ticket
   erp-cs/time-entry-approve-status:
-    '10': Pending
-    '20': Approved
-    '30': Rejected
+    PENDING: Pending
+    APPROVED: Approved
+    REJECTED: Rejected
   erp-cs/time-entry-source:
-    '10': Manual
-    '20': Timer Import
+    MANUAL: Manual
+    TIMER_IMPORT: Timer Import

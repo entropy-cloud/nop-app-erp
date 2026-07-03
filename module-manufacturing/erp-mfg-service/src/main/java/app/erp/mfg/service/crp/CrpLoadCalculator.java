@@ -15,6 +15,7 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -341,15 +342,15 @@ public class CrpLoadCalculator {
         return total;
     }
 
-    private boolean patternMatches(LocalDate date, Integer pattern) {
-        if (pattern == null || pattern == ErpMfgConstants.WORK_DATE_PATTERN_ALL_WEEK) {
+    private boolean patternMatches(LocalDate date, String pattern) {
+        if (pattern == null || Objects.equals(pattern, ErpMfgConstants.WORK_DATE_PATTERN_ALL_WEEK)) {
             return true;
         }
         DayOfWeek dow = date.getDayOfWeek();
-        if (pattern == ErpMfgConstants.WORK_DATE_PATTERN_WEEKDAYS) {
+        if (Objects.equals(pattern, ErpMfgConstants.WORK_DATE_PATTERN_WEEKDAYS)) {
             return dow != DayOfWeek.SATURDAY && dow != DayOfWeek.SUNDAY;
         }
-        if (pattern == ErpMfgConstants.WORK_DATE_PATTERN_WEEKEND) {
+        if (Objects.equals(pattern, ErpMfgConstants.WORK_DATE_PATTERN_WEEKEND)) {
             return dow == DayOfWeek.SATURDAY || dow == DayOfWeek.SUNDAY;
         }
         return true;

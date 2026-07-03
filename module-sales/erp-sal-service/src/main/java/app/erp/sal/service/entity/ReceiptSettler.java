@@ -12,6 +12,7 @@ import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class ReceiptSettler {
      */
     public ErpSalReceipt settle(ErpSalReceipt receipt, List<SettlementAllocation> allocations) {
         if (receipt.getApproveStatus() == null
-                || receipt.getApproveStatus() != ErpSalConstants.APPROVE_STATUS_APPROVED) {
+                || !Objects.equals(receipt.getApproveStatus(), ErpSalConstants.APPROVE_STATUS_APPROVED)) {
             throw new NopException(ErpSalErrors.ERR_SETTLE_RECEIPT_NOT_APPROVED)
                     .param(ErpSalErrors.ARG_RECEIPT_CODE, receipt.getCode())
                     .param(ErpSalErrors.ARG_CURRENT_STATUS, receipt.getApproveStatus());
@@ -149,7 +150,7 @@ public class ReceiptSettler {
                     .param(ErpSalErrors.ARG_INVOICE_CODE, invoice.getCode());
         }
         if (invoice.getApproveStatus() == null
-                || invoice.getApproveStatus() != ErpSalConstants.APPROVE_STATUS_APPROVED) {
+                || !Objects.equals(invoice.getApproveStatus(), ErpSalConstants.APPROVE_STATUS_APPROVED)) {
             throw new NopException(ErpSalErrors.ERR_SETTLE_INVOICE_NOT_APPROVED)
                     .param(ErpSalErrors.ARG_INVOICE_CODE, invoice.getCode())
                     .param(ErpSalErrors.ARG_CURRENT_STATUS, invoice.getApproveStatus());
@@ -163,7 +164,7 @@ public class ReceiptSettler {
         BigDecimal received = sumInvoiceLines(invoiceId);
         invoice.setReceivedAmount(received);
         BigDecimal withTax = nz(invoice.getTotalAmountWithTax());
-        int status;
+        String status;
         if (received.signum() <= 0) {
             status = ErpSalConstants.RECEIVED_STATUS_UNRECEIVED;
         } else if (received.compareTo(withTax) >= 0) {
@@ -180,7 +181,7 @@ public class ReceiptSettler {
         ErpSalReceipt receipt = daoProvider.daoFor(ErpSalReceipt.class).getEntityById(receiptId);
         BigDecimal settled = sumReceiptLines(receiptId);
         BigDecimal total = nz(receipt.getTotalAmount());
-        int status;
+        String status;
         if (settled.signum() <= 0) {
             status = ErpSalConstants.RECEIVED_STATUS_UNRECEIVED;
         } else if (settled.compareTo(total) >= 0) {

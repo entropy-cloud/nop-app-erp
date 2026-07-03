@@ -49,7 +49,7 @@ public class _ErpInvReservation extends DynamicOrmEntity{
     public static final String PROP_NAME_reservedForPartnerId = "reservedForPartnerId";
     public static final int PROP_ID_reservedForPartnerId = 7;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 8;
     
@@ -179,7 +179,7 @@ public class _ErpInvReservation extends DynamicOrmEntity{
     private java.lang.Long _reservedForPartnerId;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 预留有效期至: VALID_UNTIL */
     private java.time.LocalDateTime _validUntil;
@@ -409,9 +409,9 @@ public class _ErpInvReservation extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -558,7 +558,7 @@ public class _ErpInvReservation extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -761,7 +761,7 @@ public class _ErpInvReservation extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -769,7 +769,7 @@ public class _ErpInvReservation extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

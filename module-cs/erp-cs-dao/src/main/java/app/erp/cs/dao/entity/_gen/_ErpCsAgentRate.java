@@ -33,7 +33,7 @@ public class _ErpCsAgentRate extends DynamicOrmEntity{
     public static final String PROP_NAME_agentId = "agentId";
     public static final int PROP_ID_agentId = 3;
     
-    /* 服务类型: SERVICE_TYPE INTEGER */
+    /* 服务类型: SERVICE_TYPE VARCHAR */
     public static final String PROP_NAME_serviceType = "serviceType";
     public static final int PROP_ID_serviceType = 4;
     
@@ -140,7 +140,7 @@ public class _ErpCsAgentRate extends DynamicOrmEntity{
     private java.lang.Long _agentId;
     
     /* 服务类型: SERVICE_TYPE */
-    private java.lang.Integer _serviceType;
+    private java.lang.String _serviceType;
     
     /* 费率(元/小时): RATE */
     private java.math.BigDecimal _rate;
@@ -324,9 +324,9 @@ public class _ErpCsAgentRate extends DynamicOrmEntity{
             }
         
             case PROP_ID_serviceType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_serviceType));
                }
                setServiceType(typedValue);
@@ -455,7 +455,7 @@ public class _ErpCsAgentRate extends DynamicOrmEntity{
         
             case PROP_ID_serviceType:{
                onInitProp(propId);
-               this._serviceType = (java.lang.Integer)value;
+               this._serviceType = (java.lang.String)value;
                
                break;
             }
@@ -589,7 +589,7 @@ public class _ErpCsAgentRate extends DynamicOrmEntity{
     /**
      * 服务类型: SERVICE_TYPE
      */
-    public final java.lang.Integer getServiceType(){
+    public final java.lang.String getServiceType(){
          onPropGet(PROP_ID_serviceType);
          return _serviceType;
     }
@@ -597,7 +597,7 @@ public class _ErpCsAgentRate extends DynamicOrmEntity{
     /**
      * 服务类型: SERVICE_TYPE
      */
-    public final void setServiceType(java.lang.Integer value){
+    public final void setServiceType(java.lang.String value){
         if(onPropSet(PROP_ID_serviceType,value)){
             this._serviceType = value;
             internalClearRefs(PROP_ID_serviceType);

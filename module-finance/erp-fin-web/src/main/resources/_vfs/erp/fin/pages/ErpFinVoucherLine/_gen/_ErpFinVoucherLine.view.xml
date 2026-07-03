@@ -37,7 +37,7 @@
                 <col id="subjectName" sortable="true"/>
 
                 <!--借贷方向-->
-                <col id="dcDirection" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="dcDirection" mandatory="true" sortable="true"/>
 
                 <!--借方金额(本位币)-->
                 <col id="debitAmount" ui:number="true" sortable="true"/>
@@ -82,7 +82,7 @@
                 <col id="materialId" ui:number="true" sortable="true"/>
 
                 <!--业务类型-->
-                <col id="businessType" ui:number="true" sortable="true"/>
+                <col id="businessType" sortable="true"/>
 
                 <!--成本中心-->
                 <col id="costCenterId" ui:number="true" sortable="true"/>

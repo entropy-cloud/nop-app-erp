@@ -41,7 +41,7 @@ public class _ErpMdMaterialCategory extends DynamicOrmEntity{
     public static final String PROP_NAME_sortNum = "sortNum";
     public static final int PROP_ID_sortNum = 5;
     
-    /* 价格校验级别: PRICE_VALIDATION_LEVEL INTEGER */
+    /* 价格校验级别: PRICE_VALIDATION_LEVEL VARCHAR */
     public static final String PROP_NAME_priceValidationLevel = "priceValidationLevel";
     public static final int PROP_ID_priceValidationLevel = 6;
     
@@ -142,7 +142,7 @@ public class _ErpMdMaterialCategory extends DynamicOrmEntity{
     private java.lang.Integer _sortNum;
     
     /* 价格校验级别: PRICE_VALIDATION_LEVEL */
-    private java.lang.Integer _priceValidationLevel;
+    private java.lang.String _priceValidationLevel;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -334,9 +334,9 @@ public class _ErpMdMaterialCategory extends DynamicOrmEntity{
             }
         
             case PROP_ID_priceValidationLevel:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_priceValidationLevel));
                }
                setPriceValidationLevel(typedValue);
@@ -449,7 +449,7 @@ public class _ErpMdMaterialCategory extends DynamicOrmEntity{
         
             case PROP_ID_priceValidationLevel:{
                onInitProp(propId);
-               this._priceValidationLevel = (java.lang.Integer)value;
+               this._priceValidationLevel = (java.lang.String)value;
                
                break;
             }
@@ -600,7 +600,7 @@ public class _ErpMdMaterialCategory extends DynamicOrmEntity{
     /**
      * 价格校验级别: PRICE_VALIDATION_LEVEL
      */
-    public final java.lang.Integer getPriceValidationLevel(){
+    public final java.lang.String getPriceValidationLevel(){
          onPropGet(PROP_ID_priceValidationLevel);
          return _priceValidationLevel;
     }
@@ -608,7 +608,7 @@ public class _ErpMdMaterialCategory extends DynamicOrmEntity{
     /**
      * 价格校验级别: PRICE_VALIDATION_LEVEL
      */
-    public final void setPriceValidationLevel(java.lang.Integer value){
+    public final void setPriceValidationLevel(java.lang.String value){
         if(onPropSet(PROP_ID_priceValidationLevel,value)){
             this._priceValidationLevel = value;
             internalClearRefs(PROP_ID_priceValidationLevel);

@@ -31,13 +31,13 @@
                 <col id="orgId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--账套性质-->
-                <col id="nature" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="nature" mandatory="true" sortable="true"/>
 
                 <!--本位币-->
                 <col id="functionalCurrencyId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--默认成本方法-->
-                <col id="costingMethod" ui:number="true" sortable="true"/>
+                <col id="costingMethod" sortable="true"/>
 
                 <!--是否调整汇率差异-->
                 <col id="isAdjustCurrency" sortable="true"/>
@@ -46,7 +46,7 @@
                 <col id="isPropagate" sortable="true"/>
 
                 <!--状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>

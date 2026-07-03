@@ -51,7 +51,7 @@ public class ProjectCostAggregator {
             return false;
         }
 
-        BigDecimal amount = parseAmount(timesheet.getCostAmount());
+        BigDecimal amount = nz(timesheet.getCostAmount());
         ErpPrjProject project = loadProject(timesheet.getProjectId());
         Long subjectId = resolveLaborSubjectId(timesheet, project);
 
@@ -185,17 +185,6 @@ public class ProjectCostAggregator {
     private ErpPrjProject loadProject(Long projectId) {
         IEntityDao<ErpPrjProject> dao = daoProvider.daoFor(ErpPrjProject.class);
         return dao.getEntityById(projectId);
-    }
-
-    private BigDecimal parseAmount(String text) {
-        if (text == null || text.trim().isEmpty()) {
-            return BigDecimal.ZERO;
-        }
-        try {
-            return new BigDecimal(text.trim());
-        } catch (NumberFormatException e) {
-            return BigDecimal.ZERO;
-        }
     }
 
     private BigDecimal nz(BigDecimal v) {

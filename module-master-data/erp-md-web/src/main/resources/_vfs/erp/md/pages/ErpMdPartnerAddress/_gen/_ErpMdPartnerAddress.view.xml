@@ -25,7 +25,7 @@
                 <col id="partnerId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--地址类型-->
-                <col id="addressType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="addressType" mandatory="true" sortable="true"/>
 
                 <!--联系人-->
                 <col id="contactPerson" sortable="true"/>

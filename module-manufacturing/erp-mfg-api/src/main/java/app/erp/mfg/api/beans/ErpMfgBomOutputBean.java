@@ -56,16 +56,16 @@
         }
 
 
-        private Integer _bomType;
+        private String _bomType;
 
     
         @PropMeta(propId=4)
     
-        public Integer getBomType(){
+        public String getBomType(){
             return _bomType;
         }
 
-        public void setBomType(Integer value){
+        public void setBomType(String value){
             this._bomType = value;
         }
 
@@ -82,16 +82,16 @@
         }
 
 
-        private Integer _consumption;
+        private String _consumption;
 
     
         @PropMeta(propId=5)
     
-        public Integer getConsumption(){
+        public String getConsumption(){
             return _consumption;
         }
 
-        public void setConsumption(Integer value){
+        public void setConsumption(String value){
             this._consumption = value;
         }
 

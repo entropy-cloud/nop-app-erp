@@ -22,6 +22,7 @@ import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.annotation.Nullable;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -118,7 +119,7 @@ public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IE
         // 强制审批：配置开启时须先 submit（approveStatus=SUBMITTED）
         if (ErpQaConfigs.isRecallRequireApproval()
                 && (recall.getApproveStatus() == null
-                || recall.getApproveStatus() != ErpQaConstants.APPROVE_STATUS_SUBMITTED)) {
+                || !Objects.equals(recall.getApproveStatus(), ErpQaConstants.APPROVE_STATUS_SUBMITTED))) {
             throw new NopException(ErpQaErrors.ERR_RECALL_APPROVAL_REQUIRED)
                     .param(ErpQaErrors.ARG_RECALL_CODE, recall.getCode());
         }
@@ -145,10 +146,10 @@ public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IE
     @BizMutation
     public ErpQaRecall cancel(@Name("recallId") Long recallId, IServiceContext context) {
         ErpQaRecall recall = requireRecall(recallId, context);
-        Integer current = recall.getStatus();
-        if (current == null || (current != ErpQaConstants.RECALL_STATUS_OPEN
-                && current != ErpQaConstants.RECALL_STATUS_APPROVED
-                && current != ErpQaConstants.RECALL_STATUS_IN_PROGRESS)) {
+        String current = recall.getStatus();
+        if (current == null || (!Objects.equals(current, ErpQaConstants.RECALL_STATUS_OPEN)
+                && !Objects.equals(current, ErpQaConstants.RECALL_STATUS_APPROVED)
+                && !Objects.equals(current, ErpQaConstants.RECALL_STATUS_IN_PROGRESS))) {
             throw illegalRecallTransition(recall, current, "OPEN 或 APPROVED 或 IN_PROGRESS");
         }
         recall.setStatus(ErpQaConstants.RECALL_STATUS_CANCELLED);
@@ -190,7 +191,7 @@ public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IE
         requireRecallStatus(recall, ErpQaConstants.RECALL_STATUS_IN_PROGRESS, "IN_PROGRESS");
         for (ErpQaRecallTarget target : loadTargets(recallId, null, context)) {
             if (target.getReturnStatus() != null
-                    && target.getReturnStatus() == ErpQaConstants.RECALL_TARGET_RETURN_RETURNED) {
+                    && Objects.equals(target.getReturnStatus(), ErpQaConstants.RECALL_TARGET_RETURN_RETURNED)) {
                 continue;
             }
             ErpSalReturn salReturn = createSalesReturnFor(recall, target, context);
@@ -292,16 +293,16 @@ public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IE
         return requireEntity(String.valueOf(recallId), null, context);
     }
 
-    private void requireRecallStatus(ErpQaRecall recall, int expected, String expectedLabel) {
-        Integer current = recall.getStatus();
-        if (current == null || current != expected) {
+    private void requireRecallStatus(ErpQaRecall recall, String expected, String expectedLabel) {
+        String current = recall.getStatus();
+        if (current == null || !Objects.equals(current, expected)) {
             throw illegalRecallTransition(recall, current, expectedLabel);
         }
     }
 
-    private void requireApproveStatus(ErpQaRecall recall, int expected, String expectedLabel) {
-        Integer current = recall.getApproveStatus();
-        if (current == null || current != expected) {
+    private void requireApproveStatus(ErpQaRecall recall, String expected, String expectedLabel) {
+        String current = recall.getApproveStatus();
+        if (current == null || !Objects.equals(current, expected)) {
             throw new NopException(ErpQaErrors.ERR_INVALID_RECALL_STATUS_TRANSITION)
                     .param(ErpQaErrors.ARG_RECALL_CODE, recall.getCode())
                     .param(ErpQaErrors.ARG_CURRENT_STATUS, current)
@@ -309,7 +310,7 @@ public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IE
         }
     }
 
-    private NopException illegalRecallTransition(ErpQaRecall recall, Integer current, String expected) {
+    private NopException illegalRecallTransition(ErpQaRecall recall, String current, String expected) {
         return new NopException(ErpQaErrors.ERR_INVALID_RECALL_STATUS_TRANSITION)
                 .param(ErpQaErrors.ARG_RECALL_CODE, recall.getCode())
                 .param(ErpQaErrors.ARG_CURRENT_STATUS, current)
@@ -332,7 +333,7 @@ public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IE
                     recall.setRecallName(asString(value));
                     break;
                 case "triggerType":
-                    recall.setTriggerType(asInt(value));
+                    recall.setTriggerType(asString(value));
                     break;
                 case "sourceNcrId":
                     recall.setSourceNcrId(asLong(value));
@@ -350,7 +351,7 @@ public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IE
                     recall.setRootCause(asString(value));
                     break;
                 case "severityLevel":
-                    recall.setSeverityLevel(asInt(value));
+                    recall.setSeverityLevel(asString(value));
                     break;
                 case "businessDate":
                     recall.setBusinessDate(asLocalDate(value));

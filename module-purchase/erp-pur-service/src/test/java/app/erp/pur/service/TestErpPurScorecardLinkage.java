@@ -63,14 +63,14 @@ public class TestErpPurScorecardLinkage extends JunitAutoTestCase {
 
         ErpMdSupplierApproval approval = findApprovalByPartner(partnerId);
         assertNotNull(approval, "应存在 AVL 记录");
-        assertEquals(40, approval.getStatus(), "standing=RED → AVL status=SUSPENDED(40) 联动生效");
+        assertEquals(ErpPurConstants.APPROVAL_STATUS_SUSPENDED, approval.getStatus(), "standing=RED → AVL status=SUSPENDED(40) 联动生效");
     }
 
     @Test
     public void testSuspendedSupplierCannotQuote() {
         Long partnerId = 9002L;
         seedPartner(partnerId);
-        seedApproval(partnerId, 40); // SUSPENDED
+        seedApproval(partnerId, ErpPurConstants.APPROVAL_STATUS_SUSPENDED); // SUSPENDED
 
         ApiResponse<?> resp = saveQuotation(partnerId);
         assertEquals(ErpPurErrors.ERR_SUPPLIER_NOT_APPROVED.getErrorCode(), resp.getCode(),
@@ -81,7 +81,7 @@ public class TestErpPurScorecardLinkage extends JunitAutoTestCase {
     public void testRejectedSupplierCannotQuote() {
         Long partnerId = 9003L;
         seedPartner(partnerId);
-        seedApproval(partnerId, 50); // REJECTED
+        seedApproval(partnerId, ErpPurConstants.APPROVAL_STATUS_REJECTED); // REJECTED
 
         ApiResponse<?> resp = saveQuotation(partnerId);
         assertEquals(ErpPurErrors.ERR_SUPPLIER_NOT_APPROVED.getErrorCode(), resp.getCode(),
@@ -182,13 +182,13 @@ public class TestErpPurScorecardLinkage extends JunitAutoTestCase {
 
     private void seedApprovedApproval(Long partnerId) {
         seedPartner(partnerId);
-        seedApproval(partnerId, 20); // APPROVED
+        seedApproval(partnerId, "APPROVED"); // APPROVED
     }
 
-    private void seedApproval(Long partnerId, int status) {
+    private void seedApproval(Long partnerId, String status) {
         ErpMdSupplierApproval approval = new ErpMdSupplierApproval();
         approval.setPartnerId(partnerId);
-        approval.setApprovalType(10);
+        approval.setApprovalType("NEW");
         approval.setMaterialCategoryId(7101L);
         approval.setValidFrom(LocalDate.of(2026, 1, 1));
         approval.setValidTo(LocalDate.of(2027, 1, 1));
@@ -203,7 +203,7 @@ public class TestErpPurScorecardLinkage extends JunitAutoTestCase {
             partner.setId(partnerId);
             partner.setCode("SUP-" + partnerId);
             partner.setName("供应商" + partnerId);
-            partner.setPartnerType(20);
+            partner.setPartnerType("SUPPLIER");
             partner.setStatus(ErpPurConstants.PARTNER_STATUS_ACTIVE);
             daoProvider.daoFor(app.erp.md.dao.entity.ErpMdPartner.class).saveEntity(partner);
 

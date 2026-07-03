@@ -6,347 +6,347 @@ public interface _ErpMdDaoConstants {
     /**
      * 物料类型: 商品 
      */
-    int MATERIAL_TYPE_GOODS = 10;
+    String MATERIAL_TYPE_GOODS = "GOODS";
                     
     /**
      * 物料类型: 原材料 
      */
-    int MATERIAL_TYPE_RAW_MATERIAL = 20;
+    String MATERIAL_TYPE_RAW_MATERIAL = "RAW_MATERIAL";
                     
     /**
      * 物料类型: 半成品 
      */
-    int MATERIAL_TYPE_SEMI_PRODUCT = 30;
+    String MATERIAL_TYPE_SEMI_PRODUCT = "SEMI_PRODUCT";
                     
     /**
      * 物料类型: 产成品 
      */
-    int MATERIAL_TYPE_FINISHED_PRODUCT = 40;
+    String MATERIAL_TYPE_FINISHED_PRODUCT = "FINISHED_PRODUCT";
                     
     /**
      * 物料类型: 服务 
      */
-    int MATERIAL_TYPE_SERVICE = 50;
+    String MATERIAL_TYPE_SERVICE = "SERVICE";
                     
     /**
      * 物料类型: 包装物 
      */
-    int MATERIAL_TYPE_PACKAGING = 60;
+    String MATERIAL_TYPE_PACKAGING = "PACKAGING";
                     
     /**
      * 物料类型: 消耗品 
      */
-    int MATERIAL_TYPE_CONSUMABLE = 70;
+    String MATERIAL_TYPE_CONSUMABLE = "CONSUMABLE";
                     
     /**
      * 启用状态: 启用 
      */
-    int ACTIVE_STATUS_ACTIVE = 10;
+    String ACTIVE_STATUS_ACTIVE = "ACTIVE";
                     
     /**
      * 启用状态: 停用 
      */
-    int ACTIVE_STATUS_INACTIVE = 20;
+    String ACTIVE_STATUS_INACTIVE = "INACTIVE";
                     
     /**
      * 存货计价方法: 移动加权平均 
      */
-    int COST_METHOD_MOVING_AVERAGE = 10;
+    String COST_METHOD_MOVING_AVERAGE = "MOVING_AVERAGE";
                     
     /**
      * 存货计价方法: 全月一次加权平均 
      */
-    int COST_METHOD_WEIGHTED_AVERAGE = 20;
+    String COST_METHOD_WEIGHTED_AVERAGE = "WEIGHTED_AVERAGE";
                     
     /**
      * 存货计价方法: 先进先出 
      */
-    int COST_METHOD_FIFO = 30;
+    String COST_METHOD_FIFO = "FIFO";
                     
     /**
      * 存货计价方法: 后进先出 
      */
-    int COST_METHOD_LIFO = 40;
+    String COST_METHOD_LIFO = "LIFO";
                     
     /**
      * 存货计价方法: 标准成本 
      */
-    int COST_METHOD_STANDARD = 50;
+    String COST_METHOD_STANDARD = "STANDARD";
                     
     /**
      * 存货计价方法: 具体辨认(个别计价) 
      */
-    int COST_METHOD_SPECIFIC = 60;
+    String COST_METHOD_SPECIFIC = "SPECIFIC";
                     
     /**
      * 存货计价方法: 批次 
      */
-    int COST_METHOD_BATCH = 70;
+    String COST_METHOD_BATCH = "BATCH";
                     
     /**
      * 价格校验级别: 不校验 
      */
-    int PRICE_VALIDATION_OFF = 10;
+    String PRICE_VALIDATION_OFF = "OFF";
                     
     /**
      * 价格校验级别: 警告放行 
      */
-    int PRICE_VALIDATION_WARN = 20;
+    String PRICE_VALIDATION_WARN = "WARN";
                     
     /**
      * 价格校验级别: 强制拦截 
      */
-    int PRICE_VALIDATION_HARD = 30;
+    String PRICE_VALIDATION_HARD = "HARD";
                     
     /**
      * 往来单位类型: 客户 
      */
-    int PARTNER_TYPE_CUSTOMER = 10;
+    String PARTNER_TYPE_CUSTOMER = "CUSTOMER";
                     
     /**
      * 往来单位类型: 供应商 
      */
-    int PARTNER_TYPE_SUPPLIER = 20;
+    String PARTNER_TYPE_SUPPLIER = "SUPPLIER";
                     
     /**
      * 往来单位类型: 客户且供应商 
      */
-    int PARTNER_TYPE_BOTH = 30;
+    String PARTNER_TYPE_BOTH = "BOTH";
                     
     /**
      * 往来单位类型: 员工(内部往来) 
      */
-    int PARTNER_TYPE_EMPLOYEE = 40;
+    String PARTNER_TYPE_EMPLOYEE = "EMPLOYEE";
                     
     /**
      * 仓库类型: 普通仓 
      */
-    int WAREHOUSE_TYPE_NORMAL = 10;
+    String WAREHOUSE_TYPE_NORMAL = "NORMAL";
                     
     /**
      * 仓库类型: 在途仓 
      */
-    int WAREHOUSE_TYPE_IN_TRANSIT = 20;
+    String WAREHOUSE_TYPE_IN_TRANSIT = "IN_TRANSIT";
                     
     /**
      * 仓库类型: 报废仓 
      */
-    int WAREHOUSE_TYPE_SCRAP = 30;
+    String WAREHOUSE_TYPE_SCRAP = "SCRAP";
                     
     /**
      * 仓库类型: 受托代销仓 
      */
-    int WAREHOUSE_TYPE_CONSIGNMENT_IN = 40;
+    String WAREHOUSE_TYPE_CONSIGNMENT_IN = "CONSIGNMENT_IN";
                     
     /**
      * 仓库类型: 委托代销仓 
      */
-    int WAREHOUSE_TYPE_CONSIGNMENT_OUT = 50;
+    String WAREHOUSE_TYPE_CONSIGNMENT_OUT = "CONSIGNMENT_OUT";
                     
     /**
      * 仓库类型: 保税仓 
      */
-    int WAREHOUSE_TYPE_BONDED = 60;
+    String WAREHOUSE_TYPE_BONDED = "BONDED";
                     
     /**
      * 科目类别: 资产 
      */
-    int SUBJECT_CLASS_ASSET = 10;
+    String SUBJECT_CLASS_ASSET = "ASSET";
                     
     /**
      * 科目类别: 负债 
      */
-    int SUBJECT_CLASS_LIABILITY = 20;
+    String SUBJECT_CLASS_LIABILITY = "LIABILITY";
                     
     /**
      * 科目类别: 权益 
      */
-    int SUBJECT_CLASS_EQUITY = 30;
+    String SUBJECT_CLASS_EQUITY = "EQUITY";
                     
     /**
      * 科目类别: 收入 
      */
-    int SUBJECT_CLASS_INCOME = 40;
+    String SUBJECT_CLASS_INCOME = "INCOME";
                     
     /**
      * 科目类别: 费用 
      */
-    int SUBJECT_CLASS_EXPENSE = 50;
+    String SUBJECT_CLASS_EXPENSE = "EXPENSE";
                     
     /**
      * 科目类别: 成本 
      */
-    int SUBJECT_CLASS_COST = 60;
+    String SUBJECT_CLASS_COST = "COST";
                     
     /**
      * 科目余额方向: 借方 
      */
-    int SUBJECT_DIRECTION_DEBIT = 10;
+    String SUBJECT_DIRECTION_DEBIT = "DEBIT";
                     
     /**
      * 科目余额方向: 贷方 
      */
-    int SUBJECT_DIRECTION_CREDIT = 20;
+    String SUBJECT_DIRECTION_CREDIT = "CREDIT";
                     
     /**
      * 科目余额类型: 借余 
      */
-    int BALANCE_TYPE_DEBIT = 10;
+    String BALANCE_TYPE_DEBIT = "DEBIT";
                     
     /**
      * 科目余额类型: 贷余 
      */
-    int BALANCE_TYPE_CREDIT = 20;
+    String BALANCE_TYPE_CREDIT = "CREDIT";
                     
     /**
      * 科目余额类型: 借贷双余 
      */
-    int BALANCE_TYPE_BOTH = 30;
+    String BALANCE_TYPE_BOTH = "BOTH";
                     
     /**
      * 组织类型: 集团 
      */
-    int ORG_TYPE_GROUP = 10;
+    String ORG_TYPE_GROUP = "GROUP";
                     
     /**
      * 组织类型: 公司 
      */
-    int ORG_TYPE_COMPANY = 20;
+    String ORG_TYPE_COMPANY = "COMPANY";
                     
     /**
      * 组织类型: 分公司 
      */
-    int ORG_TYPE_BRANCH = 30;
+    String ORG_TYPE_BRANCH = "BRANCH";
                     
     /**
      * 组织类型: 部门 
      */
-    int ORG_TYPE_DEPARTMENT = 40;
+    String ORG_TYPE_DEPARTMENT = "DEPARTMENT";
                     
     /**
      * 组织类型: 车间 
      */
-    int ORG_TYPE_WORKSHOP = 50;
+    String ORG_TYPE_WORKSHOP = "WORKSHOP";
                     
     /**
      * 组织类型: 门店 
      */
-    int ORG_TYPE_STORE = 60;
+    String ORG_TYPE_STORE = "STORE";
                     
     /**
      * 核算表性质: 财务账(法定账) 
      */
-    int ACCT_SCHEMA_NATURE_FINANCIAL = 10;
+    String ACCT_SCHEMA_NATURE_FINANCIAL = "FINANCIAL";
                     
     /**
      * 核算表性质: 管理账(内部账) 
      */
-    int ACCT_SCHEMA_NATURE_MANAGEMENT = 20;
+    String ACCT_SCHEMA_NATURE_MANAGEMENT = "MANAGEMENT";
                     
     /**
      * 核算表性质: 税务账 
      */
-    int ACCT_SCHEMA_NATURE_TAX = 30;
+    String ACCT_SCHEMA_NATURE_TAX = "TAX";
                     
     /**
      * 核算表性质: 合并账 
      */
-    int ACCT_SCHEMA_NATURE_CONSOLIDATION = 40;
+    String ACCT_SCHEMA_NATURE_CONSOLIDATION = "CONSOLIDATION";
                     
     /**
      * 核算表性质: 预算账 
      */
-    int ACCT_SCHEMA_NATURE_BUDGET = 50;
+    String ACCT_SCHEMA_NATURE_BUDGET = "BUDGET";
                     
     /**
      * 税种: 增值税 
      */
-    int TAX_TYPE_VAT = 10;
+    String TAX_TYPE_VAT = "VAT";
                     
     /**
      * 税种: 销售税 
      */
-    int TAX_TYPE_SALES_TAX = 20;
+    String TAX_TYPE_SALES_TAX = "SALES_TAX";
                     
     /**
      * 税种: 预提税 
      */
-    int TAX_TYPE_WITHHOLDING = 30;
+    String TAX_TYPE_WITHHOLDING = "WITHHOLDING";
                     
     /**
      * 税种: 关税 
      */
-    int TAX_TYPE_CUSTOMS = 40;
+    String TAX_TYPE_CUSTOMS = "CUSTOMS";
                     
     /**
      * 税种: 其他 
      */
-    int TAX_TYPE_OTHER = 50;
+    String TAX_TYPE_OTHER = "OTHER";
                     
     /**
      * 结算类型: 现金 
      */
-    int SETTLEMENT_TYPE_CASH = 10;
+    String SETTLEMENT_TYPE_CASH = "CASH";
                     
     /**
      * 结算类型: 银行转账 
      */
-    int SETTLEMENT_TYPE_BANK_TRANSFER = 20;
+    String SETTLEMENT_TYPE_BANK_TRANSFER = "BANK_TRANSFER";
                     
     /**
      * 结算类型: 票据 
      */
-    int SETTLEMENT_TYPE_NOTE = 30;
+    String SETTLEMENT_TYPE_NOTE = "NOTE";
                     
     /**
      * 结算类型: 抵扣 
      */
-    int SETTLEMENT_TYPE_OFFSET = 40;
+    String SETTLEMENT_TYPE_OFFSET = "OFFSET";
                     
     /**
      * 结算类型: 在线支付 
      */
-    int SETTLEMENT_TYPE_ONLINE = 50;
+    String SETTLEMENT_TYPE_ONLINE = "ONLINE";
                     
     /**
      * 银行账户类型: 活期 
      */
-    int BANK_ACCOUNT_TYPE_DEMAND = 10;
+    String BANK_ACCOUNT_TYPE_DEMAND = "DEMAND";
                     
     /**
      * 银行账户类型: 定期 
      */
-    int BANK_ACCOUNT_TYPE_FIXED = 20;
+    String BANK_ACCOUNT_TYPE_FIXED = "FIXED";
                     
     /**
      * 银行账户类型: 信用账户 
      */
-    int BANK_ACCOUNT_TYPE_CREDIT = 30;
+    String BANK_ACCOUNT_TYPE_CREDIT = "CREDIT";
                     
     /**
      * 银行账户类型: 其他 
      */
-    int BANK_ACCOUNT_TYPE_OTHER = 40;
+    String BANK_ACCOUNT_TYPE_OTHER = "OTHER";
                     
     /**
      * 地址类型: 账单地址 
      */
-    int ADDRESS_TYPE_BILLING = 10;
+    String ADDRESS_TYPE_BILLING = "BILLING";
                     
     /**
      * 地址类型: 发货地址 
      */
-    int ADDRESS_TYPE_SHIPPING = 20;
+    String ADDRESS_TYPE_SHIPPING = "SHIPPING";
                     
     /**
      * 地址类型: 注册地址 
      */
-    int ADDRESS_TYPE_REGISTERED = 30;
+    String ADDRESS_TYPE_REGISTERED = "REGISTERED";
                     
     /**
      * 地址类型: 其他 
      */
-    int ADDRESS_TYPE_OTHER = 40;
+    String ADDRESS_TYPE_OTHER = "OTHER";
                     
     /**
      * 批次选择策略: 先进先出 
@@ -366,36 +366,36 @@ public interface _ErpMdDaoConstants {
     /**
      * 供应商准入类型: 新供应商准入 
      */
-    int SUPPLIER_APPROVAL_TYPE_NEW = 10;
+    String SUPPLIER_APPROVAL_TYPE_NEW = "NEW";
                     
     /**
      * 供应商准入类型: 续期 
      */
-    int SUPPLIER_APPROVAL_TYPE_RENEWAL = 20;
+    String SUPPLIER_APPROVAL_TYPE_RENEWAL = "RENEWAL";
                     
     /**
      * 供应商准入状态: 已申请 
      */
-    int SUPPLIER_APPROVAL_STATUS_APPLIED = 10;
+    String SUPPLIER_APPROVAL_STATUS_APPLIED = "APPLIED";
                     
     /**
      * 供应商准入状态: 已批准 
      */
-    int SUPPLIER_APPROVAL_STATUS_APPROVED = 20;
+    String SUPPLIER_APPROVAL_STATUS_APPROVED = "APPROVED";
                     
     /**
      * 供应商准入状态: 试用期 
      */
-    int SUPPLIER_APPROVAL_STATUS_PROBATION = 30;
+    String SUPPLIER_APPROVAL_STATUS_PROBATION = "PROBATION";
                     
     /**
      * 供应商准入状态: 已暂停 
      */
-    int SUPPLIER_APPROVAL_STATUS_SUSPENDED = 40;
+    String SUPPLIER_APPROVAL_STATUS_SUSPENDED = "SUSPENDED";
                     
     /**
      * 供应商准入状态: 已驳回 
      */
-    int SUPPLIER_APPROVAL_STATUS_REJECTED = 50;
+    String SUPPLIER_APPROVAL_STATUS_REJECTED = "REJECTED";
                     
 }

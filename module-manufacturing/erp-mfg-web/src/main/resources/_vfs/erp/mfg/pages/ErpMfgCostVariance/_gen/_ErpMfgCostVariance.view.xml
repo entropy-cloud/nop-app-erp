@@ -49,7 +49,7 @@
                 <col id="varianceAmount" ui:number="true" sortable="true"/>
 
                 <!--差异百分比-->
-                <col id="variancePercent" sortable="true"/>
+                <col id="variancePercent" ui:number="true" sortable="true"/>
 
                 <!--标准数量-->
                 <col id="standardQty" ui:number="true" sortable="true"/>

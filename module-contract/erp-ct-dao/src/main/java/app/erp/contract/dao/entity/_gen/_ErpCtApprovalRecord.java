@@ -45,7 +45,7 @@ public class _ErpCtApprovalRecord extends DynamicOrmEntity{
     public static final String PROP_NAME_approverId = "approverId";
     public static final int PROP_ID_approverId = 6;
     
-    /* 审批状态: APPROVAL_STATUS INTEGER */
+    /* 审批状态: APPROVAL_STATUS VARCHAR */
     public static final String PROP_NAME_approvalStatus = "approvalStatus";
     public static final int PROP_ID_approvalStatus = 7;
     
@@ -183,7 +183,7 @@ public class _ErpCtApprovalRecord extends DynamicOrmEntity{
     private java.lang.String _approverId;
     
     /* 审批状态: APPROVAL_STATUS */
-    private java.lang.Integer _approvalStatus;
+    private java.lang.String _approvalStatus;
     
     /* 审批意见: COMMENT */
     private java.lang.String _comment;
@@ -412,9 +412,9 @@ public class _ErpCtApprovalRecord extends DynamicOrmEntity{
             }
         
             case PROP_ID_approvalStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_approvalStatus));
                }
                setApprovalStatus(typedValue);
@@ -574,7 +574,7 @@ public class _ErpCtApprovalRecord extends DynamicOrmEntity{
         
             case PROP_ID_approvalStatus:{
                onInitProp(propId);
-               this._approvalStatus = (java.lang.Integer)value;
+               this._approvalStatus = (java.lang.String)value;
                
                break;
             }
@@ -772,7 +772,7 @@ public class _ErpCtApprovalRecord extends DynamicOrmEntity{
     /**
      * 审批状态: APPROVAL_STATUS
      */
-    public final java.lang.Integer getApprovalStatus(){
+    public final java.lang.String getApprovalStatus(){
          onPropGet(PROP_ID_approvalStatus);
          return _approvalStatus;
     }
@@ -780,7 +780,7 @@ public class _ErpCtApprovalRecord extends DynamicOrmEntity{
     /**
      * 审批状态: APPROVAL_STATUS
      */
-    public final void setApprovalStatus(java.lang.Integer value){
+    public final void setApprovalStatus(java.lang.String value){
         if(onPropSet(PROP_ID_approvalStatus,value)){
             this._approvalStatus = value;
             internalClearRefs(PROP_ID_approvalStatus);

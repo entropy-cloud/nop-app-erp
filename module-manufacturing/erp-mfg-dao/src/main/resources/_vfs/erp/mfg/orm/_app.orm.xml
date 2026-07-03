@@ -15,99 +15,104 @@
     </x:gen-extends>
 
     <dicts>
-        <dict label="工单状态" name="erp-mfg/work-order-status" valueType="int" i18n-en:label="Work Order Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="SUBMITTED" label="已提交" value="20" i18n-en:label="Submitted"/>
-            <option code="NOT_STARTED" label="未开始" value="30" i18n-en:label="Not Started"/>
-            <option code="IN_PROCESS" label="生产中" value="40" i18n-en:label="In Production"/>
-            <option code="STOCK_RESERVED" label="已齐套" value="50" i18n-en:label="Kitted"/>
-            <option code="STOCK_PARTIAL" label="部分齐套" value="60" i18n-en:label="Partially Kitted"/>
-            <option code="COMPLETED" label="已完工" value="70" i18n-en:label="Completed"/>
-            <option code="STOPPED" label="已停工" value="80" i18n-en:label="Stopped"/>
-            <option code="CLOSED" label="已关闭" value="90" i18n-en:label="Closed"/>
-            <option code="CANCELLED" label="已取消" value="100" i18n-en:label="Cancelled"/>
+        <dict label="工单状态" name="erp-mfg/work-order-status" valueType="string" i18n-en:label="Work Order Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label="Submitted"/>
+            <option code="NOT_STARTED" label="未开始" value="NOT_STARTED" i18n-en:label="Not Started"/>
+            <option code="IN_PROCESS" label="生产中" value="IN_PROCESS" i18n-en:label="In Production"/>
+            <option code="STOCK_RESERVED" label="已齐套" value="STOCK_RESERVED" i18n-en:label="Kitted"/>
+            <option code="STOCK_PARTIAL" label="部分齐套" value="STOCK_PARTIAL" i18n-en:label="Partially Kitted"/>
+            <option code="COMPLETED" label="已完工" value="COMPLETED" i18n-en:label="Completed"/>
+            <option code="STOPPED" label="已停工" value="STOPPED" i18n-en:label="Stopped"/>
+            <option code="CLOSED" label="已关闭" value="CLOSED" i18n-en:label="Closed"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
         </dict>
-        <dict label="作业卡状态" name="erp-mfg/job-card-status" valueType="int" i18n-en:label="Job Card Status">
-            <option code="OPEN" label="待开始" value="10" i18n-en:label="Pending Start"/>
-            <option code="WORK_IN_PROGRESS" label="作业中" value="20" i18n-en:label="Working"/>
-            <option code="PARTIALLY_TRANSFERRED" label="部分转序" value="30" i18n-en:label="Partially Transferred"/>
-            <option code="MATERIAL_TRANSFERRED" label="已转序" value="40" i18n-en:label="Transferred"/>
-            <option code="ON_HOLD" label="暂停" value="50" i18n-en:label="Suspended"/>
-            <option code="SUBMITTED" label="已提交" value="60" i18n-en:label="Submitted"/>
-            <option code="COMPLETED" label="已完成" value="70" i18n-en:label="Completed"/>
-            <option code="CANCELLED" label="已取消" value="80" i18n-en:label="Cancelled"/>
+        <dict label="作业卡状态" name="erp-mfg/job-card-status" valueType="string" i18n-en:label="Job Card Status">
+            <option code="OPEN" label="待开始" value="OPEN" i18n-en:label="Pending Start"/>
+            <option code="WORK_IN_PROGRESS" label="作业中" value="WORK_IN_PROGRESS" i18n-en:label="Working"/>
+            <option code="PARTIALLY_TRANSFERRED" label="部分转序" value="PARTIALLY_TRANSFERRED"
+                    i18n-en:label="Partially Transferred"/>
+            <option code="MATERIAL_TRANSFERRED" label="已转序" value="MATERIAL_TRANSFERRED" i18n-en:label="Transferred"/>
+            <option code="ON_HOLD" label="暂停" value="ON_HOLD" i18n-en:label="Suspended"/>
+            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label="Submitted"/>
+            <option code="COMPLETED" label="已完成" value="COMPLETED" i18n-en:label="Completed"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
         </dict>
-        <dict label="BOM 类型" name="erp-mfg/bom-type" valueType="int" i18n-en:label="BOM Type">
-            <option code="NORMAL" label="制造" value="10" i18n-en:label="Manufactured"/>
-            <option code="PHANTOM" label="虚拟件/Kit" value="20" i18n-en:label="Phantom/Kit"/>
+        <dict label="BOM 类型" name="erp-mfg/bom-type" valueType="string" i18n-en:label="BOM Type">
+            <option code="NORMAL" label="制造" value="NORMAL" i18n-en:label="Manufactured"/>
+            <option code="PHANTOM" label="虚拟件/Kit" value="PHANTOM" i18n-en:label="Phantom/Kit"/>
         </dict>
-        <dict label="消耗控制" name="erp-mfg/consumption" valueType="int" i18n-en:label="Consumption Control">
-            <option code="FLEXIBLE" label="允许超耗" value="10" i18n-en:label="Allow Overconsumption"/>
-            <option code="WARNING" label="超耗警告" value="20" i18n-en:label="Overconsumption Warning"/>
-            <option code="STRICT" label="严格按 BOM" value="30" i18n-en:label="Strict BOM"/>
+        <dict label="消耗控制" name="erp-mfg/consumption" valueType="string" i18n-en:label="Consumption Control">
+            <option code="FLEXIBLE" label="允许超耗" value="FLEXIBLE" i18n-en:label="Allow Overconsumption"/>
+            <option code="WARNING" label="超耗警告" value="WARNING" i18n-en:label="Overconsumption Warning"/>
+            <option code="STRICT" label="严格按 BOM" value="STRICT" i18n-en:label="Strict BOM"/>
         </dict>
-        <dict label="审核状态" name="erp-mfg/approve-status" valueType="int" i18n-en:label="Approve Status">
-            <option code="UNSUBMITTED" label="未提交" value="10" i18n-en:label="Unsubmitted"/>
-            <option code="SUBMITTED" label="已提交" value="20" i18n-en:label="Submitted"/>
-            <option code="APPROVED" label="已审核" value="30" i18n-en:label="Approved"/>
-            <option code="REJECTED" label="已驳回" value="40" i18n-en:label="Rejected"/>
+        <dict label="审核状态" name="erp-mfg/approve-status" valueType="string" i18n-en:label="Approve Status">
+            <option code="UNSUBMITTED" label="未提交" value="UNSUBMITTED" i18n-en:label="Unsubmitted"/>
+            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label="Submitted"/>
+            <option code="APPROVED" label="已审核" value="APPROVED" i18n-en:label="Approved"/>
+            <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label="Rejected"/>
         </dict>
-        <dict label="工单优先级" name="erp-mfg/priority" valueType="int" i18n-en:label="Work Order Priority">
-            <option code="LOW" label="低" value="10" i18n-en:label="Low"/>
-            <option code="NORMAL" label="普通" value="20" i18n-en:label="General"/>
-            <option code="HIGH" label="高" value="30" i18n-en:label="High"/>
-            <option code="URGENT" label="紧急" value="40" i18n-en:label="Urgent"/>
+        <dict label="工单优先级" name="erp-mfg/priority" valueType="string" i18n-en:label="Work Order Priority">
+            <option code="LOW" label="低" value="LOW" i18n-en:label="Low"/>
+            <option code="NORMAL" label="普通" value="NORMAL" i18n-en:label="General"/>
+            <option code="HIGH" label="高" value="HIGH" i18n-en:label="High"/>
+            <option code="URGENT" label="紧急" value="URGENT" i18n-en:label="Urgent"/>
         </dict>
-        <dict label="MRP 计划状态" name="erp-mfg/mrp-status" valueType="int" i18n-en:label="MRP Plan Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="RUNNING" label="运算中" value="20" i18n-en:label="Computing"/>
-            <option code="COMPLETED" label="运算完成" value="30" i18n-en:label="Computed"/>
-            <option code="FIRMED" label="已确认(转工单)" value="40" i18n-en:label="Confirmed (To W/O)"/>
-            <option code="CANCELLED" label="已取消" value="50" i18n-en:label="Cancelled"/>
+        <dict label="MRP 计划状态" name="erp-mfg/mrp-status" valueType="string" i18n-en:label="MRP Plan Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="RUNNING" label="运算中" value="RUNNING" i18n-en:label="Computing"/>
+            <option code="COMPLETED" label="运算完成" value="COMPLETED" i18n-en:label="Computed"/>
+            <option code="FIRMED" label="已确认(转工单)" value="FIRMED" i18n-en:label="Confirmed (To W/O)"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
         </dict>
-        <dict label="MRP 计划订单类型" name="erp-mfg/mrp-order-type" valueType="int" i18n-en:label="MRP Plan Order Type">
-            <option code="PLANNED_ORDER" label="计划订单" value="10" i18n-en:label="Planned Order"/>
-            <option code="PURCHASE_REQUEST" label="请购建议" value="20" i18n-en:label="Purchase Req Suggestion"/>
-            <option code="WORK_ORDER_REQUEST" label="工单建议" value="30" i18n-en:label="Work Order Suggestion"/>
-            <option code="SUBCONTRACT_REQUEST" label="委外建议" value="40" i18n-en:label="Outsource Suggestion"/>
+        <dict label="MRP 计划订单类型" name="erp-mfg/mrp-order-type" valueType="string" i18n-en:label="MRP Plan Order Type">
+            <option code="PLANNED_ORDER" label="计划订单" value="PLANNED_ORDER" i18n-en:label="Planned Order"/>
+            <option code="PURCHASE_REQUEST" label="请购建议" value="PURCHASE_REQUEST"
+                    i18n-en:label="Purchase Req Suggestion"/>
+            <option code="WORK_ORDER_REQUEST" label="工单建议" value="WORK_ORDER_REQUEST"
+                    i18n-en:label="Work Order Suggestion"/>
+            <option code="SUBCONTRACT_REQUEST" label="委外建议" value="SUBCONTRACT_REQUEST"
+                    i18n-en:label="Outsource Suggestion"/>
         </dict>
-        <dict label="MRP 需求来源" name="erp-mfg/mrp-demand-source" valueType="int" i18n-en:label="MRP Demand Source">
-            <option code="SALES_ORDER" label="销售订单" value="10" i18n-en:label="Sales Order"/>
-            <option code="FORECAST" label="预测" value="20" i18n-en:label="Forecast"/>
-            <option code="SAFETY_STOCK" label="安全库存" value="30" i18n-en:label="Safety Stock"/>
-            <option code="MANUAL" label="手工录入" value="40" i18n-en:label="Manual Entry"/>
+        <dict label="MRP 需求来源" name="erp-mfg/mrp-demand-source" valueType="string" i18n-en:label="MRP Demand Source">
+            <option code="SALES_ORDER" label="销售订单" value="SALES_ORDER" i18n-en:label="Sales Order"/>
+            <option code="FORECAST" label="预测" value="FORECAST" i18n-en:label="Forecast"/>
+            <option code="SAFETY_STOCK" label="安全库存" value="SAFETY_STOCK" i18n-en:label="Safety Stock"/>
+            <option code="MANUAL" label="手工录入" value="MANUAL" i18n-en:label="Manual Entry"/>
         </dict>
-        <dict label="领料状态" name="erp-mfg/issue-status" valueType="int" i18n-en:label="Pick Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="CONFIRMED" label="已确认" value="20" i18n-en:label="Confirmed"/>
-            <option code="DONE" label="已出库" value="30" i18n-en:label="Delivered"/>
-            <option code="CANCELLED" label="已取消" value="40" i18n-en:label="Cancelled"/>
+        <dict label="领料状态" name="erp-mfg/issue-status" valueType="string" i18n-en:label="Pick Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="CONFIRMED" label="已确认" value="CONFIRMED" i18n-en:label="Confirmed"/>
+            <option code="DONE" label="已出库" value="DONE" i18n-en:label="Delivered"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
         </dict>
-        <dict label="委外单状态" name="erp-mfg/subcontract-status" valueType="int" i18n-en:label="Subcontract Order Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="ACTIVE" label="已生效" value="20" i18n-en:label="Effective"/>
-            <option code="CANCELLED" label="已作废" value="30" i18n-en:label="Voided"/>
+        <dict label="委外单状态" name="erp-mfg/subcontract-status" valueType="string"
+              i18n-en:label="Subcontract Order Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="ACTIVE" label="已生效" value="ACTIVE" i18n-en:label="Effective"/>
+            <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label="Voided"/>
         </dict>
-        <dict label="成本滚算状态" name="erp-mfg/cost-rollup-status" valueType="int" i18n-en:label="Cost Rollup Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="CALCULATED" label="已计算" value="20" i18n-en:label="Calculated"/>
-            <option code="FIRMED" label="已发布" value="30" i18n-en:label="Published"/>
-            <option code="CANCELLED" label="已作废" value="40" i18n-en:label="Voided"/>
+        <dict label="成本滚算状态" name="erp-mfg/cost-rollup-status" valueType="string" i18n-en:label="Cost Rollup Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="CALCULATED" label="已计算" value="CALCULATED" i18n-en:label="Calculated"/>
+            <option code="FIRMED" label="已发布" value="FIRMED" i18n-en:label="Published"/>
+            <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label="Voided"/>
         </dict>
-        <dict label="联副产品类型" name="erp-mfg/byproduct-type" valueType="int" i18n-en:label="Co/By-Product Type">
-            <option code="CO_PRODUCT" label="联产品" value="10" i18n-en:label="Co-product"/>
-            <option code="BY_PRODUCT" label="副产品" value="20" i18n-en:label="Byproduct"/>
+        <dict label="联副产品类型" name="erp-mfg/byproduct-type" valueType="string" i18n-en:label="Co/By-Product Type">
+            <option code="CO_PRODUCT" label="联产品" value="CO_PRODUCT" i18n-en:label="Co-product"/>
+            <option code="BY_PRODUCT" label="副产品" value="BY_PRODUCT" i18n-en:label="Byproduct"/>
         </dict>
-        <dict label="班次类型" name="erp-mfg/shift-type" valueType="int" i18n-en:label="Shift Type">
-            <option code="ONE_SHIFT" label="全天单班" value="10" i18n-en:label="One Shift"/>
-            <option code="MORNING" label="早班" value="20" i18n-en:label="Morning"/>
-            <option code="AFTERNOON" label="中班" value="30" i18n-en:label="Afternoon"/>
-            <option code="NIGHT" label="夜班" value="40" i18n-en:label="Night"/>
+        <dict label="班次类型" name="erp-mfg/shift-type" valueType="string" i18n-en:label="Shift Type">
+            <option code="ONE_SHIFT" label="全天单班" value="ONE_SHIFT" i18n-en:label="One Shift"/>
+            <option code="MORNING" label="早班" value="MORNING" i18n-en:label="Morning"/>
+            <option code="AFTERNOON" label="中班" value="AFTERNOON" i18n-en:label="Afternoon"/>
+            <option code="NIGHT" label="夜班" value="NIGHT" i18n-en:label="Night"/>
         </dict>
-        <dict label="工作日模式" name="erp-mfg/work-date-pattern" valueType="int" i18n-en:label="Work Date Pattern">
-            <option code="ALL_WEEK" label="全周" value="10" i18n-en:label="All Week"/>
-            <option code="WEEKDAYS" label="工作日(周一至周五)" value="20" i18n-en:label="Weekdays"/>
-            <option code="WEEKEND" label="仅周末" value="30" i18n-en:label="Weekend Only"/>
+        <dict label="工作日模式" name="erp-mfg/work-date-pattern" valueType="string" i18n-en:label="Work Date Pattern">
+            <option code="ALL_WEEK" label="全周" value="ALL_WEEK" i18n-en:label="All Week"/>
+            <option code="WEEKDAYS" label="工作日(周一至周五)" value="WEEKDAYS" i18n-en:label="Weekdays"/>
+            <option code="WEEKEND" label="仅周末" value="WEEKEND" i18n-en:label="Weekend Only"/>
         </dict>
     </dicts>
 
@@ -150,10 +155,12 @@
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
                 <column code="PRODUCT_ID" displayName="产品" mandatory="true" name="productId" propId="3"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Product"/>
-                <column code="BOM_TYPE" displayName="BOM类型" mandatory="true" name="bomType" propId="4" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-mfg/bom-type" i18n-en:displayName="Bom Type"/>
-                <column code="CONSUMPTION" displayName="消耗控制" name="consumption" propId="5" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-mfg/consumption" i18n-en:displayName="Consumption"/>
+                <column code="BOM_TYPE" displayName="BOM类型" mandatory="true" name="bomType" precision="20" propId="4"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mfg/bom-type"
+                        i18n-en:displayName="Bom Type"/>
+                <column code="CONSUMPTION" displayName="消耗控制" name="consumption" precision="20" propId="5"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mfg/consumption"
+                        i18n-en:displayName="Consumption"/>
                 <column code="IS_ACTIVE" defaultValue="true" displayName="是否有效" name="isActive" propId="6"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Active"/>
                 <column code="IS_DEFAULT" defaultValue="false" displayName="是否默认" name="isDefault" propId="7"
@@ -241,7 +248,7 @@
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="9"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="SCRAP_RATE" defaultValue="0" displayName="损耗率(%)" domain="rate" name="scrapRate"
-                        precision="10" propId="10" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="10" propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Scrap Rate"/>
                 <column code="WAREHOUSE_ID" displayName="发货仓库" name="warehouseId" propId="11" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
@@ -331,7 +338,7 @@
                 <column code="TIME_UNIT" displayName="时间单位" name="timeUnit" precision="20" propId="7"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Time Unit"/>
                 <column code="RATE" defaultValue="1" displayName="效率系数" domain="rate" name="rate" precision="10"
-                        propId="8" scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Rate"/>
+                        propId="8" scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Rate"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="9"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -395,13 +402,14 @@
                         i18n-en:displayName="Quantity"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="8"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
-                <column code="BYPRODUCT_TYPE" displayName="联副产品类型" name="byproductType" propId="9" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-mfg/byproduct-type" i18n-en:displayName="Byproduct Type"/>
+                <column code="BYPRODUCT_TYPE" displayName="联副产品类型" name="byproductType" precision="20" propId="9"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mfg/byproduct-type"
+                        i18n-en:displayName="Byproduct Type"/>
                 <column code="YIELD_RATE" defaultValue="100" displayName="产出率(%)" domain="rate" name="yieldRate"
-                        precision="10" propId="10" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="10" propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Yield Rate"/>
                 <column code="COST_ALLOCATION_PERCENT" defaultValue="0" displayName="成本分摊比例(%)" domain="rate"
-                        name="costAllocationPercent" precision="10" propId="11" scale="4" stdDataType="string"
+                        name="costAllocationPercent" precision="10" propId="11" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Cost Allocation Percent"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="12" stdDataType="long" stdSqlType="BIGINT"
@@ -563,7 +571,7 @@
                 <column code="NAME" displayName="工作中心名称" mandatory="true" name="name" precision="200" propId="3"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
                 <column code="CAPACITY" displayName="产能" domain="capacity" name="capacity" precision="16" propId="4"
-                        scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Capacity"/>
+                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Capacity"/>
                 <column code="CAPACITY_UNIT" displayName="产能单位" name="capacityUnit" precision="20" propId="5"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Capacity Unit"/>
                 <column code="HOURLY_RATE" displayName="小时费率" domain="hourlyRate" name="hourlyRate" precision="16"
@@ -607,11 +615,11 @@
                         i18n-en:displayName="Organization"/>
                 <column code="CALENDAR_NAME" displayName="日历名称" mandatory="true" name="calendarName" precision="200"
                         propId="4" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Calendar Name"/>
-                <column code="SHIFT_TYPE" displayName="班次类型" mandatory="true" name="shiftType" propId="5"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-mfg/shift-type"
+                <column code="SHIFT_TYPE" displayName="班次类型" mandatory="true" name="shiftType" precision="20" propId="5"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mfg/shift-type"
                         i18n-en:displayName="Shift Type"/>
-                <column code="WORK_DATE_PATTERN" displayName="工作日模式" name="workDatePattern" propId="6" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-mfg/work-date-pattern"
+                <column code="WORK_DATE_PATTERN" displayName="工作日模式" name="workDatePattern" precision="20" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mfg/work-date-pattern"
                         i18n-en:displayName="Work Date Pattern"/>
                 <column code="START_TIME" displayName="班次开始时间" name="startTime" precision="8" propId="7"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Start Time"/>
@@ -851,13 +859,15 @@
                 <column code="UNIT_COST" defaultValue="0" displayName="单位成本" domain="unitPrice" name="unitCost"
                         precision="20" propId="25" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Unit Cost"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="26"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-mfg/work-order-status"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
+                        propId="26" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mfg/work-order-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" name="approveStatus" propId="27" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-mfg/approve-status" i18n-en:displayName="Approve Status"/>
-                <column code="PRIORITY" displayName="优先级" name="priority" propId="28" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-mfg/priority" i18n-en:displayName="Priority"/>
+                <column code="APPROVE_STATUS" displayName="审核状态" name="approveStatus" precision="20" propId="27"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mfg/approve-status"
+                        i18n-en:displayName="Approve Status"/>
+                <column code="PRIORITY" displayName="优先级" name="priority" precision="20" propId="28"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mfg/priority"
+                        i18n-en:displayName="Priority"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="29"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="30" stdDataType="datetime"
@@ -1127,8 +1137,9 @@
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
                 <column code="PLANNING_HORIZON_DAYS" displayName="计划区间(天)" name="planningHorizonDays" propId="5"
                         stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Planning Horizon Days"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="6" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-mfg/mrp-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mfg/mrp-status"
+                        i18n-en:displayName="Status"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="7"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -1186,8 +1197,8 @@
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Material"/>
                 <column code="UO_M_ID" displayName="计量单位" mandatory="true" name="uoMId" propId="5" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="UoM"/>
-                <column code="ORDER_TYPE" displayName="建议类型" mandatory="true" name="orderType" propId="6"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-mfg/mrp-order-type"
+                <column code="ORDER_TYPE" displayName="建议类型" mandatory="true" name="orderType" precision="20" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mfg/mrp-order-type"
                         i18n-en:displayName="Order Type"/>
                 <column code="GROSS_REQUIREMENT" displayName="毛需求" domain="quantity" mandatory="true"
                         name="grossRequirement" precision="20" propId="7" scale="4" stdDataType="decimal"
@@ -1272,8 +1283,8 @@
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Material"/>
                 <column code="UO_M_ID" displayName="计量单位" mandatory="true" name="uoMId" propId="5" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="UoM"/>
-                <column code="DEMAND_SOURCE" displayName="需求来源" mandatory="true" name="demandSource" propId="6"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-mfg/mrp-demand-source"
+                <column code="DEMAND_SOURCE" displayName="需求来源" mandatory="true" name="demandSource" precision="20"
+                        propId="6" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mfg/mrp-demand-source"
                         i18n-en:displayName="Demand Source"/>
                 <column code="SOURCE_BILL_TYPE" displayName="来源单据类型" name="sourceBillType" precision="50" propId="7"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Source Bill Type"/>
@@ -1342,11 +1353,11 @@
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
                 <column code="BUSINESS_DATE" displayName="领料日期" mandatory="true" name="businessDate" propId="7"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="8"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-mfg/issue-status"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mfg/issue-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="9"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-mfg/approve-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="9" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mfg/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="10"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
@@ -1553,11 +1564,11 @@
                 <column code="TOTAL_AMOUNT" defaultValue="0" displayName="合计金额" domain="amount" name="totalAmount"
                         precision="20" propId="14" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Total Amt"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="15"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-mfg/subcontract-status"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
+                        propId="15" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mfg/subcontract-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="16"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-mfg/approve-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="16" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mfg/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="17"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
@@ -1730,8 +1741,9 @@
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
                 <column code="COSTING_VERSION" displayName="成本核算版本" name="costingVersion" precision="50" propId="5"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Costing Version"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="6" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-mfg/cost-rollup-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mfg/cost-rollup-status"
+                        i18n-en:displayName="Status"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="7"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -1868,8 +1880,9 @@
                 <column code="SCRAPPED_QUANTITY" defaultValue="0" displayName="报废数量" domain="quantity"
                         name="scrappedQuantity" precision="20" propId="7" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Scrapped Quantity"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="8" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-mfg/job-card-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="30" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mfg/job-card-status"
+                        i18n-en:displayName="Status"/>
                 <column code="WORKCENTER_ID" displayName="工作中心" name="workcenterId" propId="9" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Workcenter"/>
                 <column code="ACTUAL_START_TIME" displayName="实际开始时间" name="actualStartTime" propId="10"
@@ -2030,7 +2043,7 @@
                         precision="20" propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Variance Amount"/>
                 <column code="VARIANCE_PERCENT" defaultValue="0" displayName="差异百分比" domain="rate"
-                        name="variancePercent" precision="10" propId="11" scale="4" stdDataType="string"
+                        name="variancePercent" precision="10" propId="11" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Variance Percent"/>
                 <column code="STANDARD_QTY" defaultValue="0" displayName="标准数量" domain="quantity" name="standardQty"
                         precision="20" propId="12" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"

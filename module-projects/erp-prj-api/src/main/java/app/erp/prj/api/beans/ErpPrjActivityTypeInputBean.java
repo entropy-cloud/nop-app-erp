@@ -54,16 +54,16 @@
         }
 
 
-        private String _costRate;
+        private java.math.BigDecimal _costRate;
 
     
         @PropMeta(propId=4)
     
-        public String getCostRate(){
+        public java.math.BigDecimal getCostRate(){
             return _costRate;
         }
 
-        public void setCostRate(String value){
+        public void setCostRate(java.math.BigDecimal value){
             this._costRate = value;
         }
 

@@ -13,6 +13,7 @@ import app.erp.mfg.service.workorder.KitAvailabilityResult;
 import app.erp.md.dao.entity.ErpMdMaterial;
 import app.erp.qa.biz.IErpQaInspectionBiz;
 import app.erp.qa.biz.InspectionTrigger;
+import app.erp.qa.dao._ErpQaDaoConstants;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
@@ -20,6 +21,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -97,9 +99,9 @@ public class ErpMfgWorkOrderProcessor {
 
     public ErpMfgWorkOrder close(Long workOrderId, IServiceContext context) {
         ErpMfgWorkOrder wo = requireWorkOrder(workOrderId, context);
-        Integer status = wo.getDocStatus();
-        if (status == null || (status != ErpMfgConstants.WORK_ORDER_STATUS_STOPPED
-                && status != ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS)) {
+        String status = wo.getDocStatus();
+        if (status == null || (!Objects.equals(status, ErpMfgConstants.WORK_ORDER_STATUS_STOPPED)
+                && !Objects.equals(status, ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS))) {
             throw illegalTransition(wo, status, "STOPPED 或 IN_PROCESS");
         }
         wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_CLOSED);
@@ -112,12 +114,12 @@ public class ErpMfgWorkOrderProcessor {
 
     public ErpMfgWorkOrder cancel(Long workOrderId, IServiceContext context) {
         ErpMfgWorkOrder wo = requireWorkOrder(workOrderId, context);
-        Integer status = wo.getDocStatus();
+        String status = wo.getDocStatus();
         // 仅未开工前可取消（DRAFT/SUBMITTED/NOT_STARTED）。STOCK_RESERVED/STOCK_PARTIAL 属 NOT_STARTED 后续态，
         // 依 state-machine.md §迁移完整性「NOT_STARTED/SUBMITTED→CANCELLED」从严只允许前三态。
-        if (status == null || (status != ErpMfgConstants.WORK_ORDER_STATUS_DRAFT
-                && status != ErpMfgConstants.WORK_ORDER_STATUS_SUBMITTED
-                && status != ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED)) {
+        if (status == null || (!Objects.equals(status, ErpMfgConstants.WORK_ORDER_STATUS_DRAFT)
+                && !Objects.equals(status, ErpMfgConstants.WORK_ORDER_STATUS_SUBMITTED)
+                && !Objects.equals(status, ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED))) {
             throw illegalTransition(wo, status, "DRAFT、SUBMITTED 或 NOT_STARTED");
         }
         wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_CANCELLED);
@@ -153,7 +155,7 @@ public class ErpMfgWorkOrderProcessor {
         // 强制完工质检门控：达量时若属强制质检类型，经 InspectionTrigger 生成 FINAL 质检单并阻塞。默认空=不强制。
         if (willFinish && wo.getProductId() != null) {
             int gate = InspectionTrigger.enforceGate(inspectionBiz, ErpMfgConstants.RELATED_BILL_TYPE_MFG_WORK_ORDER,
-                    wo.getCode(), wo.getProductId(), 30 /* erp-qa/inspection-type FINAL */,
+                    wo.getCode(), wo.getProductId(), _ErpQaDaoConstants.INSPECTION_TYPE_FINAL,
                     newCompleted, null, null, null, context);
             if (gate == InspectionTrigger.BLOCKED) {
                 throw new NopException(ErpMfgErrors.ERR_INSPECTION_REQUIRED)
@@ -179,10 +181,10 @@ public class ErpMfgWorkOrderProcessor {
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
 
     protected void validateTransitionForStart(ErpMfgWorkOrder wo, IServiceContext context) {
-        Integer status = wo.getDocStatus();
-        if (status != null && status == ErpMfgConstants.WORK_ORDER_STATUS_STOCK_RESERVED) {
+        String status = wo.getDocStatus();
+        if (status != null && Objects.equals(status, ErpMfgConstants.WORK_ORDER_STATUS_STOCK_RESERVED)) {
             // 全齐套：直接开工
-        } else if (status != null && status == ErpMfgConstants.WORK_ORDER_STATUS_STOCK_PARTIAL) {
+        } else if (status != null && Objects.equals(status, ErpMfgConstants.WORK_ORDER_STATUS_STOCK_PARTIAL)) {
             // 部分齐套：须配置允许强制开工
             if (!isAllowPartialKitStart()) {
                 throw new NopException(ErpMfgErrors.ERR_PARTIAL_KIT_START_FORBIDDEN)
@@ -287,9 +289,9 @@ public class ErpMfgWorkOrderProcessor {
         return wo;
     }
 
-    protected void requireStatus(ErpMfgWorkOrder wo, int expected, String expectedLabel) {
-        Integer current = wo.getDocStatus();
-        if (current == null || current != expected) {
+    protected void requireStatus(ErpMfgWorkOrder wo, String expected, String expectedLabel) {
+        String current = wo.getDocStatus();
+        if (current == null || !Objects.equals(current, expected)) {
             throw illegalTransition(wo, current, expectedLabel);
         }
     }
@@ -334,7 +336,7 @@ public class ErpMfgWorkOrderProcessor {
         return v != null ? v : BigDecimal.ZERO;
     }
 
-    protected NopException illegalTransition(ErpMfgWorkOrder wo, Integer current, String expected) {
+    protected NopException illegalTransition(ErpMfgWorkOrder wo, String current, String expected) {
         return new NopException(ErpMfgErrors.ERR_INVALID_STATUS_TRANSITION)
                 .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode())
                 .param(ErpMfgErrors.ARG_CURRENT_STATUS, current)

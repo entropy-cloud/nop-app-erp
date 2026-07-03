@@ -139,16 +139,16 @@
         }
 
 
-        private Integer _returnStatus;
+        private String _returnStatus;
 
     
         @PropMeta(propId=10)
     
-        public Integer getReturnStatus(){
+        public String getReturnStatus(){
             return _returnStatus;
         }
 
-        public void setReturnStatus(Integer value){
+        public void setReturnStatus(String value){
             this._returnStatus = value;
         }
 

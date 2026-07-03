@@ -37,10 +37,10 @@
                 <col id="relatedBillCode" sortable="true"/>
 
                 <!--状态-->
-                <col id="state" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="state" mandatory="true" sortable="true"/>
 
                 <!--阻断级别-->
-                <col id="blockingLevel" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="blockingLevel" mandatory="true" sortable="true"/>
 
                 <!--错误信息-->
                 <col id="error" sortable="true"/>

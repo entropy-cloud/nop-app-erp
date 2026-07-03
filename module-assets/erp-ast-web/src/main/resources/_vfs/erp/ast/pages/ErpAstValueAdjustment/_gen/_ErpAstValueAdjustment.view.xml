@@ -40,7 +40,7 @@
                 <col id="exchangeRate" ui:number="true" sortable="true"/>
 
                 <!--调整类型-->
-                <col id="adjustmentType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="adjustmentType" mandatory="true" sortable="true"/>
 
                 <!--调整金额-->
                 <col id="adjustmentAmount" mandatory="true" ui:number="true" sortable="true"/>
@@ -49,10 +49,10 @@
                 <col id="reason" sortable="true"/>
 
                 <!--单据状态-->
-                <col id="docStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="docStatus" mandatory="true" sortable="true"/>
 
                 <!--审核状态-->
-                <col id="approveStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="approveStatus" mandatory="true" sortable="true"/>
 
                 <!--已过账-->
                 <col id="posted" sortable="true"/>

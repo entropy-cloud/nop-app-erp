@@ -42,7 +42,7 @@ public class TestErpPrjProjectCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-PRJ");
         headData.put("name", "冒烟项目");
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> result = executeRpc(GraphQLOperationType.mutation, "ErpPrjProject__save",
                 ApiRequest.build(Map.of("data", headData)));
 
@@ -57,7 +57,7 @@ public class TestErpPrjProjectCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-PRJ");
         headData.put("name", "冒烟项目");
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpPrjProject__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -75,7 +75,7 @@ public class TestErpPrjProjectCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-PRJ");
         headData.put("name", "冒烟项目");
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpPrjProject__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -97,7 +97,7 @@ public class TestErpPrjProjectCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-PRJ");
         headData.put("name", "冒烟项目");
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpPrjProject__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -120,7 +120,7 @@ public class TestErpPrjProjectCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-PRJ");
         headData.put("name", "冒烟项目");
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> head = executeRpc(GraphQLOperationType.mutation, "ErpPrjProject__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_saveHead_response.json5", head);
@@ -128,7 +128,7 @@ public class TestErpPrjProjectCrudSmoke extends JunitAutoTestCase {
 
         Map<String, Object> lineData = new LinkedHashMap<>();
         lineData.put("title", "冒烟任务");
-        lineData.put("status", 10);
+        lineData.put("status", "TODO");
         lineData.put("projectId", headId);
         ApiResponse<?> line = executeRpc(GraphQLOperationType.mutation, "ErpPrjTask__save",
                 ApiRequest.build(Map.of("data", lineData)));

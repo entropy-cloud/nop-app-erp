@@ -2,6 +2,7 @@ package app.erp.qa.service.entity;
 
 import app.erp.qa.dao.entity.ErpQaInspectionLine;
 import app.erp.qa.service.ErpQaConstants;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -21,16 +22,17 @@ public final class InspectionResultEvaluator {
     }
 
     /** 评测单行结果：实测值落在 [specMin, specMax] 内 → ACCEPTED，否则 REJECTED。 */
-    public static int evaluateLine(ErpQaInspectionLine line) {
-        BigDecimal measured = parseDecimal(line.getMeasuredValue());
-        BigDecimal min = parseDecimal(line.getSpecMin());
-        BigDecimal max = parseDecimal(line.getSpecMax());
+    public static String evaluateLine(ErpQaInspectionLine line) {
+        String measuredRaw = line.getMeasuredValue();
+        BigDecimal measured = parseDecimal(measuredRaw);
+        BigDecimal min = line.getSpecMin();
+        BigDecimal max = line.getSpecMax();
 
         boolean hasMin = min != null;
         boolean hasMax = max != null;
         if (!hasMin && !hasMax) {
             // 非数值规格（外观类）：实测值非空即合格
-            return line.getMeasuredValue() != null && !line.getMeasuredValue().trim().isEmpty()
+            return measuredRaw != null
                     ? ErpQaConstants.INSPECTION_RESULT_ACCEPTED
                     : ErpQaConstants.INSPECTION_RESULT_REJECTED;
         }
@@ -46,6 +48,17 @@ public final class InspectionResultEvaluator {
         return ErpQaConstants.INSPECTION_RESULT_ACCEPTED;
     }
 
+    private static BigDecimal parseDecimal(String value) {
+        if (value == null) {
+            return null;
+        }
+        try {
+            return new BigDecimal(value.trim());
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
     /**
      * 汇总全部行结果为质检单结果。
      *
@@ -53,16 +66,16 @@ public final class InspectionResultEvaluator {
      * @param allowConcession 是否允许让步接收（部分不合格 + 让步审批 → CONDITIONAL）
      * @return 汇总结果（ACCEPTED / CONDITIONAL / REJECTED）
      */
-    public static int aggregate(List<ErpQaInspectionLine> lines, boolean allowConcession) {
+    public static String aggregate(List<ErpQaInspectionLine> lines, boolean allowConcession) {
         if (lines == null || lines.isEmpty()) {
             throw new IllegalStateException("质检单无质检行，无法汇总结果");
         }
         boolean anyRejected = false;
         for (ErpQaInspectionLine line : lines) {
-            int lineResult = line.getResult() == null
+            String lineResult = line.getResult() == null
                     ? evaluateLine(line)
                     : line.getResult();
-            if (lineResult == ErpQaConstants.INSPECTION_RESULT_REJECTED) {
+            if (Objects.equals(lineResult, ErpQaConstants.INSPECTION_RESULT_REJECTED)) {
                 anyRejected = true;
             }
         }
@@ -72,16 +85,5 @@ public final class InspectionResultEvaluator {
         return allowConcession
                 ? ErpQaConstants.INSPECTION_RESULT_CONDITIONAL
                 : ErpQaConstants.INSPECTION_RESULT_REJECTED;
-    }
-
-    static BigDecimal parseDecimal(String value) {
-        if (value == null || value.trim().isEmpty()) {
-            return null;
-        }
-        try {
-            return new BigDecimal(value.trim());
-        } catch (NumberFormatException e) {
-            return null;
-        }
     }
 }

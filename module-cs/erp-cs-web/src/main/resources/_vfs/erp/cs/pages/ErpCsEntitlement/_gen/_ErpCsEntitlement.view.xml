@@ -37,7 +37,7 @@
                 <col id="slaPolicyId" ui:number="true" sortable="true"/>
 
                 <!--服务类型-->
-                <col id="serviceType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="serviceType" mandatory="true" sortable="true"/>
 
                 <!--生效日期-->
                 <col id="startDate" sortable="true"/>

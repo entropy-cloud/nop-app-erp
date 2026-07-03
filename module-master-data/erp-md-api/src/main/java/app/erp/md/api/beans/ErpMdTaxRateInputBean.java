@@ -54,16 +54,16 @@
         }
 
 
-        private Integer _taxType;
+        private String _taxType;
 
     
         @PropMeta(propId=4)
     
-        public Integer getTaxType(){
+        public String getTaxType(){
             return _taxType;
         }
 
-        public void setTaxType(Integer value){
+        public void setTaxType(String value){
             this._taxType = value;
         }
 
@@ -138,16 +138,16 @@
         }
 
 
-        private Integer _status;
+        private String _status;
 
     
         @PropMeta(propId=10)
     
-        public Integer getStatus(){
+        public String getStatus(){
             return _status;
         }
 
-        public void setStatus(Integer value){
+        public void setStatus(String value){
             this._status = value;
         }
 

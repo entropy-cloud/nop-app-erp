@@ -16,6 +16,7 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.dao.IOrmEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 
@@ -77,14 +78,14 @@ public class ErpFinNotesPayableProcessor {
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
 
     protected void validateTransitionForHonor(ErpFinNotesPayable note, IServiceContext context) {
-        Integer status = note.getStatus();
-        if (status == null || status != ErpFinConstants.NOTES_PAY_ISSUED) {
+        String status = note.getStatus();
+        if (status == null || !Objects.equals(status, ErpFinConstants.NOTES_PAY_ISSUED)) {
             throw illegalTransition(note, status, "ISSUED");
         }
     }
 
     protected void validateNotTerminal(ErpFinNotesPayable note, IServiceContext context) {
-        Integer status = note.getStatus();
+        String status = note.getStatus();
         if (isTerminal(status)) {
             throw illegalTransition(note, status, "非终态");
         }
@@ -179,12 +180,12 @@ public class ErpFinNotesPayableProcessor {
     }
 
     protected boolean isAlreadyIssued(ErpFinNotesPayable note) {
-        Integer status = note.getStatus();
-        return status != null && status == ErpFinConstants.NOTES_PAY_ISSUED;
+        String status = note.getStatus();
+        return status != null && Objects.equals(status, ErpFinConstants.NOTES_PAY_ISSUED);
     }
 
     protected boolean isBankAcceptance(ErpFinNotesPayable note) {
-        return note.getNotesType() != null && note.getNotesType() == ErpFinConstants.NOTES_TYPE_BANK_ACCEPTANCE;
+        return note.getNotesType() != null && Objects.equals(note.getNotesType(), ErpFinConstants.NOTES_TYPE_BANK_ACCEPTANCE);
     }
 
     protected boolean isCreditCheckOnIssue() {
@@ -192,11 +193,11 @@ public class ErpFinNotesPayableProcessor {
         return flag == null ? true : flag;
     }
 
-    protected boolean isTerminal(Integer status) {
+    protected boolean isTerminal(String status) {
         return status != null
-                && (status == ErpFinConstants.NOTES_PAY_HONORED
-                || status == ErpFinConstants.NOTES_PAY_DISHONORED
-                || status == ErpFinConstants.NOTES_PAY_WRITE_OFF);
+                && (Objects.equals(status, ErpFinConstants.NOTES_PAY_HONORED)
+                || Objects.equals(status, ErpFinConstants.NOTES_PAY_DISHONORED)
+                || Objects.equals(status, ErpFinConstants.NOTES_PAY_WRITE_OFF));
     }
 
     protected ErpFinNotesPayable reload(Long notesId) {
@@ -226,7 +227,7 @@ public class ErpFinNotesPayableProcessor {
         return v != null ? v : BigDecimal.ZERO;
     }
 
-    protected NopException illegalTransition(ErpFinNotesPayable note, Integer current, String expected) {
+    protected NopException illegalTransition(ErpFinNotesPayable note, String current, String expected) {
         return new NopException(ErpFinErrors.ERR_NOTES_PAYABLE_ILLEGAL_STATUS_TRANSITION)
                 .param(ErpFinErrors.ARG_NOTES_CODE, note.getCode())
                 .param(ErpFinErrors.ARG_CURRENT_STATUS, current)

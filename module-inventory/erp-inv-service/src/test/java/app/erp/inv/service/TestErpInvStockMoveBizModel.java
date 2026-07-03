@@ -177,7 +177,7 @@ public class TestErpInvStockMoveBizModel extends JunitAutoTestCase {
         return req;
     }
 
-    private Map<String, Object> baseReq(Integer moveType) {
+    private Map<String, Object> baseReq(String moveType) {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("moveType", moveType);
         req.put("orgId", ORG_ID);

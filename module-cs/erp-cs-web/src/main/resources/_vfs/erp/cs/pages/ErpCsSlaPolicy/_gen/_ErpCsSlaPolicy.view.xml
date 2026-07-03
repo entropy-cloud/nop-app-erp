@@ -31,7 +31,7 @@
                 <col id="ticketTypeId" ui:number="true" sortable="true"/>
 
                 <!--最低触发优先级-->
-                <col id="minPriority" ui:number="true" sortable="true"/>
+                <col id="minPriority" sortable="true"/>
 
                 <!--适用团队-->
                 <col id="teamId" ui:number="true" sortable="true"/>

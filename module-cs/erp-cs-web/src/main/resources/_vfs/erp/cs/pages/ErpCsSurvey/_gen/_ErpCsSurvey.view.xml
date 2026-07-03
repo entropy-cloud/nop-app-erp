@@ -49,7 +49,7 @@
                 <col id="surveySentAt" sortable="true"/>
 
                 <!--发送渠道-->
-                <col id="surveyChannel" ui:number="true" sortable="true"/>
+                <col id="surveyChannel" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>

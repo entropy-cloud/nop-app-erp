@@ -9,51 +9,51 @@ package app.erp.mfg.service;
 public interface ErpMfgConstants {
 
     // BOM 类型（erp-mfg/bom-type）
-    int BOM_TYPE_MANUFACTURED = 10;
-    int BOM_TYPE_PHANTOM = 20;
+    String BOM_TYPE_MANUFACTURED = "NORMAL";
+    String BOM_TYPE_PHANTOM = "PHANTOM";
 
     // 成本滚算状态（erp-mfg/cost-rollup-status）
-    int COST_ROLLUP_STATUS_DRAFT = 10;
-    int COST_ROLLUP_STATUS_CALCULATED = 20;
-    int COST_ROLLUP_STATUS_FIRMED = 30;
+    String COST_ROLLUP_STATUS_DRAFT = "DRAFT";
+    String COST_ROLLUP_STATUS_CALCULATED = "CALCULATED";
+    String COST_ROLLUP_STATUS_FIRMED = "FIRMED";
 
     // 多级 BOM 展开深度上限 / 环兜底（`erp-mfg.bom-max-depth`）
     String CONFIG_BOM_MAX_DEPTH = "erp-mfg.bom-max-depth";
     int DEFAULT_BOM_MAX_DEPTH = 15;
 
     // 工单状态（erp-mfg/work-order-status，10 态；权威：state-machine.md §适用对象一）
-    int WORK_ORDER_STATUS_DRAFT = 10;
-    int WORK_ORDER_STATUS_SUBMITTED = 20;
-    int WORK_ORDER_STATUS_NOT_STARTED = 30;
-    int WORK_ORDER_STATUS_IN_PROCESS = 40;
-    int WORK_ORDER_STATUS_STOCK_RESERVED = 50;
-    int WORK_ORDER_STATUS_STOCK_PARTIAL = 60;
-    int WORK_ORDER_STATUS_COMPLETED = 70;
-    int WORK_ORDER_STATUS_STOPPED = 80;
-    int WORK_ORDER_STATUS_CLOSED = 90;
-    int WORK_ORDER_STATUS_CANCELLED = 100;
+    String WORK_ORDER_STATUS_DRAFT = "DRAFT";
+    String WORK_ORDER_STATUS_SUBMITTED = "SUBMITTED";
+    String WORK_ORDER_STATUS_NOT_STARTED = "NOT_STARTED";
+    String WORK_ORDER_STATUS_IN_PROCESS = "IN_PROCESS";
+    String WORK_ORDER_STATUS_STOCK_RESERVED = "STOCK_RESERVED";
+    String WORK_ORDER_STATUS_STOCK_PARTIAL = "STOCK_PARTIAL";
+    String WORK_ORDER_STATUS_COMPLETED = "COMPLETED";
+    String WORK_ORDER_STATUS_STOPPED = "STOPPED";
+    String WORK_ORDER_STATUS_CLOSED = "CLOSED";
+    String WORK_ORDER_STATUS_CANCELLED = "CANCELLED";
 
     // 审核状态（erp-mfg/approve-status，三轴审批的审核轴）
-    int APPROVE_STATUS_UNSUBMITTED = 10;
-    int APPROVE_STATUS_SUBMITTED = 20;
-    int APPROVE_STATUS_APPROVED = 30;
-    int APPROVE_STATUS_REJECTED = 40;
+    String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
+    String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
+    String APPROVE_STATUS_APPROVED = "APPROVED";
+    String APPROVE_STATUS_REJECTED = "REJECTED";
 
     // 领料状态（erp-mfg/issue-status）
-    int ISSUE_STATUS_DRAFT = 10;
-    int ISSUE_STATUS_CONFIRMED = 20;
-    int ISSUE_STATUS_DONE = 30;
-    int ISSUE_STATUS_CANCELLED = 40;
+    String ISSUE_STATUS_DRAFT = "DRAFT";
+    String ISSUE_STATUS_CONFIRMED = "CONFIRMED";
+    String ISSUE_STATUS_DONE = "DONE";
+    String ISSUE_STATUS_CANCELLED = "CANCELLED";
 
     // 作业卡状态（erp-mfg/job-card-status，8 态；权威：state-machine.md §适用对象二）
-    int JOB_CARD_STATUS_OPEN = 10;
-    int JOB_CARD_STATUS_WORK_IN_PROGRESS = 20;
-    int JOB_CARD_STATUS_PARTIALLY_TRANSFERRED = 30;
-    int JOB_CARD_STATUS_MATERIAL_TRANSFERRED = 40;
-    int JOB_CARD_STATUS_ON_HOLD = 50;
-    int JOB_CARD_STATUS_SUBMITTED = 60;
-    int JOB_CARD_STATUS_COMPLETED = 70;
-    int JOB_CARD_STATUS_CANCELLED = 80;
+    String JOB_CARD_STATUS_OPEN = "OPEN";
+    String JOB_CARD_STATUS_WORK_IN_PROGRESS = "WORK_IN_PROGRESS";
+    String JOB_CARD_STATUS_PARTIALLY_TRANSFERRED = "PARTIALLY_TRANSFERRED";
+    String JOB_CARD_STATUS_MATERIAL_TRANSFERRED = "MATERIAL_TRANSFERRED";
+    String JOB_CARD_STATUS_ON_HOLD = "ON_HOLD";
+    String JOB_CARD_STATUS_SUBMITTED = "SUBMITTED";
+    String JOB_CARD_STATUS_COMPLETED = "COMPLETED";
+    String JOB_CARD_STATUS_CANCELLED = "CANCELLED";
 
     // 工单行类型（ErpMfgWorkOrderLine.lineType 自由字符串）
     String WORK_ORDER_LINE_TYPE_OUTPUT = "OUTPUT";
@@ -65,31 +65,31 @@ public interface ErpMfgConstants {
     String RELATED_BILL_TYPE_MFG_WORK_ORDER = "ERP_MFG_WORK_ORDER";
 
     // 库存移动单作业类型（对齐 ErpInvConstants 码值，避免跨 service 模块依赖）
-    int MOVE_TYPE_OUTGOING_ISSUE = 20;        // 领料出库（ErpInvConstants.MOVE_TYPE_OUTGOING）：库存域 bookCompletion 据此扣减余额
-    int MOVE_TYPE_MANUFACTURING = 40;         // 完工入库（ErpInvConstants.MOVE_TYPE_MANUFACTURING）：库存域视为入库，加产成品库存
+    String MOVE_TYPE_OUTGOING_ISSUE = "OUTGOING";        // 领料出库（ErpInvConstants.MOVE_TYPE_OUTGOING）：库存域 bookCompletion 据此扣减余额
+    String MOVE_TYPE_MANUFACTURING = "MANUFACTURE";         // 完工入库（ErpInvConstants.MOVE_TYPE_MANUFACTURING）：库存域视为入库，加产成品库存
 
     // 工单状态机配置项（无 .env/外部服务，经 AppConfig.var 读取）
     String CONFIG_ALLOW_PARTIAL_KIT_START = "erp-mfg.allow-partial-kit-start";
     String CONFIG_INSPECTION_GATE_ENABLED = "erp-mfg.inspection-gate-enabled";
 
     // MRP 计划状态（erp-mfg/mrp-status）
-    int MRP_STATUS_DRAFT = 10;
-    int MRP_STATUS_RUNNING = 20;
-    int MRP_STATUS_COMPLETED = 30;
-    int MRP_STATUS_FIRMED = 40;
-    int MRP_STATUS_CANCELLED = 50;
+    String MRP_STATUS_DRAFT = "DRAFT";
+    String MRP_STATUS_RUNNING = "RUNNING";
+    String MRP_STATUS_COMPLETED = "COMPLETED";
+    String MRP_STATUS_FIRMED = "FIRMED";
+    String MRP_STATUS_CANCELLED = "CANCELLED";
 
     // MRP 计划订单类型（erp-mfg/mrp-order-type）
-    int MRP_ORDER_TYPE_PLANNED_ORDER = 10;
-    int MRP_ORDER_TYPE_PURCHASE_REQUEST = 20;
-    int MRP_ORDER_TYPE_WORK_ORDER_REQUEST = 30;
-    int MRP_ORDER_TYPE_SUBCONTRACT_REQUEST = 40;
+    String MRP_ORDER_TYPE_PLANNED_ORDER = "PLANNED_ORDER";
+    String MRP_ORDER_TYPE_PURCHASE_REQUEST = "PURCHASE_REQUEST";
+    String MRP_ORDER_TYPE_WORK_ORDER_REQUEST = "WORK_ORDER_REQUEST";
+    String MRP_ORDER_TYPE_SUBCONTRACT_REQUEST = "SUBCONTRACT_REQUEST";
 
     // MRP 需求来源（erp-mfg/mrp-demand-source）
-    int MRP_DEMAND_SOURCE_SALES_ORDER = 10;
-    int MRP_DEMAND_SOURCE_FORECAST = 20;
-    int MRP_DEMAND_SOURCE_SAFETY_STOCK = 30;
-    int MRP_DEMAND_SOURCE_MANUAL = 40;
+    String MRP_DEMAND_SOURCE_SALES_ORDER = "SALES_ORDER";
+    String MRP_DEMAND_SOURCE_FORECAST = "FORECAST";
+    String MRP_DEMAND_SOURCE_SAFETY_STOCK = "SAFETY_STOCK";
+    String MRP_DEMAND_SOURCE_MANUAL = "MANUAL";
 
     // MRP 批量与提前期配置（经 AppConfig.var 读取；无 .env/外部服务）
     // default-lot-size: 0=lot-for-lot（净需求即建议量），>0 时按倍数向上取整
@@ -109,18 +109,18 @@ public interface ErpMfgConstants {
     String RELEASE_WO_CODE_PREFIX = "WO-MRP-";
 
     // 销售订单作废状态（erp-sal/doc-status CANCELLED=30），需求整合排除作废单
-    int SAL_DOC_STATUS_CANCELLED = 30;
+    String SAL_DOC_STATUS_CANCELLED = "CANCELLED";
 
     // 班次类型（erp-mfg/shift-type）
-    int SHIFT_TYPE_ONE_SHIFT = 10;
-    int SHIFT_TYPE_MORNING = 20;
-    int SHIFT_TYPE_AFTERNOON = 30;
-    int SHIFT_TYPE_NIGHT = 40;
+    String SHIFT_TYPE_ONE_SHIFT = "ONE_SHIFT";
+    String SHIFT_TYPE_MORNING = "MORNING";
+    String SHIFT_TYPE_AFTERNOON = "AFTERNOON";
+    String SHIFT_TYPE_NIGHT = "NIGHT";
 
     // 工作日模式（erp-mfg/work-date-pattern）
-    int WORK_DATE_PATTERN_ALL_WEEK = 10;
-    int WORK_DATE_PATTERN_WEEKDAYS = 20;
-    int WORK_DATE_PATTERN_WEEKEND = 30;
+    String WORK_DATE_PATTERN_ALL_WEEK = "ALL_WEEK";
+    String WORK_DATE_PATTERN_WEEKDAYS = "WEEKDAYS";
+    String WORK_DATE_PATTERN_WEEKEND = "WEEKEND";
 
     // CRP 超负荷阈值（经 AppConfig.var 读取；默认 1.0=负荷率超过 100% 即告警）。无 .env/外部服务。
     String CONFIG_CRP_OVERLOAD_THRESHOLD = "erp-mfg.crp-overload-threshold";

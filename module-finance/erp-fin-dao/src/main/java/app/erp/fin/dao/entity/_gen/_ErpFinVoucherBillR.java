@@ -41,7 +41,7 @@ public class _ErpFinVoucherBillR extends DynamicOrmEntity{
     public static final String PROP_NAME_billLineCode = "billLineCode";
     public static final int PROP_ID_billLineCode = 5;
     
-    /* 业务类型: BUSINESS_TYPE INTEGER */
+    /* 业务类型: BUSINESS_TYPE VARCHAR */
     public static final String PROP_NAME_businessType = "businessType";
     public static final int PROP_ID_businessType = 6;
     
@@ -139,7 +139,7 @@ public class _ErpFinVoucherBillR extends DynamicOrmEntity{
     private java.lang.String _billLineCode;
     
     /* 业务类型: BUSINESS_TYPE */
-    private java.lang.Integer _businessType;
+    private java.lang.String _businessType;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -331,9 +331,9 @@ public class _ErpFinVoucherBillR extends DynamicOrmEntity{
             }
         
             case PROP_ID_businessType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_businessType));
                }
                setBusinessType(typedValue);
@@ -446,7 +446,7 @@ public class _ErpFinVoucherBillR extends DynamicOrmEntity{
         
             case PROP_ID_businessType:{
                onInitProp(propId);
-               this._businessType = (java.lang.Integer)value;
+               this._businessType = (java.lang.String)value;
                
                break;
             }
@@ -597,7 +597,7 @@ public class _ErpFinVoucherBillR extends DynamicOrmEntity{
     /**
      * 业务类型: BUSINESS_TYPE
      */
-    public final java.lang.Integer getBusinessType(){
+    public final java.lang.String getBusinessType(){
          onPropGet(PROP_ID_businessType);
          return _businessType;
     }
@@ -605,7 +605,7 @@ public class _ErpFinVoucherBillR extends DynamicOrmEntity{
     /**
      * 业务类型: BUSINESS_TYPE
      */
-    public final void setBusinessType(java.lang.Integer value){
+    public final void setBusinessType(java.lang.String value){
         if(onPropSet(PROP_ID_businessType,value)){
             this._businessType = value;
             internalClearRefs(PROP_ID_businessType);

@@ -28,7 +28,7 @@
                 <col id="orgId" ui:number="true" sortable="true"/>
 
                 <!--方向-->
-                <col id="direction" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="direction" mandatory="true" sortable="true"/>
 
                 <!--请求报文-->
                 <col id="requestPayload" sortable="true"/>

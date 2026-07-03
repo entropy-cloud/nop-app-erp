@@ -45,7 +45,7 @@ public class TestErpDrpPlanCrudSmoke extends JunitAutoTestCase {
         headData.put("planName", "冒烟分销计划");
         headData.put("periodFrom", "2026-07-01");
         headData.put("periodTo", "2026-12-31");
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> result = executeRpc(GraphQLOperationType.mutation, "ErpDrpPlan__save",
                 ApiRequest.build(Map.of("data", headData)));
 
@@ -62,7 +62,7 @@ public class TestErpDrpPlanCrudSmoke extends JunitAutoTestCase {
         headData.put("planName", "冒烟分销计划");
         headData.put("periodFrom", "2026-07-01");
         headData.put("periodTo", "2026-12-31");
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpDrpPlan__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -82,7 +82,7 @@ public class TestErpDrpPlanCrudSmoke extends JunitAutoTestCase {
         headData.put("planName", "冒烟分销计划");
         headData.put("periodFrom", "2026-07-01");
         headData.put("periodTo", "2026-12-31");
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpDrpPlan__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -106,7 +106,7 @@ public class TestErpDrpPlanCrudSmoke extends JunitAutoTestCase {
         headData.put("planName", "冒烟分销计划");
         headData.put("periodFrom", "2026-07-01");
         headData.put("periodTo", "2026-12-31");
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpDrpPlan__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -131,7 +131,7 @@ public class TestErpDrpPlanCrudSmoke extends JunitAutoTestCase {
         headData.put("planName", "冒烟分销计划");
         headData.put("periodFrom", "2026-07-01");
         headData.put("periodTo", "2026-12-31");
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> head = executeRpc(GraphQLOperationType.mutation, "ErpDrpPlan__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_saveHead_response.json5", head);
@@ -141,8 +141,8 @@ public class TestErpDrpPlanCrudSmoke extends JunitAutoTestCase {
         lineData.put("lineNo", 1);
         lineData.put("materialId", pre.get("material"));
         lineData.put("warehouseId", pre.get("warehouse"));
-        lineData.put("replenishmentType", 10);
-        lineData.put("status", 10);
+        lineData.put("replenishmentType", "TRANSFER");
+        lineData.put("status", "SUGGESTED");
         lineData.put("planId", headId);
         ApiResponse<?> line = executeRpc(GraphQLOperationType.mutation, "ErpDrpLine__save",
                 ApiRequest.build(Map.of("data", lineData)));
@@ -168,14 +168,14 @@ Map<String, Object> d_uom = new LinkedHashMap<>();
         Map<String, Object> d_material = new LinkedHashMap<>();
         d_material.put("code", "SMOKE-MAT");
         d_material.put("name", "冒烟物料");
-        d_material.put("materialType", 10);
+        d_material.put("materialType", "GOODS");
         d_material.put("uoMId", ids.get("uom"));
-        d_material.put("status", 10);
+        d_material.put("status", "ACTIVE");
         ids.put("material", String.valueOf(((Map<?, ?>) executeRpc(GraphQLOperationType.mutation, "ErpMdMaterial__save", ApiRequest.build(Map.of("data", d_material))).getData()).get("id")));
         Map<String, Object> d_warehouse = new LinkedHashMap<>();
         d_warehouse.put("code", "SMOKE-WH");
         d_warehouse.put("name", "冒烟仓库");
-        d_warehouse.put("status", 10);
+        d_warehouse.put("status", "ACTIVE");
         ids.put("warehouse", String.valueOf(((Map<?, ?>) executeRpc(GraphQLOperationType.mutation, "ErpMdWarehouse__save", ApiRequest.build(Map.of("data", d_warehouse))).getData()).get("id")));
         return ids;
     }

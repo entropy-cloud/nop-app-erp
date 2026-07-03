@@ -6,306 +6,306 @@ public interface _ErpQaDaoConstants {
     /**
      * 检验类型: 来料检验 
      */
-    int INSPECTION_TYPE_INCOMING = 10;
+    String INSPECTION_TYPE_INCOMING = "INCOMING";
                     
     /**
      * 检验类型: 制程检验 
      */
-    int INSPECTION_TYPE_IN_PROCESS = 20;
+    String INSPECTION_TYPE_IN_PROCESS = "IN_PROCESS";
                     
     /**
      * 检验类型: 完工检验 
      */
-    int INSPECTION_TYPE_FINAL = 30;
+    String INSPECTION_TYPE_FINAL = "FINAL";
                     
     /**
      * 检验类型: 出货检验 
      */
-    int INSPECTION_TYPE_OUTGOING = 40;
+    String INSPECTION_TYPE_OUTGOING = "OUTGOING";
                     
     /**
      * 质检结果: 待检 
      */
-    int INSPECTION_RESULT_PENDING = 10;
+    String INSPECTION_RESULT_PENDING = "PENDING";
                     
     /**
      * 质检结果: 合格 
      */
-    int INSPECTION_RESULT_ACCEPTED = 20;
+    String INSPECTION_RESULT_ACCEPTED = "ACCEPTED";
                     
     /**
      * 质检结果: 让步接收 
      */
-    int INSPECTION_RESULT_CONDITIONAL = 30;
+    String INSPECTION_RESULT_CONDITIONAL = "CONDITIONAL";
                     
     /**
      * 质检结果: 不合格 
      */
-    int INSPECTION_RESULT_REJECTED = 40;
+    String INSPECTION_RESULT_REJECTED = "REJECTED";
                     
     /**
      * 不符合项状态: 待处理 
      */
-    int NCR_STATUS_OPEN = 10;
+    String NCR_STATUS_OPEN = "OPEN";
                     
     /**
      * 不符合项状态: 评审中 
      */
-    int NCR_STATUS_IN_REVIEW = 20;
+    String NCR_STATUS_IN_REVIEW = "IN_REVIEW";
                     
     /**
      * 不符合项状态: 已解决 
      */
-    int NCR_STATUS_RESOLVED = 30;
+    String NCR_STATUS_RESOLVED = "RESOLVED";
                     
     /**
      * 不符合项状态: 已升级为召回 
      */
-    int NCR_STATUS_ESCALATED_TO_RECALL = 35;
+    String NCR_STATUS_ESCALATED_TO_RECALL = "ESCALATED_TO_RECALL";
                     
     /**
      * 不符合项状态: 已取消 
      */
-    int NCR_STATUS_CANCELLED = 40;
+    String NCR_STATUS_CANCELLED = "CANCELLED";
                     
     /**
      * 纠正措施类型: 纠正 
      */
-    int ACTION_TYPE_CORRECTIVE = 10;
+    String ACTION_TYPE_CORRECTIVE = "CORRECTIVE";
                     
     /**
      * 纠正措施类型: 预防 
      */
-    int ACTION_TYPE_PREVENTIVE = 20;
+    String ACTION_TYPE_PREVENTIVE = "PREVENTIVE";
                     
     /**
      * 纠正措施类型: 纠正预防 
      */
-    int ACTION_TYPE_CAPA = 30;
+    String ACTION_TYPE_CAPA = "CAPA";
                     
     /**
      * 单据状态: 草稿 
      */
-    int DOC_STATUS_DRAFT = 10;
+    String DOC_STATUS_DRAFT = "DRAFT";
                     
     /**
      * 单据状态: 已生效 
      */
-    int DOC_STATUS_ACTIVE = 20;
+    String DOC_STATUS_ACTIVE = "ACTIVE";
                     
     /**
      * 单据状态: 已作废 
      */
-    int DOC_STATUS_CANCELLED = 30;
+    String DOC_STATUS_CANCELLED = "CANCELLED";
                     
     /**
      * 审核状态: 未提交 
      */
-    int APPROVE_STATUS_UNSUBMITTED = 10;
+    String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
                     
     /**
      * 审核状态: 已提交 
      */
-    int APPROVE_STATUS_SUBMITTED = 20;
+    String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
                     
     /**
      * 审核状态: 已审核 
      */
-    int APPROVE_STATUS_APPROVED = 30;
+    String APPROVE_STATUS_APPROVED = "APPROVED";
                     
     /**
      * 审核状态: 已驳回 
      */
-    int APPROVE_STATUS_REJECTED = 40;
+    String APPROVE_STATUS_REJECTED = "REJECTED";
                     
     /**
      * 不合格严重程度: 低 
      */
-    int SEVERITY_LOW = 10;
+    String SEVERITY_LOW = "LOW";
                     
     /**
      * 不合格严重程度: 一般 
      */
-    int SEVERITY_NORMAL = 20;
+    String SEVERITY_NORMAL = "NORMAL";
                     
     /**
      * 不合格严重程度: 高 
      */
-    int SEVERITY_HIGH = 30;
+    String SEVERITY_HIGH = "HIGH";
                     
     /**
      * 不合格严重程度: 严重 
      */
-    int SEVERITY_CRITICAL = 40;
+    String SEVERITY_CRITICAL = "CRITICAL";
                     
     /**
      * 纠正措施状态: 待执行 
      */
-    int ACTION_STATUS_PENDING = 10;
+    String ACTION_STATUS_PENDING = "PENDING";
                     
     /**
      * 纠正措施状态: 执行中 
      */
-    int ACTION_STATUS_IN_PROGRESS = 20;
+    String ACTION_STATUS_IN_PROGRESS = "IN_PROGRESS";
                     
     /**
      * 纠正措施状态: 已完成 
      */
-    int ACTION_STATUS_COMPLETED = 30;
+    String ACTION_STATUS_COMPLETED = "COMPLETED";
                     
     /**
      * 纠正措施状态: 已逾期 
      */
-    int ACTION_STATUS_OVERDUE = 40;
+    String ACTION_STATUS_OVERDUE = "OVERDUE";
                     
     /**
      * 风险状态: 待处理 
      */
-    int RISK_STATUS_OPEN = 10;
+    String RISK_STATUS_OPEN = "OPEN";
                     
     /**
      * 风险状态: 已缓解 
      */
-    int RISK_STATUS_MITIGATED = 20;
+    String RISK_STATUS_MITIGATED = "MITIGATED";
                     
     /**
      * 风险状态: 已关闭 
      */
-    int RISK_STATUS_CLOSED = 30;
+    String RISK_STATUS_CLOSED = "CLOSED";
                     
     /**
      * 质量目标状态: 进行中 
      */
-    int GOAL_STATUS_ACTIVE = 10;
+    String GOAL_STATUS_ACTIVE = "ACTIVE";
                     
     /**
      * 质量目标状态: 已达成 
      */
-    int GOAL_STATUS_ACHIEVED = 20;
+    String GOAL_STATUS_ACHIEVED = "ACHIEVED";
                     
     /**
      * 质量目标状态: 未达成 
      */
-    int GOAL_STATUS_FAILED = 30;
+    String GOAL_STATUS_FAILED = "FAILED";
                     
     /**
      * 质量目标状态: 已取消 
      */
-    int GOAL_STATUS_CANCELLED = 40;
+    String GOAL_STATUS_CANCELLED = "CANCELLED";
                     
     /**
      * 评审类型: 内部评审 
      */
-    int REVIEW_TYPE_INTERNAL = 10;
+    String REVIEW_TYPE_INTERNAL = "INTERNAL";
                     
     /**
      * 评审类型: 外部评审 
      */
-    int REVIEW_TYPE_EXTERNAL = 20;
+    String REVIEW_TYPE_EXTERNAL = "EXTERNAL";
                     
     /**
      * 评审类型: 供应商评审 
      */
-    int REVIEW_TYPE_SUPPLIER = 30;
+    String REVIEW_TYPE_SUPPLIER = "SUPPLIER";
                     
     /**
      * 处理决定: 报废 
      */
-    int DISPOSITION_TYPE_SCRAP = 10;
+    String DISPOSITION_TYPE_SCRAP = "SCRAP";
                     
     /**
      * 处理决定: 退货 
      */
-    int DISPOSITION_TYPE_RETURN = 20;
+    String DISPOSITION_TYPE_RETURN = "RETURN";
                     
     /**
      * 处理决定: 让步接收 
      */
-    int DISPOSITION_TYPE_CONCESSION = 30;
+    String DISPOSITION_TYPE_CONCESSION = "CONCESSION";
                     
     /**
      * 处理决定: 降级使用 
      */
-    int DISPOSITION_TYPE_DOWNGRADE = 40;
+    String DISPOSITION_TYPE_DOWNGRADE = "DOWNGRADE";
                     
     /**
      * 召回触发类型: 手动发起 
      */
-    int RECALL_TRIGGER_TYPE_MANUAL = 10;
+    String RECALL_TRIGGER_TYPE_MANUAL = "MANUAL";
                     
     /**
      * 召回触发类型: 量具NCR升级 
      */
-    int RECALL_TRIGGER_TYPE_GAUGE_NCR_UPGRADE = 20;
+    String RECALL_TRIGGER_TYPE_GAUGE_NCR_UPGRADE = "GAUGE_NCR_UPGRADE";
                     
     /**
      * 召回触发类型: 批次NCR升级 
      */
-    int RECALL_TRIGGER_TYPE_BATCH_NCR_UPGRADE = 30;
+    String RECALL_TRIGGER_TYPE_BATCH_NCR_UPGRADE = "BATCH_NCR_UPGRADE";
                     
     /**
      * 召回触发类型: 监管要求 
      */
-    int RECALL_TRIGGER_TYPE_REGULATORY = 40;
+    String RECALL_TRIGGER_TYPE_REGULATORY = "REGULATORY";
                     
     /**
      * 召回严重程度: 低 
      */
-    int RECALL_SEVERITY_LOW = 10;
+    String RECALL_SEVERITY_LOW = "LOW";
                     
     /**
      * 召回严重程度: 中 
      */
-    int RECALL_SEVERITY_MEDIUM = 20;
+    String RECALL_SEVERITY_MEDIUM = "MEDIUM";
                     
     /**
      * 召回严重程度: 高 
      */
-    int RECALL_SEVERITY_HIGH = 30;
+    String RECALL_SEVERITY_HIGH = "HIGH";
                     
     /**
      * 召回严重程度: 严重 
      */
-    int RECALL_SEVERITY_CRITICAL = 40;
+    String RECALL_SEVERITY_CRITICAL = "CRITICAL";
                     
     /**
      * 召回状态: 待处理 
      */
-    int RECALL_STATUS_OPEN = 10;
+    String RECALL_STATUS_OPEN = "OPEN";
                     
     /**
      * 召回状态: 已审批 
      */
-    int RECALL_STATUS_APPROVED = 20;
+    String RECALL_STATUS_APPROVED = "APPROVED";
                     
     /**
      * 召回状态: 执行中 
      */
-    int RECALL_STATUS_IN_PROGRESS = 30;
+    String RECALL_STATUS_IN_PROGRESS = "IN_PROGRESS";
                     
     /**
      * 召回状态: 已关闭 
      */
-    int RECALL_STATUS_CLOSED = 40;
+    String RECALL_STATUS_CLOSED = "CLOSED";
                     
     /**
      * 召回状态: 已取消 
      */
-    int RECALL_STATUS_CANCELLED = 50;
+    String RECALL_STATUS_CANCELLED = "CANCELLED";
                     
     /**
      * 召回目标退货状态: 待通知 
      */
-    int RECALL_TARGET_RETURN_STATUS_PENDING = 10;
+    String RECALL_TARGET_RETURN_STATUS_PENDING = "PENDING";
                     
     /**
      * 召回目标退货状态: 已通知 
      */
-    int RECALL_TARGET_RETURN_STATUS_NOTIFIED = 20;
+    String RECALL_TARGET_RETURN_STATUS_NOTIFIED = "NOTIFIED";
                     
     /**
      * 召回目标退货状态: 已退货 
      */
-    int RECALL_TARGET_RETURN_STATUS_RETURNED = 30;
+    String RECALL_TARGET_RETURN_STATUS_RETURNED = "RETURNED";
                     
 }

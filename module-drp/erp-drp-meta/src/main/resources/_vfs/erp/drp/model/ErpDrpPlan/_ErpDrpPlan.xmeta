@@ -41,7 +41,7 @@
         </prop>
         <prop name="status" displayName="状态" propId="6" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-drp/drp-plan-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-drp/drp-plan-status"/>
         </prop>
         <prop name="totalReplenishmentQty" displayName="总补货数量" propId="7" i18n-en:displayName="Total Replenishment Qty"
               queryable="true" sortable="true" insertable="true" updatable="true">

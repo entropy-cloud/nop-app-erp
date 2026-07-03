@@ -55,8 +55,8 @@ public class TestErpMfgMaterialIssue extends JunitAutoTestCase {
     static final Long CURRENCY_ID = 6301L;
     static final Long P = 1001L;     // 产成品
     static final Long M1 = 1002L;    // 子件
-    static final int MOVE_TYPE_INCOMING = 10;
-    static final int MOVE_TYPE_OUTGOING = 20;
+    static final String MOVE_TYPE_INCOMING = "INCOMING";
+    static final String MOVE_TYPE_OUTGOING = "OUTGOING";
 
     @Inject
     IDaoProvider daoProvider;
@@ -68,7 +68,7 @@ public class TestErpMfgMaterialIssue extends JunitAutoTestCase {
     @Test
     public void testConfirmIssuesOutAndAggregatesMaterialCost() {
         seedMaterial(P, null);
-        seedMaterial(M1, 10);   // 移动加权平均
+        seedMaterial(M1, "MOVING_AVERAGE");   // 移动加权平均
         seedBom(9001L, P, M1, bd("2"));
         // 期初库存：入库 10@5 → balance M1 = 10, avgCost = 5
         generateIncoming(M1, "PR-MI-001", bd("10"), bd("5"));
@@ -91,7 +91,7 @@ public class TestErpMfgMaterialIssue extends JunitAutoTestCase {
         // 出库移动单生成且 DONE
         ErpInvStockMove move = findMove(ErpMfgConstants.RELATED_BILL_TYPE_MFG_ISSUE, "MI-001");
         assertNotNull(move, "应生成出库移动单");
-        assertEquals(30, move.getDocStatus(), "业务联动移动单 DONE");   // 30 = inv DOC_STATUS_DONE
+        assertEquals("DONE", move.getDocStatus(), "业务联动移动单 DONE");
         assertEquals(MOVE_TYPE_OUTGOING, move.getMoveType(), "领料出库用 OUTGOING");
 
         // 余额扣减：10 - 2 = 8
@@ -110,7 +110,7 @@ public class TestErpMfgMaterialIssue extends JunitAutoTestCase {
     @Test
     public void testConfirmIdempotent() {
         seedMaterial(P, null);
-        seedMaterial(M1, 10);
+        seedMaterial(M1, "MOVING_AVERAGE");
         seedBom(9002L, P, M1, bd("1"));
         generateIncoming(M1, "PR-MI-IDEM", bd("10"), bd("5"));
         Long woId = seedWorkOrder("WO-MI-IDEM");
@@ -151,16 +151,16 @@ public class TestErpMfgMaterialIssue extends JunitAutoTestCase {
         rpcOk(mutation, "ErpInvStockMove__generateMove", Map.of("request", req));
     }
 
-    private void seedMaterial(Long id, Integer costMethod) {
+    private void seedMaterial(Long id, String costMethod) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();
             m.orm_propValueByName("id", id);
             m.setCode("MAT-" + id);
             m.setName("Material " + id);
-            m.orm_propValueByName("materialType", 10);
+            m.orm_propValueByName("materialType", "GOODS");
             m.setUoMId(UOM_ID);
-            m.setStatus(10);
+            m.setStatus("ACTIVE");
             m.setCostMethod(costMethod);
             dao.saveEntity(m);
         });

@@ -1,27 +1,27 @@
 # __XGEN_FORCE_OVERRIDE__
 label: MRP 计划状态
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 草稿
-    value: 10
+    value: DRAFT
     description: 
   
   - label: 运算中
-    value: 20
+    value: RUNNING
     description: 
   
   - label: 运算完成
-    value: 30
+    value: COMPLETED
     description: 
   
   - label: 已确认(转工单)
-    value: 40
+    value: FIRMED
     description: 
   
   - label: 已取消
-    value: 50
+    value: CANCELLED
     description: 
   

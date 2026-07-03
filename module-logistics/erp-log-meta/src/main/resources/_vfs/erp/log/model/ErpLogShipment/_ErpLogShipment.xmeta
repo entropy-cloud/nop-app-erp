@@ -69,19 +69,19 @@
         </prop>
         <prop name="freightTerms" displayName="运费条款" propId="13" i18n-en:displayName="Freight Terms" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-log/freight-terms"/>
+            <schema type="java.lang.String" precision="20" dict="erp-log/freight-terms"/>
         </prop>
         <prop name="freightSettlementStatus" displayName="运费结算状态" propId="14" i18n-en:displayName="Settlement Status"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-log/settlement-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-log/settlement-status"/>
         </prop>
         <prop name="totalWeight" displayName="总重量(kg)" propId="15" i18n-en:displayName="Total Weight" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="weight" type="java.lang.String" precision="12" scale="3"/>
+            <schema domain="weight" type="java.math.BigDecimal" precision="12" scale="3"/>
         </prop>
         <prop name="totalVolume" displayName="总体积(m³)" propId="16" i18n-en:displayName="Total Volume" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="volume" type="java.lang.String" precision="12" scale="6"/>
+            <schema domain="volume" type="java.math.BigDecimal" precision="12" scale="6"/>
         </prop>
         <prop name="totalParcels" displayName="总包裹数" propId="17" i18n-en:displayName="Total Parcels" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="1">
@@ -146,7 +146,7 @@
         </prop>
         <prop name="status" displayName="状态" propId="32" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-log/shipment-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-log/shipment-status"/>
         </prop>
         <prop name="remark" displayName="备注" propId="33" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

@@ -22,7 +22,7 @@ public final class DepreciationCalculator {
     private DepreciationCalculator() {
     }
 
-    public static BigDecimal calculate(int method, BigDecimal originalValue, BigDecimal residualValue,
+    public static BigDecimal calculate(String method, BigDecimal originalValue, BigDecimal residualValue,
                                        BigDecimal netBookValue, int usefulLifeMonths, int elapsedMonths,
                                        BigDecimal periodUnits, BigDecimal estimatedTotalUnits) {
         BigDecimal original = nz(originalValue);

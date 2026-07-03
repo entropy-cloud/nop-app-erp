@@ -28,10 +28,10 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--类型-->
-                <col id="partnerType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="partnerType" mandatory="true" sortable="true"/>
 
                 <!--状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--联系人-->
                 <col id="contactPerson" sortable="true"/>

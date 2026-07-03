@@ -15,6 +15,7 @@ import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -84,10 +85,10 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
         // 故直接构造内存行（不经 ORM 落库）调用评测器验证解析失败路径
         app.erp.qa.dao.entity.ErpQaInspectionLine line = new app.erp.qa.dao.entity.ErpQaInspectionLine();
         line.orm_propValueByName("id", 99001L);
-        line.setSpecMin("10");
-        line.setSpecMax("20");
+        line.setSpecMin(new BigDecimal("10"));
+        line.setSpecMax(new BigDecimal("20"));
         line.setMeasuredValue("abc");
-        int result = app.erp.qa.service.entity.InspectionResultEvaluator.evaluateLine(line);
+        String result = app.erp.qa.service.entity.InspectionResultEvaluator.evaluateLine(line);
         assertEquals(ErpQaConstants.INSPECTION_RESULT_REJECTED, result, "实测值解析失败→REJECTED");
 
         // 无规格上下限（外观类）+ 实测值非空 → ACCEPTED
@@ -120,7 +121,7 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
         List<?> list = (List<?>) resp.getData();
         assertEquals(1, list.size(), "findByRelatedBill 返回关联质检单");
         assertEquals(ErpQaConstants.INSPECTION_RESULT_ACCEPTED,
-                ((Number) ((Map<?, ?>) list.get(0)).get("result")).intValue());
+                ((Map<?, ?>) list.get(0)).get("result"));
 
         // isInspectionCleared：ACCEPTED → true
         ApiResponse<?> cleared = rpc(query, "ErpQaInspection__isInspectionCleared",
@@ -219,15 +220,19 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
     }
 
     private LineSpec withLine(String parameterName, String specMin, String specMax) {
-        return new LineSpec(parameterName, specMin, specMax);
+        return new LineSpec(parameterName, toBigDecimal(specMin), toBigDecimal(specMax));
+    }
+
+    private static BigDecimal toBigDecimal(String value) {
+        return value == null ? null : new BigDecimal(value);
     }
 
     private static final class LineSpec {
         final String parameterName;
-        final String specMin;
-        final String specMax;
+        final BigDecimal specMin;
+        final BigDecimal specMax;
 
-        LineSpec(String parameterName, String specMin, String specMax) {
+        LineSpec(String parameterName, BigDecimal specMin, BigDecimal specMax) {
             this.parameterName = parameterName;
             this.specMin = specMin;
             this.specMax = specMax;

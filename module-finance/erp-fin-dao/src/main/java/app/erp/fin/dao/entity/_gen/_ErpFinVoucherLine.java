@@ -45,7 +45,7 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
     public static final String PROP_NAME_subjectName = "subjectName";
     public static final int PROP_ID_subjectName = 6;
     
-    /* 借贷方向: DC_DIRECTION INTEGER */
+    /* 借贷方向: DC_DIRECTION VARCHAR */
     public static final String PROP_NAME_dcDirection = "dcDirection";
     public static final int PROP_ID_dcDirection = 7;
     
@@ -105,7 +105,7 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
     public static final String PROP_NAME_materialId = "materialId";
     public static final int PROP_ID_materialId = 21;
     
-    /* 业务类型: BUSINESS_TYPE INTEGER */
+    /* 业务类型: BUSINESS_TYPE VARCHAR */
     public static final String PROP_NAME_businessType = "businessType";
     public static final int PROP_ID_businessType = 22;
     
@@ -291,7 +291,7 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
     private java.lang.String _subjectName;
     
     /* 借贷方向: DC_DIRECTION */
-    private java.lang.Integer _dcDirection;
+    private java.lang.String _dcDirection;
     
     /* 借方金额(本位币): DEBIT_AMOUNT */
     private java.math.BigDecimal _debitAmount;
@@ -336,7 +336,7 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
     private java.lang.Long _materialId;
     
     /* 业务类型: BUSINESS_TYPE */
-    private java.lang.Integer _businessType;
+    private java.lang.String _businessType;
     
     /* 成本中心: COST_CENTER_ID */
     private java.lang.Long _costCenterId;
@@ -592,9 +592,9 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_dcDirection:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_dcDirection));
                }
                setDcDirection(typedValue);
@@ -742,9 +742,9 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_businessType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_businessType));
                }
                setBusinessType(typedValue);
@@ -874,7 +874,7 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
         
             case PROP_ID_dcDirection:{
                onInitProp(propId);
-               this._dcDirection = (java.lang.Integer)value;
+               this._dcDirection = (java.lang.String)value;
                
                break;
             }
@@ -979,7 +979,7 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
         
             case PROP_ID_businessType:{
                onInitProp(propId);
-               this._businessType = (java.lang.Integer)value;
+               this._businessType = (java.lang.String)value;
                
                break;
             }
@@ -1156,7 +1156,7 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
     /**
      * 借贷方向: DC_DIRECTION
      */
-    public final java.lang.Integer getDcDirection(){
+    public final java.lang.String getDcDirection(){
          onPropGet(PROP_ID_dcDirection);
          return _dcDirection;
     }
@@ -1164,7 +1164,7 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
     /**
      * 借贷方向: DC_DIRECTION
      */
-    public final void setDcDirection(java.lang.Integer value){
+    public final void setDcDirection(java.lang.String value){
         if(onPropSet(PROP_ID_dcDirection,value)){
             this._dcDirection = value;
             internalClearRefs(PROP_ID_dcDirection);
@@ -1441,7 +1441,7 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
     /**
      * 业务类型: BUSINESS_TYPE
      */
-    public final java.lang.Integer getBusinessType(){
+    public final java.lang.String getBusinessType(){
          onPropGet(PROP_ID_businessType);
          return _businessType;
     }
@@ -1449,7 +1449,7 @@ public class _ErpFinVoucherLine extends DynamicOrmEntity{
     /**
      * 业务类型: BUSINESS_TYPE
      */
-    public final void setBusinessType(java.lang.Integer value){
+    public final void setBusinessType(java.lang.String value){
         if(onPropSet(PROP_ID_businessType,value)){
             this._businessType = value;
             internalClearRefs(PROP_ID_businessType);

@@ -6,6 +6,7 @@ import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.posting.AcctDocContext;
 import app.erp.fin.service.posting.IErpFinAcctDocProvider;
 import app.erp.fin.service.posting.VoucherFact;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -27,8 +28,8 @@ import java.util.Set;
  */
 public class ExpenseClaimAcctDocProvider implements IErpFinAcctDocProvider {
 
-    static final int DC_DEBIT = 10;
-    static final int DC_CREDIT = 20;
+    static final String DC_DEBIT = ErpFinConstants.DC_DEBIT;
+    static final String DC_CREDIT = ErpFinConstants.DC_CREDIT;
 
     static final String SUBJECT_EXPENSE = "6602";        // 管理费用（费用科目，聚合口径）
     static final String SUBJECT_INPUT_VAT = "2221";      // 应交税费-进项税额
@@ -45,34 +46,34 @@ public class ExpenseClaimAcctDocProvider implements IErpFinAcctDocProvider {
         BigDecimal amountWithoutTax = readDecimal(event, ErpFinConstants.BILL_DATA_TOTAL_AMOUNT);
         BigDecimal tax = readDecimal(event, ErpFinConstants.BILL_DATA_TOTAL_TAX_AMOUNT);
         BigDecimal withTax = readDecimal(event, ErpFinConstants.BILL_DATA_TOTAL_AMOUNT_WITH_TAX);
-        int paymentMode = readInt(event, ErpFinConstants.BILL_DATA_PAYMENT_MODE,
+        String paymentMode = readString(event, ErpFinConstants.BILL_DATA_PAYMENT_MODE,
                 ErpFinConstants.PAYMENT_MODE_OWN_ACCOUNT);
 
         List<VoucherFact> facts = new ArrayList<>();
         facts.add(fact(SUBJECT_EXPENSE, "管理费用", DC_DEBIT, amountWithoutTax, event));
         facts.add(fact(SUBJECT_INPUT_VAT, "应交税费-进项税额", DC_DEBIT, tax, event));
 
-        String creditSubject = paymentMode == ErpFinConstants.PAYMENT_MODE_COMPANY_ACCOUNT
+        String creditSubject = Objects.equals(paymentMode, ErpFinConstants.PAYMENT_MODE_COMPANY_ACCOUNT)
                 ? SUBJECT_BANK_DEPOSIT : SUBJECT_PAYABLE_EMPLOYEE;
-        String creditName = paymentMode == ErpFinConstants.PAYMENT_MODE_COMPANY_ACCOUNT
+        String creditName = Objects.equals(paymentMode, ErpFinConstants.PAYMENT_MODE_COMPANY_ACCOUNT)
                 ? "银行存款" : "其他应付款-员工";
         VoucherFact credit = fact(creditSubject, creditName, DC_CREDIT, withTax, event);
         // 员工垫付挂应付-员工，携带往来维度（partnerId = employee.partnerId），便于辅助账与余额归集。
-        if (paymentMode == ErpFinConstants.PAYMENT_MODE_OWN_ACCOUNT) {
+        if (Objects.equals(paymentMode, ErpFinConstants.PAYMENT_MODE_OWN_ACCOUNT)) {
             credit.setPartnerId(asLong(event.getBillData().get(ErpFinConstants.BILL_DATA_EMPLOYEE_ID)));
         }
         facts.add(credit);
         return facts;
     }
 
-    private VoucherFact fact(String subjectCode, String subjectName, int dcDirection, BigDecimal amount,
+    private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
                              PostingEvent event) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
-        fact.setBusinessType(event.getBusinessType().getCode());
+        fact.setBusinessType(event.getBusinessType().name());
         fact.setMemo(event.getBillHeadCode());
         return fact;
     }
@@ -88,15 +89,13 @@ public class ExpenseClaimAcctDocProvider implements IErpFinAcctDocProvider {
         return new BigDecimal(value.toString().trim());
     }
 
-    private int readInt(PostingEvent event, String key, int defaultValue) {
+    private String readString(PostingEvent event, String key, String defaultValue) {
         Object value = event.getBillData().get(key);
         if (value == null) {
             return defaultValue;
         }
-        if (value instanceof Number) {
-            return ((Number) value).intValue();
-        }
-        return new BigDecimal(value.toString().trim()).intValue();
+        String s = value.toString().trim();
+        return s.isEmpty() ? defaultValue : s;
     }
 
     private Long asLong(Object value) {

@@ -152,16 +152,16 @@
         }
 
 
-        private Integer _docStatus;
+        private String _docStatus;
 
     
         @PropMeta(propId=11)
     
-        public Integer getDocStatus(){
+        public String getDocStatus(){
             return _docStatus;
         }
 
-        public void setDocStatus(Integer value){
+        public void setDocStatus(String value){
             this._docStatus = value;
         }
 

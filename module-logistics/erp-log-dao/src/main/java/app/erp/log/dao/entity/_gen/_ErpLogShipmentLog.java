@@ -37,7 +37,7 @@ public class _ErpLogShipmentLog extends DynamicOrmEntity{
     public static final String PROP_NAME_gatewayId = "gatewayId";
     public static final int PROP_ID_gatewayId = 4;
     
-    /* 操作类型: ACTION_TYPE INTEGER */
+    /* 操作类型: ACTION_TYPE VARCHAR */
     public static final String PROP_NAME_actionType = "actionType";
     public static final int PROP_ID_actionType = 5;
     
@@ -188,7 +188,7 @@ public class _ErpLogShipmentLog extends DynamicOrmEntity{
     private java.lang.String _gatewayId;
     
     /* 操作类型: ACTION_TYPE */
-    private java.lang.Integer _actionType;
+    private java.lang.String _actionType;
     
     /* 请求报文: REQUEST_BODY */
     private java.lang.String _requestBody;
@@ -415,9 +415,9 @@ public class _ErpLogShipmentLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_actionType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_actionType));
                }
                setActionType(typedValue);
@@ -603,7 +603,7 @@ public class _ErpLogShipmentLog extends DynamicOrmEntity{
         
             case PROP_ID_actionType:{
                onInitProp(propId);
-               this._actionType = (java.lang.Integer)value;
+               this._actionType = (java.lang.String)value;
                
                break;
             }
@@ -791,7 +791,7 @@ public class _ErpLogShipmentLog extends DynamicOrmEntity{
     /**
      * 操作类型: ACTION_TYPE
      */
-    public final java.lang.Integer getActionType(){
+    public final java.lang.String getActionType(){
          onPropGet(PROP_ID_actionType);
          return _actionType;
     }
@@ -799,7 +799,7 @@ public class _ErpLogShipmentLog extends DynamicOrmEntity{
     /**
      * 操作类型: ACTION_TYPE
      */
-    public final void setActionType(java.lang.Integer value){
+    public final void setActionType(java.lang.String value){
         if(onPropSet(PROP_ID_actionType,value)){
             this._actionType = value;
             internalClearRefs(PROP_ID_actionType);

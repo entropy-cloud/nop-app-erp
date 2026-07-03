@@ -49,7 +49,7 @@
         </prop>
         <prop name="hours" displayName="工时" propId="8" i18n-en:displayName="Hours" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="hours" type="java.lang.String" precision="10" scale="2"/>
+            <schema domain="hours" type="java.math.BigDecimal" precision="10" scale="2"/>
         </prop>
         <prop name="activityTypeId" displayName="活动类型" propId="9" i18n-en:displayName="Activity Type" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="activityType">
@@ -61,15 +61,15 @@
         </prop>
         <prop name="costRate" displayName="成本费率" propId="11" i18n-en:displayName="Cost Rate" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="costRate" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="costRate" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="costAmount" displayName="成本金额" propId="12" i18n-en:displayName="Cost Amount" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="costAmount" type="java.lang.String" precision="20" scale="4"/>
+            <schema domain="costAmount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="status" displayName="状态" propId="13" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-prj/timesheet-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-prj/timesheet-status"/>
         </prop>
         <prop name="posted" displayName="已过账(已转成本凭证)" propId="14" i18n-en:displayName="Posted" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="false">

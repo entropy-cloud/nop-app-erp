@@ -6,6 +6,7 @@ import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
+import app.erp.fin.service.ErpFinConstants;
 import app.erp.md.biz.IErpMdSubjectBiz;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.beans.query.QueryBean;
@@ -26,6 +27,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
@@ -52,18 +54,18 @@ import static io.nop.api.core.beans.FilterBeans.le;
  */
 public class ErpFinPostingProcessor {
 
-    static final int DC_DEBIT = 10;
-    static final int DC_CREDIT = 20;
+    static final String DC_DEBIT = ErpFinConstants.DC_DEBIT;
+    static final String DC_CREDIT = ErpFinConstants.DC_CREDIT;
 
-    static final int VOUCHER_STATUS_DRAFT = 10;
-    static final int VOUCHER_STATUS_POSTED = 20;
+    static final String VOUCHER_STATUS_DRAFT = ErpFinConstants.VOUCHER_STATUS_DRAFT;
+    static final String VOUCHER_STATUS_POSTED = ErpFinConstants.VOUCHER_STATUS_POSTED;
 
-    static final int PERIOD_STATUS_OPEN = 10;
+    static final String PERIOD_STATUS_OPEN = ErpFinConstants.PERIOD_STATUS_OPEN;
 
-    static final int POSTING_TYPE_NORMAL = 10;
-    static final int POSTING_TYPE_REVERSAL = 50;
+    static final String POSTING_TYPE_NORMAL = "NORMAL";
+    static final String POSTING_TYPE_REVERSAL = "REVERSAL";
 
-    static final int DEFAULT_VOUCHER_TYPE_TRANSFER = 30;
+    static final String DEFAULT_VOUCHER_TYPE_TRANSFER = "TRANSFER";
     static final BigDecimal EXCHANGE_RATE_DEFAULT = new BigDecimal("1");
 
     @Inject
@@ -135,7 +137,7 @@ public class ErpFinPostingProcessor {
         IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
         for (ErpFinVoucherBillR link : links) {
             ErpFinVoucher voucher = voucherDao.getEntityById(link.getVoucherId());
-            if (voucher != null && Integer.valueOf(VOUCHER_STATUS_POSTED).equals(voucher.getDocStatus())
+            if (voucher != null && VOUCHER_STATUS_POSTED.equals(voucher.getDocStatus())
                     && !Boolean.TRUE.equals(voucher.getIsReversed())) {
                 return true;
             }
@@ -164,7 +166,7 @@ public class ErpFinPostingProcessor {
                     .param(ErpFinPostingErrors.ARG_VOUCHER_DATE, voucherDate);
         }
         ErpFinAccountingPeriod period = periods.get(0);
-        if (!Integer.valueOf(PERIOD_STATUS_OPEN).equals(period.getStatus())) {
+        if (!PERIOD_STATUS_OPEN.equals(period.getStatus())) {
             throw new NopException(ErpFinPostingErrors.ERR_PERIOD_CLOSED)
                     .param(ErpFinPostingErrors.ARG_PERIOD_STATUS, period.getStatus());
         }
@@ -246,7 +248,7 @@ public class ErpFinPostingProcessor {
         BigDecimal totalCredit = BigDecimal.ZERO;
         for (VoucherFact fact : facts) {
             BigDecimal amt = fact.getAmount() == null ? BigDecimal.ZERO : fact.getAmount();
-            if (DC_CREDIT == fact.getDcDirection()) {
+            if (Objects.equals(DC_CREDIT, fact.getDcDirection())) {
                 totalCredit = totalCredit.add(amt);
             } else {
                 totalDebit = totalDebit.add(amt);
@@ -281,9 +283,9 @@ public class ErpFinPostingProcessor {
             fact.setSubjectCode(ol.getSubjectCode());
             fact.setSubjectName(ol.getSubjectName());
             fact.setDcDirection(ol.getDcDirection());
-            fact.setAmount(ol.getDcDirection() != null && ol.getDcDirection() == DC_CREDIT ? negCredit : negDebit);
+            fact.setAmount(ol.getDcDirection() != null && Objects.equals(ol.getDcDirection(), DC_CREDIT) ? negCredit : negDebit);
             fact.setMemo(ol.getMemo());
-            fact.setBusinessType(businessType.getCode());
+            fact.setBusinessType(businessType.name());
             fact.setPartnerId(ol.getPartnerId());
             fact.setDepartmentId(ol.getDepartmentId());
             fact.setProjectId(ol.getProjectId());
@@ -297,14 +299,14 @@ public class ErpFinPostingProcessor {
 
     protected Long persistVoucher(PostingEvent event, AcctDocContext ctx, List<VoucherFact> facts,
                                   BigDecimal totalDebit, BigDecimal totalCredit, boolean isReversed,
-                                  Long reversalOfVoucherId, int postingType, IServiceContext context) {
+                                  Long reversalOfVoucherId, String postingType, IServiceContext context) {
         return persistVoucher(event, ctx, facts, totalDebit, totalCredit, isReversed, reversalOfVoucherId,
                 postingType, null, null, context);
     }
 
     protected Long persistVoucher(PostingEvent event, AcctDocContext ctx, List<VoucherFact> facts,
                                   BigDecimal totalDebit, BigDecimal totalCredit, boolean isReversed,
-                                  Long reversalOfVoucherId, int postingType, String billHeadCode,
+                                  Long reversalOfVoucherId, String postingType, String billHeadCode,
                                   ErpFinBusinessType businessType, IServiceContext context) {
         IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
         IEntityDao<ErpFinVoucherLine> lineDao = daoProvider.daoFor(ErpFinVoucherLine.class);
@@ -314,7 +316,7 @@ public class ErpFinPostingProcessor {
         Long orgId = ctx.getOrgId();
         Long periodId = ctx.getPeriodId();
         LocalDate voucherDate = ctx.getVoucherDate();
-        Integer voucherType = ctx.getVoucherType() != null ? ctx.getVoucherType() : DEFAULT_VOUCHER_TYPE_TRANSFER;
+        String voucherType = ctx.getVoucherType() != null ? ctx.getVoucherType() : DEFAULT_VOUCHER_TYPE_TRANSFER;
 
         ErpFinVoucher voucher = voucherDao.newEntity();
         voucher.setCode(buildVoucherCode(businessType != null ? businessType
@@ -351,7 +353,7 @@ public class ErpFinPostingProcessor {
             line.setSubjectCode(fact.getSubjectCode());
             line.setSubjectName(fact.getSubjectName());
             line.setDcDirection(fact.getDcDirection());
-            boolean isCredit = fact.getDcDirection() != null && fact.getDcDirection() == DC_CREDIT;
+            boolean isCredit = fact.getDcDirection() != null && Objects.equals(fact.getDcDirection(), DC_CREDIT);
             line.setDebitAmount(isCredit ? BigDecimal.ZERO : amt);
             line.setCreditAmount(isCredit ? amt : BigDecimal.ZERO);
             line.setCurrencyId(currencyId);
@@ -360,8 +362,8 @@ public class ErpFinPostingProcessor {
             line.setAmountFunctional(amt);
             line.setAcctSchemaId(acctSchemaId);
             line.setMemo(fact.getMemo());
-            line.setBusinessType(businessType != null ? businessType.getCode()
-                    : (event != null ? event.getBusinessType().getCode() : null));
+            line.setBusinessType(businessType != null ? businessType.name()
+                    : (event != null ? event.getBusinessType().name() : null));
             line.setPartnerId(fact.getPartnerId());
             line.setDepartmentId(fact.getDepartmentId());
             line.setProjectId(fact.getProjectId());
@@ -379,7 +381,7 @@ public class ErpFinPostingProcessor {
             billR.setVoucherId(voucherId);
             billR.setBillType(resolvedType.name());
             billR.setBillCode(resolvedBillCode);
-            billR.setBusinessType(resolvedType.getCode());
+            billR.setBusinessType(resolvedType.name());
             billRDao.saveEntity(billR);
         }
 
@@ -392,7 +394,7 @@ public class ErpFinPostingProcessor {
         IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
         for (ErpFinVoucherBillR link : links) {
             ErpFinVoucher voucher = voucherDao.getEntityById(link.getVoucherId());
-            if (voucher != null && Integer.valueOf(VOUCHER_STATUS_POSTED).equals(voucher.getDocStatus())
+            if (voucher != null && VOUCHER_STATUS_POSTED.equals(voucher.getDocStatus())
                     && !Boolean.TRUE.equals(voucher.getIsReversed())) {
                 return voucher;
             }
@@ -404,7 +406,7 @@ public class ErpFinPostingProcessor {
                                                      IServiceContext context) {
         IEntityDao<ErpFinVoucherBillR> dao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
-        q.addFilter(and(eq("billCode", billHeadCode), eq("businessType", businessType.getCode())));
+        q.addFilter(and(eq("billCode", billHeadCode), eq("businessType", businessType.name())));
         return dao.findAllByQuery(q);
     }
 

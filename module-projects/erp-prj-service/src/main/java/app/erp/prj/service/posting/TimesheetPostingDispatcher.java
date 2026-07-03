@@ -110,7 +110,7 @@ public class TimesheetPostingDispatcher {
         billData.put(ErpPrjConstants.BILL_DATA_ACTIVITY_TYPE_ID, timesheet.getActivityTypeId());
         billData.put(ErpPrjConstants.BILL_DATA_HOURS, timesheet.getHours());
         billData.put(ErpPrjConstants.BILL_DATA_COST_RATE, timesheet.getCostRate());
-        billData.put(ErpPrjConstants.BILL_DATA_COST_AMOUNT, parseAmount(timesheet.getCostAmount()));
+        billData.put(ErpPrjConstants.BILL_DATA_COST_AMOUNT, nz(timesheet.getCostAmount()));
         billData.put(ErpPrjConstants.BILL_DATA_DEBIT_SUBJECT_CODE, debitSubjectCode);
         billData.put(ErpPrjConstants.BILL_DATA_CREDIT_SUBJECT_CODE, creditSubjectCode);
         billData.put(ErpPrjConstants.BILL_DATA_SOURCE_BILL_TYPE, ErpPrjConstants.SOURCE_BILL_TYPE_TIMESHEET);
@@ -166,16 +166,5 @@ public class TimesheetPostingDispatcher {
 
     private BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
-    }
-
-    private BigDecimal parseAmount(String text) {
-        if (text == null || text.trim().isEmpty()) {
-            return BigDecimal.ZERO;
-        }
-        try {
-            return new BigDecimal(text.trim());
-        } catch (NumberFormatException e) {
-            return BigDecimal.ZERO;
-        }
     }
 }

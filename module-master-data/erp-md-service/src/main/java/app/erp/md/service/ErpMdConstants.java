@@ -7,16 +7,16 @@ package app.erp.md.service;
 public interface ErpMdConstants {
 
     // 主数据启用状态 erp-md/active-status
-    int ACTIVE_STATUS_ACTIVE = 10;
+    String ACTIVE_STATUS_ACTIVE = "ACTIVE";
 
     // AVL 准入状态 erp-md/supplier-approval-status（APPLIED→APPROVED→PROBATION→SUSPENDED→REJECTED）
-    int APPROVAL_STATUS_APPLIED = 10;
-    int APPROVAL_STATUS_APPROVED = 20;
-    int APPROVAL_STATUS_PROBATION = 30;
-    int APPROVAL_STATUS_SUSPENDED = 40;
-    int APPROVAL_STATUS_REJECTED = 50;
+    String APPROVAL_STATUS_APPLIED = "APPLIED";
+    String APPROVAL_STATUS_APPROVED = "APPROVED";
+    String APPROVAL_STATUS_PROBATION = "PROBATION";
+    String APPROVAL_STATUS_SUSPENDED = "SUSPENDED";
+    String APPROVAL_STATUS_REJECTED = "REJECTED";
 
     // AVL 准入类型 erp-md/supplier-approval-type
-    int APPROVAL_TYPE_NEW = 10;
-    int APPROVAL_TYPE_RENEWAL = 20;
+    String APPROVAL_TYPE_NEW = "NEW";
+    String APPROVAL_TYPE_RENEWAL = "RENEWAL";
 }

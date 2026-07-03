@@ -57,7 +57,7 @@
         </prop>
         <prop name="scrapRate" displayName="损耗率(%)" propId="10" i18n-en:displayName="Scrap Rate" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="rate" type="java.lang.String" precision="10" scale="4"/>
+            <schema domain="rate" type="java.math.BigDecimal" precision="10" scale="4"/>
         </prop>
         <prop name="warehouseId" displayName="发货仓库" propId="11" i18n-en:displayName="Warehouse" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="warehouse">

@@ -45,7 +45,7 @@
         </prop>
         <prop name="standing" displayName="评级" propId="7" i18n-en:displayName="Standing" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-pur/supplier-standing"/>
+            <schema type="java.lang.String" precision="20" dict="erp-pur/supplier-standing"/>
         </prop>
         <prop name="warnThreshold" displayName="warn阈值" propId="8" i18n-en:displayName="Warn Threshold" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -61,7 +61,7 @@
         </prop>
         <prop name="status" displayName="周期状态" propId="11" i18n-en:displayName="Scorecard Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="10">
-            <schema type="java.lang.Integer" dict="erp-pur/scorecard-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-pur/scorecard-status"/>
         </prop>
         <prop name="remark" displayName="备注" propId="12" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

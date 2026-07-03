@@ -33,7 +33,7 @@
         </prop>
         <prop name="inspectionType" displayName="检验类型" propId="4" i18n-en:displayName="Inspection Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-qa/inspection-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-qa/inspection-type"/>
         </prop>
         <prop name="relatedBillType" displayName="关联单据类型" propId="5" i18n-en:displayName="Related Bill Type"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -85,15 +85,15 @@
         </prop>
         <prop name="result" displayName="质检结果" propId="18" i18n-en:displayName="Result" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-qa/inspection-result"/>
+            <schema type="java.lang.String" precision="20" dict="erp-qa/inspection-result"/>
         </prop>
         <prop name="docStatus" displayName="单据状态" propId="19" i18n-en:displayName="Doc Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-qa/doc-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-qa/doc-status"/>
         </prop>
         <prop name="approveStatus" displayName="审核状态" propId="20" i18n-en:displayName="Approve Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-qa/approve-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-qa/approve-status"/>
         </prop>
         <prop name="posted" displayName="已过账(质量结论已回写业务单据)" propId="21" i18n-en:displayName="Posted" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="false">

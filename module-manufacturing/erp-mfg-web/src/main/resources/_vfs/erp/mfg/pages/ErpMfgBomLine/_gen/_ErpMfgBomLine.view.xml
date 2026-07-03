@@ -46,7 +46,7 @@
                 <col id="remark" sortable="true"/>
 
                 <!--损耗率(%)-->
-                <col id="scrapRate" sortable="true"/>
+                <col id="scrapRate" ui:number="true" sortable="true"/>
 
                 <!--发货仓库-->
                 <col id="warehouseId" ui:number="true" sortable="true"/>

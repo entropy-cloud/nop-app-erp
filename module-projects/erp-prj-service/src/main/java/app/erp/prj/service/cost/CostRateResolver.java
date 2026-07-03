@@ -38,8 +38,8 @@ public class CostRateResolver {
      * @param timesheetCode 用于异常上下文
      */
     public BigDecimal resolve(ErpPrjTimesheet timesheet, String timesheetCode) {
-        BigDecimal rate = parseDecimal(timesheet.getCostRate());
-        if (rate != null) {
+        BigDecimal rate = timesheet.getCostRate();
+        if (rate != null && rate.signum() >= 0) {
             return rate;
         }
 
@@ -48,8 +48,8 @@ public class CostRateResolver {
             IEntityDao<ErpPrjActivityType> dao = daoProvider.daoFor(ErpPrjActivityType.class);
             ErpPrjActivityType activityType = dao.getEntityById(activityTypeId);
             if (activityType != null) {
-                BigDecimal activityRate = parseDecimal(activityType.getCostRate());
-                if (activityRate != null) {
+                BigDecimal activityRate = activityType.getCostRate();
+                if (activityRate != null && activityRate.signum() >= 0) {
                     return activityRate;
                 }
             }

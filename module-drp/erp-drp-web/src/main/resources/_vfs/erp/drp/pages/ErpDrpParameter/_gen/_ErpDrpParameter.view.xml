@@ -43,7 +43,7 @@
                 <col id="preferredSupplierId" ui:number="true" sortable="true"/>
 
                 <!--补货方法-->
-                <col id="replenishmentMethod" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="replenishmentMethod" mandatory="true" sortable="true"/>
 
                 <!--最低库存-->
                 <col id="minStockLevel" ui:number="true" sortable="true"/>

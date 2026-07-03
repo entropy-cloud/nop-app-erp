@@ -132,11 +132,11 @@ public class TestErpFinNotesReceivableStateMachine extends JunitAutoTestCase {
         seedSubject("6603", "财务费用-利息支出");
     }
 
-    private Long seedReceivable(String code, Integer status, BigDecimal amountFunctional) {
+    private Long seedReceivable(String code, String status, BigDecimal amountFunctional) {
         return seedReceivable(code, status, amountFunctional, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 9, 30));
     }
 
-    private Long seedReceivable(String code, Integer status, BigDecimal amountFunctional,
+    private Long seedReceivable(String code, String status, BigDecimal amountFunctional,
                                 LocalDate issueDate, LocalDate dueDate) {
         IEntityDao<ErpFinNotesReceivable> dao = daoProvider.daoFor(ErpFinNotesReceivable.class);
         ErpFinNotesReceivable note = new ErpFinNotesReceivable();
@@ -162,9 +162,9 @@ public class TestErpFinNotesReceivableStateMachine extends JunitAutoTestCase {
         ErpMdSubject subject = new ErpMdSubject();
         subject.setCode(code);
         subject.setName(name);
-        subject.setSubjectClass(10);
-        subject.setDirection(10);
-        subject.setStatus(10);
+        subject.setSubjectClass("ASSET");
+        subject.setDirection("DEBIT");
+        subject.setStatus("ACTIVE");
         dao.saveEntity(subject);
     }
 
@@ -174,9 +174,9 @@ public class TestErpFinNotesReceivableStateMachine extends JunitAutoTestCase {
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
-        schema.setNature(10);
+        schema.setNature("FINANCIAL");
         schema.setFunctionalCurrencyId(1L);
-        schema.setStatus(10);
+        schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
 
@@ -190,7 +190,7 @@ public class TestErpFinNotesReceivableStateMachine extends JunitAutoTestCase {
         period.setMonth(month);
         period.setStartDate(start);
         period.setEndDate(end);
-        period.setStatus(10);
+        period.setStatus(ErpFinConstants.PERIOD_STATUS_OPEN);
         dao.saveEntity(period);
     }
 

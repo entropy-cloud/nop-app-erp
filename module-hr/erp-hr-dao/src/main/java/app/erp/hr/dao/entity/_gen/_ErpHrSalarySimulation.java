@@ -49,7 +49,7 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
     public static final String PROP_NAME_simulationName = "simulationName";
     public static final int PROP_ID_simulationName = 7;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 8;
     
@@ -203,7 +203,7 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
     private java.lang.String _simulationName;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 审批人: REVIEWER_ID */
     private java.lang.Long _reviewerId;
@@ -451,9 +451,9 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -630,7 +630,7 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -854,7 +854,7 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -862,7 +862,7 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

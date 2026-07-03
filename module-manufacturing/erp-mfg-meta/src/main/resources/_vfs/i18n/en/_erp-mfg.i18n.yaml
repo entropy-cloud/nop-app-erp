@@ -691,81 +691,81 @@ dict:
     erp-mfg/work-date-pattern: Work Date Pattern
 dict.option.label:
   erp-mfg/work-order-status:
-    '10': Draft
-    '20': Submitted
-    '30': Not Started
-    '40': In Production
-    '50': Kitted
-    '60': Partially Kitted
-    '70': Completed
-    '80': Stopped
-    '90': Closed
-    '100': Cancelled
+    DRAFT: Draft
+    SUBMITTED: Submitted
+    NOT_STARTED: Not Started
+    IN_PROCESS: In Production
+    STOCK_RESERVED: Kitted
+    STOCK_PARTIAL: Partially Kitted
+    COMPLETED: Completed
+    STOPPED: Stopped
+    CLOSED: Closed
+    CANCELLED: Cancelled
   erp-mfg/job-card-status:
-    '10': Pending Start
-    '20': Working
-    '30': Partially Transferred
-    '40': Transferred
-    '50': Suspended
-    '60': Submitted
-    '70': Completed
-    '80': Cancelled
+    OPEN: Pending Start
+    WORK_IN_PROGRESS: Working
+    PARTIALLY_TRANSFERRED: Partially Transferred
+    MATERIAL_TRANSFERRED: Transferred
+    ON_HOLD: Suspended
+    SUBMITTED: Submitted
+    COMPLETED: Completed
+    CANCELLED: Cancelled
   erp-mfg/bom-type:
-    '10': Manufactured
-    '20': Phantom/Kit
+    NORMAL: Manufactured
+    PHANTOM: Phantom/Kit
   erp-mfg/consumption:
-    '10': Allow Overconsumption
-    '20': Overconsumption Warning
-    '30': Strict BOM
+    FLEXIBLE: Allow Overconsumption
+    WARNING: Overconsumption Warning
+    STRICT: Strict BOM
   erp-mfg/approve-status:
-    '10': Unsubmitted
-    '20': Submitted
-    '30': Approved
-    '40': Rejected
+    UNSUBMITTED: Unsubmitted
+    SUBMITTED: Submitted
+    APPROVED: Approved
+    REJECTED: Rejected
   erp-mfg/priority:
-    '10': Low
-    '20': General
-    '30': High
-    '40': Urgent
+    LOW: Low
+    NORMAL: General
+    HIGH: High
+    URGENT: Urgent
   erp-mfg/mrp-status:
-    '10': Draft
-    '20': Computing
-    '30': Computed
-    '40': Confirmed (To W/O)
-    '50': Cancelled
+    DRAFT: Draft
+    RUNNING: Computing
+    COMPLETED: Computed
+    FIRMED: Confirmed (To W/O)
+    CANCELLED: Cancelled
   erp-mfg/mrp-order-type:
-    '10': Planned Order
-    '20': Purchase Req Suggestion
-    '30': Work Order Suggestion
-    '40': Outsource Suggestion
+    PLANNED_ORDER: Planned Order
+    PURCHASE_REQUEST: Purchase Req Suggestion
+    WORK_ORDER_REQUEST: Work Order Suggestion
+    SUBCONTRACT_REQUEST: Outsource Suggestion
   erp-mfg/mrp-demand-source:
-    '10': Sales Order
-    '20': Forecast
-    '30': Safety Stock
-    '40': Manual Entry
+    SALES_ORDER: Sales Order
+    FORECAST: Forecast
+    SAFETY_STOCK: Safety Stock
+    MANUAL: Manual Entry
   erp-mfg/issue-status:
-    '10': Draft
-    '20': Confirmed
-    '30': Delivered
-    '40': Cancelled
+    DRAFT: Draft
+    CONFIRMED: Confirmed
+    DONE: Delivered
+    CANCELLED: Cancelled
   erp-mfg/subcontract-status:
-    '10': Draft
-    '20': Effective
-    '30': Voided
+    DRAFT: Draft
+    ACTIVE: Effective
+    CANCELLED: Voided
   erp-mfg/cost-rollup-status:
-    '10': Draft
-    '20': Calculated
-    '30': Published
-    '40': Voided
+    DRAFT: Draft
+    CALCULATED: Calculated
+    FIRMED: Published
+    CANCELLED: Voided
   erp-mfg/byproduct-type:
-    '10': Co-product
-    '20': Byproduct
+    CO_PRODUCT: Co-product
+    BY_PRODUCT: Byproduct
   erp-mfg/shift-type:
-    '10': One Shift
-    '20': Morning
-    '30': Afternoon
-    '40': Night
+    ONE_SHIFT: One Shift
+    MORNING: Morning
+    AFTERNOON: Afternoon
+    NIGHT: Night
   erp-mfg/work-date-pattern:
-    '10': All Week
-    '20': Weekdays
-    '30': Weekend Only
+    ALL_WEEK: All Week
+    WEEKDAYS: Weekdays
+    WEEKEND: Weekend Only

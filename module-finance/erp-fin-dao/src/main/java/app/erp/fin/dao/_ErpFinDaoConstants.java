@@ -6,521 +6,521 @@ public interface _ErpFinDaoConstants {
     /**
      * 凭证字: 收 
      */
-    int VOUCHER_TYPE_RECEIPT = 10;
+    String VOUCHER_TYPE_RECEIPT = "RECEIPT";
                     
     /**
      * 凭证字: 付 
      */
-    int VOUCHER_TYPE_PAYMENT = 20;
+    String VOUCHER_TYPE_PAYMENT = "PAYMENT";
                     
     /**
      * 凭证字: 转 
      */
-    int VOUCHER_TYPE_TRANSFER = 30;
+    String VOUCHER_TYPE_TRANSFER = "TRANSFER";
                     
     /**
      * 过账类型: 正常过账 
      */
-    int POSTING_TYPE_NORMAL = 10;
+    String POSTING_TYPE_NORMAL = "NORMAL";
                     
     /**
      * 过账类型: 期初余额录入 
      */
-    int POSTING_TYPE_OPENING_BALANCE = 20;
+    String POSTING_TYPE_OPENING_BALANCE = "OPENING_BALANCE";
                     
     /**
      * 过账类型: 调整 
      */
-    int POSTING_TYPE_ADJUSTMENT = 30;
+    String POSTING_TYPE_ADJUSTMENT = "ADJUSTMENT";
                     
     /**
      * 过账类型: 期末结转 
      */
-    int POSTING_TYPE_CLOSING = 40;
+    String POSTING_TYPE_CLOSING = "CLOSING";
                     
     /**
      * 过账类型: 红字冲销 
      */
-    int POSTING_TYPE_REVERSAL = 50;
+    String POSTING_TYPE_REVERSAL = "REVERSAL";
                     
     /**
      * 凭证状态: 草稿 
      */
-    int VOUCHER_STATUS_DRAFT = 10;
+    String VOUCHER_STATUS_DRAFT = "DRAFT";
                     
     /**
      * 凭证状态: 已过账 
      */
-    int VOUCHER_STATUS_POSTED = 20;
+    String VOUCHER_STATUS_POSTED = "POSTED";
                     
     /**
      * 凭证状态: 已作废 
      */
-    int VOUCHER_STATUS_CANCELLED = 30;
+    String VOUCHER_STATUS_CANCELLED = "CANCELLED";
                     
     /**
      * 借贷方向: 借 
      */
-    int DC_DIRECTION_DEBIT = 10;
+    String DC_DIRECTION_DEBIT = "DEBIT";
                     
     /**
      * 借贷方向: 贷 
      */
-    int DC_DIRECTION_CREDIT = 20;
+    String DC_DIRECTION_CREDIT = "CREDIT";
                     
     /**
      * 业务类型: 采购入库 
      */
-    int BUSINESS_TYPE_PURCHASE_INPUT = 10;
+    String BUSINESS_TYPE_PURCHASE_INPUT = "PURCHASE_INPUT";
                     
     /**
      * 业务类型: 销售出库 
      */
-    int BUSINESS_TYPE_SALES_OUTPUT = 20;
+    String BUSINESS_TYPE_SALES_OUTPUT = "SALES_OUTPUT";
                     
     /**
      * 业务类型: 应付发票 
      */
-    int BUSINESS_TYPE_AP_INVOICE = 30;
+    String BUSINESS_TYPE_AP_INVOICE = "AP_INVOICE";
                     
     /**
      * 业务类型: 应收发票 
      */
-    int BUSINESS_TYPE_AR_INVOICE = 40;
+    String BUSINESS_TYPE_AR_INVOICE = "AR_INVOICE";
                     
     /**
      * 业务类型: 付款 
      */
-    int BUSINESS_TYPE_PAYMENT = 50;
+    String BUSINESS_TYPE_PAYMENT = "PAYMENT";
                     
     /**
      * 业务类型: 收款 
      */
-    int BUSINESS_TYPE_RECEIPT = 60;
+    String BUSINESS_TYPE_RECEIPT = "RECEIPT";
                     
     /**
      * 业务类型: 折旧 
      */
-    int BUSINESS_TYPE_DEPRECIATION = 70;
+    String BUSINESS_TYPE_DEPRECIATION = "DEPRECIATION";
                     
     /**
      * 业务类型: 资本化 
      */
-    int BUSINESS_TYPE_CAPITALIZATION = 80;
+    String BUSINESS_TYPE_CAPITALIZATION = "CAPITALIZATION";
                     
     /**
      * 业务类型: 处置 
      */
-    int BUSINESS_TYPE_DISPOSAL = 90;
+    String BUSINESS_TYPE_DISPOSAL = "DISPOSAL";
                     
     /**
      * 业务类型: 生产成本结转 
      */
-    int BUSINESS_TYPE_PRODUCTION_COST = 100;
+    String BUSINESS_TYPE_PRODUCTION_COST = "PRODUCTION_COST";
                     
     /**
      * 业务类型: 项目成本归集 
      */
-    int BUSINESS_TYPE_PROJECT_COST = 110;
+    String BUSINESS_TYPE_PROJECT_COST = "PROJECT_COST";
                     
     /**
      * 业务类型: 期末结转 
      */
-    int BUSINESS_TYPE_PERIOD_CLOSING = 120;
+    String BUSINESS_TYPE_PERIOD_CLOSING = "PERIOD_CLOSING";
                     
     /**
      * 业务类型: 汇兑损益 
      */
-    int BUSINESS_TYPE_FX_REVALUATION = 130;
+    String BUSINESS_TYPE_FX_REVALUATION = "FX_REVALUATION";
                     
     /**
      * 业务类型: 采购退货冲减 
      */
-    int BUSINESS_TYPE_PURCHASE_RETURN = 140;
+    String BUSINESS_TYPE_PURCHASE_RETURN = "PURCHASE_RETURN";
                     
     /**
      * 业务类型: 销售退货冲减 
      */
-    int BUSINESS_TYPE_SALES_RETURN = 150;
+    String BUSINESS_TYPE_SALES_RETURN = "SALES_RETURN";
                     
     /**
      * 业务类型: 费用报销 
      */
-    int BUSINESS_TYPE_EXPENSE_CLAIM = 160;
+    String BUSINESS_TYPE_EXPENSE_CLAIM = "EXPENSE_CLAIM";
                     
     /**
      * 业务类型: 员工借款 
      */
-    int BUSINESS_TYPE_EMPLOYEE_ADVANCE = 170;
+    String BUSINESS_TYPE_EMPLOYEE_ADVANCE = "EMPLOYEE_ADVANCE";
                     
     /**
      * 业务类型: 借款清算 
      */
-    int BUSINESS_TYPE_EMPLOYEE_ADVANCE_SETTLE = 180;
+    String BUSINESS_TYPE_EMPLOYEE_ADVANCE_SETTLE = "EMPLOYEE_ADVANCE_SETTLE";
                     
     /**
      * 业务类型: 应收票据收到 
      */
-    int BUSINESS_TYPE_NOTES_RECEIVABLE_RECEIVED = 190;
+    String BUSINESS_TYPE_NOTES_RECEIVABLE_RECEIVED = "NOTES_RECEIVABLE_RECEIVED";
                     
     /**
      * 业务类型: 票据贴现 
      */
-    int BUSINESS_TYPE_NOTES_RECEIVABLE_DISCOUNTED = 200;
+    String BUSINESS_TYPE_NOTES_RECEIVABLE_DISCOUNTED = "NOTES_RECEIVABLE_DISCOUNTED";
                     
     /**
      * 业务类型: 票据背书转让 
      */
-    int BUSINESS_TYPE_NOTES_RECEIVABLE_ENDORSED = 210;
+    String BUSINESS_TYPE_NOTES_RECEIVABLE_ENDORSED = "NOTES_RECEIVABLE_ENDORSED";
                     
     /**
      * 业务类型: 票据托收承兑 
      */
-    int BUSINESS_TYPE_NOTES_RECEIVABLE_COLLECTION = 220;
+    String BUSINESS_TYPE_NOTES_RECEIVABLE_COLLECTION = "NOTES_RECEIVABLE_COLLECTION";
                     
     /**
      * 业务类型: 开出应付票据 
      */
-    int BUSINESS_TYPE_NOTES_PAYABLE_ISSUED = 230;
+    String BUSINESS_TYPE_NOTES_PAYABLE_ISSUED = "NOTES_PAYABLE_ISSUED";
                     
     /**
      * 业务类型: 应付票据兑付 
      */
-    int BUSINESS_TYPE_NOTES_PAYABLE_HONORED = 240;
+    String BUSINESS_TYPE_NOTES_PAYABLE_HONORED = "NOTES_PAYABLE_HONORED";
                     
     /**
      * 业务类型: 授信利息 
      */
-    int BUSINESS_TYPE_CREDIT_FACILITY_INTEREST = 250;
+    String BUSINESS_TYPE_CREDIT_FACILITY_INTEREST = "CREDIT_FACILITY_INTEREST";
                     
     /**
      * 期间状态: 开启 
      */
-    int PERIOD_STATUS_OPEN = 10;
+    String PERIOD_STATUS_OPEN = "OPEN";
                     
     /**
      * 期间状态: 结账中 
      */
-    int PERIOD_STATUS_CLOSING = 20;
+    String PERIOD_STATUS_CLOSING = "CLOSING";
                     
     /**
      * 期间状态: 已结账 
      */
-    int PERIOD_STATUS_CLOSED = 30;
+    String PERIOD_STATUS_CLOSED = "CLOSED";
                     
     /**
      * 期间状态: 未开启 
      */
-    int PERIOD_STATUS_NEVER_OPENED = 40;
+    String PERIOD_STATUS_NEVER_OPENED = "NEVER_OPENED";
                     
     /**
      * 期间状态: 已复核 
      */
-    int PERIOD_STATUS_CLOSED_FINAL = 50;
+    String PERIOD_STATUS_CLOSED_FINAL = "CLOSED_FINAL";
                     
     /**
      * 账户类型: 银行 
      */
-    int FUND_ACCOUNT_TYPE_BANK = 10;
+    String FUND_ACCOUNT_TYPE_BANK = "BANK";
                     
     /**
      * 账户类型: 现金 
      */
-    int FUND_ACCOUNT_TYPE_CASH = 20;
+    String FUND_ACCOUNT_TYPE_CASH = "CASH";
                     
     /**
      * 账户类型: 支付宝 
      */
-    int FUND_ACCOUNT_TYPE_ALIPAY = 30;
+    String FUND_ACCOUNT_TYPE_ALIPAY = "ALIPAY";
                     
     /**
      * 账户类型: 微信 
      */
-    int FUND_ACCOUNT_TYPE_WECHAT = 40;
+    String FUND_ACCOUNT_TYPE_WECHAT = "WECHAT";
                     
     /**
      * 账户类型: 其他 
      */
-    int FUND_ACCOUNT_TYPE_OTHER = 50;
+    String FUND_ACCOUNT_TYPE_OTHER = "OTHER";
                     
     /**
      * 账户状态: 启用 
      */
-    int FUND_ACCOUNT_STATUS_ACTIVE = 10;
+    String FUND_ACCOUNT_STATUS_ACTIVE = "ACTIVE";
                     
     /**
      * 账户状态: 停用 
      */
-    int FUND_ACCOUNT_STATUS_INACTIVE = 20;
+    String FUND_ACCOUNT_STATUS_INACTIVE = "INACTIVE";
                     
     /**
      * AR/AP 方向: 应收(AR) 
      */
-    int AR_AP_DIRECTION_RECEIVABLE = 10;
+    String AR_AP_DIRECTION_RECEIVABLE = "RECEIVABLE";
                     
     /**
      * AR/AP 方向: 应付(AP) 
      */
-    int AR_AP_DIRECTION_PAYABLE = 20;
+    String AR_AP_DIRECTION_PAYABLE = "PAYABLE";
                     
     /**
      * AR/AP 状态: 未核销 
      */
-    int AR_AP_STATUS_OPEN = 10;
+    String AR_AP_STATUS_OPEN = "OPEN";
                     
     /**
      * AR/AP 状态: 部分核销 
      */
-    int AR_AP_STATUS_PARTIAL = 20;
+    String AR_AP_STATUS_PARTIAL = "PARTIAL";
                     
     /**
      * AR/AP 状态: 已核销 
      */
-    int AR_AP_STATUS_SETTLED = 30;
+    String AR_AP_STATUS_SETTLED = "SETTLED";
                     
     /**
      * AR/AP 状态: 已作废 
      */
-    int AR_AP_STATUS_CANCELLED = 40;
+    String AR_AP_STATUS_CANCELLED = "CANCELLED";
                     
     /**
      * 核销单状态: 草稿 
      */
-    int RECONCILIATION_STATUS_DRAFT = 10;
+    String RECONCILIATION_STATUS_DRAFT = "DRAFT";
                     
     /**
      * 核销单状态: 已过账 
      */
-    int RECONCILIATION_STATUS_POSTED = 20;
+    String RECONCILIATION_STATUS_POSTED = "POSTED";
                     
     /**
      * 核销单状态: 已红冲 
      */
-    int RECONCILIATION_STATUS_REVERSED = 30;
+    String RECONCILIATION_STATUS_REVERSED = "REVERSED";
                     
     /**
      * 模块结账状态: 未结 
      */
-    int MODULE_CLOSE_STATUS_OPEN = 10;
+    String MODULE_CLOSE_STATUS_OPEN = "OPEN";
                     
     /**
      * 模块结账状态: 结账中 
      */
-    int MODULE_CLOSE_STATUS_CLOSING = 20;
+    String MODULE_CLOSE_STATUS_CLOSING = "CLOSING";
                     
     /**
      * 模块结账状态: 已结 
      */
-    int MODULE_CLOSE_STATUS_CLOSED = 30;
+    String MODULE_CLOSE_STATUS_CLOSED = "CLOSED";
                     
     /**
      * 审核状态: 未提交 
      */
-    int APPROVE_STATUS_UNSUBMITTED = 10;
+    String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
                     
     /**
      * 审核状态: 已提交 
      */
-    int APPROVE_STATUS_SUBMITTED = 20;
+    String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
                     
     /**
      * 审核状态: 已审核 
      */
-    int APPROVE_STATUS_APPROVED = 30;
+    String APPROVE_STATUS_APPROVED = "APPROVED";
                     
     /**
      * 审核状态: 已驳回 
      */
-    int APPROVE_STATUS_REJECTED = 40;
+    String APPROVE_STATUS_REJECTED = "REJECTED";
                     
     /**
      * 报销付款方式: 员工垫付 
      */
-    int EXPENSE_PAYMENT_MODE_OWN_ACCOUNT = 10;
+    String EXPENSE_PAYMENT_MODE_OWN_ACCOUNT = "OWN_ACCOUNT";
                     
     /**
      * 报销付款方式: 公司直付 
      */
-    int EXPENSE_PAYMENT_MODE_COMPANY_ACCOUNT = 20;
+    String EXPENSE_PAYMENT_MODE_COMPANY_ACCOUNT = "COMPANY_ACCOUNT";
                     
     /**
      * 费用类型: 差旅 
      */
-    int EXPENSE_TYPE_TRAVEL = 10;
+    String EXPENSE_TYPE_TRAVEL = "TRAVEL";
                     
     /**
      * 费用类型: 业务招待 
      */
-    int EXPENSE_TYPE_ENTERTAINMENT = 20;
+    String EXPENSE_TYPE_ENTERTAINMENT = "ENTERTAINMENT";
                     
     /**
      * 费用类型: 办公 
      */
-    int EXPENSE_TYPE_OFFICE = 30;
+    String EXPENSE_TYPE_OFFICE = "OFFICE";
                     
     /**
      * 费用类型: 通讯 
      */
-    int EXPENSE_TYPE_COMMUNICATION = 40;
+    String EXPENSE_TYPE_COMMUNICATION = "COMMUNICATION";
                     
     /**
      * 费用类型: 交通 
      */
-    int EXPENSE_TYPE_TRANSPORTATION = 50;
+    String EXPENSE_TYPE_TRANSPORTATION = "TRANSPORTATION";
                     
     /**
      * 费用类型: 其他 
      */
-    int EXPENSE_TYPE_OTHER = 60;
+    String EXPENSE_TYPE_OTHER = "OTHER";
                     
     /**
      * 借款类型: 费用预支 
      */
-    int ADVANCE_TYPE_EXPENSE_ADVANCE = 10;
+    String ADVANCE_TYPE_EXPENSE_ADVANCE = "EXPENSE_ADVANCE";
                     
     /**
      * 借款类型: 备用金 
      */
-    int ADVANCE_TYPE_IMPREST = 20;
+    String ADVANCE_TYPE_IMPREST = "IMPREST";
                     
     /**
      * 借款类型: 差旅借款 
      */
-    int ADVANCE_TYPE_TRAVEL = 30;
+    String ADVANCE_TYPE_TRAVEL = "TRAVEL";
                     
     /**
      * 报销单状态: 草稿 
      */
-    int EXPENSE_CLAIM_STATUS_DRAFT = 10;
+    String EXPENSE_CLAIM_STATUS_DRAFT = "DRAFT";
                     
     /**
      * 报销单状态: 已提交 
      */
-    int EXPENSE_CLAIM_STATUS_SUBMITTED = 20;
+    String EXPENSE_CLAIM_STATUS_SUBMITTED = "SUBMITTED";
                     
     /**
      * 报销单状态: 已审核 
      */
-    int EXPENSE_CLAIM_STATUS_APPROVED = 30;
+    String EXPENSE_CLAIM_STATUS_APPROVED = "APPROVED";
                     
     /**
      * 报销单状态: 已驳回 
      */
-    int EXPENSE_CLAIM_STATUS_REJECTED = 40;
+    String EXPENSE_CLAIM_STATUS_REJECTED = "REJECTED";
                     
     /**
      * 报销单状态: 已作废 
      */
-    int EXPENSE_CLAIM_STATUS_CANCELLED = 50;
+    String EXPENSE_CLAIM_STATUS_CANCELLED = "CANCELLED";
                     
     /**
      * 借款单状态: 草稿 
      */
-    int ADVANCE_STATUS_DRAFT = 10;
+    String ADVANCE_STATUS_DRAFT = "DRAFT";
                     
     /**
      * 借款单状态: 已提交 
      */
-    int ADVANCE_STATUS_SUBMITTED = 20;
+    String ADVANCE_STATUS_SUBMITTED = "SUBMITTED";
                     
     /**
      * 借款单状态: 已审核 
      */
-    int ADVANCE_STATUS_APPROVED = 30;
+    String ADVANCE_STATUS_APPROVED = "APPROVED";
                     
     /**
      * 借款单状态: 已驳回 
      */
-    int ADVANCE_STATUS_REJECTED = 40;
+    String ADVANCE_STATUS_REJECTED = "REJECTED";
                     
     /**
      * 借款单状态: 已作废 
      */
-    int ADVANCE_STATUS_CANCELLED = 50;
+    String ADVANCE_STATUS_CANCELLED = "CANCELLED";
                     
     /**
      * 票据类型: 银行承兑汇票 
      */
-    int NOTES_TYPE_BANK_ACCEPTANCE = 10;
+    String NOTES_TYPE_BANK_ACCEPTANCE = "BANK_ACCEPTANCE";
                     
     /**
      * 票据类型: 商业承兑汇票 
      */
-    int NOTES_TYPE_COMMERCIAL_ACCEPTANCE = 20;
+    String NOTES_TYPE_COMMERCIAL_ACCEPTANCE = "COMMERCIAL_ACCEPTANCE";
                     
     /**
      * 应收票据状态: 收到 
      */
-    int NOTES_RECEIVABLE_STATUS_RECEIVED = 10;
+    String NOTES_RECEIVABLE_STATUS_RECEIVED = "RECEIVED";
                     
     /**
      * 应收票据状态: 已贴现 
      */
-    int NOTES_RECEIVABLE_STATUS_DISCOUNTED = 20;
+    String NOTES_RECEIVABLE_STATUS_DISCOUNTED = "DISCOUNTED";
                     
     /**
      * 应收票据状态: 已背书 
      */
-    int NOTES_RECEIVABLE_STATUS_ENDORSED = 30;
+    String NOTES_RECEIVABLE_STATUS_ENDORSED = "ENDORSED";
                     
     /**
      * 应收票据状态: 托收中 
      */
-    int NOTES_RECEIVABLE_STATUS_COLLECTION_PENDING = 40;
+    String NOTES_RECEIVABLE_STATUS_COLLECTION_PENDING = "COLLECTION_PENDING";
                     
     /**
      * 应收票据状态: 已承兑 
      */
-    int NOTES_RECEIVABLE_STATUS_HONORED = 50;
+    String NOTES_RECEIVABLE_STATUS_HONORED = "HONORED";
                     
     /**
      * 应收票据状态: 已拒付 
      */
-    int NOTES_RECEIVABLE_STATUS_DISHONORED = 60;
+    String NOTES_RECEIVABLE_STATUS_DISHONORED = "DISHONORED";
                     
     /**
      * 应收票据状态: 已注销 
      */
-    int NOTES_RECEIVABLE_STATUS_WRITE_OFF = 70;
+    String NOTES_RECEIVABLE_STATUS_WRITE_OFF = "WRITE_OFF";
                     
     /**
      * 应付票据状态: 已开出 
      */
-    int NOTES_PAYABLE_STATUS_ISSUED = 10;
+    String NOTES_PAYABLE_STATUS_ISSUED = "ISSUED";
                     
     /**
      * 应付票据状态: 已兑付 
      */
-    int NOTES_PAYABLE_STATUS_HONORED = 20;
+    String NOTES_PAYABLE_STATUS_HONORED = "HONORED";
                     
     /**
      * 应付票据状态: 已拒付 
      */
-    int NOTES_PAYABLE_STATUS_DISHONORED = 30;
+    String NOTES_PAYABLE_STATUS_DISHONORED = "DISHONORED";
                     
     /**
      * 应付票据状态: 已注销 
      */
-    int NOTES_PAYABLE_STATUS_WRITE_OFF = 40;
+    String NOTES_PAYABLE_STATUS_WRITE_OFF = "WRITE_OFF";
                     
     /**
      * 授信额度类型: 银行承兑额度 
      */
-    int CREDIT_FACILITY_TYPE_BANK_ACCEPTANCE_LINE = 10;
+    String CREDIT_FACILITY_TYPE_BANK_ACCEPTANCE_LINE = "BANK_ACCEPTANCE_LINE";
                     
     /**
      * 授信额度类型: 贷款额度 
      */
-    int CREDIT_FACILITY_TYPE_LOAN_LINE = 20;
+    String CREDIT_FACILITY_TYPE_LOAN_LINE = "LOAN_LINE";
                     
     /**
      * 现金流方向: 流入 
      */
-    int CASH_FLOW_DIRECTION_INFLOW = 10;
+    String CASH_FLOW_DIRECTION_INFLOW = "INFLOW";
                     
     /**
      * 现金流方向: 流出 
      */
-    int CASH_FLOW_DIRECTION_OUTFLOW = 20;
+    String CASH_FLOW_DIRECTION_OUTFLOW = "OUTFLOW";
                     
 }

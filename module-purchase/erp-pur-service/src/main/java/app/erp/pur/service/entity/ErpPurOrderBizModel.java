@@ -19,6 +19,7 @@ import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 import java.util.List;
+import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
@@ -106,7 +107,7 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
         QueryBean q = new QueryBean();
         q.addFilter(eq("requisitionId", requisitionId));
         for (ErpPurOrder order : findList(q, null, context)) {
-            if (!Integer.valueOf(ErpPurConstants.DOC_STATUS_CANCELLED).equals(order.getDocStatus())) {
+            if (!Objects.equals(order.getDocStatus(), ErpPurConstants.DOC_STATUS_CANCELLED)) {
                 return true;
             }
         }
@@ -116,7 +117,7 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
     @Override
     @BizAction
     public void updateReceiveStatus(@Name("orderId") Long orderId,
-                                    @Name("receiveStatus") Integer receiveStatus,
+                                    @Name("receiveStatus") String receiveStatus,
                                     IServiceContext context) {
         if (orderId == null) {
             return;

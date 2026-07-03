@@ -35,9 +35,9 @@ public class TestErpFinPeriodCloseEndToEnd extends PeriodCloseTestSupport {
         assertEquals(ErpFinConstants.PERIOD_STATUS_CLOSED, period.getStatus(), "结账后 CLOSED");
 
         // 汇兑重估 + 损益结转凭证均已生成。
-        assertTrue(countVouchersByBillCode("FX-REVAL-2025-06", ErpFinBusinessType.EXCHANGE_GAIN_LOSS.getCode()) >= 1,
+        assertTrue(countVouchersByBillCode("FX-REVAL-2025-06", ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name()) >= 1,
                 "汇兑重估凭证已生成");
-        assertTrue(countVouchersByBillCode("PERIOD-CLOSE-2025-06", ErpFinBusinessType.PERIOD_CLOSE.getCode()) >= 1,
+        assertTrue(countVouchersByBillCode("PERIOD-CLOSE-2025-06", ErpFinBusinessType.PERIOD_CLOSE.name()) >= 1,
                 "损益结转凭证已生成");
 
         ErpFinAccountingPeriodStatus status = loadStatus(periodId);
@@ -55,7 +55,7 @@ public class TestErpFinPeriodCloseEndToEnd extends PeriodCloseTestSupport {
         // 重新结账（生成新凭证，幂等）。
         period = periodBiz.closePeriod(periodId, CTX);
         assertEquals(ErpFinConstants.PERIOD_STATUS_CLOSED, period.getStatus(), "重新结账成功");
-        assertTrue(countVouchersByBillCode("PERIOD-CLOSE-2025-06", ErpFinBusinessType.PERIOD_CLOSE.getCode()) >= 2,
+        assertTrue(countVouchersByBillCode("PERIOD-CLOSE-2025-06", ErpFinBusinessType.PERIOD_CLOSE.name()) >= 2,
                 "重新结账生成新的结转凭证");
     }
 }

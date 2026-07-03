@@ -6,7 +6,7 @@
   "managerId": 0,
   "parentId": 0,
   "isBudgetable": false,
-  "status": 0,
+  "status": "",
   "status_label": "",
   "delVersion": 0,
   "version": 0,

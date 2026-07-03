@@ -117,8 +117,8 @@ public class TestErpFinAging extends JunitAutoTestCase {
         p.orm_propValue(1, partnerId);
         p.setCode("P-" + partnerId);
         p.setName("Partner " + partnerId);
-        p.setPartnerType(10);
-        p.setStatus(10);
+        p.setPartnerType("CUSTOMER");
+        p.setStatus("ACTIVE");
         p.setReceivableBalance(BigDecimal.ZERO);
         p.setPayableBalance(BigDecimal.ZERO);
         dao.saveEntity(p);

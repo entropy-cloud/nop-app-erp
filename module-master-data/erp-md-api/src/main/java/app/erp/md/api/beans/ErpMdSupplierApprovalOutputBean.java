@@ -55,16 +55,16 @@
         }
 
 
-        private Integer _approvalType;
+        private String _approvalType;
 
     
         @PropMeta(propId=4)
     
-        public Integer getApprovalType(){
+        public String getApprovalType(){
             return _approvalType;
         }
 
-        public void setApprovalType(Integer value){
+        public void setApprovalType(String value){
             this._approvalType = value;
         }
 
@@ -137,16 +137,16 @@
         }
 
 
-        private Integer _status;
+        private String _status;
 
     
         @PropMeta(propId=9)
     
-        public Integer getStatus(){
+        public String getStatus(){
             return _status;
         }
 
-        public void setStatus(Integer value){
+        public void setStatus(String value){
             this._status = value;
         }
 

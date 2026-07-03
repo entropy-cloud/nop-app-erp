@@ -15,6 +15,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,47 +103,47 @@ public class ErpSalOrderProcessor {
 
     protected void validateTransitionForSubmit(ErpSalOrder order, IServiceContext context) {
         validateNotCancelled(order, context);
-        Integer status = order.getApproveStatus();
+        String status = order.getApproveStatus();
         if (status == null) {
             status = ErpSalConstants.APPROVE_STATUS_UNSUBMITTED;
         }
-        if (status != ErpSalConstants.APPROVE_STATUS_UNSUBMITTED
-                && status != ErpSalConstants.APPROVE_STATUS_REJECTED) {
+        if (!Objects.equals(status, ErpSalConstants.APPROVE_STATUS_UNSUBMITTED)
+                && !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_REJECTED)) {
             throw illegalTransition(order, status, "UNSUBMITTED 或 REJECTED");
         }
     }
 
     protected void validateTransitionForWithdraw(ErpSalOrder order, IServiceContext context) {
-        Integer status = order.getApproveStatus();
-        if (status == null || status != ErpSalConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = order.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(order, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForApprove(ErpSalOrder order, IServiceContext context) {
-        Integer status = order.getApproveStatus();
-        if (status == null || status != ErpSalConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = order.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(order, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForReject(ErpSalOrder order, IServiceContext context) {
-        Integer status = order.getApproveStatus();
-        if (status == null || status != ErpSalConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = order.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(order, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpSalOrder order, IServiceContext context) {
-        Integer status = order.getApproveStatus();
-        if (status == null || status != ErpSalConstants.APPROVE_STATUS_APPROVED) {
+        String status = order.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_APPROVED)) {
             throw illegalTransition(order, status, "APPROVED");
         }
     }
 
     protected void validateTransitionForCancel(ErpSalOrder order, IServiceContext context) {
-        Integer docStatus = order.getDocStatus();
-        if (docStatus != null && docStatus == ErpSalConstants.DOC_STATUS_CANCELLED) {
+        String docStatus = order.getDocStatus();
+        if (docStatus != null && Objects.equals(docStatus, ErpSalConstants.DOC_STATUS_CANCELLED)) {
             throw illegalDocTransition(order, docStatus, "非已作废");
         }
     }
@@ -206,20 +207,20 @@ public class ErpSalOrderProcessor {
     }
 
     protected void validateNotCancelled(ErpSalOrder order, IServiceContext context) {
-        Integer docStatus = order.getDocStatus();
-        if (docStatus != null && docStatus == ErpSalConstants.DOC_STATUS_CANCELLED) {
+        String docStatus = order.getDocStatus();
+        if (docStatus != null && Objects.equals(docStatus, ErpSalConstants.DOC_STATUS_CANCELLED)) {
             throw illegalDocTransition(order, docStatus, "非已作废");
         }
     }
 
     protected boolean isAlreadyApproved(ErpSalOrder order) {
-        Integer status = order.getApproveStatus();
-        return status != null && status == ErpSalConstants.APPROVE_STATUS_APPROVED;
+        String status = order.getApproveStatus();
+        return status != null && Objects.equals(status, ErpSalConstants.APPROVE_STATUS_APPROVED);
     }
 
     protected boolean isAlreadyRejected(ErpSalOrder order) {
-        Integer status = order.getApproveStatus();
-        return status != null && status == ErpSalConstants.APPROVE_STATUS_REJECTED;
+        String status = order.getApproveStatus();
+        return status != null && Objects.equals(status, ErpSalConstants.APPROVE_STATUS_REJECTED);
     }
 
     protected void requireLinesNonEmpty(ErpSalOrder order, IServiceContext context) {
@@ -235,7 +236,7 @@ public class ErpSalOrderProcessor {
         }
         ErpMdPartner partner = mdPartnerBiz.findById(order.getCustomerId(), context);
         if (partner == null || partner.getStatus() == null
-                || partner.getStatus() != ErpSalConstants.PARTNER_STATUS_ACTIVE) {
+                || !Objects.equals(partner.getStatus(), ErpSalConstants.PARTNER_STATUS_ACTIVE)) {
             throw new NopException(ErpSalErrors.ERR_PARTNER_INACTIVE)
                     .param(ErpSalErrors.ARG_CUSTOMER_ID, order.getCustomerId());
         }
@@ -267,14 +268,14 @@ public class ErpSalOrderProcessor {
         }
     }
 
-    protected NopException illegalTransition(ErpSalOrder order, Integer current, String expected) {
+    protected NopException illegalTransition(ErpSalOrder order, String current, String expected) {
         return new NopException(ErpSalErrors.ERR_ORDER_ILLEGAL_STATUS_TRANSITION)
                 .param(ErpSalErrors.ARG_ORDER_CODE, order.getCode())
                 .param(ErpSalErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpSalErrors.ARG_EXPECTED_STATUS, expected);
     }
 
-    protected NopException illegalDocTransition(ErpSalOrder order, Integer current, String expected) {
+    protected NopException illegalDocTransition(ErpSalOrder order, String current, String expected) {
         return new NopException(ErpSalErrors.ERR_ORDER_ILLEGAL_DOC_STATUS_TRANSITION)
                 .param(ErpSalErrors.ARG_ORDER_CODE, order.getCode())
                 .param(ErpSalErrors.ARG_CURRENT_DOC_STATUS, current)

@@ -3,9 +3,11 @@ package app.erp.ast.service.posting;
 import app.erp.ast.service.ErpAstConstants;
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.PostingEvent;
+import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.posting.AcctDocContext;
 import app.erp.fin.service.posting.IErpFinAcctDocProvider;
 import app.erp.fin.service.posting.VoucherFact;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -28,8 +30,8 @@ import java.util.Set;
  */
 public class CapitalizationAcctDocProvider implements IErpFinAcctDocProvider {
 
-    static final int DC_DEBIT = 10;
-    static final int DC_CREDIT = 20;
+    static final String DC_DEBIT = ErpFinConstants.DC_DEBIT;
+    static final String DC_CREDIT = ErpFinConstants.DC_CREDIT;
 
     static final String SUBJECT_FIXED_ASSET = "1601";       // 固定资产
     static final String SUBJECT_CIP = "1603";               // 在建工程
@@ -43,13 +45,13 @@ public class CapitalizationAcctDocProvider implements IErpFinAcctDocProvider {
     @Override
     public List<VoucherFact> createFacts(PostingEvent event, AcctDocContext ctx) {
         BigDecimal amount = readDecimal(event, ErpAstConstants.BILL_DATA_ORIGINAL_VALUE);
-        int sourceType = readInt(event, ErpAstConstants.BILL_DATA_SOURCE_TYPE);
+        String sourceType = readCode(event, ErpAstConstants.BILL_DATA_SOURCE_TYPE, ErpAstConstants.SOURCE_TYPE_DIRECT_PURCHASE);
 
         String fixedAssetSubject = readCode(event, ErpAstConstants.BILL_DATA_FIXED_ASSET_SUBJECT_CODE,
                 SUBJECT_FIXED_ASSET);
         String creditSubject;
         String creditName;
-        if (sourceType == ErpAstConstants.SOURCE_TYPE_CIP) {
+        if (Objects.equals(sourceType, ErpAstConstants.SOURCE_TYPE_CIP)) {
             creditSubject = readCode(event, ErpAstConstants.BILL_DATA_CREDIT_SUBJECT_CODE, SUBJECT_CIP);
             creditName = "在建工程";
         } else {
@@ -64,14 +66,14 @@ public class CapitalizationAcctDocProvider implements IErpFinAcctDocProvider {
         return facts;
     }
 
-    private VoucherFact fact(String subjectCode, String subjectName, int dcDirection, BigDecimal amount,
+    private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
                              PostingEvent event) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
-        fact.setBusinessType(event.getBusinessType().getCode());
+        fact.setBusinessType(event.getBusinessType().name());
         fact.setMemo(event.getBillHeadCode());
         return fact;
     }

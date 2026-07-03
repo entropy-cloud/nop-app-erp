@@ -52,11 +52,11 @@
         </prop>
         <prop name="priority" displayName="优先级" propId="9" i18n-en:displayName="Priority" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-cs/ticket-priority"/>
+            <schema type="java.lang.String" precision="20" dict="erp-cs/ticket-priority"/>
         </prop>
         <prop name="source" displayName="来源" propId="10" i18n-en:displayName="Source" queryable="true" sortable="true"
               insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-cs/ticket-source"/>
+            <schema type="java.lang.String" precision="20" dict="erp-cs/ticket-source"/>
         </prop>
         <prop name="assignedToId" displayName="分配处理人" propId="11" i18n-en:displayName="Assigned To" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -92,15 +92,15 @@
         </prop>
         <prop name="status" displayName="工单状态" propId="19" i18n-en:displayName="Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-cs/ticket-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-cs/ticket-status"/>
         </prop>
         <prop name="docStatus" displayName="单据状态" propId="20" i18n-en:displayName="Doc Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-cs/doc-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-cs/doc-status"/>
         </prop>
         <prop name="approveStatus" displayName="审核状态" propId="21" i18n-en:displayName="Approve Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-cs/approve-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-cs/approve-status"/>
         </prop>
         <prop name="remark" displayName="备注" propId="22" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

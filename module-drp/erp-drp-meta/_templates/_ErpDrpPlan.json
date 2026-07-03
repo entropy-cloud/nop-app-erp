@@ -4,7 +4,7 @@
   "planName": "",
   "periodFrom": "2000-01-01",
   "periodTo": "2000-01-01",
-  "status": 0,
+  "status": "",
   "status_label": "",
   "totalReplenishmentQty": 0.0,
   "runAt": "2000-01-01 14:00:00",

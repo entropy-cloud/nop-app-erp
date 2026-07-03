@@ -55,16 +55,16 @@
         }
 
 
-        private Integer _depreciationMethod;
+        private String _depreciationMethod;
 
     
         @PropMeta(propId=4)
     
-        public Integer getDepreciationMethod(){
+        public String getDepreciationMethod(){
             return _depreciationMethod;
         }
 
-        public void setDepreciationMethod(Integer value){
+        public void setDepreciationMethod(String value){
             this._depreciationMethod = value;
         }
 

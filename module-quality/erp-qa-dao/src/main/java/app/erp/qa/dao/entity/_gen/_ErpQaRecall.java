@@ -33,7 +33,7 @@ public class _ErpQaRecall extends DynamicOrmEntity{
     public static final String PROP_NAME_recallName = "recallName";
     public static final int PROP_ID_recallName = 3;
     
-    /* 触发类型: TRIGGER_TYPE INTEGER */
+    /* 触发类型: TRIGGER_TYPE VARCHAR */
     public static final String PROP_NAME_triggerType = "triggerType";
     public static final int PROP_ID_triggerType = 4;
     
@@ -57,7 +57,7 @@ public class _ErpQaRecall extends DynamicOrmEntity{
     public static final String PROP_NAME_rootCause = "rootCause";
     public static final int PROP_ID_rootCause = 9;
     
-    /* 严重程度: SEVERITY_LEVEL INTEGER */
+    /* 严重程度: SEVERITY_LEVEL VARCHAR */
     public static final String PROP_NAME_severityLevel = "severityLevel";
     public static final int PROP_ID_severityLevel = 10;
     
@@ -69,11 +69,11 @@ public class _ErpQaRecall extends DynamicOrmEntity{
     public static final String PROP_NAME_notifyCustomer = "notifyCustomer";
     public static final int PROP_ID_notifyCustomer = 12;
     
-    /* 召回状态: STATUS INTEGER */
+    /* 召回状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 13;
     
-    /* 审核状态: APPROVE_STATUS INTEGER */
+    /* 审核状态: APPROVE_STATUS VARCHAR */
     public static final String PROP_NAME_approveStatus = "approveStatus";
     public static final int PROP_ID_approveStatus = 14;
     
@@ -216,7 +216,7 @@ public class _ErpQaRecall extends DynamicOrmEntity{
     private java.lang.String _recallName;
     
     /* 触发类型: TRIGGER_TYPE */
-    private java.lang.Integer _triggerType;
+    private java.lang.String _triggerType;
     
     /* 来源NCR(弱指针): SOURCE_NCR_ID */
     private java.lang.Long _sourceNcrId;
@@ -234,7 +234,7 @@ public class _ErpQaRecall extends DynamicOrmEntity{
     private java.lang.String _rootCause;
     
     /* 严重程度: SEVERITY_LEVEL */
-    private java.lang.Integer _severityLevel;
+    private java.lang.String _severityLevel;
     
     /* 业务日期: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
@@ -243,10 +243,10 @@ public class _ErpQaRecall extends DynamicOrmEntity{
     private java.lang.Boolean _notifyCustomer;
     
     /* 召回状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 审核状态: APPROVE_STATUS */
-    private java.lang.Integer _approveStatus;
+    private java.lang.String _approveStatus;
     
     /* 审批人: APPROVED_BY */
     private java.lang.String _approvedBy;
@@ -460,9 +460,9 @@ public class _ErpQaRecall extends DynamicOrmEntity{
             }
         
             case PROP_ID_triggerType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_triggerType));
                }
                setTriggerType(typedValue);
@@ -520,9 +520,9 @@ public class _ErpQaRecall extends DynamicOrmEntity{
             }
         
             case PROP_ID_severityLevel:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_severityLevel));
                }
                setSeverityLevel(typedValue);
@@ -550,9 +550,9 @@ public class _ErpQaRecall extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -560,9 +560,9 @@ public class _ErpQaRecall extends DynamicOrmEntity{
             }
         
             case PROP_ID_approveStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_approveStatus));
                }
                setApproveStatus(typedValue);
@@ -691,7 +691,7 @@ public class _ErpQaRecall extends DynamicOrmEntity{
         
             case PROP_ID_triggerType:{
                onInitProp(propId);
-               this._triggerType = (java.lang.Integer)value;
+               this._triggerType = (java.lang.String)value;
                
                break;
             }
@@ -733,7 +733,7 @@ public class _ErpQaRecall extends DynamicOrmEntity{
         
             case PROP_ID_severityLevel:{
                onInitProp(propId);
-               this._severityLevel = (java.lang.Integer)value;
+               this._severityLevel = (java.lang.String)value;
                
                break;
             }
@@ -754,14 +754,14 @@ public class _ErpQaRecall extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_approveStatus:{
                onInitProp(propId);
-               this._approveStatus = (java.lang.Integer)value;
+               this._approveStatus = (java.lang.String)value;
                
                break;
             }
@@ -895,7 +895,7 @@ public class _ErpQaRecall extends DynamicOrmEntity{
     /**
      * 触发类型: TRIGGER_TYPE
      */
-    public final java.lang.Integer getTriggerType(){
+    public final java.lang.String getTriggerType(){
          onPropGet(PROP_ID_triggerType);
          return _triggerType;
     }
@@ -903,7 +903,7 @@ public class _ErpQaRecall extends DynamicOrmEntity{
     /**
      * 触发类型: TRIGGER_TYPE
      */
-    public final void setTriggerType(java.lang.Integer value){
+    public final void setTriggerType(java.lang.String value){
         if(onPropSet(PROP_ID_triggerType,value)){
             this._triggerType = value;
             internalClearRefs(PROP_ID_triggerType);
@@ -1009,7 +1009,7 @@ public class _ErpQaRecall extends DynamicOrmEntity{
     /**
      * 严重程度: SEVERITY_LEVEL
      */
-    public final java.lang.Integer getSeverityLevel(){
+    public final java.lang.String getSeverityLevel(){
          onPropGet(PROP_ID_severityLevel);
          return _severityLevel;
     }
@@ -1017,7 +1017,7 @@ public class _ErpQaRecall extends DynamicOrmEntity{
     /**
      * 严重程度: SEVERITY_LEVEL
      */
-    public final void setSeverityLevel(java.lang.Integer value){
+    public final void setSeverityLevel(java.lang.String value){
         if(onPropSet(PROP_ID_severityLevel,value)){
             this._severityLevel = value;
             internalClearRefs(PROP_ID_severityLevel);
@@ -1066,7 +1066,7 @@ public class _ErpQaRecall extends DynamicOrmEntity{
     /**
      * 召回状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -1074,7 +1074,7 @@ public class _ErpQaRecall extends DynamicOrmEntity{
     /**
      * 召回状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);
@@ -1085,7 +1085,7 @@ public class _ErpQaRecall extends DynamicOrmEntity{
     /**
      * 审核状态: APPROVE_STATUS
      */
-    public final java.lang.Integer getApproveStatus(){
+    public final java.lang.String getApproveStatus(){
          onPropGet(PROP_ID_approveStatus);
          return _approveStatus;
     }
@@ -1093,7 +1093,7 @@ public class _ErpQaRecall extends DynamicOrmEntity{
     /**
      * 审核状态: APPROVE_STATUS
      */
-    public final void setApproveStatus(java.lang.Integer value){
+    public final void setApproveStatus(java.lang.String value){
         if(onPropSet(PROP_ID_approveStatus,value)){
             this._approveStatus = value;
             internalClearRefs(PROP_ID_approveStatus);

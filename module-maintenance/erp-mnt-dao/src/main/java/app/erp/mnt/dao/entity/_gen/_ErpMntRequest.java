@@ -41,11 +41,11 @@ public class _ErpMntRequest extends DynamicOrmEntity{
     public static final String PROP_NAME_description = "description";
     public static final int PROP_ID_description = 5;
     
-    /* 优先级: PRIORITY INTEGER */
+    /* 优先级: PRIORITY VARCHAR */
     public static final String PROP_NAME_priority = "priority";
     public static final int PROP_ID_priority = 6;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 7;
     
@@ -188,10 +188,10 @@ public class _ErpMntRequest extends DynamicOrmEntity{
     private java.lang.String _description;
     
     /* 优先级: PRIORITY */
-    private java.lang.Integer _priority;
+    private java.lang.String _priority;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 请求人: REQUESTED_BY */
     private java.lang.Long _requestedBy;
@@ -422,9 +422,9 @@ public class _ErpMntRequest extends DynamicOrmEntity{
             }
         
             case PROP_ID_priority:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_priority));
                }
                setPriority(typedValue);
@@ -432,9 +432,9 @@ public class _ErpMntRequest extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -607,14 +607,14 @@ public class _ErpMntRequest extends DynamicOrmEntity{
         
             case PROP_ID_priority:{
                onInitProp(propId);
-               this._priority = (java.lang.Integer)value;
+               this._priority = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -807,7 +807,7 @@ public class _ErpMntRequest extends DynamicOrmEntity{
     /**
      * 优先级: PRIORITY
      */
-    public final java.lang.Integer getPriority(){
+    public final java.lang.String getPriority(){
          onPropGet(PROP_ID_priority);
          return _priority;
     }
@@ -815,7 +815,7 @@ public class _ErpMntRequest extends DynamicOrmEntity{
     /**
      * 优先级: PRIORITY
      */
-    public final void setPriority(java.lang.Integer value){
+    public final void setPriority(java.lang.String value){
         if(onPropSet(PROP_ID_priority,value)){
             this._priority = value;
             internalClearRefs(PROP_ID_priority);
@@ -826,7 +826,7 @@ public class _ErpMntRequest extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -834,7 +834,7 @@ public class _ErpMntRequest extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

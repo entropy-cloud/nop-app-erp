@@ -49,19 +49,19 @@ public class _ErpQaCalibration extends DynamicOrmEntity{
     public static final String PROP_NAME_standardRef = "standardRef";
     public static final int PROP_ID_standardRef = 7;
     
-    /* 测量值: MEASURED_VALUE DECIMAL */
+    /* 测量值: MEASURED_VALUE VARCHAR */
     public static final String PROP_NAME_measuredValue = "measuredValue";
     public static final int PROP_ID_measuredValue = 8;
     
-    /* 目标值: TARGET_VALUE DECIMAL */
+    /* 目标值: TARGET_VALUE VARCHAR */
     public static final String PROP_NAME_targetValue = "targetValue";
     public static final int PROP_ID_targetValue = 9;
     
-    /* 允差: TOLERANCE DECIMAL */
+    /* 允差: TOLERANCE VARCHAR */
     public static final String PROP_NAME_tolerance = "tolerance";
     public static final int PROP_ID_tolerance = 10;
     
-    /* 校准结果: RESULT INTEGER */
+    /* 校准结果: RESULT VARCHAR */
     public static final String PROP_NAME_result = "result";
     public static final int PROP_ID_result = 11;
     
@@ -73,11 +73,11 @@ public class _ErpQaCalibration extends DynamicOrmEntity{
     public static final String PROP_NAME_calibratedBy = "calibratedBy";
     public static final int PROP_ID_calibratedBy = 13;
     
-    /* 单据状态: DOC_STATUS INTEGER */
+    /* 单据状态: DOC_STATUS VARCHAR */
     public static final String PROP_NAME_docStatus = "docStatus";
     public static final int PROP_ID_docStatus = 14;
     
-    /* 审核状态: APPROVE_STATUS INTEGER */
+    /* 审核状态: APPROVE_STATUS VARCHAR */
     public static final String PROP_NAME_approveStatus = "approveStatus";
     public static final int PROP_ID_approveStatus = 15;
     
@@ -221,13 +221,13 @@ public class _ErpQaCalibration extends DynamicOrmEntity{
     private java.lang.String _measuredValue;
     
     /* 目标值: TARGET_VALUE */
-    private java.lang.String _targetValue;
+    private java.math.BigDecimal _targetValue;
     
     /* 允差: TOLERANCE */
-    private java.lang.String _tolerance;
+    private java.math.BigDecimal _tolerance;
     
     /* 校准结果: RESULT */
-    private java.lang.Integer _result;
+    private java.lang.String _result;
     
     /* 下次校准日期: NEXT_CALIBRATION_DATE */
     private java.time.LocalDate _nextCalibrationDate;
@@ -236,10 +236,10 @@ public class _ErpQaCalibration extends DynamicOrmEntity{
     private java.lang.Long _calibratedBy;
     
     /* 单据状态: DOC_STATUS */
-    private java.lang.Integer _docStatus;
+    private java.lang.String _docStatus;
     
     /* 审核状态: APPROVE_STATUS */
-    private java.lang.Integer _approveStatus;
+    private java.lang.String _approveStatus;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -494,9 +494,9 @@ public class _ErpQaCalibration extends DynamicOrmEntity{
             }
         
             case PROP_ID_targetValue:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_targetValue));
                }
                setTargetValue(typedValue);
@@ -504,9 +504,9 @@ public class _ErpQaCalibration extends DynamicOrmEntity{
             }
         
             case PROP_ID_tolerance:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_tolerance));
                }
                setTolerance(typedValue);
@@ -514,9 +514,9 @@ public class _ErpQaCalibration extends DynamicOrmEntity{
             }
         
             case PROP_ID_result:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_result));
                }
                setResult(typedValue);
@@ -544,9 +544,9 @@ public class _ErpQaCalibration extends DynamicOrmEntity{
             }
         
             case PROP_ID_docStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_docStatus));
                }
                setDocStatus(typedValue);
@@ -554,9 +554,9 @@ public class _ErpQaCalibration extends DynamicOrmEntity{
             }
         
             case PROP_ID_approveStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_approveStatus));
                }
                setApproveStatus(typedValue);
@@ -700,21 +700,21 @@ public class _ErpQaCalibration extends DynamicOrmEntity{
         
             case PROP_ID_targetValue:{
                onInitProp(propId);
-               this._targetValue = (java.lang.String)value;
+               this._targetValue = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_tolerance:{
                onInitProp(propId);
-               this._tolerance = (java.lang.String)value;
+               this._tolerance = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_result:{
                onInitProp(propId);
-               this._result = (java.lang.Integer)value;
+               this._result = (java.lang.String)value;
                
                break;
             }
@@ -735,14 +735,14 @@ public class _ErpQaCalibration extends DynamicOrmEntity{
         
             case PROP_ID_docStatus:{
                onInitProp(propId);
-               this._docStatus = (java.lang.Integer)value;
+               this._docStatus = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_approveStatus:{
                onInitProp(propId);
-               this._approveStatus = (java.lang.Integer)value;
+               this._approveStatus = (java.lang.String)value;
                
                break;
             }
@@ -957,7 +957,7 @@ public class _ErpQaCalibration extends DynamicOrmEntity{
     /**
      * 目标值: TARGET_VALUE
      */
-    public final java.lang.String getTargetValue(){
+    public final java.math.BigDecimal getTargetValue(){
          onPropGet(PROP_ID_targetValue);
          return _targetValue;
     }
@@ -965,7 +965,7 @@ public class _ErpQaCalibration extends DynamicOrmEntity{
     /**
      * 目标值: TARGET_VALUE
      */
-    public final void setTargetValue(java.lang.String value){
+    public final void setTargetValue(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_targetValue,value)){
             this._targetValue = value;
             internalClearRefs(PROP_ID_targetValue);
@@ -976,7 +976,7 @@ public class _ErpQaCalibration extends DynamicOrmEntity{
     /**
      * 允差: TOLERANCE
      */
-    public final java.lang.String getTolerance(){
+    public final java.math.BigDecimal getTolerance(){
          onPropGet(PROP_ID_tolerance);
          return _tolerance;
     }
@@ -984,7 +984,7 @@ public class _ErpQaCalibration extends DynamicOrmEntity{
     /**
      * 允差: TOLERANCE
      */
-    public final void setTolerance(java.lang.String value){
+    public final void setTolerance(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_tolerance,value)){
             this._tolerance = value;
             internalClearRefs(PROP_ID_tolerance);
@@ -995,7 +995,7 @@ public class _ErpQaCalibration extends DynamicOrmEntity{
     /**
      * 校准结果: RESULT
      */
-    public final java.lang.Integer getResult(){
+    public final java.lang.String getResult(){
          onPropGet(PROP_ID_result);
          return _result;
     }
@@ -1003,7 +1003,7 @@ public class _ErpQaCalibration extends DynamicOrmEntity{
     /**
      * 校准结果: RESULT
      */
-    public final void setResult(java.lang.Integer value){
+    public final void setResult(java.lang.String value){
         if(onPropSet(PROP_ID_result,value)){
             this._result = value;
             internalClearRefs(PROP_ID_result);
@@ -1052,7 +1052,7 @@ public class _ErpQaCalibration extends DynamicOrmEntity{
     /**
      * 单据状态: DOC_STATUS
      */
-    public final java.lang.Integer getDocStatus(){
+    public final java.lang.String getDocStatus(){
          onPropGet(PROP_ID_docStatus);
          return _docStatus;
     }
@@ -1060,7 +1060,7 @@ public class _ErpQaCalibration extends DynamicOrmEntity{
     /**
      * 单据状态: DOC_STATUS
      */
-    public final void setDocStatus(java.lang.Integer value){
+    public final void setDocStatus(java.lang.String value){
         if(onPropSet(PROP_ID_docStatus,value)){
             this._docStatus = value;
             internalClearRefs(PROP_ID_docStatus);
@@ -1071,7 +1071,7 @@ public class _ErpQaCalibration extends DynamicOrmEntity{
     /**
      * 审核状态: APPROVE_STATUS
      */
-    public final java.lang.Integer getApproveStatus(){
+    public final java.lang.String getApproveStatus(){
          onPropGet(PROP_ID_approveStatus);
          return _approveStatus;
     }
@@ -1079,7 +1079,7 @@ public class _ErpQaCalibration extends DynamicOrmEntity{
     /**
      * 审核状态: APPROVE_STATUS
      */
-    public final void setApproveStatus(java.lang.Integer value){
+    public final void setApproveStatus(java.lang.String value){
         if(onPropSet(PROP_ID_approveStatus,value)){
             this._approveStatus = value;
             internalClearRefs(PROP_ID_approveStatus);

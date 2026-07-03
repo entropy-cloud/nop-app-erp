@@ -37,7 +37,7 @@
         </prop>
         <prop name="nature" displayName="账套性质" propId="5" i18n-en:displayName="Nature" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-md/acct-schema-nature"/>
+            <schema type="java.lang.String" precision="20" dict="erp-md/acct-schema-nature"/>
         </prop>
         <prop name="functionalCurrencyId" displayName="本位币" propId="6" i18n-en:displayName="Functional Currency"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true"
@@ -46,7 +46,7 @@
         </prop>
         <prop name="costingMethod" displayName="默认成本方法" propId="7" i18n-en:displayName="Costing Method" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-md/cost-method"/>
+            <schema type="java.lang.String" precision="20" dict="erp-md/cost-method"/>
         </prop>
         <prop name="isAdjustCurrency" displayName="是否调整汇率差异" propId="8" i18n-en:displayName="Is Adjust Currency"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="true">
@@ -58,7 +58,7 @@
         </prop>
         <prop name="status" displayName="状态" propId="10" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-md/active-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-md/active-status"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="11" i18n-en:displayName="Del Flag" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">

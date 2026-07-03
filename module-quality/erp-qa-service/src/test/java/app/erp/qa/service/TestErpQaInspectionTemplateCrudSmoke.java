@@ -42,7 +42,7 @@ public class TestErpQaInspectionTemplateCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-QA");
         headData.put("name", "冒烟检验模板");
-        headData.put("inspectionType", 10);
+        headData.put("inspectionType", "INCOMING");
         headData.put("isActive", 1);
         ApiResponse<?> result = executeRpc(GraphQLOperationType.mutation, "ErpQaInspectionTemplate__save",
                 ApiRequest.build(Map.of("data", headData)));
@@ -58,7 +58,7 @@ public class TestErpQaInspectionTemplateCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-QA");
         headData.put("name", "冒烟检验模板");
-        headData.put("inspectionType", 10);
+        headData.put("inspectionType", "INCOMING");
         headData.put("isActive", 1);
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpQaInspectionTemplate__save",
                 ApiRequest.build(Map.of("data", headData)));
@@ -77,7 +77,7 @@ public class TestErpQaInspectionTemplateCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-QA");
         headData.put("name", "冒烟检验模板");
-        headData.put("inspectionType", 10);
+        headData.put("inspectionType", "INCOMING");
         headData.put("isActive", 1);
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpQaInspectionTemplate__save",
                 ApiRequest.build(Map.of("data", headData)));
@@ -100,7 +100,7 @@ public class TestErpQaInspectionTemplateCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-QA");
         headData.put("name", "冒烟检验模板");
-        headData.put("inspectionType", 10);
+        headData.put("inspectionType", "INCOMING");
         headData.put("isActive", 1);
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpQaInspectionTemplate__save",
                 ApiRequest.build(Map.of("data", headData)));
@@ -124,7 +124,7 @@ public class TestErpQaInspectionTemplateCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-QA");
         headData.put("name", "冒烟检验模板");
-        headData.put("inspectionType", 10);
+        headData.put("inspectionType", "INCOMING");
         headData.put("isActive", 1);
         ApiResponse<?> head = executeRpc(GraphQLOperationType.mutation, "ErpQaInspectionTemplate__save",
                 ApiRequest.build(Map.of("data", headData)));

@@ -6,7 +6,7 @@
   "totalRebateAmount": 0.0,
   "creditMemoBillType": "",
   "creditMemoBillCode": "",
-  "status": 0,
+  "status": "",
   "status_label": "",
   "postedAt": "2000-01-01 14:00:00",
   "postedBy": "",

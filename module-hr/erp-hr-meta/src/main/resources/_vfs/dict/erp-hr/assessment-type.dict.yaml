@@ -1,27 +1,27 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 评估类型
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 自评
-    value: 10
+    value: SELF
     description: 
   
   - label: 上级评估
-    value: 20
+    value: MANAGER
     description: 
   
   - label: 同级评估
-    value: 30
+    value: PEER
     description: 
   
   - label: 下级评估
-    value: 40
+    value: SUBORDINATE
     description: 
   
   - label: 360评估
-    value: 50
+    value: 360
     description: 
   

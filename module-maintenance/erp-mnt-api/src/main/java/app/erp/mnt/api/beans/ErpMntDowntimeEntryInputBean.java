@@ -68,16 +68,16 @@
         }
 
 
-        private String _totalMinutes;
+        private java.math.BigDecimal _totalMinutes;
 
     
         @PropMeta(propId=5)
     
-        public String getTotalMinutes(){
+        public java.math.BigDecimal getTotalMinutes(){
             return _totalMinutes;
         }
 
-        public void setTotalMinutes(String value){
+        public void setTotalMinutes(java.math.BigDecimal value){
             this._totalMinutes = value;
         }
 

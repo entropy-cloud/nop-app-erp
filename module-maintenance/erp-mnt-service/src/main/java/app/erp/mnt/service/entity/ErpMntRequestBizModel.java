@@ -13,6 +13,7 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
+import java.util.Objects;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -59,9 +60,9 @@ public class ErpMntRequestBizModel extends CrudBizModel<ErpMntRequest> implement
     @BizMutation
     public ErpMntRequest reject(@Name("requestId") Long requestId, IServiceContext context) {
         ErpMntRequest request = requireRequest(requestId, context);
-        Integer status = request.getStatus();
-        if (status == null || (status != ErpMntDaoConstants.REQUEST_STATUS_OPEN
-                && status != ErpMntDaoConstants.REQUEST_STATUS_ACCEPTED)) {
+        String status = request.getStatus();
+        if (status == null || (!Objects.equals(status, ErpMntDaoConstants.REQUEST_STATUS_OPEN)
+                && !Objects.equals(status, ErpMntDaoConstants.REQUEST_STATUS_ACCEPTED))) {
             throw illegalRequestTransition(request, status, "OPEN 或 ACCEPTED");
         }
         doReject(request, context);
@@ -72,9 +73,9 @@ public class ErpMntRequestBizModel extends CrudBizModel<ErpMntRequest> implement
     @BizMutation
     public ErpMntRequest cancel(@Name("requestId") Long requestId, IServiceContext context) {
         ErpMntRequest request = requireRequest(requestId, context);
-        Integer status = request.getStatus();
-        if (status == null || (status != ErpMntDaoConstants.REQUEST_STATUS_OPEN
-                && status != ErpMntDaoConstants.REQUEST_STATUS_ACCEPTED)) {
+        String status = request.getStatus();
+        if (status == null || (!Objects.equals(status, ErpMntDaoConstants.REQUEST_STATUS_OPEN)
+                && !Objects.equals(status, ErpMntDaoConstants.REQUEST_STATUS_ACCEPTED))) {
             throw illegalRequestTransition(request, status, "OPEN 或 ACCEPTED");
         }
         doCancel(request, context);
@@ -91,9 +92,9 @@ public class ErpMntRequestBizModel extends CrudBizModel<ErpMntRequest> implement
         return request;
     }
 
-    protected void validateTransition(ErpMntRequest request, int expected, String expectedName, IServiceContext context) {
-        Integer status = request.getStatus();
-        if (status == null || status != expected) {
+    protected void validateTransition(ErpMntRequest request, String expected, String expectedName, IServiceContext context) {
+        String status = request.getStatus();
+        if (status == null || !Objects.equals(status, expected)) {
             throw illegalRequestTransition(request, status, expectedName);
         }
     }
@@ -137,7 +138,7 @@ public class ErpMntRequestBizModel extends CrudBizModel<ErpMntRequest> implement
         updateEntity(request, null, context);
     }
 
-    protected NopException illegalRequestTransition(ErpMntRequest request, Integer current, String expected) {
+    protected NopException illegalRequestTransition(ErpMntRequest request, String current, String expected) {
         return new NopException(ErpMntErrors.ERR_INVALID_REQUEST_STATUS_TRANSITION)
                 .param(ErpMntErrors.ARG_REQUEST_CODE, request.getCode())
                 .param(ErpMntErrors.ARG_CURRENT_STATUS, current)

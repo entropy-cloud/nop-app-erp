@@ -28,7 +28,7 @@
                 <col id="recallName" mandatory="true" sortable="true"/>
 
                 <!--触发类型-->
-                <col id="triggerType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="triggerType" mandatory="true" sortable="true"/>
 
                 <!--来源NCR(弱指针)-->
                 <col id="sourceNcrId" ui:number="true" sortable="true"/>
@@ -46,7 +46,7 @@
                 <col id="rootCause" sortable="true"/>
 
                 <!--严重程度-->
-                <col id="severityLevel" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="severityLevel" mandatory="true" sortable="true"/>
 
                 <!--业务日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>
@@ -55,10 +55,10 @@
                 <col id="notifyCustomer" sortable="true"/>
 
                 <!--召回状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--审核状态-->
-                <col id="approveStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="approveStatus" mandatory="true" sortable="true"/>
 
                 <!--审批人-->
                 <col id="approvedBy" sortable="true"/>

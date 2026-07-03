@@ -34,10 +34,10 @@
                 <col id="warehouseId" ui:number="true" sortable="true"/>
 
                 <!--计算方法-->
-                <col id="method" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="method" mandatory="true" sortable="true"/>
 
                 <!--服务水平-->
-                <col id="serviceLevel" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="serviceLevel" mandatory="true" sortable="true"/>
 
                 <!--分析月数-->
                 <col id="historyMonths" ui:number="true" sortable="true"/>

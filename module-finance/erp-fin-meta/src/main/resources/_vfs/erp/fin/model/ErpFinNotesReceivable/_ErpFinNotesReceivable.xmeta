@@ -33,7 +33,7 @@
         </prop>
         <prop name="notesType" displayName="票据类型" propId="4" i18n-en:displayName="Notes Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-fin/notes-type"/>
+            <schema type="java.lang.String" precision="30" dict="erp-fin/notes-type"/>
         </prop>
         <prop name="notesNo" displayName="票据号" propId="5" i18n-en:displayName="Notes No" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -97,7 +97,7 @@
         </prop>
         <prop name="status" displayName="票据状态" propId="20" i18n-en:displayName="Status" queryable="true" sortable="true"
               insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-fin/notes-receivable-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-fin/notes-receivable-status"/>
         </prop>
         <prop name="posted" displayName="是否已过账" propId="21" i18n-en:displayName="Posted" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="false">

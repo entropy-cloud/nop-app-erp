@@ -79,16 +79,16 @@
                 <col id="settlementMethodId" ui:number="true" sortable="true"/>
 
                 <!--单据状态-->
-                <col id="docStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="docStatus" mandatory="true" sortable="true"/>
 
                 <!--审核状态-->
-                <col id="approveStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="approveStatus" mandatory="true" sortable="true"/>
 
                 <!--付款进度-->
-                <col id="paidStatus" ui:number="true" sortable="true"/>
+                <col id="paidStatus" sortable="true"/>
 
                 <!--收货状态-->
-                <col id="receiveStatus" ui:number="true" sortable="true"/>
+                <col id="receiveStatus" sortable="true"/>
 
                 <!--已过账-->
                 <col id="posted" sortable="true"/>

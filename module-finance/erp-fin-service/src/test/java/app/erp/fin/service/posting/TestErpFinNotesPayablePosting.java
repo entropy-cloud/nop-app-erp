@@ -1,6 +1,7 @@
 package app.erp.fin.service.posting;
 
 import app.erp.fin.biz.IErpFinNotesPayableBiz;
+import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinCreditFacility;
 import app.erp.fin.dao.entity.ErpFinNotesPayable;
@@ -65,7 +66,7 @@ public class TestErpFinNotesPayablePosting extends JunitAutoTestCase {
 
         ErpFinNotesPayable note = notesPayableBiz.issue(noteId, CTX);
         assertTrue(Boolean.TRUE.equals(note.getPosted()), "开出过账成功 posted=true");
-        assertFalse(findBillLinks("NP-POST-001", 230).isEmpty(), "ISSUED 凭证回链已落库");
+        assertFalse(findBillLinks("NP-POST-001", ErpFinBusinessType.NOTES_PAYABLE_ISSUED.name()).isEmpty(), "ISSUED 凭证回链已落库");
 
         ErpFinCreditFacility facility = reloadFacility(facilityId);
         assertEquals(0, new BigDecimal("800").compareTo(facility.getUsedAmount()), "授信占用 800");
@@ -90,7 +91,7 @@ public class TestErpFinNotesPayablePosting extends JunitAutoTestCase {
         notesPayableBiz.issue(noteId, CTX);
         ErpFinNotesPayable note = notesPayableBiz.honor(noteId, CTX);
         assertTrue(Boolean.TRUE.equals(note.getPosted()), "兑付过账成功 posted=true");
-        assertFalse(findBillLinks("NP-POST-002", 240).isEmpty(), "HONORED 凭证回链已落库");
+        assertFalse(findBillLinks("NP-POST-002", ErpFinBusinessType.NOTES_PAYABLE_HONORED.name()).isEmpty(), "HONORED 凭证回链已落库");
 
         ErpFinCreditFacility facility = reloadFacility(facilityId);
         assertEquals(0, BigDecimal.ZERO.compareTo(facility.getUsedAmount()), "兑付释放后授信已用归 0");
@@ -103,7 +104,7 @@ public class TestErpFinNotesPayablePosting extends JunitAutoTestCase {
         seedAcctSchema(1L);
     }
 
-    private Long seedPayable(String code, int notesType, Long creditFacilityId, BigDecimal amountFunctional, Long partnerId) {
+    private Long seedPayable(String code, String notesType, Long creditFacilityId, BigDecimal amountFunctional, Long partnerId) {
         IEntityDao<ErpFinNotesPayable> dao = daoProvider.daoFor(ErpFinNotesPayable.class);
         ErpFinNotesPayable note = new ErpFinNotesPayable();
         note.setCode(code);
@@ -128,11 +129,11 @@ public class TestErpFinNotesPayablePosting extends JunitAutoTestCase {
         ErpFinCreditFacility facility = new ErpFinCreditFacility();
         facility.setCode(code);
         facility.setOrgId(1L);
-        facility.setFacilityType(10);
+        facility.setFacilityType("BANK_ACCEPTANCE_LINE");
         facility.setTotalAmount(total);
         facility.setUsedAmount(BigDecimal.ZERO);
         facility.setAvailableAmount(total);
-        facility.setStatus(10);
+        facility.setStatus("ACTIVE");
         dao.saveEntity(facility);
         return facility.getId();
     }
@@ -147,9 +148,9 @@ public class TestErpFinNotesPayablePosting extends JunitAutoTestCase {
         ErpMdSubject subject = new ErpMdSubject();
         subject.setCode(code);
         subject.setName(name);
-        subject.setSubjectClass(10);
-        subject.setDirection(10);
-        subject.setStatus(10);
+        subject.setSubjectClass("ASSET");
+        subject.setDirection("DEBIT");
+        subject.setStatus("ACTIVE");
         dao.saveEntity(subject);
     }
 
@@ -159,9 +160,9 @@ public class TestErpFinNotesPayablePosting extends JunitAutoTestCase {
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
-        schema.setNature(10);
+        schema.setNature("FINANCIAL");
         schema.setFunctionalCurrencyId(1L);
-        schema.setStatus(10);
+        schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
 
@@ -175,11 +176,11 @@ public class TestErpFinNotesPayablePosting extends JunitAutoTestCase {
         period.setMonth(month);
         period.setStartDate(start);
         period.setEndDate(end);
-        period.setStatus(10);
+        period.setStatus(ErpFinConstants.PERIOD_STATUS_OPEN);
         dao.saveEntity(period);
     }
 
-    private List<ErpFinVoucherBillR> findBillLinks(String billCode, int businessType) {
+    private List<ErpFinVoucherBillR> findBillLinks(String billCode, String businessType) {
         IEntityDao<ErpFinVoucherBillR> dao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("billCode", billCode), eq("businessType", businessType)));

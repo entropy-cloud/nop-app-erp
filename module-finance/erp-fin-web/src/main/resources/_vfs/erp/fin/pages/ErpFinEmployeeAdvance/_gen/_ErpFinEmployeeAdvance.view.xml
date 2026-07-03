@@ -31,7 +31,7 @@
                 <col id="employeeId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--借款类型-->
-                <col id="advanceType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="advanceType" mandatory="true" sortable="true"/>
 
                 <!--借款日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>
@@ -58,10 +58,10 @@
                 <col id="projectId" ui:number="true" sortable="true"/>
 
                 <!--单据状态-->
-                <col id="docStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="docStatus" mandatory="true" sortable="true"/>
 
                 <!--审核状态-->
-                <col id="approveStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="approveStatus" mandatory="true" sortable="true"/>
 
                 <!--审核人-->
                 <col id="approvedBy" sortable="true"/>

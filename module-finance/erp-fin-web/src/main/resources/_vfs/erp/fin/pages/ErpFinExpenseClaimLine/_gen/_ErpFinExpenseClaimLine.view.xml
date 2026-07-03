@@ -28,7 +28,7 @@
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--费用类型-->
-                <col id="expenseType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="expenseType" mandatory="true" sortable="true"/>
 
                 <!--项目-->
                 <col id="projectId" ui:number="true" sortable="true"/>

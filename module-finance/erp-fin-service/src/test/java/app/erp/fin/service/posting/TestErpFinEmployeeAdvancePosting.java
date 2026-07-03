@@ -55,7 +55,7 @@ public class TestErpFinEmployeeAdvancePosting extends JunitAutoTestCase {
             seedAcctSchema(1L);
             seedSubject("1221", "其他应收款-员工预支");
             seedSubject("1002", "银行存款");
-            Long empId = seedEmployee(partnerId, 10);
+            Long empId = seedEmployee(partnerId, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
             return seedAdvance("ADV-POST-001", empId, new BigDecimal("500"));
         });
 
@@ -77,7 +77,7 @@ public class TestErpFinEmployeeAdvancePosting extends JunitAutoTestCase {
             seedAcctSchema(1L);
             seedSubject("1221", "其他应收款-员工预支");
             seedSubject("1002", "银行存款");
-            Long empId = seedEmployee(partnerId, 10);
+            Long empId = seedEmployee(partnerId, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
             return seedAdvance("ADV-POST-002", empId, new BigDecimal("300"));
         });
 
@@ -97,7 +97,7 @@ public class TestErpFinEmployeeAdvancePosting extends JunitAutoTestCase {
         advance.setCode(code);
         advance.setOrgId(1L);
         advance.setEmployeeId(employeeId);
-        advance.setAdvanceType(10);
+        advance.setAdvanceType("EXPENSE_ADVANCE");
         advance.setBusinessDate(LocalDate.of(2026, 6, 10));
         advance.setCurrencyId(1L);
         advance.setExchangeRate(BigDecimal.ONE);
@@ -111,7 +111,7 @@ public class TestErpFinEmployeeAdvancePosting extends JunitAutoTestCase {
         return advance.getId();
     }
 
-    private Long seedEmployee(long partnerId, int status) {
+    private Long seedEmployee(long partnerId, String status) {
         IEntityDao<ErpMdEmployee> dao = daoProvider.daoFor(ErpMdEmployee.class);
         ErpMdEmployee emp = new ErpMdEmployee();
         emp.setCode("E-" + partnerId);
@@ -128,9 +128,9 @@ public class TestErpFinEmployeeAdvancePosting extends JunitAutoTestCase {
         ErpMdSubject subject = new ErpMdSubject();
         subject.setCode(code);
         subject.setName(name);
-        subject.setSubjectClass(10);
-        subject.setDirection(10);
-        subject.setStatus(10);
+        subject.setSubjectClass("ASSET");
+        subject.setDirection("DEBIT");
+        subject.setStatus("ACTIVE");
         dao.saveEntity(subject);
     }
 
@@ -140,9 +140,9 @@ public class TestErpFinEmployeeAdvancePosting extends JunitAutoTestCase {
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
-        schema.setNature(10);
+        schema.setNature("FINANCIAL");
         schema.setFunctionalCurrencyId(1L);
-        schema.setStatus(10);
+        schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
 
@@ -156,7 +156,7 @@ public class TestErpFinEmployeeAdvancePosting extends JunitAutoTestCase {
         period.setMonth(month);
         period.setStartDate(start);
         period.setEndDate(end);
-        period.setStatus(10);
+        period.setStatus(ErpFinConstants.PERIOD_STATUS_OPEN);
         dao.saveEntity(period);
     }
 

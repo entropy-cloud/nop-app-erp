@@ -2,6 +2,7 @@ package app.erp.inv.service.posting;
 
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.PostingEvent;
+import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.posting.AcctDocContext;
 import app.erp.fin.service.posting.IErpFinAcctDocProvider;
 import app.erp.fin.service.posting.VoucherFact;
@@ -27,8 +28,8 @@ import java.util.Set;
  */
 public class InvAcctDocProvider implements IErpFinAcctDocProvider {
 
-    static final int DC_DEBIT = 10;
-    static final int DC_CREDIT = 20;
+    static final String DC_DEBIT = ErpFinConstants.DC_DEBIT;
+    static final String DC_CREDIT = ErpFinConstants.DC_CREDIT;
 
     static final String SUBJECT_INVENTORY = "1401";
     static final String SUBJECT_ESTIMATED_AP = "2202";
@@ -56,14 +57,14 @@ public class InvAcctDocProvider implements IErpFinAcctDocProvider {
         return facts;
     }
 
-    private VoucherFact fact(String subjectCode, String subjectName, int dcDirection, BigDecimal amount,
+    private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
                              Long materialId, Long warehouseId, PostingEvent event) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
-        fact.setBusinessType(event.getBusinessType().getCode());
+        fact.setBusinessType(event.getBusinessType().name());
         fact.setMaterialId(materialId);
         fact.setWarehouseId(warehouseId);
         fact.setMemo(event.getBillHeadCode());

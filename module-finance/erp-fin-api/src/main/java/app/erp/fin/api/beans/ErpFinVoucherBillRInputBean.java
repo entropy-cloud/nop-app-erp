@@ -82,16 +82,16 @@
         }
 
 
-        private Integer _businessType;
+        private String _businessType;
 
     
         @PropMeta(propId=6)
     
-        public Integer getBusinessType(){
+        public String getBusinessType(){
             return _businessType;
         }
 
-        public void setBusinessType(Integer value){
+        public void setBusinessType(String value){
             this._businessType = value;
         }
 

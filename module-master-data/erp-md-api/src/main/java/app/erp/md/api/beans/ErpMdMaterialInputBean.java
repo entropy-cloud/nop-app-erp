@@ -55,16 +55,16 @@
         }
 
 
-        private Integer _materialType;
+        private String _materialType;
 
     
         @PropMeta(propId=4)
     
-        public Integer getMaterialType(){
+        public String getMaterialType(){
             return _materialType;
         }
 
-        public void setMaterialType(Integer value){
+        public void setMaterialType(String value){
             this._materialType = value;
         }
 
@@ -97,30 +97,30 @@
         }
 
 
-        private Integer _status;
+        private String _status;
 
     
         @PropMeta(propId=7)
     
-        public Integer getStatus(){
+        public String getStatus(){
             return _status;
         }
 
-        public void setStatus(Integer value){
+        public void setStatus(String value){
             this._status = value;
         }
 
 
-        private Integer _costMethod;
+        private String _costMethod;
 
     
         @PropMeta(propId=8)
     
-        public Integer getCostMethod(){
+        public String getCostMethod(){
             return _costMethod;
         }
 
-        public void setCostMethod(Integer value){
+        public void setCostMethod(String value){
             this._costMethod = value;
         }
 

@@ -9,6 +9,7 @@ import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
+import java.util.Objects;
 
 import app.erp.fin.biz.IErpFinArApItemBiz;
 import app.erp.fin.dao.dto.ArApAgingRow;
@@ -35,7 +36,7 @@ public class ErpFinArApItemBizModel extends CrudBizModel<ErpFinArApItem> impleme
     @Override
     @BizQuery
     public List<ErpFinArApItem> findOpenItemsByPartner(@Name("partnerId") Long partnerId,
-                                                       @Name("direction") Integer direction,
+                                                       @Name("direction") String direction,
                                                        IServiceContext context) {
         QueryBean query = new QueryBean();
         query.addFilter(eq("partnerId", partnerId));
@@ -48,7 +49,7 @@ public class ErpFinArApItemBizModel extends CrudBizModel<ErpFinArApItem> impleme
 
     @Override
     @BizQuery
-    public List<ArApAgingRow> aging(@Name("direction") Integer direction,
+    public List<ArApAgingRow> aging(@Name("direction") String direction,
                                     @Name("asOfDate") LocalDate asOfDate,
                                     IServiceContext context) {
         LocalDate asOf = asOfDate != null ? asOfDate : CoreMetrics.today();
@@ -76,8 +77,8 @@ public class ErpFinArApItemBizModel extends CrudBizModel<ErpFinArApItem> impleme
 
     // ---------- helpers ----------
 
-    protected boolean isAgingByDueDate(Integer direction) {
-        String configKey = direction != null && direction == ErpFinConstants.DIRECTION_RECEIVABLE
+    protected boolean isAgingByDueDate(String direction) {
+        String configKey = direction != null && Objects.equals(direction, ErpFinConstants.DIRECTION_RECEIVABLE)
                 ? ErpFinConstants.CONFIG_AR_AGING_BASE
                 : ErpFinConstants.CONFIG_AP_AGING_BASE;
         String base = AppConfig.var(configKey, ErpFinConstants.AGING_BASE_DUE_DATE);

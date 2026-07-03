@@ -37,7 +37,7 @@
                 <col id="sourceWarehouseId" ui:number="true" sortable="true"/>
 
                 <!--补货类型-->
-                <col id="replenishmentType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="replenishmentType" mandatory="true" sortable="true"/>
 
                 <!--当前库存-->
                 <col id="currentStock" ui:number="true" sortable="true"/>
@@ -70,7 +70,7 @@
                 <col id="orderBillCode" sortable="true"/>
 
                 <!--状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
                 <col id="orgId" ui:number="true" sortable="true"/>

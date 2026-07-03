@@ -34,7 +34,7 @@
                 <col id="billLineCode" sortable="true"/>
 
                 <!--业务类型-->
-                <col id="businessType" ui:number="true" sortable="true"/>
+                <col id="businessType" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>

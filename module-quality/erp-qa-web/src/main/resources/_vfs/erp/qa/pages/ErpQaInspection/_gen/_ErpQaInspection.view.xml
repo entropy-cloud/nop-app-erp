@@ -28,7 +28,7 @@
                 <col id="orgId" ui:number="true" sortable="true"/>
 
                 <!--检验类型-->
-                <col id="inspectionType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="inspectionType" mandatory="true" sortable="true"/>
 
                 <!--关联单据类型-->
                 <col id="relatedBillType" sortable="true"/>
@@ -67,13 +67,13 @@
                 <col id="inspectorId" ui:number="true" sortable="true"/>
 
                 <!--质检结果-->
-                <col id="result" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="result" mandatory="true" sortable="true"/>
 
                 <!--单据状态-->
-                <col id="docStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="docStatus" mandatory="true" sortable="true"/>
 
                 <!--审核状态-->
-                <col id="approveStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="approveStatus" mandatory="true" sortable="true"/>
 
                 <!--已过账(质量结论已回写业务单据)-->
                 <col id="posted" sortable="true"/>

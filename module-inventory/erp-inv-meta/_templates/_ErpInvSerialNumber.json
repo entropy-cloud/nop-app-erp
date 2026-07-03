@@ -6,7 +6,7 @@
   "skuId": 0,
   "warehouseId": 0,
   "locationId": 0,
-  "status": 0,
+  "status": "",
   "status_label": "",
   "inBillType": "",
   "inBillCode": "",

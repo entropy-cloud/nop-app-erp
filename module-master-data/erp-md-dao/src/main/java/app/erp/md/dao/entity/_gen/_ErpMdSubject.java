@@ -37,15 +37,15 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     public static final String PROP_NAME_parentId = "parentId";
     public static final int PROP_ID_parentId = 4;
     
-    /* 科目类别: SUBJECT_CLASS INTEGER */
+    /* 科目类别: SUBJECT_CLASS VARCHAR */
     public static final String PROP_NAME_subjectClass = "subjectClass";
     public static final int PROP_ID_subjectClass = 5;
     
-    /* 余额方向: DIRECTION INTEGER */
+    /* 余额方向: DIRECTION VARCHAR */
     public static final String PROP_NAME_direction = "direction";
     public static final int PROP_ID_direction = 6;
     
-    /* 余额类型: BALANCE_TYPE INTEGER */
+    /* 余额类型: BALANCE_TYPE VARCHAR */
     public static final String PROP_NAME_balanceType = "balanceType";
     public static final int PROP_ID_balanceType = 7;
     
@@ -85,7 +85,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     public static final String PROP_NAME_isLeaf = "isLeaf";
     public static final int PROP_ID_isLeaf = 16;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 17;
     
@@ -226,13 +226,13 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     private java.lang.Long _parentId;
     
     /* 科目类别: SUBJECT_CLASS */
-    private java.lang.Integer _subjectClass;
+    private java.lang.String _subjectClass;
     
     /* 余额方向: DIRECTION */
-    private java.lang.Integer _direction;
+    private java.lang.String _direction;
     
     /* 余额类型: BALANCE_TYPE */
-    private java.lang.Integer _balanceType;
+    private java.lang.String _balanceType;
     
     /* 核算币种: CURRENCY_ID */
     private java.lang.Long _currencyId;
@@ -262,7 +262,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     private java.lang.Boolean _isLeaf;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -483,9 +483,9 @@ public class _ErpMdSubject extends DynamicOrmEntity{
             }
         
             case PROP_ID_subjectClass:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_subjectClass));
                }
                setSubjectClass(typedValue);
@@ -493,9 +493,9 @@ public class _ErpMdSubject extends DynamicOrmEntity{
             }
         
             case PROP_ID_direction:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_direction));
                }
                setDirection(typedValue);
@@ -503,9 +503,9 @@ public class _ErpMdSubject extends DynamicOrmEntity{
             }
         
             case PROP_ID_balanceType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_balanceType));
                }
                setBalanceType(typedValue);
@@ -603,9 +603,9 @@ public class _ErpMdSubject extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -721,21 +721,21 @@ public class _ErpMdSubject extends DynamicOrmEntity{
         
             case PROP_ID_subjectClass:{
                onInitProp(propId);
-               this._subjectClass = (java.lang.Integer)value;
+               this._subjectClass = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_direction:{
                onInitProp(propId);
-               this._direction = (java.lang.Integer)value;
+               this._direction = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_balanceType:{
                onInitProp(propId);
-               this._balanceType = (java.lang.Integer)value;
+               this._balanceType = (java.lang.String)value;
                
                break;
             }
@@ -805,7 +805,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -944,7 +944,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     /**
      * 科目类别: SUBJECT_CLASS
      */
-    public final java.lang.Integer getSubjectClass(){
+    public final java.lang.String getSubjectClass(){
          onPropGet(PROP_ID_subjectClass);
          return _subjectClass;
     }
@@ -952,7 +952,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     /**
      * 科目类别: SUBJECT_CLASS
      */
-    public final void setSubjectClass(java.lang.Integer value){
+    public final void setSubjectClass(java.lang.String value){
         if(onPropSet(PROP_ID_subjectClass,value)){
             this._subjectClass = value;
             internalClearRefs(PROP_ID_subjectClass);
@@ -963,7 +963,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     /**
      * 余额方向: DIRECTION
      */
-    public final java.lang.Integer getDirection(){
+    public final java.lang.String getDirection(){
          onPropGet(PROP_ID_direction);
          return _direction;
     }
@@ -971,7 +971,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     /**
      * 余额方向: DIRECTION
      */
-    public final void setDirection(java.lang.Integer value){
+    public final void setDirection(java.lang.String value){
         if(onPropSet(PROP_ID_direction,value)){
             this._direction = value;
             internalClearRefs(PROP_ID_direction);
@@ -982,7 +982,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     /**
      * 余额类型: BALANCE_TYPE
      */
-    public final java.lang.Integer getBalanceType(){
+    public final java.lang.String getBalanceType(){
          onPropGet(PROP_ID_balanceType);
          return _balanceType;
     }
@@ -990,7 +990,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     /**
      * 余额类型: BALANCE_TYPE
      */
-    public final void setBalanceType(java.lang.Integer value){
+    public final void setBalanceType(java.lang.String value){
         if(onPropSet(PROP_ID_balanceType,value)){
             this._balanceType = value;
             internalClearRefs(PROP_ID_balanceType);
@@ -1172,7 +1172,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -1180,7 +1180,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

@@ -41,11 +41,11 @@ public class _ErpInvDrpSafetyStockCalc extends DynamicOrmEntity{
     public static final String PROP_NAME_warehouseId = "warehouseId";
     public static final int PROP_ID_warehouseId = 5;
     
-    /* 计算方法: METHOD INTEGER */
+    /* 计算方法: METHOD VARCHAR */
     public static final String PROP_NAME_method = "method";
     public static final int PROP_ID_method = 6;
     
-    /* 服务水平: SERVICE_LEVEL INTEGER */
+    /* 服务水平: SERVICE_LEVEL VARCHAR */
     public static final String PROP_NAME_serviceLevel = "serviceLevel";
     public static final int PROP_ID_serviceLevel = 7;
     
@@ -208,10 +208,10 @@ public class _ErpInvDrpSafetyStockCalc extends DynamicOrmEntity{
     private java.lang.Long _warehouseId;
     
     /* 计算方法: METHOD */
-    private java.lang.Integer _method;
+    private java.lang.String _method;
     
     /* 服务水平: SERVICE_LEVEL */
-    private java.lang.Integer _serviceLevel;
+    private java.lang.String _serviceLevel;
     
     /* 分析月数: HISTORY_MONTHS */
     private java.lang.Integer _historyMonths;
@@ -454,9 +454,9 @@ public class _ErpInvDrpSafetyStockCalc extends DynamicOrmEntity{
             }
         
             case PROP_ID_method:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_method));
                }
                setMethod(typedValue);
@@ -464,9 +464,9 @@ public class _ErpInvDrpSafetyStockCalc extends DynamicOrmEntity{
             }
         
             case PROP_ID_serviceLevel:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_serviceLevel));
                }
                setServiceLevel(typedValue);
@@ -659,14 +659,14 @@ public class _ErpInvDrpSafetyStockCalc extends DynamicOrmEntity{
         
             case PROP_ID_method:{
                onInitProp(propId);
-               this._method = (java.lang.Integer)value;
+               this._method = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_serviceLevel:{
                onInitProp(propId);
-               this._serviceLevel = (java.lang.Integer)value;
+               this._serviceLevel = (java.lang.String)value;
                
                break;
             }
@@ -873,7 +873,7 @@ public class _ErpInvDrpSafetyStockCalc extends DynamicOrmEntity{
     /**
      * 计算方法: METHOD
      */
-    public final java.lang.Integer getMethod(){
+    public final java.lang.String getMethod(){
          onPropGet(PROP_ID_method);
          return _method;
     }
@@ -881,7 +881,7 @@ public class _ErpInvDrpSafetyStockCalc extends DynamicOrmEntity{
     /**
      * 计算方法: METHOD
      */
-    public final void setMethod(java.lang.Integer value){
+    public final void setMethod(java.lang.String value){
         if(onPropSet(PROP_ID_method,value)){
             this._method = value;
             internalClearRefs(PROP_ID_method);
@@ -892,7 +892,7 @@ public class _ErpInvDrpSafetyStockCalc extends DynamicOrmEntity{
     /**
      * 服务水平: SERVICE_LEVEL
      */
-    public final java.lang.Integer getServiceLevel(){
+    public final java.lang.String getServiceLevel(){
          onPropGet(PROP_ID_serviceLevel);
          return _serviceLevel;
     }
@@ -900,7 +900,7 @@ public class _ErpInvDrpSafetyStockCalc extends DynamicOrmEntity{
     /**
      * 服务水平: SERVICE_LEVEL
      */
-    public final void setServiceLevel(java.lang.Integer value){
+    public final void setServiceLevel(java.lang.String value){
         if(onPropSet(PROP_ID_serviceLevel,value)){
             this._serviceLevel = value;
             internalClearRefs(PROP_ID_serviceLevel);

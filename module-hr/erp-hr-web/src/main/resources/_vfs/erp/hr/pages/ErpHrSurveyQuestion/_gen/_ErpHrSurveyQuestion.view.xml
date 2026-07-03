@@ -31,7 +31,7 @@
                 <col id="questionText" mandatory="true" sortable="true"/>
 
                 <!--题型-->
-                <col id="questionType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="questionType" mandatory="true" sortable="true"/>
 
                 <!--评分最低分-->
                 <col id="ratingScaleMin" ui:number="true" sortable="true"/>
@@ -49,7 +49,7 @@
                 <col id="options" sortable="true"/>
 
                 <!--驱动因子分类-->
-                <col id="driverCategory" ui:number="true" sortable="true"/>
+                <col id="driverCategory" sortable="true"/>
 
                 <!--是否必填-->
                 <col id="isRequired" sortable="true"/>

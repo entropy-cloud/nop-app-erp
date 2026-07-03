@@ -1,43 +1,43 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 履行动作类型
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 创建工单
-    value: 10
+    value: CREATE_TICKET
     description: 
   
   - label: 分配处理团队
-    value: 20
+    value: ASSIGN_TEAM
     description: 
   
   - label: 分配处理人
-    value: 30
+    value: ASSIGN_AGENT
     description: 
   
   - label: 审批流程
-    value: 40
+    value: REQUEST_APPROVAL
     description: 
   
   - label: 通知客户
-    value: 50
+    value: NOTIFY_CUSTOMER
     description: 
   
   - label: 更新工单状态
-    value: 60
+    value: UPDATE_STATUS
     description: 
   
   - label: 创建子工单
-    value: 70
+    value: CREATE_CHILD_TICKET
     description: 
   
   - label: 触发外部工作流
-    value: 80
+    value: INVOKE_WORKFLOW
     description: 
   
   - label: 自动关闭
-    value: 90
+    value: CLOSE_TICKET
     description: 
   

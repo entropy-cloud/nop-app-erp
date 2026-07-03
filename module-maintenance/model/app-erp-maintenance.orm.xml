@@ -30,76 +30,76 @@
      ext:allowIdAsColName="true" ext:icon="wrench" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:biz="biz">
 
     <dicts>
-        <dict label="维护计划类型" name="erp-mnt/schedule-type" valueType="int" i18n-en:label='Maintenance Schedule Type'>
-            <option code="PREVENTIVE" label="预防性维护" value="10" i18n-en:label='Preventive Maintenance'/>
-            <option code="PREDICTIVE" label="预测性维护" value="20" i18n-en:label='Predictive Maintenance'/>
-            <option code="CALIBRATION" label="校准" value="30" i18n-en:label='Calibration'/>
+        <dict label="维护计划类型" name="erp-mnt/schedule-type" valueType="string" i18n-en:label='Maintenance Schedule Type'>
+            <option code="PREVENTIVE" label="预防性维护" value="PREVENTIVE" i18n-en:label='Preventive Maintenance'/>
+            <option code="PREDICTIVE" label="预测性维护" value="PREDICTIVE" i18n-en:label='Predictive Maintenance'/>
+            <option code="CALIBRATION" label="校准" value="CALIBRATION" i18n-en:label='Calibration'/>
         </dict>
-        <dict label="维护访问状态" name="erp-mnt/visit-status" valueType="int" i18n-en:label='Maintenance Visit Status'>
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label='Draft'/>
-            <option code="SCHEDULED" label="已排程" value="20" i18n-en:label='Scheduled'/>
-            <option code="IN_PROGRESS" label="执行中" value="30" i18n-en:label='Executing'/>
-            <option code="COMPLETED" label="已完成" value="40" i18n-en:label='Completed'/>
-            <option code="CANCELLED" label="已取消" value="50" i18n-en:label='Cancelled'/>
+        <dict label="维护访问状态" name="erp-mnt/visit-status" valueType="string" i18n-en:label='Maintenance Visit Status'>
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label='Draft'/>
+            <option code="SCHEDULED" label="已排程" value="SCHEDULED" i18n-en:label='Scheduled'/>
+            <option code="IN_PROGRESS" label="执行中" value="IN_PROGRESS" i18n-en:label='Executing'/>
+            <option code="COMPLETED" label="已完成" value="COMPLETED" i18n-en:label='Completed'/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label='Cancelled'/>
         </dict>
-        <dict label="维护请求状态" name="erp-mnt/request-status" valueType="int" i18n-en:label='Maintenance Request Status'>
-            <option code="OPEN" label="待受理" value="10" i18n-en:label='Pending Accept'/>
-            <option code="ACCEPTED" label="已受理" value="20" i18n-en:label='Accepted'/>
-            <option code="IN_PROGRESS" label="维修中" value="30" i18n-en:label='Under Repair'/>
-            <option code="COMPLETED" label="已完成" value="40" i18n-en:label='Completed'/>
-            <option code="REJECTED" label="已拒绝" value="50" i18n-en:label='Rejected'/>
-            <option code="CANCELLED" label="已取消" value="60" i18n-en:label='Cancelled'/>
+        <dict label="维护请求状态" name="erp-mnt/request-status" valueType="string" i18n-en:label='Maintenance Request Status'>
+            <option code="OPEN" label="待受理" value="OPEN" i18n-en:label='Pending Accept'/>
+            <option code="ACCEPTED" label="已受理" value="ACCEPTED" i18n-en:label='Accepted'/>
+            <option code="IN_PROGRESS" label="维修中" value="IN_PROGRESS" i18n-en:label='Under Repair'/>
+            <option code="COMPLETED" label="已完成" value="COMPLETED" i18n-en:label='Completed'/>
+            <option code="REJECTED" label="已拒绝" value="REJECTED" i18n-en:label='Rejected'/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label='Cancelled'/>
         </dict>
-        <dict label="设备状态" name="erp-mnt/equipment-status" valueType="int" i18n-en:label='Equipment Status'>
-            <option code="RUNNING" label="运行中" value="10" i18n-en:label='Running'/>
-            <option code="IDLE" label="闲置" value="20" i18n-en:label='Idle'/>
-            <option code="UNDER_MAINTENANCE" label="维护中" value="30" i18n-en:label='Under Maintenance'/>
-            <option code="DOWN" label="故障停机" value="40" i18n-en:label='Breakdown'/>
-            <option code="DECOMMISSIONED" label="已停用" value="50" i18n-en:label='Disabled'/>
+        <dict label="设备状态" name="erp-mnt/equipment-status" valueType="string" i18n-en:label='Equipment Status'>
+            <option code="RUNNING" label="运行中" value="RUNNING" i18n-en:label='Running'/>
+            <option code="IDLE" label="闲置" value="IDLE" i18n-en:label='Idle'/>
+            <option code="UNDER_MAINTENANCE" label="维护中" value="UNDER_MAINTENANCE" i18n-en:label='Under Maintenance'/>
+            <option code="DOWN" label="故障停机" value="DOWN" i18n-en:label='Breakdown'/>
+            <option code="DECOMMISSIONED" label="已停用" value="DECOMMISSIONED" i18n-en:label='Disabled'/>
         </dict>
-        <dict label="重复类型" name="erp-mnt/recurrence-type" valueType="int" i18n-en:label='Recurrence Type'>
-            <option code="DAILY" label="每日" value="10" i18n-en:label='Daily'/>
-            <option code="WEEKLY" label="每周" value="20" i18n-en:label='Weekly'/>
-            <option code="MONTHLY" label="每月" value="30" i18n-en:label='Monthly'/>
-            <option code="YEARLY" label="每年" value="40" i18n-en:label='Yearly'/>
+        <dict label="重复类型" name="erp-mnt/recurrence-type" valueType="string" i18n-en:label='Recurrence Type'>
+            <option code="DAILY" label="每日" value="DAILY" i18n-en:label='Daily'/>
+            <option code="WEEKLY" label="每周" value="WEEKLY" i18n-en:label='Weekly'/>
+            <option code="MONTHLY" label="每月" value="MONTHLY" i18n-en:label='Monthly'/>
+            <option code="YEARLY" label="每年" value="YEARLY" i18n-en:label='Yearly'/>
         </dict>
-        <dict label="优先级" name="erp-mnt/priority" valueType="int" i18n-en:label='Priority'>
-            <option code="LOW" label="低" value="10" i18n-en:label='Low'/>
-            <option code="NORMAL" label="普通" value="20" i18n-en:label='General'/>
-            <option code="HIGH" label="高" value="30" i18n-en:label='High'/>
-            <option code="URGENT" label="紧急" value="40" i18n-en:label='Urgent'/>
+        <dict label="优先级" name="erp-mnt/priority" valueType="string" i18n-en:label='Priority'>
+            <option code="LOW" label="低" value="LOW" i18n-en:label='Low'/>
+            <option code="NORMAL" label="普通" value="NORMAL" i18n-en:label='General'/>
+            <option code="HIGH" label="高" value="HIGH" i18n-en:label='High'/>
+            <option code="URGENT" label="紧急" value="URGENT" i18n-en:label='Urgent'/>
         </dict>
-        <dict label="维护任务状态" name="erp-mnt/visit-task-status" valueType="int" i18n-en:label='Maintenance Task Status'>
-            <option code="PENDING" label="待执行" value="10" i18n-en:label='Pending'/>
-            <option code="IN_PROGRESS" label="执行中" value="20" i18n-en:label='Executing'/>
-            <option code="COMPLETED" label="已完成" value="30" i18n-en:label='Completed'/>
-            <option code="SKIPPED" label="已跳过" value="40" i18n-en:label='Skipped'/>
-            <option code="FAILED" label="失败" value="50" i18n-en:label='Failed'/>
+        <dict label="维护任务状态" name="erp-mnt/visit-task-status" valueType="string" i18n-en:label='Maintenance Task Status'>
+            <option code="PENDING" label="待执行" value="PENDING" i18n-en:label='Pending'/>
+            <option code="IN_PROGRESS" label="执行中" value="IN_PROGRESS" i18n-en:label='Executing'/>
+            <option code="COMPLETED" label="已完成" value="COMPLETED" i18n-en:label='Completed'/>
+            <option code="SKIPPED" label="已跳过" value="SKIPPED" i18n-en:label='Skipped'/>
+            <option code="FAILED" label="失败" value="FAILED" i18n-en:label='Failed'/>
         </dict>
-        <dict label="单据状态" name="erp-mnt/doc-status" valueType="int" i18n-en:label='Doc Status'>
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label='Draft'/>
-            <option code="ACTIVE" label="已生效" value="20" i18n-en:label='Effective'/>
-            <option code="CANCELLED" label="已作废" value="30" i18n-en:label='Voided'/>
+        <dict label="单据状态" name="erp-mnt/doc-status" valueType="string" i18n-en:label='Doc Status'>
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label='Draft'/>
+            <option code="ACTIVE" label="已生效" value="ACTIVE" i18n-en:label='Effective'/>
+            <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label='Voided'/>
         </dict>
-        <dict label="审核状态" name="erp-mnt/approve-status" valueType="int" i18n-en:label='Approve Status'>
-            <option code="UNSUBMITTED" label="未提交" value="10" i18n-en:label='Unsubmitted'/>
-            <option code="SUBMITTED" label="已提交" value="20" i18n-en:label='Submitted'/>
-            <option code="APPROVED" label="已审核" value="30" i18n-en:label='Approved'/>
-            <option code="REJECTED" label="已驳回" value="40" i18n-en:label='Rejected'/>
+        <dict label="审核状态" name="erp-mnt/approve-status" valueType="string" i18n-en:label='Approve Status'>
+            <option code="UNSUBMITTED" label="未提交" value="UNSUBMITTED" i18n-en:label='Unsubmitted'/>
+            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label='Submitted'/>
+            <option code="APPROVED" label="已审核" value="APPROVED" i18n-en:label='Approved'/>
+            <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label='Rejected'/>
         </dict>
-        <dict label="校准结果" name="erp-mnt/calibration-result" valueType="int" i18n-en:label='Calibration Result'>
-            <option code="PASS" label="合格" value="10" i18n-en:label='Conforming'/>
-            <option code="FAIL" label="不合格" value="20" i18n-en:label='Non-conforming'/>
-            <option code="ADJUSTED" label="调整后合格" value="30" i18n-en:label='Adjusted Conforming'/>
+        <dict label="校准结果" name="erp-mnt/calibration-result" valueType="string" i18n-en:label='Calibration Result'>
+            <option code="PASS" label="合格" value="PASS" i18n-en:label='Conforming'/>
+            <option code="FAIL" label="不合格" value="FAIL" i18n-en:label='Non-conforming'/>
+            <option code="ADJUSTED" label="调整后合格" value="ADJUSTED" i18n-en:label='Adjusted Conforming'/>
         </dict>
-        <dict label="维护类型" name="erp-mnt/visit-type" valueType="int" i18n-en:label='Maintenance Type'>
-            <option code="PLANNED" label="计划性" value="10" i18n-en:label='Planned'/>
-            <option code="RESPONSIVE" label="响应性" value="20" i18n-en:label='Responsive'/>
+        <dict label="维护类型" name="erp-mnt/visit-type" valueType="string" i18n-en:label='Maintenance Type'>
+            <option code="PLANNED" label="计划性" value="PLANNED" i18n-en:label='Planned'/>
+            <option code="RESPONSIVE" label="响应性" value="RESPONSIVE" i18n-en:label='Responsive'/>
         </dict>
-        <dict label="执行结果" name="erp-mnt/visit-result" valueType="int" i18n-en:label='Execution Result'>
-            <option code="NORMAL" label="正常" value="10" i18n-en:label='Normal'/>
-            <option code="ABNORMAL" label="异常" value="20" i18n-en:label='Abnormal'/>
-            <option code="PARTIAL" label="部分完成" value="30" i18n-en:label='Partially Complete'/>
+        <dict label="执行结果" name="erp-mnt/visit-result" valueType="string" i18n-en:label='Execution Result'>
+            <option code="NORMAL" label="正常" value="NORMAL" i18n-en:label='Normal'/>
+            <option code="ABNORMAL" label="异常" value="ABNORMAL" i18n-en:label='Abnormal'/>
+            <option code="PARTIAL" label="部分完成" value="PARTIAL" i18n-en:label='Partially Complete'/>
         </dict>
     </dicts>
 
@@ -139,7 +139,7 @@
                 <column name="workcenterId" displayName="关联工作中心(关联 mfg 域)" stdSqlType="BIGINT" code="WORKCENTER_ID" propId="6" stdDataType="long" i18n-en:displayName='Workcenter' />
                 <column name="locationId" displayName="位置ID" stdSqlType="BIGINT" code="LOCATION_ID" propId="7" stdDataType="long" i18n-en:displayName='Location' />
                 <column name="categoryId" displayName="分类ID" stdSqlType="BIGINT" code="CATEGORY_ID" propId="8" stdDataType="long" i18n-en:displayName='Category' />
-                <column name="status" displayName="状态" ext:dict="erp-mnt/equipment-status" mandatory="true" code="STATUS" propId="9" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
+                <column name="status" displayName="状态" ext:dict="erp-mnt/equipment-status" mandatory="true" code="STATUS" propId="9" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
                 <column name="serialNo" displayName="序列号" stdSqlType="VARCHAR" precision="100" code="SERIAL_NO" propId="10" stdDataType="string" i18n-en:displayName='Serial No' />
                 <column name="manufacturer" displayName="制造商" stdSqlType="VARCHAR" precision="200" code="MANUFACTURER" propId="11" stdDataType="string" i18n-en:displayName='Manufacturer' />
                 <column name="model" displayName="型号" stdSqlType="VARCHAR" precision="200" code="MODEL" propId="12" stdDataType="string" i18n-en:displayName='Model' />
@@ -197,9 +197,9 @@
                 <column name="code" displayName="计划编码" domain="scheduleCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
                 <column name="name" displayName="计划名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="NAME" propId="3" stdDataType="string" i18n-en:displayName='Name' />
                 <column name="equipmentId" displayName="设备ID" stdSqlType="BIGINT" mandatory="true" code="EQUIPMENT_ID" propId="4" stdDataType="long" i18n-en:displayName='Equipment' />
-                <column name="scheduleType" displayName="计划类型" ext:dict="erp-mnt/schedule-type" mandatory="true" code="SCHEDULE_TYPE" propId="5" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Schedule Type' />
+                <column name="scheduleType" displayName="计划类型" ext:dict="erp-mnt/schedule-type" mandatory="true" code="SCHEDULE_TYPE" propId="5" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Schedule Type' />
                 <column name="frequency" displayName="频率" stdSqlType="INTEGER" code="FREQUENCY" propId="6" stdDataType="int" i18n-en:displayName='Frequency' />
-                <column name="recurrenceType" displayName="重复类型" ext:dict="erp-mnt/recurrence-type" code="RECURRENCE_TYPE" propId="7" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Recurrence Type' />
+                <column name="recurrenceType" displayName="重复类型" ext:dict="erp-mnt/recurrence-type" code="RECURRENCE_TYPE" propId="7" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Recurrence Type' />
                 <column name="daysOfWeek" displayName="星期几" stdSqlType="VARCHAR" precision="50" code="DAYS_OF_WEEK" propId="8" stdDataType="string" i18n-en:displayName='Days Of Week' />
                 <column name="startDate" displayName="开始日期" stdSqlType="DATE" mandatory="true" code="START_DATE" propId="9" stdDataType="date" i18n-en:displayName='Start Date' />
                 <column name="endDate" displayName="结束日期" stdSqlType="DATE" code="END_DATE" propId="10" stdDataType="date" i18n-en:displayName='End Date' />
@@ -228,15 +228,15 @@
                 <column name="scheduleId" displayName="维护计划ID" stdSqlType="BIGINT" code="SCHEDULE_ID" propId="3" stdDataType="long" i18n-en:displayName='Schedule' />
                 <column name="equipmentId" displayName="设备ID" stdSqlType="BIGINT" mandatory="true" code="EQUIPMENT_ID" propId="4" stdDataType="long" i18n-en:displayName='Equipment' />
                 <column name="visitDate" displayName="访问日期" stdSqlType="DATE" mandatory="true" code="VISIT_DATE" propId="5" stdDataType="date" i18n-en:displayName='Visit Date' />
-                <column name="status" displayName="状态" ext:dict="erp-mnt/visit-status" mandatory="true" code="STATUS" propId="6" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
+                <column name="status" displayName="状态" ext:dict="erp-mnt/visit-status" mandatory="true" code="STATUS" propId="6" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
                 <column name="assignedTo" displayName="指派人" stdSqlType="BIGINT" code="ASSIGNED_TO" propId="7" stdDataType="long" i18n-en:displayName='Assigned To' />
                 <column name="completedBy" displayName="完成人" stdSqlType="BIGINT" code="COMPLETED_BY" propId="8" stdDataType="long" i18n-en:displayName='Completed By' />
                 <column name="completedAt" displayName="完成时间" stdSqlType="DATETIME" code="COMPLETED_AT" propId="9" stdDataType="datetime" i18n-en:displayName='Completed At' />
                 <column name="startTime" displayName="开始时间" stdSqlType="DATETIME" code="START_TIME" propId="10" stdDataType="datetime" i18n-en:displayName='Start Time' />
                 <column name="endTime" displayName="结束时间" stdSqlType="DATETIME" code="END_TIME" propId="11" stdDataType="datetime" i18n-en:displayName='End Time' />
-                <column name="totalMinutes" displayName="总分钟数" domain="downtimeMinutes" code="TOTAL_MINUTES" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Minutes' />
-                <column name="visitType" displayName="维护类型" ext:dict="erp-mnt/visit-type" code="VISIT_TYPE" propId="13" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Visit Type' />
-                <column name="result" displayName="执行结果" ext:dict="erp-mnt/visit-result" code="RESULT" propId="14" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Result' />
+                <column name="totalMinutes" displayName="总分钟数" domain="downtimeMinutes" code="TOTAL_MINUTES" propId="12" stdSqlType="DECIMAL" precision="12" scale="2" stdDataType="decimal" i18n-en:displayName='Total Minutes' />
+                <column name="visitType" displayName="维护类型" ext:dict="erp-mnt/visit-type" code="VISIT_TYPE" propId="13" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Visit Type' />
+                <column name="result" displayName="执行结果" ext:dict="erp-mnt/visit-result" code="RESULT" propId="14" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Result' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="15" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                                             <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" stdDataType="long" code="ORG_ID" i18n-en:displayName='Organization' />
                 <column name="businessDate" displayName="业务日期" stdSqlType="DATE" stdDataType="date" code="BUSINESS_DATE" i18n-en:displayName='Business Date' />
@@ -270,7 +270,7 @@
                 <column name="visitId" displayName="维护访问ID" stdSqlType="BIGINT" mandatory="true" code="VISIT_ID" propId="2" stdDataType="long" i18n-en:displayName='Visit' />
                 <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int" i18n-en:displayName='Line No' />
                 <column name="taskDescription" displayName="任务描述" stdSqlType="VARCHAR" precision="500" mandatory="true" code="TASK_DESCRIPTION" propId="4" stdDataType="string" i18n-en:displayName='Task Description' />
-                <column name="status" displayName="状态" ext:dict="erp-mnt/visit-task-status" mandatory="true" code="STATUS" propId="5" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
+                <column name="status" displayName="状态" ext:dict="erp-mnt/visit-task-status" mandatory="true" code="STATUS" propId="5" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
                 <column name="completedBy" displayName="完成人" stdSqlType="BIGINT" code="COMPLETED_BY" propId="6" stdDataType="long" i18n-en:displayName='Completed By' />
                 <column name="completedAt" displayName="完成时间" stdSqlType="DATETIME" code="COMPLETED_AT" propId="7" stdDataType="datetime" i18n-en:displayName='Completed At' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
@@ -296,8 +296,8 @@
                 <column name="equipmentId" displayName="设备ID" stdSqlType="BIGINT" mandatory="true" code="EQUIPMENT_ID" propId="3" stdDataType="long" i18n-en:displayName='Equipment' />
                 <column name="requestDate" displayName="请求日期" stdSqlType="DATE" mandatory="true" code="REQUEST_DATE" propId="4" stdDataType="date" i18n-en:displayName='Request Date' />
                 <column name="description" displayName="问题描述" stdSqlType="VARCHAR" precision="2000" mandatory="true" code="DESCRIPTION" propId="5" stdDataType="string" i18n-en:displayName='Description' />
-                <column name="priority" displayName="优先级" ext:dict="erp-mnt/priority" mandatory="true" code="PRIORITY" propId="6" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Priority' />
-                <column name="status" displayName="状态" ext:dict="erp-mnt/request-status" mandatory="true" code="STATUS" propId="7" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
+                <column name="priority" displayName="优先级" ext:dict="erp-mnt/priority" mandatory="true" code="PRIORITY" propId="6" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Priority' />
+                <column name="status" displayName="状态" ext:dict="erp-mnt/request-status" mandatory="true" code="STATUS" propId="7" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
                 <column name="requestedBy" displayName="请求人" stdSqlType="BIGINT" mandatory="true" code="REQUESTED_BY" propId="8" stdDataType="long" i18n-en:displayName='Requested By' />
                 <column name="assignedTo" displayName="指派人" stdSqlType="BIGINT" code="ASSIGNED_TO" propId="9" stdDataType="long" i18n-en:displayName='Assigned To' />
                 <column name="acceptedBy" displayName="受理人" stdSqlType="BIGINT" code="ACCEPTED_BY" propId="10" stdDataType="long" i18n-en:displayName='Accepted By' />
@@ -325,7 +325,7 @@
                 <column name="equipmentId" displayName="设备ID" stdSqlType="BIGINT" mandatory="true" code="EQUIPMENT_ID" propId="2" stdDataType="long" i18n-en:displayName='Equipment' />
                 <column name="startTime" displayName="开始时间" stdSqlType="DATETIME" mandatory="true" code="START_TIME" propId="3" stdDataType="datetime" i18n-en:displayName='Start Time' />
                 <column name="endTime" displayName="结束时间" stdSqlType="DATETIME" code="END_TIME" propId="4" stdDataType="datetime" i18n-en:displayName='End Time' />
-                <column name="totalMinutes" displayName="总分钟数" domain="downtimeMinutes" code="TOTAL_MINUTES" propId="5" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Minutes' />
+                <column name="totalMinutes" displayName="总分钟数" domain="downtimeMinutes" code="TOTAL_MINUTES" propId="5" stdSqlType="DECIMAL" precision="12" scale="2" stdDataType="decimal" i18n-en:displayName='Total Minutes' />
                 <column name="reason" displayName="原因" stdSqlType="VARCHAR" precision="500" code="REASON" propId="6" stdDataType="string" i18n-en:displayName='Reason' />
                 <column name="relatedJobOrderId" displayName="关联生产工单ID" stdSqlType="BIGINT" code="RELATED_JOB_ORDER_ID" propId="7" stdDataType="long" i18n-en:displayName='Related Job Order' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
@@ -410,8 +410,8 @@
                 <column name="businessDate" displayName="消耗日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="7" stdDataType="date" i18n-en:displayName='Business Date' />
                 <column name="warehouseId" displayName="领料仓库" stdSqlType="BIGINT" code="WAREHOUSE_ID" propId="8" stdDataType="long" i18n-en:displayName='Warehouse' />
                 <column name="totalAmount" displayName="金额合计" domain="amount" defaultValue="0" code="TOTAL_AMOUNT" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Amt' />
-                <column name="docStatus" displayName="单据状态" ext:dict="erp-mnt/doc-status" mandatory="true" code="DOC_STATUS" propId="10" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
-                <column name="approveStatus" displayName="审核状态" ext:dict="erp-mnt/approve-status" mandatory="true" code="APPROVE_STATUS" propId="11" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Approve Status' />
+                <column name="docStatus" displayName="单据状态" ext:dict="erp-mnt/doc-status" mandatory="true" code="DOC_STATUS" propId="10" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
+                <column name="approveStatus" displayName="审核状态" ext:dict="erp-mnt/approve-status" mandatory="true" code="APPROVE_STATUS" propId="11" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approve Status' />
                 <column name="posted" displayName="已过账(库存已出库)" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="12" stdDataType="boolean" i18n-en:displayName='Posted' />
                 <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="13" stdDataType="datetime" i18n-en:displayName='Posted At' />
                 <column name="postedBy" stdDomain="userId" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="14" stdDataType="string" i18n-en:displayName='Posted By' />
@@ -480,11 +480,11 @@
                 <column name="measuredValue" displayName="测量值" stdSqlType="DECIMAL" precision="20" scale="6" code="MEASURED_VALUE" propId="7" stdDataType="decimal" i18n-en:displayName='Measured Value' />
                 <column name="targetValue" displayName="目标值" stdSqlType="DECIMAL" precision="20" scale="6" code="TARGET_VALUE" propId="8" stdDataType="decimal" i18n-en:displayName='Target Value' />
                 <column name="tolerance" displayName="允差" stdSqlType="DECIMAL" precision="20" scale="6" code="TOLERANCE" propId="9" stdDataType="decimal" i18n-en:displayName='Tolerance' />
-                <column name="result" displayName="校准结果" ext:dict="erp-mnt/calibration-result" mandatory="true" code="RESULT" propId="10" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Result' />
+                <column name="result" displayName="校准结果" ext:dict="erp-mnt/calibration-result" mandatory="true" code="RESULT" propId="10" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Result' />
                 <column name="nextCalibrationDate" displayName="下次校准日期" stdSqlType="DATE" code="NEXT_CALIBRATION_DATE" propId="11" stdDataType="date" i18n-en:displayName='Next Calibration Date' />
                 <column name="calibratedBy" displayName="校准人(职员)" stdSqlType="BIGINT" code="CALIBRATED_BY" propId="12" stdDataType="long" i18n-en:displayName='Calibrated By' />
-                <column name="docStatus" displayName="单据状态" ext:dict="erp-mnt/doc-status" mandatory="true" code="DOC_STATUS" propId="13" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
-                <column name="approveStatus" displayName="审核状态" ext:dict="erp-mnt/approve-status" mandatory="true" code="APPROVE_STATUS" propId="14" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Approve Status' />
+                <column name="docStatus" displayName="单据状态" ext:dict="erp-mnt/doc-status" mandatory="true" code="DOC_STATUS" propId="13" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
+                <column name="approveStatus" displayName="审核状态" ext:dict="erp-mnt/approve-status" mandatory="true" code="APPROVE_STATUS" propId="14" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approve Status' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="15" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="16" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="17" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />

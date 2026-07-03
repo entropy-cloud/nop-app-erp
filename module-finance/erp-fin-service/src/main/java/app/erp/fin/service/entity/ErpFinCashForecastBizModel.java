@@ -16,12 +16,15 @@ import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import java.util.Objects;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
+import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.le;
 
 /**
@@ -72,7 +75,7 @@ public class ErpFinCashForecastBizModel extends CrudBizModel<ErpFinCashForecast>
         q.addFilter(ge("dueDate", fromDate));
         q.addFilter(le("dueDate", toDate));
         // 仅未核销（OPEN/PARTIAL）项参与预测。
-        q.addFilter(le("status", ErpFinConstants.AR_AP_STATUS_PARTIAL));
+        q.addFilter(in("status", Arrays.asList(ErpFinConstants.AR_AP_STATUS_OPEN, ErpFinConstants.AR_AP_STATUS_PARTIAL)));
         List<ErpFinArApItem> items = dao.findAllByQuery(q);
 
         int count = 0;
@@ -93,7 +96,11 @@ public class ErpFinCashForecastBizModel extends CrudBizModel<ErpFinCashForecast>
         q.addFilter(ge("dueDate", fromDate));
         q.addFilter(le("dueDate", toDate));
         // 排除已承兑/已拒付/已注销（已不再是未来现金流）。
-        q.addFilter(le("status", ErpFinConstants.NOTES_RECV_COLLECTION_PENDING));
+        q.addFilter(in("status", Arrays.asList(
+                ErpFinConstants.NOTES_RECV_RECEIVED,
+                ErpFinConstants.NOTES_RECV_DISCOUNTED,
+                ErpFinConstants.NOTES_RECV_ENDORSED,
+                ErpFinConstants.NOTES_RECV_COLLECTION_PENDING)));
         List<ErpFinNotesReceivable> notes = dao.findAllByQuery(q);
 
         int count = 0;
@@ -129,13 +136,13 @@ public class ErpFinCashForecastBizModel extends CrudBizModel<ErpFinCashForecast>
         return count;
     }
 
-    private int directionForArAp(Integer direction) {
-        return direction != null && direction == ErpFinConstants.DIRECTION_RECEIVABLE
+    private String directionForArAp(String direction) {
+        return direction != null && Objects.equals(direction, ErpFinConstants.DIRECTION_RECEIVABLE)
                 ? ErpFinConstants.CASH_FLOW_INFLOW : ErpFinConstants.CASH_FLOW_OUTFLOW;
     }
 
     private ErpFinCashForecast newForecast(Long orgId, Long fundAccountId, LocalDate forecastDate,
-                                          String sourceBillType, String sourceBillCode, int direction,
+                                          String sourceBillType, String sourceBillCode, String direction,
                                           Long partnerId,
                                           java.math.BigDecimal amountSource, java.math.BigDecimal amountFunctional) {
         ErpFinCashForecast row = new ErpFinCashForecast();

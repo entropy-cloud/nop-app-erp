@@ -37,7 +37,7 @@
                 <col id="refNo" sortable="true"/>
 
                 <!--借贷方向-->
-                <col id="dcDirection" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="dcDirection" mandatory="true" sortable="true"/>
 
                 <!--金额-->
                 <col id="amount" mandatory="true" ui:number="true" sortable="true"/>
@@ -49,7 +49,7 @@
                 <col id="balanceAfter" ui:number="true" sortable="true"/>
 
                 <!--匹配状态-->
-                <col id="matchStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="matchStatus" mandatory="true" sortable="true"/>
 
                 <!--匹配凭证行ID-->
                 <col id="matchedLineId" ui:number="true" sortable="true"/>

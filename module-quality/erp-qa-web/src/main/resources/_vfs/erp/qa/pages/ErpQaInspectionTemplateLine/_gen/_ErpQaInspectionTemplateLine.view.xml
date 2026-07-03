@@ -31,10 +31,10 @@
                 <col id="parameterName" mandatory="true" sortable="true"/>
 
                 <!--规格下限-->
-                <col id="specMin" sortable="true"/>
+                <col id="specMin" ui:number="true" sortable="true"/>
 
                 <!--规格上限-->
-                <col id="specMax" sortable="true"/>
+                <col id="specMax" ui:number="true" sortable="true"/>
 
                 <!--计量单位-->
                 <col id="unit" sortable="true"/>

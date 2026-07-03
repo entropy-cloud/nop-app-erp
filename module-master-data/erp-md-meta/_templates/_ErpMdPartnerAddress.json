@@ -1,7 +1,7 @@
 {
   "id": 0,
   "partnerId": 0,
-  "addressType": 0,
+  "addressType": "",
   "addressType_label": "",
   "contactPerson": "",
   "phone": "",

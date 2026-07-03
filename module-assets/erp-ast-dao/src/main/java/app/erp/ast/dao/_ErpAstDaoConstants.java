@@ -6,156 +6,156 @@ public interface _ErpAstDaoConstants {
     /**
      * 资产状态: 草稿 
      */
-    int ASSET_STATUS_DRAFT = 10;
+    String ASSET_STATUS_DRAFT = "DRAFT";
                     
     /**
      * 资产状态: 使用中 
      */
-    int ASSET_STATUS_IN_SERVICE = 20;
+    String ASSET_STATUS_IN_SERVICE = "IN_SERVICE";
                     
     /**
      * 资产状态: 闲置 
      */
-    int ASSET_STATUS_IDLE = 30;
+    String ASSET_STATUS_IDLE = "IDLE";
                     
     /**
      * 资产状态: 已报废 
      */
-    int ASSET_STATUS_SCRAPPED = 40;
+    String ASSET_STATUS_SCRAPPED = "SCRAPPED";
                     
     /**
      * 资产状态: 已出售 
      */
-    int ASSET_STATUS_SOLD = 50;
+    String ASSET_STATUS_SOLD = "SOLD";
                     
     /**
      * 折旧方法: 直线法 
      */
-    int DEPRECIATION_METHOD_STRAIGHT_LINE = 10;
+    String DEPRECIATION_METHOD_STRAIGHT_LINE = "STRAIGHT_LINE";
                     
     /**
      * 折旧方法: 双倍余额递减 
      */
-    int DEPRECIATION_METHOD_DECLINING = 20;
+    String DEPRECIATION_METHOD_DECLINING = "DECLINING";
                     
     /**
      * 折旧方法: 工作量法 
      */
-    int DEPRECIATION_METHOD_UNITS = 30;
+    String DEPRECIATION_METHOD_UNITS = "UNITS";
                     
     /**
      * 折旧计划状态: 待执行 
      */
-    int DEPRECIATION_SCHEDULE_STATUS_PENDING = 10;
+    String DEPRECIATION_SCHEDULE_STATUS_PENDING = "PENDING";
                     
     /**
      * 折旧计划状态: 已执行 
      */
-    int DEPRECIATION_SCHEDULE_STATUS_EXECUTED = 20;
+    String DEPRECIATION_SCHEDULE_STATUS_EXECUTED = "EXECUTED";
                     
     /**
      * 折旧计划状态: 已冲销 
      */
-    int DEPRECIATION_SCHEDULE_STATUS_REVERSED = 30;
+    String DEPRECIATION_SCHEDULE_STATUS_REVERSED = "REVERSED";
                     
     /**
      * 折旧计划状态: 已取消 
      */
-    int DEPRECIATION_SCHEDULE_STATUS_CANCELLED = 40;
+    String DEPRECIATION_SCHEDULE_STATUS_CANCELLED = "CANCELLED";
                     
     /**
      * 价值调整类型: 减值 
      */
-    int ADJUSTMENT_TYPE_IMPAIRMENT = 10;
+    String ADJUSTMENT_TYPE_IMPAIRMENT = "IMPAIRMENT";
                     
     /**
      * 价值调整类型: 重估 
      */
-    int ADJUSTMENT_TYPE_REVALUATION = 20;
+    String ADJUSTMENT_TYPE_REVALUATION = "REVALUATION";
                     
     /**
      * 处置类型: 报废 
      */
-    int DISPOSAL_TYPE_SCRAPPED = 10;
+    String DISPOSAL_TYPE_SCRAPPED = "SCRAPPED";
                     
     /**
      * 处置类型: 出售 
      */
-    int DISPOSAL_TYPE_SOLD = 20;
+    String DISPOSAL_TYPE_SOLD = "SOLD";
                     
     /**
      * 单据状态: 草稿 
      */
-    int DOC_STATUS_DRAFT = 10;
+    String DOC_STATUS_DRAFT = "DRAFT";
                     
     /**
      * 单据状态: 已生效 
      */
-    int DOC_STATUS_ACTIVE = 20;
+    String DOC_STATUS_ACTIVE = "ACTIVE";
                     
     /**
      * 单据状态: 已作废 
      */
-    int DOC_STATUS_CANCELLED = 30;
+    String DOC_STATUS_CANCELLED = "CANCELLED";
                     
     /**
      * 审核状态: 未提交 
      */
-    int APPROVE_STATUS_UNSUBMITTED = 10;
+    String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
                     
     /**
      * 审核状态: 已提交 
      */
-    int APPROVE_STATUS_SUBMITTED = 20;
+    String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
                     
     /**
      * 审核状态: 已审核 
      */
-    int APPROVE_STATUS_APPROVED = 30;
+    String APPROVE_STATUS_APPROVED = "APPROVED";
                     
     /**
      * 审核状态: 已驳回 
      */
-    int APPROVE_STATUS_REJECTED = 40;
+    String APPROVE_STATUS_REJECTED = "REJECTED";
                     
     /**
      * 资本化来源类型: 库存 
      */
-    int CAPITALIZATION_SOURCE_TYPE_INVENTORY = 10;
+    String CAPITALIZATION_SOURCE_TYPE_INVENTORY = "INVENTORY";
                     
     /**
      * 资本化来源类型: 在建工程 
      */
-    int CAPITALIZATION_SOURCE_TYPE_CIP = 20;
+    String CAPITALIZATION_SOURCE_TYPE_CIP = "CIP";
                     
     /**
      * 资本化来源类型: 直接购置 
      */
-    int CAPITALIZATION_SOURCE_TYPE_DIRECT_PURCHASE = 30;
+    String CAPITALIZATION_SOURCE_TYPE_DIRECT_PURCHASE = "DIRECT_PURCHASE";
                     
     /**
      * 处置原因: 报废 
      */
-    int DISPOSAL_REASON_OBSOLETE = 10;
+    String DISPOSAL_REASON_OBSOLETE = "OBSOLETE";
                     
     /**
      * 处置原因: 出售 
      */
-    int DISPOSAL_REASON_SOLD = 20;
+    String DISPOSAL_REASON_SOLD = "SOLD";
                     
     /**
      * 处置原因: 捐赠 
      */
-    int DISPOSAL_REASON_DONATED = 30;
+    String DISPOSAL_REASON_DONATED = "DONATED";
                     
     /**
      * 处置原因: 被盗 
      */
-    int DISPOSAL_REASON_STOLEN = 40;
+    String DISPOSAL_REASON_STOLEN = "STOLEN";
                     
     /**
      * 处置原因: 其他 
      */
-    int DISPOSAL_REASON_OTHER = 50;
+    String DISPOSAL_REASON_OTHER = "OTHER";
                     
 }

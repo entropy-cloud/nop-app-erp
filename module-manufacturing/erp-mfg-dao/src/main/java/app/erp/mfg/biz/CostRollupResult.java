@@ -16,7 +16,7 @@ import java.util.List;
 public class CostRollupResult {
 
     private Long rollupId;
-    private Integer status;
+    private String status;
     private List<CostRollupLineView> lines = new ArrayList<>();
 
     public CostRollupResult() {
@@ -30,11 +30,11 @@ public class CostRollupResult {
         this.rollupId = rollupId;
     }
 
-    public Integer getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

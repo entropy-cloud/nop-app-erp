@@ -33,7 +33,7 @@
         </prop>
         <prop name="defaultPriority" displayName="默认优先级" propId="4" i18n-en:displayName="Default Priority"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-cs/ticket-priority"/>
+            <schema type="java.lang.String" precision="20" dict="erp-cs/ticket-priority"/>
         </prop>
         <prop name="defaultSlaPolicyId" displayName="默认 SLA 策略" propId="5" i18n-en:displayName="Default SLA Policy"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="defaultSlaPolicy">

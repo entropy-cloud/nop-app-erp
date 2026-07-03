@@ -34,7 +34,7 @@
                 <col id="bankAccount" mandatory="true" sortable="true"/>
 
                 <!--账户类型-->
-                <col id="accountType" ui:number="true" sortable="true"/>
+                <col id="accountType" sortable="true"/>
 
                 <!--户名-->
                 <col id="accountHolder" sortable="true"/>

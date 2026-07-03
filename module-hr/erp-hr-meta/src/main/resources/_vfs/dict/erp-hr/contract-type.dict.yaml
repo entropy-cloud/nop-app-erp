@@ -1,19 +1,19 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 合同类型
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 固定期限
-    value: 10
+    value: FIXED_TERM
     description: 
   
   - label: 无固定期限
-    value: 20
+    value: OPEN_ENDED
     description: 
   
   - label: 项目制
-    value: 30
+    value: PROJECT
     description: 
   

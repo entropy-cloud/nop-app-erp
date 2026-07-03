@@ -42,8 +42,8 @@ public class TestErpHrSurveyCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-HR");
         headData.put("title", "冒烟调查");
-        headData.put("surveyType", 10);
-        headData.put("status", 10);
+        headData.put("surveyType", "ANNUAL_ENGAGEMENT");
+        headData.put("status", "DRAFT");
         ApiResponse<?> result = executeRpc(GraphQLOperationType.mutation, "ErpHrSurvey__save",
                 ApiRequest.build(Map.of("data", headData)));
 
@@ -58,8 +58,8 @@ public class TestErpHrSurveyCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-HR");
         headData.put("title", "冒烟调查");
-        headData.put("surveyType", 10);
-        headData.put("status", 10);
+        headData.put("surveyType", "ANNUAL_ENGAGEMENT");
+        headData.put("status", "DRAFT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpHrSurvey__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -77,8 +77,8 @@ public class TestErpHrSurveyCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-HR");
         headData.put("title", "冒烟调查");
-        headData.put("surveyType", 10);
-        headData.put("status", 10);
+        headData.put("surveyType", "ANNUAL_ENGAGEMENT");
+        headData.put("status", "DRAFT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpHrSurvey__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -100,8 +100,8 @@ public class TestErpHrSurveyCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-HR");
         headData.put("title", "冒烟调查");
-        headData.put("surveyType", 10);
-        headData.put("status", 10);
+        headData.put("surveyType", "ANNUAL_ENGAGEMENT");
+        headData.put("status", "DRAFT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpHrSurvey__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -124,8 +124,8 @@ public class TestErpHrSurveyCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-HR");
         headData.put("title", "冒烟调查");
-        headData.put("surveyType", 10);
-        headData.put("status", 10);
+        headData.put("surveyType", "ANNUAL_ENGAGEMENT");
+        headData.put("status", "DRAFT");
         ApiResponse<?> head = executeRpc(GraphQLOperationType.mutation, "ErpHrSurvey__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_saveHead_response.json5", head);
@@ -133,7 +133,7 @@ public class TestErpHrSurveyCrudSmoke extends JunitAutoTestCase {
 
         Map<String, Object> lineData = new LinkedHashMap<>();
         lineData.put("questionText", "冒烟问题");
-        lineData.put("questionType", 10);
+        lineData.put("questionType", "RATING");
         lineData.put("surveyId", headId);
         ApiResponse<?> line = executeRpc(GraphQLOperationType.mutation, "ErpHrSurveyQuestion__save",
                 ApiRequest.build(Map.of("data", lineData)));

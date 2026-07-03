@@ -34,7 +34,7 @@
                 <col id="sortNum" ui:number="true" sortable="true"/>
 
                 <!--价格校验级别-->
-                <col id="priceValidationLevel" ui:number="true" sortable="true"/>
+                <col id="priceValidationLevel" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>

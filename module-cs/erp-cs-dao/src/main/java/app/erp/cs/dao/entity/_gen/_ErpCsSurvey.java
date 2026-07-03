@@ -61,7 +61,7 @@ public class _ErpCsSurvey extends DynamicOrmEntity{
     public static final String PROP_NAME_surveySentAt = "surveySentAt";
     public static final int PROP_ID_surveySentAt = 10;
     
-    /* 发送渠道: SURVEY_CHANNEL INTEGER */
+    /* 发送渠道: SURVEY_CHANNEL VARCHAR */
     public static final String PROP_NAME_surveyChannel = "surveyChannel";
     public static final int PROP_ID_surveyChannel = 11;
     
@@ -192,7 +192,7 @@ public class _ErpCsSurvey extends DynamicOrmEntity{
     private java.time.LocalDateTime _surveySentAt;
     
     /* 发送渠道: SURVEY_CHANNEL */
-    private java.lang.Integer _surveyChannel;
+    private java.lang.String _surveyChannel;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -449,9 +449,9 @@ public class _ErpCsSurvey extends DynamicOrmEntity{
             }
         
             case PROP_ID_surveyChannel:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_surveyChannel));
                }
                setSurveyChannel(typedValue);
@@ -599,7 +599,7 @@ public class _ErpCsSurvey extends DynamicOrmEntity{
         
             case PROP_ID_surveyChannel:{
                onInitProp(propId);
-               this._surveyChannel = (java.lang.Integer)value;
+               this._surveyChannel = (java.lang.String)value;
                
                break;
             }
@@ -845,7 +845,7 @@ public class _ErpCsSurvey extends DynamicOrmEntity{
     /**
      * 发送渠道: SURVEY_CHANNEL
      */
-    public final java.lang.Integer getSurveyChannel(){
+    public final java.lang.String getSurveyChannel(){
          onPropGet(PROP_ID_surveyChannel);
          return _surveyChannel;
     }
@@ -853,7 +853,7 @@ public class _ErpCsSurvey extends DynamicOrmEntity{
     /**
      * 发送渠道: SURVEY_CHANNEL
      */
-    public final void setSurveyChannel(java.lang.Integer value){
+    public final void setSurveyChannel(java.lang.String value){
         if(onPropSet(PROP_ID_surveyChannel,value)){
             this._surveyChannel = value;
             internalClearRefs(PROP_ID_surveyChannel);

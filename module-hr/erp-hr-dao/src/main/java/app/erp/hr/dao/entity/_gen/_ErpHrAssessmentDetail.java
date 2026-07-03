@@ -41,7 +41,7 @@ public class _ErpHrAssessmentDetail extends DynamicOrmEntity{
     public static final String PROP_NAME_comment = "comment";
     public static final int PROP_ID_comment = 5;
     
-    /* 来源类型: SOURCE_TYPE INTEGER */
+    /* 来源类型: SOURCE_TYPE VARCHAR */
     public static final String PROP_NAME_sourceType = "sourceType";
     public static final int PROP_ID_sourceType = 6;
     
@@ -142,7 +142,7 @@ public class _ErpHrAssessmentDetail extends DynamicOrmEntity{
     private java.lang.String _comment;
     
     /* 来源类型: SOURCE_TYPE */
-    private java.lang.Integer _sourceType;
+    private java.lang.String _sourceType;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -334,9 +334,9 @@ public class _ErpHrAssessmentDetail extends DynamicOrmEntity{
             }
         
             case PROP_ID_sourceType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_sourceType));
                }
                setSourceType(typedValue);
@@ -449,7 +449,7 @@ public class _ErpHrAssessmentDetail extends DynamicOrmEntity{
         
             case PROP_ID_sourceType:{
                onInitProp(propId);
-               this._sourceType = (java.lang.Integer)value;
+               this._sourceType = (java.lang.String)value;
                
                break;
             }
@@ -600,7 +600,7 @@ public class _ErpHrAssessmentDetail extends DynamicOrmEntity{
     /**
      * 来源类型: SOURCE_TYPE
      */
-    public final java.lang.Integer getSourceType(){
+    public final java.lang.String getSourceType(){
          onPropGet(PROP_ID_sourceType);
          return _sourceType;
     }
@@ -608,7 +608,7 @@ public class _ErpHrAssessmentDetail extends DynamicOrmEntity{
     /**
      * 来源类型: SOURCE_TYPE
      */
-    public final void setSourceType(java.lang.Integer value){
+    public final void setSourceType(java.lang.String value){
         if(onPropSet(PROP_ID_sourceType,value)){
             this._sourceType = value;
             internalClearRefs(PROP_ID_sourceType);

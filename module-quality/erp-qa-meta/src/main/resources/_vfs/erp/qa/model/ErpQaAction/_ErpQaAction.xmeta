@@ -29,7 +29,7 @@
         </prop>
         <prop name="actionType" displayName="措施类型" propId="3" i18n-en:displayName="Action Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-qa/action-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-qa/action-type"/>
         </prop>
         <prop name="description" displayName="措施描述" propId="4" i18n-en:displayName="Description" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -45,7 +45,7 @@
         </prop>
         <prop name="status" displayName="状态" propId="7" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-qa/action-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-qa/action-status"/>
         </prop>
         <prop name="completedBy" displayName="完成人" propId="8" i18n-en:displayName="Completed By" queryable="true"
               sortable="true" insertable="true" updatable="true">

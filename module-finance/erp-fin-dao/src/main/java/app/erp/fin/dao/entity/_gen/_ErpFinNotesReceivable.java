@@ -33,7 +33,7 @@ public class _ErpFinNotesReceivable extends DynamicOrmEntity{
     public static final String PROP_NAME_orgId = "orgId";
     public static final int PROP_ID_orgId = 3;
     
-    /* 票据类型: NOTES_TYPE INTEGER */
+    /* 票据类型: NOTES_TYPE VARCHAR */
     public static final String PROP_NAME_notesType = "notesType";
     public static final int PROP_ID_notesType = 4;
     
@@ -97,7 +97,7 @@ public class _ErpFinNotesReceivable extends DynamicOrmEntity{
     public static final String PROP_NAME_discountId = "discountId";
     public static final int PROP_ID_discountId = 19;
     
-    /* 票据状态: STATUS INTEGER */
+    /* 票据状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 20;
     
@@ -268,7 +268,7 @@ public class _ErpFinNotesReceivable extends DynamicOrmEntity{
     private java.lang.Long _orgId;
     
     /* 票据类型: NOTES_TYPE */
-    private java.lang.Integer _notesType;
+    private java.lang.String _notesType;
     
     /* 票据号: NOTES_NO */
     private java.lang.String _notesNo;
@@ -316,7 +316,7 @@ public class _ErpFinNotesReceivable extends DynamicOrmEntity{
     private java.lang.Long _discountId;
     
     /* 票据状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 是否已过账: POSTED */
     private java.lang.Boolean _posted;
@@ -554,9 +554,9 @@ public class _ErpFinNotesReceivable extends DynamicOrmEntity{
             }
         
             case PROP_ID_notesType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_notesType));
                }
                setNotesType(typedValue);
@@ -714,9 +714,9 @@ public class _ErpFinNotesReceivable extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -855,7 +855,7 @@ public class _ErpFinNotesReceivable extends DynamicOrmEntity{
         
             case PROP_ID_notesType:{
                onInitProp(propId);
-               this._notesType = (java.lang.Integer)value;
+               this._notesType = (java.lang.String)value;
                
                break;
             }
@@ -967,7 +967,7 @@ public class _ErpFinNotesReceivable extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -1108,7 +1108,7 @@ public class _ErpFinNotesReceivable extends DynamicOrmEntity{
     /**
      * 票据类型: NOTES_TYPE
      */
-    public final java.lang.Integer getNotesType(){
+    public final java.lang.String getNotesType(){
          onPropGet(PROP_ID_notesType);
          return _notesType;
     }
@@ -1116,7 +1116,7 @@ public class _ErpFinNotesReceivable extends DynamicOrmEntity{
     /**
      * 票据类型: NOTES_TYPE
      */
-    public final void setNotesType(java.lang.Integer value){
+    public final void setNotesType(java.lang.String value){
         if(onPropSet(PROP_ID_notesType,value)){
             this._notesType = value;
             internalClearRefs(PROP_ID_notesType);
@@ -1412,7 +1412,7 @@ public class _ErpFinNotesReceivable extends DynamicOrmEntity{
     /**
      * 票据状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -1420,7 +1420,7 @@ public class _ErpFinNotesReceivable extends DynamicOrmEntity{
     /**
      * 票据状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

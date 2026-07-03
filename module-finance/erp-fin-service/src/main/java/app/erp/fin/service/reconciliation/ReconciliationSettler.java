@@ -80,7 +80,7 @@ public class ReconciliationSettler {
         item.setStatus(resolveStatus(settledF, item.getAmountFunctional()));
     }
 
-    protected int resolveStatus(BigDecimal settledFunctional, BigDecimal amountFunctional) {
+    protected String resolveStatus(BigDecimal settledFunctional, BigDecimal amountFunctional) {
         BigDecimal settled = nz(settledFunctional);
         BigDecimal total = nz(amountFunctional);
         if (settled.compareTo(BigDecimal.ZERO) <= 0) {

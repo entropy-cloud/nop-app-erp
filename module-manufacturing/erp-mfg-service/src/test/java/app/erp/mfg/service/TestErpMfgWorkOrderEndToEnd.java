@@ -57,7 +57,7 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
     static final Long CURRENCY_ID = 6401L;
     static final Long P = 1101L;     // 产成品
     static final Long M1 = 1102L;    // 子件
-    static final int MOVE_TYPE_INCOMING = 10;
+    static final String MOVE_TYPE_INCOMING = "INCOMING";
 
     @Inject
     IDaoProvider daoProvider;
@@ -69,7 +69,7 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
     @Test
     public void testEndToEndIssueReportCompletion() {
         seedMaterial(P, null);
-        seedMaterial(M1, 10);
+        seedMaterial(M1, "MOVING_AVERAGE");
         seedBom(9101L, P, M1, bd("2"));
         generateIncoming(M1, "PR-E2E-001", bd("10"), bd("5"));   // M1: 10 @ avgCost 5
 
@@ -125,7 +125,7 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
     @Test
     public void testInspectionGateBlocksCompletionWhenEnabled() {
         seedMaterial(P, null);
-        seedMaterial(M1, 10);
+        seedMaterial(M1, "MOVING_AVERAGE");
         seedBom(9102L, P, M1, bd("1"));
         seedBomInspectionRequired(9102L, true);
         generateIncoming(M1, "PR-E2E-GATE", bd("10"), bd("5"));
@@ -168,7 +168,7 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
     @Test
     public void testJobCardStateMachine() {
         seedMaterial(P, null);
-        seedMaterial(M1, 10);
+        seedMaterial(M1, "MOVING_AVERAGE");
         seedBom(9103L, P, M1, bd("1"));
         generateIncoming(M1, "PR-E2E-JC", bd("10"), bd("5"));
         Long woId = seedWorkOrder("WO-JC", 9103L);
@@ -189,10 +189,9 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private int statusOf(Long jobCardId) {
+    private String statusOf(Long jobCardId) {
         ErpMfgJobCard jc = daoProvider.daoFor(ErpMfgJobCard.class).getEntityById(jobCardId);
-        Integer s = jc.getStatus();
-        return s == null ? -1 : s;
+        return jc.getStatus();
     }
 
     private ApiResponse<?> recordWorkRequest(Long jobCardId, BigDecimal durationMins, BigDecimal hourlyRate,
@@ -230,16 +229,16 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
         rpcOk(mutation, "ErpInvStockMove__generateMove", Map.of("request", req));
     }
 
-    private void seedMaterial(Long id, Integer costMethod) {
+    private void seedMaterial(Long id, String costMethod) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();
             m.orm_propValueByName("id", id);
             m.setCode("MAT-" + id);
             m.setName("Material " + id);
-            m.orm_propValueByName("materialType", 10);
+            m.orm_propValueByName("materialType", "GOODS");
             m.setUoMId(UOM_ID);
-            m.setStatus(10);
+            m.setStatus("ACTIVE");
             m.setCostMethod(costMethod);
             dao.saveEntity(m);
         });

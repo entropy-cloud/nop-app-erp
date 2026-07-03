@@ -43,13 +43,13 @@
                 <col id="measuredValue" sortable="true"/>
 
                 <!--目标值-->
-                <col id="targetValue" sortable="true"/>
+                <col id="targetValue" ui:number="true" sortable="true"/>
 
                 <!--允差-->
-                <col id="tolerance" sortable="true"/>
+                <col id="tolerance" ui:number="true" sortable="true"/>
 
                 <!--校准结果-->
-                <col id="result" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="result" mandatory="true" sortable="true"/>
 
                 <!--下次校准日期-->
                 <col id="nextCalibrationDate" sortable="true"/>
@@ -58,10 +58,10 @@
                 <col id="calibratedBy" ui:number="true" sortable="true"/>
 
                 <!--单据状态-->
-                <col id="docStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="docStatus" mandatory="true" sortable="true"/>
 
                 <!--审核状态-->
-                <col id="approveStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="approveStatus" mandatory="true" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

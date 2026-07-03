@@ -45,23 +45,23 @@
         </prop>
         <prop name="arStatus" displayName="应收模块状态" propId="7" i18n-en:displayName="Ar Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-fin/module-close-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-fin/module-close-status"/>
         </prop>
         <prop name="apStatus" displayName="应付模块状态" propId="8" i18n-en:displayName="Ap Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-fin/module-close-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-fin/module-close-status"/>
         </prop>
         <prop name="invStatus" displayName="存货模块状态" propId="9" i18n-en:displayName="Inv Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-fin/module-close-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-fin/module-close-status"/>
         </prop>
         <prop name="glStatus" displayName="总账模块状态" propId="10" i18n-en:displayName="Gl Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-fin/module-close-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-fin/module-close-status"/>
         </prop>
         <prop name="assetStatus" displayName="资产模块状态" propId="11" i18n-en:displayName="Asset Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-fin/module-close-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-fin/module-close-status"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="12" i18n-en:displayName="Del Flag" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">

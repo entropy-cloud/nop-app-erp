@@ -50,7 +50,7 @@ public class FifoCostingStrategy implements CostingStrategy {
     IOrmTemplate ormTemplate;
 
     @Override
-    public int costMethod() {
+    public String costMethod() {
         return ErpInvConstants.COST_METHOD_FIFO;
     }
 

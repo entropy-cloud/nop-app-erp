@@ -1,39 +1,39 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 作业卡状态
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 待开始
-    value: 10
+    value: OPEN
     description: 
   
   - label: 作业中
-    value: 20
+    value: WORK_IN_PROGRESS
     description: 
   
   - label: 部分转序
-    value: 30
+    value: PARTIALLY_TRANSFERRED
     description: 
   
   - label: 已转序
-    value: 40
+    value: MATERIAL_TRANSFERRED
     description: 
   
   - label: 暂停
-    value: 50
+    value: ON_HOLD
     description: 
   
   - label: 已提交
-    value: 60
+    value: SUBMITTED
     description: 
   
   - label: 已完成
-    value: 70
+    value: COMPLETED
     description: 
   
   - label: 已取消
-    value: 80
+    value: CANCELLED
     description: 
   

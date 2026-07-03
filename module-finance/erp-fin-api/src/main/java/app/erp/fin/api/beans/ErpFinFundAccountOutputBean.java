@@ -69,16 +69,16 @@
         }
 
 
-        private Integer _accountType;
+        private String _accountType;
 
     
         @PropMeta(propId=5)
     
-        public Integer getAccountType(){
+        public String getAccountType(){
             return _accountType;
         }
 
-        public void setAccountType(Integer value){
+        public void setAccountType(String value){
             this._accountType = value;
         }
 
@@ -179,16 +179,16 @@
         }
 
 
-        private Integer _status;
+        private String _status;
 
     
         @PropMeta(propId=12)
     
-        public Integer getStatus(){
+        public String getStatus(){
             return _status;
         }
 
-        public void setStatus(Integer value){
+        public void setStatus(String value){
             this._status = value;
         }
 

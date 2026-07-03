@@ -37,7 +37,7 @@
                 <col id="gapValue" ui:number="true" sortable="true"/>
 
                 <!--差距严重程度-->
-                <col id="gapSeverity" ui:number="true" sortable="true"/>
+                <col id="gapSeverity" sortable="true"/>
 
                 <!--评估日期-->
                 <col id="assessmentDate" sortable="true"/>

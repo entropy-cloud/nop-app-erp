@@ -2,7 +2,7 @@
   "id": 0,
   "ediDocId": 0,
   "orgId": 0,
-  "direction": 0,
+  "direction": "",
   "direction_label": "",
   "requestPayload": "",
   "responsePayload": "",

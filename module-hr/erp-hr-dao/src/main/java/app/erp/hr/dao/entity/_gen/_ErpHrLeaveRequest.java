@@ -33,7 +33,7 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
     public static final String PROP_NAME_employeeId = "employeeId";
     public static final int PROP_ID_employeeId = 3;
     
-    /* 休假类型: LEAVE_TYPE INTEGER */
+    /* 休假类型: LEAVE_TYPE VARCHAR */
     public static final String PROP_NAME_leaveType = "leaveType";
     public static final int PROP_ID_leaveType = 4;
     
@@ -53,7 +53,7 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
     public static final String PROP_NAME_reason = "reason";
     public static final int PROP_ID_reason = 8;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 9;
     
@@ -188,7 +188,7 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
     private java.lang.Long _employeeId;
     
     /* 休假类型: LEAVE_TYPE */
-    private java.lang.Integer _leaveType;
+    private java.lang.String _leaveType;
     
     /* 开始日期: START_DATE */
     private java.time.LocalDate _startDate;
@@ -203,7 +203,7 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
     private java.lang.String _reason;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 审批人: APPROVER_ID */
     private java.lang.Long _approverId;
@@ -408,9 +408,9 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
             }
         
             case PROP_ID_leaveType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_leaveType));
                }
                setLeaveType(typedValue);
@@ -458,9 +458,9 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -599,7 +599,7 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
         
             case PROP_ID_leaveType:{
                onInitProp(propId);
-               this._leaveType = (java.lang.Integer)value;
+               this._leaveType = (java.lang.String)value;
                
                break;
             }
@@ -634,7 +634,7 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -775,7 +775,7 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
     /**
      * 休假类型: LEAVE_TYPE
      */
-    public final java.lang.Integer getLeaveType(){
+    public final java.lang.String getLeaveType(){
          onPropGet(PROP_ID_leaveType);
          return _leaveType;
     }
@@ -783,7 +783,7 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
     /**
      * 休假类型: LEAVE_TYPE
      */
-    public final void setLeaveType(java.lang.Integer value){
+    public final void setLeaveType(java.lang.String value){
         if(onPropSet(PROP_ID_leaveType,value)){
             this._leaveType = value;
             internalClearRefs(PROP_ID_leaveType);
@@ -870,7 +870,7 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -878,7 +878,7 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

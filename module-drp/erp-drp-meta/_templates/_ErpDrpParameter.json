@@ -7,7 +7,7 @@
   "orderMultiple": 0.0,
   "preferredSourceWarehouseId": 0,
   "preferredSupplierId": 0,
-  "replenishmentMethod": 0,
+  "replenishmentMethod": "",
   "replenishmentMethod_label": "",
   "minStockLevel": 0.0,
   "maxStockLevel": 0.0,

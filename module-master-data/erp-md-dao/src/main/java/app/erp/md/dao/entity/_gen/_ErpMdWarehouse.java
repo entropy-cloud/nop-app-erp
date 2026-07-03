@@ -33,7 +33,7 @@ public class _ErpMdWarehouse extends DynamicOrmEntity{
     public static final String PROP_NAME_name = "name";
     public static final int PROP_ID_name = 3;
     
-    /* 仓库类型: WAREHOUSE_TYPE INTEGER */
+    /* 仓库类型: WAREHOUSE_TYPE VARCHAR */
     public static final String PROP_NAME_warehouseType = "warehouseType";
     public static final int PROP_ID_warehouseType = 4;
     
@@ -49,7 +49,7 @@ public class _ErpMdWarehouse extends DynamicOrmEntity{
     public static final String PROP_NAME_managerId = "managerId";
     public static final int PROP_ID_managerId = 7;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 8;
     
@@ -167,7 +167,7 @@ public class _ErpMdWarehouse extends DynamicOrmEntity{
     private java.lang.String _name;
     
     /* 仓库类型: WAREHOUSE_TYPE */
-    private java.lang.Integer _warehouseType;
+    private java.lang.String _warehouseType;
     
     /* 所属组织: ORG_ID */
     private java.lang.Long _orgId;
@@ -179,7 +179,7 @@ public class _ErpMdWarehouse extends DynamicOrmEntity{
     private java.lang.Long _managerId;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -369,9 +369,9 @@ public class _ErpMdWarehouse extends DynamicOrmEntity{
             }
         
             case PROP_ID_warehouseType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_warehouseType));
                }
                setWarehouseType(typedValue);
@@ -409,9 +409,9 @@ public class _ErpMdWarehouse extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -530,7 +530,7 @@ public class _ErpMdWarehouse extends DynamicOrmEntity{
         
             case PROP_ID_warehouseType:{
                onInitProp(propId);
-               this._warehouseType = (java.lang.Integer)value;
+               this._warehouseType = (java.lang.String)value;
                
                break;
             }
@@ -558,7 +558,7 @@ public class _ErpMdWarehouse extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -685,7 +685,7 @@ public class _ErpMdWarehouse extends DynamicOrmEntity{
     /**
      * 仓库类型: WAREHOUSE_TYPE
      */
-    public final java.lang.Integer getWarehouseType(){
+    public final java.lang.String getWarehouseType(){
          onPropGet(PROP_ID_warehouseType);
          return _warehouseType;
     }
@@ -693,7 +693,7 @@ public class _ErpMdWarehouse extends DynamicOrmEntity{
     /**
      * 仓库类型: WAREHOUSE_TYPE
      */
-    public final void setWarehouseType(java.lang.Integer value){
+    public final void setWarehouseType(java.lang.String value){
         if(onPropSet(PROP_ID_warehouseType,value)){
             this._warehouseType = value;
             internalClearRefs(PROP_ID_warehouseType);
@@ -761,7 +761,7 @@ public class _ErpMdWarehouse extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -769,7 +769,7 @@ public class _ErpMdWarehouse extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

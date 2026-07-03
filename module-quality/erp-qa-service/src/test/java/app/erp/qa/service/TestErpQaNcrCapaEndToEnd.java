@@ -19,6 +19,7 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -179,6 +180,10 @@ public class TestErpQaNcrCapaEndToEnd extends JunitAutoTestCase {
         rpcOk(mutation, "ErpQaInspection__recordResult", args);
     }
 
+    private static BigDecimal toBigDecimal(String value) {
+        return value == null ? null : new BigDecimal(value);
+    }
+
     private Long seedPendingInspection(String code, String specMin, String specMax) {
         Long id = 6200L + (long) (Math.abs(code.hashCode()) % 1000);
         ormTemplate.runInSession(() -> {
@@ -204,22 +209,22 @@ public class TestErpQaNcrCapaEndToEnd extends JunitAutoTestCase {
             line.setInspectionId(id);
             line.setLineNo(1);
             line.setParameterName("长度");
-            line.setSpecMin(specMin);
-            line.setSpecMax(specMax);
+            line.setSpecMin(toBigDecimal(specMin));
+            line.setSpecMax(toBigDecimal(specMax));
             line.setResult(ErpQaConstants.INSPECTION_RESULT_PENDING);
             lineDao.saveEntity(line);
         });
         return id;
     }
 
-    private Long seedAction(Long ncrId, int status) {
-        Long id = 9700L + (long) (Math.abs(ncrId.hashCode() + status) % 1000);
+    private Long seedAction(Long ncrId, String status) {
+        Long id = 9700L + (long) (Math.abs(ncrId.hashCode() + status.hashCode()) % 1000);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaAction> dao = daoProvider.daoFor(ErpQaAction.class);
             ErpQaAction a = new ErpQaAction();
             a.orm_propValueByName("id", id);
             a.setNcrId(ncrId);
-            a.setActionType(30 /* erp-qa/action-type CAPA */);
+            a.setActionType("CAPA");
             a.setStatus(status);
             a.setDescription("纠正预防措施");
             dao.saveEntity(a);

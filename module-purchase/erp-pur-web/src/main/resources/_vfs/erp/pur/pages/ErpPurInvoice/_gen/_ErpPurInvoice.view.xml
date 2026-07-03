@@ -34,7 +34,7 @@
                 <col id="invoiceNo" sortable="true"/>
 
                 <!--发票类型-->
-                <col id="invoiceType" ui:number="true" sortable="true"/>
+                <col id="invoiceType" sortable="true"/>
 
                 <!--发票日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>
@@ -64,13 +64,13 @@
                 <col id="paidAmount" ui:number="true" sortable="true"/>
 
                 <!--单据状态-->
-                <col id="docStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="docStatus" mandatory="true" sortable="true"/>
 
                 <!--审核状态-->
-                <col id="approveStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="approveStatus" mandatory="true" sortable="true"/>
 
                 <!--付款进度-->
-                <col id="paidStatus" ui:number="true" sortable="true"/>
+                <col id="paidStatus" sortable="true"/>
 
                 <!--已过账-->
                 <col id="posted" sortable="true"/>

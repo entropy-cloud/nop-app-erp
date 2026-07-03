@@ -112,7 +112,7 @@ public class TestErpSalInvoiceApproval extends JunitAutoTestCase {
     public void testInactiveCustomerRejected() {
         ErpSalInvoice invoice = newInvoice("SI-INACTIVE-001");
         ormTemplate.runInSession(() -> {
-            seedCustomer(CUSTOMER_ID, 20);
+            seedCustomer(CUSTOMER_ID, "INACTIVE");
             saveInvoiceWithLine(invoice);
         });
 
@@ -210,13 +210,13 @@ public class TestErpSalInvoiceApproval extends JunitAutoTestCase {
         seedCustomer(id, ErpSalConstants.PARTNER_STATUS_ACTIVE);
     }
 
-    private void seedCustomer(Long id, int status) {
+    private void seedCustomer(Long id, String status) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);
         partner.setCode("CUS-" + id);
         partner.setName("客户" + id);
-        partner.setPartnerType(20);
+        partner.setPartnerType("SUPPLIER");
         partner.setStatus(status);
         dao.saveEntity(partner);
     }

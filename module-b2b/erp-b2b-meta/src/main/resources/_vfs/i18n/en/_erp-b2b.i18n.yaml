@@ -333,59 +333,59 @@ dict:
     erp-b2b/exchange-direction: Exchange Direction
 dict.option.label:
   erp-b2b/edi-doc-state:
-    '10': To Send
-    '20': Sent
-    '25': To Cancel
-    '30': Cancelled
-    '40': Error
-    '50': Received
-    '60': Acknowledged
-    '70': Archived
+    TO_SEND: To Send
+    SENT: Sent
+    TO_CANCEL: To Cancel
+    CANCELLED: Cancelled
+    ERROR: Error
+    RECEIVED: Received
+    ACKNOWLEDGED: Acknowledged
+    ARCHIVED: Archived
   erp-b2b/asn-status:
-    '10': Received
-    '20': Matched
-    '30': Received To Stock
-    '40': Cancelled
+    RECEIVED: Received
+    MATCHED: Matched
+    RECEIVED_TO_STOCK: Received To Stock
+    CANCELLED: Cancelled
   erp-b2b/edi-direction:
-    '10': Outbound
-    '20': Inbound
-    '30': Both
+    OUTBOUND: Outbound
+    INBOUND: Inbound
+    BOTH: Both
   erp-b2b/edi-standard:
-    '10': UBL
-    '20': X12
-    '30': EDIFACT
-    '40': Custom
+    UBL: UBL
+    X12: X12
+    EDIFACT: EDIFACT
+    CUSTOM: Custom
   erp-b2b/blocking-level:
-    '10': Info
-    '20': Warning
-    '30': Error
+    INFO: Info
+    WARN: Warning
+    ERROR: Error
   erp-b2b/mapping-type:
-    '10': Material
-    '20': Partner
-    '30': UOM
+    MATERIAL: Material
+    PARTNER: Partner
+    UOM: UOM
   erp-b2b/partner-status:
-    '10': Registered
-    '20': Testing
-    '30': Certified
-    '40': Production
-    '50': Suspended
-    '60': Terminated
+    REGISTERED: Registered
+    TESTING: Testing
+    CERTIFIED: Certified
+    PRODUCTION: Production
+    SUSPENDED: Suspended
+    TERMINATED: Terminated
   erp-b2b/protocol:
-    '10': AS2
-    '20': SFTP
-    '30': HTTP
-    '40': HTTPS
-    '50': OFTP2
+    AS2: AS2
+    SFTP: SFTP
+    HTTP: HTTP
+    HTTPS: HTTPS
+    OFTP2: OFTP2
   erp-b2b/auth-method:
-    '10': HMAC
-    '20': Basic Auth
-    '30': Certificate
-    '40': OAuth2
+    HMAC: HMAC
+    BASIC_AUTH: Basic Auth
+    CERTIFICATE: Certificate
+    OAUTH2: OAuth2
   erp-b2b/credential-type:
-    '10': API Key
-    '20': Username Password
-    '30': Certificate
-    '40': SSH Key
+    API_KEY: API Key
+    USERNAME_PASSWORD: Username Password
+    CERTIFICATE: Certificate
+    SSH_KEY: SSH Key
   erp-b2b/exchange-direction:
-    '10': Outbound
-    '20': Inbound
+    OUTBOUND: Outbound
+    INBOUND: Inbound

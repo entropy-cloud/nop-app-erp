@@ -34,10 +34,10 @@
                 <col id="parameterName" sortable="true"/>
 
                 <!--规格下限-->
-                <col id="specMin" sortable="true"/>
+                <col id="specMin" ui:number="true" sortable="true"/>
 
                 <!--规格上限-->
-                <col id="specMax" sortable="true"/>
+                <col id="specMax" ui:number="true" sortable="true"/>
 
                 <!--实测值-->
                 <col id="measuredValue" sortable="true"/>
@@ -46,7 +46,7 @@
                 <col id="unit" sortable="true"/>
 
                 <!--行结果-->
-                <col id="result" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="result" mandatory="true" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

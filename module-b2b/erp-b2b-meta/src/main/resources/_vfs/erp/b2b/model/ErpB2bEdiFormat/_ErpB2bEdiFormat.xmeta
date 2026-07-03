@@ -37,11 +37,11 @@
         </prop>
         <prop name="formatStandard" displayName="EDI 标准" propId="5" i18n-en:displayName="Format Standard"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-b2b/edi-standard"/>
+            <schema type="java.lang.String" precision="20" dict="erp-b2b/edi-standard"/>
         </prop>
         <prop name="direction" displayName="方向" propId="6" i18n-en:displayName="Direction" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-b2b/edi-direction"/>
+            <schema type="java.lang.String" precision="20" dict="erp-b2b/edi-direction"/>
         </prop>
         <prop name="needsWebService" displayName="需要 WebService" propId="7" i18n-en:displayName="Needs Web Service"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">

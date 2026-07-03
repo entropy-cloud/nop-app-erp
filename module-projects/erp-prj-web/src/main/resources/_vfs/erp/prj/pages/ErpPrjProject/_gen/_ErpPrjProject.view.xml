@@ -46,7 +46,7 @@
                 <col id="endDate" sortable="true"/>
 
                 <!--预算总额-->
-                <col id="budget" sortable="true"/>
+                <col id="budget" ui:number="true" sortable="true"/>
 
                 <!--已承诺成本-->
                 <col id="committedCost" ui:number="true" sortable="true"/>
@@ -58,7 +58,7 @@
                 <col id="billedAmount" ui:number="true" sortable="true"/>
 
                 <!--状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--项目经理(职员)-->
                 <col id="managerId" ui:number="true" sortable="true"/>

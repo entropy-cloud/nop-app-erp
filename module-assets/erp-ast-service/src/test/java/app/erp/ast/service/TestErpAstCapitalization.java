@@ -96,7 +96,7 @@ public class TestErpAstCapitalization extends JunitAutoTestCase {
         }
 
         // CAPITALIZATION(80) 凭证经业财回链可查
-        assertTrue(!findBillLinks("CAP-AST-001", 80).isEmpty(), "CAPITALIZATION 凭证回链已落库");
+        assertTrue(!findBillLinks("CAP-AST-001", "CAPITALIZATION").isEmpty(), "CAPITALIZATION 凭证回链已落库");
     }
 
     @Test
@@ -140,12 +140,12 @@ public class TestErpAstCapitalization extends JunitAutoTestCase {
         capBiz.submit(capId, CTX);
         ErpAstAssetCapitalization cap = capBiz.approve(capId, CTX);
         assertTrue(Boolean.TRUE.equals(cap.getPosted()), "CIP 转固过账成功");
-        assertTrue(!findBillLinks("CAP-AST-003", 80).isEmpty(), "CAPITALIZATION 凭证回链已落库");
+        assertTrue(!findBillLinks("CAP-AST-003", "CAPITALIZATION").isEmpty(), "CAPITALIZATION 凭证回链已落库");
     }
 
     // ---------- seed helpers ----------
 
-    private Long seedCapitalization(String code, Long categoryId, int sourceType, BigDecimal originalValue,
+    private Long seedCapitalization(String code, Long categoryId, String sourceType, BigDecimal originalValue,
                                     LocalDate capitalizationDate) {
         IEntityDao<ErpAstAssetCapitalization> dao = daoProvider.daoFor(ErpAstAssetCapitalization.class);
         ErpAstAssetCapitalization cap = new ErpAstAssetCapitalization();
@@ -165,7 +165,7 @@ public class TestErpAstCapitalization extends JunitAutoTestCase {
         return cap.getId();
     }
 
-    private Long seedCategory(String code, String name, int method, int usefulLifeMonths, Long subjectId) {
+    private Long seedCategory(String code, String name, String method, int usefulLifeMonths, Long subjectId) {
         IEntityDao<ErpAstAssetCategory> dao = daoProvider.daoFor(ErpAstAssetCategory.class);
         ErpAstAssetCategory category = new ErpAstAssetCategory();
         category.setCode(code);
@@ -182,9 +182,9 @@ public class TestErpAstCapitalization extends JunitAutoTestCase {
         ErpMdSubject subject = new ErpMdSubject();
         subject.setCode(code);
         subject.setName(name);
-        subject.setSubjectClass(10);
-        subject.setDirection(10);
-        subject.setStatus(10);
+        subject.setSubjectClass("ASSET");
+        subject.setDirection("DEBIT");
+        subject.setStatus("ACTIVE");
         dao.saveEntity(subject);
         return subject.getId();
     }
@@ -195,9 +195,9 @@ public class TestErpAstCapitalization extends JunitAutoTestCase {
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
-        schema.setNature(10);
+        schema.setNature("FINANCIAL");
         schema.setFunctionalCurrencyId(1L);
-        schema.setStatus(10);
+        schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
 
@@ -211,7 +211,7 @@ public class TestErpAstCapitalization extends JunitAutoTestCase {
         period.setMonth(month);
         period.setStartDate(start);
         period.setEndDate(end);
-        period.setStatus(10);
+        period.setStatus("OPEN");
         dao.saveEntity(period);
     }
 
@@ -231,7 +231,7 @@ public class TestErpAstCapitalization extends JunitAutoTestCase {
         return dao.findAllByQuery(q);
     }
 
-    private List<ErpFinVoucherBillR> findBillLinks(String billCode, int businessType) {
+    private List<ErpFinVoucherBillR> findBillLinks(String billCode, String businessType) {
         IEntityDao<ErpFinVoucherBillR> dao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("billCode", billCode), eq("businessType", businessType)));

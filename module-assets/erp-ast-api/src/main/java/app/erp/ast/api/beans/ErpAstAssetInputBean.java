@@ -152,16 +152,16 @@
         }
 
 
-        private Integer _depreciationMethod;
+        private String _depreciationMethod;
 
     
         @PropMeta(propId=11)
     
-        public Integer getDepreciationMethod(){
+        public String getDepreciationMethod(){
             return _depreciationMethod;
         }
 
-        public void setDepreciationMethod(Integer value){
+        public void setDepreciationMethod(String value){
             this._depreciationMethod = value;
         }
 
@@ -264,16 +264,16 @@
         }
 
 
-        private Integer _status;
+        private String _status;
 
     
         @PropMeta(propId=19)
     
-        public Integer getStatus(){
+        public String getStatus(){
             return _status;
         }
 
-        public void setStatus(Integer value){
+        public void setStatus(String value){
             this._status = value;
         }
 

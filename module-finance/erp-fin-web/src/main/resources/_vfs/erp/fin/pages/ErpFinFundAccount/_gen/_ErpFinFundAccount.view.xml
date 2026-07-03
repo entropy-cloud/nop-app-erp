@@ -31,7 +31,7 @@
                 <col id="orgId" ui:number="true" sortable="true"/>
 
                 <!--账户类型-->
-                <col id="accountType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="accountType" mandatory="true" sortable="true"/>
 
                 <!--对应会计科目-->
                 <col id="subjectId" ui:number="true" sortable="true"/>
@@ -52,7 +52,7 @@
                 <col id="currentBalance" ui:number="true" sortable="true"/>
 
                 <!--状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

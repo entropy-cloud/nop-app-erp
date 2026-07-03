@@ -41,7 +41,7 @@
         </prop>
         <prop name="contractType" displayName="合同类型" propId="6" i18n-en:displayName="Contract Type" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-cs/contract-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-cs/contract-type"/>
         </prop>
         <prop name="startDate" displayName="生效日期" propId="7" i18n-en:displayName="Start Date" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -57,11 +57,11 @@
         </prop>
         <prop name="billingCycle" displayName="计费周期" propId="10" i18n-en:displayName="Billing Cycle" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-cs/billing-cycle"/>
+            <schema type="java.lang.String" precision="20" dict="erp-cs/billing-cycle"/>
         </prop>
         <prop name="status" displayName="合同状态" propId="11" i18n-en:displayName="Status" queryable="true" sortable="true"
               insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-cs/contract-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-cs/contract-status"/>
         </prop>
         <prop name="attachmentFileId" displayName="合同附件" propId="12" i18n-en:displayName="Attachment" queryable="true"
               sortable="true" insertable="true" updatable="true">

@@ -1,23 +1,23 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 审核状态
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 未提交
-    value: 10
+    value: UNSUBMITTED
     description: 
   
   - label: 已提交
-    value: 20
+    value: SUBMITTED
     description: 
   
   - label: 已审核
-    value: 30
+    value: APPROVED
     description: 
   
   - label: 已驳回
-    value: 40
+    value: REJECTED
     description: 
   

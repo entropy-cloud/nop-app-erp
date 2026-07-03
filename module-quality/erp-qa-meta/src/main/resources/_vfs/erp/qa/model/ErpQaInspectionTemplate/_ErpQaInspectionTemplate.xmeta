@@ -33,7 +33,7 @@
         </prop>
         <prop name="inspectionType" displayName="检验类型" propId="4" i18n-en:displayName="Inspection Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-qa/inspection-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-qa/inspection-type"/>
         </prop>
         <prop name="materialId" displayName="适用物料" propId="5" i18n-en:displayName="Material" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="material">

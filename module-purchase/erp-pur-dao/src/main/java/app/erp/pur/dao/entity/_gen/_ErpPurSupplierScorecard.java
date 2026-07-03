@@ -45,7 +45,7 @@ public class _ErpPurSupplierScorecard extends DynamicOrmEntity{
     public static final String PROP_NAME_totalScore = "totalScore";
     public static final int PROP_ID_totalScore = 6;
     
-    /* 评级: STANDING INTEGER */
+    /* 评级: STANDING VARCHAR */
     public static final String PROP_NAME_standing = "standing";
     public static final int PROP_ID_standing = 7;
     
@@ -61,7 +61,7 @@ public class _ErpPurSupplierScorecard extends DynamicOrmEntity{
     public static final String PROP_NAME_preventThreshold = "preventThreshold";
     public static final int PROP_ID_preventThreshold = 10;
     
-    /* 周期状态: STATUS INTEGER */
+    /* 周期状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 11;
     
@@ -190,7 +190,7 @@ public class _ErpPurSupplierScorecard extends DynamicOrmEntity{
     private java.math.BigDecimal _totalScore;
     
     /* 评级: STANDING */
-    private java.lang.Integer _standing;
+    private java.lang.String _standing;
     
     /* warn阈值: WARN_THRESHOLD */
     private java.math.BigDecimal _warnThreshold;
@@ -202,7 +202,7 @@ public class _ErpPurSupplierScorecard extends DynamicOrmEntity{
     private java.math.BigDecimal _preventThreshold;
     
     /* 周期状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -425,9 +425,9 @@ public class _ErpPurSupplierScorecard extends DynamicOrmEntity{
             }
         
             case PROP_ID_standing:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_standing));
                }
                setStanding(typedValue);
@@ -465,9 +465,9 @@ public class _ErpPurSupplierScorecard extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -597,7 +597,7 @@ public class _ErpPurSupplierScorecard extends DynamicOrmEntity{
         
             case PROP_ID_standing:{
                onInitProp(propId);
-               this._standing = (java.lang.Integer)value;
+               this._standing = (java.lang.String)value;
                
                break;
             }
@@ -625,7 +625,7 @@ public class _ErpPurSupplierScorecard extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -802,7 +802,7 @@ public class _ErpPurSupplierScorecard extends DynamicOrmEntity{
     /**
      * 评级: STANDING
      */
-    public final java.lang.Integer getStanding(){
+    public final java.lang.String getStanding(){
          onPropGet(PROP_ID_standing);
          return _standing;
     }
@@ -810,7 +810,7 @@ public class _ErpPurSupplierScorecard extends DynamicOrmEntity{
     /**
      * 评级: STANDING
      */
-    public final void setStanding(java.lang.Integer value){
+    public final void setStanding(java.lang.String value){
         if(onPropSet(PROP_ID_standing,value)){
             this._standing = value;
             internalClearRefs(PROP_ID_standing);
@@ -878,7 +878,7 @@ public class _ErpPurSupplierScorecard extends DynamicOrmEntity{
     /**
      * 周期状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -886,7 +886,7 @@ public class _ErpPurSupplierScorecard extends DynamicOrmEntity{
     /**
      * 周期状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

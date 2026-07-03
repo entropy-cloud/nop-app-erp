@@ -125,44 +125,44 @@
         }
 
 
-        private String _targetValue;
+        private java.math.BigDecimal _targetValue;
 
     
         @PropMeta(propId=9)
     
-        public String getTargetValue(){
+        public java.math.BigDecimal getTargetValue(){
             return _targetValue;
         }
 
-        public void setTargetValue(String value){
+        public void setTargetValue(java.math.BigDecimal value){
             this._targetValue = value;
         }
 
 
-        private String _tolerance;
+        private java.math.BigDecimal _tolerance;
 
     
         @PropMeta(propId=10)
     
-        public String getTolerance(){
+        public java.math.BigDecimal getTolerance(){
             return _tolerance;
         }
 
-        public void setTolerance(String value){
+        public void setTolerance(java.math.BigDecimal value){
             this._tolerance = value;
         }
 
 
-        private Integer _result;
+        private String _result;
 
     
         @PropMeta(propId=11)
     
-        public Integer getResult(){
+        public String getResult(){
             return _result;
         }
 
-        public void setResult(Integer value){
+        public void setResult(String value){
             this._result = value;
         }
 
@@ -207,16 +207,16 @@
         }
 
 
-        private Integer _docStatus;
+        private String _docStatus;
 
     
         @PropMeta(propId=14)
     
-        public Integer getDocStatus(){
+        public String getDocStatus(){
             return _docStatus;
         }
 
-        public void setDocStatus(Integer value){
+        public void setDocStatus(String value){
             this._docStatus = value;
         }
 
@@ -233,16 +233,16 @@
         }
 
 
-        private Integer _approveStatus;
+        private String _approveStatus;
 
     
         @PropMeta(propId=15)
     
-        public Integer getApproveStatus(){
+        public String getApproveStatus(){
             return _approveStatus;
         }
 
-        public void setApproveStatus(Integer value){
+        public void setApproveStatus(String value){
             this._approveStatus = value;
         }
 

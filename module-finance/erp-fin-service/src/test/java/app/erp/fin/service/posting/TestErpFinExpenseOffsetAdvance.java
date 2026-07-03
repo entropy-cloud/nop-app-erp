@@ -2,6 +2,7 @@ package app.erp.fin.service.posting;
 
 import app.erp.fin.biz.IErpFinEmployeeAdvanceBiz;
 import app.erp.fin.biz.IErpFinExpenseClaimBiz;
+import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinArApItem;
 import app.erp.fin.dao.entity.ErpFinEmployeeAdvance;
@@ -93,7 +94,7 @@ public class TestErpFinExpenseOffsetAdvance extends JunitAutoTestCase {
         assertEquals(ErpFinConstants.AR_AP_STATUS_PARTIAL, advanceItemAfter.getStatus());
 
         // SETTLE 清算凭证落库
-        assertTrue(!findBillLinks("EC-OFF-001", 180).isEmpty(), "EMPLOYEE_ADVANCE_SETTLE 凭证已落库");
+        assertTrue(!findBillLinks("EC-OFF-001", ErpFinBusinessType.EMPLOYEE_ADVANCE_SETTLE.name()).isEmpty(), "EMPLOYEE_ADVANCE_SETTLE 凭证已落库");
 
         // 借款单 settled/outstanding 回写
         ErpFinEmployeeAdvance advance = daoProvider.daoFor(ErpFinEmployeeAdvance.class).getEntityById(advanceId);
@@ -160,7 +161,7 @@ public class TestErpFinExpenseOffsetAdvance extends JunitAutoTestCase {
         period.setMonth(6);
         period.setStartDate(LocalDate.of(2026, 6, 1));
         period.setEndDate(LocalDate.of(2026, 6, 30));
-        period.setStatus(10);
+        period.setStatus(ErpFinConstants.PERIOD_STATUS_OPEN);
         dao.saveEntity(period);
     }
 
@@ -171,7 +172,7 @@ public class TestErpFinExpenseOffsetAdvance extends JunitAutoTestCase {
         emp.setName("员工-" + partnerId);
         emp.setOrgId(1L);
         emp.setPartnerId(partnerId);
-        emp.setStatus(10);
+        emp.setStatus("ACTIVE");
         dao.saveEntity(emp);
         return emp.getId();
     }
@@ -182,7 +183,7 @@ public class TestErpFinExpenseOffsetAdvance extends JunitAutoTestCase {
         advance.setCode(code);
         advance.setOrgId(1L);
         advance.setEmployeeId(employeeId);
-        advance.setAdvanceType(10);
+        advance.setAdvanceType("EXPENSE_ADVANCE");
         advance.setBusinessDate(LocalDate.of(2026, 6, 5));
         advance.setCurrencyId(1L);
         advance.setExchangeRate(BigDecimal.ONE);
@@ -219,7 +220,7 @@ public class TestErpFinExpenseOffsetAdvance extends JunitAutoTestCase {
         ErpFinExpenseClaimLine line = new ErpFinExpenseClaimLine();
         line.setClaimId(claim.getId());
         line.setLineNo(1);
-        line.setExpenseType(10);
+        line.setExpenseType("TRAVEL");
         line.setAmountWithoutTax(amountWithoutTax);
         line.setTaxAmount(tax);
         line.setAmountWithTax(withTax);
@@ -232,9 +233,9 @@ public class TestErpFinExpenseOffsetAdvance extends JunitAutoTestCase {
         ErpMdSubject subject = new ErpMdSubject();
         subject.setCode(code);
         subject.setName(name);
-        subject.setSubjectClass(10);
-        subject.setDirection(10);
-        subject.setStatus(10);
+        subject.setSubjectClass("ASSET");
+        subject.setDirection("DEBIT");
+        subject.setStatus("ACTIVE");
         dao.saveEntity(subject);
     }
 
@@ -244,9 +245,9 @@ public class TestErpFinExpenseOffsetAdvance extends JunitAutoTestCase {
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
-        schema.setNature(10);
+        schema.setNature("FINANCIAL");
         schema.setFunctionalCurrencyId(1L);
-        schema.setStatus(10);
+        schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
 
@@ -258,7 +259,7 @@ public class TestErpFinExpenseOffsetAdvance extends JunitAutoTestCase {
         return items.isEmpty() ? null : items.get(0);
     }
 
-    private List<ErpFinVoucherBillR> findBillLinks(String billCode, int businessType) {
+    private List<ErpFinVoucherBillR> findBillLinks(String billCode, String businessType) {
         IEntityDao<ErpFinVoucherBillR> dao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("billCode", billCode), eq("businessType", businessType)));

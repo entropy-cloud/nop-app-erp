@@ -41,7 +41,7 @@ public class TestErpB2bAsnCrudSmoke extends JunitAutoTestCase {
         Map<String, String> pre = createPrereqs();
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-B2B");
-        headData.put("status", 10);
+        headData.put("status", "RECEIVED");
         ApiResponse<?> result = executeRpc(GraphQLOperationType.mutation, "ErpB2bAsn__save",
                 ApiRequest.build(Map.of("data", headData)));
 
@@ -55,7 +55,7 @@ public class TestErpB2bAsnCrudSmoke extends JunitAutoTestCase {
         Map<String, String> pre = createPrereqs();
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-B2B");
-        headData.put("status", 10);
+        headData.put("status", "RECEIVED");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpB2bAsn__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -72,7 +72,7 @@ public class TestErpB2bAsnCrudSmoke extends JunitAutoTestCase {
         Map<String, String> pre = createPrereqs();
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-B2B");
-        headData.put("status", 10);
+        headData.put("status", "RECEIVED");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpB2bAsn__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -93,7 +93,7 @@ public class TestErpB2bAsnCrudSmoke extends JunitAutoTestCase {
         Map<String, String> pre = createPrereqs();
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-B2B");
-        headData.put("status", 10);
+        headData.put("status", "RECEIVED");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpB2bAsn__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -115,7 +115,7 @@ public class TestErpB2bAsnCrudSmoke extends JunitAutoTestCase {
         Map<String, String> pre = createPrereqs();
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-B2B");
-        headData.put("status", 10);
+        headData.put("status", "RECEIVED");
         ApiResponse<?> head = executeRpc(GraphQLOperationType.mutation, "ErpB2bAsn__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_saveHead_response.json5", head);

@@ -49,11 +49,11 @@
         </prop>
         <prop name="docStatus" displayName="单据状态" propId="8" i18n-en:displayName="Doc Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-prj/project-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-prj/project-status"/>
         </prop>
         <prop name="approveStatus" displayName="审核状态" propId="9" i18n-en:displayName="Approve Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-prj/timesheet-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-prj/timesheet-status"/>
         </prop>
         <prop name="remark" displayName="备注" propId="10" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

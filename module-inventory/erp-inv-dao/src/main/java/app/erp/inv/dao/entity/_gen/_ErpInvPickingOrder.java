@@ -45,7 +45,7 @@ public class _ErpInvPickingOrder extends DynamicOrmEntity{
     public static final String PROP_NAME_pickerId = "pickerId";
     public static final int PROP_ID_pickerId = 6;
     
-    /* 单据状态: DOC_STATUS INTEGER */
+    /* 单据状态: DOC_STATUS VARCHAR */
     public static final String PROP_NAME_docStatus = "docStatus";
     public static final int PROP_ID_docStatus = 7;
     
@@ -179,7 +179,7 @@ public class _ErpInvPickingOrder extends DynamicOrmEntity{
     private java.lang.Long _pickerId;
     
     /* 单据状态: DOC_STATUS */
-    private java.lang.Integer _docStatus;
+    private java.lang.String _docStatus;
     
     /* 关联单据类型(SALES_DELIVERY/WORK_ORDER_ISSUE): RELATED_BILL_TYPE */
     private java.lang.String _relatedBillType;
@@ -402,9 +402,9 @@ public class _ErpInvPickingOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_docStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_docStatus));
                }
                setDocStatus(typedValue);
@@ -554,7 +554,7 @@ public class _ErpInvPickingOrder extends DynamicOrmEntity{
         
             case PROP_ID_docStatus:{
                onInitProp(propId);
-               this._docStatus = (java.lang.Integer)value;
+               this._docStatus = (java.lang.String)value;
                
                break;
             }
@@ -745,7 +745,7 @@ public class _ErpInvPickingOrder extends DynamicOrmEntity{
     /**
      * 单据状态: DOC_STATUS
      */
-    public final java.lang.Integer getDocStatus(){
+    public final java.lang.String getDocStatus(){
          onPropGet(PROP_ID_docStatus);
          return _docStatus;
     }
@@ -753,7 +753,7 @@ public class _ErpInvPickingOrder extends DynamicOrmEntity{
     /**
      * 单据状态: DOC_STATUS
      */
-    public final void setDocStatus(java.lang.Integer value){
+    public final void setDocStatus(java.lang.String value){
         if(onPropSet(PROP_ID_docStatus,value)){
             this._docStatus = value;
             internalClearRefs(PROP_ID_docStatus);

@@ -3,7 +3,7 @@
   "visitId": 0,
   "lineNo": 0,
   "taskDescription": "",
-  "status": 0,
+  "status": "",
   "status_label": "",
   "completedBy": 0,
   "completedAt": "2000-01-01 14:00:00",

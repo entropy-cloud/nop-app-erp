@@ -15,6 +15,8 @@ import io.nop.core.context.IServiceContext;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import java.math.BigDecimal;
+
 @BizModel("ErpMntDowntimeEntry")
 public class ErpMntDowntimeEntryBizModel extends CrudBizModel<ErpMntDowntimeEntry> implements IErpMntDowntimeEntryBiz {
 
@@ -84,8 +86,7 @@ public class ErpMntDowntimeEntryBizModel extends CrudBizModel<ErpMntDowntimeEntr
         downtime.setEndTime(endTime);
         if (downtime.getStartTime() != null) {
             long minutes = Duration.between(downtime.getStartTime(), endTime).toMinutes();
-            // totalMinutes 列为 VARCHAR（基线类型异常），数值以字符串写入
-            downtime.setTotalMinutes(String.valueOf(minutes));
+            downtime.setTotalMinutes(BigDecimal.valueOf(minutes));
         }
         updateEntity(downtime, null, context);
     }

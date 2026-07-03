@@ -41,11 +41,11 @@ public class _ErpB2bPartnerProfile extends DynamicOrmEntity{
     public static final String PROP_NAME_partnerName = "partnerName";
     public static final int PROP_ID_partnerName = 5;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 6;
     
-    /* 传输协议: PROTOCOL INTEGER */
+    /* 传输协议: PROTOCOL VARCHAR */
     public static final String PROP_NAME_protocol = "protocol";
     public static final int PROP_ID_protocol = 7;
     
@@ -53,7 +53,7 @@ public class _ErpB2bPartnerProfile extends DynamicOrmEntity{
     public static final String PROP_NAME_transportEndpoint = "transportEndpoint";
     public static final int PROP_ID_transportEndpoint = 8;
     
-    /* 认证方式: AUTH_METHOD INTEGER */
+    /* 认证方式: AUTH_METHOD VARCHAR */
     public static final String PROP_NAME_authMethod = "authMethod";
     public static final int PROP_ID_authMethod = 9;
     
@@ -240,16 +240,16 @@ public class _ErpB2bPartnerProfile extends DynamicOrmEntity{
     private java.lang.String _partnerName;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 传输协议: PROTOCOL */
-    private java.lang.Integer _protocol;
+    private java.lang.String _protocol;
     
     /* 传输端点: TRANSPORT_ENDPOINT */
     private java.lang.String _transportEndpoint;
     
     /* 认证方式: AUTH_METHOD */
-    private java.lang.Integer _authMethod;
+    private java.lang.String _authMethod;
     
     /* Webhook密钥: WEBHOOK_SECRET */
     private java.lang.String _webhookSecret;
@@ -516,9 +516,9 @@ public class _ErpB2bPartnerProfile extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -526,9 +526,9 @@ public class _ErpB2bPartnerProfile extends DynamicOrmEntity{
             }
         
             case PROP_ID_protocol:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_protocol));
                }
                setProtocol(typedValue);
@@ -546,9 +546,9 @@ public class _ErpB2bPartnerProfile extends DynamicOrmEntity{
             }
         
             case PROP_ID_authMethod:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_authMethod));
                }
                setAuthMethod(typedValue);
@@ -771,14 +771,14 @@ public class _ErpB2bPartnerProfile extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_protocol:{
                onInitProp(propId);
-               this._protocol = (java.lang.Integer)value;
+               this._protocol = (java.lang.String)value;
                
                break;
             }
@@ -792,7 +792,7 @@ public class _ErpB2bPartnerProfile extends DynamicOrmEntity{
         
             case PROP_ID_authMethod:{
                onInitProp(propId);
-               this._authMethod = (java.lang.Integer)value;
+               this._authMethod = (java.lang.String)value;
                
                break;
             }
@@ -1020,7 +1020,7 @@ public class _ErpB2bPartnerProfile extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -1028,7 +1028,7 @@ public class _ErpB2bPartnerProfile extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);
@@ -1039,7 +1039,7 @@ public class _ErpB2bPartnerProfile extends DynamicOrmEntity{
     /**
      * 传输协议: PROTOCOL
      */
-    public final java.lang.Integer getProtocol(){
+    public final java.lang.String getProtocol(){
          onPropGet(PROP_ID_protocol);
          return _protocol;
     }
@@ -1047,7 +1047,7 @@ public class _ErpB2bPartnerProfile extends DynamicOrmEntity{
     /**
      * 传输协议: PROTOCOL
      */
-    public final void setProtocol(java.lang.Integer value){
+    public final void setProtocol(java.lang.String value){
         if(onPropSet(PROP_ID_protocol,value)){
             this._protocol = value;
             internalClearRefs(PROP_ID_protocol);
@@ -1077,7 +1077,7 @@ public class _ErpB2bPartnerProfile extends DynamicOrmEntity{
     /**
      * 认证方式: AUTH_METHOD
      */
-    public final java.lang.Integer getAuthMethod(){
+    public final java.lang.String getAuthMethod(){
          onPropGet(PROP_ID_authMethod);
          return _authMethod;
     }
@@ -1085,7 +1085,7 @@ public class _ErpB2bPartnerProfile extends DynamicOrmEntity{
     /**
      * 认证方式: AUTH_METHOD
      */
-    public final void setAuthMethod(java.lang.Integer value){
+    public final void setAuthMethod(java.lang.String value){
         if(onPropSet(PROP_ID_authMethod,value)){
             this._authMethod = value;
             internalClearRefs(PROP_ID_authMethod);

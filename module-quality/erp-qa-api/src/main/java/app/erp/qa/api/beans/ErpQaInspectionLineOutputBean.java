@@ -83,30 +83,30 @@
         }
 
 
-        private String _specMin;
+        private java.math.BigDecimal _specMin;
 
     
         @PropMeta(propId=6)
     
-        public String getSpecMin(){
+        public java.math.BigDecimal getSpecMin(){
             return _specMin;
         }
 
-        public void setSpecMin(String value){
+        public void setSpecMin(java.math.BigDecimal value){
             this._specMin = value;
         }
 
 
-        private String _specMax;
+        private java.math.BigDecimal _specMax;
 
     
         @PropMeta(propId=7)
     
-        public String getSpecMax(){
+        public java.math.BigDecimal getSpecMax(){
             return _specMax;
         }
 
-        public void setSpecMax(String value){
+        public void setSpecMax(java.math.BigDecimal value){
             this._specMax = value;
         }
 
@@ -139,16 +139,16 @@
         }
 
 
-        private Integer _result;
+        private String _result;
 
     
         @PropMeta(propId=10)
     
-        public Integer getResult(){
+        public String getResult(){
             return _result;
         }
 
-        public void setResult(Integer value){
+        public void setResult(String value){
             this._result = value;
         }
 

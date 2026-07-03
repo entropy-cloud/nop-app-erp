@@ -61,7 +61,7 @@
         </prop>
         <prop name="status" displayName="状态" propId="11" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-qa/risk-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-qa/risk-status"/>
         </prop>
         <prop name="remark" displayName="备注" propId="12" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

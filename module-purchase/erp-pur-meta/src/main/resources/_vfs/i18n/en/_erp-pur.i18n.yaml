@@ -577,46 +577,46 @@ dict:
     erp-pur/scorecard-status: Scorecard Status
 dict.option.label:
   erp-pur/doc-status:
-    '10': Draft
-    '20': Effective
-    '30': Voided
+    DRAFT: Draft
+    ACTIVE: Effective
+    CANCELLED: Voided
   erp-pur/approve-status:
-    '10': Unsubmitted
-    '20': Submitted
-    '30': Approved
-    '40': Rejected
+    UNSUBMITTED: Unsubmitted
+    SUBMITTED: Submitted
+    APPROVED: Approved
+    REJECTED: Rejected
   erp-pur/paid-status:
-    '10': Unpaid
-    '20': Partially Paid
-    '30': Fully Paid
+    UNPAID: Unpaid
+    PARTIAL: Partially Paid
+    PAID: Fully Paid
   erp-pur/receive-status:
-    '10': Unreceived
-    '20': Partially Received
-    '30': Fully Received
+    UNRECEIVED: Unreceived
+    PARTIAL: Partially Received
+    RECEIVED: Fully Received
   erp-pur/biz-type:
-    '10': Purchase Requisition
-    '20': RFQ
-    '30': Quotation
-    '40': Purchase Order
-    '50': Purchase Receipt
-    '60': Purchase Invoice
-    '70': Payment
-    '80': Purchase Return
+    REQUISITION: Purchase Requisition
+    RFQ: RFQ
+    QUOTATION: Quotation
+    ORDER: Purchase Order
+    RECEIVE: Purchase Receipt
+    INVOICE: Purchase Invoice
+    PAYMENT: Payment
+    RETURN: Purchase Return
   erp-pur/doc-direction:
-    '10': Receipt
-    '20': Issue
+    INBOUND: Receipt
+    OUTBOUND: Issue
   erp-pur/receive-type:
-    '10': Normal Receipt
-    '20': Return Receipt
-    '30': Freebie Receipt
+    NORMAL: Normal Receipt
+    RETURN: Return Receipt
+    GIFT: Freebie Receipt
   erp-pur/invoice-type:
-    '10': VAT Special
-    '20': VAT General
-    '30': Receipt Note
+    VAT_SPECIAL: VAT Special
+    VAT_NORMAL: VAT General
+    RECEIPT: Receipt Note
   erp-pur/supplier-standing:
-    '10': Green
-    '20': Yellow
-    '30': Red
+    GREEN: Green
+    YELLOW: Yellow
+    RED: Red
   erp-pur/scorecard-status:
-    '10': Draft
-    '20': Finalized
+    DRAFT: Draft
+    FINALIZED: Finalized

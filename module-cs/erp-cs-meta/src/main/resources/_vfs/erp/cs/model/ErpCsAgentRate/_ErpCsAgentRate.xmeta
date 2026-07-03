@@ -33,7 +33,7 @@
         </prop>
         <prop name="serviceType" displayName="服务类型" propId="4" i18n-en:displayName="Service Type" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-cs/service-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-cs/service-type"/>
         </prop>
         <prop name="rate" displayName="费率(元/小时)" propId="5" i18n-en:displayName="Rate" queryable="true" sortable="true"
               insertable="true" updatable="true">

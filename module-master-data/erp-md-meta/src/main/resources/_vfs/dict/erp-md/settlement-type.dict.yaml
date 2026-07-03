@@ -1,27 +1,27 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 结算类型
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 现金
-    value: 10
+    value: CASH
     description: 
   
   - label: 银行转账
-    value: 20
+    value: BANK_TRANSFER
     description: 
   
   - label: 票据
-    value: 30
+    value: NOTE
     description: 
   
   - label: 抵扣
-    value: 40
+    value: OFFSET
     description: 
   
   - label: 在线支付
-    value: 50
+    value: ONLINE
     description: 
   

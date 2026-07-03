@@ -228,7 +228,7 @@ public class TestErpSalReceiptSettlement extends JunitAutoTestCase {
         partner.setId(id);
         partner.setCode("CUS-" + id);
         partner.setName("客户" + id);
-        partner.setPartnerType(20);
+        partner.setPartnerType("SUPPLIER");
         partner.setStatus(ErpSalConstants.PARTNER_STATUS_ACTIVE);
         dao.saveEntity(partner);
     }

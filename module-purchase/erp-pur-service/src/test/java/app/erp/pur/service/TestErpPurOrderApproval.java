@@ -123,7 +123,7 @@ public class TestErpPurOrderApproval extends JunitAutoTestCase {
         ErpPurOrder order = newOrder("PO-INACTIVE-001");
         order.setApproveStatus(ErpPurConstants.APPROVE_STATUS_UNSUBMITTED);
         ormTemplate.runInSession(() -> {
-            seedSupplier(SUPPLIER_ID, 20);
+            seedSupplier(SUPPLIER_ID, "INACTIVE");
             saveOrderWithLine(order);
         });
         ApiResponse<?> bad = submit(order.getId());
@@ -221,13 +221,13 @@ public class TestErpPurOrderApproval extends JunitAutoTestCase {
         seedSupplier(id, ErpPurConstants.PARTNER_STATUS_ACTIVE);
     }
 
-    private void seedSupplier(Long id, int status) {
+    private void seedSupplier(Long id, String status) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);
         partner.setCode("SUP-" + id);
         partner.setName("供应商" + id);
-        partner.setPartnerType(10);
+        partner.setPartnerType("CUSTOMER");
         partner.setStatus(status);
         dao.saveEntity(partner);
     }

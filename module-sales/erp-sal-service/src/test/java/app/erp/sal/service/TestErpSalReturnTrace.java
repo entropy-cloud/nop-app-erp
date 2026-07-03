@@ -150,7 +150,7 @@ public class TestErpSalReturnTrace extends JunitAutoTestCase {
 
     private void seedStock(String billCode, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> req = new LinkedHashMap<>();
-        req.put("moveType", 10);
+        req.put("moveType", "INCOMING");
         req.put("orgId", ORG_ID);
         req.put("businessDate", "2026-07-01");
         req.put("destWarehouseId", WAREHOUSE_ID);
@@ -209,7 +209,7 @@ public class TestErpSalReturnTrace extends JunitAutoTestCase {
 
     private void seedPeriodAndSubjects() {
         ormTemplate.runInSession(session -> {
-            seedOpenPeriod("2026-07", 2026, 7, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31), 10);
+            seedOpenPeriod("2026-07", 2026, 7, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31), "OPEN");
             seedSubject("1401", "库存商品");
             seedSubject("6401", "主营业务成本");
             seedAcctSchema();
@@ -224,9 +224,9 @@ public class TestErpSalReturnTrace extends JunitAutoTestCase {
         schema.setCode("AS-" + ORG_ID);
         schema.setName("账套" + ORG_ID);
         schema.setOrgId(ORG_ID);
-        schema.setNature(10);
+        schema.setNature("FINANCIAL");
         schema.setFunctionalCurrencyId(CURRENCY_ID);
-        schema.setStatus(10);
+        schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
 
@@ -236,12 +236,12 @@ public class TestErpSalReturnTrace extends JunitAutoTestCase {
         partner.setId(CUSTOMER_ID);
         partner.setCode("CUS-" + CUSTOMER_ID);
         partner.setName("客户" + CUSTOMER_ID);
-        partner.setPartnerType(10);
+        partner.setPartnerType("CUSTOMER");
         partner.setStatus(ErpSalConstants.PARTNER_STATUS_ACTIVE);
         dao.saveEntity(partner);
     }
 
-    private void seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, int status) {
+    private void seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, String status) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
@@ -260,9 +260,9 @@ public class TestErpSalReturnTrace extends JunitAutoTestCase {
         ErpMdSubject subject = new ErpMdSubject();
         subject.setCode(code);
         subject.setName(name);
-        subject.setSubjectClass(10);
-        subject.setDirection(10);
-        subject.setStatus(10);
+        subject.setSubjectClass("ASSET");
+        subject.setDirection("DEBIT");
+        subject.setStatus("ACTIVE");
         dao.saveEntity(subject);
     }
 

@@ -28,7 +28,7 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--适用合同类型-->
-                <col id="contractType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="contractType" mandatory="true" sortable="true"/>
 
                 <!--模板内容-->
                 <col id="contentTemplate" sortable="true"/>

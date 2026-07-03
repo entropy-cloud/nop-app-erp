@@ -121,7 +121,7 @@ public class TestErpQaRecallStateMachine extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpQaRecall.class).getEntityById(recallId);
     }
 
-    private Long registerRecall(String code, int severity) {
+    private Long registerRecall(String code, String severity) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("code", code);
         data.put("recallName", "召回-" + code);

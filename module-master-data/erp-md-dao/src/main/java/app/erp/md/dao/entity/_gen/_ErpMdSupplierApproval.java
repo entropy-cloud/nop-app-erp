@@ -33,7 +33,7 @@ public class _ErpMdSupplierApproval extends DynamicOrmEntity{
     public static final String PROP_NAME_orgId = "orgId";
     public static final int PROP_ID_orgId = 3;
     
-    /* 准入类型: APPROVAL_TYPE INTEGER */
+    /* 准入类型: APPROVAL_TYPE VARCHAR */
     public static final String PROP_NAME_approvalType = "approvalType";
     public static final int PROP_ID_approvalType = 4;
     
@@ -53,7 +53,7 @@ public class _ErpMdSupplierApproval extends DynamicOrmEntity{
     public static final String PROP_NAME_qualificationDoc = "qualificationDoc";
     public static final int PROP_ID_qualificationDoc = 8;
     
-    /* 准入状态: STATUS INTEGER */
+    /* 准入状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 9;
     
@@ -181,7 +181,7 @@ public class _ErpMdSupplierApproval extends DynamicOrmEntity{
     private java.lang.Long _orgId;
     
     /* 准入类型: APPROVAL_TYPE */
-    private java.lang.Integer _approvalType;
+    private java.lang.String _approvalType;
     
     /* 准入物料类别: MATERIAL_CATEGORY_ID */
     private java.lang.Long _materialCategoryId;
@@ -196,7 +196,7 @@ public class _ErpMdSupplierApproval extends DynamicOrmEntity{
     private java.lang.String _qualificationDoc;
     
     /* 准入状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 批准人: APPROVED_BY */
     private java.lang.String _approvedBy;
@@ -395,9 +395,9 @@ public class _ErpMdSupplierApproval extends DynamicOrmEntity{
             }
         
             case PROP_ID_approvalType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_approvalType));
                }
                setApprovalType(typedValue);
@@ -445,9 +445,9 @@ public class _ErpMdSupplierApproval extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -576,7 +576,7 @@ public class _ErpMdSupplierApproval extends DynamicOrmEntity{
         
             case PROP_ID_approvalType:{
                onInitProp(propId);
-               this._approvalType = (java.lang.Integer)value;
+               this._approvalType = (java.lang.String)value;
                
                break;
             }
@@ -611,7 +611,7 @@ public class _ErpMdSupplierApproval extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -745,7 +745,7 @@ public class _ErpMdSupplierApproval extends DynamicOrmEntity{
     /**
      * 准入类型: APPROVAL_TYPE
      */
-    public final java.lang.Integer getApprovalType(){
+    public final java.lang.String getApprovalType(){
          onPropGet(PROP_ID_approvalType);
          return _approvalType;
     }
@@ -753,7 +753,7 @@ public class _ErpMdSupplierApproval extends DynamicOrmEntity{
     /**
      * 准入类型: APPROVAL_TYPE
      */
-    public final void setApprovalType(java.lang.Integer value){
+    public final void setApprovalType(java.lang.String value){
         if(onPropSet(PROP_ID_approvalType,value)){
             this._approvalType = value;
             internalClearRefs(PROP_ID_approvalType);
@@ -840,7 +840,7 @@ public class _ErpMdSupplierApproval extends DynamicOrmEntity{
     /**
      * 准入状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -848,7 +848,7 @@ public class _ErpMdSupplierApproval extends DynamicOrmEntity{
     /**
      * 准入状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

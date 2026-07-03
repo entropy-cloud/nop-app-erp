@@ -1,31 +1,31 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 仓库类型
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 普通仓
-    value: 10
+    value: NORMAL
     description: 
   
   - label: 在途仓
-    value: 20
+    value: IN_TRANSIT
     description: 
   
   - label: 报废仓
-    value: 30
+    value: SCRAP
     description: 
   
   - label: 受托代销仓
-    value: 40
+    value: CONSIGNMENT_IN
     description: 
   
   - label: 委托代销仓
-    value: 50
+    value: CONSIGNMENT_OUT
     description: 
   
   - label: 保税仓
-    value: 60
+    value: BONDED
     description: 
   

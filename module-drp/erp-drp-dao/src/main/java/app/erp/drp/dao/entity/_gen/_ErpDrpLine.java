@@ -45,7 +45,7 @@ public class _ErpDrpLine extends DynamicOrmEntity{
     public static final String PROP_NAME_sourceWarehouseId = "sourceWarehouseId";
     public static final int PROP_ID_sourceWarehouseId = 6;
     
-    /* 补货类型: REPLENISHMENT_TYPE INTEGER */
+    /* 补货类型: REPLENISHMENT_TYPE VARCHAR */
     public static final String PROP_NAME_replenishmentType = "replenishmentType";
     public static final int PROP_ID_replenishmentType = 7;
     
@@ -89,7 +89,7 @@ public class _ErpDrpLine extends DynamicOrmEntity{
     public static final String PROP_NAME_orderBillCode = "orderBillCode";
     public static final int PROP_ID_orderBillCode = 17;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 18;
     
@@ -252,7 +252,7 @@ public class _ErpDrpLine extends DynamicOrmEntity{
     private java.lang.Long _sourceWarehouseId;
     
     /* 补货类型: REPLENISHMENT_TYPE */
-    private java.lang.Integer _replenishmentType;
+    private java.lang.String _replenishmentType;
     
     /* 当前库存: CURRENT_STOCK */
     private java.math.BigDecimal _currentStock;
@@ -285,7 +285,7 @@ public class _ErpDrpLine extends DynamicOrmEntity{
     private java.lang.String _orderBillCode;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 业务组织: ORG_ID */
     private java.lang.Long _orgId;
@@ -535,9 +535,9 @@ public class _ErpDrpLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_replenishmentType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_replenishmentType));
                }
                setReplenishmentType(typedValue);
@@ -645,9 +645,9 @@ public class _ErpDrpLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -787,7 +787,7 @@ public class _ErpDrpLine extends DynamicOrmEntity{
         
             case PROP_ID_replenishmentType:{
                onInitProp(propId);
-               this._replenishmentType = (java.lang.Integer)value;
+               this._replenishmentType = (java.lang.String)value;
                
                break;
             }
@@ -864,7 +864,7 @@ public class _ErpDrpLine extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -1048,7 +1048,7 @@ public class _ErpDrpLine extends DynamicOrmEntity{
     /**
      * 补货类型: REPLENISHMENT_TYPE
      */
-    public final java.lang.Integer getReplenishmentType(){
+    public final java.lang.String getReplenishmentType(){
          onPropGet(PROP_ID_replenishmentType);
          return _replenishmentType;
     }
@@ -1056,7 +1056,7 @@ public class _ErpDrpLine extends DynamicOrmEntity{
     /**
      * 补货类型: REPLENISHMENT_TYPE
      */
-    public final void setReplenishmentType(java.lang.Integer value){
+    public final void setReplenishmentType(java.lang.String value){
         if(onPropSet(PROP_ID_replenishmentType,value)){
             this._replenishmentType = value;
             internalClearRefs(PROP_ID_replenishmentType);
@@ -1257,7 +1257,7 @@ public class _ErpDrpLine extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -1265,7 +1265,7 @@ public class _ErpDrpLine extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

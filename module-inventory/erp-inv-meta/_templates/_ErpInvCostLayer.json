@@ -5,7 +5,7 @@
   "skuId": 0,
   "warehouseId": 0,
   "batchNo": "",
-  "costMethod": 0,
+  "costMethod": "",
   "costMethod_label": "",
   "incomingQuantity": 0.0,
   "remainingQuantity": 0.0,

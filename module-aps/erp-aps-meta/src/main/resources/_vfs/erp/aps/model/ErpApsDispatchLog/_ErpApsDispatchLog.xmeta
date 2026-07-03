@@ -38,7 +38,7 @@
         </prop>
         <prop name="dispatchType" displayName="派工类型" propId="5" i18n-en:displayName="Dispatch Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-aps/dispatch-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-aps/dispatch-type"/>
         </prop>
         <prop name="previousStatus" displayName="派工前状态" propId="6" i18n-en:displayName="Previous Status"
               queryable="true" sortable="true" insertable="true" updatable="true">

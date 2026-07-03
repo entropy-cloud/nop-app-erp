@@ -33,7 +33,7 @@
         </prop>
         <prop name="contractType" displayName="合同类型" propId="4" i18n-en:displayName="Contract Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-hr/contract-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-hr/contract-type"/>
         </prop>
         <prop name="signDate" displayName="签订日期" propId="5" i18n-en:displayName="Sign Date" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -81,7 +81,7 @@
         </prop>
         <prop name="status" displayName="合同状态" propId="16" i18n-en:displayName="Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-hr/contract-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-hr/contract-status"/>
         </prop>
         <prop name="attachmentFileId" displayName="合同文件" propId="17" i18n-en:displayName="Attachment" queryable="true"
               sortable="true" insertable="true" updatable="true">

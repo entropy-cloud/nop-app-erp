@@ -706,135 +706,135 @@ dict:
     erp-hr/plan-item-status: Plan Item Status
 dict.option.label:
   erp-hr/employment-status:
-    '10': Active
-    '20': Probation
-    '30': Resigned
-    '40': Terminated
-    '50': Retired
+    ACTIVE: Active
+    PROBATION: Probation
+    RESIGNED: Resigned
+    TERMINATED: Terminated
+    RETIRED: Retired
   erp-hr/employee-type:
-    '10': Full Time
-    '20': Part Time
-    '30': Contractor
-    '40': Intern
+    FULL_TIME: Full Time
+    PART_TIME: Part Time
+    CONTRACTOR: Contractor
+    INTERN: Intern
   erp-hr/gender:
-    '10': Male
-    '20': Female
+    MALE: Male
+    FEMALE: Female
   erp-hr/marital-status:
-    '10': Single
-    '20': Married
-    '30': Divorced
+    SINGLE: Single
+    MARRIED: Married
+    DIVORCED: Divorced
   erp-hr/contract-type:
-    '10': Fixed Term
-    '20': Open Ended
-    '30': Project
+    FIXED_TERM: Fixed Term
+    OPEN_ENDED: Open Ended
+    PROJECT: Project
   erp-hr/contract-status:
-    '10': Active
-    '20': Expired
-    '30': Terminated
-    '40': Suspended
+    ACTIVE: Active
+    EXPIRED: Expired
+    TERMINATED: Terminated
+    SUSPENDED: Suspended
   erp-hr/leave-type:
-    '10': Annual Leave
-    '20': Sick Leave
-    '30': Personal Leave
-    '40': Marriage Leave
-    '50': Maternity Leave
-    '60': Funeral Leave
-    '70': Compensatory Leave
+    ANNUAL: Annual Leave
+    SICK: Sick Leave
+    PERSONAL: Personal Leave
+    MARRIAGE: Marriage Leave
+    MATERNITY: Maternity Leave
+    FUNERAL: Funeral Leave
+    COMPENSATORY: Compensatory Leave
   erp-hr/leave-status:
-    '10': Draft
-    '20': Submitted
-    '30': Approved
-    '40': Rejected
-    '50': Cancelled
+    DRAFT: Draft
+    SUBMITTED: Submitted
+    APPROVED: Approved
+    REJECTED: Rejected
+    CANCELLED: Cancelled
   erp-hr/timesheet-status:
-    '10': Draft
-    '20': Submitted
-    '30': Approved
-    '40': Rejected
+    DRAFT: Draft
+    SUBMITTED: Submitted
+    APPROVED: Approved
+    REJECTED: Rejected
   erp-hr/recruitment-status:
-    '10': Open
-    '20': Screening
-    '30': Interviewing
-    '40': Offered
-    '50': Hired
-    '60': Rejected
-    '70': Closed
+    OPEN: Open
+    SCREENING: Screening
+    INTERVIEW: Interviewing
+    OFFERED: Offered
+    HIRED: Hired
+    REJECTED: Rejected
+    CLOSED: Closed
   erp-hr/salary-payment-status:
-    '10': Pending
-    '20': Paid
-    '30': Void
+    PENDING: Pending
+    PAID: Paid
+    VOID: Void
   erp-hr/attendance-source:
-    '10': Card
-    '20': Biometric
-    '30': Mobile
+    CARD: Card
+    BIOMETRIC: Biometric
+    MOBILE: Mobile
   erp-hr/recruitment-source:
-    '10': Recruitment Website
-    '20': Agency
-    '30': Referral
-    '40': Campus
+    RECRUITMENT_WEBSITE: Recruitment Website
+    AGENCY: Agency
+    REFERRAL: Referral
+    CAMPUS: Campus
   erp-hr/simulation-status:
-    '10': Draft
-    '20': In Review
-    '30': Approved
-    '40': Rejected
-    '50': Converted
+    DRAFT: Draft
+    IN_REVIEW: In Review
+    APPROVED: Approved
+    REJECTED: Rejected
+    CONVERTED: Converted
   erp-hr/shift-type:
-    '10': Fixed
-    '20': Rotating
-    '30': Flexible
+    FIXED: Fixed
+    ROTATING: Rotating
+    FLEXIBLE: Flexible
   erp-hr/swap-status:
-    '10': Pending
-    '20': Approved
-    '30': Rejected
-    '40': Cancelled
+    PENDING: Pending
+    APPROVED: Approved
+    REJECTED: Rejected
+    CANCELLED: Cancelled
   erp-hr/survey-type:
-    '10': Annual Engagement
-    '20': Pulse Survey
-    '30': eNPS Survey
-    '40': Ad-hoc Survey
+    ANNUAL_ENGAGEMENT: Annual Engagement
+    PULSE: Pulse Survey
+    ENPS: eNPS Survey
+    ADHOC: Ad-hoc Survey
   erp-hr/survey-status:
-    '10': Draft
-    '20': Open
-    '30': Closed
-    '40': Archived
+    DRAFT: Draft
+    OPEN: Open
+    CLOSED: Closed
+    ARCHIVED: Archived
   erp-hr/question-type:
-    '10': Rating
-    '20': Single Choice
-    '30': Multi Choice
-    '40': Open Text
-    '50': eNPS
+    RATING: Rating
+    SINGLE_CHOICE: Single Choice
+    MULTI_CHOICE: Multi Choice
+    OPEN_TEXT: Open Text
+    ENPS: eNPS
   erp-hr/driver-category:
-    '10': Growth
-    '20': Recognition
-    '30': Management
-    '40': Wellbeing
-    '50': Alignment
+    GROWTH: Growth
+    RECOGNITION: Recognition
+    MANAGEMENT: Management
+    WELLBEING: Wellbeing
+    ALIGNMENT: Alignment
   erp-hr/competency-category:
-    '10': Skill
-    '20': Behavior
-    '30': Knowledge
+    SKILL: Skill
+    BEHAVIOR: Behavior
+    KNOWLEDGE: Knowledge
   erp-hr/assessment-type:
-    '10': Self
-    '20': Manager
-    '30': Peer
-    '40': Subordinate
-    '50': 360 Assessment
+    SELF: Self
+    MANAGER: Manager
+    PEER: Peer
+    SUBORDINATE: Subordinate
+    '360': 360 Assessment
   erp-hr/assessment-status:
-    '10': Draft
-    '20': Submitted
-    '30': Completed
+    DRAFT: Draft
+    SUBMITTED: Submitted
+    COMPLETED: Completed
   erp-hr/gap-severity:
-    '10': None
-    '20': Minor
-    '30': Moderate
-    '40': Critical
+    NONE: None
+    MINOR: Minor
+    MODERATE: Moderate
+    CRITICAL: Critical
   erp-hr/devplan-status:
-    '10': Draft
-    '20': In Progress
-    '30': Completed
-    '40': Cancelled
+    DRAFT: Draft
+    IN_PROGRESS: In Progress
+    COMPLETED: Completed
+    CANCELLED: Cancelled
   erp-hr/plan-item-status:
-    '10': Not Started
-    '20': In Progress
-    '30': Achieved
-    '40': Overdue
+    NOT_STARTED: Not Started
+    IN_PROGRESS: In Progress
+    ACHIEVED: Achieved
+    OVERDUE: Overdue

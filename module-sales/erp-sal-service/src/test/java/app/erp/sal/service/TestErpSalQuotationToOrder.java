@@ -358,7 +358,7 @@ public class TestErpSalQuotationToOrder extends JunitAutoTestCase {
         partner.setId(id);
         partner.setCode("CUS-" + id);
         partner.setName("客户" + id);
-        partner.setPartnerType(10);
+        partner.setPartnerType("CUSTOMER");
         partner.setStatus(ErpSalConstants.PARTNER_STATUS_ACTIVE);
         partner.setCreditLimit(creditLimit);
         dao.saveEntity(partner);

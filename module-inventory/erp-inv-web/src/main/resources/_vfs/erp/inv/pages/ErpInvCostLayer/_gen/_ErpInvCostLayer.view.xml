@@ -37,7 +37,7 @@
                 <col id="batchNo" sortable="true"/>
 
                 <!--计价方法-->
-                <col id="costMethod" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="costMethod" mandatory="true" sortable="true"/>
 
                 <!--入库数量-->
                 <col id="incomingQuantity" mandatory="true" ui:number="true" sortable="true"/>

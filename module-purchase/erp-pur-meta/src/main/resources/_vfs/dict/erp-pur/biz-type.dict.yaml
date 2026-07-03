@@ -1,39 +1,39 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 采购单据类型
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 请购单
-    value: 10
+    value: REQUISITION
     description: 
   
   - label: 询价单
-    value: 20
+    value: RFQ
     description: 
   
   - label: 报价单
-    value: 30
+    value: QUOTATION
     description: 
   
   - label: 采购订单
-    value: 40
+    value: ORDER
     description: 
   
   - label: 采购入库
-    value: 50
+    value: RECEIVE
     description: 
   
   - label: 采购发票
-    value: 60
+    value: INVOICE
     description: 
   
   - label: 付款单
-    value: 70
+    value: PAYMENT
     description: 
   
   - label: 采购退货
-    value: 80
+    value: RETURN
     description: 
   

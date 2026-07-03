@@ -40,7 +40,7 @@
                 <col id="isCurrent" sortable="true"/>
 
                 <!--版本状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--批准人-->
                 <col id="approvedBy" sortable="true"/>

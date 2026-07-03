@@ -55,16 +55,16 @@
         }
 
 
-        private Integer _inspectionType;
+        private String _inspectionType;
 
     
         @PropMeta(propId=4)
     
-        public Integer getInspectionType(){
+        public String getInspectionType(){
             return _inspectionType;
         }
 
-        public void setInspectionType(Integer value){
+        public void setInspectionType(String value){
             this._inspectionType = value;
         }
 

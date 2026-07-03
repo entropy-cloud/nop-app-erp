@@ -37,7 +37,7 @@ public class _ErpHrCompetency extends DynamicOrmEntity{
     public static final String PROP_NAME_description = "description";
     public static final int PROP_ID_description = 4;
     
-    /* 分类: CATEGORY INTEGER */
+    /* 分类: CATEGORY VARCHAR */
     public static final String PROP_NAME_category = "category";
     public static final int PROP_ID_category = 5;
     
@@ -170,7 +170,7 @@ public class _ErpHrCompetency extends DynamicOrmEntity{
     private java.lang.String _description;
     
     /* 分类: CATEGORY */
-    private java.lang.Integer _category;
+    private java.lang.String _category;
     
     /* 能力组: COMPETENCY_GROUP */
     private java.lang.String _competencyGroup;
@@ -379,9 +379,9 @@ public class _ErpHrCompetency extends DynamicOrmEntity{
             }
         
             case PROP_ID_category:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_category));
                }
                setCategory(typedValue);
@@ -537,7 +537,7 @@ public class _ErpHrCompetency extends DynamicOrmEntity{
         
             case PROP_ID_category:{
                onInitProp(propId);
-               this._category = (java.lang.Integer)value;
+               this._category = (java.lang.String)value;
                
                break;
             }
@@ -704,7 +704,7 @@ public class _ErpHrCompetency extends DynamicOrmEntity{
     /**
      * 分类: CATEGORY
      */
-    public final java.lang.Integer getCategory(){
+    public final java.lang.String getCategory(){
          onPropGet(PROP_ID_category);
          return _category;
     }
@@ -712,7 +712,7 @@ public class _ErpHrCompetency extends DynamicOrmEntity{
     /**
      * 分类: CATEGORY
      */
-    public final void setCategory(java.lang.Integer value){
+    public final void setCategory(java.lang.String value){
         if(onPropSet(PROP_ID_category,value)){
             this._category = value;
             internalClearRefs(PROP_ID_category);

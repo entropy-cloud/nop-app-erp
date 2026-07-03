@@ -49,7 +49,7 @@
                 <col id="residualValue" ui:number="true" sortable="true"/>
 
                 <!--折旧方法-->
-                <col id="depreciationMethod" ui:number="true" sortable="true"/>
+                <col id="depreciationMethod" sortable="true"/>
 
                 <!--折旧率-->
                 <col id="depreciationRate" ui:number="true" sortable="true"/>
@@ -73,7 +73,7 @@
                 <col id="brandModel" sortable="true"/>
 
                 <!--资产状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>

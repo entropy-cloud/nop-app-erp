@@ -41,11 +41,11 @@
         </prop>
         <prop name="method" displayName="计算方法" propId="6" i18n-en:displayName="Method" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-inv/drp-ss-method"/>
+            <schema type="java.lang.String" precision="20" dict="erp-inv/drp-ss-method"/>
         </prop>
         <prop name="serviceLevel" displayName="服务水平" propId="7" i18n-en:displayName="Service Level" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-inv/drp-service-level"/>
+            <schema type="java.lang.String" precision="20" dict="erp-inv/drp-service-level"/>
         </prop>
         <prop name="historyMonths" displayName="分析月数" propId="8" i18n-en:displayName="History Months" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="6">

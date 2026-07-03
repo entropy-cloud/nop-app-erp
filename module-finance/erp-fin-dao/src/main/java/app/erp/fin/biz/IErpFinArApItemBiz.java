@@ -23,7 +23,7 @@ public interface IErpFinArApItemBiz extends ICrudBiz<ErpFinArApItem>{
      */
     @BizQuery
     List<ErpFinArApItem> findOpenItemsByPartner(@Name("partnerId") Long partnerId,
-                                                @Name("direction") Integer direction,
+                                                @Name("direction") String direction,
                                                 IServiceContext context);
 
     /**
@@ -35,7 +35,7 @@ public interface IErpFinArApItemBiz extends ICrudBiz<ErpFinArApItem>{
      * @param asOfDate   账龄计算截止日（通常为今天）；为 null 时取当天
      */
     @BizQuery
-    List<ArApAgingRow> aging(@Name("direction") Integer direction,
+    List<ArApAgingRow> aging(@Name("direction") String direction,
                              @Name("asOfDate") LocalDate asOfDate,
                              IServiceContext context);
 }

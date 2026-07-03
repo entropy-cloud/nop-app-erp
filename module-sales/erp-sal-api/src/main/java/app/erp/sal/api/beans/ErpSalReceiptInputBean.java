@@ -209,44 +209,44 @@
         }
 
 
-        private Integer _docStatus;
+        private String _docStatus;
 
     
         @PropMeta(propId=15)
     
-        public Integer getDocStatus(){
+        public String getDocStatus(){
             return _docStatus;
         }
 
-        public void setDocStatus(Integer value){
+        public void setDocStatus(String value){
             this._docStatus = value;
         }
 
 
-        private Integer _approveStatus;
+        private String _approveStatus;
 
     
         @PropMeta(propId=16)
     
-        public Integer getApproveStatus(){
+        public String getApproveStatus(){
             return _approveStatus;
         }
 
-        public void setApproveStatus(Integer value){
+        public void setApproveStatus(String value){
             this._approveStatus = value;
         }
 
 
-        private Integer _writtenOffStatus;
+        private String _writtenOffStatus;
 
     
         @PropMeta(propId=17)
     
-        public Integer getWrittenOffStatus(){
+        public String getWrittenOffStatus(){
             return _writtenOffStatus;
         }
 
-        public void setWrittenOffStatus(Integer value){
+        public void setWrittenOffStatus(String value){
             this._writtenOffStatus = value;
         }
 

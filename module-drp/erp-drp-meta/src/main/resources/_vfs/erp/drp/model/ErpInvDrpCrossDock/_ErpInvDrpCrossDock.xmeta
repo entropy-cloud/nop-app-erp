@@ -77,7 +77,7 @@
         </prop>
         <prop name="status" displayName="状态" propId="15" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-inv/drp-xdock-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-inv/drp-xdock-status"/>
         </prop>
         <prop name="matchedAt" displayName="匹配时间" propId="16" i18n-en:displayName="Matched At" queryable="true"
               sortable="true" insertable="true" updatable="true">

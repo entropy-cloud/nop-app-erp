@@ -21,6 +21,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.orm.IOrmEntitySet;
 import jakarta.annotation.Nullable;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -111,10 +112,10 @@ public class RecallTargetLocator {
     }
 
     private boolean isSalesOutbound(ErpInvStockMove move) {
-        Integer moveType = move.getMoveType();
-        Integer docStatus = move.getDocStatus();
-        return moveType != null && moveType == ErpQaConstants.INV_OPERATION_TYPE_OUTGOING
-                && docStatus != null && docStatus == ErpQaConstants.INV_MOVE_STATUS_DONE
+        String moveType = move.getMoveType();
+        String docStatus = move.getDocStatus();
+        return moveType != null && Objects.equals(moveType, ErpQaConstants.INV_OPERATION_TYPE_OUTGOING)
+                && docStatus != null && Objects.equals(docStatus, ErpQaConstants.INV_MOVE_STATUS_DONE)
                 && ErpQaConstants.RELATED_BILL_TYPE_SAL_DELIVERY_INV.equals(move.getRelatedBillType())
                 && move.getRelatedBillCode() != null;
     }

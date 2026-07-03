@@ -61,7 +61,7 @@
                 <col id="dockSlotTime" sortable="true"/>
 
                 <!--状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--匹配时间-->
                 <col id="matchedAt" sortable="true"/>

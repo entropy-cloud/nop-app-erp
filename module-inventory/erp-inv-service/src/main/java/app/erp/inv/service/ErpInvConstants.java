@@ -18,30 +18,30 @@ public interface ErpInvConstants {
     String CONFIG_COSTING_ENABLED = "erp-inv.costing-enabled";
     // 物料/账套均未配 costMethod 时的回退默认值（dict erp-md/cost-method 的 int 码）
     String CONFIG_DEFAULT_COST_METHOD = "erp-inv.default-cost-method";
-    int DEFAULT_COST_METHOD = 10; // COST_METHOD_MOVING_AVERAGE
+    String DEFAULT_COST_METHOD = "MOVING_AVERAGE"; // COST_METHOD_MOVING_AVERAGE
 
     // 追溯链 linkType 标识（TraceLink）
     String TRACE_LINK_FORWARD = "FORWARD";
     String TRACE_LINK_RETURN = "RETURN";
 
-    int DOC_STATUS_DRAFT = 10;
-    int DOC_STATUS_CONFIRMED = 20;
-    int DOC_STATUS_DONE = 30;
-    int DOC_STATUS_CANCELLED = 40;
+    String DOC_STATUS_DRAFT = "DRAFT";
+    String DOC_STATUS_CONFIRMED = "CONFIRMED";
+    String DOC_STATUS_DONE = "DONE";
+    String DOC_STATUS_CANCELLED = "CANCELLED";
 
-    int MOVE_TYPE_INCOMING = 10;
-    int MOVE_TYPE_OUTGOING = 20;
-    int MOVE_TYPE_INTERNAL_TRANSFER = 30;
-    int MOVE_TYPE_MANUFACTURING = 40;
+    String MOVE_TYPE_INCOMING = "INCOMING";
+    String MOVE_TYPE_OUTGOING = "OUTGOING";
+    String MOVE_TYPE_INTERNAL_TRANSFER = "INTERNAL";
+    String MOVE_TYPE_MANUFACTURING = "MANUFACTURE";
 
     // 存货计价方法码值（字典 erp-md/cost-method）。本计划覆盖 10/30；20/40/50/60/70 为后续 successor。
-    int COST_METHOD_MOVING_AVERAGE = 10;
-    int COST_METHOD_MONTHLY_WEIGHTED_AVERAGE = 20;
-    int COST_METHOD_FIFO = 30;
-    int COST_METHOD_LIFO = 40;
-    int COST_METHOD_STANDARD = 50;
-    int COST_METHOD_INDIVIDUAL = 60;
-    int COST_METHOD_BATCH = 70;
+    String COST_METHOD_MOVING_AVERAGE = "MOVING_AVERAGE";
+    String COST_METHOD_MONTHLY_WEIGHTED_AVERAGE = "WEIGHTED_AVERAGE";
+    String COST_METHOD_FIFO = "FIFO";
+    String COST_METHOD_LIFO = "LIFO";
+    String COST_METHOD_STANDARD = "STANDARD";
+    String COST_METHOD_INDIVIDUAL = "SPECIFIC";
+    String COST_METHOD_BATCH = "BATCH";
 
     // 业务联动源单类型（自由字符串）。采购退货出库移动 / 销售退货入库移动的存货估值过账分别由 purchase/sales 域独占
     // （PURCHASE_RETURN/SALES_RETURN），故 inventory 域对此类联动移动跳过默认估值过账，避免与之双计存货。

@@ -45,7 +45,7 @@
         </prop>
         <prop name="costMethod" displayName="计价方法" propId="7" i18n-en:displayName="Cost Method" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-md/cost-method"/>
+            <schema type="java.lang.String" precision="20" dict="erp-md/cost-method"/>
         </prop>
         <prop name="incomingQuantity" displayName="入库数量" propId="8" i18n-en:displayName="Incoming Quantity"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">

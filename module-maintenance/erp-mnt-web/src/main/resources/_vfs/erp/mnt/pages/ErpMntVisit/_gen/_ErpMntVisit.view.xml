@@ -34,7 +34,7 @@
                 <col id="visitDate" mandatory="true" sortable="true"/>
 
                 <!--状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--指派人-->
                 <col id="assignedTo" ui:number="true" sortable="true"/>
@@ -52,13 +52,13 @@
                 <col id="endTime" sortable="true"/>
 
                 <!--总分钟数-->
-                <col id="totalMinutes" sortable="true"/>
+                <col id="totalMinutes" ui:number="true" sortable="true"/>
 
                 <!--维护类型-->
-                <col id="visitType" ui:number="true" sortable="true"/>
+                <col id="visitType" sortable="true"/>
 
                 <!--执行结果-->
-                <col id="result" ui:number="true" sortable="true"/>
+                <col id="result" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

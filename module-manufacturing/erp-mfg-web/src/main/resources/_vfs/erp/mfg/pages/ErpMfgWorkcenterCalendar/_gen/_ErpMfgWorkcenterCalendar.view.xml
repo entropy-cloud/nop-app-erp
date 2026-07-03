@@ -31,10 +31,10 @@
                 <col id="calendarName" mandatory="true" sortable="true"/>
 
                 <!--班次类型-->
-                <col id="shiftType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="shiftType" mandatory="true" sortable="true"/>
 
                 <!--工作日模式-->
-                <col id="workDatePattern" ui:number="true" sortable="true"/>
+                <col id="workDatePattern" sortable="true"/>
 
                 <!--班次开始时间-->
                 <col id="startTime" sortable="true"/>

@@ -28,7 +28,7 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--默认优先级-->
-                <col id="defaultPriority" ui:number="true" sortable="true"/>
+                <col id="defaultPriority" sortable="true"/>
 
                 <!--默认 SLA 策略-->
                 <col id="defaultSlaPolicyId" ui:number="true" sortable="true"/>

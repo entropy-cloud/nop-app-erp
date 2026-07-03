@@ -84,16 +84,16 @@
         }
 
 
-        private Integer _invoiceType;
+        private String _invoiceType;
 
     
         @PropMeta(propId=6)
     
-        public Integer getInvoiceType(){
+        public String getInvoiceType(){
             return _invoiceType;
         }
 
-        public void setInvoiceType(Integer value){
+        public void setInvoiceType(String value){
             this._invoiceType = value;
         }
 
@@ -236,16 +236,16 @@
         }
 
 
-        private Integer _docStatus;
+        private String _docStatus;
 
     
         @PropMeta(propId=16)
     
-        public Integer getDocStatus(){
+        public String getDocStatus(){
             return _docStatus;
         }
 
-        public void setDocStatus(Integer value){
+        public void setDocStatus(String value){
             this._docStatus = value;
         }
 
@@ -262,16 +262,16 @@
         }
 
 
-        private Integer _approveStatus;
+        private String _approveStatus;
 
     
         @PropMeta(propId=17)
     
-        public Integer getApproveStatus(){
+        public String getApproveStatus(){
             return _approveStatus;
         }
 
-        public void setApproveStatus(Integer value){
+        public void setApproveStatus(String value){
             this._approveStatus = value;
         }
 
@@ -288,16 +288,16 @@
         }
 
 
-        private Integer _paidStatus;
+        private String _paidStatus;
 
     
         @PropMeta(propId=18)
     
-        public Integer getPaidStatus(){
+        public String getPaidStatus(){
             return _paidStatus;
         }
 
-        public void setPaidStatus(Integer value){
+        public void setPaidStatus(String value){
             this._paidStatus = value;
         }
 

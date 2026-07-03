@@ -37,7 +37,7 @@
         </prop>
         <prop name="direction" displayName="应收应付" propId="5" i18n-en:displayName="Direction" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-fin/ar-ap-direction"/>
+            <schema type="java.lang.String" precision="20" dict="erp-fin/ar-ap-direction"/>
         </prop>
         <prop name="partnerId" displayName="往来单位" propId="6" i18n-en:displayName="Partner" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="partner">
@@ -96,7 +96,7 @@
         </prop>
         <prop name="status" displayName="状态" propId="19" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-fin/ar-ap-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-fin/ar-ap-status"/>
         </prop>
         <prop name="periodId" displayName="所属期间" propId="20" i18n-en:displayName="Period" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="period">

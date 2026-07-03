@@ -28,7 +28,7 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--成本费率-->
-                <col id="costRate" sortable="true"/>
+                <col id="costRate" ui:number="true" sortable="true"/>
 
                 <!--科目-->
                 <col id="subjectId" ui:number="true" sortable="true"/>

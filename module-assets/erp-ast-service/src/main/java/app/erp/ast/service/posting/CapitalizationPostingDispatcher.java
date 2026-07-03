@@ -14,6 +14,7 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -94,8 +95,8 @@ public class CapitalizationPostingDispatcher {
         billData.put(ErpAstConstants.BILL_DATA_CATEGORY_ID, cap.getCategoryId());
         billData.put(ErpAstConstants.BILL_DATA_FIXED_ASSET_SUBJECT_CODE,
                 resolveSubjectCode(category != null ? category.getSubjectId() : null, "1601"));
-        int sourceType = cap.getSourceType() == null ? 0 : cap.getSourceType();
-        String defaultCredit = sourceType == ErpAstConstants.SOURCE_TYPE_CIP ? "1603" : "1002";
+        String sourceType = cap.getSourceType();
+        String defaultCredit = Objects.equals(sourceType, ErpAstConstants.SOURCE_TYPE_CIP) ? "1603" : "1002";
         billData.put(ErpAstConstants.BILL_DATA_CREDIT_SUBJECT_CODE,
                 resolveSubjectCode(category != null ? category.getCipSubjectId() : null, defaultCredit));
         event.setBillData(billData);

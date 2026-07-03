@@ -43,12 +43,12 @@ public class TestErpCtContractCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-CT");
         headData.put("contractName", "冒烟合同");
-        headData.put("contractType", 10);
-        headData.put("contractDirection", 10);
+        headData.put("contractType", "PURCHASE");
+        headData.put("contractDirection", "INBOUND");
         headData.put("partnerId", pre.get("partner"));
         headData.put("startDate", "2026-07-01");
         headData.put("endDate", "2027-07-01");
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> result = executeRpc(GraphQLOperationType.mutation, "ErpCtContract__save",
                 ApiRequest.build(Map.of("data", headData)));
 
@@ -63,12 +63,12 @@ public class TestErpCtContractCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-CT");
         headData.put("contractName", "冒烟合同");
-        headData.put("contractType", 10);
-        headData.put("contractDirection", 10);
+        headData.put("contractType", "PURCHASE");
+        headData.put("contractDirection", "INBOUND");
         headData.put("partnerId", pre.get("partner"));
         headData.put("startDate", "2026-07-01");
         headData.put("endDate", "2027-07-01");
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpCtContract__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -86,12 +86,12 @@ public class TestErpCtContractCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-CT");
         headData.put("contractName", "冒烟合同");
-        headData.put("contractType", 10);
-        headData.put("contractDirection", 10);
+        headData.put("contractType", "PURCHASE");
+        headData.put("contractDirection", "INBOUND");
         headData.put("partnerId", pre.get("partner"));
         headData.put("startDate", "2026-07-01");
         headData.put("endDate", "2027-07-01");
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpCtContract__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -113,12 +113,12 @@ public class TestErpCtContractCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-CT");
         headData.put("contractName", "冒烟合同");
-        headData.put("contractType", 10);
-        headData.put("contractDirection", 10);
+        headData.put("contractType", "PURCHASE");
+        headData.put("contractDirection", "INBOUND");
         headData.put("partnerId", pre.get("partner"));
         headData.put("startDate", "2026-07-01");
         headData.put("endDate", "2027-07-01");
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpCtContract__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -141,12 +141,12 @@ public class TestErpCtContractCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-CT");
         headData.put("contractName", "冒烟合同");
-        headData.put("contractType", 10);
-        headData.put("contractDirection", 10);
+        headData.put("contractType", "PURCHASE");
+        headData.put("contractDirection", "INBOUND");
         headData.put("partnerId", pre.get("partner"));
         headData.put("startDate", "2026-07-01");
         headData.put("endDate", "2027-07-01");
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> head = executeRpc(GraphQLOperationType.mutation, "ErpCtContract__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_saveHead_response.json5", head);
@@ -175,8 +175,8 @@ public class TestErpCtContractCrudSmoke extends JunitAutoTestCase {
 Map<String, Object> d_partner = new LinkedHashMap<>();
         d_partner.put("code", "SMOKE-PARTNER");
         d_partner.put("name", "冒烟客户");
-        d_partner.put("partnerType", 10);
-        d_partner.put("status", 10);
+        d_partner.put("partnerType", "CUSTOMER");
+        d_partner.put("status", "ACTIVE");
         ids.put("partner", String.valueOf(((Map<?, ?>) executeRpc(GraphQLOperationType.mutation, "ErpMdPartner__save", ApiRequest.build(Map.of("data", d_partner))).getData()).get("id")));
         return ids;
     }

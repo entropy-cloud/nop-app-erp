@@ -1,15 +1,15 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 处置类型
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 报废
-    value: 10
+    value: SCRAPPED
     description: 
   
   - label: 出售
-    value: 20
+    value: SOLD
     description: 
   

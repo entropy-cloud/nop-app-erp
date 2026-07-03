@@ -199,7 +199,7 @@ public class TestErpMfgBomExplosion extends JunitAutoTestCase {
                 .orElseThrow(() -> new AssertionError("未找到物料 " + materialId));
     }
 
-    private Long seedBom(Long id, Long productId, int bomType, boolean isDefault, boolean isActive, BigDecimal qty) {
+    private Long seedBom(Long id, Long productId, String bomType, boolean isDefault, boolean isActive, BigDecimal qty) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBom> dao = daoProvider.daoFor(ErpMfgBom.class);
             ErpMfgBom bom = new ErpMfgBom();

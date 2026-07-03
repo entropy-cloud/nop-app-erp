@@ -10,7 +10,7 @@
   "reservedQuantity": 0.0,
   "lockedQuantity": 0.0,
   "availableQuantity": 0.0,
-  "costMethod": 0,
+  "costMethod": "",
   "costMethod_label": "",
   "avgCost": 0.0,
   "totalCost": 0.0,

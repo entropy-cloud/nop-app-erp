@@ -21,6 +21,7 @@ import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -60,27 +61,27 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
     @SingleSession
     public ErpPrjTimesheet submit(@Name("timesheetId") Long timesheetId, IServiceContext context) {
         ErpPrjTimesheet timesheet = requireTimesheet(timesheetId, context);
-        Integer status = timesheet.getStatus();
-        if (status != null && status == ErpPrjConstants.TIMESHEET_STATUS_SUBMITTED) {
+        String status = timesheet.getStatus();
+        if (status != null && Objects.equals(status, ErpPrjConstants.TIMESHEET_STATUS_SUBMITTED)) {
             return timesheet;
         }
-        if (status != null && status == ErpPrjConstants.TIMESHEET_STATUS_APPROVED) {
+        if (status != null && Objects.equals(status, ErpPrjConstants.TIMESHEET_STATUS_APPROVED)) {
             throw illegalTransition(timesheet, status, "DRAFT");
         }
-        if (status != null && status != ErpPrjConstants.TIMESHEET_STATUS_DRAFT) {
+        if (status != null && !Objects.equals(status, ErpPrjConstants.TIMESHEET_STATUS_DRAFT)) {
             throw illegalTransition(timesheet, status, "DRAFT");
         }
 
         validateProjectReferenceable(timesheet);
         validateTaskAcceptsTimesheet(timesheet);
 
-        BigDecimal hours = parseHours(timesheet.getHours());
+        BigDecimal hours = nz(timesheet.getHours());
         BigDecimal costRate = costRateResolver.resolve(timesheet, timesheet.getCode());
         BigDecimal costAmount = CostRateResolver.computeCostAmount(hours, costRate)
                 .setScale(4, RoundingMode.HALF_UP);
 
-        timesheet.setCostRate(toStorageDecimal(costRate));
-        timesheet.setCostAmount(toStorageDecimal(costAmount));
+        timesheet.setCostRate(costRate);
+        timesheet.setCostAmount(costAmount);
         timesheet.setStatus(ErpPrjConstants.TIMESHEET_STATUS_SUBMITTED);
         runBudgetCheckHook(timesheet, costAmount);
         dao().updateEntity(timesheet);
@@ -92,11 +93,11 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
     @SingleSession
     public ErpPrjTimesheet approve(@Name("timesheetId") Long timesheetId, IServiceContext context) {
         ErpPrjTimesheet timesheet = requireTimesheet(timesheetId, context);
-        Integer status = timesheet.getStatus();
-        if (status != null && status == ErpPrjConstants.TIMESHEET_STATUS_APPROVED) {
+        String status = timesheet.getStatus();
+        if (status != null && Objects.equals(status, ErpPrjConstants.TIMESHEET_STATUS_APPROVED)) {
             return timesheet;
         }
-        if (status == null || status != ErpPrjConstants.TIMESHEET_STATUS_SUBMITTED) {
+        if (status == null || !Objects.equals(status, ErpPrjConstants.TIMESHEET_STATUS_SUBMITTED)) {
             throw illegalTransition(timesheet, status, "SUBMITTED");
         }
 
@@ -123,8 +124,8 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
     @SingleSession
     public ErpPrjTimesheet reject(@Name("timesheetId") Long timesheetId, IServiceContext context) {
         ErpPrjTimesheet timesheet = requireTimesheet(timesheetId, context);
-        Integer status = timesheet.getStatus();
-        if (status == null || status != ErpPrjConstants.TIMESHEET_STATUS_SUBMITTED) {
+        String status = timesheet.getStatus();
+        if (status == null || !Objects.equals(status, ErpPrjConstants.TIMESHEET_STATUS_SUBMITTED)) {
             throw illegalTransition(timesheet, status, "SUBMITTED");
         }
         timesheet.setStatus(ErpPrjConstants.TIMESHEET_STATUS_DRAFT);
@@ -137,8 +138,8 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
     @SingleSession
     public ErpPrjTimesheet cancel(@Name("timesheetId") Long timesheetId, IServiceContext context) {
         ErpPrjTimesheet timesheet = requireTimesheet(timesheetId, context);
-        Integer status = timesheet.getStatus();
-        if (status != null && status == ErpPrjConstants.TIMESHEET_STATUS_APPROVED) {
+        String status = timesheet.getStatus();
+        if (status != null && Objects.equals(status, ErpPrjConstants.TIMESHEET_STATUS_APPROVED)) {
             if (Boolean.TRUE.equals(timesheet.getPosted())) {
                 postingDispatcher.reverse(timesheet);
                 timesheet = requireEntity(String.valueOf(timesheetId), null, context);
@@ -161,8 +162,8 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
                     .param(ErpPrjErrors.ARG_TIMESHEET_CODE, timesheet.getCode())
                     .param(ErpPrjErrors.ARG_PROJECT_ID, timesheet.getProjectId());
         }
-        Integer projectStatus = project.getStatus();
-        if (projectStatus == null || projectStatus != ErpPrjConstants.PROJECT_STATUS_OPEN) {
+        String projectStatus = project.getStatus();
+        if (projectStatus == null || !Objects.equals(projectStatus, ErpPrjConstants.PROJECT_STATUS_OPEN)) {
             throw new NopException(ErpPrjErrors.ERR_TIMESHEET_PROJECT_NOT_OPEN)
                     .param(ErpPrjErrors.ARG_TIMESHEET_CODE, timesheet.getCode())
                     .param(ErpPrjErrors.ARG_PROJECT_ID, timesheet.getProjectId());
@@ -179,10 +180,10 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
                     .param(ErpPrjErrors.ARG_TIMESHEET_CODE, timesheet.getCode())
                     .param(ErpPrjErrors.ARG_TASK_ID, timesheet.getTaskId());
         }
-        Integer taskStatus = task.getStatus();
+        String taskStatus = task.getStatus();
         if (taskStatus == null
-                || (taskStatus != ErpPrjConstants.TASK_STATUS_TODO
-                && taskStatus != ErpPrjConstants.TASK_STATUS_IN_PROGRESS)) {
+                || (!Objects.equals(taskStatus, ErpPrjConstants.TASK_STATUS_TODO)
+                && !Objects.equals(taskStatus, ErpPrjConstants.TASK_STATUS_IN_PROGRESS))) {
             throw new NopException(ErpPrjErrors.ERR_TIMESHEET_TASK_NOT_ALLOWED)
                     .param(ErpPrjErrors.ARG_TIMESHEET_CODE, timesheet.getCode())
                     .param(ErpPrjErrors.ARG_TASK_ID, timesheet.getTaskId());
@@ -215,22 +216,8 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
         return dao.getEntityById(taskId);
     }
 
-    private BigDecimal parseHours(String text) {
-        if (text == null || text.trim().isEmpty()) {
-            return BigDecimal.ZERO;
-        }
-        try {
-            return new BigDecimal(text.trim());
-        } catch (NumberFormatException e) {
-            return BigDecimal.ZERO;
-        }
-    }
-
-    private String toStorageDecimal(BigDecimal value) {
-        if (value == null) {
-            return null;
-        }
-        return value.toPlainString();
+    private BigDecimal nz(BigDecimal v) {
+        return v != null ? v : BigDecimal.ZERO;
     }
 
     private String currentUserId() {
@@ -242,7 +229,7 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
         }
     }
 
-    private NopException illegalTransition(ErpPrjTimesheet timesheet, Integer current, String expected) {
+    private NopException illegalTransition(ErpPrjTimesheet timesheet, String current, String expected) {
         return new NopException(ErpPrjErrors.ERR_TIMESHEET_ILLEGAL_STATUS_TRANSITION)
                 .param(ErpPrjErrors.ARG_TIMESHEET_CODE, timesheet.getCode())
                 .param(ErpPrjErrors.ARG_CURRENT_STATUS, current)

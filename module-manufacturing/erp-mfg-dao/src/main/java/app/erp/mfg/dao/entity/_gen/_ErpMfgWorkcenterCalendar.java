@@ -37,11 +37,11 @@ public class _ErpMfgWorkcenterCalendar extends DynamicOrmEntity{
     public static final String PROP_NAME_calendarName = "calendarName";
     public static final int PROP_ID_calendarName = 4;
     
-    /* 班次类型: SHIFT_TYPE INTEGER */
+    /* 班次类型: SHIFT_TYPE VARCHAR */
     public static final String PROP_NAME_shiftType = "shiftType";
     public static final int PROP_ID_shiftType = 5;
     
-    /* 工作日模式: WORK_DATE_PATTERN INTEGER */
+    /* 工作日模式: WORK_DATE_PATTERN VARCHAR */
     public static final String PROP_NAME_workDatePattern = "workDatePattern";
     public static final int PROP_ID_workDatePattern = 6;
     
@@ -181,10 +181,10 @@ public class _ErpMfgWorkcenterCalendar extends DynamicOrmEntity{
     private java.lang.String _calendarName;
     
     /* 班次类型: SHIFT_TYPE */
-    private java.lang.Integer _shiftType;
+    private java.lang.String _shiftType;
     
     /* 工作日模式: WORK_DATE_PATTERN */
-    private java.lang.Integer _workDatePattern;
+    private java.lang.String _workDatePattern;
     
     /* 班次开始时间: START_TIME */
     private java.lang.String _startTime;
@@ -402,9 +402,9 @@ public class _ErpMfgWorkcenterCalendar extends DynamicOrmEntity{
             }
         
             case PROP_ID_shiftType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_shiftType));
                }
                setShiftType(typedValue);
@@ -412,9 +412,9 @@ public class _ErpMfgWorkcenterCalendar extends DynamicOrmEntity{
             }
         
             case PROP_ID_workDatePattern:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_workDatePattern));
                }
                setWorkDatePattern(typedValue);
@@ -580,14 +580,14 @@ public class _ErpMfgWorkcenterCalendar extends DynamicOrmEntity{
         
             case PROP_ID_shiftType:{
                onInitProp(propId);
-               this._shiftType = (java.lang.Integer)value;
+               this._shiftType = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_workDatePattern:{
                onInitProp(propId);
-               this._workDatePattern = (java.lang.Integer)value;
+               this._workDatePattern = (java.lang.String)value;
                
                break;
             }
@@ -761,7 +761,7 @@ public class _ErpMfgWorkcenterCalendar extends DynamicOrmEntity{
     /**
      * 班次类型: SHIFT_TYPE
      */
-    public final java.lang.Integer getShiftType(){
+    public final java.lang.String getShiftType(){
          onPropGet(PROP_ID_shiftType);
          return _shiftType;
     }
@@ -769,7 +769,7 @@ public class _ErpMfgWorkcenterCalendar extends DynamicOrmEntity{
     /**
      * 班次类型: SHIFT_TYPE
      */
-    public final void setShiftType(java.lang.Integer value){
+    public final void setShiftType(java.lang.String value){
         if(onPropSet(PROP_ID_shiftType,value)){
             this._shiftType = value;
             internalClearRefs(PROP_ID_shiftType);
@@ -780,7 +780,7 @@ public class _ErpMfgWorkcenterCalendar extends DynamicOrmEntity{
     /**
      * 工作日模式: WORK_DATE_PATTERN
      */
-    public final java.lang.Integer getWorkDatePattern(){
+    public final java.lang.String getWorkDatePattern(){
          onPropGet(PROP_ID_workDatePattern);
          return _workDatePattern;
     }
@@ -788,7 +788,7 @@ public class _ErpMfgWorkcenterCalendar extends DynamicOrmEntity{
     /**
      * 工作日模式: WORK_DATE_PATTERN
      */
-    public final void setWorkDatePattern(java.lang.Integer value){
+    public final void setWorkDatePattern(java.lang.String value){
         if(onPropSet(PROP_ID_workDatePattern,value)){
             this._workDatePattern = value;
             internalClearRefs(PROP_ID_workDatePattern);

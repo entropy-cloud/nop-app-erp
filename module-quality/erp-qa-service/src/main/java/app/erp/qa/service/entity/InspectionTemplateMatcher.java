@@ -27,7 +27,7 @@ public final class InspectionTemplateMatcher {
     private InspectionTemplateMatcher() {
     }
 
-    public static TemplateMatchResult match(IDaoProvider daoProvider, Long materialId, Integer inspectionType) {
+    public static TemplateMatchResult match(IDaoProvider daoProvider, Long materialId, String inspectionType) {
         ErpQaInspectionTemplate template = findActiveByMaterialAndType(daoProvider, materialId, inspectionType);
         if (template == null) {
             Long defaultId = ErpQaConfigs.getDefaultInspectionTemplateId();
@@ -47,7 +47,7 @@ public final class InspectionTemplateMatcher {
     }
 
     private static ErpQaInspectionTemplate findActiveByMaterialAndType(IDaoProvider daoProvider,
-                                                                       Long materialId, Integer inspectionType) {
+                                                                       Long materialId, String inspectionType) {
         IEntityDao<ErpQaInspectionTemplate> dao = daoProvider.daoFor(ErpQaInspectionTemplate.class);
         QueryBean q = new QueryBean();
         if (materialId != null) {

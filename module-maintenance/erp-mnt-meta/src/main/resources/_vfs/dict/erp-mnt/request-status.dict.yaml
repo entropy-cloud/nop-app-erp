@@ -1,31 +1,31 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 维护请求状态
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 待受理
-    value: 10
+    value: OPEN
     description: 
   
   - label: 已受理
-    value: 20
+    value: ACCEPTED
     description: 
   
   - label: 维修中
-    value: 30
+    value: IN_PROGRESS
     description: 
   
   - label: 已完成
-    value: 40
+    value: COMPLETED
     description: 
   
   - label: 已拒绝
-    value: 50
+    value: REJECTED
     description: 
   
   - label: 已取消
-    value: 60
+    value: CANCELLED
     description: 
   

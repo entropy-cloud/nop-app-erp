@@ -29,7 +29,7 @@ public class _ErpQaAction extends DynamicOrmEntity{
     public static final String PROP_NAME_ncrId = "ncrId";
     public static final int PROP_ID_ncrId = 2;
     
-    /* 措施类型: ACTION_TYPE INTEGER */
+    /* 措施类型: ACTION_TYPE VARCHAR */
     public static final String PROP_NAME_actionType = "actionType";
     public static final int PROP_ID_actionType = 3;
     
@@ -45,7 +45,7 @@ public class _ErpQaAction extends DynamicOrmEntity{
     public static final String PROP_NAME_dueDate = "dueDate";
     public static final int PROP_ID_dueDate = 6;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 7;
     
@@ -172,7 +172,7 @@ public class _ErpQaAction extends DynamicOrmEntity{
     private java.lang.Long _ncrId;
     
     /* 措施类型: ACTION_TYPE */
-    private java.lang.Integer _actionType;
+    private java.lang.String _actionType;
     
     /* 措施描述: DESCRIPTION */
     private java.lang.String _description;
@@ -184,7 +184,7 @@ public class _ErpQaAction extends DynamicOrmEntity{
     private java.time.LocalDate _dueDate;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 完成人: COMPLETED_BY */
     private java.lang.Long _completedBy;
@@ -379,9 +379,9 @@ public class _ErpQaAction extends DynamicOrmEntity{
             }
         
             case PROP_ID_actionType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_actionType));
                }
                setActionType(typedValue);
@@ -419,9 +419,9 @@ public class _ErpQaAction extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -563,7 +563,7 @@ public class _ErpQaAction extends DynamicOrmEntity{
         
             case PROP_ID_actionType:{
                onInitProp(propId);
-               this._actionType = (java.lang.Integer)value;
+               this._actionType = (java.lang.String)value;
                
                break;
             }
@@ -591,7 +591,7 @@ public class _ErpQaAction extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -720,7 +720,7 @@ public class _ErpQaAction extends DynamicOrmEntity{
     /**
      * 措施类型: ACTION_TYPE
      */
-    public final java.lang.Integer getActionType(){
+    public final java.lang.String getActionType(){
          onPropGet(PROP_ID_actionType);
          return _actionType;
     }
@@ -728,7 +728,7 @@ public class _ErpQaAction extends DynamicOrmEntity{
     /**
      * 措施类型: ACTION_TYPE
      */
-    public final void setActionType(java.lang.Integer value){
+    public final void setActionType(java.lang.String value){
         if(onPropSet(PROP_ID_actionType,value)){
             this._actionType = value;
             internalClearRefs(PROP_ID_actionType);
@@ -796,7 +796,7 @@ public class _ErpQaAction extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -804,7 +804,7 @@ public class _ErpQaAction extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

@@ -54,16 +54,16 @@
         }
 
 
-        private Integer _notesType;
+        private String _notesType;
 
     
         @PropMeta(propId=4)
     
-        public Integer getNotesType(){
+        public String getNotesType(){
             return _notesType;
         }
 
-        public void setNotesType(Integer value){
+        public void setNotesType(String value){
             this._notesType = value;
         }
 
@@ -250,16 +250,16 @@
         }
 
 
-        private Integer _status;
+        private String _status;
 
     
         @PropMeta(propId=18)
     
-        public Integer getStatus(){
+        public String getStatus(){
             return _status;
         }
 
-        public void setStatus(Integer value){
+        public void setStatus(String value){
             this._status = value;
         }
 

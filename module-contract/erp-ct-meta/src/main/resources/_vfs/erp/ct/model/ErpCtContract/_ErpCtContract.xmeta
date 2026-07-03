@@ -37,11 +37,11 @@
         </prop>
         <prop name="contractType" displayName="合同类型" propId="5" i18n-en:displayName="Contract Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-ct/contract-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-ct/contract-type"/>
         </prop>
         <prop name="contractDirection" displayName="合同方向" propId="6" i18n-en:displayName="Direction" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-ct/contract-direction"/>
+            <schema type="java.lang.String" precision="20" dict="erp-ct/contract-direction"/>
         </prop>
         <prop name="partnerId" displayName="合作方" propId="7" i18n-en:displayName="Partner" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="partner">
@@ -69,7 +69,7 @@
         </prop>
         <prop name="status" displayName="合同状态" propId="13" i18n-en:displayName="Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-ct/contract-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-ct/contract-status"/>
         </prop>
         <prop name="templateId" displayName="合同模板" propId="14" i18n-en:displayName="Template" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="template">

@@ -1,23 +1,23 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 开票条款
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 预付款
-    value: 10
+    value: ADVANCE
     description: 
   
   - label: 里程碑
-    value: 20
+    value: MILESTONE
     description: 
   
   - label: 月结
-    value: 30
+    value: MONTHLY
     description: 
   
   - label: 完工
-    value: 40
+    value: COMPLETION
     description: 
   

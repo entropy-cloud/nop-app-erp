@@ -99,7 +99,7 @@ public class TestErpFinModuleCloseOrder extends JunitAutoTestCase {
         return ormTemplate.runInSession(session -> action.get());
     }
 
-    private Long seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, int status) {
+    private Long seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, String status) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);

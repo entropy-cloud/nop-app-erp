@@ -263,7 +263,7 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private void seedEquipment(Long id, int status) {
+    private void seedEquipment(Long id, String status) {
         IEntityDao<ErpMntEquipment> dao = daoProvider.daoFor(ErpMntEquipment.class);
         ErpMntEquipment equipment = new ErpMntEquipment();
         equipment.setId(id);
@@ -273,7 +273,7 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
         dao.saveEntity(equipment);
     }
 
-    private void seedVisit(Long id, Long equipmentId, int status, String code) {
+    private void seedVisit(Long id, Long equipmentId, String status, String code) {
         IEntityDao<ErpMntVisit> dao = daoProvider.daoFor(ErpMntVisit.class);
         ErpMntVisit visit = new ErpMntVisit();
         visit.setId(id);
@@ -286,7 +286,7 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
         dao.saveEntity(visit);
     }
 
-    private void seedRequest(Long id, Long equipmentId, int status, String code) {
+    private void seedRequest(Long id, Long equipmentId, String status, String code) {
         IEntityDao<ErpMntRequest> dao = daoProvider.daoFor(ErpMntRequest.class);
         ErpMntRequest request = new ErpMntRequest();
         request.setId(id);
@@ -307,15 +307,15 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpMntVisit.class).getEntityById(visitId);
     }
 
-    private int visitStatus(Long visitId) {
+    private String visitStatus(Long visitId) {
         return loadVisit(visitId).getStatus();
     }
 
-    private int requestStatus(Long requestId) {
+    private String requestStatus(Long requestId) {
         return daoProvider.daoFor(ErpMntRequest.class).getEntityById(requestId).getStatus();
     }
 
-    private int equipmentStatus() {
+    private String equipmentStatus() {
         return daoProvider.daoFor(ErpMntEquipment.class).getEntityById(EQUIPMENT_ID).getStatus();
     }
 

@@ -139,16 +139,16 @@
         }
 
 
-        private String _budget;
+        private java.math.BigDecimal _budget;
 
     
         @PropMeta(propId=10)
     
-        public String getBudget(){
+        public java.math.BigDecimal getBudget(){
             return _budget;
         }
 
-        public void setBudget(String value){
+        public void setBudget(java.math.BigDecimal value){
             this._budget = value;
         }
 
@@ -195,16 +195,16 @@
         }
 
 
-        private Integer _status;
+        private String _status;
 
     
         @PropMeta(propId=14)
     
-        public Integer getStatus(){
+        public String getStatus(){
             return _status;
         }
 
-        public void setStatus(Integer value){
+        public void setStatus(String value){
             this._status = value;
         }
 

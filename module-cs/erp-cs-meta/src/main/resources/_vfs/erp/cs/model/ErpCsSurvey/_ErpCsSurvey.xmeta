@@ -61,7 +61,7 @@
         </prop>
         <prop name="surveyChannel" displayName="发送渠道" propId="11" i18n-en:displayName="Survey Channel" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-cs/survey-channel"/>
+            <schema type="java.lang.String" precision="20" dict="erp-cs/survey-channel"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="12" i18n-en:displayName="Del Flag" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">

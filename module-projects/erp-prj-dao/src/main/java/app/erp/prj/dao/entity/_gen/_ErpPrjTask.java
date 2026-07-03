@@ -69,11 +69,11 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     public static final String PROP_NAME_dependsOnId = "dependsOnId";
     public static final int PROP_ID_dependsOnId = 12;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 13;
     
-    /* 优先级: PRIORITY INTEGER */
+    /* 优先级: PRIORITY VARCHAR */
     public static final String PROP_NAME_priority = "priority";
     public static final int PROP_ID_priority = 14;
     
@@ -243,19 +243,19 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     private java.time.LocalDate _actualEndDate;
     
     /* 预估工时: ESTIMATED_HOURS */
-    private java.lang.String _estimatedHours;
+    private java.math.BigDecimal _estimatedHours;
     
     /* 实际工时: ACTUAL_HOURS */
-    private java.lang.String _actualHours;
+    private java.math.BigDecimal _actualHours;
     
     /* 依赖任务: DEPENDS_ON_ID */
     private java.lang.Long _dependsOnId;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 优先级: PRIORITY */
-    private java.lang.Integer _priority;
+    private java.lang.String _priority;
     
     /* 阻塞原因: BLOCK_REASON */
     private java.lang.String _blockReason;
@@ -529,9 +529,9 @@ public class _ErpPrjTask extends DynamicOrmEntity{
             }
         
             case PROP_ID_estimatedHours:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_estimatedHours));
                }
                setEstimatedHours(typedValue);
@@ -539,9 +539,9 @@ public class _ErpPrjTask extends DynamicOrmEntity{
             }
         
             case PROP_ID_actualHours:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_actualHours));
                }
                setActualHours(typedValue);
@@ -559,9 +559,9 @@ public class _ErpPrjTask extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -569,9 +569,9 @@ public class _ErpPrjTask extends DynamicOrmEntity{
             }
         
             case PROP_ID_priority:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_priority));
                }
                setPriority(typedValue);
@@ -742,14 +742,14 @@ public class _ErpPrjTask extends DynamicOrmEntity{
         
             case PROP_ID_estimatedHours:{
                onInitProp(propId);
-               this._estimatedHours = (java.lang.String)value;
+               this._estimatedHours = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_actualHours:{
                onInitProp(propId);
-               this._actualHours = (java.lang.String)value;
+               this._actualHours = (java.math.BigDecimal)value;
                
                break;
             }
@@ -763,14 +763,14 @@ public class _ErpPrjTask extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_priority:{
                onInitProp(propId);
-               this._priority = (java.lang.Integer)value;
+               this._priority = (java.lang.String)value;
                
                break;
             }
@@ -1018,7 +1018,7 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     /**
      * 预估工时: ESTIMATED_HOURS
      */
-    public final java.lang.String getEstimatedHours(){
+    public final java.math.BigDecimal getEstimatedHours(){
          onPropGet(PROP_ID_estimatedHours);
          return _estimatedHours;
     }
@@ -1026,7 +1026,7 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     /**
      * 预估工时: ESTIMATED_HOURS
      */
-    public final void setEstimatedHours(java.lang.String value){
+    public final void setEstimatedHours(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_estimatedHours,value)){
             this._estimatedHours = value;
             internalClearRefs(PROP_ID_estimatedHours);
@@ -1037,7 +1037,7 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     /**
      * 实际工时: ACTUAL_HOURS
      */
-    public final java.lang.String getActualHours(){
+    public final java.math.BigDecimal getActualHours(){
          onPropGet(PROP_ID_actualHours);
          return _actualHours;
     }
@@ -1045,7 +1045,7 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     /**
      * 实际工时: ACTUAL_HOURS
      */
-    public final void setActualHours(java.lang.String value){
+    public final void setActualHours(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_actualHours,value)){
             this._actualHours = value;
             internalClearRefs(PROP_ID_actualHours);
@@ -1075,7 +1075,7 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -1083,7 +1083,7 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);
@@ -1094,7 +1094,7 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     /**
      * 优先级: PRIORITY
      */
-    public final java.lang.Integer getPriority(){
+    public final java.lang.String getPriority(){
          onPropGet(PROP_ID_priority);
          return _priority;
     }
@@ -1102,7 +1102,7 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     /**
      * 优先级: PRIORITY
      */
-    public final void setPriority(java.lang.Integer value){
+    public final void setPriority(java.lang.String value){
         if(onPropSet(PROP_ID_priority,value)){
             this._priority = value;
             internalClearRefs(PROP_ID_priority);

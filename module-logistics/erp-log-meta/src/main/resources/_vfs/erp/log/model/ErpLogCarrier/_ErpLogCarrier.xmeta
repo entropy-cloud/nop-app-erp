@@ -37,7 +37,7 @@
         </prop>
         <prop name="carrierType" displayName="承运商类型" propId="5" i18n-en:displayName="Carrier Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-log/carrier-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-log/carrier-type"/>
         </prop>
         <prop name="gatewayId" displayName="网关标识" propId="6" i18n-en:displayName="Gateway ID" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -57,7 +57,7 @@
         </prop>
         <prop name="maxParcelWeight" displayName="最大包裹重量(kg)" propId="10" i18n-en:displayName="Max Parcel Weight"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="weight" type="java.lang.String" precision="12" scale="3"/>
+            <schema domain="weight" type="java.math.BigDecimal" precision="12" scale="3"/>
         </prop>
         <prop name="supportedServiceTypes" displayName="支持服务类型" propId="11"
               i18n-en:displayName="Supported Service Types" queryable="true" sortable="true" insertable="true"

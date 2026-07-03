@@ -12,6 +12,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -171,18 +172,7 @@ public class ErpFinArApItemGenerator {
     /** 报销公司直付（paymentMode=COMPANY_ACCOUNT）：贷银行存款，不挂应付-员工辅助账。 */
     protected boolean isCompanyAccountPayment(Map<String, Object> data) {
         Object mode = data.get(ErpFinConstants.BILL_DATA_PAYMENT_MODE);
-        if (mode == null) {
-            return false;
-        }
-        if (mode instanceof Number) {
-            return ((Number) mode).intValue() == ErpFinConstants.PAYMENT_MODE_COMPANY_ACCOUNT;
-        }
-        try {
-            return new BigDecimal(mode.toString().trim()).intValue()
-                    == ErpFinConstants.PAYMENT_MODE_COMPANY_ACCOUNT;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+        return ErpFinConstants.PAYMENT_MODE_COMPANY_ACCOUNT.equals(mode);
     }
 
     protected List<ErpFinArApItem> findItems(String sourceBillType, String sourceBillCode, IServiceContext context) {
@@ -324,10 +314,10 @@ public class ErpFinArApItemGenerator {
 
     /** 来源单据方向配置。 */
     protected static final class SourceProfile {
-        final int direction;
+        final String direction;
         final String sourceBillType;
 
-        SourceProfile(int direction, String sourceBillType) {
+        SourceProfile(String direction, String sourceBillType) {
             this.direction = direction;
             this.sourceBillType = sourceBillType;
         }

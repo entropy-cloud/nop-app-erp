@@ -8,7 +8,7 @@
   "quantity": 0.0,
   "operationId": 0,
   "remark": "",
-  "scrapRate": "",
+  "scrapRate": 0.0,
   "warehouseId": 0,
   "alternativeMaterialId": 0,
   "delVersion": 0,

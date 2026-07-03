@@ -44,7 +44,7 @@ public class TestErpAstAssetCrudSmoke extends JunitAutoTestCase {
         headData.put("name", "冒烟资产");
         headData.put("acquisitionDate", "2026-07-01");
         headData.put("originalValue", 10000);
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> result = executeRpc(GraphQLOperationType.mutation, "ErpAstAsset__save",
                 ApiRequest.build(Map.of("data", headData)));
 
@@ -61,7 +61,7 @@ public class TestErpAstAssetCrudSmoke extends JunitAutoTestCase {
         headData.put("name", "冒烟资产");
         headData.put("acquisitionDate", "2026-07-01");
         headData.put("originalValue", 10000);
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpAstAsset__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -81,7 +81,7 @@ public class TestErpAstAssetCrudSmoke extends JunitAutoTestCase {
         headData.put("name", "冒烟资产");
         headData.put("acquisitionDate", "2026-07-01");
         headData.put("originalValue", 10000);
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpAstAsset__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -105,7 +105,7 @@ public class TestErpAstAssetCrudSmoke extends JunitAutoTestCase {
         headData.put("name", "冒烟资产");
         headData.put("acquisitionDate", "2026-07-01");
         headData.put("originalValue", 10000);
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpAstAsset__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -130,7 +130,7 @@ public class TestErpAstAssetCrudSmoke extends JunitAutoTestCase {
         headData.put("name", "冒烟资产");
         headData.put("acquisitionDate", "2026-07-01");
         headData.put("originalValue", 10000);
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> head = executeRpc(GraphQLOperationType.mutation, "ErpAstAsset__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_saveHead_response.json5", head);
@@ -139,7 +139,7 @@ public class TestErpAstAssetCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> lineData = new LinkedHashMap<>();
         lineData.put("period", "2026-07");
         lineData.put("plannedAmount", 1000);
-        lineData.put("status", 10);
+        lineData.put("status", "PENDING");
         lineData.put("exchangeRate", "1");
         lineData.put("assetId", headId);
         ApiResponse<?> line = executeRpc(GraphQLOperationType.mutation, "ErpAstDepreciationSchedule__save",

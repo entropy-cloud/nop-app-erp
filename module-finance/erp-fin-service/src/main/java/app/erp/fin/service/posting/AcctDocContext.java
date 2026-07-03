@@ -14,8 +14,8 @@ public class AcctDocContext {
     private Long currencyId;
     private BigDecimal exchangeRate;
     private Long periodId;
-    private Integer periodStatus;
-    private Integer voucherType;
+    private String periodStatus;
+    private String voucherType;
 
     public LocalDate getVoucherDate() {
         return voucherDate;
@@ -65,19 +65,19 @@ public class AcctDocContext {
         this.periodId = periodId;
     }
 
-    public Integer getPeriodStatus() {
+    public String getPeriodStatus() {
         return periodStatus;
     }
 
-    public void setPeriodStatus(Integer periodStatus) {
+    public void setPeriodStatus(String periodStatus) {
         this.periodStatus = periodStatus;
     }
 
-    public Integer getVoucherType() {
+    public String getVoucherType() {
         return voucherType;
     }
 
-    public void setVoucherType(Integer voucherType) {
+    public void setVoucherType(String voucherType) {
         this.voucherType = voucherType;
     }
 }

@@ -1,27 +1,27 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 预留状态
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 生效中
-    value: 10
+    value: OPEN
     description: 
   
   - label: 部分消耗
-    value: 20
+    value: PARTIALLY_CONSUMED
     description: 
   
   - label: 已全部消耗
-    value: 30
+    value: CONSUMED
     description: 
   
   - label: 已取消
-    value: 40
+    value: CANCELLED
     description: 
   
   - label: 已过期
-    value: 50
+    value: EXPIRED
     description: 
   

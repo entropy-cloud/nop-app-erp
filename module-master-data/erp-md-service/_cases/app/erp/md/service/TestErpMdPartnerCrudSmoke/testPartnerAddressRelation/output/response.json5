@@ -7,8 +7,8 @@
       {
         "id": "2",
         "partnerId": 1,
-        "addressType": 10,
-        "addressType_label": "10-账单地址",
+        "addressType": "BILLING",
+        "addressType_label": "BILLING-账单地址",
         "contactPerson": null,
         "phone": null,
         "address": "冒烟测试-关系导航地址行",

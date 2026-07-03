@@ -17,6 +17,7 @@ import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,8 +59,8 @@ public class ErpQaInspectionBizModel extends CrudBizModel<ErpQaInspection> imple
                                         @Name("allowConcession") Boolean allowConcession,
                                         IServiceContext context) {
         ErpQaInspection inspection = requireInspection(inspectionId, context);
-        Integer current = inspection.getResult();
-        if (current != null && current != ErpQaConstants.INSPECTION_RESULT_PENDING) {
+        String current = inspection.getResult();
+        if (current != null && !Objects.equals(current, ErpQaConstants.INSPECTION_RESULT_PENDING)) {
             throw illegalInspectionTransition(inspection, current, "PENDING（终态不可恢复）");
         }
 
@@ -78,17 +79,17 @@ public class ErpQaInspectionBizModel extends CrudBizModel<ErpQaInspection> imple
         }
 
         boolean concession = Boolean.TRUE.equals(allowConcession);
-        int aggregated = InspectionResultEvaluator.aggregate(lines, concession);
+        String aggregated = InspectionResultEvaluator.aggregate(lines, concession);
         inspection.setResult(aggregated);
         inspection.setPosted(Boolean.TRUE);
-        if (aggregated == ErpQaConstants.INSPECTION_RESULT_CONDITIONAL) {
+        if (Objects.equals(aggregated, ErpQaConstants.INSPECTION_RESULT_CONDITIONAL)) {
             // 让步接收须经审批：本期以质量主管审核（approveStatus=APPROVED）简化（完整多级审批流 Non-Goal）
             inspection.setApproveStatus(ErpQaConstants.APPROVE_STATUS_APPROVED);
         }
         dao().updateEntity(inspection);
 
         // Phase 3：REJECTED 自动生成 NCR（经 NcrLifecycleService，配置门控）
-        if (aggregated == ErpQaConstants.INSPECTION_RESULT_REJECTED) {
+        if (Objects.equals(aggregated, ErpQaConstants.INSPECTION_RESULT_REJECTED)) {
             ncrLifecycleService.autoCreateNcrFromInspection(inspection, lines, context);
         }
         return inspection;
@@ -113,12 +114,12 @@ public class ErpQaInspectionBizModel extends CrudBizModel<ErpQaInspection> imple
                                        IServiceContext context) {
         List<ErpQaInspection> inspections = findByRelatedBill(billType, billCode, context);
         for (ErpQaInspection ins : inspections) {
-            Integer result = ins.getResult();
-            if (result == null || result == ErpQaConstants.INSPECTION_RESULT_PENDING) {
+            String result = ins.getResult();
+            if (result == null || Objects.equals(result, ErpQaConstants.INSPECTION_RESULT_PENDING)) {
                 return false;
             }
             // ACCEPTED / CONDITIONAL 放行；REJECTED 阻塞（业务域应触发退货/返工/NCR 处置）
-            if (result == ErpQaConstants.INSPECTION_RESULT_REJECTED) {
+            if (Objects.equals(result, ErpQaConstants.INSPECTION_RESULT_REJECTED)) {
                 return false;
             }
         }
@@ -130,7 +131,7 @@ public class ErpQaInspectionBizModel extends CrudBizModel<ErpQaInspection> imple
     public ErpQaInspection createForBusinessBill(@Name("billType") String billType,
                                                  @Name("billCode") String billCode,
                                                  @Name("materialId") Long materialId,
-                                                 @Name("inspectionType") Integer inspectionType,
+                                                 @Name("inspectionType") String inspectionType,
                                                  @Name("lotQuantity") java.math.BigDecimal lotQuantity,
                                                  @Name("supplierId") Long supplierId,
                                                  @Name("warehouseId") Long warehouseId,
@@ -140,7 +141,7 @@ public class ErpQaInspectionBizModel extends CrudBizModel<ErpQaInspection> imple
                 lotQuantity, supplierId, warehouseId, batchNo, context);
     }
 
-    ErpQaInspection doCreateForBusinessBill(String billType, String billCode, Long materialId, Integer inspectionType,
+    ErpQaInspection doCreateForBusinessBill(String billType, String billCode, Long materialId, String inspectionType,
                                             java.math.BigDecimal lotQuantity, Long supplierId, Long warehouseId,
                                             String batchNo, IServiceContext context) {
         // 模板匹配：materialId × inspectionType → active 模板；无匹配走全局默认；仍无则无行（人工补录）
@@ -243,7 +244,7 @@ public class ErpQaInspectionBizModel extends CrudBizModel<ErpQaInspection> imple
         return explicitResultLineIds;
     }
 
-    private NopException illegalInspectionTransition(ErpQaInspection ins, Integer current, String expected) {
+    private NopException illegalInspectionTransition(ErpQaInspection ins, String current, String expected) {
         return new NopException(ErpQaErrors.ERR_INVALID_INSPECTION_STATUS_TRANSITION)
                 .param(ErpQaErrors.ARG_INSPECTION_CODE, ins.getCode())
                 .param(ErpQaErrors.ARG_CURRENT_STATUS, current)

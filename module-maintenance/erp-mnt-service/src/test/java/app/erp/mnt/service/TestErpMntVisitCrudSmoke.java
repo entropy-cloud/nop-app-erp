@@ -43,7 +43,7 @@ public class TestErpMntVisitCrudSmoke extends JunitAutoTestCase {
         headData.put("code", "SMOKE-MNT");
         headData.put("equipmentId", pre.get("equipment"));
         headData.put("visitDate", "2026-07-01");
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> result = executeRpc(GraphQLOperationType.mutation, "ErpMntVisit__save",
                 ApiRequest.build(Map.of("data", headData)));
 
@@ -59,7 +59,7 @@ public class TestErpMntVisitCrudSmoke extends JunitAutoTestCase {
         headData.put("code", "SMOKE-MNT");
         headData.put("equipmentId", pre.get("equipment"));
         headData.put("visitDate", "2026-07-01");
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpMntVisit__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -78,7 +78,7 @@ public class TestErpMntVisitCrudSmoke extends JunitAutoTestCase {
         headData.put("code", "SMOKE-MNT");
         headData.put("equipmentId", pre.get("equipment"));
         headData.put("visitDate", "2026-07-01");
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpMntVisit__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -101,7 +101,7 @@ public class TestErpMntVisitCrudSmoke extends JunitAutoTestCase {
         headData.put("code", "SMOKE-MNT");
         headData.put("equipmentId", pre.get("equipment"));
         headData.put("visitDate", "2026-07-01");
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpMntVisit__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -125,7 +125,7 @@ public class TestErpMntVisitCrudSmoke extends JunitAutoTestCase {
         headData.put("code", "SMOKE-MNT");
         headData.put("equipmentId", pre.get("equipment"));
         headData.put("visitDate", "2026-07-01");
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> head = executeRpc(GraphQLOperationType.mutation, "ErpMntVisit__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_saveHead_response.json5", head);
@@ -134,7 +134,7 @@ public class TestErpMntVisitCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> lineData = new LinkedHashMap<>();
         lineData.put("lineNo", 1);
         lineData.put("taskDescription", "冒烟任务");
-        lineData.put("status", 10);
+        lineData.put("status", "PENDING");
         lineData.put("visitId", headId);
         ApiResponse<?> line = executeRpc(GraphQLOperationType.mutation, "ErpMntVisitTask__save",
                 ApiRequest.build(Map.of("data", lineData)));
@@ -156,7 +156,7 @@ public class TestErpMntVisitCrudSmoke extends JunitAutoTestCase {
 Map<String, Object> d_equipment = new LinkedHashMap<>();
         d_equipment.put("code", "SMOKE-EQUIP");
         d_equipment.put("name", "冒烟设备");
-        d_equipment.put("status", 10);
+        d_equipment.put("status", "RUNNING");
         ids.put("equipment", String.valueOf(((Map<?, ?>) executeRpc(GraphQLOperationType.mutation, "ErpMntEquipment__save", ApiRequest.build(Map.of("data", d_equipment))).getData()).get("id")));
         return ids;
     }

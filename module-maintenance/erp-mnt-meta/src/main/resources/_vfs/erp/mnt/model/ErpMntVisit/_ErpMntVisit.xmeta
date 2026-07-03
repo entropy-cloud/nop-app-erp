@@ -41,7 +41,7 @@
         </prop>
         <prop name="status" displayName="状态" propId="6" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-mnt/visit-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-mnt/visit-status"/>
         </prop>
         <prop name="assignedTo" displayName="指派人" propId="7" i18n-en:displayName="Assigned To" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -65,15 +65,15 @@
         </prop>
         <prop name="totalMinutes" displayName="总分钟数" propId="12" i18n-en:displayName="Total Minutes" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="downtimeMinutes" type="java.lang.String" precision="12" scale="2"/>
+            <schema domain="downtimeMinutes" type="java.math.BigDecimal" precision="12" scale="2"/>
         </prop>
         <prop name="visitType" displayName="维护类型" propId="13" i18n-en:displayName="Visit Type" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-mnt/visit-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-mnt/visit-type"/>
         </prop>
         <prop name="result" displayName="执行结果" propId="14" i18n-en:displayName="Result" queryable="true" sortable="true"
               insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-mnt/visit-result"/>
+            <schema type="java.lang.String" precision="20" dict="erp-mnt/visit-result"/>
         </prop>
         <prop name="remark" displayName="备注" propId="15" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

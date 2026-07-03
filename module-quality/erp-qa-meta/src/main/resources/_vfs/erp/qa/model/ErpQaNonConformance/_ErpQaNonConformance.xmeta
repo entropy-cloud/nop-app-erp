@@ -57,15 +57,15 @@
         </prop>
         <prop name="severity" displayName="严重程度" propId="10" i18n-en:displayName="Severity" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-qa/severity"/>
+            <schema type="java.lang.String" precision="20" dict="erp-qa/severity"/>
         </prop>
         <prop name="dispositionType" displayName="处理决定" propId="11" i18n-en:displayName="Disposition Type"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-qa/disposition-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-qa/disposition-type"/>
         </prop>
         <prop name="status" displayName="状态" propId="12" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-qa/ncr-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-qa/ncr-status"/>
         </prop>
         <prop name="supplierId" displayName="供应商" propId="13" i18n-en:displayName="Supplier" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="supplier">
@@ -77,15 +77,15 @@
         </prop>
         <prop name="measuredValue" displayName="实测值" propId="15" i18n-en:displayName="Measured Value" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="measuredValue" type="java.lang.String" precision="20" scale="6"/>
+            <schema domain="measuredValue" type="java.lang.String" precision="100"/>
         </prop>
         <prop name="specMin" displayName="规格下限" propId="16" i18n-en:displayName="Spec Min" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="specLimit" type="java.lang.String" precision="20" scale="6"/>
+            <schema domain="specLimit" type="java.math.BigDecimal" precision="20" scale="6"/>
         </prop>
         <prop name="specMax" displayName="规格上限" propId="17" i18n-en:displayName="Spec Max" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="specLimit" type="java.lang.String" precision="20" scale="6"/>
+            <schema domain="specLimit" type="java.math.BigDecimal" precision="20" scale="6"/>
         </prop>
         <prop name="assignedTo" displayName="责任人" propId="18" i18n-en:displayName="Assigned To" queryable="true"
               sortable="true" insertable="true" updatable="true">

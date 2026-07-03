@@ -15,6 +15,7 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 
@@ -42,8 +43,8 @@ public class ErpPrjProjectBizModel extends CrudBizModel<ErpPrjProject> implement
     @SingleSession
     public ErpPrjProject requireReferenceable(@Name("projectId") Long projectId, IServiceContext context) {
         ErpPrjProject project = requireEntity(String.valueOf(projectId), null, context);
-        Integer status = project.getStatus();
-        if (status == null || status != ErpPrjConstants.PROJECT_STATUS_OPEN) {
+        String status = project.getStatus();
+        if (status == null || !Objects.equals(status, ErpPrjConstants.PROJECT_STATUS_OPEN)) {
             throw new NopException(ErpPrjErrors.ERR_PROJECT_NOT_REFERENCEABLE)
                     .param(ErpPrjErrors.ARG_PROJECT_ID, projectId)
                     .param(ErpPrjErrors.ARG_CURRENT_STATUS, status);
@@ -63,8 +64,8 @@ public class ErpPrjProjectBizModel extends CrudBizModel<ErpPrjProject> implement
     @SingleSession
     public ErpPrjProject closeProject(@Name("projectId") Long projectId, IServiceContext context) {
         ErpPrjProject project = requireEntity(String.valueOf(projectId), null, context);
-        Integer status = project.getStatus();
-        if (status == null || status != ErpPrjConstants.PROJECT_STATUS_OPEN) {
+        String status = project.getStatus();
+        if (status == null || !Objects.equals(status, ErpPrjConstants.PROJECT_STATUS_OPEN)) {
             throw new NopException(ErpPrjErrors.ERR_PROJECT_NOT_CLOSABLE)
                     .param(ErpPrjErrors.ARG_PROJECT_ID, projectId)
                     .param(ErpPrjErrors.ARG_CURRENT_STATUS, status);

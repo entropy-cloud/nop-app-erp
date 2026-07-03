@@ -12,7 +12,7 @@ public class VoucherFact {
     private String subjectCode;
     private Long subjectId;
     private String subjectName;
-    private Integer dcDirection;
+    private String dcDirection;
     private BigDecimal amount;
     private String amountKey;
     private String accountKey;
@@ -24,7 +24,7 @@ public class VoucherFact {
     private Long warehouseId;
     private Long materialId;
     private Long costCenterId;
-    private Integer businessType;
+    private String businessType;
 
     public String getSubjectCode() {
         return subjectCode;
@@ -50,11 +50,11 @@ public class VoucherFact {
         this.subjectName = subjectName;
     }
 
-    public Integer getDcDirection() {
+    public String getDcDirection() {
         return dcDirection;
     }
 
-    public void setDcDirection(Integer dcDirection) {
+    public void setDcDirection(String dcDirection) {
         this.dcDirection = dcDirection;
     }
 
@@ -138,11 +138,11 @@ public class VoucherFact {
         this.costCenterId = costCenterId;
     }
 
-    public Integer getBusinessType() {
+    public String getBusinessType() {
         return businessType;
     }
 
-    public void setBusinessType(Integer businessType) {
+    public void setBusinessType(String businessType) {
         this.businessType = businessType;
     }
 }

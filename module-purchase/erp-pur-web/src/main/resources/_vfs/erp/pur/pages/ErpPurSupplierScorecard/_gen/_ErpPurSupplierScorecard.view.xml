@@ -37,7 +37,7 @@
                 <col id="totalScore" ui:number="true" sortable="true"/>
 
                 <!--评级-->
-                <col id="standing" ui:number="true" sortable="true"/>
+                <col id="standing" sortable="true"/>
 
                 <!--warn阈值-->
                 <col id="warnThreshold" ui:number="true" sortable="true"/>
@@ -49,7 +49,7 @@
                 <col id="preventThreshold" ui:number="true" sortable="true"/>
 
                 <!--周期状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

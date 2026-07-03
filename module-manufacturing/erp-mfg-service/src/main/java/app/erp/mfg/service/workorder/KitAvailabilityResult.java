@@ -18,7 +18,7 @@ import java.util.List;
 public class KitAvailabilityResult {
 
     private boolean fullyAvailable;
-    private int resultingStatus;
+    private String resultingStatus;
     private final List<KitShortage> shortages = new ArrayList<>();
 
     public static KitAvailabilityResult reserved() {
@@ -39,7 +39,7 @@ public class KitAvailabilityResult {
         return fullyAvailable;
     }
 
-    public int getResultingStatus() {
+    public String getResultingStatus() {
         return resultingStatus;
     }
 

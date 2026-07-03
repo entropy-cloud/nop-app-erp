@@ -31,7 +31,7 @@
                 <col id="workcenterId" ui:number="true" sortable="true"/>
 
                 <!--派工类型-->
-                <col id="dispatchType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="dispatchType" mandatory="true" sortable="true"/>
 
                 <!--派工前状态-->
                 <col id="previousStatus" sortable="true"/>

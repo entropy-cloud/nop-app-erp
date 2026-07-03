@@ -1,2 +1,2 @@
 _chgType,ID,CODE,NAME,INSPECTION_TYPE,MATERIAL_ID,IS_ACTIVE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,1,SMOKE-QA,冒烟检验模板,10,,1,冒烟-已修改,0,1,autotest-ref,*,autotest-ref,*
+A,1,SMOKE-QA,冒烟检验模板,INCOMING,,1,冒烟-已修改,0,1,autotest-ref,*,autotest-ref,*

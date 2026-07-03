@@ -97,16 +97,16 @@
         }
 
 
-        private Integer _dcDirection;
+        private String _dcDirection;
 
     
         @PropMeta(propId=7)
     
-        public Integer getDcDirection(){
+        public String getDcDirection(){
             return _dcDirection;
         }
 
-        public void setDcDirection(Integer value){
+        public void setDcDirection(String value){
             this._dcDirection = value;
         }
 
@@ -165,16 +165,16 @@
         }
 
 
-        private Integer _matchStatus;
+        private String _matchStatus;
 
     
         @PropMeta(propId=11)
     
-        public Integer getMatchStatus(){
+        public String getMatchStatus(){
             return _matchStatus;
         }
 
-        public void setMatchStatus(Integer value){
+        public void setMatchStatus(String value){
             this._matchStatus = value;
         }
 

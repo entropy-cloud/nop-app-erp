@@ -1,31 +1,31 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 费用类型
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 差旅
-    value: 10
+    value: TRAVEL
     description: 
   
   - label: 业务招待
-    value: 20
+    value: ENTERTAINMENT
     description: 
   
   - label: 办公
-    value: 30
+    value: OFFICE
     description: 
   
   - label: 通讯
-    value: 40
+    value: COMMUNICATION
     description: 
   
   - label: 交通
-    value: 50
+    value: TRANSPORTATION
     description: 
   
   - label: 其他
-    value: 60
+    value: OTHER
     description: 
   

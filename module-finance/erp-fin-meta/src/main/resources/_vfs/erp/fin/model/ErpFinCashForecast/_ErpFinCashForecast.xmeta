@@ -45,7 +45,7 @@
         </prop>
         <prop name="direction" displayName="现金流方向" propId="7" i18n-en:displayName="Direction" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-fin/cash-flow-direction"/>
+            <schema type="java.lang.String" precision="20" dict="erp-fin/cash-flow-direction"/>
         </prop>
         <prop name="partnerId" displayName="往来单位" propId="8" i18n-en:displayName="Partner" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="partner">

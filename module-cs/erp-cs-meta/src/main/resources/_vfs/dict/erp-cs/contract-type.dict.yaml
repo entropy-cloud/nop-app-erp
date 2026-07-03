@@ -1,19 +1,19 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 合同类型
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 年度
-    value: 10
+    value: ANNUAL
     description: 
   
   - label: 季度
-    value: 20
+    value: QUARTERLY
     description: 
   
   - label: 一次性
-    value: 30
+    value: ONE_TIME
     description: 
   

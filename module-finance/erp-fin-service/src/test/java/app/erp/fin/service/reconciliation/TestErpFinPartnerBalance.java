@@ -95,7 +95,7 @@ public class TestErpFinPartnerBalance extends JunitAutoTestCase {
                 receiptAmt, invoiceAmt);
     }
 
-    private Long[] setup(long partner, int direction, String payBillType, String invBillType,
+    private Long[] setup(long partner, String direction, String payBillType, String invBillType,
                          BigDecimal payAmt, BigDecimal invAmt) {
         final Long[][] holder = new Long[1][];
         ormTemplate.runInSession(() -> {
@@ -118,14 +118,14 @@ public class TestErpFinPartnerBalance extends JunitAutoTestCase {
         p.orm_propValue(1, partnerId);
         p.setCode("P-" + partnerId);
         p.setName("Partner " + partnerId);
-        p.setPartnerType(10);
-        p.setStatus(10);
+        p.setPartnerType("CUSTOMER");
+        p.setStatus("ACTIVE");
         p.setReceivableBalance(BigDecimal.ZERO);
         p.setPayableBalance(BigDecimal.ZERO);
         dao.saveEntity(p);
     }
 
-    private ErpFinArApItem newItem(int direction, long partnerId, String sourceBillType, String sourceBillCode,
+    private ErpFinArApItem newItem(String direction, long partnerId, String sourceBillType, String sourceBillCode,
                                    BigDecimal amount, LocalDate businessDate) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem item = dao.newEntity();

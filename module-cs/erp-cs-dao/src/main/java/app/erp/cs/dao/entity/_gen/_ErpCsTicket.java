@@ -53,11 +53,11 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     public static final String PROP_NAME_ticketTypeId = "ticketTypeId";
     public static final int PROP_ID_ticketTypeId = 8;
     
-    /* 优先级: PRIORITY INTEGER */
+    /* 优先级: PRIORITY VARCHAR */
     public static final String PROP_NAME_priority = "priority";
     public static final int PROP_ID_priority = 9;
     
-    /* 来源: SOURCE INTEGER */
+    /* 来源: SOURCE VARCHAR */
     public static final String PROP_NAME_source = "source";
     public static final int PROP_ID_source = 10;
     
@@ -93,15 +93,15 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     public static final String PROP_NAME_progress = "progress";
     public static final int PROP_ID_progress = 18;
     
-    /* 工单状态: STATUS INTEGER */
+    /* 工单状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 19;
     
-    /* 单据状态: DOC_STATUS INTEGER */
+    /* 单据状态: DOC_STATUS VARCHAR */
     public static final String PROP_NAME_docStatus = "docStatus";
     public static final int PROP_ID_docStatus = 20;
     
-    /* 审核状态: APPROVE_STATUS INTEGER */
+    /* 审核状态: APPROVE_STATUS VARCHAR */
     public static final String PROP_NAME_approveStatus = "approveStatus";
     public static final int PROP_ID_approveStatus = 21;
     
@@ -285,10 +285,10 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     private java.lang.Long _ticketTypeId;
     
     /* 优先级: PRIORITY */
-    private java.lang.Integer _priority;
+    private java.lang.String _priority;
     
     /* 来源: SOURCE */
-    private java.lang.Integer _source;
+    private java.lang.String _source;
     
     /* 分配处理人: ASSIGNED_TO_ID */
     private java.lang.String _assignedToId;
@@ -315,13 +315,13 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     private java.lang.Integer _progress;
     
     /* 工单状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 单据状态: DOC_STATUS */
-    private java.lang.Integer _docStatus;
+    private java.lang.String _docStatus;
     
     /* 审核状态: APPROVE_STATUS */
-    private java.lang.Integer _approveStatus;
+    private java.lang.String _approveStatus;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -600,9 +600,9 @@ public class _ErpCsTicket extends DynamicOrmEntity{
             }
         
             case PROP_ID_priority:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_priority));
                }
                setPriority(typedValue);
@@ -610,9 +610,9 @@ public class _ErpCsTicket extends DynamicOrmEntity{
             }
         
             case PROP_ID_source:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_source));
                }
                setSource(typedValue);
@@ -700,9 +700,9 @@ public class _ErpCsTicket extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -710,9 +710,9 @@ public class _ErpCsTicket extends DynamicOrmEntity{
             }
         
             case PROP_ID_docStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_docStatus));
                }
                setDocStatus(typedValue);
@@ -720,9 +720,9 @@ public class _ErpCsTicket extends DynamicOrmEntity{
             }
         
             case PROP_ID_approveStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_approveStatus));
                }
                setApproveStatus(typedValue);
@@ -876,14 +876,14 @@ public class _ErpCsTicket extends DynamicOrmEntity{
         
             case PROP_ID_priority:{
                onInitProp(propId);
-               this._priority = (java.lang.Integer)value;
+               this._priority = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_source:{
                onInitProp(propId);
-               this._source = (java.lang.Integer)value;
+               this._source = (java.lang.String)value;
                
                break;
             }
@@ -946,21 +946,21 @@ public class _ErpCsTicket extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_docStatus:{
                onInitProp(propId);
-               this._docStatus = (java.lang.Integer)value;
+               this._docStatus = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_approveStatus:{
                onInitProp(propId);
-               this._approveStatus = (java.lang.Integer)value;
+               this._approveStatus = (java.lang.String)value;
                
                break;
             }
@@ -1182,7 +1182,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 优先级: PRIORITY
      */
-    public final java.lang.Integer getPriority(){
+    public final java.lang.String getPriority(){
          onPropGet(PROP_ID_priority);
          return _priority;
     }
@@ -1190,7 +1190,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 优先级: PRIORITY
      */
-    public final void setPriority(java.lang.Integer value){
+    public final void setPriority(java.lang.String value){
         if(onPropSet(PROP_ID_priority,value)){
             this._priority = value;
             internalClearRefs(PROP_ID_priority);
@@ -1201,7 +1201,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 来源: SOURCE
      */
-    public final java.lang.Integer getSource(){
+    public final java.lang.String getSource(){
          onPropGet(PROP_ID_source);
          return _source;
     }
@@ -1209,7 +1209,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 来源: SOURCE
      */
-    public final void setSource(java.lang.Integer value){
+    public final void setSource(java.lang.String value){
         if(onPropSet(PROP_ID_source,value)){
             this._source = value;
             internalClearRefs(PROP_ID_source);
@@ -1372,7 +1372,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 工单状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -1380,7 +1380,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 工单状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);
@@ -1391,7 +1391,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 单据状态: DOC_STATUS
      */
-    public final java.lang.Integer getDocStatus(){
+    public final java.lang.String getDocStatus(){
          onPropGet(PROP_ID_docStatus);
          return _docStatus;
     }
@@ -1399,7 +1399,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 单据状态: DOC_STATUS
      */
-    public final void setDocStatus(java.lang.Integer value){
+    public final void setDocStatus(java.lang.String value){
         if(onPropSet(PROP_ID_docStatus,value)){
             this._docStatus = value;
             internalClearRefs(PROP_ID_docStatus);
@@ -1410,7 +1410,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 审核状态: APPROVE_STATUS
      */
-    public final java.lang.Integer getApproveStatus(){
+    public final java.lang.String getApproveStatus(){
          onPropGet(PROP_ID_approveStatus);
          return _approveStatus;
     }
@@ -1418,7 +1418,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 审核状态: APPROVE_STATUS
      */
-    public final void setApproveStatus(java.lang.Integer value){
+    public final void setApproveStatus(java.lang.String value){
         if(onPropSet(PROP_ID_approveStatus,value)){
             this._approveStatus = value;
             internalClearRefs(PROP_ID_approveStatus);

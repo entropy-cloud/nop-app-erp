@@ -1,107 +1,107 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 业务类型
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 采购入库
-    value: 10
+    value: PURCHASE_INPUT
     description: 
   
   - label: 销售出库
-    value: 20
+    value: SALES_OUTPUT
     description: 
   
   - label: 应付发票
-    value: 30
+    value: AP_INVOICE
     description: 
   
   - label: 应收发票
-    value: 40
+    value: AR_INVOICE
     description: 
   
   - label: 付款
-    value: 50
+    value: PAYMENT
     description: 
   
   - label: 收款
-    value: 60
+    value: RECEIPT
     description: 
   
   - label: 折旧
-    value: 70
+    value: DEPRECIATION
     description: 
   
   - label: 资本化
-    value: 80
+    value: CAPITALIZATION
     description: 
   
   - label: 处置
-    value: 90
+    value: DISPOSAL
     description: 
   
   - label: 生产成本结转
-    value: 100
+    value: PRODUCTION_COST
     description: 
   
   - label: 项目成本归集
-    value: 110
+    value: PROJECT_COST
     description: 
   
   - label: 期末结转
-    value: 120
+    value: PERIOD_CLOSING
     description: 
   
   - label: 汇兑损益
-    value: 130
+    value: FX_REVALUATION
     description: 
   
   - label: 采购退货冲减
-    value: 140
+    value: PURCHASE_RETURN
     description: 
   
   - label: 销售退货冲减
-    value: 150
+    value: SALES_RETURN
     description: 
   
   - label: 费用报销
-    value: 160
+    value: EXPENSE_CLAIM
     description: 
   
   - label: 员工借款
-    value: 170
+    value: EMPLOYEE_ADVANCE
     description: 
   
   - label: 借款清算
-    value: 180
+    value: EMPLOYEE_ADVANCE_SETTLE
     description: 
   
   - label: 应收票据收到
-    value: 190
+    value: NOTES_RECEIVABLE_RECEIVED
     description: 
   
   - label: 票据贴现
-    value: 200
+    value: NOTES_RECEIVABLE_DISCOUNTED
     description: 
   
   - label: 票据背书转让
-    value: 210
+    value: NOTES_RECEIVABLE_ENDORSED
     description: 
   
   - label: 票据托收承兑
-    value: 220
+    value: NOTES_RECEIVABLE_COLLECTION
     description: 
   
   - label: 开出应付票据
-    value: 230
+    value: NOTES_PAYABLE_ISSUED
     description: 
   
   - label: 应付票据兑付
-    value: 240
+    value: NOTES_PAYABLE_HONORED
     description: 
   
   - label: 授信利息
-    value: 250
+    value: CREDIT_FACILITY_INTEREST
     description: 
   

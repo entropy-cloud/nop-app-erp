@@ -34,7 +34,7 @@
                 <col id="sequence" ui:number="true" sortable="true"/>
 
                 <!--动作类型-->
-                <col id="actionType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="actionType" mandatory="true" sortable="true"/>
 
                 <!--动作配置-->
                 <col id="actionConfig" sortable="true"/>

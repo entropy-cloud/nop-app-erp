@@ -1,19 +1,19 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 入库类型
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 正常入库
-    value: 10
+    value: NORMAL
     description: 
   
   - label: 退货入库
-    value: 20
+    value: RETURN
     description: 
   
   - label: 赠品入库
-    value: 30
+    value: GIFT
     description: 
   

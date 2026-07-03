@@ -1,27 +1,27 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 设备状态
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 运行中
-    value: 10
+    value: RUNNING
     description: 
   
   - label: 闲置
-    value: 20
+    value: IDLE
     description: 
   
   - label: 维护中
-    value: 30
+    value: UNDER_MAINTENANCE
     description: 
   
   - label: 故障停机
-    value: 40
+    value: DOWN
     description: 
   
   - label: 已停用
-    value: 50
+    value: DECOMMISSIONED
     description: 
   

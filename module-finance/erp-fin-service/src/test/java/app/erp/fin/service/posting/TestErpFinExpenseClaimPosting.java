@@ -1,6 +1,7 @@
 package app.erp.fin.service.posting;
 
 import app.erp.fin.biz.IErpFinExpenseClaimBiz;
+import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinArApItem;
 import app.erp.fin.dao.entity.ErpFinExpenseClaim;
@@ -69,7 +70,7 @@ public class TestErpFinExpenseClaimPosting extends JunitAutoTestCase {
         assertTrue(Boolean.TRUE.equals(claim.getPosted()), "过账成功 posted=true");
 
         // EXPENSE_CLAIM 凭证经业财回链可查
-        assertTrue(!findBillLinks("EC-POST-001", 160).isEmpty(), "EXPENSE_CLAIM 凭证回链已落库");
+        assertTrue(!findBillLinks("EC-POST-001", ErpFinBusinessType.EXPENSE_CLAIM.name()).isEmpty(), "EXPENSE_CLAIM 凭证回链已落库");
 
         // DIRECTION_PAYABLE 辅助账，partnerId = claimant.partnerId（非 employee.id）
         ErpFinArApItem item = findItem("EXPENSE_CLAIM", "EC-POST-001");
@@ -130,8 +131,8 @@ public class TestErpFinExpenseClaimPosting extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private Long seedClaim(String code, Long claimantId, int approveStatus,
-                           BigDecimal amountWithoutTax, BigDecimal tax, BigDecimal withTax, int paymentMode) {
+    private Long seedClaim(String code, Long claimantId, String approveStatus,
+                           BigDecimal amountWithoutTax, BigDecimal tax, BigDecimal withTax, String paymentMode) {
         IEntityDao<ErpFinExpenseClaim> dao = daoProvider.daoFor(ErpFinExpenseClaim.class);
         ErpFinExpenseClaim claim = new ErpFinExpenseClaim();
         claim.setCode(code);
@@ -153,7 +154,7 @@ public class TestErpFinExpenseClaimPosting extends JunitAutoTestCase {
         ErpFinExpenseClaimLine line = new ErpFinExpenseClaimLine();
         line.setClaimId(claim.getId());
         line.setLineNo(1);
-        line.setExpenseType(10);
+        line.setExpenseType("TRAVEL");
         line.setAmountWithoutTax(amountWithoutTax);
         line.setTaxAmount(tax);
         line.setAmountWithTax(withTax);
@@ -161,7 +162,7 @@ public class TestErpFinExpenseClaimPosting extends JunitAutoTestCase {
         return claim.getId();
     }
 
-    private Long seedEmployee(long partnerId, int status) {
+    private Long seedEmployee(long partnerId, String status) {
         IEntityDao<ErpMdEmployee> dao = daoProvider.daoFor(ErpMdEmployee.class);
         ErpMdEmployee emp = new ErpMdEmployee();
         emp.setCode("E-" + partnerId);
@@ -178,9 +179,9 @@ public class TestErpFinExpenseClaimPosting extends JunitAutoTestCase {
         ErpMdSubject subject = new ErpMdSubject();
         subject.setCode(code);
         subject.setName(name);
-        subject.setSubjectClass(10);
-        subject.setDirection(10);
-        subject.setStatus(10);
+        subject.setSubjectClass("ASSET");
+        subject.setDirection("DEBIT");
+        subject.setStatus("ACTIVE");
         dao.saveEntity(subject);
     }
 
@@ -190,9 +191,9 @@ public class TestErpFinExpenseClaimPosting extends JunitAutoTestCase {
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
-        schema.setNature(10);
+        schema.setNature("FINANCIAL");
         schema.setFunctionalCurrencyId(1L);
-        schema.setStatus(10);
+        schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
 
@@ -206,7 +207,7 @@ public class TestErpFinExpenseClaimPosting extends JunitAutoTestCase {
         period.setMonth(month);
         period.setStartDate(start);
         period.setEndDate(end);
-        period.setStatus(10);
+        period.setStatus(ErpFinConstants.PERIOD_STATUS_OPEN);
         dao.saveEntity(period);
     }
 
@@ -222,7 +223,7 @@ public class TestErpFinExpenseClaimPosting extends JunitAutoTestCase {
         return dao.findAllByQuery(q);
     }
 
-    private List<ErpFinVoucherBillR> findBillLinks(String billCode, int businessType) {
+    private List<ErpFinVoucherBillR> findBillLinks(String billCode, String businessType) {
         IEntityDao<ErpFinVoucherBillR> dao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("billCode", billCode), eq("businessType", businessType)));

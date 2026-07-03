@@ -1,23 +1,23 @@
 # __XGEN_FORCE_OVERRIDE__
 label: SLA 策略
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 紧急_4小时
-    value: 10
+    value: URGENT_4H
     description: 
   
   - label: 高_8小时
-    value: 20
+    value: HIGH_8H
     description: 
   
   - label: 普通_24小时
-    value: 30
+    value: NORMAL_24H
     description: 
   
   - label: 低_48小时
-    value: 40
+    value: LOW_48H
     description: 
   

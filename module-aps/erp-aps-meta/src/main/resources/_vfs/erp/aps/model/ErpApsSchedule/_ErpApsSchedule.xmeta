@@ -37,7 +37,7 @@
         </prop>
         <prop name="schedulingMode" displayName="排产模式" propId="5" i18n-en:displayName="Scheduling Mode" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-aps/scheduling-mode"/>
+            <schema type="java.lang.String" precision="20" dict="erp-aps/scheduling-mode"/>
         </prop>
         <prop name="horizonStart" displayName="展望期开始" propId="6" i18n-en:displayName="Horizon Start" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -49,7 +49,7 @@
         </prop>
         <prop name="status" displayName="状态" propId="8" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-aps/schedule-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-aps/schedule-status"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="9" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">

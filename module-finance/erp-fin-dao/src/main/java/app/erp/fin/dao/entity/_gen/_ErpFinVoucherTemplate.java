@@ -37,11 +37,11 @@ public class _ErpFinVoucherTemplate extends DynamicOrmEntity{
     public static final String PROP_NAME_acctSchemaId = "acctSchemaId";
     public static final int PROP_ID_acctSchemaId = 4;
     
-    /* 业务类型: BUSINESS_TYPE INTEGER */
+    /* 业务类型: BUSINESS_TYPE VARCHAR */
     public static final String PROP_NAME_businessType = "businessType";
     public static final int PROP_ID_businessType = 5;
     
-    /* 凭证字: VOUCHER_TYPE INTEGER */
+    /* 凭证字: VOUCHER_TYPE VARCHAR */
     public static final String PROP_NAME_voucherType = "voucherType";
     public static final int PROP_ID_voucherType = 6;
     
@@ -167,10 +167,10 @@ public class _ErpFinVoucherTemplate extends DynamicOrmEntity{
     private java.lang.Long _acctSchemaId;
     
     /* 业务类型: BUSINESS_TYPE */
-    private java.lang.Integer _businessType;
+    private java.lang.String _businessType;
     
     /* 凭证字: VOUCHER_TYPE */
-    private java.lang.Integer _voucherType;
+    private java.lang.String _voucherType;
     
     /* 模板类型: TEMPLATE_TYPE */
     private java.lang.String _templateType;
@@ -376,9 +376,9 @@ public class _ErpFinVoucherTemplate extends DynamicOrmEntity{
             }
         
             case PROP_ID_businessType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_businessType));
                }
                setBusinessType(typedValue);
@@ -386,9 +386,9 @@ public class _ErpFinVoucherTemplate extends DynamicOrmEntity{
             }
         
             case PROP_ID_voucherType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_voucherType));
                }
                setVoucherType(typedValue);
@@ -534,14 +534,14 @@ public class _ErpFinVoucherTemplate extends DynamicOrmEntity{
         
             case PROP_ID_businessType:{
                onInitProp(propId);
-               this._businessType = (java.lang.Integer)value;
+               this._businessType = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_voucherType:{
                onInitProp(propId);
-               this._voucherType = (java.lang.Integer)value;
+               this._voucherType = (java.lang.String)value;
                
                break;
             }
@@ -701,7 +701,7 @@ public class _ErpFinVoucherTemplate extends DynamicOrmEntity{
     /**
      * 业务类型: BUSINESS_TYPE
      */
-    public final java.lang.Integer getBusinessType(){
+    public final java.lang.String getBusinessType(){
          onPropGet(PROP_ID_businessType);
          return _businessType;
     }
@@ -709,7 +709,7 @@ public class _ErpFinVoucherTemplate extends DynamicOrmEntity{
     /**
      * 业务类型: BUSINESS_TYPE
      */
-    public final void setBusinessType(java.lang.Integer value){
+    public final void setBusinessType(java.lang.String value){
         if(onPropSet(PROP_ID_businessType,value)){
             this._businessType = value;
             internalClearRefs(PROP_ID_businessType);
@@ -720,7 +720,7 @@ public class _ErpFinVoucherTemplate extends DynamicOrmEntity{
     /**
      * 凭证字: VOUCHER_TYPE
      */
-    public final java.lang.Integer getVoucherType(){
+    public final java.lang.String getVoucherType(){
          onPropGet(PROP_ID_voucherType);
          return _voucherType;
     }
@@ -728,7 +728,7 @@ public class _ErpFinVoucherTemplate extends DynamicOrmEntity{
     /**
      * 凭证字: VOUCHER_TYPE
      */
-    public final void setVoucherType(java.lang.Integer value){
+    public final void setVoucherType(java.lang.String value){
         if(onPropSet(PROP_ID_voucherType,value)){
             this._voucherType = value;
             internalClearRefs(PROP_ID_voucherType);

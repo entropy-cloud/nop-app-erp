@@ -43,7 +43,7 @@
                 <col id="netBookValue" ui:number="true" sortable="true"/>
 
                 <!--执行状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--执行时间-->
                 <col id="executedAt" sortable="true"/>

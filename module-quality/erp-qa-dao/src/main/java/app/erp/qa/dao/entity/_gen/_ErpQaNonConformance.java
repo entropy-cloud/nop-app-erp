@@ -57,15 +57,15 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     public static final String PROP_NAME_description = "description";
     public static final int PROP_ID_description = 9;
     
-    /* 严重程度: SEVERITY INTEGER */
+    /* 严重程度: SEVERITY VARCHAR */
     public static final String PROP_NAME_severity = "severity";
     public static final int PROP_ID_severity = 10;
     
-    /* 处理决定: DISPOSITION_TYPE INTEGER */
+    /* 处理决定: DISPOSITION_TYPE VARCHAR */
     public static final String PROP_NAME_dispositionType = "dispositionType";
     public static final int PROP_ID_dispositionType = 11;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 12;
     
@@ -77,7 +77,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     public static final String PROP_NAME_parameterName = "parameterName";
     public static final int PROP_ID_parameterName = 14;
     
-    /* 实测值: MEASURED_VALUE DECIMAL */
+    /* 实测值: MEASURED_VALUE VARCHAR */
     public static final String PROP_NAME_measuredValue = "measuredValue";
     public static final int PROP_ID_measuredValue = 15;
     
@@ -272,13 +272,13 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     private java.lang.String _description;
     
     /* 严重程度: SEVERITY */
-    private java.lang.Integer _severity;
+    private java.lang.String _severity;
     
     /* 处理决定: DISPOSITION_TYPE */
-    private java.lang.Integer _dispositionType;
+    private java.lang.String _dispositionType;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 供应商: SUPPLIER_ID */
     private java.lang.Long _supplierId;
@@ -290,10 +290,10 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     private java.lang.String _measuredValue;
     
     /* 规格下限: SPEC_MIN */
-    private java.lang.String _specMin;
+    private java.math.BigDecimal _specMin;
     
     /* 规格上限: SPEC_MAX */
-    private java.lang.String _specMax;
+    private java.math.BigDecimal _specMax;
     
     /* 责任人: ASSIGNED_TO */
     private java.lang.Long _assignedTo;
@@ -588,9 +588,9 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
             }
         
             case PROP_ID_severity:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_severity));
                }
                setSeverity(typedValue);
@@ -598,9 +598,9 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
             }
         
             case PROP_ID_dispositionType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_dispositionType));
                }
                setDispositionType(typedValue);
@@ -608,9 +608,9 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -648,9 +648,9 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
             }
         
             case PROP_ID_specMin:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_specMin));
                }
                setSpecMin(typedValue);
@@ -658,9 +658,9 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
             }
         
             case PROP_ID_specMax:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_specMax));
                }
                setSpecMax(typedValue);
@@ -851,21 +851,21 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
         
             case PROP_ID_severity:{
                onInitProp(propId);
-               this._severity = (java.lang.Integer)value;
+               this._severity = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_dispositionType:{
                onInitProp(propId);
-               this._dispositionType = (java.lang.Integer)value;
+               this._dispositionType = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -893,14 +893,14 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
         
             case PROP_ID_specMin:{
                onInitProp(propId);
-               this._specMin = (java.lang.String)value;
+               this._specMin = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_specMax:{
                onInitProp(propId);
-               this._specMax = (java.lang.String)value;
+               this._specMax = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1162,7 +1162,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /**
      * 严重程度: SEVERITY
      */
-    public final java.lang.Integer getSeverity(){
+    public final java.lang.String getSeverity(){
          onPropGet(PROP_ID_severity);
          return _severity;
     }
@@ -1170,7 +1170,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /**
      * 严重程度: SEVERITY
      */
-    public final void setSeverity(java.lang.Integer value){
+    public final void setSeverity(java.lang.String value){
         if(onPropSet(PROP_ID_severity,value)){
             this._severity = value;
             internalClearRefs(PROP_ID_severity);
@@ -1181,7 +1181,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /**
      * 处理决定: DISPOSITION_TYPE
      */
-    public final java.lang.Integer getDispositionType(){
+    public final java.lang.String getDispositionType(){
          onPropGet(PROP_ID_dispositionType);
          return _dispositionType;
     }
@@ -1189,7 +1189,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /**
      * 处理决定: DISPOSITION_TYPE
      */
-    public final void setDispositionType(java.lang.Integer value){
+    public final void setDispositionType(java.lang.String value){
         if(onPropSet(PROP_ID_dispositionType,value)){
             this._dispositionType = value;
             internalClearRefs(PROP_ID_dispositionType);
@@ -1200,7 +1200,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -1208,7 +1208,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);
@@ -1276,7 +1276,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /**
      * 规格下限: SPEC_MIN
      */
-    public final java.lang.String getSpecMin(){
+    public final java.math.BigDecimal getSpecMin(){
          onPropGet(PROP_ID_specMin);
          return _specMin;
     }
@@ -1284,7 +1284,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /**
      * 规格下限: SPEC_MIN
      */
-    public final void setSpecMin(java.lang.String value){
+    public final void setSpecMin(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_specMin,value)){
             this._specMin = value;
             internalClearRefs(PROP_ID_specMin);
@@ -1295,7 +1295,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /**
      * 规格上限: SPEC_MAX
      */
-    public final java.lang.String getSpecMax(){
+    public final java.math.BigDecimal getSpecMax(){
          onPropGet(PROP_ID_specMax);
          return _specMax;
     }
@@ -1303,7 +1303,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /**
      * 规格上限: SPEC_MAX
      */
-    public final void setSpecMax(java.lang.String value){
+    public final void setSpecMax(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_specMax,value)){
             this._specMax = value;
             internalClearRefs(PROP_ID_specMax);

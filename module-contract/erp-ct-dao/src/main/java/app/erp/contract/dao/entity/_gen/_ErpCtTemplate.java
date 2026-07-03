@@ -33,7 +33,7 @@ public class _ErpCtTemplate extends DynamicOrmEntity{
     public static final String PROP_NAME_name = "name";
     public static final int PROP_ID_name = 3;
     
-    /* 适用合同类型: CONTRACT_TYPE INTEGER */
+    /* 适用合同类型: CONTRACT_TYPE VARCHAR */
     public static final String PROP_NAME_contractType = "contractType";
     public static final int PROP_ID_contractType = 4;
     
@@ -137,7 +137,7 @@ public class _ErpCtTemplate extends DynamicOrmEntity{
     private java.lang.String _name;
     
     /* 适用合同类型: CONTRACT_TYPE */
-    private java.lang.Integer _contractType;
+    private java.lang.String _contractType;
     
     /* 模板内容: CONTENT_TEMPLATE */
     private java.lang.String _contentTemplate;
@@ -321,9 +321,9 @@ public class _ErpCtTemplate extends DynamicOrmEntity{
             }
         
             case PROP_ID_contractType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_contractType));
                }
                setContractType(typedValue);
@@ -452,7 +452,7 @@ public class _ErpCtTemplate extends DynamicOrmEntity{
         
             case PROP_ID_contractType:{
                onInitProp(propId);
-               this._contractType = (java.lang.Integer)value;
+               this._contractType = (java.lang.String)value;
                
                break;
             }
@@ -586,7 +586,7 @@ public class _ErpCtTemplate extends DynamicOrmEntity{
     /**
      * 适用合同类型: CONTRACT_TYPE
      */
-    public final java.lang.Integer getContractType(){
+    public final java.lang.String getContractType(){
          onPropGet(PROP_ID_contractType);
          return _contractType;
     }
@@ -594,7 +594,7 @@ public class _ErpCtTemplate extends DynamicOrmEntity{
     /**
      * 适用合同类型: CONTRACT_TYPE
      */
-    public final void setContractType(java.lang.Integer value){
+    public final void setContractType(java.lang.String value){
         if(onPropSet(PROP_ID_contractType,value)){
             this._contractType = value;
             internalClearRefs(PROP_ID_contractType);

@@ -34,7 +34,7 @@
                 <col id="description" sortable="true"/>
 
                 <!--借贷方向-->
-                <col id="dcDirection" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="dcDirection" mandatory="true" sortable="true"/>
 
                 <!--金额-->
                 <col id="amount" mandatory="true" ui:number="true" sortable="true"/>

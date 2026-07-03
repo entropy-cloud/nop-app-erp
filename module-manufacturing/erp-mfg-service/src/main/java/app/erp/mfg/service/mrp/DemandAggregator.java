@@ -13,6 +13,7 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -171,8 +172,8 @@ public class DemandAggregator {
         List<ErpMfgMrpDemand> all = dao.findAllByQuery(q);
         List<ErpMfgMrpDemand> kept = new ArrayList<>();
         for (ErpMfgMrpDemand d : all) {
-            Integer src = d.getDemandSource();
-            if (src != null && src != ErpMfgConstants.MRP_DEMAND_SOURCE_MANUAL) {
+            String src = d.getDemandSource();
+            if (src != null && !Objects.equals(src, ErpMfgConstants.MRP_DEMAND_SOURCE_MANUAL)) {
                 dao.deleteEntity(d);
             } else {
                 kept.add(d);

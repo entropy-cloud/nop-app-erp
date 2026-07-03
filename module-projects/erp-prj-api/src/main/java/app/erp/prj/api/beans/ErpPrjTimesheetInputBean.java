@@ -110,16 +110,16 @@
         }
 
 
-        private String _hours;
+        private java.math.BigDecimal _hours;
 
     
         @PropMeta(propId=8)
     
-        public String getHours(){
+        public java.math.BigDecimal getHours(){
             return _hours;
         }
 
-        public void setHours(String value){
+        public void setHours(java.math.BigDecimal value){
             this._hours = value;
         }
 
@@ -152,44 +152,44 @@
         }
 
 
-        private String _costRate;
+        private java.math.BigDecimal _costRate;
 
     
         @PropMeta(propId=11)
     
-        public String getCostRate(){
+        public java.math.BigDecimal getCostRate(){
             return _costRate;
         }
 
-        public void setCostRate(String value){
+        public void setCostRate(java.math.BigDecimal value){
             this._costRate = value;
         }
 
 
-        private String _costAmount;
+        private java.math.BigDecimal _costAmount;
 
     
         @PropMeta(propId=12)
     
-        public String getCostAmount(){
+        public java.math.BigDecimal getCostAmount(){
             return _costAmount;
         }
 
-        public void setCostAmount(String value){
+        public void setCostAmount(java.math.BigDecimal value){
             this._costAmount = value;
         }
 
 
-        private Integer _status;
+        private String _status;
 
     
         @PropMeta(propId=13)
     
-        public Integer getStatus(){
+        public String getStatus(){
             return _status;
         }
 
-        public void setStatus(Integer value){
+        public void setStatus(String value){
             this._status = value;
         }
 

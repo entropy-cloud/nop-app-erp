@@ -49,7 +49,7 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
     public static final String PROP_NAME_specMax = "specMax";
     public static final int PROP_ID_specMax = 7;
     
-    /* 实测值: MEASURED_VALUE DECIMAL */
+    /* 实测值: MEASURED_VALUE VARCHAR */
     public static final String PROP_NAME_measuredValue = "measuredValue";
     public static final int PROP_ID_measuredValue = 8;
     
@@ -57,7 +57,7 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
     public static final String PROP_NAME_unit = "unit";
     public static final int PROP_ID_unit = 9;
     
-    /* 行结果: RESULT INTEGER */
+    /* 行结果: RESULT VARCHAR */
     public static final String PROP_NAME_result = "result";
     public static final int PROP_ID_result = 10;
     
@@ -174,10 +174,10 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
     private java.lang.String _parameterName;
     
     /* 规格下限: SPEC_MIN */
-    private java.lang.String _specMin;
+    private java.math.BigDecimal _specMin;
     
     /* 规格上限: SPEC_MAX */
-    private java.lang.String _specMax;
+    private java.math.BigDecimal _specMax;
     
     /* 实测值: MEASURED_VALUE */
     private java.lang.String _measuredValue;
@@ -186,7 +186,7 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
     private java.lang.String _unit;
     
     /* 行结果: RESULT */
-    private java.lang.Integer _result;
+    private java.lang.String _result;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -396,9 +396,9 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_specMin:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_specMin));
                }
                setSpecMin(typedValue);
@@ -406,9 +406,9 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_specMax:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_specMax));
                }
                setSpecMax(typedValue);
@@ -436,9 +436,9 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_result:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_result));
                }
                setResult(typedValue);
@@ -561,14 +561,14 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
         
             case PROP_ID_specMin:{
                onInitProp(propId);
-               this._specMin = (java.lang.String)value;
+               this._specMin = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_specMax:{
                onInitProp(propId);
-               this._specMax = (java.lang.String)value;
+               this._specMax = (java.math.BigDecimal)value;
                
                break;
             }
@@ -589,7 +589,7 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
         
             case PROP_ID_result:{
                onInitProp(propId);
-               this._result = (java.lang.Integer)value;
+               this._result = (java.lang.String)value;
                
                break;
             }
@@ -747,7 +747,7 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
     /**
      * 规格下限: SPEC_MIN
      */
-    public final java.lang.String getSpecMin(){
+    public final java.math.BigDecimal getSpecMin(){
          onPropGet(PROP_ID_specMin);
          return _specMin;
     }
@@ -755,7 +755,7 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
     /**
      * 规格下限: SPEC_MIN
      */
-    public final void setSpecMin(java.lang.String value){
+    public final void setSpecMin(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_specMin,value)){
             this._specMin = value;
             internalClearRefs(PROP_ID_specMin);
@@ -766,7 +766,7 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
     /**
      * 规格上限: SPEC_MAX
      */
-    public final java.lang.String getSpecMax(){
+    public final java.math.BigDecimal getSpecMax(){
          onPropGet(PROP_ID_specMax);
          return _specMax;
     }
@@ -774,7 +774,7 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
     /**
      * 规格上限: SPEC_MAX
      */
-    public final void setSpecMax(java.lang.String value){
+    public final void setSpecMax(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_specMax,value)){
             this._specMax = value;
             internalClearRefs(PROP_ID_specMax);
@@ -823,7 +823,7 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
     /**
      * 行结果: RESULT
      */
-    public final java.lang.Integer getResult(){
+    public final java.lang.String getResult(){
          onPropGet(PROP_ID_result);
          return _result;
     }
@@ -831,7 +831,7 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
     /**
      * 行结果: RESULT
      */
-    public final void setResult(java.lang.Integer value){
+    public final void setResult(java.lang.String value){
         if(onPropSet(PROP_ID_result,value)){
             this._result = value;
             internalClearRefs(PROP_ID_result);

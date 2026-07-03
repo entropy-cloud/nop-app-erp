@@ -17,6 +17,7 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.dao.IOrmEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -126,37 +127,37 @@ public class ErpAstAssetCapitalizationProcessor {
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
 
     protected void validateTransitionForSubmit(ErpAstAssetCapitalization cap, IServiceContext context) {
-        Integer status = currentApproveStatus(cap);
-        if (status != ErpAstConstants.APPROVE_STATUS_UNSUBMITTED
-                && status != ErpAstConstants.APPROVE_STATUS_REJECTED) {
+        String status = currentApproveStatus(cap);
+        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_UNSUBMITTED)
+                && !Objects.equals(status, ErpAstConstants.APPROVE_STATUS_REJECTED)) {
             throw illegalTransition(cap, status, "UNSUBMITTED 或 REJECTED");
         }
     }
 
     protected void validateTransitionForApprove(ErpAstAssetCapitalization cap, IServiceContext context) {
-        Integer status = currentApproveStatus(cap);
-        if (status != ErpAstConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = currentApproveStatus(cap);
+        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(cap, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForReject(ErpAstAssetCapitalization cap, IServiceContext context) {
-        Integer status = currentApproveStatus(cap);
-        if (status != ErpAstConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = currentApproveStatus(cap);
+        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(cap, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpAstAssetCapitalization cap, IServiceContext context) {
-        Integer status = currentApproveStatus(cap);
-        if (status != ErpAstConstants.APPROVE_STATUS_APPROVED) {
+        String status = currentApproveStatus(cap);
+        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_APPROVED)) {
             throw illegalTransition(cap, status, "APPROVED");
         }
     }
 
     protected void validateTransitionForCancel(ErpAstAssetCapitalization cap, IServiceContext context) {
-        Integer docStatus = cap.getDocStatus();
-        if (docStatus != null && docStatus == ErpAstConstants.DOC_STATUS_CANCELLED) {
+        String docStatus = cap.getDocStatus();
+        if (docStatus != null && Objects.equals(docStatus, ErpAstConstants.DOC_STATUS_CANCELLED)) {
             throw illegalDocTransition(cap, docStatus, "非已作废");
         }
     }
@@ -209,7 +210,7 @@ public class ErpAstAssetCapitalizationProcessor {
     protected void generateDepreciationSchedule(ErpAstAssetCapitalization cap, ErpAstAsset asset,
                                                   IServiceContext context) {
         ErpAstAssetCategory category = loadCategory(cap.getCategoryId());
-        int method = category.getDepreciationMethod();
+        String method = category.getDepreciationMethod();
         int months = category.getUsefulLifeMonths();
         BigDecimal original = cap.getOriginalValue();
         BigDecimal residual = nz(asset.getResidualValue());
@@ -221,7 +222,7 @@ public class ErpAstAssetCapitalizationProcessor {
         LocalDate start = baseDate.plusMonths(1);
 
         BigDecimal straightMonthly = BigDecimal.ZERO;
-        if (method == ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE) {
+        if (Objects.equals(method, ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE)) {
             straightMonthly = original.subtract(residual).divide(BigDecimal.valueOf(months), SCALE, RoundingMode.HALF_UP);
         }
 
@@ -248,9 +249,9 @@ public class ErpAstAssetCapitalizationProcessor {
      * 计划折旧额。直线法每期等额、最后一期按残值约束调整；双倍余额递减/工作量法的实际金额在折旧执行时
      * 按账面净值/工作量计算，计划额置 0 占位。
      */
-    protected BigDecimal plannedAmount(int method, int monthIndex, int months, BigDecimal original,
+    protected BigDecimal plannedAmount(String method, int monthIndex, int months, BigDecimal original,
                                        BigDecimal residual, BigDecimal straightMonthly) {
-        if (method == ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE) {
+        if (Objects.equals(method, ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE)) {
             if (monthIndex == months - 1) {
                 BigDecimal beforeLast = straightMonthly.multiply(BigDecimal.valueOf(months - 1));
                 return original.subtract(residual).subtract(beforeLast);
@@ -297,17 +298,17 @@ public class ErpAstAssetCapitalizationProcessor {
     }
 
     protected boolean isAlreadyApproved(ErpAstAssetCapitalization cap) {
-        Integer status = cap.getApproveStatus();
-        return status != null && status == ErpAstConstants.APPROVE_STATUS_APPROVED;
+        String status = cap.getApproveStatus();
+        return status != null && Objects.equals(status, ErpAstConstants.APPROVE_STATUS_APPROVED);
     }
 
     protected boolean isAlreadyRejected(ErpAstAssetCapitalization cap) {
-        Integer status = cap.getApproveStatus();
-        return status != null && status == ErpAstConstants.APPROVE_STATUS_REJECTED;
+        String status = cap.getApproveStatus();
+        return status != null && Objects.equals(status, ErpAstConstants.APPROVE_STATUS_REJECTED);
     }
 
-    protected Integer currentApproveStatus(ErpAstAssetCapitalization cap) {
-        Integer status = cap.getApproveStatus();
+    protected String currentApproveStatus(ErpAstAssetCapitalization cap) {
+        String status = cap.getApproveStatus();
         return status != null ? status : ErpAstConstants.APPROVE_STATUS_UNSUBMITTED;
     }
 
@@ -357,14 +358,14 @@ public class ErpAstAssetCapitalizationProcessor {
         return v != null ? v : BigDecimal.ZERO;
     }
 
-    protected NopException illegalTransition(ErpAstAssetCapitalization cap, Integer current, String expected) {
+    protected NopException illegalTransition(ErpAstAssetCapitalization cap, String current, String expected) {
         return new NopException(ErpAstErrors.ERR_CAPITALIZATION_ILLEGAL_STATUS_TRANSITION)
                 .param(ErpAstErrors.ARG_CAPITALIZATION_CODE, cap.getCode())
                 .param(ErpAstErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpAstErrors.ARG_EXPECTED_STATUS, expected);
     }
 
-    protected NopException illegalDocTransition(ErpAstAssetCapitalization cap, Integer current, String expected) {
+    protected NopException illegalDocTransition(ErpAstAssetCapitalization cap, String current, String expected) {
         return new NopException(ErpAstErrors.ERR_CAPITALIZATION_ILLEGAL_DOC_TRANSITION)
                 .param(ErpAstErrors.ARG_CAPITALIZATION_CODE, cap.getCode())
                 .param(ErpAstErrors.ARG_CURRENT_DOC_STATUS, current)

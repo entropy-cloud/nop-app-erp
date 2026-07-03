@@ -31,10 +31,10 @@
                 <col id="acctSchemaId" ui:number="true" sortable="true"/>
 
                 <!--业务类型-->
-                <col id="businessType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="businessType" mandatory="true" sortable="true"/>
 
                 <!--凭证字-->
-                <col id="voucherType" ui:number="true" sortable="true"/>
+                <col id="voucherType" sortable="true"/>
 
                 <!--模板类型-->
                 <col id="templateType" sortable="true"/>

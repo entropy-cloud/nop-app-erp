@@ -25,7 +25,7 @@
                 <col id="employeeId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--评估类型-->
-                <col id="assessmentType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="assessmentType" mandatory="true" sortable="true"/>
 
                 <!--评估人-->
                 <col id="assessorId" ui:number="true" sortable="true"/>
@@ -34,7 +34,7 @@
                 <col id="assessmentDate" sortable="true"/>
 
                 <!--状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--综合评分-->
                 <col id="overallScore" ui:number="true" sortable="true"/>

@@ -28,7 +28,7 @@
                 <col id="orgId" ui:number="true" sortable="true"/>
 
                 <!--准入类型-->
-                <col id="approvalType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="approvalType" mandatory="true" sortable="true"/>
 
                 <!--准入物料类别-->
                 <col id="materialCategoryId" mandatory="true" ui:number="true" sortable="true"/>
@@ -43,7 +43,7 @@
                 <col id="qualificationDoc" sortable="true"/>
 
                 <!--准入状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--批准人-->
                 <col id="approvedBy" sortable="true"/>

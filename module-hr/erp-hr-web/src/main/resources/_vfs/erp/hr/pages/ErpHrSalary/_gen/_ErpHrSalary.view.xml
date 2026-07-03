@@ -70,7 +70,7 @@
                 <col id="netSalary" ui:number="true" sortable="true"/>
 
                 <!--支付状态-->
-                <col id="paymentStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="paymentStatus" mandatory="true" sortable="true"/>
 
                 <!--实发日期-->
                 <col id="paymentDate" sortable="true"/>

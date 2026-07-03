@@ -254,7 +254,7 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
     private java.math.BigDecimal _varianceAmount;
     
     /* 差异百分比: VARIANCE_PERCENT */
-    private java.lang.String _variancePercent;
+    private java.math.BigDecimal _variancePercent;
     
     /* 标准数量: STANDARD_QTY */
     private java.math.BigDecimal _standardQty;
@@ -559,9 +559,9 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
             }
         
             case PROP_ID_variancePercent:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_variancePercent));
                }
                setVariancePercent(typedValue);
@@ -789,7 +789,7 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
         
             case PROP_ID_variancePercent:{
                onInitProp(propId);
-               this._variancePercent = (java.lang.String)value;
+               this._variancePercent = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1091,7 +1091,7 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
     /**
      * 差异百分比: VARIANCE_PERCENT
      */
-    public final java.lang.String getVariancePercent(){
+    public final java.math.BigDecimal getVariancePercent(){
          onPropGet(PROP_ID_variancePercent);
          return _variancePercent;
     }
@@ -1099,7 +1099,7 @@ public class _ErpMfgCostVariance extends DynamicOrmEntity{
     /**
      * 差异百分比: VARIANCE_PERCENT
      */
-    public final void setVariancePercent(java.lang.String value){
+    public final void setVariancePercent(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_variancePercent,value)){
             this._variancePercent = value;
             internalClearRefs(PROP_ID_variancePercent);

@@ -15,45 +15,46 @@
     </x:gen-extends>
 
     <dicts>
-        <dict label="DRP计划状态" name="erp-drp/drp-plan-status" valueType="int" i18n-en:label="DRP Plan Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="COMPUTED" label="已计算" value="20" i18n-en:label="Computed"/>
-            <option code="APPROVED" label="已批准" value="30" i18n-en:label="Approved"/>
-            <option code="EXECUTED" label="已执行" value="40" i18n-en:label="Executed"/>
+        <dict label="DRP计划状态" name="erp-drp/drp-plan-status" valueType="string" i18n-en:label="DRP Plan Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="COMPUTED" label="已计算" value="COMPUTED" i18n-en:label="Computed"/>
+            <option code="APPROVED" label="已批准" value="APPROVED" i18n-en:label="Approved"/>
+            <option code="EXECUTED" label="已执行" value="EXECUTED" i18n-en:label="Executed"/>
         </dict>
-        <dict label="DRP明细行状态" name="erp-drp/drp-line-status" valueType="int" i18n-en:label="DRP Line Status">
-            <option code="SUGGESTED" label="建议" value="10" i18n-en:label="Suggested"/>
-            <option code="APPROVED" label="已批准" value="20" i18n-en:label="Approved"/>
-            <option code="ORDERED" label="已下单" value="30" i18n-en:label="Ordered"/>
-            <option code="CANCELLED" label="已取消" value="40" i18n-en:label="Cancelled"/>
+        <dict label="DRP明细行状态" name="erp-drp/drp-line-status" valueType="string" i18n-en:label="DRP Line Status">
+            <option code="SUGGESTED" label="建议" value="SUGGESTED" i18n-en:label="Suggested"/>
+            <option code="APPROVED" label="已批准" value="APPROVED" i18n-en:label="Approved"/>
+            <option code="ORDERED" label="已下单" value="ORDERED" i18n-en:label="Ordered"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
         </dict>
-        <dict label="补货类型" name="erp-drp/drp-replenishment-type" valueType="int" i18n-en:label="Replenishment Type">
-            <option code="TRANSFER" label="仓间调拨" value="10" i18n-en:label="Transfer"/>
-            <option code="PURCHASE" label="向供应商采购" value="20" i18n-en:label="Purchase"/>
+        <dict label="补货类型" name="erp-drp/drp-replenishment-type" valueType="string" i18n-en:label="Replenishment Type">
+            <option code="TRANSFER" label="仓间调拨" value="TRANSFER" i18n-en:label="Transfer"/>
+            <option code="PURCHASE" label="向供应商采购" value="PURCHASE" i18n-en:label="Purchase"/>
         </dict>
-        <dict label="补货方法" name="erp-drp/drp-replenishment-method" valueType="int" i18n-en:label="Replenishment Method">
-            <option code="MIN_MAX" label="最小-最大" value="10" i18n-en:label="Min-Max"/>
-            <option code="PERIODIC" label="定期" value="20" i18n-en:label="Periodic"/>
-            <option code="LOT_FOR_LOT" label="按需" value="30" i18n-en:label="Lot-for-Lot"/>
+        <dict label="补货方法" name="erp-drp/drp-replenishment-method" valueType="string"
+              i18n-en:label="Replenishment Method">
+            <option code="MIN_MAX" label="最小-最大" value="MIN_MAX" i18n-en:label="Min-Max"/>
+            <option code="PERIODIC" label="定期" value="PERIODIC" i18n-en:label="Periodic"/>
+            <option code="LOT_FOR_LOT" label="按需" value="LOT_FOR_LOT" i18n-en:label="Lot-for-Lot"/>
         </dict>
-        <dict label="安全库存计算方法" name="erp-inv/drp-ss-method" valueType="int" i18n-en:label="Safety Stock Method">
-            <option code="STATISTICAL" label="标准差法" value="10" i18n-en:label="Statistical"/>
-            <option code="SIMPLE" label="简易法" value="20" i18n-en:label="Simple"/>
-            <option code="DDMRP" label="需求驱动法" value="30" i18n-en:label="DDMRP"/>
+        <dict label="安全库存计算方法" name="erp-inv/drp-ss-method" valueType="string" i18n-en:label="Safety Stock Method">
+            <option code="STATISTICAL" label="标准差法" value="STATISTICAL" i18n-en:label="Statistical"/>
+            <option code="SIMPLE" label="简易法" value="SIMPLE" i18n-en:label="Simple"/>
+            <option code="DDMRP" label="需求驱动法" value="DDMRP" i18n-en:label="DDMRP"/>
         </dict>
-        <dict label="服务水平" name="erp-inv/drp-service-level" valueType="int" i18n-en:label="Service Level">
-            <option code="PCT95" label="95%" value="10" i18n-en:label="95%"/>
-            <option code="PCT97_5" label="97.5%" value="20" i18n-en:label="97.5%"/>
-            <option code="PCT99" label="99%" value="30" i18n-en:label="99%"/>
-            <option code="PCT99_5" label="99.5%" value="40" i18n-en:label="99.5%"/>
+        <dict label="服务水平" name="erp-inv/drp-service-level" valueType="string" i18n-en:label="Service Level">
+            <option code="PCT95" label="95%" value="PCT95" i18n-en:label="95%"/>
+            <option code="PCT97_5" label="97.5%" value="PCT97_5" i18n-en:label="97.5%"/>
+            <option code="PCT99" label="99%" value="PCT99" i18n-en:label="99%"/>
+            <option code="PCT99_5" label="99.5%" value="PCT99_5" i18n-en:label="99.5%"/>
         </dict>
-        <dict label="越库状态" name="erp-inv/drp-xdock-status" valueType="int" i18n-en:label="Cross Dock Status">
-            <option code="PENDING" label="待匹配" value="10" i18n-en:label="Pending"/>
-            <option code="MATCHED" label="已匹配" value="20" i18n-en:label="Matched"/>
-            <option code="STAGING" label="暂存中" value="30" i18n-en:label="Staging"/>
-            <option code="LOADED" label="已装车" value="40" i18n-en:label="Loaded"/>
-            <option code="COMPLETED" label="已完成" value="50" i18n-en:label="Completed"/>
-            <option code="CANCELLED" label="已取消" value="60" i18n-en:label="Cancelled"/>
+        <dict label="越库状态" name="erp-inv/drp-xdock-status" valueType="string" i18n-en:label="Cross Dock Status">
+            <option code="PENDING" label="待匹配" value="PENDING" i18n-en:label="Pending"/>
+            <option code="MATCHED" label="已匹配" value="MATCHED" i18n-en:label="Matched"/>
+            <option code="STAGING" label="暂存中" value="STAGING" i18n-en:label="Staging"/>
+            <option code="LOADED" label="已装车" value="LOADED" i18n-en:label="Loaded"/>
+            <option code="COMPLETED" label="已完成" value="COMPLETED" i18n-en:label="Completed"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
         </dict>
     </dicts>
 
@@ -91,8 +92,9 @@
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Period From"/>
                 <column code="PERIOD_TO" displayName="期间结束" mandatory="true" name="periodTo" propId="5"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Period To"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="6" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-drp/drp-plan-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-drp/drp-plan-status"
+                        i18n-en:displayName="Status"/>
                 <column code="TOTAL_REPLENISHMENT_QTY" displayName="总补货数量" domain="quantity"
                         name="totalReplenishmentQty" precision="20" propId="7" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Total Replenishment Qty"/>
@@ -154,8 +156,8 @@
                 <column code="SOURCE_WAREHOUSE_ID" displayName="来源仓库" name="sourceWarehouseId" propId="6"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Source Warehouse"/>
                 <column code="REPLENISHMENT_TYPE" displayName="补货类型" mandatory="true" name="replenishmentType"
-                        propId="7" stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-drp/drp-replenishment-type"
-                        i18n-en:displayName="Replenishment Type"/>
+                        precision="20" propId="7" stdDataType="string" stdSqlType="VARCHAR"
+                        ext:dict="erp-drp/drp-replenishment-type" i18n-en:displayName="Replenishment Type"/>
                 <column code="CURRENT_STOCK" displayName="当前库存" domain="quantity" name="currentStock" precision="20"
                         propId="8" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Current Stock"/>
@@ -184,8 +186,9 @@
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Order Bill Type"/>
                 <column code="ORDER_BILL_CODE" displayName="生成单据号" name="orderBillCode" precision="50" propId="17"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Order Bill Code"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="18" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-drp/drp-line-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="18"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-drp/drp-line-status"
+                        i18n-en:displayName="Status"/>
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="19" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="20"
@@ -265,8 +268,8 @@
                 <column code="PREFERRED_SUPPLIER_ID" displayName="首选供应商" name="preferredSupplierId" propId="8"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Preferred Supplier"/>
                 <column code="REPLENISHMENT_METHOD" displayName="补货方法" mandatory="true" name="replenishmentMethod"
-                        propId="9" stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-drp/drp-replenishment-method"
-                        i18n-en:displayName="Replenishment Method"/>
+                        precision="20" propId="9" stdDataType="string" stdSqlType="VARCHAR"
+                        ext:dict="erp-drp/drp-replenishment-method" i18n-en:displayName="Replenishment Method"/>
                 <column code="MIN_STOCK_LEVEL" displayName="最低库存" domain="quantity" name="minStockLevel" precision="20"
                         propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Min Stock Level"/>
@@ -345,10 +348,11 @@
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Material"/>
                 <column code="WAREHOUSE_ID" displayName="仓库" name="warehouseId" propId="5" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
-                <column code="METHOD" displayName="计算方法" mandatory="true" name="method" propId="6" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-inv/drp-ss-method" i18n-en:displayName="Method"/>
-                <column code="SERVICE_LEVEL" displayName="服务水平" mandatory="true" name="serviceLevel" propId="7"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-inv/drp-service-level"
+                <column code="METHOD" displayName="计算方法" mandatory="true" name="method" precision="20" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/drp-ss-method"
+                        i18n-en:displayName="Method"/>
+                <column code="SERVICE_LEVEL" displayName="服务水平" mandatory="true" name="serviceLevel" precision="20"
+                        propId="7" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/drp-service-level"
                         i18n-en:displayName="Service Level"/>
                 <column code="HISTORY_MONTHS" defaultValue="6" displayName="分析月数" name="historyMonths" propId="8"
                         stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="History Months"/>
@@ -442,8 +446,9 @@
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Staging Location"/>
                 <column code="DOCK_SLOT_TIME" displayName="月台时间窗口" name="dockSlotTime" propId="14"
                         stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Dock Slot Time"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="15" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-inv/drp-xdock-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="15"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/drp-xdock-status"
+                        i18n-en:displayName="Status"/>
                 <column code="MATCHED_AT" displayName="匹配时间" name="matchedAt" propId="16" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Matched At"/>
                 <column code="LOADED_AT" displayName="装车完成时间" name="loadedAt" propId="17" stdDataType="datetime"

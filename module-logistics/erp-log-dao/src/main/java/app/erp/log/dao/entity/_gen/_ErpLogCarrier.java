@@ -37,7 +37,7 @@ public class _ErpLogCarrier extends DynamicOrmEntity{
     public static final String PROP_NAME_carrierName = "carrierName";
     public static final int PROP_ID_carrierName = 4;
     
-    /* 承运商类型: CARRIER_TYPE INTEGER */
+    /* 承运商类型: CARRIER_TYPE VARCHAR */
     public static final String PROP_NAME_carrierType = "carrierType";
     public static final int PROP_ID_carrierType = 5;
     
@@ -184,7 +184,7 @@ public class _ErpLogCarrier extends DynamicOrmEntity{
     private java.lang.String _carrierName;
     
     /* 承运商类型: CARRIER_TYPE */
-    private java.lang.Integer _carrierType;
+    private java.lang.String _carrierType;
     
     /* 网关标识: GATEWAY_ID */
     private java.lang.String _gatewayId;
@@ -199,7 +199,7 @@ public class _ErpLogCarrier extends DynamicOrmEntity{
     private java.lang.String _trackingUrlTemplate;
     
     /* 最大包裹重量(kg): MAX_PARCEL_WEIGHT */
-    private java.lang.String _maxParcelWeight;
+    private java.math.BigDecimal _maxParcelWeight;
     
     /* 支持服务类型: SUPPORTED_SERVICE_TYPES */
     private java.lang.String _supportedServiceTypes;
@@ -405,9 +405,9 @@ public class _ErpLogCarrier extends DynamicOrmEntity{
             }
         
             case PROP_ID_carrierType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_carrierType));
                }
                setCarrierType(typedValue);
@@ -455,9 +455,9 @@ public class _ErpLogCarrier extends DynamicOrmEntity{
             }
         
             case PROP_ID_maxParcelWeight:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_maxParcelWeight));
                }
                setMaxParcelWeight(typedValue);
@@ -583,7 +583,7 @@ public class _ErpLogCarrier extends DynamicOrmEntity{
         
             case PROP_ID_carrierType:{
                onInitProp(propId);
-               this._carrierType = (java.lang.Integer)value;
+               this._carrierType = (java.lang.String)value;
                
                break;
             }
@@ -618,7 +618,7 @@ public class _ErpLogCarrier extends DynamicOrmEntity{
         
             case PROP_ID_maxParcelWeight:{
                onInitProp(propId);
-               this._maxParcelWeight = (java.lang.String)value;
+               this._maxParcelWeight = (java.math.BigDecimal)value;
                
                break;
             }
@@ -764,7 +764,7 @@ public class _ErpLogCarrier extends DynamicOrmEntity{
     /**
      * 承运商类型: CARRIER_TYPE
      */
-    public final java.lang.Integer getCarrierType(){
+    public final java.lang.String getCarrierType(){
          onPropGet(PROP_ID_carrierType);
          return _carrierType;
     }
@@ -772,7 +772,7 @@ public class _ErpLogCarrier extends DynamicOrmEntity{
     /**
      * 承运商类型: CARRIER_TYPE
      */
-    public final void setCarrierType(java.lang.Integer value){
+    public final void setCarrierType(java.lang.String value){
         if(onPropSet(PROP_ID_carrierType,value)){
             this._carrierType = value;
             internalClearRefs(PROP_ID_carrierType);
@@ -859,7 +859,7 @@ public class _ErpLogCarrier extends DynamicOrmEntity{
     /**
      * 最大包裹重量(kg): MAX_PARCEL_WEIGHT
      */
-    public final java.lang.String getMaxParcelWeight(){
+    public final java.math.BigDecimal getMaxParcelWeight(){
          onPropGet(PROP_ID_maxParcelWeight);
          return _maxParcelWeight;
     }
@@ -867,7 +867,7 @@ public class _ErpLogCarrier extends DynamicOrmEntity{
     /**
      * 最大包裹重量(kg): MAX_PARCEL_WEIGHT
      */
-    public final void setMaxParcelWeight(java.lang.String value){
+    public final void setMaxParcelWeight(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_maxParcelWeight,value)){
             this._maxParcelWeight = value;
             internalClearRefs(PROP_ID_maxParcelWeight);

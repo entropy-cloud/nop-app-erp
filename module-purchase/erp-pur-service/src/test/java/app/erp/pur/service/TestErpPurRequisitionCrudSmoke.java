@@ -43,8 +43,8 @@ public class TestErpPurRequisitionCrudSmoke extends JunitAutoTestCase {
         headData.put("code", "SMOKE-PUR");
         headData.put("requesterId", 1);
         headData.put("businessDate", "2026-07-01");
-        headData.put("docStatus", 10);
-        headData.put("approveStatus", 10);
+        headData.put("docStatus", "DRAFT");
+        headData.put("approveStatus", "UNSUBMITTED");
         ApiResponse<?> result = executeRpc(GraphQLOperationType.mutation, "ErpPurRequisition__save",
                 ApiRequest.build(Map.of("data", headData)));
 
@@ -60,8 +60,8 @@ public class TestErpPurRequisitionCrudSmoke extends JunitAutoTestCase {
         headData.put("code", "SMOKE-PUR");
         headData.put("requesterId", 1);
         headData.put("businessDate", "2026-07-01");
-        headData.put("docStatus", 10);
-        headData.put("approveStatus", 10);
+        headData.put("docStatus", "DRAFT");
+        headData.put("approveStatus", "UNSUBMITTED");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpPurRequisition__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -80,8 +80,8 @@ public class TestErpPurRequisitionCrudSmoke extends JunitAutoTestCase {
         headData.put("code", "SMOKE-PUR");
         headData.put("requesterId", 1);
         headData.put("businessDate", "2026-07-01");
-        headData.put("docStatus", 10);
-        headData.put("approveStatus", 10);
+        headData.put("docStatus", "DRAFT");
+        headData.put("approveStatus", "UNSUBMITTED");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpPurRequisition__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -104,8 +104,8 @@ public class TestErpPurRequisitionCrudSmoke extends JunitAutoTestCase {
         headData.put("code", "SMOKE-PUR");
         headData.put("requesterId", 1);
         headData.put("businessDate", "2026-07-01");
-        headData.put("docStatus", 10);
-        headData.put("approveStatus", 10);
+        headData.put("docStatus", "DRAFT");
+        headData.put("approveStatus", "UNSUBMITTED");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpPurRequisition__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -129,8 +129,8 @@ public class TestErpPurRequisitionCrudSmoke extends JunitAutoTestCase {
         headData.put("code", "SMOKE-PUR");
         headData.put("requesterId", 1);
         headData.put("businessDate", "2026-07-01");
-        headData.put("docStatus", 10);
-        headData.put("approveStatus", 10);
+        headData.put("docStatus", "DRAFT");
+        headData.put("approveStatus", "UNSUBMITTED");
         ApiResponse<?> head = executeRpc(GraphQLOperationType.mutation, "ErpPurRequisition__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_saveHead_response.json5", head);
@@ -139,8 +139,8 @@ public class TestErpPurRequisitionCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> lineData = new LinkedHashMap<>();
         lineData.put("code", "SMOKE-PUR-RFQ");
         lineData.put("businessDate", "2026-07-01");
-        lineData.put("docStatus", 10);
-        lineData.put("approveStatus", 10);
+        lineData.put("docStatus", "DRAFT");
+        lineData.put("approveStatus", "UNSUBMITTED");
         lineData.put("requisitionId", headId);
         ApiResponse<?> line = executeRpc(GraphQLOperationType.mutation, "ErpPurRfq__save",
                 ApiRequest.build(Map.of("data", lineData)));

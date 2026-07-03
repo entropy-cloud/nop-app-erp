@@ -98,16 +98,16 @@
         }
 
 
-        private Integer _paymentMode;
+        private String _paymentMode;
 
     
         @PropMeta(propId=7)
     
-        public Integer getPaymentMode(){
+        public String getPaymentMode(){
             return _paymentMode;
         }
 
-        public void setPaymentMode(Integer value){
+        public void setPaymentMode(String value){
             this._paymentMode = value;
         }
 
@@ -250,16 +250,16 @@
         }
 
 
-        private Integer _docStatus;
+        private String _docStatus;
 
     
         @PropMeta(propId=17)
     
-        public Integer getDocStatus(){
+        public String getDocStatus(){
             return _docStatus;
         }
 
-        public void setDocStatus(Integer value){
+        public void setDocStatus(String value){
             this._docStatus = value;
         }
 
@@ -276,16 +276,16 @@
         }
 
 
-        private Integer _approveStatus;
+        private String _approveStatus;
 
     
         @PropMeta(propId=18)
     
-        public Integer getApproveStatus(){
+        public String getApproveStatus(){
             return _approveStatus;
         }
 
-        public void setApproveStatus(Integer value){
+        public void setApproveStatus(String value){
             this._approveStatus = value;
         }
 

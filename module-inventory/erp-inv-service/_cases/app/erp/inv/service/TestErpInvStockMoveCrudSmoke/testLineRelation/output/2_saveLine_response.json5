@@ -6,7 +6,7 @@
     "materialId": 2,
     "skuId": null,
     "uoMId": 1,
-    "quantity": "10",
+    "quantity": 10,
     "unitCost": null,
     "totalCost": null,
     "currencyId": null,

@@ -9,7 +9,7 @@
   "totalDebit": 0.0,
   "totalCredit": 0.0,
   "importTime": "2000-01-01 14:00:00",
-  "docStatus": 0,
+  "docStatus": "",
   "docStatus_label": "",
   "remark": "",
   "delVersion": 0,

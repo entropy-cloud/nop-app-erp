@@ -5,6 +5,7 @@ import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.PostingEvent;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
+import app.erp.fin.service.ErpFinConstants;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
@@ -13,6 +14,7 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 import java.util.List;
+import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
@@ -29,8 +31,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  */
 public class ProjectPostingExecutor {
 
-    private static final int VOUCHER_STATUS_POSTED = 20;
-    private static final int POSTING_TYPE_NORMAL = 10;
+    private static final String VOUCHER_STATUS_POSTED = ErpFinConstants.VOUCHER_STATUS_POSTED;
+    private static final String POSTING_TYPE_NORMAL = "NORMAL";
 
     @Inject
     IErpFinVoucherBiz voucherBiz;
@@ -57,14 +59,14 @@ public class ProjectPostingExecutor {
     private void markOriginalVoucherReversed(String billHeadCode, ErpFinBusinessType businessType) {
         IEntityDao<ErpFinVoucherBillR> linkDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
-        q.addFilter(and(eq("billCode", billHeadCode), eq("businessType", businessType.getCode())));
+        q.addFilter(and(eq("billCode", billHeadCode), eq("businessType", businessType.name())));
         List<ErpFinVoucherBillR> links = linkDao.findAllByQuery(q);
         IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
         for (ErpFinVoucherBillR link : links) {
             ErpFinVoucher voucher = voucherDao.getEntityById(link.getVoucherId());
-            if (voucher != null && Integer.valueOf(VOUCHER_STATUS_POSTED).equals(voucher.getDocStatus())
+            if (voucher != null && Objects.equals(voucher.getDocStatus(), VOUCHER_STATUS_POSTED)
                     && !Boolean.TRUE.equals(voucher.getIsReversed())
-                    && (voucher.getPostingType() == null || voucher.getPostingType() == POSTING_TYPE_NORMAL)) {
+                    && (voucher.getPostingType() == null || Objects.equals(voucher.getPostingType(), POSTING_TYPE_NORMAL))) {
                 voucher.setIsReversed(true);
                 voucherDao.updateEntity(voucher);
             }

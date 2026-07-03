@@ -154,24 +154,24 @@ dict:
     erp-aps/dispatch-type: Dispatch Type
 dict.option.label:
   erp-aps/operation-order-status:
-    '10': Draft
-    '20': Planned
-    '30': In Progress
-    '40': Finished
-    '50': Cancelled
+    DRAFT: Draft
+    PLANNED: Planned
+    IN_PROGRESS: In Progress
+    FINISHED: Finished
+    CANCELLED: Cancelled
   erp-aps/schedule-status:
-    '10': Draft
-    '20': Published
-    '30': Archived
+    DRAFT: Draft
+    PUBLISHED: Published
+    ARCHIVED: Archived
   erp-aps/constraint-type:
-    '10': Maintenance
-    '20': Tool Life
-    '30': Personnel
+    MAINTENANCE: Maintenance
+    TOOL: Tool Life
+    PERSONNEL: Personnel
   erp-aps/scheduling-mode:
-    '10': Forward
-    '20': Backward
+    FORWARD: Forward
+    BACKWARD: Backward
   erp-aps/dispatch-type:
-    '10': Auto
-    '20': Manual
-    '30': Hold
-    '40': Unhold
+    AUTO: Auto
+    MANUAL: Manual
+    HOLD: Hold
+    UNHOLD: Unhold

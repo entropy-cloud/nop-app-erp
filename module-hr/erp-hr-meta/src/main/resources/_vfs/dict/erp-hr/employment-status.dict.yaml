@@ -1,27 +1,27 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 雇佣状态
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 在职
-    value: 10
+    value: ACTIVE
     description: 
   
   - label: 试用
-    value: 20
+    value: PROBATION
     description: 
   
   - label: 已离职
-    value: 30
+    value: RESIGNED
     description: 
   
   - label: 已解雇
-    value: 40
+    value: TERMINATED
     description: 
   
   - label: 已退休
-    value: 50
+    value: RETIRED
     description: 
   

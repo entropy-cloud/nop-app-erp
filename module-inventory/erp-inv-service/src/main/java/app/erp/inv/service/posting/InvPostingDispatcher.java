@@ -15,6 +15,7 @@ import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -85,14 +86,14 @@ public class InvPostingDispatcher {
                 || ErpInvConstants.RELATED_BILL_TYPE_MNT_SPARE_PART.equals(move.getRelatedBillType())) {
             return null;
         }
-        Integer moveType = move.getMoveType();
+        String moveType = move.getMoveType();
         if (moveType == null) {
             return null;
         }
-        if (moveType == ErpInvConstants.MOVE_TYPE_INCOMING) {
+        if (Objects.equals(moveType, ErpInvConstants.MOVE_TYPE_INCOMING)) {
             return ErpFinBusinessType.PURCHASE_INPUT;
         }
-        if (moveType == ErpInvConstants.MOVE_TYPE_OUTGOING) {
+        if (Objects.equals(moveType, ErpInvConstants.MOVE_TYPE_OUTGOING)) {
             return ErpFinBusinessType.SALES_OUTPUT;
         }
         return null;

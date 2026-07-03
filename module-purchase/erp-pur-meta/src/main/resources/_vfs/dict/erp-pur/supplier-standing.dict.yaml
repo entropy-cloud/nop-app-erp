@@ -1,19 +1,19 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 供应商评级
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 优秀
-    value: 10
+    value: GREEN
     description: 
   
   - label: 待改进
-    value: 20
+    value: YELLOW
     description: 
   
   - label: 不合格
-    value: 30
+    value: RED
     description: 
   

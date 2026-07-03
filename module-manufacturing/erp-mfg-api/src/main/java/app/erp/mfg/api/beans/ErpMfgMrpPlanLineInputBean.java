@@ -82,16 +82,16 @@
         }
 
 
-        private Integer _orderType;
+        private String _orderType;
 
     
         @PropMeta(propId=6)
     
-        public Integer getOrderType(){
+        public String getOrderType(){
             return _orderType;
         }
 
-        public void setOrderType(Integer value){
+        public void setOrderType(String value){
             this._orderType = value;
         }
 

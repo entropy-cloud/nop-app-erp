@@ -28,7 +28,7 @@
                 <col id="agentId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--服务类型-->
-                <col id="serviceType" ui:number="true" sortable="true"/>
+                <col id="serviceType" sortable="true"/>
 
                 <!--费率(元/小时)-->
                 <col id="rate" ui:number="true" sortable="true"/>

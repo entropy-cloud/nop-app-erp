@@ -1,27 +1,27 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 维护任务状态
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 待执行
-    value: 10
+    value: PENDING
     description: 
   
   - label: 执行中
-    value: 20
+    value: IN_PROGRESS
     description: 
   
   - label: 已完成
-    value: 30
+    value: COMPLETED
     description: 
   
   - label: 已跳过
-    value: 40
+    value: SKIPPED
     description: 
   
   - label: 失败
-    value: 50
+    value: FAILED
     description: 
   

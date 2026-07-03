@@ -310,7 +310,7 @@ public class TestErpMfgCrpLoad extends JunitAutoTestCase {
         });
     }
 
-    private void seedCalendar(Long workcenterId, String start, String end, int pattern, LocalDate from, LocalDate to) {
+    private void seedCalendar(Long workcenterId, String start, String end, String pattern, LocalDate from, LocalDate to) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkcenterCalendar> dao = daoProvider.daoFor(ErpMfgWorkcenterCalendar.class);
             ErpMfgWorkcenterCalendar c = new ErpMfgWorkcenterCalendar();
@@ -367,7 +367,7 @@ public class TestErpMfgCrpLoad extends JunitAutoTestCase {
         });
     }
 
-    private Long seedWorkOrder(String code, Long routingId, LocalDate start, LocalDate end, int docStatus) {
+    private Long seedWorkOrder(String code, Long routingId, LocalDate start, LocalDate end, String docStatus) {
         Long id = 8000L + (long) Math.abs(code.hashCode() % 1000);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);

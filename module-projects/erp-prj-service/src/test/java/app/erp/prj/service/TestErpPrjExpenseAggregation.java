@@ -4,9 +4,11 @@ import app.erp.fin.biz.IErpFinExpenseClaimBiz;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinExpenseClaim;
 import app.erp.fin.dao.entity.ErpFinExpenseClaimLine;
+import app.erp.fin.service.ErpFinConstants;
 import app.erp.md.dao.entity.ErpMdAcctSchema;
 import app.erp.md.dao.entity.ErpMdEmployee;
 import app.erp.md.dao.entity.ErpMdSubject;
+import app.erp.md.service.ErpMdConstants;
 import app.erp.prj.biz.IErpPrjCostCollectionBiz;
 import app.erp.prj.biz.IErpPrjProjectBiz;
 import app.erp.prj.dao.entity.ErpPrjCostCollectionLine;
@@ -54,10 +56,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
 
     private static final IServiceContext CTX = new ServiceContextImpl();
-
-    /** finance 域 APPROVED=30 / DRAFT=10 / CANCELLED=50。 */
-    private static final int FIN_APPROVE_STATUS_APPROVED = 30;
-    private static final int FIN_DOC_STATUS_DRAFT = 10;
 
     @Inject
     IDaoProvider daoProvider;
@@ -197,22 +195,22 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
         claim.setOrgId(1L);
         claim.setClaimantId(claimantId);
         claim.setBusinessDate(LocalDate.of(2026, 7, 15));
-        claim.setPaymentMode(10);
+        claim.setPaymentMode(ErpFinConstants.PAYMENT_MODE_OWN_ACCOUNT);
         claim.setCurrencyId(1L);
         claim.setExchangeRate(BigDecimal.ONE);
         claim.setAmountWithoutTax(amountWithoutTax);
         claim.setTaxAmount(tax);
         claim.setAmountWithTax(withTax);
         claim.setReason("项目费用");
-        claim.setDocStatus(FIN_DOC_STATUS_DRAFT);
-        claim.setApproveStatus(FIN_APPROVE_STATUS_APPROVED);
+        claim.setDocStatus(ErpFinConstants.DOC_STATUS_DRAFT);
+        claim.setApproveStatus(ErpFinConstants.APPROVE_STATUS_APPROVED);
         dao.saveEntity(claim);
 
         IEntityDao<ErpFinExpenseClaimLine> lineDao = daoProvider.daoFor(ErpFinExpenseClaimLine.class);
         ErpFinExpenseClaimLine line = new ErpFinExpenseClaimLine();
         line.setClaimId(claim.getId());
         line.setLineNo(1);
-        line.setExpenseType(10);
+        line.setExpenseType("TRAVEL");
         line.setProjectId(projectId);
         line.setSubjectId(subjectId);
         line.setAmountWithoutTax(amountWithoutTax);
@@ -227,12 +225,12 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
         emp.setCode("EMP-" + System.nanoTime());
         emp.setName("测试员工");
         emp.setOrgId(1L);
-        emp.setStatus(10);
+        emp.setStatus(ErpMdConstants.ACTIVE_STATUS_ACTIVE);
         dao.saveEntity(emp);
         return emp.getId();
     }
 
-    private Long seedProject(String code, String name, Long projectTypeId, int status) {
+    private Long seedProject(String code, String name, Long projectTypeId, String status) {
         IEntityDao<ErpPrjProject> dao = daoProvider.daoFor(ErpPrjProject.class);
         ErpPrjProject p = new ErpPrjProject();
         p.setCode(code);
@@ -261,9 +259,9 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
         ErpMdSubject s = new ErpMdSubject();
         s.setCode(code);
         s.setName(name);
-        s.setSubjectClass(10);
-        s.setDirection(10);
-        s.setStatus(10);
+        s.setSubjectClass("ASSET");
+        s.setDirection(ErpFinConstants.DC_DEBIT);
+        s.setStatus(ErpMdConstants.ACTIVE_STATUS_ACTIVE);
         dao.saveEntity(s);
         return s.getId();
     }
@@ -274,9 +272,9 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
-        schema.setNature(10);
+        schema.setNature("FINANCIAL");
         schema.setFunctionalCurrencyId(1L);
-        schema.setStatus(10);
+        schema.setStatus(ErpMdConstants.ACTIVE_STATUS_ACTIVE);
         dao.saveEntity(schema);
     }
 
@@ -290,7 +288,7 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
         period.setMonth(7);
         period.setStartDate(LocalDate.of(2026, 7, 1));
         period.setEndDate(LocalDate.of(2026, 7, 31));
-        period.setStatus(10);
+        period.setStatus(ErpFinConstants.PERIOD_STATUS_OPEN);
         dao.saveEntity(period);
     }
 

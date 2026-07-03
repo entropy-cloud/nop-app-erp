@@ -16,6 +16,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -81,15 +82,15 @@ public class ExchangeRevaluationService {
                 continue;
             }
             boolean isReceivable = item.getDirection() != null
-                    && item.getDirection() == ErpFinConstants.DIRECTION_RECEIVABLE;
+                    && Objects.equals(item.getDirection(), ErpFinConstants.DIRECTION_RECEIVABLE);
             ErpMdSubject counterpartSubject = isReceivable ? arSubject : apSubject;
             // diff = openFunctional − revaluedFunctional。应收(资产)：revalued↑(diff<0)=收益；应付(负债)：revalued↓(diff>0)=收益。
             boolean gain = isReceivable
                     ? diff.compareTo(BigDecimal.ZERO) < 0
                     : diff.compareTo(BigDecimal.ZERO) > 0;
             BigDecimal abs = diff.abs();
-            int counterpartDc = gain ? ErpFinConstants.DC_DEBIT : ErpFinConstants.DC_CREDIT;
-            int fxDc = gain ? ErpFinConstants.DC_CREDIT : ErpFinConstants.DC_DEBIT;
+            String counterpartDc = gain ? ErpFinConstants.DC_DEBIT : ErpFinConstants.DC_CREDIT;
+            String fxDc = gain ? ErpFinConstants.DC_CREDIT : ErpFinConstants.DC_DEBIT;
             lines.add(new Line(counterpartSubject.getId(), counterpartSubject.getCode(), counterpartSubject.getName(),
                     counterpartDc, abs, item.getPartnerId()));
             lines.add(new Line(fxSubject.getId(), fxSubject.getCode(), fxSubject.getName(), fxDc, abs, null));
@@ -100,7 +101,7 @@ public class ExchangeRevaluationService {
 
         Long acctSchemaId = resolveAcctSchemaId(period.getId());
         return CloseVoucherWriter.writeVoucher(daoProvider, "FXV", BILL_CODE_PREFIX + period.getCode(),
-                ErpFinBusinessType.EXCHANGE_GAIN_LOSS.getCode(), ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name(),
+                ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name(), ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name(),
                 period.getOrgId(), acctSchemaId, period.getId(), functionalCurrencyId, BigDecimal.ONE,
                 period.getEndDate(), lines, "期末汇兑重估");
     }

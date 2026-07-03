@@ -198,31 +198,31 @@ dict:
     erp-log/doc-status: Doc Status
 dict.option.label:
   erp-log/carrier-type:
-    '10': Express
-    '20': Freight
-    '30': Air Freight
-    '40': Sea Freight
-    '50': Rail Freight
+    EXPRESS: Express
+    FREIGHT: Freight
+    AIR: Air Freight
+    SEA: Sea Freight
+    RAIL: Rail Freight
   erp-log/freight-terms:
-    '10': Prepaid
-    '20': Collect
+    PREPAID: Prepaid
+    COLLECT: Collect
   erp-log/shipment-status:
-    '10': Draft
-    '20': Advised
-    '30': Dispatched
-    '40': In Transit
-    '50': Delivered
-    '60': Cancelled
+    DRAFT: Draft
+    ADVISED: Advised
+    DISPATCHED: Dispatched
+    IN_TRANSIT: In Transit
+    DELIVERED: Delivered
+    CANCELLED: Cancelled
   erp-log/settlement-status:
-    '10': Pending
-    '20': Settled
+    PENDING: Pending
+    SETTLED: Settled
   erp-log/gateway-action:
-    '10': Create Shipment
-    '20': Get Label
-    '30': Advise Pickup
-    '40': Track
-    '50': Cancel
+    CREATE_SHIPMENT: Create Shipment
+    GET_LABEL: Get Label
+    ADVISE: Advise Pickup
+    TRACK: Track
+    CANCEL: Cancel
   erp-log/doc-status:
-    '10': Draft
-    '20': Effective
-    '30': Voided
+    DRAFT: Draft
+    ACTIVE: Effective
+    CANCELLED: Voided

@@ -37,7 +37,7 @@
         </prop>
         <prop name="disposalType" displayName="处置类型" propId="5" i18n-en:displayName="Disposal Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-ast/disposal-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-ast/disposal-type"/>
         </prop>
         <prop name="disposalAmount" displayName="处置金额" propId="6" i18n-en:displayName="Disposal Amount" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -61,15 +61,15 @@
         </prop>
         <prop name="reason" displayName="处置原因" propId="11" i18n-en:displayName="Reason" queryable="true" sortable="true"
               insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-ast/disposal-reason"/>
+            <schema type="java.lang.String" precision="20" dict="erp-ast/disposal-reason"/>
         </prop>
         <prop name="docStatus" displayName="单据状态" propId="12" i18n-en:displayName="Doc Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-ast/doc-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-ast/doc-status"/>
         </prop>
         <prop name="approveStatus" displayName="审核状态" propId="13" i18n-en:displayName="Approve Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-ast/approve-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-ast/approve-status"/>
         </prop>
         <prop name="posted" displayName="已过账" propId="14" i18n-en:displayName="Posted" queryable="true" sortable="true"
               insertable="true" updatable="true" defaultValue="false">

@@ -9,46 +9,46 @@ package app.erp.qa.service;
 public interface ErpQaConstants {
 
     // 检验类型（erp-qa/inspection-type）
-    int INSPECTION_TYPE_INCOMING = 10;
-    int INSPECTION_TYPE_IN_PROCESS = 20;
-    int INSPECTION_TYPE_FINAL = 30;
-    int INSPECTION_TYPE_OUTGOING = 40;
+    String INSPECTION_TYPE_INCOMING = "INCOMING";
+    String INSPECTION_TYPE_IN_PROCESS = "IN_PROCESS";
+    String INSPECTION_TYPE_FINAL = "FINAL";
+    String INSPECTION_TYPE_OUTGOING = "OUTGOING";
 
     // 质检单结果（erp-qa/inspection-result，质检单 4 态；权威：state-machine.md §适用对象一）
-    int INSPECTION_RESULT_PENDING = 10;
-    int INSPECTION_RESULT_ACCEPTED = 20;
-    int INSPECTION_RESULT_CONDITIONAL = 30;
-    int INSPECTION_RESULT_REJECTED = 40;
+    String INSPECTION_RESULT_PENDING = "PENDING";
+    String INSPECTION_RESULT_ACCEPTED = "ACCEPTED";
+    String INSPECTION_RESULT_CONDITIONAL = "CONDITIONAL";
+    String INSPECTION_RESULT_REJECTED = "REJECTED";
 
     // NCR 状态（erp-qa/ncr-status，5 态；权威：state-machine.md §适用对象二）
-    int NCR_STATUS_OPEN = 10;
-    int NCR_STATUS_IN_REVIEW = 20;
-    int NCR_STATUS_RESOLVED = 30;
-    int NCR_STATUS_ESCALATED_TO_RECALL = 35;
-    int NCR_STATUS_CANCELLED = 40;
+    String NCR_STATUS_OPEN = "OPEN";
+    String NCR_STATUS_IN_REVIEW = "IN_REVIEW";
+    String NCR_STATUS_RESOLVED = "RESOLVED";
+    String NCR_STATUS_ESCALATED_TO_RECALL = "ESCALATED_TO_RECALL";
+    String NCR_STATUS_CANCELLED = "CANCELLED";
 
     // 纠正措施状态（erp-qa/action-status）
-    int ACTION_STATUS_PENDING = 10;
-    int ACTION_STATUS_IN_PROGRESS = 20;
-    int ACTION_STATUS_COMPLETED = 30;
-    int ACTION_STATUS_OVERDUE = 40;
+    String ACTION_STATUS_PENDING = "PENDING";
+    String ACTION_STATUS_IN_PROGRESS = "IN_PROGRESS";
+    String ACTION_STATUS_COMPLETED = "COMPLETED";
+    String ACTION_STATUS_OVERDUE = "OVERDUE";
 
     // 审核状态（erp-qa/approve-status）
-    int APPROVE_STATUS_UNSUBMITTED = 10;
-    int APPROVE_STATUS_SUBMITTED = 20;
-    int APPROVE_STATUS_APPROVED = 30;
-    int APPROVE_STATUS_REJECTED = 40;
+    String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
+    String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
+    String APPROVE_STATUS_APPROVED = "APPROVED";
+    String APPROVE_STATUS_REJECTED = "REJECTED";
 
     // 单据状态（erp-qa/doc-status）
-    int DOC_STATUS_DRAFT = 10;
-    int DOC_STATUS_ACTIVE = 20;
-    int DOC_STATUS_CANCELLED = 30;
+    String DOC_STATUS_DRAFT = "DRAFT";
+    String DOC_STATUS_ACTIVE = "ACTIVE";
+    String DOC_STATUS_CANCELLED = "CANCELLED";
 
     // 处置决定（erp-qa/disposition-type）—— NCR 评审裁决时填
-    int DISPOSITION_TYPE_SCRAP = 10;
-    int DISPOSITION_TYPE_RETURN = 20;
-    int DISPOSITION_TYPE_CONCESSION = 30;
-    int DISPOSITION_TYPE_DOWNGRADE = 40;
+    String DISPOSITION_TYPE_SCRAP = "SCRAP";
+    String DISPOSITION_TYPE_RETURN = "RETURN";
+    String DISPOSITION_TYPE_CONCESSION = "CONCESSION";
+    String DISPOSITION_TYPE_DOWNGRADE = "DOWNGRADE";
 
     // NCR 来源类型（自由字符串，写入 ErpQaNonConformance.sourceType）
     String NCR_SOURCE_TYPE_INSPECTION = "INSPECTION";
@@ -69,28 +69,28 @@ public interface ErpQaConstants {
     // ---- 召回事件（2.11）----
 
     // 召回触发类型（erp-qa/recall-trigger-type）
-    int RECALL_TRIGGER_MANUAL = 10;
-    int RECALL_TRIGGER_GAUGE_NCR_UPGRADE = 20;
-    int RECALL_TRIGGER_BATCH_NCR_UPGRADE = 30;
-    int RECALL_TRIGGER_REGULATORY = 40;
+    String RECALL_TRIGGER_MANUAL = "MANUAL";
+    String RECALL_TRIGGER_GAUGE_NCR_UPGRADE = "GAUGE_NCR_UPGRADE";
+    String RECALL_TRIGGER_BATCH_NCR_UPGRADE = "BATCH_NCR_UPGRADE";
+    String RECALL_TRIGGER_REGULATORY = "REGULATORY";
 
     // 召回严重程度（erp-qa/recall-severity）
-    int RECALL_SEVERITY_LOW = 10;
-    int RECALL_SEVERITY_MEDIUM = 20;
-    int RECALL_SEVERITY_HIGH = 30;
-    int RECALL_SEVERITY_CRITICAL = 40;
+    String RECALL_SEVERITY_LOW = "LOW";
+    String RECALL_SEVERITY_MEDIUM = "MEDIUM";
+    String RECALL_SEVERITY_HIGH = "HIGH";
+    String RECALL_SEVERITY_CRITICAL = "CRITICAL";
 
     // 召回状态（erp-qa/recall-status，5 态）
-    int RECALL_STATUS_OPEN = 10;
-    int RECALL_STATUS_APPROVED = 20;
-    int RECALL_STATUS_IN_PROGRESS = 30;
-    int RECALL_STATUS_CLOSED = 40;
-    int RECALL_STATUS_CANCELLED = 50;
+    String RECALL_STATUS_OPEN = "OPEN";
+    String RECALL_STATUS_APPROVED = "APPROVED";
+    String RECALL_STATUS_IN_PROGRESS = "IN_PROGRESS";
+    String RECALL_STATUS_CLOSED = "CLOSED";
+    String RECALL_STATUS_CANCELLED = "CANCELLED";
 
     // 召回目标退货状态（erp-qa/recall-target-return-status）
-    int RECALL_TARGET_RETURN_PENDING = 10;
-    int RECALL_TARGET_RETURN_NOTIFIED = 20;
-    int RECALL_TARGET_RETURN_RETURNED = 30;
+    String RECALL_TARGET_RETURN_PENDING = "PENDING";
+    String RECALL_TARGET_RETURN_NOTIFIED = "NOTIFIED";
+    String RECALL_TARGET_RETURN_RETURNED = "RETURNED";
 
     // 召回配置项
     // 召回是否强制审批（默认 true：OPEN→APPROVED 须经 submit/approve）
@@ -107,11 +107,11 @@ public interface ErpQaConstants {
 
     // ---- 跨域字典镜像值（召回定位/退货编排消费；权威为各域 ORM 字典，此处仅镜像不可变码值）----
     // erp-inv/operation-type：出库（销售出库移动单 moveType）
-    int INV_OPERATION_TYPE_OUTGOING = 20;
+    String INV_OPERATION_TYPE_OUTGOING = "OUTGOING";
     // erp-inv/move-status：已完成（仅已出库的货才进入召回定位）
-    int INV_MOVE_STATUS_DONE = 30;
+    String INV_MOVE_STATUS_DONE = "DONE";
     // erp-sal/doc-status：草稿（召回生成的退货单为草稿，召回不直接改余额，由销售标准流程审批过账）
-    int SAL_DOC_STATUS_DRAFT = 10;
+    String SAL_DOC_STATUS_DRAFT = "DRAFT";
     // erp-sal/approve-status：未提交（召回生成的退货单初始审核状态）
-    int SAL_APPROVE_STATUS_UNSUBMITTED = 10;
+    String SAL_APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
 }

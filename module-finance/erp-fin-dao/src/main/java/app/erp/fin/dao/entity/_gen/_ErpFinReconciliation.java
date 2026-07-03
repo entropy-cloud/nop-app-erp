@@ -37,7 +37,7 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
     public static final String PROP_NAME_acctSchemaId = "acctSchemaId";
     public static final int PROP_ID_acctSchemaId = 4;
     
-    /* 应收应付: DIRECTION INTEGER */
+    /* 应收应付: DIRECTION VARCHAR */
     public static final String PROP_NAME_direction = "direction";
     public static final int PROP_ID_direction = 5;
     
@@ -69,7 +69,7 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
     public static final String PROP_NAME_fxGainLoss = "fxGainLoss";
     public static final int PROP_ID_fxGainLoss = 12;
     
-    /* 状态: DOC_STATUS INTEGER */
+    /* 状态: DOC_STATUS VARCHAR */
     public static final String PROP_NAME_docStatus = "docStatus";
     public static final int PROP_ID_docStatus = 13;
     
@@ -218,7 +218,7 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
     private java.lang.Long _acctSchemaId;
     
     /* 应收应付: DIRECTION */
-    private java.lang.Integer _direction;
+    private java.lang.String _direction;
     
     /* 往来单位: PARTNER_ID */
     private java.lang.Long _partnerId;
@@ -242,7 +242,7 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
     private java.math.BigDecimal _fxGainLoss;
     
     /* 状态: DOC_STATUS */
-    private java.lang.Integer _docStatus;
+    private java.lang.String _docStatus;
     
     /* 过账人: POSTED_BY */
     private java.lang.String _postedBy;
@@ -463,9 +463,9 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
             }
         
             case PROP_ID_direction:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_direction));
                }
                setDirection(typedValue);
@@ -543,9 +543,9 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
             }
         
             case PROP_ID_docStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_docStatus));
                }
                setDocStatus(typedValue);
@@ -681,7 +681,7 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
         
             case PROP_ID_direction:{
                onInitProp(propId);
-               this._direction = (java.lang.Integer)value;
+               this._direction = (java.lang.String)value;
                
                break;
             }
@@ -737,7 +737,7 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
         
             case PROP_ID_docStatus:{
                onInitProp(propId);
-               this._docStatus = (java.lang.Integer)value;
+               this._docStatus = (java.lang.String)value;
                
                break;
             }
@@ -890,7 +890,7 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
     /**
      * 应收应付: DIRECTION
      */
-    public final java.lang.Integer getDirection(){
+    public final java.lang.String getDirection(){
          onPropGet(PROP_ID_direction);
          return _direction;
     }
@@ -898,7 +898,7 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
     /**
      * 应收应付: DIRECTION
      */
-    public final void setDirection(java.lang.Integer value){
+    public final void setDirection(java.lang.String value){
         if(onPropSet(PROP_ID_direction,value)){
             this._direction = value;
             internalClearRefs(PROP_ID_direction);
@@ -1042,7 +1042,7 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
     /**
      * 状态: DOC_STATUS
      */
-    public final java.lang.Integer getDocStatus(){
+    public final java.lang.String getDocStatus(){
          onPropGet(PROP_ID_docStatus);
          return _docStatus;
     }
@@ -1050,7 +1050,7 @@ public class _ErpFinReconciliation extends DynamicOrmEntity{
     /**
      * 状态: DOC_STATUS
      */
-    public final void setDocStatus(java.lang.Integer value){
+    public final void setDocStatus(java.lang.String value){
         if(onPropSet(PROP_ID_docStatus,value)){
             this._docStatus = value;
             internalClearRefs(PROP_ID_docStatus);

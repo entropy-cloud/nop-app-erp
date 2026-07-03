@@ -97,16 +97,16 @@
         }
 
 
-        private Integer _dcDirection;
+        private String _dcDirection;
 
     
         @PropMeta(propId=7)
     
-        public Integer getDcDirection(){
+        public String getDcDirection(){
             return _dcDirection;
         }
 
-        public void setDcDirection(Integer value){
+        public void setDcDirection(String value){
             this._dcDirection = value;
         }
 
@@ -319,16 +319,16 @@
         }
 
 
-        private Integer _businessType;
+        private String _businessType;
 
     
         @PropMeta(propId=22)
     
-        public Integer getBusinessType(){
+        public String getBusinessType(){
             return _businessType;
         }
 
-        public void setBusinessType(Integer value){
+        public void setBusinessType(String value){
             this._businessType = value;
         }
 

@@ -6,116 +6,116 @@ public interface _ErpSalDaoConstants {
     /**
      * 单据状态: 草稿 
      */
-    int DOC_STATUS_DRAFT = 10;
+    String DOC_STATUS_DRAFT = "DRAFT";
                     
     /**
      * 单据状态: 已生效 
      */
-    int DOC_STATUS_ACTIVE = 20;
+    String DOC_STATUS_ACTIVE = "ACTIVE";
                     
     /**
      * 单据状态: 已作废 
      */
-    int DOC_STATUS_CANCELLED = 30;
+    String DOC_STATUS_CANCELLED = "CANCELLED";
                     
     /**
      * 审核状态: 未提交 
      */
-    int APPROVE_STATUS_UNSUBMITTED = 10;
+    String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
                     
     /**
      * 审核状态: 已提交 
      */
-    int APPROVE_STATUS_SUBMITTED = 20;
+    String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
                     
     /**
      * 审核状态: 已审核 
      */
-    int APPROVE_STATUS_APPROVED = 30;
+    String APPROVE_STATUS_APPROVED = "APPROVED";
                     
     /**
      * 审核状态: 已驳回 
      */
-    int APPROVE_STATUS_REJECTED = 40;
+    String APPROVE_STATUS_REJECTED = "REJECTED";
                     
     /**
      * 收款进度: 未收款 
      */
-    int RECEIVED_STATUS_UNRECEIVED = 10;
+    String RECEIVED_STATUS_UNRECEIVED = "UNRECEIVED";
                     
     /**
      * 收款进度: 部分收款 
      */
-    int RECEIVED_STATUS_PARTIAL = 20;
+    String RECEIVED_STATUS_PARTIAL = "PARTIAL";
                     
     /**
      * 收款进度: 已收清 
      */
-    int RECEIVED_STATUS_RECEIVED = 30;
+    String RECEIVED_STATUS_RECEIVED = "RECEIVED";
                     
     /**
      * 发货状态: 未发货 
      */
-    int DELIVERY_STATUS_UNDELIVERED = 10;
+    String DELIVERY_STATUS_UNDELIVERED = "UNDELIVERED";
                     
     /**
      * 发货状态: 部分发货 
      */
-    int DELIVERY_STATUS_PARTIAL = 20;
+    String DELIVERY_STATUS_PARTIAL = "PARTIAL";
                     
     /**
      * 发货状态: 已发清 
      */
-    int DELIVERY_STATUS_DELIVERED = 30;
+    String DELIVERY_STATUS_DELIVERED = "DELIVERED";
                     
     /**
      * 销售单据类型: 销售报价 
      */
-    int BIZ_TYPE_QUOTATION = 10;
+    String BIZ_TYPE_QUOTATION = "QUOTATION";
                     
     /**
      * 销售单据类型: 销售合同 
      */
-    int BIZ_TYPE_CONTRACT = 20;
+    String BIZ_TYPE_CONTRACT = "CONTRACT";
                     
     /**
      * 销售单据类型: 销售订单 
      */
-    int BIZ_TYPE_ORDER = 30;
+    String BIZ_TYPE_ORDER = "ORDER";
                     
     /**
      * 销售单据类型: 销售出库 
      */
-    int BIZ_TYPE_DELIVERY = 40;
+    String BIZ_TYPE_DELIVERY = "DELIVERY";
                     
     /**
      * 销售单据类型: 销售发票 
      */
-    int BIZ_TYPE_INVOICE = 50;
+    String BIZ_TYPE_INVOICE = "INVOICE";
                     
     /**
      * 销售单据类型: 收款单 
      */
-    int BIZ_TYPE_RECEIPT = 60;
+    String BIZ_TYPE_RECEIPT = "RECEIPT";
                     
     /**
      * 销售单据类型: 销售退货 
      */
-    int BIZ_TYPE_RETURN = 70;
+    String BIZ_TYPE_RETURN = "RETURN";
                     
     /**
      * 发票类型: 增值税专用 
      */
-    int INVOICE_TYPE_VAT_SPECIAL = 10;
+    String INVOICE_TYPE_VAT_SPECIAL = "VAT_SPECIAL";
                     
     /**
      * 发票类型: 增值税普通 
      */
-    int INVOICE_TYPE_VAT_NORMAL = 20;
+    String INVOICE_TYPE_VAT_NORMAL = "VAT_NORMAL";
                     
     /**
      * 发票类型: 收据 
      */
-    int INVOICE_TYPE_RECEIPT = 30;
+    String INVOICE_TYPE_RECEIPT = "RECEIPT";
                     
 }

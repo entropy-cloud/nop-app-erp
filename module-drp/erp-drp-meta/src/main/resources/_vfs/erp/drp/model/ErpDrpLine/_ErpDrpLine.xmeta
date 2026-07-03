@@ -45,7 +45,7 @@
         </prop>
         <prop name="replenishmentType" displayName="补货类型" propId="7" i18n-en:displayName="Replenishment Type"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-drp/drp-replenishment-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-drp/drp-replenishment-type"/>
         </prop>
         <prop name="currentStock" displayName="当前库存" propId="8" i18n-en:displayName="Current Stock" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -89,7 +89,7 @@
         </prop>
         <prop name="status" displayName="状态" propId="18" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-drp/drp-line-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-drp/drp-line-status"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="19" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">

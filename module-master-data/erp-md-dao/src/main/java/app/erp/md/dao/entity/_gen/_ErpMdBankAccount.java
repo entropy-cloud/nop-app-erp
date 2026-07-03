@@ -41,7 +41,7 @@ public class _ErpMdBankAccount extends DynamicOrmEntity{
     public static final String PROP_NAME_bankAccount = "bankAccount";
     public static final int PROP_ID_bankAccount = 5;
     
-    /* 账户类型: ACCOUNT_TYPE INTEGER */
+    /* 账户类型: ACCOUNT_TYPE VARCHAR */
     public static final String PROP_NAME_accountType = "accountType";
     public static final int PROP_ID_accountType = 6;
     
@@ -153,7 +153,7 @@ public class _ErpMdBankAccount extends DynamicOrmEntity{
     private java.lang.String _bankAccount;
     
     /* 账户类型: ACCOUNT_TYPE */
-    private java.lang.Integer _accountType;
+    private java.lang.String _accountType;
     
     /* 户名: ACCOUNT_HOLDER */
     private java.lang.String _accountHolder;
@@ -357,9 +357,9 @@ public class _ErpMdBankAccount extends DynamicOrmEntity{
             }
         
             case PROP_ID_accountType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_accountType));
                }
                setAccountType(typedValue);
@@ -492,7 +492,7 @@ public class _ErpMdBankAccount extends DynamicOrmEntity{
         
             case PROP_ID_accountType:{
                onInitProp(propId);
-               this._accountType = (java.lang.Integer)value;
+               this._accountType = (java.lang.String)value;
                
                break;
             }
@@ -657,7 +657,7 @@ public class _ErpMdBankAccount extends DynamicOrmEntity{
     /**
      * 账户类型: ACCOUNT_TYPE
      */
-    public final java.lang.Integer getAccountType(){
+    public final java.lang.String getAccountType(){
          onPropGet(PROP_ID_accountType);
          return _accountType;
     }
@@ -665,7 +665,7 @@ public class _ErpMdBankAccount extends DynamicOrmEntity{
     /**
      * 账户类型: ACCOUNT_TYPE
      */
-    public final void setAccountType(java.lang.Integer value){
+    public final void setAccountType(java.lang.String value){
         if(onPropSet(PROP_ID_accountType,value)){
             this._accountType = value;
             internalClearRefs(PROP_ID_accountType);

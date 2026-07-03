@@ -56,16 +56,16 @@
         }
 
 
-        private Integer _warehouseType;
+        private String _warehouseType;
 
     
         @PropMeta(propId=4)
     
-        public Integer getWarehouseType(){
+        public String getWarehouseType(){
             return _warehouseType;
         }
 
-        public void setWarehouseType(Integer value){
+        public void setWarehouseType(String value){
             this._warehouseType = value;
         }
 
@@ -124,16 +124,16 @@
         }
 
 
-        private Integer _status;
+        private String _status;
 
     
         @PropMeta(propId=8)
     
-        public Integer getStatus(){
+        public String getStatus(){
             return _status;
         }
 
-        public void setStatus(Integer value){
+        public void setStatus(String value){
             this._status = value;
         }
 

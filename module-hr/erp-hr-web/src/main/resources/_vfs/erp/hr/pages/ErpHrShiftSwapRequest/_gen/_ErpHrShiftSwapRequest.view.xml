@@ -46,7 +46,7 @@
                 <col id="reason" sortable="true"/>
 
                 <!--状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--审批人-->
                 <col id="approvedById" sortable="true"/>

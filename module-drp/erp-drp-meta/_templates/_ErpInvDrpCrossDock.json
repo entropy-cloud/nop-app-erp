@@ -13,7 +13,7 @@
   "quantity": 0.0,
   "stagingLocationId": 0,
   "dockSlotTime": "2000-01-01 14:00:00",
-  "status": 0,
+  "status": "",
   "status_label": "",
   "matchedAt": "2000-01-01 14:00:00",
   "loadedAt": "2000-01-01 14:00:00",

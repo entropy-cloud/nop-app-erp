@@ -68,30 +68,30 @@
         }
 
 
-        private Integer _shiftType;
+        private String _shiftType;
 
     
         @PropMeta(propId=5)
     
-        public Integer getShiftType(){
+        public String getShiftType(){
             return _shiftType;
         }
 
-        public void setShiftType(Integer value){
+        public void setShiftType(String value){
             this._shiftType = value;
         }
 
 
-        private Integer _workDatePattern;
+        private String _workDatePattern;
 
     
         @PropMeta(propId=6)
     
-        public Integer getWorkDatePattern(){
+        public String getWorkDatePattern(){
             return _workDatePattern;
         }
 
-        public void setWorkDatePattern(Integer value){
+        public void setWorkDatePattern(String value){
             this._workDatePattern = value;
         }
 

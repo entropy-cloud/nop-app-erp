@@ -1,19 +1,19 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 消耗控制
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 允许超耗
-    value: 10
+    value: FLEXIBLE
     description: 
   
   - label: 超耗警告
-    value: 20
+    value: WARNING
     description: 
   
   - label: 严格按 BOM
-    value: 30
+    value: STRICT
     description: 
   

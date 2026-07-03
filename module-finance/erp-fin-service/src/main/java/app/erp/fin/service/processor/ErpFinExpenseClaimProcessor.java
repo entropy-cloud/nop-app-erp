@@ -18,6 +18,7 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.dao.IOrmEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -101,44 +102,44 @@ public class ErpFinExpenseClaimProcessor {
 
     protected void validateTransitionForSubmit(ErpFinExpenseClaim claim, IServiceContext context) {
         validateNotCancelled(claim, context);
-        Integer status = currentApproveStatus(claim);
-        if (status != ErpFinConstants.APPROVE_STATUS_UNSUBMITTED
-                && status != ErpFinConstants.APPROVE_STATUS_REJECTED) {
+        String status = currentApproveStatus(claim);
+        if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_UNSUBMITTED)
+                && !Objects.equals(status, ErpFinConstants.APPROVE_STATUS_REJECTED)) {
             throw illegalTransition(claim, status, "UNSUBMITTED 或 REJECTED");
         }
     }
 
     protected void validateTransitionForWithdraw(ErpFinExpenseClaim claim, IServiceContext context) {
-        Integer status = currentApproveStatus(claim);
-        if (status != ErpFinConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = currentApproveStatus(claim);
+        if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(claim, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForApprove(ErpFinExpenseClaim claim, IServiceContext context) {
-        Integer status = currentApproveStatus(claim);
-        if (status != ErpFinConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = currentApproveStatus(claim);
+        if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(claim, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForReject(ErpFinExpenseClaim claim, IServiceContext context) {
-        Integer status = currentApproveStatus(claim);
-        if (status != ErpFinConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = currentApproveStatus(claim);
+        if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(claim, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpFinExpenseClaim claim, IServiceContext context) {
-        Integer status = currentApproveStatus(claim);
-        if (status != ErpFinConstants.APPROVE_STATUS_APPROVED) {
+        String status = currentApproveStatus(claim);
+        if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_APPROVED)) {
             throw illegalTransition(claim, status, "APPROVED");
         }
     }
 
     protected void validateTransitionForCancel(ErpFinExpenseClaim claim, IServiceContext context) {
-        Integer docStatus = claim.getDocStatus();
-        if (docStatus != null && docStatus == ErpFinConstants.DOC_STATUS_CANCELLED) {
+        String docStatus = claim.getDocStatus();
+        if (docStatus != null && Objects.equals(docStatus, ErpFinConstants.DOC_STATUS_CANCELLED)) {
             throw illegalDocTransition(claim, docStatus, "非已作废");
         }
     }
@@ -160,7 +161,7 @@ public class ErpFinExpenseClaimProcessor {
         ErpMdEmployee claimant = claim.getClaimantId() == null ? null
                 : daoProvider.daoFor(ErpMdEmployee.class).getEntityById(claim.getClaimantId());
         if (claimant == null || claimant.getStatus() == null
-                || claimant.getStatus() != ErpFinConstants.EMPLOYEE_STATUS_ACTIVE) {
+                || !Objects.equals(claimant.getStatus(), ErpFinConstants.EMPLOYEE_STATUS_ACTIVE)) {
             throw new NopException(ErpFinErrors.ERR_EXPENSE_CLAIM_CLAIMANT_INACTIVE)
                     .param(ErpFinErrors.ARG_CLAIMANT_ID, claim.getClaimantId());
         }
@@ -262,8 +263,8 @@ public class ErpFinExpenseClaimProcessor {
     }
 
     protected ErpFinExpenseClaim doCancel(Long claimId, ErpFinExpenseClaim claim, IServiceContext context) {
-        Integer approveStatus = currentApproveStatus(claim);
-        if (approveStatus == ErpFinConstants.APPROVE_STATUS_APPROVED
+        String approveStatus = currentApproveStatus(claim);
+        if (Objects.equals(approveStatus, ErpFinConstants.APPROVE_STATUS_APPROVED)
                 && Boolean.TRUE.equals(claim.getPosted())) {
             offsetOrchestrator.reverseOffset(claim);
             postingDispatcher.reverse(claim);
@@ -310,17 +311,17 @@ public class ErpFinExpenseClaimProcessor {
     }
 
     protected boolean isAlreadyApproved(ErpFinExpenseClaim claim) {
-        Integer status = claim.getApproveStatus();
-        return status != null && status == ErpFinConstants.APPROVE_STATUS_APPROVED;
+        String status = claim.getApproveStatus();
+        return status != null && Objects.equals(status, ErpFinConstants.APPROVE_STATUS_APPROVED);
     }
 
     protected boolean isAlreadyRejected(ErpFinExpenseClaim claim) {
-        Integer status = claim.getApproveStatus();
-        return status != null && status == ErpFinConstants.APPROVE_STATUS_REJECTED;
+        String status = claim.getApproveStatus();
+        return status != null && Objects.equals(status, ErpFinConstants.APPROVE_STATUS_REJECTED);
     }
 
-    protected Integer currentApproveStatus(ErpFinExpenseClaim claim) {
-        Integer status = claim.getApproveStatus();
+    protected String currentApproveStatus(ErpFinExpenseClaim claim) {
+        String status = claim.getApproveStatus();
         return status != null ? status : ErpFinConstants.APPROVE_STATUS_UNSUBMITTED;
     }
 
@@ -361,14 +362,14 @@ public class ErpFinExpenseClaimProcessor {
         return s == null || s.trim().isEmpty();
     }
 
-    protected NopException illegalTransition(ErpFinExpenseClaim claim, Integer current, String expected) {
+    protected NopException illegalTransition(ErpFinExpenseClaim claim, String current, String expected) {
         return new NopException(ErpFinErrors.ERR_EXPENSE_CLAIM_ILLEGAL_STATUS_TRANSITION)
                 .param(ErpFinErrors.ARG_CLAIM_CODE, claim.getCode())
                 .param(ErpFinErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpFinErrors.ARG_EXPECTED_STATUS, expected);
     }
 
-    protected NopException illegalDocTransition(ErpFinExpenseClaim claim, Integer current, String expected) {
+    protected NopException illegalDocTransition(ErpFinExpenseClaim claim, String current, String expected) {
         return new NopException(ErpFinErrors.ERR_EXPENSE_CLAIM_ILLEGAL_DOC_STATUS_TRANSITION)
                 .param(ErpFinErrors.ARG_CLAIM_CODE, claim.getCode())
                 .param(ErpFinErrors.ARG_CURRENT_DOC_STATUS, current)

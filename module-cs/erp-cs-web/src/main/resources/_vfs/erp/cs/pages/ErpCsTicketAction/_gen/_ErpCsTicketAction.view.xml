@@ -25,13 +25,13 @@
                 <col id="ticketId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--操作类型-->
-                <col id="actionType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="actionType" mandatory="true" sortable="true"/>
 
                 <!--起始状态-->
-                <col id="fromStatus" ui:number="true" sortable="true"/>
+                <col id="fromStatus" sortable="true"/>
 
                 <!--目标状态-->
-                <col id="toStatus" ui:number="true" sortable="true"/>
+                <col id="toStatus" sortable="true"/>
 
                 <!--操作人-->
                 <col id="operatorId" sortable="true"/>

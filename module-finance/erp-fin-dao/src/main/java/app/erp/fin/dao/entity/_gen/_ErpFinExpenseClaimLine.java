@@ -33,7 +33,7 @@ public class _ErpFinExpenseClaimLine extends DynamicOrmEntity{
     public static final String PROP_NAME_lineNo = "lineNo";
     public static final int PROP_ID_lineNo = 3;
     
-    /* 费用类型: EXPENSE_TYPE INTEGER */
+    /* 费用类型: EXPENSE_TYPE VARCHAR */
     public static final String PROP_NAME_expenseType = "expenseType";
     public static final int PROP_ID_expenseType = 4;
     
@@ -191,7 +191,7 @@ public class _ErpFinExpenseClaimLine extends DynamicOrmEntity{
     private java.lang.Integer _lineNo;
     
     /* 费用类型: EXPENSE_TYPE */
-    private java.lang.Integer _expenseType;
+    private java.lang.String _expenseType;
     
     /* 项目: PROJECT_ID */
     private java.lang.Long _projectId;
@@ -411,9 +411,9 @@ public class _ErpFinExpenseClaimLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_expenseType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_expenseType));
                }
                setExpenseType(typedValue);
@@ -602,7 +602,7 @@ public class _ErpFinExpenseClaimLine extends DynamicOrmEntity{
         
             case PROP_ID_expenseType:{
                onInitProp(propId);
-               this._expenseType = (java.lang.Integer)value;
+               this._expenseType = (java.lang.String)value;
                
                break;
             }
@@ -778,7 +778,7 @@ public class _ErpFinExpenseClaimLine extends DynamicOrmEntity{
     /**
      * 费用类型: EXPENSE_TYPE
      */
-    public final java.lang.Integer getExpenseType(){
+    public final java.lang.String getExpenseType(){
          onPropGet(PROP_ID_expenseType);
          return _expenseType;
     }
@@ -786,7 +786,7 @@ public class _ErpFinExpenseClaimLine extends DynamicOrmEntity{
     /**
      * 费用类型: EXPENSE_TYPE
      */
-    public final void setExpenseType(java.lang.Integer value){
+    public final void setExpenseType(java.lang.String value){
         if(onPropSet(PROP_ID_expenseType,value)){
             this._expenseType = value;
             internalClearRefs(PROP_ID_expenseType);

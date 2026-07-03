@@ -6,86 +6,86 @@ public interface _ErpApsDaoConstants {
     /**
      * 工序工单状态: 草稿 
      */
-    int OPERATION_ORDER_STATUS_DRAFT = 10;
+    String OPERATION_ORDER_STATUS_DRAFT = "DRAFT";
                     
     /**
      * 工序工单状态: 已排程 
      */
-    int OPERATION_ORDER_STATUS_PLANNED = 20;
+    String OPERATION_ORDER_STATUS_PLANNED = "PLANNED";
                     
     /**
      * 工序工单状态: 执行中 
      */
-    int OPERATION_ORDER_STATUS_IN_PROGRESS = 30;
+    String OPERATION_ORDER_STATUS_IN_PROGRESS = "IN_PROGRESS";
                     
     /**
      * 工序工单状态: 已完成 
      */
-    int OPERATION_ORDER_STATUS_FINISHED = 40;
+    String OPERATION_ORDER_STATUS_FINISHED = "FINISHED";
                     
     /**
      * 工序工单状态: 已取消 
      */
-    int OPERATION_ORDER_STATUS_CANCELLED = 50;
+    String OPERATION_ORDER_STATUS_CANCELLED = "CANCELLED";
                     
     /**
      * 排产方案状态: 草稿 
      */
-    int SCHEDULE_STATUS_DRAFT = 10;
+    String SCHEDULE_STATUS_DRAFT = "DRAFT";
                     
     /**
      * 排产方案状态: 已发布 
      */
-    int SCHEDULE_STATUS_PUBLISHED = 20;
+    String SCHEDULE_STATUS_PUBLISHED = "PUBLISHED";
                     
     /**
      * 排产方案状态: 已归档 
      */
-    int SCHEDULE_STATUS_ARCHIVED = 30;
+    String SCHEDULE_STATUS_ARCHIVED = "ARCHIVED";
                     
     /**
      * 约束类型: 维护停机 
      */
-    int CONSTRAINT_TYPE_MAINTENANCE = 10;
+    String CONSTRAINT_TYPE_MAINTENANCE = "MAINTENANCE";
                     
     /**
      * 约束类型: 刀具寿命 
      */
-    int CONSTRAINT_TYPE_TOOL = 20;
+    String CONSTRAINT_TYPE_TOOL = "TOOL";
                     
     /**
      * 约束类型: 人员约束 
      */
-    int CONSTRAINT_TYPE_PERSONNEL = 30;
+    String CONSTRAINT_TYPE_PERSONNEL = "PERSONNEL";
                     
     /**
      * 排产模式: 前向排产 
      */
-    int SCHEDULING_MODE_FORWARD = 10;
+    String SCHEDULING_MODE_FORWARD = "FORWARD";
                     
     /**
      * 排产模式: 后向排产 
      */
-    int SCHEDULING_MODE_BACKWARD = 20;
+    String SCHEDULING_MODE_BACKWARD = "BACKWARD";
                     
     /**
      * 派工类型: 自动派工 
      */
-    int DISPATCH_TYPE_AUTO = 10;
+    String DISPATCH_TYPE_AUTO = "AUTO";
                     
     /**
      * 派工类型: 手动派工 
      */
-    int DISPATCH_TYPE_MANUAL = 20;
+    String DISPATCH_TYPE_MANUAL = "MANUAL";
                     
     /**
      * 派工类型: 保持 
      */
-    int DISPATCH_TYPE_HOLD = 30;
+    String DISPATCH_TYPE_HOLD = "HOLD";
                     
     /**
      * 派工类型: 解除保持 
      */
-    int DISPATCH_TYPE_UNHOLD = 40;
+    String DISPATCH_TYPE_UNHOLD = "UNHOLD";
                     
 }

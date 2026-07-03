@@ -731,129 +731,129 @@ dict:
     erp-fin/cash-flow-direction: Cash Flow Direction
 dict.option.label:
   erp-fin/voucher-type:
-    '10': Receive
-    '20': Pay
-    '30': Transfer
+    RECEIPT: Receive
+    PAYMENT: Pay
+    TRANSFER: Transfer
   erp-fin/posting-type:
-    '10': Normal
-    '20': Opening Balance
-    '30': Adjustment
-    '40': Period Closing
-    '50': Reversal
+    NORMAL: Normal
+    OPENING_BALANCE: Opening Balance
+    ADJUSTMENT: Adjustment
+    CLOSING: Period Closing
+    REVERSAL: Reversal
   erp-fin/voucher-status:
-    '10': Draft
-    '20': Posted
-    '30': Voided
+    DRAFT: Draft
+    POSTED: Posted
+    CANCELLED: Voided
   erp-fin/dc-direction:
-    '10': Debit
-    '20': Credit
+    DEBIT: Debit
+    CREDIT: Credit
   erp-fin/business-type:
-    '10': Purchase Receipt
-    '20': Sales Issue
-    '30': AP Invoice
-    '40': AR Invoice
-    '50': Payment
-    '60': Receipt
-    '70': Depreciation
-    '80': Capitalization
-    '90': Disposal
-    '100': Prod Cost Transfer
-    '110': Project Cost Accrual
-    '120': Period-End Closing
-    '130': FX Gain/Loss
-    '140': Purchase Return
-    '150': Sales Return
-    '160': Expense Claim
-    '170': Employee Advance
-    '180': Advance Settlement
-    '190': Notes Receivable Received
-    '200': Notes Discounted
-    '210': Notes Endorsed
-    '220': Notes Collection
-    '230': Notes Payable Issued
-    '240': Notes Payable Honored
-    '250': Credit Facility Interest
+    PURCHASE_INPUT: Purchase Receipt
+    SALES_OUTPUT: Sales Issue
+    AP_INVOICE: AP Invoice
+    AR_INVOICE: AR Invoice
+    PAYMENT: Payment
+    RECEIPT: Receipt
+    DEPRECIATION: Depreciation
+    CAPITALIZATION: Capitalization
+    DISPOSAL: Disposal
+    PRODUCTION_COST: Prod Cost Transfer
+    PROJECT_COST: Project Cost Accrual
+    PERIOD_CLOSING: Period-End Closing
+    FX_REVALUATION: FX Gain/Loss
+    PURCHASE_RETURN: Purchase Return
+    SALES_RETURN: Sales Return
+    EXPENSE_CLAIM: Expense Claim
+    EMPLOYEE_ADVANCE: Employee Advance
+    EMPLOYEE_ADVANCE_SETTLE: Advance Settlement
+    NOTES_RECEIVABLE_RECEIVED: Notes Receivable Received
+    NOTES_RECEIVABLE_DISCOUNTED: Notes Discounted
+    NOTES_RECEIVABLE_ENDORSED: Notes Endorsed
+    NOTES_RECEIVABLE_COLLECTION: Notes Collection
+    NOTES_PAYABLE_ISSUED: Notes Payable Issued
+    NOTES_PAYABLE_HONORED: Notes Payable Honored
+    CREDIT_FACILITY_INTEREST: Credit Facility Interest
   erp-fin/period-status:
-    '10': Open
-    '20': Closing
-    '30': Closed
-    '40': Not Open
-    '50': Closed Final
+    OPEN: Open
+    CLOSING: Closing
+    CLOSED: Closed
+    NEVER_OPENED: Not Open
+    CLOSED_FINAL: Closed Final
   erp-fin/fund-account-type:
-    '10': Bank
-    '20': Cash
-    '30': Alipay
-    '40': WeChat
-    '50': Other
+    BANK: Bank
+    CASH: Cash
+    ALIPAY: Alipay
+    WECHAT: WeChat
+    OTHER: Other
   erp-fin/fund-account-status:
-    '10': Enabled
-    '20': Disabled
+    ACTIVE: Enabled
+    INACTIVE: Disabled
   erp-fin/ar-ap-direction:
-    '10': AR
-    '20': AP
+    RECEIVABLE: AR
+    PAYABLE: AP
   erp-fin/ar-ap-status:
-    '10': Unmatched
-    '20': Partially Matched
-    '30': Matched
-    '40': Voided
+    OPEN: Unmatched
+    PARTIAL: Partially Matched
+    SETTLED: Matched
+    CANCELLED: Voided
   erp-fin/reconciliation-status:
-    '10': Draft
-    '20': Posted
-    '30': Red Offset
+    DRAFT: Draft
+    POSTED: Posted
+    REVERSED: Red Offset
   erp-fin/module-close-status:
-    '10': Unsettled
-    '20': Closing
-    '30': Settled
+    OPEN: Unsettled
+    CLOSING: Closing
+    CLOSED: Settled
   erp-fin/approve-status:
-    '10': Unsubmitted
-    '20': Submitted
-    '30': Approved
-    '40': Rejected
+    UNSUBMITTED: Unsubmitted
+    SUBMITTED: Submitted
+    APPROVED: Approved
+    REJECTED: Rejected
   erp-fin/expense-payment-mode:
-    '10': Own Account
-    '20': Company Account
+    OWN_ACCOUNT: Own Account
+    COMPANY_ACCOUNT: Company Account
   erp-fin/expense-type:
-    '10': Travel
-    '20': Entertainment
-    '30': Office
-    '40': Communication
-    '50': Transportation
-    '60': Other
+    TRAVEL: Travel
+    ENTERTAINMENT: Entertainment
+    OFFICE: Office
+    COMMUNICATION: Communication
+    TRANSPORTATION: Transportation
+    OTHER: Other
   erp-fin/advance-type:
-    '10': Expense Advance
-    '20': Imprest
-    '30': Travel Advance
+    EXPENSE_ADVANCE: Expense Advance
+    IMPREST: Imprest
+    TRAVEL: Travel Advance
   erp-fin/expense-claim-status:
-    '10': Draft
-    '20': Submitted
-    '30': Approved
-    '40': Rejected
-    '50': Cancelled
+    DRAFT: Draft
+    SUBMITTED: Submitted
+    APPROVED: Approved
+    REJECTED: Rejected
+    CANCELLED: Cancelled
   erp-fin/advance-status:
-    '10': Draft
-    '20': Submitted
-    '30': Approved
-    '40': Rejected
-    '50': Cancelled
+    DRAFT: Draft
+    SUBMITTED: Submitted
+    APPROVED: Approved
+    REJECTED: Rejected
+    CANCELLED: Cancelled
   erp-fin/notes-type:
-    '10': Bank Acceptance
-    '20': Commercial Acceptance
+    BANK_ACCEPTANCE: Bank Acceptance
+    COMMERCIAL_ACCEPTANCE: Commercial Acceptance
   erp-fin/notes-receivable-status:
-    '10': Received
-    '20': Discounted
-    '30': Endorsed
-    '40': Collection Pending
-    '50': Honored
-    '60': Dishonored
-    '70': Written Off
+    RECEIVED: Received
+    DISCOUNTED: Discounted
+    ENDORSED: Endorsed
+    COLLECTION_PENDING: Collection Pending
+    HONORED: Honored
+    DISHONORED: Dishonored
+    WRITE_OFF: Written Off
   erp-fin/notes-payable-status:
-    '10': Issued
-    '20': Honored
-    '30': Dishonored
-    '40': Written Off
+    ISSUED: Issued
+    HONORED: Honored
+    DISHONORED: Dishonored
+    WRITE_OFF: Written Off
   erp-fin/credit-facility-type:
-    '10': Bank Acceptance Line
-    '20': Loan Line
+    BANK_ACCEPTANCE_LINE: Bank Acceptance Line
+    LOAN_LINE: Loan Line
   erp-fin/cash-flow-direction:
-    '10': Inflow
-    '20': Outflow
+    INFLOW: Inflow
+    OUTFLOW: Outflow

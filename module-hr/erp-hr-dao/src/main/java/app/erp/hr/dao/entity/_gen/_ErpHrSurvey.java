@@ -37,7 +37,7 @@ public class _ErpHrSurvey extends DynamicOrmEntity{
     public static final String PROP_NAME_description = "description";
     public static final int PROP_ID_description = 4;
     
-    /* 调研类型: SURVEY_TYPE INTEGER */
+    /* 调研类型: SURVEY_TYPE VARCHAR */
     public static final String PROP_NAME_surveyType = "surveyType";
     public static final int PROP_ID_surveyType = 5;
     
@@ -45,7 +45,7 @@ public class _ErpHrSurvey extends DynamicOrmEntity{
     public static final String PROP_NAME_isAnonymous = "isAnonymous";
     public static final int PROP_ID_isAnonymous = 6;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 7;
     
@@ -243,13 +243,13 @@ public class _ErpHrSurvey extends DynamicOrmEntity{
     private java.lang.String _description;
     
     /* 调研类型: SURVEY_TYPE */
-    private java.lang.Integer _surveyType;
+    private java.lang.String _surveyType;
     
     /* 是否匿名: IS_ANONYMOUS */
     private java.lang.Boolean _isAnonymous;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 开始日期: START_DATE */
     private java.time.LocalDate _startDate;
@@ -512,9 +512,9 @@ public class _ErpHrSurvey extends DynamicOrmEntity{
             }
         
             case PROP_ID_surveyType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_surveyType));
                }
                setSurveyType(typedValue);
@@ -532,9 +532,9 @@ public class _ErpHrSurvey extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -770,7 +770,7 @@ public class _ErpHrSurvey extends DynamicOrmEntity{
         
             case PROP_ID_surveyType:{
                onInitProp(propId);
-               this._surveyType = (java.lang.Integer)value;
+               this._surveyType = (java.lang.String)value;
                
                break;
             }
@@ -784,7 +784,7 @@ public class _ErpHrSurvey extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -1007,7 +1007,7 @@ public class _ErpHrSurvey extends DynamicOrmEntity{
     /**
      * 调研类型: SURVEY_TYPE
      */
-    public final java.lang.Integer getSurveyType(){
+    public final java.lang.String getSurveyType(){
          onPropGet(PROP_ID_surveyType);
          return _surveyType;
     }
@@ -1015,7 +1015,7 @@ public class _ErpHrSurvey extends DynamicOrmEntity{
     /**
      * 调研类型: SURVEY_TYPE
      */
-    public final void setSurveyType(java.lang.Integer value){
+    public final void setSurveyType(java.lang.String value){
         if(onPropSet(PROP_ID_surveyType,value)){
             this._surveyType = value;
             internalClearRefs(PROP_ID_surveyType);
@@ -1045,7 +1045,7 @@ public class _ErpHrSurvey extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -1053,7 +1053,7 @@ public class _ErpHrSurvey extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

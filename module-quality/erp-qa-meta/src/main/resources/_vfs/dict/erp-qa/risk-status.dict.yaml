@@ -1,19 +1,19 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 风险状态
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 待处理
-    value: 10
+    value: OPEN
     description: 
   
   - label: 已缓解
-    value: 20
+    value: MITIGATED
     description: 
   
   - label: 已关闭
-    value: 30
+    value: CLOSED
     description: 
   

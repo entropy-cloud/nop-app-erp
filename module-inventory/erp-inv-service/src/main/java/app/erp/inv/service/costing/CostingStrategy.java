@@ -15,8 +15,8 @@ import java.math.BigDecimal;
  */
 public interface CostingStrategy {
 
-    /** 对应字典 {@code erp-md/cost-method} 的 int 码（10=MOVING_AVERAGE、30=FIFO…）。 */
-    int costMethod();
+    /** 对应字典 {@code erp-md/cost-method} 的码值（MOVING_AVERAGE、FIFO…）。 */
+    String costMethod();
 
     /**
      * 入库记账：维护成本层（FIFO）/ 重算 avgCost（移动加权平均）+ 更新余额 + 写不可变流水。

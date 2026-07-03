@@ -31,10 +31,10 @@
                 <col id="formatName" mandatory="true" sortable="true"/>
 
                 <!--EDI 标准-->
-                <col id="formatStandard" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="formatStandard" mandatory="true" sortable="true"/>
 
                 <!--方向-->
-                <col id="direction" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="direction" mandatory="true" sortable="true"/>
 
                 <!--需要 WebService-->
                 <col id="needsWebService" mandatory="true" ui:number="true" sortable="true"/>

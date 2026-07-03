@@ -46,19 +46,19 @@
                 <col id="actualEndDate" sortable="true"/>
 
                 <!--预估工时-->
-                <col id="estimatedHours" sortable="true"/>
+                <col id="estimatedHours" ui:number="true" sortable="true"/>
 
                 <!--实际工时-->
-                <col id="actualHours" sortable="true"/>
+                <col id="actualHours" ui:number="true" sortable="true"/>
 
                 <!--依赖任务-->
                 <col id="dependsOnId" ui:number="true" sortable="true"/>
 
                 <!--状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--优先级-->
-                <col id="priority" ui:number="true" sortable="true"/>
+                <col id="priority" sortable="true"/>
 
                 <!--阻塞原因-->
                 <col id="blockReason" sortable="true"/>

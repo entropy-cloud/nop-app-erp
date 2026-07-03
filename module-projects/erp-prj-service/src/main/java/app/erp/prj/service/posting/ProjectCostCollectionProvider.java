@@ -2,6 +2,7 @@ package app.erp.prj.service.posting;
 
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.PostingEvent;
+import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.posting.AcctDocContext;
 import app.erp.fin.service.posting.IErpFinAcctDocProvider;
 import app.erp.fin.service.posting.VoucherFact;
@@ -31,8 +32,8 @@ import java.util.Set;
  */
 public class ProjectCostCollectionProvider implements IErpFinAcctDocProvider {
 
-    static final int DC_DEBIT = 10;
-    static final int DC_CREDIT = 20;
+    static final String DC_DEBIT = ErpFinConstants.DC_DEBIT;
+    static final String DC_CREDIT = ErpFinConstants.DC_CREDIT;
 
     /** 工时成本默认借方科目（项目类型 defaultSubjectId 缺失时回退）。 */
     static final String SUBJECT_PROJECT_COST_DEFAULT = "5101";
@@ -84,14 +85,14 @@ public class ProjectCostCollectionProvider implements IErpFinAcctDocProvider {
         return (sourceBillType == null ? "" : sourceBillType) + ":" + event.getBillHeadCode();
     }
 
-    private VoucherFact fact(String subjectCode, String subjectName, int dcDirection, BigDecimal amount,
+    private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
                              PostingEvent event, String memo) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
-        fact.setBusinessType(event.getBusinessType().getCode());
+        fact.setBusinessType(event.getBusinessType().name());
         fact.setMemo(memo);
         return fact;
     }

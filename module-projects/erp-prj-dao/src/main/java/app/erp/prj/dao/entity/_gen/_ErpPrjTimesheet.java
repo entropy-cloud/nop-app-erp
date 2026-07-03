@@ -69,7 +69,7 @@ public class _ErpPrjTimesheet extends DynamicOrmEntity{
     public static final String PROP_NAME_costAmount = "costAmount";
     public static final int PROP_ID_costAmount = 12;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 13;
     
@@ -251,7 +251,7 @@ public class _ErpPrjTimesheet extends DynamicOrmEntity{
     private java.time.LocalDate _workDate;
     
     /* 工时: HOURS */
-    private java.lang.String _hours;
+    private java.math.BigDecimal _hours;
     
     /* 活动类型: ACTIVITY_TYPE_ID */
     private java.lang.Long _activityTypeId;
@@ -260,13 +260,13 @@ public class _ErpPrjTimesheet extends DynamicOrmEntity{
     private java.lang.Long _currencyId;
     
     /* 成本费率: COST_RATE */
-    private java.lang.String _costRate;
+    private java.math.BigDecimal _costRate;
     
     /* 成本金额: COST_AMOUNT */
-    private java.lang.String _costAmount;
+    private java.math.BigDecimal _costAmount;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 已过账(已转成本凭证): POSTED */
     private java.lang.Boolean _posted;
@@ -535,9 +535,9 @@ public class _ErpPrjTimesheet extends DynamicOrmEntity{
             }
         
             case PROP_ID_hours:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_hours));
                }
                setHours(typedValue);
@@ -565,9 +565,9 @@ public class _ErpPrjTimesheet extends DynamicOrmEntity{
             }
         
             case PROP_ID_costRate:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_costRate));
                }
                setCostRate(typedValue);
@@ -575,9 +575,9 @@ public class _ErpPrjTimesheet extends DynamicOrmEntity{
             }
         
             case PROP_ID_costAmount:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_costAmount));
                }
                setCostAmount(typedValue);
@@ -585,9 +585,9 @@ public class _ErpPrjTimesheet extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -774,7 +774,7 @@ public class _ErpPrjTimesheet extends DynamicOrmEntity{
         
             case PROP_ID_hours:{
                onInitProp(propId);
-               this._hours = (java.lang.String)value;
+               this._hours = (java.math.BigDecimal)value;
                
                break;
             }
@@ -795,21 +795,21 @@ public class _ErpPrjTimesheet extends DynamicOrmEntity{
         
             case PROP_ID_costRate:{
                onInitProp(propId);
-               this._costRate = (java.lang.String)value;
+               this._costRate = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_costAmount:{
                onInitProp(propId);
-               this._costAmount = (java.lang.String)value;
+               this._costAmount = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -1040,7 +1040,7 @@ public class _ErpPrjTimesheet extends DynamicOrmEntity{
     /**
      * 工时: HOURS
      */
-    public final java.lang.String getHours(){
+    public final java.math.BigDecimal getHours(){
          onPropGet(PROP_ID_hours);
          return _hours;
     }
@@ -1048,7 +1048,7 @@ public class _ErpPrjTimesheet extends DynamicOrmEntity{
     /**
      * 工时: HOURS
      */
-    public final void setHours(java.lang.String value){
+    public final void setHours(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_hours,value)){
             this._hours = value;
             internalClearRefs(PROP_ID_hours);
@@ -1097,7 +1097,7 @@ public class _ErpPrjTimesheet extends DynamicOrmEntity{
     /**
      * 成本费率: COST_RATE
      */
-    public final java.lang.String getCostRate(){
+    public final java.math.BigDecimal getCostRate(){
          onPropGet(PROP_ID_costRate);
          return _costRate;
     }
@@ -1105,7 +1105,7 @@ public class _ErpPrjTimesheet extends DynamicOrmEntity{
     /**
      * 成本费率: COST_RATE
      */
-    public final void setCostRate(java.lang.String value){
+    public final void setCostRate(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_costRate,value)){
             this._costRate = value;
             internalClearRefs(PROP_ID_costRate);
@@ -1116,7 +1116,7 @@ public class _ErpPrjTimesheet extends DynamicOrmEntity{
     /**
      * 成本金额: COST_AMOUNT
      */
-    public final java.lang.String getCostAmount(){
+    public final java.math.BigDecimal getCostAmount(){
          onPropGet(PROP_ID_costAmount);
          return _costAmount;
     }
@@ -1124,7 +1124,7 @@ public class _ErpPrjTimesheet extends DynamicOrmEntity{
     /**
      * 成本金额: COST_AMOUNT
      */
-    public final void setCostAmount(java.lang.String value){
+    public final void setCostAmount(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_costAmount,value)){
             this._costAmount = value;
             internalClearRefs(PROP_ID_costAmount);
@@ -1135,7 +1135,7 @@ public class _ErpPrjTimesheet extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -1143,7 +1143,7 @@ public class _ErpPrjTimesheet extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

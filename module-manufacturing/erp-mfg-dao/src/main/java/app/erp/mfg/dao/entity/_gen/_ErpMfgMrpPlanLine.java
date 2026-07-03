@@ -41,7 +41,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     public static final String PROP_NAME_uoMId = "uoMId";
     public static final int PROP_ID_uoMId = 5;
     
-    /* 建议类型: ORDER_TYPE INTEGER */
+    /* 建议类型: ORDER_TYPE VARCHAR */
     public static final String PROP_NAME_orderType = "orderType";
     public static final int PROP_ID_orderType = 6;
     
@@ -211,7 +211,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     private java.lang.Long _uoMId;
     
     /* 建议类型: ORDER_TYPE */
-    private java.lang.Integer _orderType;
+    private java.lang.String _orderType;
     
     /* 毛需求: GROSS_REQUIREMENT */
     private java.math.BigDecimal _grossRequirement;
@@ -457,9 +457,9 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_orderType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orderType));
                }
                setOrderType(typedValue);
@@ -662,7 +662,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
         
             case PROP_ID_orderType:{
                onInitProp(propId);
-               this._orderType = (java.lang.Integer)value;
+               this._orderType = (java.lang.String)value;
                
                break;
             }
@@ -876,7 +876,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     /**
      * 建议类型: ORDER_TYPE
      */
-    public final java.lang.Integer getOrderType(){
+    public final java.lang.String getOrderType(){
          onPropGet(PROP_ID_orderType);
          return _orderType;
     }
@@ -884,7 +884,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     /**
      * 建议类型: ORDER_TYPE
      */
-    public final void setOrderType(java.lang.Integer value){
+    public final void setOrderType(java.lang.String value){
         if(onPropSet(PROP_ID_orderType,value)){
             this._orderType = value;
             internalClearRefs(PROP_ID_orderType);

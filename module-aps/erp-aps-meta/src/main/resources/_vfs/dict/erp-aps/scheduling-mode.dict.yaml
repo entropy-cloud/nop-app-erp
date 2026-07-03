@@ -1,15 +1,15 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 排产模式
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 前向排产
-    value: 10
+    value: FORWARD
     description: 
   
   - label: 后向排产
-    value: 20
+    value: BACKWARD
     description: 
   

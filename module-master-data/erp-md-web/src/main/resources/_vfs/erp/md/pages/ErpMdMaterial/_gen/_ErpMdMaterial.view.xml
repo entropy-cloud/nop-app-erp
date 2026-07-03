@@ -28,7 +28,7 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--物料类型-->
-                <col id="materialType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialType" mandatory="true" sortable="true"/>
 
                 <!--分类ID-->
                 <col id="categoryId" ui:number="true" sortable="true"/>
@@ -37,10 +37,10 @@
                 <col id="uoMId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--存货计价方法-->
-                <col id="costMethod" ui:number="true" sortable="true"/>
+                <col id="costMethod" sortable="true"/>
 
                 <!--是否批次管理-->
                 <col id="isBatchManaged" sortable="true"/>

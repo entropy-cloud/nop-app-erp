@@ -32,6 +32,7 @@ import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -232,7 +233,7 @@ public class ErpFinAccountingPeriodProcessor {
 
     public void advanceModule(ErpFinAccountingPeriodStatus status, Module module) {
         Module prev = module.predecessor();
-        if (prev != null && moduleStatusOf(status, prev) != ErpFinConstants.MODULE_CLOSE_CLOSED) {
+        if (prev != null && !Objects.equals(moduleStatusOf(status, prev), ErpFinConstants.MODULE_CLOSE_CLOSED)) {
             throw new NopException(ErpFinErrors.ERR_MODULE_OUT_OF_ORDER)
                     .param(ErpFinErrors.ARG_MODULE, module.name())
                     .param(ErpFinErrors.ARG_PREV_MODULE, prev.name());
@@ -249,7 +250,7 @@ public class ErpFinAccountingPeriodProcessor {
         status.setGlStatus(ErpFinConstants.MODULE_CLOSE_OPEN);
     }
 
-    private int moduleStatusOf(ErpFinAccountingPeriodStatus status, Module module) {
+    private String moduleStatusOf(ErpFinAccountingPeriodStatus status, Module module) {
         switch (module) {
             case AR:
                 return status.getArStatus();
@@ -266,7 +267,7 @@ public class ErpFinAccountingPeriodProcessor {
         }
     }
 
-    private void setModuleStatus(ErpFinAccountingPeriodStatus status, Module module, int value) {
+    private void setModuleStatus(ErpFinAccountingPeriodStatus status, Module module, String value) {
         switch (module) {
             case AR:
                 status.setArStatus(value);
@@ -383,7 +384,7 @@ public class ErpFinAccountingPeriodProcessor {
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", period.getId()));
         return dao.findAllByQuery(q).stream()
-                .filter(v -> !Integer.valueOf(ErpFinConstants.VOUCHER_STATUS_POSTED).equals(v.getDocStatus()))
+                .filter(v -> !ErpFinConstants.VOUCHER_STATUS_POSTED.equals(v.getDocStatus()))
                 .map(ErpFinVoucher::getCode)
                 .collect(Collectors.toList());
     }
@@ -394,8 +395,8 @@ public class ErpFinAccountingPeriodProcessor {
         q.addFilter(and(ge("businessDate", period.getStartDate()), le("businessDate", period.getEndDate())));
         return dao.findAllByQuery(q).stream()
                 .filter(i -> i.getStatus() != null
-                        && i.getStatus() != ErpFinConstants.AR_AP_STATUS_SETTLED
-                        && i.getStatus() != ErpFinConstants.AR_AP_STATUS_CANCELLED)
+                        && !Objects.equals(i.getStatus(), ErpFinConstants.AR_AP_STATUS_SETTLED)
+                        && !Objects.equals(i.getStatus(), ErpFinConstants.AR_AP_STATUS_CANCELLED))
                 .map(ErpFinArApItem::getCode)
                 .collect(Collectors.toList());
     }
@@ -406,7 +407,7 @@ public class ErpFinAccountingPeriodProcessor {
                                      ErpFinBusinessType businessType, IServiceContext context) {
         IEntityDao<ErpFinVoucherBillR> dao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
-        q.addFilter(and(eq("billCode", billHeadCode), eq("businessType", businessType.getCode())));
+        q.addFilter(and(eq("billCode", billHeadCode), eq("businessType", businessType.name())));
         if (dao.findAllByQuery(q).isEmpty()) {
             return;
         }
@@ -423,8 +424,8 @@ public class ErpFinAccountingPeriodProcessor {
         return period;
     }
 
-    protected void assertPeriodStatus(ErpFinAccountingPeriod period, int expected, String action) {
-        if (period.getStatus() == null || period.getStatus() != expected) {
+    protected void assertPeriodStatus(ErpFinAccountingPeriod period, String expected, String action) {
+        if (!Objects.equals(period.getStatus(), expected)) {
             throw new NopException(ErpFinErrors.ERR_PERIOD_ILLEGAL_TRANSITION)
                     .param(ErpFinErrors.ARG_PERIOD_CODE, period.getCode())
                     .param(ErpFinErrors.ARG_CURRENT_PERIOD_STATUS, period.getStatus())

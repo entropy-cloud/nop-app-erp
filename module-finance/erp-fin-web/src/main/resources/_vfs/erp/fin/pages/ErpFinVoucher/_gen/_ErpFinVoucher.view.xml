@@ -25,10 +25,10 @@
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--凭证字-->
-                <col id="voucherType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="voucherType" mandatory="true" sortable="true"/>
 
                 <!--过账类型-->
-                <col id="postingType" ui:number="true" sortable="true"/>
+                <col id="postingType" sortable="true"/>
 
                 <!--凭证日期-->
                 <col id="voucherDate" mandatory="true" sortable="true"/>
@@ -58,7 +58,7 @@
                 <col id="reversalOfVoucherId" ui:number="true" sortable="true"/>
 
                 <!--凭证状态-->
-                <col id="docStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="docStatus" mandatory="true" sortable="true"/>
 
                 <!--过账人-->
                 <col id="postedBy" sortable="true"/>

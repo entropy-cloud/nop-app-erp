@@ -210,16 +210,16 @@
         }
 
 
-        private Integer _receiveStatus;
+        private String _receiveStatus;
 
     
         @PropMeta(propId=15)
     
-        public Integer getReceiveStatus(){
+        public String getReceiveStatus(){
             return _receiveStatus;
         }
 
-        public void setReceiveStatus(Integer value){
+        public void setReceiveStatus(String value){
             this._receiveStatus = value;
         }
 
@@ -236,16 +236,16 @@
         }
 
 
-        private Integer _receiveType;
+        private String _receiveType;
 
     
         @PropMeta(propId=16)
     
-        public Integer getReceiveType(){
+        public String getReceiveType(){
             return _receiveType;
         }
 
-        public void setReceiveType(Integer value){
+        public void setReceiveType(String value){
             this._receiveType = value;
         }
 
@@ -262,16 +262,16 @@
         }
 
 
-        private Integer _docStatus;
+        private String _docStatus;
 
     
         @PropMeta(propId=17)
     
-        public Integer getDocStatus(){
+        public String getDocStatus(){
             return _docStatus;
         }
 
-        public void setDocStatus(Integer value){
+        public void setDocStatus(String value){
             this._docStatus = value;
         }
 
@@ -288,16 +288,16 @@
         }
 
 
-        private Integer _approveStatus;
+        private String _approveStatus;
 
     
         @PropMeta(propId=18)
     
-        public Integer getApproveStatus(){
+        public String getApproveStatus(){
             return _approveStatus;
         }
 
-        public void setApproveStatus(Integer value){
+        public void setApproveStatus(String value){
             this._approveStatus = value;
         }
 

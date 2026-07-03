@@ -10,7 +10,7 @@
   "productionDate": "2000-01-01",
   "expiryDate": "2000-01-01",
   "shelfLifeDays": 0,
-  "status": 0,
+  "status": "",
   "status_label": "",
   "remark": "",
   "delVersion": 0,

@@ -6,171 +6,171 @@ public interface _ErpPurDaoConstants {
     /**
      * 单据状态: 草稿 
      */
-    int DOC_STATUS_DRAFT = 10;
+    String DOC_STATUS_DRAFT = "DRAFT";
                     
     /**
      * 单据状态: 已生效 
      */
-    int DOC_STATUS_ACTIVE = 20;
+    String DOC_STATUS_ACTIVE = "ACTIVE";
                     
     /**
      * 单据状态: 已作废 
      */
-    int DOC_STATUS_CANCELLED = 30;
+    String DOC_STATUS_CANCELLED = "CANCELLED";
                     
     /**
      * 审核状态: 未提交 
      */
-    int APPROVE_STATUS_UNSUBMITTED = 10;
+    String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
                     
     /**
      * 审核状态: 已提交 
      */
-    int APPROVE_STATUS_SUBMITTED = 20;
+    String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
                     
     /**
      * 审核状态: 已审核 
      */
-    int APPROVE_STATUS_APPROVED = 30;
+    String APPROVE_STATUS_APPROVED = "APPROVED";
                     
     /**
      * 审核状态: 已驳回 
      */
-    int APPROVE_STATUS_REJECTED = 40;
+    String APPROVE_STATUS_REJECTED = "REJECTED";
                     
     /**
      * 付款进度: 未付款 
      */
-    int PAID_STATUS_UNPAID = 10;
+    String PAID_STATUS_UNPAID = "UNPAID";
                     
     /**
      * 付款进度: 部分付款 
      */
-    int PAID_STATUS_PARTIAL = 20;
+    String PAID_STATUS_PARTIAL = "PARTIAL";
                     
     /**
      * 付款进度: 已付清 
      */
-    int PAID_STATUS_PAID = 30;
+    String PAID_STATUS_PAID = "PAID";
                     
     /**
      * 收货状态: 未收货 
      */
-    int RECEIVE_STATUS_UNRECEIVED = 10;
+    String RECEIVE_STATUS_UNRECEIVED = "UNRECEIVED";
                     
     /**
      * 收货状态: 部分收货 
      */
-    int RECEIVE_STATUS_PARTIAL = 20;
+    String RECEIVE_STATUS_PARTIAL = "PARTIAL";
                     
     /**
      * 收货状态: 已收清 
      */
-    int RECEIVE_STATUS_RECEIVED = 30;
+    String RECEIVE_STATUS_RECEIVED = "RECEIVED";
                     
     /**
      * 采购单据类型: 请购单 
      */
-    int BIZ_TYPE_REQUISITION = 10;
+    String BIZ_TYPE_REQUISITION = "REQUISITION";
                     
     /**
      * 采购单据类型: 询价单 
      */
-    int BIZ_TYPE_RFQ = 20;
+    String BIZ_TYPE_RFQ = "RFQ";
                     
     /**
      * 采购单据类型: 报价单 
      */
-    int BIZ_TYPE_QUOTATION = 30;
+    String BIZ_TYPE_QUOTATION = "QUOTATION";
                     
     /**
      * 采购单据类型: 采购订单 
      */
-    int BIZ_TYPE_ORDER = 40;
+    String BIZ_TYPE_ORDER = "ORDER";
                     
     /**
      * 采购单据类型: 采购入库 
      */
-    int BIZ_TYPE_RECEIVE = 50;
+    String BIZ_TYPE_RECEIVE = "RECEIVE";
                     
     /**
      * 采购单据类型: 采购发票 
      */
-    int BIZ_TYPE_INVOICE = 60;
+    String BIZ_TYPE_INVOICE = "INVOICE";
                     
     /**
      * 采购单据类型: 付款单 
      */
-    int BIZ_TYPE_PAYMENT = 70;
+    String BIZ_TYPE_PAYMENT = "PAYMENT";
                     
     /**
      * 采购单据类型: 采购退货 
      */
-    int BIZ_TYPE_RETURN = 80;
+    String BIZ_TYPE_RETURN = "RETURN";
                     
     /**
      * 单据方向: 入库 
      */
-    int DOC_DIRECTION_INBOUND = 10;
+    String DOC_DIRECTION_INBOUND = "INBOUND";
                     
     /**
      * 单据方向: 出库 
      */
-    int DOC_DIRECTION_OUTBOUND = 20;
+    String DOC_DIRECTION_OUTBOUND = "OUTBOUND";
                     
     /**
      * 入库类型: 正常入库 
      */
-    int RECEIVE_TYPE_NORMAL = 10;
+    String RECEIVE_TYPE_NORMAL = "NORMAL";
                     
     /**
      * 入库类型: 退货入库 
      */
-    int RECEIVE_TYPE_RETURN = 20;
+    String RECEIVE_TYPE_RETURN = "RETURN";
                     
     /**
      * 入库类型: 赠品入库 
      */
-    int RECEIVE_TYPE_GIFT = 30;
+    String RECEIVE_TYPE_GIFT = "GIFT";
                     
     /**
      * 发票类型: 增值税专用 
      */
-    int INVOICE_TYPE_VAT_SPECIAL = 10;
+    String INVOICE_TYPE_VAT_SPECIAL = "VAT_SPECIAL";
                     
     /**
      * 发票类型: 增值税普通 
      */
-    int INVOICE_TYPE_VAT_NORMAL = 20;
+    String INVOICE_TYPE_VAT_NORMAL = "VAT_NORMAL";
                     
     /**
      * 发票类型: 收据 
      */
-    int INVOICE_TYPE_RECEIPT = 30;
+    String INVOICE_TYPE_RECEIPT = "RECEIPT";
                     
     /**
      * 供应商评级: 优秀 
      */
-    int SUPPLIER_STANDING_GREEN = 10;
+    String SUPPLIER_STANDING_GREEN = "GREEN";
                     
     /**
      * 供应商评级: 待改进 
      */
-    int SUPPLIER_STANDING_YELLOW = 20;
+    String SUPPLIER_STANDING_YELLOW = "YELLOW";
                     
     /**
      * 供应商评级: 不合格 
      */
-    int SUPPLIER_STANDING_RED = 30;
+    String SUPPLIER_STANDING_RED = "RED";
                     
     /**
      * 评分卡状态: 草稿 
      */
-    int SCORECARD_STATUS_DRAFT = 10;
+    String SCORECARD_STATUS_DRAFT = "DRAFT";
                     
     /**
      * 评分卡状态: 已定稿 
      */
-    int SCORECARD_STATUS_FINALIZED = 20;
+    String SCORECARD_STATUS_FINALIZED = "FINALIZED";
                     
 }

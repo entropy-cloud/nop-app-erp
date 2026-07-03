@@ -28,7 +28,7 @@
                 <col id="employeeId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--合同类型-->
-                <col id="contractType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="contractType" mandatory="true" sortable="true"/>
 
                 <!--签订日期-->
                 <col id="signDate" mandatory="true" sortable="true"/>
@@ -64,7 +64,7 @@
                 <col id="housingFundBase" ui:number="true" sortable="true"/>
 
                 <!--合同状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--合同文件-->
                 <col id="attachmentFileId" sortable="true"/>

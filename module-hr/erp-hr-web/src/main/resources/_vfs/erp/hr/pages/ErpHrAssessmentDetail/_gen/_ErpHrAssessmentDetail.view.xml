@@ -34,7 +34,7 @@
                 <col id="comment" sortable="true"/>
 
                 <!--来源类型-->
-                <col id="sourceType" ui:number="true" sortable="true"/>
+                <col id="sourceType" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>

@@ -41,7 +41,7 @@
         </prop>
         <prop name="actionType" displayName="动作类型" propId="6" i18n-en:displayName="Action Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-cs/fulfillment-action-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-cs/fulfillment-action-type"/>
         </prop>
         <prop name="actionConfig" displayName="动作配置" propId="7" i18n-en:displayName="Action Config" queryable="true"
               sortable="true" insertable="true" updatable="true">

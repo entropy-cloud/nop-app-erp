@@ -33,7 +33,7 @@ public class _ErpQaInspectionTemplate extends DynamicOrmEntity{
     public static final String PROP_NAME_name = "name";
     public static final int PROP_ID_name = 3;
     
-    /* 检验类型: INSPECTION_TYPE INTEGER */
+    /* 检验类型: INSPECTION_TYPE VARCHAR */
     public static final String PROP_NAME_inspectionType = "inspectionType";
     public static final int PROP_ID_inspectionType = 4;
     
@@ -143,7 +143,7 @@ public class _ErpQaInspectionTemplate extends DynamicOrmEntity{
     private java.lang.String _name;
     
     /* 检验类型: INSPECTION_TYPE */
-    private java.lang.Integer _inspectionType;
+    private java.lang.String _inspectionType;
     
     /* 适用物料: MATERIAL_ID */
     private java.lang.Long _materialId;
@@ -327,9 +327,9 @@ public class _ErpQaInspectionTemplate extends DynamicOrmEntity{
             }
         
             case PROP_ID_inspectionType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_inspectionType));
                }
                setInspectionType(typedValue);
@@ -458,7 +458,7 @@ public class _ErpQaInspectionTemplate extends DynamicOrmEntity{
         
             case PROP_ID_inspectionType:{
                onInitProp(propId);
-               this._inspectionType = (java.lang.Integer)value;
+               this._inspectionType = (java.lang.String)value;
                
                break;
             }
@@ -592,7 +592,7 @@ public class _ErpQaInspectionTemplate extends DynamicOrmEntity{
     /**
      * 检验类型: INSPECTION_TYPE
      */
-    public final java.lang.Integer getInspectionType(){
+    public final java.lang.String getInspectionType(){
          onPropGet(PROP_ID_inspectionType);
          return _inspectionType;
     }
@@ -600,7 +600,7 @@ public class _ErpQaInspectionTemplate extends DynamicOrmEntity{
     /**
      * 检验类型: INSPECTION_TYPE
      */
-    public final void setInspectionType(java.lang.Integer value){
+    public final void setInspectionType(java.lang.String value){
         if(onPropSet(PROP_ID_inspectionType,value)){
             this._inspectionType = value;
             internalClearRefs(PROP_ID_inspectionType);

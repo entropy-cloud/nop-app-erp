@@ -52,7 +52,7 @@ public class TestErpInvPosting extends JunitAutoTestCase {
     static final Long UOM_ID = 5003L;
     static final Long CURRENCY_ID = 6003L;
     static final Long ACCT_SCHEMA_ID = 7003L;
-    static final int VOUCHER_STATUS_POSTED = 20;
+    static final String VOUCHER_STATUS_POSTED = "POSTED";
 
     @Inject
     IDaoProvider daoProvider;
@@ -131,7 +131,7 @@ public class TestErpInvPosting extends JunitAutoTestCase {
         return executeRpc(mutation, "ErpInvStockMove__generateMove", ApiRequest.build(Map.of("request", req)));
     }
 
-    private Map<String, Object> baseReq(Integer moveType) {
+    private Map<String, Object> baseReq(String moveType) {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("moveType", moveType);
         req.put("orgId", ORG_ID);
@@ -160,7 +160,7 @@ public class TestErpInvPosting extends JunitAutoTestCase {
 
     private void seedPeriodAndSubjects() {
         ormTemplate.runInSession(() -> {
-            seedOpenPeriod("2026-07", 2026, 7, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31), 10);
+            seedOpenPeriod("2026-07", 2026, 7, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31), "OPEN");
             seedSubject("1401", "库存商品");
             seedSubject("2202", "应付账款-暂估");
             seedSubject("6401", "主营业务成本");
@@ -174,7 +174,7 @@ public class TestErpInvPosting extends JunitAutoTestCase {
         });
     }
 
-    private void seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, int status) {
+    private void seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, String status) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
@@ -193,9 +193,9 @@ public class TestErpInvPosting extends JunitAutoTestCase {
         ErpMdSubject subject = new ErpMdSubject();
         subject.setCode(code);
         subject.setName(name);
-        subject.setSubjectClass(10);
-        subject.setDirection(10);
-        subject.setStatus(10);
+        subject.setSubjectClass("ASSET");
+        subject.setDirection("DEBIT");
+        subject.setStatus("ACTIVE");
         dao.saveEntity(subject);
     }
 

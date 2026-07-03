@@ -25,7 +25,7 @@
                 <col id="machineId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--约束类型-->
-                <col id="constraintType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="constraintType" mandatory="true" sortable="true"/>
 
                 <!--开始时间-->
                 <col id="startTime" mandatory="true" sortable="true"/>

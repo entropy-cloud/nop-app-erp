@@ -1,23 +1,23 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 服务水平
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 95%
-    value: 10
+    value: PCT95
     description: 
   
   - label: 97.5%
-    value: 20
+    value: PCT97_5
     description: 
   
   - label: 99%
-    value: 30
+    value: PCT99
     description: 
   
   - label: 99.5%
-    value: 40
+    value: PCT99_5
     description: 
   

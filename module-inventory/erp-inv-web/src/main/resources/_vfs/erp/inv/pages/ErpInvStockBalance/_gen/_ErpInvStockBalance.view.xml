@@ -52,7 +52,7 @@
                 <col id="availableQuantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--计价方法-->
-                <col id="costMethod" ui:number="true" sortable="true"/>
+                <col id="costMethod" sortable="true"/>
 
                 <!--平均成本-->
                 <col id="avgCost" ui:number="true" sortable="true"/>

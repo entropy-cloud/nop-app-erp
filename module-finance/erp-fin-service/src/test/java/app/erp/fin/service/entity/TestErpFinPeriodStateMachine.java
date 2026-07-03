@@ -119,7 +119,7 @@ public class TestErpFinPeriodStateMachine extends JunitAutoTestCase {
         return ormTemplate.runInSession(session -> action.get());
     }
 
-    private Long seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, int status) {
+    private Long seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, String status) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
@@ -134,11 +134,11 @@ public class TestErpFinPeriodStateMachine extends JunitAutoTestCase {
         return period.getId();
     }
 
-    private void seedUnpostedVoucher(String code, Long periodId, LocalDate date, int docStatus) {
+    private void seedUnpostedVoucher(String code, Long periodId, LocalDate date, String docStatus) {
         IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);
         ErpFinVoucher v = new ErpFinVoucher();
         v.setCode(code);
-        v.setVoucherType(30);
+        v.setVoucherType("TRANSFER");
         v.setVoucherDate(date);
         v.setOrgId(1L);
         v.setAcctSchemaId(1L);

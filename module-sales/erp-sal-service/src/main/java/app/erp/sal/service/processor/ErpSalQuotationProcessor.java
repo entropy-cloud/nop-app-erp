@@ -13,6 +13,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -115,54 +116,54 @@ public class ErpSalQuotationProcessor {
 
     protected void validateTransitionForSubmit(ErpSalQuotation quotation, IServiceContext context) {
         validateNotCancelled(quotation, context);
-        Integer status = quotation.getApproveStatus();
+        String status = quotation.getApproveStatus();
         if (status == null) {
             status = ErpSalConstants.APPROVE_STATUS_UNSUBMITTED;
         }
-        if (status != ErpSalConstants.APPROVE_STATUS_UNSUBMITTED
-                && status != ErpSalConstants.APPROVE_STATUS_REJECTED) {
+        if (!Objects.equals(status, ErpSalConstants.APPROVE_STATUS_UNSUBMITTED)
+                && !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_REJECTED)) {
             throw illegalTransition(quotation, status, "UNSUBMITTED 或 REJECTED");
         }
     }
 
     protected void validateTransitionForWithdraw(ErpSalQuotation quotation, IServiceContext context) {
-        Integer status = quotation.getApproveStatus();
-        if (status == null || status != ErpSalConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = quotation.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(quotation, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForApprove(ErpSalQuotation quotation, IServiceContext context) {
-        Integer status = quotation.getApproveStatus();
-        if (status == null || status != ErpSalConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = quotation.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(quotation, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForReject(ErpSalQuotation quotation, IServiceContext context) {
-        Integer status = quotation.getApproveStatus();
-        if (status == null || status != ErpSalConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = quotation.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(quotation, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpSalQuotation quotation, IServiceContext context) {
-        Integer status = quotation.getApproveStatus();
-        if (status == null || status != ErpSalConstants.APPROVE_STATUS_APPROVED) {
+        String status = quotation.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_APPROVED)) {
             throw illegalTransition(quotation, status, "APPROVED");
         }
     }
 
     protected void validateTransitionForCancel(ErpSalQuotation quotation, IServiceContext context) {
-        Integer docStatus = quotation.getDocStatus();
-        if (docStatus != null && docStatus == ErpSalConstants.DOC_STATUS_CANCELLED) {
+        String docStatus = quotation.getDocStatus();
+        if (docStatus != null && Objects.equals(docStatus, ErpSalConstants.DOC_STATUS_CANCELLED)) {
             throw illegalDocTransition(quotation, docStatus, "非已作废");
         }
     }
 
     protected void validateTransitionForConfirm(ErpSalQuotation quotation, IServiceContext context) {
-        Integer status = quotation.getApproveStatus();
-        if (status == null || status != ErpSalConstants.APPROVE_STATUS_APPROVED) {
+        String status = quotation.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_APPROVED)) {
             throw illegalTransition(quotation, status, "APPROVED");
         }
     }
@@ -172,9 +173,9 @@ public class ErpSalQuotationProcessor {
      */
     protected void validateReadyForConvert(ErpSalQuotation quotation, IServiceContext context) {
         validateNotCancelled(quotation, context);
-        Integer status = quotation.getApproveStatus();
+        String status = quotation.getApproveStatus();
         boolean accepted = Boolean.TRUE.equals(quotation.getIsAccepted());
-        if (status == null || status != ErpSalConstants.APPROVE_STATUS_APPROVED || !accepted) {
+        if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_APPROVED) || !accepted) {
             throw new NopException(ErpSalErrors.ERR_QUOTATION_NOT_READY)
                     .param(ErpSalErrors.ARG_QUOTATION_CODE, quotation.getCode())
                     .param(ErpSalErrors.ARG_CURRENT_STATUS, status)
@@ -277,20 +278,20 @@ public class ErpSalQuotationProcessor {
     }
 
     protected void validateNotCancelled(ErpSalQuotation quotation, IServiceContext context) {
-        Integer docStatus = quotation.getDocStatus();
-        if (docStatus != null && docStatus == ErpSalConstants.DOC_STATUS_CANCELLED) {
+        String docStatus = quotation.getDocStatus();
+        if (docStatus != null && Objects.equals(docStatus, ErpSalConstants.DOC_STATUS_CANCELLED)) {
             throw illegalDocTransition(quotation, docStatus, "非已作废");
         }
     }
 
     protected boolean isAlreadyApproved(ErpSalQuotation quotation) {
-        Integer status = quotation.getApproveStatus();
-        return status != null && status == ErpSalConstants.APPROVE_STATUS_APPROVED;
+        String status = quotation.getApproveStatus();
+        return status != null && Objects.equals(status, ErpSalConstants.APPROVE_STATUS_APPROVED);
     }
 
     protected boolean isAlreadyRejected(ErpSalQuotation quotation) {
-        Integer status = quotation.getApproveStatus();
-        return status != null && status == ErpSalConstants.APPROVE_STATUS_REJECTED;
+        String status = quotation.getApproveStatus();
+        return status != null && Objects.equals(status, ErpSalConstants.APPROVE_STATUS_REJECTED);
     }
 
     protected void requireLinesNonEmpty(ErpSalQuotation quotation, IServiceContext context) {
@@ -314,14 +315,14 @@ public class ErpSalQuotationProcessor {
         return daoProvider.daoFor(ErpSalQuotation.class);
     }
 
-    protected NopException illegalTransition(ErpSalQuotation quotation, Integer current, String expected) {
+    protected NopException illegalTransition(ErpSalQuotation quotation, String current, String expected) {
         return new NopException(ErpSalErrors.ERR_QUOTATION_ILLEGAL_STATUS_TRANSITION)
                 .param(ErpSalErrors.ARG_QUOTATION_CODE, quotation.getCode())
                 .param(ErpSalErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpSalErrors.ARG_EXPECTED_STATUS, expected);
     }
 
-    protected NopException illegalDocTransition(ErpSalQuotation quotation, Integer current, String expected) {
+    protected NopException illegalDocTransition(ErpSalQuotation quotation, String current, String expected) {
         return new NopException(ErpSalErrors.ERR_QUOTATION_ILLEGAL_DOC_STATUS_TRANSITION)
                 .param(ErpSalErrors.ARG_QUOTATION_CODE, quotation.getCode())
                 .param(ErpSalErrors.ARG_CURRENT_DOC_STATUS, current)

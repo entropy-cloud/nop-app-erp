@@ -181,16 +181,16 @@ public class _ErpLogShipmentParcel extends DynamicOrmEntity{
     private java.lang.String _labelUrl;
     
     /* 重量(kg): WEIGHT */
-    private java.lang.String _weight;
+    private java.math.BigDecimal _weight;
     
     /* 长(cm): LENGTH */
-    private java.lang.String _length;
+    private java.math.BigDecimal _length;
     
     /* 宽(cm): WIDTH */
-    private java.lang.String _width;
+    private java.math.BigDecimal _width;
     
     /* 高(cm): HEIGHT */
-    private java.lang.String _height;
+    private java.math.BigDecimal _height;
     
     /* 申报价值: DECLARED_VALUE */
     private java.math.BigDecimal _declaredValue;
@@ -409,9 +409,9 @@ public class _ErpLogShipmentParcel extends DynamicOrmEntity{
             }
         
             case PROP_ID_weight:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_weight));
                }
                setWeight(typedValue);
@@ -419,9 +419,9 @@ public class _ErpLogShipmentParcel extends DynamicOrmEntity{
             }
         
             case PROP_ID_length:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_length));
                }
                setLength(typedValue);
@@ -429,9 +429,9 @@ public class _ErpLogShipmentParcel extends DynamicOrmEntity{
             }
         
             case PROP_ID_width:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_width));
                }
                setWidth(typedValue);
@@ -439,9 +439,9 @@ public class _ErpLogShipmentParcel extends DynamicOrmEntity{
             }
         
             case PROP_ID_height:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_height));
                }
                setHeight(typedValue);
@@ -584,28 +584,28 @@ public class _ErpLogShipmentParcel extends DynamicOrmEntity{
         
             case PROP_ID_weight:{
                onInitProp(propId);
-               this._weight = (java.lang.String)value;
+               this._weight = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_length:{
                onInitProp(propId);
-               this._length = (java.lang.String)value;
+               this._length = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_width:{
                onInitProp(propId);
-               this._width = (java.lang.String)value;
+               this._width = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_height:{
                onInitProp(propId);
-               this._height = (java.lang.String)value;
+               this._height = (java.math.BigDecimal)value;
                
                break;
             }
@@ -777,7 +777,7 @@ public class _ErpLogShipmentParcel extends DynamicOrmEntity{
     /**
      * 重量(kg): WEIGHT
      */
-    public final java.lang.String getWeight(){
+    public final java.math.BigDecimal getWeight(){
          onPropGet(PROP_ID_weight);
          return _weight;
     }
@@ -785,7 +785,7 @@ public class _ErpLogShipmentParcel extends DynamicOrmEntity{
     /**
      * 重量(kg): WEIGHT
      */
-    public final void setWeight(java.lang.String value){
+    public final void setWeight(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_weight,value)){
             this._weight = value;
             internalClearRefs(PROP_ID_weight);
@@ -796,7 +796,7 @@ public class _ErpLogShipmentParcel extends DynamicOrmEntity{
     /**
      * 长(cm): LENGTH
      */
-    public final java.lang.String getLength(){
+    public final java.math.BigDecimal getLength(){
          onPropGet(PROP_ID_length);
          return _length;
     }
@@ -804,7 +804,7 @@ public class _ErpLogShipmentParcel extends DynamicOrmEntity{
     /**
      * 长(cm): LENGTH
      */
-    public final void setLength(java.lang.String value){
+    public final void setLength(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_length,value)){
             this._length = value;
             internalClearRefs(PROP_ID_length);
@@ -815,7 +815,7 @@ public class _ErpLogShipmentParcel extends DynamicOrmEntity{
     /**
      * 宽(cm): WIDTH
      */
-    public final java.lang.String getWidth(){
+    public final java.math.BigDecimal getWidth(){
          onPropGet(PROP_ID_width);
          return _width;
     }
@@ -823,7 +823,7 @@ public class _ErpLogShipmentParcel extends DynamicOrmEntity{
     /**
      * 宽(cm): WIDTH
      */
-    public final void setWidth(java.lang.String value){
+    public final void setWidth(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_width,value)){
             this._width = value;
             internalClearRefs(PROP_ID_width);
@@ -834,7 +834,7 @@ public class _ErpLogShipmentParcel extends DynamicOrmEntity{
     /**
      * 高(cm): HEIGHT
      */
-    public final java.lang.String getHeight(){
+    public final java.math.BigDecimal getHeight(){
          onPropGet(PROP_ID_height);
          return _height;
     }
@@ -842,7 +842,7 @@ public class _ErpLogShipmentParcel extends DynamicOrmEntity{
     /**
      * 高(cm): HEIGHT
      */
-    public final void setHeight(java.lang.String value){
+    public final void setHeight(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_height,value)){
             this._height = value;
             internalClearRefs(PROP_ID_height);

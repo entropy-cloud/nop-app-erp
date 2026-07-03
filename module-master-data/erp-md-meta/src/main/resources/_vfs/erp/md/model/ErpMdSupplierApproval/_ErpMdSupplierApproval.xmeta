@@ -33,7 +33,7 @@
         </prop>
         <prop name="approvalType" displayName="准入类型" propId="4" i18n-en:displayName="Approval Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-md/supplier-approval-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-md/supplier-approval-type"/>
         </prop>
         <prop name="materialCategoryId" displayName="准入物料类别" propId="5" i18n-en:displayName="Material Category"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true"
@@ -54,7 +54,7 @@
         </prop>
         <prop name="status" displayName="准入状态" propId="9" i18n-en:displayName="Approval Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="10">
-            <schema type="java.lang.Integer" dict="erp-md/supplier-approval-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-md/supplier-approval-status"/>
         </prop>
         <prop name="approvedBy" displayName="批准人" propId="10" i18n-en:displayName="Approved By" queryable="true"
               sortable="true" insertable="true" updatable="true">

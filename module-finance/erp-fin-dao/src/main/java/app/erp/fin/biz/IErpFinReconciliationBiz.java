@@ -19,7 +19,7 @@ public interface IErpFinReconciliationBiz extends ICrudBiz<ErpFinReconciliation>
      * 行仅记录引用与核销金额，实际回写辅助账在 {@link #post} 时发生。
      */
     @BizMutation
-    ErpFinReconciliation create(@Name("direction") Integer direction,
+    ErpFinReconciliation create(@Name("direction") String direction,
                                 @Name("partnerId") Long partnerId,
                                 @Name("businessDate") LocalDate businessDate,
                                 @Name("lines") List<ReconciliationLineInput> lines,

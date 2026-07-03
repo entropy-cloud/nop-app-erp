@@ -43,13 +43,13 @@
                 <col id="remark" sortable="true"/>
 
                 <!--联副产品类型-->
-                <col id="byproductType" ui:number="true" sortable="true"/>
+                <col id="byproductType" sortable="true"/>
 
                 <!--产出率(%)-->
-                <col id="yieldRate" sortable="true"/>
+                <col id="yieldRate" ui:number="true" sortable="true"/>
 
                 <!--成本分摊比例(%)-->
-                <col id="costAllocationPercent" sortable="true"/>
+                <col id="costAllocationPercent" ui:number="true" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>

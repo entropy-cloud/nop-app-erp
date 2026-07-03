@@ -49,7 +49,7 @@
         </prop>
         <prop name="invoiceTerm" displayName="开票条款" propId="8" i18n-en:displayName="Invoice Term" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-ct/invoice-term"/>
+            <schema type="java.lang.String" precision="20" dict="erp-ct/invoice-term"/>
         </prop>
         <prop name="remark" displayName="备注" propId="9" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

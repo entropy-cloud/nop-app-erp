@@ -14,6 +14,7 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.dao.IOrmEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 
@@ -93,44 +94,44 @@ public class ErpFinEmployeeAdvanceProcessor {
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
 
     protected void validateTransitionForSubmit(ErpFinEmployeeAdvance advance, IServiceContext context) {
-        Integer status = currentApproveStatus(advance);
-        if (status != ErpFinConstants.APPROVE_STATUS_UNSUBMITTED
-                && status != ErpFinConstants.APPROVE_STATUS_REJECTED) {
+        String status = currentApproveStatus(advance);
+        if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_UNSUBMITTED)
+                && !Objects.equals(status, ErpFinConstants.APPROVE_STATUS_REJECTED)) {
             throw illegalTransition(advance, status, "UNSUBMITTED 或 REJECTED");
         }
     }
 
     protected void validateTransitionForWithdraw(ErpFinEmployeeAdvance advance, IServiceContext context) {
-        Integer status = currentApproveStatus(advance);
-        if (status != ErpFinConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = currentApproveStatus(advance);
+        if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(advance, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForApprove(ErpFinEmployeeAdvance advance, IServiceContext context) {
-        Integer status = currentApproveStatus(advance);
-        if (status != ErpFinConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = currentApproveStatus(advance);
+        if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(advance, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForReject(ErpFinEmployeeAdvance advance, IServiceContext context) {
-        Integer status = currentApproveStatus(advance);
-        if (status != ErpFinConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = currentApproveStatus(advance);
+        if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(advance, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpFinEmployeeAdvance advance, IServiceContext context) {
-        Integer status = currentApproveStatus(advance);
-        if (status != ErpFinConstants.APPROVE_STATUS_APPROVED) {
+        String status = currentApproveStatus(advance);
+        if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_APPROVED)) {
             throw illegalTransition(advance, status, "APPROVED");
         }
     }
 
     protected void validateTransitionForCancel(ErpFinEmployeeAdvance advance, IServiceContext context) {
-        Integer docStatus = advance.getDocStatus();
-        if (docStatus != null && docStatus == ErpFinConstants.DOC_STATUS_CANCELLED) {
+        String docStatus = advance.getDocStatus();
+        if (docStatus != null && Objects.equals(docStatus, ErpFinConstants.DOC_STATUS_CANCELLED)) {
             throw illegalDocTransition(advance, docStatus, "非已作废");
         }
     }
@@ -147,7 +148,7 @@ public class ErpFinEmployeeAdvanceProcessor {
         ErpMdEmployee employee = advance.getEmployeeId() == null ? null
                 : daoProvider.daoFor(ErpMdEmployee.class).getEntityById(advance.getEmployeeId());
         if (employee == null || employee.getStatus() == null
-                || employee.getStatus() != ErpFinConstants.EMPLOYEE_STATUS_ACTIVE) {
+                || !Objects.equals(employee.getStatus(), ErpFinConstants.EMPLOYEE_STATUS_ACTIVE)) {
             throw new NopException(ErpFinErrors.ERR_EMPLOYEE_ADVANCE_EMPLOYEE_INACTIVE)
                     .param(ErpFinErrors.ARG_EMPLOYEE_ID, advance.getEmployeeId());
         }
@@ -216,8 +217,8 @@ public class ErpFinEmployeeAdvanceProcessor {
     }
 
     protected ErpFinEmployeeAdvance doCancel(Long advanceId, ErpFinEmployeeAdvance advance, IServiceContext context) {
-        Integer approveStatus = currentApproveStatus(advance);
-        if (approveStatus == ErpFinConstants.APPROVE_STATUS_APPROVED
+        String approveStatus = currentApproveStatus(advance);
+        if (Objects.equals(approveStatus, ErpFinConstants.APPROVE_STATUS_APPROVED)
                 && Boolean.TRUE.equals(advance.getPosted())) {
             postingDispatcher.reverse(advance);
             advance = reload(advanceId);
@@ -260,17 +261,17 @@ public class ErpFinEmployeeAdvanceProcessor {
     }
 
     protected boolean isAlreadyApproved(ErpFinEmployeeAdvance advance) {
-        Integer status = advance.getApproveStatus();
-        return status != null && status == ErpFinConstants.APPROVE_STATUS_APPROVED;
+        String status = advance.getApproveStatus();
+        return status != null && Objects.equals(status, ErpFinConstants.APPROVE_STATUS_APPROVED);
     }
 
     protected boolean isAlreadyRejected(ErpFinEmployeeAdvance advance) {
-        Integer status = advance.getApproveStatus();
-        return status != null && status == ErpFinConstants.APPROVE_STATUS_REJECTED;
+        String status = advance.getApproveStatus();
+        return status != null && Objects.equals(status, ErpFinConstants.APPROVE_STATUS_REJECTED);
     }
 
-    protected Integer currentApproveStatus(ErpFinEmployeeAdvance advance) {
-        Integer status = advance.getApproveStatus();
+    protected String currentApproveStatus(ErpFinEmployeeAdvance advance) {
+        String status = advance.getApproveStatus();
         return status != null ? status : ErpFinConstants.APPROVE_STATUS_UNSUBMITTED;
     }
 
@@ -297,14 +298,14 @@ public class ErpFinEmployeeAdvanceProcessor {
         return v != null ? v : BigDecimal.ZERO;
     }
 
-    protected NopException illegalTransition(ErpFinEmployeeAdvance advance, Integer current, String expected) {
+    protected NopException illegalTransition(ErpFinEmployeeAdvance advance, String current, String expected) {
         return new NopException(ErpFinErrors.ERR_EMPLOYEE_ADVANCE_ILLEGAL_STATUS_TRANSITION)
                 .param(ErpFinErrors.ARG_ADVANCE_CODE, advance.getCode())
                 .param(ErpFinErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpFinErrors.ARG_EXPECTED_STATUS, expected);
     }
 
-    protected NopException illegalDocTransition(ErpFinEmployeeAdvance advance, Integer current, String expected) {
+    protected NopException illegalDocTransition(ErpFinEmployeeAdvance advance, String current, String expected) {
         return new NopException(ErpFinErrors.ERR_EMPLOYEE_ADVANCE_ILLEGAL_DOC_STATUS_TRANSITION)
                 .param(ErpFinErrors.ARG_ADVANCE_CODE, advance.getCode())
                 .param(ErpFinErrors.ARG_CURRENT_DOC_STATUS, current)

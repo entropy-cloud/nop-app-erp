@@ -33,7 +33,7 @@ public class _ErpCsTicketType extends DynamicOrmEntity{
     public static final String PROP_NAME_name = "name";
     public static final int PROP_ID_name = 3;
     
-    /* 默认优先级: DEFAULT_PRIORITY INTEGER */
+    /* 默认优先级: DEFAULT_PRIORITY VARCHAR */
     public static final String PROP_NAME_defaultPriority = "defaultPriority";
     public static final int PROP_ID_defaultPriority = 4;
     
@@ -140,7 +140,7 @@ public class _ErpCsTicketType extends DynamicOrmEntity{
     private java.lang.String _name;
     
     /* 默认优先级: DEFAULT_PRIORITY */
-    private java.lang.Integer _defaultPriority;
+    private java.lang.String _defaultPriority;
     
     /* 默认 SLA 策略: DEFAULT_SLA_POLICY_ID */
     private java.lang.Long _defaultSlaPolicyId;
@@ -324,9 +324,9 @@ public class _ErpCsTicketType extends DynamicOrmEntity{
             }
         
             case PROP_ID_defaultPriority:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_defaultPriority));
                }
                setDefaultPriority(typedValue);
@@ -455,7 +455,7 @@ public class _ErpCsTicketType extends DynamicOrmEntity{
         
             case PROP_ID_defaultPriority:{
                onInitProp(propId);
-               this._defaultPriority = (java.lang.Integer)value;
+               this._defaultPriority = (java.lang.String)value;
                
                break;
             }
@@ -589,7 +589,7 @@ public class _ErpCsTicketType extends DynamicOrmEntity{
     /**
      * 默认优先级: DEFAULT_PRIORITY
      */
-    public final java.lang.Integer getDefaultPriority(){
+    public final java.lang.String getDefaultPriority(){
          onPropGet(PROP_ID_defaultPriority);
          return _defaultPriority;
     }
@@ -597,7 +597,7 @@ public class _ErpCsTicketType extends DynamicOrmEntity{
     /**
      * 默认优先级: DEFAULT_PRIORITY
      */
-    public final void setDefaultPriority(java.lang.Integer value){
+    public final void setDefaultPriority(java.lang.String value){
         if(onPropSet(PROP_ID_defaultPriority,value)){
             this._defaultPriority = value;
             internalClearRefs(PROP_ID_defaultPriority);

@@ -2,7 +2,7 @@
   "id": 0,
   "claimId": 0,
   "lineNo": 0,
-  "expenseType": 0,
+  "expenseType": "",
   "expenseType_label": "",
   "projectId": 0,
   "costCenterId": 0,

@@ -43,7 +43,7 @@ public class PartnerBalanceUpdater {
         partner.setPayableBalance(sumOpen(partnerId, ErpFinConstants.DIRECTION_PAYABLE));
     }
 
-    protected BigDecimal sumOpen(Long partnerId, int direction) {
+    protected BigDecimal sumOpen(Long partnerId, String direction) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("partnerId", partnerId));

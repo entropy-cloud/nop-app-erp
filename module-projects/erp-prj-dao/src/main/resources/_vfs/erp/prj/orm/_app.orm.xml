@@ -15,29 +15,29 @@
     </x:gen-extends>
 
     <dicts>
-        <dict label="项目状态" name="erp-prj/project-status" valueType="int" i18n-en:label="Project Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="OPEN" label="进行中" value="20" i18n-en:label="In Progress"/>
-            <option code="ON_HOLD" label="暂停" value="30" i18n-en:label="Suspended"/>
-            <option code="COMPLETED" label="已完成" value="40" i18n-en:label="Completed"/>
-            <option code="CANCELLED" label="已取消" value="50" i18n-en:label="Cancelled"/>
+        <dict label="项目状态" name="erp-prj/project-status" valueType="string" i18n-en:label="Project Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="OPEN" label="进行中" value="OPEN" i18n-en:label="In Progress"/>
+            <option code="ON_HOLD" label="暂停" value="ON_HOLD" i18n-en:label="Suspended"/>
+            <option code="COMPLETED" label="已完成" value="COMPLETED" i18n-en:label="Completed"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
         </dict>
-        <dict label="任务状态" name="erp-prj/task-status" valueType="int" i18n-en:label="Task Status">
-            <option code="TODO" label="待开始" value="10" i18n-en:label="Pending Start"/>
-            <option code="IN_PROGRESS" label="进行中" value="20" i18n-en:label="In Progress"/>
-            <option code="DONE" label="已完成" value="30" i18n-en:label="Completed"/>
-            <option code="BLOCKED" label="阻塞" value="40" i18n-en:label="Blocked"/>
+        <dict label="任务状态" name="erp-prj/task-status" valueType="string" i18n-en:label="Task Status">
+            <option code="TODO" label="待开始" value="TODO" i18n-en:label="Pending Start"/>
+            <option code="IN_PROGRESS" label="进行中" value="IN_PROGRESS" i18n-en:label="In Progress"/>
+            <option code="DONE" label="已完成" value="DONE" i18n-en:label="Completed"/>
+            <option code="BLOCKED" label="阻塞" value="BLOCKED" i18n-en:label="Blocked"/>
         </dict>
-        <dict label="工时状态" name="erp-prj/timesheet-status" valueType="int" i18n-en:label="Timesheet Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="SUBMITTED" label="已提交" value="20" i18n-en:label="Submitted"/>
-            <option code="APPROVED" label="已审批" value="30" i18n-en:label="Approved"/>
+        <dict label="工时状态" name="erp-prj/timesheet-status" valueType="string" i18n-en:label="Timesheet Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label="Submitted"/>
+            <option code="APPROVED" label="已审批" value="APPROVED" i18n-en:label="Approved"/>
         </dict>
-        <dict label="优先级" name="erp-prj/priority" valueType="int" i18n-en:label="Priority">
-            <option code="LOW" label="低" value="10" i18n-en:label="Low"/>
-            <option code="NORMAL" label="普通" value="20" i18n-en:label="General"/>
-            <option code="HIGH" label="高" value="30" i18n-en:label="High"/>
-            <option code="URGENT" label="紧急" value="40" i18n-en:label="Urgent"/>
+        <dict label="优先级" name="erp-prj/priority" valueType="string" i18n-en:label="Priority">
+            <option code="LOW" label="低" value="LOW" i18n-en:label="Low"/>
+            <option code="NORMAL" label="普通" value="NORMAL" i18n-en:label="General"/>
+            <option code="HIGH" label="高" value="HIGH" i18n-en:label="High"/>
+            <option code="URGENT" label="紧急" value="URGENT" i18n-en:label="Urgent"/>
         </dict>
     </dicts>
 
@@ -90,7 +90,7 @@
                 <column code="END_DATE" displayName="结束日期" name="endDate" propId="9" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="End Date"/>
                 <column code="BUDGET" defaultValue="0" displayName="预算总额" domain="budget" name="budget" precision="20"
-                        propId="10" scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Budget"/>
+                        propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Budget"/>
                 <column code="COMMITTED_COST" defaultValue="0" displayName="已承诺成本" domain="amount" name="committedCost"
                         precision="20" propId="11" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Committed Cost"/>
@@ -100,8 +100,9 @@
                 <column code="BILLED_AMOUNT" defaultValue="0" displayName="已开票金额" domain="amount" name="billedAmount"
                         precision="20" propId="13" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Billed Amount"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="14" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-prj/project-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="14"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-prj/project-status"
+                        i18n-en:displayName="Status"/>
                 <column code="MANAGER_ID" displayName="项目经理(职员)" name="managerId" propId="15" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Manager"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="16"
@@ -210,17 +211,19 @@
                 <column code="ACTUAL_END_DATE" displayName="实际结束日期" name="actualEndDate" propId="9" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Actual End Date"/>
                 <column code="ESTIMATED_HOURS" displayName="预估工时" domain="hours" name="estimatedHours" precision="10"
-                        propId="10" scale="2" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="10" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Estimated Hours"/>
                 <column code="ACTUAL_HOURS" displayName="实际工时" domain="hours" name="actualHours" precision="10"
-                        propId="11" scale="2" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="11" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Actual Hours"/>
                 <column code="DEPENDS_ON_ID" displayName="依赖任务" name="dependsOnId" propId="12" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Depends On"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="13" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-prj/task-status" i18n-en:displayName="Status"/>
-                <column code="PRIORITY" displayName="优先级" name="priority" propId="14" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-prj/priority" i18n-en:displayName="Priority"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="13"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-prj/task-status"
+                        i18n-en:displayName="Status"/>
+                <column code="PRIORITY" displayName="优先级" name="priority" precision="20" propId="14"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-prj/priority"
+                        i18n-en:displayName="Priority"/>
                 <column code="BLOCK_REASON" displayName="阻塞原因" name="blockReason" precision="500" propId="15"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Block Reason"/>
                 <column code="SORT_NUM" displayName="排序号" name="sortNum" propId="16" stdDataType="int"
@@ -305,18 +308,19 @@
                 <column code="WORK_DATE" displayName="工作日期" mandatory="true" name="workDate" propId="7"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Work Date"/>
                 <column code="HOURS" displayName="工时" domain="hours" mandatory="true" name="hours" precision="10"
-                        propId="8" scale="2" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Hours"/>
+                        propId="8" scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Hours"/>
                 <column code="ACTIVITY_TYPE_ID" displayName="活动类型" name="activityTypeId" propId="9" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Activity Type"/>
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="10" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="COST_RATE" displayName="成本费率" domain="costRate" name="costRate" precision="20" propId="11"
-                        scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Cost Rate"/>
+                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Cost Rate"/>
                 <column code="COST_AMOUNT" displayName="成本金额" domain="costAmount" name="costAmount" precision="20"
-                        propId="12" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="12" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Cost Amount"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="13" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-prj/timesheet-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="13"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-prj/timesheet-status"
+                        i18n-en:displayName="Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账(已转成本凭证)" name="posted" propId="14"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="15" stdDataType="datetime"
@@ -439,7 +443,7 @@
                 <column code="NAME" displayName="类型名称" mandatory="true" name="name" precision="200" propId="3"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
                 <column code="COST_RATE" displayName="成本费率" domain="costRate" name="costRate" precision="20" propId="4"
-                        scale="4" stdDataType="string" stdSqlType="DECIMAL" i18n-en:displayName="Cost Rate"/>
+                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Cost Rate"/>
                 <column code="SUBJECT_ID" displayName="科目" name="subjectId" propId="5" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Subject"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="6"
@@ -540,11 +544,11 @@
                 <column code="TOTAL_AMOUNT" defaultValue="0" displayName="预算总额" domain="amount" name="totalAmount"
                         precision="20" propId="7" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Total Amt"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="8"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-prj/project-status"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-prj/project-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="9"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-prj/timesheet-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="9" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-prj/timesheet-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="10"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
@@ -677,11 +681,11 @@
                 <column code="TOTAL_AMOUNT" defaultValue="0" displayName="归集金额合计" domain="amount" name="totalAmount"
                         precision="20" propId="7" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Total Amt"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="8"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-prj/project-status"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-prj/project-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="9"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-prj/timesheet-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="9" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-prj/timesheet-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账(已转成本凭证)" name="posted" propId="10"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
@@ -830,8 +834,9 @@
                         i18n-en:displayName="Billing Amount"/>
                 <column code="IS_BILLING_TRIGGER" defaultValue="false" displayName="是否触发开票节点" name="isBillingTrigger"
                         propId="8" stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Billing Trigger"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="9" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-prj/task-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="9"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-prj/task-status"
+                        i18n-en:displayName="Status"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="10"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -887,11 +892,11 @@
                 <column code="TOTAL_AMOUNT" defaultValue="0" displayName="开票金额" domain="amount" name="totalAmount"
                         precision="20" propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Total Amt"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="11"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-prj/project-status"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
+                        propId="11" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-prj/project-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="12"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-prj/timesheet-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="12" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-prj/timesheet-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="13"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>

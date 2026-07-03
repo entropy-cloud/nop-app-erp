@@ -37,7 +37,7 @@
         </prop>
         <prop name="advanceType" displayName="借款类型" propId="5" i18n-en:displayName="Advance Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-fin/advance-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-fin/advance-type"/>
         </prop>
         <prop name="businessDate" displayName="借款日期" propId="6" i18n-en:displayName="Business Date" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -73,11 +73,11 @@
         </prop>
         <prop name="docStatus" displayName="单据状态" propId="14" i18n-en:displayName="Doc Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-fin/advance-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-fin/advance-status"/>
         </prop>
         <prop name="approveStatus" displayName="审核状态" propId="15" i18n-en:displayName="Approve Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-fin/approve-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-fin/approve-status"/>
         </prop>
         <prop name="approvedBy" displayName="审核人" propId="16" i18n-en:displayName="Approved By" queryable="true"
               sortable="true" insertable="true" updatable="true">

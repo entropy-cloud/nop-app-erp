@@ -42,16 +42,16 @@
         }
 
 
-        private Integer _voucherType;
+        private String _voucherType;
 
     
         @PropMeta(propId=3)
     
-        public Integer getVoucherType(){
+        public String getVoucherType(){
             return _voucherType;
         }
 
-        public void setVoucherType(Integer value){
+        public void setVoucherType(String value){
             this._voucherType = value;
         }
 
@@ -68,16 +68,16 @@
         }
 
 
-        private Integer _postingType;
+        private String _postingType;
 
     
         @PropMeta(propId=4)
     
-        public Integer getPostingType(){
+        public String getPostingType(){
             return _postingType;
         }
 
-        public void setPostingType(Integer value){
+        public void setPostingType(String value){
             this._postingType = value;
         }
 
@@ -220,16 +220,16 @@
         }
 
 
-        private Integer _docStatus;
+        private String _docStatus;
 
     
         @PropMeta(propId=14)
     
-        public Integer getDocStatus(){
+        public String getDocStatus(){
             return _docStatus;
         }
 
-        public void setDocStatus(Integer value){
+        public void setDocStatus(String value){
             this._docStatus = value;
         }
 

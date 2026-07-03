@@ -68,16 +68,16 @@
         }
 
 
-        private Integer _scheduleType;
+        private String _scheduleType;
 
     
         @PropMeta(propId=5)
     
-        public Integer getScheduleType(){
+        public String getScheduleType(){
             return _scheduleType;
         }
 
-        public void setScheduleType(Integer value){
+        public void setScheduleType(String value){
             this._scheduleType = value;
         }
 
@@ -96,16 +96,16 @@
         }
 
 
-        private Integer _recurrenceType;
+        private String _recurrenceType;
 
     
         @PropMeta(propId=7)
     
-        public Integer getRecurrenceType(){
+        public String getRecurrenceType(){
             return _recurrenceType;
         }
 
-        public void setRecurrenceType(Integer value){
+        public void setRecurrenceType(String value){
             this._recurrenceType = value;
         }
 

@@ -19,6 +19,7 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -151,7 +152,7 @@ public class TestErpQaInspectionTrigger extends JunitAutoTestCase {
         return Boolean.TRUE.equals(resp.getData());
     }
 
-    private Long createForBusinessBill(String billType, String billCode, Long materialId, int inspectionType) {
+    private Long createForBusinessBill(String billType, String billCode, Long materialId, String inspectionType) {
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("billType", billType);
         args.put("billCode", billCode);
@@ -173,7 +174,7 @@ public class TestErpQaInspectionTrigger extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpQaInspectionLine.class).findAllByQuery(q);
     }
 
-    private Long seedTemplate(String code, Long materialId, int inspectionType, TplLineSpec... lines) {
+    private Long seedTemplate(String code, Long materialId, String inspectionType, TplLineSpec... lines) {
         Long id = 5000L + (long) (Math.abs(code.hashCode()) % 1000);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaInspectionTemplate> dao = daoProvider.daoFor(ErpQaInspectionTemplate.class);
@@ -205,7 +206,11 @@ public class TestErpQaInspectionTrigger extends JunitAutoTestCase {
     }
 
     private TplLineSpec tplLine(String parameterName, String specMin, String specMax) {
-        return new TplLineSpec(parameterName, specMin, specMax);
+        return new TplLineSpec(parameterName, toBigDecimal(specMin), toBigDecimal(specMax));
+    }
+
+    private static BigDecimal toBigDecimal(String value) {
+        return value == null ? null : new BigDecimal(value);
     }
 
     private void setConfig(String key, String value) {
@@ -219,10 +224,10 @@ public class TestErpQaInspectionTrigger extends JunitAutoTestCase {
 
     private static final class TplLineSpec {
         final String parameterName;
-        final String specMin;
-        final String specMax;
+        final BigDecimal specMin;
+        final BigDecimal specMax;
 
-        TplLineSpec(String parameterName, String specMin, String specMax) {
+        TplLineSpec(String parameterName, BigDecimal specMin, BigDecimal specMax) {
             this.parameterName = parameterName;
             this.specMin = specMin;
             this.specMax = specMax;

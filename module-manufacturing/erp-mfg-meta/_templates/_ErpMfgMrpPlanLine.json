@@ -4,7 +4,7 @@
   "lineNo": 0,
   "materialId": 0,
   "uoMId": 0,
-  "orderType": 0,
+  "orderType": "",
   "orderType_label": "",
   "grossRequirement": 0.0,
   "scheduledReceipt": 0.0,

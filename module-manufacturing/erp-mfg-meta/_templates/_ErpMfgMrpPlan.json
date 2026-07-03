@@ -4,7 +4,7 @@
   "orgId": 0,
   "businessDate": "2000-01-01",
   "planningHorizonDays": 0,
-  "status": 0,
+  "status": "",
   "status_label": "",
   "remark": "",
   "delVersion": 0,

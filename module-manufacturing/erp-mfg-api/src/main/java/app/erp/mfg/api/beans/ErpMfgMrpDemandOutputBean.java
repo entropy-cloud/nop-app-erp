@@ -83,16 +83,16 @@
         }
 
 
-        private Integer _demandSource;
+        private String _demandSource;
 
     
         @PropMeta(propId=6)
     
-        public Integer getDemandSource(){
+        public String getDemandSource(){
             return _demandSource;
         }
 
-        public void setDemandSource(Integer value){
+        public void setDemandSource(String value){
             this._demandSource = value;
         }
 

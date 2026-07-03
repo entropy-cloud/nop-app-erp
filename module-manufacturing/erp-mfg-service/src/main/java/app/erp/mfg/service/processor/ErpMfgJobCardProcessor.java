@@ -11,6 +11,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -43,9 +44,9 @@ public class ErpMfgJobCardProcessor {
 
     public ErpMfgJobCard recordWork(JobCardWorkRecord record, IServiceContext context) {
         ErpMfgJobCard jc = requireJobCard(record.getJobCardId(), context);
-        Integer status = jc.getStatus();
-        if (status == null || (status != ErpMfgConstants.JOB_CARD_STATUS_WORK_IN_PROGRESS
-                && status != ErpMfgConstants.JOB_CARD_STATUS_SUBMITTED)) {
+        String status = jc.getStatus();
+        if (status == null || (!Objects.equals(status, ErpMfgConstants.JOB_CARD_STATUS_WORK_IN_PROGRESS)
+                && !Objects.equals(status, ErpMfgConstants.JOB_CARD_STATUS_SUBMITTED))) {
             throw illegalTransition(jc, status, "WORK_IN_PROGRESS 或 SUBMITTED");
         }
 
@@ -71,9 +72,9 @@ public class ErpMfgJobCardProcessor {
 
     public ErpMfgJobCard submitJob(Long jobCardId, IServiceContext context) {
         ErpMfgJobCard jc = requireJobCard(jobCardId, context);
-        Integer status = jc.getStatus();
-        if (status == null || (status != ErpMfgConstants.JOB_CARD_STATUS_WORK_IN_PROGRESS
-                && status != ErpMfgConstants.JOB_CARD_STATUS_ON_HOLD)) {
+        String status = jc.getStatus();
+        if (status == null || (!Objects.equals(status, ErpMfgConstants.JOB_CARD_STATUS_WORK_IN_PROGRESS)
+                && !Objects.equals(status, ErpMfgConstants.JOB_CARD_STATUS_ON_HOLD))) {
             throw illegalTransition(jc, status, "WORK_IN_PROGRESS 或 ON_HOLD");
         }
         jc.setStatus(ErpMfgConstants.JOB_CARD_STATUS_SUBMITTED);
@@ -107,10 +108,10 @@ public class ErpMfgJobCardProcessor {
 
     public ErpMfgJobCard cancelJob(Long jobCardId, IServiceContext context) {
         ErpMfgJobCard jc = requireJobCard(jobCardId, context);
-        Integer status = jc.getStatus();
-        if (status == null || (status != ErpMfgConstants.JOB_CARD_STATUS_OPEN
-                && status != ErpMfgConstants.JOB_CARD_STATUS_WORK_IN_PROGRESS
-                && status != ErpMfgConstants.JOB_CARD_STATUS_ON_HOLD)) {
+        String status = jc.getStatus();
+        if (status == null || (!Objects.equals(status, ErpMfgConstants.JOB_CARD_STATUS_OPEN)
+                && !Objects.equals(status, ErpMfgConstants.JOB_CARD_STATUS_WORK_IN_PROGRESS)
+                && !Objects.equals(status, ErpMfgConstants.JOB_CARD_STATUS_ON_HOLD))) {
             throw illegalTransition(jc, status, "OPEN、WORK_IN_PROGRESS 或 ON_HOLD");
         }
         jc.setStatus(ErpMfgConstants.JOB_CARD_STATUS_CANCELLED);
@@ -129,9 +130,9 @@ public class ErpMfgJobCardProcessor {
         return jc;
     }
 
-    protected void requireStatus(ErpMfgJobCard jc, int expected, String expectedLabel) {
-        Integer current = jc.getStatus();
-        if (current == null || current != expected) {
+    protected void requireStatus(ErpMfgJobCard jc, String expected, String expectedLabel) {
+        String current = jc.getStatus();
+        if (current == null || !Objects.equals(current, expected)) {
             throw illegalTransition(jc, current, expectedLabel);
         }
     }
@@ -178,7 +179,7 @@ public class ErpMfgJobCardProcessor {
         return v != null ? v : BigDecimal.ZERO;
     }
 
-    protected NopException illegalTransition(ErpMfgJobCard jc, Integer current, String expected) {
+    protected NopException illegalTransition(ErpMfgJobCard jc, String current, String expected) {
         return new NopException(ErpMfgErrors.ERR_INVALID_STATUS_TRANSITION)
                 .param(ErpMfgErrors.ARG_JOB_CARD_ID, jc.getId())
                 .param(ErpMfgErrors.ARG_CURRENT_STATUS, current)

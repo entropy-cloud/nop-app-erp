@@ -17,6 +17,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -66,19 +67,19 @@ public class ProfitLossClosingService {
             if (l.getSubjectId() == null) {
                 continue;
             }
-            Integer bt = l.getBusinessType();
-            if (bt != null && (bt == ErpFinBusinessType.PERIOD_CLOSE.getCode()
-                    || bt == ErpFinBusinessType.EXCHANGE_GAIN_LOSS.getCode())) {
+            String bt = l.getBusinessType();
+            if (bt != null && (Objects.equals(bt, ErpFinBusinessType.PERIOD_CLOSE.name())
+                    || Objects.equals(bt, ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name()))) {
                 continue;
             }
             ErpMdSubject subject = subjectCache.computeIfAbsent(l.getSubjectId(), this::loadSubject);
             if (subject == null) {
                 continue;
             }
-            int subjectClass = subject.getSubjectClass() == null ? 0 : subject.getSubjectClass();
-            if (subjectClass != ErpFinConstants.SUBJECT_CLASS_INCOME
-                    && subjectClass != ErpFinConstants.SUBJECT_CLASS_EXPENSE
-                    && subjectClass != ErpFinConstants.SUBJECT_CLASS_COST) {
+            String subjectClass = subject.getSubjectClass();
+            if (!Objects.equals(subjectClass, ErpFinConstants.SUBJECT_CLASS_INCOME)
+                    && !Objects.equals(subjectClass, ErpFinConstants.SUBJECT_CLASS_EXPENSE)
+                    && !Objects.equals(subjectClass, ErpFinConstants.SUBJECT_CLASS_COST)) {
                 continue;
             }
             SubjectAgg a = agg.computeIfAbsent(l.getSubjectId(), k -> new SubjectAgg(subject));
@@ -93,8 +94,8 @@ public class ProfitLossClosingService {
         BigDecimal totalExpenseCost = BigDecimal.ZERO;
         List<Line> plLines = new ArrayList<>();
         for (SubjectAgg a : agg.values()) {
-            int cls = a.subject.getSubjectClass();
-            if (cls == ErpFinConstants.SUBJECT_CLASS_INCOME) {
+            String cls = a.subject.getSubjectClass();
+            if (Objects.equals(cls, ErpFinConstants.SUBJECT_CLASS_INCOME)) {
                 BigDecimal net = a.credit.subtract(a.debit);
                 if (net.compareTo(BigDecimal.ZERO) != 0) {
                     plLines.add(new Line(a.subject.getId(), a.subject.getCode(), a.subject.getName(),
@@ -131,7 +132,7 @@ public class ProfitLossClosingService {
         Long acctSchemaId = resolveAcctSchemaId(period.getId());
         Long functionalCurrencyId = resolveFunctionalCurrencyId();
         return CloseVoucherWriter.writeVoucher(daoProvider, "CLP", BILL_CODE_PREFIX + period.getCode(),
-                ErpFinBusinessType.PERIOD_CLOSE.getCode(), ErpFinBusinessType.PERIOD_CLOSE.name(),
+                ErpFinBusinessType.PERIOD_CLOSE.name(), ErpFinBusinessType.PERIOD_CLOSE.name(),
                 orgId, acctSchemaId, period.getId(), functionalCurrencyId, BigDecimal.ONE,
                 period.getEndDate(), plLines, "期末损益结转");
     }

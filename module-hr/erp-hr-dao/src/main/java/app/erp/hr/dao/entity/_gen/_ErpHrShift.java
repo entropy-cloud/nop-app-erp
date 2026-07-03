@@ -37,7 +37,7 @@ public class _ErpHrShift extends DynamicOrmEntity{
     public static final String PROP_NAME_name = "name";
     public static final int PROP_ID_name = 4;
     
-    /* 班次类型: SHIFT_TYPE INTEGER */
+    /* 班次类型: SHIFT_TYPE VARCHAR */
     public static final String PROP_NAME_shiftType = "shiftType";
     public static final int PROP_ID_shiftType = 5;
     
@@ -213,7 +213,7 @@ public class _ErpHrShift extends DynamicOrmEntity{
     private java.lang.String _name;
     
     /* 班次类型: SHIFT_TYPE */
-    private java.lang.Integer _shiftType;
+    private java.lang.String _shiftType;
     
     /* 上班时间: START_TIME */
     private java.lang.String _startTime;
@@ -464,9 +464,9 @@ public class _ErpHrShift extends DynamicOrmEntity{
             }
         
             case PROP_ID_shiftType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_shiftType));
                }
                setShiftType(typedValue);
@@ -692,7 +692,7 @@ public class _ErpHrShift extends DynamicOrmEntity{
         
             case PROP_ID_shiftType:{
                onInitProp(propId);
-               this._shiftType = (java.lang.Integer)value;
+               this._shiftType = (java.lang.String)value;
                
                break;
             }
@@ -908,7 +908,7 @@ public class _ErpHrShift extends DynamicOrmEntity{
     /**
      * 班次类型: SHIFT_TYPE
      */
-    public final java.lang.Integer getShiftType(){
+    public final java.lang.String getShiftType(){
          onPropGet(PROP_ID_shiftType);
          return _shiftType;
     }
@@ -916,7 +916,7 @@ public class _ErpHrShift extends DynamicOrmEntity{
     /**
      * 班次类型: SHIFT_TYPE
      */
-    public final void setShiftType(java.lang.Integer value){
+    public final void setShiftType(java.lang.String value){
         if(onPropSet(PROP_ID_shiftType,value)){
             this._shiftType = value;
             internalClearRefs(PROP_ID_shiftType);

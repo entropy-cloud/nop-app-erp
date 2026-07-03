@@ -356,79 +356,79 @@ dict:
     erp-qa/recall-target-return-status: Recall Target Return Status
 dict.option.label:
   erp-qa/inspection-type:
-    '10': Incoming Inspection
-    '20': In-Process Inspection
-    '30': Final Inspection
-    '40': Outgoing Inspection
+    INCOMING: Incoming Inspection
+    IN_PROCESS: In-Process Inspection
+    FINAL: Final Inspection
+    OUTGOING: Outgoing Inspection
   erp-qa/inspection-result:
-    '10': Pending Inspection
-    '20': Conforming
-    '30': Waiver Accept
-    '40': Non-conforming
+    PENDING: Pending Inspection
+    ACCEPTED: Conforming
+    CONDITIONAL: Waiver Accept
+    REJECTED: Non-conforming
   erp-qa/ncr-status:
-    '10': Pending
-    '20': Reviewing
-    '30': Resolved
-    '35': Escalated to Recall
-    '40': Cancelled
+    OPEN: Pending
+    IN_REVIEW: Reviewing
+    RESOLVED: Resolved
+    ESCALATED_TO_RECALL: Escalated to Recall
+    CANCELLED: Cancelled
   erp-qa/action-type:
-    '10': Correction
-    '20': Preventive
-    '30': Corrective & Preventive
+    CORRECTIVE: Correction
+    PREVENTIVE: Preventive
+    CAPA: Corrective & Preventive
   erp-qa/doc-status:
-    '10': Draft
-    '20': Effective
-    '30': Voided
+    DRAFT: Draft
+    ACTIVE: Effective
+    CANCELLED: Voided
   erp-qa/approve-status:
-    '10': Unsubmitted
-    '20': Submitted
-    '30': Approved
-    '40': Rejected
+    UNSUBMITTED: Unsubmitted
+    SUBMITTED: Submitted
+    APPROVED: Approved
+    REJECTED: Rejected
   erp-qa/severity:
-    '10': Low
-    '20': General
-    '30': High
-    '40': Critical
+    LOW: Low
+    NORMAL: General
+    HIGH: High
+    CRITICAL: Critical
   erp-qa/action-status:
-    '10': Pending
-    '20': Executing
-    '30': Completed
-    '40': Overdue
+    PENDING: Pending
+    IN_PROGRESS: Executing
+    COMPLETED: Completed
+    OVERDUE: Overdue
   erp-qa/risk-status:
-    '10': Pending
-    '20': Mitigated
-    '30': Closed
+    OPEN: Pending
+    MITIGATED: Mitigated
+    CLOSED: Closed
   erp-qa/goal-status:
-    '10': In Progress
-    '20': Achieved
-    '30': Not Achieved
-    '40': Cancelled
+    ACTIVE: In Progress
+    ACHIEVED: Achieved
+    FAILED: Not Achieved
+    CANCELLED: Cancelled
   erp-qa/review-type:
-    '10': Internal Review
-    '20': External Review
-    '30': Supplier Review
+    INTERNAL: Internal Review
+    EXTERNAL: External Review
+    SUPPLIER: Supplier Review
   erp-qa/disposition-type:
-    '10': Scrap
-    '20': Return
-    '30': Waiver Accept
-    '40': Downgrade Use
+    SCRAP: Scrap
+    RETURN: Return
+    CONCESSION: Waiver Accept
+    DOWNGRADE: Downgrade Use
   erp-qa/recall-trigger-type:
-    '10': Manual
-    '20': Gauge NCR Upgrade
-    '30': Batch NCR Upgrade
-    '40': Regulatory
+    MANUAL: Manual
+    GAUGE_NCR_UPGRADE: Gauge NCR Upgrade
+    BATCH_NCR_UPGRADE: Batch NCR Upgrade
+    REGULATORY: Regulatory
   erp-qa/recall-severity:
-    '10': Low
-    '20': Medium
-    '30': High
-    '40': Critical
+    LOW: Low
+    MEDIUM: Medium
+    HIGH: High
+    CRITICAL: Critical
   erp-qa/recall-status:
-    '10': Open
-    '20': Approved
-    '30': In Progress
-    '40': Closed
-    '50': Cancelled
+    OPEN: Open
+    APPROVED: Approved
+    IN_PROGRESS: In Progress
+    CLOSED: Closed
+    CANCELLED: Cancelled
   erp-qa/recall-target-return-status:
-    '10': Pending
-    '20': Notified
-    '30': Returned
+    PENDING: Pending
+    NOTIFIED: Notified
+    RETURNED: Returned

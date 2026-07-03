@@ -6,176 +6,176 @@ public interface _ErpCtDaoConstants {
     /**
      * 合同状态: 草稿 
      */
-    int CONTRACT_STATUS_DRAFT = 10;
+    String CONTRACT_STATUS_DRAFT = "DRAFT";
                     
     /**
      * 合同状态: 谈判中 
      */
-    int CONTRACT_STATUS_NEGOTIATION = 20;
+    String CONTRACT_STATUS_NEGOTIATION = "NEGOTIATION";
                     
     /**
      * 合同状态: 执行中 
      */
-    int CONTRACT_STATUS_ACTIVE = 30;
+    String CONTRACT_STATUS_ACTIVE = "ACTIVE";
                     
     /**
      * 合同状态: 已中止 
      */
-    int CONTRACT_STATUS_SUSPENDED = 40;
+    String CONTRACT_STATUS_SUSPENDED = "SUSPENDED";
                     
     /**
      * 合同状态: 已到期 
      */
-    int CONTRACT_STATUS_EXPIRED = 50;
+    String CONTRACT_STATUS_EXPIRED = "EXPIRED";
                     
     /**
      * 合同状态: 已终止 
      */
-    int CONTRACT_STATUS_TERMINATED = 60;
+    String CONTRACT_STATUS_TERMINATED = "TERMINATED";
                     
     /**
      * 合同类型: 采购合同 
      */
-    int CONTRACT_TYPE_PURCHASE = 10;
+    String CONTRACT_TYPE_PURCHASE = "PURCHASE";
                     
     /**
      * 合同类型: 销售合同 
      */
-    int CONTRACT_TYPE_SALES = 20;
+    String CONTRACT_TYPE_SALES = "SALES";
                     
     /**
      * 合同类型: 劳动合同 
      */
-    int CONTRACT_TYPE_EMPLOYMENT = 30;
+    String CONTRACT_TYPE_EMPLOYMENT = "EMPLOYMENT";
                     
     /**
      * 合同类型: 服务合同 
      */
-    int CONTRACT_TYPE_SERVICE = 40;
+    String CONTRACT_TYPE_SERVICE = "SERVICE";
                     
     /**
      * 合同方向: 进向(我方付款) 
      */
-    int CONTRACT_DIRECTION_INBOUND = 10;
+    String CONTRACT_DIRECTION_INBOUND = "INBOUND";
                     
     /**
      * 合同方向: 出向(客户付款) 
      */
-    int CONTRACT_DIRECTION_OUTBOUND = 20;
+    String CONTRACT_DIRECTION_OUTBOUND = "OUTBOUND";
                     
     /**
      * 开票条款: 预付款 
      */
-    int INVOICE_TERM_ADVANCE = 10;
+    String INVOICE_TERM_ADVANCE = "ADVANCE";
                     
     /**
      * 开票条款: 里程碑 
      */
-    int INVOICE_TERM_MILESTONE = 20;
+    String INVOICE_TERM_MILESTONE = "MILESTONE";
                     
     /**
      * 开票条款: 月结 
      */
-    int INVOICE_TERM_MONTHLY = 30;
+    String INVOICE_TERM_MONTHLY = "MONTHLY";
                     
     /**
      * 开票条款: 完工 
      */
-    int INVOICE_TERM_COMPLETION = 40;
+    String INVOICE_TERM_COMPLETION = "COMPLETION";
                     
     /**
      * 版本状态: 草稿 
      */
-    int VERSION_STATUS_DRAFT = 10;
+    String VERSION_STATUS_DRAFT = "DRAFT";
                     
     /**
      * 版本状态: 定稿 
      */
-    int VERSION_STATUS_FINALIZED = 20;
+    String VERSION_STATUS_FINALIZED = "FINALIZED";
                     
     /**
      * 版本状态: 已签署 
      */
-    int VERSION_STATUS_SIGNED = 30;
+    String VERSION_STATUS_SIGNED = "SIGNED";
                     
     /**
      * 审批状态: 等待中 
      */
-    int APPROVAL_STATUS_WAITING = 10;
+    String APPROVAL_STATUS_WAITING = "WAITING";
                     
     /**
      * 审批状态: 待审批 
      */
-    int APPROVAL_STATUS_PENDING = 20;
+    String APPROVAL_STATUS_PENDING = "PENDING";
                     
     /**
      * 审批状态: 已通过 
      */
-    int APPROVAL_STATUS_APPROVED = 30;
+    String APPROVAL_STATUS_APPROVED = "APPROVED";
                     
     /**
      * 审批状态: 已驳回 
      */
-    int APPROVAL_STATUS_REJECTED = 40;
+    String APPROVAL_STATUS_REJECTED = "REJECTED";
                     
     /**
      * 审批状态: 已跳过 
      */
-    int APPROVAL_STATUS_SKIPPED = 50;
+    String APPROVAL_STATUS_SKIPPED = "SKIPPED";
                     
     /**
      * 返利类型: 采购返利 
      */
-    int REBATE_TYPE_PURCHASE = 10;
+    String REBATE_TYPE_PURCHASE = "PURCHASE";
                     
     /**
      * 返利类型: 销售返利 
      */
-    int REBATE_TYPE_SALES = 20;
+    String REBATE_TYPE_SALES = "SALES";
                     
     /**
      * 返利协议状态: 草稿 
      */
-    int REBATE_AGREEMENT_STATUS_DRAFT = 10;
+    String REBATE_AGREEMENT_STATUS_DRAFT = "DRAFT";
                     
     /**
      * 返利协议状态: 生效中 
      */
-    int REBATE_AGREEMENT_STATUS_ACTIVE = 20;
+    String REBATE_AGREEMENT_STATUS_ACTIVE = "ACTIVE";
                     
     /**
      * 返利协议状态: 已到期 
      */
-    int REBATE_AGREEMENT_STATUS_EXPIRED = 30;
+    String REBATE_AGREEMENT_STATUS_EXPIRED = "EXPIRED";
                     
     /**
      * 返利协议状态: 已结算 
      */
-    int REBATE_AGREEMENT_STATUS_SETTLED = 40;
+    String REBATE_AGREEMENT_STATUS_SETTLED = "SETTLED";
                     
     /**
      * 结算单状态: 草稿 
      */
-    int SETTLEMENT_STATUS_DRAFT = 10;
+    String SETTLEMENT_STATUS_DRAFT = "DRAFT";
                     
     /**
      * 结算单状态: 已过账 
      */
-    int SETTLEMENT_STATUS_POSTED = 20;
+    String SETTLEMENT_STATUS_POSTED = "POSTED";
                     
     /**
      * 结算单状态: 已取消 
      */
-    int SETTLEMENT_STATUS_CANCELLED = 30;
+    String SETTLEMENT_STATUS_CANCELLED = "CANCELLED";
                     
     /**
      * 计提方法: 期末一次性 
      */
-    int ACCRUAL_METHOD_PERIOD_END = 10;
+    String ACCRUAL_METHOD_PERIOD_END = "PERIOD_END";
                     
     /**
      * 计提方法: 逐笔累计 
      */
-    int ACCRUAL_METHOD_PROGRESSIVE = 20;
+    String ACCRUAL_METHOD_PROGRESSIVE = "PROGRESSIVE";
                     
 }

@@ -1,23 +1,23 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 工时表状态
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 草稿
-    value: 10
+    value: DRAFT
     description: 
   
   - label: 已提交
-    value: 20
+    value: SUBMITTED
     description: 
   
   - label: 已批准
-    value: 30
+    value: APPROVED
     description: 
   
   - label: 已驳回
-    value: 40
+    value: REJECTED
     description: 
   

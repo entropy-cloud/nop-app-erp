@@ -5,7 +5,7 @@
   "businessDate": "2000-01-01",
   "warehouseId": 0,
   "pickerId": 0,
-  "docStatus": 0,
+  "docStatus": "",
   "docStatus_label": "",
   "relatedBillType": "",
   "relatedBillCode": "",

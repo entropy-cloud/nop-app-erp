@@ -206,35 +206,35 @@ dict:
     erp-inv/drp-xdock-status: Cross Dock Status
 dict.option.label:
   erp-drp/drp-plan-status:
-    '10': Draft
-    '20': Computed
-    '30': Approved
-    '40': Executed
+    DRAFT: Draft
+    COMPUTED: Computed
+    APPROVED: Approved
+    EXECUTED: Executed
   erp-drp/drp-line-status:
-    '10': Suggested
-    '20': Approved
-    '30': Ordered
-    '40': Cancelled
+    SUGGESTED: Suggested
+    APPROVED: Approved
+    ORDERED: Ordered
+    CANCELLED: Cancelled
   erp-drp/drp-replenishment-type:
-    '10': Transfer
-    '20': Purchase
+    TRANSFER: Transfer
+    PURCHASE: Purchase
   erp-drp/drp-replenishment-method:
-    '10': Min-Max
-    '20': Periodic
-    '30': Lot-for-Lot
+    MIN_MAX: Min-Max
+    PERIODIC: Periodic
+    LOT_FOR_LOT: Lot-for-Lot
   erp-inv/drp-ss-method:
-    '10': Statistical
-    '20': Simple
-    '30': DDMRP
+    STATISTICAL: Statistical
+    SIMPLE: Simple
+    DDMRP: DDMRP
   erp-inv/drp-service-level:
-    '10': 95%
-    '20': 97.5%
-    '30': 99%
-    '40': 99.5%
+    PCT95: 95%
+    PCT97_5: 97.5%
+    PCT99: 99%
+    PCT99_5: 99.5%
   erp-inv/drp-xdock-status:
-    '10': Pending
-    '20': Matched
-    '30': Staging
-    '40': Loaded
-    '50': Completed
-    '60': Cancelled
+    PENDING: Pending
+    MATCHED: Matched
+    STAGING: Staging
+    LOADED: Loaded
+    COMPLETED: Completed
+    CANCELLED: Cancelled

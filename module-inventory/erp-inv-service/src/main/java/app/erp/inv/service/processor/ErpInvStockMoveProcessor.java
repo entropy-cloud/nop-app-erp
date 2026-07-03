@@ -3,6 +3,7 @@ package app.erp.inv.service.processor;
 import app.erp.inv.biz.StockMoveLineRequest;
 import app.erp.inv.biz.StockMoveRequest;
 import app.erp.inv.biz.TraceChainResult;
+import app.erp.inv.dao.ErpInvDaoConstants;
 import app.erp.inv.dao.entity.ErpInvStockBalance;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.inv.dao.entity.ErpInvStockMoveLine;
@@ -20,6 +21,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -92,16 +94,16 @@ public class ErpInvStockMoveProcessor {
 
     public ErpInvStockMove cancel(Long moveId, IServiceContext context) {
         ErpInvStockMove move = requireMove(moveId, context);
-        Integer status = move.getDocStatus();
+        String status = move.getDocStatus();
         if (status == null
-                || (status != ErpInvConstants.DOC_STATUS_DRAFT && status != ErpInvConstants.DOC_STATUS_CONFIRMED)) {
+                || (!Objects.equals(status, ErpInvConstants.DOC_STATUS_DRAFT) && !Objects.equals(status, ErpInvConstants.DOC_STATUS_CONFIRMED))) {
             throw new NopException(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION)
                     .param(ErpInvErrors.ARG_MOVE_CODE, move.getCode())
                     .param(ErpInvErrors.ARG_CURRENT_STATUS, status)
                     .param(ErpInvErrors.ARG_EXPECTED_STATUS,
                             "DRAFT或CONFIRMED");
         }
-        if (status == ErpInvConstants.DOC_STATUS_CONFIRMED) {
+        if (Objects.equals(status, ErpInvConstants.DOC_STATUS_CONFIRMED)) {
             releaseReservation(move, loadLines(move.getId()), context);
         }
         move.setDocStatus(ErpInvConstants.DOC_STATUS_CANCELLED);
@@ -111,7 +113,7 @@ public class ErpInvStockMoveProcessor {
 
     public ErpInvStockMove reverse(Long moveId, IServiceContext context) {
         ErpInvStockMove original = requireMove(moveId, context);
-        if (original.getDocStatus() == null || original.getDocStatus() != ErpInvConstants.DOC_STATUS_DONE) {
+        if (original.getDocStatus() == null || !Objects.equals(original.getDocStatus(), ErpInvConstants.DOC_STATUS_DONE)) {
             throw new NopException(ErpInvErrors.ERR_REVERSE_NOT_DONE)
                     .param(ErpInvErrors.ARG_MOVE_CODE, original.getCode())
                     .param(ErpInvErrors.ARG_CURRENT_STATUS, original.getDocStatus());
@@ -179,8 +181,8 @@ public class ErpInvStockMoveProcessor {
     // ---------- step：状态机迁移 ----------
 
     protected void doConfirm(ErpInvStockMove move, List<ErpInvStockMoveLine> lines, IServiceContext context) {
-        Integer status = move.getDocStatus();
-        if (status == null || status != ErpInvConstants.DOC_STATUS_DRAFT) {
+        String status = move.getDocStatus();
+        if (status == null || !Objects.equals(status, ErpInvConstants.DOC_STATUS_DRAFT)) {
             throw new NopException(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION)
                     .param(ErpInvErrors.ARG_MOVE_CODE, move.getCode())
                     .param(ErpInvErrors.ARG_CURRENT_STATUS, status)
@@ -194,8 +196,8 @@ public class ErpInvStockMoveProcessor {
 
     protected void doComplete(ErpInvStockMove move, List<ErpInvStockMoveLine> lines, Long acctSchemaId,
                               IServiceContext context) {
-        Integer status = move.getDocStatus();
-        if (status == null || status != ErpInvConstants.DOC_STATUS_CONFIRMED) {
+        String status = move.getDocStatus();
+        if (status == null || !Objects.equals(status, ErpInvConstants.DOC_STATUS_CONFIRMED)) {
             throw new NopException(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION)
                     .param(ErpInvErrors.ARG_MOVE_CODE, move.getCode())
                     .param(ErpInvErrors.ARG_CURRENT_STATUS, status)
@@ -265,7 +267,7 @@ public class ErpInvStockMoveProcessor {
         move.setDestWarehouseId(request.getDestWarehouseId());
         move.setDestLocationId(request.getDestLocationId());
         move.setDocStatus(ErpInvConstants.DOC_STATUS_DRAFT);
-        move.setApproveStatus(10);
+        move.setApproveStatus(ErpInvDaoConstants.APPROVE_STATUS_UNSUBMITTED);
         move.setPosted(false);
         move.setRelatedBillType(request.getRelatedBillType());
         move.setRelatedBillCode(request.getRelatedBillCode());
@@ -332,12 +334,12 @@ public class ErpInvStockMoveProcessor {
 
     // ---------- helpers: semantics ----------
 
-    protected boolean reservesOnConfirm(Integer moveType) {
+    protected boolean reservesOnConfirm(String moveType) {
         if (moveType == null) {
             return false;
         }
-        return moveType == ErpInvConstants.MOVE_TYPE_OUTGOING
-                || moveType == ErpInvConstants.MOVE_TYPE_INTERNAL_TRANSFER;
+        return Objects.equals(moveType, ErpInvConstants.MOVE_TYPE_OUTGOING)
+                || Objects.equals(moveType, ErpInvConstants.MOVE_TYPE_INTERNAL_TRANSFER);
     }
 
     protected Long resolveReservationWarehouseId(ErpInvStockMove move) {
@@ -348,20 +350,20 @@ public class ErpInvStockMoveProcessor {
         return line.getSourceLocationId() != null ? line.getSourceLocationId() : move.getSourceLocationId();
     }
 
-    protected Integer inverseMoveType(Integer moveType) {
+    protected String inverseMoveType(String moveType) {
         if (moveType == null) {
             return null;
         }
-        if (moveType == ErpInvConstants.MOVE_TYPE_INCOMING) {
+        if (Objects.equals(moveType, ErpInvConstants.MOVE_TYPE_INCOMING)) {
             return ErpInvConstants.MOVE_TYPE_OUTGOING;
         }
-        if (moveType == ErpInvConstants.MOVE_TYPE_OUTGOING) {
+        if (Objects.equals(moveType, ErpInvConstants.MOVE_TYPE_OUTGOING)) {
             return ErpInvConstants.MOVE_TYPE_INCOMING;
         }
         return moveType;
     }
 
-    protected BigDecimal negateOrSame(BigDecimal qty, Integer moveType) {
+    protected BigDecimal negateOrSame(BigDecimal qty, String moveType) {
         if (qty == null) {
             return BigDecimal.ZERO;
         }

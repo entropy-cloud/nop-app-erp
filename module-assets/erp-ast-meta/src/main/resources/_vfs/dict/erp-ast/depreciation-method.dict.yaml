@@ -1,19 +1,19 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 折旧方法
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 直线法
-    value: 10
+    value: STRAIGHT_LINE
     description: 
   
   - label: 双倍余额递减
-    value: 20
+    value: DECLINING
     description: 
   
   - label: 工作量法
-    value: 30
+    value: UNITS
     description: 
   

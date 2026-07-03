@@ -31,10 +31,10 @@
                 <col id="contractName" mandatory="true" sortable="true"/>
 
                 <!--合同类型-->
-                <col id="contractType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="contractType" mandatory="true" sortable="true"/>
 
                 <!--合同方向-->
-                <col id="contractDirection" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="contractDirection" mandatory="true" sortable="true"/>
 
                 <!--合作方-->
                 <col id="partnerId" mandatory="true" ui:number="true" sortable="true"/>
@@ -55,7 +55,7 @@
                 <col id="signDate" sortable="true"/>
 
                 <!--合同状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--合同模板-->
                 <col id="templateId" ui:number="true" sortable="true"/>

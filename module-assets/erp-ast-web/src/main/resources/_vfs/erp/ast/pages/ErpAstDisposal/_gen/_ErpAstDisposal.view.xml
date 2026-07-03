@@ -31,7 +31,7 @@
                 <col id="assetId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--处置类型-->
-                <col id="disposalType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="disposalType" mandatory="true" sortable="true"/>
 
                 <!--处置金额-->
                 <col id="disposalAmount" ui:number="true" sortable="true"/>
@@ -49,13 +49,13 @@
                 <col id="gainLoss" ui:number="true" sortable="true"/>
 
                 <!--处置原因-->
-                <col id="reason" ui:number="true" sortable="true"/>
+                <col id="reason" sortable="true"/>
 
                 <!--单据状态-->
-                <col id="docStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="docStatus" mandatory="true" sortable="true"/>
 
                 <!--审核状态-->
-                <col id="approveStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="approveStatus" mandatory="true" sortable="true"/>
 
                 <!--已过账-->
                 <col id="posted" sortable="true"/>

@@ -28,10 +28,10 @@
                 <col id="productId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--BOM类型-->
-                <col id="bomType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="bomType" mandatory="true" sortable="true"/>
 
                 <!--消耗控制-->
-                <col id="consumption" ui:number="true" sortable="true"/>
+                <col id="consumption" sortable="true"/>
 
                 <!--是否有效-->
                 <col id="isActive" sortable="true"/>

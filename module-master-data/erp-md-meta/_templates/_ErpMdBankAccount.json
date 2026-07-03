@@ -4,7 +4,7 @@
   "bankName": "",
   "bankBranch": "",
   "bankAccount": "",
-  "accountType": 0,
+  "accountType": "",
   "accountType_label": "",
   "accountHolder": "",
   "isDefault": false,

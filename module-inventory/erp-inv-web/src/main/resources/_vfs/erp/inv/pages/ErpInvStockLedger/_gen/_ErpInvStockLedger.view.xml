@@ -61,7 +61,7 @@
                 <col id="balanceTotalCost" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--计价方法-->
-                <col id="costMethod" ui:number="true" sortable="true"/>
+                <col id="costMethod" sortable="true"/>
 
                 <!--账套-->
                 <col id="acctSchemaId" ui:number="true" sortable="true"/>

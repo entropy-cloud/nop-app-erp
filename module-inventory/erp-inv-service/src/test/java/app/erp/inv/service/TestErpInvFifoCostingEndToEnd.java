@@ -56,7 +56,7 @@ public class TestErpInvFifoCostingEndToEnd extends JunitAutoTestCase {
     static final Long CURRENCY_ID = 6301L;
     static final Long ACCT_SCHEMA_ID = 7301L;
     static final String PERIOD_CODE = "2026-07";
-    static final int VOUCHER_STATUS_POSTED = 20;
+    static final String VOUCHER_STATUS_POSTED = "POSTED";
 
     @Inject
     IDaoProvider daoProvider;
@@ -177,7 +177,7 @@ public class TestErpInvFifoCostingEndToEnd extends JunitAutoTestCase {
         return executeRpc(mutation, "ErpInvStockMove__generateMove", ApiRequest.build(Map.of("request", req)));
     }
 
-    private Map<String, Object> baseReq(Long materialId, Integer moveType) {
+    private Map<String, Object> baseReq(Long materialId, String moveType) {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("moveType", moveType);
         req.put("orgId", ORG_ID);
@@ -260,9 +260,9 @@ public class TestErpInvFifoCostingEndToEnd extends JunitAutoTestCase {
             material.orm_propValueByName("id", id);
             material.setCode("MATF-E2E-" + id);
             material.setName("FIFO Material E2E " + id);
-            material.orm_propValueByName("materialType", 10);
+            material.orm_propValueByName("materialType", "GOODS");
             material.setUoMId(UOM_ID);
-            material.setStatus(10);
+            material.setStatus("ACTIVE");
             material.setCostMethod(ErpInvConstants.COST_METHOD_FIFO);
             dao.saveEntity(material);
         });
@@ -287,7 +287,7 @@ public class TestErpInvFifoCostingEndToEnd extends JunitAutoTestCase {
         period.orm_propValueByName("month", 7);
         period.setStartDate(LocalDate.of(2026, 7, 1));
         period.setEndDate(LocalDate.of(2026, 7, 31));
-        period.orm_propValueByName("status", 10);
+        period.orm_propValueByName("status", "OPEN");
         dao.saveEntity(period);
     }
 
@@ -296,9 +296,9 @@ public class TestErpInvFifoCostingEndToEnd extends JunitAutoTestCase {
         ErpMdSubject subject = new ErpMdSubject();
         subject.setCode(code);
         subject.setName(name);
-        subject.orm_propValueByName("subjectClass", 10);
-        subject.orm_propValueByName("direction", 10);
-        subject.orm_propValueByName("status", 10);
+        subject.orm_propValueByName("subjectClass", "ASSET");
+        subject.orm_propValueByName("direction", "DEBIT");
+        subject.orm_propValueByName("status", "ACTIVE");
         dao.saveEntity(subject);
     }
 }

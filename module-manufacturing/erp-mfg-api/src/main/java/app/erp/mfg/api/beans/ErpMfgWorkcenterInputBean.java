@@ -54,16 +54,16 @@
         }
 
 
-        private String _capacity;
+        private java.math.BigDecimal _capacity;
 
     
         @PropMeta(propId=4)
     
-        public String getCapacity(){
+        public java.math.BigDecimal getCapacity(){
             return _capacity;
         }
 
-        public void setCapacity(String value){
+        public void setCapacity(java.math.BigDecimal value){
             this._capacity = value;
         }
 

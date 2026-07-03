@@ -21,6 +21,7 @@ import jakarta.inject.Inject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
@@ -110,7 +111,7 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
         QueryBean q = new QueryBean();
         q.addFilter(eq("quotationId", quotationId));
         for (ErpSalOrder order : findList(q, null, context)) {
-            if (!Integer.valueOf(ErpSalConstants.DOC_STATUS_CANCELLED).equals(order.getDocStatus())) {
+            if (!Objects.equals(ErpSalConstants.DOC_STATUS_CANCELLED, order.getDocStatus())) {
                 return true;
             }
         }
@@ -120,7 +121,7 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
     @Override
     @BizAction
     public void updateDeliveryStatus(@Name("orderId") Long orderId,
-                                     @Name("deliveryStatus") Integer deliveryStatus,
+                                     @Name("deliveryStatus") String deliveryStatus,
                                      IServiceContext context) {
         if (orderId == null) {
             return;

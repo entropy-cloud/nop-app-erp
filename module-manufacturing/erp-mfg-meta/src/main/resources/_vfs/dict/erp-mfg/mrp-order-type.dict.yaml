@@ -1,23 +1,23 @@
 # __XGEN_FORCE_OVERRIDE__
 label: MRP 计划订单类型
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 计划订单
-    value: 10
+    value: PLANNED_ORDER
     description: 
   
   - label: 请购建议
-    value: 20
+    value: PURCHASE_REQUEST
     description: 
   
   - label: 工单建议
-    value: 30
+    value: WORK_ORDER_REQUEST
     description: 
   
   - label: 委外建议
-    value: 40
+    value: SUBCONTRACT_REQUEST
     description: 
   

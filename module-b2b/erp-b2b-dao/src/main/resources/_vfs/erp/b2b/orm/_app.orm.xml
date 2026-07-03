@@ -15,73 +15,73 @@
     </x:gen-extends>
 
     <dicts>
-        <dict label="EDI 文档状态" name="erp-b2b/edi-doc-state" valueType="int" i18n-en:label="EDI Document State">
-            <option code="TO_SEND" label="待发送" value="10" i18n-en:label="To Send"/>
-            <option code="SENT" label="已发送" value="20" i18n-en:label="Sent"/>
-            <option code="TO_CANCEL" label="待取消" value="25" i18n-en:label="To Cancel"/>
-            <option code="CANCELLED" label="已取消" value="30" i18n-en:label="Cancelled"/>
-            <option code="ERROR" label="错误" value="40" i18n-en:label="Error"/>
-            <option code="RECEIVED" label="已接收" value="50" i18n-en:label="Received"/>
-            <option code="ACKNOWLEDGED" label="已确认" value="60" i18n-en:label="Acknowledged"/>
-            <option code="ARCHIVED" label="已归档" value="70" i18n-en:label="Archived"/>
+        <dict label="EDI 文档状态" name="erp-b2b/edi-doc-state" valueType="string" i18n-en:label="EDI Document State">
+            <option code="TO_SEND" label="待发送" value="TO_SEND" i18n-en:label="To Send"/>
+            <option code="SENT" label="已发送" value="SENT" i18n-en:label="Sent"/>
+            <option code="TO_CANCEL" label="待取消" value="TO_CANCEL" i18n-en:label="To Cancel"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
+            <option code="ERROR" label="错误" value="ERROR" i18n-en:label="Error"/>
+            <option code="RECEIVED" label="已接收" value="RECEIVED" i18n-en:label="Received"/>
+            <option code="ACKNOWLEDGED" label="已确认" value="ACKNOWLEDGED" i18n-en:label="Acknowledged"/>
+            <option code="ARCHIVED" label="已归档" value="ARCHIVED" i18n-en:label="Archived"/>
         </dict>
-        <dict label="ASN 状态" name="erp-b2b/asn-status" valueType="int" i18n-en:label="ASN Status">
-            <option code="RECEIVED" label="已接收" value="10" i18n-en:label="Received"/>
-            <option code="MATCHED" label="已匹配" value="20" i18n-en:label="Matched"/>
-            <option code="RECEIVED_TO_STOCK" label="已入库" value="30" i18n-en:label="Received To Stock"/>
-            <option code="CANCELLED" label="已取消" value="40" i18n-en:label="Cancelled"/>
+        <dict label="ASN 状态" name="erp-b2b/asn-status" valueType="string" i18n-en:label="ASN Status">
+            <option code="RECEIVED" label="已接收" value="RECEIVED" i18n-en:label="Received"/>
+            <option code="MATCHED" label="已匹配" value="MATCHED" i18n-en:label="Matched"/>
+            <option code="RECEIVED_TO_STOCK" label="已入库" value="RECEIVED_TO_STOCK" i18n-en:label="Received To Stock"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
         </dict>
-        <dict label="EDI 方向" name="erp-b2b/edi-direction" valueType="int" i18n-en:label="EDI Direction">
-            <option code="OUTBOUND" label="出站" value="10" i18n-en:label="Outbound"/>
-            <option code="INBOUND" label="入站" value="20" i18n-en:label="Inbound"/>
-            <option code="BOTH" label="双向" value="30" i18n-en:label="Both"/>
+        <dict label="EDI 方向" name="erp-b2b/edi-direction" valueType="string" i18n-en:label="EDI Direction">
+            <option code="OUTBOUND" label="出站" value="OUTBOUND" i18n-en:label="Outbound"/>
+            <option code="INBOUND" label="入站" value="INBOUND" i18n-en:label="Inbound"/>
+            <option code="BOTH" label="双向" value="BOTH" i18n-en:label="Both"/>
         </dict>
-        <dict label="EDI 标准" name="erp-b2b/edi-standard" valueType="int" i18n-en:label="EDI Standard">
-            <option code="UBL" label="UBL" value="10" i18n-en:label="UBL"/>
-            <option code="X12" label="X12" value="20" i18n-en:label="X12"/>
-            <option code="EDIFACT" label="EDIFACT" value="30" i18n-en:label="EDIFACT"/>
-            <option code="CUSTOM" label="自定义" value="40" i18n-en:label="Custom"/>
+        <dict label="EDI 标准" name="erp-b2b/edi-standard" valueType="string" i18n-en:label="EDI Standard">
+            <option code="UBL" label="UBL" value="UBL" i18n-en:label="UBL"/>
+            <option code="X12" label="X12" value="X12" i18n-en:label="X12"/>
+            <option code="EDIFACT" label="EDIFACT" value="EDIFACT" i18n-en:label="EDIFACT"/>
+            <option code="CUSTOM" label="自定义" value="CUSTOM" i18n-en:label="Custom"/>
         </dict>
-        <dict label="阻断级别" name="erp-b2b/blocking-level" valueType="int" i18n-en:label="Blocking Level">
-            <option code="INFO" label="信息" value="10" i18n-en:label="Info"/>
-            <option code="WARN" label="警告" value="20" i18n-en:label="Warning"/>
-            <option code="ERROR" label="错误" value="30" i18n-en:label="Error"/>
+        <dict label="阻断级别" name="erp-b2b/blocking-level" valueType="string" i18n-en:label="Blocking Level">
+            <option code="INFO" label="信息" value="INFO" i18n-en:label="Info"/>
+            <option code="WARN" label="警告" value="WARN" i18n-en:label="Warning"/>
+            <option code="ERROR" label="错误" value="ERROR" i18n-en:label="Error"/>
         </dict>
-        <dict label="代码映射类型" name="erp-b2b/mapping-type" valueType="int" i18n-en:label="Mapping Type">
-            <option code="MATERIAL" label="物料" value="10" i18n-en:label="Material"/>
-            <option code="PARTNER" label="伙伴" value="20" i18n-en:label="Partner"/>
-            <option code="UOM" label="计量单位" value="30" i18n-en:label="UOM"/>
+        <dict label="代码映射类型" name="erp-b2b/mapping-type" valueType="string" i18n-en:label="Mapping Type">
+            <option code="MATERIAL" label="物料" value="MATERIAL" i18n-en:label="Material"/>
+            <option code="PARTNER" label="伙伴" value="PARTNER" i18n-en:label="Partner"/>
+            <option code="UOM" label="计量单位" value="UOM" i18n-en:label="UOM"/>
         </dict>
-        <dict label="伙伴上线状态" name="erp-b2b/partner-status" valueType="int" i18n-en:label="Partner Status">
-            <option code="REGISTERED" label="已注册" value="10" i18n-en:label="Registered"/>
-            <option code="TESTING" label="测试中" value="20" i18n-en:label="Testing"/>
-            <option code="CERTIFIED" label="已认证" value="30" i18n-en:label="Certified"/>
-            <option code="PRODUCTION" label="生产中" value="40" i18n-en:label="Production"/>
-            <option code="SUSPENDED" label="已暂停" value="50" i18n-en:label="Suspended"/>
-            <option code="TERMINATED" label="已终止" value="60" i18n-en:label="Terminated"/>
+        <dict label="伙伴上线状态" name="erp-b2b/partner-status" valueType="string" i18n-en:label="Partner Status">
+            <option code="REGISTERED" label="已注册" value="REGISTERED" i18n-en:label="Registered"/>
+            <option code="TESTING" label="测试中" value="TESTING" i18n-en:label="Testing"/>
+            <option code="CERTIFIED" label="已认证" value="CERTIFIED" i18n-en:label="Certified"/>
+            <option code="PRODUCTION" label="生产中" value="PRODUCTION" i18n-en:label="Production"/>
+            <option code="SUSPENDED" label="已暂停" value="SUSPENDED" i18n-en:label="Suspended"/>
+            <option code="TERMINATED" label="已终止" value="TERMINATED" i18n-en:label="Terminated"/>
         </dict>
-        <dict label="传输协议" name="erp-b2b/protocol" valueType="int" i18n-en:label="Protocol">
-            <option code="AS2" label="AS2" value="10" i18n-en:label="AS2"/>
-            <option code="SFTP" label="SFTP" value="20" i18n-en:label="SFTP"/>
-            <option code="HTTP" label="HTTP" value="30" i18n-en:label="HTTP"/>
-            <option code="HTTPS" label="HTTPS" value="40" i18n-en:label="HTTPS"/>
-            <option code="OFTP2" label="OFTP2" value="50" i18n-en:label="OFTP2"/>
+        <dict label="传输协议" name="erp-b2b/protocol" valueType="string" i18n-en:label="Protocol">
+            <option code="AS2" label="AS2" value="AS2" i18n-en:label="AS2"/>
+            <option code="SFTP" label="SFTP" value="SFTP" i18n-en:label="SFTP"/>
+            <option code="HTTP" label="HTTP" value="HTTP" i18n-en:label="HTTP"/>
+            <option code="HTTPS" label="HTTPS" value="HTTPS" i18n-en:label="HTTPS"/>
+            <option code="OFTP2" label="OFTP2" value="OFTP2" i18n-en:label="OFTP2"/>
         </dict>
-        <dict label="认证方式" name="erp-b2b/auth-method" valueType="int" i18n-en:label="Auth Method">
-            <option code="HMAC" label="HMAC" value="10" i18n-en:label="HMAC"/>
-            <option code="BASIC_AUTH" label="Basic Auth" value="20" i18n-en:label="Basic Auth"/>
-            <option code="CERTIFICATE" label="证书" value="30" i18n-en:label="Certificate"/>
-            <option code="OAUTH2" label="OAuth2" value="40" i18n-en:label="OAuth2"/>
+        <dict label="认证方式" name="erp-b2b/auth-method" valueType="string" i18n-en:label="Auth Method">
+            <option code="HMAC" label="HMAC" value="HMAC" i18n-en:label="HMAC"/>
+            <option code="BASIC_AUTH" label="Basic Auth" value="BASIC_AUTH" i18n-en:label="Basic Auth"/>
+            <option code="CERTIFICATE" label="证书" value="CERTIFICATE" i18n-en:label="Certificate"/>
+            <option code="OAUTH2" label="OAuth2" value="OAUTH2" i18n-en:label="OAuth2"/>
         </dict>
-        <dict label="凭证类型" name="erp-b2b/credential-type" valueType="int" i18n-en:label="Credential Type">
-            <option code="API_KEY" label="API Key" value="10" i18n-en:label="API Key"/>
-            <option code="USERNAME_PASSWORD" label="用户名密码" value="20" i18n-en:label="Username Password"/>
-            <option code="CERTIFICATE" label="证书" value="30" i18n-en:label="Certificate"/>
-            <option code="SSH_KEY" label="SSH Key" value="40" i18n-en:label="SSH Key"/>
+        <dict label="凭证类型" name="erp-b2b/credential-type" valueType="string" i18n-en:label="Credential Type">
+            <option code="API_KEY" label="API Key" value="API_KEY" i18n-en:label="API Key"/>
+            <option code="USERNAME_PASSWORD" label="用户名密码" value="USERNAME_PASSWORD" i18n-en:label="Username Password"/>
+            <option code="CERTIFICATE" label="证书" value="CERTIFICATE" i18n-en:label="Certificate"/>
+            <option code="SSH_KEY" label="SSH Key" value="SSH_KEY" i18n-en:label="SSH Key"/>
         </dict>
-        <dict label="测试方向" name="erp-b2b/exchange-direction" valueType="int" i18n-en:label="Exchange Direction">
-            <option code="OUTBOUND" label="出站" value="10" i18n-en:label="Outbound"/>
-            <option code="INBOUND" label="入站" value="20" i18n-en:label="Inbound"/>
+        <dict label="测试方向" name="erp-b2b/exchange-direction" valueType="string" i18n-en:label="Exchange Direction">
+            <option code="OUTBOUND" label="出站" value="OUTBOUND" i18n-en:label="Outbound"/>
+            <option code="INBOUND" label="入站" value="INBOUND" i18n-en:label="Inbound"/>
         </dict>
     </dicts>
 
@@ -117,11 +117,12 @@
                         i18n-en:displayName="Organization"/>
                 <column code="FORMAT_NAME" displayName="格式名称" mandatory="true" name="formatName" precision="200"
                         propId="4" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Format Name"/>
-                <column code="FORMAT_STANDARD" displayName="EDI 标准" mandatory="true" name="formatStandard" propId="5"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-b2b/edi-standard"
-                        i18n-en:displayName="Format Standard"/>
-                <column code="DIRECTION" displayName="方向" mandatory="true" name="direction" propId="6" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-b2b/edi-direction" i18n-en:displayName="Direction"/>
+                <column code="FORMAT_STANDARD" displayName="EDI 标准" mandatory="true" name="formatStandard"
+                        precision="20" propId="5" stdDataType="string" stdSqlType="VARCHAR"
+                        ext:dict="erp-b2b/edi-standard" i18n-en:displayName="Format Standard"/>
+                <column code="DIRECTION" displayName="方向" mandatory="true" name="direction" precision="20" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-b2b/edi-direction"
+                        i18n-en:displayName="Direction"/>
                 <column code="NEEDS_WEB_SERVICE" defaultValue="0" displayName="需要 WebService" mandatory="true"
                         name="needsWebService" propId="7" stdDataType="int" stdSqlType="INTEGER"
                         i18n-en:displayName="Needs Web Service"/>
@@ -172,11 +173,12 @@
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Related Bill Type"/>
                 <column code="RELATED_BILL_CODE" displayName="关联单据号" name="relatedBillCode" precision="50" propId="6"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Related Bill Code"/>
-                <column code="STATE" displayName="状态" mandatory="true" name="state" propId="7" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-b2b/edi-doc-state" i18n-en:displayName="State"/>
+                <column code="STATE" displayName="状态" mandatory="true" name="state" precision="20" propId="7"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-b2b/edi-doc-state"
+                        i18n-en:displayName="State"/>
                 <column code="BLOCKING_LEVEL" defaultValue="10" displayName="阻断级别" mandatory="true" name="blockingLevel"
-                        propId="8" stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-b2b/blocking-level"
-                        i18n-en:displayName="Blocking Level"/>
+                        precision="20" propId="8" stdDataType="string" stdSqlType="VARCHAR"
+                        ext:dict="erp-b2b/blocking-level" i18n-en:displayName="Blocking Level"/>
                 <column code="ERROR" displayName="错误信息" name="error" precision="2000" propId="9" stdDataType="string"
                         stdSqlType="VARCHAR" i18n-en:displayName="Error Message"/>
                 <column code="RETRY_COUNT" defaultValue="0" displayName="重试次数" mandatory="true" name="retryCount"
@@ -250,8 +252,9 @@
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Related Bill Type"/>
                 <column code="RELATED_BILL_CODE" displayName="关联采购订单号" name="relatedBillCode" precision="50" propId="10"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Related Bill Code"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="11" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-b2b/asn-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="11"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-b2b/asn-status"
+                        i18n-en:displayName="Status"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="12"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -362,8 +365,8 @@
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="2" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
-                <column code="MAPPING_TYPE" displayName="映射类型" mandatory="true" name="mappingType" propId="3"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-b2b/mapping-type"
+                <column code="MAPPING_TYPE" displayName="映射类型" mandatory="true" name="mappingType" precision="20"
+                        propId="3" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-b2b/mapping-type"
                         i18n-en:displayName="Mapping Type"/>
                 <column code="INTERNAL_CODE" displayName="内部代码" mandatory="true" name="internalCode" precision="100"
                         propId="4" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Internal Code"/>
@@ -416,8 +419,9 @@
                         stdSqlType="BIGINT" i18n-en:displayName="EDI Document"/>
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
-                <column code="DIRECTION" displayName="方向" mandatory="true" name="direction" propId="4" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-b2b/edi-direction" i18n-en:displayName="Direction"/>
+                <column code="DIRECTION" displayName="方向" mandatory="true" name="direction" precision="20" propId="4"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-b2b/edi-direction"
+                        i18n-en:displayName="Direction"/>
                 <column code="REQUEST_PAYLOAD" displayName="请求报文" domain="payload" name="requestPayload" propId="5"
                         stdDataType="string" stdSqlType="CLOB" i18n-en:displayName="Request Payload"/>
                 <column code="RESPONSE_PAYLOAD" displayName="响应报文" domain="payload" name="responsePayload" propId="6"
@@ -479,14 +483,16 @@
                 <column code="PARTNER_NAME" displayName="伙伴名称" domain="name" mandatory="true" name="partnerName"
                         precision="200" propId="5" stdDataType="string" stdSqlType="VARCHAR"
                         i18n-en:displayName="Partner Name"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="6" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-b2b/partner-status" i18n-en:displayName="Status"/>
-                <column code="PROTOCOL" displayName="传输协议" mandatory="true" name="protocol" propId="7" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-b2b/protocol" i18n-en:displayName="Protocol"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-b2b/partner-status"
+                        i18n-en:displayName="Status"/>
+                <column code="PROTOCOL" displayName="传输协议" mandatory="true" name="protocol" precision="20" propId="7"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-b2b/protocol"
+                        i18n-en:displayName="Protocol"/>
                 <column code="TRANSPORT_ENDPOINT" displayName="传输端点" name="transportEndpoint" precision="500" propId="8"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Transport Endpoint"/>
-                <column code="AUTH_METHOD" displayName="认证方式" mandatory="true" name="authMethod" propId="9"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-b2b/auth-method"
+                <column code="AUTH_METHOD" displayName="认证方式" mandatory="true" name="authMethod" precision="20"
+                        propId="9" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-b2b/auth-method"
                         i18n-en:displayName="Auth Method"/>
                 <column code="WEBHOOK_SECRET" displayName="Webhook密钥" name="webhookSecret" precision="500" propId="10"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Webhook Secret"/>
@@ -552,8 +558,8 @@
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="PARTNER_PROFILE_ID" displayName="伙伴档案" mandatory="true" name="partnerProfileId" propId="2"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Partner Profile"/>
-                <column code="CREDENTIAL_TYPE" displayName="凭证类型" mandatory="true" name="credentialType" propId="3"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-b2b/credential-type"
+                <column code="CREDENTIAL_TYPE" displayName="凭证类型" mandatory="true" name="credentialType" precision="20"
+                        propId="3" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-b2b/credential-type"
                         i18n-en:displayName="Credential Type"/>
                 <column code="CREDENTIAL_KEY" displayName="凭证标识" name="credentialKey" precision="200" propId="4"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Credential Key"/>
@@ -603,8 +609,9 @@
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="PARTNER_PROFILE_ID" displayName="伙伴档案" mandatory="true" name="partnerProfileId" propId="2"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Partner Profile"/>
-                <column code="DIRECTION" displayName="方向" mandatory="true" name="direction" propId="3" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-b2b/exchange-direction" i18n-en:displayName="Direction"/>
+                <column code="DIRECTION" displayName="方向" mandatory="true" name="direction" precision="20" propId="3"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-b2b/exchange-direction"
+                        i18n-en:displayName="Direction"/>
                 <column code="FORMAT_CODE" displayName="EDI格式" mandatory="true" name="formatCode" precision="50"
                         propId="4" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Format Code"/>
                 <column code="TEST_CASE_CODE" displayName="测试用例编号" name="testCaseCode" precision="50" propId="5"

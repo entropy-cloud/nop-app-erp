@@ -23,6 +23,7 @@ import io.nop.commons.util.StringHelper;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -56,7 +57,7 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
     @Override
     @BizMutation
     @SingleSession
-    public ErpFinReconciliation create(@Name("direction") Integer direction,
+    public ErpFinReconciliation create(@Name("direction") String direction,
                                        @Name("partnerId") Long partnerId,
                                        @Name("businessDate") LocalDate businessDate,
                                        @Name("lines") List<ReconciliationLineInput> lines,
@@ -105,7 +106,7 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
     @SingleSession
     public ErpFinReconciliation post(@Name("reconciliationId") Long reconciliationId, IServiceContext context) {
         ErpFinReconciliation head = requireHead(reconciliationId, context);
-        if (!Integer.valueOf(ErpFinConstants.RECON_STATUS_DRAFT).equals(head.getDocStatus())) {
+        if (!ErpFinConstants.RECON_STATUS_DRAFT.equals(head.getDocStatus())) {
             throw statusError(head);
         }
         List<ErpFinReconciliationLine> lines = loadLines(reconciliationId);
@@ -134,7 +135,7 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
     @SingleSession
     public ErpFinReconciliation reverse(@Name("reconciliationId") Long reconciliationId, IServiceContext context) {
         ErpFinReconciliation head = requireHead(reconciliationId, context);
-        if (!Integer.valueOf(ErpFinConstants.RECON_STATUS_POSTED).equals(head.getDocStatus())) {
+        if (!ErpFinConstants.RECON_STATUS_POSTED.equals(head.getDocStatus())) {
             throw statusError(head);
         }
         List<ErpFinReconciliationLine> lines = loadLines(reconciliationId);
@@ -181,8 +182,8 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
 
     protected void assertOpen(ErpFinArApItem item, Long itemId) {
         if (item.getStatus() != null
-                && (item.getStatus() == ErpFinConstants.AR_AP_STATUS_SETTLED
-                || item.getStatus() == ErpFinConstants.AR_AP_STATUS_CANCELLED)) {
+                && (Objects.equals(item.getStatus(), ErpFinConstants.AR_AP_STATUS_SETTLED)
+                || Objects.equals(item.getStatus(), ErpFinConstants.AR_AP_STATUS_CANCELLED))) {
             throw new NopException(ErpFinErrors.ERR_RECONCILIATION_ITEM_NOT_OPEN)
                     .param(ErpFinErrors.ARG_PAYMENT_ITEM_ID, itemId);
         }

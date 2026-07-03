@@ -31,7 +31,7 @@
                 <col id="gatewayId" mandatory="true" sortable="true"/>
 
                 <!--操作类型-->
-                <col id="actionType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="actionType" mandatory="true" sortable="true"/>
 
                 <!--请求报文-->
                 <col id="requestBody" sortable="true"/>

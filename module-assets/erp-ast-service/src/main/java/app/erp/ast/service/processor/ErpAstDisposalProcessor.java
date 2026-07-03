@@ -17,6 +17,7 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.dao.IOrmEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -71,8 +72,8 @@ public class ErpAstDisposalProcessor {
         BigDecimal gainLoss = disposalAmount.subtract(nbv);
 
         // 资产终态：SCRAPPED/SOLD
-        int terminalStatus = disposal.getDisposalType() != null
-                && disposal.getDisposalType() == ErpAstConstants.DISPOSAL_TYPE_SOLD
+        String terminalStatus = disposal.getDisposalType() != null
+                && Objects.equals(disposal.getDisposalType(), ErpAstConstants.DISPOSAL_TYPE_SOLD)
                         ? ErpAstConstants.ASSET_STATUS_SOLD
                         : ErpAstConstants.ASSET_STATUS_SCRAPPED;
         asset.setStatus(terminalStatus);
@@ -145,37 +146,37 @@ public class ErpAstDisposalProcessor {
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
 
     protected void validateTransitionForSubmit(ErpAstDisposal disposal, IServiceContext context) {
-        Integer status = currentApproveStatus(disposal);
-        if (status != ErpAstConstants.APPROVE_STATUS_UNSUBMITTED
-                && status != ErpAstConstants.APPROVE_STATUS_REJECTED) {
+        String status = currentApproveStatus(disposal);
+        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_UNSUBMITTED)
+                && !Objects.equals(status, ErpAstConstants.APPROVE_STATUS_REJECTED)) {
             throw illegalTransition(disposal, status, "UNSUBMITTED 或 REJECTED");
         }
     }
 
     protected void validateTransitionForApprove(ErpAstDisposal disposal, IServiceContext context) {
-        Integer status = currentApproveStatus(disposal);
-        if (status != ErpAstConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = currentApproveStatus(disposal);
+        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(disposal, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForReject(ErpAstDisposal disposal, IServiceContext context) {
-        Integer status = currentApproveStatus(disposal);
-        if (status != ErpAstConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = currentApproveStatus(disposal);
+        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(disposal, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpAstDisposal disposal, IServiceContext context) {
-        Integer status = currentApproveStatus(disposal);
-        if (status != ErpAstConstants.APPROVE_STATUS_APPROVED) {
+        String status = currentApproveStatus(disposal);
+        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_APPROVED)) {
             throw illegalTransition(disposal, status, "APPROVED");
         }
     }
 
     protected void validateTransitionForCancel(ErpAstDisposal disposal, IServiceContext context) {
-        Integer docStatus = disposal.getDocStatus();
-        if (docStatus != null && docStatus == ErpAstConstants.DOC_STATUS_CANCELLED) {
+        String docStatus = disposal.getDocStatus();
+        if (docStatus != null && Objects.equals(docStatus, ErpAstConstants.DOC_STATUS_CANCELLED)) {
             throw illegalDocTransition(disposal, docStatus, "非已作废");
         }
     }
@@ -190,16 +191,16 @@ public class ErpAstDisposalProcessor {
     }
 
     protected void validateAssetDisposable(ErpAstAsset asset, IServiceContext context) {
-        Integer assetStatus = asset.getStatus();
+        String assetStatus = asset.getStatus();
         if (assetStatus != null
-                && (assetStatus == ErpAstConstants.ASSET_STATUS_SCRAPPED
-                        || assetStatus == ErpAstConstants.ASSET_STATUS_SOLD)) {
+                && (Objects.equals(assetStatus, ErpAstConstants.ASSET_STATUS_SCRAPPED)
+                        || Objects.equals(assetStatus, ErpAstConstants.ASSET_STATUS_SOLD))) {
             throw new NopException(ErpAstErrors.ERR_DISPOSAL_ASSET_ALREADY_DISPOSED)
                     .param(ErpAstErrors.ARG_ASSET_CODE, asset.getCode());
         }
         if (assetStatus == null
-                || (assetStatus != ErpAstConstants.ASSET_STATUS_IN_SERVICE
-                        && assetStatus != ErpAstConstants.ASSET_STATUS_IDLE)) {
+                || (!Objects.equals(assetStatus, ErpAstConstants.ASSET_STATUS_IN_SERVICE)
+                        && !Objects.equals(assetStatus, ErpAstConstants.ASSET_STATUS_IDLE))) {
             throw new NopException(ErpAstErrors.ERR_DISPOSAL_ASSET_NOT_DISPOSABLE)
                     .param(ErpAstErrors.ARG_ASSET_CODE, asset.getCode());
         }
@@ -245,17 +246,17 @@ public class ErpAstDisposalProcessor {
     }
 
     protected boolean isAlreadyApproved(ErpAstDisposal disposal) {
-        Integer status = disposal.getApproveStatus();
-        return status != null && status == ErpAstConstants.APPROVE_STATUS_APPROVED;
+        String status = disposal.getApproveStatus();
+        return status != null && Objects.equals(status, ErpAstConstants.APPROVE_STATUS_APPROVED);
     }
 
     protected boolean isAlreadyRejected(ErpAstDisposal disposal) {
-        Integer status = disposal.getApproveStatus();
-        return status != null && status == ErpAstConstants.APPROVE_STATUS_REJECTED;
+        String status = disposal.getApproveStatus();
+        return status != null && Objects.equals(status, ErpAstConstants.APPROVE_STATUS_REJECTED);
     }
 
-    protected Integer currentApproveStatus(ErpAstDisposal disposal) {
-        Integer status = disposal.getApproveStatus();
+    protected String currentApproveStatus(ErpAstDisposal disposal) {
+        String status = disposal.getApproveStatus();
         return status != null ? status : ErpAstConstants.APPROVE_STATUS_UNSUBMITTED;
     }
 
@@ -286,14 +287,14 @@ public class ErpAstDisposalProcessor {
         return v != null ? v : BigDecimal.ZERO;
     }
 
-    protected NopException illegalTransition(ErpAstDisposal disposal, Integer current, String expected) {
+    protected NopException illegalTransition(ErpAstDisposal disposal, String current, String expected) {
         return new NopException(ErpAstErrors.ERR_DISPOSAL_ILLEGAL_STATUS_TRANSITION)
                 .param(ErpAstErrors.ARG_DISPOSAL_CODE, disposal.getCode())
                 .param(ErpAstErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpAstErrors.ARG_EXPECTED_STATUS, expected);
     }
 
-    protected NopException illegalDocTransition(ErpAstDisposal disposal, Integer current, String expected) {
+    protected NopException illegalDocTransition(ErpAstDisposal disposal, String current, String expected) {
         return new NopException(ErpAstErrors.ERR_DISPOSAL_ILLEGAL_DOC_TRANSITION)
                 .param(ErpAstErrors.ARG_DISPOSAL_CODE, disposal.getCode())
                 .param(ErpAstErrors.ARG_CURRENT_DOC_STATUS, current)

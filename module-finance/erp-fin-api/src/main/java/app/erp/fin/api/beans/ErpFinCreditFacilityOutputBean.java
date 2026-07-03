@@ -69,16 +69,16 @@
         }
 
 
-        private Integer _facilityType;
+        private String _facilityType;
 
     
         @PropMeta(propId=5)
     
-        public Integer getFacilityType(){
+        public String getFacilityType(){
             return _facilityType;
         }
 
-        public void setFacilityType(Integer value){
+        public void setFacilityType(String value){
             this._facilityType = value;
         }
 
@@ -165,16 +165,16 @@
         }
 
 
-        private Integer _status;
+        private String _status;
 
     
         @PropMeta(propId=11)
     
-        public Integer getStatus(){
+        public String getStatus(){
             return _status;
         }
 
-        public void setStatus(Integer value){
+        public void setStatus(String value){
             this._status = value;
         }
 

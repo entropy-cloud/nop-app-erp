@@ -262,8 +262,8 @@ public class TestErpMfgMrpEndToEnd extends JunitAutoTestCase {
             o.setCurrencyId(CURRENCY_ID);
             o.setBusinessDate(LocalDate.of(2026, 7, 1));
             o.setDeliveryDate(deliveryDate);
-            o.setDocStatus(20);
-            o.setApproveStatus(30);
+            o.setDocStatus("ACTIVE");
+            o.setApproveStatus("APPROVED");
             odao.saveEntity(o);
 
             IEntityDao<ErpSalOrderLine> ldao = daoProvider.daoFor(ErpSalOrderLine.class);
@@ -288,9 +288,9 @@ public class TestErpMfgMrpEndToEnd extends JunitAutoTestCase {
             m.orm_propValueByName("id", id);
             m.setCode("MAT-" + id);
             m.setName("Material " + id);
-            m.orm_propValueByName("materialType", 10);
+            m.orm_propValueByName("materialType", "GOODS");
             m.setUoMId(UOM_ID);
-            m.setStatus(10);
+            m.setStatus("ACTIVE");
             dao.saveEntity(m);
         });
     }

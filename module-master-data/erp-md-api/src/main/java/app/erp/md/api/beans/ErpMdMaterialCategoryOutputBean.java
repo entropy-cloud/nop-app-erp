@@ -84,16 +84,16 @@
         }
 
 
-        private Integer _priceValidationLevel;
+        private String _priceValidationLevel;
 
     
         @PropMeta(propId=6)
     
-        public Integer getPriceValidationLevel(){
+        public String getPriceValidationLevel(){
             return _priceValidationLevel;
         }
 
-        public void setPriceValidationLevel(Integer value){
+        public void setPriceValidationLevel(String value){
             this._priceValidationLevel = value;
         }
 

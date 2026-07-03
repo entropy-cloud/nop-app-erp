@@ -1,19 +1,19 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 资本化来源类型
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 库存
-    value: 10
+    value: INVENTORY
     description: 
   
   - label: 在建工程
-    value: 20
+    value: CIP
     description: 
   
   - label: 直接购置
-    value: 30
+    value: DIRECT_PURCHASE
     description: 
   

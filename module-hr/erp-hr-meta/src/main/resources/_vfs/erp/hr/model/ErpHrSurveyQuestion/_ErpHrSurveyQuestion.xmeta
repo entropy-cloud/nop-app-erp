@@ -37,7 +37,7 @@
         </prop>
         <prop name="questionType" displayName="题型" propId="5" i18n-en:displayName="Question Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-hr/question-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-hr/question-type"/>
         </prop>
         <prop name="ratingScaleMin" displayName="评分最低分" propId="6" i18n-en:displayName="Rating Scale Min"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="1">
@@ -61,7 +61,7 @@
         </prop>
         <prop name="driverCategory" displayName="驱动因子分类" propId="11" i18n-en:displayName="Driver Category"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-hr/driver-category"/>
+            <schema type="java.lang.String" precision="20" dict="erp-hr/driver-category"/>
         </prop>
         <prop name="isRequired" displayName="是否必填" propId="12" i18n-en:displayName="Is Required" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="true">

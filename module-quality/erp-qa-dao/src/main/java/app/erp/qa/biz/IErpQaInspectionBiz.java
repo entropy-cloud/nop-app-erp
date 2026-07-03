@@ -43,7 +43,7 @@ public interface IErpQaInspectionBiz extends ICrudBiz<ErpQaInspection> {
     ErpQaInspection createForBusinessBill(@Name("billType") String billType,
                                           @Name("billCode") String billCode,
                                           @Name("materialId") Long materialId,
-                                          @Name("inspectionType") Integer inspectionType,
+                                          @Name("inspectionType") String inspectionType,
                                           @Name("lotQuantity") BigDecimal lotQuantity,
                                           @Name("supplierId") Long supplierId,
                                           @Name("warehouseId") Long warehouseId,

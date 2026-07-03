@@ -37,7 +37,7 @@
         </prop>
         <prop name="dcDirection" displayName="借贷方向" propId="5" i18n-en:displayName="Dc Direction" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-fin/dc-direction"/>
+            <schema type="java.lang.String" precision="20" dict="erp-fin/dc-direction"/>
         </prop>
         <prop name="amountExpression" displayName="金额表达式" propId="6" i18n-en:displayName="Amount Expression"
               queryable="true" sortable="true" insertable="true" updatable="true">

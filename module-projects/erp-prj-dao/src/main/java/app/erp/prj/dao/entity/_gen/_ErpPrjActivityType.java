@@ -133,7 +133,7 @@ public class _ErpPrjActivityType extends DynamicOrmEntity{
     private java.lang.String _name;
     
     /* 成本费率: COST_RATE */
-    private java.lang.String _costRate;
+    private java.math.BigDecimal _costRate;
     
     /* 科目: SUBJECT_ID */
     private java.lang.Long _subjectId;
@@ -311,9 +311,9 @@ public class _ErpPrjActivityType extends DynamicOrmEntity{
             }
         
             case PROP_ID_costRate:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_costRate));
                }
                setCostRate(typedValue);
@@ -432,7 +432,7 @@ public class _ErpPrjActivityType extends DynamicOrmEntity{
         
             case PROP_ID_costRate:{
                onInitProp(propId);
-               this._costRate = (java.lang.String)value;
+               this._costRate = (java.math.BigDecimal)value;
                
                break;
             }
@@ -559,7 +559,7 @@ public class _ErpPrjActivityType extends DynamicOrmEntity{
     /**
      * 成本费率: COST_RATE
      */
-    public final java.lang.String getCostRate(){
+    public final java.math.BigDecimal getCostRate(){
          onPropGet(PROP_ID_costRate);
          return _costRate;
     }
@@ -567,7 +567,7 @@ public class _ErpPrjActivityType extends DynamicOrmEntity{
     /**
      * 成本费率: COST_RATE
      */
-    public final void setCostRate(java.lang.String value){
+    public final void setCostRate(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_costRate,value)){
             this._costRate = value;
             internalClearRefs(PROP_ID_costRate);

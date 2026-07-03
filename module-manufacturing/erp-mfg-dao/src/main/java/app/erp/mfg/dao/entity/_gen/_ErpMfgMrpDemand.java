@@ -41,7 +41,7 @@ public class _ErpMfgMrpDemand extends DynamicOrmEntity{
     public static final String PROP_NAME_uoMId = "uoMId";
     public static final int PROP_ID_uoMId = 5;
     
-    /* 需求来源: DEMAND_SOURCE INTEGER */
+    /* 需求来源: DEMAND_SOURCE VARCHAR */
     public static final String PROP_NAME_demandSource = "demandSource";
     public static final int PROP_ID_demandSource = 6;
     
@@ -173,7 +173,7 @@ public class _ErpMfgMrpDemand extends DynamicOrmEntity{
     private java.lang.Long _uoMId;
     
     /* 需求来源: DEMAND_SOURCE */
-    private java.lang.Integer _demandSource;
+    private java.lang.String _demandSource;
     
     /* 来源单据类型: SOURCE_BILL_TYPE */
     private java.lang.String _sourceBillType;
@@ -389,9 +389,9 @@ public class _ErpMfgMrpDemand extends DynamicOrmEntity{
             }
         
             case PROP_ID_demandSource:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_demandSource));
                }
                setDemandSource(typedValue);
@@ -544,7 +544,7 @@ public class _ErpMfgMrpDemand extends DynamicOrmEntity{
         
             case PROP_ID_demandSource:{
                onInitProp(propId);
-               this._demandSource = (java.lang.Integer)value;
+               this._demandSource = (java.lang.String)value;
                
                break;
             }
@@ -723,7 +723,7 @@ public class _ErpMfgMrpDemand extends DynamicOrmEntity{
     /**
      * 需求来源: DEMAND_SOURCE
      */
-    public final java.lang.Integer getDemandSource(){
+    public final java.lang.String getDemandSource(){
          onPropGet(PROP_ID_demandSource);
          return _demandSource;
     }
@@ -731,7 +731,7 @@ public class _ErpMfgMrpDemand extends DynamicOrmEntity{
     /**
      * 需求来源: DEMAND_SOURCE
      */
-    public final void setDemandSource(java.lang.Integer value){
+    public final void setDemandSource(java.lang.String value){
         if(onPropSet(PROP_ID_demandSource,value)){
             this._demandSource = value;
             internalClearRefs(PROP_ID_demandSource);

@@ -49,7 +49,7 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
     public static final String PROP_NAME_exchangeRate = "exchangeRate";
     public static final int PROP_ID_exchangeRate = 7;
     
-    /* 调整类型: ADJUSTMENT_TYPE INTEGER */
+    /* 调整类型: ADJUSTMENT_TYPE VARCHAR */
     public static final String PROP_NAME_adjustmentType = "adjustmentType";
     public static final int PROP_ID_adjustmentType = 8;
     
@@ -61,11 +61,11 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
     public static final String PROP_NAME_reason = "reason";
     public static final int PROP_ID_reason = 10;
     
-    /* 单据状态: DOC_STATUS INTEGER */
+    /* 单据状态: DOC_STATUS VARCHAR */
     public static final String PROP_NAME_docStatus = "docStatus";
     public static final int PROP_ID_docStatus = 11;
     
-    /* 审核状态: APPROVE_STATUS INTEGER */
+    /* 审核状态: APPROVE_STATUS VARCHAR */
     public static final String PROP_NAME_approveStatus = "approveStatus";
     public static final int PROP_ID_approveStatus = 12;
     
@@ -249,7 +249,7 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
     private java.math.BigDecimal _exchangeRate;
     
     /* 调整类型: ADJUSTMENT_TYPE */
-    private java.lang.Integer _adjustmentType;
+    private java.lang.String _adjustmentType;
     
     /* 调整金额: ADJUSTMENT_AMOUNT */
     private java.math.BigDecimal _adjustmentAmount;
@@ -258,10 +258,10 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
     private java.lang.String _reason;
     
     /* 单据状态: DOC_STATUS */
-    private java.lang.Integer _docStatus;
+    private java.lang.String _docStatus;
     
     /* 审核状态: APPROVE_STATUS */
-    private java.lang.Integer _approveStatus;
+    private java.lang.String _approveStatus;
     
     /* 已过账: POSTED */
     private java.lang.Boolean _posted;
@@ -539,9 +539,9 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
             }
         
             case PROP_ID_adjustmentType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_adjustmentType));
                }
                setAdjustmentType(typedValue);
@@ -569,9 +569,9 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
             }
         
             case PROP_ID_docStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_docStatus));
                }
                setDocStatus(typedValue);
@@ -579,9 +579,9 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
             }
         
             case PROP_ID_approveStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_approveStatus));
                }
                setApproveStatus(typedValue);
@@ -788,7 +788,7 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
         
             case PROP_ID_adjustmentType:{
                onInitProp(propId);
-               this._adjustmentType = (java.lang.Integer)value;
+               this._adjustmentType = (java.lang.String)value;
                
                break;
             }
@@ -809,14 +809,14 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
         
             case PROP_ID_docStatus:{
                onInitProp(propId);
-               this._docStatus = (java.lang.Integer)value;
+               this._docStatus = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_approveStatus:{
                onInitProp(propId);
-               this._approveStatus = (java.lang.Integer)value;
+               this._approveStatus = (java.lang.String)value;
                
                break;
             }
@@ -1061,7 +1061,7 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
     /**
      * 调整类型: ADJUSTMENT_TYPE
      */
-    public final java.lang.Integer getAdjustmentType(){
+    public final java.lang.String getAdjustmentType(){
          onPropGet(PROP_ID_adjustmentType);
          return _adjustmentType;
     }
@@ -1069,7 +1069,7 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
     /**
      * 调整类型: ADJUSTMENT_TYPE
      */
-    public final void setAdjustmentType(java.lang.Integer value){
+    public final void setAdjustmentType(java.lang.String value){
         if(onPropSet(PROP_ID_adjustmentType,value)){
             this._adjustmentType = value;
             internalClearRefs(PROP_ID_adjustmentType);
@@ -1118,7 +1118,7 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
     /**
      * 单据状态: DOC_STATUS
      */
-    public final java.lang.Integer getDocStatus(){
+    public final java.lang.String getDocStatus(){
          onPropGet(PROP_ID_docStatus);
          return _docStatus;
     }
@@ -1126,7 +1126,7 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
     /**
      * 单据状态: DOC_STATUS
      */
-    public final void setDocStatus(java.lang.Integer value){
+    public final void setDocStatus(java.lang.String value){
         if(onPropSet(PROP_ID_docStatus,value)){
             this._docStatus = value;
             internalClearRefs(PROP_ID_docStatus);
@@ -1137,7 +1137,7 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
     /**
      * 审核状态: APPROVE_STATUS
      */
-    public final java.lang.Integer getApproveStatus(){
+    public final java.lang.String getApproveStatus(){
          onPropGet(PROP_ID_approveStatus);
          return _approveStatus;
     }
@@ -1145,7 +1145,7 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
     /**
      * 审核状态: APPROVE_STATUS
      */
-    public final void setApproveStatus(java.lang.Integer value){
+    public final void setApproveStatus(java.lang.String value){
         if(onPropSet(PROP_ID_approveStatus,value)){
             this._approveStatus = value;
             internalClearRefs(PROP_ID_approveStatus);

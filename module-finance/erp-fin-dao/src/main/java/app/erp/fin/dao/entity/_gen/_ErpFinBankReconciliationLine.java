@@ -41,7 +41,7 @@ public class _ErpFinBankReconciliationLine extends DynamicOrmEntity{
     public static final String PROP_NAME_description = "description";
     public static final int PROP_ID_description = 5;
     
-    /* 借贷方向: DC_DIRECTION INTEGER */
+    /* 借贷方向: DC_DIRECTION VARCHAR */
     public static final String PROP_NAME_dcDirection = "dcDirection";
     public static final int PROP_ID_dcDirection = 6;
     
@@ -160,7 +160,7 @@ public class _ErpFinBankReconciliationLine extends DynamicOrmEntity{
     private java.lang.String _description;
     
     /* 借贷方向: DC_DIRECTION */
-    private java.lang.Integer _dcDirection;
+    private java.lang.String _dcDirection;
     
     /* 金额: AMOUNT */
     private java.math.BigDecimal _amount;
@@ -370,9 +370,9 @@ public class _ErpFinBankReconciliationLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_dcDirection:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_dcDirection));
                }
                setDcDirection(typedValue);
@@ -515,7 +515,7 @@ public class _ErpFinBankReconciliationLine extends DynamicOrmEntity{
         
             case PROP_ID_dcDirection:{
                onInitProp(propId);
-               this._dcDirection = (java.lang.Integer)value;
+               this._dcDirection = (java.lang.String)value;
                
                break;
             }
@@ -687,7 +687,7 @@ public class _ErpFinBankReconciliationLine extends DynamicOrmEntity{
     /**
      * 借贷方向: DC_DIRECTION
      */
-    public final java.lang.Integer getDcDirection(){
+    public final java.lang.String getDcDirection(){
          onPropGet(PROP_ID_dcDirection);
          return _dcDirection;
     }
@@ -695,7 +695,7 @@ public class _ErpFinBankReconciliationLine extends DynamicOrmEntity{
     /**
      * 借贷方向: DC_DIRECTION
      */
-    public final void setDcDirection(java.lang.Integer value){
+    public final void setDcDirection(java.lang.String value){
         if(onPropSet(PROP_ID_dcDirection,value)){
             this._dcDirection = value;
             internalClearRefs(PROP_ID_dcDirection);

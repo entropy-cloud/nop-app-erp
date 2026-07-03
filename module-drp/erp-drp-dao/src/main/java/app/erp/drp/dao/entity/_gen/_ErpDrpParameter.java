@@ -53,7 +53,7 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
     public static final String PROP_NAME_preferredSupplierId = "preferredSupplierId";
     public static final int PROP_ID_preferredSupplierId = 8;
     
-    /* 补货方法: REPLENISHMENT_METHOD INTEGER */
+    /* 补货方法: REPLENISHMENT_METHOD VARCHAR */
     public static final String PROP_NAME_replenishmentMethod = "replenishmentMethod";
     public static final int PROP_ID_replenishmentMethod = 9;
     
@@ -216,7 +216,7 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
     private java.lang.Long _preferredSupplierId;
     
     /* 补货方法: REPLENISHMENT_METHOD */
-    private java.lang.Integer _replenishmentMethod;
+    private java.lang.String _replenishmentMethod;
     
     /* 最低库存: MIN_STOCK_LEVEL */
     private java.math.BigDecimal _minStockLevel;
@@ -477,9 +477,9 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
             }
         
             case PROP_ID_replenishmentMethod:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_replenishmentMethod));
                }
                setReplenishmentMethod(typedValue);
@@ -663,7 +663,7 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
         
             case PROP_ID_replenishmentMethod:{
                onInitProp(propId);
-               this._replenishmentMethod = (java.lang.Integer)value;
+               this._replenishmentMethod = (java.lang.String)value;
                
                break;
             }
@@ -906,7 +906,7 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
     /**
      * 补货方法: REPLENISHMENT_METHOD
      */
-    public final java.lang.Integer getReplenishmentMethod(){
+    public final java.lang.String getReplenishmentMethod(){
          onPropGet(PROP_ID_replenishmentMethod);
          return _replenishmentMethod;
     }
@@ -914,7 +914,7 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
     /**
      * 补货方法: REPLENISHMENT_METHOD
      */
-    public final void setReplenishmentMethod(java.lang.Integer value){
+    public final void setReplenishmentMethod(java.lang.String value){
         if(onPropSet(PROP_ID_replenishmentMethod,value)){
             this._replenishmentMethod = value;
             internalClearRefs(PROP_ID_replenishmentMethod);

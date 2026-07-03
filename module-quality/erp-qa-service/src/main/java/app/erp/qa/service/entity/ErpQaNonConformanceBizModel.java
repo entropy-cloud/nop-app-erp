@@ -14,6 +14,7 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -107,7 +108,7 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
             data.put("materialId", ncr.getMaterialId());
         }
         // NCR severity(LOW/NORMAL/HIGH/CRITICAL=10/20/30/40) 与 recall severity(LOW/MEDIUM/HIGH/CRITICAL=10/20/30/40) 码值对齐
-        int severity = ncr.getSeverity() != null ? ncr.getSeverity() : ErpQaConstants.RECALL_SEVERITY_MEDIUM;
+        String severity = ncr.getSeverity() != null ? ncr.getSeverity() : ErpQaConstants.RECALL_SEVERITY_MEDIUM;
         data.put("severityLevel", severity);
         data.put("businessDate", LocalDate.now().toString());
         data.put("rootCause", ncr.getDescription());
@@ -118,9 +119,9 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
     @BizMutation
     public ErpQaNonConformance cancel(@Name("ncrId") Long ncrId, IServiceContext context) {
         ErpQaNonConformance ncr = requireNcr(ncrId, context);
-        Integer current = ncr.getStatus();
-        if (current == null || (current != ErpQaConstants.NCR_STATUS_OPEN
-                && current != ErpQaConstants.NCR_STATUS_IN_REVIEW)) {
+        String current = ncr.getStatus();
+        if (current == null || (!Objects.equals(current, ErpQaConstants.NCR_STATUS_OPEN)
+                && !Objects.equals(current, ErpQaConstants.NCR_STATUS_IN_REVIEW))) {
             throw illegalNcrTransition(ncr, current, "OPEN 或 IN_REVIEW");
         }
         ncr.setStatus(ErpQaConstants.NCR_STATUS_CANCELLED);
@@ -137,14 +138,14 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
         return requireEntity(String.valueOf(ncrId), null, context);
     }
 
-    private void requireNcrStatus(ErpQaNonConformance ncr, int expected, String expectedLabel) {
-        Integer current = ncr.getStatus();
-        if (current == null || current != expected) {
+    private void requireNcrStatus(ErpQaNonConformance ncr, String expected, String expectedLabel) {
+        String current = ncr.getStatus();
+        if (current == null || !Objects.equals(current, expected)) {
             throw illegalNcrTransition(ncr, current, expectedLabel);
         }
     }
 
-    private NopException illegalNcrTransition(ErpQaNonConformance ncr, Integer current, String expected) {
+    private NopException illegalNcrTransition(ErpQaNonConformance ncr, String current, String expected) {
         return new NopException(ErpQaErrors.ERR_INVALID_NCR_STATUS_TRANSITION)
                 .param(ErpQaErrors.ARG_NCR_CODE, ncr.getCode())
                 .param(ErpQaErrors.ARG_CURRENT_STATUS, current)

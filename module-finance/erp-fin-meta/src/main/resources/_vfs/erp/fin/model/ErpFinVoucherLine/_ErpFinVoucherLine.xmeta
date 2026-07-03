@@ -45,7 +45,7 @@
         </prop>
         <prop name="dcDirection" displayName="借贷方向" propId="7" i18n-en:displayName="Dc Direction" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-fin/dc-direction"/>
+            <schema type="java.lang.String" precision="20" dict="erp-fin/dc-direction"/>
         </prop>
         <prop name="debitAmount" displayName="借方金额(本位币)" propId="8" i18n-en:displayName="Debit Amount" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
@@ -105,7 +105,7 @@
         </prop>
         <prop name="businessType" displayName="业务类型" propId="22" i18n-en:displayName="Business Type" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-fin/business-type"/>
+            <schema type="java.lang.String" precision="30" dict="erp-fin/business-type"/>
         </prop>
         <prop name="costCenterId" displayName="成本中心" propId="23" i18n-en:displayName="Cost Center" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="costCenter">

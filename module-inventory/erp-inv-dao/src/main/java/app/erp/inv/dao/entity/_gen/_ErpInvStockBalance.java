@@ -65,7 +65,7 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
     public static final String PROP_NAME_availableQuantity = "availableQuantity";
     public static final int PROP_ID_availableQuantity = 11;
     
-    /* 计价方法: COST_METHOD INTEGER */
+    /* 计价方法: COST_METHOD VARCHAR */
     public static final String PROP_NAME_costMethod = "costMethod";
     public static final int PROP_ID_costMethod = 12;
     
@@ -235,7 +235,7 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
     private java.math.BigDecimal _availableQuantity;
     
     /* 计价方法: COST_METHOD */
-    private java.lang.Integer _costMethod;
+    private java.lang.String _costMethod;
     
     /* 平均成本: AVG_COST */
     private java.math.BigDecimal _avgCost;
@@ -523,9 +523,9 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
             }
         
             case PROP_ID_costMethod:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_costMethod));
                }
                setCostMethod(typedValue);
@@ -710,7 +710,7 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
         
             case PROP_ID_costMethod:{
                onInitProp(propId);
-               this._costMethod = (java.lang.Integer)value;
+               this._costMethod = (java.lang.String)value;
                
                break;
             }
@@ -996,7 +996,7 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
     /**
      * 计价方法: COST_METHOD
      */
-    public final java.lang.Integer getCostMethod(){
+    public final java.lang.String getCostMethod(){
          onPropGet(PROP_ID_costMethod);
          return _costMethod;
     }
@@ -1004,7 +1004,7 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
     /**
      * 计价方法: COST_METHOD
      */
-    public final void setCostMethod(java.lang.Integer value){
+    public final void setCostMethod(java.lang.String value){
         if(onPropSet(PROP_ID_costMethod,value)){
             this._costMethod = value;
             internalClearRefs(PROP_ID_costMethod);

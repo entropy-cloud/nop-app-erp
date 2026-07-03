@@ -17,7 +17,7 @@ import java.util.List;
  * <p>幂等键：{@code (relatedBillType, relatedBillCode)}——同源单重复触发反查已有移动单直接返回。
  */
 public class StockMoveRequest {
-    private Integer moveType;
+    private String moveType;
     private Long orgId;
     private LocalDate businessDate;
     private Long sourceWarehouseId;
@@ -34,11 +34,11 @@ public class StockMoveRequest {
     private Long originReturnedMoveId;
     private List<StockMoveLineRequest> lines;
 
-    public Integer getMoveType() {
+    public String getMoveType() {
         return moveType;
     }
 
-    public void setMoveType(Integer moveType) {
+    public void setMoveType(String moveType) {
         this.moveType = moveType;
     }
 

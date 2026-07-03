@@ -8,6 +8,7 @@ import io.nop.api.core.config.AppConfig;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 /**
  * 成本方法解析器。按 {@code ErpMdMaterial.costMethod} → {@code ErpMdAcctSchema.costingMethod} →
@@ -26,11 +27,11 @@ public class CostMethodResolver {
      *
      * <p>注：accountSchemaId 优先取行级（如有），回退调用方提供的账套；二者皆无时直接走配置默认。
      */
-    public int resolve(ErpInvStockMoveLine line, Long acctSchemaId) {
+    public String resolve(ErpInvStockMoveLine line, Long acctSchemaId) {
         if (!isCostingEnabled()) {
             return ErpInvConstants.COST_METHOD_MOVING_AVERAGE;
         }
-        Integer method = readMaterialCostMethod(line.getMaterialId());
+        String method = readMaterialCostMethod(line.getMaterialId());
         if (method == null && acctSchemaId != null) {
             method = readAcctSchemaCostingMethod(acctSchemaId);
         }
@@ -40,13 +41,13 @@ public class CostMethodResolver {
         return method;
     }
 
-    /** 当前已实现策略：MOVING_AVERAGE（10）+ FIFO（30）。其他码值回退默认，待 successor 接管。 */
-    private boolean isSupported(int method) {
-        return method == ErpInvConstants.COST_METHOD_MOVING_AVERAGE
-                || method == ErpInvConstants.COST_METHOD_FIFO;
+    /** 当前已实现策略：MOVING_AVERAGE + FIFO。其他码值回退默认，待 successor 接管。 */
+    private boolean isSupported(String method) {
+        return Objects.equals(method, ErpInvConstants.COST_METHOD_MOVING_AVERAGE)
+                || Objects.equals(method, ErpInvConstants.COST_METHOD_FIFO);
     }
 
-    private Integer readMaterialCostMethod(Long materialId) {
+    private String readMaterialCostMethod(Long materialId) {
         if (materialId == null) {
             return null;
         }
@@ -55,7 +56,7 @@ public class CostMethodResolver {
         return material != null ? material.getCostMethod() : null;
     }
 
-    private Integer readAcctSchemaCostingMethod(Long acctSchemaId) {
+    private String readAcctSchemaCostingMethod(Long acctSchemaId) {
         if (acctSchemaId == null) {
             return null;
         }
@@ -69,8 +70,8 @@ public class CostMethodResolver {
         return !Boolean.FALSE.equals(flag);
     }
 
-    private int defaultCostMethod() {
-        Integer configured = AppConfig.var(ErpInvConstants.CONFIG_DEFAULT_COST_METHOD,
+    private String defaultCostMethod() {
+        String configured = AppConfig.var(ErpInvConstants.CONFIG_DEFAULT_COST_METHOD,
                 ErpInvConstants.DEFAULT_COST_METHOD);
         return configured != null ? configured : ErpInvConstants.DEFAULT_COST_METHOD;
     }

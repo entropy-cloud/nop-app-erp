@@ -29,7 +29,7 @@ public class _ErpApsConstraint extends DynamicOrmEntity{
     public static final String PROP_NAME_machineId = "machineId";
     public static final int PROP_ID_machineId = 2;
     
-    /* 约束类型: CONSTRAINT_TYPE INTEGER */
+    /* 约束类型: CONSTRAINT_TYPE VARCHAR */
     public static final String PROP_NAME_constraintType = "constraintType";
     public static final int PROP_ID_constraintType = 3;
     
@@ -144,7 +144,7 @@ public class _ErpApsConstraint extends DynamicOrmEntity{
     private java.lang.Long _machineId;
     
     /* 约束类型: CONSTRAINT_TYPE */
-    private java.lang.Integer _constraintType;
+    private java.lang.String _constraintType;
     
     /* 开始时间: START_TIME */
     private java.time.LocalDateTime _startTime;
@@ -327,9 +327,9 @@ public class _ErpApsConstraint extends DynamicOrmEntity{
             }
         
             case PROP_ID_constraintType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_constraintType));
                }
                setConstraintType(typedValue);
@@ -471,7 +471,7 @@ public class _ErpApsConstraint extends DynamicOrmEntity{
         
             case PROP_ID_constraintType:{
                onInitProp(propId);
-               this._constraintType = (java.lang.Integer)value;
+               this._constraintType = (java.lang.String)value;
                
                break;
             }
@@ -600,7 +600,7 @@ public class _ErpApsConstraint extends DynamicOrmEntity{
     /**
      * 约束类型: CONSTRAINT_TYPE
      */
-    public final java.lang.Integer getConstraintType(){
+    public final java.lang.String getConstraintType(){
          onPropGet(PROP_ID_constraintType);
          return _constraintType;
     }
@@ -608,7 +608,7 @@ public class _ErpApsConstraint extends DynamicOrmEntity{
     /**
      * 约束类型: CONSTRAINT_TYPE
      */
-    public final void setConstraintType(java.lang.Integer value){
+    public final void setConstraintType(java.lang.String value){
         if(onPropSet(PROP_ID_constraintType,value)){
             this._constraintType = value;
             internalClearRefs(PROP_ID_constraintType);

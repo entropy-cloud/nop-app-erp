@@ -45,23 +45,23 @@ public class _ErpFinAccountingPeriodStatus extends DynamicOrmEntity{
     public static final String PROP_NAME_unpostedVouchers = "unpostedVouchers";
     public static final int PROP_ID_unpostedVouchers = 6;
     
-    /* 应收模块状态: AR_STATUS INTEGER */
+    /* 应收模块状态: AR_STATUS VARCHAR */
     public static final String PROP_NAME_arStatus = "arStatus";
     public static final int PROP_ID_arStatus = 7;
     
-    /* 应付模块状态: AP_STATUS INTEGER */
+    /* 应付模块状态: AP_STATUS VARCHAR */
     public static final String PROP_NAME_apStatus = "apStatus";
     public static final int PROP_ID_apStatus = 8;
     
-    /* 存货模块状态: INV_STATUS INTEGER */
+    /* 存货模块状态: INV_STATUS VARCHAR */
     public static final String PROP_NAME_invStatus = "invStatus";
     public static final int PROP_ID_invStatus = 9;
     
-    /* 总账模块状态: GL_STATUS INTEGER */
+    /* 总账模块状态: GL_STATUS VARCHAR */
     public static final String PROP_NAME_glStatus = "glStatus";
     public static final int PROP_ID_glStatus = 10;
     
-    /* 资产模块状态: ASSET_STATUS INTEGER */
+    /* 资产模块状态: ASSET_STATUS VARCHAR */
     public static final String PROP_NAME_assetStatus = "assetStatus";
     public static final int PROP_ID_assetStatus = 11;
     
@@ -180,19 +180,19 @@ public class _ErpFinAccountingPeriodStatus extends DynamicOrmEntity{
     private java.lang.Integer _unpostedVouchers;
     
     /* 应收模块状态: AR_STATUS */
-    private java.lang.Integer _arStatus;
+    private java.lang.String _arStatus;
     
     /* 应付模块状态: AP_STATUS */
-    private java.lang.Integer _apStatus;
+    private java.lang.String _apStatus;
     
     /* 存货模块状态: INV_STATUS */
-    private java.lang.Integer _invStatus;
+    private java.lang.String _invStatus;
     
     /* 总账模块状态: GL_STATUS */
-    private java.lang.Integer _glStatus;
+    private java.lang.String _glStatus;
     
     /* 资产模块状态: ASSET_STATUS */
-    private java.lang.Integer _assetStatus;
+    private java.lang.String _assetStatus;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -409,9 +409,9 @@ public class _ErpFinAccountingPeriodStatus extends DynamicOrmEntity{
             }
         
             case PROP_ID_arStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_arStatus));
                }
                setArStatus(typedValue);
@@ -419,9 +419,9 @@ public class _ErpFinAccountingPeriodStatus extends DynamicOrmEntity{
             }
         
             case PROP_ID_apStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_apStatus));
                }
                setApStatus(typedValue);
@@ -429,9 +429,9 @@ public class _ErpFinAccountingPeriodStatus extends DynamicOrmEntity{
             }
         
             case PROP_ID_invStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_invStatus));
                }
                setInvStatus(typedValue);
@@ -439,9 +439,9 @@ public class _ErpFinAccountingPeriodStatus extends DynamicOrmEntity{
             }
         
             case PROP_ID_glStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_glStatus));
                }
                setGlStatus(typedValue);
@@ -449,9 +449,9 @@ public class _ErpFinAccountingPeriodStatus extends DynamicOrmEntity{
             }
         
             case PROP_ID_assetStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_assetStatus));
                }
                setAssetStatus(typedValue);
@@ -571,35 +571,35 @@ public class _ErpFinAccountingPeriodStatus extends DynamicOrmEntity{
         
             case PROP_ID_arStatus:{
                onInitProp(propId);
-               this._arStatus = (java.lang.Integer)value;
+               this._arStatus = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_apStatus:{
                onInitProp(propId);
-               this._apStatus = (java.lang.Integer)value;
+               this._apStatus = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_invStatus:{
                onInitProp(propId);
-               this._invStatus = (java.lang.Integer)value;
+               this._invStatus = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_glStatus:{
                onInitProp(propId);
-               this._glStatus = (java.lang.Integer)value;
+               this._glStatus = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_assetStatus:{
                onInitProp(propId);
-               this._assetStatus = (java.lang.Integer)value;
+               this._assetStatus = (java.lang.String)value;
                
                break;
             }
@@ -769,7 +769,7 @@ public class _ErpFinAccountingPeriodStatus extends DynamicOrmEntity{
     /**
      * 应收模块状态: AR_STATUS
      */
-    public final java.lang.Integer getArStatus(){
+    public final java.lang.String getArStatus(){
          onPropGet(PROP_ID_arStatus);
          return _arStatus;
     }
@@ -777,7 +777,7 @@ public class _ErpFinAccountingPeriodStatus extends DynamicOrmEntity{
     /**
      * 应收模块状态: AR_STATUS
      */
-    public final void setArStatus(java.lang.Integer value){
+    public final void setArStatus(java.lang.String value){
         if(onPropSet(PROP_ID_arStatus,value)){
             this._arStatus = value;
             internalClearRefs(PROP_ID_arStatus);
@@ -788,7 +788,7 @@ public class _ErpFinAccountingPeriodStatus extends DynamicOrmEntity{
     /**
      * 应付模块状态: AP_STATUS
      */
-    public final java.lang.Integer getApStatus(){
+    public final java.lang.String getApStatus(){
          onPropGet(PROP_ID_apStatus);
          return _apStatus;
     }
@@ -796,7 +796,7 @@ public class _ErpFinAccountingPeriodStatus extends DynamicOrmEntity{
     /**
      * 应付模块状态: AP_STATUS
      */
-    public final void setApStatus(java.lang.Integer value){
+    public final void setApStatus(java.lang.String value){
         if(onPropSet(PROP_ID_apStatus,value)){
             this._apStatus = value;
             internalClearRefs(PROP_ID_apStatus);
@@ -807,7 +807,7 @@ public class _ErpFinAccountingPeriodStatus extends DynamicOrmEntity{
     /**
      * 存货模块状态: INV_STATUS
      */
-    public final java.lang.Integer getInvStatus(){
+    public final java.lang.String getInvStatus(){
          onPropGet(PROP_ID_invStatus);
          return _invStatus;
     }
@@ -815,7 +815,7 @@ public class _ErpFinAccountingPeriodStatus extends DynamicOrmEntity{
     /**
      * 存货模块状态: INV_STATUS
      */
-    public final void setInvStatus(java.lang.Integer value){
+    public final void setInvStatus(java.lang.String value){
         if(onPropSet(PROP_ID_invStatus,value)){
             this._invStatus = value;
             internalClearRefs(PROP_ID_invStatus);
@@ -826,7 +826,7 @@ public class _ErpFinAccountingPeriodStatus extends DynamicOrmEntity{
     /**
      * 总账模块状态: GL_STATUS
      */
-    public final java.lang.Integer getGlStatus(){
+    public final java.lang.String getGlStatus(){
          onPropGet(PROP_ID_glStatus);
          return _glStatus;
     }
@@ -834,7 +834,7 @@ public class _ErpFinAccountingPeriodStatus extends DynamicOrmEntity{
     /**
      * 总账模块状态: GL_STATUS
      */
-    public final void setGlStatus(java.lang.Integer value){
+    public final void setGlStatus(java.lang.String value){
         if(onPropSet(PROP_ID_glStatus,value)){
             this._glStatus = value;
             internalClearRefs(PROP_ID_glStatus);
@@ -845,7 +845,7 @@ public class _ErpFinAccountingPeriodStatus extends DynamicOrmEntity{
     /**
      * 资产模块状态: ASSET_STATUS
      */
-    public final java.lang.Integer getAssetStatus(){
+    public final java.lang.String getAssetStatus(){
          onPropGet(PROP_ID_assetStatus);
          return _assetStatus;
     }
@@ -853,7 +853,7 @@ public class _ErpFinAccountingPeriodStatus extends DynamicOrmEntity{
     /**
      * 资产模块状态: ASSET_STATUS
      */
-    public final void setAssetStatus(java.lang.Integer value){
+    public final void setAssetStatus(java.lang.String value){
         if(onPropSet(PROP_ID_assetStatus,value)){
             this._assetStatus = value;
             internalClearRefs(PROP_ID_assetStatus);

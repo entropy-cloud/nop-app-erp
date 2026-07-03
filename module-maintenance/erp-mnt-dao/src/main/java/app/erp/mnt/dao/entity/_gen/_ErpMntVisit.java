@@ -41,7 +41,7 @@ public class _ErpMntVisit extends DynamicOrmEntity{
     public static final String PROP_NAME_visitDate = "visitDate";
     public static final int PROP_ID_visitDate = 5;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 6;
     
@@ -69,11 +69,11 @@ public class _ErpMntVisit extends DynamicOrmEntity{
     public static final String PROP_NAME_totalMinutes = "totalMinutes";
     public static final int PROP_ID_totalMinutes = 12;
     
-    /* 维护类型: VISIT_TYPE INTEGER */
+    /* 维护类型: VISIT_TYPE VARCHAR */
     public static final String PROP_NAME_visitType = "visitType";
     public static final int PROP_ID_visitType = 13;
     
-    /* 执行结果: RESULT INTEGER */
+    /* 执行结果: RESULT VARCHAR */
     public static final String PROP_NAME_result = "result";
     public static final int PROP_ID_result = 14;
     
@@ -249,7 +249,7 @@ public class _ErpMntVisit extends DynamicOrmEntity{
     private java.time.LocalDate _visitDate;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 指派人: ASSIGNED_TO */
     private java.lang.Long _assignedTo;
@@ -267,13 +267,13 @@ public class _ErpMntVisit extends DynamicOrmEntity{
     private java.time.LocalDateTime _endTime;
     
     /* 总分钟数: TOTAL_MINUTES */
-    private java.lang.String _totalMinutes;
+    private java.math.BigDecimal _totalMinutes;
     
     /* 维护类型: VISIT_TYPE */
-    private java.lang.Integer _visitType;
+    private java.lang.String _visitType;
     
     /* 执行结果: RESULT */
-    private java.lang.Integer _result;
+    private java.lang.String _result;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -525,9 +525,9 @@ public class _ErpMntVisit extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -585,9 +585,9 @@ public class _ErpMntVisit extends DynamicOrmEntity{
             }
         
             case PROP_ID_totalMinutes:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_totalMinutes));
                }
                setTotalMinutes(typedValue);
@@ -595,9 +595,9 @@ public class _ErpMntVisit extends DynamicOrmEntity{
             }
         
             case PROP_ID_visitType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_visitType));
                }
                setVisitType(typedValue);
@@ -605,9 +605,9 @@ public class _ErpMntVisit extends DynamicOrmEntity{
             }
         
             case PROP_ID_result:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_result));
                }
                setResult(typedValue);
@@ -780,7 +780,7 @@ public class _ErpMntVisit extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -822,21 +822,21 @@ public class _ErpMntVisit extends DynamicOrmEntity{
         
             case PROP_ID_totalMinutes:{
                onInitProp(propId);
-               this._totalMinutes = (java.lang.String)value;
+               this._totalMinutes = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_visitType:{
                onInitProp(propId);
-               this._visitType = (java.lang.Integer)value;
+               this._visitType = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_result:{
                onInitProp(propId);
-               this._result = (java.lang.Integer)value;
+               this._result = (java.lang.String)value;
                
                break;
             }
@@ -1029,7 +1029,7 @@ public class _ErpMntVisit extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -1037,7 +1037,7 @@ public class _ErpMntVisit extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);
@@ -1143,7 +1143,7 @@ public class _ErpMntVisit extends DynamicOrmEntity{
     /**
      * 总分钟数: TOTAL_MINUTES
      */
-    public final java.lang.String getTotalMinutes(){
+    public final java.math.BigDecimal getTotalMinutes(){
          onPropGet(PROP_ID_totalMinutes);
          return _totalMinutes;
     }
@@ -1151,7 +1151,7 @@ public class _ErpMntVisit extends DynamicOrmEntity{
     /**
      * 总分钟数: TOTAL_MINUTES
      */
-    public final void setTotalMinutes(java.lang.String value){
+    public final void setTotalMinutes(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_totalMinutes,value)){
             this._totalMinutes = value;
             internalClearRefs(PROP_ID_totalMinutes);
@@ -1162,7 +1162,7 @@ public class _ErpMntVisit extends DynamicOrmEntity{
     /**
      * 维护类型: VISIT_TYPE
      */
-    public final java.lang.Integer getVisitType(){
+    public final java.lang.String getVisitType(){
          onPropGet(PROP_ID_visitType);
          return _visitType;
     }
@@ -1170,7 +1170,7 @@ public class _ErpMntVisit extends DynamicOrmEntity{
     /**
      * 维护类型: VISIT_TYPE
      */
-    public final void setVisitType(java.lang.Integer value){
+    public final void setVisitType(java.lang.String value){
         if(onPropSet(PROP_ID_visitType,value)){
             this._visitType = value;
             internalClearRefs(PROP_ID_visitType);
@@ -1181,7 +1181,7 @@ public class _ErpMntVisit extends DynamicOrmEntity{
     /**
      * 执行结果: RESULT
      */
-    public final java.lang.Integer getResult(){
+    public final java.lang.String getResult(){
          onPropGet(PROP_ID_result);
          return _result;
     }
@@ -1189,7 +1189,7 @@ public class _ErpMntVisit extends DynamicOrmEntity{
     /**
      * 执行结果: RESULT
      */
-    public final void setResult(java.lang.Integer value){
+    public final void setResult(java.lang.String value){
         if(onPropSet(PROP_ID_result,value)){
             this._result = value;
             internalClearRefs(PROP_ID_result);

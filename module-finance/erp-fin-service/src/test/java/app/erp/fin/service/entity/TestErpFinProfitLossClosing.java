@@ -56,11 +56,11 @@ public class TestErpFinProfitLossClosing extends JunitAutoTestCase {
             Long pid = seedOpenPeriod("2024-03", 2024, 3,
                     LocalDate.of(2024, 3, 1), LocalDate.of(2024, 3, 31));
             java.util.Map<String, ErpMdSubject> subjects = new java.util.HashMap<>();
-            subjects.put("1001", seedSubject("1001", "库存现金", 10, 10));
-            subjects.put("6001", seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, 20));
-            subjects.put("6601", seedSubject("6601", "销售费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, 10));
-            subjects.put("6401", seedSubject("6401", "主营业务成本", ErpFinConstants.SUBJECT_CLASS_COST, 10));
-            subjects.put("4103", seedSubject("4103", "本年利润", 30, 20));
+            subjects.put("1001", seedSubject("1001", "库存现金", "ASSET", ErpFinConstants.DC_DEBIT));
+            subjects.put("6001", seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT));
+            subjects.put("6601", seedSubject("6601", "销售费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT));
+            subjects.put("6401", seedSubject("6401", "主营业务成本", ErpFinConstants.SUBJECT_CLASS_COST, ErpFinConstants.DC_DEBIT));
+            subjects.put("4103", seedSubject("4103", "本年利润", "EQUITY", ErpFinConstants.DC_CREDIT));
             // 收入 150
             seedPostedVoucher("V-INCOME-001", pid, LocalDate.of(2024, 3, 10), subjects,
                     line("1001", "库存现金", ErpFinConstants.DC_DEBIT, "150"),
@@ -80,7 +80,7 @@ public class TestErpFinProfitLossClosing extends JunitAutoTestCase {
 
         // 结转凭证存在（PERIOD_CLOSE，billCode=PERIOD-CLOSE-2024-03）。
         ErpFinVoucher closeVoucher = findCloseVoucher("PERIOD-CLOSE-2024-03",
-                ErpFinBusinessType.PERIOD_CLOSE.getCode());
+                ErpFinBusinessType.PERIOD_CLOSE.name());
         assertNotNull(closeVoucher, "应生成损益结转凭证");
         assertTrue(closeVoucher.getTotalDebit().compareTo(closeVoucher.getTotalCredit()) == 0, "结转凭证借贷平衡");
 
@@ -123,14 +123,14 @@ public class TestErpFinProfitLossClosing extends JunitAutoTestCase {
         return p.getId();
     }
 
-    private ErpMdSubject seedSubject(String code, String name, int subjectClass, int direction) {
+    private ErpMdSubject seedSubject(String code, String name, String subjectClass, String direction) {
         IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
         ErpMdSubject s = new ErpMdSubject();
         s.setCode(code);
         s.setName(name);
         s.setSubjectClass(subjectClass);
         s.setDirection(direction);
-        s.setStatus(10);
+        s.setStatus("ACTIVE");
         dao.saveEntity(s);
         return s;
     }
@@ -143,7 +143,7 @@ public class TestErpFinProfitLossClosing extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private Object[] line(String subjectCode, String subjectName, int dc, String amount) {
+    private Object[] line(String subjectCode, String subjectName, String dc, String amount) {
         return new Object[]{subjectCode, subjectName, dc, new BigDecimal(amount)};
     }
 
@@ -156,7 +156,7 @@ public class TestErpFinProfitLossClosing extends JunitAutoTestCase {
         }
         ErpFinVoucher v = new ErpFinVoucher();
         v.setCode(code);
-        v.setVoucherType(30);
+        v.setVoucherType("TRANSFER");
         v.setVoucherDate(date);
         v.setOrgId(1L);
         v.setAcctSchemaId(1L);
@@ -171,7 +171,7 @@ public class TestErpFinProfitLossClosing extends JunitAutoTestCase {
         int lineNo = 1;
         for (Object[] l : lines) {
             ErpMdSubject subj = subjects.get((String) l[0]);
-            int dc = (int) l[2];
+            String dc = (String) l[2];
             BigDecimal amt = (BigDecimal) l[3];
             ErpFinVoucherLine line = new ErpFinVoucherLine();
             line.setVoucherId(v.getId());
@@ -180,8 +180,8 @@ public class TestErpFinProfitLossClosing extends JunitAutoTestCase {
             line.setSubjectCode((String) l[0]);
             line.setSubjectName((String) l[1]);
             line.setDcDirection(dc);
-            line.setDebitAmount(dc == ErpFinConstants.DC_DEBIT ? amt : BigDecimal.ZERO);
-            line.setCreditAmount(dc == ErpFinConstants.DC_CREDIT ? amt : BigDecimal.ZERO);
+            line.setDebitAmount(ErpFinConstants.DC_DEBIT.equals(dc) ? amt : BigDecimal.ZERO);
+            line.setCreditAmount(ErpFinConstants.DC_CREDIT.equals(dc) ? amt : BigDecimal.ZERO);
             line.setCurrencyId(1L);
             line.setExchangeRate(BigDecimal.ONE);
             line.setAmountSource(amt);
@@ -191,7 +191,7 @@ public class TestErpFinProfitLossClosing extends JunitAutoTestCase {
         }
     }
 
-    private ErpFinVoucher findCloseVoucher(String billCode, int businessType) {
+    private ErpFinVoucher findCloseVoucher(String billCode, String businessType) {
         IEntityDao<ErpFinVoucherBillR> dao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("billCode", billCode), eq("businessType", businessType)));

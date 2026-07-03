@@ -45,7 +45,7 @@
         </prop>
         <prop name="paymentMode" displayName="付款方式" propId="7" i18n-en:displayName="Payment Mode" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-fin/expense-payment-mode"/>
+            <schema type="java.lang.String" precision="20" dict="erp-fin/expense-payment-mode"/>
         </prop>
         <prop name="currencyId" displayName="币种" propId="8" i18n-en:displayName="Currency" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="currency">
@@ -85,11 +85,11 @@
         </prop>
         <prop name="docStatus" displayName="单据状态" propId="17" i18n-en:displayName="Doc Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-fin/expense-claim-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-fin/expense-claim-status"/>
         </prop>
         <prop name="approveStatus" displayName="审核状态" propId="18" i18n-en:displayName="Approve Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-fin/approve-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-fin/approve-status"/>
         </prop>
         <prop name="approvedBy" displayName="审核人" propId="19" i18n-en:displayName="Approved By" queryable="true"
               sortable="true" insertable="true" updatable="true">

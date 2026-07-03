@@ -42,7 +42,7 @@ public class TestErpFinVoucherTemplateCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-FIN");
         headData.put("name", "冒烟凭证模板");
-        headData.put("businessType", 10);
+        headData.put("businessType", "PURCHASE_INPUT");
         ApiResponse<?> result = executeRpc(GraphQLOperationType.mutation, "ErpFinVoucherTemplate__save",
                 ApiRequest.build(Map.of("data", headData)));
 
@@ -57,7 +57,7 @@ public class TestErpFinVoucherTemplateCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-FIN");
         headData.put("name", "冒烟凭证模板");
-        headData.put("businessType", 10);
+        headData.put("businessType", "PURCHASE_INPUT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpFinVoucherTemplate__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -75,7 +75,7 @@ public class TestErpFinVoucherTemplateCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-FIN");
         headData.put("name", "冒烟凭证模板");
-        headData.put("businessType", 10);
+        headData.put("businessType", "PURCHASE_INPUT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpFinVoucherTemplate__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -97,7 +97,7 @@ public class TestErpFinVoucherTemplateCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-FIN");
         headData.put("name", "冒烟凭证模板");
-        headData.put("businessType", 10);
+        headData.put("businessType", "PURCHASE_INPUT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpFinVoucherTemplate__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -120,7 +120,7 @@ public class TestErpFinVoucherTemplateCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-FIN");
         headData.put("name", "冒烟凭证模板");
-        headData.put("businessType", 10);
+        headData.put("businessType", "PURCHASE_INPUT");
         ApiResponse<?> head = executeRpc(GraphQLOperationType.mutation, "ErpFinVoucherTemplate__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_saveHead_response.json5", head);
@@ -129,7 +129,7 @@ public class TestErpFinVoucherTemplateCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> lineData = new LinkedHashMap<>();
         lineData.put("lineNo", 1);
         lineData.put("subjectCode", "1001");
-        lineData.put("dcDirection", 10);
+        lineData.put("dcDirection", "DEBIT");
         lineData.put("templateId", headId);
         ApiResponse<?> line = executeRpc(GraphQLOperationType.mutation, "ErpFinVoucherTemplateLine__save",
                 ApiRequest.build(Map.of("data", lineData)));

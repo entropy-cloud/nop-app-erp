@@ -45,7 +45,7 @@ public class _ErpFinCashForecast extends DynamicOrmEntity{
     public static final String PROP_NAME_sourceBillCode = "sourceBillCode";
     public static final int PROP_ID_sourceBillCode = 6;
     
-    /* 现金流方向: DIRECTION INTEGER */
+    /* 现金流方向: DIRECTION VARCHAR */
     public static final String PROP_NAME_direction = "direction";
     public static final int PROP_ID_direction = 7;
     
@@ -180,7 +180,7 @@ public class _ErpFinCashForecast extends DynamicOrmEntity{
     private java.lang.String _sourceBillCode;
     
     /* 现金流方向: DIRECTION */
-    private java.lang.Integer _direction;
+    private java.lang.String _direction;
     
     /* 往来单位: PARTNER_ID */
     private java.lang.Long _partnerId;
@@ -409,9 +409,9 @@ public class _ErpFinCashForecast extends DynamicOrmEntity{
             }
         
             case PROP_ID_direction:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_direction));
                }
                setDirection(typedValue);
@@ -571,7 +571,7 @@ public class _ErpFinCashForecast extends DynamicOrmEntity{
         
             case PROP_ID_direction:{
                onInitProp(propId);
-               this._direction = (java.lang.Integer)value;
+               this._direction = (java.lang.String)value;
                
                break;
             }
@@ -769,7 +769,7 @@ public class _ErpFinCashForecast extends DynamicOrmEntity{
     /**
      * 现金流方向: DIRECTION
      */
-    public final java.lang.Integer getDirection(){
+    public final java.lang.String getDirection(){
          onPropGet(PROP_ID_direction);
          return _direction;
     }
@@ -777,7 +777,7 @@ public class _ErpFinCashForecast extends DynamicOrmEntity{
     /**
      * 现金流方向: DIRECTION
      */
-    public final void setDirection(java.lang.Integer value){
+    public final void setDirection(java.lang.String value){
         if(onPropSet(PROP_ID_direction,value)){
             this._direction = value;
             internalClearRefs(PROP_ID_direction);

@@ -9,7 +9,7 @@
   "standardAmount": 0.0,
   "actualAmount": 0.0,
   "varianceAmount": 0.0,
-  "variancePercent": "",
+  "variancePercent": 0.0,
   "standardQty": 0.0,
   "actualQty": 0.0,
   "standardPrice": 0.0,

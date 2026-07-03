@@ -52,7 +52,7 @@ public class TestErpPurInvoicePosting extends JunitAutoTestCase {
     static final Long UOM_ID = 5101L;
     static final Long CURRENCY_ID = 6101L;
     static final Long ACCT_SCHEMA_ID = 7003L;
-    static final int VOUCHER_STATUS_POSTED = 20;
+    static final String VOUCHER_STATUS_POSTED = "POSTED";
 
     @Inject
     IDaoProvider daoProvider;
@@ -180,14 +180,14 @@ public class TestErpPurInvoicePosting extends JunitAutoTestCase {
         partner.setId(id);
         partner.setCode("SUP-" + id);
         partner.setName("供应商" + id);
-        partner.setPartnerType(10);
+        partner.setPartnerType("CUSTOMER");
         partner.setStatus(ErpPurConstants.PARTNER_STATUS_ACTIVE);
         dao.saveEntity(partner);
     }
 
     private void seedPeriodAndSubjects() {
         ormTemplate.runInSession(() -> {
-            seedOpenPeriod("2026-07", 2026, 7, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31), 10);
+            seedOpenPeriod("2026-07", 2026, 7, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31), "OPEN");
             seedSubject("1403", "在途物资");
             seedSubject("2221", "应交税费-进项税额");
             seedSubject("2202", "应付账款");
@@ -203,13 +203,13 @@ public class TestErpPurInvoicePosting extends JunitAutoTestCase {
         schema.setCode("AS-" + id);
         schema.setName("账套" + id);
         schema.setOrgId(orgId);
-        schema.setNature(10);
+        schema.setNature("FINANCIAL");
         schema.setFunctionalCurrencyId(CURRENCY_ID);
-        schema.setStatus(10);
+        schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
 
-    private void seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, int status) {
+    private void seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, String status) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
@@ -228,9 +228,9 @@ public class TestErpPurInvoicePosting extends JunitAutoTestCase {
         ErpMdSubject subject = new ErpMdSubject();
         subject.setCode(code);
         subject.setName(name);
-        subject.setSubjectClass(10);
-        subject.setDirection(10);
-        subject.setStatus(10);
+        subject.setSubjectClass("ASSET");
+        subject.setDirection("DEBIT");
+        subject.setStatus("ACTIVE");
         dao.saveEntity(subject);
     }
 

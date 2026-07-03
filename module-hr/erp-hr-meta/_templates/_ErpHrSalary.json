@@ -16,7 +16,7 @@
   "taxAmount": 0.0,
   "otherDeductions": 0.0,
   "netSalary": 0.0,
-  "paymentStatus": 0,
+  "paymentStatus": "",
   "paymentStatus_label": "",
   "paymentDate": "2000-01-01",
   "orgId": 0,

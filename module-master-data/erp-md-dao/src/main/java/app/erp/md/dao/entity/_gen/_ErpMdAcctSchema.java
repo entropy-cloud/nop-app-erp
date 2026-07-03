@@ -37,7 +37,7 @@ public class _ErpMdAcctSchema extends DynamicOrmEntity{
     public static final String PROP_NAME_orgId = "orgId";
     public static final int PROP_ID_orgId = 4;
     
-    /* 账套性质: NATURE INTEGER */
+    /* 账套性质: NATURE VARCHAR */
     public static final String PROP_NAME_nature = "nature";
     public static final int PROP_ID_nature = 5;
     
@@ -45,7 +45,7 @@ public class _ErpMdAcctSchema extends DynamicOrmEntity{
     public static final String PROP_NAME_functionalCurrencyId = "functionalCurrencyId";
     public static final int PROP_ID_functionalCurrencyId = 6;
     
-    /* 默认成本方法: COSTING_METHOD INTEGER */
+    /* 默认成本方法: COSTING_METHOD VARCHAR */
     public static final String PROP_NAME_costingMethod = "costingMethod";
     public static final int PROP_ID_costingMethod = 7;
     
@@ -57,7 +57,7 @@ public class _ErpMdAcctSchema extends DynamicOrmEntity{
     public static final String PROP_NAME_isPropagate = "isPropagate";
     public static final int PROP_ID_isPropagate = 9;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 10;
     
@@ -170,13 +170,13 @@ public class _ErpMdAcctSchema extends DynamicOrmEntity{
     private java.lang.Long _orgId;
     
     /* 账套性质: NATURE */
-    private java.lang.Integer _nature;
+    private java.lang.String _nature;
     
     /* 本位币: FUNCTIONAL_CURRENCY_ID */
     private java.lang.Long _functionalCurrencyId;
     
     /* 默认成本方法: COSTING_METHOD */
-    private java.lang.Integer _costingMethod;
+    private java.lang.String _costingMethod;
     
     /* 是否调整汇率差异: IS_ADJUST_CURRENCY */
     private java.lang.Boolean _isAdjustCurrency;
@@ -185,7 +185,7 @@ public class _ErpMdAcctSchema extends DynamicOrmEntity{
     private java.lang.Boolean _isPropagate;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -379,9 +379,9 @@ public class _ErpMdAcctSchema extends DynamicOrmEntity{
             }
         
             case PROP_ID_nature:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_nature));
                }
                setNature(typedValue);
@@ -399,9 +399,9 @@ public class _ErpMdAcctSchema extends DynamicOrmEntity{
             }
         
             case PROP_ID_costingMethod:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_costingMethod));
                }
                setCostingMethod(typedValue);
@@ -429,9 +429,9 @@ public class _ErpMdAcctSchema extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -537,7 +537,7 @@ public class _ErpMdAcctSchema extends DynamicOrmEntity{
         
             case PROP_ID_nature:{
                onInitProp(propId);
-               this._nature = (java.lang.Integer)value;
+               this._nature = (java.lang.String)value;
                
                break;
             }
@@ -551,7 +551,7 @@ public class _ErpMdAcctSchema extends DynamicOrmEntity{
         
             case PROP_ID_costingMethod:{
                onInitProp(propId);
-               this._costingMethod = (java.lang.Integer)value;
+               this._costingMethod = (java.lang.String)value;
                
                break;
             }
@@ -572,7 +572,7 @@ public class _ErpMdAcctSchema extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -704,7 +704,7 @@ public class _ErpMdAcctSchema extends DynamicOrmEntity{
     /**
      * 账套性质: NATURE
      */
-    public final java.lang.Integer getNature(){
+    public final java.lang.String getNature(){
          onPropGet(PROP_ID_nature);
          return _nature;
     }
@@ -712,7 +712,7 @@ public class _ErpMdAcctSchema extends DynamicOrmEntity{
     /**
      * 账套性质: NATURE
      */
-    public final void setNature(java.lang.Integer value){
+    public final void setNature(java.lang.String value){
         if(onPropSet(PROP_ID_nature,value)){
             this._nature = value;
             internalClearRefs(PROP_ID_nature);
@@ -742,7 +742,7 @@ public class _ErpMdAcctSchema extends DynamicOrmEntity{
     /**
      * 默认成本方法: COSTING_METHOD
      */
-    public final java.lang.Integer getCostingMethod(){
+    public final java.lang.String getCostingMethod(){
          onPropGet(PROP_ID_costingMethod);
          return _costingMethod;
     }
@@ -750,7 +750,7 @@ public class _ErpMdAcctSchema extends DynamicOrmEntity{
     /**
      * 默认成本方法: COSTING_METHOD
      */
-    public final void setCostingMethod(java.lang.Integer value){
+    public final void setCostingMethod(java.lang.String value){
         if(onPropSet(PROP_ID_costingMethod,value)){
             this._costingMethod = value;
             internalClearRefs(PROP_ID_costingMethod);
@@ -799,7 +799,7 @@ public class _ErpMdAcctSchema extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -807,7 +807,7 @@ public class _ErpMdAcctSchema extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

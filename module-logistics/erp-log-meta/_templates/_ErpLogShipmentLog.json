@@ -3,7 +3,7 @@
   "shipmentId": 0,
   "orgId": 0,
   "gatewayId": "",
-  "actionType": 0,
+  "actionType": "",
   "actionType_label": "",
   "requestBody": "",
   "responseBody": "",

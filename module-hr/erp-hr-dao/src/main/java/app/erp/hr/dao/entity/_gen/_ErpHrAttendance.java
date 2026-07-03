@@ -57,7 +57,7 @@ public class _ErpHrAttendance extends DynamicOrmEntity{
     public static final String PROP_NAME_isAbsent = "isAbsent";
     public static final int PROP_ID_isAbsent = 9;
     
-    /* 来源: SOURCE INTEGER */
+    /* 来源: SOURCE VARCHAR */
     public static final String PROP_NAME_source = "source";
     public static final int PROP_ID_source = 10;
     
@@ -206,7 +206,7 @@ public class _ErpHrAttendance extends DynamicOrmEntity{
     private java.lang.Boolean _isAbsent;
     
     /* 来源: SOURCE */
-    private java.lang.Integer _source;
+    private java.lang.String _source;
     
     /* 关联休假: LEAVE_REQUEST_ID */
     private java.lang.Long _leaveRequestId;
@@ -468,9 +468,9 @@ public class _ErpHrAttendance extends DynamicOrmEntity{
             }
         
             case PROP_ID_source:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_source));
                }
                setSource(typedValue);
@@ -641,7 +641,7 @@ public class _ErpHrAttendance extends DynamicOrmEntity{
         
             case PROP_ID_source:{
                onInitProp(propId);
-               this._source = (java.lang.Integer)value;
+               this._source = (java.lang.String)value;
                
                break;
             }
@@ -889,7 +889,7 @@ public class _ErpHrAttendance extends DynamicOrmEntity{
     /**
      * 来源: SOURCE
      */
-    public final java.lang.Integer getSource(){
+    public final java.lang.String getSource(){
          onPropGet(PROP_ID_source);
          return _source;
     }
@@ -897,7 +897,7 @@ public class _ErpHrAttendance extends DynamicOrmEntity{
     /**
      * 来源: SOURCE
      */
-    public final void setSource(java.lang.Integer value){
+    public final void setSource(java.lang.String value){
         if(onPropSet(PROP_ID_source,value)){
             this._source = value;
             internalClearRefs(PROP_ID_source);

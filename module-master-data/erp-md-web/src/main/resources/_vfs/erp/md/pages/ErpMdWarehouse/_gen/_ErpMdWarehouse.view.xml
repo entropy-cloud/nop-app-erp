@@ -28,7 +28,7 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--仓库类型-->
-                <col id="warehouseType" ui:number="true" sortable="true"/>
+                <col id="warehouseType" sortable="true"/>
 
                 <!--所属组织-->
                 <col id="orgId" ui:number="true" sortable="true"/>
@@ -40,7 +40,7 @@
                 <col id="managerId" ui:number="true" sortable="true"/>
 
                 <!--状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>

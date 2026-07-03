@@ -57,7 +57,7 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
     public static final String PROP_NAME_notifiedBy = "notifiedBy";
     public static final int PROP_ID_notifiedBy = 9;
     
-    /* 退货状态: RETURN_STATUS INTEGER */
+    /* 退货状态: RETURN_STATUS VARCHAR */
     public static final String PROP_NAME_returnStatus = "returnStatus";
     public static final int PROP_ID_returnStatus = 10;
     
@@ -196,7 +196,7 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
     private java.lang.String _notifiedBy;
     
     /* 退货状态: RETURN_STATUS */
-    private java.lang.Integer _returnStatus;
+    private java.lang.String _returnStatus;
     
     /* 已生成退货单(弱指针): GENERATED_RETURN_ID */
     private java.lang.Long _generatedReturnId;
@@ -452,9 +452,9 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
             }
         
             case PROP_ID_returnStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_returnStatus));
                }
                setReturnStatus(typedValue);
@@ -615,7 +615,7 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
         
             case PROP_ID_returnStatus:{
                onInitProp(propId);
-               this._returnStatus = (java.lang.Integer)value;
+               this._returnStatus = (java.lang.String)value;
                
                break;
             }
@@ -856,7 +856,7 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
     /**
      * 退货状态: RETURN_STATUS
      */
-    public final java.lang.Integer getReturnStatus(){
+    public final java.lang.String getReturnStatus(){
          onPropGet(PROP_ID_returnStatus);
          return _returnStatus;
     }
@@ -864,7 +864,7 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
     /**
      * 退货状态: RETURN_STATUS
      */
-    public final void setReturnStatus(java.lang.Integer value){
+    public final void setReturnStatus(java.lang.String value){
         if(onPropSet(PROP_ID_returnStatus,value)){
             this._returnStatus = value;
             internalClearRefs(PROP_ID_returnStatus);

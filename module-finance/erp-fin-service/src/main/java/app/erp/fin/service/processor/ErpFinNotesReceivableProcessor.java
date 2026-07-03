@@ -15,6 +15,7 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.dao.IOrmEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -97,38 +98,38 @@ public class ErpFinNotesReceivableProcessor {
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
 
     protected void validateTransitionForDiscount(ErpFinNotesReceivable note, IServiceContext context) {
-        Integer status = note.getStatus();
-        if (status == null || status != ErpFinConstants.NOTES_RECV_RECEIVED) {
+        String status = note.getStatus();
+        if (status == null || !Objects.equals(status, ErpFinConstants.NOTES_RECV_RECEIVED)) {
             throw illegalTransition(note, status, "RECEIVED");
         }
     }
 
     protected void validateTransitionForEndorse(ErpFinNotesReceivable note, IServiceContext context) {
-        Integer status = note.getStatus();
-        if (status == null || status != ErpFinConstants.NOTES_RECV_RECEIVED) {
+        String status = note.getStatus();
+        if (status == null || !Objects.equals(status, ErpFinConstants.NOTES_RECV_RECEIVED)) {
             throw illegalTransition(note, status, "RECEIVED");
         }
     }
 
     protected void validateTransitionForCollect(ErpFinNotesReceivable note, IServiceContext context) {
-        Integer status = note.getStatus();
+        String status = note.getStatus();
         // 托收：已收到或已贴现（贴现后票据仍归本方，到期仍需托收承兑）均可进入托收中。
         if (status == null
-                || (status != ErpFinConstants.NOTES_RECV_RECEIVED
-                && status != ErpFinConstants.NOTES_RECV_DISCOUNTED)) {
+                || (!Objects.equals(status, ErpFinConstants.NOTES_RECV_RECEIVED)
+                && !Objects.equals(status, ErpFinConstants.NOTES_RECV_DISCOUNTED))) {
             throw illegalTransition(note, status, "RECEIVED 或 DISCOUNTED");
         }
     }
 
     protected void validateTransitionForHonorOrDishonor(ErpFinNotesReceivable note, IServiceContext context) {
-        Integer status = note.getStatus();
-        if (status == null || status != ErpFinConstants.NOTES_RECV_COLLECTION_PENDING) {
+        String status = note.getStatus();
+        if (status == null || !Objects.equals(status, ErpFinConstants.NOTES_RECV_COLLECTION_PENDING)) {
             throw illegalTransition(note, status, "COLLECTION_PENDING");
         }
     }
 
     protected void validateNotTerminal(ErpFinNotesReceivable note, IServiceContext context) {
-        Integer status = note.getStatus();
+        String status = note.getStatus();
         if (isTerminal(status)) {
             throw illegalTransition(note, status, "非终态");
         }
@@ -252,7 +253,7 @@ public class ErpFinNotesReceivableProcessor {
     // ---------- 校验/查询辅助（protected，供派生复用与覆盖） ----------
 
     /** 票据当前状态对应的最末过账业务类型（writeOff 红冲用）。COLLECTION_PENDING 无独立过账，回退到收到时的资产确认。 */
-    protected ErpFinBusinessType businessTypeForStatus(Integer status) {
+    protected ErpFinBusinessType businessTypeForStatus(String status) {
         if (status == null) {
             return null;
         }
@@ -293,15 +294,15 @@ public class ErpFinNotesReceivableProcessor {
     }
 
     protected boolean isAlreadyReceived(ErpFinNotesReceivable note) {
-        Integer status = note.getStatus();
-        return status != null && status == ErpFinConstants.NOTES_RECV_RECEIVED;
+        String status = note.getStatus();
+        return status != null && Objects.equals(status, ErpFinConstants.NOTES_RECV_RECEIVED);
     }
 
-    protected boolean isTerminal(Integer status) {
+    protected boolean isTerminal(String status) {
         return status != null
-                && (status == ErpFinConstants.NOTES_RECV_HONORED
-                || status == ErpFinConstants.NOTES_RECV_DISHONORED
-                || status == ErpFinConstants.NOTES_RECV_WRITE_OFF);
+                && (Objects.equals(status, ErpFinConstants.NOTES_RECV_HONORED)
+                || Objects.equals(status, ErpFinConstants.NOTES_RECV_DISHONORED)
+                || Objects.equals(status, ErpFinConstants.NOTES_RECV_WRITE_OFF));
     }
 
     protected ErpFinNotesReceivable reload(Long notesId) {
@@ -331,7 +332,7 @@ public class ErpFinNotesReceivableProcessor {
         return v != null ? v : BigDecimal.ZERO;
     }
 
-    protected NopException illegalTransition(ErpFinNotesReceivable note, Integer current, String expected) {
+    protected NopException illegalTransition(ErpFinNotesReceivable note, String current, String expected) {
         return new NopException(ErpFinErrors.ERR_NOTES_RECEIVABLE_ILLEGAL_STATUS_TRANSITION)
                 .param(ErpFinErrors.ARG_NOTES_CODE, note.getCode())
                 .param(ErpFinErrors.ARG_CURRENT_STATUS, current)

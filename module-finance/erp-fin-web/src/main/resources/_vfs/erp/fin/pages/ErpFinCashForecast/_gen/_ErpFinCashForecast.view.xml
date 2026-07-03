@@ -37,7 +37,7 @@
                 <col id="sourceBillCode" sortable="true"/>
 
                 <!--现金流方向-->
-                <col id="direction" ui:number="true" sortable="true"/>
+                <col id="direction" sortable="true"/>
 
                 <!--往来单位-->
                 <col id="partnerId" ui:number="true" sortable="true"/>

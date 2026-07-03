@@ -18,6 +18,7 @@ import jakarta.inject.Inject;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
@@ -44,8 +45,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  */
 public class MrpReleaseService {
 
-    static final int PUR_DOC_STATUS_DRAFT = 10;
-    static final int PUR_APPROVE_STATUS_UNSUBMITTED = 10;
+    static final String PUR_DOC_STATUS_DRAFT = "DRAFT";
+    static final String PUR_APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
 
     @Inject
     IDaoProvider daoProvider;
@@ -82,14 +83,14 @@ public class MrpReleaseService {
         return billCode;
     }
 
-    private ErpMfgMrpPlanLine requireReleasable(Long planLineId, int expectedOrderType) {
+    private ErpMfgMrpPlanLine requireReleasable(Long planLineId, String expectedOrderType) {
         ErpMfgMrpPlanLine line = requireLine(planLineId);
         if (Boolean.TRUE.equals(line.getIsFirmed())) {
             throw new NopException(ErpMfgErrors.ERR_MRP_LINE_ALREADY_FIRMED)
                     .param(ErpMfgErrors.ARG_MRP_LINE_ID, planLineId);
         }
-        Integer orderType = line.getOrderType();
-        if (orderType == null || orderType != expectedOrderType) {
+        String orderType = line.getOrderType();
+        if (orderType == null || !Objects.equals(orderType, expectedOrderType)) {
             throw new NopException(ErpMfgErrors.ERR_MRP_RELEASE_UNSUPPORTED_ORDER_TYPE)
                     .param(ErpMfgErrors.ARG_MRP_LINE_ID, planLineId);
         }

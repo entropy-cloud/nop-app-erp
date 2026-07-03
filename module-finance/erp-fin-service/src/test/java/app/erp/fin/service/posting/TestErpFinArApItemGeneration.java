@@ -44,11 +44,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
     private static final IServiceContext CTX = new ServiceContextImpl();
 
-    static final int DC_DEBIT = 10;
-    static final int DC_CREDIT = 20;
-    static final int BUSINESS_TYPE_AP_INVOICE = ErpFinBusinessType.AP_INVOICE.getCode();
-    static final int VOUCHER_TYPE_TRANSFER = 30;
-    static final int PERIOD_STATUS_OPEN = 10;
+    static final String DC_DEBIT = ErpFinConstants.DC_DEBIT;
+    static final String DC_CREDIT = ErpFinConstants.DC_CREDIT;
+    static final String BUSINESS_TYPE_AP_INVOICE = ErpFinBusinessType.AP_INVOICE.name();
+    static final String VOUCHER_TYPE_TRANSFER = "TRANSFER";
+    static final String PERIOD_STATUS_OPEN = ErpFinConstants.PERIOD_STATUS_OPEN;
 
     @Inject
     IDaoProvider daoProvider;
@@ -237,7 +237,7 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
         ErpFinVoucherTemplate tpl = new ErpFinVoucherTemplate();
         tpl.setCode("TPL-RECEIPT");
         tpl.setName("收款模板");
-        tpl.setBusinessType(ErpFinBusinessType.RECEIPT.getCode());
+        tpl.setBusinessType(ErpFinBusinessType.RECEIPT.name());
         tpl.setVoucherType(VOUCHER_TYPE_TRANSFER);
         tpl.setIsActive(true);
         dao.saveEntity(tpl);
@@ -251,7 +251,7 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
         ErpFinVoucherTemplate tpl = new ErpFinVoucherTemplate();
         tpl.setCode("TPL-PURCHASE-INPUT");
         tpl.setName("采购入库模板");
-        tpl.setBusinessType(ErpFinBusinessType.PURCHASE_INPUT.getCode());
+        tpl.setBusinessType(ErpFinBusinessType.PURCHASE_INPUT.name());
         tpl.setVoucherType(VOUCHER_TYPE_TRANSFER);
         tpl.setIsActive(true);
         dao.saveEntity(tpl);
@@ -261,7 +261,7 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
     }
 
     private ErpFinVoucherTemplateLine tplLine(Long templateId, int lineNo, String subjectCode,
-                                              int dcDirection, String amountKey) {
+                                              String dcDirection, String amountKey) {
         ErpFinVoucherTemplateLine line = new ErpFinVoucherTemplateLine();
         line.setTemplateId(templateId);
         line.setLineNo(lineNo);
@@ -277,9 +277,9 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
         ErpMdSubject subject = new ErpMdSubject();
         subject.setCode(code);
         subject.setName(name);
-        subject.setSubjectClass(10);
-        subject.setDirection(10);
-        subject.setStatus(10);
+        subject.setSubjectClass("ASSET");
+        subject.setDirection("DEBIT");
+        subject.setStatus("ACTIVE");
         dao.saveEntity(subject);
     }
 

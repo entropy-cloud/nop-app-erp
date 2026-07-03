@@ -34,7 +34,7 @@
                 <col id="fullName" sortable="true"/>
 
                 <!--性别-->
-                <col id="gender" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="gender" mandatory="true" sortable="true"/>
 
                 <!--出生日期-->
                 <col id="birthDate" sortable="true"/>
@@ -52,7 +52,7 @@
                 <col id="mobilePhone" sortable="true"/>
 
                 <!--婚姻状况-->
-                <col id="maritalStatus" ui:number="true" sortable="true"/>
+                <col id="maritalStatus" sortable="true"/>
 
                 <!--国籍-->
                 <col id="nationality" sortable="true"/>
@@ -94,10 +94,10 @@
                 <col id="resignationReason" sortable="true"/>
 
                 <!--雇佣状态-->
-                <col id="employmentStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="employmentStatus" mandatory="true" sortable="true"/>
 
                 <!--员工类型-->
-                <col id="employeeType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="employeeType" mandatory="true" sortable="true"/>
 
                 <!--工资卡账户-->
                 <col id="bankAccountId" ui:number="true" sortable="true"/>

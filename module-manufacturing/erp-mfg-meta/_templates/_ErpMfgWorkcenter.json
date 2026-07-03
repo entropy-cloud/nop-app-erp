@@ -2,7 +2,7 @@
   "id": 0,
   "code": "",
   "name": "",
-  "capacity": "",
+  "capacity": 0.0,
   "capacityUnit": "",
   "hourlyRate": 0.0,
   "workHoursPerDay": 0.0,

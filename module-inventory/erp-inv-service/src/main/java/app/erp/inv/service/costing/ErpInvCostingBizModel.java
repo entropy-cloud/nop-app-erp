@@ -18,6 +18,7 @@ import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -73,8 +74,8 @@ public class ErpInvCostingBizModel implements IErpInvCostingBiz {
             for (ErpInvStockMoveLine line : lines) {
                 List<ErpInvStockLedger> ledgers = findLedgers(move.getId(), line.getId());
                 for (ErpInvStockLedger ledger : ledgers) {
-                    int method = costMethodResolver.resolve(line, ledger.getAcctSchemaId());
-                    if (method != ErpInvConstants.COST_METHOD_FIFO) {
+                    String method = costMethodResolver.resolve(line, ledger.getAcctSchemaId());
+                    if (!Objects.equals(method, ErpInvConstants.COST_METHOD_FIFO)) {
                         continue;
                     }
                     if (ledger.getQuantity() != null && ledger.getQuantity().signum() > 0) {
@@ -113,7 +114,7 @@ public class ErpInvCostingBizModel implements IErpInvCostingBiz {
         }
         appendLayer(move, line, ledger, qty, unitCost, unitCost.multiply(qty));
         if (ledger.getCostMethod() == null
-                || ledger.getCostMethod() != ErpInvConstants.COST_METHOD_FIFO) {
+                || !Objects.equals(ledger.getCostMethod(), ErpInvConstants.COST_METHOD_FIFO)) {
             ledger.setCostMethod(ErpInvConstants.COST_METHOD_FIFO);
             daoProvider.daoFor(ErpInvStockLedger.class).saveOrUpdateEntity(ledger);
         }

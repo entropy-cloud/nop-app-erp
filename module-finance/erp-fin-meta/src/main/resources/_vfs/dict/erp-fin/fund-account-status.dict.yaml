@@ -1,15 +1,15 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 账户状态
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 启用
-    value: 10
+    value: ACTIVE
     description: 
   
   - label: 停用
-    value: 20
+    value: INACTIVE
     description: 
   

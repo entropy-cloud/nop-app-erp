@@ -125,11 +125,11 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
         seedSubject("1002", "银行存款");
     }
 
-    private Long seedPayable(String code, int notesType, Long creditFacilityId, BigDecimal amountFunctional) {
+    private Long seedPayable(String code, String notesType, Long creditFacilityId, BigDecimal amountFunctional) {
         return seedPayable(code, notesType, creditFacilityId, amountFunctional, null);
     }
 
-    private Long seedPayable(String code, int notesType, Long creditFacilityId, BigDecimal amountFunctional, Integer status) {
+    private Long seedPayable(String code, String notesType, Long creditFacilityId, BigDecimal amountFunctional, String status) {
         IEntityDao<ErpFinNotesPayable> dao = daoProvider.daoFor(ErpFinNotesPayable.class);
         ErpFinNotesPayable note = new ErpFinNotesPayable();
         note.setCode(code);
@@ -152,11 +152,11 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
         ErpFinCreditFacility facility = new ErpFinCreditFacility();
         facility.setCode(code);
         facility.setOrgId(1L);
-        facility.setFacilityType(10);
+        facility.setFacilityType("BANK_ACCEPTANCE_LINE");
         facility.setTotalAmount(total);
         facility.setUsedAmount(used);
         facility.setAvailableAmount(total.subtract(used));
-        facility.setStatus(10);
+        facility.setStatus("ACTIVE");
         dao.saveEntity(facility);
         return facility.getId();
     }
@@ -171,9 +171,9 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
         ErpMdSubject subject = new ErpMdSubject();
         subject.setCode(code);
         subject.setName(name);
-        subject.setSubjectClass(10);
-        subject.setDirection(10);
-        subject.setStatus(10);
+        subject.setSubjectClass("ASSET");
+        subject.setDirection("DEBIT");
+        subject.setStatus("ACTIVE");
         dao.saveEntity(subject);
     }
 
@@ -183,9 +183,9 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
-        schema.setNature(10);
+        schema.setNature("FINANCIAL");
         schema.setFunctionalCurrencyId(1L);
-        schema.setStatus(10);
+        schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
 
@@ -199,7 +199,7 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
         period.setMonth(month);
         period.setStartDate(start);
         period.setEndDate(end);
-        period.setStatus(10);
+        period.setStatus(ErpFinConstants.PERIOD_STATUS_OPEN);
         dao.saveEntity(period);
     }
 }

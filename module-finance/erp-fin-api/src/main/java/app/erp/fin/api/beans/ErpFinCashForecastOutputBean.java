@@ -97,16 +97,16 @@
         }
 
 
-        private Integer _direction;
+        private String _direction;
 
     
         @PropMeta(propId=7)
     
-        public Integer getDirection(){
+        public String getDirection(){
             return _direction;
         }
 
-        public void setDirection(Integer value){
+        public void setDirection(String value){
             this._direction = value;
         }
 

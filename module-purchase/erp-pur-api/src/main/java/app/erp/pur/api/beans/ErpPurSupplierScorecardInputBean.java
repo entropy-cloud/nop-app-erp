@@ -97,16 +97,16 @@
         }
 
 
-        private Integer _standing;
+        private String _standing;
 
     
         @PropMeta(propId=7)
     
-        public Integer getStanding(){
+        public String getStanding(){
             return _standing;
         }
 
-        public void setStanding(Integer value){
+        public void setStanding(String value){
             this._standing = value;
         }
 
@@ -153,16 +153,16 @@
         }
 
 
-        private Integer _status;
+        private String _status;
 
     
         @PropMeta(propId=11)
     
-        public Integer getStatus(){
+        public String getStatus(){
             return _status;
         }
 
-        public void setStatus(Integer value){
+        public void setStatus(String value){
             this._status = value;
         }
 

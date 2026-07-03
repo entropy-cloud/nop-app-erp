@@ -32,155 +32,155 @@
      ext:allowIdAsColName="true" ext:icon="landmark" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:biz="biz">
 
     <dicts>
-        <dict label="凭证字" name="erp-fin/voucher-type" valueType="int" i18n-en:label='Voucher Type'>
-            <option code="RECEIPT" label="收" value="10" i18n-en:label='Receive'/>
-            <option code="PAYMENT" label="付" value="20" i18n-en:label='Pay'/>
-            <option code="TRANSFER" label="转" value="30" i18n-en:label='Transfer'/>
+        <dict label="凭证字" name="erp-fin/voucher-type" valueType="string" i18n-en:label='Voucher Type'>
+            <option code="RECEIPT" label="收" value="RECEIPT" i18n-en:label='Receive'/>
+            <option code="PAYMENT" label="付" value="PAYMENT" i18n-en:label='Pay'/>
+            <option code="TRANSFER" label="转" value="TRANSFER" i18n-en:label='Transfer'/>
         </dict>
-        <dict label="过账类型" name="erp-fin/posting-type" valueType="int" i18n-en:label='Posting Type'>
-            <option code="NORMAL" label="正常过账" value="10" i18n-en:label='Normal'/>
-            <option code="OPENING_BALANCE" label="期初余额录入" value="20" i18n-en:label='Opening Balance'/>
-            <option code="ADJUSTMENT" label="调整" value="30" i18n-en:label='Adjustment'/>
-            <option code="CLOSING" label="期末结转" value="40" i18n-en:label='Period Closing'/>
-            <option code="REVERSAL" label="红字冲销" value="50" i18n-en:label='Reversal'/>
+        <dict label="过账类型" name="erp-fin/posting-type" valueType="string" i18n-en:label='Posting Type'>
+            <option code="NORMAL" label="正常过账" value="NORMAL" i18n-en:label='Normal'/>
+            <option code="OPENING_BALANCE" label="期初余额录入" value="OPENING_BALANCE" i18n-en:label='Opening Balance'/>
+            <option code="ADJUSTMENT" label="调整" value="ADJUSTMENT" i18n-en:label='Adjustment'/>
+            <option code="CLOSING" label="期末结转" value="CLOSING" i18n-en:label='Period Closing'/>
+            <option code="REVERSAL" label="红字冲销" value="REVERSAL" i18n-en:label='Reversal'/>
         </dict>
-        <dict label="凭证状态" name="erp-fin/voucher-status" valueType="int" i18n-en:label='Voucher Status'>
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label='Draft'/>
-            <option code="POSTED" label="已过账" value="20" i18n-en:label='Posted'/>
-            <option code="CANCELLED" label="已作废" value="30" i18n-en:label='Voided'/>
+        <dict label="凭证状态" name="erp-fin/voucher-status" valueType="string" i18n-en:label='Voucher Status'>
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label='Draft'/>
+            <option code="POSTED" label="已过账" value="POSTED" i18n-en:label='Posted'/>
+            <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label='Voided'/>
         </dict>
-        <dict label="借贷方向" name="erp-fin/dc-direction" valueType="int" i18n-en:label='Debit/Credit Direction'>
-            <option code="DEBIT" label="借" value="10" i18n-en:label='Debit'/>
-            <option code="CREDIT" label="贷" value="20" i18n-en:label='Credit'/>
+        <dict label="借贷方向" name="erp-fin/dc-direction" valueType="string" i18n-en:label='Debit/Credit Direction'>
+            <option code="DEBIT" label="借" value="DEBIT" i18n-en:label='Debit'/>
+            <option code="CREDIT" label="贷" value="CREDIT" i18n-en:label='Credit'/>
         </dict>
-        <dict label="业务类型" name="erp-fin/business-type" valueType="int" i18n-en:label='Business Type'>
-            <option code="PURCHASE_INPUT" label="采购入库" value="10" i18n-en:label='Purchase Receipt'/>
-            <option code="SALES_OUTPUT" label="销售出库" value="20" i18n-en:label='Sales Issue'/>
-            <option code="AP_INVOICE" label="应付发票" value="30" i18n-en:label='AP Invoice'/>
-            <option code="AR_INVOICE" label="应收发票" value="40" i18n-en:label='AR Invoice'/>
-            <option code="PAYMENT" label="付款" value="50" i18n-en:label='Payment'/>
-            <option code="RECEIPT" label="收款" value="60" i18n-en:label='Receipt'/>
-            <option code="DEPRECIATION" label="折旧" value="70" i18n-en:label='Depreciation'/>
-            <option code="CAPITALIZATION" label="资本化" value="80" i18n-en:label='Capitalization'/>
-            <option code="DISPOSAL" label="处置" value="90" i18n-en:label='Disposal'/>
-            <option code="PRODUCTION_COST" label="生产成本结转" value="100" i18n-en:label='Prod Cost Transfer'/>
-            <option code="PROJECT_COST" label="项目成本归集" value="110" i18n-en:label='Project Cost Accrual'/>
-            <option code="PERIOD_CLOSING" label="期末结转" value="120" i18n-en:label='Period-End Closing'/>
-            <option code="FX_REVALUATION" label="汇兑损益" value="130" i18n-en:label='FX Gain/Loss'/>
-            <option code="PURCHASE_RETURN" label="采购退货冲减" value="140" i18n-en:label='Purchase Return'/>
-            <option code="SALES_RETURN" label="销售退货冲减" value="150" i18n-en:label='Sales Return'/>
-            <option code="EXPENSE_CLAIM" label="费用报销" value="160" i18n-en:label='Expense Claim'/>
-            <option code="EMPLOYEE_ADVANCE" label="员工借款" value="170" i18n-en:label='Employee Advance'/>
-            <option code="EMPLOYEE_ADVANCE_SETTLE" label="借款清算" value="180" i18n-en:label='Advance Settlement'/>
-            <option code="NOTES_RECEIVABLE_RECEIVED" label="应收票据收到" value="190" i18n-en:label='Notes Receivable Received'/>
-            <option code="NOTES_RECEIVABLE_DISCOUNTED" label="票据贴现" value="200" i18n-en:label='Notes Discounted'/>
-            <option code="NOTES_RECEIVABLE_ENDORSED" label="票据背书转让" value="210" i18n-en:label='Notes Endorsed'/>
-            <option code="NOTES_RECEIVABLE_COLLECTION" label="票据托收承兑" value="220" i18n-en:label='Notes Collection'/>
-            <option code="NOTES_PAYABLE_ISSUED" label="开出应付票据" value="230" i18n-en:label='Notes Payable Issued'/>
-            <option code="NOTES_PAYABLE_HONORED" label="应付票据兑付" value="240" i18n-en:label='Notes Payable Honored'/>
-            <option code="CREDIT_FACILITY_INTEREST" label="授信利息" value="250" i18n-en:label='Credit Facility Interest'/>
+        <dict label="业务类型" name="erp-fin/business-type" valueType="string" i18n-en:label='Business Type'>
+            <option code="PURCHASE_INPUT" label="采购入库" value="PURCHASE_INPUT" i18n-en:label='Purchase Receipt'/>
+            <option code="SALES_OUTPUT" label="销售出库" value="SALES_OUTPUT" i18n-en:label='Sales Issue'/>
+            <option code="AP_INVOICE" label="应付发票" value="AP_INVOICE" i18n-en:label='AP Invoice'/>
+            <option code="AR_INVOICE" label="应收发票" value="AR_INVOICE" i18n-en:label='AR Invoice'/>
+            <option code="PAYMENT" label="付款" value="PAYMENT" i18n-en:label='Payment'/>
+            <option code="RECEIPT" label="收款" value="RECEIPT" i18n-en:label='Receipt'/>
+            <option code="DEPRECIATION" label="折旧" value="DEPRECIATION" i18n-en:label='Depreciation'/>
+            <option code="CAPITALIZATION" label="资本化" value="CAPITALIZATION" i18n-en:label='Capitalization'/>
+            <option code="DISPOSAL" label="处置" value="DISPOSAL" i18n-en:label='Disposal'/>
+            <option code="PRODUCTION_COST" label="生产成本结转" value="PRODUCTION_COST" i18n-en:label='Prod Cost Transfer'/>
+            <option code="PROJECT_COST" label="项目成本归集" value="PROJECT_COST" i18n-en:label='Project Cost Accrual'/>
+            <option code="PERIOD_CLOSING" label="期末结转" value="PERIOD_CLOSING" i18n-en:label='Period-End Closing'/>
+            <option code="FX_REVALUATION" label="汇兑损益" value="FX_REVALUATION" i18n-en:label='FX Gain/Loss'/>
+            <option code="PURCHASE_RETURN" label="采购退货冲减" value="PURCHASE_RETURN" i18n-en:label='Purchase Return'/>
+            <option code="SALES_RETURN" label="销售退货冲减" value="SALES_RETURN" i18n-en:label='Sales Return'/>
+            <option code="EXPENSE_CLAIM" label="费用报销" value="EXPENSE_CLAIM" i18n-en:label='Expense Claim'/>
+            <option code="EMPLOYEE_ADVANCE" label="员工借款" value="EMPLOYEE_ADVANCE" i18n-en:label='Employee Advance'/>
+            <option code="EMPLOYEE_ADVANCE_SETTLE" label="借款清算" value="EMPLOYEE_ADVANCE_SETTLE" i18n-en:label='Advance Settlement'/>
+            <option code="NOTES_RECEIVABLE_RECEIVED" label="应收票据收到" value="NOTES_RECEIVABLE_RECEIVED" i18n-en:label='Notes Receivable Received'/>
+            <option code="NOTES_RECEIVABLE_DISCOUNTED" label="票据贴现" value="NOTES_RECEIVABLE_DISCOUNTED" i18n-en:label='Notes Discounted'/>
+            <option code="NOTES_RECEIVABLE_ENDORSED" label="票据背书转让" value="NOTES_RECEIVABLE_ENDORSED" i18n-en:label='Notes Endorsed'/>
+            <option code="NOTES_RECEIVABLE_COLLECTION" label="票据托收承兑" value="NOTES_RECEIVABLE_COLLECTION" i18n-en:label='Notes Collection'/>
+            <option code="NOTES_PAYABLE_ISSUED" label="开出应付票据" value="NOTES_PAYABLE_ISSUED" i18n-en:label='Notes Payable Issued'/>
+            <option code="NOTES_PAYABLE_HONORED" label="应付票据兑付" value="NOTES_PAYABLE_HONORED" i18n-en:label='Notes Payable Honored'/>
+            <option code="CREDIT_FACILITY_INTEREST" label="授信利息" value="CREDIT_FACILITY_INTEREST" i18n-en:label='Credit Facility Interest'/>
         </dict>
-        <dict label="期间状态" name="erp-fin/period-status" valueType="int" i18n-en:label='Period Status'>
-            <option code="OPEN" label="开启" value="10" i18n-en:label='Open'/>
-            <option code="CLOSING" label="结账中" value="20" i18n-en:label='Closing'/>
-            <option code="CLOSED" label="已结账" value="30" i18n-en:label='Closed'/>
-            <option code="NEVER_OPENED" label="未开启" value="40" i18n-en:label='Not Open'/>
-            <option code="CLOSED_FINAL" label="已复核" value="50" i18n-en:label='Closed Final'/>
+        <dict label="期间状态" name="erp-fin/period-status" valueType="string" i18n-en:label='Period Status'>
+            <option code="OPEN" label="开启" value="OPEN" i18n-en:label='Open'/>
+            <option code="CLOSING" label="结账中" value="CLOSING" i18n-en:label='Closing'/>
+            <option code="CLOSED" label="已结账" value="CLOSED" i18n-en:label='Closed'/>
+            <option code="NEVER_OPENED" label="未开启" value="NEVER_OPENED" i18n-en:label='Not Open'/>
+            <option code="CLOSED_FINAL" label="已复核" value="CLOSED_FINAL" i18n-en:label='Closed Final'/>
         </dict>
-        <dict label="账户类型" name="erp-fin/fund-account-type" valueType="int" i18n-en:label='Account Type'>
-            <option code="BANK" label="银行" value="10" i18n-en:label='Bank'/>
-            <option code="CASH" label="现金" value="20" i18n-en:label='Cash'/>
-            <option code="ALIPAY" label="支付宝" value="30" i18n-en:label='Alipay'/>
-            <option code="WECHAT" label="微信" value="40" i18n-en:label='WeChat'/>
-            <option code="OTHER" label="其他" value="50" i18n-en:label='Other'/>
+        <dict label="账户类型" name="erp-fin/fund-account-type" valueType="string" i18n-en:label='Account Type'>
+            <option code="BANK" label="银行" value="BANK" i18n-en:label='Bank'/>
+            <option code="CASH" label="现金" value="CASH" i18n-en:label='Cash'/>
+            <option code="ALIPAY" label="支付宝" value="ALIPAY" i18n-en:label='Alipay'/>
+            <option code="WECHAT" label="微信" value="WECHAT" i18n-en:label='WeChat'/>
+            <option code="OTHER" label="其他" value="OTHER" i18n-en:label='Other'/>
         </dict>
-        <dict label="账户状态" name="erp-fin/fund-account-status" valueType="int" i18n-en:label='Account Status'>
-            <option code="ACTIVE" label="启用" value="10" i18n-en:label='Enabled'/>
-            <option code="INACTIVE" label="停用" value="20" i18n-en:label='Disabled'/>
+        <dict label="账户状态" name="erp-fin/fund-account-status" valueType="string" i18n-en:label='Account Status'>
+            <option code="ACTIVE" label="启用" value="ACTIVE" i18n-en:label='Enabled'/>
+            <option code="INACTIVE" label="停用" value="INACTIVE" i18n-en:label='Disabled'/>
         </dict>
-        <dict label="AR/AP 方向" name="erp-fin/ar-ap-direction" valueType="int" i18n-en:label='AR/AP Direction'>
-            <option code="RECEIVABLE" label="应收(AR)" value="10" i18n-en:label='AR'/>
-            <option code="PAYABLE" label="应付(AP)" value="20" i18n-en:label='AP'/>
+        <dict label="AR/AP 方向" name="erp-fin/ar-ap-direction" valueType="string" i18n-en:label='AR/AP Direction'>
+            <option code="RECEIVABLE" label="应收(AR)" value="RECEIVABLE" i18n-en:label='AR'/>
+            <option code="PAYABLE" label="应付(AP)" value="PAYABLE" i18n-en:label='AP'/>
         </dict>
-        <dict label="AR/AP 状态" name="erp-fin/ar-ap-status" valueType="int" i18n-en:label='AR/AP Status'>
-            <option code="OPEN" label="未核销" value="10" i18n-en:label='Unmatched'/>
-            <option code="PARTIAL" label="部分核销" value="20" i18n-en:label='Partially Matched'/>
-            <option code="SETTLED" label="已核销" value="30" i18n-en:label='Matched'/>
-            <option code="CANCELLED" label="已作废" value="40" i18n-en:label='Voided'/>
+        <dict label="AR/AP 状态" name="erp-fin/ar-ap-status" valueType="string" i18n-en:label='AR/AP Status'>
+            <option code="OPEN" label="未核销" value="OPEN" i18n-en:label='Unmatched'/>
+            <option code="PARTIAL" label="部分核销" value="PARTIAL" i18n-en:label='Partially Matched'/>
+            <option code="SETTLED" label="已核销" value="SETTLED" i18n-en:label='Matched'/>
+            <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label='Voided'/>
         </dict>
-        <dict label="核销单状态" name="erp-fin/reconciliation-status" valueType="int" i18n-en:label='Reconciliation Status'>
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label='Draft'/>
-            <option code="POSTED" label="已过账" value="20" i18n-en:label='Posted'/>
-            <option code="REVERSED" label="已红冲" value="30" i18n-en:label='Red Offset'/>
+        <dict label="核销单状态" name="erp-fin/reconciliation-status" valueType="string" i18n-en:label='Reconciliation Status'>
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label='Draft'/>
+            <option code="POSTED" label="已过账" value="POSTED" i18n-en:label='Posted'/>
+            <option code="REVERSED" label="已红冲" value="REVERSED" i18n-en:label='Red Offset'/>
         </dict>
-        <dict label="模块结账状态" name="erp-fin/module-close-status" valueType="int" i18n-en:label='Module Close Status'>
-            <option code="OPEN" label="未结" value="10" i18n-en:label='Unsettled'/>
-            <option code="CLOSING" label="结账中" value="20" i18n-en:label='Closing'/>
-            <option code="CLOSED" label="已结" value="30" i18n-en:label='Settled'/>
+        <dict label="模块结账状态" name="erp-fin/module-close-status" valueType="string" i18n-en:label='Module Close Status'>
+            <option code="OPEN" label="未结" value="OPEN" i18n-en:label='Unsettled'/>
+            <option code="CLOSING" label="结账中" value="CLOSING" i18n-en:label='Closing'/>
+            <option code="CLOSED" label="已结" value="CLOSED" i18n-en:label='Settled'/>
         </dict>
-        <dict label="审核状态" name="erp-fin/approve-status" valueType="int" i18n-en:label='Approval Status'>
-            <option code="UNSUBMITTED" label="未提交" value="10" i18n-en:label='Unsubmitted'/>
-            <option code="SUBMITTED" label="已提交" value="20" i18n-en:label='Submitted'/>
-            <option code="APPROVED" label="已审核" value="30" i18n-en:label='Approved'/>
-            <option code="REJECTED" label="已驳回" value="40" i18n-en:label='Rejected'/>
+        <dict label="审核状态" name="erp-fin/approve-status" valueType="string" i18n-en:label='Approval Status'>
+            <option code="UNSUBMITTED" label="未提交" value="UNSUBMITTED" i18n-en:label='Unsubmitted'/>
+            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label='Submitted'/>
+            <option code="APPROVED" label="已审核" value="APPROVED" i18n-en:label='Approved'/>
+            <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label='Rejected'/>
         </dict>
-        <dict label="报销付款方式" name="erp-fin/expense-payment-mode" valueType="int" i18n-en:label='Expense Payment Mode'>
-            <option code="OWN_ACCOUNT" label="员工垫付" value="10" i18n-en:label='Own Account'/>
-            <option code="COMPANY_ACCOUNT" label="公司直付" value="20" i18n-en:label='Company Account'/>
+        <dict label="报销付款方式" name="erp-fin/expense-payment-mode" valueType="string" i18n-en:label='Expense Payment Mode'>
+            <option code="OWN_ACCOUNT" label="员工垫付" value="OWN_ACCOUNT" i18n-en:label='Own Account'/>
+            <option code="COMPANY_ACCOUNT" label="公司直付" value="COMPANY_ACCOUNT" i18n-en:label='Company Account'/>
         </dict>
-        <dict label="费用类型" name="erp-fin/expense-type" valueType="int" i18n-en:label='Expense Type'>
-            <option code="TRAVEL" label="差旅" value="10" i18n-en:label='Travel'/>
-            <option code="ENTERTAINMENT" label="业务招待" value="20" i18n-en:label='Entertainment'/>
-            <option code="OFFICE" label="办公" value="30" i18n-en:label='Office'/>
-            <option code="COMMUNICATION" label="通讯" value="40" i18n-en:label='Communication'/>
-            <option code="TRANSPORTATION" label="交通" value="50" i18n-en:label='Transportation'/>
-            <option code="OTHER" label="其他" value="60" i18n-en:label='Other'/>
+        <dict label="费用类型" name="erp-fin/expense-type" valueType="string" i18n-en:label='Expense Type'>
+            <option code="TRAVEL" label="差旅" value="TRAVEL" i18n-en:label='Travel'/>
+            <option code="ENTERTAINMENT" label="业务招待" value="ENTERTAINMENT" i18n-en:label='Entertainment'/>
+            <option code="OFFICE" label="办公" value="OFFICE" i18n-en:label='Office'/>
+            <option code="COMMUNICATION" label="通讯" value="COMMUNICATION" i18n-en:label='Communication'/>
+            <option code="TRANSPORTATION" label="交通" value="TRANSPORTATION" i18n-en:label='Transportation'/>
+            <option code="OTHER" label="其他" value="OTHER" i18n-en:label='Other'/>
         </dict>
-        <dict label="借款类型" name="erp-fin/advance-type" valueType="int" i18n-en:label='Advance Type'>
-            <option code="EXPENSE_ADVANCE" label="费用预支" value="10" i18n-en:label='Expense Advance'/>
-            <option code="IMPREST" label="备用金" value="20" i18n-en:label='Imprest'/>
-            <option code="TRAVEL" label="差旅借款" value="30" i18n-en:label='Travel Advance'/>
+        <dict label="借款类型" name="erp-fin/advance-type" valueType="string" i18n-en:label='Advance Type'>
+            <option code="EXPENSE_ADVANCE" label="费用预支" value="EXPENSE_ADVANCE" i18n-en:label='Expense Advance'/>
+            <option code="IMPREST" label="备用金" value="IMPREST" i18n-en:label='Imprest'/>
+            <option code="TRAVEL" label="差旅借款" value="TRAVEL" i18n-en:label='Travel Advance'/>
         </dict>
-        <dict label="报销单状态" name="erp-fin/expense-claim-status" valueType="int" i18n-en:label='Expense Claim Status'>
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label='Draft'/>
-            <option code="SUBMITTED" label="已提交" value="20" i18n-en:label='Submitted'/>
-            <option code="APPROVED" label="已审核" value="30" i18n-en:label='Approved'/>
-            <option code="REJECTED" label="已驳回" value="40" i18n-en:label='Rejected'/>
-            <option code="CANCELLED" label="已作废" value="50" i18n-en:label='Cancelled'/>
+        <dict label="报销单状态" name="erp-fin/expense-claim-status" valueType="string" i18n-en:label='Expense Claim Status'>
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label='Draft'/>
+            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label='Submitted'/>
+            <option code="APPROVED" label="已审核" value="APPROVED" i18n-en:label='Approved'/>
+            <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label='Rejected'/>
+            <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label='Cancelled'/>
         </dict>
-        <dict label="借款单状态" name="erp-fin/advance-status" valueType="int" i18n-en:label='Advance Status'>
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label='Draft'/>
-            <option code="SUBMITTED" label="已提交" value="20" i18n-en:label='Submitted'/>
-            <option code="APPROVED" label="已审核" value="30" i18n-en:label='Approved'/>
-            <option code="REJECTED" label="已驳回" value="40" i18n-en:label='Rejected'/>
-            <option code="CANCELLED" label="已作废" value="50" i18n-en:label='Cancelled'/>
+        <dict label="借款单状态" name="erp-fin/advance-status" valueType="string" i18n-en:label='Advance Status'>
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label='Draft'/>
+            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label='Submitted'/>
+            <option code="APPROVED" label="已审核" value="APPROVED" i18n-en:label='Approved'/>
+            <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label='Rejected'/>
+            <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label='Cancelled'/>
         </dict>
-        <dict label="票据类型" name="erp-fin/notes-type" valueType="int" i18n-en:label='Notes Type'>
-            <option code="BANK_ACCEPTANCE" label="银行承兑汇票" value="10" i18n-en:label='Bank Acceptance'/>
-            <option code="COMMERCIAL_ACCEPTANCE" label="商业承兑汇票" value="20" i18n-en:label='Commercial Acceptance'/>
+        <dict label="票据类型" name="erp-fin/notes-type" valueType="string" i18n-en:label='Notes Type'>
+            <option code="BANK_ACCEPTANCE" label="银行承兑汇票" value="BANK_ACCEPTANCE" i18n-en:label='Bank Acceptance'/>
+            <option code="COMMERCIAL_ACCEPTANCE" label="商业承兑汇票" value="COMMERCIAL_ACCEPTANCE" i18n-en:label='Commercial Acceptance'/>
         </dict>
-        <dict label="应收票据状态" name="erp-fin/notes-receivable-status" valueType="int" i18n-en:label='Notes Receivable Status'>
-            <option code="RECEIVED" label="收到" value="10" i18n-en:label='Received'/>
-            <option code="DISCOUNTED" label="已贴现" value="20" i18n-en:label='Discounted'/>
-            <option code="ENDORSED" label="已背书" value="30" i18n-en:label='Endorsed'/>
-            <option code="COLLECTION_PENDING" label="托收中" value="40" i18n-en:label='Collection Pending'/>
-            <option code="HONORED" label="已承兑" value="50" i18n-en:label='Honored'/>
-            <option code="DISHONORED" label="已拒付" value="60" i18n-en:label='Dishonored'/>
-            <option code="WRITE_OFF" label="已注销" value="70" i18n-en:label='Written Off'/>
+        <dict label="应收票据状态" name="erp-fin/notes-receivable-status" valueType="string" i18n-en:label='Notes Receivable Status'>
+            <option code="RECEIVED" label="收到" value="RECEIVED" i18n-en:label='Received'/>
+            <option code="DISCOUNTED" label="已贴现" value="DISCOUNTED" i18n-en:label='Discounted'/>
+            <option code="ENDORSED" label="已背书" value="ENDORSED" i18n-en:label='Endorsed'/>
+            <option code="COLLECTION_PENDING" label="托收中" value="COLLECTION_PENDING" i18n-en:label='Collection Pending'/>
+            <option code="HONORED" label="已承兑" value="HONORED" i18n-en:label='Honored'/>
+            <option code="DISHONORED" label="已拒付" value="DISHONORED" i18n-en:label='Dishonored'/>
+            <option code="WRITE_OFF" label="已注销" value="WRITE_OFF" i18n-en:label='Written Off'/>
         </dict>
-        <dict label="应付票据状态" name="erp-fin/notes-payable-status" valueType="int" i18n-en:label='Notes Payable Status'>
-            <option code="ISSUED" label="已开出" value="10" i18n-en:label='Issued'/>
-            <option code="HONORED" label="已兑付" value="20" i18n-en:label='Honored'/>
-            <option code="DISHONORED" label="已拒付" value="30" i18n-en:label='Dishonored'/>
-            <option code="WRITE_OFF" label="已注销" value="40" i18n-en:label='Written Off'/>
+        <dict label="应付票据状态" name="erp-fin/notes-payable-status" valueType="string" i18n-en:label='Notes Payable Status'>
+            <option code="ISSUED" label="已开出" value="ISSUED" i18n-en:label='Issued'/>
+            <option code="HONORED" label="已兑付" value="HONORED" i18n-en:label='Honored'/>
+            <option code="DISHONORED" label="已拒付" value="DISHONORED" i18n-en:label='Dishonored'/>
+            <option code="WRITE_OFF" label="已注销" value="WRITE_OFF" i18n-en:label='Written Off'/>
         </dict>
-        <dict label="授信额度类型" name="erp-fin/credit-facility-type" valueType="int" i18n-en:label='Credit Facility Type'>
-            <option code="BANK_ACCEPTANCE_LINE" label="银行承兑额度" value="10" i18n-en:label='Bank Acceptance Line'/>
-            <option code="LOAN_LINE" label="贷款额度" value="20" i18n-en:label='Loan Line'/>
+        <dict label="授信额度类型" name="erp-fin/credit-facility-type" valueType="string" i18n-en:label='Credit Facility Type'>
+            <option code="BANK_ACCEPTANCE_LINE" label="银行承兑额度" value="BANK_ACCEPTANCE_LINE" i18n-en:label='Bank Acceptance Line'/>
+            <option code="LOAN_LINE" label="贷款额度" value="LOAN_LINE" i18n-en:label='Loan Line'/>
         </dict>
-        <dict label="现金流方向" name="erp-fin/cash-flow-direction" valueType="int" i18n-en:label='Cash Flow Direction'>
-            <option code="INFLOW" label="流入" value="10" i18n-en:label='Inflow'/>
-            <option code="OUTFLOW" label="流出" value="20" i18n-en:label='Outflow'/>
+        <dict label="现金流方向" name="erp-fin/cash-flow-direction" valueType="string" i18n-en:label='Cash Flow Direction'>
+            <option code="INFLOW" label="流入" value="INFLOW" i18n-en:label='Inflow'/>
+            <option code="OUTFLOW" label="流出" value="OUTFLOW" i18n-en:label='Outflow'/>
         </dict>
     </dicts>
 
@@ -216,8 +216,8 @@
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="凭证号" domain="voucherCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
-                <column name="voucherType" displayName="凭证字" ext:dict="erp-fin/voucher-type" mandatory="true" code="VOUCHER_TYPE" propId="3" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Voucher Type' />
-                <column name="postingType" displayName="过账类型" ext:dict="erp-fin/posting-type" code="POSTING_TYPE" propId="4" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Posting Type' />
+                <column name="voucherType" displayName="凭证字" ext:dict="erp-fin/voucher-type" mandatory="true" code="VOUCHER_TYPE" propId="3" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Voucher Type' />
+                <column name="postingType" displayName="过账类型" ext:dict="erp-fin/posting-type" code="POSTING_TYPE" propId="4" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Posting Type' />
                 <column name="voucherDate" displayName="凭证日期" stdSqlType="DATE" mandatory="true" code="VOUCHER_DATE" propId="5" stdDataType="date" i18n-en:displayName='Voucher Date' />
                 <column name="voucherNo" displayName="凭证编号" domain="voucherNo" code="VOUCHER_NO" propId="6" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Voucher No' />
                 <column name="orgId" displayName="核算组织" stdSqlType="BIGINT" mandatory="true" code="ORG_ID" propId="7" stdDataType="long" i18n-en:displayName='Organization' />
@@ -227,7 +227,7 @@
                 <column name="totalCredit" displayName="贷方合计(本位币)" domain="amount" defaultValue="0" code="TOTAL_CREDIT" propId="11" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Credit' />
                 <column name="isReversed" displayName="是否红字冲销凭证" stdSqlType="BOOLEAN" defaultValue="false" code="IS_REVERSED" propId="12" stdDataType="boolean" i18n-en:displayName='Is Reversed' />
                 <column name="reversalOfVoucherId" displayName="原冲销凭证ID" stdSqlType="BIGINT" code="REVERSAL_OF_VOUCHER_ID" propId="13" stdDataType="long" i18n-en:displayName='Reversal Of Voucher' />
-                <column name="docStatus" displayName="凭证状态" ext:dict="erp-fin/voucher-status" mandatory="true" code="DOC_STATUS" propId="14" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
+                <column name="docStatus" displayName="凭证状态" ext:dict="erp-fin/voucher-status" mandatory="true" code="DOC_STATUS" propId="14" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
                 <column name="postedBy" stdDomain="userId" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="15" stdDataType="string" i18n-en:displayName='Posted By' />
                 <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="16" stdDataType="datetime" i18n-en:displayName='Posted At' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="17" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
@@ -263,7 +263,7 @@
                 <column name="subjectId" displayName="科目ID" stdSqlType="BIGINT" mandatory="true" code="SUBJECT_ID" propId="4" stdDataType="long" i18n-en:displayName='Subject' />
                 <column name="subjectCode" displayName="科目编码" domain="subjectCode" mandatory="true" code="SUBJECT_CODE" propId="5" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Subject Code' />
                 <column name="subjectName" displayName="科目名称" domain="subjectName" code="SUBJECT_NAME" propId="6" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Subject Name' />
-                <column name="dcDirection" displayName="借贷方向" ext:dict="erp-fin/dc-direction" mandatory="true" code="DC_DIRECTION" propId="7" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Dc Direction' />
+                <column name="dcDirection" displayName="借贷方向" ext:dict="erp-fin/dc-direction" mandatory="true" code="DC_DIRECTION" propId="7" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Dc Direction' />
                 <column name="debitAmount" displayName="借方金额(本位币)" domain="amount" defaultValue="0" code="DEBIT_AMOUNT" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Debit Amount' />
                 <column name="creditAmount" displayName="贷方金额(本位币)" domain="amount" defaultValue="0" code="CREDIT_AMOUNT" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Credit Amount' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true" code="CURRENCY_ID" propId="10" stdDataType="long" i18n-en:displayName='Currency' />
@@ -279,7 +279,7 @@
                 <column name="projectId" displayName="辅助-项目" stdSqlType="BIGINT" code="PROJECT_ID" propId="19" stdDataType="long" i18n-en:displayName='Project' />
                 <column name="warehouseId" displayName="辅助-仓库" stdSqlType="BIGINT" code="WAREHOUSE_ID" propId="20" stdDataType="long" i18n-en:displayName='Warehouse' />
                 <column name="materialId" displayName="辅助-物料" stdSqlType="BIGINT" code="MATERIAL_ID" propId="21" stdDataType="long" i18n-en:displayName='Material' />
-                <column name="businessType" displayName="业务类型" ext:dict="erp-fin/business-type" code="BUSINESS_TYPE" propId="22" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Business Type' />
+                <column name="businessType" displayName="业务类型" ext:dict="erp-fin/business-type" code="BUSINESS_TYPE" propId="22" stdSqlType="VARCHAR" precision="30" stdDataType="string" i18n-en:displayName='Business Type' />
                 <column name="costCenterId" displayName="成本中心" stdSqlType="BIGINT" code="COST_CENTER_ID" propId="23" stdDataType="long" i18n-en:displayName='Cost Center' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="24" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="25" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -312,8 +312,8 @@
                 <column name="code" displayName="模板编码" domain="voucherCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
                 <column name="name" displayName="模板名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="NAME" propId="3" stdDataType="string" i18n-en:displayName='Name' />
                 <column name="acctSchemaId" displayName="账套(空表示所有账套通用)" stdSqlType="BIGINT" code="ACCT_SCHEMA_ID" propId="4" stdDataType="long" i18n-en:displayName='Acct Schema' />
-                <column name="businessType" displayName="业务类型" ext:dict="erp-fin/business-type" mandatory="true" code="BUSINESS_TYPE" propId="5" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Business Type' />
-                <column name="voucherType" displayName="凭证字" ext:dict="erp-fin/voucher-type" code="VOUCHER_TYPE" propId="6" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Voucher Type' />
+                <column name="businessType" displayName="业务类型" ext:dict="erp-fin/business-type" mandatory="true" code="BUSINESS_TYPE" propId="5" stdSqlType="VARCHAR" precision="30" stdDataType="string" i18n-en:displayName='Business Type' />
+                <column name="voucherType" displayName="凭证字" ext:dict="erp-fin/voucher-type" code="VOUCHER_TYPE" propId="6" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Voucher Type' />
                 <column name="templateType" displayName="模板类型" stdSqlType="VARCHAR" precision="50" code="TEMPLATE_TYPE" propId="7" stdDataType="string" i18n-en:displayName='Template Type' />
                 <column name="isActive" displayName="是否启用" stdSqlType="BOOLEAN" defaultValue="true" code="IS_ACTIVE" propId="8" stdDataType="boolean" i18n-en:displayName='Active' />
                 <column name="validFrom" displayName="生效日期" stdSqlType="DATE" code="VALID_FROM" propId="9" stdDataType="date" i18n-en:displayName='Valid From' />
@@ -340,7 +340,7 @@
                 <column name="templateId" displayName="模板ID" stdSqlType="BIGINT" mandatory="true" code="TEMPLATE_ID" propId="2" stdDataType="long" i18n-en:displayName='Template' />
                 <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int" i18n-en:displayName='Line No' />
                 <column name="subjectCode" displayName="科目编码(可含占位符)" domain="subjectCode" mandatory="true" code="SUBJECT_CODE" propId="4" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Subject Code' />
-                <column name="dcDirection" displayName="借贷方向" ext:dict="erp-fin/dc-direction" mandatory="true" code="DC_DIRECTION" propId="5" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Dc Direction' />
+                <column name="dcDirection" displayName="借贷方向" ext:dict="erp-fin/dc-direction" mandatory="true" code="DC_DIRECTION" propId="5" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Dc Direction' />
                 <column name="amountExpression" displayName="金额表达式" domain="amountExpression" code="AMOUNT_EXPRESSION" propId="6" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Amount Expression' />
                 <column name="accountKey" displayName="科目映射键" stdSqlType="VARCHAR" precision="50" code="ACCOUNT_KEY" propId="7" stdDataType="string" i18n-en:displayName='Account Key' />
                 <column name="amountKey" displayName="金额占位键" stdSqlType="VARCHAR" precision="50" code="AMOUNT_KEY" propId="8" stdDataType="string" i18n-en:displayName='Amount Key' />
@@ -367,7 +367,7 @@
                 <column name="billType" displayName="单据类型" stdSqlType="VARCHAR" precision="50" mandatory="true" code="BILL_TYPE" propId="3" stdDataType="string" i18n-en:displayName='Bill Type' />
                 <column name="billCode" displayName="单据编号" stdSqlType="VARCHAR" precision="50" mandatory="true" code="BILL_CODE" propId="4" stdDataType="string" i18n-en:displayName='Bill Code' />
                 <column name="billLineCode" displayName="单据行号" stdSqlType="VARCHAR" precision="50" code="BILL_LINE_CODE" propId="5" stdDataType="string" i18n-en:displayName='Bill Line Code' />
-                <column name="businessType" displayName="业务类型" ext:dict="erp-fin/business-type" code="BUSINESS_TYPE" propId="6" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Business Type' />
+                <column name="businessType" displayName="业务类型" ext:dict="erp-fin/business-type" code="BUSINESS_TYPE" propId="6" stdSqlType="VARCHAR" precision="30" stdDataType="string" i18n-en:displayName='Business Type' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="7" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="8" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="9" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
@@ -395,7 +395,7 @@
                 <column name="endDate" displayName="结束日期" stdSqlType="DATE" mandatory="true" code="END_DATE" propId="8" stdDataType="date" i18n-en:displayName='End Date' />
                 <column name="quarter" displayName="季度" stdSqlType="INTEGER" code="QUARTER" propId="9" stdDataType="int" i18n-en:displayName='Quarter' />
                 <column name="isAdjustment" displayName="是否调整期" stdSqlType="BOOLEAN" defaultValue="false" code="IS_ADJUSTMENT" propId="10" stdDataType="boolean" i18n-en:displayName='Is Adjustment' />
-                <column name="status" displayName="期间状态" ext:dict="erp-fin/period-status" mandatory="true" code="STATUS" propId="11" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
+                <column name="status" displayName="期间状态" ext:dict="erp-fin/period-status" mandatory="true" code="STATUS" propId="11" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
                 <column name="closedBy" stdDomain="userId" displayName="结账人" stdSqlType="VARCHAR" precision="36" code="CLOSED_BY" propId="12" stdDataType="string" i18n-en:displayName='Closed By' />
                 <column name="closedAt" displayName="结账时间" stdSqlType="DATETIME" code="CLOSED_AT" propId="13" stdDataType="datetime" i18n-en:displayName='Closed At' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="14" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
@@ -424,11 +424,11 @@
                 <column name="totalVouchers" displayName="凭证总数" stdSqlType="INTEGER" defaultValue="0" code="TOTAL_VOUCHERS" propId="4" stdDataType="int" i18n-en:displayName='Total Vouchers' />
                 <column name="postedVouchers" displayName="已过账凭证数" stdSqlType="INTEGER" defaultValue="0" code="POSTED_VOUCHERS" propId="5" stdDataType="int" i18n-en:displayName='Posted Vouchers' />
                 <column name="unpostedVouchers" displayName="未过账凭证数" stdSqlType="INTEGER" defaultValue="0" code="UNPOSTED_VOUCHERS" propId="6" stdDataType="int" i18n-en:displayName='Unposted Vouchers' />
-                <column name="arStatus" displayName="应收模块状态" ext:dict="erp-fin/module-close-status" mandatory="true" code="AR_STATUS" propId="7" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Ar Status' />
-                <column name="apStatus" displayName="应付模块状态" ext:dict="erp-fin/module-close-status" mandatory="true" code="AP_STATUS" propId="8" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Ap Status' />
-                <column name="invStatus" displayName="存货模块状态" ext:dict="erp-fin/module-close-status" mandatory="true" code="INV_STATUS" propId="9" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Inv Status' />
-                <column name="glStatus" displayName="总账模块状态" ext:dict="erp-fin/module-close-status" mandatory="true" code="GL_STATUS" propId="10" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Gl Status' />
-                <column name="assetStatus" displayName="资产模块状态" ext:dict="erp-fin/module-close-status" mandatory="true" code="ASSET_STATUS" propId="11" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Asset Status' />
+                <column name="arStatus" displayName="应收模块状态" ext:dict="erp-fin/module-close-status" mandatory="true" code="AR_STATUS" propId="7" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Ar Status' />
+                <column name="apStatus" displayName="应付模块状态" ext:dict="erp-fin/module-close-status" mandatory="true" code="AP_STATUS" propId="8" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Ap Status' />
+                <column name="invStatus" displayName="存货模块状态" ext:dict="erp-fin/module-close-status" mandatory="true" code="INV_STATUS" propId="9" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Inv Status' />
+                <column name="glStatus" displayName="总账模块状态" ext:dict="erp-fin/module-close-status" mandatory="true" code="GL_STATUS" propId="10" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Gl Status' />
+                <column name="assetStatus" displayName="资产模块状态" ext:dict="erp-fin/module-close-status" mandatory="true" code="ASSET_STATUS" propId="11" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Asset Status' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="12" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="13" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="14" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
@@ -451,7 +451,7 @@
                 <column name="code" displayName="单号" domain="voucherCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
                 <column name="orgId" displayName="组织" stdSqlType="BIGINT" mandatory="true" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="acctSchemaId" displayName="账套" stdSqlType="BIGINT" mandatory="true" code="ACCT_SCHEMA_ID" propId="4" stdDataType="long" i18n-en:displayName='Acct Schema' />
-                <column name="direction" displayName="应收应付" ext:dict="erp-fin/ar-ap-direction" mandatory="true" code="DIRECTION" propId="5" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Direction' />
+                <column name="direction" displayName="应收应付" ext:dict="erp-fin/ar-ap-direction" mandatory="true" code="DIRECTION" propId="5" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Direction' />
                 <column name="partnerId" displayName="往来单位" stdSqlType="BIGINT" mandatory="true" code="PARTNER_ID" propId="6" stdDataType="long" i18n-en:displayName='Partner' />
                 <column name="sourceBillType" displayName="来源单据类型(AP_INVOICE/AR_INVOICE/PAYMENT/RECEIPT)" stdSqlType="VARCHAR" precision="50" mandatory="true" code="SOURCE_BILL_TYPE" propId="7" stdDataType="string" i18n-en:displayName='Source Bill Type' />
                 <column name="sourceBillCode" displayName="来源单据号" stdSqlType="VARCHAR" precision="50" mandatory="true" code="SOURCE_BILL_CODE" propId="8" stdDataType="string" i18n-en:displayName='Source Bill Code' />
@@ -465,7 +465,7 @@
                 <column name="settledAmountFunctional" displayName="已核销本位币金额" domain="amount" defaultValue="0" code="SETTLED_AMOUNT_FUNCTIONAL" propId="16" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Settled Amount Functional' />
                 <column name="openAmountSource" displayName="未核销源币金额" domain="amount" mandatory="true" code="OPEN_AMOUNT_SOURCE" propId="17" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Open Amount Source' />
                 <column name="openAmountFunctional" displayName="未核销本位币金额" domain="amount" mandatory="true" code="OPEN_AMOUNT_FUNCTIONAL" propId="18" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Open Amount Functional' />
-                <column name="status" displayName="状态" ext:dict="erp-fin/ar-ap-status" mandatory="true" code="STATUS" propId="19" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
+                <column name="status" displayName="状态" ext:dict="erp-fin/ar-ap-status" mandatory="true" code="STATUS" propId="19" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
                 <column name="periodId" displayName="所属期间" stdSqlType="BIGINT" code="PERIOD_ID" propId="20" stdDataType="long" i18n-en:displayName='Period' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="21" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="22" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
@@ -497,7 +497,7 @@
                 <column name="code" displayName="单号" domain="voucherCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
                 <column name="orgId" displayName="组织" stdSqlType="BIGINT" mandatory="true" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="acctSchemaId" displayName="账套" stdSqlType="BIGINT" mandatory="true" code="ACCT_SCHEMA_ID" propId="4" stdDataType="long" i18n-en:displayName='Acct Schema' />
-                <column name="direction" displayName="应收应付" ext:dict="erp-fin/ar-ap-direction" mandatory="true" code="DIRECTION" propId="5" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Direction' />
+                <column name="direction" displayName="应收应付" ext:dict="erp-fin/ar-ap-direction" mandatory="true" code="DIRECTION" propId="5" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Direction' />
                 <column name="partnerId" displayName="往来单位" stdSqlType="BIGINT" mandatory="true" code="PARTNER_ID" propId="6" stdDataType="long" i18n-en:displayName='Partner' />
                 <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="7" stdDataType="date" i18n-en:displayName='Business Date' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true" code="CURRENCY_ID" propId="8" stdDataType="long" i18n-en:displayName='Currency' />
@@ -505,7 +505,7 @@
                 <column name="totalAmountSource" displayName="核销总额(源币)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT_SOURCE" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Amount Source' />
                 <column name="totalAmountFunctional" displayName="核销总额(本位币)" domain="amount" defaultValue="0" code="TOTAL_AMOUNT_FUNCTIONAL" propId="11" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Amount Functional' />
                 <column name="fxGainLoss" displayName="汇兑损益" domain="amount" defaultValue="0" code="FX_GAIN_LOSS" propId="12" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Fx Gain Loss' />
-                <column name="docStatus" displayName="状态" ext:dict="erp-fin/reconciliation-status" mandatory="true" code="DOC_STATUS" propId="13" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
+                <column name="docStatus" displayName="状态" ext:dict="erp-fin/reconciliation-status" mandatory="true" code="DOC_STATUS" propId="13" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
                 <column name="postedBy" stdDomain="userId" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="14" stdDataType="string" i18n-en:displayName='Posted By' />
                 <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="15" stdDataType="datetime" i18n-en:displayName='Posted At' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="16" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
@@ -657,14 +657,14 @@
                 <column name="code" displayName="账户编码" domain="voucherCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
                 <column name="name" displayName="账户名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="NAME" propId="3" stdDataType="string" i18n-en:displayName='Name' />
                 <column name="orgId" displayName="所属组织" stdSqlType="BIGINT" code="ORG_ID" propId="4" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="accountType" displayName="账户类型" ext:dict="erp-fin/fund-account-type" mandatory="true" code="ACCOUNT_TYPE" propId="5" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Account Type' />
+                <column name="accountType" displayName="账户类型" ext:dict="erp-fin/fund-account-type" mandatory="true" code="ACCOUNT_TYPE" propId="5" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Account Type' />
                 <column name="subjectId" displayName="对应会计科目" stdSqlType="BIGINT" code="SUBJECT_ID" propId="6" stdDataType="long" i18n-en:displayName='Subject' />
                 <column name="bankName" displayName="开户银行" stdSqlType="VARCHAR" precision="200" code="BANK_NAME" propId="7" stdDataType="string" i18n-en:displayName='Bank Name' />
                 <column name="bankAccount" displayName="银行账号" stdSqlType="VARCHAR" precision="50" code="BANK_ACCOUNT" propId="8" stdDataType="string" i18n-en:displayName='Bank Account' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true" code="CURRENCY_ID" propId="9" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="openingBalance" displayName="期初余额" domain="amount" defaultValue="0" code="OPENING_BALANCE" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Opening Balance' />
                 <column name="currentBalance" displayName="当前余额" domain="amount" defaultValue="0" code="CURRENT_BALANCE" propId="11" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Current Balance' />
-                <column name="status" displayName="状态" ext:dict="erp-fin/fund-account-status" mandatory="true" code="STATUS" propId="12" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
+                <column name="status" displayName="状态" ext:dict="erp-fin/fund-account-status" mandatory="true" code="STATUS" propId="12" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="14" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="15" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -697,7 +697,7 @@
                 <column name="totalDebit" displayName="借方发生额" domain="amount" defaultValue="0" code="TOTAL_DEBIT" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Debit' />
                 <column name="totalCredit" displayName="贷方发生额" domain="amount" defaultValue="0" code="TOTAL_CREDIT" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Credit' />
                 <column name="importTime" displayName="导入时间" stdSqlType="DATETIME" code="IMPORT_TIME" propId="10" stdDataType="datetime" i18n-en:displayName='Import Time' />
-                <column name="docStatus" displayName="状态" ext:dict="erp-fin/voucher-status" mandatory="true" code="DOC_STATUS" propId="11" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
+                <column name="docStatus" displayName="状态" ext:dict="erp-fin/voucher-status" mandatory="true" code="DOC_STATUS" propId="11" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="13" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="14" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -725,11 +725,11 @@
                 <column name="transactionDate" displayName="交易日期" stdSqlType="DATE" mandatory="true" code="TRANSACTION_DATE" propId="4" stdDataType="date" i18n-en:displayName='Transaction Date' />
                 <column name="description" displayName="摘要(银行)" domain="memo" code="DESCRIPTION" propId="5" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Description' />
                 <column name="refNo" displayName="银行参考号" stdSqlType="VARCHAR" precision="50" code="REF_NO" propId="6" stdDataType="string" i18n-en:displayName='Reference No' />
-                <column name="dcDirection" displayName="借贷方向" ext:dict="erp-fin/dc-direction" mandatory="true" code="DC_DIRECTION" propId="7" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Dc Direction' />
+                <column name="dcDirection" displayName="借贷方向" ext:dict="erp-fin/dc-direction" mandatory="true" code="DC_DIRECTION" propId="7" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Dc Direction' />
                 <column name="amount" displayName="金额" domain="amount" mandatory="true" code="AMOUNT" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amount' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true" code="CURRENCY_ID" propId="9" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="balanceAfter" displayName="交易后余额" domain="amount" code="BALANCE_AFTER" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Balance After' />
-                <column name="matchStatus" displayName="匹配状态" ext:dict="erp-fin/ar-ap-status" mandatory="true" code="MATCH_STATUS" propId="11" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Match Status' />
+                <column name="matchStatus" displayName="匹配状态" ext:dict="erp-fin/ar-ap-status" mandatory="true" code="MATCH_STATUS" propId="11" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Match Status' />
                 <column name="matchedLineId" displayName="匹配凭证行ID" stdSqlType="BIGINT" code="MATCHED_LINE_ID" propId="12" stdDataType="long" i18n-en:displayName='Matched Line' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="14" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
@@ -763,7 +763,7 @@
                 <column name="isBalanced" displayName="是否平衡" stdSqlType="BOOLEAN" defaultValue="false" code="IS_BALANCED" propId="10" stdDataType="boolean" i18n-en:displayName='Is Balanced' />
                 <column name="reconciledAt" displayName="对账完成时间" stdSqlType="DATETIME" code="RECONCILED_AT" propId="11" stdDataType="datetime" i18n-en:displayName='Reconciled At' />
                 <column name="reconciledBy" displayName="对账人" stdSqlType="BIGINT" code="RECONCILED_BY" propId="12" stdDataType="long" i18n-en:displayName='Reconciled By' />
-                <column name="docStatus" displayName="状态" ext:dict="erp-fin/voucher-status" mandatory="true" code="DOC_STATUS" propId="13" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
+                <column name="docStatus" displayName="状态" ext:dict="erp-fin/voucher-status" mandatory="true" code="DOC_STATUS" propId="13" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="14" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="15" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="16" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -792,7 +792,7 @@
                 <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int" i18n-en:displayName='Line No' />
                 <column name="adjustmentType" displayName="调整类型" stdSqlType="VARCHAR" precision="50" mandatory="true" code="ADJUSTMENT_TYPE" propId="4" stdDataType="string" i18n-en:displayName='Adjustment Type' />
                 <column name="description" displayName="说明" domain="memo" code="DESCRIPTION" propId="5" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Description' />
-                <column name="dcDirection" displayName="借贷方向" ext:dict="erp-fin/dc-direction" mandatory="true" code="DC_DIRECTION" propId="6" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Dc Direction' />
+                <column name="dcDirection" displayName="借贷方向" ext:dict="erp-fin/dc-direction" mandatory="true" code="DC_DIRECTION" propId="6" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Dc Direction' />
                 <column name="amount" displayName="金额" domain="amount" mandatory="true" code="AMOUNT" propId="7" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amount' />
                 <column name="side" displayName="调整方" stdSqlType="VARCHAR" precision="20" mandatory="true" code="SIDE" propId="8" stdDataType="string" i18n-en:displayName='Side' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
@@ -819,7 +819,7 @@
                 <column name="claimantId" displayName="报销人" stdSqlType="BIGINT" mandatory="true" code="CLAIMANT_ID" propId="4" stdDataType="long" i18n-en:displayName='Claimant' />
                 <column name="departmentId" displayName="部门" stdSqlType="BIGINT" code="DEPARTMENT_ID" propId="5" stdDataType="long" i18n-en:displayName='Department' />
                 <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="6" stdDataType="date" i18n-en:displayName='Business Date' />
-                <column name="paymentMode" displayName="付款方式" ext:dict="erp-fin/expense-payment-mode" mandatory="true" code="PAYMENT_MODE" propId="7" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Payment Mode' />
+                <column name="paymentMode" displayName="付款方式" ext:dict="erp-fin/expense-payment-mode" mandatory="true" code="PAYMENT_MODE" propId="7" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Payment Mode' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true" code="CURRENCY_ID" propId="8" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="9" stdSqlType="DECIMAL" precision="20" scale="8" i18n-en:displayName='Exchange Rate' />
                 <column name="amountSource" displayName="源币种金额" domain="amount" defaultValue="0" code="AMOUNT_SOURCE" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amt (Source)' />
@@ -829,8 +829,8 @@
                 <column name="amountWithTax" displayName="价税合计" domain="amount" defaultValue="0" code="AMOUNT_WITH_TAX" propId="14" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amt With Tax' />
                 <column name="settleAdvanceId" displayName="抵扣借款单" stdSqlType="BIGINT" code="SETTLE_ADVANCE_ID" propId="15" stdDataType="long" i18n-en:displayName='Settle Advance' />
                 <column name="reason" displayName="报销事由" domain="memo" code="REASON" propId="16" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Reason' />
-                <column name="docStatus" displayName="单据状态" ext:dict="erp-fin/expense-claim-status" mandatory="true" code="DOC_STATUS" propId="17" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
-                <column name="approveStatus" displayName="审核状态" ext:dict="erp-fin/approve-status" mandatory="true" code="APPROVE_STATUS" propId="18" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Approve Status' />
+                <column name="docStatus" displayName="单据状态" ext:dict="erp-fin/expense-claim-status" mandatory="true" code="DOC_STATUS" propId="17" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
+                <column name="approveStatus" displayName="审核状态" ext:dict="erp-fin/approve-status" mandatory="true" code="APPROVE_STATUS" propId="18" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approve Status' />
                 <column name="approvedBy" stdDomain="userId" displayName="审核人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="19" stdDataType="string" i18n-en:displayName='Approved By' />
                 <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="20" stdDataType="datetime" i18n-en:displayName='Approved At' />
                 <column name="posted" displayName="是否已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="21" stdDataType="boolean" i18n-en:displayName='Posted' />
@@ -862,7 +862,7 @@
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="claimId" displayName="报销单ID" stdSqlType="BIGINT" mandatory="true" code="CLAIM_ID" propId="2" stdDataType="long" i18n-en:displayName='Claim' />
                 <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int" i18n-en:displayName='Line No' />
-                <column name="expenseType" displayName="费用类型" ext:dict="erp-fin/expense-type" mandatory="true" code="EXPENSE_TYPE" propId="4" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Expense Type' />
+                <column name="expenseType" displayName="费用类型" ext:dict="erp-fin/expense-type" mandatory="true" code="EXPENSE_TYPE" propId="4" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Expense Type' />
                 <column name="projectId" displayName="项目" stdSqlType="BIGINT" code="PROJECT_ID" propId="5" stdDataType="long" i18n-en:displayName='Project' />
                 <column name="costCenterId" displayName="成本中心" stdSqlType="BIGINT" code="COST_CENTER_ID" propId="6" stdDataType="long" i18n-en:displayName='Cost Center' />
                 <column name="subjectId" displayName="费用科目" stdSqlType="BIGINT" code="SUBJECT_ID" propId="7" stdDataType="long" i18n-en:displayName='Subject' />
@@ -896,7 +896,7 @@
                 <column name="code" displayName="单号" domain="voucherCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
                 <column name="orgId" displayName="核算组织" stdSqlType="BIGINT" mandatory="true" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="employeeId" displayName="借款人" stdSqlType="BIGINT" mandatory="true" code="EMPLOYEE_ID" propId="4" stdDataType="long" i18n-en:displayName='Employee' />
-                <column name="advanceType" displayName="借款类型" ext:dict="erp-fin/advance-type" mandatory="true" code="ADVANCE_TYPE" propId="5" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Advance Type' />
+                <column name="advanceType" displayName="借款类型" ext:dict="erp-fin/advance-type" mandatory="true" code="ADVANCE_TYPE" propId="5" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Advance Type' />
                 <column name="businessDate" displayName="借款日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="6" stdDataType="date" i18n-en:displayName='Business Date' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true" code="CURRENCY_ID" propId="7" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="8" stdSqlType="DECIMAL" precision="20" scale="8" i18n-en:displayName='Exchange Rate' />
@@ -905,8 +905,8 @@
                 <column name="settledAmount" displayName="已清算金额" domain="amount" defaultValue="0" code="SETTLED_AMOUNT" propId="11" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Settled Amount' />
                 <column name="outstandingAmount" displayName="未还金额" domain="amount" defaultValue="0" code="OUTSTANDING_AMOUNT" propId="12" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Outstanding Amount' />
                 <column name="projectId" displayName="关联项目" stdSqlType="BIGINT" code="PROJECT_ID" propId="13" stdDataType="long" i18n-en:displayName='Project' />
-                <column name="docStatus" displayName="单据状态" ext:dict="erp-fin/advance-status" mandatory="true" code="DOC_STATUS" propId="14" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Doc Status' />
-                <column name="approveStatus" displayName="审核状态" ext:dict="erp-fin/approve-status" mandatory="true" code="APPROVE_STATUS" propId="15" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Approve Status' />
+                <column name="docStatus" displayName="单据状态" ext:dict="erp-fin/advance-status" mandatory="true" code="DOC_STATUS" propId="14" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
+                <column name="approveStatus" displayName="审核状态" ext:dict="erp-fin/approve-status" mandatory="true" code="APPROVE_STATUS" propId="15" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approve Status' />
                 <column name="approvedBy" stdDomain="userId" displayName="审核人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="16" stdDataType="string" i18n-en:displayName='Approved By' />
                 <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="17" stdDataType="datetime" i18n-en:displayName='Approved At' />
                 <column name="posted" displayName="是否已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="18" stdDataType="boolean" i18n-en:displayName='Posted' />
@@ -936,7 +936,7 @@
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="单号" domain="voucherCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
                 <column name="orgId" displayName="核算组织" stdSqlType="BIGINT" mandatory="true" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="notesType" displayName="票据类型" ext:dict="erp-fin/notes-type" mandatory="true" code="NOTES_TYPE" propId="4" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Notes Type' />
+                <column name="notesType" displayName="票据类型" ext:dict="erp-fin/notes-type" mandatory="true" code="NOTES_TYPE" propId="4" stdSqlType="VARCHAR" precision="30" stdDataType="string" i18n-en:displayName='Notes Type' />
                 <column name="notesNo" displayName="票据号" stdSqlType="VARCHAR" precision="50" code="NOTES_NO" propId="5" stdDataType="string" i18n-en:displayName='Notes No' />
                 <column name="drawerName" displayName="出票人" stdSqlType="VARCHAR" precision="200" code="DRAWER_NAME" propId="6" stdDataType="string" i18n-en:displayName='Drawer Name' />
                 <column name="drawerBank" displayName="出票行" stdSqlType="VARCHAR" precision="200" code="DRAWER_BANK" propId="7" stdDataType="string" i18n-en:displayName='Drawer Bank' />
@@ -952,7 +952,7 @@
                 <column name="sourceBillType" displayName="来源单据类型" stdSqlType="VARCHAR" precision="50" code="SOURCE_BILL_TYPE" propId="17" stdDataType="string" i18n-en:displayName='Source Bill Type' />
                 <column name="sourceBillCode" displayName="来源单据号" stdSqlType="VARCHAR" precision="50" code="SOURCE_BILL_CODE" propId="18" stdDataType="string" i18n-en:displayName='Source Bill Code' />
                 <column name="discountId" displayName="贴现明细" stdSqlType="BIGINT" code="DISCOUNT_ID" propId="19" stdDataType="long" i18n-en:displayName='Discount' />
-                <column name="status" displayName="票据状态" ext:dict="erp-fin/notes-receivable-status" code="STATUS" propId="20" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
+                <column name="status" displayName="票据状态" ext:dict="erp-fin/notes-receivable-status" code="STATUS" propId="20" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
                 <column name="posted" displayName="是否已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="21" stdDataType="boolean" i18n-en:displayName='Posted' />
                 <column name="postedBy" stdDomain="userId" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="22" stdDataType="string" i18n-en:displayName='Posted By' />
                 <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="23" stdDataType="datetime" i18n-en:displayName='Posted At' />
@@ -978,7 +978,7 @@
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="单号" domain="voucherCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
                 <column name="orgId" displayName="核算组织" stdSqlType="BIGINT" mandatory="true" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="notesType" displayName="票据类型" ext:dict="erp-fin/notes-type" mandatory="true" code="NOTES_TYPE" propId="4" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Notes Type' />
+                <column name="notesType" displayName="票据类型" ext:dict="erp-fin/notes-type" mandatory="true" code="NOTES_TYPE" propId="4" stdSqlType="VARCHAR" precision="30" stdDataType="string" i18n-en:displayName='Notes Type' />
                 <column name="notesNo" displayName="票据号" stdSqlType="VARCHAR" precision="50" code="NOTES_NO" propId="5" stdDataType="string" i18n-en:displayName='Notes No' />
                 <column name="payeeName" displayName="收款人" stdSqlType="VARCHAR" precision="200" code="PAYEE_NAME" propId="6" stdDataType="string" i18n-en:displayName='Payee Name' />
                 <column name="payeeBank" displayName="收款行" stdSqlType="VARCHAR" precision="200" code="PAYEE_BANK" propId="7" stdDataType="string" i18n-en:displayName='Payee Bank' />
@@ -992,7 +992,7 @@
                 <column name="creditFacilityId" displayName="占用授信额度" stdSqlType="BIGINT" code="CREDIT_FACILITY_ID" propId="15" stdDataType="long" i18n-en:displayName='Credit Facility' />
                 <column name="sourceBillType" displayName="来源单据类型" stdSqlType="VARCHAR" precision="50" code="SOURCE_BILL_TYPE" propId="16" stdDataType="string" i18n-en:displayName='Source Bill Type' />
                 <column name="sourceBillCode" displayName="来源单据号" stdSqlType="VARCHAR" precision="50" code="SOURCE_BILL_CODE" propId="17" stdDataType="string" i18n-en:displayName='Source Bill Code' />
-                <column name="status" displayName="票据状态" ext:dict="erp-fin/notes-payable-status" code="STATUS" propId="18" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
+                <column name="status" displayName="票据状态" ext:dict="erp-fin/notes-payable-status" code="STATUS" propId="18" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
                 <column name="posted" displayName="是否已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="19" stdDataType="boolean" i18n-en:displayName='Posted' />
                 <column name="postedBy" stdDomain="userId" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="20" stdDataType="string" i18n-en:displayName='Posted By' />
                 <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="21" stdDataType="datetime" i18n-en:displayName='Posted At' />
@@ -1051,13 +1051,13 @@
                 <column name="code" displayName="单号" domain="voucherCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
                 <column name="orgId" displayName="核算组织" stdSqlType="BIGINT" mandatory="true" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="fundAccountId" displayName="授信银行账户" stdSqlType="BIGINT" code="FUND_ACCOUNT_ID" propId="4" stdDataType="long" i18n-en:displayName='Fund Account' />
-                <column name="facilityType" displayName="授信类型" ext:dict="erp-fin/credit-facility-type" mandatory="true" code="FACILITY_TYPE" propId="5" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Facility Type' />
+                <column name="facilityType" displayName="授信类型" ext:dict="erp-fin/credit-facility-type" mandatory="true" code="FACILITY_TYPE" propId="5" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Facility Type' />
                 <column name="totalAmount" displayName="授信总额" domain="amount" defaultValue="0" code="TOTAL_AMOUNT" propId="6" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Amount' />
                 <column name="usedAmount" displayName="已用额度" domain="amount" defaultValue="0" code="USED_AMOUNT" propId="7" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Used Amount' />
                 <column name="availableAmount" displayName="可用额度" domain="amount" defaultValue="0" code="AVAILABLE_AMOUNT" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Available Amount' />
                 <column name="validFrom" displayName="生效日" stdSqlType="DATE" code="VALID_FROM" propId="9" stdDataType="date" i18n-en:displayName='Valid From' />
                 <column name="validTo" displayName="到期日" stdSqlType="DATE" code="VALID_TO" propId="10" stdDataType="date" i18n-en:displayName='Valid To' />
-                <column name="status" displayName="状态" ext:dict="erp-fin/fund-account-status" code="STATUS" propId="11" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
+                <column name="status" displayName="状态" ext:dict="erp-fin/fund-account-status" code="STATUS" propId="11" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="13" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="14" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -1081,7 +1081,7 @@
                 <column name="forecastDate" displayName="预测日期" stdSqlType="DATE" mandatory="true" code="FORECAST_DATE" propId="4" stdDataType="date" i18n-en:displayName='Forecast Date' />
                 <column name="sourceBillType" displayName="来源单据类型" stdSqlType="VARCHAR" precision="50" code="SOURCE_BILL_TYPE" propId="5" stdDataType="string" i18n-en:displayName='Source Bill Type' />
                 <column name="sourceBillCode" displayName="来源单据号" stdSqlType="VARCHAR" precision="50" code="SOURCE_BILL_CODE" propId="6" stdDataType="string" i18n-en:displayName='Source Bill Code' />
-                <column name="direction" displayName="现金流方向" ext:dict="erp-fin/cash-flow-direction" code="DIRECTION" propId="7" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Direction' />
+                <column name="direction" displayName="现金流方向" ext:dict="erp-fin/cash-flow-direction" code="DIRECTION" propId="7" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Direction' />
                 <column name="partnerId" displayName="往来单位" stdSqlType="BIGINT" code="PARTNER_ID" propId="8" stdDataType="long" i18n-en:displayName='Partner' />
                 <column name="amountSource" displayName="源币种金额" domain="amount" defaultValue="0" code="AMOUNT_SOURCE" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amt (Source)' />
                 <column name="amountFunctional" displayName="本位币金额" domain="amount" defaultValue="0" code="AMOUNT_FUNCTIONAL" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amt (Functional)' />

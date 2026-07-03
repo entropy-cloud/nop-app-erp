@@ -33,7 +33,7 @@
         </prop>
         <prop name="capacity" displayName="产能" propId="4" i18n-en:displayName="Capacity" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="capacity" type="java.lang.String" precision="16" scale="4"/>
+            <schema domain="capacity" type="java.math.BigDecimal" precision="16" scale="4"/>
         </prop>
         <prop name="capacityUnit" displayName="产能单位" propId="5" i18n-en:displayName="Capacity Unit" queryable="true"
               sortable="true" insertable="true" updatable="true">

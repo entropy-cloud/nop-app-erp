@@ -30,36 +30,36 @@ public interface ErpFinConstants {
     String CONFIG_EXPENSE_REASON_REQUIRED = "erp-fin.expense-reason-required";
 
     // ---- ar-ap-direction ----
-    int DIRECTION_RECEIVABLE = 10;
-    int DIRECTION_PAYABLE = 20;
+    String DIRECTION_RECEIVABLE = "RECEIVABLE";
+    String DIRECTION_PAYABLE = "PAYABLE";
 
     // ---- ar-ap-status ----
-    int AR_AP_STATUS_OPEN = 10;
-    int AR_AP_STATUS_PARTIAL = 20;
-    int AR_AP_STATUS_SETTLED = 30;
-    int AR_AP_STATUS_CANCELLED = 40;
+    String AR_AP_STATUS_OPEN = "OPEN";
+    String AR_AP_STATUS_PARTIAL = "PARTIAL";
+    String AR_AP_STATUS_SETTLED = "SETTLED";
+    String AR_AP_STATUS_CANCELLED = "CANCELLED";
 
     // ---- reconciliation-status ----
-    int RECON_STATUS_DRAFT = 10;
-    int RECON_STATUS_POSTED = 20;
-    int RECON_STATUS_REVERSED = 30;
+    String RECON_STATUS_DRAFT = "DRAFT";
+    String RECON_STATUS_POSTED = "POSTED";
+    String RECON_STATUS_REVERSED = "REVERSED";
 
     // ---- approve-status（共用 erp-fin/approve-status） ----
-    int APPROVE_STATUS_UNSUBMITTED = 10;
-    int APPROVE_STATUS_SUBMITTED = 20;
-    int APPROVE_STATUS_APPROVED = 30;
-    int APPROVE_STATUS_REJECTED = 40;
+    String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
+    String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
+    String APPROVE_STATUS_APPROVED = "APPROVED";
+    String APPROVE_STATUS_REJECTED = "REJECTED";
 
     // ---- expense-claim-status / advance-status（docStatus 轴） ----
-    int DOC_STATUS_DRAFT = 10;
-    int DOC_STATUS_CANCELLED = 50;
+    String DOC_STATUS_DRAFT = "DRAFT";
+    String DOC_STATUS_CANCELLED = "CANCELLED";
 
     // ---- expense-payment-mode ----
-    int PAYMENT_MODE_OWN_ACCOUNT = 10;
-    int PAYMENT_MODE_COMPANY_ACCOUNT = 20;
+    String PAYMENT_MODE_OWN_ACCOUNT = "OWN_ACCOUNT";
+    String PAYMENT_MODE_COMPANY_ACCOUNT = "COMPANY_ACCOUNT";
 
     // ---- 主数据启用状态 erp-md/active-status（员工启用校验） ----
-    int EMPLOYEE_STATUS_ACTIVE = 10;
+    String EMPLOYEE_STATUS_ACTIVE = "ACTIVE";
 
     // ---- sourceBillType（ErpFinArApItem.sourceBillType 字符串值） ----
     String SOURCE_BILL_AP_INVOICE = "AP_INVOICE";
@@ -114,29 +114,29 @@ public interface ErpFinConstants {
     String CONFIG_FX_GAIN_LOSS_SUBJECT_CODE = "erp-fin.exchange-gain-loss-subject-code";
 
     // ---- period-status（erp-fin/period-status）四态关账机 ----
-    int PERIOD_STATUS_OPEN = 10;
-    int PERIOD_STATUS_CLOSING = 20;
-    int PERIOD_STATUS_CLOSED = 30;
-    int PERIOD_STATUS_NEVER_OPENED = 40;
-    int PERIOD_STATUS_CLOSED_FINAL = 50;
+    String PERIOD_STATUS_OPEN = "OPEN";
+    String PERIOD_STATUS_CLOSING = "CLOSING";
+    String PERIOD_STATUS_CLOSED = "CLOSED";
+    String PERIOD_STATUS_NEVER_OPENED = "NEVER_OPENED";
+    String PERIOD_STATUS_CLOSED_FINAL = "CLOSED_FINAL";
 
     // ---- module-close-status（erp-fin/module-close-status） ----
-    int MODULE_CLOSE_OPEN = 10;
-    int MODULE_CLOSE_CLOSING = 20;
-    int MODULE_CLOSE_CLOSED = 30;
+    String MODULE_CLOSE_OPEN = "OPEN";
+    String MODULE_CLOSE_CLOSING = "CLOSING";
+    String MODULE_CLOSE_CLOSED = "CLOSED";
 
     // ---- subject-class（erp-md/subject-class）损益结转识别三类 ----
-    int SUBJECT_CLASS_INCOME = 40;
-    int SUBJECT_CLASS_EXPENSE = 50;
-    int SUBJECT_CLASS_COST = 60;
+    String SUBJECT_CLASS_INCOME = "INCOME";
+    String SUBJECT_CLASS_EXPENSE = "EXPENSE";
+    String SUBJECT_CLASS_COST = "COST";
 
     // ---- 借贷方向 ----
-    int DC_DEBIT = 10;
-    int DC_CREDIT = 20;
+    String DC_DEBIT = "DEBIT";
+    String DC_CREDIT = "CREDIT";
 
     // ---- 凭证状态 ----
-    int VOUCHER_STATUS_DRAFT = 10;
-    int VOUCHER_STATUS_POSTED = 20;
+    String VOUCHER_STATUS_DRAFT = "DRAFT";
+    String VOUCHER_STATUS_POSTED = "POSTED";
 
     // ---- 资金/票据配置项（treasury.md §配置点），经 AppConfig.var 读取 ----
     /** 开银承前是否强制校验授信可用额度，默认 true。 */
@@ -145,27 +145,27 @@ public interface ErpFinConstants {
     String CONFIG_NOTES_WRITEOFF_APPROVAL_REQUIRED = "erp-fin.notes-writeoff-approval-required";
 
     // ---- notes-type ----
-    int NOTES_TYPE_BANK_ACCEPTANCE = 10;
-    int NOTES_TYPE_COMMERCIAL_ACCEPTANCE = 20;
+    String NOTES_TYPE_BANK_ACCEPTANCE = "BANK_ACCEPTANCE";
+    String NOTES_TYPE_COMMERCIAL_ACCEPTANCE = "COMMERCIAL_ACCEPTANCE";
 
     // ---- notes-receivable-status（7 态状态机，treasury.md） ----
-    int NOTES_RECV_RECEIVED = 10;
-    int NOTES_RECV_DISCOUNTED = 20;
-    int NOTES_RECV_ENDORSED = 30;
-    int NOTES_RECV_COLLECTION_PENDING = 40;
-    int NOTES_RECV_HONORED = 50;
-    int NOTES_RECV_DISHONORED = 60;
-    int NOTES_RECV_WRITE_OFF = 70;
+    String NOTES_RECV_RECEIVED = "RECEIVED";
+    String NOTES_RECV_DISCOUNTED = "DISCOUNTED";
+    String NOTES_RECV_ENDORSED = "ENDORSED";
+    String NOTES_RECV_COLLECTION_PENDING = "COLLECTION_PENDING";
+    String NOTES_RECV_HONORED = "HONORED";
+    String NOTES_RECV_DISHONORED = "DISHONORED";
+    String NOTES_RECV_WRITE_OFF = "WRITE_OFF";
 
     // ---- notes-payable-status ----
-    int NOTES_PAY_ISSUED = 10;
-    int NOTES_PAY_HONORED = 20;
-    int NOTES_PAY_DISHONORED = 30;
-    int NOTES_PAY_WRITE_OFF = 40;
+    String NOTES_PAY_ISSUED = "ISSUED";
+    String NOTES_PAY_HONORED = "HONORED";
+    String NOTES_PAY_DISHONORED = "DISHONORED";
+    String NOTES_PAY_WRITE_OFF = "WRITE_OFF";
 
     // ---- cash-flow-direction ----
-    int CASH_FLOW_INFLOW = 10;
-    int CASH_FLOW_OUTFLOW = 20;
+    String CASH_FLOW_INFLOW = "INFLOW";
+    String CASH_FLOW_OUTFLOW = "OUTFLOW";
 
     // ---- PostingEvent.billData 键（票据过账派发器填入） ----
     String BILL_DATA_PARTNER_ID = "partnerId";

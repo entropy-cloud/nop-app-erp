@@ -40,11 +40,11 @@ public class TestStubErpSalReturnBiz extends CrudBizModel<ErpSalReturn> implemen
             }
             Object docStatus = data.get("docStatus");
             if (docStatus != null) {
-                entity.setDocStatus(asInt(docStatus));
+                entity.setDocStatus(asString(docStatus));
             }
             Object approveStatus = data.get("approveStatus");
             if (approveStatus != null) {
-                entity.setApproveStatus(asInt(approveStatus));
+                entity.setApproveStatus(asString(approveStatus));
             }
             entity.setPosted(Boolean.FALSE);
         }

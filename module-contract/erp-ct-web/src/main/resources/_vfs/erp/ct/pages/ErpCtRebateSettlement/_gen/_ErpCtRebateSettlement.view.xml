@@ -40,7 +40,7 @@
                 <col id="creditMemoBillCode" sortable="true"/>
 
                 <!--状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--过账时间-->
                 <col id="postedAt" sortable="true"/>

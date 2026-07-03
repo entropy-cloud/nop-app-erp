@@ -34,7 +34,7 @@
                 <col id="partnerId" ui:number="true" sortable="true"/>
 
                 <!--合同类型-->
-                <col id="contractType" ui:number="true" sortable="true"/>
+                <col id="contractType" sortable="true"/>
 
                 <!--生效日期-->
                 <col id="startDate" sortable="true"/>
@@ -46,10 +46,10 @@
                 <col id="totalAmount" ui:number="true" sortable="true"/>
 
                 <!--计费周期-->
-                <col id="billingCycle" ui:number="true" sortable="true"/>
+                <col id="billingCycle" sortable="true"/>
 
                 <!--合同状态-->
-                <col id="status" ui:number="true" sortable="true"/>
+                <col id="status" sortable="true"/>
 
                 <!--合同附件-->
                 <col id="attachmentFileId" sortable="true"/>

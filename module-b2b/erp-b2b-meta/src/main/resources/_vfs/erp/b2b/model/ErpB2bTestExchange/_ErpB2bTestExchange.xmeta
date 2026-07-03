@@ -30,7 +30,7 @@
         </prop>
         <prop name="direction" displayName="方向" propId="3" i18n-en:displayName="Direction" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-b2b/exchange-direction"/>
+            <schema type="java.lang.String" precision="20" dict="erp-b2b/exchange-direction"/>
         </prop>
         <prop name="formatCode" displayName="EDI格式" propId="4" i18n-en:displayName="Format Code" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">

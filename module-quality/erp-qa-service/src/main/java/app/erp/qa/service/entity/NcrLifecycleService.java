@@ -13,6 +13,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -80,7 +81,7 @@ public class NcrLifecycleService {
         StringBuilder sb = new StringBuilder("不合格项: ");
         boolean first = true;
         for (ErpQaInspectionLine line : lines) {
-            if (line.getResult() != null && line.getResult() == ErpQaConstants.INSPECTION_RESULT_REJECTED) {
+            if (line.getResult() != null && Objects.equals(line.getResult(), ErpQaConstants.INSPECTION_RESULT_REJECTED)) {
                 if (!first) {
                     sb.append("; ");
                 }
@@ -100,7 +101,7 @@ public class NcrLifecycleService {
             return true;
         }
         for (ErpQaActionImpl a : actions) {
-            if (a.status == null || a.status != ErpQaConstants.ACTION_STATUS_COMPLETED) {
+            if (a.status == null || !Objects.equals(a.status, ErpQaConstants.ACTION_STATUS_COMPLETED)) {
                 return false;
             }
             if (a.verificationPerson == null || a.verificationDate == null) {
@@ -135,11 +136,11 @@ public class NcrLifecycleService {
 
     private static final class ErpQaActionImpl {
         final Long id;
-        final Integer status;
+        final String status;
         final Long verificationPerson;
         final LocalDate verificationDate;
 
-        ErpQaActionImpl(Long id, Integer status, Long verificationPerson, LocalDate verificationDate) {
+        ErpQaActionImpl(Long id, String status, Long verificationPerson, LocalDate verificationDate) {
             this.id = id;
             this.status = status;
             this.verificationPerson = verificationPerson;

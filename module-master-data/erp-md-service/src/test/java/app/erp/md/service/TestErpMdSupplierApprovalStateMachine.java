@@ -141,7 +141,7 @@ public class TestErpMdSupplierApprovalStateMachine extends JunitAutoTestCase {
                 ApiRequest.build(Map.of("partnerId", 7801L)));
         assertEquals(0, resp.getStatus());
         assertEquals(ErpMdConstants.APPROVAL_STATUS_APPROVED,
-                ((Number) ((Map<?, ?>) resp.getData()).get("status")).intValue());
+                ((Map<?, ?>) resp.getData()).get("status"));
 
         // 不存在的供应商返回 null（无有效资格）
         ApiResponse<?> none = executeRpc(query, "ErpMdSupplierApproval__findEffectiveByPartner",
@@ -177,7 +177,7 @@ public class TestErpMdSupplierApprovalStateMachine extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private ErpMdSupplierApproval seedApproval(int status, String qualificationDoc) {
+    private ErpMdSupplierApproval seedApproval(String status, String qualificationDoc) {
         ErpMdSupplierApproval approval = new ErpMdSupplierApproval();
         approval.setPartnerId(PARTNER_ID);
         approval.setApprovalType(ErpMdConstants.APPROVAL_TYPE_NEW);

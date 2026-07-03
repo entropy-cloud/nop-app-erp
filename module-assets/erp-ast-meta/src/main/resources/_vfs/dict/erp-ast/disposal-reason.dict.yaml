@@ -1,27 +1,27 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 处置原因
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 报废
-    value: 10
+    value: OBSOLETE
     description: 
   
   - label: 出售
-    value: 20
+    value: SOLD
     description: 
   
   - label: 捐赠
-    value: 30
+    value: DONATED
     description: 
   
   - label: 被盗
-    value: 40
+    value: STOLEN
     description: 
   
   - label: 其他
-    value: 50
+    value: OTHER
     description: 
   

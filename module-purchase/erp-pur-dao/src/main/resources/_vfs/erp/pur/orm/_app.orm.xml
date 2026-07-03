@@ -15,59 +15,59 @@
     </x:gen-extends>
 
     <dicts>
-        <dict label="单据状态" name="erp-pur/doc-status" valueType="int" i18n-en:label="Doc Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="ACTIVE" label="已生效" value="20" i18n-en:label="Effective"/>
-            <option code="CANCELLED" label="已作废" value="30" i18n-en:label="Voided"/>
+        <dict label="单据状态" name="erp-pur/doc-status" valueType="string" i18n-en:label="Doc Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="ACTIVE" label="已生效" value="ACTIVE" i18n-en:label="Effective"/>
+            <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label="Voided"/>
         </dict>
-        <dict label="审核状态" name="erp-pur/approve-status" valueType="int" i18n-en:label="Approve Status">
-            <option code="UNSUBMITTED" label="未提交" value="10" i18n-en:label="Unsubmitted"/>
-            <option code="SUBMITTED" label="已提交" value="20" i18n-en:label="Submitted"/>
-            <option code="APPROVED" label="已审核" value="30" i18n-en:label="Approved"/>
-            <option code="REJECTED" label="已驳回" value="40" i18n-en:label="Rejected"/>
+        <dict label="审核状态" name="erp-pur/approve-status" valueType="string" i18n-en:label="Approve Status">
+            <option code="UNSUBMITTED" label="未提交" value="UNSUBMITTED" i18n-en:label="Unsubmitted"/>
+            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label="Submitted"/>
+            <option code="APPROVED" label="已审核" value="APPROVED" i18n-en:label="Approved"/>
+            <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label="Rejected"/>
         </dict>
-        <dict label="付款进度" name="erp-pur/paid-status" valueType="int" i18n-en:label="Payment Status">
-            <option code="UNPAID" label="未付款" value="10" i18n-en:label="Unpaid"/>
-            <option code="PARTIAL" label="部分付款" value="20" i18n-en:label="Partially Paid"/>
-            <option code="PAID" label="已付清" value="30" i18n-en:label="Fully Paid"/>
+        <dict label="付款进度" name="erp-pur/paid-status" valueType="string" i18n-en:label="Payment Status">
+            <option code="UNPAID" label="未付款" value="UNPAID" i18n-en:label="Unpaid"/>
+            <option code="PARTIAL" label="部分付款" value="PARTIAL" i18n-en:label="Partially Paid"/>
+            <option code="PAID" label="已付清" value="PAID" i18n-en:label="Fully Paid"/>
         </dict>
-        <dict label="收货状态" name="erp-pur/receive-status" valueType="int" i18n-en:label="Receive Status">
-            <option code="UNRECEIVED" label="未收货" value="10" i18n-en:label="Unreceived"/>
-            <option code="PARTIAL" label="部分收货" value="20" i18n-en:label="Partially Received"/>
-            <option code="RECEIVED" label="已收清" value="30" i18n-en:label="Fully Received"/>
+        <dict label="收货状态" name="erp-pur/receive-status" valueType="string" i18n-en:label="Receive Status">
+            <option code="UNRECEIVED" label="未收货" value="UNRECEIVED" i18n-en:label="Unreceived"/>
+            <option code="PARTIAL" label="部分收货" value="PARTIAL" i18n-en:label="Partially Received"/>
+            <option code="RECEIVED" label="已收清" value="RECEIVED" i18n-en:label="Fully Received"/>
         </dict>
-        <dict label="采购单据类型" name="erp-pur/biz-type" valueType="int" i18n-en:label="Purchase Doc Type">
-            <option code="REQUISITION" label="请购单" value="10" i18n-en:label="Purchase Requisition"/>
-            <option code="RFQ" label="询价单" value="20" i18n-en:label="RFQ"/>
-            <option code="QUOTATION" label="报价单" value="30" i18n-en:label="Quotation"/>
-            <option code="ORDER" label="采购订单" value="40" i18n-en:label="Purchase Order"/>
-            <option code="RECEIVE" label="采购入库" value="50" i18n-en:label="Purchase Receipt"/>
-            <option code="INVOICE" label="采购发票" value="60" i18n-en:label="Purchase Invoice"/>
-            <option code="PAYMENT" label="付款单" value="70" i18n-en:label="Payment"/>
-            <option code="RETURN" label="采购退货" value="80" i18n-en:label="Purchase Return"/>
+        <dict label="采购单据类型" name="erp-pur/biz-type" valueType="string" i18n-en:label="Purchase Doc Type">
+            <option code="REQUISITION" label="请购单" value="REQUISITION" i18n-en:label="Purchase Requisition"/>
+            <option code="RFQ" label="询价单" value="RFQ" i18n-en:label="RFQ"/>
+            <option code="QUOTATION" label="报价单" value="QUOTATION" i18n-en:label="Quotation"/>
+            <option code="ORDER" label="采购订单" value="ORDER" i18n-en:label="Purchase Order"/>
+            <option code="RECEIVE" label="采购入库" value="RECEIVE" i18n-en:label="Purchase Receipt"/>
+            <option code="INVOICE" label="采购发票" value="INVOICE" i18n-en:label="Purchase Invoice"/>
+            <option code="PAYMENT" label="付款单" value="PAYMENT" i18n-en:label="Payment"/>
+            <option code="RETURN" label="采购退货" value="RETURN" i18n-en:label="Purchase Return"/>
         </dict>
-        <dict label="单据方向" name="erp-pur/doc-direction" valueType="int" i18n-en:label="Doc Direction">
-            <option code="INBOUND" label="入库" value="10" i18n-en:label="Receipt"/>
-            <option code="OUTBOUND" label="出库" value="20" i18n-en:label="Issue"/>
+        <dict label="单据方向" name="erp-pur/doc-direction" valueType="string" i18n-en:label="Doc Direction">
+            <option code="INBOUND" label="入库" value="INBOUND" i18n-en:label="Receipt"/>
+            <option code="OUTBOUND" label="出库" value="OUTBOUND" i18n-en:label="Issue"/>
         </dict>
-        <dict label="入库类型" name="erp-pur/receive-type" valueType="int" i18n-en:label="Receipt Type">
-            <option code="NORMAL" label="正常入库" value="10" i18n-en:label="Normal Receipt"/>
-            <option code="RETURN" label="退货入库" value="20" i18n-en:label="Return Receipt"/>
-            <option code="GIFT" label="赠品入库" value="30" i18n-en:label="Freebie Receipt"/>
+        <dict label="入库类型" name="erp-pur/receive-type" valueType="string" i18n-en:label="Receipt Type">
+            <option code="NORMAL" label="正常入库" value="NORMAL" i18n-en:label="Normal Receipt"/>
+            <option code="RETURN" label="退货入库" value="RETURN" i18n-en:label="Return Receipt"/>
+            <option code="GIFT" label="赠品入库" value="GIFT" i18n-en:label="Freebie Receipt"/>
         </dict>
-        <dict label="发票类型" name="erp-pur/invoice-type" valueType="int" i18n-en:label="Invoice Type">
-            <option code="VAT_SPECIAL" label="增值税专用" value="10" i18n-en:label="VAT Special"/>
-            <option code="VAT_NORMAL" label="增值税普通" value="20" i18n-en:label="VAT General"/>
-            <option code="RECEIPT" label="收据" value="30" i18n-en:label="Receipt Note"/>
+        <dict label="发票类型" name="erp-pur/invoice-type" valueType="string" i18n-en:label="Invoice Type">
+            <option code="VAT_SPECIAL" label="增值税专用" value="VAT_SPECIAL" i18n-en:label="VAT Special"/>
+            <option code="VAT_NORMAL" label="增值税普通" value="VAT_NORMAL" i18n-en:label="VAT General"/>
+            <option code="RECEIPT" label="收据" value="RECEIPT" i18n-en:label="Receipt Note"/>
         </dict>
-        <dict label="供应商评级" name="erp-pur/supplier-standing" valueType="int" i18n-en:label="Supplier Standing">
-            <option code="GREEN" label="优秀" value="10" i18n-en:label="Green"/>
-            <option code="YELLOW" label="待改进" value="20" i18n-en:label="Yellow"/>
-            <option code="RED" label="不合格" value="30" i18n-en:label="Red"/>
+        <dict label="供应商评级" name="erp-pur/supplier-standing" valueType="string" i18n-en:label="Supplier Standing">
+            <option code="GREEN" label="优秀" value="GREEN" i18n-en:label="Green"/>
+            <option code="YELLOW" label="待改进" value="YELLOW" i18n-en:label="Yellow"/>
+            <option code="RED" label="不合格" value="RED" i18n-en:label="Red"/>
         </dict>
-        <dict label="评分卡状态" name="erp-pur/scorecard-status" valueType="int" i18n-en:label="Scorecard Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="FINALIZED" label="已定稿" value="20" i18n-en:label="Finalized"/>
+        <dict label="评分卡状态" name="erp-pur/scorecard-status" valueType="string" i18n-en:label="Scorecard Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="FINALIZED" label="已定稿" value="FINALIZED" i18n-en:label="Finalized"/>
         </dict>
     </dicts>
 
@@ -113,11 +113,11 @@
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
                 <column code="REQUIRED_DATE" displayName="需求日期" name="requiredDate" propId="7" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Required Date"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="8"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-pur/doc-status"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/doc-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="9"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-pur/approve-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="9" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="10"
                         stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
@@ -263,11 +263,11 @@
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
                 <column code="VALID_UNTIL" displayName="报价有效期至" name="validUntil" propId="6" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Valid Until"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="7"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-pur/doc-status"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20" propId="7"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/doc-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="8"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-pur/approve-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="8" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="9"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
@@ -402,11 +402,11 @@
                         stdSqlType="DATE" i18n-en:displayName="Valid To"/>
                 <column code="IS_ACCEPTED" defaultValue="false" displayName="是否中标" name="isAccepted" propId="11"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Accepted"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="12"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-pur/doc-status"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
+                        propId="12" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/doc-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="13"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-pur/approve-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="13" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="14"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
@@ -622,8 +622,8 @@
                 <column code="TOTAL_SCORE" displayName="总分(派生)" domain="amount" name="totalScore" precision="18"
                         propId="6" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Total Score"/>
-                <column code="STANDING" displayName="评级" name="standing" propId="7" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-pur/supplier-standing" i18n-en:displayName="Standing"/>
+                <column code="STANDING" displayName="评级" name="standing" precision="20" propId="7" stdDataType="string"
+                        stdSqlType="VARCHAR" ext:dict="erp-pur/supplier-standing" i18n-en:displayName="Standing"/>
                 <column code="WARN_THRESHOLD" displayName="warn阈值" domain="amount" name="warnThreshold" precision="18"
                         propId="8" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Warn Threshold"/>
@@ -633,8 +633,8 @@
                 <column code="PREVENT_THRESHOLD" displayName="prevent阈值" domain="amount" name="preventThreshold"
                         precision="18" propId="10" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Prevent Threshold"/>
-                <column code="STATUS" defaultValue="10" displayName="周期状态" mandatory="true" name="status" propId="11"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-pur/scorecard-status"
+                <column code="STATUS" defaultValue="10" displayName="周期状态" mandatory="true" name="status" precision="20"
+                        propId="11" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/scorecard-status"
                         i18n-en:displayName="Scorecard Status"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="12"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
@@ -830,16 +830,18 @@
                         i18n-en:displayName="Paid Amount"/>
                 <column code="SETTLEMENT_METHOD_ID" displayName="结算方式" name="settlementMethodId" propId="20"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Settlement Method"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="21"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-pur/doc-status"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
+                        propId="21" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/doc-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="22"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-pur/approve-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="22" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/approve-status"
                         i18n-en:displayName="Approve Status"/>
-                <column code="PAID_STATUS" displayName="付款进度" name="paidStatus" propId="23" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-pur/paid-status" i18n-en:displayName="Paid Status"/>
-                <column code="RECEIVE_STATUS" displayName="收货状态" name="receiveStatus" propId="24" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-pur/receive-status" i18n-en:displayName="Receive Status"/>
+                <column code="PAID_STATUS" displayName="付款进度" name="paidStatus" precision="20" propId="23"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/paid-status"
+                        i18n-en:displayName="Paid Status"/>
+                <column code="RECEIVE_STATUS" displayName="收货状态" name="receiveStatus" precision="20" propId="24"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/receive-status"
+                        i18n-en:displayName="Receive Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="25"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="26" stdDataType="datetime"
@@ -1069,15 +1071,17 @@
                 <column code="TOTAL_AMOUNT_WITH_TAX" defaultValue="0" displayName="合计金额(含税)" domain="amount"
                         name="totalAmountWithTax" precision="20" propId="14" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Total (Inc. Tax)"/>
-                <column code="RECEIVE_STATUS" displayName="收货状态" name="receiveStatus" propId="15" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-pur/receive-status" i18n-en:displayName="Receive Status"/>
-                <column code="RECEIVE_TYPE" displayName="入库类型" name="receiveType" propId="16" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-pur/receive-type" i18n-en:displayName="Receive Type"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="17"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-pur/doc-status"
+                <column code="RECEIVE_STATUS" displayName="收货状态" name="receiveStatus" precision="20" propId="15"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/receive-status"
+                        i18n-en:displayName="Receive Status"/>
+                <column code="RECEIVE_TYPE" displayName="入库类型" name="receiveType" precision="20" propId="16"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/receive-type"
+                        i18n-en:displayName="Receive Type"/>
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
+                        propId="17" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/doc-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="18"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-pur/approve-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="18" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="19"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
@@ -1260,8 +1264,9 @@
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Supplier"/>
                 <column code="INVOICE_NO" displayName="发票号码" name="invoiceNo" precision="50" propId="5"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Invoice No"/>
-                <column code="INVOICE_TYPE" displayName="发票类型" name="invoiceType" propId="6" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-pur/invoice-type" i18n-en:displayName="Invoice Type"/>
+                <column code="INVOICE_TYPE" displayName="发票类型" name="invoiceType" precision="20" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/invoice-type"
+                        i18n-en:displayName="Invoice Type"/>
                 <column code="BUSINESS_DATE" displayName="发票日期" mandatory="true" name="businessDate" propId="7"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="8"
@@ -1287,14 +1292,15 @@
                 <column code="PAID_AMOUNT" defaultValue="0" displayName="已付金额" domain="amount" name="paidAmount"
                         precision="20" propId="15" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Paid Amount"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="16"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-pur/doc-status"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
+                        propId="16" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/doc-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="17"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-pur/approve-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="17" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/approve-status"
                         i18n-en:displayName="Approve Status"/>
-                <column code="PAID_STATUS" displayName="付款进度" name="paidStatus" propId="18" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-pur/paid-status" i18n-en:displayName="Paid Status"/>
+                <column code="PAID_STATUS" displayName="付款进度" name="paidStatus" precision="20" propId="18"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/paid-status"
+                        i18n-en:displayName="Paid Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="19"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="20" stdDataType="datetime"
@@ -1464,14 +1470,14 @@
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Bank Account"/>
                 <column code="PARTNER_BANK_ACCOUNT_ID" displayName="供应商收款账户(银行账户主数据)" name="partnerBankAccountId"
                         propId="14" stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Partner Bank Account"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="15"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-pur/doc-status"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
+                        propId="15" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/doc-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="16"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-pur/approve-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="16" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/approve-status"
                         i18n-en:displayName="Approve Status"/>
-                <column code="WRITTEN_OFF_STATUS" displayName="核销状态" name="writtenOffStatus" propId="17"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-pur/paid-status"
+                <column code="WRITTEN_OFF_STATUS" displayName="核销状态" name="writtenOffStatus" precision="20" propId="17"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/paid-status"
                         i18n-en:displayName="Written Off Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="18"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
@@ -1634,11 +1640,11 @@
                 <column code="TOTAL_AMOUNT_WITH_TAX" defaultValue="0" displayName="合计金额(含税)" domain="amount"
                         name="totalAmountWithTax" precision="20" propId="14" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Total (Inc. Tax)"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="15"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-pur/doc-status"
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
+                        propId="15" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/doc-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="16"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-pur/approve-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="16" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="17"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>

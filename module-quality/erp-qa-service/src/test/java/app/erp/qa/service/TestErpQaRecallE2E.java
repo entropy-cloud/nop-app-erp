@@ -76,7 +76,7 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
     @Test
     public void testNcrUpgradeToRecallFullChain() {
         seedTraceFixture();
-        Long ncrId = seedNcr("NCR-E2E-UPG", 30 /* erp-qa/severity HIGH=30 */);
+        Long ncrId = seedNcr("NCR-E2E-UPG", "HIGH");
 
         // NCR 升级 → 建召回
         Long recallId = upgradeToRecallAndGetId(ncrId);
@@ -155,17 +155,17 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
             batch.setWarehouseId(WAREHOUSE_ID);
             batch.setTotalQuantity(new BigDecimal("100"));
             batch.setAvailableQuantity(new BigDecimal("100"));
-            batch.setStatus(10);
+            batch.setStatus("OPEN");
             batchDao.saveEntity(batch);
 
             IEntityDao<ErpInvStockMove> moveDao = daoProvider.daoFor(ErpInvStockMove.class);
             ErpInvStockMove move = new ErpInvStockMove();
             move.orm_propValueByName("id", MOVE_PK);
             move.setCode("MV-" + DELIVERY_CODE);
-            move.setMoveType(20);
+            move.setMoveType("OUTGOING");
             move.setBusinessDate(LocalDate.now());
-            move.setDocStatus(30);
-            move.setApproveStatus(30);
+            move.setDocStatus("DONE");
+            move.setApproveStatus("APPROVED");
             move.setRelatedBillType(ErpQaConstants.RELATED_BILL_TYPE_SAL_DELIVERY_INV);
             move.setRelatedBillCode(DELIVERY_CODE);
             move.setPosted(Boolean.FALSE);
@@ -198,9 +198,9 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
         material.orm_propValueByName("id", MATERIAL_ID);
         material.setCode("MAT-E2E");
         material.setName("E2E物料");
-        material.setMaterialType(10);
+        material.setMaterialType("GOODS");
         material.setUoMId(UOM_ID);
-        material.setStatus(10);
+        material.setStatus("ACTIVE");
         matDao.saveEntity(material);
 
         IEntityDao<ErpMdWarehouse> whDao = daoProvider.daoFor(ErpMdWarehouse.class);
@@ -208,7 +208,7 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
         warehouse.orm_propValueByName("id", WAREHOUSE_ID);
         warehouse.setCode("WH-E2E");
         warehouse.setName("E2E仓库");
-        warehouse.setStatus(10);
+        warehouse.setStatus("ACTIVE");
         whDao.saveEntity(warehouse);
 
         IEntityDao<ErpMdCurrency> curDao = daoProvider.daoFor(ErpMdCurrency.class);
@@ -223,8 +223,8 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
         partner.orm_propValueByName("id", CUSTOMER_ID);
         partner.setCode("CUS-E2E");
         partner.setName("E2E客户");
-        partner.setPartnerType(10);
-        partner.setStatus(10);
+        partner.setPartnerType("CUSTOMER");
+        partner.setStatus("ACTIVE");
         partnerDao.saveEntity(partner);
 
         // 销售出库单 + 行（generateReturns 经 IErpSalDeliveryBiz 读 warehouse/currency/uoM）
@@ -236,8 +236,8 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
         delivery.setWarehouseId(WAREHOUSE_ID);
         delivery.setCurrencyId(CURRENCY_ID);
         delivery.setBusinessDate(LocalDate.now());
-        delivery.setDocStatus(20);
-        delivery.setApproveStatus(30);
+        delivery.setDocStatus("ACTIVE");
+        delivery.setApproveStatus("APPROVED");
         delivery.setPosted(Boolean.FALSE);
         dlvDao.saveEntity(delivery);
 
@@ -252,7 +252,7 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
         dlvLineDao.saveEntity(dlvLine);
     }
 
-    private Long seedNcr(String code, int severity) {
+    private Long seedNcr(String code, String severity) {
         Long id = 30200L + (long) (Math.abs(code.hashCode()) % 1000);
         ormTemplate.runInSession(session -> {
             IEntityDao<ErpQaNonConformance> dao = daoProvider.daoFor(ErpQaNonConformance.class);
@@ -284,7 +284,7 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
 
     // ---------- recall helpers ----------
 
-    private Long registerManualRecall(String code, int severity) {
+    private Long registerManualRecall(String code, String severity) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("code", code);
         data.put("recallName", "召回-" + code);

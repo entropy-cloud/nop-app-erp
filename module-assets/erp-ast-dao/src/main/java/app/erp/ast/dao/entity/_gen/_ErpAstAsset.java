@@ -61,7 +61,7 @@ public class _ErpAstAsset extends DynamicOrmEntity{
     public static final String PROP_NAME_residualValue = "residualValue";
     public static final int PROP_ID_residualValue = 10;
     
-    /* 折旧方法: DEPRECIATION_METHOD INTEGER */
+    /* 折旧方法: DEPRECIATION_METHOD VARCHAR */
     public static final String PROP_NAME_depreciationMethod = "depreciationMethod";
     public static final int PROP_ID_depreciationMethod = 11;
     
@@ -93,7 +93,7 @@ public class _ErpAstAsset extends DynamicOrmEntity{
     public static final String PROP_NAME_brandModel = "brandModel";
     public static final int PROP_ID_brandModel = 18;
     
-    /* 资产状态: STATUS INTEGER */
+    /* 资产状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 19;
     
@@ -284,7 +284,7 @@ public class _ErpAstAsset extends DynamicOrmEntity{
     private java.math.BigDecimal _residualValue;
     
     /* 折旧方法: DEPRECIATION_METHOD */
-    private java.lang.Integer _depreciationMethod;
+    private java.lang.String _depreciationMethod;
     
     /* 折旧率: DEPRECIATION_RATE */
     private java.math.BigDecimal _depreciationRate;
@@ -308,7 +308,7 @@ public class _ErpAstAsset extends DynamicOrmEntity{
     private java.lang.String _brandModel;
     
     /* 资产状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -607,9 +607,9 @@ public class _ErpAstAsset extends DynamicOrmEntity{
             }
         
             case PROP_ID_depreciationMethod:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_depreciationMethod));
                }
                setDepreciationMethod(typedValue);
@@ -687,9 +687,9 @@ public class _ErpAstAsset extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -867,7 +867,7 @@ public class _ErpAstAsset extends DynamicOrmEntity{
         
             case PROP_ID_depreciationMethod:{
                onInitProp(propId);
-               this._depreciationMethod = (java.lang.Integer)value;
+               this._depreciationMethod = (java.lang.String)value;
                
                break;
             }
@@ -923,7 +923,7 @@ public class _ErpAstAsset extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -1190,7 +1190,7 @@ public class _ErpAstAsset extends DynamicOrmEntity{
     /**
      * 折旧方法: DEPRECIATION_METHOD
      */
-    public final java.lang.Integer getDepreciationMethod(){
+    public final java.lang.String getDepreciationMethod(){
          onPropGet(PROP_ID_depreciationMethod);
          return _depreciationMethod;
     }
@@ -1198,7 +1198,7 @@ public class _ErpAstAsset extends DynamicOrmEntity{
     /**
      * 折旧方法: DEPRECIATION_METHOD
      */
-    public final void setDepreciationMethod(java.lang.Integer value){
+    public final void setDepreciationMethod(java.lang.String value){
         if(onPropSet(PROP_ID_depreciationMethod,value)){
             this._depreciationMethod = value;
             internalClearRefs(PROP_ID_depreciationMethod);
@@ -1342,7 +1342,7 @@ public class _ErpAstAsset extends DynamicOrmEntity{
     /**
      * 资产状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -1350,7 +1350,7 @@ public class _ErpAstAsset extends DynamicOrmEntity{
     /**
      * 资产状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

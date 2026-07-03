@@ -17,6 +17,7 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -73,7 +74,7 @@ public class MrpEngine {
      */
     public void runMrp(Long planId, List<ErpMfgMrpDemand> demands) {
         ErpMfgMrpPlan plan = requirePlan(planId);
-        if (plan.getStatus() != null && plan.getStatus() != ErpMfgConstants.MRP_STATUS_DRAFT) {
+        if (plan.getStatus() != null && !Objects.equals(plan.getStatus(), ErpMfgConstants.MRP_STATUS_DRAFT)) {
             throw new NopException(ErpMfgErrors.ERR_MRP_INVALID_PLAN_STATUS)
                     .param(ErpMfgErrors.ARG_PLAN_CODE, plan.getCode())
                     .param(ErpMfgErrors.ARG_CURRENT_STATUS, plan.getStatus());
@@ -116,7 +117,7 @@ public class MrpEngine {
 
         ErpMfgBom bom = bomExpander.findDefaultBomOrNull(materialId);
         boolean manufactured = bom != null;
-        int orderType = manufactured
+        String orderType = manufactured
                 ? ErpMfgConstants.MRP_ORDER_TYPE_WORK_ORDER_REQUEST
                 : ErpMfgConstants.MRP_ORDER_TYPE_PURCHASE_REQUEST;
         long leadDays = manufactured ? mfgLeadDays(bom.getId()) : purLeadDays(materialId);

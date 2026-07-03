@@ -8,6 +8,7 @@ import io.nop.api.core.config.AppConfig;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.util.List;
 
@@ -45,10 +46,10 @@ public class SupplierEligibilityChecker {
         if (approval == null) {
             return Decision.PREVENT;
         }
-        Integer approvalStatus = approval.getStatus();
+        String approvalStatus = approval.getStatus();
         if (approvalStatus != null
-                && (approvalStatus == ErpPurConstants.APPROVAL_STATUS_SUSPENDED
-                || approvalStatus == ErpPurConstants.APPROVAL_STATUS_REJECTED)) {
+                && (Objects.equals(approvalStatus, ErpPurConstants.APPROVAL_STATUS_SUSPENDED)
+                || Objects.equals(approvalStatus, ErpPurConstants.APPROVAL_STATUS_REJECTED))) {
             return Decision.PREVENT;
         }
 
@@ -56,11 +57,11 @@ public class SupplierEligibilityChecker {
         if (latest == null || latest.getStanding() == null) {
             return Decision.ALLOW;
         }
-        int standing = latest.getStanding();
-        if (standing == ErpPurConstants.STANDING_RED) {
+        String standing = latest.getStanding();
+        if (Objects.equals(standing, ErpPurConstants.STANDING_RED)) {
             return isPreventOnRed() ? Decision.PREVENT : Decision.ALLOW;
         }
-        if (standing == ErpPurConstants.STANDING_YELLOW) {
+        if (Objects.equals(standing, ErpPurConstants.STANDING_YELLOW)) {
             return Decision.WARN;
         }
         return Decision.ALLOW;

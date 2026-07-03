@@ -124,44 +124,44 @@
         }
 
 
-        private Integer _byproductType;
+        private String _byproductType;
 
     
         @PropMeta(propId=9)
     
-        public Integer getByproductType(){
+        public String getByproductType(){
             return _byproductType;
         }
 
-        public void setByproductType(Integer value){
+        public void setByproductType(String value){
             this._byproductType = value;
         }
 
 
-        private String _yieldRate;
+        private java.math.BigDecimal _yieldRate;
 
     
         @PropMeta(propId=10)
     
-        public String getYieldRate(){
+        public java.math.BigDecimal getYieldRate(){
             return _yieldRate;
         }
 
-        public void setYieldRate(String value){
+        public void setYieldRate(java.math.BigDecimal value){
             this._yieldRate = value;
         }
 
 
-        private String _costAllocationPercent;
+        private java.math.BigDecimal _costAllocationPercent;
 
     
         @PropMeta(propId=11)
     
-        public String getCostAllocationPercent(){
+        public java.math.BigDecimal getCostAllocationPercent(){
             return _costAllocationPercent;
         }
 
-        public void setCostAllocationPercent(String value){
+        public void setCostAllocationPercent(java.math.BigDecimal value){
             this._costAllocationPercent = value;
         }
 

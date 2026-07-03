@@ -58,9 +58,9 @@ public class TestErpFinExchangeRevaluation extends JunitAutoTestCase {
             Long pid = seedOpenPeriod("2024-06", 2024, 6);
             seedCurrency(1L, "CNY", true);
             seedCurrency(2L, "EUR", false);
-            seedSubject("1122", "应收账款", 10, 10);
-            seedSubject("2202", "应付账款", 20, 20);
-            seedSubject("6603", "财务费用-汇兑损益", 50, 10);
+            seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT);
+            seedSubject("2202", "应付账款", "LIABILITY", ErpFinConstants.DC_CREDIT);
+            seedSubject("6603", "财务费用-汇兑损益", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
             seedOpenArAp("ARI-FX-001", pid, LocalDate.of(2024, 6, 10),
                     ErpFinConstants.DIRECTION_RECEIVABLE, 2L,
                     new BigDecimal("100"), new BigDecimal("800"));
@@ -135,18 +135,18 @@ public class TestErpFinExchangeRevaluation extends JunitAutoTestCase {
         dao.saveEntity(c);
     }
 
-    private void seedSubject(String code, String name, int subjectClass, int direction) {
+    private void seedSubject(String code, String name, String subjectClass, String direction) {
         IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
         ErpMdSubject s = new ErpMdSubject();
         s.setCode(code);
         s.setName(name);
         s.setSubjectClass(subjectClass);
         s.setDirection(direction);
-        s.setStatus(10);
+        s.setStatus("ACTIVE");
         dao.saveEntity(s);
     }
 
-    private void seedOpenArAp(String code, Long periodId, LocalDate date, int direction,
+    private void seedOpenArAp(String code, Long periodId, LocalDate date, String direction,
                              Long currencyId, BigDecimal openSource, BigDecimal openFunctional) {
         IEntityDao<app.erp.fin.dao.entity.ErpFinArApItem> dao =
                 daoProvider.daoFor(app.erp.fin.dao.entity.ErpFinArApItem.class);

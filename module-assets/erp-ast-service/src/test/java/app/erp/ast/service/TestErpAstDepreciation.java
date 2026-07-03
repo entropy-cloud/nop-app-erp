@@ -81,7 +81,7 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
         assertEquals(0, nz(asset.getNetBookValue()).compareTo(BigDecimal.ZERO), "资产净值=残值 0");
 
         // DEPRECIATION(70) 凭证经业财回链可查
-        assertTrue(!findBillLinks("AST-SL#" + START_PERIOD, 70).isEmpty(), "首期 DEPRECIATION 凭证回链已落库");
+        assertTrue(!findBillLinks("AST-SL#" + START_PERIOD, "DEPRECIATION").isEmpty(), "首期 DEPRECIATION 凭证回链已落库");
     }
 
     @Test
@@ -195,7 +195,7 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
                 "幂等重执行后累计折旧不双计");
 
         // 三次过账产生 3 条回链：原始（已红冲）+ 红字冲销凭证 + 重生成（有效）
-        List<ErpFinVoucherBillR> links = findBillLinks("AST-IDEM#" + period, 70);
+        List<ErpFinVoucherBillR> links = findBillLinks("AST-IDEM#" + period, "DEPRECIATION");
         assertEquals(3, links.size(), "原始 + 红冲 + 重生成三条回链");
         long activeVouchers = links.stream()
                 .map(l -> daoProvider.daoFor(ErpFinVoucher.class).getEntityById(l.getVoucherId()))
@@ -239,7 +239,7 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private List<ErpFinVoucherBillR> findBillLinks(String billCode, int businessType) {
+    private List<ErpFinVoucherBillR> findBillLinks(String billCode, String businessType) {
         IEntityDao<ErpFinVoucherBillR> dao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("billCode", billCode), eq("businessType", businessType)));

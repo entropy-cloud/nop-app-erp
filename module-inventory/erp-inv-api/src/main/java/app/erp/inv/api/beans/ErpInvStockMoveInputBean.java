@@ -41,16 +41,16 @@
         }
 
 
-        private Integer _moveType;
+        private String _moveType;
 
     
         @PropMeta(propId=3)
     
-        public Integer getMoveType(){
+        public String getMoveType(){
             return _moveType;
         }
 
-        public void setMoveType(Integer value){
+        public void setMoveType(String value){
             this._moveType = value;
         }
 
@@ -139,30 +139,30 @@
         }
 
 
-        private Integer _docStatus;
+        private String _docStatus;
 
     
         @PropMeta(propId=10)
     
-        public Integer getDocStatus(){
+        public String getDocStatus(){
             return _docStatus;
         }
 
-        public void setDocStatus(Integer value){
+        public void setDocStatus(String value){
             this._docStatus = value;
         }
 
 
-        private Integer _approveStatus;
+        private String _approveStatus;
 
     
         @PropMeta(propId=11)
     
-        public Integer getApproveStatus(){
+        public String getApproveStatus(){
             return _approveStatus;
         }
 
-        public void setApproveStatus(Integer value){
+        public void setApproveStatus(String value){
             this._approveStatus = value;
         }
 

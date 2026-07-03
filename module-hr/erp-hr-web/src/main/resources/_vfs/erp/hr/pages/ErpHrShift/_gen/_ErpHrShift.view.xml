@@ -31,7 +31,7 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--班次类型-->
-                <col id="shiftType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="shiftType" mandatory="true" sortable="true"/>
 
                 <!--上班时间-->
                 <col id="startTime" mandatory="true" sortable="true"/>

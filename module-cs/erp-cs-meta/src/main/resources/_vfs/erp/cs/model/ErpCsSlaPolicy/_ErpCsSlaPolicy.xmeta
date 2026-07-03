@@ -37,7 +37,7 @@
         </prop>
         <prop name="minPriority" displayName="最低触发优先级" propId="5" i18n-en:displayName="Min Priority" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-cs/ticket-priority"/>
+            <schema type="java.lang.String" precision="20" dict="erp-cs/ticket-priority"/>
         </prop>
         <prop name="teamId" displayName="适用团队" propId="6" i18n-en:displayName="Team" queryable="true" sortable="true"
               insertable="true" updatable="true" ext:relation="team">

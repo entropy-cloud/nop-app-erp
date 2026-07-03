@@ -33,7 +33,7 @@ public class _ErpMdTaxRate extends DynamicOrmEntity{
     public static final String PROP_NAME_name = "name";
     public static final int PROP_ID_name = 3;
     
-    /* 税种: TAX_TYPE INTEGER */
+    /* 税种: TAX_TYPE VARCHAR */
     public static final String PROP_NAME_taxType = "taxType";
     public static final int PROP_ID_taxType = 4;
     
@@ -57,7 +57,7 @@ public class _ErpMdTaxRate extends DynamicOrmEntity{
     public static final String PROP_NAME_validTo = "validTo";
     public static final int PROP_ID_validTo = 9;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 10;
     
@@ -158,7 +158,7 @@ public class _ErpMdTaxRate extends DynamicOrmEntity{
     private java.lang.String _name;
     
     /* 税种: TAX_TYPE */
-    private java.lang.Integer _taxType;
+    private java.lang.String _taxType;
     
     /* 税率(%): RATE */
     private java.math.BigDecimal _rate;
@@ -176,7 +176,7 @@ public class _ErpMdTaxRate extends DynamicOrmEntity{
     private java.time.LocalDate _validTo;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -360,9 +360,9 @@ public class _ErpMdTaxRate extends DynamicOrmEntity{
             }
         
             case PROP_ID_taxType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_taxType));
                }
                setTaxType(typedValue);
@@ -420,9 +420,9 @@ public class _ErpMdTaxRate extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -521,7 +521,7 @@ public class _ErpMdTaxRate extends DynamicOrmEntity{
         
             case PROP_ID_taxType:{
                onInitProp(propId);
-               this._taxType = (java.lang.Integer)value;
+               this._taxType = (java.lang.String)value;
                
                break;
             }
@@ -563,7 +563,7 @@ public class _ErpMdTaxRate extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -676,7 +676,7 @@ public class _ErpMdTaxRate extends DynamicOrmEntity{
     /**
      * 税种: TAX_TYPE
      */
-    public final java.lang.Integer getTaxType(){
+    public final java.lang.String getTaxType(){
          onPropGet(PROP_ID_taxType);
          return _taxType;
     }
@@ -684,7 +684,7 @@ public class _ErpMdTaxRate extends DynamicOrmEntity{
     /**
      * 税种: TAX_TYPE
      */
-    public final void setTaxType(java.lang.Integer value){
+    public final void setTaxType(java.lang.String value){
         if(onPropSet(PROP_ID_taxType,value)){
             this._taxType = value;
             internalClearRefs(PROP_ID_taxType);
@@ -790,7 +790,7 @@ public class _ErpMdTaxRate extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -798,7 +798,7 @@ public class _ErpMdTaxRate extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

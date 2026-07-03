@@ -3,7 +3,7 @@
   "orgId": 0,
   "operationOrderId": 0,
   "workcenterId": 0,
-  "dispatchType": 0,
+  "dispatchType": "",
   "dispatchType_label": "",
   "previousStatus": "",
   "newStatus": "",

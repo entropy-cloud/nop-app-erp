@@ -1,23 +1,23 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 计划项状态
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 未开始
-    value: 10
+    value: NOT_STARTED
     description: 
   
   - label: 进行中
-    value: 20
+    value: IN_PROGRESS
     description: 
   
   - label: 已完成
-    value: 30
+    value: ACHIEVED
     description: 
   
   - label: 已逾期
-    value: 40
+    value: OVERDUE
     description: 
   

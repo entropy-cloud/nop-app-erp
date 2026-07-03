@@ -49,7 +49,7 @@ public class _ErpCtInvoicePlan extends DynamicOrmEntity{
     public static final String PROP_NAME_invoiceDate = "invoiceDate";
     public static final int PROP_ID_invoiceDate = 7;
     
-    /* 开票条款: INVOICE_TERM INTEGER */
+    /* 开票条款: INVOICE_TERM VARCHAR */
     public static final String PROP_NAME_invoiceTerm = "invoiceTerm";
     public static final int PROP_ID_invoiceTerm = 8;
     
@@ -166,7 +166,7 @@ public class _ErpCtInvoicePlan extends DynamicOrmEntity{
     private java.time.LocalDate _invoiceDate;
     
     /* 开票条款: INVOICE_TERM */
-    private java.lang.Integer _invoiceTerm;
+    private java.lang.String _invoiceTerm;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -390,9 +390,9 @@ public class _ErpCtInvoicePlan extends DynamicOrmEntity{
             }
         
             case PROP_ID_invoiceTerm:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_invoiceTerm));
                }
                setInvoiceTerm(typedValue);
@@ -529,7 +529,7 @@ public class _ErpCtInvoicePlan extends DynamicOrmEntity{
         
             case PROP_ID_invoiceTerm:{
                onInitProp(propId);
-               this._invoiceTerm = (java.lang.Integer)value;
+               this._invoiceTerm = (java.lang.String)value;
                
                break;
             }
@@ -725,7 +725,7 @@ public class _ErpCtInvoicePlan extends DynamicOrmEntity{
     /**
      * 开票条款: INVOICE_TERM
      */
-    public final java.lang.Integer getInvoiceTerm(){
+    public final java.lang.String getInvoiceTerm(){
          onPropGet(PROP_ID_invoiceTerm);
          return _invoiceTerm;
     }
@@ -733,7 +733,7 @@ public class _ErpCtInvoicePlan extends DynamicOrmEntity{
     /**
      * 开票条款: INVOICE_TERM
      */
-    public final void setInvoiceTerm(java.lang.Integer value){
+    public final void setInvoiceTerm(java.lang.String value){
         if(onPropSet(PROP_ID_invoiceTerm,value)){
             this._invoiceTerm = value;
             internalClearRefs(PROP_ID_invoiceTerm);

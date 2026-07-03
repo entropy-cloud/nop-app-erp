@@ -269,7 +269,7 @@ public class TestErpPurRequisitionConvertToOrder extends JunitAutoTestCase {
         partner.setId(id);
         partner.setCode("SUP-" + id);
         partner.setName("供应商" + id);
-        partner.setPartnerType(10);
+        partner.setPartnerType("CUSTOMER");
         partner.setStatus(ErpPurConstants.PARTNER_STATUS_ACTIVE);
         daoProvider.daoFor(app.erp.md.dao.entity.ErpMdPartner.class).saveEntity(partner);
     }

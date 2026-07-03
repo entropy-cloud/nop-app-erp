@@ -23,6 +23,7 @@ import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -133,47 +134,47 @@ public class ErpPurReturnProcessor {
 
     protected void validateTransitionForSubmit(ErpPurReturn returnOrder, IServiceContext context) {
         validateNotCancelled(returnOrder, context);
-        Integer status = returnOrder.getApproveStatus();
+        String status = returnOrder.getApproveStatus();
         if (status == null) {
             status = ErpPurConstants.APPROVE_STATUS_UNSUBMITTED;
         }
-        if (status != ErpPurConstants.APPROVE_STATUS_UNSUBMITTED
-                && status != ErpPurConstants.APPROVE_STATUS_REJECTED) {
+        if (!Objects.equals(status, ErpPurConstants.APPROVE_STATUS_UNSUBMITTED)
+                && !Objects.equals(status, ErpPurConstants.APPROVE_STATUS_REJECTED)) {
             throw illegalTransition(returnOrder, status, "UNSUBMITTED 或 REJECTED");
         }
     }
 
     protected void validateTransitionForWithdraw(ErpPurReturn returnOrder, IServiceContext context) {
-        Integer status = returnOrder.getApproveStatus();
-        if (status == null || status != ErpPurConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = returnOrder.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpPurConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(returnOrder, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForApprove(ErpPurReturn returnOrder, IServiceContext context) {
-        Integer status = returnOrder.getApproveStatus();
-        if (status == null || status != ErpPurConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = returnOrder.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpPurConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(returnOrder, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForReject(ErpPurReturn returnOrder, IServiceContext context) {
-        Integer status = returnOrder.getApproveStatus();
-        if (status == null || status != ErpPurConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = returnOrder.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpPurConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(returnOrder, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpPurReturn returnOrder, IServiceContext context) {
-        Integer status = returnOrder.getApproveStatus();
-        if (status == null || status != ErpPurConstants.APPROVE_STATUS_APPROVED) {
+        String status = returnOrder.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpPurConstants.APPROVE_STATUS_APPROVED)) {
             throw illegalTransition(returnOrder, status, "APPROVED");
         }
     }
 
     protected void validateTransitionForCancel(ErpPurReturn returnOrder, IServiceContext context) {
-        Integer docStatus = returnOrder.getDocStatus();
-        if (docStatus != null && docStatus == ErpPurConstants.DOC_STATUS_CANCELLED) {
+        String docStatus = returnOrder.getDocStatus();
+        if (docStatus != null && Objects.equals(docStatus, ErpPurConstants.DOC_STATUS_CANCELLED)) {
             throw illegalDocTransition(returnOrder, docStatus, "非已作废");
         }
     }
@@ -285,15 +286,15 @@ public class ErpPurReturnProcessor {
     }
 
     protected void validateNotCancelled(ErpPurReturn returnOrder, IServiceContext context) {
-        Integer docStatus = returnOrder.getDocStatus();
-        if (docStatus != null && docStatus == ErpPurConstants.DOC_STATUS_CANCELLED) {
+        String docStatus = returnOrder.getDocStatus();
+        if (docStatus != null && Objects.equals(docStatus, ErpPurConstants.DOC_STATUS_CANCELLED)) {
             throw illegalDocTransition(returnOrder, docStatus, "非已作废");
         }
     }
 
     protected boolean isAlreadyApproved(ErpPurReturn returnOrder) {
-        Integer status = returnOrder.getApproveStatus();
-        return status != null && status == ErpPurConstants.APPROVE_STATUS_APPROVED;
+        String status = returnOrder.getApproveStatus();
+        return status != null && Objects.equals(status, ErpPurConstants.APPROVE_STATUS_APPROVED);
     }
 
     protected boolean isApproved(ErpPurReturn returnOrder) {
@@ -301,8 +302,8 @@ public class ErpPurReturnProcessor {
     }
 
     protected boolean isAlreadyRejected(ErpPurReturn returnOrder) {
-        Integer status = returnOrder.getApproveStatus();
-        return status != null && status == ErpPurConstants.APPROVE_STATUS_REJECTED;
+        String status = returnOrder.getApproveStatus();
+        return status != null && Objects.equals(status, ErpPurConstants.APPROVE_STATUS_REJECTED);
     }
 
     protected void requireLinesNonEmpty(ErpPurReturn returnOrder, IServiceContext context) {
@@ -318,7 +319,7 @@ public class ErpPurReturnProcessor {
         }
         ErpMdPartner partner = mdPartnerBiz.findById(returnOrder.getSupplierId(), context);
         if (partner == null || partner.getStatus() == null
-                || partner.getStatus() != ErpPurConstants.PARTNER_STATUS_ACTIVE) {
+                || !Objects.equals(partner.getStatus(), ErpPurConstants.PARTNER_STATUS_ACTIVE)) {
             throw new NopException(ErpPurErrors.ERR_PARTNER_INACTIVE)
                     .param(ErpPurErrors.ARG_SUPPLIER_ID, returnOrder.getSupplierId());
         }
@@ -330,8 +331,8 @@ public class ErpPurReturnProcessor {
             throw new NopException(ErpPurErrors.ERR_RETURN_RECEIVE_NOT_APPROVED)
                     .param(ErpPurErrors.ARG_CURRENT_STATUS, null);
         }
-        Integer receiveStatus = receive.getApproveStatus();
-        if (receiveStatus == null || receiveStatus != ErpPurConstants.APPROVE_STATUS_APPROVED) {
+        String receiveStatus = receive.getApproveStatus();
+        if (receiveStatus == null || !Objects.equals(receiveStatus, ErpPurConstants.APPROVE_STATUS_APPROVED)) {
             throw new NopException(ErpPurErrors.ERR_RETURN_RECEIVE_NOT_APPROVED)
                     .param(ErpPurErrors.ARG_CURRENT_STATUS, receiveStatus);
         }
@@ -392,14 +393,14 @@ public class ErpPurReturnProcessor {
         }
     }
 
-    protected NopException illegalTransition(ErpPurReturn returnOrder, Integer current, String expected) {
+    protected NopException illegalTransition(ErpPurReturn returnOrder, String current, String expected) {
         return new NopException(ErpPurErrors.ERR_RETURN_ILLEGAL_STATUS_TRANSITION)
                 .param(ErpPurErrors.ARG_RETURN_CODE, returnOrder.getCode())
                 .param(ErpPurErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpPurErrors.ARG_EXPECTED_STATUS, expected);
     }
 
-    protected NopException illegalDocTransition(ErpPurReturn returnOrder, Integer current, String expected) {
+    protected NopException illegalDocTransition(ErpPurReturn returnOrder, String current, String expected) {
         return new NopException(ErpPurErrors.ERR_RETURN_ILLEGAL_DOC_STATUS_TRANSITION)
                 .param(ErpPurErrors.ARG_RETURN_CODE, returnOrder.getCode())
                 .param(ErpPurErrors.ARG_CURRENT_DOC_STATUS, current)

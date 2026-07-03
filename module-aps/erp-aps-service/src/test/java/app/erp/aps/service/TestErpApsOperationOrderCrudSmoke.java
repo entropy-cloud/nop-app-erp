@@ -46,7 +46,7 @@ public class TestErpApsOperationOrderCrudSmoke extends JunitAutoTestCase {
         headData.put("sequence", 10);
         headData.put("machineId", 1);
         headData.put("qty", 100);
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> result = executeRpc(GraphQLOperationType.mutation, "ErpApsOperationOrder__save",
                 ApiRequest.build(Map.of("data", headData)));
 
@@ -65,7 +65,7 @@ public class TestErpApsOperationOrderCrudSmoke extends JunitAutoTestCase {
         headData.put("sequence", 10);
         headData.put("machineId", 1);
         headData.put("qty", 100);
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpApsOperationOrder__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -87,7 +87,7 @@ public class TestErpApsOperationOrderCrudSmoke extends JunitAutoTestCase {
         headData.put("sequence", 10);
         headData.put("machineId", 1);
         headData.put("qty", 100);
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpApsOperationOrder__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -113,7 +113,7 @@ public class TestErpApsOperationOrderCrudSmoke extends JunitAutoTestCase {
         headData.put("sequence", 10);
         headData.put("machineId", 1);
         headData.put("qty", 100);
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> created = executeRpc(GraphQLOperationType.mutation, "ErpApsOperationOrder__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_save_response.json5", created);
@@ -140,7 +140,7 @@ public class TestErpApsOperationOrderCrudSmoke extends JunitAutoTestCase {
         headData.put("sequence", 10);
         headData.put("machineId", 1);
         headData.put("qty", 100);
-        headData.put("status", 10);
+        headData.put("status", "DRAFT");
         ApiResponse<?> head = executeRpc(GraphQLOperationType.mutation, "ErpApsOperationOrder__save",
                 ApiRequest.build(Map.of("data", headData)));
         output("1_saveHead_response.json5", head);

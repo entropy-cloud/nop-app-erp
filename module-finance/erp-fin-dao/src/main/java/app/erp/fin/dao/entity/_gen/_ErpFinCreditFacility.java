@@ -37,7 +37,7 @@ public class _ErpFinCreditFacility extends DynamicOrmEntity{
     public static final String PROP_NAME_fundAccountId = "fundAccountId";
     public static final int PROP_ID_fundAccountId = 4;
     
-    /* 授信类型: FACILITY_TYPE INTEGER */
+    /* 授信类型: FACILITY_TYPE VARCHAR */
     public static final String PROP_NAME_facilityType = "facilityType";
     public static final int PROP_ID_facilityType = 5;
     
@@ -61,7 +61,7 @@ public class _ErpFinCreditFacility extends DynamicOrmEntity{
     public static final String PROP_NAME_validTo = "validTo";
     public static final int PROP_ID_validTo = 10;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 11;
     
@@ -181,7 +181,7 @@ public class _ErpFinCreditFacility extends DynamicOrmEntity{
     private java.lang.Long _fundAccountId;
     
     /* 授信类型: FACILITY_TYPE */
-    private java.lang.Integer _facilityType;
+    private java.lang.String _facilityType;
     
     /* 授信总额: TOTAL_AMOUNT */
     private java.math.BigDecimal _totalAmount;
@@ -199,7 +199,7 @@ public class _ErpFinCreditFacility extends DynamicOrmEntity{
     private java.time.LocalDate _validTo;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -402,9 +402,9 @@ public class _ErpFinCreditFacility extends DynamicOrmEntity{
             }
         
             case PROP_ID_facilityType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_facilityType));
                }
                setFacilityType(typedValue);
@@ -462,9 +462,9 @@ public class _ErpFinCreditFacility extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -580,7 +580,7 @@ public class _ErpFinCreditFacility extends DynamicOrmEntity{
         
             case PROP_ID_facilityType:{
                onInitProp(propId);
-               this._facilityType = (java.lang.Integer)value;
+               this._facilityType = (java.lang.String)value;
                
                break;
             }
@@ -622,7 +622,7 @@ public class _ErpFinCreditFacility extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -761,7 +761,7 @@ public class _ErpFinCreditFacility extends DynamicOrmEntity{
     /**
      * 授信类型: FACILITY_TYPE
      */
-    public final java.lang.Integer getFacilityType(){
+    public final java.lang.String getFacilityType(){
          onPropGet(PROP_ID_facilityType);
          return _facilityType;
     }
@@ -769,7 +769,7 @@ public class _ErpFinCreditFacility extends DynamicOrmEntity{
     /**
      * 授信类型: FACILITY_TYPE
      */
-    public final void setFacilityType(java.lang.Integer value){
+    public final void setFacilityType(java.lang.String value){
         if(onPropSet(PROP_ID_facilityType,value)){
             this._facilityType = value;
             internalClearRefs(PROP_ID_facilityType);
@@ -875,7 +875,7 @@ public class _ErpFinCreditFacility extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -883,7 +883,7 @@ public class _ErpFinCreditFacility extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

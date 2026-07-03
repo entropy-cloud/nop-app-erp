@@ -124,7 +124,7 @@ public class TestErpMdPartnerCrudSmoke extends JunitAutoTestCase {
 
         Map<String, Object> addressData = new LinkedHashMap<>();
         addressData.put("partnerId", partnerId);
-        addressData.put("addressType", 10);
+        addressData.put("addressType", "BILLING");
         addressData.put("address", "冒烟测试-关系导航地址行");
         ApiResponse<?> address = executeRpc(GraphQLOperationType.mutation, "ErpMdPartnerAddress__save",
                 ApiRequest.build(Map.of("data", addressData)));

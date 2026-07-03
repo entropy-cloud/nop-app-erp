@@ -1,23 +1,23 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 质检结果
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 待检
-    value: 10
+    value: PENDING
     description: 
   
   - label: 合格
-    value: 20
+    value: ACCEPTED
     description: 
   
   - label: 让步接收
-    value: 30
+    value: CONDITIONAL
     description: 
   
   - label: 不合格
-    value: 40
+    value: REJECTED
     description: 
   

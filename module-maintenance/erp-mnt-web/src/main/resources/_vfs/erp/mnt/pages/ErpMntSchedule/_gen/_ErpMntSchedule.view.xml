@@ -31,13 +31,13 @@
                 <col id="equipmentId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--计划类型-->
-                <col id="scheduleType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="scheduleType" mandatory="true" sortable="true"/>
 
                 <!--频率-->
                 <col id="frequency" ui:number="true" sortable="true"/>
 
                 <!--重复类型-->
-                <col id="recurrenceType" ui:number="true" sortable="true"/>
+                <col id="recurrenceType" sortable="true"/>
 
                 <!--星期几-->
                 <col id="daysOfWeek" sortable="true"/>

@@ -55,16 +55,16 @@
         }
 
 
-        private Integer _settlementType;
+        private String _settlementType;
 
     
         @PropMeta(propId=4)
     
-        public Integer getSettlementType(){
+        public String getSettlementType(){
             return _settlementType;
         }
 
-        public void setSettlementType(Integer value){
+        public void setSettlementType(String value){
             this._settlementType = value;
         }
 
@@ -109,16 +109,16 @@
         }
 
 
-        private Integer _status;
+        private String _status;
 
     
         @PropMeta(propId=7)
     
-        public Integer getStatus(){
+        public String getStatus(){
             return _status;
         }
 
-        public void setStatus(Integer value){
+        public void setStatus(String value){
             this._status = value;
         }
 

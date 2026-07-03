@@ -139,16 +139,16 @@
         }
 
 
-        private Integer _sourceType;
+        private String _sourceType;
 
     
         @PropMeta(propId=10)
     
-        public Integer getSourceType(){
+        public String getSourceType(){
             return _sourceType;
         }
 
-        public void setSourceType(Integer value){
+        public void setSourceType(String value){
             this._sourceType = value;
         }
 
@@ -179,16 +179,16 @@
         }
 
 
-        private Integer _docStatus;
+        private String _docStatus;
 
     
         @PropMeta(propId=12)
     
-        public Integer getDocStatus(){
+        public String getDocStatus(){
             return _docStatus;
         }
 
-        public void setDocStatus(Integer value){
+        public void setDocStatus(String value){
             this._docStatus = value;
         }
 
@@ -205,16 +205,16 @@
         }
 
 
-        private Integer _approveStatus;
+        private String _approveStatus;
 
     
         @PropMeta(propId=13)
     
-        public Integer getApproveStatus(){
+        public String getApproveStatus(){
             return _approveStatus;
         }
 
-        public void setApproveStatus(Integer value){
+        public void setApproveStatus(String value){
             this._approveStatus = value;
         }
 

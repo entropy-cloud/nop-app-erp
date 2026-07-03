@@ -31,7 +31,7 @@
                 <col id="acctSchemaId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--应收应付-->
-                <col id="direction" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="direction" mandatory="true" sortable="true"/>
 
                 <!--往来单位-->
                 <col id="partnerId" mandatory="true" ui:number="true" sortable="true"/>
@@ -73,7 +73,7 @@
                 <col id="openAmountFunctional" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--所属期间-->
                 <col id="periodId" ui:number="true" sortable="true"/>

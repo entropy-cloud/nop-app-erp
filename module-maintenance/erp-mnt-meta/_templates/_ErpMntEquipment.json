@@ -7,7 +7,7 @@
   "workcenterId": 0,
   "locationId": 0,
   "categoryId": 0,
-  "status": 0,
+  "status": "",
   "status_label": "",
   "serialNo": "",
   "manufacturer": "",

@@ -22,6 +22,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -130,47 +131,47 @@ public class ErpSalDeliveryProcessor {
 
     protected void validateTransitionForSubmit(ErpSalDelivery delivery, IServiceContext context) {
         validateNotCancelled(delivery, context);
-        Integer status = delivery.getApproveStatus();
+        String status = delivery.getApproveStatus();
         if (status == null) {
             status = ErpSalConstants.APPROVE_STATUS_UNSUBMITTED;
         }
-        if (status != ErpSalConstants.APPROVE_STATUS_UNSUBMITTED
-                && status != ErpSalConstants.APPROVE_STATUS_REJECTED) {
+        if (!Objects.equals(status, ErpSalConstants.APPROVE_STATUS_UNSUBMITTED)
+                && !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_REJECTED)) {
             throw illegalTransition(delivery, status, "UNSUBMITTED 或 REJECTED");
         }
     }
 
     protected void validateTransitionForWithdraw(ErpSalDelivery delivery, IServiceContext context) {
-        Integer status = delivery.getApproveStatus();
-        if (status == null || status != ErpSalConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = delivery.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(delivery, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForApprove(ErpSalDelivery delivery, IServiceContext context) {
-        Integer status = delivery.getApproveStatus();
-        if (status == null || status != ErpSalConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = delivery.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(delivery, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForReject(ErpSalDelivery delivery, IServiceContext context) {
-        Integer status = delivery.getApproveStatus();
-        if (status == null || status != ErpSalConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = delivery.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(delivery, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpSalDelivery delivery, IServiceContext context) {
-        Integer status = delivery.getApproveStatus();
-        if (status == null || status != ErpSalConstants.APPROVE_STATUS_APPROVED) {
+        String status = delivery.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_APPROVED)) {
             throw illegalTransition(delivery, status, "APPROVED");
         }
     }
 
     protected void validateTransitionForCancel(ErpSalDelivery delivery, IServiceContext context) {
-        Integer docStatus = delivery.getDocStatus();
-        if (docStatus != null && docStatus == ErpSalConstants.DOC_STATUS_CANCELLED) {
+        String docStatus = delivery.getDocStatus();
+        if (docStatus != null && Objects.equals(docStatus, ErpSalConstants.DOC_STATUS_CANCELLED)) {
             throw illegalDocTransition(delivery, docStatus, "非已作废");
         }
     }
@@ -302,7 +303,7 @@ public class ErpSalDeliveryProcessor {
                 allFullyDelivered = false;
             }
         }
-        int rolled;
+        String rolled;
         if (allFullyDelivered) {
             rolled = ErpSalConstants.DELIVERY_STATUS_DELIVERED;
         } else if (anyDelivered) {
@@ -327,7 +328,7 @@ public class ErpSalDeliveryProcessor {
                 continue;
             }
             int gate = InspectionTrigger.enforceGate(inspectionBiz, billType, delivery.getCode(),
-                    line.getMaterialId(), 40 /* erp-qa/inspection-type OUTGOING */,
+                    line.getMaterialId(), "OUTGOING" /* erp-qa/inspection-type OUTGOING */,
                     line.getQuantity(), null, delivery.getWarehouseId(), null, context);
             if (gate == InspectionTrigger.BLOCKED) {
                 throw new NopException(ErpSalErrors.ERR_DELIVERY_INSPECTION_BLOCKED)
@@ -348,15 +349,15 @@ public class ErpSalDeliveryProcessor {
     }
 
     protected void validateNotCancelled(ErpSalDelivery delivery, IServiceContext context) {
-        Integer docStatus = delivery.getDocStatus();
-        if (docStatus != null && docStatus == ErpSalConstants.DOC_STATUS_CANCELLED) {
+        String docStatus = delivery.getDocStatus();
+        if (docStatus != null && Objects.equals(docStatus, ErpSalConstants.DOC_STATUS_CANCELLED)) {
             throw illegalDocTransition(delivery, docStatus, "非已作废");
         }
     }
 
     protected boolean isAlreadyApproved(ErpSalDelivery delivery) {
-        Integer status = delivery.getApproveStatus();
-        return status != null && status == ErpSalConstants.APPROVE_STATUS_APPROVED;
+        String status = delivery.getApproveStatus();
+        return status != null && Objects.equals(status, ErpSalConstants.APPROVE_STATUS_APPROVED);
     }
 
     protected boolean isApproved(ErpSalDelivery delivery) {
@@ -364,8 +365,8 @@ public class ErpSalDeliveryProcessor {
     }
 
     protected boolean isAlreadyRejected(ErpSalDelivery delivery) {
-        Integer status = delivery.getApproveStatus();
-        return status != null && status == ErpSalConstants.APPROVE_STATUS_REJECTED;
+        String status = delivery.getApproveStatus();
+        return status != null && Objects.equals(status, ErpSalConstants.APPROVE_STATUS_REJECTED);
     }
 
     protected void requireLinesNonEmpty(ErpSalDelivery delivery, IServiceContext context) {
@@ -381,7 +382,7 @@ public class ErpSalDeliveryProcessor {
         }
         ErpMdPartner partner = mdPartnerBiz.findById(delivery.getCustomerId(), context);
         if (partner == null || partner.getStatus() == null
-                || partner.getStatus() != ErpSalConstants.PARTNER_STATUS_ACTIVE) {
+                || !Objects.equals(partner.getStatus(), ErpSalConstants.PARTNER_STATUS_ACTIVE)) {
             throw new NopException(ErpSalErrors.ERR_PARTNER_INACTIVE)
                     .param(ErpSalErrors.ARG_CUSTOMER_ID, delivery.getCustomerId());
         }
@@ -437,14 +438,14 @@ public class ErpSalDeliveryProcessor {
         }
     }
 
-    protected NopException illegalTransition(ErpSalDelivery delivery, Integer current, String expected) {
+    protected NopException illegalTransition(ErpSalDelivery delivery, String current, String expected) {
         return new NopException(ErpSalErrors.ERR_ILLEGAL_STATUS_TRANSITION)
                 .param(ErpSalErrors.ARG_DELIVERY_CODE, delivery.getCode())
                 .param(ErpSalErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpSalErrors.ARG_EXPECTED_STATUS, expected);
     }
 
-    protected NopException illegalDocTransition(ErpSalDelivery delivery, Integer current, String expected) {
+    protected NopException illegalDocTransition(ErpSalDelivery delivery, String current, String expected) {
         return new NopException(ErpSalErrors.ERR_ILLEGAL_DOC_STATUS_TRANSITION)
                 .param(ErpSalErrors.ARG_DELIVERY_CODE, delivery.getCode())
                 .param(ErpSalErrors.ARG_CURRENT_DOC_STATUS, current)

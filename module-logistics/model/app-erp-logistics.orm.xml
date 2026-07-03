@@ -25,40 +25,40 @@
      ext:allowIdAsColName="true" ext:icon="truck" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:biz="biz">
 
     <dicts>
-        <dict label="承运商类型" name="erp-log/carrier-type" valueType="int" i18n-en:label='Carrier Type'>
-            <option code="EXPRESS" label="快递" value="10" i18n-en:label='Express'/>
-            <option code="FREIGHT" label="货运" value="20" i18n-en:label='Freight'/>
-            <option code="AIR" label="空运" value="30" i18n-en:label='Air Freight'/>
-            <option code="SEA" label="海运" value="40" i18n-en:label='Sea Freight'/>
-            <option code="RAIL" label="铁路" value="50" i18n-en:label='Rail Freight'/>
+        <dict label="承运商类型" name="erp-log/carrier-type" valueType="string" i18n-en:label='Carrier Type'>
+            <option code="EXPRESS" label="快递" value="EXPRESS" i18n-en:label='Express'/>
+            <option code="FREIGHT" label="货运" value="FREIGHT" i18n-en:label='Freight'/>
+            <option code="AIR" label="空运" value="AIR" i18n-en:label='Air Freight'/>
+            <option code="SEA" label="海运" value="SEA" i18n-en:label='Sea Freight'/>
+            <option code="RAIL" label="铁路" value="RAIL" i18n-en:label='Rail Freight'/>
         </dict>
-        <dict label="运费条款" name="erp-log/freight-terms" valueType="int" i18n-en:label='Freight Terms'>
-            <option code="PREPAID" label="预付" value="10" i18n-en:label='Prepaid'/>
-            <option code="COLLECT" label="到付" value="20" i18n-en:label='Collect'/>
+        <dict label="运费条款" name="erp-log/freight-terms" valueType="string" i18n-en:label='Freight Terms'>
+            <option code="PREPAID" label="预付" value="PREPAID" i18n-en:label='Prepaid'/>
+            <option code="COLLECT" label="到付" value="COLLECT" i18n-en:label='Collect'/>
         </dict>
-        <dict label="发运单状态" name="erp-log/shipment-status" valueType="int" i18n-en:label='Shipment Status'>
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label='Draft'/>
-            <option code="ADVISED" label="已预约" value="20" i18n-en:label='Advised'/>
-            <option code="DISPATCHED" label="已派发" value="30" i18n-en:label='Dispatched'/>
-            <option code="IN_TRANSIT" label="运输中" value="40" i18n-en:label='In Transit'/>
-            <option code="DELIVERED" label="已签收" value="50" i18n-en:label='Delivered'/>
-            <option code="CANCELLED" label="已取消" value="60" i18n-en:label='Cancelled'/>
+        <dict label="发运单状态" name="erp-log/shipment-status" valueType="string" i18n-en:label='Shipment Status'>
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label='Draft'/>
+            <option code="ADVISED" label="已预约" value="ADVISED" i18n-en:label='Advised'/>
+            <option code="DISPATCHED" label="已派发" value="DISPATCHED" i18n-en:label='Dispatched'/>
+            <option code="IN_TRANSIT" label="运输中" value="IN_TRANSIT" i18n-en:label='In Transit'/>
+            <option code="DELIVERED" label="已签收" value="DELIVERED" i18n-en:label='Delivered'/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label='Cancelled'/>
         </dict>
-        <dict label="运费结算状态" name="erp-log/settlement-status" valueType="int" i18n-en:label='Settlement Status'>
-            <option code="PENDING" label="待结算" value="10" i18n-en:label='Pending'/>
-            <option code="SETTLED" label="已结算" value="20" i18n-en:label='Settled'/>
+        <dict label="运费结算状态" name="erp-log/settlement-status" valueType="string" i18n-en:label='Settlement Status'>
+            <option code="PENDING" label="待结算" value="PENDING" i18n-en:label='Pending'/>
+            <option code="SETTLED" label="已结算" value="SETTLED" i18n-en:label='Settled'/>
         </dict>
-        <dict label="网关操作类型" name="erp-log/gateway-action" valueType="int" i18n-en:label='Gateway Action'>
-            <option code="CREATE_SHIPMENT" label="下单" value="10" i18n-en:label='Create Shipment'/>
-            <option code="GET_LABEL" label="获取面单" value="20" i18n-en:label='Get Label'/>
-            <option code="ADVISE" label="预约取件" value="30" i18n-en:label='Advise Pickup'/>
-            <option code="TRACK" label="追踪" value="40" i18n-en:label='Track'/>
-            <option code="CANCEL" label="取消" value="50" i18n-en:label='Cancel'/>
+        <dict label="网关操作类型" name="erp-log/gateway-action" valueType="string" i18n-en:label='Gateway Action'>
+            <option code="CREATE_SHIPMENT" label="下单" value="CREATE_SHIPMENT" i18n-en:label='Create Shipment'/>
+            <option code="GET_LABEL" label="获取面单" value="GET_LABEL" i18n-en:label='Get Label'/>
+            <option code="ADVISE" label="预约取件" value="ADVISE" i18n-en:label='Advise Pickup'/>
+            <option code="TRACK" label="追踪" value="TRACK" i18n-en:label='Track'/>
+            <option code="CANCEL" label="取消" value="CANCEL" i18n-en:label='Cancel'/>
         </dict>
-        <dict label="单据状态" name="erp-log/doc-status" valueType="int" i18n-en:label='Doc Status'>
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label='Draft'/>
-            <option code="ACTIVE" label="已生效" value="20" i18n-en:label='Effective'/>
-            <option code="CANCELLED" label="已作废" value="30" i18n-en:label='Voided'/>
+        <dict label="单据状态" name="erp-log/doc-status" valueType="string" i18n-en:label='Doc Status'>
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label='Draft'/>
+            <option code="ACTIVE" label="已生效" value="ACTIVE" i18n-en:label='Effective'/>
+            <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label='Voided'/>
         </dict>
     </dicts>
 
@@ -96,12 +96,12 @@
                 <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="carrierName" displayName="承运商名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="CARRIER_NAME" propId="4" stdDataType="string" i18n-en:displayName='Carrier Name' />
-                <column name="carrierType" displayName="承运商类型" ext:dict="erp-log/carrier-type" mandatory="true" code="CARRIER_TYPE" propId="5" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Carrier Type' />
+                <column name="carrierType" displayName="承运商类型" ext:dict="erp-log/carrier-type" mandatory="true" code="CARRIER_TYPE" propId="5" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Carrier Type' />
                 <column name="gatewayId" displayName="网关标识" stdSqlType="VARCHAR" precision="50" mandatory="true" code="GATEWAY_ID" propId="6" stdDataType="string" i18n-en:displayName='Gateway ID' />
                 <column name="partnerId" displayName="承运商往来单位ID" stdSqlType="BIGINT" code="PARTNER_ID" propId="7" stdDataType="long" i18n-en:displayName='Partner' />
                 <column name="isActive" displayName="是否启用" stdSqlType="INTEGER" mandatory="true" defaultValue="1" code="IS_ACTIVE" propId="8" stdDataType="int" i18n-en:displayName='Active' />
                 <column name="trackingUrlTemplate" displayName="追踪URL模板" stdSqlType="VARCHAR" precision="500" code="TRACKING_URL_TEMPLATE" propId="9" stdDataType="string" i18n-en:displayName='Tracking URL Template' />
-                <column name="maxParcelWeight" displayName="最大包裹重量(kg)" domain="weight" code="MAX_PARCEL_WEIGHT" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Max Parcel Weight' />
+                <column name="maxParcelWeight" displayName="最大包裹重量(kg)" domain="weight" code="MAX_PARCEL_WEIGHT" propId="10" stdSqlType="DECIMAL" precision="12" scale="3" stdDataType="decimal" i18n-en:displayName='Max Parcel Weight' />
                 <column name="supportedServiceTypes" displayName="支持服务类型" domain="jsonText" code="SUPPORTED_SERVICE_TYPES" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Supported Service Types' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="13" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
@@ -167,10 +167,10 @@
                 <column name="labelUrl" displayName="面单URL" stdSqlType="VARCHAR" precision="500" code="LABEL_URL" propId="10" stdDataType="string" i18n-en:displayName='Label URL' />
                 <column name="freightAmount" displayName="运费" domain="amount" code="FREIGHT_AMOUNT" propId="11" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Freight Amount' />
                 <column name="freightCurrencyId" displayName="运费币种" stdSqlType="BIGINT" code="FREIGHT_CURRENCY_ID" propId="12" stdDataType="long" i18n-en:displayName='Currency' />
-                <column name="freightTerms" displayName="运费条款" ext:dict="erp-log/freight-terms" code="FREIGHT_TERMS" propId="13" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Freight Terms' />
-                <column name="freightSettlementStatus" displayName="运费结算状态" ext:dict="erp-log/settlement-status" code="FREIGHT_SETTLEMENT_STATUS" propId="14" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Settlement Status' />
-                <column name="totalWeight" displayName="总重量(kg)" domain="weight" code="TOTAL_WEIGHT" propId="15" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Weight' />
-                <column name="totalVolume" displayName="总体积(m³)" domain="volume" code="TOTAL_VOLUME" propId="16" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Total Volume' />
+                <column name="freightTerms" displayName="运费条款" ext:dict="erp-log/freight-terms" code="FREIGHT_TERMS" propId="13" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Freight Terms' />
+                <column name="freightSettlementStatus" displayName="运费结算状态" ext:dict="erp-log/settlement-status" code="FREIGHT_SETTLEMENT_STATUS" propId="14" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Settlement Status' />
+                <column name="totalWeight" displayName="总重量(kg)" domain="weight" code="TOTAL_WEIGHT" propId="15" stdSqlType="DECIMAL" precision="12" scale="3" stdDataType="decimal" i18n-en:displayName='Total Weight' />
+                <column name="totalVolume" displayName="总体积(m³)" domain="volume" code="TOTAL_VOLUME" propId="16" stdSqlType="DECIMAL" precision="12" scale="6" stdDataType="decimal" i18n-en:displayName='Total Volume' />
                 <column name="totalParcels" displayName="总包裹数" stdSqlType="INTEGER" defaultValue="1" code="TOTAL_PARCELS" propId="17" stdDataType="int" i18n-en:displayName='Total Parcels' />
                 <column name="receiverName" displayName="收货人" stdSqlType="VARCHAR" precision="100" code="RECEIVER_NAME" propId="18" stdDataType="string" i18n-en:displayName='Receiver Name' />
                 <column name="receiverPhone" displayName="收货人电话" domain="phone" code="RECEIVER_PHONE" propId="19" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Receiver Phone' />
@@ -186,7 +186,7 @@
                 <column name="actualDeliveryDate" displayName="实际送达日期" stdSqlType="DATE" code="ACTUAL_DELIVERY_DATE" propId="29" stdDataType="date" i18n-en:displayName='Actual Delivery Date' />
                 <column name="signedBy" displayName="签收人" stdSqlType="VARCHAR" precision="100" code="SIGNED_BY" propId="30" stdDataType="string" i18n-en:displayName='Signed By' />
                 <column name="shipperId" displayName="发货员(职员)" stdSqlType="BIGINT" code="SHIPPER_ID" propId="31" stdDataType="long" i18n-en:displayName='Shipper' />
-                <column name="status" displayName="状态" ext:dict="erp-log/shipment-status" mandatory="true" code="STATUS" propId="32" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
+                <column name="status" displayName="状态" ext:dict="erp-log/shipment-status" mandatory="true" code="STATUS" propId="32" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="33" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="34" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="35" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -245,10 +245,10 @@
                 <column name="parcelNo" displayName="包裹编号" stdSqlType="VARCHAR" precision="50" mandatory="true" code="PARCEL_NO" propId="3" stdDataType="string" i18n-en:displayName='Parcel No' />
                 <column name="trackingNo" displayName="运单号" stdSqlType="VARCHAR" precision="100" code="TRACKING_NO" propId="4" stdDataType="string" i18n-en:displayName='Tracking No' />
                 <column name="labelUrl" displayName="面单URL" stdSqlType="VARCHAR" precision="500" code="LABEL_URL" propId="5" stdDataType="string" i18n-en:displayName='Label URL' />
-                <column name="weight" displayName="重量(kg)" domain="weight" code="WEIGHT" propId="6" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Weight' />
-                <column name="length" displayName="长(cm)" domain="dimension" code="LENGTH" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Length' />
-                <column name="width" displayName="宽(cm)" domain="dimension" code="WIDTH" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Width' />
-                <column name="height" displayName="高(cm)" domain="dimension" code="HEIGHT" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Height' />
+                <column name="weight" displayName="重量(kg)" domain="weight" code="WEIGHT" propId="6" stdSqlType="DECIMAL" precision="12" scale="3" stdDataType="decimal" i18n-en:displayName='Weight' />
+                <column name="length" displayName="长(cm)" domain="dimension" code="LENGTH" propId="7" stdSqlType="DECIMAL" precision="12" scale="2" stdDataType="decimal" i18n-en:displayName='Length' />
+                <column name="width" displayName="宽(cm)" domain="dimension" code="WIDTH" propId="8" stdSqlType="DECIMAL" precision="12" scale="2" stdDataType="decimal" i18n-en:displayName='Width' />
+                <column name="height" displayName="高(cm)" domain="dimension" code="HEIGHT" propId="9" stdSqlType="DECIMAL" precision="12" scale="2" stdDataType="decimal" i18n-en:displayName='Height' />
                 <column name="declaredValue" displayName="申报价值" domain="amount" code="DECLARED_VALUE" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Declared Value' />
                 <column name="isActive" displayName="是否有效" stdSqlType="INTEGER" mandatory="true" defaultValue="1" code="IS_ACTIVE" propId="11" stdDataType="int" i18n-en:displayName='Active' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
@@ -273,7 +273,7 @@
                 <column name="shipmentId" displayName="发运单ID" stdSqlType="BIGINT" mandatory="true" code="SHIPMENT_ID" propId="2" stdDataType="long" i18n-en:displayName='Shipment' />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="gatewayId" displayName="网关标识" stdSqlType="VARCHAR" precision="50" mandatory="true" code="GATEWAY_ID" propId="4" stdDataType="string" i18n-en:displayName='Gateway ID' />
-                <column name="actionType" displayName="操作类型" ext:dict="erp-log/gateway-action" mandatory="true" code="ACTION_TYPE" propId="5" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Action Type' />
+                <column name="actionType" displayName="操作类型" ext:dict="erp-log/gateway-action" mandatory="true" code="ACTION_TYPE" propId="5" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Action Type' />
                 <column name="requestBody" displayName="请求报文" domain="jsonText" code="REQUEST_BODY" propId="6" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Request Body' />
                 <column name="responseBody" displayName="响应报文" domain="jsonText" code="RESPONSE_BODY" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Response Body' />
                 <column name="httpStatus" displayName="HTTP状态码" stdSqlType="INTEGER" code="HTTP_STATUS" propId="8" stdDataType="int" i18n-en:displayName='HTTP Status' />

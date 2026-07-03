@@ -153,16 +153,16 @@
         }
 
 
-        private String _variancePercent;
+        private java.math.BigDecimal _variancePercent;
 
     
         @PropMeta(propId=11)
     
-        public String getVariancePercent(){
+        public java.math.BigDecimal getVariancePercent(){
             return _variancePercent;
         }
 
-        public void setVariancePercent(String value){
+        public void setVariancePercent(java.math.BigDecimal value){
             this._variancePercent = value;
         }
 

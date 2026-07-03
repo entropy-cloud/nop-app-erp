@@ -57,11 +57,11 @@
         </prop>
         <prop name="estimatedHours" displayName="预估工时" propId="10" i18n-en:displayName="Estimated Hours"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="hours" type="java.lang.String" precision="10" scale="2"/>
+            <schema domain="hours" type="java.math.BigDecimal" precision="10" scale="2"/>
         </prop>
         <prop name="actualHours" displayName="实际工时" propId="11" i18n-en:displayName="Actual Hours" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="hours" type="java.lang.String" precision="10" scale="2"/>
+            <schema domain="hours" type="java.math.BigDecimal" precision="10" scale="2"/>
         </prop>
         <prop name="dependsOnId" displayName="依赖任务" propId="12" i18n-en:displayName="Depends On" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="dependsOn">
@@ -69,11 +69,11 @@
         </prop>
         <prop name="status" displayName="状态" propId="13" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-prj/task-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-prj/task-status"/>
         </prop>
         <prop name="priority" displayName="优先级" propId="14" i18n-en:displayName="Priority" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-prj/priority"/>
+            <schema type="java.lang.String" precision="20" dict="erp-prj/priority"/>
         </prop>
         <prop name="blockReason" displayName="阻塞原因" propId="15" i18n-en:displayName="Block Reason" queryable="true"
               sortable="true" insertable="true" updatable="true">

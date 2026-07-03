@@ -45,11 +45,11 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
     public static final String PROP_NAME_relatedBillCode = "relatedBillCode";
     public static final int PROP_ID_relatedBillCode = 6;
     
-    /* 状态: STATE INTEGER */
+    /* 状态: STATE VARCHAR */
     public static final String PROP_NAME_state = "state";
     public static final int PROP_ID_state = 7;
     
-    /* 阻断级别: BLOCKING_LEVEL INTEGER */
+    /* 阻断级别: BLOCKING_LEVEL VARCHAR */
     public static final String PROP_NAME_blockingLevel = "blockingLevel";
     public static final int PROP_ID_blockingLevel = 8;
     
@@ -204,10 +204,10 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
     private java.lang.String _relatedBillCode;
     
     /* 状态: STATE */
-    private java.lang.Integer _state;
+    private java.lang.String _state;
     
     /* 阻断级别: BLOCKING_LEVEL */
-    private java.lang.Integer _blockingLevel;
+    private java.lang.String _blockingLevel;
     
     /* 错误信息: ERROR */
     private java.lang.String _error;
@@ -451,9 +451,9 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
             }
         
             case PROP_ID_state:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_state));
                }
                setState(typedValue);
@@ -461,9 +461,9 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
             }
         
             case PROP_ID_blockingLevel:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_blockingLevel));
                }
                setBlockingLevel(typedValue);
@@ -643,14 +643,14 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
         
             case PROP_ID_state:{
                onInitProp(propId);
-               this._state = (java.lang.Integer)value;
+               this._state = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_blockingLevel:{
                onInitProp(propId);
-               this._blockingLevel = (java.lang.Integer)value;
+               this._blockingLevel = (java.lang.String)value;
                
                break;
             }
@@ -862,7 +862,7 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
     /**
      * 状态: STATE
      */
-    public final java.lang.Integer getState(){
+    public final java.lang.String getState(){
          onPropGet(PROP_ID_state);
          return _state;
     }
@@ -870,7 +870,7 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
     /**
      * 状态: STATE
      */
-    public final void setState(java.lang.Integer value){
+    public final void setState(java.lang.String value){
         if(onPropSet(PROP_ID_state,value)){
             this._state = value;
             internalClearRefs(PROP_ID_state);
@@ -881,7 +881,7 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
     /**
      * 阻断级别: BLOCKING_LEVEL
      */
-    public final java.lang.Integer getBlockingLevel(){
+    public final java.lang.String getBlockingLevel(){
          onPropGet(PROP_ID_blockingLevel);
          return _blockingLevel;
     }
@@ -889,7 +889,7 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
     /**
      * 阻断级别: BLOCKING_LEVEL
      */
-    public final void setBlockingLevel(java.lang.Integer value){
+    public final void setBlockingLevel(java.lang.String value){
         if(onPropSet(PROP_ID_blockingLevel,value)){
             this._blockingLevel = value;
             internalClearRefs(PROP_ID_blockingLevel);

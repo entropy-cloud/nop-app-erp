@@ -138,16 +138,16 @@
         }
 
 
-        private Integer _result;
+        private String _result;
 
     
         @PropMeta(propId=10)
     
-        public Integer getResult(){
+        public String getResult(){
             return _result;
         }
 
-        public void setResult(Integer value){
+        public void setResult(String value){
             this._result = value;
         }
 
@@ -180,30 +180,30 @@
         }
 
 
-        private Integer _docStatus;
+        private String _docStatus;
 
     
         @PropMeta(propId=13)
     
-        public Integer getDocStatus(){
+        public String getDocStatus(){
             return _docStatus;
         }
 
-        public void setDocStatus(Integer value){
+        public void setDocStatus(String value){
             this._docStatus = value;
         }
 
 
-        private Integer _approveStatus;
+        private String _approveStatus;
 
     
         @PropMeta(propId=14)
     
-        public Integer getApproveStatus(){
+        public String getApproveStatus(){
             return _approveStatus;
         }
 
-        public void setApproveStatus(Integer value){
+        public void setApproveStatus(String value){
             this._approveStatus = value;
         }
 

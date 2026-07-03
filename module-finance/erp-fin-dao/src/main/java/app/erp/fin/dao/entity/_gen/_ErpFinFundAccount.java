@@ -37,7 +37,7 @@ public class _ErpFinFundAccount extends DynamicOrmEntity{
     public static final String PROP_NAME_orgId = "orgId";
     public static final int PROP_ID_orgId = 4;
     
-    /* 账户类型: ACCOUNT_TYPE INTEGER */
+    /* 账户类型: ACCOUNT_TYPE VARCHAR */
     public static final String PROP_NAME_accountType = "accountType";
     public static final int PROP_ID_accountType = 5;
     
@@ -65,7 +65,7 @@ public class _ErpFinFundAccount extends DynamicOrmEntity{
     public static final String PROP_NAME_currentBalance = "currentBalance";
     public static final int PROP_ID_currentBalance = 11;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 12;
     
@@ -191,7 +191,7 @@ public class _ErpFinFundAccount extends DynamicOrmEntity{
     private java.lang.Long _orgId;
     
     /* 账户类型: ACCOUNT_TYPE */
-    private java.lang.Integer _accountType;
+    private java.lang.String _accountType;
     
     /* 对应会计科目: SUBJECT_ID */
     private java.lang.Long _subjectId;
@@ -212,7 +212,7 @@ public class _ErpFinFundAccount extends DynamicOrmEntity{
     private java.math.BigDecimal _currentBalance;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -418,9 +418,9 @@ public class _ErpFinFundAccount extends DynamicOrmEntity{
             }
         
             case PROP_ID_accountType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_accountType));
                }
                setAccountType(typedValue);
@@ -488,9 +488,9 @@ public class _ErpFinFundAccount extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -606,7 +606,7 @@ public class _ErpFinFundAccount extends DynamicOrmEntity{
         
             case PROP_ID_accountType:{
                onInitProp(propId);
-               this._accountType = (java.lang.Integer)value;
+               this._accountType = (java.lang.String)value;
                
                break;
             }
@@ -655,7 +655,7 @@ public class _ErpFinFundAccount extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -794,7 +794,7 @@ public class _ErpFinFundAccount extends DynamicOrmEntity{
     /**
      * 账户类型: ACCOUNT_TYPE
      */
-    public final java.lang.Integer getAccountType(){
+    public final java.lang.String getAccountType(){
          onPropGet(PROP_ID_accountType);
          return _accountType;
     }
@@ -802,7 +802,7 @@ public class _ErpFinFundAccount extends DynamicOrmEntity{
     /**
      * 账户类型: ACCOUNT_TYPE
      */
-    public final void setAccountType(java.lang.Integer value){
+    public final void setAccountType(java.lang.String value){
         if(onPropSet(PROP_ID_accountType,value)){
             this._accountType = value;
             internalClearRefs(PROP_ID_accountType);
@@ -927,7 +927,7 @@ public class _ErpFinFundAccount extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -935,7 +935,7 @@ public class _ErpFinFundAccount extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

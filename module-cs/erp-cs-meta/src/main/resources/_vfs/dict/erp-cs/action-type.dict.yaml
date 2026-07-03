@@ -1,31 +1,31 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 操作类型
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 分派
-    value: 10
+    value: ASSIGN
     description: 
   
   - label: 备注
-    value: 20
+    value: NOTE
     description: 
   
   - label: 附件
-    value: 30
+    value: ATTACH
     description: 
   
   - label: 升级
-    value: 40
+    value: ESCALATE
     description: 
   
   - label: 关闭
-    value: 50
+    value: CLOSE
     description: 
   
   - label: 取消
-    value: 60
+    value: CANCEL
     description: 
   

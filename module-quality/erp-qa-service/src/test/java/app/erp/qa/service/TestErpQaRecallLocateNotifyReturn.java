@@ -153,9 +153,9 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
         material.orm_propValueByName("id", MATERIAL_ID);
         material.setCode("MAT-RC");
         material.setName("召回测试物料");
-        material.setMaterialType(10);
+        material.setMaterialType("GOODS");
         material.setUoMId(UOM_ID);
-        material.setStatus(10);
+        material.setStatus("ACTIVE");
         matDao.saveEntity(material);
 
         IEntityDao<ErpMdWarehouse> whDao = daoProvider.daoFor(ErpMdWarehouse.class);
@@ -163,7 +163,7 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
         warehouse.orm_propValueByName("id", WAREHOUSE_ID);
         warehouse.setCode("WH-RC");
         warehouse.setName("召回测试仓库");
-        warehouse.setStatus(10);
+        warehouse.setStatus("ACTIVE");
         whDao.saveEntity(warehouse);
 
         IEntityDao<ErpMdCurrency> curDao = daoProvider.daoFor(ErpMdCurrency.class);
@@ -178,8 +178,8 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
         partner.orm_propValueByName("id", CUSTOMER_ID);
         partner.setCode("CUS-RC");
         partner.setName("召回测试客户");
-        partner.setPartnerType(10);
-        partner.setStatus(10);
+        partner.setPartnerType("CUSTOMER");
+        partner.setStatus("ACTIVE");
         partnerDao.saveEntity(partner);
     }
 
@@ -196,7 +196,7 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
             batch.setWarehouseId(WAREHOUSE_ID);
             batch.setTotalQuantity(new BigDecimal("100"));
             batch.setAvailableQuantity(new BigDecimal("100"));
-            batch.setStatus(10); // erp-inv/batch-status OPEN
+            batch.setStatus("OPEN"); // erp-inv/batch-status OPEN
             batchDao.saveEntity(batch);
 
             // 销售出库单 + 行
@@ -208,8 +208,8 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
             delivery.setWarehouseId(WAREHOUSE_ID);
             delivery.setCurrencyId(CURRENCY_ID);
             delivery.setBusinessDate(LocalDate.now());
-            delivery.setDocStatus(20); // erp-sal/doc-status ACTIVE
-            delivery.setApproveStatus(30); // erp-sal/approve-status APPROVED
+            delivery.setDocStatus("ACTIVE"); // erp-sal/doc-status ACTIVE
+            delivery.setApproveStatus("APPROVED"); // erp-sal/approve-status APPROVED
             delivery.setPosted(Boolean.FALSE);
             dlvDao.saveEntity(delivery);
 
@@ -228,10 +228,10 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
             ErpInvStockMove move = new ErpInvStockMove();
             move.orm_propValueByName("id", MOVE_PK);
             move.setCode("MV-" + DELIVERY_CODE);
-            move.setMoveType(20); // erp-inv/operation-type OUTGOING
+            move.setMoveType("OUTGOING"); // erp-inv/operation-type OUTGOING
             move.setBusinessDate(LocalDate.now());
-            move.setDocStatus(30); // erp-inv/move-status DONE
-            move.setApproveStatus(30); // APPROVED
+            move.setDocStatus("DONE"); // erp-inv/move-status DONE
+            move.setApproveStatus("APPROVED"); // APPROVED
             move.setRelatedBillType(ErpQaConstants.RELATED_BILL_TYPE_SAL_DELIVERY_INV);
             move.setRelatedBillCode(DELIVERY_CODE);
             move.setPosted(Boolean.FALSE);

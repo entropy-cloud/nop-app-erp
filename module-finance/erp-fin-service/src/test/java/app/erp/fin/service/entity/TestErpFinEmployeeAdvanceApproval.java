@@ -85,7 +85,7 @@ public class TestErpFinEmployeeAdvanceApproval extends JunitAutoTestCase {
 
     @Test
     public void testRejectEmployeeInactive() {
-        Long advanceId = seedAdvance("ADV-006", 9902L, 20,
+        Long advanceId = seedAdvance("ADV-006", 9902L, "INACTIVE",
                 ErpFinConstants.APPROVE_STATUS_UNSUBMITTED, new BigDecimal("100"));
         assertThrows(NopException.class, () -> advanceBiz.submit(advanceId, CTX));
     }
@@ -99,11 +99,11 @@ public class TestErpFinEmployeeAdvanceApproval extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private Long seedValidAdvance(String code, int approveStatus, BigDecimal amount) {
+    private Long seedValidAdvance(String code, String approveStatus, BigDecimal amount) {
         return seedAdvance(code, 9902L, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE, approveStatus, amount);
     }
 
-    private Long seedAdvance(String code, Long partnerId, int employeeStatus, int approveStatus, BigDecimal amount) {
+    private Long seedAdvance(String code, Long partnerId, String employeeStatus, String approveStatus, BigDecimal amount) {
         return ormTemplate.runInSession(session -> {
             IEntityDao<ErpMdEmployee> empDao = daoProvider.daoFor(ErpMdEmployee.class);
             ErpMdEmployee emp = new ErpMdEmployee();
@@ -119,7 +119,7 @@ public class TestErpFinEmployeeAdvanceApproval extends JunitAutoTestCase {
             advance.setCode(code);
             advance.setOrgId(1L);
             advance.setEmployeeId(emp.getId());
-            advance.setAdvanceType(10);
+            advance.setAdvanceType("EXPENSE_ADVANCE");
             advance.setBusinessDate(java.time.LocalDate.of(2026, 6, 10));
             advance.setCurrencyId(1L);
             advance.setExchangeRate(BigDecimal.ONE);

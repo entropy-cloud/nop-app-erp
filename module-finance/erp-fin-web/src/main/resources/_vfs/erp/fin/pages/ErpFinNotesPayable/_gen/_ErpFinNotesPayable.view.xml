@@ -28,7 +28,7 @@
                 <col id="orgId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--票据类型-->
-                <col id="notesType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="notesType" mandatory="true" sortable="true"/>
 
                 <!--票据号-->
                 <col id="notesNo" sortable="true"/>
@@ -70,7 +70,7 @@
                 <col id="sourceBillCode" sortable="true"/>
 
                 <!--票据状态-->
-                <col id="status" ui:number="true" sortable="true"/>
+                <col id="status" sortable="true"/>
 
                 <!--是否已过账-->
                 <col id="posted" sortable="true"/>

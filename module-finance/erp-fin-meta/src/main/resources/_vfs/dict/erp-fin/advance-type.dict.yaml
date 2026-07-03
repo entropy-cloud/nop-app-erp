@@ -1,19 +1,19 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 借款类型
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 费用预支
-    value: 10
+    value: EXPENSE_ADVANCE
     description: 
   
   - label: 备用金
-    value: 20
+    value: IMPREST
     description: 
   
   - label: 差旅借款
-    value: 30
+    value: TRAVEL
     description: 
   

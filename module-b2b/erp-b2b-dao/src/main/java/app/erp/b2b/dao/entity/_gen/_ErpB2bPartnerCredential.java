@@ -29,7 +29,7 @@ public class _ErpB2bPartnerCredential extends DynamicOrmEntity{
     public static final String PROP_NAME_partnerProfileId = "partnerProfileId";
     public static final int PROP_ID_partnerProfileId = 2;
     
-    /* 凭证类型: CREDENTIAL_TYPE INTEGER */
+    /* 凭证类型: CREDENTIAL_TYPE VARCHAR */
     public static final String PROP_NAME_credentialType = "credentialType";
     public static final int PROP_ID_credentialType = 3;
     
@@ -151,7 +151,7 @@ public class _ErpB2bPartnerCredential extends DynamicOrmEntity{
     private java.lang.Long _partnerProfileId;
     
     /* 凭证类型: CREDENTIAL_TYPE */
-    private java.lang.Integer _credentialType;
+    private java.lang.String _credentialType;
     
     /* 凭证标识: CREDENTIAL_KEY */
     private java.lang.String _credentialKey;
@@ -340,9 +340,9 @@ public class _ErpB2bPartnerCredential extends DynamicOrmEntity{
             }
         
             case PROP_ID_credentialType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_credentialType));
                }
                setCredentialType(typedValue);
@@ -494,7 +494,7 @@ public class _ErpB2bPartnerCredential extends DynamicOrmEntity{
         
             case PROP_ID_credentialType:{
                onInitProp(propId);
-               this._credentialType = (java.lang.Integer)value;
+               this._credentialType = (java.lang.String)value;
                
                break;
             }
@@ -630,7 +630,7 @@ public class _ErpB2bPartnerCredential extends DynamicOrmEntity{
     /**
      * 凭证类型: CREDENTIAL_TYPE
      */
-    public final java.lang.Integer getCredentialType(){
+    public final java.lang.String getCredentialType(){
          onPropGet(PROP_ID_credentialType);
          return _credentialType;
     }
@@ -638,7 +638,7 @@ public class _ErpB2bPartnerCredential extends DynamicOrmEntity{
     /**
      * 凭证类型: CREDENTIAL_TYPE
      */
-    public final void setCredentialType(java.lang.Integer value){
+    public final void setCredentialType(java.lang.String value){
         if(onPropSet(PROP_ID_credentialType,value)){
             this._credentialType = value;
             internalClearRefs(PROP_ID_credentialType);

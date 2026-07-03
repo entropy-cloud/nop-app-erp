@@ -37,7 +37,7 @@ public class _ErpApsDispatchLog extends DynamicOrmEntity{
     public static final String PROP_NAME_workcenterId = "workcenterId";
     public static final int PROP_ID_workcenterId = 4;
     
-    /* 派工类型: DISPATCH_TYPE INTEGER */
+    /* 派工类型: DISPATCH_TYPE VARCHAR */
     public static final String PROP_NAME_dispatchType = "dispatchType";
     public static final int PROP_ID_dispatchType = 5;
     
@@ -195,7 +195,7 @@ public class _ErpApsDispatchLog extends DynamicOrmEntity{
     private java.lang.Long _workcenterId;
     
     /* 派工类型: DISPATCH_TYPE */
-    private java.lang.Integer _dispatchType;
+    private java.lang.String _dispatchType;
     
     /* 派工前状态: PREVIOUS_STATUS */
     private java.lang.String _previousStatus;
@@ -428,9 +428,9 @@ public class _ErpApsDispatchLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_dispatchType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_dispatchType));
                }
                setDispatchType(typedValue);
@@ -626,7 +626,7 @@ public class _ErpApsDispatchLog extends DynamicOrmEntity{
         
             case PROP_ID_dispatchType:{
                onInitProp(propId);
-               this._dispatchType = (java.lang.Integer)value;
+               this._dispatchType = (java.lang.String)value;
                
                break;
             }
@@ -821,7 +821,7 @@ public class _ErpApsDispatchLog extends DynamicOrmEntity{
     /**
      * 派工类型: DISPATCH_TYPE
      */
-    public final java.lang.Integer getDispatchType(){
+    public final java.lang.String getDispatchType(){
          onPropGet(PROP_ID_dispatchType);
          return _dispatchType;
     }
@@ -829,7 +829,7 @@ public class _ErpApsDispatchLog extends DynamicOrmEntity{
     /**
      * 派工类型: DISPATCH_TYPE
      */
-    public final void setDispatchType(java.lang.Integer value){
+    public final void setDispatchType(java.lang.String value){
         if(onPropSet(PROP_ID_dispatchType,value)){
             this._dispatchType = value;
             internalClearRefs(PROP_ID_dispatchType);

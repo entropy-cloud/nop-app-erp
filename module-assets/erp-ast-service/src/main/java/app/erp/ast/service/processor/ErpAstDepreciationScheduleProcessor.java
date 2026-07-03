@@ -20,6 +20,7 @@ import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -55,7 +56,7 @@ public class ErpAstDepreciationScheduleProcessor {
 
         ErpAstAssetCategory category = asset.getCategoryId() == null ? null
                 : daoProvider.daoFor(ErpAstAssetCategory.class).getEntityById(asset.getCategoryId());
-        int method = asset.getDepreciationMethod() != null ? asset.getDepreciationMethod()
+        String method = asset.getDepreciationMethod() != null ? asset.getDepreciationMethod()
                 : (category != null && category.getDepreciationMethod() != null ? category.getDepreciationMethod()
                         : ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE);
         int months = asset.getUsefulLifeMonths() != null ? asset.getUsefulLifeMonths()
@@ -63,7 +64,7 @@ public class ErpAstDepreciationScheduleProcessor {
 
         ErpAstDepreciationSchedule schedule = findSchedule(assetId, period);
         boolean wasExecuted = schedule != null
-                && ErpAstConstants.SCHEDULE_STATUS_EXECUTED == schedule.getStatus();
+                && Objects.equals(schedule.getStatus(), ErpAstConstants.SCHEDULE_STATUS_EXECUTED);
 
         // 幂等重执行：先红冲已过账凭证（硬前置）
         if (wasExecuted && Boolean.TRUE.equals(schedule.getPosted())) {
@@ -74,7 +75,7 @@ public class ErpAstDepreciationScheduleProcessor {
         // 回退本期旧折旧对资产卡片汇总的影响，恢复到本期前状态后重算
         if (schedule != null && schedule.getActualAmount() != null
                 && schedule.getStatus() != null
-                && schedule.getStatus() == ErpAstConstants.SCHEDULE_STATUS_EXECUTED) {
+                && Objects.equals(schedule.getStatus(), ErpAstConstants.SCHEDULE_STATUS_EXECUTED)) {
             BigDecimal oldAmount = schedule.getActualAmount();
             asset.setAccumulatedDepreciation(nz(asset.getAccumulatedDepreciation()).subtract(oldAmount));
             asset.setNetBookValue(nz(asset.getNetBookValue()).add(oldAmount));
@@ -154,7 +155,7 @@ public class ErpAstDepreciationScheduleProcessor {
     public ErpAstDepreciationSchedule reverseDepreciation(Long assetId, String period, IServiceContext context) {
         ErpAstDepreciationSchedule schedule = findSchedule(assetId, period);
         if (schedule == null || schedule.getStatus() == null
-                || schedule.getStatus() != ErpAstConstants.SCHEDULE_STATUS_EXECUTED) {
+                || !Objects.equals(schedule.getStatus(), ErpAstConstants.SCHEDULE_STATUS_EXECUTED)) {
             throw new NopException(ErpAstErrors.ERR_SCHEDULE_ILLEGAL_STATUS_TRANSITION)
                     .param(ErpAstErrors.ARG_CURRENT_STATUS, schedule != null ? schedule.getStatus() : null)
                     .param(ErpAstErrors.ARG_EXPECTED_STATUS, "EXECUTED");
@@ -179,8 +180,8 @@ public class ErpAstDepreciationScheduleProcessor {
     // ---------- step：业务规则校验（protected，下游可逐个覆盖） ----------
 
     protected void validateAssetInService(ErpAstAsset asset, IServiceContext context) {
-        Integer assetStatus = asset.getStatus();
-        if (assetStatus == null || assetStatus != ErpAstConstants.ASSET_STATUS_IN_SERVICE) {
+        String assetStatus = asset.getStatus();
+        if (assetStatus == null || !Objects.equals(assetStatus, ErpAstConstants.ASSET_STATUS_IN_SERVICE)) {
             throw new NopException(ErpAstErrors.ERR_DEPRECIATION_ASSET_NOT_IN_SERVICE)
                     .param(ErpAstErrors.ARG_ASSET_CODE, asset.getCode());
         }
@@ -193,7 +194,7 @@ public class ErpAstDepreciationScheduleProcessor {
                     .param(ErpAstErrors.ARG_PERIOD, period);
         }
         if (periodEntity.getStatus() == null
-                || periodEntity.getStatus() != ErpAstConstants.PERIOD_STATUS_OPEN) {
+                || !Objects.equals(periodEntity.getStatus(), ErpAstConstants.PERIOD_STATUS_OPEN)) {
             throw new NopException(ErpAstErrors.ERR_DEPRECIATION_PERIOD_CLOSED)
                     .param(ErpAstErrors.ARG_PERIOD, period);
         }

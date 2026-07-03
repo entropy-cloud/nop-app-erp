@@ -49,7 +49,7 @@ public class BudgetChecker {
         if (project == null) {
             return;
         }
-        BigDecimal total = parseAmount(project.getBudget());
+        BigDecimal total = project.getBudget();
         if (total == null || total.signum() <= 0) {
             return;
         }
@@ -100,17 +100,6 @@ public class BudgetChecker {
             sum = sum.add(nz(l.getAmount()));
         }
         return sum;
-    }
-
-    private BigDecimal parseAmount(String text) {
-        if (text == null || text.trim().isEmpty()) {
-            return null;
-        }
-        try {
-            return new BigDecimal(text.trim());
-        } catch (NumberFormatException e) {
-            return null;
-        }
     }
 
     private BigDecimal nz(BigDecimal v) {

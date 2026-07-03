@@ -53,16 +53,16 @@
         </prop>
         <prop name="byproductType" displayName="联副产品类型" propId="9" i18n-en:displayName="Byproduct Type" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-mfg/byproduct-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-mfg/byproduct-type"/>
         </prop>
         <prop name="yieldRate" displayName="产出率(%)" propId="10" i18n-en:displayName="Yield Rate" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="100">
-            <schema domain="rate" type="java.lang.String" precision="10" scale="4"/>
+            <schema domain="rate" type="java.math.BigDecimal" precision="10" scale="4"/>
         </prop>
         <prop name="costAllocationPercent" displayName="成本分摊比例(%)" propId="11"
               i18n-en:displayName="Cost Allocation Percent" queryable="true" sortable="true" insertable="true"
               updatable="true" defaultValue="0">
-            <schema domain="rate" type="java.lang.String" precision="10" scale="4"/>
+            <schema domain="rate" type="java.math.BigDecimal" precision="10" scale="4"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="12" i18n-en:displayName="Del Flag" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">

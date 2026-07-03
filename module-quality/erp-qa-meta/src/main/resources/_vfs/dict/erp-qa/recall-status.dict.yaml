@@ -1,27 +1,27 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 召回状态
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 待处理
-    value: 10
+    value: OPEN
     description: 
   
   - label: 已审批
-    value: 20
+    value: APPROVED
     description: 
   
   - label: 执行中
-    value: 30
+    value: IN_PROGRESS
     description: 
   
   - label: 已关闭
-    value: 40
+    value: CLOSED
     description: 
   
   - label: 已取消
-    value: 50
+    value: CANCELLED
     description: 
   

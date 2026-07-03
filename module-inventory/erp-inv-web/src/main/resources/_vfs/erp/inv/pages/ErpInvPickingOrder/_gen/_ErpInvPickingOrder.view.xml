@@ -37,7 +37,7 @@
                 <col id="pickerId" ui:number="true" sortable="true"/>
 
                 <!--单据状态-->
-                <col id="docStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="docStatus" mandatory="true" sortable="true"/>
 
                 <!--关联单据类型(SALES_DELIVERY/WORK_ORDER_ISSUE)-->
                 <col id="relatedBillType" sortable="true"/>

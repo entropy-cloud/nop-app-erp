@@ -49,19 +49,19 @@
         </prop>
         <prop name="measuredValue" displayName="测量值" propId="8" i18n-en:displayName="Measured Value" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="measuredValue" type="java.lang.String" precision="20" scale="6"/>
+            <schema domain="measuredValue" type="java.lang.String" precision="100"/>
         </prop>
         <prop name="targetValue" displayName="目标值" propId="9" i18n-en:displayName="Target Value" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="measuredValue" type="java.lang.String" precision="20" scale="6"/>
+            <schema domain="measuredValue" type="java.math.BigDecimal" precision="20" scale="6"/>
         </prop>
         <prop name="tolerance" displayName="允差" propId="10" i18n-en:displayName="Tolerance" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="measuredValue" type="java.lang.String" precision="20" scale="6"/>
+            <schema domain="measuredValue" type="java.math.BigDecimal" precision="20" scale="6"/>
         </prop>
         <prop name="result" displayName="校准结果" propId="11" i18n-en:displayName="Result" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-qa/inspection-result"/>
+            <schema type="java.lang.String" precision="20" dict="erp-qa/inspection-result"/>
         </prop>
         <prop name="nextCalibrationDate" displayName="下次校准日期" propId="12" i18n-en:displayName="Next Calibration Date"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -73,11 +73,11 @@
         </prop>
         <prop name="docStatus" displayName="单据状态" propId="14" i18n-en:displayName="Doc Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-qa/doc-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-qa/doc-status"/>
         </prop>
         <prop name="approveStatus" displayName="审核状态" propId="15" i18n-en:displayName="Approve Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-qa/approve-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-qa/approve-status"/>
         </prop>
         <prop name="remark" displayName="备注" propId="16" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

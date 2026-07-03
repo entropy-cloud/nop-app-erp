@@ -22,6 +22,7 @@ import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -74,12 +75,12 @@ public class ErpMfgMaterialIssueBizModel extends CrudBizModel<ErpMfgMaterialIssu
     @BizMutation
     public ErpMfgMaterialIssue confirm(@Name("issueId") Long issueId, IServiceContext context) {
         ErpMfgMaterialIssue issue = requireEntity(String.valueOf(issueId), null, context);
-        Integer status = issue.getDocStatus();
+        String status = issue.getDocStatus();
         // 幂等：已 DONE（已出库）直接返回，不重复触发库存出库（state-machine §4）
-        if (status != null && status == ErpMfgConstants.ISSUE_STATUS_DONE) {
+        if (status != null && Objects.equals(status, ErpMfgConstants.ISSUE_STATUS_DONE)) {
             return issue;
         }
-        if (status == null || status != ErpMfgConstants.ISSUE_STATUS_DRAFT) {
+        if (status == null || !Objects.equals(status, ErpMfgConstants.ISSUE_STATUS_DRAFT)) {
             throw illegalTransition(issue, status, "DRAFT");
         }
         List<ErpMfgMaterialIssueLine> lines = loadLines(issueId);
@@ -184,7 +185,7 @@ public class ErpMfgMaterialIssueBizModel extends CrudBizModel<ErpMfgMaterialIssu
         return v != null ? v : BigDecimal.ZERO;
     }
 
-    private NopException illegalTransition(ErpMfgMaterialIssue issue, Integer current, String expected) {
+    private NopException illegalTransition(ErpMfgMaterialIssue issue, String current, String expected) {
         return new NopException(ErpMfgErrors.ERR_INVALID_STATUS_TRANSITION)
                 .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, issue.getCode())
                 .param(ErpMfgErrors.ARG_CURRENT_STATUS, current)

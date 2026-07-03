@@ -94,10 +94,10 @@ public class TestErpSalReturnPosting extends JunitAutoTestCase {
         assertTrue(Boolean.TRUE.equals(approved.getPosted()), "审核过账 posted=true");
 
         // SALES_RETURN 凭证（billHeadCode=return.code，businessType=150）
-        ErpFinVoucherBillR link = findBillLink("RT-POST-001", ErpFinBusinessType.SALES_RETURN.getCode());
+        ErpFinVoucherBillR link = findBillLink("RT-POST-001", ErpFinBusinessType.SALES_RETURN.name());
         assertNotNull(link, "应生成 SALES_RETURN 业财回链");
         ErpFinVoucher voucher = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(link.getVoucherId());
-        assertEquals(20, voucher.getDocStatus(), "凭证 docStatus=已过账");
+        assertEquals(ErpFinConstants.VOUCHER_STATUS_POSTED, voucher.getDocStatus(), "凭证 docStatus=已过账");
         // 借 1401 库存商品 20 / 贷 6401 主营业务成本 20
         assertEquals(0, voucher.getTotalDebit().compareTo(RETURN_COST), "借方合计=20");
         assertEquals(0, voucher.getTotalCredit().compareTo(RETURN_COST), "贷方合计=20");
@@ -201,7 +201,7 @@ public class TestErpSalReturnPosting extends JunitAutoTestCase {
 
     // ---------- queries ----------
 
-    private ErpFinVoucherBillR findBillLink(String billCode, int businessType) {
+    private ErpFinVoucherBillR findBillLink(String billCode, String businessType) {
         IEntityDao<ErpFinVoucherBillR> dao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("billCode", billCode), eq("businessType", businessType)));
@@ -227,7 +227,7 @@ public class TestErpSalReturnPosting extends JunitAutoTestCase {
 
     private void seedPeriodAndSubjects() {
         ormTemplate.runInSession(session -> {
-            seedOpenPeriod("2026-07", 2026, 7, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31), 10);
+            seedOpenPeriod("2026-07", 2026, 7, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31), "OPEN");
             seedSubject("1401", "库存商品");
             seedSubject("6401", "主营业务成本");
             seedAcctSchema();
@@ -242,9 +242,9 @@ public class TestErpSalReturnPosting extends JunitAutoTestCase {
         schema.setCode("AS-" + ORG_ID);
         schema.setName("账套" + ORG_ID);
         schema.setOrgId(ORG_ID);
-        schema.setNature(10);
+        schema.setNature("FINANCIAL");
         schema.setFunctionalCurrencyId(CURRENCY_ID);
-        schema.setStatus(10);
+        schema.setStatus(ErpSalConstants.PARTNER_STATUS_ACTIVE);
         dao.saveEntity(schema);
     }
 
@@ -254,12 +254,12 @@ public class TestErpSalReturnPosting extends JunitAutoTestCase {
         partner.setId(CUSTOMER_ID);
         partner.setCode("CUS-" + CUSTOMER_ID);
         partner.setName("客户" + CUSTOMER_ID);
-        partner.setPartnerType(20);
+        partner.setPartnerType("SUPPLIER");
         partner.setStatus(ErpSalConstants.PARTNER_STATUS_ACTIVE);
         dao.saveEntity(partner);
     }
 
-    private void seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, int status) {
+    private void seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, String status) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
@@ -278,9 +278,9 @@ public class TestErpSalReturnPosting extends JunitAutoTestCase {
         ErpMdSubject subject = new ErpMdSubject();
         subject.setCode(code);
         subject.setName(name);
-        subject.setSubjectClass(10);
-        subject.setDirection(10);
-        subject.setStatus(10);
+        subject.setSubjectClass("ASSET");
+        subject.setDirection("DEBIT");
+        subject.setStatus(ErpSalConstants.PARTNER_STATUS_ACTIVE);
         dao.saveEntity(subject);
     }
 

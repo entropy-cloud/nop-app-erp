@@ -45,7 +45,7 @@ public class _ErpFinBankStatementLine extends DynamicOrmEntity{
     public static final String PROP_NAME_refNo = "refNo";
     public static final int PROP_ID_refNo = 6;
     
-    /* 借贷方向: DC_DIRECTION INTEGER */
+    /* 借贷方向: DC_DIRECTION VARCHAR */
     public static final String PROP_NAME_dcDirection = "dcDirection";
     public static final int PROP_ID_dcDirection = 7;
     
@@ -61,7 +61,7 @@ public class _ErpFinBankStatementLine extends DynamicOrmEntity{
     public static final String PROP_NAME_balanceAfter = "balanceAfter";
     public static final int PROP_ID_balanceAfter = 10;
     
-    /* 匹配状态: MATCH_STATUS INTEGER */
+    /* 匹配状态: MATCH_STATUS VARCHAR */
     public static final String PROP_NAME_matchStatus = "matchStatus";
     public static final int PROP_ID_matchStatus = 11;
     
@@ -197,7 +197,7 @@ public class _ErpFinBankStatementLine extends DynamicOrmEntity{
     private java.lang.String _refNo;
     
     /* 借贷方向: DC_DIRECTION */
-    private java.lang.Integer _dcDirection;
+    private java.lang.String _dcDirection;
     
     /* 金额: AMOUNT */
     private java.math.BigDecimal _amount;
@@ -209,7 +209,7 @@ public class _ErpFinBankStatementLine extends DynamicOrmEntity{
     private java.math.BigDecimal _balanceAfter;
     
     /* 匹配状态: MATCH_STATUS */
-    private java.lang.Integer _matchStatus;
+    private java.lang.String _matchStatus;
     
     /* 匹配凭证行ID: MATCHED_LINE_ID */
     private java.lang.Long _matchedLineId;
@@ -438,9 +438,9 @@ public class _ErpFinBankStatementLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_dcDirection:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_dcDirection));
                }
                setDcDirection(typedValue);
@@ -478,9 +478,9 @@ public class _ErpFinBankStatementLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_matchStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_matchStatus));
                }
                setMatchStatus(typedValue);
@@ -620,7 +620,7 @@ public class _ErpFinBankStatementLine extends DynamicOrmEntity{
         
             case PROP_ID_dcDirection:{
                onInitProp(propId);
-               this._dcDirection = (java.lang.Integer)value;
+               this._dcDirection = (java.lang.String)value;
                
                break;
             }
@@ -648,7 +648,7 @@ public class _ErpFinBankStatementLine extends DynamicOrmEntity{
         
             case PROP_ID_matchStatus:{
                onInitProp(propId);
-               this._matchStatus = (java.lang.Integer)value;
+               this._matchStatus = (java.lang.String)value;
                
                break;
             }
@@ -832,7 +832,7 @@ public class _ErpFinBankStatementLine extends DynamicOrmEntity{
     /**
      * 借贷方向: DC_DIRECTION
      */
-    public final java.lang.Integer getDcDirection(){
+    public final java.lang.String getDcDirection(){
          onPropGet(PROP_ID_dcDirection);
          return _dcDirection;
     }
@@ -840,7 +840,7 @@ public class _ErpFinBankStatementLine extends DynamicOrmEntity{
     /**
      * 借贷方向: DC_DIRECTION
      */
-    public final void setDcDirection(java.lang.Integer value){
+    public final void setDcDirection(java.lang.String value){
         if(onPropSet(PROP_ID_dcDirection,value)){
             this._dcDirection = value;
             internalClearRefs(PROP_ID_dcDirection);
@@ -908,7 +908,7 @@ public class _ErpFinBankStatementLine extends DynamicOrmEntity{
     /**
      * 匹配状态: MATCH_STATUS
      */
-    public final java.lang.Integer getMatchStatus(){
+    public final java.lang.String getMatchStatus(){
          onPropGet(PROP_ID_matchStatus);
          return _matchStatus;
     }
@@ -916,7 +916,7 @@ public class _ErpFinBankStatementLine extends DynamicOrmEntity{
     /**
      * 匹配状态: MATCH_STATUS
      */
-    public final void setMatchStatus(java.lang.Integer value){
+    public final void setMatchStatus(java.lang.String value){
         if(onPropSet(PROP_ID_matchStatus,value)){
             this._matchStatus = value;
             internalClearRefs(PROP_ID_matchStatus);

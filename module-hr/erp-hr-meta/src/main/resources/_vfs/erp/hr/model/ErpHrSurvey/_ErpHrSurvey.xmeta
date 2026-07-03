@@ -37,7 +37,7 @@
         </prop>
         <prop name="surveyType" displayName="调研类型" propId="5" i18n-en:displayName="Survey Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-hr/survey-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-hr/survey-type"/>
         </prop>
         <prop name="isAnonymous" displayName="是否匿名" propId="6" i18n-en:displayName="Is Anonymous" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="true">
@@ -45,7 +45,7 @@
         </prop>
         <prop name="status" displayName="状态" propId="7" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-hr/survey-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-hr/survey-status"/>
         </prop>
         <prop name="startDate" displayName="开始日期" propId="8" i18n-en:displayName="Start Date" queryable="true"
               sortable="true" insertable="true" updatable="true">

@@ -135,7 +135,7 @@ public class AdvanceOffsetOrchestrator {
         return flag == null || flag;
     }
 
-    private ErpFinArApItem findOpenItem(String sourceBillType, String sourceBillCode, int direction) {
+    private ErpFinArApItem findOpenItem(String sourceBillType, String sourceBillCode, String direction) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(
@@ -178,12 +178,12 @@ public class AdvanceOffsetOrchestrator {
         IEntityDao<ErpFinVoucherBillR> linkDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean lq = new QueryBean();
         lq.addFilter(and(eq("billCode", claimCode),
-                eq("businessType", ErpFinBusinessType.EMPLOYEE_ADVANCE_SETTLE.getCode())));
+                eq("businessType", ErpFinBusinessType.EMPLOYEE_ADVANCE_SETTLE.name())));
         List<ErpFinVoucherBillR> links = linkDao.findAllByQuery(lq);
         IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
         for (ErpFinVoucherBillR link : links) {
             ErpFinVoucher v = voucherDao.getEntityById(link.getVoucherId());
-            if (v != null && Integer.valueOf(20).equals(v.getDocStatus())
+            if (v != null && ErpFinConstants.VOUCHER_STATUS_POSTED.equals(v.getDocStatus())
                     && !Boolean.TRUE.equals(v.getIsReversed())) {
                 return nz(v.getTotalDebit());
             }
@@ -211,7 +211,7 @@ public class AdvanceOffsetOrchestrator {
         item.setStatus(resolveStatus(settled, item.getAmountFunctional()));
     }
 
-    private int resolveStatus(BigDecimal settledFunctional, BigDecimal amountFunctional) {
+    private String resolveStatus(BigDecimal settledFunctional, BigDecimal amountFunctional) {
         BigDecimal settled = nz(settledFunctional);
         BigDecimal total = nz(amountFunctional);
         if (settled.compareTo(BigDecimal.ZERO) <= 0) {

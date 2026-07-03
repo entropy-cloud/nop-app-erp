@@ -31,7 +31,7 @@
                 <col id="carrierName" mandatory="true" sortable="true"/>
 
                 <!--承运商类型-->
-                <col id="carrierType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="carrierType" mandatory="true" sortable="true"/>
 
                 <!--网关标识-->
                 <col id="gatewayId" mandatory="true" sortable="true"/>
@@ -46,7 +46,7 @@
                 <col id="trackingUrlTemplate" sortable="true"/>
 
                 <!--最大包裹重量(kg)-->
-                <col id="maxParcelWeight" sortable="true"/>
+                <col id="maxParcelWeight" ui:number="true" sortable="true"/>
 
                 <!--支持服务类型-->
                 <col id="supportedServiceTypes" sortable="true"/>

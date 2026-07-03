@@ -139,16 +139,16 @@
         }
 
 
-        private String _scrapRate;
+        private java.math.BigDecimal _scrapRate;
 
     
         @PropMeta(propId=10)
     
-        public String getScrapRate(){
+        public java.math.BigDecimal getScrapRate(){
             return _scrapRate;
         }
 
-        public void setScrapRate(String value){
+        public void setScrapRate(java.math.BigDecimal value){
             this._scrapRate = value;
         }
 

@@ -1,31 +1,31 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 伙伴上线状态
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 已注册
-    value: 10
+    value: REGISTERED
     description: 
   
   - label: 测试中
-    value: 20
+    value: TESTING
     description: 
   
   - label: 已认证
-    value: 30
+    value: CERTIFIED
     description: 
   
   - label: 生产中
-    value: 40
+    value: PRODUCTION
     description: 
   
   - label: 已暂停
-    value: 50
+    value: SUSPENDED
     description: 
   
   - label: 已终止
-    value: 60
+    value: TERMINATED
     description: 
   

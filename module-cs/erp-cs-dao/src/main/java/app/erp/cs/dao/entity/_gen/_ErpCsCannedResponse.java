@@ -53,7 +53,7 @@ public class _ErpCsCannedResponse extends DynamicOrmEntity{
     public static final String PROP_NAME_macroTicketTypeId = "macroTicketTypeId";
     public static final int PROP_ID_macroTicketTypeId = 8;
     
-    /* 自动匹配优先级: MACRO_PRIORITY INTEGER */
+    /* 自动匹配优先级: MACRO_PRIORITY VARCHAR */
     public static final String PROP_NAME_macroPriority = "macroPriority";
     public static final int PROP_ID_macroPriority = 9;
     
@@ -196,7 +196,7 @@ public class _ErpCsCannedResponse extends DynamicOrmEntity{
     private java.lang.Long _macroTicketTypeId;
     
     /* 自动匹配优先级: MACRO_PRIORITY */
-    private java.lang.Integer _macroPriority;
+    private java.lang.String _macroPriority;
     
     /* 排序: SEQUENCE */
     private java.lang.Integer _sequence;
@@ -445,9 +445,9 @@ public class _ErpCsCannedResponse extends DynamicOrmEntity{
             }
         
             case PROP_ID_macroPriority:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_macroPriority));
                }
                setMacroPriority(typedValue);
@@ -611,7 +611,7 @@ public class _ErpCsCannedResponse extends DynamicOrmEntity{
         
             case PROP_ID_macroPriority:{
                onInitProp(propId);
-               this._macroPriority = (java.lang.Integer)value;
+               this._macroPriority = (java.lang.String)value;
                
                break;
             }
@@ -840,7 +840,7 @@ public class _ErpCsCannedResponse extends DynamicOrmEntity{
     /**
      * 自动匹配优先级: MACRO_PRIORITY
      */
-    public final java.lang.Integer getMacroPriority(){
+    public final java.lang.String getMacroPriority(){
          onPropGet(PROP_ID_macroPriority);
          return _macroPriority;
     }
@@ -848,7 +848,7 @@ public class _ErpCsCannedResponse extends DynamicOrmEntity{
     /**
      * 自动匹配优先级: MACRO_PRIORITY
      */
-    public final void setMacroPriority(java.lang.Integer value){
+    public final void setMacroPriority(java.lang.String value){
         if(onPropSet(PROP_ID_macroPriority,value)){
             this._macroPriority = value;
             internalClearRefs(PROP_ID_macroPriority);

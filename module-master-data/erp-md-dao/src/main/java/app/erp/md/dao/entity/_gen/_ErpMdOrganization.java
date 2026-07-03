@@ -37,7 +37,7 @@ public class _ErpMdOrganization extends DynamicOrmEntity{
     public static final String PROP_NAME_parentId = "parentId";
     public static final int PROP_ID_parentId = 4;
     
-    /* 组织类型: ORG_TYPE INTEGER */
+    /* 组织类型: ORG_TYPE VARCHAR */
     public static final String PROP_NAME_orgType = "orgType";
     public static final int PROP_ID_orgType = 5;
     
@@ -45,7 +45,7 @@ public class _ErpMdOrganization extends DynamicOrmEntity{
     public static final String PROP_NAME_functionalCurrencyId = "functionalCurrencyId";
     public static final int PROP_ID_functionalCurrencyId = 6;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 7;
     
@@ -149,13 +149,13 @@ public class _ErpMdOrganization extends DynamicOrmEntity{
     private java.lang.Long _parentId;
     
     /* 组织类型: ORG_TYPE */
-    private java.lang.Integer _orgType;
+    private java.lang.String _orgType;
     
     /* 本位币: FUNCTIONAL_CURRENCY_ID */
     private java.lang.Long _functionalCurrencyId;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -340,9 +340,9 @@ public class _ErpMdOrganization extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgType));
                }
                setOrgType(typedValue);
@@ -360,9 +360,9 @@ public class _ErpMdOrganization extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -468,7 +468,7 @@ public class _ErpMdOrganization extends DynamicOrmEntity{
         
             case PROP_ID_orgType:{
                onInitProp(propId);
-               this._orgType = (java.lang.Integer)value;
+               this._orgType = (java.lang.String)value;
                
                break;
             }
@@ -482,7 +482,7 @@ public class _ErpMdOrganization extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -614,7 +614,7 @@ public class _ErpMdOrganization extends DynamicOrmEntity{
     /**
      * 组织类型: ORG_TYPE
      */
-    public final java.lang.Integer getOrgType(){
+    public final java.lang.String getOrgType(){
          onPropGet(PROP_ID_orgType);
          return _orgType;
     }
@@ -622,7 +622,7 @@ public class _ErpMdOrganization extends DynamicOrmEntity{
     /**
      * 组织类型: ORG_TYPE
      */
-    public final void setOrgType(java.lang.Integer value){
+    public final void setOrgType(java.lang.String value){
         if(onPropSet(PROP_ID_orgType,value)){
             this._orgType = value;
             internalClearRefs(PROP_ID_orgType);
@@ -652,7 +652,7 @@ public class _ErpMdOrganization extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -660,7 +660,7 @@ public class _ErpMdOrganization extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

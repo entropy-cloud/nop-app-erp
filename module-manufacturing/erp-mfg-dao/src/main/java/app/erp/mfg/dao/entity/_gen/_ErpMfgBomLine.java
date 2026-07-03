@@ -211,7 +211,7 @@ public class _ErpMfgBomLine extends DynamicOrmEntity{
     private java.lang.String _remark;
     
     /* 损耗率(%): SCRAP_RATE */
-    private java.lang.String _scrapRate;
+    private java.math.BigDecimal _scrapRate;
     
     /* 发货仓库: WAREHOUSE_ID */
     private java.lang.Long _warehouseId;
@@ -467,9 +467,9 @@ public class _ErpMfgBomLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_scrapRate:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_scrapRate));
                }
                setScrapRate(typedValue);
@@ -630,7 +630,7 @@ public class _ErpMfgBomLine extends DynamicOrmEntity{
         
             case PROP_ID_scrapRate:{
                onInitProp(propId);
-               this._scrapRate = (java.lang.String)value;
+               this._scrapRate = (java.math.BigDecimal)value;
                
                break;
             }
@@ -871,7 +871,7 @@ public class _ErpMfgBomLine extends DynamicOrmEntity{
     /**
      * 损耗率(%): SCRAP_RATE
      */
-    public final java.lang.String getScrapRate(){
+    public final java.math.BigDecimal getScrapRate(){
          onPropGet(PROP_ID_scrapRate);
          return _scrapRate;
     }
@@ -879,7 +879,7 @@ public class _ErpMfgBomLine extends DynamicOrmEntity{
     /**
      * 损耗率(%): SCRAP_RATE
      */
-    public final void setScrapRate(java.lang.String value){
+    public final void setScrapRate(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_scrapRate,value)){
             this._scrapRate = value;
             internalClearRefs(PROP_ID_scrapRate);

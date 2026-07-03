@@ -16,6 +16,7 @@ import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -56,7 +57,7 @@ public class StockMoveBookkeeper implements BookingContext {
     FifoCostingStrategy fifoCostingStrategy;
 
     /** 其他策略（FIFO 等）按 costMethod 注册——Phase 2 注入 FifoCostingStrategy 后填充。 */
-    final Map<Integer, CostingStrategy> strategyByMethod = new HashMap<>();
+    final Map<String, CostingStrategy> strategyByMethod = new HashMap<>();
 
     @jakarta.annotation.PostConstruct
     void initStrategyRegistry() {
@@ -74,12 +75,12 @@ public class StockMoveBookkeeper implements BookingContext {
      */
     public void bookCompletion(ErpInvStockMove move, List<ErpInvStockMoveLine> lines, Long acctSchemaId) {
         for (ErpInvStockMoveLine line : lines) {
-            int method = costMethodResolver.resolve(line, acctSchemaId);
+            String method = costMethodResolver.resolve(line, acctSchemaId);
             CostingStrategy strategy = resolveStrategy(method);
-            if (move.getMoveType() != null && move.getMoveType() == ErpInvConstants.MOVE_TYPE_INTERNAL_TRANSFER) {
+            if (move.getMoveType() != null && Objects.equals(move.getMoveType(), ErpInvConstants.MOVE_TYPE_INTERNAL_TRANSFER)) {
                 BigDecimal carriedCost = strategy.onOutgoing(move, line, acctSchemaId, this);
                 strategy.onIncoming(move, line, acctSchemaId, carriedCost, this);
-            } else if (move.getMoveType() != null && move.getMoveType() == ErpInvConstants.MOVE_TYPE_OUTGOING) {
+            } else if (move.getMoveType() != null && Objects.equals(move.getMoveType(), ErpInvConstants.MOVE_TYPE_OUTGOING)) {
                 strategy.onOutgoing(move, line, acctSchemaId, this);
             } else {
                 BigDecimal unitCost = nz(line.getUnitCost());
@@ -88,7 +89,7 @@ public class StockMoveBookkeeper implements BookingContext {
         }
     }
 
-    private CostingStrategy resolveStrategy(int method) {
+    private CostingStrategy resolveStrategy(String method) {
         CostingStrategy strategy = strategyByMethod.get(method);
         return strategy != null ? strategy : movingAverageCostingStrategy;
     }
@@ -131,7 +132,7 @@ public class StockMoveBookkeeper implements BookingContext {
     public void writeLedger(ErpInvStockMove move, ErpInvStockMoveLine line, Long acctSchemaId,
                              ErpInvStockBalance balance, Long warehouseId, Long locationId,
                              BigDecimal signedQty, BigDecimal unitCost, BigDecimal signedTotalCost,
-                             int costMethod) {
+                             String costMethod) {
         IEntityDao<ErpInvStockLedger> dao = daoProvider.daoFor(ErpInvStockLedger.class);
         ErpInvStockLedger ledger = dao.newEntity();
         ledger.setCode("SL-" + StringHelper.generateUUID());

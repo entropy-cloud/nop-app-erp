@@ -45,7 +45,7 @@ public class _ErpHrGapAnalysis extends DynamicOrmEntity{
     public static final String PROP_NAME_gapValue = "gapValue";
     public static final int PROP_ID_gapValue = 6;
     
-    /* 差距严重程度: GAP_SEVERITY INTEGER */
+    /* 差距严重程度: GAP_SEVERITY VARCHAR */
     public static final String PROP_NAME_gapSeverity = "gapSeverity";
     public static final int PROP_ID_gapSeverity = 7;
     
@@ -166,7 +166,7 @@ public class _ErpHrGapAnalysis extends DynamicOrmEntity{
     private java.lang.Integer _gapValue;
     
     /* 差距严重程度: GAP_SEVERITY */
-    private java.lang.Integer _gapSeverity;
+    private java.lang.String _gapSeverity;
     
     /* 评估日期: ASSESSMENT_DATE */
     private java.time.LocalDate _assessmentDate;
@@ -383,9 +383,9 @@ public class _ErpHrGapAnalysis extends DynamicOrmEntity{
             }
         
             case PROP_ID_gapSeverity:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_gapSeverity));
                }
                setGapSeverity(typedValue);
@@ -525,7 +525,7 @@ public class _ErpHrGapAnalysis extends DynamicOrmEntity{
         
             case PROP_ID_gapSeverity:{
                onInitProp(propId);
-               this._gapSeverity = (java.lang.Integer)value;
+               this._gapSeverity = (java.lang.String)value;
                
                break;
             }
@@ -709,7 +709,7 @@ public class _ErpHrGapAnalysis extends DynamicOrmEntity{
     /**
      * 差距严重程度: GAP_SEVERITY
      */
-    public final java.lang.Integer getGapSeverity(){
+    public final java.lang.String getGapSeverity(){
          onPropGet(PROP_ID_gapSeverity);
          return _gapSeverity;
     }
@@ -717,7 +717,7 @@ public class _ErpHrGapAnalysis extends DynamicOrmEntity{
     /**
      * 差距严重程度: GAP_SEVERITY
      */
-    public final void setGapSeverity(java.lang.Integer value){
+    public final void setGapSeverity(java.lang.String value){
         if(onPropSet(PROP_ID_gapSeverity,value)){
             this._gapSeverity = value;
             internalClearRefs(PROP_ID_gapSeverity);

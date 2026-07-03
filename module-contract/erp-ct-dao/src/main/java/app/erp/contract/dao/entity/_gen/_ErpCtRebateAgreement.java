@@ -41,7 +41,7 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
     public static final String PROP_NAME_partnerId = "partnerId";
     public static final int PROP_ID_partnerId = 5;
     
-    /* 返利类型: REBATE_TYPE INTEGER */
+    /* 返利类型: REBATE_TYPE VARCHAR */
     public static final String PROP_NAME_rebateType = "rebateType";
     public static final int PROP_ID_rebateType = 6;
     
@@ -57,11 +57,11 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
     public static final String PROP_NAME_endDate = "endDate";
     public static final int PROP_ID_endDate = 9;
     
-    /* 计提方法: ACCRUAL_METHOD INTEGER */
+    /* 计提方法: ACCRUAL_METHOD VARCHAR */
     public static final String PROP_NAME_accrualMethod = "accrualMethod";
     public static final int PROP_ID_accrualMethod = 10;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 11;
     
@@ -201,7 +201,7 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
     private java.lang.Long _partnerId;
     
     /* 返利类型: REBATE_TYPE */
-    private java.lang.Integer _rebateType;
+    private java.lang.String _rebateType;
     
     /* 签订日期: AGREEMENT_DATE */
     private java.time.LocalDate _agreementDate;
@@ -213,10 +213,10 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
     private java.time.LocalDate _endDate;
     
     /* 计提方法: ACCRUAL_METHOD */
-    private java.lang.Integer _accrualMethod;
+    private java.lang.String _accrualMethod;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 当前累计金额: TOTAL_ACCUMULATED_AMOUNT */
     private java.math.BigDecimal _totalAccumulatedAmount;
@@ -441,9 +441,9 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
             }
         
             case PROP_ID_rebateType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_rebateType));
                }
                setRebateType(typedValue);
@@ -481,9 +481,9 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
             }
         
             case PROP_ID_accrualMethod:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_accrualMethod));
                }
                setAccrualMethod(typedValue);
@@ -491,9 +491,9 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -636,7 +636,7 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
         
             case PROP_ID_rebateType:{
                onInitProp(propId);
-               this._rebateType = (java.lang.Integer)value;
+               this._rebateType = (java.lang.String)value;
                
                break;
             }
@@ -664,14 +664,14 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
         
             case PROP_ID_accrualMethod:{
                onInitProp(propId);
-               this._accrualMethod = (java.lang.Integer)value;
+               this._accrualMethod = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -843,7 +843,7 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
     /**
      * 返利类型: REBATE_TYPE
      */
-    public final java.lang.Integer getRebateType(){
+    public final java.lang.String getRebateType(){
          onPropGet(PROP_ID_rebateType);
          return _rebateType;
     }
@@ -851,7 +851,7 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
     /**
      * 返利类型: REBATE_TYPE
      */
-    public final void setRebateType(java.lang.Integer value){
+    public final void setRebateType(java.lang.String value){
         if(onPropSet(PROP_ID_rebateType,value)){
             this._rebateType = value;
             internalClearRefs(PROP_ID_rebateType);
@@ -919,7 +919,7 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
     /**
      * 计提方法: ACCRUAL_METHOD
      */
-    public final java.lang.Integer getAccrualMethod(){
+    public final java.lang.String getAccrualMethod(){
          onPropGet(PROP_ID_accrualMethod);
          return _accrualMethod;
     }
@@ -927,7 +927,7 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
     /**
      * 计提方法: ACCRUAL_METHOD
      */
-    public final void setAccrualMethod(java.lang.Integer value){
+    public final void setAccrualMethod(java.lang.String value){
         if(onPropSet(PROP_ID_accrualMethod,value)){
             this._accrualMethod = value;
             internalClearRefs(PROP_ID_accrualMethod);
@@ -938,7 +938,7 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -946,7 +946,7 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);

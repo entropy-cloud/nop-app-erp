@@ -1,19 +1,19 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 收货状态
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 未收货
-    value: 10
+    value: UNRECEIVED
     description: 
   
   - label: 部分收货
-    value: 20
+    value: PARTIAL
     description: 
   
   - label: 已收清
-    value: 30
+    value: RECEIVED
     description: 
   

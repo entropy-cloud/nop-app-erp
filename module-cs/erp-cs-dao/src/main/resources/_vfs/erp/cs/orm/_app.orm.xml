@@ -15,107 +15,108 @@
     </x:gen-extends>
 
     <dicts>
-        <dict label="工单状态" name="erp-cs/ticket-status" valueType="int" i18n-en:label="Ticket Status">
-            <option code="NEW" label="新建" value="10" i18n-en:label="New"/>
-            <option code="ASSIGNED" label="已分配" value="20" i18n-en:label="Assigned"/>
-            <option code="IN_PROGRESS" label="处理中" value="30" i18n-en:label="In Progress"/>
-            <option code="RESOLVED" label="已解决" value="40" i18n-en:label="Resolved"/>
-            <option code="CLOSED" label="已关闭" value="50" i18n-en:label="Closed"/>
-            <option code="CANCELLED" label="已取消" value="60" i18n-en:label="Cancelled"/>
+        <dict label="工单状态" name="erp-cs/ticket-status" valueType="string" i18n-en:label="Ticket Status">
+            <option code="NEW" label="新建" value="NEW" i18n-en:label="New"/>
+            <option code="ASSIGNED" label="已分配" value="ASSIGNED" i18n-en:label="Assigned"/>
+            <option code="IN_PROGRESS" label="处理中" value="IN_PROGRESS" i18n-en:label="In Progress"/>
+            <option code="RESOLVED" label="已解决" value="RESOLVED" i18n-en:label="Resolved"/>
+            <option code="CLOSED" label="已关闭" value="CLOSED" i18n-en:label="Closed"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
         </dict>
-        <dict label="工单优先级" name="erp-cs/ticket-priority" valueType="int" i18n-en:label="Ticket Priority">
-            <option code="LOW" label="低" value="10" i18n-en:label="Low"/>
-            <option code="NORMAL" label="普通" value="20" i18n-en:label="Normal"/>
-            <option code="HIGH" label="高" value="30" i18n-en:label="High"/>
-            <option code="URGENT" label="紧急" value="40" i18n-en:label="Urgent"/>
+        <dict label="工单优先级" name="erp-cs/ticket-priority" valueType="string" i18n-en:label="Ticket Priority">
+            <option code="LOW" label="低" value="LOW" i18n-en:label="Low"/>
+            <option code="NORMAL" label="普通" value="NORMAL" i18n-en:label="Normal"/>
+            <option code="HIGH" label="高" value="HIGH" i18n-en:label="High"/>
+            <option code="URGENT" label="紧急" value="URGENT" i18n-en:label="Urgent"/>
         </dict>
-        <dict label="工单来源" name="erp-cs/ticket-source" valueType="int" i18n-en:label="Ticket Source">
-            <option code="PHONE" label="电话" value="10" i18n-en:label="Phone"/>
-            <option code="EMAIL" label="邮件" value="20" i18n-en:label="Email"/>
-            <option code="PORTAL" label="门户" value="30" i18n-en:label="Portal"/>
-            <option code="CHAT" label="在线聊天" value="40" i18n-en:label="Chat"/>
-            <option code="SOCIAL" label="社交媒体" value="50" i18n-en:label="Social Media"/>
+        <dict label="工单来源" name="erp-cs/ticket-source" valueType="string" i18n-en:label="Ticket Source">
+            <option code="PHONE" label="电话" value="PHONE" i18n-en:label="Phone"/>
+            <option code="EMAIL" label="邮件" value="EMAIL" i18n-en:label="Email"/>
+            <option code="PORTAL" label="门户" value="PORTAL" i18n-en:label="Portal"/>
+            <option code="CHAT" label="在线聊天" value="CHAT" i18n-en:label="Chat"/>
+            <option code="SOCIAL" label="社交媒体" value="SOCIAL" i18n-en:label="Social Media"/>
         </dict>
-        <dict label="工单类型" name="erp-cs/ticket-type" valueType="int" i18n-en:label="Ticket Type">
-            <option code="COMPLAINT" label="投诉" value="10" i18n-en:label="Complaint"/>
-            <option code="INQUIRY" label="咨询" value="20" i18n-en:label="Inquiry"/>
-            <option code="REPAIR" label="维修" value="30" i18n-en:label="Repair"/>
-            <option code="RETURN" label="退换货" value="40" i18n-en:label="Return/Exchange"/>
-            <option code="OTHER" label="其他" value="99" i18n-en:label="Other"/>
+        <dict label="工单类型" name="erp-cs/ticket-type" valueType="string" i18n-en:label="Ticket Type">
+            <option code="COMPLAINT" label="投诉" value="COMPLAINT" i18n-en:label="Complaint"/>
+            <option code="INQUIRY" label="咨询" value="INQUIRY" i18n-en:label="Inquiry"/>
+            <option code="REPAIR" label="维修" value="REPAIR" i18n-en:label="Repair"/>
+            <option code="RETURN" label="退换货" value="RETURN" i18n-en:label="Return/Exchange"/>
+            <option code="OTHER" label="其他" value="OTHER" i18n-en:label="Other"/>
         </dict>
-        <dict label="SLA 策略" name="erp-cs/sla-policy" valueType="int" i18n-en:label="SLA Policy">
-            <option code="URGENT_4H" label="紧急_4小时" value="10" i18n-en:label="Urgent 4H"/>
-            <option code="HIGH_8H" label="高_8小时" value="20" i18n-en:label="High 8H"/>
-            <option code="NORMAL_24H" label="普通_24小时" value="30" i18n-en:label="Normal 24H"/>
-            <option code="LOW_48H" label="低_48小时" value="40" i18n-en:label="Low 48H"/>
+        <dict label="SLA 策略" name="erp-cs/sla-policy" valueType="string" i18n-en:label="SLA Policy">
+            <option code="URGENT_4H" label="紧急_4小时" value="URGENT_4H" i18n-en:label="Urgent 4H"/>
+            <option code="HIGH_8H" label="高_8小时" value="HIGH_8H" i18n-en:label="High 8H"/>
+            <option code="NORMAL_24H" label="普通_24小时" value="NORMAL_24H" i18n-en:label="Normal 24H"/>
+            <option code="LOW_48H" label="低_48小时" value="LOW_48H" i18n-en:label="Low 48H"/>
         </dict>
-        <dict label="操作类型" name="erp-cs/action-type" valueType="int" i18n-en:label="Action Type">
-            <option code="ASSIGN" label="分派" value="10" i18n-en:label="Assign"/>
-            <option code="NOTE" label="备注" value="20" i18n-en:label="Note"/>
-            <option code="ATTACH" label="附件" value="30" i18n-en:label="Attachment"/>
-            <option code="ESCALATE" label="升级" value="40" i18n-en:label="Escalate"/>
-            <option code="CLOSE" label="关闭" value="50" i18n-en:label="Close"/>
-            <option code="CANCEL" label="取消" value="60" i18n-en:label="Cancel"/>
+        <dict label="操作类型" name="erp-cs/action-type" valueType="string" i18n-en:label="Action Type">
+            <option code="ASSIGN" label="分派" value="ASSIGN" i18n-en:label="Assign"/>
+            <option code="NOTE" label="备注" value="NOTE" i18n-en:label="Note"/>
+            <option code="ATTACH" label="附件" value="ATTACH" i18n-en:label="Attachment"/>
+            <option code="ESCALATE" label="升级" value="ESCALATE" i18n-en:label="Escalate"/>
+            <option code="CLOSE" label="关闭" value="CLOSE" i18n-en:label="Close"/>
+            <option code="CANCEL" label="取消" value="CANCEL" i18n-en:label="Cancel"/>
         </dict>
-        <dict label="单据状态" name="erp-cs/doc-status" valueType="int" i18n-en:label="Doc Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="ACTIVE" label="已生效" value="20" i18n-en:label="Effective"/>
-            <option code="CANCELLED" label="已作废" value="30" i18n-en:label="Voided"/>
+        <dict label="单据状态" name="erp-cs/doc-status" valueType="string" i18n-en:label="Doc Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="ACTIVE" label="已生效" value="ACTIVE" i18n-en:label="Effective"/>
+            <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label="Voided"/>
         </dict>
-        <dict label="审核状态" name="erp-cs/approve-status" valueType="int" i18n-en:label="Approve Status">
-            <option code="UNSUBMITTED" label="未提交" value="10" i18n-en:label="Unsubmitted"/>
-            <option code="SUBMITTED" label="已提交" value="20" i18n-en:label="Submitted"/>
-            <option code="APPROVED" label="已审核" value="30" i18n-en:label="Approved"/>
-            <option code="REJECTED" label="已驳回" value="40" i18n-en:label="Rejected"/>
+        <dict label="审核状态" name="erp-cs/approve-status" valueType="string" i18n-en:label="Approve Status">
+            <option code="UNSUBMITTED" label="未提交" value="UNSUBMITTED" i18n-en:label="Unsubmitted"/>
+            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label="Submitted"/>
+            <option code="APPROVED" label="已审核" value="APPROVED" i18n-en:label="Approved"/>
+            <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label="Rejected"/>
         </dict>
-        <dict label="调查发送渠道" name="erp-cs/survey-channel" valueType="int" i18n-en:label="Survey Channel">
-            <option code="EMAIL" label="邮件" value="10" i18n-en:label="Email"/>
-            <option code="PHONE" label="电话" value="20" i18n-en:label="Phone"/>
-            <option code="PORTAL" label="门户" value="30" i18n-en:label="Portal"/>
-            <option code="CHAT" label="在线聊天" value="40" i18n-en:label="Chat"/>
+        <dict label="调查发送渠道" name="erp-cs/survey-channel" valueType="string" i18n-en:label="Survey Channel">
+            <option code="EMAIL" label="邮件" value="EMAIL" i18n-en:label="Email"/>
+            <option code="PHONE" label="电话" value="PHONE" i18n-en:label="Phone"/>
+            <option code="PORTAL" label="门户" value="PORTAL" i18n-en:label="Portal"/>
+            <option code="CHAT" label="在线聊天" value="CHAT" i18n-en:label="Chat"/>
         </dict>
-        <dict label="服务类型" name="erp-cs/service-type" valueType="int" i18n-en:label="Service Type">
-            <option code="WARRANTY" label="保修期权益" value="10" i18n-en:label="Warranty"/>
-            <option code="SUPPORT_CONTRACT" label="付费支持合同" value="20" i18n-en:label="Support Contract"/>
-            <option code="PAY_PER_TICKET" label="按次计费" value="30" i18n-en:label="Pay Per Ticket"/>
+        <dict label="服务类型" name="erp-cs/service-type" valueType="string" i18n-en:label="Service Type">
+            <option code="WARRANTY" label="保修期权益" value="WARRANTY" i18n-en:label="Warranty"/>
+            <option code="SUPPORT_CONTRACT" label="付费支持合同" value="SUPPORT_CONTRACT" i18n-en:label="Support Contract"/>
+            <option code="PAY_PER_TICKET" label="按次计费" value="PAY_PER_TICKET" i18n-en:label="Pay Per Ticket"/>
         </dict>
-        <dict label="合同类型" name="erp-cs/contract-type" valueType="int" i18n-en:label="Contract Type">
-            <option code="ANNUAL" label="年度" value="10" i18n-en:label="Annual"/>
-            <option code="QUARTERLY" label="季度" value="20" i18n-en:label="Quarterly"/>
-            <option code="ONE_TIME" label="一次性" value="30" i18n-en:label="One Time"/>
+        <dict label="合同类型" name="erp-cs/contract-type" valueType="string" i18n-en:label="Contract Type">
+            <option code="ANNUAL" label="年度" value="ANNUAL" i18n-en:label="Annual"/>
+            <option code="QUARTERLY" label="季度" value="QUARTERLY" i18n-en:label="Quarterly"/>
+            <option code="ONE_TIME" label="一次性" value="ONE_TIME" i18n-en:label="One Time"/>
         </dict>
-        <dict label="计费周期" name="erp-cs/billing-cycle" valueType="int" i18n-en:label="Billing Cycle">
-            <option code="MONTHLY" label="按月" value="10" i18n-en:label="Monthly"/>
-            <option code="QUARTERLY" label="按季度" value="20" i18n-en:label="Quarterly"/>
-            <option code="YEARLY" label="按年" value="30" i18n-en:label="Yearly"/>
+        <dict label="计费周期" name="erp-cs/billing-cycle" valueType="string" i18n-en:label="Billing Cycle">
+            <option code="MONTHLY" label="按月" value="MONTHLY" i18n-en:label="Monthly"/>
+            <option code="QUARTERLY" label="按季度" value="QUARTERLY" i18n-en:label="Quarterly"/>
+            <option code="YEARLY" label="按年" value="YEARLY" i18n-en:label="Yearly"/>
         </dict>
-        <dict label="合同状态" name="erp-cs/contract-status" valueType="int" i18n-en:label="Contract Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="ACTIVE" label="生效中" value="20" i18n-en:label="Active"/>
-            <option code="EXPIRED" label="已过期" value="30" i18n-en:label="Expired"/>
-            <option code="CANCELLED" label="已取消" value="40" i18n-en:label="Cancelled"/>
+        <dict label="合同状态" name="erp-cs/contract-status" valueType="string" i18n-en:label="Contract Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="ACTIVE" label="生效中" value="ACTIVE" i18n-en:label="Active"/>
+            <option code="EXPIRED" label="已过期" value="EXPIRED" i18n-en:label="Expired"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
         </dict>
-        <dict label="履行动作类型" name="erp-cs/fulfillment-action-type" valueType="int"
+        <dict label="履行动作类型" name="erp-cs/fulfillment-action-type" valueType="string"
               i18n-en:label="Fulfillment Action Type">
-            <option code="CREATE_TICKET" label="创建工单" value="10" i18n-en:label="Create Ticket"/>
-            <option code="ASSIGN_TEAM" label="分配处理团队" value="20" i18n-en:label="Assign Team"/>
-            <option code="ASSIGN_AGENT" label="分配处理人" value="30" i18n-en:label="Assign Agent"/>
-            <option code="REQUEST_APPROVAL" label="审批流程" value="40" i18n-en:label="Request Approval"/>
-            <option code="NOTIFY_CUSTOMER" label="通知客户" value="50" i18n-en:label="Notify Customer"/>
-            <option code="UPDATE_STATUS" label="更新工单状态" value="60" i18n-en:label="Update Status"/>
-            <option code="CREATE_CHILD_TICKET" label="创建子工单" value="70" i18n-en:label="Create Child Ticket"/>
-            <option code="INVOKE_WORKFLOW" label="触发外部工作流" value="80" i18n-en:label="Invoke Workflow"/>
-            <option code="CLOSE_TICKET" label="自动关闭" value="90" i18n-en:label="Close Ticket"/>
+            <option code="CREATE_TICKET" label="创建工单" value="CREATE_TICKET" i18n-en:label="Create Ticket"/>
+            <option code="ASSIGN_TEAM" label="分配处理团队" value="ASSIGN_TEAM" i18n-en:label="Assign Team"/>
+            <option code="ASSIGN_AGENT" label="分配处理人" value="ASSIGN_AGENT" i18n-en:label="Assign Agent"/>
+            <option code="REQUEST_APPROVAL" label="审批流程" value="REQUEST_APPROVAL" i18n-en:label="Request Approval"/>
+            <option code="NOTIFY_CUSTOMER" label="通知客户" value="NOTIFY_CUSTOMER" i18n-en:label="Notify Customer"/>
+            <option code="UPDATE_STATUS" label="更新工单状态" value="UPDATE_STATUS" i18n-en:label="Update Status"/>
+            <option code="CREATE_CHILD_TICKET" label="创建子工单" value="CREATE_CHILD_TICKET"
+                    i18n-en:label="Create Child Ticket"/>
+            <option code="INVOKE_WORKFLOW" label="触发外部工作流" value="INVOKE_WORKFLOW" i18n-en:label="Invoke Workflow"/>
+            <option code="CLOSE_TICKET" label="自动关闭" value="CLOSE_TICKET" i18n-en:label="Close Ticket"/>
         </dict>
-        <dict label="计时审批状态" name="erp-cs/time-entry-approve-status" valueType="int"
+        <dict label="计时审批状态" name="erp-cs/time-entry-approve-status" valueType="string"
               i18n-en:label="Time Entry Approve Status">
-            <option code="PENDING" label="待审批" value="10" i18n-en:label="Pending"/>
-            <option code="APPROVED" label="已审批" value="20" i18n-en:label="Approved"/>
-            <option code="REJECTED" label="已驳回" value="30" i18n-en:label="Rejected"/>
+            <option code="PENDING" label="待审批" value="PENDING" i18n-en:label="Pending"/>
+            <option code="APPROVED" label="已审批" value="APPROVED" i18n-en:label="Approved"/>
+            <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label="Rejected"/>
         </dict>
-        <dict label="计时来源" name="erp-cs/time-entry-source" valueType="int" i18n-en:label="Time Entry Source">
-            <option code="MANUAL" label="手动录入" value="10" i18n-en:label="Manual"/>
-            <option code="TIMER_IMPORT" label="计时器导入" value="20" i18n-en:label="Timer Import"/>
+        <dict label="计时来源" name="erp-cs/time-entry-source" valueType="string" i18n-en:label="Time Entry Source">
+            <option code="MANUAL" label="手动录入" value="MANUAL" i18n-en:label="Manual"/>
+            <option code="TIMER_IMPORT" label="计时器导入" value="TIMER_IMPORT" i18n-en:label="Timer Import"/>
         </dict>
     </dicts>
 
@@ -162,10 +163,11 @@
                         stdSqlType="BIGINT" i18n-en:displayName="Contact"/>
                 <column code="TICKET_TYPE_ID" displayName="工单类型" mandatory="true" name="ticketTypeId" propId="8"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Ticket Type"/>
-                <column code="PRIORITY" displayName="优先级" mandatory="true" name="priority" propId="9" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-cs/ticket-priority" i18n-en:displayName="Priority"/>
-                <column code="SOURCE" displayName="来源" name="source" propId="10" stdDataType="int" stdSqlType="INTEGER"
-                        ext:dict="erp-cs/ticket-source" i18n-en:displayName="Source"/>
+                <column code="PRIORITY" displayName="优先级" mandatory="true" name="priority" precision="20" propId="9"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-cs/ticket-priority"
+                        i18n-en:displayName="Priority"/>
+                <column code="SOURCE" displayName="来源" name="source" precision="20" propId="10" stdDataType="string"
+                        stdSqlType="VARCHAR" ext:dict="erp-cs/ticket-source" i18n-en:displayName="Source"/>
                 <column code="ASSIGNED_TO_ID" displayName="分配处理人" name="assignedToId" precision="36" propId="11"
                         stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Assigned To"/>
                 <column code="SLA_POLICY_ID" displayName="SLA 策略" name="slaPolicyId" propId="12" stdDataType="long"
@@ -182,13 +184,14 @@
                         stdSqlType="INTEGER" i18n-en:displayName="Duration(min)"/>
                 <column code="PROGRESS" defaultValue="0" displayName="进度(%)" name="progress" propId="18"
                         stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Progress"/>
-                <column code="STATUS" displayName="工单状态" mandatory="true" name="status" propId="19" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-cs/ticket-status" i18n-en:displayName="Status"/>
-                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" propId="20"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-cs/doc-status"
+                <column code="STATUS" displayName="工单状态" mandatory="true" name="status" precision="20" propId="19"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-cs/ticket-status"
+                        i18n-en:displayName="Status"/>
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
+                        propId="20" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-cs/doc-status"
                         i18n-en:displayName="Doc Status"/>
-                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" propId="21"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-cs/approve-status"
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="21" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-cs/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="22"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
@@ -267,8 +270,9 @@
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
                 <column code="NAME" displayName="名称" mandatory="true" name="name" precision="200" propId="3"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
-                <column code="DEFAULT_PRIORITY" displayName="默认优先级" name="defaultPriority" propId="4" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-cs/ticket-priority" i18n-en:displayName="Default Priority"/>
+                <column code="DEFAULT_PRIORITY" displayName="默认优先级" name="defaultPriority" precision="20" propId="4"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-cs/ticket-priority"
+                        i18n-en:displayName="Default Priority"/>
                 <column code="DEFAULT_SLA_POLICY_ID" displayName="默认 SLA 策略" name="defaultSlaPolicyId" propId="5"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Default SLA Policy"/>
                 <column code="SEQUENCE" defaultValue="0" displayName="排序" name="sequence" propId="6" stdDataType="int"
@@ -313,8 +317,9 @@
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
                 <column code="TICKET_TYPE_ID" displayName="适用工单类型" name="ticketTypeId" propId="4" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Ticket Type"/>
-                <column code="MIN_PRIORITY" displayName="最低触发优先级" name="minPriority" propId="5" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-cs/ticket-priority" i18n-en:displayName="Min Priority"/>
+                <column code="MIN_PRIORITY" displayName="最低触发优先级" name="minPriority" precision="20" propId="5"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-cs/ticket-priority"
+                        i18n-en:displayName="Min Priority"/>
                 <column code="TEAM_ID" displayName="适用团队" name="teamId" propId="6" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Team"/>
                 <column code="RESOLVE_HOURS" displayName="解决时限(小时)" name="resolveHours" propId="7" stdDataType="int"
@@ -401,13 +406,15 @@
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="TICKET_ID" displayName="工单ID" mandatory="true" name="ticketId" propId="2"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Ticket"/>
-                <column code="ACTION_TYPE" displayName="操作类型" mandatory="true" name="actionType" propId="3"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-cs/action-type"
+                <column code="ACTION_TYPE" displayName="操作类型" mandatory="true" name="actionType" precision="20"
+                        propId="3" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-cs/action-type"
                         i18n-en:displayName="Action Type"/>
-                <column code="FROM_STATUS" displayName="起始状态" name="fromStatus" propId="4" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-cs/ticket-status" i18n-en:displayName="From Status"/>
-                <column code="TO_STATUS" displayName="目标状态" name="toStatus" propId="5" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-cs/ticket-status" i18n-en:displayName="To Status"/>
+                <column code="FROM_STATUS" displayName="起始状态" name="fromStatus" precision="20" propId="4"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-cs/ticket-status"
+                        i18n-en:displayName="From Status"/>
+                <column code="TO_STATUS" displayName="目标状态" name="toStatus" precision="20" propId="5"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-cs/ticket-status"
+                        i18n-en:displayName="To Status"/>
                 <column code="OPERATOR_ID" displayName="操作人" name="operatorId" precision="36" propId="6"
                         stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Operator"/>
                 <column code="CONTENT" displayName="操作内容" domain="content" name="content" precision="4000" propId="7"
@@ -556,8 +563,9 @@
                         propId="7" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Variable Defs"/>
                 <column code="MACRO_TICKET_TYPE_ID" displayName="自动匹配工单类型" name="macroTicketTypeId" propId="8"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Macro Ticket Type"/>
-                <column code="MACRO_PRIORITY" displayName="自动匹配优先级" name="macroPriority" propId="9" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-cs/ticket-priority" i18n-en:displayName="Macro Priority"/>
+                <column code="MACRO_PRIORITY" displayName="自动匹配优先级" name="macroPriority" precision="20" propId="9"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-cs/ticket-priority"
+                        i18n-en:displayName="Macro Priority"/>
                 <column code="SEQUENCE" defaultValue="0" displayName="排序" name="sequence" propId="10" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Sequence"/>
                 <column code="IS_ACTIVE" defaultValue="true" displayName="是否启用" name="isActive" propId="11"
@@ -626,8 +634,9 @@
                         stdSqlType="DATETIME" i18n-en:displayName="Responded At"/>
                 <column code="SURVEY_SENT_AT" displayName="调查发送时间" name="surveySentAt" propId="10"
                         stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Survey Sent At"/>
-                <column code="SURVEY_CHANNEL" displayName="发送渠道" name="surveyChannel" propId="11" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-cs/survey-channel" i18n-en:displayName="Survey Channel"/>
+                <column code="SURVEY_CHANNEL" displayName="发送渠道" name="surveyChannel" precision="20" propId="11"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-cs/survey-channel"
+                        i18n-en:displayName="Survey Channel"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="12" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Del Flag"/>
@@ -670,8 +679,9 @@
                         i18n-en:displayName="Organization"/>
                 <column code="AGENT_ID" displayName="客服" mandatory="true" name="agentId" propId="3" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Agent"/>
-                <column code="SERVICE_TYPE" displayName="服务类型" name="serviceType" propId="4" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-cs/service-type" i18n-en:displayName="Service Type"/>
+                <column code="SERVICE_TYPE" displayName="服务类型" name="serviceType" precision="20" propId="4"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-cs/service-type"
+                        i18n-en:displayName="Service Type"/>
                 <column code="RATE" displayName="费率(元/小时)" domain="amount" name="rate" precision="18" propId="5"
                         scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Rate"/>
                 <column code="EFFECTIVE_DATE" displayName="生效日期" name="effectiveDate" propId="6" stdDataType="date"
@@ -718,8 +728,9 @@
                         i18n-en:displayName="Organization"/>
                 <column code="PARTNER_ID" displayName="签约客户" name="partnerId" propId="5" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
-                <column code="CONTRACT_TYPE" displayName="合同类型" name="contractType" propId="6" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-cs/contract-type" i18n-en:displayName="Contract Type"/>
+                <column code="CONTRACT_TYPE" displayName="合同类型" name="contractType" precision="20" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-cs/contract-type"
+                        i18n-en:displayName="Contract Type"/>
                 <column code="START_DATE" displayName="生效日期" name="startDate" propId="7" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Start Date"/>
                 <column code="END_DATE" displayName="到期日期" name="endDate" propId="8" stdDataType="date"
@@ -727,10 +738,11 @@
                 <column code="TOTAL_AMOUNT" displayName="合同总金额" domain="amount" name="totalAmount" precision="18"
                         propId="9" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Total Amount"/>
-                <column code="BILLING_CYCLE" displayName="计费周期" name="billingCycle" propId="10" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-cs/billing-cycle" i18n-en:displayName="Billing Cycle"/>
-                <column code="STATUS" displayName="合同状态" name="status" propId="11" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-cs/contract-status" i18n-en:displayName="Status"/>
+                <column code="BILLING_CYCLE" displayName="计费周期" name="billingCycle" precision="20" propId="10"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-cs/billing-cycle"
+                        i18n-en:displayName="Billing Cycle"/>
+                <column code="STATUS" displayName="合同状态" name="status" precision="20" propId="11" stdDataType="string"
+                        stdSqlType="VARCHAR" ext:dict="erp-cs/contract-status" i18n-en:displayName="Status"/>
                 <column code="ATTACHMENT_FILE_ID" displayName="合同附件" name="attachmentFileId" precision="200" propId="12"
                         stdDataType="string" stdDomain="file" stdSqlType="VARCHAR" i18n-en:displayName="Attachment"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -781,8 +793,8 @@
                         stdSqlType="BIGINT" i18n-en:displayName="Contract"/>
                 <column code="SLA_POLICY_ID" displayName="SLA策略" name="slaPolicyId" propId="6" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="SLA Policy"/>
-                <column code="SERVICE_TYPE" displayName="服务类型" mandatory="true" name="serviceType" propId="7"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-cs/service-type"
+                <column code="SERVICE_TYPE" displayName="服务类型" mandatory="true" name="serviceType" precision="20"
+                        propId="7" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-cs/service-type"
                         i18n-en:displayName="Service Type"/>
                 <column code="START_DATE" displayName="生效日期" name="startDate" propId="8" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Start Date"/>
@@ -1001,8 +1013,8 @@
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Catalog Item"/>
                 <column code="SEQUENCE" displayName="执行顺序" name="sequence" propId="5" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Sequence"/>
-                <column code="ACTION_TYPE" displayName="动作类型" mandatory="true" name="actionType" propId="6"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-cs/fulfillment-action-type"
+                <column code="ACTION_TYPE" displayName="动作类型" mandatory="true" name="actionType" precision="20"
+                        propId="6" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-cs/fulfillment-action-type"
                         i18n-en:displayName="Action Type"/>
                 <column code="ACTION_CONFIG" displayName="动作配置" domain="json" name="actionConfig" precision="4000"
                         propId="7" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Action Config"/>
@@ -1072,8 +1084,8 @@
                         i18n-en:displayName="Billable Amount"/>
                 <column code="DESCRIPTION" displayName="工作内容描述" name="description" precision="1000" propId="11"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Description"/>
-                <column code="APPROVAL_STATUS" displayName="审批状态" name="approvalStatus" propId="12" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-cs/time-entry-approve-status"
+                <column code="APPROVAL_STATUS" displayName="审批状态" name="approvalStatus" precision="20" propId="12"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-cs/time-entry-approve-status"
                         i18n-en:displayName="Approval Status"/>
                 <column code="APPROVED_BY_ID" displayName="审批人" name="approvedById" precision="36" propId="13"
                         stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
@@ -1083,8 +1095,8 @@
                         stdSqlType="BIGINT" i18n-en:displayName="Project"/>
                 <column code="TASK_ID" displayName="关联任务" name="taskId" propId="16" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Task"/>
-                <column code="SOURCE" displayName="来源" name="source" propId="17" stdDataType="int" stdSqlType="INTEGER"
-                        ext:dict="erp-cs/time-entry-source" i18n-en:displayName="Source"/>
+                <column code="SOURCE" displayName="来源" name="source" precision="20" propId="17" stdDataType="string"
+                        stdSqlType="VARCHAR" ext:dict="erp-cs/time-entry-source" i18n-en:displayName="Source"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="18" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Del Flag"/>

@@ -300,61 +300,61 @@ dict:
     erp-mnt/visit-result: Execution Result
 dict.option.label:
   erp-mnt/schedule-type:
-    '10': Preventive Maintenance
-    '20': Predictive Maintenance
-    '30': Calibration
+    PREVENTIVE: Preventive Maintenance
+    PREDICTIVE: Predictive Maintenance
+    CALIBRATION: Calibration
   erp-mnt/visit-status:
-    '10': Draft
-    '20': Scheduled
-    '30': Executing
-    '40': Completed
-    '50': Cancelled
+    DRAFT: Draft
+    SCHEDULED: Scheduled
+    IN_PROGRESS: Executing
+    COMPLETED: Completed
+    CANCELLED: Cancelled
   erp-mnt/request-status:
-    '10': Pending Accept
-    '20': Accepted
-    '30': Under Repair
-    '40': Completed
-    '50': Rejected
-    '60': Cancelled
+    OPEN: Pending Accept
+    ACCEPTED: Accepted
+    IN_PROGRESS: Under Repair
+    COMPLETED: Completed
+    REJECTED: Rejected
+    CANCELLED: Cancelled
   erp-mnt/equipment-status:
-    '10': Running
-    '20': Idle
-    '30': Under Maintenance
-    '40': Breakdown
-    '50': Disabled
+    RUNNING: Running
+    IDLE: Idle
+    UNDER_MAINTENANCE: Under Maintenance
+    DOWN: Breakdown
+    DECOMMISSIONED: Disabled
   erp-mnt/recurrence-type:
-    '10': Daily
-    '20': Weekly
-    '30': Monthly
-    '40': Yearly
+    DAILY: Daily
+    WEEKLY: Weekly
+    MONTHLY: Monthly
+    YEARLY: Yearly
   erp-mnt/priority:
-    '10': Low
-    '20': General
-    '30': High
-    '40': Urgent
+    LOW: Low
+    NORMAL: General
+    HIGH: High
+    URGENT: Urgent
   erp-mnt/visit-task-status:
-    '10': Pending
-    '20': Executing
-    '30': Completed
-    '40': Skipped
-    '50': Failed
+    PENDING: Pending
+    IN_PROGRESS: Executing
+    COMPLETED: Completed
+    SKIPPED: Skipped
+    FAILED: Failed
   erp-mnt/doc-status:
-    '10': Draft
-    '20': Effective
-    '30': Voided
+    DRAFT: Draft
+    ACTIVE: Effective
+    CANCELLED: Voided
   erp-mnt/approve-status:
-    '10': Unsubmitted
-    '20': Submitted
-    '30': Approved
-    '40': Rejected
+    UNSUBMITTED: Unsubmitted
+    SUBMITTED: Submitted
+    APPROVED: Approved
+    REJECTED: Rejected
   erp-mnt/calibration-result:
-    '10': Conforming
-    '20': Non-conforming
-    '30': Adjusted Conforming
+    PASS: Conforming
+    FAIL: Non-conforming
+    ADJUSTED: Adjusted Conforming
   erp-mnt/visit-type:
-    '10': Planned
-    '20': Responsive
+    PLANNED: Planned
+    RESPONSIVE: Responsive
   erp-mnt/visit-result:
-    '10': Normal
-    '20': Abnormal
-    '30': Partially Complete
+    NORMAL: Normal
+    ABNORMAL: Abnormal
+    PARTIAL: Partially Complete

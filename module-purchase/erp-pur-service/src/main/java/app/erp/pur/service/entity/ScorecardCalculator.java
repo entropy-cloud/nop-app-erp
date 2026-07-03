@@ -116,7 +116,7 @@ public class ScorecardCalculator {
      * </ul>
      * 阈值缺省回退默认（warn=80, hold=60），保证无配置时仍可落档。
      */
-    protected int determineStanding(BigDecimal totalScore, ErpPurSupplierScorecard scorecard) {
+    protected String determineStanding(BigDecimal totalScore, ErpPurSupplierScorecard scorecard) {
         BigDecimal warn = nvl(scorecard.getWarnThreshold(), new BigDecimal("80"));
         BigDecimal hold = nvl(scorecard.getHoldThreshold(), new BigDecimal("60"));
         if (totalScore.compareTo(warn) >= 0) {

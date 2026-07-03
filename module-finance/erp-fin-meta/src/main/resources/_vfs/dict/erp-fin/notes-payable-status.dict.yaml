@@ -1,23 +1,23 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 应付票据状态
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 已开出
-    value: 10
+    value: ISSUED
     description: 
   
   - label: 已兑付
-    value: 20
+    value: HONORED
     description: 
   
   - label: 已拒付
-    value: 30
+    value: DISHONORED
     description: 
   
   - label: 已注销
-    value: 40
+    value: WRITE_OFF
     description: 
   

@@ -488,99 +488,99 @@ dict:
     erp-md/supplier-approval-status: Supplier Approval Status
 dict.option.label:
   erp-md/material-type:
-    '10': Merchandise
-    '20': Raw Material
-    '30': Semi-Finished
-    '40': Finished Good
-    '50': Service
-    '60': Packaging
-    '70': Consumable
+    GOODS: Merchandise
+    RAW_MATERIAL: Raw Material
+    SEMI_PRODUCT: Semi-Finished
+    FINISHED_PRODUCT: Finished Good
+    SERVICE: Service
+    PACKAGING: Packaging
+    CONSUMABLE: Consumable
   erp-md/active-status:
-    '10': Enabled
-    '20': Disabled
+    ACTIVE: Enabled
+    INACTIVE: Disabled
   erp-md/cost-method:
-    '10': Moving Weighted Avg
-    '20': Monthly Weighted Avg
-    '30': FIFO
-    '40': LIFO
-    '50': Standard Cost
-    '60': Specific Identification
-    '70': Batch
+    MOVING_AVERAGE: Moving Weighted Avg
+    WEIGHTED_AVERAGE: Monthly Weighted Avg
+    FIFO: FIFO
+    LIFO: LIFO
+    STANDARD: Standard Cost
+    SPECIFIC: Specific Identification
+    BATCH: Batch
   erp-md/price-validation:
-    '10': No Check
-    '20': Warning Release
-    '30': Force Block
+    'OFF': No Check
+    WARN: Warning Release
+    HARD: Force Block
   erp-md/partner-type:
-    '10': Customer
-    '20': Supplier
-    '30': Customer & Supplier
-    '40': Employee (Internal)
+    CUSTOMER: Customer
+    SUPPLIER: Supplier
+    BOTH: Customer & Supplier
+    EMPLOYEE: Employee (Internal)
   erp-md/warehouse-type:
-    '10': Normal Warehouse
-    '20': In Transit
-    '30': Scrap Warehouse
-    '40': Consignment In
-    '50': Consignment Out
-    '60': Bonded Warehouse
+    NORMAL: Normal Warehouse
+    IN_TRANSIT: In Transit
+    SCRAP: Scrap Warehouse
+    CONSIGNMENT_IN: Consignment In
+    CONSIGNMENT_OUT: Consignment Out
+    BONDED: Bonded Warehouse
   erp-md/subject-class:
-    '10': Asset
-    '20': Liability
-    '30': Equity
-    '40': Revenue
-    '50': Expense
-    '60': Cost
+    ASSET: Asset
+    LIABILITY: Liability
+    EQUITY: Equity
+    INCOME: Revenue
+    EXPENSE: Expense
+    COST: Cost
   erp-md/subject-direction:
-    '10': Debit Side
-    '20': Credit Side
+    DEBIT: Debit Side
+    CREDIT: Credit Side
   erp-md/balance-type:
-    '10': Debit Balance
-    '20': Credit Balance
-    '30': Debit/Credit Both
+    DEBIT: Debit Balance
+    CREDIT: Credit Balance
+    BOTH: Debit/Credit Both
   erp-md/org-type:
-    '10': Group
-    '20': Company
-    '30': Branch
-    '40': Department
-    '50': Workshop
-    '60': Store
+    GROUP: Group
+    COMPANY: Company
+    BRANCH: Branch
+    DEPARTMENT: Department
+    WORKSHOP: Workshop
+    STORE: Store
   erp-md/acct-schema-nature:
-    '10': Financial Book
-    '20': Management Book
-    '30': Tax Book
-    '40': Consolidated Book
-    '50': Budget Book
+    FINANCIAL: Financial Book
+    MANAGEMENT: Management Book
+    TAX: Tax Book
+    CONSOLIDATION: Consolidated Book
+    BUDGET: Budget Book
   erp-md/tax-type:
-    '10': VAT
-    '20': Sales Tax
-    '30': Withholding Tax
-    '40': Customs Duty
-    '50': Other
+    VAT: VAT
+    SALES_TAX: Sales Tax
+    WITHHOLDING: Withholding Tax
+    CUSTOMS: Customs Duty
+    OTHER: Other
   erp-md/settlement-type:
-    '10': Cash
-    '20': Bank Transfer
-    '30': Note
-    '40': Deductible
-    '50': Online Payment
+    CASH: Cash
+    BANK_TRANSFER: Bank Transfer
+    NOTE: Note
+    OFFSET: Deductible
+    ONLINE: Online Payment
   erp-md/bank-account-type:
-    '10': Current Account
-    '20': Periodic
-    '30': Credit Account
-    '40': Other
+    DEMAND: Current Account
+    FIXED: Periodic
+    CREDIT: Credit Account
+    OTHER: Other
   erp-md/address-type:
-    '10': Billing Address
-    '20': Delivery Address
-    '30': Registered Address
-    '40': Other
+    BILLING: Billing Address
+    SHIPPING: Delivery Address
+    REGISTERED: Registered Address
+    OTHER: Other
   erp-md/batch-strategy:
     FIFO: FIFO
     FEFO: FEFO
     MANUAL: Manual
   erp-md/supplier-approval-type:
-    '10': New Supplier
-    '20': Renewal
+    NEW: New Supplier
+    RENEWAL: Renewal
   erp-md/supplier-approval-status:
-    '10': Applied
-    '20': Approved
-    '30': Probation
-    '40': Suspended
-    '50': Rejected
+    APPLIED: Applied
+    APPROVED: Approved
+    PROBATION: Probation
+    SUSPENDED: Suspended
+    REJECTED: Rejected

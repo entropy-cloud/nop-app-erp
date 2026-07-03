@@ -31,7 +31,7 @@
                 <col id="endTime" sortable="true"/>
 
                 <!--总分钟数-->
-                <col id="totalMinutes" sortable="true"/>
+                <col id="totalMinutes" ui:number="true" sortable="true"/>
 
                 <!--原因-->
                 <col id="reason" sortable="true"/>

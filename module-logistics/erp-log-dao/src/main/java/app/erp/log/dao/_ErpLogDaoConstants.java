@@ -6,116 +6,116 @@ public interface _ErpLogDaoConstants {
     /**
      * 承运商类型: 快递 
      */
-    int CARRIER_TYPE_EXPRESS = 10;
+    String CARRIER_TYPE_EXPRESS = "EXPRESS";
                     
     /**
      * 承运商类型: 货运 
      */
-    int CARRIER_TYPE_FREIGHT = 20;
+    String CARRIER_TYPE_FREIGHT = "FREIGHT";
                     
     /**
      * 承运商类型: 空运 
      */
-    int CARRIER_TYPE_AIR = 30;
+    String CARRIER_TYPE_AIR = "AIR";
                     
     /**
      * 承运商类型: 海运 
      */
-    int CARRIER_TYPE_SEA = 40;
+    String CARRIER_TYPE_SEA = "SEA";
                     
     /**
      * 承运商类型: 铁路 
      */
-    int CARRIER_TYPE_RAIL = 50;
+    String CARRIER_TYPE_RAIL = "RAIL";
                     
     /**
      * 运费条款: 预付 
      */
-    int FREIGHT_TERMS_PREPAID = 10;
+    String FREIGHT_TERMS_PREPAID = "PREPAID";
                     
     /**
      * 运费条款: 到付 
      */
-    int FREIGHT_TERMS_COLLECT = 20;
+    String FREIGHT_TERMS_COLLECT = "COLLECT";
                     
     /**
      * 发运单状态: 草稿 
      */
-    int SHIPMENT_STATUS_DRAFT = 10;
+    String SHIPMENT_STATUS_DRAFT = "DRAFT";
                     
     /**
      * 发运单状态: 已预约 
      */
-    int SHIPMENT_STATUS_ADVISED = 20;
+    String SHIPMENT_STATUS_ADVISED = "ADVISED";
                     
     /**
      * 发运单状态: 已派发 
      */
-    int SHIPMENT_STATUS_DISPATCHED = 30;
+    String SHIPMENT_STATUS_DISPATCHED = "DISPATCHED";
                     
     /**
      * 发运单状态: 运输中 
      */
-    int SHIPMENT_STATUS_IN_TRANSIT = 40;
+    String SHIPMENT_STATUS_IN_TRANSIT = "IN_TRANSIT";
                     
     /**
      * 发运单状态: 已签收 
      */
-    int SHIPMENT_STATUS_DELIVERED = 50;
+    String SHIPMENT_STATUS_DELIVERED = "DELIVERED";
                     
     /**
      * 发运单状态: 已取消 
      */
-    int SHIPMENT_STATUS_CANCELLED = 60;
+    String SHIPMENT_STATUS_CANCELLED = "CANCELLED";
                     
     /**
      * 运费结算状态: 待结算 
      */
-    int SETTLEMENT_STATUS_PENDING = 10;
+    String SETTLEMENT_STATUS_PENDING = "PENDING";
                     
     /**
      * 运费结算状态: 已结算 
      */
-    int SETTLEMENT_STATUS_SETTLED = 20;
+    String SETTLEMENT_STATUS_SETTLED = "SETTLED";
                     
     /**
      * 网关操作类型: 下单 
      */
-    int GATEWAY_ACTION_CREATE_SHIPMENT = 10;
+    String GATEWAY_ACTION_CREATE_SHIPMENT = "CREATE_SHIPMENT";
                     
     /**
      * 网关操作类型: 获取面单 
      */
-    int GATEWAY_ACTION_GET_LABEL = 20;
+    String GATEWAY_ACTION_GET_LABEL = "GET_LABEL";
                     
     /**
      * 网关操作类型: 预约取件 
      */
-    int GATEWAY_ACTION_ADVISE = 30;
+    String GATEWAY_ACTION_ADVISE = "ADVISE";
                     
     /**
      * 网关操作类型: 追踪 
      */
-    int GATEWAY_ACTION_TRACK = 40;
+    String GATEWAY_ACTION_TRACK = "TRACK";
                     
     /**
      * 网关操作类型: 取消 
      */
-    int GATEWAY_ACTION_CANCEL = 50;
+    String GATEWAY_ACTION_CANCEL = "CANCEL";
                     
     /**
      * 单据状态: 草稿 
      */
-    int DOC_STATUS_DRAFT = 10;
+    String DOC_STATUS_DRAFT = "DRAFT";
                     
     /**
      * 单据状态: 已生效 
      */
-    int DOC_STATUS_ACTIVE = 20;
+    String DOC_STATUS_ACTIVE = "ACTIVE";
                     
     /**
      * 单据状态: 已作废 
      */
-    int DOC_STATUS_CANCELLED = 30;
+    String DOC_STATUS_CANCELLED = "CANCELLED";
                     
 }

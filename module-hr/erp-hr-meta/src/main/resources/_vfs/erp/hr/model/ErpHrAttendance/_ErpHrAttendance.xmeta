@@ -57,7 +57,7 @@
         </prop>
         <prop name="source" displayName="来源" propId="10" i18n-en:displayName="Source" queryable="true" sortable="true"
               insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-hr/attendance-source"/>
+            <schema type="java.lang.String" precision="20" dict="erp-hr/attendance-source"/>
         </prop>
         <prop name="leaveRequestId" displayName="关联休假" propId="11" i18n-en:displayName="Leave Request" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="leaveRequest">

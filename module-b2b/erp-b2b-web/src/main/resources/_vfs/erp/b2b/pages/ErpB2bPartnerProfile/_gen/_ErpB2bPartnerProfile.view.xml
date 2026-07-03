@@ -34,16 +34,16 @@
                 <col id="partnerName" mandatory="true" sortable="true"/>
 
                 <!--状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--传输协议-->
-                <col id="protocol" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="protocol" mandatory="true" sortable="true"/>
 
                 <!--传输端点-->
                 <col id="transportEndpoint" sortable="true"/>
 
                 <!--认证方式-->
-                <col id="authMethod" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="authMethod" mandatory="true" sortable="true"/>
 
                 <!--Webhook密钥-->
                 <col id="webhookSecret" sortable="true"/>

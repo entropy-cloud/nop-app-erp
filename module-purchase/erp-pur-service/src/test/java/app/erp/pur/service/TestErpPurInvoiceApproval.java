@@ -112,7 +112,7 @@ public class TestErpPurInvoiceApproval extends JunitAutoTestCase {
     public void testInactiveSupplierRejected() {
         ErpPurInvoice invoice = newInvoice("PI-INACTIVE-001");
         ormTemplate.runInSession(() -> {
-            seedSupplier(SUPPLIER_ID, 20);
+            seedSupplier(SUPPLIER_ID, "INACTIVE");
             saveInvoiceWithLine(invoice);
         });
 
@@ -210,13 +210,13 @@ public class TestErpPurInvoiceApproval extends JunitAutoTestCase {
         seedSupplier(id, ErpPurConstants.PARTNER_STATUS_ACTIVE);
     }
 
-    private void seedSupplier(Long id, int status) {
+    private void seedSupplier(Long id, String status) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);
         partner.setCode("SUP-" + id);
         partner.setName("供应商" + id);
-        partner.setPartnerType(10);
+        partner.setPartnerType("CUSTOMER");
         partner.setStatus(status);
         dao.saveEntity(partner);
     }

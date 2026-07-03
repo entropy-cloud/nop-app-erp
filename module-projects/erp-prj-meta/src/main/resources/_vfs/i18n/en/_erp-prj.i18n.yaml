@@ -326,22 +326,22 @@ dict:
     erp-prj/priority: Priority
 dict.option.label:
   erp-prj/project-status:
-    '10': Draft
-    '20': In Progress
-    '30': Suspended
-    '40': Completed
-    '50': Cancelled
+    DRAFT: Draft
+    OPEN: In Progress
+    ON_HOLD: Suspended
+    COMPLETED: Completed
+    CANCELLED: Cancelled
   erp-prj/task-status:
-    '10': Pending Start
-    '20': In Progress
-    '30': Completed
-    '40': Blocked
+    TODO: Pending Start
+    IN_PROGRESS: In Progress
+    DONE: Completed
+    BLOCKED: Blocked
   erp-prj/timesheet-status:
-    '10': Draft
-    '20': Submitted
-    '30': Approved
+    DRAFT: Draft
+    SUBMITTED: Submitted
+    APPROVED: Approved
   erp-prj/priority:
-    '10': Low
-    '20': General
-    '30': High
-    '40': Urgent
+    LOW: Low
+    NORMAL: General
+    HIGH: High
+    URGENT: Urgent

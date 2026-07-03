@@ -125,11 +125,11 @@ public class TestErpFinPartnerIdResolution extends JunitAutoTestCase {
         period.setMonth(6);
         period.setStartDate(LocalDate.of(2026, 6, 1));
         period.setEndDate(LocalDate.of(2026, 6, 30));
-        period.setStatus(10);
+        period.setStatus(ErpFinConstants.PERIOD_STATUS_OPEN);
         dao.saveEntity(period);
     }
 
-    private Long seedEmployee(Long partnerId, int status) {
+    private Long seedEmployee(Long partnerId, String status) {
         IEntityDao<ErpMdEmployee> dao = daoProvider.daoFor(ErpMdEmployee.class);
         ErpMdEmployee emp = new ErpMdEmployee();
         emp.setCode("E-" + (partnerId != null ? partnerId : "nopartner"));
@@ -167,7 +167,7 @@ public class TestErpFinPartnerIdResolution extends JunitAutoTestCase {
         ErpFinExpenseClaimLine line = new ErpFinExpenseClaimLine();
         line.setClaimId(claim.getId());
         line.setLineNo(1);
-        line.setExpenseType(10);
+        line.setExpenseType("TRAVEL");
         line.setAmountWithoutTax(new BigDecimal("100"));
         line.setTaxAmount(new BigDecimal("13"));
         line.setAmountWithTax(withTax);
@@ -182,7 +182,7 @@ public class TestErpFinPartnerIdResolution extends JunitAutoTestCase {
         advance.setCode(code);
         advance.setOrgId(1L);
         advance.setEmployeeId(employeeId);
-        advance.setAdvanceType(10);
+        advance.setAdvanceType("EXPENSE_ADVANCE");
         advance.setBusinessDate(LocalDate.of(2026, 6, 10));
         advance.setCurrencyId(1L);
         advance.setExchangeRate(BigDecimal.ONE);
@@ -201,9 +201,9 @@ public class TestErpFinPartnerIdResolution extends JunitAutoTestCase {
         ErpMdSubject subject = new ErpMdSubject();
         subject.setCode(code);
         subject.setName(name);
-        subject.setSubjectClass(10);
-        subject.setDirection(10);
-        subject.setStatus(10);
+        subject.setSubjectClass("ASSET");
+        subject.setDirection("DEBIT");
+        subject.setStatus("ACTIVE");
         dao.saveEntity(subject);
     }
 
@@ -213,9 +213,9 @@ public class TestErpFinPartnerIdResolution extends JunitAutoTestCase {
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
-        schema.setNature(10);
+        schema.setNature("FINANCIAL");
         schema.setFunctionalCurrencyId(1L);
-        schema.setStatus(10);
+        schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
 

@@ -43,10 +43,10 @@
                 <col id="ticketTypeId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--优先级-->
-                <col id="priority" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="priority" mandatory="true" sortable="true"/>
 
                 <!--来源-->
-                <col id="source" ui:number="true" sortable="true"/>
+                <col id="source" sortable="true"/>
 
                 <!--分配处理人-->
                 <col id="assignedToId" sortable="true"/>
@@ -73,13 +73,13 @@
                 <col id="progress" ui:number="true" sortable="true"/>
 
                 <!--工单状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--单据状态-->
-                <col id="docStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="docStatus" mandatory="true" sortable="true"/>
 
                 <!--审核状态-->
-                <col id="approveStatus" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="approveStatus" mandatory="true" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

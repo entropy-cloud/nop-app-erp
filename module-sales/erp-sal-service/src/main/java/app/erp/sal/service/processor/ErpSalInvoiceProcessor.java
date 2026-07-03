@@ -15,6 +15,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,8 +103,8 @@ public class ErpSalInvoiceProcessor {
     public ErpSalInvoice cancel(Long invoiceId, IServiceContext context) {
         ErpSalInvoice invoice = requireInvoice(invoiceId, context);
         validateTransitionForCancel(invoice, context);
-        Integer approveStatus = invoice.getApproveStatus();
-        if (approveStatus != null && approveStatus == ErpSalConstants.APPROVE_STATUS_APPROVED
+        String approveStatus = invoice.getApproveStatus();
+        if (approveStatus != null && Objects.equals(approveStatus, ErpSalConstants.APPROVE_STATUS_APPROVED)
                 && Boolean.TRUE.equals(invoice.getPosted())) {
             postingDispatcher.reverse(invoice);
             invoice = invoiceDao().getEntityById(invoiceId);
@@ -119,47 +120,47 @@ public class ErpSalInvoiceProcessor {
 
     protected void validateTransitionForSubmit(ErpSalInvoice invoice, IServiceContext context) {
         validateNotCancelled(invoice, context);
-        Integer status = invoice.getApproveStatus();
+        String status = invoice.getApproveStatus();
         if (status == null) {
             status = ErpSalConstants.APPROVE_STATUS_UNSUBMITTED;
         }
-        if (status != ErpSalConstants.APPROVE_STATUS_UNSUBMITTED
-                && status != ErpSalConstants.APPROVE_STATUS_REJECTED) {
+        if (!Objects.equals(status, ErpSalConstants.APPROVE_STATUS_UNSUBMITTED)
+                && !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_REJECTED)) {
             throw illegalTransition(invoice, status, "UNSUBMITTED 或 REJECTED");
         }
     }
 
     protected void validateTransitionForWithdraw(ErpSalInvoice invoice, IServiceContext context) {
-        Integer status = invoice.getApproveStatus();
-        if (status == null || status != ErpSalConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = invoice.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(invoice, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForApprove(ErpSalInvoice invoice, IServiceContext context) {
-        Integer status = invoice.getApproveStatus();
-        if (status == null || status != ErpSalConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = invoice.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(invoice, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForReject(ErpSalInvoice invoice, IServiceContext context) {
-        Integer status = invoice.getApproveStatus();
-        if (status == null || status != ErpSalConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = invoice.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(invoice, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpSalInvoice invoice, IServiceContext context) {
-        Integer status = invoice.getApproveStatus();
-        if (status == null || status != ErpSalConstants.APPROVE_STATUS_APPROVED) {
+        String status = invoice.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_APPROVED)) {
             throw illegalTransition(invoice, status, "APPROVED");
         }
     }
 
     protected void validateTransitionForCancel(ErpSalInvoice invoice, IServiceContext context) {
-        Integer docStatus = invoice.getDocStatus();
-        if (docStatus != null && docStatus == ErpSalConstants.DOC_STATUS_CANCELLED) {
+        String docStatus = invoice.getDocStatus();
+        if (docStatus != null && Objects.equals(docStatus, ErpSalConstants.DOC_STATUS_CANCELLED)) {
             throw illegalDocTransition(invoice, docStatus, "非已作废");
         }
     }
@@ -230,20 +231,20 @@ public class ErpSalInvoiceProcessor {
     }
 
     protected void validateNotCancelled(ErpSalInvoice invoice, IServiceContext context) {
-        Integer docStatus = invoice.getDocStatus();
-        if (docStatus != null && docStatus == ErpSalConstants.DOC_STATUS_CANCELLED) {
+        String docStatus = invoice.getDocStatus();
+        if (docStatus != null && Objects.equals(docStatus, ErpSalConstants.DOC_STATUS_CANCELLED)) {
             throw illegalDocTransition(invoice, docStatus, "非已作废");
         }
     }
 
     protected boolean isAlreadyApproved(ErpSalInvoice invoice) {
-        Integer status = invoice.getApproveStatus();
-        return status != null && status == ErpSalConstants.APPROVE_STATUS_APPROVED;
+        String status = invoice.getApproveStatus();
+        return status != null && Objects.equals(status, ErpSalConstants.APPROVE_STATUS_APPROVED);
     }
 
     protected boolean isAlreadyRejected(ErpSalInvoice invoice) {
-        Integer status = invoice.getApproveStatus();
-        return status != null && status == ErpSalConstants.APPROVE_STATUS_REJECTED;
+        String status = invoice.getApproveStatus();
+        return status != null && Objects.equals(status, ErpSalConstants.APPROVE_STATUS_REJECTED);
     }
 
     protected void requireLinesNonEmpty(ErpSalInvoice invoice, IServiceContext context) {
@@ -259,7 +260,7 @@ public class ErpSalInvoiceProcessor {
         }
         ErpMdPartner partner = mdPartnerBiz.findById(invoice.getCustomerId(), context);
         if (partner == null || partner.getStatus() == null
-                || partner.getStatus() != ErpSalConstants.PARTNER_STATUS_ACTIVE) {
+                || !Objects.equals(partner.getStatus(), ErpSalConstants.PARTNER_STATUS_ACTIVE)) {
             throw new NopException(ErpSalErrors.ERR_PARTNER_INACTIVE)
                     .param(ErpSalErrors.ARG_CUSTOMER_ID, invoice.getCustomerId());
         }
@@ -291,14 +292,14 @@ public class ErpSalInvoiceProcessor {
         }
     }
 
-    protected NopException illegalTransition(ErpSalInvoice invoice, Integer current, String expected) {
+    protected NopException illegalTransition(ErpSalInvoice invoice, String current, String expected) {
         return new NopException(ErpSalErrors.ERR_INVOICE_ILLEGAL_STATUS_TRANSITION)
                 .param(ErpSalErrors.ARG_INVOICE_CODE, invoice.getCode())
                 .param(ErpSalErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpSalErrors.ARG_EXPECTED_STATUS, expected);
     }
 
-    protected NopException illegalDocTransition(ErpSalInvoice invoice, Integer current, String expected) {
+    protected NopException illegalDocTransition(ErpSalInvoice invoice, String current, String expected) {
         return new NopException(ErpSalErrors.ERR_INVOICE_ILLEGAL_DOC_STATUS_TRANSITION)
                 .param(ErpSalErrors.ARG_INVOICE_CODE, invoice.getCode())
                 .param(ErpSalErrors.ARG_CURRENT_DOC_STATUS, current)

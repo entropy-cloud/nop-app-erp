@@ -37,15 +37,15 @@
         </prop>
         <prop name="subjectClass" displayName="科目类别" propId="5" i18n-en:displayName="Subject Class" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-md/subject-class"/>
+            <schema type="java.lang.String" precision="20" dict="erp-md/subject-class"/>
         </prop>
         <prop name="direction" displayName="余额方向" propId="6" i18n-en:displayName="Direction" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-md/subject-direction"/>
+            <schema type="java.lang.String" precision="20" dict="erp-md/subject-direction"/>
         </prop>
         <prop name="balanceType" displayName="余额类型" propId="7" i18n-en:displayName="Balance Type" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-md/balance-type"/>
+            <schema type="java.lang.String" precision="20" dict="erp-md/balance-type"/>
         </prop>
         <prop name="currencyId" displayName="核算币种" propId="8" i18n-en:displayName="Currency" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="currency">
@@ -86,7 +86,7 @@
         </prop>
         <prop name="status" displayName="状态" propId="17" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-md/active-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-md/active-status"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="18" i18n-en:displayName="Del Flag" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">

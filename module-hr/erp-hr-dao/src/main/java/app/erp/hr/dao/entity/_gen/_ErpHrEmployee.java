@@ -41,7 +41,7 @@ public class _ErpHrEmployee extends DynamicOrmEntity{
     public static final String PROP_NAME_fullName = "fullName";
     public static final int PROP_ID_fullName = 5;
     
-    /* 性别: GENDER INTEGER */
+    /* 性别: GENDER VARCHAR */
     public static final String PROP_NAME_gender = "gender";
     public static final int PROP_ID_gender = 6;
     
@@ -65,7 +65,7 @@ public class _ErpHrEmployee extends DynamicOrmEntity{
     public static final String PROP_NAME_mobilePhone = "mobilePhone";
     public static final int PROP_ID_mobilePhone = 11;
     
-    /* 婚姻状况: MARITAL_STATUS INTEGER */
+    /* 婚姻状况: MARITAL_STATUS VARCHAR */
     public static final String PROP_NAME_maritalStatus = "maritalStatus";
     public static final int PROP_ID_maritalStatus = 12;
     
@@ -121,11 +121,11 @@ public class _ErpHrEmployee extends DynamicOrmEntity{
     public static final String PROP_NAME_resignationReason = "resignationReason";
     public static final int PROP_ID_resignationReason = 25;
     
-    /* 雇佣状态: EMPLOYMENT_STATUS INTEGER */
+    /* 雇佣状态: EMPLOYMENT_STATUS VARCHAR */
     public static final String PROP_NAME_employmentStatus = "employmentStatus";
     public static final int PROP_ID_employmentStatus = 26;
     
-    /* 员工类型: EMPLOYEE_TYPE INTEGER */
+    /* 员工类型: EMPLOYEE_TYPE VARCHAR */
     public static final String PROP_NAME_employeeType = "employeeType";
     public static final int PROP_ID_employeeType = 27;
     
@@ -343,7 +343,7 @@ public class _ErpHrEmployee extends DynamicOrmEntity{
     private java.lang.String _fullName;
     
     /* 性别: GENDER */
-    private java.lang.Integer _gender;
+    private java.lang.String _gender;
     
     /* 出生日期: BIRTH_DATE */
     private java.time.LocalDate _birthDate;
@@ -361,7 +361,7 @@ public class _ErpHrEmployee extends DynamicOrmEntity{
     private java.lang.String _mobilePhone;
     
     /* 婚姻状况: MARITAL_STATUS */
-    private java.lang.Integer _maritalStatus;
+    private java.lang.String _maritalStatus;
     
     /* 国籍: NATIONALITY */
     private java.lang.String _nationality;
@@ -403,10 +403,10 @@ public class _ErpHrEmployee extends DynamicOrmEntity{
     private java.lang.String _resignationReason;
     
     /* 雇佣状态: EMPLOYMENT_STATUS */
-    private java.lang.Integer _employmentStatus;
+    private java.lang.String _employmentStatus;
     
     /* 员工类型: EMPLOYEE_TYPE */
-    private java.lang.Integer _employeeType;
+    private java.lang.String _employeeType;
     
     /* 工资卡账户: BANK_ACCOUNT_ID */
     private java.lang.Long _bankAccountId;
@@ -697,9 +697,9 @@ public class _ErpHrEmployee extends DynamicOrmEntity{
             }
         
             case PROP_ID_gender:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_gender));
                }
                setGender(typedValue);
@@ -757,9 +757,9 @@ public class _ErpHrEmployee extends DynamicOrmEntity{
             }
         
             case PROP_ID_maritalStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_maritalStatus));
                }
                setMaritalStatus(typedValue);
@@ -897,9 +897,9 @@ public class _ErpHrEmployee extends DynamicOrmEntity{
             }
         
             case PROP_ID_employmentStatus:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_employmentStatus));
                }
                setEmploymentStatus(typedValue);
@@ -907,9 +907,9 @@ public class _ErpHrEmployee extends DynamicOrmEntity{
             }
         
             case PROP_ID_employeeType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_employeeType));
                }
                setEmployeeType(typedValue);
@@ -1082,7 +1082,7 @@ public class _ErpHrEmployee extends DynamicOrmEntity{
         
             case PROP_ID_gender:{
                onInitProp(propId);
-               this._gender = (java.lang.Integer)value;
+               this._gender = (java.lang.String)value;
                
                break;
             }
@@ -1124,7 +1124,7 @@ public class _ErpHrEmployee extends DynamicOrmEntity{
         
             case PROP_ID_maritalStatus:{
                onInitProp(propId);
-               this._maritalStatus = (java.lang.Integer)value;
+               this._maritalStatus = (java.lang.String)value;
                
                break;
             }
@@ -1222,14 +1222,14 @@ public class _ErpHrEmployee extends DynamicOrmEntity{
         
             case PROP_ID_employmentStatus:{
                onInitProp(propId);
-               this._employmentStatus = (java.lang.Integer)value;
+               this._employmentStatus = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_employeeType:{
                onInitProp(propId);
-               this._employeeType = (java.lang.Integer)value;
+               this._employeeType = (java.lang.String)value;
                
                break;
             }
@@ -1422,7 +1422,7 @@ public class _ErpHrEmployee extends DynamicOrmEntity{
     /**
      * 性别: GENDER
      */
-    public final java.lang.Integer getGender(){
+    public final java.lang.String getGender(){
          onPropGet(PROP_ID_gender);
          return _gender;
     }
@@ -1430,7 +1430,7 @@ public class _ErpHrEmployee extends DynamicOrmEntity{
     /**
      * 性别: GENDER
      */
-    public final void setGender(java.lang.Integer value){
+    public final void setGender(java.lang.String value){
         if(onPropSet(PROP_ID_gender,value)){
             this._gender = value;
             internalClearRefs(PROP_ID_gender);
@@ -1536,7 +1536,7 @@ public class _ErpHrEmployee extends DynamicOrmEntity{
     /**
      * 婚姻状况: MARITAL_STATUS
      */
-    public final java.lang.Integer getMaritalStatus(){
+    public final java.lang.String getMaritalStatus(){
          onPropGet(PROP_ID_maritalStatus);
          return _maritalStatus;
     }
@@ -1544,7 +1544,7 @@ public class _ErpHrEmployee extends DynamicOrmEntity{
     /**
      * 婚姻状况: MARITAL_STATUS
      */
-    public final void setMaritalStatus(java.lang.Integer value){
+    public final void setMaritalStatus(java.lang.String value){
         if(onPropSet(PROP_ID_maritalStatus,value)){
             this._maritalStatus = value;
             internalClearRefs(PROP_ID_maritalStatus);
@@ -1802,7 +1802,7 @@ public class _ErpHrEmployee extends DynamicOrmEntity{
     /**
      * 雇佣状态: EMPLOYMENT_STATUS
      */
-    public final java.lang.Integer getEmploymentStatus(){
+    public final java.lang.String getEmploymentStatus(){
          onPropGet(PROP_ID_employmentStatus);
          return _employmentStatus;
     }
@@ -1810,7 +1810,7 @@ public class _ErpHrEmployee extends DynamicOrmEntity{
     /**
      * 雇佣状态: EMPLOYMENT_STATUS
      */
-    public final void setEmploymentStatus(java.lang.Integer value){
+    public final void setEmploymentStatus(java.lang.String value){
         if(onPropSet(PROP_ID_employmentStatus,value)){
             this._employmentStatus = value;
             internalClearRefs(PROP_ID_employmentStatus);
@@ -1821,7 +1821,7 @@ public class _ErpHrEmployee extends DynamicOrmEntity{
     /**
      * 员工类型: EMPLOYEE_TYPE
      */
-    public final java.lang.Integer getEmployeeType(){
+    public final java.lang.String getEmployeeType(){
          onPropGet(PROP_ID_employeeType);
          return _employeeType;
     }
@@ -1829,7 +1829,7 @@ public class _ErpHrEmployee extends DynamicOrmEntity{
     /**
      * 员工类型: EMPLOYEE_TYPE
      */
-    public final void setEmployeeType(java.lang.Integer value){
+    public final void setEmployeeType(java.lang.String value){
         if(onPropSet(PROP_ID_employeeType,value)){
             this._employeeType = value;
             internalClearRefs(PROP_ID_employeeType);

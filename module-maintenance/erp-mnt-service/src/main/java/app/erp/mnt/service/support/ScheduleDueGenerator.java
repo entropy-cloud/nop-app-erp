@@ -71,7 +71,7 @@ public class ScheduleDueGenerator {
         LocalDate base = schedule.getNextDueDate() != null ? schedule.getNextDueDate() : asOfDate;
         int frequency = schedule.getFrequency() != null && schedule.getFrequency() > 0
                 ? schedule.getFrequency() : 1;
-        int recurrenceType = schedule.getRecurrenceType() != null
+        String recurrenceType = schedule.getRecurrenceType() != null
                 ? schedule.getRecurrenceType() : ErpMntDaoConstants.RECURRENCE_TYPE_MONTHLY;
         LocalDate next;
         switch (recurrenceType) {

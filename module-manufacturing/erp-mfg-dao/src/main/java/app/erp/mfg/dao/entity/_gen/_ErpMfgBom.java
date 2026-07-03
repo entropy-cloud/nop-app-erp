@@ -33,11 +33,11 @@ public class _ErpMfgBom extends DynamicOrmEntity{
     public static final String PROP_NAME_productId = "productId";
     public static final int PROP_ID_productId = 3;
     
-    /* BOM类型: BOM_TYPE INTEGER */
+    /* BOM类型: BOM_TYPE VARCHAR */
     public static final String PROP_NAME_bomType = "bomType";
     public static final int PROP_ID_bomType = 4;
     
-    /* 消耗控制: CONSUMPTION INTEGER */
+    /* 消耗控制: CONSUMPTION VARCHAR */
     public static final String PROP_NAME_consumption = "consumption";
     public static final int PROP_ID_consumption = 5;
     
@@ -184,10 +184,10 @@ public class _ErpMfgBom extends DynamicOrmEntity{
     private java.lang.Long _productId;
     
     /* BOM类型: BOM_TYPE */
-    private java.lang.Integer _bomType;
+    private java.lang.String _bomType;
     
     /* 消耗控制: CONSUMPTION */
-    private java.lang.Integer _consumption;
+    private java.lang.String _consumption;
     
     /* 是否有效: IS_ACTIVE */
     private java.lang.Boolean _isActive;
@@ -398,9 +398,9 @@ public class _ErpMfgBom extends DynamicOrmEntity{
             }
         
             case PROP_ID_bomType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_bomType));
                }
                setBomType(typedValue);
@@ -408,9 +408,9 @@ public class _ErpMfgBom extends DynamicOrmEntity{
             }
         
             case PROP_ID_consumption:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_consumption));
                }
                setConsumption(typedValue);
@@ -579,14 +579,14 @@ public class _ErpMfgBom extends DynamicOrmEntity{
         
             case PROP_ID_bomType:{
                onInitProp(propId);
-               this._bomType = (java.lang.Integer)value;
+               this._bomType = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_consumption:{
                onInitProp(propId);
-               this._consumption = (java.lang.Integer)value;
+               this._consumption = (java.lang.String)value;
                
                break;
             }
@@ -748,7 +748,7 @@ public class _ErpMfgBom extends DynamicOrmEntity{
     /**
      * BOM类型: BOM_TYPE
      */
-    public final java.lang.Integer getBomType(){
+    public final java.lang.String getBomType(){
          onPropGet(PROP_ID_bomType);
          return _bomType;
     }
@@ -756,7 +756,7 @@ public class _ErpMfgBom extends DynamicOrmEntity{
     /**
      * BOM类型: BOM_TYPE
      */
-    public final void setBomType(java.lang.Integer value){
+    public final void setBomType(java.lang.String value){
         if(onPropSet(PROP_ID_bomType,value)){
             this._bomType = value;
             internalClearRefs(PROP_ID_bomType);
@@ -767,7 +767,7 @@ public class _ErpMfgBom extends DynamicOrmEntity{
     /**
      * 消耗控制: CONSUMPTION
      */
-    public final java.lang.Integer getConsumption(){
+    public final java.lang.String getConsumption(){
          onPropGet(PROP_ID_consumption);
          return _consumption;
     }
@@ -775,7 +775,7 @@ public class _ErpMfgBom extends DynamicOrmEntity{
     /**
      * 消耗控制: CONSUMPTION
      */
-    public final void setConsumption(java.lang.Integer value){
+    public final void setConsumption(java.lang.String value){
         if(onPropSet(PROP_ID_consumption,value)){
             this._consumption = value;
             internalClearRefs(PROP_ID_consumption);

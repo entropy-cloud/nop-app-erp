@@ -69,44 +69,44 @@
         }
 
 
-        private Integer _subjectClass;
+        private String _subjectClass;
 
     
         @PropMeta(propId=5)
     
-        public Integer getSubjectClass(){
+        public String getSubjectClass(){
             return _subjectClass;
         }
 
-        public void setSubjectClass(Integer value){
+        public void setSubjectClass(String value){
             this._subjectClass = value;
         }
 
 
-        private Integer _direction;
+        private String _direction;
 
     
         @PropMeta(propId=6)
     
-        public Integer getDirection(){
+        public String getDirection(){
             return _direction;
         }
 
-        public void setDirection(Integer value){
+        public void setDirection(String value){
             this._direction = value;
         }
 
 
-        private Integer _balanceType;
+        private String _balanceType;
 
     
         @PropMeta(propId=7)
     
-        public Integer getBalanceType(){
+        public String getBalanceType(){
             return _balanceType;
         }
 
-        public void setBalanceType(Integer value){
+        public void setBalanceType(String value){
             this._balanceType = value;
         }
 
@@ -237,16 +237,16 @@
         }
 
 
-        private Integer _status;
+        private String _status;
 
     
         @PropMeta(propId=17)
     
-        public Integer getStatus(){
+        public String getStatus(){
             return _status;
         }
 
-        public void setStatus(Integer value){
+        public void setStatus(String value){
             this._status = value;
         }
 

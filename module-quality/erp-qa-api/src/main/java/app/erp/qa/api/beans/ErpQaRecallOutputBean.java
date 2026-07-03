@@ -56,16 +56,16 @@
         }
 
 
-        private Integer _triggerType;
+        private String _triggerType;
 
     
         @PropMeta(propId=4)
     
-        public Integer getTriggerType(){
+        public String getTriggerType(){
             return _triggerType;
         }
 
-        public void setTriggerType(Integer value){
+        public void setTriggerType(String value){
             this._triggerType = value;
         }
 
@@ -152,16 +152,16 @@
         }
 
 
-        private Integer _severityLevel;
+        private String _severityLevel;
 
     
         @PropMeta(propId=10)
     
-        public Integer getSeverityLevel(){
+        public String getSeverityLevel(){
             return _severityLevel;
         }
 
-        public void setSeverityLevel(Integer value){
+        public void setSeverityLevel(String value){
             this._severityLevel = value;
         }
 
@@ -206,16 +206,16 @@
         }
 
 
-        private Integer _status;
+        private String _status;
 
     
         @PropMeta(propId=13)
     
-        public Integer getStatus(){
+        public String getStatus(){
             return _status;
         }
 
-        public void setStatus(Integer value){
+        public void setStatus(String value){
             this._status = value;
         }
 
@@ -232,16 +232,16 @@
         }
 
 
-        private Integer _approveStatus;
+        private String _approveStatus;
 
     
         @PropMeta(propId=14)
     
-        public Integer getApproveStatus(){
+        public String getApproveStatus(){
             return _approveStatus;
         }
 
-        public void setApproveStatus(Integer value){
+        public void setApproveStatus(String value){
             this._approveStatus = value;
         }
 

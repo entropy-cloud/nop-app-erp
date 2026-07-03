@@ -15,61 +15,61 @@
     </x:gen-extends>
 
     <dicts>
-        <dict label="合同状态" name="erp-ct/contract-status" valueType="int" i18n-en:label="Contract Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="NEGOTIATION" label="谈判中" value="20" i18n-en:label="Negotiation"/>
-            <option code="ACTIVE" label="执行中" value="30" i18n-en:label="Active"/>
-            <option code="SUSPENDED" label="已中止" value="40" i18n-en:label="Suspended"/>
-            <option code="EXPIRED" label="已到期" value="50" i18n-en:label="Expired"/>
-            <option code="TERMINATED" label="已终止" value="60" i18n-en:label="Terminated"/>
+        <dict label="合同状态" name="erp-ct/contract-status" valueType="string" i18n-en:label="Contract Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="NEGOTIATION" label="谈判中" value="NEGOTIATION" i18n-en:label="Negotiation"/>
+            <option code="ACTIVE" label="执行中" value="ACTIVE" i18n-en:label="Active"/>
+            <option code="SUSPENDED" label="已中止" value="SUSPENDED" i18n-en:label="Suspended"/>
+            <option code="EXPIRED" label="已到期" value="EXPIRED" i18n-en:label="Expired"/>
+            <option code="TERMINATED" label="已终止" value="TERMINATED" i18n-en:label="Terminated"/>
         </dict>
-        <dict label="合同类型" name="erp-ct/contract-type" valueType="int" i18n-en:label="Contract Type">
-            <option code="PURCHASE" label="采购合同" value="10" i18n-en:label="Purchase"/>
-            <option code="SALES" label="销售合同" value="20" i18n-en:label="Sales"/>
-            <option code="EMPLOYMENT" label="劳动合同" value="30" i18n-en:label="Employment"/>
-            <option code="SERVICE" label="服务合同" value="40" i18n-en:label="Service"/>
+        <dict label="合同类型" name="erp-ct/contract-type" valueType="string" i18n-en:label="Contract Type">
+            <option code="PURCHASE" label="采购合同" value="PURCHASE" i18n-en:label="Purchase"/>
+            <option code="SALES" label="销售合同" value="SALES" i18n-en:label="Sales"/>
+            <option code="EMPLOYMENT" label="劳动合同" value="EMPLOYMENT" i18n-en:label="Employment"/>
+            <option code="SERVICE" label="服务合同" value="SERVICE" i18n-en:label="Service"/>
         </dict>
-        <dict label="合同方向" name="erp-ct/contract-direction" valueType="int" i18n-en:label="Contract Direction">
-            <option code="INBOUND" label="进向(我方付款)" value="10" i18n-en:label="Inbound (Pay)"/>
-            <option code="OUTBOUND" label="出向(客户付款)" value="20" i18n-en:label="Outbound (Receive)"/>
+        <dict label="合同方向" name="erp-ct/contract-direction" valueType="string" i18n-en:label="Contract Direction">
+            <option code="INBOUND" label="进向(我方付款)" value="INBOUND" i18n-en:label="Inbound (Pay)"/>
+            <option code="OUTBOUND" label="出向(客户付款)" value="OUTBOUND" i18n-en:label="Outbound (Receive)"/>
         </dict>
-        <dict label="开票条款" name="erp-ct/invoice-term" valueType="int" i18n-en:label="Invoice Term">
-            <option code="ADVANCE" label="预付款" value="10" i18n-en:label="Advance"/>
-            <option code="MILESTONE" label="里程碑" value="20" i18n-en:label="Milestone"/>
-            <option code="MONTHLY" label="月结" value="30" i18n-en:label="Monthly"/>
-            <option code="COMPLETION" label="完工" value="40" i18n-en:label="Completion"/>
+        <dict label="开票条款" name="erp-ct/invoice-term" valueType="string" i18n-en:label="Invoice Term">
+            <option code="ADVANCE" label="预付款" value="ADVANCE" i18n-en:label="Advance"/>
+            <option code="MILESTONE" label="里程碑" value="MILESTONE" i18n-en:label="Milestone"/>
+            <option code="MONTHLY" label="月结" value="MONTHLY" i18n-en:label="Monthly"/>
+            <option code="COMPLETION" label="完工" value="COMPLETION" i18n-en:label="Completion"/>
         </dict>
-        <dict label="版本状态" name="erp-ct/version-status" valueType="int" i18n-en:label="Version Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="FINALIZED" label="定稿" value="20" i18n-en:label="Finalized"/>
-            <option code="SIGNED" label="已签署" value="30" i18n-en:label="Signed"/>
+        <dict label="版本状态" name="erp-ct/version-status" valueType="string" i18n-en:label="Version Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="FINALIZED" label="定稿" value="FINALIZED" i18n-en:label="Finalized"/>
+            <option code="SIGNED" label="已签署" value="SIGNED" i18n-en:label="Signed"/>
         </dict>
-        <dict label="审批状态" name="erp-ct/approval-status" valueType="int" i18n-en:label="Approval Status">
-            <option code="WAITING" label="等待中" value="10" i18n-en:label="Waiting"/>
-            <option code="PENDING" label="待审批" value="20" i18n-en:label="Pending"/>
-            <option code="APPROVED" label="已通过" value="30" i18n-en:label="Approved"/>
-            <option code="REJECTED" label="已驳回" value="40" i18n-en:label="Rejected"/>
-            <option code="SKIPPED" label="已跳过" value="50" i18n-en:label="Skipped"/>
+        <dict label="审批状态" name="erp-ct/approval-status" valueType="string" i18n-en:label="Approval Status">
+            <option code="WAITING" label="等待中" value="WAITING" i18n-en:label="Waiting"/>
+            <option code="PENDING" label="待审批" value="PENDING" i18n-en:label="Pending"/>
+            <option code="APPROVED" label="已通过" value="APPROVED" i18n-en:label="Approved"/>
+            <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label="Rejected"/>
+            <option code="SKIPPED" label="已跳过" value="SKIPPED" i18n-en:label="Skipped"/>
         </dict>
-        <dict label="返利类型" name="erp-ct/rebate-type" valueType="int" i18n-en:label="Rebate Type">
-            <option code="PURCHASE" label="采购返利" value="10" i18n-en:label="Purchase"/>
-            <option code="SALES" label="销售返利" value="20" i18n-en:label="Sales"/>
+        <dict label="返利类型" name="erp-ct/rebate-type" valueType="string" i18n-en:label="Rebate Type">
+            <option code="PURCHASE" label="采购返利" value="PURCHASE" i18n-en:label="Purchase"/>
+            <option code="SALES" label="销售返利" value="SALES" i18n-en:label="Sales"/>
         </dict>
-        <dict label="返利协议状态" name="erp-ct/rebate-agreement-status" valueType="int"
+        <dict label="返利协议状态" name="erp-ct/rebate-agreement-status" valueType="string"
               i18n-en:label="Rebate Agreement Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="ACTIVE" label="生效中" value="20" i18n-en:label="Active"/>
-            <option code="EXPIRED" label="已到期" value="30" i18n-en:label="Expired"/>
-            <option code="SETTLED" label="已结算" value="40" i18n-en:label="Settled"/>
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="ACTIVE" label="生效中" value="ACTIVE" i18n-en:label="Active"/>
+            <option code="EXPIRED" label="已到期" value="EXPIRED" i18n-en:label="Expired"/>
+            <option code="SETTLED" label="已结算" value="SETTLED" i18n-en:label="Settled"/>
         </dict>
-        <dict label="结算单状态" name="erp-ct/settlement-status" valueType="int" i18n-en:label="Settlement Status">
-            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
-            <option code="POSTED" label="已过账" value="20" i18n-en:label="Posted"/>
-            <option code="CANCELLED" label="已取消" value="30" i18n-en:label="Cancelled"/>
+        <dict label="结算单状态" name="erp-ct/settlement-status" valueType="string" i18n-en:label="Settlement Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="POSTED" label="已过账" value="POSTED" i18n-en:label="Posted"/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
         </dict>
-        <dict label="计提方法" name="erp-ct/accrual-method" valueType="int" i18n-en:label="Accrual Method">
-            <option code="PERIOD_END" label="期末一次性" value="10" i18n-en:label="Period End"/>
-            <option code="PROGRESSIVE" label="逐笔累计" value="20" i18n-en:label="Progressive"/>
+        <dict label="计提方法" name="erp-ct/accrual-method" valueType="string" i18n-en:label="Accrual Method">
+            <option code="PERIOD_END" label="期末一次性" value="PERIOD_END" i18n-en:label="Period End"/>
+            <option code="PROGRESSIVE" label="逐笔累计" value="PROGRESSIVE" i18n-en:label="Progressive"/>
         </dict>
     </dicts>
 
@@ -107,12 +107,12 @@
                         i18n-en:displayName="Organization"/>
                 <column code="CONTRACT_NAME" displayName="合同名称" mandatory="true" name="contractName" precision="200"
                         propId="4" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Contract Name"/>
-                <column code="CONTRACT_TYPE" displayName="合同类型" mandatory="true" name="contractType" propId="5"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ct/contract-type"
+                <column code="CONTRACT_TYPE" displayName="合同类型" mandatory="true" name="contractType" precision="20"
+                        propId="5" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ct/contract-type"
                         i18n-en:displayName="Contract Type"/>
                 <column code="CONTRACT_DIRECTION" displayName="合同方向" mandatory="true" name="contractDirection"
-                        propId="6" stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ct/contract-direction"
-                        i18n-en:displayName="Direction"/>
+                        precision="20" propId="6" stdDataType="string" stdSqlType="VARCHAR"
+                        ext:dict="erp-ct/contract-direction" i18n-en:displayName="Direction"/>
                 <column code="PARTNER_ID" displayName="合作方" mandatory="true" name="partnerId" propId="7"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="8" stdDataType="long"
@@ -126,8 +126,9 @@
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="End Date"/>
                 <column code="SIGN_DATE" displayName="签署日期" name="signDate" propId="12" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Sign Date"/>
-                <column code="STATUS" displayName="合同状态" mandatory="true" name="status" propId="13" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-ct/contract-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="合同状态" mandatory="true" name="status" precision="20" propId="13"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ct/contract-status"
+                        i18n-en:displayName="Status"/>
                 <column code="TEMPLATE_ID" displayName="合同模板" name="templateId" propId="14" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Template"/>
                 <column code="PARENT_CONTRACT_ID" displayName="父合同" name="parentContractId" propId="15"
@@ -292,8 +293,9 @@
                         stdDataType="string" stdDomain="file" stdSqlType="VARCHAR" i18n-en:displayName="Attachment"/>
                 <column code="IS_CURRENT" defaultValue="false" displayName="是否当前版本" name="isCurrent" propId="7"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Current"/>
-                <column code="STATUS" displayName="版本状态" mandatory="true" name="status" propId="8" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-ct/version-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="版本状态" mandatory="true" name="status" precision="20" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ct/version-status"
+                        i18n-en:displayName="Status"/>
                 <column code="APPROVED_BY" displayName="批准人" name="approvedBy" precision="36" propId="9"
                         stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
                 <column code="APPROVED_AT" displayName="批准时间" name="approvedAt" propId="10" stdDataType="datetime"
@@ -346,8 +348,8 @@
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Invoice Bill Code"/>
                 <column code="INVOICE_DATE" displayName="实际开票日期" name="invoiceDate" propId="7" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Invoice Date"/>
-                <column code="INVOICE_TERM" displayName="开票条款" mandatory="true" name="invoiceTerm" propId="8"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ct/invoice-term"
+                <column code="INVOICE_TERM" displayName="开票条款" mandatory="true" name="invoiceTerm" precision="20"
+                        propId="8" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ct/invoice-term"
                         i18n-en:displayName="Invoice Term"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="9"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
@@ -438,8 +440,8 @@
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
                 <column code="NAME" displayName="名称" mandatory="true" name="name" precision="200" propId="3"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
-                <column code="CONTRACT_TYPE" displayName="适用合同类型" mandatory="true" name="contractType" propId="4"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ct/contract-type"
+                <column code="CONTRACT_TYPE" displayName="适用合同类型" mandatory="true" name="contractType" precision="20"
+                        propId="4" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ct/contract-type"
                         i18n-en:displayName="Contract Type"/>
                 <column code="CONTENT_TEMPLATE" displayName="模板内容" domain="content" name="contentTemplate"
                         precision="4000" propId="5" stdDataType="string" stdSqlType="VARCHAR"
@@ -538,8 +540,8 @@
                         stdSqlType="INTEGER" i18n-en:displayName="Approval Order"/>
                 <column code="APPROVER_ID" displayName="审批人" name="approverId" precision="36" propId="6"
                         stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approver"/>
-                <column code="APPROVAL_STATUS" displayName="审批状态" mandatory="true" name="approvalStatus" propId="7"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ct/approval-status"
+                <column code="APPROVAL_STATUS" displayName="审批状态" mandatory="true" name="approvalStatus" precision="20"
+                        propId="7" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ct/approval-status"
                         i18n-en:displayName="Approval Status"/>
                 <column code="COMMENT" displayName="审批意见" name="comment" precision="1000" propId="8"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Comment"/>
@@ -659,8 +661,8 @@
                         stdSqlType="BIGINT" i18n-en:displayName="Contract"/>
                 <column code="PARTNER_ID" displayName="对方伙伴" mandatory="true" name="partnerId" propId="5"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
-                <column code="REBATE_TYPE" displayName="返利类型" mandatory="true" name="rebateType" propId="6"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ct/rebate-type"
+                <column code="REBATE_TYPE" displayName="返利类型" mandatory="true" name="rebateType" precision="20"
+                        propId="6" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ct/rebate-type"
                         i18n-en:displayName="Rebate Type"/>
                 <column code="AGREEMENT_DATE" displayName="签订日期" name="agreementDate" propId="7" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Agreement Date"/>
@@ -668,11 +670,12 @@
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Start Date"/>
                 <column code="END_DATE" displayName="有效期结束" mandatory="true" name="endDate" propId="9"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="End Date"/>
-                <column code="ACCRUAL_METHOD" displayName="计提方法" mandatory="true" name="accrualMethod" propId="10"
-                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-ct/accrual-method"
+                <column code="ACCRUAL_METHOD" displayName="计提方法" mandatory="true" name="accrualMethod" precision="20"
+                        propId="10" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ct/accrual-method"
                         i18n-en:displayName="Accrual Method"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="11" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-ct/rebate-agreement-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="11"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ct/rebate-agreement-status"
+                        i18n-en:displayName="Status"/>
                 <column code="TOTAL_ACCUMULATED_AMOUNT" displayName="当前累计金额" domain="amount"
                         name="totalAccumulatedAmount" precision="18" propId="12" scale="2" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Total Accumulated Amount"/>
@@ -849,8 +852,9 @@
                         propId="6" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Credit Memo Bill Type"/>
                 <column code="CREDIT_MEMO_BILL_CODE" displayName="信用单号" name="creditMemoBillCode" precision="50"
                         propId="7" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Credit Memo Bill Code"/>
-                <column code="STATUS" displayName="状态" mandatory="true" name="status" propId="8" stdDataType="int"
-                        stdSqlType="INTEGER" ext:dict="erp-ct/settlement-status" i18n-en:displayName="Status"/>
+                <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ct/settlement-status"
+                        i18n-en:displayName="Status"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="9" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
                 <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="50" propId="10"

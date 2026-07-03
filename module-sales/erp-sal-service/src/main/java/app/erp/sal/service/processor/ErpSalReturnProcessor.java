@@ -24,6 +24,7 @@ import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -144,47 +145,47 @@ public class ErpSalReturnProcessor {
 
     protected void validateTransitionForSubmit(ErpSalReturn returnOrder, IServiceContext context) {
         validateNotCancelled(returnOrder, context);
-        Integer status = returnOrder.getApproveStatus();
+        String status = returnOrder.getApproveStatus();
         if (status == null) {
             status = ErpSalConstants.APPROVE_STATUS_UNSUBMITTED;
         }
-        if (status != ErpSalConstants.APPROVE_STATUS_UNSUBMITTED
-                && status != ErpSalConstants.APPROVE_STATUS_REJECTED) {
+        if (!Objects.equals(status, ErpSalConstants.APPROVE_STATUS_UNSUBMITTED)
+                && !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_REJECTED)) {
             throw illegalTransition(returnOrder, status, "UNSUBMITTED 或 REJECTED");
         }
     }
 
     protected void validateTransitionForWithdraw(ErpSalReturn returnOrder, IServiceContext context) {
-        Integer status = returnOrder.getApproveStatus();
-        if (status == null || status != ErpSalConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = returnOrder.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(returnOrder, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForApprove(ErpSalReturn returnOrder, IServiceContext context) {
-        Integer status = returnOrder.getApproveStatus();
-        if (status == null || status != ErpSalConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = returnOrder.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(returnOrder, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForReject(ErpSalReturn returnOrder, IServiceContext context) {
-        Integer status = returnOrder.getApproveStatus();
-        if (status == null || status != ErpSalConstants.APPROVE_STATUS_SUBMITTED) {
+        String status = returnOrder.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(returnOrder, status, "SUBMITTED");
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpSalReturn returnOrder, IServiceContext context) {
-        Integer status = returnOrder.getApproveStatus();
-        if (status == null || status != ErpSalConstants.APPROVE_STATUS_APPROVED) {
+        String status = returnOrder.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_APPROVED)) {
             throw illegalTransition(returnOrder, status, "APPROVED");
         }
     }
 
     protected void validateTransitionForCancel(ErpSalReturn returnOrder, IServiceContext context) {
-        Integer docStatus = returnOrder.getDocStatus();
-        if (docStatus != null && docStatus == ErpSalConstants.DOC_STATUS_CANCELLED) {
+        String docStatus = returnOrder.getDocStatus();
+        if (docStatus != null && Objects.equals(docStatus, ErpSalConstants.DOC_STATUS_CANCELLED)) {
             throw illegalDocTransition(returnOrder, docStatus, "非已作废");
         }
     }
@@ -213,8 +214,8 @@ public class ErpSalReturnProcessor {
             throw new NopException(ErpSalErrors.ERR_RETURN_DELIVERY_NOT_APPROVED)
                     .param(ErpSalErrors.ARG_CURRENT_STATUS, null);
         }
-        Integer deliveryStatus = delivery.getApproveStatus();
-        if (deliveryStatus == null || deliveryStatus != ErpSalConstants.APPROVE_STATUS_APPROVED) {
+        String deliveryStatus = delivery.getApproveStatus();
+        if (deliveryStatus == null || !Objects.equals(deliveryStatus, ErpSalConstants.APPROVE_STATUS_APPROVED)) {
             throw new NopException(ErpSalErrors.ERR_RETURN_DELIVERY_NOT_APPROVED)
                     .param(ErpSalErrors.ARG_CURRENT_STATUS, deliveryStatus);
         }
@@ -379,15 +380,15 @@ public class ErpSalReturnProcessor {
     }
 
     protected void validateNotCancelled(ErpSalReturn returnOrder, IServiceContext context) {
-        Integer docStatus = returnOrder.getDocStatus();
-        if (docStatus != null && docStatus == ErpSalConstants.DOC_STATUS_CANCELLED) {
+        String docStatus = returnOrder.getDocStatus();
+        if (docStatus != null && Objects.equals(docStatus, ErpSalConstants.DOC_STATUS_CANCELLED)) {
             throw illegalDocTransition(returnOrder, docStatus, "非已作废");
         }
     }
 
     protected boolean isAlreadyApproved(ErpSalReturn returnOrder) {
-        Integer status = returnOrder.getApproveStatus();
-        return status != null && status == ErpSalConstants.APPROVE_STATUS_APPROVED;
+        String status = returnOrder.getApproveStatus();
+        return status != null && Objects.equals(status, ErpSalConstants.APPROVE_STATUS_APPROVED);
     }
 
     protected boolean isApproved(ErpSalReturn returnOrder) {
@@ -395,8 +396,8 @@ public class ErpSalReturnProcessor {
     }
 
     protected boolean isAlreadyRejected(ErpSalReturn returnOrder) {
-        Integer status = returnOrder.getApproveStatus();
-        return status != null && status == ErpSalConstants.APPROVE_STATUS_REJECTED;
+        String status = returnOrder.getApproveStatus();
+        return status != null && Objects.equals(status, ErpSalConstants.APPROVE_STATUS_REJECTED);
     }
 
     protected void requireLinesNonEmpty(ErpSalReturn returnOrder, IServiceContext context) {
@@ -412,7 +413,7 @@ public class ErpSalReturnProcessor {
         }
         ErpMdPartner partner = mdPartnerBiz.findById(returnOrder.getCustomerId(), context);
         if (partner == null || partner.getStatus() == null
-                || partner.getStatus() != ErpSalConstants.PARTNER_STATUS_ACTIVE) {
+                || !Objects.equals(partner.getStatus(), ErpSalConstants.PARTNER_STATUS_ACTIVE)) {
             throw new NopException(ErpSalErrors.ERR_PARTNER_INACTIVE)
                     .param(ErpSalErrors.ARG_CUSTOMER_ID, returnOrder.getCustomerId());
         }
@@ -444,14 +445,14 @@ public class ErpSalReturnProcessor {
         }
     }
 
-    protected NopException illegalTransition(ErpSalReturn returnOrder, Integer current, String expected) {
+    protected NopException illegalTransition(ErpSalReturn returnOrder, String current, String expected) {
         return new NopException(ErpSalErrors.ERR_RETURN_ILLEGAL_STATUS_TRANSITION)
                 .param(ErpSalErrors.ARG_RETURN_CODE, returnOrder.getCode())
                 .param(ErpSalErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpSalErrors.ARG_EXPECTED_STATUS, expected);
     }
 
-    protected NopException illegalDocTransition(ErpSalReturn returnOrder, Integer current, String expected) {
+    protected NopException illegalDocTransition(ErpSalReturn returnOrder, String current, String expected) {
         return new NopException(ErpSalErrors.ERR_RETURN_ILLEGAL_DOC_STATUS_TRANSITION)
                 .param(ErpSalErrors.ARG_RETURN_CODE, returnOrder.getCode())
                 .param(ErpSalErrors.ARG_CURRENT_DOC_STATUS, current)

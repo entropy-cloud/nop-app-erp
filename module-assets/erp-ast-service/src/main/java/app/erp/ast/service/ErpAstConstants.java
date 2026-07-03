@@ -17,46 +17,46 @@ public interface ErpAstConstants {
     String CONFIG_RESIDUAL_VALUE_ENFORCED = "erp-ast.residual-value-enforced";
 
     // ---- asset-status ----
-    int ASSET_STATUS_DRAFT = 10;
-    int ASSET_STATUS_IN_SERVICE = 20;
-    int ASSET_STATUS_IDLE = 30;
-    int ASSET_STATUS_SCRAPPED = 40;
-    int ASSET_STATUS_SOLD = 50;
+    String ASSET_STATUS_DRAFT = "DRAFT";
+    String ASSET_STATUS_IN_SERVICE = "IN_SERVICE";
+    String ASSET_STATUS_IDLE = "IDLE";
+    String ASSET_STATUS_SCRAPPED = "SCRAPPED";
+    String ASSET_STATUS_SOLD = "SOLD";
 
     // ---- depreciation-method ----
-    int DEPRECIATION_METHOD_STRAIGHT_LINE = 10;
-    int DEPRECIATION_METHOD_DECLINING = 20;
-    int DEPRECIATION_METHOD_UNITS = 30;
+    String DEPRECIATION_METHOD_STRAIGHT_LINE = "STRAIGHT_LINE";
+    String DEPRECIATION_METHOD_DECLINING = "DECLINING";
+    String DEPRECIATION_METHOD_UNITS = "UNITS";
 
     // ---- depreciation-schedule-status ----
-    int SCHEDULE_STATUS_PENDING = 10;
-    int SCHEDULE_STATUS_EXECUTED = 20;
-    int SCHEDULE_STATUS_REVERSED = 30;
-    int SCHEDULE_STATUS_CANCELLED = 40;
+    String SCHEDULE_STATUS_PENDING = "PENDING";
+    String SCHEDULE_STATUS_EXECUTED = "EXECUTED";
+    String SCHEDULE_STATUS_REVERSED = "REVERSED";
+    String SCHEDULE_STATUS_CANCELLED = "CANCELLED";
 
     // ---- disposal-type ----
-    int DISPOSAL_TYPE_SCRAPPED = 10;
-    int DISPOSAL_TYPE_SOLD = 20;
+    String DISPOSAL_TYPE_SCRAPPED = "SCRAPPED";
+    String DISPOSAL_TYPE_SOLD = "SOLD";
 
     // ---- doc-status ----
-    int DOC_STATUS_DRAFT = 10;
-    int DOC_STATUS_ACTIVE = 20;
-    int DOC_STATUS_CANCELLED = 30;
+    String DOC_STATUS_DRAFT = "DRAFT";
+    String DOC_STATUS_ACTIVE = "ACTIVE";
+    String DOC_STATUS_CANCELLED = "CANCELLED";
 
     // ---- approve-status ----
-    int APPROVE_STATUS_UNSUBMITTED = 10;
-    int APPROVE_STATUS_SUBMITTED = 20;
-    int APPROVE_STATUS_APPROVED = 30;
-    int APPROVE_STATUS_REJECTED = 40;
+    String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
+    String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
+    String APPROVE_STATUS_APPROVED = "APPROVED";
+    String APPROVE_STATUS_REJECTED = "REJECTED";
 
     // ---- capitalization-source-type ----
-    int SOURCE_TYPE_INVENTORY = 10;
-    int SOURCE_TYPE_CIP = 20;
-    int SOURCE_TYPE_DIRECT_PURCHASE = 30;
+    String SOURCE_TYPE_INVENTORY = "INVENTORY";
+    String SOURCE_TYPE_CIP = "CIP";
+    String SOURCE_TYPE_DIRECT_PURCHASE = "DIRECT_PURCHASE";
 
     // ---- erp-fin/period-status（折旧期间控制引用） ----
-    int PERIOD_STATUS_OPEN = 10;
-    int PERIOD_STATUS_CLOSED = 30;
+    String PERIOD_STATUS_OPEN = "OPEN";
+    String PERIOD_STATUS_CLOSED = "CLOSED";
 
     // ---- PostingEvent.billData 键（资产过账派发器填入，Provider 读取） ----
     String BILL_DATA_ASSET_ID = "ASSET_ID";

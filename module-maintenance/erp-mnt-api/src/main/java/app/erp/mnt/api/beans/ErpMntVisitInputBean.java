@@ -83,16 +83,16 @@
         }
 
 
-        private Integer _status;
+        private String _status;
 
     
         @PropMeta(propId=6)
     
-        public Integer getStatus(){
+        public String getStatus(){
             return _status;
         }
 
-        public void setStatus(Integer value){
+        public void setStatus(String value){
             this._status = value;
         }
 
@@ -167,44 +167,44 @@
         }
 
 
-        private String _totalMinutes;
+        private java.math.BigDecimal _totalMinutes;
 
     
         @PropMeta(propId=12)
     
-        public String getTotalMinutes(){
+        public java.math.BigDecimal getTotalMinutes(){
             return _totalMinutes;
         }
 
-        public void setTotalMinutes(String value){
+        public void setTotalMinutes(java.math.BigDecimal value){
             this._totalMinutes = value;
         }
 
 
-        private Integer _visitType;
+        private String _visitType;
 
     
         @PropMeta(propId=13)
     
-        public Integer getVisitType(){
+        public String getVisitType(){
             return _visitType;
         }
 
-        public void setVisitType(Integer value){
+        public void setVisitType(String value){
             this._visitType = value;
         }
 
 
-        private Integer _result;
+        private String _result;
 
     
         @PropMeta(propId=14)
     
-        public Integer getResult(){
+        public String getResult(){
             return _result;
         }
 
-        public void setResult(Integer value){
+        public void setResult(String value){
             this._result = value;
         }
 

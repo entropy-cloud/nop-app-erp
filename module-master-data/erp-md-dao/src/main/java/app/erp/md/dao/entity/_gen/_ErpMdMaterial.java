@@ -33,7 +33,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     public static final String PROP_NAME_name = "name";
     public static final int PROP_ID_name = 3;
     
-    /* 物料类型: MATERIAL_TYPE INTEGER */
+    /* 物料类型: MATERIAL_TYPE VARCHAR */
     public static final String PROP_NAME_materialType = "materialType";
     public static final int PROP_ID_materialType = 4;
     
@@ -45,11 +45,11 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     public static final String PROP_NAME_uoMId = "uoMId";
     public static final int PROP_ID_uoMId = 6;
     
-    /* 状态: STATUS INTEGER */
+    /* 状态: STATUS VARCHAR */
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 7;
     
-    /* 存货计价方法: COST_METHOD INTEGER */
+    /* 存货计价方法: COST_METHOD VARCHAR */
     public static final String PROP_NAME_costMethod = "costMethod";
     public static final int PROP_ID_costMethod = 8;
     
@@ -236,7 +236,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     private java.lang.String _name;
     
     /* 物料类型: MATERIAL_TYPE */
-    private java.lang.Integer _materialType;
+    private java.lang.String _materialType;
     
     /* 分类ID: CATEGORY_ID */
     private java.lang.Long _categoryId;
@@ -245,10 +245,10 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     private java.lang.Long _uoMId;
     
     /* 状态: STATUS */
-    private java.lang.Integer _status;
+    private java.lang.String _status;
     
     /* 存货计价方法: COST_METHOD */
-    private java.lang.Integer _costMethod;
+    private java.lang.String _costMethod;
     
     /* 是否批次管理: IS_BATCH_MANAGED */
     private java.lang.Boolean _isBatchManaged;
@@ -492,9 +492,9 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialType:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialType));
                }
                setMaterialType(typedValue);
@@ -522,9 +522,9 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
             }
         
             case PROP_ID_status:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_status));
                }
                setStatus(typedValue);
@@ -532,9 +532,9 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
             }
         
             case PROP_ID_costMethod:{
-               java.lang.Integer typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toInteger(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_costMethod));
                }
                setCostMethod(typedValue);
@@ -743,7 +743,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
         
             case PROP_ID_materialType:{
                onInitProp(propId);
-               this._materialType = (java.lang.Integer)value;
+               this._materialType = (java.lang.String)value;
                
                break;
             }
@@ -764,14 +764,14 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
         
             case PROP_ID_status:{
                onInitProp(propId);
-               this._status = (java.lang.Integer)value;
+               this._status = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_costMethod:{
                onInitProp(propId);
-               this._costMethod = (java.lang.Integer)value;
+               this._costMethod = (java.lang.String)value;
                
                break;
             }
@@ -961,7 +961,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     /**
      * 物料类型: MATERIAL_TYPE
      */
-    public final java.lang.Integer getMaterialType(){
+    public final java.lang.String getMaterialType(){
          onPropGet(PROP_ID_materialType);
          return _materialType;
     }
@@ -969,7 +969,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     /**
      * 物料类型: MATERIAL_TYPE
      */
-    public final void setMaterialType(java.lang.Integer value){
+    public final void setMaterialType(java.lang.String value){
         if(onPropSet(PROP_ID_materialType,value)){
             this._materialType = value;
             internalClearRefs(PROP_ID_materialType);
@@ -1018,7 +1018,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final java.lang.Integer getStatus(){
+    public final java.lang.String getStatus(){
          onPropGet(PROP_ID_status);
          return _status;
     }
@@ -1026,7 +1026,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     /**
      * 状态: STATUS
      */
-    public final void setStatus(java.lang.Integer value){
+    public final void setStatus(java.lang.String value){
         if(onPropSet(PROP_ID_status,value)){
             this._status = value;
             internalClearRefs(PROP_ID_status);
@@ -1037,7 +1037,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     /**
      * 存货计价方法: COST_METHOD
      */
-    public final java.lang.Integer getCostMethod(){
+    public final java.lang.String getCostMethod(){
          onPropGet(PROP_ID_costMethod);
          return _costMethod;
     }
@@ -1045,7 +1045,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     /**
      * 存货计价方法: COST_METHOD
      */
-    public final void setCostMethod(java.lang.Integer value){
+    public final void setCostMethod(java.lang.String value){
         if(onPropSet(PROP_ID_costMethod,value)){
             this._costMethod = value;
             internalClearRefs(PROP_ID_costMethod);

@@ -53,7 +53,7 @@
         </prop>
         <prop name="macroPriority" displayName="自动匹配优先级" propId="9" i18n-en:displayName="Macro Priority"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Integer" dict="erp-cs/ticket-priority"/>
+            <schema type="java.lang.String" precision="20" dict="erp-cs/ticket-priority"/>
         </prop>
         <prop name="sequence" displayName="排序" propId="10" i18n-en:displayName="Sequence" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">

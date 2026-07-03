@@ -55,6 +55,6 @@ public interface IErpSalOrderBiz extends ICrudBiz<ErpSalOrder> {
      */
     @BizAction
     void updateDeliveryStatus(@Name("orderId") Long orderId,
-                              @Name("deliveryStatus") Integer deliveryStatus,
+                              @Name("deliveryStatus") String deliveryStatus,
                               IServiceContext context);
 }

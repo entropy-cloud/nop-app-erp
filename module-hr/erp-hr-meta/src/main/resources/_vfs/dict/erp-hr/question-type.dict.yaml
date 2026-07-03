@@ -1,27 +1,27 @@
 # __XGEN_FORCE_OVERRIDE__
 label: 题目类型
 locale: zh-CN
-valueType: int
+valueType: string
 description: 
 options:
 
   - label: 评分题
-    value: 10
+    value: RATING
     description: 
   
   - label: 单选题
-    value: 20
+    value: SINGLE_CHOICE
     description: 
   
   - label: 多选题
-    value: 30
+    value: MULTI_CHOICE
     description: 
   
   - label: 开放文本
-    value: 40
+    value: OPEN_TEXT
     description: 
   
   - label: eNPS题
-    value: 50
+    value: ENPS
     description: 
   

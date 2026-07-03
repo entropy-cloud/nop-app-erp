@@ -34,16 +34,16 @@
                 <col id="labelUrl" sortable="true"/>
 
                 <!--重量(kg)-->
-                <col id="weight" sortable="true"/>
+                <col id="weight" ui:number="true" sortable="true"/>
 
                 <!--长(cm)-->
-                <col id="length" sortable="true"/>
+                <col id="length" ui:number="true" sortable="true"/>
 
                 <!--宽(cm)-->
-                <col id="width" sortable="true"/>
+                <col id="width" ui:number="true" sortable="true"/>
 
                 <!--高(cm)-->
-                <col id="height" sortable="true"/>
+                <col id="height" ui:number="true" sortable="true"/>
 
                 <!--申报价值-->
                 <col id="declaredValue" ui:number="true" sortable="true"/>

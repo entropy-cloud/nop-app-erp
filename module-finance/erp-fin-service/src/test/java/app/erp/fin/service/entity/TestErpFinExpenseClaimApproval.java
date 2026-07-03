@@ -97,7 +97,7 @@ public class TestErpFinExpenseClaimApproval extends JunitAutoTestCase {
 
     @Test
     public void testRejectClaimantInactive() {
-        Long claimId = seedClaimWithClaimant("EC-APP-006", 9901L, 20,
+        Long claimId = seedClaimWithClaimant("EC-APP-006", 9901L, "INACTIVE",
                 ErpFinConstants.APPROVE_STATUS_UNSUBMITTED, true);
         assertThrows(NopException.class, () -> claimBiz.submit(claimId, CTX));
     }
@@ -116,12 +116,12 @@ public class TestErpFinExpenseClaimApproval extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private Long seedValidClaim(String code, int approveStatus, Long docStatus) {
+    private Long seedValidClaim(String code, String approveStatus, Long docStatus) {
         return seedClaimWithClaimant(code, 9901L, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE, approveStatus, true);
     }
 
-    private Long seedClaimWithClaimant(String code, Long partnerId, int employeeStatus,
-                                       int approveStatus, boolean withLines) {
+    private Long seedClaimWithClaimant(String code, Long partnerId, String employeeStatus,
+                                       String approveStatus, boolean withLines) {
         return ormTemplate.runInSession(session -> {
             Long empId = seedEmployee(partnerId, employeeStatus);
             ErpFinExpenseClaim claim = newClaim(code, empId, approveStatus);
@@ -147,7 +147,7 @@ public class TestErpFinExpenseClaimApproval extends JunitAutoTestCase {
         });
     }
 
-    private Long seedEmployee(Long partnerId, int status) {
+    private Long seedEmployee(Long partnerId, String status) {
         // 测试库不强制 FK（对齐 TestErpFinArApItemGeneration 用合成 partnerId=2L/3L），故仅 set partnerId，
         // 不必先建 ErpMdPartner。partnerId=null 表示员工无内部往来单位（partner-missing 用例）。
         IEntityDao<ErpMdEmployee> empDao = daoProvider.daoFor(ErpMdEmployee.class);
@@ -161,7 +161,7 @@ public class TestErpFinExpenseClaimApproval extends JunitAutoTestCase {
         return emp.getId();
     }
 
-    private ErpFinExpenseClaim newClaim(String code, Long claimantId, int approveStatus) {
+    private ErpFinExpenseClaim newClaim(String code, Long claimantId, String approveStatus) {
         IEntityDao<ErpFinExpenseClaim> dao = daoProvider.daoFor(ErpFinExpenseClaim.class);
         ErpFinExpenseClaim claim = new ErpFinExpenseClaim();
         claim.setCode(code);
@@ -186,7 +186,7 @@ public class TestErpFinExpenseClaimApproval extends JunitAutoTestCase {
         ErpFinExpenseClaimLine line = new ErpFinExpenseClaimLine();
         line.setClaimId(claimId);
         line.setLineNo(1);
-        line.setExpenseType(10);
+        line.setExpenseType("TRAVEL");
         line.setAmountWithoutTax(amountWithTax);
         line.setTaxAmount(BigDecimal.ZERO);
         line.setAmountWithTax(amountWithTax);

@@ -25,7 +25,7 @@
                 <col id="ncrId" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--措施类型-->
-                <col id="actionType" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="actionType" mandatory="true" sortable="true"/>
 
                 <!--措施描述-->
                 <col id="description" sortable="true"/>
@@ -37,7 +37,7 @@
                 <col id="dueDate" sortable="true"/>
 
                 <!--状态-->
-                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
 
                 <!--完成人-->
                 <col id="completedBy" ui:number="true" sortable="true"/>
