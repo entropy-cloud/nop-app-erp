@@ -25,6 +25,8 @@ alter table erp_md_bank_account add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT N
 
 alter table erp_pur_requisition add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
+alter table erp_pur_supplier_scorecard add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
 alter table erp_pur_supplier_price_list add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_pur_invoice add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
@@ -35,11 +37,15 @@ alter table erp_pur_requisition_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' 
 
 alter table erp_pur_rfq add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
+alter table erp_pur_supplier_scorecard_criteria add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
 alter table erp_pur_payment_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_pur_rfq_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_pur_quotation add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
+alter table erp_pur_supplier_scorecard_variable add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_pur_quotation_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
@@ -96,6 +102,9 @@ alter table erp_md_bank_account add constraint PK_erp_md_bank_account primary ke
 alter table erp_pur_requisition drop constraint PK_erp_pur_requisition;
 alter table erp_pur_requisition add constraint PK_erp_pur_requisition primary key (NOP_TENANT_ID, ID);
 
+alter table erp_pur_supplier_scorecard drop constraint PK_erp_pur_supplier_scorecard;
+alter table erp_pur_supplier_scorecard add constraint PK_erp_pur_supplier_scorecard primary key (NOP_TENANT_ID, ID);
+
 alter table erp_pur_supplier_price_list drop constraint PK_erp_pur_supplier_price_list;
 alter table erp_pur_supplier_price_list add constraint PK_erp_pur_supplier_price_list primary key (NOP_TENANT_ID, ID);
 
@@ -111,6 +120,9 @@ alter table erp_pur_requisition_line add constraint PK_erp_pur_requisition_line 
 alter table erp_pur_rfq drop constraint PK_erp_pur_rfq;
 alter table erp_pur_rfq add constraint PK_erp_pur_rfq primary key (NOP_TENANT_ID, ID);
 
+alter table erp_pur_supplier_scorecard_criteria drop constraint PK_erp_pur_supplier_scorecard_criteria;
+alter table erp_pur_supplier_scorecard_criteria add constraint PK_erp_pur_supplier_scorecard_criteria primary key (NOP_TENANT_ID, ID);
+
 alter table erp_pur_payment_line drop constraint PK_erp_pur_payment_line;
 alter table erp_pur_payment_line add constraint PK_erp_pur_payment_line primary key (NOP_TENANT_ID, ID);
 
@@ -119,6 +131,9 @@ alter table erp_pur_rfq_line add constraint PK_erp_pur_rfq_line primary key (NOP
 
 alter table erp_pur_quotation drop constraint PK_erp_pur_quotation;
 alter table erp_pur_quotation add constraint PK_erp_pur_quotation primary key (NOP_TENANT_ID, ID);
+
+alter table erp_pur_supplier_scorecard_variable drop constraint PK_erp_pur_supplier_scorecard_variable;
+alter table erp_pur_supplier_scorecard_variable add constraint PK_erp_pur_supplier_scorecard_variable primary key (NOP_TENANT_ID, ID);
 
 alter table erp_pur_quotation_line drop constraint PK_erp_pur_quotation_line;
 alter table erp_pur_quotation_line add constraint PK_erp_pur_quotation_line primary key (NOP_TENANT_ID, ID);

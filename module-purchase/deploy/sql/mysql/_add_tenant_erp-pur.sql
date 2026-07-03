@@ -25,6 +25,8 @@ alter table erp_md_bank_account add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NU
 
 alter table erp_pur_requisition add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_pur_supplier_scorecard add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_pur_supplier_price_list add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_pur_invoice add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -35,11 +37,15 @@ alter table erp_pur_requisition_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' N
 
 alter table erp_pur_rfq add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_pur_supplier_scorecard_criteria add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_pur_payment_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_pur_rfq_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_pur_quotation add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_pur_supplier_scorecard_variable add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_pur_quotation_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -96,6 +102,9 @@ alter table erp_md_bank_account add primary key (NOP_TENANT_ID, ID);
 alter table erp_pur_requisition drop primary key;
 alter table erp_pur_requisition add primary key (NOP_TENANT_ID, ID);
 
+alter table erp_pur_supplier_scorecard drop primary key;
+alter table erp_pur_supplier_scorecard add primary key (NOP_TENANT_ID, ID);
+
 alter table erp_pur_supplier_price_list drop primary key;
 alter table erp_pur_supplier_price_list add primary key (NOP_TENANT_ID, ID);
 
@@ -111,6 +120,9 @@ alter table erp_pur_requisition_line add primary key (NOP_TENANT_ID, ID);
 alter table erp_pur_rfq drop primary key;
 alter table erp_pur_rfq add primary key (NOP_TENANT_ID, ID);
 
+alter table erp_pur_supplier_scorecard_criteria drop primary key;
+alter table erp_pur_supplier_scorecard_criteria add primary key (NOP_TENANT_ID, ID);
+
 alter table erp_pur_payment_line drop primary key;
 alter table erp_pur_payment_line add primary key (NOP_TENANT_ID, ID);
 
@@ -119,6 +131,9 @@ alter table erp_pur_rfq_line add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_pur_quotation drop primary key;
 alter table erp_pur_quotation add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_pur_supplier_scorecard_variable drop primary key;
+alter table erp_pur_supplier_scorecard_variable add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_pur_quotation_line drop primary key;
 alter table erp_pur_quotation_line add primary key (NOP_TENANT_ID, ID);

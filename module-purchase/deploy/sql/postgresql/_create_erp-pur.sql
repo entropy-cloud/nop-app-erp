@@ -129,6 +129,28 @@ CREATE TABLE erp_pur_requisition(
   constraint PK_erp_pur_requisition primary key (id)
 );
 
+CREATE TABLE erp_pur_supplier_scorecard(
+  id INT8 NOT NULL ,
+  partner_id INT8 NOT NULL ,
+  org_id INT8  ,
+  period_from DATE NOT NULL ,
+  period_to DATE NOT NULL ,
+  total_score NUMERIC(18,2)  ,
+  standing INT4  ,
+  warn_threshold NUMERIC(18,2)  ,
+  hold_threshold NUMERIC(18,2)  ,
+  prevent_threshold NUMERIC(18,2)  ,
+  status INT4 default 10  NOT NULL ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_pur_supplier_scorecard primary key (id)
+);
+
 CREATE TABLE erp_pur_supplier_price_list(
   id INT8 NOT NULL ,
   supplier_id INT8 NOT NULL ,
@@ -258,6 +280,23 @@ CREATE TABLE erp_pur_rfq(
   constraint PK_erp_pur_rfq primary key (id)
 );
 
+CREATE TABLE erp_pur_supplier_scorecard_criteria(
+  id INT8 NOT NULL ,
+  scorecard_id INT8 NOT NULL ,
+  criteria_name VARCHAR(100) NOT NULL ,
+  weight NUMERIC(5,2) NOT NULL ,
+  formula VARCHAR(1000) NOT NULL ,
+  score NUMERIC(18,2)  ,
+  weighted_score NUMERIC(18,2)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_pur_supplier_scorecard_criteria primary key (id)
+);
+
 CREATE TABLE erp_pur_payment_line(
   id INT8 NOT NULL ,
   payment_id INT8 NOT NULL ,
@@ -312,6 +351,21 @@ CREATE TABLE erp_pur_quotation(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   constraint PK_erp_pur_quotation primary key (id)
+);
+
+CREATE TABLE erp_pur_supplier_scorecard_variable(
+  id INT8 NOT NULL ,
+  criteria_id INT8 NOT NULL ,
+  variable_name VARCHAR(100) NOT NULL ,
+  path VARCHAR(200) NOT NULL ,
+  value NUMERIC(20,6)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_pur_supplier_scorecard_variable primary key (id)
 );
 
 CREATE TABLE erp_pur_quotation_line(
@@ -603,6 +657,44 @@ CREATE TABLE erp_pur_return_line(
                     
       COMMENT ON COLUMN erp_pur_requisition.update_time IS '修改时间';
                     
+      COMMENT ON TABLE erp_pur_supplier_scorecard IS '供应商评分卡';
+                
+      COMMENT ON COLUMN erp_pur_supplier_scorecard.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard.partner_id IS '供应商';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard.period_from IS '评分周期起';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard.period_to IS '评分周期止';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard.total_score IS '总分(派生)';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard.standing IS '评级';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard.warn_threshold IS 'warn阈值';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard.hold_threshold IS 'hold阈值';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard.prevent_threshold IS 'prevent阈值';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard.status IS '周期状态';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard.update_time IS '修改时间';
+                    
       COMMENT ON TABLE erp_pur_supplier_price_list IS '供应商价格清单';
                 
       COMMENT ON COLUMN erp_pur_supplier_price_list.id IS 'ID';
@@ -831,6 +923,34 @@ CREATE TABLE erp_pur_return_line(
                     
       COMMENT ON COLUMN erp_pur_rfq.update_time IS '修改时间';
                     
+      COMMENT ON TABLE erp_pur_supplier_scorecard_criteria IS '评分维度';
+                
+      COMMENT ON COLUMN erp_pur_supplier_scorecard_criteria.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard_criteria.scorecard_id IS '评分卡';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard_criteria.criteria_name IS '维度名';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard_criteria.weight IS '权重(0-100)';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard_criteria.formula IS '公式(XLang表达式)';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard_criteria.score IS '维度得分';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard_criteria.weighted_score IS '加权得分';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard_criteria.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard_criteria.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard_criteria.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard_criteria.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard_criteria.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard_criteria.update_time IS '修改时间';
+                    
       COMMENT ON TABLE erp_pur_payment_line IS '付款核销行';
                 
       COMMENT ON COLUMN erp_pur_payment_line.id IS 'ID';
@@ -924,6 +1044,30 @@ CREATE TABLE erp_pur_return_line(
       COMMENT ON COLUMN erp_pur_quotation.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_pur_quotation.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_pur_supplier_scorecard_variable IS '评分变量';
+                
+      COMMENT ON COLUMN erp_pur_supplier_scorecard_variable.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard_variable.criteria_id IS '评分维度';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard_variable.variable_name IS '变量名';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard_variable.path IS '业务取值路径';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard_variable.value IS '取值';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard_variable.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard_variable.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard_variable.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard_variable.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard_variable.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_pur_supplier_scorecard_variable.update_time IS '修改时间';
                     
       COMMENT ON TABLE erp_pur_quotation_line IS '供应商报价单行';
                 

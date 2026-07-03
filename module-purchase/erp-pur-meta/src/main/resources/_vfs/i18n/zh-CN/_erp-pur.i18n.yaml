@@ -17,6 +17,9 @@ entity:
     ErpPurRfq: 采购询价单
     ErpPurRfqLine: 采购询价单行
     ErpPurSupplierPriceList: 供应商价格清单
+    ErpPurSupplierScorecard: 供应商评分卡
+    ErpPurSupplierScorecardCriteria: 评分维度
+    ErpPurSupplierScorecardVariable: 评分变量
 prop:
   label:
     ErpPurInvoice:
@@ -506,4 +509,57 @@ prop:
       updatedBy: 修改人
       validFrom: 生效日期
       validTo: 失效日期
+      version: 数据版本
+    ErpPurSupplierScorecard:
+      createTime: 创建时间
+      createdBy: 创建人
+      criterias: null
+      delVersion: 逻辑删除版本
+      holdThreshold: hold阈值
+      id: ID
+      org: null
+      orgId: 业务组织
+      partnerId: 供应商
+      periodFrom: 评分周期起
+      periodTo: 评分周期止
+      preventThreshold: prevent阈值
+      remark: 备注
+      standing: 评级
+      standing_label: 评级
+      status: 周期状态
+      status_label: 周期状态
+      supplier: null
+      totalScore: 总分(派生)
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      warnThreshold: warn阈值
+    ErpPurSupplierScorecardCriteria:
+      createTime: 创建时间
+      createdBy: 创建人
+      criteriaName: 维度名
+      delVersion: 逻辑删除版本
+      formula: 公式(XLang表达式)
+      id: ID
+      score: 维度得分
+      scorecard: null
+      scorecardId: 评分卡
+      updateTime: 修改时间
+      updatedBy: 修改人
+      variables: null
+      version: 数据版本
+      weight: 权重(0-100)
+      weightedScore: 加权得分
+    ErpPurSupplierScorecardVariable:
+      createTime: 创建时间
+      createdBy: 创建人
+      criteria: null
+      criteriaId: 评分维度
+      delVersion: 逻辑删除版本
+      id: ID
+      path: 业务取值路径
+      updateTime: 修改时间
+      updatedBy: 修改人
+      value: 取值
+      variableName: 变量名
       version: 数据版本

@@ -1,0 +1,3 @@
+
+x:gen-extends: |
+    <web:GenPage view="ErpPurSupplierScorecardVariable.view.xml" page="picker" xpl:lib="/nop/web/xlib/web.xlib" />

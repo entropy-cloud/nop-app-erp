@@ -129,6 +129,28 @@ CREATE TABLE erp_pur_requisition(
   constraint PK_erp_pur_requisition primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_pur_supplier_scorecard(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  PARTNER_ID BIGINT NOT NULL    COMMENT '供应商',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  PERIOD_FROM DATE NOT NULL    COMMENT '评分周期起',
+  PERIOD_TO DATE NOT NULL    COMMENT '评分周期止',
+  TOTAL_SCORE DECIMAL(18,2) NULL    COMMENT '总分(派生)',
+  STANDING INTEGER NULL    COMMENT '评级',
+  WARN_THRESHOLD DECIMAL(18,2) NULL    COMMENT 'warn阈值',
+  HOLD_THRESHOLD DECIMAL(18,2) NULL    COMMENT 'hold阈值',
+  PREVENT_THRESHOLD DECIMAL(18,2) NULL    COMMENT 'prevent阈值',
+  STATUS INTEGER default 10  NOT NULL    COMMENT '周期状态',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_pur_supplier_scorecard primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_pur_supplier_price_list(
   ID BIGINT NOT NULL    COMMENT 'ID',
   SUPPLIER_ID BIGINT NOT NULL    COMMENT '供应商',
@@ -258,6 +280,23 @@ CREATE TABLE erp_pur_rfq(
   constraint PK_erp_pur_rfq primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_pur_supplier_scorecard_criteria(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  SCORECARD_ID BIGINT NOT NULL    COMMENT '评分卡',
+  CRITERIA_NAME VARCHAR(100) NOT NULL    COMMENT '维度名',
+  WEIGHT DECIMAL(5,2) NOT NULL    COMMENT '权重(0-100)',
+  FORMULA VARCHAR(1000) NOT NULL    COMMENT '公式(XLang表达式)',
+  SCORE DECIMAL(18,2) NULL    COMMENT '维度得分',
+  WEIGHTED_SCORE DECIMAL(18,2) NULL    COMMENT '加权得分',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_pur_supplier_scorecard_criteria primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_pur_payment_line(
   ID BIGINT NOT NULL    COMMENT 'ID',
   PAYMENT_ID BIGINT NOT NULL    COMMENT '付款单ID',
@@ -312,6 +351,21 @@ CREATE TABLE erp_pur_quotation(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   constraint PK_erp_pur_quotation primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_pur_supplier_scorecard_variable(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CRITERIA_ID BIGINT NOT NULL    COMMENT '评分维度',
+  VARIABLE_NAME VARCHAR(100) NOT NULL    COMMENT '变量名',
+  PATH VARCHAR(200) NOT NULL    COMMENT '业务取值路径',
+  VALUE DECIMAL(20,6) NULL    COMMENT '取值',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_pur_supplier_scorecard_variable primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_pur_quotation_line(
@@ -567,6 +621,8 @@ CREATE TABLE erp_pur_return_line(
                 
    ALTER TABLE erp_pur_requisition COMMENT '采购请购单';
                 
+   ALTER TABLE erp_pur_supplier_scorecard COMMENT '供应商评分卡';
+                
    ALTER TABLE erp_pur_supplier_price_list COMMENT '供应商价格清单';
                 
    ALTER TABLE erp_pur_invoice COMMENT '采购发票';
@@ -577,11 +633,15 @@ CREATE TABLE erp_pur_return_line(
                 
    ALTER TABLE erp_pur_rfq COMMENT '采购询价单';
                 
+   ALTER TABLE erp_pur_supplier_scorecard_criteria COMMENT '评分维度';
+                
    ALTER TABLE erp_pur_payment_line COMMENT '付款核销行';
                 
    ALTER TABLE erp_pur_rfq_line COMMENT '采购询价单行';
                 
    ALTER TABLE erp_pur_quotation COMMENT '供应商报价单';
+                
+   ALTER TABLE erp_pur_supplier_scorecard_variable COMMENT '评分变量';
                 
    ALTER TABLE erp_pur_quotation_line COMMENT '供应商报价单行';
                 

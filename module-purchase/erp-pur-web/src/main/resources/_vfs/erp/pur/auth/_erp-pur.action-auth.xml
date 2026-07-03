@@ -249,6 +249,48 @@
                         </resource>
                     </children>
                 </resource>
+                <resource id="ErpPurSupplierScorecard-main" displayName="供应商评分卡" orderNo="10052"
+                          i18n-en:displayName="Supplier Scorecard" icon="gauge" component="AMIS" resourceType="SUBM"
+                          url="/erp/pur/pages/ErpPurSupplierScorecard/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPurSupplierScorecard:query" displayName="查询供应商评分卡"
+                                  i18n-en:displayName="Query Supplier Scorecard" orderNo="10053" resourceType="FNPT">
+                            <permissions>ErpPurSupplierScorecard:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPurSupplierScorecard:mutation" displayName="修改供应商评分卡"
+                                  i18n-en:displayName="Modify Supplier Scorecard" orderNo="10054" resourceType="FNPT">
+                            <permissions>ErpPurSupplierScorecard:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPurSupplierScorecardCriteria-main" displayName="评分维度" orderNo="10055"
+                          i18n-en:displayName="Scorecard Criteria" icon="sliders-horizontal" component="AMIS"
+                          resourceType="SUBM" url="/erp/pur/pages/ErpPurSupplierScorecardCriteria/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPurSupplierScorecardCriteria:query" displayName="查询评分维度"
+                                  i18n-en:displayName="Query Scorecard Criteria" orderNo="10056" resourceType="FNPT">
+                            <permissions>ErpPurSupplierScorecardCriteria:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPurSupplierScorecardCriteria:mutation" displayName="修改评分维度"
+                                  i18n-en:displayName="Modify Scorecard Criteria" orderNo="10057" resourceType="FNPT">
+                            <permissions>ErpPurSupplierScorecardCriteria:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPurSupplierScorecardVariable-main" displayName="评分变量" orderNo="10058"
+                          i18n-en:displayName="Scorecard Variable" icon="variable" component="AMIS" resourceType="SUBM"
+                          url="/erp/pur/pages/ErpPurSupplierScorecardVariable/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPurSupplierScorecardVariable:query" displayName="查询评分变量"
+                                  i18n-en:displayName="Query Scorecard Variable" orderNo="10059" resourceType="FNPT">
+                            <permissions>ErpPurSupplierScorecardVariable:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPurSupplierScorecardVariable:mutation" displayName="修改评分变量"
+                                  i18n-en:displayName="Modify Scorecard Variable" orderNo="10060" resourceType="FNPT">
+                            <permissions>ErpPurSupplierScorecardVariable:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
             </children>
         </resource>
     </site>

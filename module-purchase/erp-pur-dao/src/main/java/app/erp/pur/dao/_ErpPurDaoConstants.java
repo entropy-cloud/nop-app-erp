@@ -148,4 +148,29 @@ public interface _ErpPurDaoConstants {
      */
     int INVOICE_TYPE_RECEIPT = 30;
                     
+    /**
+     * 供应商评级: 优秀 
+     */
+    int SUPPLIER_STANDING_GREEN = 10;
+                    
+    /**
+     * 供应商评级: 待改进 
+     */
+    int SUPPLIER_STANDING_YELLOW = 20;
+                    
+    /**
+     * 供应商评级: 不合格 
+     */
+    int SUPPLIER_STANDING_RED = 30;
+                    
+    /**
+     * 评分卡状态: 草稿 
+     */
+    int SCORECARD_STATUS_DRAFT = 10;
+                    
+    /**
+     * 评分卡状态: 已定稿 
+     */
+    int SCORECARD_STATUS_FINALIZED = 20;
+                    
 }

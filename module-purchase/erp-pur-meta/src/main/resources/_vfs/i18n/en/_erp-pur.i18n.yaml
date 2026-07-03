@@ -17,6 +17,9 @@ entity:
     ErpPurRfq: Purchase RFQ
     ErpPurRfqLine: Purchase RFQ Line
     ErpPurSupplierPriceList: Supplier Price List
+    ErpPurSupplierScorecard: Supplier Scorecard
+    ErpPurSupplierScorecardCriteria: Scorecard Criteria
+    ErpPurSupplierScorecardVariable: Scorecard Variable
 prop:
   label:
     ErpPurInvoice:
@@ -507,6 +510,59 @@ prop:
       material: Material
       uoM: Uo M
       currency: Currency
+    ErpPurSupplierScorecard:
+      id: ID
+      partnerId: Supplier
+      orgId: Organization
+      periodFrom: Period From
+      periodTo: Period To
+      totalScore: Total Score
+      standing: Standing
+      standing_label: null
+      warnThreshold: Warn Threshold
+      holdThreshold: Hold Threshold
+      preventThreshold: Prevent Threshold
+      status: Scorecard Status
+      status_label: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      supplier: Supplier
+      org: Org
+      criterias: Criteria
+    ErpPurSupplierScorecardCriteria:
+      id: ID
+      scorecardId: Scorecard
+      criteriaName: Criteria Name
+      weight: Weight
+      formula: Formula
+      score: Score
+      weightedScore: Weighted Score
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      scorecard: Scorecard
+      variables: Variables
+    ErpPurSupplierScorecardVariable:
+      id: ID
+      criteriaId: Criteria
+      variableName: Variable Name
+      path: Path
+      value: Value
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      criteria: Criteria
 dict:
   label:
     erp-pur/doc-status: Doc Status
@@ -517,6 +573,8 @@ dict:
     erp-pur/doc-direction: Doc Direction
     erp-pur/receive-type: Receipt Type
     erp-pur/invoice-type: Invoice Type
+    erp-pur/supplier-standing: Supplier Standing
+    erp-pur/scorecard-status: Scorecard Status
 dict.option.label:
   erp-pur/doc-status:
     '10': Draft
@@ -555,3 +613,10 @@ dict.option.label:
     '10': VAT Special
     '20': VAT General
     '30': Receipt Note
+  erp-pur/supplier-standing:
+    '10': Green
+    '20': Yellow
+    '30': Red
+  erp-pur/scorecard-status:
+    '10': Draft
+    '20': Finalized

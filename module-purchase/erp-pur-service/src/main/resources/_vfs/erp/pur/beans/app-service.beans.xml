@@ -65,4 +65,16 @@
           class="app.erp.pur.service.processor.ErpPurInvoiceProcessor"/>
     <bean id="app.erp.pur.service.processor.ErpPurPaymentProcessor"
           class="app.erp.pur.service.processor.ErpPurPaymentProcessor"/>
+
+    <!-- 供应商评分卡周期评分计算器（criteria×formula×weight→totalScore→standing，公式经 XLang 表达式） -->
+    <bean id="app.erp.pur.service.entity.ScorecardCalculator"
+          class="app.erp.pur.service.entity.ScorecardCalculator"/>
+
+    <!-- 评分卡 standing=RED → AVL SUSPENDED 跨域联动桥（purchase→master-data I*Biz，下游可派生覆盖联动策略） -->
+    <bean id="app.erp.pur.service.ScorecardStandingLinker"
+          class="app.erp.pur.service.ScorecardStandingLinker"/>
+
+    <!-- 供应商询价/报价准入资格校验器（AVL 准入状态 + 评分 standing 三档联动 prevent/warn/allow） -->
+    <bean id="app.erp.pur.service.SupplierEligibilityChecker"
+          class="app.erp.pur.service.SupplierEligibilityChecker"/>
 </beans>

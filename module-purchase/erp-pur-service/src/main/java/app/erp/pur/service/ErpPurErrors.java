@@ -207,4 +207,38 @@ public interface ErpPurErrors {
     ErrorCode ERR_RECEIVE_INSPECTION_BLOCKED = ErrorCode.define("erp.err.pur.receive-inspection-blocked",
             "入库单 {receiveCode} 属强制质检类型，关联质检单未合格/让步，审核暂挂待质检结论",
             ARG_RECEIVE_CODE);
+
+    // --- 供应商评分卡作用域错误码（docs/design/purchase/supplier-evaluation.md §业务规则） ---
+
+    String ARG_SCORECARD_ID = "scorecardId";
+    String ARG_PARTNER_ID = "partnerId";
+    String ARG_CRITERIA_NAME = "criteriaName";
+    String ARG_FORMULA = "formula";
+    String ARG_TOTAL_WEIGHT = "totalWeight";
+    String ARG_STANDING = "standing";
+
+    ErrorCode ERR_SCORECARD_NOT_FOUND = ErrorCode.define("erp.err.pur.scorecard-not-found",
+            "供应商评分卡 {scorecardId} 不存在", ARG_SCORECARD_ID);
+
+    ErrorCode ERR_SCORECARD_ALREADY_FINALIZED = ErrorCode.define("erp.err.pur.scorecard-already-finalized",
+            "供应商评分卡 {scorecardId} 已定稿，不可重算（请新建评分周期）",
+            ARG_SCORECARD_ID);
+
+    ErrorCode ERR_SCORECARD_WEIGHT_NOT_100 = ErrorCode.define("erp.err.pur.scorecard-weight-not-100",
+            "供应商评分卡 {scorecardId} 维度权重之和={totalWeight}，必须为 100",
+            ARG_SCORECARD_ID, ARG_TOTAL_WEIGHT);
+
+    ErrorCode ERR_SCORECARD_NO_CRITERIA = ErrorCode.define("erp.err.pur.scorecard-no-criteria",
+            "供应商评分卡 {scorecardId} 无评分维度，不可定稿",
+            ARG_SCORECARD_ID);
+
+    ErrorCode ERR_SCORECARD_FORMULA_EVAL_FAIL = ErrorCode.define("erp.err.pur.scorecard-formula-eval-fail",
+            "供应商评分卡维度 {criteriaName} 公式 [{formula}] 计算失败",
+            ARG_CRITERIA_NAME, ARG_FORMULA);
+
+    // --- RFQ/报价创建校验作用域错误码（standing/approval 联动） ---
+
+    ErrorCode ERR_SUPPLIER_NOT_APPROVED = ErrorCode.define("erp.err.pur.supplier-not-approved",
+            "供应商 {partnerId} 准入资格 {standing}，不可作为询价/报价收件人",
+            ARG_PARTNER_ID, ARG_STANDING);
 }

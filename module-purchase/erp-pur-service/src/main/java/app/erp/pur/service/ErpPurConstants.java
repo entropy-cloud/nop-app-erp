@@ -32,6 +32,11 @@ public interface ErpPurConstants {
     // 主数据启用状态 erp-md/active-status
     int PARTNER_STATUS_ACTIVE = 10;
 
+    // AVL 准入状态 erp-md/supplier-approval-status（purchase 侧副本，避免 main 代码依赖 master-data-service）
+    // 权威值见 module-master-data 的 ErpMdConstants（镜像 dict 值）
+    int APPROVAL_STATUS_SUSPENDED = 40;
+    int APPROVAL_STATUS_REJECTED = 50;
+
     // 库存作业类型（对齐 erp-inv/operation-type，调用方侧副本避免 main 代码依赖 inventory-service）
     int MOVE_TYPE_INCOMING = 10;
     int MOVE_TYPE_OUTGOING = 20;
@@ -53,4 +58,17 @@ public interface ErpPurConstants {
     // 已核销判定阈值：累计已核销 / 发票含税总额 ≥ 此比例视为 PAID，否则按是否 > 0 区分 PARTIAL/UNPAID。
     // 用 BigDecimal 比例避免浮点；1.0 即全额核销才 PAID。
     java.math.BigDecimal PAID_FULL_RATIO = java.math.BigDecimal.ONE;
+
+    // 供应商评级 standing erp-pur/supplier-standing（finalize 后按 totalScore 落档）
+    int STANDING_GREEN = 10;
+    int STANDING_YELLOW = 20;
+    int STANDING_RED = 30;
+
+    // 评分卡周期状态 erp-pur/scorecard-status（DRAFT 草稿可重算 / FINALIZED 已定稿不可重算）
+    int SCORECARD_STATUS_DRAFT = 10;
+    int SCORECARD_STATUS_FINALIZED = 20;
+
+    // 评分卡配置项（supplier-evaluation.md §配置点，缺失走默认，无需 .env）
+    String CONFIG_SCORECARD_PREVENT_ON_RED = "erp-pur.scorecard-prevent-on-red";
+    String CONFIG_SCORECARD_EVALUATION_CRON = "erp-pur.scorecard-evaluation-cron";
 }

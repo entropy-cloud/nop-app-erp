@@ -60,6 +60,15 @@
             <option code="VAT_NORMAL" label="增值税普通" value="20" i18n-en:label="VAT General"/>
             <option code="RECEIPT" label="收据" value="30" i18n-en:label="Receipt Note"/>
         </dict>
+        <dict label="供应商评级" name="erp-pur/supplier-standing" valueType="int" i18n-en:label="Supplier Standing">
+            <option code="GREEN" label="优秀" value="10" i18n-en:label="Green"/>
+            <option code="YELLOW" label="待改进" value="20" i18n-en:label="Yellow"/>
+            <option code="RED" label="不合格" value="30" i18n-en:label="Red"/>
+        </dict>
+        <dict label="评分卡状态" name="erp-pur/scorecard-status" valueType="int" i18n-en:label="Scorecard Status">
+            <option code="DRAFT" label="草稿" value="10" i18n-en:label="Draft"/>
+            <option code="FINALIZED" label="已定稿" value="20" i18n-en:label="Finalized"/>
+        </dict>
     </dicts>
 
     <domains>
@@ -589,6 +598,179 @@
                         i18n-en:displayName="Currency">
                     <join>
                         <on leftProp="currencyId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.pur.dao.entity.ErpPurSupplierScorecard" createTimeProp="createTime"
+                createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="供应商评分卡"
+                name="app.erp.pur.dao.entity.ErpPurSupplierScorecard" registerShortName="true"
+                tableName="erp_pur_supplier_scorecard" tagSet="gid,erp.purchase" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="gauge"
+                i18n-en:displayName="Supplier Scorecard">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="PARTNER_ID" displayName="供应商" mandatory="true" name="partnerId" propId="2"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Supplier"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="PERIOD_FROM" displayName="评分周期起" mandatory="true" name="periodFrom" propId="4"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Period From"/>
+                <column code="PERIOD_TO" displayName="评分周期止" mandatory="true" name="periodTo" propId="5"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Period To"/>
+                <column code="TOTAL_SCORE" displayName="总分(派生)" domain="amount" name="totalScore" precision="18"
+                        propId="6" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Total Score"/>
+                <column code="STANDING" displayName="评级" name="standing" propId="7" stdDataType="int"
+                        stdSqlType="INTEGER" ext:dict="erp-pur/supplier-standing" i18n-en:displayName="Standing"/>
+                <column code="WARN_THRESHOLD" displayName="warn阈值" domain="amount" name="warnThreshold" precision="18"
+                        propId="8" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Warn Threshold"/>
+                <column code="HOLD_THRESHOLD" displayName="hold阈值" domain="amount" name="holdThreshold" precision="18"
+                        propId="9" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Hold Threshold"/>
+                <column code="PREVENT_THRESHOLD" displayName="prevent阈值" domain="amount" name="preventThreshold"
+                        precision="18" propId="10" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Prevent Threshold"/>
+                <column code="STATUS" defaultValue="10" displayName="周期状态" mandatory="true" name="status" propId="11"
+                        stdDataType="int" stdSqlType="INTEGER" ext:dict="erp-pur/scorecard-status"
+                        i18n-en:displayName="Scorecard Status"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="12"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="13" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="14" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="15" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="16" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="17" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="supplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
+                        i18n-en:displayName="Supplier">
+                    <join>
+                        <on leftProp="partnerId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-many cascadeDelete="true" name="criterias"
+                         refEntityName="app.erp.pur.dao.entity.ErpPurSupplierScorecardCriteria"
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Criteria"
+                         ext:estRows="10">
+                    <join>
+                        <on leftProp="id" rightProp="scorecardId"/>
+                    </join>
+                </to-many>
+            </relations>
+        </entity>
+        <entity className="app.erp.pur.dao.entity.ErpPurSupplierScorecardCriteria" createTimeProp="createTime"
+                createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="评分维度"
+                name="app.erp.pur.dao.entity.ErpPurSupplierScorecardCriteria" registerShortName="true"
+                tableName="erp_pur_supplier_scorecard_criteria" tagSet="gid,erp.purchase" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="sliders-horizontal"
+                i18n-en:displayName="Scorecard Criteria">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="SCORECARD_ID" displayName="评分卡" mandatory="true" name="scorecardId" propId="2"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Scorecard"/>
+                <column code="CRITERIA_NAME" displayName="维度名" mandatory="true" name="criteriaName" precision="100"
+                        propId="3" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Criteria Name"/>
+                <column code="WEIGHT" displayName="权重(0-100)" domain="amount" mandatory="true" name="weight"
+                        precision="5" propId="4" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Weight"/>
+                <column code="FORMULA" displayName="公式(XLang表达式)" mandatory="true" name="formula" precision="1000"
+                        propId="5" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Formula"/>
+                <column code="SCORE" displayName="维度得分" domain="amount" name="score" precision="18" propId="6" scale="2"
+                        stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Score"/>
+                <column code="WEIGHTED_SCORE" displayName="加权得分" domain="amount" name="weightedScore" precision="18"
+                        propId="7" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Weighted Score"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="8" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="9" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="10" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="11" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="12" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="scorecard" refEntityName="app.erp.pur.dao.entity.ErpPurSupplierScorecard" tagSet="pub"
+                        i18n-en:displayName="Scorecard">
+                    <join>
+                        <on leftProp="scorecardId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-many cascadeDelete="true" name="variables"
+                         refEntityName="app.erp.pur.dao.entity.ErpPurSupplierScorecardVariable"
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Variables"
+                         ext:estRows="10">
+                    <join>
+                        <on leftProp="id" rightProp="criteriaId"/>
+                    </join>
+                </to-many>
+            </relations>
+        </entity>
+        <entity className="app.erp.pur.dao.entity.ErpPurSupplierScorecardVariable" createTimeProp="createTime"
+                createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="评分变量"
+                name="app.erp.pur.dao.entity.ErpPurSupplierScorecardVariable" registerShortName="true"
+                tableName="erp_pur_supplier_scorecard_variable" tagSet="gid,erp.purchase" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="variable"
+                i18n-en:displayName="Scorecard Variable">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CRITERIA_ID" displayName="评分维度" mandatory="true" name="criteriaId" propId="2"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Criteria"/>
+                <column code="VARIABLE_NAME" displayName="变量名" mandatory="true" name="variableName" precision="100"
+                        propId="3" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Variable Name"/>
+                <column code="PATH" displayName="业务取值路径" mandatory="true" name="path" precision="200" propId="4"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Path"/>
+                <column code="VALUE" displayName="取值" domain="amount" name="value" precision="20" propId="5" scale="6"
+                        stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Value"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="6" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="7" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="8" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="9" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="10" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="11" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="criteria" refEntityName="app.erp.pur.dao.entity.ErpPurSupplierScorecardCriteria"
+                        tagSet="pub" i18n-en:displayName="Criteria">
+                    <join>
+                        <on leftProp="criteriaId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>

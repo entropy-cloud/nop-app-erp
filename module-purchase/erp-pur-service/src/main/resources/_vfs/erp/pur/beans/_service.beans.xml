@@ -13,6 +13,14 @@
         <property name="bizObjName" value="ErpPurRequisition"/>
     </bean>
 
+    <bean id="app.erp.pur.service.entity.ErpPurSupplierScorecardBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPurSupplierScorecard" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.pur.biz.IErpPurSupplierScorecardBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpPurSupplierScorecard"/>
+    </bean>
+
     <bean id="app.erp.pur.service.entity.ErpPurSupplierPriceListBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpPurSupplierPriceList" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -50,6 +58,14 @@
         <property name="bizObjName" value="ErpPurRfq"/>
     </bean>
 
+    <bean id="app.erp.pur.service.entity.ErpPurSupplierScorecardCriteriaBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPurSupplierScorecardCriteria" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.pur.biz.IErpPurSupplierScorecardCriteriaBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpPurSupplierScorecardCriteria"/>
+    </bean>
+
     <bean id="app.erp.pur.service.entity.ErpPurPaymentLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpPurPaymentLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -70,6 +86,14 @@
     <bean id="biz_ErpPurQuotation" class="io.nop.biz.proxy.BizProxyFactoryBean"
           ioc:type="app.erp.pur.biz.IErpPurQuotationBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
         <property name="bizObjName" value="ErpPurQuotation"/>
+    </bean>
+
+    <bean id="app.erp.pur.service.entity.ErpPurSupplierScorecardVariableBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPurSupplierScorecardVariable" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.pur.biz.IErpPurSupplierScorecardVariableBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpPurSupplierScorecardVariable"/>
     </bean>
 
     <bean id="app.erp.pur.service.entity.ErpPurQuotationLineBizModel" ioc:type="@bean:id" ioc:default="true"/>

@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 供应商评级
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 优秀
+    value: 10
+    description: 
+  
+  - label: 待改进
+    value: 20
+    description: 
+  
+  - label: 不合格
+    value: 30
+    description: 
+  
