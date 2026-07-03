@@ -43,3 +43,9 @@
 - DIRECT 模式可使用 nop-wf 简单流程或直接状态变更
 - nop-wf 完成回调更新业务单据 approveStatus
 - `approveStatus` 只跟踪业务终态，严格限定为**四态**：`UNSUBMITTED`（未提交）/ `SUBMITTED`（已提交待审批）/ `APPROVED`（已批准）/ `REJECTED`（已驳回），不跟踪 wf 内部状态。`SUBMITTED` 表示单据已提交等待审批，审批过程中的场内进度（会签、转审、待阅等）完全由 nop-wf 引擎在 `NopWfStepInstance`/`NopWfWork` 表中管理，不污染业务表。**禁止**使用 `APPROVING`、`PENDING_APPROVAL` 等中间态值。
+
+> 审批能力是 nop-wf-core 的**平台级通用能力**（非 ERP 专属）。**平台设计与使用指南在 nop-entropy**：
+> - 平台设计：`../nop-entropy/ai-dev/design/nop-wf/approvable-entity-design.md`（`use-approval` tag、`IApprovableBiz` 接口、objMeta 流程配置、codegen 标准 action、两流正交分离、wf 回调）
+> - 使用指南：`../nop-entropy/docs-for-ai/03-runbooks/enable-approval-on-entity.md`
+>
+> ERP 应用层落位见 `wf-integration-design.md`。核心：审批流（nop-wf）与业务处理正交分离；业务实体标 `use-approval`，由 codegen 生成标准审批 action；审批通过经 wf 结束事件回调 action；**业务联动在 xbiz 层注入（action source `x:override="append"` / `<observes>`），approveStatus 由标准 action source 迁移，不由 wf 引擎直写业务表**。

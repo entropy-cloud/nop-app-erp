@@ -25,7 +25,7 @@
 
 ### Milestone M4 — 业财一体端到端
 - 4.3 期末结账全流程：`done`（计划 1000-3；含 4.3 前置「存货成本核算」done 计划 1538-1：记账器策略分派 MOVING_AVERAGE/FIFO + ErpInvCostLayer FIFO 队列 + period-close step2 接线 IErpInvCostingBiz.reclosePeriodCosts）
-- 4.1/4.2/4.4：`todo`
+- 4.1/4.2/4.4：`done`（计划 1018-1：4.1/4.2 扩展既有 P2P/O2C E2E 断言财务核销层——AP_INVOICE/AR_INVOICE/PAYMENT/RECEIPT 过账生成辅助账 + ErpFinReconciliation 核销 openAmount 归零 + 账龄；4.4 新增采购/销售退货到退款连续链 E2E——退货审核→反向库存→红字过账→负 openAmount 辅助账回减→cancelOnReverse 归零 + 异常路径）
 
 ## Implementation Order
 
@@ -51,12 +51,12 @@
 
 | # | 工作项 | 涉及域 |
 |---|--------|---------|
-| 4.1 | 采购到付款全链路测试（PO→Receive→Invoice→Pay） | purchase/finance |
-| 4.2 | 销售到收款全链路测试（SO→Delivery→Invoice→Receipt） | sales/finance |
+| 4.1 | 采购到付款全链路测试（PO→Receive→Invoice→Pay） | purchase/finance | ✅ `done`（计划 1018-1） |
+| 4.2 | 销售到收款全链路测试（SO→Delivery→Invoice→Receipt） | sales/finance | ✅ `done`（计划 1018-1） |
 | 4.3 | 期末结账全流程（成本核算→汇兑重估→结转损益→关账） ✅ | finance |
 
 > **存货成本核算引擎（M4 前置 / 1000-3 step2 deferred 承接）**：`done` 计划 `2026-07-02-1538-1`——`StockMoveBookkeeper` 重构为按物料 `costMethod` 策略分派（`CostMethodResolver` → `MovingAverageCostingStrategy` 抽取既有逻辑行为不变 / 新增 `FifoCostingStrategy` 维护消耗 `ErpInvCostLayer` FIFO 队列、多层加权 COGS 经既有 `ledger.totalCost` 通道、红冲按加权 unitCost 追加层、首次无成本抛 `ERR_COST_NOT_AVAILABLE`）；`IErpInvCostingBiz.reclosePeriodCosts` + finance `closeInvModule` 接线 period-close §步骤2 兜底重算（finance→inventory R，config-gated）。解除 1000-3 step2 deferred。Non-Goal：BATCH/INDIVIDUAL/STANDARD/全月一次/LIFO/Landed Cost/成本调整/报表（见计划 Deferred）。
-| 4.4 | 采购/销售退货到退款全链路 | purchase/sales/finance |
+| 4.4 | 采购/销售退货到退款全链路 | purchase/sales/finance | ✅ `done`（计划 1018-1） |
 
 ## Reference
 

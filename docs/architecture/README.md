@@ -41,7 +41,7 @@ Use `docs/design/` for app-layer feature and business design. Use `docs/architec
 - `module-boundaries.md` - 模块依赖方向（DAG）、跨工程实体关系硬规则
 - `data-dependency-matrix.md` - 数据依赖矩阵（模块间只读 R / 同步写 S / 弱指针 P 三类依赖、跨域字段目录、业财一体事务边界、billType 枚举）
 - `domain-module-split-analysis.md` - 18 域拆分决策（方案B）、命名与前缀方案（§2.0 映射表）、codegen 边界
-- `document-engine.md` - DocumentEngine 统一状态机设计（三轴状态、声明式转换规则、异步过账机制）
+- `document-engine.md` - 单据三轴状态与流转基线（docStatus/approveStatus/postedStatus 正交分离、状态字段+task.xml/Processor 流转实现；过时的统一 DocumentEngine 服务设想已剔除，过账指向 `docs/design/finance/posting.md`，审批指向 `wf-integration-design.md`）
 - `doc-model-design.md` - 单据模型设计（双维度类型、进销存三单链、单据编号规则）
 - `l10n-strategy.md` - 本地化策略设计（中国本地化模块、金税接口、增值税发票）
 - `api-response-conventions.md` - API 响应约定
@@ -51,3 +51,4 @@ Use `docs/design/` for app-layer feature and business design. Use `docs/architec
 - `integration-pattern.md` - 外部 API 集成模式（Webhook 出站/入站）
 - `b2b-integration.md` - B2B **集成契约层**（EDI 格式 SPI 适用性派发 + 信封状态机 + ASN 入站、Webhook、技术边界）；**业务语义**（状态机业务含义、用例、页面）归 `docs/design/b2b/README.md`，两者相互引用
 - `competitive-comparison.md` - 竞品架构对标（Odoo/ERPNext/metasfresh/iDempiere/Tryton/Openbravo/MixERP），8 个"超越点"杠杆与汇总表、诚实声明
+- `wf-integration-design.md` - 审批流集成（ERP 应用层落位）：哪些 ERP 单据标 `use-approval`、ERP 业务联动如何在 xbiz 注入（`append`/`<observes>`）、首批 WORKFLOW 实体。**平台级设计权威在 nop-entropy**（`ai-dev/design/nop-wf/approvable-entity-design.md` + `docs-for-ai/03-runbooks/enable-approval-on-entity.md`）
