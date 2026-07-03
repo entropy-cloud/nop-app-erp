@@ -164,6 +164,17 @@
 
 > 质检触发规则见 `quality/README.md` "质检对制造域的约束声明"节。双方文档都显式声明此约束。
 
+### 实现偏离补注（plan 2026-07-02-2237-1）
+
+> 本节记录 plan 2237-1 落地时与上方状态机设计文档的实现偏离，供 2.4 quality 落地后裁决回填。
+
+- **INSPECTING 态字典缺失 → config-gated 钩子替代**：上方 §质检约束声明引用工单 INSPECTING 态，但 `erp-mfg/work-order-status` 字典（10 态）**无 INSPECTING 态**。plan 2237-1 以 config-gated 完工门控钩子替代（不加 ORM 字典态）：`reportCompletion` 时若 `ErpMfgBom.inspectionRequired=true` 且 `erp-mfg.inspection-gate-enabled=true`（默认 false）且完工达量，抛 `ERR_INSPECTION_REQUIRED` 拒绝 COMPLETED，工单保持 IN_PROCESS 待质检结果。**触发条件**：2.4 quality 落地后 flip config=true 接线，并裁决是否需向字典补 INSPECTING 态。
+- **领料出库 moveType 用 OUTGOING(20) 而非 MANUFACTURING(40)**：库存域 `StockMoveBookkeeper.bookCompletion` 按 moveType 决定方向——MANUFACTURING(40) 视为入库（加库存），OUTGOING(20) 才扣减余额。故领料出库移动单用 `MOVE_TYPE_OUTGOING_ISSUE(20)`（relatedBillType=ERP_MFG_ISSUE）；完工入库移动单用 MANUFACTURING(40)（relatedBillType=ERP_MFG_WORK_ORDER）。计划原写「moveType=MANUFACTURE」为对库存域方向语义的假设偏差，已按库存域实际实现修正。
+- **齐套校验只读不写预留**：`checkAvailability`（NOT_STARTED→STOCK_RESERVED/STOCK_PARTIAL）仅读 `ErpInvStockBalance.availableQuantity` 置状态，不写库存预留记录（实际扣减由开工后领料出库移动单 DONE 完成，对齐 `inventory/cross-domain.md §余量校验规则`）。故 `cancel`（→CANCELLED）为纯状态迁移，无预留记录需释放。
+- **制造费用 overheadCost=0**：工作中心仅有单一 `hourlyRate`（无独立制造费率分列，同 plan 1538-2），故报工工时成本（`durationMins/60 × hourlyRate`）统一计入 `WorkOrder.laborCost`，`overheadCost`=0。**触发条件**：工作中心费率拆分后细化。
+- **完工成本结转凭证 Non-Goal**：完工入库移动单生成（产成品入 destWarehouse）已落地，但产成品存货估值过账凭证（MANUFACTURING_RECEIPT 凭证类型）依赖 finance 域制造业财一体过账 Provider，属独立 owner plan successor（Non-Goal）。当前完工入库移动单 posted=false。
+- **工时/实领数量列类型修正补注**：`ErpMfgJobCardTimeLog.durationMins`/`setupMins`/`runMins`/`hourlyRate`（VARCHAR→DECIMAL，对齐 domain）+ `ErpMfgMaterialIssueLine.issuedQuantity`（BOOLEAN→DECIMAL，对齐 domain）已修正，解除报工成本归集数值计算阻塞（同 plan 1538-2 工时/费率修正范式）。
+
 ---
 
 ## 适用对象二：作业卡（JobCard）
