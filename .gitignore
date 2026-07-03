@@ -32,5 +32,4 @@ db/
 # Windows artifact
 nul
 
-# Local tool configs
-.opencode/
+# Local tool configs (skills are versioned)
