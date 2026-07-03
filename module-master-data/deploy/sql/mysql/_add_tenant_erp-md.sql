@@ -27,6 +27,8 @@ alter table erp_md_employee add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_acct_schema add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_md_supplier_approval add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_sys_config add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_warehouse add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -84,6 +86,9 @@ alter table erp_md_employee add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_md_acct_schema drop primary key;
 alter table erp_md_acct_schema add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_supplier_approval drop primary key;
+alter table erp_md_supplier_approval add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_sys_config drop primary key;
 alter table erp_sys_config add primary key (NOP_TENANT_ID, ID);

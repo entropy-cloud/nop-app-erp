@@ -1,0 +1,27 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 供应商准入状态
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 已申请
+    value: 10
+    description: 
+  
+  - label: 已批准
+    value: 20
+    description: 
+  
+  - label: 试用期
+    value: 30
+    description: 
+  
+  - label: 已暂停
+    value: 40
+    description: 
+  
+  - label: 已驳回
+    value: 50
+    description: 
+  

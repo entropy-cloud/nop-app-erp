@@ -107,6 +107,14 @@
         <property name="bizObjName" value="ErpMdAcctSchema"/>
     </bean>
 
+    <bean id="app.erp.md.service.entity.ErpMdSupplierApprovalBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMdSupplierApproval" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.md.biz.IErpMdSupplierApprovalBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMdSupplierApproval"/>
+    </bean>
+
     <bean id="app.erp.md.service.entity.ErpSysConfigBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpSysConfig" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.md.biz.IErpSysConfigBiz"

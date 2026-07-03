@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="badge-check" xmlns:c="c" xmlns:graphql="graphql"
+      xmlns:meta-gen="meta-gen" xmlns:biz="biz" displayName="供应商准入资格" i18n-en:displayName="Supplier Approval (AVL)"
+      tagSet="gid,erp.master-data" xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.md.dao.entity.ErpMdSupplierApproval</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="partnerId" displayName="供应商" propId="2" i18n-en:displayName="Partner" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="partner">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="orgId" displayName="所属组织" propId="3" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="organization">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="approvalType" displayName="准入类型" propId="4" i18n-en:displayName="Approval Type" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer" dict="erp-md/supplier-approval-type"/>
+        </prop>
+        <prop name="materialCategoryId" displayName="准入物料类别" propId="5" i18n-en:displayName="Material Category"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true"
+              ext:relation="materialCategory">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="validFrom" displayName="生效日期" propId="6" i18n-en:displayName="Valid From" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="validTo" displayName="失效日期" propId="7" i18n-en:displayName="Valid To" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="qualificationDoc" displayName="资质文件" propId="8" i18n-en:displayName="Qualification Doc"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="500"/>
+        </prop>
+        <prop name="status" displayName="准入状态" propId="9" i18n-en:displayName="Approval Status" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="10">
+            <schema type="java.lang.Integer" dict="erp-md/supplier-approval-status"/>
+        </prop>
+        <prop name="approvedBy" displayName="批准人" propId="10" i18n-en:displayName="Approved By" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="approvedAt" displayName="批准时间" propId="11" i18n-en:displayName="Approved At" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDateTime"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="12" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="13" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="14" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="15" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="16" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="17" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="18" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="partner" i18n-en:displayName="Partner" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="partnerId" ext:joinRightProp="id" insertable="false" updatable="false"
+              mandatory="true" lazy="true">
+            <schema bizObjName="ErpMdPartner"/>
+        </prop>
+        <prop name="organization" i18n-en:displayName="Organization" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="orgId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="materialCategory" i18n-en:displayName="Material Category" tagSet="pub" ext:kind="to-one"
+              internal="true" queryable="true" ext:joinLeftProp="materialCategoryId" ext:joinRightProp="id"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
+            <schema bizObjName="ErpMdMaterialCategory"/>
+        </prop>
+    </props>
+</meta>

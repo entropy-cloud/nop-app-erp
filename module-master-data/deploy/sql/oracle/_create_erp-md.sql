@@ -263,6 +263,28 @@ CREATE TABLE erp_md_acct_schema(
   constraint PK_erp_md_acct_schema primary key (ID)
 );
 
+CREATE TABLE erp_md_supplier_approval(
+  ID NUMBER(20) NOT NULL ,
+  PARTNER_ID NUMBER(20) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  APPROVAL_TYPE INTEGER NOT NULL ,
+  MATERIAL_CATEGORY_ID NUMBER(20) NOT NULL ,
+  VALID_FROM DATE  ,
+  VALID_TO DATE  ,
+  QUALIFICATION_DOC VARCHAR2(500)  ,
+  STATUS INTEGER default 10  NOT NULL ,
+  APPROVED_BY VARCHAR2(50)  ,
+  APPROVED_AT DATE  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  REMARK VARCHAR2(1000)  ,
+  constraint PK_erp_md_supplier_approval primary key (ID)
+);
+
 CREATE TABLE erp_sys_config(
   ID NUMBER(20) NOT NULL ,
   CONFIG_KEY VARCHAR2(200) NOT NULL ,
@@ -857,6 +879,44 @@ CREATE TABLE erp_md_uom_conversion(
       COMMENT ON COLUMN erp_md_acct_schema.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_md_acct_schema.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_md_supplier_approval IS '供应商准入资格';
+                
+      COMMENT ON COLUMN erp_md_supplier_approval.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_md_supplier_approval.PARTNER_ID IS '供应商';
+                    
+      COMMENT ON COLUMN erp_md_supplier_approval.ORG_ID IS '所属组织';
+                    
+      COMMENT ON COLUMN erp_md_supplier_approval.APPROVAL_TYPE IS '准入类型';
+                    
+      COMMENT ON COLUMN erp_md_supplier_approval.MATERIAL_CATEGORY_ID IS '准入物料类别';
+                    
+      COMMENT ON COLUMN erp_md_supplier_approval.VALID_FROM IS '生效日期';
+                    
+      COMMENT ON COLUMN erp_md_supplier_approval.VALID_TO IS '失效日期';
+                    
+      COMMENT ON COLUMN erp_md_supplier_approval.QUALIFICATION_DOC IS '资质文件';
+                    
+      COMMENT ON COLUMN erp_md_supplier_approval.STATUS IS '准入状态';
+                    
+      COMMENT ON COLUMN erp_md_supplier_approval.APPROVED_BY IS '批准人';
+                    
+      COMMENT ON COLUMN erp_md_supplier_approval.APPROVED_AT IS '批准时间';
+                    
+      COMMENT ON COLUMN erp_md_supplier_approval.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_md_supplier_approval.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_md_supplier_approval.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_md_supplier_approval.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_md_supplier_approval.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_md_supplier_approval.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_md_supplier_approval.REMARK IS '备注';
                     
       COMMENT ON TABLE erp_sys_config IS '系统配置';
                 

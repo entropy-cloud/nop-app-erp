@@ -363,4 +363,39 @@ public interface _ErpMdDaoConstants {
      */
     String BATCH_STRATEGY_MANUAL = "MANUAL";
                     
+    /**
+     * 供应商准入类型: 新供应商准入 
+     */
+    int SUPPLIER_APPROVAL_TYPE_NEW = 10;
+                    
+    /**
+     * 供应商准入类型: 续期 
+     */
+    int SUPPLIER_APPROVAL_TYPE_RENEWAL = 20;
+                    
+    /**
+     * 供应商准入状态: 已申请 
+     */
+    int SUPPLIER_APPROVAL_STATUS_APPLIED = 10;
+                    
+    /**
+     * 供应商准入状态: 已批准 
+     */
+    int SUPPLIER_APPROVAL_STATUS_APPROVED = 20;
+                    
+    /**
+     * 供应商准入状态: 试用期 
+     */
+    int SUPPLIER_APPROVAL_STATUS_PROBATION = 30;
+                    
+    /**
+     * 供应商准入状态: 已暂停 
+     */
+    int SUPPLIER_APPROVAL_STATUS_SUSPENDED = 40;
+                    
+    /**
+     * 供应商准入状态: 已驳回 
+     */
+    int SUPPLIER_APPROVAL_STATUS_REJECTED = 50;
+                    
 }

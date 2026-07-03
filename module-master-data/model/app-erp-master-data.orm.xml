@@ -151,6 +151,19 @@
             <option code="FEFO" label="先到期先出" value="FEFO" i18n-en:label='FEFO'/>
             <option code="MANUAL" label="手工指定" value="MANUAL" i18n-en:label='Manual'/>
         </dict>
+        <!-- AVL 准入：供应商准入类型（docs/design/purchase/supplier-evaluation.md §ErpMdSupplierApproval） -->
+        <dict label="供应商准入类型" name="erp-md/supplier-approval-type" valueType="int" i18n-en:label='Supplier Approval Type'>
+            <option code="NEW" label="新供应商准入" value="10" i18n-en:label='New Supplier'/>
+            <option code="RENEWAL" label="续期" value="20" i18n-en:label='Renewal'/>
+        </dict>
+        <!-- AVL 准入：供应商准入状态机（APPLIED→APPROVED→PROBATION→SUSPENDED→REJECTED） -->
+        <dict label="供应商准入状态" name="erp-md/supplier-approval-status" valueType="int" i18n-en:label='Supplier Approval Status'>
+            <option code="APPLIED" label="已申请" value="10" i18n-en:label='Applied'/>
+            <option code="APPROVED" label="已批准" value="20" i18n-en:label='Approved'/>
+            <option code="PROBATION" label="试用期" value="30" i18n-en:label='Probation'/>
+            <option code="SUSPENDED" label="已暂停" value="40" i18n-en:label='Suspended'/>
+            <option code="REJECTED" label="已驳回" value="50" i18n-en:label='Rejected'/>
+        </dict>
     </dicts>
 
     <entities>
@@ -857,6 +870,46 @@
                 <to-many name="children" refEntityName="app.erp.md.dao.entity.ErpMdCostCenter" tagSet="pub,insertable,updatable" i18n-en:displayName='Children' ext:estRows="10">
                     <join><on leftProp="id" rightProp="parentId"/></join>
                 </to-many>
+            </relations>
+        </entity>
+
+        <!-- 供应商准入资格 AVL（Approved Vendor List）——评分 standing=RED 触发 SUSPENDED 联动入口 -->
+        <entity className="app.erp.md.dao.entity.ErpMdSupplierApproval"
+                displayName="供应商准入资格" ext:icon="badge-check" i18n-en:displayName="Supplier Approval (AVL)" name="app.erp.md.dao.entity.ErpMdSupplierApproval"
+                tableName="erp_md_supplier_approval" tagSet="gid,erp.master-data" registerShortName="true"
+                useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
+                versionProp="version" createTimeProp="createTime" createrProp="createdBy"
+                updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default" i18n-en:displayName='ID' />
+                <column name="partnerId" code="PARTNER_ID" displayName="供应商" propId="2" stdSqlType="BIGINT" stdDataType="long" mandatory="true" i18n-en:displayName='Partner' />
+                <column name="orgId" code="ORG_ID" displayName="所属组织" propId="3" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="approvalType" code="APPROVAL_TYPE" displayName="准入类型" propId="4" stdSqlType="INTEGER" stdDataType="int" mandatory="true" ext:dict="erp-md/supplier-approval-type" i18n-en:displayName='Approval Type' />
+                <column name="materialCategoryId" code="MATERIAL_CATEGORY_ID" displayName="准入物料类别" propId="5" stdSqlType="BIGINT" stdDataType="long" mandatory="true" i18n-en:displayName='Material Category' />
+                <column name="validFrom" code="VALID_FROM" displayName="生效日期" propId="6" stdSqlType="DATE" stdDataType="date" i18n-en:displayName='Valid From' />
+                <column name="validTo" code="VALID_TO" displayName="失效日期" propId="7" stdSqlType="DATE" stdDataType="date" i18n-en:displayName='Valid To' />
+                <column name="qualificationDoc" code="QUALIFICATION_DOC" displayName="资质文件" propId="8" stdSqlType="VARCHAR" precision="500" stdDataType="string" i18n-en:displayName='Qualification Doc' />
+                <column name="status" code="STATUS" displayName="准入状态" propId="9" stdSqlType="INTEGER" stdDataType="int" mandatory="true" ext:dict="erp-md/supplier-approval-status" defaultValue="10" i18n-en:displayName='Approval Status' />
+                <column name="approvedBy" code="APPROVED_BY" displayName="批准人" propId="10" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Approved By' />
+                <column name="approvedAt" code="APPROVED_AT" displayName="批准时间" propId="11" stdSqlType="DATETIME" stdDataType="datetime" i18n-en:displayName='Approved At' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="12" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="13" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="14" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="15" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="16" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+                <column name="remark" code="REMARK" displayName="备注" propId="18" domain="remark" stdSqlType="VARCHAR" precision="1000" i18n-en:displayName='Remark' />
+            </columns>
+            <relations>
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Partner'>
+                    <join><on leftProp="partnerId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="organization" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Organization'>
+                    <join><on leftProp="orgId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="materialCategory" refEntityName="app.erp.md.dao.entity.ErpMdMaterialCategory" tagSet="pub" i18n-en:displayName='Material Category'>
+                    <join><on leftProp="materialCategoryId" rightProp="id"/></join>
+                </to-one>
             </relations>
         </entity>
 

@@ -17,6 +17,7 @@ entity:
     ErpMdPartnerContact: 往来单位联系人
     ErpMdSettlementMethod: 结算方式
     ErpMdSubject: 会计科目
+    ErpMdSupplierApproval: 供应商准入资格
     ErpMdTaxRate: 税率
     ErpMdUoM: 计量单位
     ErpMdUoMConversion: 单位换算
@@ -358,6 +359,30 @@ prop:
       subjectClass_label: 科目类别
       updateTime: 修改时间
       updatedBy: 修改人
+      version: 数据版本
+    ErpMdSupplierApproval:
+      approvalType: 准入类型
+      approvalType_label: 准入类型
+      approvedAt: 批准时间
+      approvedBy: 批准人
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      materialCategory: null
+      materialCategoryId: 准入物料类别
+      orgId: 所属组织
+      organization: null
+      partner: null
+      partnerId: 供应商
+      qualificationDoc: 资质文件
+      remark: 备注
+      status: 准入状态
+      status_label: 准入状态
+      updateTime: 修改时间
+      updatedBy: 修改人
+      validFrom: 生效日期
+      validTo: 失效日期
       version: 数据版本
     ErpMdTaxRate:
       code: 税率编码

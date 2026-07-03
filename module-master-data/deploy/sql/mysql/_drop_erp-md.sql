@@ -13,6 +13,7 @@ drop table  if exists  erp_md_subject;
 drop table  if exists  erp_md_organization;
 drop table  if exists  erp_md_employee;
 drop table  if exists  erp_md_acct_schema;
+drop table  if exists  erp_md_supplier_approval;
 drop table  if exists  erp_sys_config;
 drop table  if exists  erp_md_warehouse;
 drop table  if exists  erp_md_cost_center;

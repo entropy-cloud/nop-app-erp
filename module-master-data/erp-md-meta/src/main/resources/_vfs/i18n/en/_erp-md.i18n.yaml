@@ -17,6 +17,7 @@ entity:
     ErpMdPartnerContact: Partner Contact
     ErpMdSettlementMethod: Settlement Method
     ErpMdSubject: Accounting Subject
+    ErpMdSupplierApproval: Supplier Approval (AVL)
     ErpMdTaxRate: Tax Rate
     ErpMdUoM: Unit of Measure
     ErpMdUoMConversion: UoM Conversion
@@ -359,6 +360,30 @@ prop:
       parent: Parent
       currency: Currency
       children: Children
+    ErpMdSupplierApproval:
+      id: ID
+      partnerId: Partner
+      orgId: Organization
+      approvalType: Approval Type
+      approvalType_label: null
+      materialCategoryId: Material Category
+      validFrom: Valid From
+      validTo: Valid To
+      qualificationDoc: Qualification Doc
+      status: Approval Status
+      status_label: null
+      approvedBy: Approved By
+      approvedAt: Approved At
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      partner: Partner
+      organization: Organization
+      materialCategory: Material Category
     ErpMdTaxRate:
       id: ID
       code: Code
@@ -459,6 +484,8 @@ dict:
     erp-md/bank-account-type: Bank Account Type
     erp-md/address-type: Address Type
     erp-md/batch-strategy: Batch Selection Strategy
+    erp-md/supplier-approval-type: Supplier Approval Type
+    erp-md/supplier-approval-status: Supplier Approval Status
 dict.option.label:
   erp-md/material-type:
     '10': Merchandise
@@ -548,3 +575,12 @@ dict.option.label:
     FIFO: FIFO
     FEFO: FEFO
     MANUAL: Manual
+  erp-md/supplier-approval-type:
+    '10': New Supplier
+    '20': Renewal
+  erp-md/supplier-approval-status:
+    '10': Applied
+    '20': Approved
+    '30': Probation
+    '40': Suspended
+    '50': Rejected

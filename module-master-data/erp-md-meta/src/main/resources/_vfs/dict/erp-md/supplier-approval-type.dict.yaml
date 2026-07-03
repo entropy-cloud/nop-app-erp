@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 供应商准入类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 新供应商准入
+    value: 10
+    description: 
+  
+  - label: 续期
+    value: 20
+    description: 
+  
