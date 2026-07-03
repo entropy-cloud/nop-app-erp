@@ -214,13 +214,13 @@ public class _ErpMfgJobCardTimeLog extends DynamicOrmEntity{
     private java.time.LocalDateTime _endTime;
     
     /* 工时(分钟): DURATION_MINS */
-    private java.lang.String _durationMins;
+    private java.math.BigDecimal _durationMins;
     
     /* 准备时间(分钟): SETUP_MINS */
-    private java.lang.String _setupMins;
+    private java.math.BigDecimal _setupMins;
     
     /* 加工时间(分钟): RUN_MINS */
-    private java.lang.String _runMins;
+    private java.math.BigDecimal _runMins;
     
     /* 本班完工数量: COMPLETED_QUANTITY */
     private java.math.BigDecimal _completedQuantity;
@@ -229,7 +229,7 @@ public class _ErpMfgJobCardTimeLog extends DynamicOrmEntity{
     private java.math.BigDecimal _scrappedQuantity;
     
     /* 小时费率: HOURLY_RATE */
-    private java.lang.String _hourlyRate;
+    private java.math.BigDecimal _hourlyRate;
     
     /* 人工成本: LABOR_COST */
     private java.math.BigDecimal _laborCost;
@@ -474,9 +474,9 @@ public class _ErpMfgJobCardTimeLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_durationMins:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_durationMins));
                }
                setDurationMins(typedValue);
@@ -484,9 +484,9 @@ public class _ErpMfgJobCardTimeLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_setupMins:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_setupMins));
                }
                setSetupMins(typedValue);
@@ -494,9 +494,9 @@ public class _ErpMfgJobCardTimeLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_runMins:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_runMins));
                }
                setRunMins(typedValue);
@@ -524,9 +524,9 @@ public class _ErpMfgJobCardTimeLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_hourlyRate:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_hourlyRate));
                }
                setHourlyRate(typedValue);
@@ -673,21 +673,21 @@ public class _ErpMfgJobCardTimeLog extends DynamicOrmEntity{
         
             case PROP_ID_durationMins:{
                onInitProp(propId);
-               this._durationMins = (java.lang.String)value;
+               this._durationMins = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_setupMins:{
                onInitProp(propId);
-               this._setupMins = (java.lang.String)value;
+               this._setupMins = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_runMins:{
                onInitProp(propId);
-               this._runMins = (java.lang.String)value;
+               this._runMins = (java.math.BigDecimal)value;
                
                break;
             }
@@ -708,7 +708,7 @@ public class _ErpMfgJobCardTimeLog extends DynamicOrmEntity{
         
             case PROP_ID_hourlyRate:{
                onInitProp(propId);
-               this._hourlyRate = (java.lang.String)value;
+               this._hourlyRate = (java.math.BigDecimal)value;
                
                break;
             }
@@ -911,7 +911,7 @@ public class _ErpMfgJobCardTimeLog extends DynamicOrmEntity{
     /**
      * 工时(分钟): DURATION_MINS
      */
-    public final java.lang.String getDurationMins(){
+    public final java.math.BigDecimal getDurationMins(){
          onPropGet(PROP_ID_durationMins);
          return _durationMins;
     }
@@ -919,7 +919,7 @@ public class _ErpMfgJobCardTimeLog extends DynamicOrmEntity{
     /**
      * 工时(分钟): DURATION_MINS
      */
-    public final void setDurationMins(java.lang.String value){
+    public final void setDurationMins(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_durationMins,value)){
             this._durationMins = value;
             internalClearRefs(PROP_ID_durationMins);
@@ -930,7 +930,7 @@ public class _ErpMfgJobCardTimeLog extends DynamicOrmEntity{
     /**
      * 准备时间(分钟): SETUP_MINS
      */
-    public final java.lang.String getSetupMins(){
+    public final java.math.BigDecimal getSetupMins(){
          onPropGet(PROP_ID_setupMins);
          return _setupMins;
     }
@@ -938,7 +938,7 @@ public class _ErpMfgJobCardTimeLog extends DynamicOrmEntity{
     /**
      * 准备时间(分钟): SETUP_MINS
      */
-    public final void setSetupMins(java.lang.String value){
+    public final void setSetupMins(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_setupMins,value)){
             this._setupMins = value;
             internalClearRefs(PROP_ID_setupMins);
@@ -949,7 +949,7 @@ public class _ErpMfgJobCardTimeLog extends DynamicOrmEntity{
     /**
      * 加工时间(分钟): RUN_MINS
      */
-    public final java.lang.String getRunMins(){
+    public final java.math.BigDecimal getRunMins(){
          onPropGet(PROP_ID_runMins);
          return _runMins;
     }
@@ -957,7 +957,7 @@ public class _ErpMfgJobCardTimeLog extends DynamicOrmEntity{
     /**
      * 加工时间(分钟): RUN_MINS
      */
-    public final void setRunMins(java.lang.String value){
+    public final void setRunMins(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_runMins,value)){
             this._runMins = value;
             internalClearRefs(PROP_ID_runMins);
@@ -1006,7 +1006,7 @@ public class _ErpMfgJobCardTimeLog extends DynamicOrmEntity{
     /**
      * 小时费率: HOURLY_RATE
      */
-    public final java.lang.String getHourlyRate(){
+    public final java.math.BigDecimal getHourlyRate(){
          onPropGet(PROP_ID_hourlyRate);
          return _hourlyRate;
     }
@@ -1014,7 +1014,7 @@ public class _ErpMfgJobCardTimeLog extends DynamicOrmEntity{
     /**
      * 小时费率: HOURLY_RATE
      */
-    public final void setHourlyRate(java.lang.String value){
+    public final void setHourlyRate(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_hourlyRate,value)){
             this._hourlyRate = value;
             internalClearRefs(PROP_ID_hourlyRate);

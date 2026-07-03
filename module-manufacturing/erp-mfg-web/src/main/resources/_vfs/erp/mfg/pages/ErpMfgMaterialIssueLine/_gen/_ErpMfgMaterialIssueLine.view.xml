@@ -43,7 +43,7 @@
                 <col id="requiredQuantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--实领数量-->
-                <col id="issuedQuantity" sortable="true"/>
+                <col id="issuedQuantity" ui:number="true" sortable="true"/>
 
                 <!--单位成本-->
                 <col id="unitCost" ui:number="true" sortable="true"/>

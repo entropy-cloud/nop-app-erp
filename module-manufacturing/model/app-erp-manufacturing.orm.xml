@@ -612,7 +612,7 @@
                 <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UO_M_ID" propId="6" stdDataType="long" i18n-en:displayName='UoM' />
                 <column name="workOrderLineId" displayName="对应工单投入行" stdSqlType="BIGINT" code="WORK_ORDER_LINE_ID" propId="7" stdDataType="long" i18n-en:displayName='Work Order Line' />
                 <column name="requiredQuantity" displayName="应领数量" domain="quantity" mandatory="true" code="REQUIRED_QUANTITY" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Required Quantity' />
-                <column name="issuedQuantity" displayName="实领数量" domain="quantity" defaultValue="0" code="ISSUED_QUANTITY" propId="9" stdSqlType="BOOLEAN" stdDataType="boolean" i18n-en:displayName='Issued Quantity' />
+                <column name="issuedQuantity" displayName="实领数量" domain="quantity" defaultValue="0" code="ISSUED_QUANTITY" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" stdDataType="decimal" i18n-en:displayName='Issued Quantity' />
                 <column name="unitCost" displayName="单位成本" domain="unitPrice" code="UNIT_COST" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Unit Cost' />
                 <column name="totalCost" displayName="总成本" domain="amount" code="TOTAL_COST" propId="11" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Cost' />
                 <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="12" stdDataType="string" i18n-en:displayName='Batch No' />
@@ -812,12 +812,12 @@
                 <column name="workDate" displayName="作业日期" stdSqlType="DATE" mandatory="true" code="WORK_DATE" propId="5" stdDataType="date" i18n-en:displayName='Work Date' />
                 <column name="startTime" displayName="开始时间" stdSqlType="DATETIME" code="START_TIME" propId="6" stdDataType="datetime" i18n-en:displayName='Start Time' />
                 <column name="endTime" displayName="结束时间" stdSqlType="DATETIME" code="END_TIME" propId="7" stdDataType="datetime" i18n-en:displayName='End Time' />
-                <column name="durationMins" displayName="工时(分钟)" domain="timeInMins" mandatory="true" code="DURATION_MINS" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Duration Mins' />
-                <column name="setupMins" displayName="准备时间(分钟)" domain="timeInMins" defaultValue="0" code="SETUP_MINS" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Setup Mins' />
-                <column name="runMins" displayName="加工时间(分钟)" domain="timeInMins" defaultValue="0" code="RUN_MINS" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Run Mins' />
+                <column name="durationMins" displayName="工时(分钟)" domain="timeInMins" mandatory="true" code="DURATION_MINS" propId="8" stdSqlType="DECIMAL" precision="12" scale="2" stdDataType="decimal" i18n-en:displayName='Duration Mins' />
+                <column name="setupMins" displayName="准备时间(分钟)" domain="timeInMins" defaultValue="0" code="SETUP_MINS" propId="9" stdSqlType="DECIMAL" precision="12" scale="2" stdDataType="decimal" i18n-en:displayName='Setup Mins' />
+                <column name="runMins" displayName="加工时间(分钟)" domain="timeInMins" defaultValue="0" code="RUN_MINS" propId="10" stdSqlType="DECIMAL" precision="12" scale="2" stdDataType="decimal" i18n-en:displayName='Run Mins' />
                 <column name="completedQuantity" displayName="本班完工数量" domain="quantity" defaultValue="0" code="COMPLETED_QUANTITY" propId="11" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Completed Quantity' />
                 <column name="scrappedQuantity" displayName="本班报废数量" domain="quantity" defaultValue="0" code="SCRAPPED_QUANTITY" propId="12" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Scrapped Quantity' />
-                <column name="hourlyRate" displayName="小时费率" domain="hourlyRate" code="HOURLY_RATE" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Hourly Rate' />
+                <column name="hourlyRate" displayName="小时费率" domain="hourlyRate" code="HOURLY_RATE" propId="13" stdSqlType="DECIMAL" precision="16" scale="4" stdDataType="decimal" i18n-en:displayName='Hourly Rate' />
                 <column name="laborCost" displayName="人工成本" domain="amount" defaultValue="0" code="LABOR_COST" propId="14" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Labor Cost' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="15" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="16" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />

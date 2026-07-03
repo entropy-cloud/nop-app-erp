@@ -124,16 +124,16 @@
         }
 
 
-        private Boolean _issuedQuantity;
+        private java.math.BigDecimal _issuedQuantity;
 
     
         @PropMeta(propId=9)
     
-        public Boolean getIssuedQuantity(){
+        public java.math.BigDecimal getIssuedQuantity(){
             return _issuedQuantity;
         }
 
-        public void setIssuedQuantity(Boolean value){
+        public void setIssuedQuantity(java.math.BigDecimal value){
             this._issuedQuantity = value;
         }
 

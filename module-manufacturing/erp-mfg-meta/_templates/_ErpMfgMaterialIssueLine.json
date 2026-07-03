@@ -7,7 +7,7 @@
   "uoMId": 0,
   "workOrderLineId": 0,
   "requiredQuantity": 0.0,
-  "issuedQuantity": false,
+  "issuedQuantity": 0.0,
   "unitCost": 0.0,
   "totalCost": 0.0,
   "batchNo": "",

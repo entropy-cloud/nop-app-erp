@@ -49,15 +49,15 @@
         </prop>
         <prop name="durationMins" displayName="工时(分钟)" propId="8" i18n-en:displayName="Duration Mins" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema domain="timeInMins" type="java.lang.String" precision="12" scale="2"/>
+            <schema domain="timeInMins" type="java.math.BigDecimal" precision="12" scale="2"/>
         </prop>
         <prop name="setupMins" displayName="准备时间(分钟)" propId="9" i18n-en:displayName="Setup Mins" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="timeInMins" type="java.lang.String" precision="12" scale="2"/>
+            <schema domain="timeInMins" type="java.math.BigDecimal" precision="12" scale="2"/>
         </prop>
         <prop name="runMins" displayName="加工时间(分钟)" propId="10" i18n-en:displayName="Run Mins" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="timeInMins" type="java.lang.String" precision="12" scale="2"/>
+            <schema domain="timeInMins" type="java.math.BigDecimal" precision="12" scale="2"/>
         </prop>
         <prop name="completedQuantity" displayName="本班完工数量" propId="11" i18n-en:displayName="Completed Quantity"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
@@ -69,7 +69,7 @@
         </prop>
         <prop name="hourlyRate" displayName="小时费率" propId="13" i18n-en:displayName="Hourly Rate" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema domain="hourlyRate" type="java.lang.String" precision="16" scale="4"/>
+            <schema domain="hourlyRate" type="java.math.BigDecimal" precision="16" scale="4"/>
         </prop>
         <prop name="laborCost" displayName="人工成本" propId="14" i18n-en:displayName="Labor Cost" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">

@@ -1244,7 +1244,7 @@
                         name="requiredQuantity" precision="20" propId="8" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Required Quantity"/>
                 <column code="ISSUED_QUANTITY" defaultValue="0" displayName="实领数量" domain="quantity"
-                        name="issuedQuantity" precision="20" propId="9" scale="4" stdDataType="boolean"
+                        name="issuedQuantity" precision="20" propId="9" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Issued Quantity"/>
                 <column code="UNIT_COST" displayName="单位成本" domain="unitPrice" name="unitCost" precision="20"
                         propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Unit Cost"/>
@@ -1736,13 +1736,13 @@
                 <column code="END_TIME" displayName="结束时间" name="endTime" propId="7" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="End Time"/>
                 <column code="DURATION_MINS" displayName="工时(分钟)" domain="timeInMins" mandatory="true"
-                        name="durationMins" precision="12" propId="8" scale="2" stdDataType="string"
+                        name="durationMins" precision="12" propId="8" scale="2" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Duration Mins"/>
                 <column code="SETUP_MINS" defaultValue="0" displayName="准备时间(分钟)" domain="timeInMins" name="setupMins"
-                        precision="12" propId="9" scale="2" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="12" propId="9" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Setup Mins"/>
                 <column code="RUN_MINS" defaultValue="0" displayName="加工时间(分钟)" domain="timeInMins" name="runMins"
-                        precision="12" propId="10" scale="2" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="12" propId="10" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Run Mins"/>
                 <column code="COMPLETED_QUANTITY" defaultValue="0" displayName="本班完工数量" domain="quantity"
                         name="completedQuantity" precision="20" propId="11" scale="4" stdDataType="decimal"
@@ -1751,7 +1751,7 @@
                         name="scrappedQuantity" precision="20" propId="12" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Scrapped Quantity"/>
                 <column code="HOURLY_RATE" displayName="小时费率" domain="hourlyRate" name="hourlyRate" precision="16"
-                        propId="13" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="13" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Hourly Rate"/>
                 <column code="LABOR_COST" defaultValue="0" displayName="人工成本" domain="amount" name="laborCost"
                         precision="20" propId="14" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"

@@ -111,44 +111,44 @@
         }
 
 
-        private String _durationMins;
+        private java.math.BigDecimal _durationMins;
 
     
         @PropMeta(propId=8)
     
-        public String getDurationMins(){
+        public java.math.BigDecimal getDurationMins(){
             return _durationMins;
         }
 
-        public void setDurationMins(String value){
+        public void setDurationMins(java.math.BigDecimal value){
             this._durationMins = value;
         }
 
 
-        private String _setupMins;
+        private java.math.BigDecimal _setupMins;
 
     
         @PropMeta(propId=9)
     
-        public String getSetupMins(){
+        public java.math.BigDecimal getSetupMins(){
             return _setupMins;
         }
 
-        public void setSetupMins(String value){
+        public void setSetupMins(java.math.BigDecimal value){
             this._setupMins = value;
         }
 
 
-        private String _runMins;
+        private java.math.BigDecimal _runMins;
 
     
         @PropMeta(propId=10)
     
-        public String getRunMins(){
+        public java.math.BigDecimal getRunMins(){
             return _runMins;
         }
 
-        public void setRunMins(String value){
+        public void setRunMins(java.math.BigDecimal value){
             this._runMins = value;
         }
 
@@ -181,16 +181,16 @@
         }
 
 
-        private String _hourlyRate;
+        private java.math.BigDecimal _hourlyRate;
 
     
         @PropMeta(propId=13)
     
-        public String getHourlyRate(){
+        public java.math.BigDecimal getHourlyRate(){
             return _hourlyRate;
         }
 
-        public void setHourlyRate(String value){
+        public void setHourlyRate(java.math.BigDecimal value){
             this._hourlyRate = value;
         }
 

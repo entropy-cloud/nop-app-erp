@@ -53,7 +53,7 @@
         </prop>
         <prop name="issuedQuantity" displayName="实领数量" propId="9" i18n-en:displayName="Issued Quantity" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
-            <schema domain="quantity" type="java.lang.Boolean" precision="20" scale="4"/>
+            <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="unitCost" displayName="单位成本" propId="10" i18n-en:displayName="Unit Cost" queryable="true"
               sortable="true" insertable="true" updatable="true">

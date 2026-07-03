@@ -219,7 +219,7 @@ public class _ErpMfgMaterialIssueLine extends DynamicOrmEntity{
     private java.math.BigDecimal _requiredQuantity;
     
     /* 实领数量: ISSUED_QUANTITY */
-    private java.lang.Boolean _issuedQuantity;
+    private java.math.BigDecimal _issuedQuantity;
     
     /* 单位成本: UNIT_COST */
     private java.math.BigDecimal _unitCost;
@@ -480,9 +480,9 @@ public class _ErpMfgMaterialIssueLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_issuedQuantity:{
-               java.lang.Boolean typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toBoolean(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_issuedQuantity));
                }
                setIssuedQuantity(typedValue);
@@ -666,7 +666,7 @@ public class _ErpMfgMaterialIssueLine extends DynamicOrmEntity{
         
             case PROP_ID_issuedQuantity:{
                onInitProp(propId);
-               this._issuedQuantity = (java.lang.Boolean)value;
+               this._issuedQuantity = (java.math.BigDecimal)value;
                
                break;
             }
@@ -909,7 +909,7 @@ public class _ErpMfgMaterialIssueLine extends DynamicOrmEntity{
     /**
      * 实领数量: ISSUED_QUANTITY
      */
-    public final java.lang.Boolean getIssuedQuantity(){
+    public final java.math.BigDecimal getIssuedQuantity(){
          onPropGet(PROP_ID_issuedQuantity);
          return _issuedQuantity;
     }
@@ -917,7 +917,7 @@ public class _ErpMfgMaterialIssueLine extends DynamicOrmEntity{
     /**
      * 实领数量: ISSUED_QUANTITY
      */
-    public final void setIssuedQuantity(java.lang.Boolean value){
+    public final void setIssuedQuantity(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_issuedQuantity,value)){
             this._issuedQuantity = value;
             internalClearRefs(PROP_ID_issuedQuantity);

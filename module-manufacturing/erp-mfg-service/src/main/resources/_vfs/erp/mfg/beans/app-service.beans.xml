@@ -15,4 +15,12 @@
     <!-- 成本卷算服务（plan 2026-07-02-1538-2 Phase 3）：采购件基础 + 制造件材料+工时 → ErpMfgCostRollup/Line -->
     <bean id="app.erp.mfg.service.costing.CostRollupService"
           class="app.erp.mfg.service.costing.CostRollupService"/>
+
+    <!-- 工单齐套校验服务（plan 2026-07-02-2237-1 Phase 2）：BOM 展开 × plannedQuantity 对照 inventory 余额可用量 -->
+    <bean id="app.erp.mfg.service.workorder.KitAvailabilityChecker"
+          class="app.erp.mfg.service.workorder.KitAvailabilityChecker"/>
+
+    <!-- 领料出库移动单请求构造器（plan 2026-07-02-2237-1 Phase 3）：领料单→StockMoveRequest(MANUFACTURING 出库) -->
+    <bean id="app.erp.mfg.service.entity.MaterialIssueStockMoveBuilder"
+          class="app.erp.mfg.service.entity.MaterialIssueStockMoveBuilder"/>
 </beans>

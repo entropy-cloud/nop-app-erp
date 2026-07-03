@@ -40,13 +40,13 @@
                 <col id="endTime" sortable="true"/>
 
                 <!--工时(分钟)-->
-                <col id="durationMins" mandatory="true" sortable="true"/>
+                <col id="durationMins" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--准备时间(分钟)-->
-                <col id="setupMins" sortable="true"/>
+                <col id="setupMins" ui:number="true" sortable="true"/>
 
                 <!--加工时间(分钟)-->
-                <col id="runMins" sortable="true"/>
+                <col id="runMins" ui:number="true" sortable="true"/>
 
                 <!--本班完工数量-->
                 <col id="completedQuantity" ui:number="true" sortable="true"/>
@@ -55,7 +55,7 @@
                 <col id="scrappedQuantity" ui:number="true" sortable="true"/>
 
                 <!--小时费率-->
-                <col id="hourlyRate" sortable="true"/>
+                <col id="hourlyRate" ui:number="true" sortable="true"/>
 
                 <!--人工成本-->
                 <col id="laborCost" ui:number="true" sortable="true"/>
