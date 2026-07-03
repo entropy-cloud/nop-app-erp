@@ -1,6 +1,6 @@
 # 2026-07-03-1707-3-quality-recall-event 批次召回事件聚合（登记/审批/目标定位/客户通知/批量退货）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-03
 > Source: `docs/backlog/extended-roadmap.md` 工作项 2.11；`docs/design/quality/recall.md`；`docs/design/quality/state-machine.md`
 > Related: `docs/plans/2026-07-02-0700-1-inventory-trace-chain.md`（批次追溯链 done 1.11）、`docs/plans/2026-07-02-2237-3-quality-inspection-trigger-ncr-capa.md`（NCR/CAPA done 2.4）、`docs/plans/2026-07-02-0456-2-sales-return-and-refund.md`（销售退货 done 1.10）
@@ -60,78 +60,78 @@
 
 ### Phase 1 — 召回事件建模 + 状态机 + 强制审批（quality）+ codegen
 
-Status: planned
+Status: completed
 Targets: `module-quality/model/app-erp-quality.orm.xml`(扩)、codegen 产物、`ErpQaRecallBizModel.java`(新)、`IErpQaRecallBiz.java`(新)、`ErpQaErrors.java`(扩)、`ErpQaConstants.java`(扩)、`ErpQaConfigs.java`(扩)、beans.xml
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Proof`
 - Prereqs: 既有 quality ORM（NonConformance）；ncr-status.ESCALATED_TO_RECALL 已存在。
 
-- [ ] `Add`：quality ORM 新增 `ErpQaRecall` + `ErpQaRecallTarget` + 字典（recall-trigger-type/recall-severity/recall-status/recall-target-return-status/approve-status），codegen 生成 CRUD 骨架。
+- [x] `Add`：quality ORM 新增 `ErpQaRecall` + `ErpQaRecallTarget` + 字典（recall-trigger-type/recall-severity/recall-status/recall-target-return-status/approve-status），codegen 生成 CRUD 骨架。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`IErpQaRecallBiz` 状态机——`register`（→OPEN）、`submit`/`approve`（→APPROVED，强制审批 `erp-qua.recall-require-approval`）、`reject`（→CANCELLED）、`cancel`（非终态→CANCELLED）、`close`（IN_PROGRESS→CLOSED，门控 notify）。非法迁移抛 `ErpQaErrors.ERR_INVALID_RECALL_STATUS_TRANSITION`；未审批不可执行 locateTargets。
+- [x] `Add`：`IErpQaRecallBiz` 状态机——`register`（→OPEN）、`submit`/`approve`（→APPROVED，强制审批 `erp-qua.recall-require-approval`）、`reject`（→CANCELLED）、`cancel`（非终态→CANCELLED）、`close`（IN_PROGRESS→CLOSED，门控 notify）。非法迁移抛 `ErpQaErrors.ERR_INVALID_RECALL_STATUS_TRANSITION`；未审批不可执行 locateTargets。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：`TestErpQaRecallStateMachine`（全状态迁移 + 强制审批 + 非法迁移抛错 + CRITICAL 标记）。`mvn test -pl module-quality/erp-qa-service -am -Dtest=TestErpQaRecallStateMachine*`。
+- [x] `Proof`：`TestErpQaRecallStateMachine`（全状态迁移 + 强制审批 + 非法迁移抛错 + CRITICAL 标记）。`mvn test -pl module-quality/erp-qa-service -am -Dtest=TestErpQaRecallStateMachine*`。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
 > Phase 1 交付召回实体 + 状态机。解除 Phase 2（目标定位 locateTargets + close 门控）+ Phase 3（NCR 升级建召回）基线。
 
-- [ ] 召回头/目标实体 + 状态机（含强制审批）单测通过
+- [x] 召回头/目标实体 + 状态机（含强制审批）单测通过
 
 ### Phase 2 — 目标定位（追溯链反查）+ 客户通知门控 + 批量退货编排 + 测试
 
-Status: planned
+Status: completed
 Targets: `ErpQaRecallBizModel.java`(扩)、`IErpQaRecallBiz.java`(扩)、`RecallTargetLocator.java`(新)、`erp-qa-service/pom.xml`(新 inv-dao + sal-dao 依赖)、beans.xml
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: Phase 1（召回实体）；**新增 erp-qa-service→erp-inv-dao + erp-sal-dao compile 依赖**（pom，起步落实）；trace-chain done（1.11）；sales return done（1.10）。
 
-- [ ] `Add`：`erp-qa-service/pom.xml` 新增 `app-erp-inventory-dao` + `app-erp-sales-dao` 依赖。
+- [x] `Add`：`erp-qa-service/pom.xml` 新增 `app-erp-inventory-dao` + `app-erp-sales-dao` 依赖（+ test-only `app-erp-inventory-service` + `app-erp-sales-service` 使跨域 BizModel Bean 可注入运行）。
   - Skill: none
-- [ ] `Add`：`IErpQaRecallBiz.locateTargets(recallId)`——`RecallTargetLocator` 经 `IErpInvStockMoveBiz.batchTrace(batchNo)`（`batchId` Long→经批次主数据解析 `batchNo` String→聚合相关移动单→筛选销售出库 moveType→客户+发货数量）生成 ErpQaRecallTarget（PENDING）+ recall→IN_PROGRESS；`erp-inv.trace-chain-enabled=false` 抛 `ErpQaErrors.ERR_TRACE_CHAIN_DISABLED`。serialNo 维度本期 config-gated 降级（Non-Goal）。
+- [x] `Add`：`IErpQaRecallBiz.locateTargets(recallId)`——`RecallTargetLocator` 经 `IErpInvStockMoveBiz.batchTrace(batchNo)`（`batchId` Long→经批次主数据解析 `batchNo` String→聚合相关移动单→筛选销售出库 moveType→客户+发货数量）生成 ErpQaRecallTarget（PENDING）+ recall→IN_PROGRESS；`erp-inv.trace-chain-enabled=false` 抛 `ErpQaErrors.ERR_TRACE_CHAIN_DISABLED`。serialNo 维度本期 config-gated 降级（Non-Goal）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`IErpQaRecallBiz.notifyCustomers(recallId, targetIds?)`——标记 target.notifiedAt/notifiedBy + returnStatus=NOTIFIED + recall.notifyCustomer=true（severityLevel≥MEDIUM 必备）。
+- [x] `Add`：`IErpQaRecallBiz.notifyCustomers(recallId)`——标记 target.notifiedAt/notifiedBy + returnStatus=NOTIFIED + recall.notifyCustomer=true。**偏离补注**：`targetIds?` 可选过滤参数因 GraphQL 强制非空参数约束移除（改为通知全部 target）——close 门控本就要求全部 target 已通知，部分通知无业务价值，故收敛为全量。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`IErpQaRecallBiz.generateReturns(recallId, targetIds?)`——为每个 target 调 `IErpSalReturnBiz` 生成销售退货单（标准退货流程，召回不直接改余额）+ target.returnStatus=RETURNED。
+- [x] `Add`：`IErpQaRecallBiz.generateReturns(recallId)`——为每个 target 调 `IErpSalReturnBiz.save` 生成销售退货单草稿（召回不直接改余额，标准退货流程审批过账由 sales 域执行）+ target.returnStatus=RETURNED。同上移除 `targetIds?` 收敛为全量。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`IErpQaRecallBiz.close(recallId)` 门控——`erp-qua.recall-notify-required-to-close=true` 时所有 target returnStatus≠PENDING + notifyCustomer=true 方可 CLOSED，否则抛 `ErpQaErrors.ERR_RECALL_NOTIFY_INCOMPLETE`。
+- [x] `Add`：`IErpQaRecallBiz.close(recallId)` 门控——`erp-qua.recall-notify-required-to-close=true` 时所有 target returnStatus≠PENDING + notifyCustomer=true 方可 CLOSED，否则抛 `ErpQaErrors.ERR_RECALL_NOTIFY_INCOMPLETE`。
   - Skill: `nop-backend-dev`
-- [ ] `Decision`：批量退货耦合度（同步 IErpSalReturnBiz）+ 目标定位追溯方向（batchTrace），见 Task Route Decision。
+- [x] `Decision`：批量退货耦合度（同步 IErpSalReturnBiz）+ 目标定位追溯方向（batchTrace），见 Task Route Decision。
   - Skill: none
-- [ ] `Proof`：`TestErpQaRecallLocateNotifyReturn`（locateTargets 经 batchTrace 生成 Target；batchId→batchNo 类型桥；追溯未启用抛错；notifyCustomers 标记；generateReturns 生成退货单 + RETURNED；close 门控未通知全 target 抛错；通知后可 close）。`mvn test -pl module-quality/erp-qa-service -am -Dtest=TestErpQaRecallLocateNotifyReturn*`。
+- [x] `Proof`：`TestErpQaRecallLocateNotifyReturn`（locateTargets 经 batchTrace 生成 Target；batchId→batchNo 类型桥；追溯未启用抛错；notifyCustomers 标记；generateReturns 生成退货单 + RETURNED；close 门控未通知全 target 抛错；通知后可 close）。`mvn test -pl module-quality/erp-qa-service -am -Dtest=TestErpQaRecallLocateNotifyReturn*`。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
 > Phase 2 交付目标定位 + 客户通知门控 + 批量退货编排。完整仓库验证属 Closure Gates。
 
-- [ ] 目标定位（batchTrace + batchId→batchNo 类型桥 + 追溯未启用报错）+ 客户通知门控 + 批量退货编排单测通过
-- [ ] erp-qa-service→erp-inv-dao + erp-sal-dao 依赖已落实且 inventory/sales 既有套件无回归
+- [x] 目标定位（batchTrace + batchId→batchNo 类型桥 + 追溯未启用报错）+ 客户通知门控 + 批量退货编排单测通过
+- [x] erp-qa-service→erp-inv-dao + erp-sal-dao 依赖已落实且 inventory/sales 既有套件无回归（本任务仅向 quality-service 加依赖，未改 inventory/sales 代码）
 
 ### Phase 3 — NCR 升级召回 + 端到端 + 文档/日志
 
-Status: planned
+Status: completed
 Targets: `ErpQaNonConformanceBizModel.java`(扩, upgradeToRecall)、`IErpQaNonConformanceBiz.java`(扩)、`docs/logs/2026/{执行当日 month-day}.md`、`docs/backlog/extended-roadmap.md`、`docs/design/quality/recall.md`(偏离补注)
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1（召回实体）+ Phase 2（locateTargets/退货）。
 
-- [ ] `Add`：`IErpQaNonConformanceBiz.upgradeToRecall(ncrId)`——NCR.status→ESCALATED_TO_RECALL（字典值已存在）+ 生成 ErpQaRecall（triggerType=GAUGE/BATCH_NCR_UPGRADE + sourceNcrId 关联 + 召回对象继承 NCR 批次/物料）。
+- [x] `Add`：`IErpQaNonConformanceBiz.upgradeToRecall(ncrId)`——NCR.status→ESCALATED_TO_RECALL（字典值已存在）+ 生成 ErpQaRecall（triggerType=GAUGE/BATCH_NCR_UPGRADE + sourceNcrId 关联 + 召回对象继承 NCR 批次/物料）。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：端到端 `TestErpQaRecallE2E`（NCR 升级→建召回 OPEN→submit/approve→locateTargets 经追溯链生成 target→notifyCustomers→generateReturns 退货→close 门控通过；手动 MANUAL 触发全链路；severityLevel=CRITICAL 标记）。`mvn test -pl module-quality/erp-qa-service -am -Dtest=TestErpQaRecallE2E*`。
+- [x] `Proof`：端到端 `TestErpQaRecallE2E`（NCR 升级→建召回 OPEN→submit/approve→locateTargets 经追溯链生成 target→notifyCustomers→generateReturns 退货→close 门控通过；手动 MANUAL 触发全链路；severityLevel=CRITICAL 标记）。`mvn test -pl module-quality/erp-qa-service -am -Dtest=TestErpQaRecallE2E*`。
   - Skill: `nop-testing`
-- [ ] `Add`：`docs/logs/2026/{执行当日 month-day}.md` 新增本计划条目（含验证状态）；`extended-roadmap.md` 工作项 2.11 标注 done；`recall.md` 补注（目标定位以 `batchTrace` 为准——原文「反向追溯…正向追溯找到销售出库」自相矛盾，澄清为批次聚合查询；召回不过账/不改余额/多级审批/serialNo 单件追溯 Non-Goal）。
+- [x] `Add`：`docs/logs/2026/{执行当日 month-day}.md` 新增本计划条目（含验证状态）；`extended-roadmap.md` 工作项 2.11 标注 done；`recall.md` 补注（目标定位以 `batchTrace` 为准——原文「反向追溯…正向追溯找到销售出库」自相矛盾，澄清为批次聚合查询；召回不过账/不改余额/多级审批/serialNo 单件追溯 Non-Goal）。
   - Skill: none
 
 Exit Criteria:
 
 > Phase 3 交付 NCR 升级召回 + 召回全场景端到端。完整仓库验证属 Closure Gates。
 
-- [ ] NCR 升级→建召回 + 召回全场景端到端单测通过
+- [x] NCR 升级→建召回 + 召回全场景端到端单测通过
 
 ## Draft Review Record
 
@@ -142,14 +142,14 @@ Exit Criteria:
 
 > 仅在所有项目和每阶段退出标准都勾选 `[x]` 后关闭。完整仓库验证在此处运行一次。
 
-- [ ] 范围内行为完成：召回事件状态机（强制审批）+ 目标定位（追溯链 batchTrace + batchId→batchNo 类型桥 + 追溯未启用报错）+ 客户通知门控 + 批量退货编排（IErpSalReturnBiz）+ NCR 升级召回（ESCALATED_TO_RECALL），行为测试通过
-- [ ] 相关文档对齐：`extended-roadmap.md` 2.11 done；当日日志已记；`recall.md` Non-Goal 偏离补注
-- [ ] 已运行验证：`mvn test -pl module-quality/erp-qa-service -am`（+ inventory/sales 既有套件无回归）；根 `mvn clean install -DskipTests`
-- [ ] 无范围内项目静默降级（追溯链底层/NCR 单点/退货过账/召回改余额/召回过账/多级审批 均为计划内 Non-Goal）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控、日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：召回事件状态机（强制审批）+ 目标定位（追溯链 batchTrace + batchId→batchNo 类型桥 + 追溯未启用报错）+ 客户通知门控 + 批量退货编排（IErpSalReturnBiz）+ NCR 升级召回（ESCALATED_TO_RECALL），行为测试通过
+- [x] 相关文档对齐：`extended-roadmap.md` 2.11 done；当日日志已记；`recall.md` Non-Goal 偏离补注
+- [x] 已运行验证：`mvn test -pl module-quality/erp-qa-service -am`（+ inventory/sales 既有套件无回归）；根 `mvn clean install -DskipTests`
+- [x] 无范围内项目静默降级（追溯链底层/NCR 单点/退货过账/召回改余额/召回过账/多级审批 均为计划内 Non-Goal）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控、日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符 — `ses_0d77f984affeasYZLWzcBnDMgP`，verdict `passes closure audit`（唯一 BLOCKER 为本计划文件自身的机械勾选更新，已在本步骤完成后清零；全部实质实现/测试/文档通过）
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -173,4 +173,8 @@ Exit Criteria:
 
 ## Closure
 
-（待结束后填写）
+- 完成：全部 3 阶段（召回事件建模+状态机+强制审批 codegen / 目标定位+客户通知门控+批量退货编排 / NCR 升级召回+端到端+文档对齐）。
+- 验证状态：**全绿**——`mvn test -pl module-quality/erp-qa-service -am` = 33 tests / 0 Failures（新增 11：RecallStateMachine 6 + RecallLocateNotifyReturn 2 + RecallE2E 3；既有 22 无回归）；inventory 45 / sales 既有套件无回归；全仓 `mvn test` BUILD SUCCESS；根 `mvn clean install -DskipTests` BUILD SUCCESS（146 模块）。
+- 文档对齐：`extended-roadmap.md` 工作项 2.11 标 done；`docs/logs/2026/07-03.md` 新增计划条目（含验证状态）；`recall.md` 补注目标定位 batchTrace 澄清 + 类型桥残留风险 + serialNo/过账/改余额/多级审批 Non-Goal。
+- 结束审计：独立子代理 `ses_0d77f984affeasYZLWzcBnDMgP` 通过（passes closure audit），唯一 BLOCKER 为计划文件自身机械勾选，已清零。
+- Deferred（Non-Goal，均已裁决）：召回直接库存调整、召回事件财务过账、多级召回审批工作流引擎（Successor：多级审批引擎需求时）、serialNo 单件追溯目标定位（Successor：单件追溯查询就绪 + 单件召回需求时）。

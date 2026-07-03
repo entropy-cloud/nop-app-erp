@@ -81,7 +81,13 @@
 | returnStatus | dict `erp-qa/recall-target-return-status`：PENDING/NOTIFIED/RETURNED |
 | 标准审计字段 | |
 
-**目标定位算法**：通过 `trace-chain.md` 反向追溯——召回对象（批次/序列号）→ 正向追溯找到销售出库移动单 → 关联客户与发货数量，生成 ErpQaRecallTarget 明细。
+**目标定位算法**：经 `trace-chain.md` 的 `IErpInvStockMoveBiz.batchTrace(batchNo)` **批次聚合查询**——以召回批次号 `batchNo` 为入口聚合全部相关移动单，筛选销售出库移动类型（`relatedBillType` = 销售出库）→ 关联客户与发货数量，生成 ErpQaRecallTarget 明细。
+
+> **澄清（实现基线，优先于本节上方「反向追溯…正向追溯找到销售出库」字面描述）**：召回从批次起无单一源移动单，故采用 `batchTrace(batchNo)`（按批次号聚合全部移动单）为唯一入口。`backwardTrace(moveId)` 沿 `originMoveId` **上溯**至根、`forwardTrace(moveId)` 需已知单一源移动单起点，二者方向/前提均不契合召回从批次起的场景，故 rejected。
+
+> **类型桥（残留风险）**：`batchTrace` 入参为 `batchNo:String`，而 `ErpQaRecall.batchId` 为 Long FK，须经批次主数据（`ErpInvBatch`）解析为 `batchNo` 再聚合。
+
+> **serialNo 单件追溯（本期 Non-Goal）**：`batchTrace` 按批次聚合，不覆盖单件 serialNo 维度召回定位。本期召回对象以批次为主；serialNo 维度目标定位 config-gated 降级，待 inventory 单件追溯查询能力就绪后补齐（触发条件：单件追溯查询能力 + 单件召回需求）。
 
 ## 裁决 D2：NCR 升级召回实现
 
@@ -112,6 +118,15 @@
 |---|---|---|
 | `erp-qua.recall-require-approval` | true | 召回是否强制审批 |
 | `erp-qua.recall-notify-required-to-close` | true | 关闭召回前是否强制要求通知所有受影响客户 |
+
+## Non-Goals（本期延后，已落地实现声明）
+
+> 以下均为计划内显式 Non-Goal，非静默降级。本期召回事件聚合层不覆盖：
+
+- **召回财务过账**：召回事件本身不产生会计凭证（业务规则 1）。
+- **召回直接改库存余额**：召回产生的库存变动经标准销售退货移动单完成（移动单 DONE 写流水/更新余额），召回只登记编排，不绕过移动单直接改余额（业务规则 2 / 反模式警示）。
+- **多级召回审批工作流引擎**：本期单级强制审批（CRITICAL 标记需高层，但无引擎驱动多级）。触发条件：多级审批引擎需求时。
+- **serialNo 单件追溯目标定位**：`batchTrace(batchNo)` 按批次聚合，本期不覆盖单件 serialNo 维度召回定位。触发条件：inventory 单件追溯查询能力就绪且单件召回需求时。
 
 ## 反模式警示
 
