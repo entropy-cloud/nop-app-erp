@@ -100,3 +100,14 @@
 - `docs/design/aps/README.md`（APS 工序级排产）
 - `docs/design/manufacturing/mrp.md`
 - `docs/design/manufacturing/state-machine.md`
+
+## 实现偏离补注（2026-07-03，plan 2026-07-03-1707-1 落地）
+
+> 以下为本期实现相对上方设计的明知偏离，均为计划内 Non-Goal，已记入 plan Deferred But Adjudicated。
+
+- **负荷来源 fallback（无 APS）**：设计 §业务规则 3「CRP 读取 APS 排产结果」依赖 APS OperationOrder 排程时间。APS 模块（M3 工作项 3.10/3.11）尚未落地，本期负荷来源取 **WorkOrder（plannedStartDate~plannedEndDate）+ RoutingOperation（workcenterId + standardTime）**，按区间内日**均匀分派**。APS 落地后负荷来源可切换为精确排程时间（successor）。
+- **maintenance 停机扣减可用时段为 Non-Goal**：设计 §跨域协作「maintenance/downtime 设备停机扣减工作中心可用时段」为事件驱动，需 maintenance 停机事件机制（当前 maintenance 停机通知制造为本期 Non-Goal）。本期 WorkcenterCalendar 可用工时不扣减停机（successor：maintenance 停机事件 + 排产停机窗口联动）。
+- **标量 `Workcenter.capacity` 保留不删不依赖**：既有 `ErpMfgWorkcenter.capacity`/`capacityUnit` 为反模式（单一标量产能，见上方反模式警示）。本期 CRP 一律用新增 `ErpMfgWorkcenterCapacity` 子实体（按产品产能 + 换模/清理/效率），既有标量保留为旧显示字段不删（out-of-scope：存量数据迁移）。
+- **负荷桶粒度为日级（非班次级）**：`ErpMfgCrpLoad.loadDate` + loadHours/setupHours 按 workcenter×date 聚合。班次建模已就绪（WorkcenterCalendar.shiftType）但负荷按日聚合已足；日内多班次超负荷不可见（班次级为 APS 范畴）。
+- **CRP 可视化页面（AMIS 甘特/热力图）为 Non-Goal**：本期交付 GraphQL 负荷报表查询（`ErpMfgCrpLoad__getLoadReport`）；AMIS 可视化为独立前端面（successor）。
+- **CRP 定时运行 cron 为 Non-Goal**：`erp-mfg.crp-run-schedule` cron 本期不接线；负荷计算以按需 `@BizMutation calculateLoad` 暴露入口（手动/nop-job 可调），on-demand 入口已可被周期调度复用（successor：定时自动运行需求）。
