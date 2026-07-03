@@ -93,12 +93,14 @@
 
 1. **评分卡不过账**：评分是绩效评估产物，不产生会计凭证。
 2. **公式用 nop 规则引擎/DSL，不硬编码 Java**：criteria.formula 引用 variable，variable.path 从业务实体取值（🟢 ERPNext 范式）。新增维度 = 配置 criteria + variable，不改代码。
+   - **公式引擎实现落定**（2026-07-03，plan 2026-07-03-1707-2 Phase 2）：选用平台 XLang 表达式（`XLang.newCompileTool().allowUnregisteredScopeVar(true).compileSimpleExpr(...)`）承载 criteria.formula，variable.path 经 Java 装配为 inputs map。nop-rule 文档明确「纯算术/公式计算直接用 XLang 表达式即可，不必引入规则引擎」，故不引入 nop-rule 依赖；公式纯算术表达式部分由 XLang 引擎算，取值由 Java 提供。
 3. **standing → RFQ 三档联动**：
    - standing=GREEN：正常询价。
    - standing=YELLOW：RFQ 创建时 warn（提示该供应商近期评分偏低）。
    - standing=RED：RFQ 创建时 hold（需质量主管审批）或 prevent（直接禁止该供应商参与 RFQ）。
+   - **RFQ 校验落点实现偏离补注**（2026-07-03，plan 2026-07-03-1707-2 Phase 3）：RFQ 头 `ErpPurRfq` 无 supplierId（一份询价发多个供应商），供应商参与询价的入口为报价单 `ErpPurQuotation`（含 supplierId）。故 standing/approval 联动校验钩子落在 `ErpPurQuotationBizModel.defaultPrepareSave`（委托 `SupplierEligibilityChecker`）。设计意图（SUSPENDED/RED 供应商不可参与询价）不变。
 4. **standing=RED → 自动写 SupplierApproval=SUSPENDED**：评分 finalize 后若 standing=RED，同步更新 master-data 的 `ErpMdSupplierApproval.status=SUSPENDED`，使暂停立即生效。
-5. **RFQ 创建校验**：RFQ 创建时校验供应商 `ErpMdSupplierApproval.status`（SUSPENDED/REJECTED 的供应商不可作为 RFQ 收件人）。
+5. **RFQ 创建校验**：RFQ 创建时校验供应商 `ErpMdSupplierApproval.status`（SUSPENDED/REJECTED 的供应商不可作为 RFQ 收件人）。实现落点同规则 3（报价单保存前置钩子）。
 6. **周期快照非实时累加**：评分按 period 取数计算，是时点快照（🟢 ERPNext `supplier_scorecard_period` 范式）。
 
 ## 跨域协作

@@ -17,7 +17,8 @@
 - 2.6：✅ done（项目成本归集：工时状态机+成本率解析+PROJECT_COST_COLLECTION 业财过账 + 预算控制(WARNING/STRICT) + 成本归集汇总(actualCost 回写) + 项目状态引用校验 + 费用报销归集(projects 驱动只读聚合, config-gated)，2026-07-03，`docs/plans/2026-07-03-1018-2-projects-cost-collection.md`）
 - 2.7：✅ done（维护计划/停机/备件消耗：访问 5 态+请求 6 态状态机+设备状态联动+备件消耗→inventory 出库(generateMove 扣余额)+维护计划到期生成 PLANNED 访问+停机记录(totalMinutes+设备 DOWN 联动)+维护全场景端到端，2026-07-03，`docs/plans/2026-07-03-1018-3-maintenance-visit-request-sparepart-downtime.md`）
 - 2.8：✅ done（CRP 负荷计算：工作中心日历/班次 + 按产品产能子实体(取代标量 capacity 反模式) + 负荷快照行 + calculateLoad(workcenter×date 聚合 loadHours+setupHours, 重算清旧快照) + getLoadReport(loadHours/capacityHours×efficiency/loadRate/overloaded) + 超负荷阈值门控(erp-mfg.crp-overload-threshold 默认1.0)；APS fallback WorkOrder 计划日期均匀分派，2026-07-03，`docs/plans/2026-07-03-1707-1-manufacturing-crp-load-engine.md`）
-- 2.9–2.11：`todo`
+- 2.9：✅ done（供应商评分卡周期评分 + AVL 准入联动：AVL 准入 6 态状态机(APPLIED→APPROVED→PROBATION→SUSPENDED→REJECTED) + 评分卡周期/维度/变量三实体 + finalizeScorecard 引擎(criteria×formula×weight→totalScore→standing, 公式经 XLang 表达式非硬编码) + standing=RED→AVL SUSPENDED 跨域联动 + RFQ 收件人校验(prevent/warn/hold config-gated), 2026-07-03, `docs/plans/2026-07-03-1707-2-supplier-scorecard-avl.md`）
+- 2.10–2.11：`todo`
 
 ### Milestone M3 — 新增 8 域
 - 3.1–3.21：`todo`
