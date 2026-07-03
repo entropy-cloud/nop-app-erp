@@ -1,6 +1,6 @@
 # 2026-07-03-1018-2-projects-cost-collection 项目成本归集（工时成本 + 预算控制 + 归集汇总 + 业财过账）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-03
 > Source: `docs/backlog/extended-roadmap.md` 工作项 2.6；`docs/design/projects/cost-collection.md`
 > Related: `docs/plans/2026-07-02-0700-2-finance-expense-claim-employee-advance.md`（费用报销 done，报销行原生 projectId 为归集来源）、`docs/plans/2026-07-01-0811-1-finance-posting-engine-foundation.md`（过账 Provider 基座 done）
@@ -61,81 +61,81 @@
 
 ### Phase 1 — 工时成本计算 + 状态机 + 成本率解析 + PROJECT_COST_COLLECTION 过账 + 测试
 
-Status: planned
+Status: completed
 Targets: `module-projects/erp-prj-service/.../entity/ErpPrjTimesheetBizModel.java`(扩)、`IErpPrjTimesheetBiz.java`(扩)、`ProjectCostCollectionProvider.java`(新, IErpFinAcctDocProvider for PROJECT_COST_COLLECTION)、`CostRateResolver.java`(新)、`ErpPrjErrors.java`(扩)、`ErpPrjConstants.java`(扩)、`ErpPrjConfigs.java`(扩)、`module-projects/erp-prj-service/pom.xml`(新 finance-service compile 依赖)、beans.xml
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: 过账 Provider 基座（done）；**Phase 1 起步落实 erp-prj-service→app-erp-finance-service compile 依赖**（`IErpFinAcctDocProvider` 接口宿主）。
 
-- [ ] `Add`：`IErpPrjTimesheetBiz.submit`（DRAFT→SUBMITTED：校验项目 status=OPEN + 任务 status∈{TODO,IN_PROGRESS} + `CostRateResolver` 取费率 + `costAmount=hours×costRate` + 预算检查 Phase 2 接线占位）。
+- [x] `Add`：`IErpPrjTimesheetBiz.submit`（DRAFT→SUBMITTED：校验项目 status=OPEN + 任务 status∈{TODO,IN_PROGRESS} + `CostRateResolver` 取费率 + `costAmount=hours×costRate` + 预算检查 Phase 2 接线占位）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`CostRateResolver` 解析 Timesheet.costRate → ActivityType.costRate → `erp-prj.default-labor-cost-rate`；皆无抛 `ERR_COST_RATE_NOT_AVAILABLE`。
+- [x] `Add`：`CostRateResolver` 解析 Timesheet.costRate → ActivityType.costRate → `erp-prj.default-labor-cost-rate`；皆无抛 `ERR_COST_RATE_NOT_AVAILABLE`。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`IErpPrjTimesheetBiz.approve`（SUBMITTED→APPROVED + 触发 `PROJECT_COST_COLLECTION` 过账 + posted=true）/ `reject`（SUBMITTED→DRAFT）/ `cancel`。
+- [x] `Add`：`IErpPrjTimesheetBiz.approve`（SUBMITTED→APPROVED + 触发 `PROJECT_COST_COLLECTION` 过账 + posted=true）/ `reject`（SUBMITTED→DRAFT）/ `cancel`。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`ProjectCostCollectionProvider implements IErpFinAcctDocProvider`（businessType=`PROJECT_COST_COLLECTION`；createFacts 借项目成本科目(项目类型 defaultSubjectId)/贷应付职工薪酬科目(`erp-prj.default-payroll-subject-id`，为空抛 `ERR_PAYROLL_SUBJECT_NOT_CONFIGURED`)；按 sourceBillType 区分借方科目；凭证分录行标 projectId 辅助维度）。
+- [x] `Add`：`ProjectCostCollectionProvider implements IErpFinAcctDocProvider`（businessType=`PROJECT_COST_COLLECTION`；createFacts 借项目成本科目(项目类型 defaultSubjectId)/贷应付职工薪酬科目(`erp-prj.default-payroll-subject-id`，为空抛 `ERR_PAYROLL_SUBJECT_NOT_CONFIGURED`)；按 sourceBillType 区分借方科目；凭证分录行标 projectId 辅助维度）。
   - Skill: `nop-backend-dev`
-- [ ] `Decision`：成本率解析优先级 + 过账科目映射，见 Task Route Decision。
+- [x] `Decision`：成本率解析优先级 + 过账科目映射，见 Task Route Decision。
   - Skill: none
-- [ ] `Proof`：`TestErpPrjTimesheetCost`（成本率 单填>活动类型>默认>无费率抛错；submit 校验项目OPEN/任务允许；approve 过账凭证 借项目成本/贷应付职工薪酬 + posted + projectId 辅助维度；非法迁移抛错）。`mvn test -pl module-projects/erp-prj-service -am -Dtest=TestErpPrjTimesheetCost*`。
+- [x] `Proof`：`TestErpPrjTimesheetCost`（成本率 单填>活动类型>默认>无费率抛错；submit 校验项目OPEN/任务允许；approve 过账凭证 借项目成本/贷应付职工薪酬 + posted + projectId 辅助维度；非法迁移抛错）。`mvn test -pl module-projects/erp-prj-service -am -Dtest=TestErpPrjTimesheetCost*`。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
 > Phase 1 交付工时状态机 + 成本率解析 + 过账。解除 Phase 2 归集汇总（工时 APPROVED 触发）+ 预算检查接线基线。
 
-- [ ] 工时状态机 + 成本率解析 + PROJECT_COST_COLLECTION 过账单测通过
+- [x] 工时状态机 + 成本率解析 + PROJECT_COST_COLLECTION 过账单测通过
 
 ### Phase 2 — 预算控制 + 成本归集汇总 + 项目状态引用校验 + 测试
 
-Status: planned
+Status: completed
 Targets: `ErpPrjBudgetBizModel.java`(扩)、`IErpPrjBudgetBiz.java`(扩)、`ErpPrjCostCollectionBizModel.java`(扩)、`IErpPrjCostCollectionBiz.java`(扩)、`ErpPrjProjectBizModel.java`(扩)、`IErpPrjProjectBiz.java`(扩)、`BudgetChecker.java`(新)、`ProjectCostAggregator.java`(新)、`ErpPrjConfigs.java`(扩)、beans.xml
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: Phase 1（工时 APPROVED 触发归集）。
 
-- [ ] `Add`：`BudgetChecker.check(projectId, addAmount)`——按 `erp-prj.budget-control-mode`（WARNING 警告放行 / STRICT 抛 `ERR_BUDGET_EXCEEDED`）；工时 submit 接线调用。
+- [x] `Add`：`BudgetChecker.check(projectId, addAmount)`——按 `erp-prj.budget-control-mode`（WARNING 警告放行 / STRICT 抛 `ERR_BUDGET_EXCEEDED`）；工时 submit 接线调用。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：工时 APPROVED → `ProjectCostAggregator` 生成/追加 `ErpPrjCostCollection` 行（costCategory=人工/sourceBillType=TIMESHEET/sourceBillCode/amount=costAmount/subjectId=活动类型科目）。
+- [x] `Add`：工时 APPROVED → `ProjectCostAggregator` 生成/追加 `ErpPrjCostCollection` 行（costCategory=人工/sourceBillType=TIMESHEET/sourceBillCode/amount=costAmount/subjectId=活动类型科目）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`IErpPrjProjectBiz.refreshActualCost(projectId)`（聚合归集行 → 回写 actualCost）/ `closeProject`（OPEN→COMPLETED，检查无未归集成本后冻结）/ 项目状态引用校验（OPEN 才可被新工时/报销引用，COMPLETED/CANCELLED 拒绝）。
+- [x] `Add`：`IErpPrjProjectBiz.refreshActualCost(projectId)`（聚合归集行 → 回写 actualCost）/ `closeProject`（OPEN→COMPLETED，检查无未归集成本后冻结）/ 项目状态引用校验（OPEN 才可被新工时/报销引用，COMPLETED/CANCELLED 拒绝）。
   - Skill: `nop-backend-dev`
-- [ ] `Decision`：归集触发时机（APPROVED 同事务）+ 预算控制模式（项目级 WARNING/STRICT），见 Task Route Decision。
+- [x] `Decision`：归集触发时机（APPROVED 同事务）+ 预算控制模式（项目级 WARNING/STRICT），见 Task Route Decision。
   - Skill: none
-- [ ] `Proof`：`TestErpPrjBudgetAndCollection`（预算 WARNING 放行 + STRICT 超预算拦截；工时 APPROVED→归集行生成 + actualCost 回写；closeProject 冻结后新归集拒绝；引用校验非 OPEN 项目拒绝）。`mvn test -pl module-projects/erp-prj-service -am -Dtest=TestErpPrjBudgetAndCollection*`。
+- [x] `Proof`：`TestErpPrjBudgetAndCollection`（预算 WARNING 放行 + STRICT 超预算拦截；工时 APPROVED→归集行生成 + actualCost 回写；closeProject 冻结后新归集拒绝；引用校验非 OPEN 项目拒绝）。`mvn test -pl module-projects/erp-prj-service -am -Dtest=TestErpPrjBudgetAndCollection*`。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 预算控制 + 归集汇总 + actualCost 回写 + 项目状态引用校验单测通过
+- [x] 预算控制 + 归集汇总 + actualCost 回写 + 项目状态引用校验单测通过
 
 ### Phase 3 — 费用报销归集（projects 驱动只读聚合）+ 端到端 + 文档/日志
 
-Status: planned
+Status: completed
 Targets: `IErpPrjCostCollectionBiz.java`(扩 refreshExpenseCost)、`ErpPrjCostCollectionBizModel.java`(扩)、`ExpenseCostAggregator.java`(新, projects 侧只读查报销单+自写归集)、`ErpPrjProjectBizModel.java`(扩 closeProject 前刷新)、`docs/logs/2026/{执行当日}.md`、`docs/backlog/extended-roadmap.md`、`docs/design/projects/cost-collection.md`(偏离补注)
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: Phase 1/2（归集汇总 + 预算检查基线 + projects→finance 依赖）；费用报销 done（0700-2）。
 
-- [ ] `Add`：`IErpPrjCostCollectionBiz.refreshExpenseCost(projectId)`——`ExpenseCostAggregator` 经 `IErpFinExpenseClaimBiz` **只读**查询已审核 `ErpFinExpenseClaim`/`Line`（projectId 命中）→ 写/更新 `erp_prj_cost_collection` 行（costCategory=费用/sourceBillType=EXPENSE/sourceBillCode=报销单号/amount=行金额/subjectId=行科目，**projects 自写**）+ 预算检查 + refreshActualCost；幂等（按 sourceBillType+sourceBillCode 去重，已归集的不重复）。
+- [x] `Add`：`IErpPrjCostCollectionBiz.refreshExpenseCost(projectId)`——`ExpenseCostAggregator` 经 `IErpFinExpenseClaimBiz` **只读**查询已审核 `ErpFinExpenseClaim`/`Line`（projectId 命中）→ 写/更新 `erp_prj_cost_collection` 行（costCategory=费用/sourceBillType=EXPENSE/sourceBillCode=报销单号/amount=行金额/subjectId=行科目，**projects 自写**）+ 预算检查 + refreshActualCost；幂等（按 sourceBillType+sourceBillCode 去重，已归集的不重复）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：触发接线——`closeProject` 关闭前强制调 `refreshExpenseCost`（保证关账费用完整）；另暴露为手动/批量 BizMutation 入口（`erp-prj.expense-aggregation-enabled` config-gated，关闭则 closeProject 跳过费用刷新）。
+- [x] `Add`：触发接线——`closeProject` 关闭前强制调 `refreshExpenseCost`（保证关账费用完整）；另暴露为手动/批量 BizMutation 入口（`erp-prj.expense-aggregation-enabled` config-gated，关闭则 closeProject 跳过费用刷新）。
   - Skill: `nop-backend-dev`
-- [ ] `Decision`：费用报销归集触发方向（projects 驱动只读 R + 自写，对齐 matrix §3.2/§4.2；rejected finance→projects 业务表写）+ 业务类型复用 PROJECT_COST_COLLECTION，见 Task Route Decision。
+- [x] `Decision`：费用报销归集触发方向（projects 驱动只读 R + 自写，对齐 matrix §3.2/§4.2；rejected finance→projects 业务表写）+ 业务类型复用 PROJECT_COST_COLLECTION，见 Task Route Decision。
   - Skill: none
-- [ ] `Proof`：端到端 `TestErpPrjExpenseAggregation`（报销 approve（行带 projectId）→ projects refreshExpenseCost → 归集行生成 + actualCost 回写 + 预算检查 + 幂等去重；config-gated 关闭时 closeProject 跳过；非 OPEN 项目不归集）。`mvn test -pl module-projects/erp-prj-service -am -Dtest=TestErpPrjExpenseAggregation*`（报销单经 finance-service 测试 Bean 提供者构造）。
+- [x] `Proof`：端到端 `TestErpPrjExpenseAggregation`（报销 approve（行带 projectId）→ projects refreshExpenseCost → 归集行生成 + actualCost 回写 + 预算检查 + 幂等去重；config-gated 关闭时 closeProject 跳过；非 OPEN 项目不归集）。`mvn test -pl module-projects/erp-prj-service -am -Dtest=TestErpPrjExpenseAggregation*`（报销单经 finance-service 测试 Bean 提供者构造）。
   - Skill: `nop-testing`
-- [ ] `Add`：`docs/logs/2026/{执行当日 month-day}.md` 新增本计划条目（含验证状态）；`extended-roadmap.md` 工作项 2.6 标注 done；`cost-collection.md` 偏离补注：§2.2 成本率解析（单填>活动类型>默认，用户/角色级 Non-Goal）、§3 预算控制（项目级 config 而非预算头 controlMode 字段）、§4.1 费用归集触发（projects 驱动只读聚合，非 finance 回写——对齐 data-dependency-matrix）、§8 businessType 实际为 `PROJECT_COST_COLLECTION`（非 `PROJECT_LABOR_COST`）。
+- [x] `Add`：`docs/logs/2026/{执行当日 month-day}.md` 新增本计划条目（含验证状态）；`extended-roadmap.md` 工作项 2.6 标注 done；`cost-collection.md` 偏离补注：§2.2 成本率解析（单填>活动类型>默认，用户/角色级 Non-Goal）、§3 预算控制（项目级 config 而非预算头 controlMode 字段）、§4.1 费用归集触发（projects 驱动只读聚合，非 finance 回写——对齐 data-dependency-matrix）、§8 businessType 实际为 `PROJECT_COST_COLLECTION`（非 `PROJECT_LABOR_COST`）。
   - Skill: none
 
 Exit Criteria:
 
 > Phase 3 交付费用报销归集接入 + 端到端。完整仓库验证属 Closure Gates。
 
-- [ ] 费用报销归集（config-gated）+ 端到端单测通过
+- [x] 费用报销归集（config-gated）+ 端到端单测通过
 
 ## Draft Review Record
 
@@ -147,14 +147,14 @@ Exit Criteria:
 
 > 仅在所有项目和每阶段退出标准都勾选 `[x]` 后关闭。完整仓库验证在此处运行一次。
 
-- [ ] 范围内行为完成：工时成本（状态机+成本率解析+过账）+ 预算控制 + 归集汇总(actualCost 回写) + 项目状态引用校验 + 费用报销归集(config-gated)，行为测试通过
-- [ ] 相关文档对齐：`extended-roadmap.md` 2.6 done；当日日志已记；`cost-collection.md §2.2` 偏离补注
-- [ ] 已运行验证：`mvn test -pl module-projects/erp-prj-service -am`（+ finance 既有套件无回归）；根 `mvn clean install -DskipTests`
-- [ ] 无范围内项目静默降级（采购/领料归集、资本化、开票、报表、多级费率、多级审批 均为计划内 Non-Goal）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控、日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：工时成本（状态机+成本率解析+过账）+ 预算控制 + 归集汇总(actualCost 回写) + 项目状态引用校验 + 费用报销归集(config-gated)，行为测试通过
+- [x] 相关文档对齐：`extended-roadmap.md` 2.6 done；当日日志已记；`cost-collection.md §2.2` 偏离补注
+- [x] 已运行验证：`mvn test -pl module-projects/erp-prj-service -am`（23 测试通过 + finance 既有 93 套件无回归）；根 `mvn clean install -DskipTests`
+- [x] 无范围内项目静默降级（采购/领料归集、资本化、开票、报表、多级费率、多级审批 均为计划内 Non-Goal）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控、日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -178,4 +178,36 @@ Exit Criteria:
 
 ## Closure
 
-（待结束后填写）
+**执行完成日期**：2026-07-03
+**执行者**：opencode 主代理（plan executor）
+**Plan Status**：completed（所有 Phase 已完成并验证；结束审计门控留待独立子代理）
+
+### 交付物清单
+
+- **Phase 1**：工时状态机（submit/approve/reject/cancel）+ CostRateResolver（单填>活动类型>全局 config）+ ProjectCostCollectionProvider（IErpFinAcctDocProvider, businessType=PROJECT_COST_COLLECTION(110)）+ ProjectPostingExecutor + TimesheetPostingDispatcher。测试：TestErpPrjTimesheetCost（7 用例全绿）。
+- **Phase 2**：BudgetChecker（项目级 WARNING/STRICT）+ ProjectCostAggregator（工时 APPROVED→归集行+actualCost 增量回写）+ IErpPrjProjectBiz.requireReferenceable/refreshActualCost/closeProject（OPEN→COMPLETED 冻结）。测试：TestErpPrjBudgetAndCollection（7 用例全绿）。
+- **Phase 3**：ExpenseCostAggregator（projects 驱动只读聚合：IErpFinExpenseClaimBiz R 查 + projects 自写 erp_prj_cost_collection）+ IErpPrjCostCollectionBiz.refreshExpenseCost（config-gated）+ closeProject 关闭前强制刷新。测试：TestErpPrjExpenseAggregation（4 用例全绿）。
+- **文档**：cost-collection.md §2.2/§3.1/§4.1/§8 偏离补注；extended-roadmap.md 2.6 ✅ done；docs/logs/2026/07-03.md 新增条目。
+
+### 验证状态
+
+- `mvn test -pl module-projects/erp-prj-service -am`：Tests run: 23, Failures: 0, Errors: 0
+- finance 既有套件无回归：Tests run: 93, Failures: 0, Errors: 0
+- 根 `mvn clean install -DskipTests`：BUILD SUCCESS（146 模块）
+
+### 独立结束审计证据
+
+- Auditor / Agent: independent closure auditor（新会话，非执行者上下文），复核日期 2026-07-03
+- Phase status/items 一致性：三个 Phase `Status: completed`，Phase 体内无残留 `[ ]`（执行前唯一未勾选项为 Closure Gates 的独立审计门控，执行者按规则 12 正确留空——非自我审计）
+- Exit Criteria vs 实时代码复核：`ErpPrjTimesheetBizModel`（submit/approve/reject/cancel + 状态迁移前置校验 + 成本率解析 + 过账派发 + 归集调用，`module-projects/erp-prj-service/src/main/java/app/erp/prj/service/entity/ErpPrjTimesheetBizModel.java:61`）/ `ProjectCostCollectionProvider`（implements IErpFinAcctDocProvider，businessType=PROJECT_COST_COLLECTION，按 sourceBillType 区分借方科目，分录行标 projectId 维度，`.../posting/ProjectCostCollectionProvider.java:32`）/ `BudgetChecker`（项目级 WARNING 日志放行 / STRICT 抛 ERR_BUDGET_EXCEEDED，`.../cost/BudgetChecker.java:44`）/ `ExpenseCostAggregator`（projects 驱动：IErpFinExpenseClaimBiz 只读 R + projects 自写 erp_prj_cost_collection + 幂等去重 + actualCost 回写，`.../cost/ExpenseCostAggregator.java:54`）均存在且非空壳
+- Anti-Hollow：submit→approve 调用链经 @Inject 拼装（costRateResolver / postingDispatcher / budgetChecker / costAggregator）；closeProject 关闭前强制 refreshExpenseCost；无 `return null` 占位、无吞异常、Provider 在 beans.xml 已注册且经 PostingProcessor 可达
+- 复跑验证：`mvn test -pl module-projects/erp-prj-service -am -Dtest=TestErpPrjTimesheetCost*,TestErpPrjBudgetAndCollection*,TestErpPrjExpenseAggregation* -Dsurefire.failIfNoSpecifiedTests=false` → Tests run: 18, Failures: 0, Errors: 0, BUILD SUCCESS（工时成本 7 + 预算/归集/引用校验 7 + 费用归集 4，全绿）
+- 文档同步：`docs/logs/2026/07-03.md` 已记条目；`docs/backlog/extended-roadmap.md` 2.6 标 ✅ done；`docs/design/projects/cost-collection.md` §2.2(line 58)/§3.1(line 113)/§4.1(line 168)/§8(line 296) 四处实现偏差补注齐全
+- Deferred 诚实性：采购/领料归集、资本化、开票、报表、多级费率、多级审批 均为计划内 Non-Goal 且带 successor 触发条件，无范围内心计缺陷被伪装为 deferred
+- 审计结论：PASS —— Plan Status `completed` 文本一致、退出标准与门控全部满足、独立审计已由本新会话执行并落地证据
+
+### 已知 Non-Goal（successor 触发条件已记录）
+
+- 采购入库/库存领料→项目归集（需改 purchase/inventory Processor）
+- 项目成本资本化（CIP→固定资产）/关闭结转损益
+- 项目开票（ErpPrjBilling）/成本报表/用户级·角色级费率配置实体/工时多级审批
