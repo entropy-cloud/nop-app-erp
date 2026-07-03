@@ -26,6 +26,11 @@ public interface ErpMfgErrors {
     String ARG_COMPLETED_QTY = "completedQty";
     String ARG_PLANNED_QTY = "plannedQty";
 
+    String ARG_MRP_PLAN_ID = "mrpPlanId";
+    String ARG_MRP_LINE_ID = "mrpLineId";
+    String ARG_PLAN_CODE = "planCode";
+    String ARG_SUPPLIER_ID = "supplierId";
+
     ErrorCode ERR_BOM_NOT_FOUND = ErrorCode.define(
             "nop.err.mfg.bom.not-found",
             "BOM不存在: {bomId}",
@@ -85,4 +90,34 @@ public interface ErpMfgErrors {
             "nop.err.mfg.issue.lines-empty",
             "领料单[{workOrderCode}]无领料行，无法确认出库",
             ARG_WORK_ORDER_CODE);
+
+    ErrorCode ERR_MRP_PLAN_NOT_FOUND = ErrorCode.define(
+            "nop.err.mfg.mrp-plan.not-found",
+            "MRP计划不存在: {mrpPlanId}",
+            ARG_MRP_PLAN_ID);
+
+    ErrorCode ERR_MRP_PLAN_LINE_NOT_FOUND = ErrorCode.define(
+            "nop.err.mfg.mrp-plan-line.not-found",
+            "MRP计划行不存在: {mrpLineId}",
+            ARG_MRP_LINE_ID);
+
+    ErrorCode ERR_MRP_INVALID_PLAN_STATUS = ErrorCode.define(
+            "nop.err.mfg.mrp-plan.illegal-status",
+            "MRP计划[{planCode}]当前状态不允许此操作",
+            ARG_PLAN_CODE, ARG_CURRENT_STATUS);
+
+    ErrorCode ERR_MRP_LINE_ALREADY_FIRMED = ErrorCode.define(
+            "nop.err.mfg.mrp-plan-line.already-firmed",
+            "MRP计划行[{mrpLineId}]已释放转单，不可重复释放",
+            ARG_MRP_LINE_ID);
+
+    ErrorCode ERR_MRP_RELEASE_MISSING_SUPPLIER = ErrorCode.define(
+            "nop.err.mfg.mrp-release.missing-supplier",
+            "释放采购建议行[{mrpLineId}]须提供供应商[supplierId]",
+            ARG_MRP_LINE_ID);
+
+    ErrorCode ERR_MRP_RELEASE_UNSUPPORTED_ORDER_TYPE = ErrorCode.define(
+            "nop.err.mfg.mrp-release.unsupported-order-type",
+            "MRP计划行[{mrpLineId}]的建议类型不支持释放转单（仅支持采购建议/工单建议）",
+            ARG_MRP_LINE_ID);
 }

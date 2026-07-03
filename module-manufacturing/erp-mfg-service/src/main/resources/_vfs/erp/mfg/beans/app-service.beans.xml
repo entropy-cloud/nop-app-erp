@@ -23,4 +23,16 @@
     <!-- 领料出库移动单请求构造器（plan 2026-07-02-2237-1 Phase 3）：领料单→StockMoveRequest(MANUFACTURING 出库) -->
     <bean id="app.erp.mfg.service.entity.MaterialIssueStockMoveBuilder"
           class="app.erp.mfg.service.entity.MaterialIssueStockMoveBuilder"/>
+
+    <!-- MRP 独立需求整合服务（plan 2026-07-02-2237-2 Phase 1）：销售订单/安全库存/手工需求 → ErpMfgMrpDemand -->
+    <bean id="app.erp.mfg.service.mrp.DemandAggregator"
+          class="app.erp.mfg.service.mrp.DemandAggregator"/>
+
+    <!-- MRP 计算引擎（plan 2026-07-02-2237-2 Phase 1）：BOM 多级展开 + 净需求 + lot sizing + 提前期 → ErpMfgMrpPlanLine -->
+    <bean id="app.erp.mfg.service.mrp.MrpEngine"
+          class="app.erp.mfg.service.mrp.MrpEngine"/>
+
+    <!-- MRP 计划订单释放服务（plan 2026-07-02-2237-2 Phase 2）：PURCHASE_REQUEST→采购订单 / WORK_ORDER_REQUEST→工单 -->
+    <bean id="app.erp.mfg.service.mrp.MrpReleaseService"
+          class="app.erp.mfg.service.mrp.MrpReleaseService"/>
 </beans>

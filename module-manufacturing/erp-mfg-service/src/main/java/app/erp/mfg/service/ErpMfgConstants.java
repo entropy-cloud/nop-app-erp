@@ -71,4 +71,43 @@ public interface ErpMfgConstants {
     // 工单状态机配置项（无 .env/外部服务，经 AppConfig.var 读取）
     String CONFIG_ALLOW_PARTIAL_KIT_START = "erp-mfg.allow-partial-kit-start";
     String CONFIG_INSPECTION_GATE_ENABLED = "erp-mfg.inspection-gate-enabled";
+
+    // MRP 计划状态（erp-mfg/mrp-status）
+    int MRP_STATUS_DRAFT = 10;
+    int MRP_STATUS_RUNNING = 20;
+    int MRP_STATUS_COMPLETED = 30;
+    int MRP_STATUS_FIRMED = 40;
+    int MRP_STATUS_CANCELLED = 50;
+
+    // MRP 计划订单类型（erp-mfg/mrp-order-type）
+    int MRP_ORDER_TYPE_PLANNED_ORDER = 10;
+    int MRP_ORDER_TYPE_PURCHASE_REQUEST = 20;
+    int MRP_ORDER_TYPE_WORK_ORDER_REQUEST = 30;
+    int MRP_ORDER_TYPE_SUBCONTRACT_REQUEST = 40;
+
+    // MRP 需求来源（erp-mfg/mrp-demand-source）
+    int MRP_DEMAND_SOURCE_SALES_ORDER = 10;
+    int MRP_DEMAND_SOURCE_FORECAST = 20;
+    int MRP_DEMAND_SOURCE_SAFETY_STOCK = 30;
+    int MRP_DEMAND_SOURCE_MANUAL = 40;
+
+    // MRP 批量与提前期配置（经 AppConfig.var 读取；无 .env/外部服务）
+    // default-lot-size: 0=lot-for-lot（净需求即建议量），>0 时按倍数向上取整
+    String CONFIG_MRP_DEFAULT_LOT_SIZE = "erp-mfg.default-lot-size";
+    int DEFAULT_MRP_DEFAULT_LOT_SIZE = 0;
+    // 制造件 routing 累计工时换算提前期天数：days = hours × days-per-routing-hour（默认 0.125=8h/天）
+    String CONFIG_MFG_LEADTIME_DAYS_PER_ROUTING_HOUR = "erp-mfg.mfg-leadtime-days-per-routing-hour";
+    double DEFAULT_MFG_LEADTIME_DAYS_PER_ROUTING_HOUR = 0.125;
+
+    // 需求来源单据类型（自由字符串，写入 ErpMfgMrpDemand/PlanLine 的 source 字段用于 pegging 追溯）
+    String SOURCE_BILL_TYPE_SAL_ORDER = "ERP_SAL_ORDER";
+    String SOURCE_BILL_TYPE_MD_MATERIAL = "ERP_MD_MATERIAL";
+    String SOURCE_BILL_TYPE_MRP_MANUAL = "ERP_MFG_MRP_DEMAND";
+
+    // 释放生成的目标单据 code 前缀
+    String RELEASE_PO_CODE_PREFIX = "PO-MRP-";
+    String RELEASE_WO_CODE_PREFIX = "WO-MRP-";
+
+    // 销售订单作废状态（erp-sal/doc-status CANCELLED=30），需求整合排除作废单
+    int SAL_DOC_STATUS_CANCELLED = 30;
 }

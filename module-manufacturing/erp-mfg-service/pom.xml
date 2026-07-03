@@ -18,6 +18,18 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- MRP 需求整合读取销售订单行（ErpSalOrder/ErpSalOrderLine）。manufacturing→sales 单向（R），DAG 无环 -->
+        <dependency>
+            <artifactId>app-erp-sales-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!-- MRP 释放 PURCHASE_REQUEST 生成采购订单（ErpPurOrder/ErpPurOrderLine）。manufacturing→purchase 单向（R），DAG 无环 -->
+        <dependency>
+            <artifactId>app-erp-purchase-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <artifactId>app-erp-manufacturing-codegen</artifactId>
             <groupId>io.nop.app</groupId>
