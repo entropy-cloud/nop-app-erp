@@ -242,13 +242,21 @@ IErpCrmConversionBiz（CRM 转化服务）
 
 > **实现偏离补注**（2026-07-04，plan 2026-07-04-0549-2）：转化动作（convertToCustomer/convertToQuotation）实现于 `ErpCrmLeadBizModel`（`@BizModel("ErpCrmLead")`）而非独立的 `ErpCrmConversion` BizModel——非实体 BizModel 不会被 GraphQL 自动注册为业务对象（unknown-biz-obj-name）。`IErpCrmConversionBiz` 契约接口保留为衔接 seam，由 `ErpCrmLeadBizModel` 实现，GraphQL 动作名为 `ErpCrmLead__convertToCustomer` / `ErpCrmLead__convertToQuotation`。另：`IErpCrmLeadBiz.lose` 的 `lostReasonId`/`lostReasonDesc` 标注 `@Optional`（Nop GraphQL 对 `@Name` 参数默认非空校验，须显式 `@Optional` 才能让业务校验在缺失时抛 `ERR_LOST_REASON_REQUIRED`）。
 
+> **实现偏离补注**（2026-07-04，plan 2026-07-04-0700-1 §3.2 活动提醒）：Event complete/cancel + findDueReminders + getLeadTimeline 实现于 `ErpCrmEventBizModel`（GraphQL 动作 `ErpCrmEvent__complete/cancel/findDueReminders/getLeadTimeline`）。`lastContactDate`/`nextActivityDate` 采用推模式（Event 状态变更时经 `LeadActivityDerivationHelper` 即时回写 Lead，查询零成本避免 N+1）。`findDueReminders` 的窗口范围查询（startDateTime ge/le）由方法内部构造，因 XMeta 仅暴露 eq/in/dateBetween，走 `doFindListByQueryDirectly` 避免限制内部派生查询。
+
 ## 配置点
 
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
 | `erp-crm.auto-convert-duplicate-lead` | false | 发现重复线索时是否自动合并 |
+| `erp-crm.event-reminder-enabled` | true | 是否启用到期事件提醒查询（`findDueReminders`） |
 | `erp-crm.event-reminder-cron` | — | 事件提醒 cron（如每小时） |
 | `erp-crm.default-team-id` | — | 新线索默认团队 |
+| `erp-crm.lead-scoring.auto-qualify` | true | 评分达标是否自动转商机（复用 qualify NEW→QUALIFIED） |
+| `erp-crm.lead-scoring.recalc-on-lead-update` | true | 线索评分相关字段变更是否触发重新评分 |
+| `erp-crm.forecast.commit-threshold` | 80 | 预测 commit 概率阈值（%） |
+| `erp-crm.forecast.upside-threshold` | 30 | 预测 upside 概率阈值（%） |
+| `erp-crm.forecast.accuracy-auto-compute` | true | 期间关闭后是否自动计算准确率 |
 
 ## 菜单归属
 

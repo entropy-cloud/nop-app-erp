@@ -206,3 +206,7 @@
 - `marketing.md`（活动归因, 评分间接关联）
 - `docs/design/crm/README.md` §业务规则 4（事件提醒 Job）
 - `docs/analysis/erp-survey/` — Odoo/ERPNext CRM 评分源码分析
+
+## 实现偏离补注
+
+> **实现偏离补注**（2026-07-04，plan 2026-07-04-0700-1 §3.3）：评分引擎实现于 `ErpCrmLeadScoreBizModel.recalculateScore`（GraphQL 动作 `ErpCrmLeadScore__recalculateScore`），核心逻辑在 support 类 `LeadScoringEngine`。偏离 `lead-scoring.md` "回写 lead.score" 的表述——Lead ORM 无 `score`/`scoreId` 列，Lead 当前分数由按 `leadId + calculatedAt DESC` 派生查询最新 `ErpCrmLeadScore.totalScore` 表达（Option B 不扩 ORM）。评分方法约定（首版）：LOOKUP 的 `formula` 字段指定 Lead 属性名（如 `jobTitle`/`companyName`），`lookupTable` 为 `[{"value":"x","score":N}]`；BOOLEAN 同 LOOKUP 匹配但命中取 `maxScore`；FORMULA 支持 `ENGAGEMENT_SCORE`（已完成事件计数，上限 `maxScore`）或字面量整数。多 `isActive=true` 配置抛 `ERR_MULTIPLE_ACTIVE_SCORE_CONFIG`（强制单一生效口径，符合业务规则8）；无 active 配置时 `recalculateScore` 返回 null（不阻断 Lead 流程，triggeredAction=NONE）。auto-qualify 经 `ErpCrmLeadProcessor.qualify`（复用 NEW→QUALIFIED）而非 `IErpCrmLeadBiz` 接口（避免 BizModel 间循环依赖）。recalc-on-lead-update 在 `ErpCrmLeadBizModel.defaultPrepareUpdate` 同步触发（config-gated）。归一化公式：`totalScore = Σ(rawScore × weight) / Σ(maxScore × weight) × 100`。

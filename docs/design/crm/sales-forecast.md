@@ -215,3 +215,7 @@ OPEN（当前可刷新预测）
 - `README.md` §ErpCrmLead §ErpCrmStage（预测数据源）
 - `territory.md`（区域层级，预测聚合维度）
 - `docs/analysis/erp-survey/` — Salesforce/ERPNext/Odoo 预测模型分析
+
+## 实现偏离补注
+
+> **实现偏离补注**（2026-07-04，plan 2026-07-04-0700-1 §3.4）：预测聚合引擎实现于 `ErpCrmForecastBizModel.refreshForecast`（GraphQL 动作 `ErpCrmForecast__refreshForecast`）+ 期间状态机于 `ErpCrmForecastPeriodBizModel.freeze/closePeriod`（GraphQL 动作 `ErpCrmForecastPeriod__freeze/closePeriod`），核心逻辑在 support 类 `ForecastAggregator`。层级 rollup 首版实现个人（ownerId 非空）→ 团队（teamId 非空、ownerId 空）→ 公司（均为空）三级；区域（territory）层级因 Lead ORM 无 territoryId 直接关联暂未实现（记 Follow-up，触发条件：Lead→Territory 映射就绪时）。`refreshForecast` 采用"清旧重建"策略（先删除期间内所有 Forecast + ForecastLine 再重建）而非逐行 upsert，保证一致性。多币种首版不做汇率换算（`currencyId` 取商机币种，跨币种聚合按 Lead 主币种记，符合 Non-Goal）。准确率公式：`accuracy = 1 - |预测 - 实际| / MAX(预测, 实际)`，预测与实际均为 0 时返回 1.0。`commitAccuracy`/`upsideAccuracy` 为 Double 类型（ORM 列 COMMIT_ACCURACY/UPSIDE_ACCURACY 映射）。FROZEN/CLOSED 拒绝重算抛 `ERR_FORECAST_PERIOD_NOT_OPEN`。

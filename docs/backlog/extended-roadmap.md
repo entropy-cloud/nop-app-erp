@@ -23,7 +23,10 @@
 
 ### Milestone M3 — 新增 8 域
 - 3.1：✅ done（CRM 线索→商机→报价单转化：Lead docStatus 状态机(NEW→QUALIFIED/LOST/CANCELLED, lostReason 必填) + 漏斗阶段流转(moveStage 允许回退+convLog 全量留痕+probability 默认回填) + 线索查重(companyName/contactEmail/contactPhone, auto-convert-duplicate-lead 默认关仅提示) + 转化闭环(convertToCustomer 经 IErpMdPartnerBiz 建客户+新建 OPPORTUNITY+原 lead CONVERTED 弱指针；convertToQuotation 经 IErpSalQuotationBiz save 建报价单+弱指针+CONVERTED；幂等 ERR_LEAD_ALREADY_CONVERTED)；核心零污染 sales/master-data 实体零字段新增，2026-07-04，`docs/plans/2026-07-04-0549-2-crm-lead-opportunity-quotation-conversion.md`）
-- 3.2–3.21：`todo`
+- 3.2：✅ done（CRM 活动提醒/时间线：Event complete/cancel 状态机(PLANNED→COMPLETED/CANCELLED) + 推模式回写 Lead.lastContactDate/nextActivityDate + findDueReminders(config-gated 窗口查询) + getLeadTimeline(Event+Activity 合并倒序)，2026-07-04，`docs/plans/2026-07-04-0700-1-crm-event-reminder-lead-scoring-forecast.md`）
+- 3.3：✅ done（CRM 线索评分引擎：config 驱动 LOOKUP/FORMULA/BOOLEAN 准则 → 归一化 totalScore(0-100) → append-only 评分记录+行级快照 + auto-qualify 阈值触发(复用 qualify NEW→QUALIFIED, config-gated) + recalc-on-lead-update(config-gated) + 多 active config 抛错/无 active 不阻断，2026-07-04，同上计划）
+- 3.4：✅ done（CRM 销售预测：refreshForecast 聚合引擎(commit/upside/best-case/weighted 分类+团队→公司层级 rollup+ForecastLine 快照清旧重建) + 期间状态机(OPEN→FROZEN/CLOSED, FROZEN/CLOSED 拒绝重算) + closePeriod 触发准确率(config-gated)，2026-07-04，同上计划）
+- 3.5–3.21：`todo`
 
 ## Implementation Order
 
@@ -48,9 +51,9 @@
 | # | 工作项 | 域 | 设计文档 |
 |---|--------|-----|---------|
 | 3.1 | ✅ CRM Lead→Opportunity→Quotation 转化 | crm | `crm/README.md` |
-| 3.2 | CRM 活动日历/事件提醒 | crm | `crm/README.md` |
-| 3.3 | CRM 线索评分引擎 | crm | `crm/lead-scoring.md` |
-| 3.4 | CRM 销售预测 | crm | `crm/sales-forecast.md` |
+| 3.2 | ✅ CRM 活动日历/事件提醒 | crm | `crm/README.md` |
+| 3.3 | ✅ CRM 线索评分引擎 | crm | `crm/lead-scoring.md` |
+| 3.4 | ✅ CRM 销售预测 | crm | `crm/sales-forecast.md` |
 | 3.5 | 客服 Ticket + SLA 计时 | customer-service | `customer-service/README.md`, `customer-service/sla.md` |
 | 3.6 | 客服满意度调查 | customer-service | `customer-service/csat.md` |
 | 3.7 | HR 薪酬核算 + 个税计算 | human-resource | `human-resource/payroll.md` |
