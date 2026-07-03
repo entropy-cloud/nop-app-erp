@@ -55,6 +55,12 @@ public interface ErpMntErrors {
     ErrorCode ERR_DOWNTIME_NOT_FOUND = ErrorCode.define("erp.err.mnt.downtime-not-found",
             "停机记录 {downtimeId} 不存在", ARG_DOWNTIME_ID);
 
+    ErrorCode ERR_DOWNTIME_ALREADY_COMPLETED = ErrorCode.define("erp.err.mnt.downtime-already-completed",
+            "停机记录 {downtimeId} 已结束，不可再次记录/结束", ARG_DOWNTIME_ID);
+
+    ErrorCode ERR_DOWNTIME_NOT_STARTED = ErrorCode.define("erp.err.mnt.downtime-not-started",
+            "停机记录 {downtimeId} 尚未开始（无 startTime），不可结束", ARG_DOWNTIME_ID);
+
     ErrorCode ERR_USAGE_NOT_FOUND = ErrorCode.define("erp.err.mnt.usage-not-found",
             "备件消耗单 {usageId} 不存在", ARG_USAGE_ID);
 
