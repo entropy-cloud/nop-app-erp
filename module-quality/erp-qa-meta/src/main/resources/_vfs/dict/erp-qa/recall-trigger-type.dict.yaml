@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 召回触发类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 手动发起
+    value: 10
+    description: 
+  
+  - label: 量具NCR升级
+    value: 20
+    description: 
+  
+  - label: 批次NCR升级
+    value: 30
+    description: 
+  
+  - label: 监管要求
+    value: 40
+    description: 
+  

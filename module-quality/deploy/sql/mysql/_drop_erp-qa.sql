@@ -15,4 +15,6 @@ drop table  if exists  erp_qa_inspection_template_line;
 drop table  if exists  erp_qa_inspection_line;
 drop table  if exists  erp_qa_non_conformance;
 drop table  if exists  erp_qa_action;
+drop table  if exists  erp_qa_recall;
+drop table  if exists  erp_qa_recall_target;
 

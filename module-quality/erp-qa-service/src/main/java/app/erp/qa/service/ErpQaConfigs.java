@@ -52,6 +52,33 @@ public final class ErpQaConfigs {
         return Boolean.parseBoolean(raw.trim());
     }
 
+    /** 召回是否强制审批（默认 true：OPEN→APPROVED 须经 submit/approve）。 */
+    public static boolean isRecallRequireApproval() {
+        String raw = AppConfig.var(ErpQaConstants.CONFIG_RECALL_REQUIRE_APPROVAL, "true");
+        if (raw == null || raw.trim().isEmpty()) {
+            return true;
+        }
+        return Boolean.parseBoolean(raw.trim());
+    }
+
+    /** 召回关闭是否要求全部目标已通知（默认 true）。 */
+    public static boolean isRecallNotifyRequiredToClose() {
+        String raw = AppConfig.var(ErpQaConstants.CONFIG_RECALL_NOTIFY_REQUIRED_TO_CLOSE, "true");
+        if (raw == null || raw.trim().isEmpty()) {
+            return true;
+        }
+        return Boolean.parseBoolean(raw.trim());
+    }
+
+    /** 库存追溯链是否启用（inventory 既有配置，召回定位消费）。 */
+    public static boolean isTraceChainEnabled() {
+        String raw = AppConfig.var(ErpQaConstants.CONFIG_INV_TRACE_CHAIN_ENABLED, "true");
+        if (raw == null || raw.trim().isEmpty()) {
+            return true;
+        }
+        return Boolean.parseBoolean(raw.trim());
+    }
+
     private static List<String> parseCsv(String raw) {
         List<String> result = new ArrayList<>();
         if (raw == null || raw.trim().isEmpty()) {

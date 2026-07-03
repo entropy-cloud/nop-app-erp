@@ -20,6 +20,9 @@ public interface ErpQaErrors {
     String ARG_BILL_TYPE = "billType";
     String ARG_BILL_CODE = "billCode";
     String ARG_MATERIAL_ID = "materialId";
+    String ARG_RECALL_ID = "recallId";
+    String ARG_RECALL_CODE = "recallCode";
+    String ARG_BATCH_NO = "batchNo";
 
     ErrorCode ERR_INSPECTION_NOT_FOUND = ErrorCode.define(
             "nop.err.qa.inspection.not-found",
@@ -75,4 +78,36 @@ public interface ErpQaErrors {
             "nop.err.qa.action.verify-missing-fields",
             "纠正措施[{actionId}]效果验证须同时填写验证人与验证日期",
             ARG_ACTION_ID);
+
+    // ---- 召回事件（2.11）----
+
+    ErrorCode ERR_RECALL_NOT_FOUND = ErrorCode.define(
+            "nop.err.qa.recall.not-found",
+            "召回事件不存在: {recallId}",
+            ARG_RECALL_ID);
+
+    ErrorCode ERR_INVALID_RECALL_STATUS_TRANSITION = ErrorCode.define(
+            "nop.err.qa.recall.illegal-status-transition",
+            "召回事件[{recallCode}]当前状态[{currentStatus}]不允许此操作，期望[{expectedStatus}]",
+            ARG_RECALL_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+
+    ErrorCode ERR_RECALL_APPROVAL_REQUIRED = ErrorCode.define(
+            "nop.err.qa.recall.approval-required",
+            "召回事件[{recallCode}]配置强制审批（erp-qua.recall-require-approval=true），须先 submit 再 approve",
+            ARG_RECALL_CODE);
+
+    ErrorCode ERR_TRACE_CHAIN_DISABLED = ErrorCode.define(
+            "nop.err.qa.recall.trace-chain-disabled",
+            "库存追溯链未启用（erp-inv.trace-chain-enabled=false），召回目标定位不可用",
+            ARG_RECALL_CODE, ARG_BATCH_NO);
+
+    ErrorCode ERR_RECALL_LOCATE_NO_BATCH = ErrorCode.define(
+            "nop.err.qa.recall.locate-no-batch",
+            "召回事件[{recallCode}]未指定召回批次（batchId/batchNo），无法定位销售出库目标",
+            ARG_RECALL_CODE);
+
+    ErrorCode ERR_RECALL_NOTIFY_INCOMPLETE = ErrorCode.define(
+            "nop.err.qa.recall.notify-incomplete",
+            "召回事件[{recallCode}]存在未通知目标或未标记客户通知，禁止关闭（erp-qua.recall-notify-required-to-close=true）",
+            ARG_RECALL_CODE);
 }

@@ -309,6 +309,55 @@ CREATE TABLE erp_qa_action(
   constraint PK_erp_qa_action primary key (ID)
 );
 
+CREATE TABLE erp_qa_recall(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  RECALL_NAME VARCHAR2(200) NOT NULL ,
+  TRIGGER_TYPE INTEGER NOT NULL ,
+  SOURCE_NCR_ID NUMBER(20)  ,
+  MATERIAL_ID NUMBER(20)  ,
+  BATCH_ID NUMBER(20)  ,
+  SERIAL_NO VARCHAR2(50)  ,
+  ROOT_CAUSE VARCHAR2(2000)  ,
+  SEVERITY_LEVEL INTEGER NOT NULL ,
+  BUSINESS_DATE DATE NOT NULL ,
+  NOTIFY_CUSTOMER CHAR(1) default 0   ,
+  STATUS INTEGER NOT NULL ,
+  APPROVE_STATUS INTEGER NOT NULL ,
+  APPROVED_BY VARCHAR2(36)  ,
+  APPROVED_AT DATE  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_qa_recall primary key (ID)
+);
+
+CREATE TABLE erp_qa_recall_target(
+  ID NUMBER(20) NOT NULL ,
+  RECALL_ID NUMBER(20) NOT NULL ,
+  PARTNER_ID NUMBER(20)  ,
+  BATCH_NO VARCHAR2(50)  ,
+  SERIAL_NO VARCHAR2(50)  ,
+  SALES_DELIVERY_ID NUMBER(20)  ,
+  SHIPPED_QTY NUMBER(20,4)  ,
+  NOTIFIED_AT DATE  ,
+  NOTIFIED_BY VARCHAR2(36)  ,
+  RETURN_STATUS INTEGER NOT NULL ,
+  GENERATED_RETURN_ID NUMBER(20)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_qa_recall_target primary key (ID)
+);
+
 
       COMMENT ON TABLE erp_md_material IS '物料';
                 
@@ -777,4 +826,90 @@ CREATE TABLE erp_qa_action(
       COMMENT ON COLUMN erp_qa_action.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_qa_action.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_qa_recall IS '召回事件';
+                
+      COMMENT ON COLUMN erp_qa_recall.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_qa_recall.CODE IS '单号';
+                    
+      COMMENT ON COLUMN erp_qa_recall.RECALL_NAME IS '召回名称';
+                    
+      COMMENT ON COLUMN erp_qa_recall.TRIGGER_TYPE IS '触发类型';
+                    
+      COMMENT ON COLUMN erp_qa_recall.SOURCE_NCR_ID IS '来源NCR(弱指针)';
+                    
+      COMMENT ON COLUMN erp_qa_recall.MATERIAL_ID IS '召回物料';
+                    
+      COMMENT ON COLUMN erp_qa_recall.BATCH_ID IS '召回批次(弱指针→ErpInvBatch)';
+                    
+      COMMENT ON COLUMN erp_qa_recall.SERIAL_NO IS '召回序列号';
+                    
+      COMMENT ON COLUMN erp_qa_recall.ROOT_CAUSE IS '根本原因';
+                    
+      COMMENT ON COLUMN erp_qa_recall.SEVERITY_LEVEL IS '严重程度';
+                    
+      COMMENT ON COLUMN erp_qa_recall.BUSINESS_DATE IS '业务日期';
+                    
+      COMMENT ON COLUMN erp_qa_recall.NOTIFY_CUSTOMER IS '已通知客户';
+                    
+      COMMENT ON COLUMN erp_qa_recall.STATUS IS '召回状态';
+                    
+      COMMENT ON COLUMN erp_qa_recall.APPROVE_STATUS IS '审核状态';
+                    
+      COMMENT ON COLUMN erp_qa_recall.APPROVED_BY IS '审批人';
+                    
+      COMMENT ON COLUMN erp_qa_recall.APPROVED_AT IS '审批时间';
+                    
+      COMMENT ON COLUMN erp_qa_recall.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_qa_recall.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_qa_recall.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_qa_recall.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_qa_recall.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_qa_recall.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_qa_recall.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_qa_recall_target IS '召回目标';
+                
+      COMMENT ON COLUMN erp_qa_recall_target.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_qa_recall_target.RECALL_ID IS '召回事件';
+                    
+      COMMENT ON COLUMN erp_qa_recall_target.PARTNER_ID IS '受影响客户';
+                    
+      COMMENT ON COLUMN erp_qa_recall_target.BATCH_NO IS '批号';
+                    
+      COMMENT ON COLUMN erp_qa_recall_target.SERIAL_NO IS '序列号';
+                    
+      COMMENT ON COLUMN erp_qa_recall_target.SALES_DELIVERY_ID IS '销售出库单(弱指针)';
+                    
+      COMMENT ON COLUMN erp_qa_recall_target.SHIPPED_QTY IS '发货数量';
+                    
+      COMMENT ON COLUMN erp_qa_recall_target.NOTIFIED_AT IS '通知时间';
+                    
+      COMMENT ON COLUMN erp_qa_recall_target.NOTIFIED_BY IS '通知人';
+                    
+      COMMENT ON COLUMN erp_qa_recall_target.RETURN_STATUS IS '退货状态';
+                    
+      COMMENT ON COLUMN erp_qa_recall_target.GENERATED_RETURN_ID IS '已生成退货单(弱指针)';
+                    
+      COMMENT ON COLUMN erp_qa_recall_target.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_qa_recall_target.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_qa_recall_target.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_qa_recall_target.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_qa_recall_target.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_qa_recall_target.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_qa_recall_target.UPDATE_TIME IS '修改时间';
                     

@@ -31,6 +31,10 @@ alter table erp_qa_non_conformance add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT
 
 alter table erp_qa_action add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_qa_recall add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_qa_recall_target add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_md_material drop constraint PK_erp_md_material;
 alter table erp_md_material add constraint PK_erp_md_material primary key (NOP_TENANT_ID, id);
 
@@ -78,5 +82,11 @@ alter table erp_qa_non_conformance add constraint PK_erp_qa_non_conformance prim
 
 alter table erp_qa_action drop constraint PK_erp_qa_action;
 alter table erp_qa_action add constraint PK_erp_qa_action primary key (NOP_TENANT_ID, id);
+
+alter table erp_qa_recall drop constraint PK_erp_qa_recall;
+alter table erp_qa_recall add constraint PK_erp_qa_recall primary key (NOP_TENANT_ID, id);
+
+alter table erp_qa_recall_target drop constraint PK_erp_qa_recall_target;
+alter table erp_qa_recall_target add constraint PK_erp_qa_recall_target primary key (NOP_TENANT_ID, id);
 
 

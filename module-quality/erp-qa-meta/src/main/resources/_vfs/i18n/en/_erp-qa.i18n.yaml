@@ -8,6 +8,8 @@ entity:
     ErpQaInspectionTemplateLine: Inspection Template Line
     ErpQaNonConformance: Non-Conformance Report
     ErpQaQualityGoal: Quality Goal
+    ErpQaRecall: Recall Event
+    ErpQaRecallTarget: Recall Target
     ErpQaReview: Quality Review
     ErpQaRiskRegister: Risk Register
     ErpQaSamplingPlan: Sampling Plan
@@ -219,6 +221,59 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       responsiblePerson: Responsible Person
+    ErpQaRecall:
+      id: ID
+      code: Code
+      recallName: Recall Name
+      triggerType: Trigger Type
+      triggerType_label: null
+      sourceNcrId: Source NCR
+      materialId: Material
+      batchId: Batch
+      serialNo: Serial No
+      rootCause: Root Cause
+      severityLevel: Severity Level
+      severityLevel_label: null
+      businessDate: Business Date
+      notifyCustomer: Notify Customer
+      status: Status
+      status_label: null
+      approveStatus: Approve Status
+      approveStatus_label: null
+      approvedBy: Approved By
+      approvedAt: Approved At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      sourceNcr: Source NCR
+      material: Material
+      targets: Targets
+    ErpQaRecallTarget:
+      id: ID
+      recallId: Recall
+      partnerId: Affected Customer
+      batchNo: Batch No
+      serialNo: Serial No
+      salesDeliveryId: Sales Delivery
+      shippedQty: Shipped Qty
+      notifiedAt: Notified At
+      notifiedBy: Notified By
+      returnStatus: Return Status
+      returnStatus_label: null
+      generatedReturnId: Generated Return
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      recall: Recall
+      partner: Affected Customer
     ErpQaReview:
       id: ID
       code: Code
@@ -295,6 +350,10 @@ dict:
     erp-qa/goal-status: Quality Goal Status
     erp-qa/review-type: Review Type
     erp-qa/disposition-type: Disposition Type
+    erp-qa/recall-trigger-type: Recall Trigger Type
+    erp-qa/recall-severity: Recall Severity
+    erp-qa/recall-status: Recall Status
+    erp-qa/recall-target-return-status: Recall Target Return Status
 dict.option.label:
   erp-qa/inspection-type:
     '10': Incoming Inspection
@@ -353,3 +412,23 @@ dict.option.label:
     '20': Return
     '30': Waiver Accept
     '40': Downgrade Use
+  erp-qa/recall-trigger-type:
+    '10': Manual
+    '20': Gauge NCR Upgrade
+    '30': Batch NCR Upgrade
+    '40': Regulatory
+  erp-qa/recall-severity:
+    '10': Low
+    '20': Medium
+    '30': High
+    '40': Critical
+  erp-qa/recall-status:
+    '10': Open
+    '20': Approved
+    '30': In Progress
+    '40': Closed
+    '50': Cancelled
+  erp-qa/recall-target-return-status:
+    '10': Pending
+    '20': Notified
+    '30': Returned

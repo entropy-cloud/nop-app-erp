@@ -100,6 +100,31 @@
             <option code="CONCESSION" label="让步接收" value="30" i18n-en:label='Waiver Accept'/>
             <option code="DOWNGRADE" label="降级使用" value="40" i18n-en:label='Downgrade Use'/>
         </dict>
+        <!-- 召回（2.11）字典 -->
+        <dict label="召回触发类型" name="erp-qa/recall-trigger-type" valueType="int" i18n-en:label='Recall Trigger Type'>
+            <option code="MANUAL" label="手动发起" value="10" i18n-en:label='Manual'/>
+            <option code="GAUGE_NCR_UPGRADE" label="量具NCR升级" value="20" i18n-en:label='Gauge NCR Upgrade'/>
+            <option code="BATCH_NCR_UPGRADE" label="批次NCR升级" value="30" i18n-en:label='Batch NCR Upgrade'/>
+            <option code="REGULATORY" label="监管要求" value="40" i18n-en:label='Regulatory'/>
+        </dict>
+        <dict label="召回严重程度" name="erp-qa/recall-severity" valueType="int" i18n-en:label='Recall Severity'>
+            <option code="LOW" label="低" value="10" i18n-en:label='Low'/>
+            <option code="MEDIUM" label="中" value="20" i18n-en:label='Medium'/>
+            <option code="HIGH" label="高" value="30" i18n-en:label='High'/>
+            <option code="CRITICAL" label="严重" value="40" i18n-en:label='Critical'/>
+        </dict>
+        <dict label="召回状态" name="erp-qa/recall-status" valueType="int" i18n-en:label='Recall Status'>
+            <option code="OPEN" label="待处理" value="10" i18n-en:label='Open'/>
+            <option code="APPROVED" label="已审批" value="20" i18n-en:label='Approved'/>
+            <option code="IN_PROGRESS" label="执行中" value="30" i18n-en:label='In Progress'/>
+            <option code="CLOSED" label="已关闭" value="40" i18n-en:label='Closed'/>
+            <option code="CANCELLED" label="已取消" value="50" i18n-en:label='Cancelled'/>
+        </dict>
+        <dict label="召回目标退货状态" name="erp-qa/recall-target-return-status" valueType="int" i18n-en:label='Recall Target Return Status'>
+            <option code="PENDING" label="待通知" value="10" i18n-en:label='Pending'/>
+            <option code="NOTIFIED" label="已通知" value="20" i18n-en:label='Notified'/>
+            <option code="RETURNED" label="已退货" value="30" i18n-en:label='Returned'/>
+        </dict>
     </dicts>
 
     <domains>
@@ -478,6 +503,72 @@
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
                     <join><on leftProp="orgId" rightProp="id"/></join>
                 </to-one>
+            </relations>
+        </entity>
+
+        <!-- 召回事件头（2.11） -->
+        <entity className="app.erp.qa.dao.entity.ErpQaRecall"
+                displayName="召回事件" ext:icon="alert-octagon" i18n-en:displayName="Recall Event" name="app.erp.qa.dao.entity.ErpQaRecall"
+                tableName="erp_qa_recall" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="recallName" displayName="召回名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="RECALL_NAME" propId="3" stdDataType="string" i18n-en:displayName='Recall Name' />
+                <column name="triggerType" displayName="触发类型" ext:dict="erp-qa/recall-trigger-type" mandatory="true" code="TRIGGER_TYPE" propId="4" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Trigger Type' />
+                <column name="sourceNcrId" displayName="来源NCR(弱指针)" stdSqlType="BIGINT" code="SOURCE_NCR_ID" propId="5" stdDataType="long" i18n-en:displayName='Source NCR' />
+                <column name="materialId" displayName="召回物料" stdSqlType="BIGINT" code="MATERIAL_ID" propId="6" stdDataType="long" i18n-en:displayName='Material' />
+                <column name="batchId" displayName="召回批次(弱指针→ErpInvBatch)" stdSqlType="BIGINT" code="BATCH_ID" propId="7" stdDataType="long" i18n-en:displayName='Batch' />
+                <column name="serialNo" displayName="召回序列号" stdSqlType="VARCHAR" precision="50" code="SERIAL_NO" propId="8" stdDataType="string" i18n-en:displayName='Serial No' />
+                <column name="rootCause" displayName="根本原因" stdSqlType="VARCHAR" precision="2000" code="ROOT_CAUSE" propId="9" stdDataType="string" i18n-en:displayName='Root Cause' />
+                <column name="severityLevel" displayName="严重程度" ext:dict="erp-qa/recall-severity" mandatory="true" code="SEVERITY_LEVEL" propId="10" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Severity Level' />
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="11" stdDataType="date" i18n-en:displayName='Business Date' />
+                <column name="notifyCustomer" displayName="已通知客户" stdSqlType="BOOLEAN" defaultValue="false" code="NOTIFY_CUSTOMER" propId="12" stdDataType="boolean" i18n-en:displayName='Notify Customer' />
+                <column name="status" displayName="召回状态" ext:dict="erp-qa/recall-status" mandatory="true" code="STATUS" propId="13" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
+                <column name="approveStatus" displayName="审核状态" ext:dict="erp-qa/approve-status" mandatory="true" code="APPROVE_STATUS" propId="14" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Approve Status' />
+                <column name="approvedBy" stdDomain="userId" displayName="审批人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="15" stdDataType="string" i18n-en:displayName='Approved By' />
+                <column name="approvedAt" displayName="审批时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="16" stdDataType="datetime" i18n-en:displayName='Approved At' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="17" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="18" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="19" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="20" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="21" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="22" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="23" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-one name="sourceNcr" refEntityName="app.erp.qa.dao.entity.ErpQaNonConformance" tagSet="pub" i18n-en:displayName='Source NCR'><join><on leftProp="sourceNcrId" rightProp="id"/></join></to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
+                <to-many name="targets" refEntityName="app.erp.qa.dao.entity.ErpQaRecallTarget" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Targets' ext:estRows="50"><join><on leftProp="id" rightProp="recallId"/></join></to-many>
+            </relations>
+        </entity>
+
+        <!-- 召回目标（受影响客户/批次，2.11） -->
+        <entity className="app.erp.qa.dao.entity.ErpQaRecallTarget"
+                displayName="召回目标" ext:icon="crosshair" i18n-en:displayName="Recall Target" name="app.erp.qa.dao.entity.ErpQaRecallTarget"
+                tableName="erp_qa_recall_target" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="recallId" displayName="召回事件" stdSqlType="BIGINT" mandatory="true" code="RECALL_ID" propId="2" stdDataType="long" i18n-en:displayName='Recall' />
+                <column name="partnerId" displayName="受影响客户" stdSqlType="BIGINT" code="PARTNER_ID" propId="3" stdDataType="long" i18n-en:displayName='Affected Customer' />
+                <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="4" stdDataType="string" i18n-en:displayName='Batch No' />
+                <column name="serialNo" displayName="序列号" stdSqlType="VARCHAR" precision="50" code="SERIAL_NO" propId="5" stdDataType="string" i18n-en:displayName='Serial No' />
+                <column name="salesDeliveryId" displayName="销售出库单(弱指针)" stdSqlType="BIGINT" code="SALES_DELIVERY_ID" propId="6" stdDataType="long" i18n-en:displayName='Sales Delivery' />
+                <column name="shippedQty" displayName="发货数量" domain="quantity" code="SHIPPED_QTY" propId="7" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Shipped Qty' />
+                <column name="notifiedAt" displayName="通知时间" stdSqlType="DATETIME" code="NOTIFIED_AT" propId="8" stdDataType="datetime" i18n-en:displayName='Notified At' />
+                <column name="notifiedBy" stdDomain="userId" displayName="通知人" stdSqlType="VARCHAR" precision="36" code="NOTIFIED_BY" propId="9" stdDataType="string" i18n-en:displayName='Notified By' />
+                <column name="returnStatus" displayName="退货状态" ext:dict="erp-qa/recall-target-return-status" mandatory="true" code="RETURN_STATUS" propId="10" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Return Status' />
+                <column name="generatedReturnId" displayName="已生成退货单(弱指针)" stdSqlType="BIGINT" code="GENERATED_RETURN_ID" propId="11" stdDataType="long" i18n-en:displayName='Generated Return' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="13" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="14" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="15" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="16" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="17" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-one name="recall" refEntityName="app.erp.qa.dao.entity.ErpQaRecall" tagSet="pub" i18n-en:displayName='Recall'><join><on leftProp="recallId" rightProp="id"/></join></to-one>
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Affected Customer'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 

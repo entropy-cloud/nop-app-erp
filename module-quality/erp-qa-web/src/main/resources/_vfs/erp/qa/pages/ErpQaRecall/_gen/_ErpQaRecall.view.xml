@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:schema="/nop/schema/xui/xview.xdef" bizObjName="ErpQaRecall" xmlns:i18n-en="i18n-en"
+      xmlns:x="/nop/schema/xdsl.xdef" xmlns:j="j" xmlns:c="c" xmlns:gql="gql" xmlns:view-gen="view-gen" xmlns:xpl="xpl">
+
+    <objMeta>/erp/qa/model/ErpQaRecall/ErpQaRecall.xmeta</objMeta>
+
+    <controlLib>/nop/web/xlib/control.xlib</controlLib>
+
+    <x:gen-extends>
+        <view-gen:DefaultViewGenExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <view-gen:DefaultViewPostExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:post-extends>
+
+    <grids>
+        <grid id="list" x:abstract="true">
+            <cols>
+
+                <!--ID-->
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--单号-->
+                <col id="code" mandatory="true" sortable="true"/>
+
+                <!--召回名称-->
+                <col id="recallName" mandatory="true" sortable="true"/>
+
+                <!--触发类型-->
+                <col id="triggerType" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--来源NCR(弱指针)-->
+                <col id="sourceNcrId" ui:number="true" sortable="true"/>
+
+                <!--召回物料-->
+                <col id="materialId" ui:number="true" sortable="true"/>
+
+                <!--召回批次(弱指针→ErpInvBatch)-->
+                <col id="batchId" ui:number="true" sortable="true"/>
+
+                <!--召回序列号-->
+                <col id="serialNo" sortable="true"/>
+
+                <!--根本原因-->
+                <col id="rootCause" sortable="true"/>
+
+                <!--严重程度-->
+                <col id="severityLevel" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--业务日期-->
+                <col id="businessDate" mandatory="true" sortable="true"/>
+
+                <!--已通知客户-->
+                <col id="notifyCustomer" sortable="true"/>
+
+                <!--召回状态-->
+                <col id="status" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--审核状态-->
+                <col id="approveStatus" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--审批人-->
+                <col id="approvedBy" sortable="true"/>
+
+                <!--审批时间-->
+                <col id="approvedAt" sortable="true"/>
+
+                <!--备注-->
+                <col id="remark" sortable="true"/>
+
+                <!--逻辑删除版本-->
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--创建人-->
+                <col id="createdBy" mandatory="true" sortable="true"/>
+
+                <!--创建时间-->
+                <col id="createTime" mandatory="true" sortable="true"/>
+
+                <!--修改人-->
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+
+                <!--修改时间-->
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list" x:prototype="list" x:abstract="true"/>
+    </grids>
+
+    <forms>
+        <form id="view" editMode="view" title="查看-召回事件" i18n-en:title="View Recall Event">
+            <layout>
+ id[ID] code[单号]
+ recallName[召回名称] triggerType[触发类型]
+ sourceNcrId[来源NCR(弱指针)] materialId[召回物料]
+ batchId[召回批次(弱指针→ErpInvBatch)] serialNo[召回序列号]
+ rootCause[根本原因] severityLevel[严重程度]
+ businessDate[业务日期] notifyCustomer[已通知客户]
+ status[召回状态] approveStatus[审核状态]
+ approvedBy[审批人] approvedAt[审批时间]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+</layout>
+        </form>
+        <form id="add" editMode="add" title="新增-召回事件" i18n-en:title="Add Recall Event">
+            <layout>
+ id[ID] code[单号]
+ recallName[召回名称] triggerType[触发类型]
+ sourceNcrId[来源NCR(弱指针)] materialId[召回物料]
+ batchId[召回批次(弱指针→ErpInvBatch)] serialNo[召回序列号]
+ rootCause[根本原因] severityLevel[严重程度]
+ businessDate[业务日期] notifyCustomer[已通知客户]
+ status[召回状态] approveStatus[审核状态]
+ approvedBy[审批人] approvedAt[审批时间]
+ remark[备注] 
+</layout>
+        </form>
+        <form id="edit" editMode="edit" title="编辑-召回事件" i18n-en:title="Edit Recall Event">
+            <layout>
+ id[ID] code[单号]
+ recallName[召回名称] triggerType[触发类型]
+ sourceNcrId[来源NCR(弱指针)] materialId[召回物料]
+ batchId[召回批次(弱指针→ErpInvBatch)] serialNo[召回序列号]
+ rootCause[根本原因] severityLevel[严重程度]
+ businessDate[业务日期] notifyCustomer[已通知客户]
+ status[召回状态] approveStatus[审核状态]
+ approvedBy[审批人] approvedAt[审批时间]
+ remark[备注] delVersion[逻辑删除版本]
+</layout>
+        </form>
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-召回事件" i18n-en:title="Update Recall Event"/>
+    </forms>
+
+    <pages>
+        <crud name="view-list" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpQaRecall__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </crud>
+        <crud name="main" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpQaRecall__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+            <listActions>
+                <action id="batch-delete-button" label="@i18n:common.batchDelete" batch="true">
+                    <api url="@mutation:ErpQaRecall__batchDelete?ids=$ids"/>
+                    <confirmText>@i18n:common.confirmBatchDelete</confirmText>
+                </action>
+                <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
+                    <dialog page="add"/>
+                </action>
+            </listActions>
+            <rowActions>
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+                <action id="row-update-button" level="primary" label="@i18n:common.edit" x:abstract="true">
+                    <dialog page="update"/>
+                </action>
+                <action id="row-delete-button" level="danger" label="@i18n:common.delete" x:abstract="true">
+                    <api url="@mutation:ErpQaRecall__delete?id=$id"/>
+                    <confirmText>@i18n:common.confirmDelete</confirmText>
+                </action>
+                <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
+                    <action id="row-update-button" label="@i18n:common.edit">
+                        <dialog page="update"/>
+                    </action>
+                    <action id="row-delete-button" label="@i18n:common.delete">
+                        <api url="@mutation:ErpQaRecall__delete?id=$id"/>
+                        <confirmText>@i18n:common.confirmDelete</confirmText>
+                    </action>
+                </actionGroup>
+            </rowActions>
+        </crud>
+        <picker name="picker" grid="pick-list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table noOperations="true">
+                <api url="@query:ErpQaRecall__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </picker>
+        <simple name="add" form="add">
+            <api url="@mutation:ErpQaRecall__save/id"/>
+        </simple>
+        <simple name="view" form="view">
+            <initApi url="@query:ErpQaRecall__get?id=$id" gql:selection="{@formSelection}"/>
+        </simple>
+        <simple name="update" form="edit">
+            <initApi url="@query:ErpQaRecall__get?id=$id" gql:selection="{@formSelection}"/>
+            <api url="@mutation:ErpQaRecall__update/id?id=$id" withFormData="true"/>
+        </simple>
+    </pages>
+</view>

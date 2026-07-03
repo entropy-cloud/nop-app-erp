@@ -29,6 +29,28 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- compile: 召回目标定位经库存批次追溯（IErpInvStockMoveBiz.batchTrace + IErpInvBatchBiz + TraceChainResult 位于 inventory dao）。
+             quality→inventory 单向只读（R），DAG 无环。 -->
+        <dependency>
+            <artifactId>app-erp-inventory-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!-- compile: 召回批量退货经销售退货标准流程编排（IErpSalReturnBiz + IErpSalDeliveryBiz + ErpSalReturn 位于 sales dao）。
+             quality→sales 单向写触发，DAG 无环。注意：sales-service 与 quality-service 已存在反向 test 依赖
+             （sales 强制质检门控注入 IErpQaInspectionBiz），故 quality 测试不直接依赖 sales-service（避免 reactor 环），
+             改用 test-mock-sales.beans.xml 注册 CrudBizModel 桩接管 IErpSalReturnBiz/IErpSalDeliveryBiz。 -->
+        <dependency>
+            <artifactId>app-erp-sales-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <artifactId>app-erp-sales-meta</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
         <!-- test-only: 引入 master-data 使 erp-md/* 字典与 ErpMd* 实体（物料/供应商/仓库/职员/组织）注册到
              qa-service 测试 classpath，质检单 ErpQaInspection 跨域引用校验与 schema 初始化可通过 -->
         <dependency>
@@ -37,6 +59,16 @@
             <version>1.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
+        <!-- test-only: 召回目标定位 batchTrace Bean 实现（IErpInvStockMoveBiz/IErpInvBatchBiz）使测试可注入运行。 -->
+        <dependency>
+            <artifactId>app-erp-inventory-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- 注：不引入 app-erp-sales-service（test）——sales-service 已反向 test 依赖 quality-service，
+             再引入会形成 reactor 环。召回批量退货测试改用 test-mock-sales.beans.xml 桩。 -->
+
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-biz</artifactId>

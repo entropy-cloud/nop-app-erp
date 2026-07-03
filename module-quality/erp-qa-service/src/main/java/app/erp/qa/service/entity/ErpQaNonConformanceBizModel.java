@@ -2,7 +2,9 @@
 package app.erp.qa.service.entity;
 
 import app.erp.qa.biz.IErpQaNonConformanceBiz;
+import app.erp.qa.biz.IErpQaRecallBiz;
 import app.erp.qa.dao.entity.ErpQaNonConformance;
+import app.erp.qa.dao.entity.ErpQaRecall;
 import app.erp.qa.service.ErpQaConstants;
 import app.erp.qa.service.ErpQaErrors;
 import io.nop.api.core.annotations.biz.BizModel;
@@ -13,7 +15,10 @@ import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * NCR BizModel。在 {@link CrudBizModel} 标准 CRUD 之上实现 NCR 5 态状态机
@@ -30,6 +35,8 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
 
     @Inject
     NcrLifecycleService ncrLifecycleService;
+    @Inject
+    IErpQaRecallBiz recallBiz;
 
     public ErpQaNonConformanceBizModel() {
         setEntityName(ErpQaNonConformance.class.getName());
@@ -37,6 +44,10 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
 
     public void setNcrLifecycleService(NcrLifecycleService ncrLifecycleService) {
         this.ncrLifecycleService = ncrLifecycleService;
+    }
+
+    public void setRecallBiz(IErpQaRecallBiz recallBiz) {
+        this.recallBiz = recallBiz;
     }
 
     @Override
@@ -72,10 +83,35 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
     public ErpQaNonConformance escalateToRecall(@Name("ncrId") Long ncrId, IServiceContext context) {
         ErpQaNonConformance ncr = requireNcr(ncrId, context);
         requireNcrStatus(ncr, ErpQaConstants.NCR_STATUS_IN_REVIEW, "IN_REVIEW");
-        // 升级为召回（终态，指向召回事件 2.11；召回属 Non-Goal，本期仅状态迁移）
+        // 升级为召回（终态，仅状态迁移占位；不建召回实体。真正建召回用 upgradeToRecall）
         ncr.setStatus(ErpQaConstants.NCR_STATUS_ESCALATED_TO_RECALL);
         dao().updateEntity(ncr);
         return ncr;
+    }
+
+    @Override
+    @BizMutation
+    public ErpQaRecall upgradeToRecall(@Name("ncrId") Long ncrId, IServiceContext context) {
+        ErpQaNonConformance ncr = requireNcr(ncrId, context);
+        requireNcrStatus(ncr, ErpQaConstants.NCR_STATUS_IN_REVIEW, "IN_REVIEW");
+        // NCR→ESCALATED_TO_RECALL（字典值已存在），并生成召回事件（继承 NCR 物料/严重程度）
+        ncr.setStatus(ErpQaConstants.NCR_STATUS_ESCALATED_TO_RECALL);
+        dao().updateEntity(ncr);
+
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("code", "RC-FROM-NCR-" + ncr.getId());
+        data.put("recallName", "NCR升级召回:" + ncr.getCode());
+        data.put("triggerType", ErpQaConstants.RECALL_TRIGGER_BATCH_NCR_UPGRADE);
+        data.put("sourceNcrId", ncr.getId());
+        if (ncr.getMaterialId() != null) {
+            data.put("materialId", ncr.getMaterialId());
+        }
+        // NCR severity(LOW/NORMAL/HIGH/CRITICAL=10/20/30/40) 与 recall severity(LOW/MEDIUM/HIGH/CRITICAL=10/20/30/40) 码值对齐
+        int severity = ncr.getSeverity() != null ? ncr.getSeverity() : ErpQaConstants.RECALL_SEVERITY_MEDIUM;
+        data.put("severityLevel", severity);
+        data.put("businessDate", LocalDate.now().toString());
+        data.put("rootCause", ncr.getDescription());
+        return recallBiz.register(data, context);
     }
 
     @Override

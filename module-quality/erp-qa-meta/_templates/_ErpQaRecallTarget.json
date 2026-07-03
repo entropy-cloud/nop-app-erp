@@ -1,0 +1,23 @@
+{
+  "id": 0,
+  "recallId": 0,
+  "partnerId": 0,
+  "batchNo": "",
+  "serialNo": "",
+  "salesDeliveryId": 0,
+  "shippedQty": 0.0,
+  "notifiedAt": "2000-01-01 14:00:00",
+  "notifiedBy": "",
+  "returnStatus": 0,
+  "returnStatus_label": "",
+  "generatedReturnId": 0,
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "recall": null,
+  "partner": null
+}

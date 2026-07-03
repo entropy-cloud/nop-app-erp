@@ -8,6 +8,8 @@ entity:
     ErpQaInspectionTemplateLine: 质检模板行
     ErpQaNonConformance: 不合格品报告
     ErpQaQualityGoal: 质量目标
+    ErpQaRecall: 召回事件
+    ErpQaRecallTarget: 召回目标
     ErpQaReview: 质量评审
     ErpQaRiskRegister: 风险登记
     ErpQaSamplingPlan: 抽样方案
@@ -216,6 +218,59 @@ prop:
       status_label: 状态
       targetValue: 目标值
       unit: 单位
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpQaRecall:
+      approveStatus: 审核状态
+      approveStatus_label: 审核状态
+      approvedAt: 审批时间
+      approvedBy: 审批人
+      batchId: 召回批次(弱指针→ErpInvBatch)
+      businessDate: 业务日期
+      code: 单号
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      material: null
+      materialId: 召回物料
+      notifyCustomer: 已通知客户
+      recallName: 召回名称
+      remark: 备注
+      rootCause: 根本原因
+      serialNo: 召回序列号
+      severityLevel: 严重程度
+      severityLevel_label: 严重程度
+      sourceNcr: null
+      sourceNcrId: 来源NCR(弱指针)
+      status: 召回状态
+      status_label: 召回状态
+      targets: null
+      triggerType: 触发类型
+      triggerType_label: 触发类型
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpQaRecallTarget:
+      batchNo: 批号
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      generatedReturnId: 已生成退货单(弱指针)
+      id: ID
+      notifiedAt: 通知时间
+      notifiedBy: 通知人
+      partner: null
+      partnerId: 受影响客户
+      recall: null
+      recallId: 召回事件
+      remark: 备注
+      returnStatus: 退货状态
+      returnStatus_label: 退货状态
+      salesDeliveryId: 销售出库单(弱指针)
+      serialNo: 序列号
+      shippedQty: 发货数量
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本

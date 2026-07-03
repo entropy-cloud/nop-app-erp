@@ -11,4 +11,8 @@
     <!-- NCR 生命周期服务（plan 2026-07-02-2237-3 Phase 3）：REJECTED 自动生成 NCR + resolve 门控校验 -->
     <bean id="app.erp.qa.service.entity.NcrLifecycleService"
           class="app.erp.qa.service.entity.NcrLifecycleService"/>
+
+    <!-- 召回目标定位器（plan 2026-07-03-1707-3 Phase 2）：经库存批次追溯 batchTrace 反查受影响销售出库 → ErpQaRecallTarget -->
+    <bean id="app.erp.qa.service.entity.RecallTargetLocator"
+          class="app.erp.qa.service.entity.RecallTargetLocator"/>
 </beans>

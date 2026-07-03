@@ -228,4 +228,84 @@ public interface _ErpQaDaoConstants {
      */
     int DISPOSITION_TYPE_DOWNGRADE = 40;
                     
+    /**
+     * 召回触发类型: 手动发起 
+     */
+    int RECALL_TRIGGER_TYPE_MANUAL = 10;
+                    
+    /**
+     * 召回触发类型: 量具NCR升级 
+     */
+    int RECALL_TRIGGER_TYPE_GAUGE_NCR_UPGRADE = 20;
+                    
+    /**
+     * 召回触发类型: 批次NCR升级 
+     */
+    int RECALL_TRIGGER_TYPE_BATCH_NCR_UPGRADE = 30;
+                    
+    /**
+     * 召回触发类型: 监管要求 
+     */
+    int RECALL_TRIGGER_TYPE_REGULATORY = 40;
+                    
+    /**
+     * 召回严重程度: 低 
+     */
+    int RECALL_SEVERITY_LOW = 10;
+                    
+    /**
+     * 召回严重程度: 中 
+     */
+    int RECALL_SEVERITY_MEDIUM = 20;
+                    
+    /**
+     * 召回严重程度: 高 
+     */
+    int RECALL_SEVERITY_HIGH = 30;
+                    
+    /**
+     * 召回严重程度: 严重 
+     */
+    int RECALL_SEVERITY_CRITICAL = 40;
+                    
+    /**
+     * 召回状态: 待处理 
+     */
+    int RECALL_STATUS_OPEN = 10;
+                    
+    /**
+     * 召回状态: 已审批 
+     */
+    int RECALL_STATUS_APPROVED = 20;
+                    
+    /**
+     * 召回状态: 执行中 
+     */
+    int RECALL_STATUS_IN_PROGRESS = 30;
+                    
+    /**
+     * 召回状态: 已关闭 
+     */
+    int RECALL_STATUS_CLOSED = 40;
+                    
+    /**
+     * 召回状态: 已取消 
+     */
+    int RECALL_STATUS_CANCELLED = 50;
+                    
+    /**
+     * 召回目标退货状态: 待通知 
+     */
+    int RECALL_TARGET_RETURN_STATUS_PENDING = 10;
+                    
+    /**
+     * 召回目标退货状态: 已通知 
+     */
+    int RECALL_TARGET_RETURN_STATUS_NOTIFIED = 20;
+                    
+    /**
+     * 召回目标退货状态: 已退货 
+     */
+    int RECALL_TARGET_RETURN_STATUS_RETURNED = 30;
+                    
 }

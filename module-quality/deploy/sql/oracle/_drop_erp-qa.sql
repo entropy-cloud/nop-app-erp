@@ -15,4 +15,6 @@ drop table erp_qa_inspection_template_line;
 drop table erp_qa_inspection_line;
 drop table erp_qa_non_conformance;
 drop table erp_qa_action;
+drop table erp_qa_recall;
+drop table erp_qa_recall_target;
 
