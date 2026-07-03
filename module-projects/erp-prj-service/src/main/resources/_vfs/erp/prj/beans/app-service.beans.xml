@@ -7,4 +7,28 @@
     <import resource="_dao.beans.xml"/>
 
     <import resource="_service.beans.xml"/>
+
+    <!-- 项目业财过账：执行器 + 工时派发器 + PROJECT_COST_COLLECTION Provider（Registry 容器级 collect-by-type 自动收录） -->
+    <bean id="app.erp.prj.service.posting.ProjectPostingExecutor"
+          class="app.erp.prj.service.posting.ProjectPostingExecutor"/>
+    <bean id="app.erp.prj.service.posting.TimesheetPostingDispatcher"
+          class="app.erp.prj.service.posting.TimesheetPostingDispatcher"/>
+    <bean id="app.erp.prj.service.posting.ProjectCostCollectionProvider"
+          class="app.erp.prj.service.posting.ProjectCostCollectionProvider"/>
+
+    <!-- 工时成本率解析器 -->
+    <bean id="app.erp.prj.service.cost.CostRateResolver"
+          class="app.erp.prj.service.cost.CostRateResolver"/>
+
+    <!-- 项目预算检查器（WARNING/STRICT，按 erp-prj.budget-control-mode） -->
+    <bean id="app.erp.prj.service.cost.BudgetChecker"
+          class="app.erp.prj.service.cost.BudgetChecker"/>
+
+    <!-- 项目成本归集聚合器（工时 APPROVED → 归集行 + actualCost 回写） -->
+    <bean id="app.erp.prj.service.cost.ProjectCostAggregator"
+          class="app.erp.prj.service.cost.ProjectCostAggregator"/>
+
+    <!-- 费用报销归集聚合器（projects 驱动只读聚合，config-gated） -->
+    <bean id="app.erp.prj.service.cost.ExpenseCostAggregator"
+          class="app.erp.prj.service.cost.ExpenseCostAggregator"/>
 </beans>

@@ -29,6 +29,14 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- 业财过账接入财务引擎：IErpFinVoucherBiz Facade + IErpFinAcctDocProvider SPI（均在 finance-service）
+             + IErpFinExpenseClaimBiz 只读查报销单（projects→finance R 读，对齐 data-dependency-matrix §3.2）。
+             projects→finance 单向（过账 S 写 + 报销单 R 读），finance 为 DAG 顶，无环。 -->
+        <dependency>
+            <artifactId>app-erp-finance-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-biz</artifactId>
@@ -52,6 +60,14 @@
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-autotest-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- test-only: 引入 master-data 注册跨域业务对象(ErpMdSubject/ErpMdCurrency/ErpMdEmployee 等)及 BizModel Bean，
+             业财过账引擎 resolveSubjects 经 IErpMdSubjectBiz 解析科目编码（对齐 erp-ast-service 测试依赖）。 -->
+        <dependency>
+            <artifactId>app-erp-master-data-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <dependency>

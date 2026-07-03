@@ -1,15 +1,83 @@
-
 package app.erp.prj.service.entity;
-
-import io.nop.api.core.annotations.biz.BizModel;
-import io.nop.biz.crud.CrudBizModel;
 
 import app.erp.prj.biz.IErpPrjProjectBiz;
 import app.erp.prj.dao.entity.ErpPrjProject;
+import app.erp.prj.service.ErpPrjConfigs;
+import app.erp.prj.service.ErpPrjConstants;
+import app.erp.prj.service.ErpPrjErrors;
+import app.erp.prj.service.cost.ExpenseCostAggregator;
+import app.erp.prj.service.cost.ProjectCostAggregator;
+import io.nop.api.core.annotations.biz.BizModel;
+import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.core.Name;
+import io.nop.api.core.annotations.orm.SingleSession;
+import io.nop.api.core.exceptions.NopException;
+import io.nop.biz.crud.CrudBizModel;
+import io.nop.core.context.IServiceContext;
+import jakarta.inject.Inject;
 
+import java.math.BigDecimal;
+
+/**
+ * 项目 BizModel。CRUD 之上承载项目状态引用校验（{@code cost-collection.md §七}）与
+ * 成本归集回写（{@code §4.2}）。
+ *
+ * <p>{@code closeProject} 实现 OPEN→COMPLETED 冻结（对齐 §4.3「项目关闭」）；关闭后
+ * {@link #requireReferenceable} 拒绝新单据引用，从而拒绝新归集。
+ */
 @BizModel("ErpPrjProject")
-public class ErpPrjProjectBizModel extends CrudBizModel<ErpPrjProject> implements IErpPrjProjectBiz{
-    public ErpPrjProjectBizModel(){
+public class ErpPrjProjectBizModel extends CrudBizModel<ErpPrjProject> implements IErpPrjProjectBiz {
+
+    @Inject
+    ProjectCostAggregator costAggregator;
+    @Inject
+    ExpenseCostAggregator expenseCostAggregator;
+
+    public ErpPrjProjectBizModel() {
         setEntityName(ErpPrjProject.class.getName());
+    }
+
+    @Override
+    @BizMutation
+    @SingleSession
+    public ErpPrjProject requireReferenceable(@Name("projectId") Long projectId, IServiceContext context) {
+        ErpPrjProject project = requireEntity(String.valueOf(projectId), null, context);
+        Integer status = project.getStatus();
+        if (status == null || status != ErpPrjConstants.PROJECT_STATUS_OPEN) {
+            throw new NopException(ErpPrjErrors.ERR_PROJECT_NOT_REFERENCEABLE)
+                    .param(ErpPrjErrors.ARG_PROJECT_ID, projectId)
+                    .param(ErpPrjErrors.ARG_CURRENT_STATUS, status);
+        }
+        return project;
+    }
+
+    @Override
+    @BizMutation
+    @SingleSession
+    public BigDecimal refreshActualCost(@Name("projectId") Long projectId, IServiceContext context) {
+        return costAggregator.refreshActualCost(projectId);
+    }
+
+    @Override
+    @BizMutation
+    @SingleSession
+    public ErpPrjProject closeProject(@Name("projectId") Long projectId, IServiceContext context) {
+        ErpPrjProject project = requireEntity(String.valueOf(projectId), null, context);
+        Integer status = project.getStatus();
+        if (status == null || status != ErpPrjConstants.PROJECT_STATUS_OPEN) {
+            throw new NopException(ErpPrjErrors.ERR_PROJECT_NOT_CLOSABLE)
+                    .param(ErpPrjErrors.ARG_PROJECT_ID, projectId)
+                    .param(ErpPrjErrors.ARG_CURRENT_STATUS, status);
+        }
+        // 关闭前刷新实际成本（保证关账数据完整，对齐 §4.3）
+        costAggregator.refreshActualCost(projectId);
+        // 关闭前刷新费用报销归集（config-gated，保证关账费用完整，对齐计划 Phase 3 Decision）
+        if (ErpPrjConfigs.expenseAggregationEnabled()) {
+            expenseCostAggregator.refreshExpenseCost(projectId);
+        }
+        project = requireEntity(String.valueOf(projectId), null, context);
+        project.setStatus(ErpPrjConstants.PROJECT_STATUS_COMPLETED);
+        dao().updateEntity(project);
+        return project;
     }
 }
