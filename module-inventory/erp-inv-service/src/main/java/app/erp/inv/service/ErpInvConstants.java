@@ -45,6 +45,9 @@ public interface ErpInvConstants {
 
     // 业务联动源单类型（自由字符串）。采购退货出库移动 / 销售退货入库移动的存货估值过账分别由 purchase/sales 域独占
     // （PURCHASE_RETURN/SALES_RETURN），故 inventory 域对此类联动移动跳过默认估值过账，避免与之双计存货。
+    // 维护领料出库移动（MNT_SPARE_PART）非销售出库，其维修费用过账（MAINTENANCE_ISSUE）由 maintenance 域独占
+    // （当前为 Non-Goal，延后），故 inventory 域同样跳过默认估值过账，避免误派 SALES_OUTPUT 凭证。
     String RELATED_BILL_TYPE_PUR_RETURN = "ERP_PUR_RETURN";
     String RELATED_BILL_TYPE_SAL_RETURN = "ERP_SAL_RETURN";
+    String RELATED_BILL_TYPE_MNT_SPARE_PART = "ERP_MNT_SPARE_PART";
 }

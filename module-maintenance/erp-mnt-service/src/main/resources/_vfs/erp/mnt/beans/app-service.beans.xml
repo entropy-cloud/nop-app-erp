@@ -7,4 +7,16 @@
     <import resource="_dao.beans.xml"/>
 
     <import resource="_service.beans.xml"/>
+
+    <!-- 维护域服务（非 BizModel）：设备状态联动器（访问/停机触发设备状态，经 erp-mnt.equipment-status-link-enabled 门控） -->
+    <bean id="app.erp.mnt.service.support.EquipmentStatusLinker"
+          class="app.erp.mnt.service.support.EquipmentStatusLinker"/>
+
+    <!-- 维护域服务（非 BizModel）：备件领料出库服务（按行调 IErpInvStockMoveBiz.generateMove 跨域出库） -->
+    <bean id="app.erp.mnt.service.support.SparePartIssueService"
+          class="app.erp.mnt.service.support.SparePartIssueService"/>
+
+    <!-- 维护域服务（非 BizModel）：维护计划到期生成访问生成器（扫描 active 计划生成 PLANNED 访问 + 推进 nextDueDate） -->
+    <bean id="app.erp.mnt.service.support.ScheduleDueGenerator"
+          class="app.erp.mnt.service.support.ScheduleDueGenerator"/>
 </beans>

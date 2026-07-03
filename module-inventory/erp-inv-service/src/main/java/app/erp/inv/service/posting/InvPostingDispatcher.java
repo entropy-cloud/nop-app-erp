@@ -78,8 +78,11 @@ public class InvPostingDispatcher {
 
     private ErpFinBusinessType resolveBusinessType(ErpInvStockMove move) {
         // 采购退货出库移动 / 销售退货入库移动：存货估值过账由 purchase/sales 域独占，inventory 跳过。
+        // 维护领料出库移动：非销售出库，维修费用过账（MAINTENANCE_ISSUE）由 maintenance 域独占（当前 Non-Goal），
+        // inventory 跳过，避免误派 SALES_OUTPUT 凭证；移动单 DONE 即代表库存已出库。
         if (ErpInvConstants.RELATED_BILL_TYPE_PUR_RETURN.equals(move.getRelatedBillType())
-                || ErpInvConstants.RELATED_BILL_TYPE_SAL_RETURN.equals(move.getRelatedBillType())) {
+                || ErpInvConstants.RELATED_BILL_TYPE_SAL_RETURN.equals(move.getRelatedBillType())
+                || ErpInvConstants.RELATED_BILL_TYPE_MNT_SPARE_PART.equals(move.getRelatedBillType())) {
             return null;
         }
         Integer moveType = move.getMoveType();

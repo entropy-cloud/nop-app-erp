@@ -29,6 +29,13 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- compile: 备件消耗出库触发库存移动跨域契约（IErpInvStockMoveBiz + StockMoveRequest DTO 位于 inventory dao）。
+             maintenance→inventory 单向（备件领料出库 I*Biz 写触发），DAG 无环。 -->
+        <dependency>
+            <artifactId>app-erp-inventory-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-biz</artifactId>
@@ -52,6 +59,21 @@
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-autotest-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- test-only: generateMove Bean 实现使测试可注入运行（app-erp-all 聚合时由 app 层提供）。 -->
+        <dependency>
+            <artifactId>app-erp-inventory-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- test-only: 引入 master-data 注册跨域业务对象(ErpMd*) + 字典(erp-md/cost-method 等)，
+             使库存实体 XMeta 字典解析与跨域引用校验可通过（inventory 出库移动单引用物料/仓库）。 -->
+        <dependency>
+            <artifactId>app-erp-master-data-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <dependency>
