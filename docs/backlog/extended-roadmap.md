@@ -13,7 +13,8 @@
 - 2.1：✅ done（BOM/工艺路线 BizModel：默认 BOM 选择 + 多级展开 phantom/环/深度 + 成本卷算 → ErpMfgCostRollup/Line；含工时/费率列类型修正，2026-07-02，`docs/plans/2026-07-02-1538-2-manufacturing-bom-routing-rollup.md`）
 - 2.2：✅ done（WorkOrder/JobCard 状态机：10 态工单状态机 + 三轴审批 + 齐套校验 + 领料出库/报工/完工入库 + 成本归集 + 完工质检 config-gated 钩子；含工时/费率/实领数量列类型修正，2026-07-03，`docs/plans/2026-07-02-2237-1-manufacturing-workorder-jobcard-state-machine.md`）
 - 2.3：✅ done（MRP 计算引擎：需求整合(销售订单/安全库存/手工)→BOM 多级展开→净需求→按期分单(lot-for-lot/固定批量)→计划订单(WORK_ORDER_REQUEST/PURCHASE_REQUEST)→释放转采购订单/工单，2026-07-03，`docs/plans/2026-07-02-2237-2-manufacturing-mrp-engine.md`）
-- 2.4, 2.6–2.11：`todo`
+- 2.4：✅ done（质检触发 + NCR/CAPA 流程：质检单 4 态状态机(行级评测+结果汇总+posted) + 业务触发(采购入库/销售出库/工单完工 createForBusinessBill+模板匹配+强制质检阻塞 config-gated) + NCR 5 态状态机 + CAPA 生命周期(效果验证门控) + REJECTED 自动生成 NCR，2026-07-03，`docs/plans/2026-07-02-2237-3-quality-inspection-trigger-ncr-capa.md`）
+- 2.6–2.11：`todo`
 
 ### Milestone M3 — 新增 8 域
 - 3.1–3.21：`todo`

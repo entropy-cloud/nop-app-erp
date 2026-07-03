@@ -1,7 +1,7 @@
 # 2026-07-02-2237-3-quality-inspection-trigger-ncr-capa 质检触发 + 质检单状态机 + NCR/CAPA 闭环
 
-> Plan Status: active
-> Last Reviewed: 2026-07-02
+> Plan Status: completed
+> Last Reviewed: 2026-07-03
 > Source: `docs/backlog/extended-roadmap.md` 工作项 2.4（质检触发 + NCR/CAPA 流程）；`docs/design/quality/state-machine.md`；`docs/design/manufacturing/state-machine.md §质检对工单状态的约束声明`
 > Related: `2026-07-02-2237-1-manufacturing-workorder-jobcard-state-machine.md`（N=1 工单完工质检 config-gated 钩子，本计划提供 quality 侧实现 + flip `erp-mfg.inspection-gate-enabled`）
 > Mission: erp
@@ -63,79 +63,79 @@
 
 ### Phase 1 — 质检单状态机（行级评测 + 结果汇总 + 审批 + posted）+ 测试
 
-Status: planned
+Status: completed
 Targets: `module-quality/erp-qa-service/.../entity/ErpQaInspectionBizModel.java`(扩)、`IErpQaInspectionBiz.java`(扩)、`InspectionResultEvaluator.java`(新)、`ErpQaErrors.java`(扩)、`ErpQaConstants.java`(扩)、beans.xml
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: 无（既有质检实体 + 模板为基线）。
 
-- [ ] `Add`：`IErpQaInspectionBiz.recordResult(inspectionId, lineResults)` —— 行级评测（specMin/specMax vs measuredValue 数值比较，解析失败视为不合格）；汇总全行 → ACCEPTED / CONDITIONAL（部分不合格+让步审批 approveStatus APPROVED）/ REJECTED；迁移 result PENDING→终态；posted=true。
+[x] `Add`：`IErpQaInspectionBiz.recordResult(inspectionId, lineResults)` —— 行级评测（specMin/specMax vs measuredValue 数值比较，解析失败视为不合格）；汇总全行 → ACCEPTED / CONDITIONAL（部分不合格+让步审批 approveStatus APPROVED）/ REJECTED；迁移 result PENDING→终态；posted=true。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`IErpQaInspectionBiz.findByRelatedBill(billType, billCode)` —— 按关联业务单据反查质检单 + result（供业务域查结论，跨域只读经 I*Biz）。
+[x] `Add`：`IErpQaInspectionBiz.findByRelatedBill(billType, billCode)` —— 按关联业务单据反查质检单 + result（供业务域查结论，跨域只读经 I*Biz）。
   - Skill: `nop-backend-dev`
-- [ ] `Decision`：行级评测规则（specMin/specMax vs measuredValue 数值比较 + 汇总）+ 结果反馈方向（business 查 quality），见 Task Route Decision。
+[x] `Decision`：行级评测规则（specMin/specMax vs measuredValue 数值比较 + 汇总）+ 结果反馈方向（business 查 quality），见 Task Route Decision。
   - Skill: none
-- [ ] `Proof`：`TestErpQaInspectionStateMachine`（全合格→ACCEPTED；部分不合格+让步→CONDITIONAL；关键不合格→REJECTED；行级 specMin/specMax 评测；终态不可恢复重复 recordResult 抛错；findByRelatedBill 返回正确 result）。`mvn test -pl module-quality/erp-qa-service -am -Dtest=TestErpQaInspectionStateMachine*`。
+[x] `Proof`：`TestErpQaInspectionStateMachine`（全合格→ACCEPTED；部分不合格+让步→CONDITIONAL；关键不合格→REJECTED；行级 specMin/specMax 评测；终态不可恢复重复 recordResult 抛错；findByRelatedBill 返回正确 result）。`mvn test -pl module-quality/erp-qa-service -am -Dtest=TestErpQaInspectionStateMachine*`。
   - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
 > Phase 1 交付质检单状态机 + 行级评测 + 结果汇总 + 反查。解除 Phase 2 业务触发的 quality 侧 API + Phase 3 NCR 自动生成基线。
 
-- [ ] 质检单 4 态（行级评测 + 汇总 + posted + findByRelatedBill）单测通过
+[x] 质检单 4 态（行级评测 + 汇总 + posted + findByRelatedBill）单测通过
 
 ### Phase 2 — 业务触发（createForBusinessBill + 模板匹配 + 强制质检阻塞）+ 测试
 
-Status: planned
+Status: completed
 Targets: `module-quality/erp-qa-service/.../entity/ErpQaInspectionBizModel.java`(扩 createForBusinessBill)、`IErpQaInspectionBiz.java`(扩)、`InspectionTriggerService.java`(新)、`ErpQaConfigs.java`(扩)、各业务域 Processor/Pom（config-gated 钩子接线）、beans.xml
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: Phase 1（recordResult + findByRelatedBill）。
 
-- [ ] `Add`：`IErpQaInspectionBiz.createForBusinessBill(billType, billCode, materialId, inspectionType, lotQuantity, supplierId, warehouseId, batchNo)` —— 生成 ErpQaInspection（result=PENDING + relatedBillType/Code + inspectionType + 模板匹配复制行）；按 materialId × inspectionType 匹配 active `ErpQaInspectionTemplate`；无匹配走 `erp-qua.default-inspection-template`；仍无则无行（人工补录）。
+[x] `Add`：`IErpQaInspectionBiz.createForBusinessBill(billType, billCode, materialId, inspectionType, lotQuantity, supplierId, warehouseId, batchNo)` —— 生成 ErpQaInspection（result=PENDING + relatedBillType/Code + inspectionType + 模板匹配复制行）；按 materialId × inspectionType 匹配 active `ErpQaInspectionTemplate`；无匹配走 `erp-qua.default-inspection-template`；仍无则无行（人工补录）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：config-gated 业务触发接线——采购入库 confirm（INCOMING）/ 工单完工 reportCompletion（FINAL，连 N=1 `erp-mfg.inspection-gate-enabled`）/ 销售出库 confirm（OUTGOING）时，若物料/单据类型在 `erp-qua.mandatory-inspection-bill-types` 中，调 `createForBusinessBill`；业务域 confirm/DONE 前查 `findByRelatedBill`，未 ACCEPTED/CONDITIONAL 时拒绝（强制质检阻塞）。purchase/sales/manufacturing-service compile 依赖 quality-dao。
+[x] `Add`：config-gated 业务触发接线——采购入库 confirm（INCOMING）/ 工单完工 reportCompletion（FINAL，连 N=1 `erp-mfg.inspection-gate-enabled`）/ 销售出库 confirm（OUTGOING）时，若物料/单据类型在 `erp-qua.mandatory-inspection-bill-types` 中，调 `createForBusinessBill`；业务域 confirm/DONE 前查 `findByRelatedBill`，未 ACCEPTED/CONDITIONAL 时拒绝（强制质检阻塞）。purchase/sales/manufacturing-service compile 依赖 quality-dao。
   - Skill: `nop-backend-dev`
-- [ ] `Decision`：触发耦合度（business→quality 同步 I*Biz R）+ 模板匹配（materialId×inspectionType → 全局默认 → 无行人工补录），见 Task Route Decision。
+[x] `Decision`：触发耦合度（business→quality 同步 I*Biz R）+ 模板匹配（materialId×inspectionType → 全局默认 → 无行人工补录），见 Task Route Decision。
   - Skill: none
-- [ ] `Proof`：`TestErpQaInspectionTrigger`（采购入库 confirm→生成 INCOMING 质检单 + 模板匹配复制行；强制质检阻塞（PENDING 时 confirm 拒绝）；ACCEPTED 后 confirm 通过；无模板走默认；销售出库 OUTGOING 触发；工单 FINAL 触发 + inspection-gate-enabled=true 门控联动）。`mvn test -pl module-quality/erp-qa-service -am -Dtest=TestErpQaInspectionTrigger*`。
+[x] `Proof`：`TestErpQaInspectionTrigger`（采购入库 confirm→生成 INCOMING 质检单 + 模板匹配复制行；强制质检阻塞（PENDING 时 confirm 拒绝）；ACCEPTED 后 confirm 通过；无模板走默认；销售出库 OUTGOING 触发；工单 FINAL 触发 + inspection-gate-enabled=true 门控联动）。`mvn test -pl module-quality/erp-qa-service -am -Dtest=TestErpQaInspectionTrigger*`。
   - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
 > Phase 2 交付业务触发 + 模板匹配 + 强制质检阻塞。解除 Phase 3 NCR 自动生成的触发基线。
 
-- [ ] 业务触发（采购/销售/工单 → 生成质检单 + 模板匹配 + 强制阻塞）单测通过
+[x] 业务触发（采购/销售/工单 → 生成质检单 + 模板匹配 + 强制阻塞）单测通过
 
 ### Phase 3 — NCR 状态机 + CAPA 闭环 + 自动生成 + 端到端 + 文档/日志
 
-Status: planned
+Status: completed
 Targets: `module-quality/erp-qa-service/.../entity/ErpQaNonConformanceBizModel.java`(扩)、`IErpQaNonConformanceBiz.java`(扩)、`ErpQaActionBizModel.java`(扩)、`IErpQaActionBiz.java`(扩)、`NcrLifecycleService.java`(新)、`docs/logs/2026/{执行当日}.md`、`docs/backlog/extended-roadmap.md`、`docs/design/quality/state-machine.md`(偏离补注)
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: Phase 1（REJECTED 结果）+ Phase 2（业务触发）。
 
-- [ ] `Add`：NCR 自动生成——`IErpQaInspectionBiz.recordResult` REJECTED 时，若 `erp-qua.auto-create-ncr-on-reject=true`，自动生成 ErpQaNonConformance（sourceType=INSPECTION/sourceCode=质检单号/inspectionId/materialId/quantity=不合格量/status=OPEN/dispositionType 待裁决）。
+[x] `Add`：NCR 自动生成——`IErpQaInspectionBiz.recordResult` REJECTED 时，若 `erp-qua.auto-create-ncr-on-reject=true`，自动生成 ErpQaNonConformance（sourceType=INSPECTION/sourceCode=质检单号/inspectionId/materialId/quantity=不合格量/status=OPEN/dispositionType 待裁决）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`IErpQaNonConformanceBiz` NCR 5 态迁移——`submitReview`（OPEN→IN_REVIEW）、`resolve`（IN_REVIEW→RESOLVED，**须全部关联 ErpQaAction.status=COMPLETED + verificationPerson/verificationDate 已填**）、`escalateToRecall`（IN_REVIEW→ESCALATED_TO_RECALL）、`cancel`（OPEN/IN_REVIEW→CANCELLED）。非法迁移抛 `ErpQaErrors.ERR_INVALID_NCR_STATUS_TRANSITION`。
+[x] `Add`：`IErpQaNonConformanceBiz` NCR 5 态迁移——`submitReview`（OPEN→IN_REVIEW）、`resolve`（IN_REVIEW→RESOLVED，**须全部关联 ErpQaAction.status=COMPLETED + verificationPerson/verificationDate 已填**）、`escalateToRecall`（IN_REVIEW→ESCALATED_TO_RECALL）、`cancel`（OPEN/IN_REVIEW→CANCELLED）。非法迁移抛 `ErpQaErrors.ERR_INVALID_NCR_STATUS_TRANSITION`。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`IErpQaActionBiz` CAPA 生命周期——`startAction`（PENDING→IN_PROGRESS）、`completeAction`（IN_PROGRESS→COMPLETED + completedBy/completedAt）、`verifyAction`（COMPLETED + verificationPerson/verificationDate 填写）；逾期 `erp-qa.action-overdue-check` 配置门控标记 OVERDUE。
+[x] `Add`：`IErpQaActionBiz` CAPA 生命周期——`startAction`（PENDING→IN_PROGRESS）、`completeAction`（IN_PROGRESS→COMPLETED + completedBy/completedAt）、`verifyAction`（COMPLETED + verificationPerson/verificationDate 填写）；逾期 `erp-qa.action-overdue-check` 配置门控标记 OVERDUE。
   - Skill: `nop-backend-dev`
-- [ ] `Decision`：NCR resolve 门控（须全部 CAPA COMPLETED + 验证）+ NCR 自动生成（REJECTED 触发），见 Task Route Decision。
+[x] `Decision`：NCR resolve 门控（须全部 CAPA COMPLETED + 验证）+ NCR 自动生成（REJECTED 触发），见 Task Route Decision。
   - Skill: none
-- [ ] `Proof`：端到端 `TestErpQaNcrCapaEndToEnd`（采购入库→质检 REJECTED→自动生成 NCR OPEN→评审 IN_REVIEW→制定 CAPA Action PENDING→执行 IN_PROGRESS→完成 COMPLETED + 验证→NCR resolve RESOLVED；NCR 未全部 CAPA COMPLETED 时 resolve 拒绝；escalateToRecall → ESCALATED_TO_RECALL 终态；cancel）。`mvn test -pl module-quality/erp-qa-service -am -Dtest=TestErpQaNcrCapaEndToEnd*`。
+[x] `Proof`：端到端 `TestErpQaNcrCapaEndToEnd`（采购入库→质检 REJECTED→自动生成 NCR OPEN→评审 IN_REVIEW→制定 CAPA Action PENDING→执行 IN_PROGRESS→完成 COMPLETED + 验证→NCR resolve RESOLVED；NCR 未全部 CAPA COMPLETED 时 resolve 拒绝；escalateToRecall → ESCALATED_TO_RECALL 终态；cancel）。`mvn test -pl module-quality/erp-qa-service -am -Dtest=TestErpQaNcrCapaEndToEnd*`。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：`docs/logs/2026/{执行当日 month-day}.md` 新增本计划条目（含验证状态）；`extended-roadmap.md` 工作项 2.4 标注 done；`quality/state-machine.md` 偏离（NCR 财务过账 Non-Goal + 召回 2.11 Non-Goal + 让步审批简化 + 抽检方案/校准/QMS 高级 Non-Goal）补注。
+[x] `Add`：`docs/logs/2026/{执行当日 month-day}.md` 新增本计划条目（含验证状态）；`extended-roadmap.md` 工作项 2.4 标注 done；`quality/state-machine.md` 偏离（NCR 财务过账 Non-Goal + 召回 2.11 Non-Goal + 让步审批简化 + 抽检方案/校准/QMS 高级 Non-Goal）补注。
   - Skill: none
 
 Exit Criteria:
 
 > Phase 3 交付 NCR 状态机 + CAPA 闭环 + 自动生成 + 端到端。完整仓库验证属 Closure Gates。
 
-- [ ] NCR 5 态（+ CAPA 闭环门控）+ 自动生成 + 端到端单测通过
+[x] NCR 5 态（+ CAPA 闭环门控）+ 自动生成 + 端到端单测通过
 
 ## Draft Review Record
 
@@ -146,14 +146,14 @@ Exit Criteria:
 
 > 仅在所有项目和每阶段退出标准都勾选 `[x]` 后关闭。完整仓库验证在此处运行一次。
 
-- [ ] 范围内行为完成：质检单 4 态（行级评测 + 结果汇总）+ 业务触发（采购/销售/工单 + 模板匹配 + 强制阻塞）+ NCR 5 态 + CAPA 闭环（效果验证门控）+ 自动生成，行为测试通过
-- [ ] 相关文档对齐：`extended-roadmap.md` 2.4 done 标注；当日日志已记；`quality/state-machine.md` Non-Goal 偏离补注
-- [ ] 已运行验证：`mvn test -pl module-quality/erp-qa-service -am`（CRUD 0 回归 + 新增质检/NCR/CAPA）；根 `mvn clean install -DskipTests`
-- [ ] 无范围内项目静默降级（NCR 财务过账/召回/让步审批流/抽检方案/校准/QMS 高级 均为计划内 Non-Goal）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控、日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：质检单 4 态（行级评测 + 结果汇总）+ 业务触发（采购/销售/工单 + 模板匹配 + 强制阻塞）+ NCR 5 态 + CAPA 闭环（效果验证门控）+ 自动生成，行为测试通过
+- [x] 相关文档对齐：`extended-roadmap.md` 2.4 done 标注；当日日志已记；`quality/state-machine.md` Non-Goal 偏离补注
+- [x] 已运行验证：`mvn test -pl module-quality/erp-qa-service -am`（CRUD 0 回归 + 新增质检/NCR/CAPA）；根 `mvn clean install -DskipTests`
+- [x] 无范围内项目静默降级（NCR 财务过账/召回/让步审批流/抽检方案/校准/QMS 高级 均为计划内 Non-Goal）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控、日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -177,11 +177,18 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行完成后填写>
+Status Note: 全部三个 Phase 已执行并验证通过。质检单 4 态状态机（行级评测 specMin/specMax + 结果汇总 ACCEPTED/CONDITIONAL/REJECTED + posted + findByRelatedBill + isInspectionCleared）、业务触发（createForBusinessBill + 模板匹配 materialId×inspectionType→全局默认→无行 + 强制质检阻塞 config-gated，purchase/sales/mfg BizModel 经 InspectionTrigger.enforceGate 接线）、NCR 5 态状态机（submitReview/resolve/escalateToRecall/cancel，resolve 门控须全部 CAPA COMPLETED + 验证）、CAPA 生命周期（startAction/completeAction/verifyAction）、REJECTED 自动生成 NCR 均已落地。验证全绿：`mvn test -pl module-quality/erp-qa-service -am` = 22 tests（新增 17：StateMachine 7 + Trigger 6 + NcrCapaEndToEnd 4，既有 5 无回归）；purchase(70)/sales(65)/mfg(36) 既有套件无回归；根 `mvn clean install -DskipTests` = BUILD SUCCESS。NCR 财务过账/召回 2.11/让步多级审批流/抽检方案/校准/QMS 高级均为计划内 Non-Goal（已补注 state-machine.md）。
 
 Closure Audit Evidence:
 
-<待独立结束审计后填写>
+- Auditor / Agent: 独立结束审计子代理（新会话，非执行者上下文）
+- Audit Scope: 全文重读计划 + 逐条核实实时仓库 + 反空心检查 + 五点一致性
+- Behavior Landed (anti-hollow verified): `ErpQaInspectionBizModel` recordResult/findByRelatedBill/isInspectionCleared/createForBusinessBill（非空壳，行级评测经 InspectionResultEvaluator 数值比较 + 汇总 + posted + REJECTED 自动 NCR 经 NcrLifecycleService）；`ErpQaNonConformanceBizModel` submitReview/resolve/escalateToRecall/cancel（带状态校验 + resolve 门控 requireResolveGate）；`ErpQaActionBizModel` startAction/completeAction/verifyAction（带验证字段校验）；`NcrLifecycleService` autoCreateNcrFromInspection/allActionsCompletedAndVerified/requireResolveGate；`InspectionResultEvaluator` evaluateLine/aggregate；`InspectionTemplateMatcher` + `InspectionTrigger`（quality-dao 共享门控助手）。
+- Cross-Module Wiring (runtime-reachable): purchase `ErpPurReceiveBizModel`(INCOMING) / sales `ErpSalDeliveryBizModel`(OUTGOING) / manufacturing `ErpMfgWorkOrderBizModel`(FINAL, 连 erp-mfg.inspection-gate-enabled) 均经 `InspectionTrigger.enforceGate` 接线（grep 确认 import + 注入 + 调用点；非注册不可达）。
+- Tests Executed (artifact-backed): `_cases/` 快照目录已录制 17 个新测试方法的 autotest.yaml（StateMachine 7 / Trigger 6 / NcrCapaEndToEnd 4），快照仅在测试实际运行时生成 → 验证全绿声明可证；测试经 IGraphQLEngine 调真实 RPC（非签名桩），覆盖全合格/部分不合格+让步/关键不合格/解析失败/终态不可恢复/findByRelatedBill/isInspectionCleared/采购-销售-工单触发/无模板走默认/无模板无行/强制阻塞→放行/REJECTED 自动NCR/resolve门控(未完成+未验证拒绝)/escalateToRecall终态/cancel/非法迁移。
+- Docs Sync: `docs/logs/2026/07-03.md` 完整计划条目（含验证状态）；`extended-roadmap.md:16` 工作项 2.4 标 ✅done + 引用本计划；`docs/design/quality/state-machine.md:176-184` Non-Goal 偏离补注（NCR 财务过账/召回2.11/让步审批简化/抽检方案/校准/QMS 高级，均带触发条件）。
+- Deferred Honesty: 无范围内缺陷或契约漂移藏入 Deferred；Deferred But Adjudicated 三项均为计划内 Non-Goal 且命名 successor 触发条件。
+- Five-point Consistency: Plan Status(completed) / 三 Phase Status(completed) / 三 Phase Exit Criteria(全[x]) / Closure Gates(全[x]) / 日志(07-03) 一致。
 
 Follow-up:
 

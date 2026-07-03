@@ -168,3 +168,20 @@ NCR 关闭（RESOLVED）时，根据处置方式触发不同的财务处理：
 - 不合格 → NCR → CAPA 的闭环是否完整（效果验证才能关闭）。
 - 质检结果反馈业务域的机制（事件驱动）。
 - 业务单据作废时关联质检单的联动取消。
+
+---
+
+## 实现偏离补注（计划 2026-07-02-2237-3，2026-07-03 落地）
+
+本期落地范围与上述设计的偏离（均为计划内 Non-Goal，留后继）：
+
+- **质检结果反馈业务域**：设计 §7「事件驱动」本期改为**业务域查 quality 结果**（`IErpQaInspectionBiz.findByRelatedBill` / `isInspectionCleared`），quality 不反向依赖 business（DAG 无环）。业务域 Processor 在 confirm/DONE 前 config-gated 查询。残留风险：业务域须主动查。事件驱动留后继。
+- **强制质检阻塞机制**：设计 §4「强制质检的业务单据未经质检就流转 → 系统拦截」经 `erp-qua.mandatory-inspection-bill-types` config-gated（默认空=不强制）落地；purchase/sales/mfg BizModel 经 `InspectionTrigger.enforceGate`（business→quality 同步 I*Biz 写触发）——首次流转生成 PENDING 质检单并阻塞，质检合格/让步后再次流转放行。
+- **NCR 财务过账（Non-Goal）**：设计 §「NCR 财务影响规则」（退货红字/返工成本/报废损失/召回退货凭证）依赖 finance 域 NCR 驱动过账 Provider + purchase/sales 退货流程，属业财一体面，本期不落地。触发条件：NCR 驱动自动退货/报废过账 Provider 落地时（successor）。
+- **召回事件（Non-Goal）**：NCR `ESCALATED_TO_RECALL` 为终态指向 `recall.md`；召回 `ErpQaRecall` 属工作项 2.11，本期仅状态迁移不触发召回流程。触发条件：2.11 落地时。
+- **让步接收审批流（简化）**：设计 §2 让步 CONDITIONAL 需「让步审批」；本期以 `approveStatus=APPROVED`（质量主管审核）简化，完整多级让步审批工作流 Non-Goal。触发条件：多级审批需求时。
+- **抽检方案自动计算（Non-Goal）**：`ErpQaSamplingPlan` 实体存在但抽样数量自动计算（AQL/GB2828）不落地。触发条件：统计抽样需求时。
+- **校准管理 / 风险登记 / 质量目标 / 评审（Non-Goal）**：`ErpQaCalibration`/`ErpQaRiskRegister`/`ErpQaQualityGoal`/`ErpQaReview` 实体存在但 BizModel 深化不落地（仅标准 CRUD 空壳）。触发条件：计量管理 / QMS 全面需求时。
+- **业务单据作废联动取消（未落地）**：设计 §4「业务单据作废时关联质检单自动取消」本期未接线（业务域 cancel 未回调 quality 取消质检单）。触发条件：作废联动需求时。
+- **行级评测规格类型**：`specMin/specMax/measuredValue` 列域为 DECIMAL（domain measuredValue/specLimit），非数值规格（外观「合格/不合格」）由 `InspectionResultEvaluator`「无规格上下限 + 实测非空即合格」分支处理；纯非数值实测值落库受域强转限制（须人工录入行结果覆盖）。
+
