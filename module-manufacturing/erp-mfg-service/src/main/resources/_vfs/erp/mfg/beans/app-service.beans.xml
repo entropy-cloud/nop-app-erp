@@ -36,6 +36,10 @@
     <bean id="app.erp.mfg.service.mrp.MrpReleaseService"
           class="app.erp.mfg.service.mrp.MrpReleaseService"/>
 
+    <!-- CRP 负荷计算引擎（plan 2026-07-03-1707-1）：WorkOrder×RoutingOperation 分派→workcenter×date 负荷快照+报表 -->
+    <bean id="app.erp.mfg.service.crp.CrpLoadCalculator"
+          class="app.erp.mfg.service.crp.CrpLoadCalculator"/>
+
     <!-- manufacturing 域状态机编排 Processor（Facade + Processor 两层结构，protected step 方法供下游覆盖）。 -->
     <bean id="app.erp.mfg.service.processor.ErpMfgWorkOrderProcessor"
           class="app.erp.mfg.service.processor.ErpMfgWorkOrderProcessor"/>

@@ -69,16 +69,6 @@ CREATE TABLE erp_mfg_routing(
   constraint PK_erp_mfg_routing primary key (id)
 );
 
-CREATE TABLE erp_md_currency(
-  id INT8  ,
-  code VARCHAR(50)  ,
-  name VARCHAR(200)  ,
-  symbol VARCHAR(50)  ,
-  decimal_places INT4  ,
-  is_functional BOOLEAN  ,
-  constraint PK_erp_md_currency primary key (id)
-);
-
 CREATE TABLE erp_md_organization(
   id INT8  ,
   code VARCHAR(50)  ,
@@ -87,6 +77,16 @@ CREATE TABLE erp_md_organization(
   parent_id INT8  ,
   status INT4  ,
   constraint PK_erp_md_organization primary key (id)
+);
+
+CREATE TABLE erp_md_currency(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  symbol VARCHAR(50)  ,
+  decimal_places INT4  ,
+  is_functional BOOLEAN  ,
+  constraint PK_erp_md_currency primary key (id)
 );
 
 CREATE TABLE erp_md_location(
@@ -162,6 +162,48 @@ CREATE TABLE erp_mfg_routing_operation(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   constraint PK_erp_mfg_routing_operation primary key (id)
+);
+
+CREATE TABLE erp_mfg_workcenter_calendar(
+  id INT8 NOT NULL ,
+  workcenter_id INT8 NOT NULL ,
+  org_id INT8  ,
+  calendar_name VARCHAR(200) NOT NULL ,
+  shift_type INT4 NOT NULL ,
+  work_date_pattern INT4  ,
+  start_time VARCHAR(8)  ,
+  end_time VARCHAR(8)  ,
+  effective_from DATE  ,
+  effective_to DATE  ,
+  is_active BOOLEAN default true   ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_mfg_workcenter_calendar primary key (id)
+);
+
+CREATE TABLE erp_mfg_workcenter_capacity(
+  id INT8 NOT NULL ,
+  workcenter_id INT8 NOT NULL ,
+  org_id INT8  ,
+  material_id INT8 NOT NULL ,
+  capacity_per_hour NUMERIC(16,4) NOT NULL ,
+  setup_time NUMERIC(12,2) default 0   ,
+  cleanup_time NUMERIC(12,2) default 0   ,
+  efficiency_factor NUMERIC(10,4) default 1   ,
+  is_active BOOLEAN default true   ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_mfg_workcenter_capacity primary key (id)
 );
 
 CREATE TABLE erp_mfg_mrp_plan(
@@ -392,6 +434,24 @@ CREATE TABLE erp_mfg_bom_line(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   constraint PK_erp_mfg_bom_line primary key (id)
+);
+
+CREATE TABLE erp_mfg_crp_load(
+  id INT8 NOT NULL ,
+  workcenter_id INT8 NOT NULL ,
+  org_id INT8  ,
+  work_order_id INT8  ,
+  load_date DATE NOT NULL ,
+  load_hours NUMERIC(12,2) default 0   ,
+  setup_hours NUMERIC(12,2) default 0   ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_mfg_crp_load primary key (id)
 );
 
 CREATE TABLE erp_mfg_work_order_line(
@@ -690,9 +750,9 @@ CREATE TABLE erp_mfg_material_issue_line(
                     
       COMMENT ON COLUMN erp_mfg_routing.update_time IS '修改时间';
                     
-      COMMENT ON TABLE erp_md_currency IS '币种';
-                
       COMMENT ON TABLE erp_md_organization IS '组织';
+                
+      COMMENT ON TABLE erp_md_currency IS '币种';
                 
       COMMENT ON TABLE erp_md_location IS '库位';
                 
@@ -775,6 +835,78 @@ CREATE TABLE erp_mfg_material_issue_line(
       COMMENT ON COLUMN erp_mfg_routing_operation.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_mfg_routing_operation.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_mfg_workcenter_calendar IS '工作中心日历';
+                
+      COMMENT ON COLUMN erp_mfg_workcenter_calendar.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_calendar.workcenter_id IS '工作中心';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_calendar.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_calendar.calendar_name IS '日历名称';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_calendar.shift_type IS '班次类型';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_calendar.work_date_pattern IS '工作日模式';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_calendar.start_time IS '班次开始时间';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_calendar.end_time IS '班次结束时间';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_calendar.effective_from IS '生效起始日期';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_calendar.effective_to IS '生效结束日期';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_calendar.is_active IS '是否有效';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_calendar.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_calendar.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_calendar.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_calendar.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_calendar.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_calendar.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_calendar.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_mfg_workcenter_capacity IS '工作中心产能';
+                
+      COMMENT ON COLUMN erp_mfg_workcenter_capacity.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_capacity.workcenter_id IS '工作中心';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_capacity.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_capacity.material_id IS '关联物料';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_capacity.capacity_per_hour IS '每小时产能';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_capacity.setup_time IS '换模时间(分钟)';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_capacity.cleanup_time IS '清理时间(分钟)';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_capacity.efficiency_factor IS '效率系数';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_capacity.is_active IS '是否有效';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_capacity.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_capacity.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_capacity.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_capacity.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_capacity.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_capacity.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_mfg_workcenter_capacity.update_time IS '修改时间';
                     
       COMMENT ON TABLE erp_mfg_mrp_plan IS 'MRP计划';
                 
@@ -1175,6 +1307,36 @@ CREATE TABLE erp_mfg_material_issue_line(
       COMMENT ON COLUMN erp_mfg_bom_line.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_mfg_bom_line.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_mfg_crp_load IS 'CRP负荷';
+                
+      COMMENT ON COLUMN erp_mfg_crp_load.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_mfg_crp_load.workcenter_id IS '工作中心';
+                    
+      COMMENT ON COLUMN erp_mfg_crp_load.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_mfg_crp_load.work_order_id IS '工单(弱指针)';
+                    
+      COMMENT ON COLUMN erp_mfg_crp_load.load_date IS '负荷日期';
+                    
+      COMMENT ON COLUMN erp_mfg_crp_load.load_hours IS '占用工时';
+                    
+      COMMENT ON COLUMN erp_mfg_crp_load.setup_hours IS '换模工时';
+                    
+      COMMENT ON COLUMN erp_mfg_crp_load.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_mfg_crp_load.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_mfg_crp_load.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_mfg_crp_load.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_mfg_crp_load.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_mfg_crp_load.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_mfg_crp_load.update_time IS '修改时间';
                     
       COMMENT ON TABLE erp_mfg_work_order_line IS '工单行';
                 

@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 工作日模式
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 全周
+    value: 10
+    description: 
+  
+  - label: 工作日(周一至周五)
+    value: 20
+    description: 
+  
+  - label: 仅周末
+    value: 30
+    description: 
+  

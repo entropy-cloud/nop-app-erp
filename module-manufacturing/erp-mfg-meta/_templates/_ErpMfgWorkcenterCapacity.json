@@ -1,0 +1,21 @@
+{
+  "id": 0,
+  "workcenterId": 0,
+  "orgId": 0,
+  "materialId": 0,
+  "capacityPerHour": 0.0,
+  "setupTime": 0.0,
+  "cleanupTime": 0.0,
+  "efficiencyFactor": 0.0,
+  "isActive": false,
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "workcenter": null,
+  "material": null,
+  "org": null
+}

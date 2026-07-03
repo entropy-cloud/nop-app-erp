@@ -288,4 +288,39 @@ public interface _ErpMfgDaoConstants {
      */
     int BYPRODUCT_TYPE_BY_PRODUCT = 20;
                     
+    /**
+     * 班次类型: 全天单班 
+     */
+    int SHIFT_TYPE_ONE_SHIFT = 10;
+                    
+    /**
+     * 班次类型: 早班 
+     */
+    int SHIFT_TYPE_MORNING = 20;
+                    
+    /**
+     * 班次类型: 中班 
+     */
+    int SHIFT_TYPE_AFTERNOON = 30;
+                    
+    /**
+     * 班次类型: 夜班 
+     */
+    int SHIFT_TYPE_NIGHT = 40;
+                    
+    /**
+     * 工作日模式: 全周 
+     */
+    int WORK_DATE_PATTERN_ALL_WEEK = 10;
+                    
+    /**
+     * 工作日模式: 工作日(周一至周五) 
+     */
+    int WORK_DATE_PATTERN_WEEKDAYS = 20;
+                    
+    /**
+     * 工作日模式: 仅周末 
+     */
+    int WORK_DATE_PATTERN_WEEKEND = 30;
+                    
 }

@@ -11,9 +11,9 @@ alter table erp_mfg_workcenter add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NUL
 
 alter table erp_mfg_routing add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
-alter table erp_md_currency add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
-
 alter table erp_md_organization add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_currency add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_location add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -26,6 +26,10 @@ alter table erp_inv_batch add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 alter table erp_mfg_bom add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_routing_operation add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_mfg_workcenter_calendar add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_mfg_workcenter_capacity add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_mrp_plan add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -46,6 +50,8 @@ alter table erp_mfg_cost_rollup_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' N
 alter table erp_mfg_work_order add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_bom_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_mfg_crp_load add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_work_order_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -83,11 +89,11 @@ alter table erp_mfg_workcenter add constraint PK_erp_mfg_workcenter primary key 
 alter table erp_mfg_routing drop constraint PK_erp_mfg_routing;
 alter table erp_mfg_routing add constraint PK_erp_mfg_routing primary key (NOP_TENANT_ID, id);
 
-alter table erp_md_currency drop constraint PK_erp_md_currency;
-alter table erp_md_currency add constraint PK_erp_md_currency primary key (NOP_TENANT_ID, id);
-
 alter table erp_md_organization drop constraint PK_erp_md_organization;
 alter table erp_md_organization add constraint PK_erp_md_organization primary key (NOP_TENANT_ID, id);
+
+alter table erp_md_currency drop constraint PK_erp_md_currency;
+alter table erp_md_currency add constraint PK_erp_md_currency primary key (NOP_TENANT_ID, id);
 
 alter table erp_md_location drop constraint PK_erp_md_location;
 alter table erp_md_location add constraint PK_erp_md_location primary key (NOP_TENANT_ID, id);
@@ -106,6 +112,12 @@ alter table erp_mfg_bom add constraint PK_erp_mfg_bom primary key (NOP_TENANT_ID
 
 alter table erp_mfg_routing_operation drop constraint PK_erp_mfg_routing_operation;
 alter table erp_mfg_routing_operation add constraint PK_erp_mfg_routing_operation primary key (NOP_TENANT_ID, id);
+
+alter table erp_mfg_workcenter_calendar drop constraint PK_erp_mfg_workcenter_calendar;
+alter table erp_mfg_workcenter_calendar add constraint PK_erp_mfg_workcenter_calendar primary key (NOP_TENANT_ID, id);
+
+alter table erp_mfg_workcenter_capacity drop constraint PK_erp_mfg_workcenter_capacity;
+alter table erp_mfg_workcenter_capacity add constraint PK_erp_mfg_workcenter_capacity primary key (NOP_TENANT_ID, id);
 
 alter table erp_mfg_mrp_plan drop constraint PK_erp_mfg_mrp_plan;
 alter table erp_mfg_mrp_plan add constraint PK_erp_mfg_mrp_plan primary key (NOP_TENANT_ID, id);
@@ -136,6 +148,9 @@ alter table erp_mfg_work_order add constraint PK_erp_mfg_work_order primary key 
 
 alter table erp_mfg_bom_line drop constraint PK_erp_mfg_bom_line;
 alter table erp_mfg_bom_line add constraint PK_erp_mfg_bom_line primary key (NOP_TENANT_ID, id);
+
+alter table erp_mfg_crp_load drop constraint PK_erp_mfg_crp_load;
+alter table erp_mfg_crp_load add constraint PK_erp_mfg_crp_load primary key (NOP_TENANT_ID, id);
 
 alter table erp_mfg_work_order_line drop constraint PK_erp_mfg_work_order_line;
 alter table erp_mfg_work_order_line add constraint PK_erp_mfg_work_order_line primary key (NOP_TENANT_ID, id);

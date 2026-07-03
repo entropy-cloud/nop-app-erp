@@ -34,6 +34,22 @@
         <property name="bizObjName" value="ErpMfgRoutingOperation"/>
     </bean>
 
+    <bean id="app.erp.mfg.service.entity.ErpMfgWorkcenterCalendarBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgWorkcenterCalendar" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgWorkcenterCalendarBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMfgWorkcenterCalendar"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgWorkcenterCapacityBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgWorkcenterCapacity" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgWorkcenterCapacityBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMfgWorkcenterCapacity"/>
+    </bean>
+
     <bean id="app.erp.mfg.service.entity.ErpMfgMrpPlanBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpMfgMrpPlan" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -107,6 +123,13 @@
     <bean id="biz_ErpMfgBomLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
           ioc:type="app.erp.mfg.biz.IErpMfgBomLineBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
         <property name="bizObjName" value="ErpMfgBomLine"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgCrpLoadBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgCrpLoad" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgCrpLoadBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMfgCrpLoad"/>
     </bean>
 
     <bean id="app.erp.mfg.service.entity.ErpMfgWorkOrderLineBizModel" ioc:type="@bean:id" ioc:default="true"/>

@@ -8,6 +8,7 @@ entity:
     ErpMfgCostRollup: Cost Rollup
     ErpMfgCostRollupLine: Cost Rollup Line
     ErpMfgCostVariance: Cost Variance
+    ErpMfgCrpLoad: CRP Load
     ErpMfgJobCard: Job Card
     ErpMfgJobCardTimeLog: Job Card Time Log
     ErpMfgMaterialIssue: Material Issue
@@ -23,6 +24,8 @@ entity:
     ErpMfgWorkOrder: Work Order
     ErpMfgWorkOrderLine: Work Order Line
     ErpMfgWorkcenter: Work Center
+    ErpMfgWorkcenterCalendar: Work Center Calendar
+    ErpMfgWorkcenterCapacity: Work Center Capacity
 prop:
   label:
     ErpMfgBatchGenealogy:
@@ -222,6 +225,24 @@ prop:
       material: Material
       workcenter: Workcenter
       operation: Operation
+    ErpMfgCrpLoad:
+      id: ID
+      workcenterId: Workcenter
+      orgId: Organization
+      workOrderId: Work Order
+      loadDate: Load Date
+      loadHours: Load Hours
+      setupHours: Setup Hours
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      workcenter: Workcenter
+      workOrder: Work Order
+      org: Org
     ErpMfgJobCard:
       id: ID
       workOrderId: Work Order
@@ -608,6 +629,49 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+    ErpMfgWorkcenterCalendar:
+      id: ID
+      workcenterId: Workcenter
+      orgId: Organization
+      calendarName: Calendar Name
+      shiftType: Shift Type
+      shiftType_label: null
+      workDatePattern: Work Date Pattern
+      workDatePattern_label: null
+      startTime: Start Time
+      endTime: End Time
+      effectiveFrom: Effective From
+      effectiveTo: Effective To
+      isActive: Active
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      workcenter: Workcenter
+      org: Org
+    ErpMfgWorkcenterCapacity:
+      id: ID
+      workcenterId: Workcenter
+      orgId: Organization
+      materialId: Material
+      capacityPerHour: Capacity Per Hour
+      setupTime: Setup Time
+      cleanupTime: Cleanup Time
+      efficiencyFactor: Efficiency Factor
+      isActive: Active
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      workcenter: Workcenter
+      material: Material
+      org: Org
 dict:
   label:
     erp-mfg/work-order-status: Work Order Status
@@ -623,6 +687,8 @@ dict:
     erp-mfg/subcontract-status: Subcontract Order Status
     erp-mfg/cost-rollup-status: Cost Rollup Status
     erp-mfg/byproduct-type: Co/By-Product Type
+    erp-mfg/shift-type: Shift Type
+    erp-mfg/work-date-pattern: Work Date Pattern
 dict.option.label:
   erp-mfg/work-order-status:
     '10': Draft
@@ -694,3 +760,12 @@ dict.option.label:
   erp-mfg/byproduct-type:
     '10': Co-product
     '20': Byproduct
+  erp-mfg/shift-type:
+    '10': One Shift
+    '20': Morning
+    '30': Afternoon
+    '40': Night
+  erp-mfg/work-date-pattern:
+    '10': All Week
+    '20': Weekdays
+    '30': Weekend Only

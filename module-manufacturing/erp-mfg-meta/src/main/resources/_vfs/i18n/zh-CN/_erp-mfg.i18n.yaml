@@ -8,6 +8,7 @@ entity:
     ErpMfgCostRollup: 标准成本滚算
     ErpMfgCostRollupLine: 标准成本滚算行
     ErpMfgCostVariance: 成本差异记录
+    ErpMfgCrpLoad: CRP负荷
     ErpMfgJobCard: 作业卡
     ErpMfgJobCardTimeLog: 作业工时记录
     ErpMfgMaterialIssue: 领料单
@@ -23,6 +24,8 @@ entity:
     ErpMfgWorkOrder: 工单
     ErpMfgWorkOrderLine: 工单行
     ErpMfgWorkcenter: 工作中心
+    ErpMfgWorkcenterCalendar: 工作中心日历
+    ErpMfgWorkcenterCapacity: 工作中心产能
 prop:
   label:
     ErpMfgBatchGenealogy:
@@ -220,6 +223,24 @@ prop:
       version: 数据版本
       workOrder: null
       workOrderId: 工单
+      workcenter: null
+      workcenterId: 工作中心
+    ErpMfgCrpLoad:
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      loadDate: 负荷日期
+      loadHours: 占用工时
+      org: null
+      orgId: 业务组织
+      remark: 备注
+      setupHours: 换模工时
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      workOrder: null
+      workOrderId: 工单(弱指针)
       workcenter: null
       workcenterId: 工作中心
     ErpMfgJobCard:
@@ -608,3 +629,46 @@ prop:
       updatedBy: 修改人
       version: 数据版本
       workHoursPerDay: 日工时
+    ErpMfgWorkcenterCalendar:
+      calendarName: 日历名称
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      effectiveFrom: 生效起始日期
+      effectiveTo: 生效结束日期
+      endTime: 班次结束时间
+      id: ID
+      isActive: 是否有效
+      org: null
+      orgId: 业务组织
+      remark: 备注
+      shiftType: 班次类型
+      shiftType_label: 班次类型
+      startTime: 班次开始时间
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      workDatePattern: 工作日模式
+      workDatePattern_label: 工作日模式
+      workcenter: null
+      workcenterId: 工作中心
+    ErpMfgWorkcenterCapacity:
+      capacityPerHour: 每小时产能
+      cleanupTime: 清理时间(分钟)
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      efficiencyFactor: 效率系数
+      id: ID
+      isActive: 是否有效
+      material: null
+      materialId: 关联物料
+      org: null
+      orgId: 业务组织
+      remark: 备注
+      setupTime: 换模时间(分钟)
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      workcenter: null
+      workcenterId: 工作中心

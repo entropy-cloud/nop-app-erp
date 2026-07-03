@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 班次类型
+locale: zh-CN
+valueType: int
+description: 
+options:
+
+  - label: 全天单班
+    value: 10
+    description: 
+  
+  - label: 早班
+    value: 20
+    description: 
+  
+  - label: 中班
+    value: 30
+    description: 
+  
+  - label: 夜班
+    value: 40
+    description: 
+  

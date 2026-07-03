@@ -110,4 +110,19 @@ public interface ErpMfgConstants {
 
     // 销售订单作废状态（erp-sal/doc-status CANCELLED=30），需求整合排除作废单
     int SAL_DOC_STATUS_CANCELLED = 30;
+
+    // 班次类型（erp-mfg/shift-type）
+    int SHIFT_TYPE_ONE_SHIFT = 10;
+    int SHIFT_TYPE_MORNING = 20;
+    int SHIFT_TYPE_AFTERNOON = 30;
+    int SHIFT_TYPE_NIGHT = 40;
+
+    // 工作日模式（erp-mfg/work-date-pattern）
+    int WORK_DATE_PATTERN_ALL_WEEK = 10;
+    int WORK_DATE_PATTERN_WEEKDAYS = 20;
+    int WORK_DATE_PATTERN_WEEKEND = 30;
+
+    // CRP 超负荷阈值（经 AppConfig.var 读取；默认 1.0=负荷率超过 100% 即告警）。无 .env/外部服务。
+    String CONFIG_CRP_OVERLOAD_THRESHOLD = "erp-mfg.crp-overload-threshold";
+    double DEFAULT_CRP_OVERLOAD_THRESHOLD = 1.0;
 }

@@ -69,16 +69,6 @@ CREATE TABLE erp_mfg_routing(
   constraint PK_erp_mfg_routing primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_md_currency(
-  ID BIGINT NULL    COMMENT 'null',
-  CODE VARCHAR(50) NULL    COMMENT 'null',
-  NAME VARCHAR(200) NULL    COMMENT 'null',
-  SYMBOL VARCHAR(50) NULL    COMMENT 'null',
-  DECIMAL_PLACES INTEGER NULL    COMMENT 'null',
-  IS_FUNCTIONAL BOOLEAN NULL    COMMENT 'null',
-  constraint PK_erp_md_currency primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
 CREATE TABLE erp_md_organization(
   ID BIGINT NULL    COMMENT 'null',
   CODE VARCHAR(50) NULL    COMMENT 'null',
@@ -87,6 +77,16 @@ CREATE TABLE erp_md_organization(
   PARENT_ID BIGINT NULL    COMMENT 'null',
   STATUS INTEGER NULL    COMMENT 'null',
   constraint PK_erp_md_organization primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_md_currency(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  SYMBOL VARCHAR(50) NULL    COMMENT 'null',
+  DECIMAL_PLACES INTEGER NULL    COMMENT 'null',
+  IS_FUNCTIONAL BOOLEAN NULL    COMMENT 'null',
+  constraint PK_erp_md_currency primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_md_location(
@@ -162,6 +162,48 @@ CREATE TABLE erp_mfg_routing_operation(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   constraint PK_erp_mfg_routing_operation primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_mfg_workcenter_calendar(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  WORKCENTER_ID BIGINT NOT NULL    COMMENT '工作中心',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  CALENDAR_NAME VARCHAR(200) NOT NULL    COMMENT '日历名称',
+  SHIFT_TYPE INTEGER NOT NULL    COMMENT '班次类型',
+  WORK_DATE_PATTERN INTEGER NULL    COMMENT '工作日模式',
+  START_TIME VARCHAR(8) NULL    COMMENT '班次开始时间',
+  END_TIME VARCHAR(8) NULL    COMMENT '班次结束时间',
+  EFFECTIVE_FROM DATE NULL    COMMENT '生效起始日期',
+  EFFECTIVE_TO DATE NULL    COMMENT '生效结束日期',
+  IS_ACTIVE BOOLEAN default 1  NULL    COMMENT '是否有效',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_mfg_workcenter_calendar primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_mfg_workcenter_capacity(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  WORKCENTER_ID BIGINT NOT NULL    COMMENT '工作中心',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  MATERIAL_ID BIGINT NOT NULL    COMMENT '关联物料',
+  CAPACITY_PER_HOUR DECIMAL(16,4) NOT NULL    COMMENT '每小时产能',
+  SETUP_TIME DECIMAL(12,2) default 0  NULL    COMMENT '换模时间(分钟)',
+  CLEANUP_TIME DECIMAL(12,2) default 0  NULL    COMMENT '清理时间(分钟)',
+  EFFICIENCY_FACTOR DECIMAL(10,4) default 1  NULL    COMMENT '效率系数',
+  IS_ACTIVE BOOLEAN default 1  NULL    COMMENT '是否有效',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_mfg_workcenter_capacity primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_mfg_mrp_plan(
@@ -392,6 +434,24 @@ CREATE TABLE erp_mfg_bom_line(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   constraint PK_erp_mfg_bom_line primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_mfg_crp_load(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  WORKCENTER_ID BIGINT NOT NULL    COMMENT '工作中心',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  WORK_ORDER_ID BIGINT NULL    COMMENT '工单(弱指针)',
+  LOAD_DATE DATE NOT NULL    COMMENT '负荷日期',
+  LOAD_HOURS DECIMAL(12,2) default 0  NULL    COMMENT '占用工时',
+  SETUP_HOURS DECIMAL(12,2) default 0  NULL    COMMENT '换模工时',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_mfg_crp_load primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_mfg_work_order_line(
@@ -638,9 +698,9 @@ CREATE TABLE erp_mfg_material_issue_line(
                 
    ALTER TABLE erp_mfg_routing COMMENT '工艺路线';
                 
-   ALTER TABLE erp_md_currency COMMENT '币种';
-                
    ALTER TABLE erp_md_organization COMMENT '组织';
+                
+   ALTER TABLE erp_md_currency COMMENT '币种';
                 
    ALTER TABLE erp_md_location COMMENT '库位';
                 
@@ -653,6 +713,10 @@ CREATE TABLE erp_mfg_material_issue_line(
    ALTER TABLE erp_mfg_bom COMMENT 'BOM';
                 
    ALTER TABLE erp_mfg_routing_operation COMMENT '工艺路线工序';
+                
+   ALTER TABLE erp_mfg_workcenter_calendar COMMENT '工作中心日历';
+                
+   ALTER TABLE erp_mfg_workcenter_capacity COMMENT '工作中心产能';
                 
    ALTER TABLE erp_mfg_mrp_plan COMMENT 'MRP计划';
                 
@@ -673,6 +737,8 @@ CREATE TABLE erp_mfg_material_issue_line(
    ALTER TABLE erp_mfg_work_order COMMENT '工单';
                 
    ALTER TABLE erp_mfg_bom_line COMMENT 'BOM行';
+                
+   ALTER TABLE erp_mfg_crp_load COMMENT 'CRP负荷';
                 
    ALTER TABLE erp_mfg_work_order_line COMMENT '工单行';
                 

@@ -11,9 +11,9 @@ alter table erp_mfg_workcenter add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NUL
 
 alter table erp_mfg_routing add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
-alter table erp_md_currency add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
-
 alter table erp_md_organization add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_md_currency add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_location add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -26,6 +26,10 @@ alter table erp_inv_batch add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 alter table erp_mfg_bom add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_routing_operation add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_mfg_workcenter_calendar add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_mfg_workcenter_capacity add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_mrp_plan add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -46,6 +50,8 @@ alter table erp_mfg_cost_rollup_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' N
 alter table erp_mfg_work_order add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_bom_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_mfg_crp_load add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_work_order_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -83,11 +89,11 @@ alter table erp_mfg_workcenter add primary key (NOP_TENANT_ID, ID);
 alter table erp_mfg_routing drop primary key;
 alter table erp_mfg_routing add primary key (NOP_TENANT_ID, ID);
 
-alter table erp_md_currency drop primary key;
-alter table erp_md_currency add primary key (NOP_TENANT_ID, ID);
-
 alter table erp_md_organization drop primary key;
 alter table erp_md_organization add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_currency drop primary key;
+alter table erp_md_currency add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_md_location drop primary key;
 alter table erp_md_location add primary key (NOP_TENANT_ID, ID);
@@ -106,6 +112,12 @@ alter table erp_mfg_bom add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_mfg_routing_operation drop primary key;
 alter table erp_mfg_routing_operation add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_mfg_workcenter_calendar drop primary key;
+alter table erp_mfg_workcenter_calendar add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_mfg_workcenter_capacity drop primary key;
+alter table erp_mfg_workcenter_capacity add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_mfg_mrp_plan drop primary key;
 alter table erp_mfg_mrp_plan add primary key (NOP_TENANT_ID, ID);
@@ -136,6 +148,9 @@ alter table erp_mfg_work_order add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_mfg_bom_line drop primary key;
 alter table erp_mfg_bom_line add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_mfg_crp_load drop primary key;
+alter table erp_mfg_crp_load add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_mfg_work_order_line drop primary key;
 alter table erp_mfg_work_order_line add primary key (NOP_TENANT_ID, ID);

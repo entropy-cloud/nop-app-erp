@@ -31,6 +31,9 @@ public interface ErpMfgErrors {
     String ARG_PLAN_CODE = "planCode";
     String ARG_SUPPLIER_ID = "supplierId";
 
+    String ARG_PERIOD_FROM = "periodFrom";
+    String ARG_PERIOD_TO = "periodTo";
+
     ErrorCode ERR_BOM_NOT_FOUND = ErrorCode.define(
             "nop.err.mfg.bom.not-found",
             "BOM不存在: {bomId}",
@@ -120,4 +123,9 @@ public interface ErpMfgErrors {
             "nop.err.mfg.mrp-release.unsupported-order-type",
             "MRP计划行[{mrpLineId}]的建议类型不支持释放转单（仅支持采购建议/工单建议）",
             ARG_MRP_LINE_ID);
+
+    ErrorCode ERR_CRP_PERIOD_INVALID = ErrorCode.define(
+            "nop.err.mfg.crp.period-invalid",
+            "CRP负荷计算区间非法：periodFrom[{periodFrom}]与periodTo[{periodTo}]均不可为空且from不得晚于to",
+            ARG_PERIOD_FROM, ARG_PERIOD_TO);
 }
