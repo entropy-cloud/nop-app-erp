@@ -5,6 +5,7 @@ import app.erp.crm.dao.entity.ErpCrmLead;
 import app.erp.crm.service.processor.ErpCrmConversionProcessor;
 import app.erp.crm.service.processor.ErpCrmLeadProcessor;
 import app.erp.crm.service.support.LeadDuplicateChecker;
+import app.erp.crm.service.support.LeadScoringEngine;
 import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.sal.dao.entity.ErpSalQuotation;
 import io.nop.api.core.annotations.biz.BizModel;
@@ -37,6 +38,9 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
 
     @Inject
     LeadDuplicateChecker duplicateChecker;
+
+    @Inject
+    LeadScoringEngine scoringEngine;
 
     public ErpCrmLeadBizModel() {
         setEntityName(ErpCrmLead.class.getName());
@@ -108,5 +112,21 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
         super.defaultPrepareSave(entityData, context);
         // 查重默认仅提示不阻断（auto-convert-duplicate-lead=false）；候选结果可经 findDuplicates 查询。
         duplicateChecker.checkAndNotify(entityData.getEntity(), context);
+    }
+
+    @Override
+    protected void defaultPrepareUpdate(EntityData<ErpCrmLead> entityData, IServiceContext context) {
+        super.defaultPrepareUpdate(entityData, context);
+        // config-gated：lead-scoring.recalc-on-lead-update=true 时线索字段变更触发重新评分。
+        ErpCrmLead lead = entityData.getEntity();
+        if (lead.getId() == null) {
+            return;
+        }
+        boolean recalcEnabled = io.nop.api.core.config.AppConfig.var(
+                app.erp.crm.service.ErpCrmConstants.CONFIG_LEAD_SCORING_RECALC_ON_LEAD_UPDATE, Boolean.TRUE);
+        if (recalcEnabled) {
+            scoringEngine.recalculateScore(lead.getId(),
+                    app.erp.crm.service.ErpCrmConstants.TRIGGER_EVENT_LEAD_UPDATE, context);
+        }
     }
 }

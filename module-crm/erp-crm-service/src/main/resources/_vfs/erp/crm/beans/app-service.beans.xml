@@ -19,4 +19,20 @@
     <!-- CRM 转化闭环 Processor（LEAD→客户+商机、OPPORTUNITY→报价单，跨域经 IErpMdPartnerBiz/IErpSalQuotationBiz） -->
     <bean id="app.erp.crm.service.processor.ErpCrmConversionProcessor"
           class="app.erp.crm.service.processor.ErpCrmConversionProcessor"/>
+
+    <!-- CRM 活动派生字段回写器（Event 状态变更即时回写 Lead.lastContactDate/nextActivityDate，推模式） -->
+    <bean id="app.erp.crm.service.support.LeadActivityDerivationHelper"
+          class="app.erp.crm.service.support.LeadActivityDerivationHelper"/>
+
+    <!-- CRM 线索活动时间线聚合器（Event + Activity 合并按时间倒序返回只读聚合视图） -->
+    <bean id="app.erp.crm.service.support.EventTimelineAggregator"
+          class="app.erp.crm.service.support.EventTimelineAggregator"/>
+
+    <!-- CRM 线索评分引擎（config 驱动 LOOKUP/FORMULA/BOOLEAN 准则 → 归一化 totalScore → append-only 评分记录 + auto-qualify） -->
+    <bean id="app.erp.crm.service.support.LeadScoringEngine"
+          class="app.erp.crm.service.support.LeadScoringEngine"/>
+
+    <!-- CRM 销售预测聚合引擎（commit/upside/best-case/weighted 分类 + 商机级 ForecastLine 快照 + 团队→公司层级 rollup + 准确率） -->
+    <bean id="app.erp.crm.service.support.ForecastAggregator"
+          class="app.erp.crm.service.support.ForecastAggregator"/>
 </beans>

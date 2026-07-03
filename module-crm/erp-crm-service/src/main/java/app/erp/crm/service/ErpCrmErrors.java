@@ -18,6 +18,11 @@ public interface ErpCrmErrors {
     String ARG_PARTNER_ID = "partnerId";
     String ARG_QUOTATION_CODE = "quotationCode";
     String ARG_DUPLICATE_COUNT = "duplicateCount";
+    String ARG_EVENT_ID = "eventId";
+    String ARG_EVENT_CODE = "eventCode";
+    String ARG_PERIOD_ID = "periodId";
+    String ARG_CONFIG_ID = "configId";
+    String ARG_ACTIVE_COUNT = "activeCount";
 
     ErrorCode ERR_LEAD_NOT_FOUND = ErrorCode.define("erp.err.crm.lead-not-found",
             "线索/商机 {leadId} 不存在", ARG_LEAD_ID);
@@ -48,4 +53,21 @@ public interface ErpCrmErrors {
     ErrorCode ERR_DUPLICATE_LEAD_FOUND = ErrorCode.define("erp.err.crm.duplicate-lead-found",
             "发现 {duplicateCount} 条疑似重复线索（companyName/contactEmail/contactPhone 命中既有非终态线索）",
             ARG_DUPLICATE_COUNT);
+
+    ErrorCode ERR_EVENT_NOT_FOUND = ErrorCode.define("erp.err.crm.event-not-found",
+            "活动/事件 {eventId} 不存在", ARG_EVENT_ID);
+
+    ErrorCode ERR_EVENT_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.crm.event-illegal-status-transition",
+            "活动/事件 {eventCode} 当前状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_EVENT_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+
+    ErrorCode ERR_MULTIPLE_ACTIVE_SCORE_CONFIG = ErrorCode.define("erp.err.crm.multiple-active-score-config",
+            "存在 {activeCount} 个 isActive=true 的评分规则配置（同一时间仅允许一个生效）", ARG_ACTIVE_COUNT);
+
+    ErrorCode ERR_FORECAST_PERIOD_NOT_FOUND = ErrorCode.define("erp.err.crm.forecast-period-not-found",
+            "预测期间 {periodId} 不存在", ARG_PERIOD_ID);
+
+    ErrorCode ERR_FORECAST_PERIOD_NOT_OPEN = ErrorCode.define("erp.err.crm.forecast-period-not-open",
+            "预测期间 {periodId} 当前状态={currentStatus}，仅 OPEN 期间可刷新预测（期望状态={expectedStatus}）",
+            ARG_PERIOD_ID, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
 }
