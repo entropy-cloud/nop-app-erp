@@ -87,6 +87,26 @@
             <option code="SAMPLE" label="抽样盘点" value="SAMPLE" i18n-en:label='Sample Count'/>
             <option code="CYCLE" label="循环盘点" value="CYCLE" i18n-en:label='Cycle Count'/>
         </dict>
+        <!-- 所有权类型（owner 维度，consignment.md；feature group 开关 erp-inv.ownership-tracking-enabled 默认关） -->
+        <dict label="库存所有权类型" name="erp-inv/ownership-type" valueType="string" i18n-en:label='Ownership Type'>
+            <option code="OWNED" label="自有库存" value="OWNED" i18n-en:label='Owned'/>
+            <option code="VMI_SUPPLIER" label="供应商寄售" value="VMI_SUPPLIER" i18n-en:label='VMI Supplier'/>
+            <option code="CONSIGNMENT_OUT" label="寄售出去" value="CONSIGNMENT_OUT" i18n-en:label='Consignment Out'/>
+            <option code="CUSTOMER_PROVIDED" label="客供料" value="CUSTOMER_PROVIDED" i18n-en:label='Customer Provided'/>
+        </dict>
+        <!-- 所有权转移类型（consignment.md §ErpInvOwnershipTransfer） -->
+        <dict label="所有权转移类型" name="erp-inv/ownership-transfer-type" valueType="string" i18n-en:label='Ownership Transfer Type'>
+            <option code="VMI_CONSUME" label="VMI消耗(供应商→自有)" value="VMI_CONSUME" i18n-en:label='VMI Consume'/>
+            <option code="CONSIGNMENT_RETURN" label="寄售回收" value="CONSIGNMENT_RETURN" i18n-en:label='Consignment Return'/>
+            <option code="OWNERSHIP_TO_CUSTOMER" label="所有权转客户" value="OWNERSHIP_TO_CUSTOMER" i18n-en:label='Ownership To Customer'/>
+        </dict>
+        <!-- 所有权转移状态（DRAFT→CONFIRMED→DONE / CONFIRMED→CANCELLED） -->
+        <dict label="所有权转移状态" name="erp-inv/ownership-transfer-status" valueType="string" i18n-en:label='Ownership Transfer Status'>
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label='Draft'/>
+            <option code="CONFIRMED" label="已确认" value="CONFIRMED" i18n-en:label='Confirmed'/>
+            <option code="DONE" label="已完成" value="DONE" i18n-en:label='Completed'/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label='Cancelled'/>
+        </dict>
     </dicts>
 
     <domains>
@@ -214,6 +234,8 @@
                 <column name="businessDate" displayName="业务日期" stdSqlType="DATE" code="BUSINESS_DATE" propId="18" stdDataType="date" i18n-en:displayName='Business Date' />
                 <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="19" stdDataType="string" i18n-en:displayName='Batch No' />
                 <column name="serialNo" displayName="序列号" stdSqlType="VARCHAR" precision="50" code="SERIAL_NO" propId="20" stdDataType="string" i18n-en:displayName='Serial No' />
+                <column name="ownerId" displayName="所有权往来单位" stdSqlType="BIGINT" code="OWNER_ID" propId="27" stdDataType="long" i18n-en:displayName='Owner Partner' />
+                <column name="ownershipType" displayName="所有权类型" ext:dict="erp-inv/ownership-type" defaultValue="OWNED" code="OWNERSHIP_TYPE" propId="28" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Ownership Type' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="21" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="22" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="23" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
@@ -231,6 +253,7 @@
                 <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
                 <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub" i18n-en:displayName='Acct Schema'><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
+                <to-one name="owner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Owner'><join><on leftProp="ownerId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -254,6 +277,8 @@
                 <column name="avgCost" displayName="平均成本" domain="unitPrice" code="AVG_COST" propId="13" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Avg Cost' />
                 <column name="totalCost" displayName="总成本" domain="amount" code="TOTAL_COST" propId="14" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Cost' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="15" stdDataType="long" i18n-en:displayName='Currency' />
+                <column name="ownerId" displayName="所有权往来单位" stdSqlType="BIGINT" code="OWNER_ID" propId="22" stdDataType="long" i18n-en:displayName='Owner Partner' />
+                <column name="ownershipType" displayName="所有权类型" ext:dict="erp-inv/ownership-type" defaultValue="OWNED" code="OWNERSHIP_TYPE" propId="23" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Ownership Type' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="16" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="17" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="18" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
@@ -268,6 +293,7 @@
                 <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
                 <to-one name="location" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub" i18n-en:displayName='Location'><join><on leftProp="locationId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="owner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Owner'><join><on leftProp="ownerId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 
@@ -629,6 +655,77 @@
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
                 <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub" i18n-en:displayName='Warehouse'><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
                 <to-one name="location" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub" i18n-en:displayName='Location'><join><on leftProp="locationId" rightProp="id"/></join></to-one>
+            </relations>
+        </entity>
+
+        <!-- 所有权转移单头（consignment.md §ErpInvOwnershipTransfer；法权变更，物理位置不变 sourceLocId=destLocId） -->
+        <entity className="app.erp.inv.dao.entity.ErpInvOwnershipTransfer"
+                displayName="所有权转移单" ext:icon="arrow-left-right" i18n-en:displayName="Ownership Transfer" name="app.erp.inv.dao.entity.ErpInvOwnershipTransfer"
+                tableName="erp_inv_ownership_transfer" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="transferType" displayName="转移类型" ext:dict="erp-inv/ownership-transfer-type" mandatory="true" code="TRANSFER_TYPE" propId="4" stdSqlType="VARCHAR" precision="30" stdDataType="string" i18n-en:displayName='Transfer Type' />
+                <column name="partnerId" displayName="所有权对方(往来单位)" stdSqlType="BIGINT" mandatory="true" code="PARTNER_ID" propId="5" stdDataType="long" i18n-en:displayName='Partner' />
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="6" stdDataType="date" i18n-en:displayName='Business Date' />
+                <column name="warehouseId" displayName="仓库" stdSqlType="BIGINT" mandatory="true" code="WAREHOUSE_ID" propId="7" stdDataType="long" i18n-en:displayName='Warehouse' />
+                <column name="sourceLocId" displayName="源库位(=目的库位)" stdSqlType="BIGINT" mandatory="true" code="SOURCE_LOC_ID" propId="8" stdDataType="long" i18n-en:displayName='Source Location' />
+                <column name="destLocId" displayName="目的库位(=源库位)" stdSqlType="BIGINT" mandatory="true" code="DEST_LOC_ID" propId="9" stdDataType="long" i18n-en:displayName='Dest Location' />
+                <column name="fromOwnershipType" displayName="转前所有权类型" ext:dict="erp-inv/ownership-type" mandatory="true" code="FROM_OWNERSHIP_TYPE" propId="10" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='From Ownership Type' />
+                <column name="toOwnershipType" displayName="转后所有权类型" ext:dict="erp-inv/ownership-type" mandatory="true" code="TO_OWNERSHIP_TYPE" propId="11" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='To Ownership Type' />
+                <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="12" stdDataType="long" i18n-en:displayName='Currency' />
+                <column name="docStatus" displayName="单据状态" ext:dict="erp-inv/ownership-transfer-status" mandatory="true" code="DOC_STATUS" propId="13" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
+                <column name="posted" displayName="已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="14" stdDataType="boolean" i18n-en:displayName='Posted' />
+                <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="15" stdDataType="datetime" i18n-en:displayName='Posted At' />
+                <column name="postedBy" stdDomain="userId" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="16" stdDataType="string" i18n-en:displayName='Posted By' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="17" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="18" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="19" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="20" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="21" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="22" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="23" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Partner'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub" i18n-en:displayName='Warehouse'><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
+                <to-one name="sourceLoc" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub" i18n-en:displayName='Source Location'><join><on leftProp="sourceLocId" rightProp="id"/></join></to-one>
+                <to-one name="destLoc" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub" i18n-en:displayName='Dest Location'><join><on leftProp="destLocId" rightProp="id"/></join></to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+                <to-many name="lines" refEntityName="app.erp.inv.dao.entity.ErpInvOwnershipTransferLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="30"><join><on leftProp="id" rightProp="transferId"/></join></to-many>
+            </relations>
+        </entity>
+
+        <!-- 所有权转移单行 -->
+        <entity className="app.erp.inv.dao.entity.ErpInvOwnershipTransferLine"
+                displayName="所有权转移单行" ext:icon="list" i18n-en:displayName="Ownership Transfer Line" name="app.erp.inv.dao.entity.ErpInvOwnershipTransferLine"
+                tableName="erp_inv_ownership_transfer_line" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="transferId" displayName="转移单ID" stdSqlType="BIGINT" mandatory="true" code="TRANSFER_ID" propId="2" stdDataType="long" i18n-en:displayName='Transfer' />
+                <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int" i18n-en:displayName='Line No' />
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="4" stdDataType="long" i18n-en:displayName='Material' />
+                <column name="skuId" displayName="SKU" stdSqlType="BIGINT" code="SKU_ID" propId="5" stdDataType="long" i18n-en:displayName='SKU' />
+                <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="6" stdDataType="string" i18n-en:displayName='Batch No' />
+                <column name="quantity" displayName="数量" domain="quantity" mandatory="true" code="QUANTITY" propId="7" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Quantity' />
+                <column name="unitCost" displayName="单位成本" domain="unitPrice" code="UNIT_COST" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Unit Cost' />
+                <column name="totalCost" displayName="总成本" domain="amount" code="TOTAL_COST" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Cost' />
+                <column name="sourceBillType" displayName="来源单据类型" stdSqlType="VARCHAR" precision="50" code="SOURCE_BILL_TYPE" propId="10" stdDataType="string" i18n-en:displayName='Source Bill Type' />
+                <column name="sourceBillCode" displayName="来源单据号" stdSqlType="VARCHAR" precision="50" code="SOURCE_BILL_CODE" propId="11" stdDataType="string" i18n-en:displayName='Source Bill Code' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="13" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="14" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="15" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="16" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="17" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-one name="transfer" refEntityName="app.erp.inv.dao.entity.ErpInvOwnershipTransfer" tagSet="pub" i18n-en:displayName='Transfer'><join><on leftProp="transferId" rightProp="id"/></join></to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
+                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub" i18n-en:displayName='Sku'><join><on leftProp="skuId" rightProp="id"/></join></to-one>
             </relations>
         </entity>
 

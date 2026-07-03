@@ -105,8 +105,16 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 21;
     
+    /* 所有权往来单位: OWNER_ID BIGINT */
+    public static final String PROP_NAME_ownerId = "ownerId";
+    public static final int PROP_ID_ownerId = 22;
+    
+    /* 所有权类型: OWNERSHIP_TYPE VARCHAR */
+    public static final String PROP_NAME_ownershipType = "ownershipType";
+    public static final int PROP_ID_ownershipType = 23;
+    
 
-    private static int _PROP_ID_BOUND = 22;
+    private static int _PROP_ID_BOUND = 24;
 
     
     /* relation:  */
@@ -127,11 +135,14 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_org = "org";
     
+    /* relation:  */
+    public static final String PROP_NAME_owner = "owner";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[22];
+    private static final String[] PROP_ID_TO_NAME = new String[24];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -198,6 +209,12 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
+          PROP_ID_TO_NAME[PROP_ID_ownerId] = PROP_NAME_ownerId;
+          PROP_NAME_TO_ID.put(PROP_NAME_ownerId, PROP_ID_ownerId);
+      
+          PROP_ID_TO_NAME[PROP_ID_ownershipType] = PROP_NAME_ownershipType;
+          PROP_NAME_TO_ID.put(PROP_NAME_ownershipType, PROP_ID_ownershipType);
+      
     }
 
     
@@ -263,6 +280,12 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* 所有权往来单位: OWNER_ID */
+    private java.lang.Long _ownerId;
+    
+    /* 所有权类型: OWNERSHIP_TYPE */
+    private java.lang.String _ownershipType;
     
 
     public _ErpInvStockBalance(){
@@ -400,6 +423,12 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_ownerId:
+               return getOwnerId();
+        
+            case PROP_ID_ownershipType:
+               return getOwnershipType();
         
            default:
               return super.orm_propValue(propId);
@@ -622,6 +651,26 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_ownerId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_ownerId));
+               }
+               setOwnerId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_ownershipType:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_ownershipType));
+               }
+               setOwnershipType(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -774,6 +823,20 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_ownerId:{
+               onInitProp(propId);
+               this._ownerId = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_ownershipType:{
+               onInitProp(propId);
+               this._ownershipType = (java.lang.String)value;
                
                break;
             }
@@ -1184,6 +1247,44 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
     }
     
     /**
+     * 所有权往来单位: OWNER_ID
+     */
+    public final java.lang.Long getOwnerId(){
+         onPropGet(PROP_ID_ownerId);
+         return _ownerId;
+    }
+
+    /**
+     * 所有权往来单位: OWNER_ID
+     */
+    public final void setOwnerId(java.lang.Long value){
+        if(onPropSet(PROP_ID_ownerId,value)){
+            this._ownerId = value;
+            internalClearRefs(PROP_ID_ownerId);
+            
+        }
+    }
+    
+    /**
+     * 所有权类型: OWNERSHIP_TYPE
+     */
+    public final java.lang.String getOwnershipType(){
+         onPropGet(PROP_ID_ownershipType);
+         return _ownershipType;
+    }
+
+    /**
+     * 所有权类型: OWNERSHIP_TYPE
+     */
+    public final void setOwnershipType(java.lang.String value){
+        if(onPropSet(PROP_ID_ownershipType,value)){
+            this._ownershipType = value;
+            internalClearRefs(PROP_ID_ownershipType);
+            
+        }
+    }
+    
+    /**
      * 
      */
     public final app.erp.md.dao.entity.ErpMdMaterial getMaterial(){
@@ -1315,6 +1416,29 @@ public class _ErpInvStockBalance extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_org, refEntity,()->{
            
                            this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdPartner getOwner(){
+       return (app.erp.md.dao.entity.ErpMdPartner)internalGetRefEntity(PROP_NAME_owner);
+    }
+
+    public final void setOwner(app.erp.md.dao.entity.ErpMdPartner refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOwnerId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_owner, refEntity,()->{
+           
+                           this.setOwnerId(refEntity.getId());
                        
            });
            }

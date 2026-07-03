@@ -232,6 +232,8 @@ CREATE TABLE erp_inv_stock_balance(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
+  OWNER_ID NUMBER(20)  ,
+  OWNERSHIP_TYPE VARCHAR2(20) default 'OWNED'   ,
   constraint PK_erp_inv_stock_balance primary key (ID)
 );
 
@@ -253,6 +255,33 @@ CREATE TABLE erp_inv_reservation(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   constraint PK_erp_inv_reservation primary key (ID)
+);
+
+CREATE TABLE erp_inv_ownership_transfer(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  TRANSFER_TYPE VARCHAR2(30) NOT NULL ,
+  PARTNER_ID NUMBER(20) NOT NULL ,
+  BUSINESS_DATE DATE NOT NULL ,
+  WAREHOUSE_ID NUMBER(20) NOT NULL ,
+  SOURCE_LOC_ID NUMBER(20) NOT NULL ,
+  DEST_LOC_ID NUMBER(20) NOT NULL ,
+  FROM_OWNERSHIP_TYPE VARCHAR2(20) NOT NULL ,
+  TO_OWNERSHIP_TYPE VARCHAR2(20) NOT NULL ,
+  CURRENCY_ID NUMBER(20)  ,
+  DOC_STATUS VARCHAR2(20) NOT NULL ,
+  POSTED CHAR(1) default 0   ,
+  POSTED_AT DATE  ,
+  POSTED_BY VARCHAR2(36)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_inv_ownership_transfer primary key (ID)
 );
 
 CREATE TABLE erp_inv_picking_order(
@@ -390,6 +419,28 @@ CREATE TABLE erp_inv_reservation_line(
   constraint PK_erp_inv_reservation_line primary key (ID)
 );
 
+CREATE TABLE erp_inv_ownership_transfer_line(
+  ID NUMBER(20) NOT NULL ,
+  TRANSFER_ID NUMBER(20) NOT NULL ,
+  LINE_NO INTEGER NOT NULL ,
+  MATERIAL_ID NUMBER(20) NOT NULL ,
+  SKU_ID NUMBER(20)  ,
+  BATCH_NO VARCHAR2(50)  ,
+  QUANTITY NUMBER(20,4) NOT NULL ,
+  UNIT_COST NUMBER(20,4)  ,
+  TOTAL_COST NUMBER(20,4)  ,
+  SOURCE_BILL_TYPE VARCHAR2(50)  ,
+  SOURCE_BILL_CODE VARCHAR2(50)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_inv_ownership_transfer_line primary key (ID)
+);
+
 CREATE TABLE erp_inv_picking_order_line(
   ID NUMBER(20) NOT NULL ,
   PICKING_ID NUMBER(20) NOT NULL ,
@@ -438,6 +489,8 @@ CREATE TABLE erp_inv_stock_ledger(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
+  OWNER_ID NUMBER(20)  ,
+  OWNERSHIP_TYPE VARCHAR2(20) default 'OWNED'   ,
   constraint PK_erp_inv_stock_ledger primary key (ID)
 );
 
@@ -720,6 +773,10 @@ CREATE TABLE erp_inv_stock_ledger(
                     
       COMMENT ON COLUMN erp_inv_stock_balance.UPDATE_TIME IS '修改时间';
                     
+      COMMENT ON COLUMN erp_inv_stock_balance.OWNER_ID IS '所有权往来单位';
+                    
+      COMMENT ON COLUMN erp_inv_stock_balance.OWNERSHIP_TYPE IS '所有权类型';
+                    
       COMMENT ON TABLE erp_inv_reservation IS '库存预留单';
                 
       COMMENT ON COLUMN erp_inv_reservation.ID IS 'ID';
@@ -753,6 +810,54 @@ CREATE TABLE erp_inv_stock_ledger(
       COMMENT ON COLUMN erp_inv_reservation.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_inv_reservation.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_inv_ownership_transfer IS '所有权转移单';
+                
+      COMMENT ON COLUMN erp_inv_ownership_transfer.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer.CODE IS '单号';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer.TRANSFER_TYPE IS '转移类型';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer.PARTNER_ID IS '所有权对方(往来单位)';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer.BUSINESS_DATE IS '业务日期';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer.WAREHOUSE_ID IS '仓库';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer.SOURCE_LOC_ID IS '源库位(=目的库位)';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer.DEST_LOC_ID IS '目的库位(=源库位)';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer.FROM_OWNERSHIP_TYPE IS '转前所有权类型';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer.TO_OWNERSHIP_TYPE IS '转后所有权类型';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer.CURRENCY_ID IS '币种';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer.DOC_STATUS IS '单据状态';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer.POSTED IS '已过账';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer.POSTED_AT IS '过账时间';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer.POSTED_BY IS '过账人';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_inv_picking_order IS '拣货单';
                 
@@ -988,6 +1093,44 @@ CREATE TABLE erp_inv_stock_ledger(
                     
       COMMENT ON COLUMN erp_inv_reservation_line.UPDATE_TIME IS '修改时间';
                     
+      COMMENT ON TABLE erp_inv_ownership_transfer_line IS '所有权转移单行';
+                
+      COMMENT ON COLUMN erp_inv_ownership_transfer_line.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer_line.TRANSFER_ID IS '转移单ID';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer_line.LINE_NO IS '行号';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer_line.MATERIAL_ID IS '物料';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer_line.SKU_ID IS 'SKU';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer_line.BATCH_NO IS '批号';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer_line.QUANTITY IS '数量';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer_line.UNIT_COST IS '单位成本';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer_line.TOTAL_COST IS '总成本';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer_line.SOURCE_BILL_TYPE IS '来源单据类型';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer_line.SOURCE_BILL_CODE IS '来源单据号';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer_line.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer_line.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer_line.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer_line.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer_line.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer_line.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_inv_ownership_transfer_line.UPDATE_TIME IS '修改时间';
+                    
       COMMENT ON TABLE erp_inv_picking_order_line IS '拣货单行';
                 
       COMMENT ON COLUMN erp_inv_picking_order_line.ID IS 'ID';
@@ -1077,4 +1220,8 @@ CREATE TABLE erp_inv_stock_ledger(
       COMMENT ON COLUMN erp_inv_stock_ledger.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_inv_stock_ledger.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_inv_stock_ledger.OWNER_ID IS '所有权往来单位';
+                    
+      COMMENT ON COLUMN erp_inv_stock_ledger.OWNERSHIP_TYPE IS '所有权类型';
                     

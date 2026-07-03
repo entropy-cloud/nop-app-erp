@@ -105,3 +105,7 @@ options:
     value: CREDIT_FACILITY_INTEREST
     description: 
   
+  - label: 所有权转移
+    value: OWNERSHIP_TRANSFER
+    description: 
+  

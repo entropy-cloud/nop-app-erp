@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 所有权转移类型
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: VMI消耗(供应商→自有)
+    value: VMI_CONSUME
+    description: 
+  
+  - label: 寄售回收
+    value: CONSIGNMENT_RETURN
+    description: 
+  
+  - label: 所有权转客户
+    value: OWNERSHIP_TO_CUSTOMER
+    description: 
+  

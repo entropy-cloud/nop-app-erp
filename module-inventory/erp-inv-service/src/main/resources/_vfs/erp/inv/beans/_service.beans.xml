@@ -58,6 +58,14 @@
         <property name="bizObjName" value="ErpInvReservation"/>
     </bean>
 
+    <bean id="app.erp.inv.service.entity.ErpInvOwnershipTransferBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpInvOwnershipTransfer" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.inv.biz.IErpInvOwnershipTransferBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpInvOwnershipTransfer"/>
+    </bean>
+
     <bean id="app.erp.inv.service.entity.ErpInvPickingOrderBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpInvPickingOrder" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -103,6 +111,14 @@
           ioc:type="app.erp.inv.biz.IErpInvReservationLineBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
         <property name="bizObjName" value="ErpInvReservationLine"/>
+    </bean>
+
+    <bean id="app.erp.inv.service.entity.ErpInvOwnershipTransferLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpInvOwnershipTransferLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.inv.biz.IErpInvOwnershipTransferLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpInvOwnershipTransferLine"/>
     </bean>
 
     <bean id="app.erp.inv.service.entity.ErpInvPickingOrderLineBizModel" ioc:type="@bean:id" ioc:default="true"/>

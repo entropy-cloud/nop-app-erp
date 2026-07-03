@@ -2,6 +2,8 @@ entity:
   label:
     ErpInvBatch: Batch Ledger
     ErpInvCostLayer: Cost Layer
+    ErpInvOwnershipTransfer: Ownership Transfer
+    ErpInvOwnershipTransferLine: Ownership Transfer Line
     ErpInvPickingOrder: Picking Order
     ErpInvPickingOrderLine: Picking Order Line
     ErpInvReservation: Stock Reservation
@@ -72,6 +74,63 @@ prop:
       org: Org
       incomingMove: Incoming Move
       acctSchema: Acct Schema
+    ErpInvOwnershipTransfer:
+      id: ID
+      code: Code
+      orgId: Organization
+      transferType: Transfer Type
+      transferType_label: null
+      partnerId: Partner
+      businessDate: Business Date
+      warehouseId: Warehouse
+      sourceLocId: Source Location
+      destLocId: Dest Location
+      fromOwnershipType: From Ownership Type
+      fromOwnershipType_label: null
+      toOwnershipType: To Ownership Type
+      toOwnershipType_label: null
+      currencyId: Currency
+      docStatus: Doc Status
+      docStatus_label: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+      partner: Partner
+      warehouse: Warehouse
+      sourceLoc: Source Location
+      destLoc: Dest Location
+      currency: Currency
+      lines: Lines
+    ErpInvOwnershipTransferLine:
+      id: ID
+      transferId: Transfer
+      lineNo: Line No
+      materialId: Material
+      skuId: SKU
+      batchNo: Batch No
+      quantity: Quantity
+      unitCost: Unit Cost
+      totalCost: Total Cost
+      sourceBillType: Source Bill Type
+      sourceBillCode: Source Bill Code
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      transfer: Transfer
+      material: Material
+      sku: Sku
     ErpInvPickingOrder:
       id: ID
       code: Code
@@ -212,12 +271,16 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      ownerId: Owner Partner
+      ownershipType: Ownership Type
+      ownershipType_label: null
       material: Material
       sku: Sku
       warehouse: Warehouse
       currency: Currency
       location: Location
       org: Org
+      owner: Owner
     ErpInvStockLedger:
       id: ID
       code: Code
@@ -246,6 +309,9 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      ownerId: Owner Partner
+      ownershipType: Ownership Type
+      ownershipType_label: null
       move: Move
       moveLine: Move Line
       material: Material
@@ -255,6 +321,7 @@ prop:
       currency: Currency
       org: Org
       acctSchema: Acct Schema
+      owner: Owner
     ErpInvStockMove:
       id: ID
       code: Code
@@ -432,6 +499,9 @@ dict:
     erp-inv/reservation-status: Reservation Status
     erp-inv/picking-status: Picking Status
     erp-inv/take-type: Take Type
+    erp-inv/ownership-type: Ownership Type
+    erp-inv/ownership-transfer-type: Ownership Transfer Type
+    erp-inv/ownership-transfer-status: Ownership Transfer Status
 dict.option.label:
   erp-inv/move-status:
     DRAFT: Draft
@@ -477,3 +547,17 @@ dict.option.label:
     FULL: Full Count
     SAMPLE: Sample Count
     CYCLE: Cycle Count
+  erp-inv/ownership-type:
+    OWNED: Owned
+    VMI_SUPPLIER: VMI Supplier
+    CONSIGNMENT_OUT: Consignment Out
+    CUSTOMER_PROVIDED: Customer Provided
+  erp-inv/ownership-transfer-type:
+    VMI_CONSUME: VMI Consume
+    CONSIGNMENT_RETURN: Consignment Return
+    OWNERSHIP_TO_CUSTOMER: Ownership To Customer
+  erp-inv/ownership-transfer-status:
+    DRAFT: Draft
+    CONFIRMED: Confirmed
+    DONE: Completed
+    CANCELLED: Cancelled

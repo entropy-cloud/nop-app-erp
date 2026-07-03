@@ -33,6 +33,17 @@
     <bean id="app.erp.inv.service.posting.InvAcctDocProvider"
           class="app.erp.inv.service.posting.InvAcctDocProvider"/>
 
+    <!-- 所有权转移过账（consignment.md §业财过账，plan 2026-07-04-0549-1） -->
+    <bean id="app.erp.inv.service.posting.OwnershipTransferPostingDispatcher"
+          class="app.erp.inv.service.posting.OwnershipTransferPostingDispatcher"/>
+
+    <bean id="app.erp.inv.service.posting.InvOwnershipTransferProvider"
+          class="app.erp.inv.service.posting.InvOwnershipTransferProvider"/>
+
+    <!-- 所有权转移单状态机/同库位调账编排 Processor -->
+    <bean id="app.erp.inv.service.processor.ErpInvOwnershipTransferProcessor"
+          class="app.erp.inv.service.processor.ErpInvOwnershipTransferProcessor"/>
+
     <!-- 库存追溯链查询助手（只读，基于移动单自追溯上链） -->
     <bean id="app.erp.inv.service.trace.TraceChainQuery"
           class="app.erp.inv.service.trace.TraceChainQuery"/>

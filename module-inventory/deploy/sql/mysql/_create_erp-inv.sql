@@ -232,6 +232,8 @@ CREATE TABLE erp_inv_stock_balance(
   CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  OWNER_ID BIGINT NULL    COMMENT '所有权往来单位',
+  OWNERSHIP_TYPE VARCHAR(20) default 'OWNED'  NULL    COMMENT '所有权类型',
   constraint PK_erp_inv_stock_balance primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
@@ -253,6 +255,33 @@ CREATE TABLE erp_inv_reservation(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   constraint PK_erp_inv_reservation primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_inv_ownership_transfer(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '单号',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  TRANSFER_TYPE VARCHAR(30) NOT NULL    COMMENT '转移类型',
+  PARTNER_ID BIGINT NOT NULL    COMMENT '所有权对方(往来单位)',
+  BUSINESS_DATE DATE NOT NULL    COMMENT '业务日期',
+  WAREHOUSE_ID BIGINT NOT NULL    COMMENT '仓库',
+  SOURCE_LOC_ID BIGINT NOT NULL    COMMENT '源库位(=目的库位)',
+  DEST_LOC_ID BIGINT NOT NULL    COMMENT '目的库位(=源库位)',
+  FROM_OWNERSHIP_TYPE VARCHAR(20) NOT NULL    COMMENT '转前所有权类型',
+  TO_OWNERSHIP_TYPE VARCHAR(20) NOT NULL    COMMENT '转后所有权类型',
+  CURRENCY_ID BIGINT NULL    COMMENT '币种',
+  DOC_STATUS VARCHAR(20) NOT NULL    COMMENT '单据状态',
+  POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
+  POSTED_AT DATETIME NULL    COMMENT '过账时间',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_inv_ownership_transfer primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_inv_picking_order(
@@ -390,6 +419,28 @@ CREATE TABLE erp_inv_reservation_line(
   constraint PK_erp_inv_reservation_line primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_inv_ownership_transfer_line(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  TRANSFER_ID BIGINT NOT NULL    COMMENT '转移单ID',
+  LINE_NO INTEGER NOT NULL    COMMENT '行号',
+  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
+  SKU_ID BIGINT NULL    COMMENT 'SKU',
+  BATCH_NO VARCHAR(50) NULL    COMMENT '批号',
+  QUANTITY DECIMAL(20,4) NOT NULL    COMMENT '数量',
+  UNIT_COST DECIMAL(20,4) NULL    COMMENT '单位成本',
+  TOTAL_COST DECIMAL(20,4) NULL    COMMENT '总成本',
+  SOURCE_BILL_TYPE VARCHAR(50) NULL    COMMENT '来源单据类型',
+  SOURCE_BILL_CODE VARCHAR(50) NULL    COMMENT '来源单据号',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_inv_ownership_transfer_line primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_inv_picking_order_line(
   ID BIGINT NOT NULL    COMMENT 'ID',
   PICKING_ID BIGINT NOT NULL    COMMENT '拣货单ID',
@@ -438,6 +489,8 @@ CREATE TABLE erp_inv_stock_ledger(
   CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  OWNER_ID BIGINT NULL    COMMENT '所有权往来单位',
+  OWNERSHIP_TYPE VARCHAR(20) default 'OWNED'  NULL    COMMENT '所有权类型',
   constraint PK_erp_inv_stock_ledger primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
@@ -476,6 +529,8 @@ CREATE TABLE erp_inv_stock_ledger(
                 
    ALTER TABLE erp_inv_reservation COMMENT '库存预留单';
                 
+   ALTER TABLE erp_inv_ownership_transfer COMMENT '所有权转移单';
+                
    ALTER TABLE erp_inv_picking_order COMMENT '拣货单';
                 
    ALTER TABLE erp_inv_transfer_order_line COMMENT '调拨单行';
@@ -487,6 +542,8 @@ CREATE TABLE erp_inv_stock_ledger(
    ALTER TABLE erp_inv_cost_layer COMMENT '成本层';
                 
    ALTER TABLE erp_inv_reservation_line COMMENT '库存预留单行';
+                
+   ALTER TABLE erp_inv_ownership_transfer_line COMMENT '所有权转移单行';
                 
    ALTER TABLE erp_inv_picking_order_line COMMENT '拣货单行';
                 

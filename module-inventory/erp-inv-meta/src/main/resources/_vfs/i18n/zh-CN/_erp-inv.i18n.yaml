@@ -2,6 +2,8 @@ entity:
   label:
     ErpInvBatch: 批次台账
     ErpInvCostLayer: 成本层
+    ErpInvOwnershipTransfer: 所有权转移单
+    ErpInvOwnershipTransferLine: 所有权转移单行
     ErpInvPickingOrder: 拣货单
     ErpInvPickingOrderLine: 拣货单行
     ErpInvReservation: 库存预留单
@@ -72,6 +74,63 @@ prop:
       version: 数据版本
       warehouse: null
       warehouseId: 仓库
+    ErpInvOwnershipTransfer:
+      businessDate: 业务日期
+      code: 单号
+      createTime: 创建时间
+      createdBy: 创建人
+      currency: null
+      currencyId: 币种
+      delVersion: 逻辑删除版本
+      destLoc: null
+      destLocId: 目的库位(=源库位)
+      docStatus: 单据状态
+      docStatus_label: 单据状态
+      fromOwnershipType: 转前所有权类型
+      fromOwnershipType_label: 转前所有权类型
+      id: ID
+      lines: null
+      org: null
+      orgId: 业务组织
+      partner: null
+      partnerId: 所有权对方(往来单位)
+      posted: 已过账
+      postedAt: 过账时间
+      postedBy: 过账人
+      remark: 备注
+      sourceLoc: null
+      sourceLocId: 源库位(=目的库位)
+      toOwnershipType: 转后所有权类型
+      toOwnershipType_label: 转后所有权类型
+      transferType: 转移类型
+      transferType_label: 转移类型
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      warehouse: null
+      warehouseId: 仓库
+    ErpInvOwnershipTransferLine:
+      batchNo: 批号
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      lineNo: 行号
+      material: null
+      materialId: 物料
+      quantity: 数量
+      remark: 备注
+      sku: null
+      skuId: SKU
+      sourceBillCode: 来源单据号
+      sourceBillType: 来源单据类型
+      totalCost: 总成本
+      transfer: null
+      transferId: 转移单ID
+      unitCost: 单位成本
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
     ErpInvPickingOrder:
       businessDate: 业务日期
       code: 单号
@@ -208,6 +267,10 @@ prop:
       materialId: 物料
       org: null
       orgId: 业务组织
+      owner: null
+      ownerId: 所有权往来单位
+      ownershipType: 所有权类型
+      ownershipType_label: 所有权类型
       reservedQuantity: 预留数量
       sku: null
       skuId: SKU
@@ -244,6 +307,10 @@ prop:
       moveLineId: 移动单行ID
       org: null
       orgId: 业务组织
+      owner: null
+      ownerId: 所有权往来单位
+      ownershipType: 所有权类型
+      ownershipType_label: 所有权类型
       quantity: 数量
       serialNo: 序列号
       sku: null

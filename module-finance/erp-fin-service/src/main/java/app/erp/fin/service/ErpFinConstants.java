@@ -72,6 +72,8 @@ public interface ErpFinConstants {
     String SOURCE_BILL_EMPLOYEE_ADVANCE = "EMPLOYEE_ADVANCE";
     String SOURCE_BILL_NOTES_RECEIVABLE = "NOTES_RECEIVABLE";
     String SOURCE_BILL_NOTES_ENDORSED = "NOTES_ENDORSED";
+    // 所有权转移生成的应付（VMI 消耗等，consignment.md；待供应商采购发票核销）
+    String SOURCE_BILL_OWNERSHIP_TRANSFER = "OWNERSHIP_TRANSFER";
 
     // ---- PostingEvent.billData 键（员工→partnerId 解析，派发器填入已解析的 employee.partnerId） ----
     /** billData 键：携带已解析的 employee.partnerId（非 employee.id），供 ArApItemGenerator.resolvePartnerId 直接采用。 */

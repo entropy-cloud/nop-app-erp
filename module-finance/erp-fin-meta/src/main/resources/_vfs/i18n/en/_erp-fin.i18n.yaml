@@ -773,6 +773,7 @@ dict.option.label:
     NOTES_PAYABLE_ISSUED: Notes Payable Issued
     NOTES_PAYABLE_HONORED: Notes Payable Honored
     CREDIT_FACILITY_INTEREST: Credit Facility Interest
+    OWNERSHIP_TRANSFER: Ownership Transfer
   erp-fin/period-status:
     OPEN: Open
     CLOSING: Closing

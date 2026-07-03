@@ -319,6 +319,46 @@
         }
 
 
+        private Long _ownerId;
+
+    
+        @PropMeta(propId=22)
+    
+        public Long getOwnerId(){
+            return _ownerId;
+        }
+
+        public void setOwnerId(Long value){
+            this._ownerId = value;
+        }
+
+
+        private String _ownershipType;
+
+    
+        @PropMeta(propId=23)
+    
+        public String getOwnershipType(){
+            return _ownershipType;
+        }
+
+        public void setOwnershipType(String value){
+            this._ownershipType = value;
+        }
+
+
+        private String _ownershipType_label;
+
+    
+        public String getOwnershipType_label(){
+            return _ownershipType_label;
+        }
+
+        public void setOwnershipType_label(String value){
+            this._ownershipType_label = value;
+        }
+
+
         private Map<String,Object> _material;
 
         public Map<String,Object> getMaterial(){
@@ -382,6 +422,17 @@
 
         public void setOrg(Map<String,Object> value){
             this._org = value;
+        }
+
+
+        private Map<String,Object> _owner;
+
+        public Map<String,Object> getOwner(){
+            return _owner;
+        }
+
+        public void setOwner(Map<String,Object> value){
+            this._owner = value;
         }
 
 

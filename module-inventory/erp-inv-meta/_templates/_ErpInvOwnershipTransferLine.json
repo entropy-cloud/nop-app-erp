@@ -1,0 +1,23 @@
+{
+  "id": 0,
+  "transferId": 0,
+  "lineNo": 0,
+  "materialId": 0,
+  "skuId": 0,
+  "batchNo": "",
+  "quantity": 0.0,
+  "unitCost": 0.0,
+  "totalCost": 0.0,
+  "sourceBillType": "",
+  "sourceBillCode": "",
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "transfer": null,
+  "material": null,
+  "sku": null
+}

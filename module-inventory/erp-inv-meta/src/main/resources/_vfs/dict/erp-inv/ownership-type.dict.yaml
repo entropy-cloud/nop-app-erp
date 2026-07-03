@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 库存所有权类型
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 自有库存
+    value: OWNED
+    description: 
+  
+  - label: 供应商寄售
+    value: VMI_SUPPLIER
+    description: 
+  
+  - label: 寄售出去
+    value: CONSIGNMENT_OUT
+    description: 
+  
+  - label: 客供料
+    value: CUSTOMER_PROVIDED
+    description: 
+  

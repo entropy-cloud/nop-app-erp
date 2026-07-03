@@ -1,0 +1,279 @@
+//__XGEN_FORCE_OVERRIDE__
+    package app.erp.inv.api.beans;
+
+    import com.fasterxml.jackson.annotation.JsonInclude;
+    import io.nop.api.core.annotations.data.DataBean;
+    import io.nop.api.core.annotations.meta.PropMeta;
+    import io.nop.api.core.api.CrudInputBase;
+    import java.util.List;
+    
+    @DataBean
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @SuppressWarnings({"PMD","java:S116","java:S115"})
+    public class ErpInvOwnershipTransferInputBean extends CrudInputBase {
+
+    
+        private Long _id;
+
+    
+        @PropMeta(propId=1)
+    
+        public Long getId(){
+            return _id;
+        }
+
+        public void setId(Long value){
+            this._id = value;
+        }
+
+
+        private String _code;
+
+    
+        @PropMeta(propId=2)
+    
+        public String getCode(){
+            return _code;
+        }
+
+        public void setCode(String value){
+            this._code = value;
+        }
+
+
+        private Long _orgId;
+
+    
+        @PropMeta(propId=3)
+    
+        public Long getOrgId(){
+            return _orgId;
+        }
+
+        public void setOrgId(Long value){
+            this._orgId = value;
+        }
+
+
+        private String _transferType;
+
+    
+        @PropMeta(propId=4)
+    
+        public String getTransferType(){
+            return _transferType;
+        }
+
+        public void setTransferType(String value){
+            this._transferType = value;
+        }
+
+
+        private Long _partnerId;
+
+    
+        @PropMeta(propId=5)
+    
+        public Long getPartnerId(){
+            return _partnerId;
+        }
+
+        public void setPartnerId(Long value){
+            this._partnerId = value;
+        }
+
+
+        private java.time.LocalDate _businessDate;
+
+    
+        @PropMeta(propId=6)
+    
+        public java.time.LocalDate getBusinessDate(){
+            return _businessDate;
+        }
+
+        public void setBusinessDate(java.time.LocalDate value){
+            this._businessDate = value;
+        }
+
+
+        private Long _warehouseId;
+
+    
+        @PropMeta(propId=7)
+    
+        public Long getWarehouseId(){
+            return _warehouseId;
+        }
+
+        public void setWarehouseId(Long value){
+            this._warehouseId = value;
+        }
+
+
+        private Long _sourceLocId;
+
+    
+        @PropMeta(propId=8)
+    
+        public Long getSourceLocId(){
+            return _sourceLocId;
+        }
+
+        public void setSourceLocId(Long value){
+            this._sourceLocId = value;
+        }
+
+
+        private Long _destLocId;
+
+    
+        @PropMeta(propId=9)
+    
+        public Long getDestLocId(){
+            return _destLocId;
+        }
+
+        public void setDestLocId(Long value){
+            this._destLocId = value;
+        }
+
+
+        private String _fromOwnershipType;
+
+    
+        @PropMeta(propId=10)
+    
+        public String getFromOwnershipType(){
+            return _fromOwnershipType;
+        }
+
+        public void setFromOwnershipType(String value){
+            this._fromOwnershipType = value;
+        }
+
+
+        private String _toOwnershipType;
+
+    
+        @PropMeta(propId=11)
+    
+        public String getToOwnershipType(){
+            return _toOwnershipType;
+        }
+
+        public void setToOwnershipType(String value){
+            this._toOwnershipType = value;
+        }
+
+
+        private Long _currencyId;
+
+    
+        @PropMeta(propId=12)
+    
+        public Long getCurrencyId(){
+            return _currencyId;
+        }
+
+        public void setCurrencyId(Long value){
+            this._currencyId = value;
+        }
+
+
+        private String _docStatus;
+
+    
+        @PropMeta(propId=13)
+    
+        public String getDocStatus(){
+            return _docStatus;
+        }
+
+        public void setDocStatus(String value){
+            this._docStatus = value;
+        }
+
+
+        private Boolean _posted;
+
+    
+        @PropMeta(propId=14)
+    
+        public Boolean getPosted(){
+            return _posted;
+        }
+
+        public void setPosted(Boolean value){
+            this._posted = value;
+        }
+
+
+        private java.time.LocalDateTime _postedAt;
+
+    
+        @PropMeta(propId=15)
+    
+        public java.time.LocalDateTime getPostedAt(){
+            return _postedAt;
+        }
+
+        public void setPostedAt(java.time.LocalDateTime value){
+            this._postedAt = value;
+        }
+
+
+        private String _postedBy;
+
+    
+        @PropMeta(propId=16)
+    
+        public String getPostedBy(){
+            return _postedBy;
+        }
+
+        public void setPostedBy(String value){
+            this._postedBy = value;
+        }
+
+
+        private String _remark;
+
+    
+        @PropMeta(propId=17)
+    
+        public String getRemark(){
+            return _remark;
+        }
+
+        public void setRemark(String value){
+            this._remark = value;
+        }
+
+
+        private Long _delVersion;
+
+    
+        @PropMeta(propId=18)
+    
+        public Long getDelVersion(){
+            return _delVersion;
+        }
+
+        public void setDelVersion(Long value){
+            this._delVersion = value;
+        }
+
+
+        private List<ErpInvOwnershipTransferLineInputBean> _lines;
+
+        public List<ErpInvOwnershipTransferLineInputBean> getLines(){
+            return _lines;
+        }
+
+        public void setLines(List<ErpInvOwnershipTransferLineInputBean> value){
+            this._lines = value;
+        }
+
+
+    }

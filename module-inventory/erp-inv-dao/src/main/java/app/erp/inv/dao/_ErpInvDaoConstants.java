@@ -178,4 +178,59 @@ public interface _ErpInvDaoConstants {
      */
     String TAKE_TYPE_CYCLE = "CYCLE";
                     
+    /**
+     * 库存所有权类型: 自有库存 
+     */
+    String OWNERSHIP_TYPE_OWNED = "OWNED";
+                    
+    /**
+     * 库存所有权类型: 供应商寄售 
+     */
+    String OWNERSHIP_TYPE_VMI_SUPPLIER = "VMI_SUPPLIER";
+                    
+    /**
+     * 库存所有权类型: 寄售出去 
+     */
+    String OWNERSHIP_TYPE_CONSIGNMENT_OUT = "CONSIGNMENT_OUT";
+                    
+    /**
+     * 库存所有权类型: 客供料 
+     */
+    String OWNERSHIP_TYPE_CUSTOMER_PROVIDED = "CUSTOMER_PROVIDED";
+                    
+    /**
+     * 所有权转移类型: VMI消耗(供应商→自有) 
+     */
+    String OWNERSHIP_TRANSFER_TYPE_VMI_CONSUME = "VMI_CONSUME";
+                    
+    /**
+     * 所有权转移类型: 寄售回收 
+     */
+    String OWNERSHIP_TRANSFER_TYPE_CONSIGNMENT_RETURN = "CONSIGNMENT_RETURN";
+                    
+    /**
+     * 所有权转移类型: 所有权转客户 
+     */
+    String OWNERSHIP_TRANSFER_TYPE_OWNERSHIP_TO_CUSTOMER = "OWNERSHIP_TO_CUSTOMER";
+                    
+    /**
+     * 所有权转移状态: 草稿 
+     */
+    String OWNERSHIP_TRANSFER_STATUS_DRAFT = "DRAFT";
+                    
+    /**
+     * 所有权转移状态: 已确认 
+     */
+    String OWNERSHIP_TRANSFER_STATUS_CONFIRMED = "CONFIRMED";
+                    
+    /**
+     * 所有权转移状态: 已完成 
+     */
+    String OWNERSHIP_TRANSFER_STATUS_DONE = "DONE";
+                    
+    /**
+     * 所有权转移状态: 已取消 
+     */
+    String OWNERSHIP_TRANSFER_STATUS_CANCELLED = "CANCELLED";
+                    
 }

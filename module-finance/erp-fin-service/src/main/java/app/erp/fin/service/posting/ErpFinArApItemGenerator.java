@@ -160,6 +160,10 @@ public class ErpFinArApItemGenerator {
             case NOTES_RECEIVABLE_ENDORSED:
                 // 票据背书转让：生成应付侧辅助账（DIRECTION_PAYABLE），抵供应商 AP_INVOICE 应付（同方向核销）。
                 return new SourceProfile(ErpFinConstants.DIRECTION_PAYABLE, ErpFinConstants.SOURCE_BILL_NOTES_ENDORSED);
+            case OWNERSHIP_TRANSFER:
+                // VMI 消耗等所有权转移：生成应付侧辅助账（DIRECTION_PAYABLE），openAmount 等待供应商采购发票核销
+                // （consignment.md §业财过账；本项目自建能力，非 Odoo 借鉴）。金额取 TOTAL_COST（转移的存货成本）。
+                return new SourceProfile(ErpFinConstants.DIRECTION_PAYABLE, ErpFinConstants.SOURCE_BILL_OWNERSHIP_TRANSFER);
             default:
                 return null;
         }
@@ -241,6 +245,10 @@ public class ErpFinArApItemGenerator {
                 || ErpFinConstants.SOURCE_BILL_NOTES_ENDORSED.equals(sourceBillType)) {
             // 票据辅助账金额取票面（FACE_AMOUNT），回退 TOTAL/AMOUNT。
             return asAmount(data.get("FACE_AMOUNT"), amount);
+        }
+        if (ErpFinConstants.SOURCE_BILL_OWNERSHIP_TRANSFER.equals(sourceBillType)) {
+            // 所有权转移应付金额取转移的存货成本（TOTAL_COST），回退 TOTAL/AMOUNT。
+            return asAmount(data.get("TOTAL_COST"), amount);
         }
         if (ErpFinConstants.SOURCE_BILL_PUR_RETURN.equals(sourceBillType)) {
             // 退货冲减：TOTAL_AMOUNT 正值取负；null 时回退 null（由调用方校验缺失）。

@@ -20,6 +20,13 @@ public interface ErpInvConstants {
     String CONFIG_DEFAULT_COST_METHOD = "erp-inv.default-cost-method";
     String DEFAULT_COST_METHOD = "MOVING_AVERAGE"; // COST_METHOD_MOVING_AVERAGE
 
+    // 所有权维度配置项（consignment.md §配置点）
+    // ownership-tracking-enabled=false（默认关，对齐 Odoo feature group）时 ownerId 一律 null、ownershipType=OWNED，
+    // 既有余额键行为逐字节不变（非 VMI 用户无感知）。启用后方入余额键。
+    String CONFIG_OWNERSHIP_TRACKING_ENABLED = "erp-inv.ownership-tracking-enabled";
+    // VMI 消耗转移 DONE 时是否自动生成应付（默认 true）
+    String CONFIG_VMI_AUTO_GENERATE_AP = "erp-inv.vmi-auto-generate-ap";
+
     // 追溯链 linkType 标识（TraceLink）
     String TRACE_LINK_FORWARD = "FORWARD";
     String TRACE_LINK_RETURN = "RETURN";
@@ -50,4 +57,24 @@ public interface ErpInvConstants {
     String RELATED_BILL_TYPE_PUR_RETURN = "ERP_PUR_RETURN";
     String RELATED_BILL_TYPE_SAL_RETURN = "ERP_SAL_RETURN";
     String RELATED_BILL_TYPE_MNT_SPARE_PART = "ERP_MNT_SPARE_PART";
+
+    // 所有权类型（dict erp-inv/ownership-type，consignment.md）
+    String OWNERSHIP_TYPE_OWNED = "OWNED";
+    String OWNERSHIP_TYPE_VMI_SUPPLIER = "VMI_SUPPLIER";
+    String OWNERSHIP_TYPE_CONSIGNMENT_OUT = "CONSIGNMENT_OUT";
+    String OWNERSHIP_TYPE_CUSTOMER_PROVIDED = "CUSTOMER_PROVIDED";
+
+    // 所有权转移类型（dict erp-inv/ownership-transfer-type）
+    String TRANSFER_TYPE_VMI_CONSUME = "VMI_CONSUME";
+    String TRANSFER_TYPE_CONSIGNMENT_RETURN = "CONSIGNMENT_RETURN";
+    String TRANSFER_TYPE_OWNERSHIP_TO_CUSTOMER = "OWNERSHIP_TO_CUSTOMER";
+
+    // 所有权转移单据状态（dict erp-inv/ownership-transfer-status；独立于移动单 move-status，不复用）
+    String OWNERSHIP_TRANSFER_STATUS_DRAFT = "DRAFT";
+    String OWNERSHIP_TRANSFER_STATUS_CONFIRMED = "CONFIRMED";
+    String OWNERSHIP_TRANSFER_STATUS_DONE = "DONE";
+    String OWNERSHIP_TRANSFER_STATUS_CANCELLED = "CANCELLED";
+
+    // 业财回链/PostingEvent billType 标识（所有权转移单源单识别）
+    String BILL_TYPE_OWNERSHIP_TRANSFER = "OWNERSHIP_TRANSFER";
 }

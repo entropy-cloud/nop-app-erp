@@ -70,6 +70,8 @@
                     i18n-en:label="Notes Payable Honored"/>
             <option code="CREDIT_FACILITY_INTEREST" label="授信利息" value="CREDIT_FACILITY_INTEREST"
                     i18n-en:label="Credit Facility Interest"/>
+            <option code="OWNERSHIP_TRANSFER" label="所有权转移" value="OWNERSHIP_TRANSFER"
+                    i18n-en:label="Ownership Transfer"/>
         </dict>
         <dict label="期间状态" name="erp-fin/period-status" valueType="string" i18n-en:label="Period Status">
             <option code="OPEN" label="开启" value="OPEN" i18n-en:label="Open"/>

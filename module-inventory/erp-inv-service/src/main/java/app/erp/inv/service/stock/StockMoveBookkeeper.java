@@ -11,6 +11,7 @@ import app.erp.inv.service.costing.CostingStrategy;
 import app.erp.inv.service.costing.FifoCostingStrategy;
 import app.erp.inv.service.costing.MovingAverageCostingStrategy;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.config.AppConfig;
 import io.nop.commons.util.StringHelper;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -96,13 +97,18 @@ public class StockMoveBookkeeper implements BookingContext {
 
     /**
      * 按 物料 × 仓库 × 库位 × 批次 维度查找余额，不存在则初始化（totalQuantity=0、costMethod=移动加权平均）。
+     *
+     * <p>owner 维度（consignment.md §配置点）：{@code erp-inv.ownership-tracking-enabled=false}（默认关）时
+     * ownerId 一律 null、不入键，与基线逐字节一致；启用时方按 ownerId 拆出独立子余额行。标准移动单不携带 ownerId，
+     * 故 disabled 时透传 null（等价既有行为），enabled 时同样 null（标准移动单写 OWNED 余额，VMI 余额经转移单建立）。
      */
     public ErpInvStockBalance upsertBalance(ErpInvStockMove move, ErpInvStockMoveLine line,
                                              Long warehouseId, Long locationId) {
         // 同事务内可能已新建余额但未刷盘，查询前先 flush 使待落库的预留量/余额可见
         ormTemplate.flushSession();
+        Long ownerId = resolveOwnerKey(null);
         ErpInvStockBalance balance = findBalance(move.getOrgId(), line.getMaterialId(), line.getSkuId(),
-                warehouseId, locationId, line.getBatchNo());
+                warehouseId, locationId, line.getBatchNo(), ownerId);
         if (balance != null) {
             return balance;
         }
@@ -122,6 +128,11 @@ public class StockMoveBookkeeper implements BookingContext {
         balance.setAvgCost(BigDecimal.ZERO);
         balance.setTotalCost(BigDecimal.ZERO);
         balance.setCurrencyId(line.getCurrencyId());
+        // owner 维度默认值：OWNED + null ownerId（disabled/enabled 但标准移动单均如此）
+        balance.setOwnershipType(ErpInvConstants.OWNERSHIP_TYPE_OWNED);
+        if (isOwnershipTrackingEnabled()) {
+            balance.setOwnerId(ownerId);
+        }
         dao.saveEntity(balance);
         return balance;
     }
@@ -176,7 +187,7 @@ public class StockMoveBookkeeper implements BookingContext {
     }
 
     ErpInvStockBalance findBalance(Long orgId, Long materialId, Long skuId, Long warehouseId,
-                                   Long locationId, String batchNo) {
+                                   Long locationId, String batchNo, Long ownerId) {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("orgId", orgId));
@@ -188,8 +199,26 @@ public class StockMoveBookkeeper implements BookingContext {
         if (batchNo != null) {
             q.addFilter(eq("batchNo", batchNo));
         }
+        // owner 维度入键仅当 ownership-tracking-enabled（默认关）。关闭时 ownerId 强制 null，等价既有行为。
+        if (isOwnershipTrackingEnabled() && ownerId != null) {
+            q.addFilter(eq("ownerId", ownerId));
+        }
         List<ErpInvStockBalance> list = dao.findAllByQuery(q);
         return list.isEmpty() ? null : list.get(0);
+    }
+
+    /** owner 维度开关：默认关（对齐 Odoo feature group，非 VMI 用户无感知）。 */
+    public boolean isOwnershipTrackingEnabled() {
+        Boolean flag = AppConfig.var(ErpInvConstants.CONFIG_OWNERSHIP_TRACKING_ENABLED, Boolean.FALSE);
+        return Boolean.TRUE.equals(flag);
+    }
+
+    /**
+     * 解析余额键中的 ownerId。disabled 时一律返回 null（不入键）；enabled 时透传调用方提供的 ownerId。
+     * 标准移动单不携带 ownerId，故两态下均返回 null（写 OWNED 余额或 null-owner 子余额）。
+     */
+    Long resolveOwnerKey(Long ownerId) {
+        return isOwnershipTrackingEnabled() ? ownerId : null;
     }
 
     private static BigDecimal nz(BigDecimal v) {

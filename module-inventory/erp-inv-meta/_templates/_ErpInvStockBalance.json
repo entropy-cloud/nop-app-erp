@@ -21,10 +21,14 @@
   "createTime": "2000-01-01 14:00:00",
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
+  "ownerId": 0,
+  "ownershipType": "",
+  "ownershipType_label": "",
   "material": null,
   "sku": null,
   "warehouse": null,
   "currency": null,
   "location": null,
-  "org": null
+  "org": null,
+  "owner": null
 }

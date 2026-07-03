@@ -194,6 +194,11 @@ public interface _ErpFinDaoConstants {
     String BUSINESS_TYPE_CREDIT_FACILITY_INTEREST = "CREDIT_FACILITY_INTEREST";
                     
     /**
+     * 业务类型: 所有权转移 
+     */
+    String BUSINESS_TYPE_OWNERSHIP_TRANSFER = "OWNERSHIP_TRANSFER";
+                    
+    /**
      * 期间状态: 开启 
      */
     String PERIOD_STATUS_OPEN = "OPEN";

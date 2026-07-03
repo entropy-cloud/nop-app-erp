@@ -236,4 +236,32 @@
         }
 
 
+        private Long _ownerId;
+
+    
+        @PropMeta(propId=22)
+    
+        public Long getOwnerId(){
+            return _ownerId;
+        }
+
+        public void setOwnerId(Long value){
+            this._ownerId = value;
+        }
+
+
+        private String _ownershipType;
+
+    
+        @PropMeta(propId=23)
+    
+        public String getOwnershipType(){
+            return _ownershipType;
+        }
+
+        public void setOwnershipType(String value){
+            this._ownershipType = value;
+        }
+
+
     }
