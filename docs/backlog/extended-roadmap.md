@@ -15,7 +15,8 @@
 - 2.3：✅ done（MRP 计算引擎：需求整合(销售订单/安全库存/手工)→BOM 多级展开→净需求→按期分单(lot-for-lot/固定批量)→计划订单(WORK_ORDER_REQUEST/PURCHASE_REQUEST)→释放转采购订单/工单，2026-07-03，`docs/plans/2026-07-02-2237-2-manufacturing-mrp-engine.md`）
 - 2.4：✅ done（质检触发 + NCR/CAPA 流程：质检单 4 态状态机(行级评测+结果汇总+posted) + 业务触发(采购入库/销售出库/工单完工 createForBusinessBill+模板匹配+强制质检阻塞 config-gated) + NCR 5 态状态机 + CAPA 生命周期(效果验证门控) + REJECTED 自动生成 NCR，2026-07-03，`docs/plans/2026-07-02-2237-3-quality-inspection-trigger-ncr-capa.md`）
 - 2.6：✅ done（项目成本归集：工时状态机+成本率解析+PROJECT_COST_COLLECTION 业财过账 + 预算控制(WARNING/STRICT) + 成本归集汇总(actualCost 回写) + 项目状态引用校验 + 费用报销归集(projects 驱动只读聚合, config-gated)，2026-07-03，`docs/plans/2026-07-03-1018-2-projects-cost-collection.md`）
-- 2.7–2.11：`todo`
+- 2.7：✅ done（维护计划/停机/备件消耗：访问 5 态+请求 6 态状态机+设备状态联动+备件消耗→inventory 出库(generateMove 扣余额)+维护计划到期生成 PLANNED 访问+停机记录(totalMinutes+设备 DOWN 联动)+维护全场景端到端，2026-07-03，`docs/plans/2026-07-03-1018-3-maintenance-visit-request-sparepart-downtime.md`）
+- 2.8–2.11：`todo`
 
 ### Milestone M3 — 新增 8 域
 - 3.1–3.21：`todo`

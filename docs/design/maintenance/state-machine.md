@@ -135,6 +135,37 @@
 
 维护请求的其他维度（异常/角色/TODO）与维护访问类似，不重复展开；审查时同样使用提示词。
 
+## 适用对象三：停机记录（DowntimeEntry）
+
+停机记录无显式状态字段，以时间字段隐式表达生命周期（startTime/endTime/totalMinutes）。
+
+```
+新建（startTime 已记 = 停机开始）
+  ├─ record → 设备置 DOWN
+  └─ complete → endTime + totalMinutes 计算 + 设备恢复（终态）
+```
+
+| 阶段 | 触发 | 结果 |
+|------|------|------|
+| record | 维护人员/操作员 | 设备→DOWN（经 `EquipmentStatusLinker`，`erp-mnt.equipment-status-link-enabled` 门控） |
+| complete | 维护人员 | endTime + totalMinutes（startTime→endTime 差值分钟，写入 VARCHAR/DECIMAL 列）+ 设备恢复 RUNNING |
+
+- 终态保护：endTime 非空（已 complete）不可再 record/complete。
+- `relatedJobOrderId` 仅存值（记录影响生产工单），不依赖 EQL 自引用导航（基线 refEntityName 自引用 bug，修复合规后续）。
+
+## 实现偏离与 Non-Goal（补注）
+
+> 以下为工作项 2.7（`docs/plans/2026-07-03-1018-3-maintenance-visit-request-sparepart-downtime.md`）落地时显式延后项，**明知偏离**目标架构，已带触发条件移交后继。
+
+| 偏离项 | 现状 | 目标架构 | 触发条件 |
+|--------|------|----------|----------|
+| 停机通知制造域（排产调整） | maintenance 不反向依赖 manufacturing（避免成环） | 事件驱动：maintenance 发布停机事件，制造域订阅调整排产（§7） | APS/排产停机窗口联动需求时 |
+| 维修费用过账（备件消耗/工时凭证） | 备件消耗仅触发 inventory 出库（`generateMove` 扣余额），不生成 finance 凭证 | maintenance→finance S 写：维修领料过账 MAINTENANCE_ISSUE 凭证（`docs/architecture/data-dependency-matrix.md` 列为目标架构） | 维修费用业财一体过账需求时 |
+| 预测性维护（PREDICTIVE） | `scheduleType=PREDICTIVE` 数据来源未就绪 | IoT/传感器数据驱动 | IoT 集成落地时 |
+| 校准管理全流程 | ErpMntCalibration 仅 CRUD 骨架 | 量具校准 + 下次校准日期推进（独立面） | 计量管理需求时 |
+| 设备-资产价值联动 | assets 域负责资产价值，maintenance 仅实物维护 | 跨域价值联动（折旧/资本化受维护影响） | 资产维护影响价值评估时 |
+| 多级审批 | 访问/请求/备件消耗单级 approve 简化 | 多级审批工作流 | 多级审批需求时 |
+
 ## 审查提示
 
 审查本状态机时，使用 `docs/skills/state-machine-business-review-prompt.md`，重点检查：

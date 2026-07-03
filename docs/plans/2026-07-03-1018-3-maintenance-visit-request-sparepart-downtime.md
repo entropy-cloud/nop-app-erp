@@ -1,6 +1,6 @@
 # 2026-07-03-1018-3-maintenance-visit-request-sparepart-downtime 设备维护执行（访问/请求状态机 + 备件消耗出库 + 维护计划到期 + 停机记录）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-03
 > Source: `docs/backlog/extended-roadmap.md` 工作项 2.7；`docs/design/maintenance/state-machine.md`；`docs/design/maintenance/README.md`
 > Related: `docs/plans/2026-07-01-0811-2-inventory-stockmove-bizmodel.md`（StockMove done，备件消耗经 IErpInvStockMoveBiz 出库）
@@ -113,25 +113,25 @@ Exit Criteria:
 
 ### Phase 3 — 停机记录（totalMinutes + 设备 DOWN 联动）+ 端到端 + 文档/日志
 
-Status: planned
+Status: completed
 Targets: `ErpMntDowntimeEntryBizModel.java`(扩)、`IErpMntDowntimeEntryBiz.java`(扩)、`docs/logs/2026/{执行当日}.md`、`docs/backlog/extended-roadmap.md`、`docs/design/maintenance/state-machine.md`(偏离补注)
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1（设备状态联动基线）。
 
-- [ ] `Add`：`IErpMntDowntimeEntryBiz.record`（设备→DOWN + startTime）/ `complete`（endTime + totalMinutes 计算（数值写入 VARCHAR 列，见 baseline 类型异常）+ 设备恢复）；关联 relatedJobOrderId（可空字段，记录影响工单；不依赖坏掉的 EQL 自引用导航，仅存值）。
+- [x] `Add`：`IErpMntDowntimeEntryBiz.record`（设备→DOWN + startTime）/ `complete`（endTime + totalMinutes 计算（数值写入 VARCHAR 列，见 baseline 类型异常）+ 设备恢复）；关联 relatedJobOrderId（可空字段，记录影响工单；不依赖坏掉的 EQL 自引用导航，仅存值）。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：端到端 `TestErpMntDowntimeAndE2E`（停机 record→设备 DOWN + complete→totalMinutes + 设备恢复；维护全场景：计划到期生成访问 PLANNED→schedule→start(设备UNDER_MAINTENANCE)→备件消耗出库→complete(设备恢复)；报修请求→accept 生成访问 RESPONSIVE→执行→complete）。`mvn test -pl module-maintenance/erp-mnt-service -am -Dtest=TestErpMntDowntimeAndE2E*`。
+- [x] `Proof`：端到端 `TestErpMntDowntimeAndE2E`（停机 record→设备 DOWN + complete→totalMinutes + 设备恢复；维护全场景：计划到期生成访问 PLANNED→schedule→start(设备UNDER_MAINTENANCE)→备件消耗出库→complete(设备恢复)；报修请求→accept 生成访问 RESPONSIVE→执行→complete）。`mvn test -pl module-maintenance/erp-mnt-service -am -Dtest=TestErpMntDowntimeAndE2E*`。
   - Skill: `nop-testing`
-- [ ] `Add`：`docs/logs/2026/{执行当日 month-day}.md` 新增本计划条目（含验证状态）；`extended-roadmap.md` 工作项 2.7 标注 done；`maintenance/state-machine.md` 偏离（停机通知制造 Non-Goal + 维修费用过账 Non-Goal + 预测性/校准 Non-Goal）补注。
+- [x] `Add`：`docs/logs/2026/{执行当日 month-day}.md` 新增本计划条目（含验证状态）；`extended-roadmap.md` 工作项 2.7 标注 done；`maintenance/state-machine.md` 偏离（停机通知制造 Non-Goal + 维修费用过账 Non-Goal + 预测性/校准 Non-Goal）补注。
   - Skill: none
 
 Exit Criteria:
 
 > Phase 3 交付停机记录 + 维护全场景端到端。完整仓库验证属 Closure Gates。
 
-- [ ] 停机记录（totalMinutes + 设备 DOWN 联动）+ 维护全场景端到端单测通过
+- [x] 停机记录（totalMinutes + 设备 DOWN 联动）+ 维护全场景端到端单测通过
 
 ## Draft Review Record
 
@@ -142,14 +142,14 @@ Exit Criteria:
 
 > 仅在所有项目和每阶段退出标准都勾选 `[x]` 后关闭。完整仓库验证在此处运行一次。
 
-- [ ] 范围内行为完成：访问 5 态 + 请求 6 态（受理生成访问）+ 设备状态联动 + 备件消耗出库 + 计划到期生成 + 停机记录，行为测试通过
-- [ ] 相关文档对齐：`extended-roadmap.md` 2.7 done；当日日志已记；`maintenance/state-machine.md` Non-Goal 偏离补注
-- [ ] 已运行验证：`mvn test -pl module-maintenance/erp-mnt-service -am`（+ inventory 既有套件无回归）；根 `mvn clean install -DskipTests`
-- [ ] 无范围内项目静默降级（停机通知制造/维修费用过账/预测性/校准/资产价值联动/多级审批 均为计划内 Non-Goal）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控、日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：访问 5 态 + 请求 6 态（受理生成访问）+ 设备状态联动 + 备件消耗出库 + 计划到期生成 + 停机记录，行为测试通过
+- [x] 相关文档对齐：`extended-roadmap.md` 2.7 done；当日日志已记；`maintenance/state-machine.md` Non-Goal 偏离补注
+- [x] 已运行验证：`mvn test -pl module-maintenance/erp-mnt-service -am`（22 tests/0 failures，inventory/finance 既有套件无回归）；根 `mvn clean install -DskipTests`（146 模块 BUILD SUCCESS）；全仓 `mvn test` BUILD SUCCESS（无下游回归）
+- [x] 无范围内项目静默降级（停机通知制造/维修费用过账/预测性/校准/资产价值联动/多级审批 均为计划内 Non-Goal）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控、日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -173,4 +173,8 @@ Exit Criteria:
 
 ## Closure
 
-（待结束后填写）
+- **结束时间**：2026-07-03
+- **结束审计**：独立子代理（新会话 `ses_0d852ede0ffe2ro7V62ZZVduWk`）执行，**Verdict: PASS**（无 Blocker）。已据 Concern #1 对齐测试注释（totalMinutes 列 stdSqlType=VARCHAR/domain DECIMAL 基线异常）。
+- **验证状态（全绿）**：`mvn test -pl module-maintenance/erp-mnt-service -am` = 22 tests / 0 failures（Phase 3 新增 4：`TestErpMntDowntimeAndE2E`；既有 Phase1 9 + Phase2 4 + smoke 5 无回归）；全仓 `mvn test` BUILD SUCCESS（无下游回归）；根 `mvn clean install -DskipTests` = 146 模块 BUILD SUCCESS。
+- **交付物**：`IErpMntDowntimeEntryBiz.record/complete`（设备 DOWN 联动 + totalMinutes 计算）+ `ErpMntErrors` 补 2 错误码 + `TestErpMntDowntimeAndE2E`（4 tests）+ 日志/路线图/state-machine Non-Goal 补注。
+- **Deferred（Non-Goal，留后继）**：停机通知制造域（事件驱动）/ 维修费用过账（MAINTENANCE_ISSUE 凭证）/ 预测性维护（IoT）/ 校准管理全流程 / 设备-资产价值联动 / 多级审批（均带触发条件，见 Deferred But Adjudicated）。
