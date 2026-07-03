@@ -4,7 +4,8 @@ import app.erp.fin.biz.IErpFinAccountingPeriodBiz;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriodStatus;
 import app.erp.fin.service.ErpFinConstants;
-import app.erp.fin.service.entity.ErpFinAccountingPeriodBizModel.Module;
+import app.erp.fin.service.processor.ErpFinAccountingPeriodProcessor;
+import app.erp.fin.service.processor.ErpFinAccountingPeriodProcessor.Module;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.exceptions.NopException;
@@ -41,7 +42,7 @@ public class TestErpFinModuleCloseOrder extends JunitAutoTestCase {
     @Inject
     IErpFinAccountingPeriodBiz periodCloseBiz;
     @Inject
-    ErpFinAccountingPeriodBizModel periodCloseBizModel;
+    ErpFinAccountingPeriodProcessor periodProcessor;
 
     @Test
     public void testModuleCloseOrder() {
@@ -70,7 +71,7 @@ public class TestErpFinModuleCloseOrder extends JunitAutoTestCase {
         seed(() -> holder[0] = seedPeriodStatus(periodId));
 
         assertThrows(NopException.class,
-                () -> periodCloseBizModel.advanceModule(holder[0], Module.AP),
+                () -> periodProcessor.advanceModule(holder[0], Module.AP),
                 "AP 关账前置 AR 未关账，应拒绝");
     }
 

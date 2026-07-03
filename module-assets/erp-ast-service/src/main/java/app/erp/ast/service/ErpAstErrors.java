@@ -26,6 +26,10 @@ public interface ErpAstErrors {
     String ARG_AMOUNT = "amount";
 
     // --- 资本化 ---
+    ErrorCode ERR_CAPITALIZATION_NOT_FOUND = ErrorCode.define(
+            "erp.err.ast.capitalization.not-found",
+            "资本化单 {capitalizationId} 不存在",
+            ARG_CAPITALIZATION_ID);
     ErrorCode ERR_CAPITALIZATION_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
             "erp.err.ast.capitalization.illegal-status-transition",
             "资本化单 {capitalizationCode} 当前审核状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
@@ -74,6 +78,10 @@ public interface ErpAstErrors {
             ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
 
     // --- 处置 ---
+    ErrorCode ERR_DISPOSAL_NOT_FOUND = ErrorCode.define(
+            "erp.err.ast.disposal.not-found",
+            "处置单 {disposalId} 不存在",
+            ARG_DISPOSAL_ID);
     ErrorCode ERR_DISPOSAL_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
             "erp.err.ast.disposal.illegal-status-transition",
             "处置单 {disposalCode} 当前审核状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",

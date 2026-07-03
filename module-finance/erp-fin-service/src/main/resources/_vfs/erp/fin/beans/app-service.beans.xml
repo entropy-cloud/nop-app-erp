@@ -72,9 +72,22 @@
     <bean id="app.erp.fin.service.posting.NotesPostingDispatcher"
           class="app.erp.fin.service.posting.NotesPostingDispatcher"/>
 
-    <!-- 期末结账编排组件（被 ErpFinPeriodCloseBizModel 调用）：损益结转 + 汇兑重估。 -->
+    <!-- 期末结账编排组件（被 ErpFinAccountingPeriodProcessor 调用）：损益结转 + 汇兑重估。 -->
     <bean id="app.erp.fin.service.profitloss.ProfitLossClosingService"
           class="app.erp.fin.service.profitloss.ProfitLossClosingService"/>
     <bean id="app.erp.fin.service.fx.ExchangeRevaluationService"
           class="app.erp.fin.service.fx.ExchangeRevaluationService"/>
+
+    <!-- finance 域审批/状态机编排 Processor（Facade + Processor 两层结构，protected step 方法供下游覆盖）。
+         各 Facade BizModel 仅负责入口/事务/委托，编排委托对应 Processor。 -->
+    <bean id="app.erp.fin.service.processor.ErpFinEmployeeAdvanceProcessor"
+          class="app.erp.fin.service.processor.ErpFinEmployeeAdvanceProcessor"/>
+    <bean id="app.erp.fin.service.processor.ErpFinExpenseClaimProcessor"
+          class="app.erp.fin.service.processor.ErpFinExpenseClaimProcessor"/>
+    <bean id="app.erp.fin.service.processor.ErpFinNotesPayableProcessor"
+          class="app.erp.fin.service.processor.ErpFinNotesPayableProcessor"/>
+    <bean id="app.erp.fin.service.processor.ErpFinNotesReceivableProcessor"
+          class="app.erp.fin.service.processor.ErpFinNotesReceivableProcessor"/>
+    <bean id="app.erp.fin.service.processor.ErpFinAccountingPeriodProcessor"
+          class="app.erp.fin.service.processor.ErpFinAccountingPeriodProcessor"/>
 </beans>

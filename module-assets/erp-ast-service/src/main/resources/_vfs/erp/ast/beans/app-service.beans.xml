@@ -27,4 +27,13 @@
           class="app.erp.ast.service.posting.DisposalPostingDispatcher"/>
     <bean id="app.erp.ast.service.posting.DisposalAcctDocProvider"
           class="app.erp.ast.service.posting.DisposalAcctDocProvider"/>
+
+    <!-- assets 域状态机编排 Processor（Facade + Processor 两层结构，protected step 方法供下游覆盖）。
+         各 Facade BizModel 仅负责入口/事务/委托，编排委托对应 Processor。 -->
+    <bean id="app.erp.ast.service.processor.ErpAstAssetCapitalizationProcessor"
+          class="app.erp.ast.service.processor.ErpAstAssetCapitalizationProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstDepreciationScheduleProcessor"
+          class="app.erp.ast.service.processor.ErpAstDepreciationScheduleProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstDisposalProcessor"
+          class="app.erp.ast.service.processor.ErpAstDisposalProcessor"/>
 </beans>

@@ -35,4 +35,10 @@
     <!-- MRP 计划订单释放服务（plan 2026-07-02-2237-2 Phase 2）：PURCHASE_REQUEST→采购订单 / WORK_ORDER_REQUEST→工单 -->
     <bean id="app.erp.mfg.service.mrp.MrpReleaseService"
           class="app.erp.mfg.service.mrp.MrpReleaseService"/>
+
+    <!-- manufacturing 域状态机编排 Processor（Facade + Processor 两层结构，protected step 方法供下游覆盖）。 -->
+    <bean id="app.erp.mfg.service.processor.ErpMfgWorkOrderProcessor"
+          class="app.erp.mfg.service.processor.ErpMfgWorkOrderProcessor"/>
+    <bean id="app.erp.mfg.service.processor.ErpMfgJobCardProcessor"
+          class="app.erp.mfg.service.processor.ErpMfgJobCardProcessor"/>
 </beans>
