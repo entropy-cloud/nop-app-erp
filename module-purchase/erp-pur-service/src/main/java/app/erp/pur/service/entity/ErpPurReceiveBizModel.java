@@ -13,6 +13,8 @@ import app.erp.pur.dao.entity.ErpPurReceive;
 import app.erp.pur.dao.entity.ErpPurReceiveLine;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
+import app.erp.qa.biz.IErpQaInspectionBiz;
+import app.erp.qa.biz.InspectionTrigger;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -58,6 +60,9 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
 
     @Inject
     IErpMdPartnerBiz mdPartnerBiz;
+
+    @Inject
+    IErpQaInspectionBiz inspectionBiz;
 
     public ErpPurReceiveBizModel() {
         setEntityName(ErpPurReceive.class.getName());
@@ -111,6 +116,10 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
             throw illegalTransition(receive, status, "SUBMITTED");
         }
         requireSupplierActive(receive, context);
+
+        // 强制质检门控（plan 2026-07-02-2237-3 Phase 2）：erp-qua.mandatory-inspection-bill-types 配置门控，
+        // 默认空=不强制（无副作用）。属强制类型时：首次审核生成 PENDING 质检单并阻塞，质检合格/让步后再次审核放行。
+        enforceInspectionGate(receive, context);
 
         ErpInvStockMove move = triggerIncomingMove(receive, context);
         // 跨域 generateMove 调用可能扰动会话脏跟踪，故重新加载并以 updateEntity 显式持久化。
@@ -320,6 +329,29 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
     }
 
     // ---------- query helpers ----------
+
+    /**
+     * 强制质检门控（config-gated，默认空=不强制）。属强制类型时按入库单行物料逐行触发：首次生成 PENDING 质检单并阻塞，
+     * 质检合格/让步后再次审核放行。billType=ERP_PUR_RECEIPT，inspectionType=INCOMING。
+     */
+    private void enforceInspectionGate(ErpPurReceive receive, IServiceContext context) {
+        String billType = ErpPurConstants.RELATED_BILL_TYPE_PUR_RECEIVE;
+        if (!InspectionTrigger.isMandatoryBillType(billType)) {
+            return;
+        }
+        for (ErpPurReceiveLine line : loadLines(receive.getId())) {
+            if (line.getMaterialId() == null) {
+                continue;
+            }
+            int gate = InspectionTrigger.enforceGate(inspectionBiz, billType, receive.getCode(),
+                    line.getMaterialId(), 10 /* erp-qa/inspection-type INCOMING */,
+                    line.getQuantity(), receive.getSupplierId(), receive.getWarehouseId(), null, context);
+            if (gate == InspectionTrigger.BLOCKED) {
+                throw new NopException(ErpPurErrors.ERR_RECEIVE_INSPECTION_BLOCKED)
+                        .param(ErpPurErrors.ARG_RECEIVE_CODE, receive.getCode());
+            }
+        }
+    }
 
     List<ErpPurReceiveLine> loadLines(Long receiveId) {
         // D2 边界场景：同聚合子表加载，父实体已由 requireEntity 经数据权限/Meta 管道授权，子行无独立权限规则。

@@ -30,6 +30,13 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- 完工强制质检门控（IErpQaInspectionBiz + InspectionTrigger 位于 quality dao）。
+             manufacturing→quality 单向（business→quality 触发），DAG 无环。默认配置空=不强制，无副作用。 -->
+        <dependency>
+            <artifactId>app-erp-quality-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <artifactId>app-erp-manufacturing-codegen</artifactId>
             <groupId>io.nop.app</groupId>
@@ -53,6 +60,14 @@
              manufacturing→inventory 单向（R），DAG 无环；app-erp-all 聚合时由 app 层提供 Bean。 -->
         <dependency>
             <artifactId>app-erp-inventory-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- test-only: 完工强制质检门控 IErpQaInspectionBiz Bean 实现注册（app-erp-all 聚合时由 app 层提供）。
+             默认配置空=不强制，现有制造流程测试不受影响。 -->
+        <dependency>
+            <artifactId>app-erp-quality-service</artifactId>
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
             <scope>test</scope>

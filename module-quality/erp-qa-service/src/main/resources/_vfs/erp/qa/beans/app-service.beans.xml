@@ -7,4 +7,8 @@
     <import resource="_dao.beans.xml"/>
 
     <import resource="_service.beans.xml"/>
+
+    <!-- NCR 生命周期服务（plan 2026-07-02-2237-3 Phase 3）：REJECTED 自动生成 NCR + resolve 门控校验 -->
+    <bean id="app.erp.qa.service.entity.NcrLifecycleService"
+          class="app.erp.qa.service.entity.NcrLifecycleService"/>
 </beans>

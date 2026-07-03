@@ -13,6 +13,8 @@ import app.erp.sal.dao.entity.ErpSalDeliveryLine;
 import app.erp.sal.dao.entity.ErpSalOrderLine;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
+import app.erp.qa.biz.IErpQaInspectionBiz;
+import app.erp.qa.biz.InspectionTrigger;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -58,6 +60,9 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
 
     @Inject
     IErpMdPartnerBiz mdPartnerBiz;
+
+    @Inject
+    IErpQaInspectionBiz inspectionBiz;
 
     public ErpSalDeliveryBizModel() {
         setEntityName(ErpSalDelivery.class.getName());
@@ -111,6 +116,10 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
             throw illegalTransition(delivery, status, "SUBMITTED");
         }
         requireCustomerActive(delivery, context);
+
+        // 强制质检门控（plan 2026-07-02-2237-3 Phase 2）：erp-qua.mandatory-inspection-bill-types 配置门控，
+        // 默认空=不强制。属强制类型时：首次审核生成 PENDING 质检单并阻塞，质检合格/让步后再次审核放行。
+        enforceInspectionGate(delivery, context);
 
         ErpInvStockMove move = triggerOutgoingMove(delivery, context);
         // 跨域 generateMove 调用可能扰动会话脏跟踪，故重新加载并以 updateEntity 显式持久化。
@@ -313,6 +322,29 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
     }
 
     // ---------- query helpers ----------
+
+    /**
+     * 强制质检门控（config-gated，默认空=不强制）。属强制类型时按出库单行物料逐行触发：首次生成 PENDING 质检单并阻塞，
+     * 质检合格/让步后再次审核放行。billType=ERP_SAL_DELIVERY，inspectionType=OUTGOING。
+     */
+    private void enforceInspectionGate(ErpSalDelivery delivery, IServiceContext context) {
+        String billType = ErpSalConstants.RELATED_BILL_TYPE_SAL_DELIVERY;
+        if (!InspectionTrigger.isMandatoryBillType(billType)) {
+            return;
+        }
+        for (ErpSalDeliveryLine line : loadLines(delivery.getId())) {
+            if (line.getMaterialId() == null) {
+                continue;
+            }
+            int gate = InspectionTrigger.enforceGate(inspectionBiz, billType, delivery.getCode(),
+                    line.getMaterialId(), 40 /* erp-qa/inspection-type OUTGOING */,
+                    line.getQuantity(), null, delivery.getWarehouseId(), null, context);
+            if (gate == InspectionTrigger.BLOCKED) {
+                throw new NopException(ErpSalErrors.ERR_DELIVERY_INSPECTION_BLOCKED)
+                        .param(ErpSalErrors.ARG_DELIVERY_CODE, delivery.getCode());
+            }
+        }
+    }
 
     List<ErpSalDeliveryLine> loadLines(Long deliveryId) {
         // D2 边界场景：同聚合子表加载，父实体已由 requireEntity 经数据权限/Meta 管道授权，子行无独立权限规则。

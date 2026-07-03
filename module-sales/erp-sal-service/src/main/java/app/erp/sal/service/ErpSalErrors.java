@@ -187,4 +187,10 @@ public interface ErpSalErrors {
     ErrorCode ERR_RETURN_REASON_REQUIRED = ErrorCode.define("erp.err.sal.return-reason-required",
             "销售退货单 {returnCode} 第 {lineNo} 行缺少退货原因（按配置必填）",
             ARG_RETURN_CODE, ARG_LINE_NO);
+
+    // 强制质检阻塞（plan 2026-07-02-2237-3 Phase 2）：出库单 {deliveryCode} 属强制质检类型，
+    // 关联质检单未合格/让步，审核暂挂（首次审核已生成 PENDING 质检单，待质检结论后再次审核放行）
+    ErrorCode ERR_DELIVERY_INSPECTION_BLOCKED = ErrorCode.define("erp.err.sal.delivery-inspection-blocked",
+            "出库单 {deliveryCode} 属强制质检类型，关联质检单未合格/让步，审核暂挂待质检结论",
+            ARG_DELIVERY_CODE);
 }

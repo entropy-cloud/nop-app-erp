@@ -13,6 +13,8 @@ import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
 import app.erp.mfg.service.workorder.KitAvailabilityChecker;
 import app.erp.mfg.service.workorder.KitAvailabilityResult;
+import app.erp.qa.biz.IErpQaInspectionBiz;
+import app.erp.qa.biz.InspectionTrigger;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -50,6 +52,8 @@ public class ErpMfgWorkOrderBizModel extends CrudBizModel<ErpMfgWorkOrder> imple
     KitAvailabilityChecker kitAvailabilityChecker;
     @Inject
     IErpInvStockMoveBiz stockMoveBiz;
+    @Inject
+    IErpQaInspectionBiz inspectionBiz;
 
     public ErpMfgWorkOrderBizModel() {
         setEntityName(ErpMfgWorkOrder.class.getName());
@@ -61,6 +65,10 @@ public class ErpMfgWorkOrderBizModel extends CrudBizModel<ErpMfgWorkOrder> imple
 
     public void setStockMoveBiz(IErpInvStockMoveBiz stockMoveBiz) {
         this.stockMoveBiz = stockMoveBiz;
+    }
+
+    public void setInspectionBiz(IErpQaInspectionBiz inspectionBiz) {
+        this.inspectionBiz = inspectionBiz;
     }
 
     @Override
@@ -207,6 +215,18 @@ public class ErpMfgWorkOrderBizModel extends CrudBizModel<ErpMfgWorkOrder> imple
         if (willFinish && isInspectionGated(wo)) {
             throw new NopException(ErpMfgErrors.ERR_INSPECTION_REQUIRED)
                     .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode());
+        }
+
+        // 强制完工质检门控（plan 2026-07-02-2237-3 Phase 2）：达量时若 ERP_MFG_WORK_ORDER 属强制质检类型，
+        // 经 InspectionTrigger 生成 FINAL 质检单并阻塞（首次 PENDING；质检合格/让步后再次报工放行）。默认空=不强制。
+        if (willFinish && wo.getProductId() != null) {
+            int gate = InspectionTrigger.enforceGate(inspectionBiz, ErpMfgConstants.RELATED_BILL_TYPE_MFG_WORK_ORDER,
+                    wo.getCode(), wo.getProductId(), 30 /* erp-qa/inspection-type FINAL */,
+                    newCompleted, null, null, null, context);
+            if (gate == InspectionTrigger.BLOCKED) {
+                throw new NopException(ErpMfgErrors.ERR_INSPECTION_REQUIRED)
+                        .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode());
+            }
         }
 
         // 累加完工数量 + 重算成本（unitCost 用累加后成本 / 累加后完工量）

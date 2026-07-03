@@ -42,6 +42,13 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- compile: 出库审核强制质检门控（IErpQaInspectionBiz + InspectionTrigger 位于 quality dao）。
+             sales→quality 单向（business→quality 触发），DAG 无环。默认配置空=不强制，无副作用。 -->
+        <dependency>
+            <artifactId>app-erp-quality-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!-- compile: 销售发票/收款过账接入财务过账引擎（凭证聚合根 Facade IErpFinVoucherBiz 位于 finance-dao；
              IErpFinAcctDocProvider SPI 位于 finance-service）。sales→finance 单向无环
              （finance 为 DAG 顶，不依赖 sales）。 -->
@@ -61,6 +68,14 @@
              使单域 GraphQL save 的跨域引用校验(validateRefValue)可在 H2 内存库中通过 -->
         <dependency>
             <artifactId>app-erp-master-data-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- test-only: 强制质检门控 IErpQaInspectionBiz Bean 实现注册（app-erp-all 聚合时由 app 层提供）。
+             默认配置空=不强制，现有销售流程测试不受影响。 -->
+        <dependency>
+            <artifactId>app-erp-quality-service</artifactId>
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
             <scope>test</scope>
