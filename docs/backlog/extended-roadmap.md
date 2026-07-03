@@ -22,7 +22,8 @@
 - 2.10：✅ done（VMI 所有权转移：StockBalance/Ledger 加 ownerId/ownershipType 维度(config-gated, ownership-tracking-enabled 默认关) + ErpInvOwnershipTransfer/Line 三态状态机(DRAFT→CONFIRMED→DONE/CANCELLED) + 同库位余额重分类(sourceLocId=destLocId 物理不变) + OWNERSHIP_TRANSFER 业财过账(借存货/贷应付-供应商) + DIRECTION_PAYABLE 辅助账(待供应商采购发票核销) + vmi-auto-generate-ap config 门控，2026-07-04，`docs/plans/2026-07-04-0549-1-inventory-vmi-ownership-transfer.md`）
 
 ### Milestone M3 — 新增 8 域
-- 3.1–3.21：`todo`
+- 3.1：✅ done（CRM 线索→商机→报价单转化：Lead docStatus 状态机(NEW→QUALIFIED/LOST/CANCELLED, lostReason 必填) + 漏斗阶段流转(moveStage 允许回退+convLog 全量留痕+probability 默认回填) + 线索查重(companyName/contactEmail/contactPhone, auto-convert-duplicate-lead 默认关仅提示) + 转化闭环(convertToCustomer 经 IErpMdPartnerBiz 建客户+新建 OPPORTUNITY+原 lead CONVERTED 弱指针；convertToQuotation 经 IErpSalQuotationBiz save 建报价单+弱指针+CONVERTED；幂等 ERR_LEAD_ALREADY_CONVERTED)；核心零污染 sales/master-data 实体零字段新增，2026-07-04，`docs/plans/2026-07-04-0549-2-crm-lead-opportunity-quotation-conversion.md`）
+- 3.2–3.21：`todo`
 
 ## Implementation Order
 
@@ -46,7 +47,7 @@
 
 | # | 工作项 | 域 | 设计文档 |
 |---|--------|-----|---------|
-| 3.1 | CRM Lead→Opportunity→Quotation 转化 | crm | `crm/README.md` |
+| 3.1 | ✅ CRM Lead→Opportunity→Quotation 转化 | crm | `crm/README.md` |
 | 3.2 | CRM 活动日历/事件提醒 | crm | `crm/README.md` |
 | 3.3 | CRM 线索评分引擎 | crm | `crm/lead-scoring.md` |
 | 3.4 | CRM 销售预测 | crm | `crm/sales-forecast.md` |

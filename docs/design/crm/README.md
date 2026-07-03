@@ -240,6 +240,8 @@ IErpCrmConversionBiz（CRM 转化服务）
 
 > **核心零污染**：转化结果存在 CRM 侧（lead.relatedBillType/Code），sales 实体（ErpSalQuotation）零字段新增。
 
+> **实现偏离补注**（2026-07-04，plan 2026-07-04-0549-2）：转化动作（convertToCustomer/convertToQuotation）实现于 `ErpCrmLeadBizModel`（`@BizModel("ErpCrmLead")`）而非独立的 `ErpCrmConversion` BizModel——非实体 BizModel 不会被 GraphQL 自动注册为业务对象（unknown-biz-obj-name）。`IErpCrmConversionBiz` 契约接口保留为衔接 seam，由 `ErpCrmLeadBizModel` 实现，GraphQL 动作名为 `ErpCrmLead__convertToCustomer` / `ErpCrmLead__convertToQuotation`。另：`IErpCrmLeadBiz.lose` 的 `lostReasonId`/`lostReasonDesc` 标注 `@Optional`（Nop GraphQL 对 `@Name` 参数默认非空校验，须显式 `@Optional` 才能让业务校验在缺失时抛 `ERR_LOST_REASON_REQUIRED`）。
+
 ## 配置点
 
 | 配置项 | 默认值 | 说明 |
