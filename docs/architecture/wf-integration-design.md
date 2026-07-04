@@ -100,7 +100,7 @@ Java Processor (业务逻辑, 跨域编排)
 | 方案 | 评价 | 选用场景 |
 |------|------|----------|
 | xbiz `<source>` inject Processor | **默认** | 审批逻辑稳定，无需拓扑可变编排 |
-| xbiz `task:name` → task.xml | **灵活定制** | 审批通过后的业务联动需要分步 Delta 覆盖（不同客户重排校验→规则→过账顺序） |
+| xbiz `task:name`/`task:path` → task.xml | **灵活定制** | 审批通过后的业务联动需要分步 Delta 覆盖（不同客户重排校验→规则→过账顺序） |
 | Java `@BizMutation` + xbiz `x:override="remove"` | **禁止** | 脱离平台审批标准流程，失去产品化配置升迁能力 |
 | xbiz `<observes>` append | 辅助 | 仅追加广播联动（通知、日志），不改变主逻辑 |
 
@@ -120,6 +120,9 @@ Java Processor (业务逻辑, 跨域编排)
 <!-- 编译期由 biz-gen:TaskFlowSupport 展开（arg/return/source 自动生成），不指定 version 取最新 -->
 <mutation name="approve" x:override="replace"
           task:name="ErpPurReceive/approve"/>
+<!-- 也可用 task:path 直接指定 VFS 路径 -->
+<mutation name="approve" x:override="replace"
+          task:path="/nop/task/ErpPurReceive/approve.task.xml"/>
 ```
 
 task.xml 内通过 `inject()` 复用既有 Processor：

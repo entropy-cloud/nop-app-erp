@@ -344,3 +344,13 @@ HR 选择轮换模板 + 轮换组
 - `docs/design/human-resource/use-cases.md`（UC-HR-06 考勤跟踪）
 - 🟢 Odoo `hr_attendance`（排班模板 + 打卡 + 迟到计算 + 排班调换）
 - 🟢 AureusERP `shift_template.php`、`shift_swap.php`（排班模板 + 调换）
+
+## 实现偏离补注（plan 2026-07-04-0831-3 落地后追加）
+
+- **轮换组建模**：本期按 Phase 2 Decision 不新增 `ErpHrShiftRotationGroup` 实体、不加 `staggerDays` 列，组成员与错峰天数作为 `generateRotation(patternId, groupMemberIds, staggerDays, dateRange, regenerate)` 的瞬态方法入参传入。「重新生成」时调用方须重传 groupMemberIds/staggerDays（持久化层无法重读组定义）。设计 §3.2 的 RotationGroup 实体作为 successor 候选（触发条件：组定义频繁复用或需多套错峰方案时）。
+- **迟到/早退/缺勤结果落点**：本期按 Phase 1 Decision 计算结果写 `ErpHrAttendance` 已有列（lateMinutes/earlyLeaveMinutes/isAbsent），`ErpHrShiftAssignment` 保持「该员工当天应上什么班」的标准输入角色、不加结果列。排班看板若需展示迟到/缺勤须 join Attendance（本期看板可视化属 Non-Goal）。
+- **开放给全员认领的排班市场**：本期 Non-Goal，仅支持指定员工一对一交换。开放认领需排班市场匹配机制（独立结果表面），归 follow-up。
+- **排班看板/日历 AMIS 可视化**：本期 Non-Goal，本计划只提供数据契约。前端可视化归前端计划。
+- **出勤率/调换率/排班覆盖率报表**：本期 Non-Goal，归 follow-up。
+- **nop-job 定时提醒/自动生成 cron**：本期手动/外部调度触发；cron 注册归 follow-up。
+- **`assignmentDate` 字段查询运算符限制**：XMeta 限制 `assignmentDate` 字段仅支持 `eq/in/dateBetween/dateTimeBetween`，跨日期范围查询统一用 `FilterBeans.dateBetween`。
