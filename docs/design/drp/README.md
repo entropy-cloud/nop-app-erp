@@ -20,22 +20,22 @@
 
 ## 实体清单
 
-> 表前缀 `erp_inv_drp_`、类名 `ErpInvDrp*`、字典 `erp-inv/drp-*`。
+> 命名现状（ORM 为权威源）：DRP 计划/明细/补货参数三实体为 `ErpDrpPlan`/`ErpDrpLine`/`ErpDrpParameter`，表 `erp_drp_`，字典 `erp-drp/drp-*`；安全库存计算/提前期记录/越库/月台预约实体保留 `ErpInvDrp*`、表 `erp_inv_drp_`、字典 `erp-inv/drp-*`（混用历史延续）。本期已完成文档→ORM 命名对齐。
 
-### ErpInvDrpPlan（DRP 计划头）
+### ErpDrpPlan（DRP 计划头）
 
 | 字段 | 含义 |
 |------|------|
 | id/code/orgId | 标准 |
 | planName | 计划名称（如"2026-07 月度 DRP"） |
 | periodFrom/periodTo | 计划覆盖区间 |
-| status | dict `erp-inv/drp-plan-status`：DRAFT / COMPUTED / APPROVED / EXECUTED |
+| status | dict `erp-drp/drp-plan-status`：DRAFT / COMPUTED / APPROVED / EXECUTED |
 | totalReplenishmentQty | 总补货数量（派生） |
 | runAt | 运行时间 |
 | runBy | 运行人 |
 | 标准审计字段 | |
 
-### ErpInvDrpLine（DRP 明细行）
+### ErpDrpLine（DRP 明细行）
 
 | 字段 | 含义 |
 |------|------|
@@ -53,10 +53,10 @@
 | suggestedQty | 建议补货量（净需求向上取整到包装倍数） |
 | approvedQty | 批准补货量（人工调整后） |
 | orderBillType/orderBillCode | 生成的补货单（TransferOrder 或 PurchaseOrder，已执行后回写） |
-| status | dict `erp-inv/drp-line-status`：SUGGESTED / APPROVED / ORDERED / CANCELLED |
+| status | dict `erp-drp/drp-line-status`：SUGGESTED / APPROVED / ORDERED / CANCELLED |
 | 标准审计字段 | |
 
-### ErpInvDrpParameter（仓库补货参数）
+### ErpDrpParameter（仓库补货参数）
 
 | 字段 | 含义 |
 |------|------|

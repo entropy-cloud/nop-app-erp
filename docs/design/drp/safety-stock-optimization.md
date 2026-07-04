@@ -2,7 +2,7 @@
 
 ## 目的
 
-设计统计安全库存计算功能：基于需求历史数据，按统计方法（标准差 × 服务水平）自动计算安全库存和再订货点。为 DRP 补货参数（ErpInvDrpParameter.safetyStock）提供推荐值，支持参数配置和人工覆盖。
+设计统计安全库存计算功能：基于需求历史数据，按统计方法（标准差 × 服务水平）自动计算安全库存和再订货点。为 DRP 补货参数（ErpDrpParameter.safetyStock）提供推荐值，支持参数配置和人工覆盖。
 
 ## 设计依据
 
@@ -155,7 +155,7 @@
     │           │                 │
     │           ▼                 │
     │  回写 DRP 参数               │
-    │  → ErpInvDrpParameter       │
+    │  → ErpDrpParameter          │
     │      .safetyStock = 结果    │
     │           │                 │
     │           ▼                 │
@@ -176,11 +176,11 @@
 
 ## 业务规则
 
-1. **计算结果仅是建议**：`calculatedSafetyStock` 是系统推荐值，人工可通过 `overrideSafetyStock` 覆盖。DRP 运行时优先取 `overrideSafetyStock`，其次取 `calculatedSafetyStock`，最后取 `ErpInvDrpParameter.safetyStock` 原值。
-2. **覆盖审计**：人工覆盖需记录 `overwrittenBy` 和 `overwrittenAt`，用于后续追溯。
+1. **计算结果仅是建议**：`calculatedSafetyStock` 是系统推荐值，人工可通过 `overrideSafetyStock` 覆盖。DRP 运行时优先取 `overrideSafetyStock`，其次取 `calculatedSafetyStock`，最后取 `ErpDrpParameter.safetyStock` 原值。
+2. **覆盖审计**：人工覆盖需记录 `overwrittenBy`，用于后续追溯。
 3. **计算再触发**：当 historyMonths、serviceLevel、leadTimeDays 任一参数变化时，`calculatedSafetyStock` 标记为 STALE，提示用户重新计算。
 4. **批量计算**：支持按物料分类、仓库范围批量触发安全库存计算。
-5. **计算结果对比**：新计算结果与当前 `ErpInvDrpParameter.safetyStock` 进行比较，差异超过 20%（可配置）时告警提示。
+5. **计算结果对比**：新计算结果与当前 `ErpDrpParameter.safetyStock` 进行比较，差异超过 20%（可配置）时告警提示。
 
 ## 跨域协作
 
@@ -205,7 +205,7 @@
 - ⛔ **安全库存与再订货点混为一谈**——安全库存是"缓冲量"，再订货点是"触发补货的库存水位"。两者都需计算，但语义不同。
 - ⛔ **不做历史清洗直接使用原始数据**——促销 spike、停产期、数据缺失都会扭曲标准差，必须进行数据清洗。
 - ⛔ **所有物料使用相同服务水平**——A/B/C 分类物料的缺货影响不同，应按分类差异化配置服务水平。
-- ⛔ **计算结果直接覆写 DRP 参数**——必须经过人工审查确认后才能回写 ErpInvDrpParameter。
+- ⛔ **计算结果直接覆写 DRP 参数**——必须经过人工审查确认后才能回写 ErpDrpParameter。
 
 ## 证据强度
 
@@ -219,7 +219,7 @@
 
 ## 参考
 
-- `drp/README.md`（DRP 模块总述 + ErpInvDrpParameter）
+- `drp/README.md`（DRP 模块总述 + ErpDrpParameter）
 - `drp/use-cases.md` §UC-DRP-05 安全库存调整
 - `drp/state-machine.md`（DRP 计划状态机）
 - `docs/design/manufacturing/mrp.md`（MRP 安全库存概念）

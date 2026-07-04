@@ -109,13 +109,13 @@
 
 1. DRP 计划已 COMPUTED，部分行建议补货量异常（安全库存参数刚更新）。
 2. 计划员回退到 DRAFT（COMPUTED→DRAFT）。
-3. 修改仓库补货参数（ErpInvDrpParameter.safetyStock）。
+3. 修改仓库补货参数（ErpDrpParameter.safetyStock）。
 4. 重新运行计算，生成新的 SUGGESTED 行。
 
 ### 10. 与设计文档一致性
 
-- 状态定义见 `drp/README.md` §ErpInvDrpPlan 和 §ErpInvDrpLine。
-- 状态码归 `model/app-erp-drp.orm.xml` dict `erp-inv/drp-plan-status` 和 `erp-inv/drp-line-status`。
+- 状态定义见 `drp/README.md` §ErpDrpPlan 和 §ErpDrpLine。
+- 状态码归 `model/app-erp-drp.orm.xml` dict `erp-drp/drp-plan-status` 和 `erp-drp/drp-line-status`。
 
 ---
 

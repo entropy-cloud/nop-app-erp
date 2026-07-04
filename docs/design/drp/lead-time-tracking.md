@@ -42,8 +42,8 @@
     ▼
 回写补货参数
     │
-    ├─► 更新 ErpInvDrpParameter.safetyStock
-    └─► 更新 ErpInvDrpParameter.replenishmentLeadTime
+    ├─► 更新 ErpDrpParameter.safetyStock
+    └─► 更新 ErpDrpParameter.replenishmentLeadTime
 ```
 
 ## 实际提前期记录
