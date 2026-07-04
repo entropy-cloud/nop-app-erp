@@ -33,9 +33,10 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  *   <li>写 {@link ErpDrpLine}（status=SUGGESTED）+ 回写 plan {@code totalReplenishmentQty/runAt/runBy} + status DRAFT→COMPUTED。</li>
  * </ul>
  *
- * <p><b>Non-Goal</b>：正式预测集成（forecastDemand 默认 0/手工）；多级分销展开；联合变分安全库存（需 ORM 列，归 Deferred）。
+ * <p><b>Non-Goal</b>：多级分销展开；联合变分安全库存（需 ORM 列，归 Deferred）。FORECAST 集成已落地
+ * （plan 2026-07-05-0427-1 §Phase 3，DrpDemandAggregator 按 materialId+warehouseId 消费 APPROVED 预测）。
  *
- * <p>本类为非 BizModel 服务助手（对齐 MRP {@code MrpEngine} 范式），跨域只读聚合（inventory/purchase）直接用 {@link IDaoProvider}。
+ * <p>本类为非 BizModel 服务助手（对齐 MRP {@code MrpEngine} 范式），跨域只读聚合（inventory/purchase/manufacturing）直接用 {@link IDaoProvider}。
  */
 public class DrpEngine {
 

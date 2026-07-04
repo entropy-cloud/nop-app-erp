@@ -223,6 +223,24 @@ CREATE TABLE erp_mfg_mrp_plan(
   constraint PK_erp_mfg_mrp_plan primary key (ID)
 );
 
+CREATE TABLE erp_mfg_forecast(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  PLAN_NAME VARCHAR2(200) NOT NULL ,
+  PERIOD_FROM DATE NOT NULL ,
+  PERIOD_TO DATE NOT NULL ,
+  STATUS VARCHAR2(20) NOT NULL ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_mfg_forecast primary key (ID)
+);
+
 CREATE TABLE erp_mfg_cost_rollup(
   ID NUMBER(20) NOT NULL ,
   CODE VARCHAR2(50) NOT NULL ,
@@ -345,6 +363,27 @@ CREATE TABLE erp_mfg_mrp_demand(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   constraint PK_erp_mfg_mrp_demand primary key (ID)
+);
+
+CREATE TABLE erp_mfg_forecast_line(
+  ID NUMBER(20) NOT NULL ,
+  FORECAST_ID NUMBER(20) NOT NULL ,
+  LINE_NO INTEGER NOT NULL ,
+  MATERIAL_ID NUMBER(20) NOT NULL ,
+  WAREHOUSE_ID NUMBER(20)  ,
+  UO_M_ID NUMBER(20) NOT NULL ,
+  PERIOD_START DATE NOT NULL ,
+  PERIOD_END DATE NOT NULL ,
+  FORECAST_QTY NUMBER(20,4) NOT NULL ,
+  SOURCED_FLAG VARCHAR2(50)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_mfg_forecast_line primary key (ID)
 );
 
 CREATE TABLE erp_mfg_cost_rollup_line(
@@ -936,6 +975,36 @@ CREATE TABLE erp_mfg_material_issue_line(
                     
       COMMENT ON COLUMN erp_mfg_mrp_plan.UPDATE_TIME IS '修改时间';
                     
+      COMMENT ON TABLE erp_mfg_forecast IS '需求预测';
+                
+      COMMENT ON COLUMN erp_mfg_forecast.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast.CODE IS '单号';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast.PLAN_NAME IS '预测名称';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast.PERIOD_FROM IS '预测区间起';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast.PERIOD_TO IS '预测区间止';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast.STATUS IS '状态';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast.UPDATE_TIME IS '修改时间';
+                    
       COMMENT ON TABLE erp_mfg_cost_rollup IS '标准成本滚算';
                 
       COMMENT ON COLUMN erp_mfg_cost_rollup.ID IS 'ID';
@@ -1147,6 +1216,42 @@ CREATE TABLE erp_mfg_material_issue_line(
       COMMENT ON COLUMN erp_mfg_mrp_demand.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_mfg_mrp_demand.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_mfg_forecast_line IS '需求预测行';
+                
+      COMMENT ON COLUMN erp_mfg_forecast_line.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast_line.FORECAST_ID IS '需求预测ID';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast_line.LINE_NO IS '行号';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast_line.MATERIAL_ID IS '物料';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast_line.WAREHOUSE_ID IS '仓库（可选，空=产品级 MRP 消费，填=仓级 DRP 消费）';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast_line.UO_M_ID IS '计量单位';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast_line.PERIOD_START IS '桶起始日期';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast_line.PERIOD_END IS '桶结束日期';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast_line.FORECAST_QTY IS '预测数量';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast_line.SOURCED_FLAG IS '来源标记';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast_line.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast_line.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast_line.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast_line.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast_line.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast_line.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_mfg_forecast_line.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_mfg_cost_rollup_line IS '标准成本滚算行';
                 

@@ -309,6 +309,26 @@ public interface _ErpMfgDaoConstants {
     String SHIFT_TYPE_NIGHT = "NIGHT";
                     
     /**
+     * 需求预测状态: 草稿 
+     */
+    String FORECAST_STATUS_DRAFT = "DRAFT";
+                    
+    /**
+     * 需求预测状态: 已审批 
+     */
+    String FORECAST_STATUS_APPROVED = "APPROVED";
+                    
+    /**
+     * 需求预测状态: 已消费 
+     */
+    String FORECAST_STATUS_CONSUMED = "CONSUMED";
+                    
+    /**
+     * 需求预测状态: 已取消 
+     */
+    String FORECAST_STATUS_CANCELLED = "CANCELLED";
+                    
+    /**
      * 工作日模式: 全周 
      */
     String WORK_DATE_PATTERN_ALL_WEEK = "ALL_WEEK";

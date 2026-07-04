@@ -33,7 +33,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  *
  * <p>算法（自顶向下递归，按计划量展开）：
  * <ul>
- *   <li>毛需求来源：{@link ErpMfgMrpDemand}（由 {@link DemandAggregator} 整合的销售订单/安全库存/手工需求）。</li>
+ *   <li>毛需求来源：{@link ErpMfgMrpDemand}（由 {@link DemandAggregator} 整合的销售订单/安全库存/需求预测/手工需求）。</li>
  *   <li>净需求 = 毛需求 − 可用量（{@link ErpInvStockBalance} 合计 total − reserved − locked），负值归零。</li>
  *   <li>计划订单类型：有默认且有效的 BOM（制造件）→ WORK_ORDER_REQUEST；否则（采购件）→ PURCHASE_REQUEST。</li>
  *   <li>BOM 多级展开：制造件经 {@link BomExpander#explode} 单级展开（按计划量缩放子件有效用量），递归到采购件；
@@ -44,8 +44,9 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  *   <li>Pegging：每条计划行记录 {@code parentLineId}（多级 BOM 层级链）；需求来源追溯见 demand 行。</li>
  * </ul>
  *
- * <p><b>Non-Goal</b>：FORECAST 来源、物料级批量策略（minOrderQty/fixedLotSize/lowLevelCode 物化列）、
+ * <p><b>Non-Goal</b>：物料级批量策略（minOrderQty/fixedLotSize/lowLevelCode 物化列）、
  * CRP 产能校验、AUTO_SCHEDULED、需求时界、委外释放、scrapRate 纳入净需求（见计划 Non-Goals）。
+ * FORECAST 来源已落地（plan 2026-07-05-0427-1）。
  *
  * <p>本类为非 BizModel 服务助手（对齐 {@code BomExpander}/{@code CostRollupService} 范式），跨域只读聚合
  * （inventory/master-data）直接用 {@link IDaoProvider}。

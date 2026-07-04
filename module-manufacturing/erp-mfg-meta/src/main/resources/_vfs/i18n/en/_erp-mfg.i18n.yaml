@@ -9,6 +9,8 @@ entity:
     ErpMfgCostRollupLine: Cost Rollup Line
     ErpMfgCostVariance: Cost Variance
     ErpMfgCrpLoad: CRP Load
+    ErpMfgForecast: Demand Forecast
+    ErpMfgForecastLine: Demand Forecast Line
     ErpMfgJobCard: Job Card
     ErpMfgJobCardTimeLog: Job Card Time Log
     ErpMfgMaterialIssue: Material Issue
@@ -243,6 +245,46 @@ prop:
       workcenter: Workcenter
       workOrder: Work Order
       org: Org
+    ErpMfgForecast:
+      id: ID
+      code: Code
+      orgId: Organization
+      planName: Plan Name
+      periodFrom: Period From
+      periodTo: Period To
+      status: Status
+      status_label: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      lines: Lines
+      org: Org
+    ErpMfgForecastLine:
+      id: ID
+      forecastId: Forecast
+      lineNo: Line No
+      materialId: Material
+      warehouseId: Warehouse
+      uoMId: UoM
+      periodStart: Period Start
+      periodEnd: Period End
+      forecastQty: Forecast Qty
+      sourcedFlag: Sourced Flag
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      forecast: Forecast
+      material: Material
+      warehouse: Warehouse
+      uoM: Uo M
     ErpMfgJobCard:
       id: ID
       workOrderId: Work Order
@@ -688,6 +730,7 @@ dict:
     erp-mfg/cost-rollup-status: Cost Rollup Status
     erp-mfg/byproduct-type: Co/By-Product Type
     erp-mfg/shift-type: Shift Type
+    erp-mfg/forecast-status: Forecast Status
     erp-mfg/work-date-pattern: Work Date Pattern
 dict.option.label:
   erp-mfg/work-order-status:
@@ -765,6 +808,11 @@ dict.option.label:
     MORNING: Morning
     AFTERNOON: Afternoon
     NIGHT: Night
+  erp-mfg/forecast-status:
+    DRAFT: Draft
+    APPROVED: Approved
+    CONSUMED: Consumed
+    CANCELLED: Cancelled
   erp-mfg/work-date-pattern:
     ALL_WEEK: All Week
     WEEKDAYS: Weekdays

@@ -1,0 +1,23 @@
+{
+  "id": 0,
+  "forecastId": 0,
+  "lineNo": 0,
+  "materialId": 0,
+  "warehouseId": 0,
+  "uoMId": 0,
+  "periodStart": "2000-01-01",
+  "periodEnd": "2000-01-01",
+  "forecastQty": 0.0,
+  "sourcedFlag": "",
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "forecast": null,
+  "material": null,
+  "warehouse": null,
+  "uoM": null
+}

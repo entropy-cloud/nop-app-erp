@@ -223,6 +223,24 @@ CREATE TABLE erp_mfg_mrp_plan(
   constraint PK_erp_mfg_mrp_plan primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_mfg_forecast(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '单号',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  PLAN_NAME VARCHAR(200) NOT NULL    COMMENT '预测名称',
+  PERIOD_FROM DATE NOT NULL    COMMENT '预测区间起',
+  PERIOD_TO DATE NOT NULL    COMMENT '预测区间止',
+  STATUS VARCHAR(20) NOT NULL    COMMENT '状态',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_mfg_forecast primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_mfg_cost_rollup(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '单号',
@@ -345,6 +363,27 @@ CREATE TABLE erp_mfg_mrp_demand(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   constraint PK_erp_mfg_mrp_demand primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_mfg_forecast_line(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  FORECAST_ID BIGINT NOT NULL    COMMENT '需求预测ID',
+  LINE_NO INTEGER NOT NULL    COMMENT '行号',
+  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
+  WAREHOUSE_ID BIGINT NULL    COMMENT '仓库（可选，空=产品级 MRP 消费，填=仓级 DRP 消费）',
+  UO_M_ID BIGINT NOT NULL    COMMENT '计量单位',
+  PERIOD_START DATE NOT NULL    COMMENT '桶起始日期',
+  PERIOD_END DATE NOT NULL    COMMENT '桶结束日期',
+  FORECAST_QTY DECIMAL(20,4) NOT NULL    COMMENT '预测数量',
+  SOURCED_FLAG VARCHAR(50) NULL    COMMENT '来源标记',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_mfg_forecast_line primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_mfg_cost_rollup_line(
@@ -720,6 +759,8 @@ CREATE TABLE erp_mfg_material_issue_line(
                 
    ALTER TABLE erp_mfg_mrp_plan COMMENT 'MRP计划';
                 
+   ALTER TABLE erp_mfg_forecast COMMENT '需求预测';
+                
    ALTER TABLE erp_mfg_cost_rollup COMMENT '标准成本滚算';
                 
    ALTER TABLE erp_mfg_bom_byproduct COMMENT 'BOM联副产品';
@@ -731,6 +772,8 @@ CREATE TABLE erp_mfg_material_issue_line(
    ALTER TABLE erp_mfg_mrp_plan_line COMMENT 'MRP计划行';
                 
    ALTER TABLE erp_mfg_mrp_demand COMMENT 'MRP独立需求';
+                
+   ALTER TABLE erp_mfg_forecast_line COMMENT '需求预测行';
                 
    ALTER TABLE erp_mfg_cost_rollup_line COMMENT '标准成本滚算行';
                 

@@ -121,6 +121,12 @@
             <option code="AFTERNOON" label="中班" value="AFTERNOON" i18n-en:label='Afternoon'/>
             <option code="NIGHT" label="夜班" value="NIGHT" i18n-en:label='Night'/>
         </dict>
+        <dict label="需求预测状态" name="erp-mfg/forecast-status" valueType="string" i18n-en:label='Forecast Status'>
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label='Draft'/>
+            <option code="APPROVED" label="已审批" value="APPROVED" i18n-en:label='Approved'/>
+            <option code="CONSUMED" label="已消费" value="CONSUMED" i18n-en:label='Consumed'/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label='Cancelled'/>
+        </dict>
         <dict label="工作日模式" name="erp-mfg/work-date-pattern" valueType="string" i18n-en:label='Work Date Pattern'>
             <option code="ALL_WEEK" label="全周" value="ALL_WEEK" i18n-en:label='All Week'/>
             <option code="WEEKDAYS" label="工作日(周一至周五)" value="WEEKDAYS" i18n-en:label='Weekdays'/>
@@ -653,6 +659,63 @@
             <relations>
                 <to-one name="mrpPlan" refEntityName="app.erp.mfg.dao.entity.ErpMfgMrpPlan" tagSet="pub" i18n-en:displayName='Mrp Plan'><join><on leftProp="mrpPlanId" rightProp="id"/></join></to-one>
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
+                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub" i18n-en:displayName='Uo M'><join><on leftProp="uoMId" rightProp="id"/></join></to-one>
+            </relations>
+        </entity>
+
+        <!-- 需求预测头（运营需求预测：产品×时间桶，仓库维度可选以同时服务 MRP/DRP） -->
+        <entity className="app.erp.mfg.dao.entity.ErpMfgForecast"
+                displayName="需求预测" ext:icon="chart-line" i18n-en:displayName="Demand Forecast" name="app.erp.mfg.dao.entity.ErpMfgForecast"
+                tableName="erp_mfg_forecast" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" displayName="单号" domain="workOrderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="planName" displayName="预测名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="PLAN_NAME" propId="4" stdDataType="string" i18n-en:displayName='Plan Name' />
+                <column name="periodFrom" displayName="预测区间起" stdSqlType="DATE" mandatory="true" code="PERIOD_FROM" propId="5" stdDataType="date" i18n-en:displayName='Period From' />
+                <column name="periodTo" displayName="预测区间止" stdSqlType="DATE" mandatory="true" code="PERIOD_TO" propId="6" stdDataType="date" i18n-en:displayName='Period To' />
+                <column name="status" displayName="状态" ext:dict="erp-mfg/forecast-status" mandatory="true" code="STATUS" propId="7" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="9" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="10" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="11" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="12" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="13" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="14" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-many name="lines" refEntityName="app.erp.mfg.dao.entity.ErpMfgForecastLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="500"><join><on leftProp="id" rightProp="forecastId"/></join></to-many>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+            </relations>
+        </entity>
+
+        <!-- 需求预测行（materialId 必填；warehouseId 可选——空=产品级 MRP 消费，填=仓级 DRP 消费） -->
+        <entity className="app.erp.mfg.dao.entity.ErpMfgForecastLine"
+                displayName="需求预测行" ext:icon="list" i18n-en:displayName="Demand Forecast Line" name="app.erp.mfg.dao.entity.ErpMfgForecastLine"
+                tableName="erp_mfg_forecast_line" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="forecastId" displayName="需求预测ID" stdSqlType="BIGINT" mandatory="true" code="FORECAST_ID" propId="2" stdDataType="long" i18n-en:displayName='Forecast' />
+                <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int" i18n-en:displayName='Line No' />
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="4" stdDataType="long" i18n-en:displayName='Material' />
+                <column name="warehouseId" displayName="仓库（可选，空=产品级 MRP 消费，填=仓级 DRP 消费）" stdSqlType="BIGINT" code="WAREHOUSE_ID" propId="5" stdDataType="long" i18n-en:displayName='Warehouse' />
+                <column name="uoMId" displayName="计量单位" stdSqlType="BIGINT" mandatory="true" code="UO_M_ID" propId="6" stdDataType="long" i18n-en:displayName='UoM' />
+                <column name="periodStart" displayName="桶起始日期" stdSqlType="DATE" mandatory="true" code="PERIOD_START" propId="7" stdDataType="date" i18n-en:displayName='Period Start' />
+                <column name="periodEnd" displayName="桶结束日期" stdSqlType="DATE" mandatory="true" code="PERIOD_END" propId="8" stdDataType="date" i18n-en:displayName='Period End' />
+                <column name="forecastQty" displayName="预测数量" domain="quantity" mandatory="true" code="FORECAST_QTY" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Forecast Qty' />
+                <column name="sourcedFlag" displayName="来源标记" stdSqlType="VARCHAR" precision="50" code="SOURCED_FLAG" propId="10" stdDataType="string" i18n-en:displayName='Sourced Flag' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="12" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="13" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="14" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="15" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="16" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-one name="forecast" refEntityName="app.erp.mfg.dao.entity.ErpMfgForecast" tagSet="pub" i18n-en:displayName='Forecast'><join><on leftProp="forecastId" rightProp="id"/></join></to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub" i18n-en:displayName='Warehouse'><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
                 <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub" i18n-en:displayName='Uo M'><join><on leftProp="uoMId" rightProp="id"/></join></to-one>
             </relations>
         </entity>

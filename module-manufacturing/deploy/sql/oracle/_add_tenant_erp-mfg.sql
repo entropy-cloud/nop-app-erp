@@ -33,6 +33,8 @@ alter table erp_mfg_workcenter_capacity add NOP_TENANT_ID VARCHAR2(32) DEFAULT '
 
 alter table erp_mfg_mrp_plan add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
+alter table erp_mfg_forecast add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
 alter table erp_mfg_cost_rollup add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_bom_byproduct add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
@@ -44,6 +46,8 @@ alter table erp_mfg_bom_operation add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT
 alter table erp_mfg_mrp_plan_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_mrp_demand add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
+alter table erp_mfg_forecast_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_cost_rollup_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
@@ -122,6 +126,9 @@ alter table erp_mfg_workcenter_capacity add constraint PK_erp_mfg_workcenter_cap
 alter table erp_mfg_mrp_plan drop constraint PK_erp_mfg_mrp_plan;
 alter table erp_mfg_mrp_plan add constraint PK_erp_mfg_mrp_plan primary key (NOP_TENANT_ID, ID);
 
+alter table erp_mfg_forecast drop constraint PK_erp_mfg_forecast;
+alter table erp_mfg_forecast add constraint PK_erp_mfg_forecast primary key (NOP_TENANT_ID, ID);
+
 alter table erp_mfg_cost_rollup drop constraint PK_erp_mfg_cost_rollup;
 alter table erp_mfg_cost_rollup add constraint PK_erp_mfg_cost_rollup primary key (NOP_TENANT_ID, ID);
 
@@ -139,6 +146,9 @@ alter table erp_mfg_mrp_plan_line add constraint PK_erp_mfg_mrp_plan_line primar
 
 alter table erp_mfg_mrp_demand drop constraint PK_erp_mfg_mrp_demand;
 alter table erp_mfg_mrp_demand add constraint PK_erp_mfg_mrp_demand primary key (NOP_TENANT_ID, ID);
+
+alter table erp_mfg_forecast_line drop constraint PK_erp_mfg_forecast_line;
+alter table erp_mfg_forecast_line add constraint PK_erp_mfg_forecast_line primary key (NOP_TENANT_ID, ID);
 
 alter table erp_mfg_cost_rollup_line drop constraint PK_erp_mfg_cost_rollup_line;
 alter table erp_mfg_cost_rollup_line add constraint PK_erp_mfg_cost_rollup_line primary key (NOP_TENANT_ID, ID);

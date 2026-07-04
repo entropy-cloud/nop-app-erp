@@ -33,6 +33,8 @@ alter table erp_mfg_workcenter_capacity add NOP_TENANT_ID VARCHAR(32) DEFAULT '0
 
 alter table erp_mfg_mrp_plan add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_mfg_forecast add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_mfg_cost_rollup add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_bom_byproduct add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -44,6 +46,8 @@ alter table erp_mfg_bom_operation add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT 
 alter table erp_mfg_mrp_plan_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_mrp_demand add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_mfg_forecast_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_cost_rollup_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -122,6 +126,9 @@ alter table erp_mfg_workcenter_capacity add primary key (NOP_TENANT_ID, ID);
 alter table erp_mfg_mrp_plan drop primary key;
 alter table erp_mfg_mrp_plan add primary key (NOP_TENANT_ID, ID);
 
+alter table erp_mfg_forecast drop primary key;
+alter table erp_mfg_forecast add primary key (NOP_TENANT_ID, ID);
+
 alter table erp_mfg_cost_rollup drop primary key;
 alter table erp_mfg_cost_rollup add primary key (NOP_TENANT_ID, ID);
 
@@ -139,6 +146,9 @@ alter table erp_mfg_mrp_plan_line add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_mfg_mrp_demand drop primary key;
 alter table erp_mfg_mrp_demand add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_mfg_forecast_line drop primary key;
+alter table erp_mfg_forecast_line add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_mfg_cost_rollup_line drop primary key;
 alter table erp_mfg_cost_rollup_line add primary key (NOP_TENANT_ID, ID);

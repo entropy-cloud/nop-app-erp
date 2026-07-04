@@ -9,6 +9,8 @@ entity:
     ErpMfgCostRollupLine: 标准成本滚算行
     ErpMfgCostVariance: 成本差异记录
     ErpMfgCrpLoad: CRP负荷
+    ErpMfgForecast: 需求预测
+    ErpMfgForecastLine: 需求预测行
     ErpMfgJobCard: 作业卡
     ErpMfgJobCardTimeLog: 作业工时记录
     ErpMfgMaterialIssue: 领料单
@@ -243,6 +245,46 @@ prop:
       workOrderId: 工单(弱指针)
       workcenter: null
       workcenterId: 工作中心
+    ErpMfgForecast:
+      code: 单号
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      lines: null
+      org: null
+      orgId: 业务组织
+      periodFrom: 预测区间起
+      periodTo: 预测区间止
+      planName: 预测名称
+      remark: 备注
+      status: 状态
+      status_label: 状态
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpMfgForecastLine:
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      forecast: null
+      forecastId: 需求预测ID
+      forecastQty: 预测数量
+      id: ID
+      lineNo: 行号
+      material: null
+      materialId: 物料
+      periodEnd: 桶结束日期
+      periodStart: 桶起始日期
+      remark: 备注
+      sourcedFlag: 来源标记
+      uoM: null
+      uoMId: 计量单位
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      warehouse: null
+      warehouseId: 仓库（可选，空=产品级 MRP 消费，填=仓级 DRP 消费）
     ErpMfgJobCard:
       actualEndTime: 实际结束时间
       actualStartTime: 实际开始时间

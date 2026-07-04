@@ -10,6 +10,11 @@ package app.erp.drp.service;
  */
 public interface ErpDrpConfigs {
 
+    // DRP 净需求：是否消费 APPROVED 预测行填充 forecastDemand（plan 2026-07-05-0427-1 §Phase 3；默认 true）。
+    // false 时 forecastDemand=0（与基线一致，回归兼容）。
+    String CONFIG_DRP_FORECAST_CONSUME_ENABLED = "erp-drp.forecast-consume-enabled";
+    boolean DEFAULT_DRP_FORECAST_CONSUME_ENABLED = true;
+
     // DRP 净需求：预测需求默认 horizon 天数（无后端预测实体时，forecastDemand 默认 0/手工录入）
     String CONFIG_DRP_DEFAULT_FORECAST_HORIZON_DAYS = "erp-inv.drp-default-forecast-horizon-days";
     int DEFAULT_DRP_DEFAULT_FORECAST_HORIZON_DAYS = 30;

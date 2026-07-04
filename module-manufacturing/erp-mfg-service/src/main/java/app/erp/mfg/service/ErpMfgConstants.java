@@ -103,6 +103,7 @@ public interface ErpMfgConstants {
     String SOURCE_BILL_TYPE_SAL_ORDER = "ERP_SAL_ORDER";
     String SOURCE_BILL_TYPE_MD_MATERIAL = "ERP_MD_MATERIAL";
     String SOURCE_BILL_TYPE_MRP_MANUAL = "ERP_MFG_MRP_DEMAND";
+    String SOURCE_BILL_TYPE_MFG_FORECAST = "ERP_MFG_FORECAST";
 
     // 释放生成的目标单据 code 前缀
     String RELEASE_PO_CODE_PREFIX = "PO-MRP-";
@@ -139,4 +140,17 @@ public interface ErpMfgConstants {
     String CONFIG_CRP_RUN_DEFAULT_WINDOW_MONTHS = "erp-mfg.crp-run-default-window-months";
     /** CONFIG_CRP_RUN_DEFAULT_WINDOW_MONTHS 缺省值。 */
     int DEFAULT_CRP_RUN_WINDOW_MONTHS = 0;
+
+    // 需求预测状态（erp-mfg/forecast-status，4 态；权威：plan 2026-07-05-0427-1 §Goals）
+    String FORECAST_STATUS_DRAFT = "DRAFT";
+    String FORECAST_STATUS_APPROVED = "APPROVED";
+    String FORECAST_STATUS_CONSUMED = "CONSUMED";
+    String FORECAST_STATUS_CANCELLED = "CANCELLED";
+
+    // 预测需求来源（写入 ErpMfgMrpDemand.demandSource 的 FORECAST 码值；与 erp-mfg/mrp-demand-source 字典一致）
+    // 已在 MRP_DEMAND_SOURCE_FORECAST 常量中定义，不重复声明
+
+    // MRP 消费预测总开关（plan 2026-07-05-0427-1 §Infrastructure）。默认 true=消费 APPROVED 预测行。
+    String CONFIG_MFG_FORECAST_CONSUME_ENABLED = "erp-mfg.forecast-consume-enabled";
+    boolean DEFAULT_MFG_FORECAST_CONSUME_ENABLED = true;
 }

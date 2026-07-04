@@ -57,6 +57,13 @@
         <property name="bizObjName" value="ErpMfgMrpPlan"/>
     </bean>
 
+    <bean id="app.erp.mfg.service.entity.ErpMfgForecastBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgForecast" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgForecastBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMfgForecast"/>
+    </bean>
+
     <bean id="app.erp.mfg.service.entity.ErpMfgCostRollupBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpMfgCostRollup" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -101,6 +108,14 @@
     <bean id="biz_ErpMfgMrpDemand" class="io.nop.biz.proxy.BizProxyFactoryBean"
           ioc:type="app.erp.mfg.biz.IErpMfgMrpDemandBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
         <property name="bizObjName" value="ErpMfgMrpDemand"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgForecastLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgForecastLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgForecastLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMfgForecastLine"/>
     </bean>
 
     <bean id="app.erp.mfg.service.entity.ErpMfgCostRollupLineBizModel" ioc:type="@bean:id" ioc:default="true"/>

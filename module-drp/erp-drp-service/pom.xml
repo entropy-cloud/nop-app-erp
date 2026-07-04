@@ -36,6 +36,13 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- DRP 净需求只读聚合：消费 ErpMfgForecast/Line（APPROVED 预测填充 ErpDrpLine.forecastDemand，plan 2026-07-05-0427-1 §Phase 3）。
+             drp→manufacturing 单向（R），DAG 无环（manufacturing 不反向依赖 drp）。 -->
+        <dependency>
+            <artifactId>app-erp-manufacturing-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <artifactId>app-erp-drp-codegen</artifactId>
             <groupId>io.nop.app</groupId>

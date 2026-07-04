@@ -31,6 +31,9 @@ public interface ErpMfgErrors {
     String ARG_PLAN_CODE = "planCode";
     String ARG_SUPPLIER_ID = "supplierId";
 
+    String ARG_FORECAST_ID = "forecastId";
+    String ARG_FORECAST_CODE = "forecastCode";
+
     String ARG_PERIOD_FROM = "periodFrom";
     String ARG_PERIOD_TO = "periodTo";
 
@@ -128,4 +131,14 @@ public interface ErpMfgErrors {
             "nop.err.mfg.crp.period-invalid",
             "CRP负荷计算区间非法：periodFrom[{periodFrom}]与periodTo[{periodTo}]均不可为空且from不得晚于to",
             ARG_PERIOD_FROM, ARG_PERIOD_TO);
+
+    ErrorCode ERR_FORECAST_NOT_FOUND = ErrorCode.define(
+            "nop.err.mfg.forecast.not-found",
+            "需求预测不存在: {forecastId}",
+            ARG_FORECAST_ID);
+
+    ErrorCode ERR_FORECAST_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
+            "nop.err.mfg.forecast.illegal-status-transition",
+            "需求预测[{forecastCode}]当前状态[{currentStatus}]不允许此操作，期望状态[{expectedStatus}]",
+            ARG_FORECAST_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
 }
