@@ -39,7 +39,8 @@ public enum ErpFinBusinessType {
     SALARY(270),
     SALARY_PAYMENT(280),
     SOCIAL_INSURANCE_ER(290),
-    HOUSING_FUND_ER(300);
+    HOUSING_FUND_ER(300),
+    FREIGHT(310);
 
     private final int code;
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:ioc="ioc"
        xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
@@ -7,4 +7,28 @@
     <import resource="_dao.beans.xml"/>
 
     <import resource="_service.beans.xml"/>
+
+    <!-- 承运商网关三层 SPI（carrier-integration.md §一）：Registry 镜像 finance ErpFinAcctDocRegistry 的
+         List 注入 + 内部建图范式；Mock 承运商（gatewayId="mock"）注册为 Factory Bean。
+         真实承运商 HTTP 集成归 follow-up（Non-Goal）。 -->
+    <bean id="app.erp.log.service.spi.ErpLogCarrierGatewayRegistry"
+          class="app.erp.log.service.spi.ErpLogCarrierGatewayRegistry">
+        <property name="factories">
+            <ioc:collect-beans by-type="app.erp.log.service.spi.IErpLogCarrierGatewayClientFactory"
+                               only-concrete-classes="true" ioc:ignore-depends="true"/>
+        </property>
+    </bean>
+
+    <bean id="app.erp.log.service.spi.mock.MockCarrierGatewayClientFactory"
+          class="app.erp.log.service.spi.mock.MockCarrierGatewayClientFactory"/>
+
+    <!-- 承运商网关派发器（非 BizModel 编排层）：completeDeliveryOrder 重试/写回 + trackShipment 轮询推进，
+         被 ErpLogShipmentBizModel 状态机动作委托调用。 -->
+    <bean id="app.erp.log.service.gateway.GatewayDispatcher"
+          class="app.erp.log.service.gateway.GatewayDispatcher"/>
+
+    <!-- 物流产费过账 Provider（注册为 Bean 后由 finance ErpFinAcctDocRegistry 自动聚合，
+         处理 FREIGHT 业务类型——3.18 path-1 销售运费 借销售费用-运费/贷应付或银行存款）。 -->
+    <bean id="app.erp.log.service.posting.LogisticsFreightProvider"
+          class="app.erp.log.service.posting.LogisticsFreightProvider"/>
 </beans>

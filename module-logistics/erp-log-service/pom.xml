@@ -18,6 +18,19 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- compile: 物流产费过账接入财务过账引擎（凭证聚合根 Facade IErpFinVoucherBiz 位于 finance-dao；
+             IErpFinAcctDocProvider SPI 位于 finance-service）。logistics→finance 单向无环（finance 为 DAG 顶，不依赖 logistics）。 -->
+        <dependency>
+            <artifactId>app-erp-finance-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!-- test-only: 运费过账测试需 finance ORM 跨域实体（ErpMd*/ErpAstAsset/ErpInv*/ErpPrjProject）在测试 classpath
+             可加载（与 finance-service 自身测试依赖一致）；master-data 提供账套/科目主数据 seed。 -->
+        <dependency><artifactId>app-erp-master-data-service</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version><scope>test</scope></dependency>
+        <dependency><artifactId>app-erp-assets-dao</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version><scope>test</scope></dependency>
+        <dependency><artifactId>app-erp-inventory-dao</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version><scope>test</scope></dependency>
+        <dependency><artifactId>app-erp-projects-dao</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version><scope>test</scope></dependency>
         <dependency>
             <artifactId>app-erp-logistics-codegen</artifactId>
             <groupId>io.nop.app</groupId>
