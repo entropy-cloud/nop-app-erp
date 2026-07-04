@@ -102,8 +102,10 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
+      earliestStartDateT: 最早开工时间
       id: ID
       isOutsourced: 是否外协
+      latestEndDateT: 最晚完工时间
       machineId: 工作中心/设备
       operationName: 工序名称
       org: null

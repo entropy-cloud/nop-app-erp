@@ -125,8 +125,16 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 26;
     
+    /* 最早开工时间: EARLIEST_START_DATE_T DATETIME */
+    public static final String PROP_NAME_earliestStartDateT = "earliestStartDateT";
+    public static final int PROP_ID_earliestStartDateT = 27;
+    
+    /* 最晚完工时间: LATEST_END_DATE_T DATETIME */
+    public static final String PROP_NAME_latestEndDateT = "latestEndDateT";
+    public static final int PROP_ID_latestEndDateT = 28;
+    
 
-    private static int _PROP_ID_BOUND = 27;
+    private static int _PROP_ID_BOUND = 29;
 
     
     /* relation:  */
@@ -136,7 +144,7 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[27];
+    private static final String[] PROP_ID_TO_NAME = new String[29];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -218,6 +226,12 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
+          PROP_ID_TO_NAME[PROP_ID_earliestStartDateT] = PROP_NAME_earliestStartDateT;
+          PROP_NAME_TO_ID.put(PROP_NAME_earliestStartDateT, PROP_ID_earliestStartDateT);
+      
+          PROP_ID_TO_NAME[PROP_ID_latestEndDateT] = PROP_NAME_latestEndDateT;
+          PROP_NAME_TO_ID.put(PROP_NAME_latestEndDateT, PROP_ID_latestEndDateT);
+      
     }
 
     
@@ -298,6 +312,12 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* 最早开工时间: EARLIEST_START_DATE_T */
+    private java.time.LocalDateTime _earliestStartDateT;
+    
+    /* 最晚完工时间: LATEST_END_DATE_T */
+    private java.time.LocalDateTime _latestEndDateT;
     
 
     public _ErpApsOperationOrder(){
@@ -450,6 +470,12 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_earliestStartDateT:
+               return getEarliestStartDateT();
+        
+            case PROP_ID_latestEndDateT:
+               return getLatestEndDateT();
         
            default:
               return super.orm_propValue(propId);
@@ -722,6 +748,26 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_earliestStartDateT:{
+               java.time.LocalDateTime typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLocalDateTime(value,
+                       err-> newTypeConversionError(PROP_NAME_earliestStartDateT));
+               }
+               setEarliestStartDateT(typedValue);
+               break;
+            }
+        
+            case PROP_ID_latestEndDateT:{
+               java.time.LocalDateTime typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLocalDateTime(value,
+                       err-> newTypeConversionError(PROP_NAME_latestEndDateT));
+               }
+               setLatestEndDateT(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -909,6 +955,20 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_earliestStartDateT:{
+               onInitProp(propId);
+               this._earliestStartDateT = (java.time.LocalDateTime)value;
+               
+               break;
+            }
+        
+            case PROP_ID_latestEndDateT:{
+               onInitProp(propId);
+               this._latestEndDateT = (java.time.LocalDateTime)value;
                
                break;
             }
@@ -1409,6 +1469,44 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_updateTime,value)){
             this._updateTime = value;
             internalClearRefs(PROP_ID_updateTime);
+            
+        }
+    }
+    
+    /**
+     * 最早开工时间: EARLIEST_START_DATE_T
+     */
+    public final java.time.LocalDateTime getEarliestStartDateT(){
+         onPropGet(PROP_ID_earliestStartDateT);
+         return _earliestStartDateT;
+    }
+
+    /**
+     * 最早开工时间: EARLIEST_START_DATE_T
+     */
+    public final void setEarliestStartDateT(java.time.LocalDateTime value){
+        if(onPropSet(PROP_ID_earliestStartDateT,value)){
+            this._earliestStartDateT = value;
+            internalClearRefs(PROP_ID_earliestStartDateT);
+            
+        }
+    }
+    
+    /**
+     * 最晚完工时间: LATEST_END_DATE_T
+     */
+    public final java.time.LocalDateTime getLatestEndDateT(){
+         onPropGet(PROP_ID_latestEndDateT);
+         return _latestEndDateT;
+    }
+
+    /**
+     * 最晚完工时间: LATEST_END_DATE_T
+     */
+    public final void setLatestEndDateT(java.time.LocalDateTime value){
+        if(onPropSet(PROP_ID_latestEndDateT,value)){
+            this._latestEndDateT = value;
+            internalClearRefs(PROP_ID_latestEndDateT);
             
         }
     }

@@ -92,6 +92,12 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--最早开工时间-->
+                <col id="earliestStartDateT" sortable="true"/>
+
+                <!--最晚完工时间-->
+                <col id="latestEndDateT" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -112,7 +118,8 @@
  orgId[业务组织] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ updateTime[修改时间] earliestStartDateT[最早开工时间]
+ latestEndDateT[最晚完工时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-工序工单" i18n-en:title="Add Operation Order">
@@ -127,6 +134,7 @@
  totalDuration[总耗时(分钟)] assignedToId[操作工]
  isOutsourced[是否外协] status[状态]
  orgId[业务组织] remark[备注]
+ earliestStartDateT[最早开工时间] latestEndDateT[最晚完工时间]
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-工序工单" i18n-en:title="Edit Operation Order">
@@ -141,7 +149,8 @@
  totalDuration[总耗时(分钟)] assignedToId[操作工]
  isOutsourced[是否外协] status[状态]
  orgId[业务组织] remark[备注]
- delVersion[逻辑删除版本] 
+ delVersion[逻辑删除版本] earliestStartDateT[最早开工时间]
+ latestEndDateT[最晚完工时间] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

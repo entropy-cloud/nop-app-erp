@@ -7,4 +7,12 @@
     <import resource="_dao.beans.xml"/>
 
     <import resource="_service.beans.xml"/>
+
+    <!-- APS 排产状态机编排 Processor（Facade + Processor 两层结构，protected step 方法供下游覆盖） -->
+    <bean id="app.erp.aps.service.processor.ErpApsSchedulingProcessor"
+          class="app.erp.aps.service.processor.ErpApsSchedulingProcessor"/>
+
+    <!-- ATP/CTP 交期承诺模拟服务（跨域 I*Biz 只读聚合 inventory + 工艺路线追溯 mfg） -->
+    <bean id="app.erp.aps.service.atpctp.ErpApsAtpCtpService"
+          class="app.erp.aps.service.atpctp.ErpApsAtpCtpServiceImpl"/>
 </beans>

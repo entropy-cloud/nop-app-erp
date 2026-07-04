@@ -71,6 +71,8 @@
                 <column name="runtimePerUnit" displayName="每件加工时间(分钟)" domain="duration" code="RUNTIME_PER_UNIT" propId="13" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Runtime Per Unit' />
                 <column name="qty" displayName="加工数量" domain="quantity" mandatory="true" code="QTY" propId="14" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Quantity' />
                 <column name="totalDuration" displayName="总耗时(分钟)" domain="duration" code="TOTAL_DURATION" propId="15" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Total Duration' />
+                <column name="earliestStartDateT" displayName="最早开工时间" stdSqlType="DATETIME" code="EARLIEST_START_DATE_T" propId="27" stdDataType="datetime" i18n-en:displayName='Earliest Start Date' />
+                <column name="latestEndDateT" displayName="最晚完工时间" stdSqlType="DATETIME" code="LATEST_END_DATE_T" propId="28" stdDataType="datetime" i18n-en:displayName='Latest End Date' />
                 <column name="assignedToId" stdDomain="userId" displayName="操作工" stdSqlType="VARCHAR" precision="36" code="ASSIGNED_TO_ID" propId="16" stdDataType="string" i18n-en:displayName='Assigned To' />
                 <column name="isOutsourced" displayName="是否外协" stdSqlType="BOOLEAN" defaultValue="false" code="IS_OUTSOURCED" propId="17" stdDataType="boolean" i18n-en:displayName='Is Outsourced' />
                 <column name="status" displayName="状态" ext:dict="erp-aps/operation-order-status" mandatory="true" code="STATUS" propId="18" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />

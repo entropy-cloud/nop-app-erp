@@ -123,6 +123,14 @@
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
+        <prop name="earliestStartDateT" displayName="最早开工时间" propId="27" i18n-en:displayName="Earliest Start Date"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDateTime"/>
+        </prop>
+        <prop name="latestEndDateT" displayName="最晚完工时间" propId="28" i18n-en:displayName="Latest End Date"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDateTime"/>
+        </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
               lazy="true">

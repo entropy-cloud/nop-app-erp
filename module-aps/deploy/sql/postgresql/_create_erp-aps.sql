@@ -31,6 +31,8 @@ CREATE TABLE erp_aps_operation_order(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  earliest_start_date_t TIMESTAMP  ,
+  latest_end_date_t TIMESTAMP  ,
   constraint PK_erp_aps_operation_order primary key (id)
 );
 
@@ -203,6 +205,10 @@ CREATE TABLE erp_aps_dispatch_log(
       COMMENT ON COLUMN erp_aps_operation_order.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_aps_operation_order.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_aps_operation_order.earliest_start_date_t IS '最早开工时间';
+                    
+      COMMENT ON COLUMN erp_aps_operation_order.latest_end_date_t IS '最晚完工时间';
                     
       COMMENT ON TABLE erp_aps_schedule IS '排产方案';
                 

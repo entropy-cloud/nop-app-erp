@@ -128,6 +128,10 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="26" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="EARLIEST_START_DATE_T" displayName="最早开工时间" name="earliestStartDateT" propId="27"
+                        stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Earliest Start Date"/>
+                <column code="LATEST_END_DATE_T" displayName="最晚完工时间" name="latestEndDateT" propId="28"
+                        stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Latest End Date"/>
             </columns>
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
