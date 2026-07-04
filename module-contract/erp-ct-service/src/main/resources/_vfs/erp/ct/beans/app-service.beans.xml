@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
        xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:ioc="ioc"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
@@ -11,4 +12,19 @@
     <!-- 合同域服务（非 BizModel）：返利计提引擎（PERIOD_END/PROGRESSIVE 两法 + 跨档追溯补差） -->
     <bean id="app.erp.ct.service.rebate.RebateEngine"
           class="app.erp.ct.service.rebate.RebateEngine"/>
+
+    <!-- 电子签章三层 SPI（plan 2026-07-04-2200-2，design e-signature.md §SPI 接口）：Registry 镜像
+         logistics ErpLogCarrierGatewayRegistry / finance ErpFinAcctDocRegistry 的 List 注入 + 内部建图范式；
+         MockSignatureProvider（providerCode="MOCK"）注册为 Bean。真实三方供应商（e签宝/DocuSign/Tsign）
+         HTTP 集成归 follow-up（Non-Goal）。 -->
+    <bean id="app.erp.ct.service.spi.ErpCtSignatureProviderRegistry"
+          class="app.erp.ct.service.spi.ErpCtSignatureProviderRegistry">
+        <property name="providers">
+            <ioc:collect-beans by-type="app.erp.ct.service.spi.IErpCtSignatureProvider"
+                               only-concrete-classes="true" ioc:ignore-depends="true"/>
+        </property>
+    </bean>
+
+    <bean id="app.erp.ct.service.spi.mock.MockSignatureProvider"
+          class="app.erp.ct.service.spi.mock.MockSignatureProvider"/>
 </beans>

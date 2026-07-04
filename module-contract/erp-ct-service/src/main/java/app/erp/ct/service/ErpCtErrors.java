@@ -24,6 +24,13 @@ public interface ErpCtErrors {
     String ARG_FROM_QTY = "fromQty";
     String ARG_TO_QTY = "toQty";
 
+    // --- 电子签章（plan 2026-07-04-2200-2，dict erp-ct/sign-status / erp-ct/sign-provider） ---
+
+    String ARG_PROVIDER_CODE = "providerCode";
+    String ARG_SIGNATURE_REQUEST_ID = "signatureRequestId";
+    String ARG_VERSION_ID = "versionId";
+    String ARG_EVENT_ID = "eventId";
+
     // --- 合同头状态机（dict erp-ct/contract-status） ---
 
     ErrorCode ERR_CT_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.ct.illegal-status-transition",
@@ -65,4 +72,34 @@ public interface ErpCtErrors {
     ErrorCode ERR_CT_SETTLEMENT_ILLEGAL_TRANSITION = ErrorCode.define("erp.err.ct.settlement-illegal-transition",
             "返利结算单 {settlementId} 当前状态={currentStatus}，不允许过账（仅 DRAFT 可过账）",
             ARG_SETTLEMENT_ID, ARG_CURRENT_STATUS);
+
+    // --- 电子签章（plan 2026-07-04-2200-2，design e-signature.md） ---
+
+    ErrorCode ERR_CT_SIGNATURE_PROVIDER_NOT_REGISTERED = ErrorCode.define("erp.err.ct.signature-provider-not-registered",
+            "签章提供商 {providerCode} 未注册（无对应 IErpCtSignatureProvider Bean）",
+            ARG_PROVIDER_CODE);
+
+    ErrorCode ERR_CT_SIGNATURE_ILLEGAL_TRANSITION = ErrorCode.define("erp.err.ct.signature-illegal-transition",
+            "签章请求 {signatureRequestId} 当前状态={currentStatus}，不允许该操作（期望状态={expectedStatus}）",
+            ARG_SIGNATURE_REQUEST_ID, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+
+    ErrorCode ERR_CT_SIGNATURE_VERSION_NOT_FINALIZED = ErrorCode.define("erp.err.ct.signature-version-not-finalized",
+            "合同版本 {versionId} 非定稿状态（仅 FINALIZED 版本可发起电子签章）",
+            ARG_VERSION_ID);
+
+    ErrorCode ERR_CT_SIGNATURE_ALREADY_COMPLETED = ErrorCode.define("erp.err.ct.signature-already-completed",
+            "签章请求 {signatureRequestId} 已完成签署，不可重复完成",
+            ARG_SIGNATURE_REQUEST_ID);
+
+    ErrorCode ERR_CT_SIGNATURE_CALLBACK_SIGNATURE_INVALID = ErrorCode.define("erp.err.ct.signature-callback-signature-invalid",
+            "签章回调签名校验失败（providerCode={providerCode}）",
+            ARG_PROVIDER_CODE);
+
+    ErrorCode ERR_CT_SIGNATURE_CALLBACK_DUPLICATE_EVENT = ErrorCode.define("erp.err.ct.signature-callback-duplicate-event",
+            "签章回调事件 {eventId} 已处理（幂等拒绝，providerCode={providerCode}）",
+            ARG_EVENT_ID, ARG_PROVIDER_CODE);
+
+    ErrorCode ERR_CT_SIGNATURE_INIT_FAILED = ErrorCode.define("erp.err.ct.signature-init-failed",
+            "签章请求初始化失败（providerCode={providerCode}）：{errorMsg}",
+            ARG_PROVIDER_CODE, "errorMsg");
 }

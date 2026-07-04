@@ -44,4 +44,26 @@ public interface ErpCtConstants {
     String CONTRACT_TYPE_SALES = "SALES";
     String CONTRACT_DIRECTION_INBOUND = "INBOUND";
     String CONTRACT_DIRECTION_OUTBOUND = "OUTBOUND";
+
+    // --- 电子签章状态（dict erp-ct/sign-status，plan 2026-07-04-2200-2） ---
+    String SIGNATURE_STATUS_PENDING = "PENDING_SIGNATURE";
+    String SIGNATURE_STATUS_PARTIALLY = "PARTIALLY_SIGNED";
+    String SIGNATURE_STATUS_FULLY = "FULLY_SIGNED";
+    String SIGNATURE_STATUS_REJECTED = "REJECTED";
+    String SIGNATURE_STATUS_EXPIRED = "EXPIRED";
+    String SIGNATURE_STATUS_CANCELLED = "CANCELLED";
+
+    // --- 电子签章提供商（dict erp-ct/sign-provider） ---
+    String SIGNATURE_PROVIDER_MOCK = "MOCK";
+
+    // --- 签署 webhook 回调事件（design e-signature.md §签署回调 Webhook） ---
+    String SIGNATURE_EVENT_SIGNER_SIGNED = "signer.signed";
+    String SIGNATURE_EVENT_COMPLETED = "signing.completed";
+    /** design webhook 表同时列了 declined/rejected；本期按权威状态机 6 态收敛 declined→REJECTED。 */
+    String SIGNATURE_EVENT_REJECTED = "signing.rejected";
+    String SIGNATURE_EVENT_DECLINED = "signing.declined";
+    String SIGNATURE_EVENT_EXPIRED = "signing.expired";
+
+    /** 签署顺序：顺序 / 并行（SignatureInitRequest.signingOrder）。 */
+    String SIGNING_ORDER_SEQUENTIAL = "SEQUENTIAL";
 }

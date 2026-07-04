@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 签章提供商
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: e签宝
+    value: 10
+    description: 
+  
+  - label: DocuSign
+    value: 20
+    description: 
+  
+  - label: Tsign
+    value: 30
+    description: 
+  
+  - label: Mock(测试)
+    value: 99
+    description: 
+  

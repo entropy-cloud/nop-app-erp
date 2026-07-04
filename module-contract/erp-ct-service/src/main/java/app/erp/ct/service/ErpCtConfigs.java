@@ -35,4 +35,26 @@ public interface ErpCtConfigs {
 
     /** 结算模式（AUTO / MANUAL）。AUTO=计提后自动生成结算单草稿；MANUAL=需人工新建。默认 AUTO。 */
     String CFG_SETTLEMENT_MODE = "erp-ct.settlement-mode";
+
+    // --- 电子签章（plan 2026-07-04-2200-2，design e-signature.md） ---
+
+    /** 电子签章是否启用。默认 false（未启用走线下签署附件上传 + 手动确认 SIGNED）。 */
+    String CFG_E_SIGNATURE_ENABLED = "erp-ct.e-signature-enabled";
+
+    /** 默认签章提供商编码（对应 dict erp-ct/sign-provider 的 code）。默认 MOCK（本期 stub）。 */
+    String CFG_SIGNATURE_DEFAULT_PROVIDER = "erp-ct.signature-default-provider";
+
+    /** webhook 回调是否强制签名校验。默认 true。 */
+    String CFG_SIGNATURE_CALLBACK_SIGNATURE_REQUIRED = "erp-ct.signature-callback-signature-required";
+
+    /** 主动轮询 cron 表达式（注册归部署 Non-Goal，仅作为配置项）。默认每 2 小时。 */
+    String CFG_SIGNATURE_STATUS_POLLING_CRON = "erp-ct.signature-status-polling-cron";
+
+    /** 签署截止默认天数（initSignatureRequest 未传 signingDeadline 时使用）。默认 15。 */
+    String CFG_SIGNATURE_DEADLINE_DEFAULT_DAYS = "erp-ct.signature-deadline-default-days";
+
+    String DEFAULT_SIGNATURE_DEFAULT_PROVIDER = "MOCK";
+    boolean DEFAULT_SIGNATURE_CALLBACK_SIGNATURE_REQUIRED = true;
+    String DEFAULT_SIGNATURE_STATUS_POLLING_CRON = "0 0 */2 * * ?";
+    int DEFAULT_SIGNATURE_DEADLINE_DEFAULT_DAYS = 15;
 }

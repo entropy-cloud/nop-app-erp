@@ -1,0 +1,31 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 签章状态
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 待签署
+    value: 10
+    description: 
+  
+  - label: 部分签署
+    value: 20
+    description: 
+  
+  - label: 全部签署
+    value: 30
+    description: 
+  
+  - label: 拒签
+    value: 40
+    description: 
+  
+  - label: 过期
+    value: 50
+    description: 
+  
+  - label: 已撤销
+    value: 60
+    description: 
+  

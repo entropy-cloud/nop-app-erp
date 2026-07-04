@@ -178,4 +178,54 @@ public interface _ErpCtDaoConstants {
      */
     String ACCRUAL_METHOD_PROGRESSIVE = "PROGRESSIVE";
                     
+    /**
+     * 签章状态: 待签署 
+     */
+    String SIGN_STATUS_PENDING_SIGNATURE = "10";
+                    
+    /**
+     * 签章状态: 部分签署 
+     */
+    String SIGN_STATUS_PARTIALLY_SIGNED = "20";
+                    
+    /**
+     * 签章状态: 全部签署 
+     */
+    String SIGN_STATUS_FULLY_SIGNED = "30";
+                    
+    /**
+     * 签章状态: 拒签 
+     */
+    String SIGN_STATUS_REJECTED = "40";
+                    
+    /**
+     * 签章状态: 过期 
+     */
+    String SIGN_STATUS_EXPIRED = "50";
+                    
+    /**
+     * 签章状态: 已撤销 
+     */
+    String SIGN_STATUS_CANCELLED = "60";
+                    
+    /**
+     * 签章提供商: e签宝 
+     */
+    String SIGN_PROVIDER_ESIGN_BAO = "10";
+                    
+    /**
+     * 签章提供商: DocuSign 
+     */
+    String SIGN_PROVIDER_DOCUSIGN = "20";
+                    
+    /**
+     * 签章提供商: Tsign 
+     */
+    String SIGN_PROVIDER_TSIGN = "30";
+                    
+    /**
+     * 签章提供商: Mock(测试) 
+     */
+    String SIGN_PROVIDER_MOCK = "99";
+                    
 }

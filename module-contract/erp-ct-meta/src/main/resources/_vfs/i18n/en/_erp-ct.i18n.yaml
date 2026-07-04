@@ -288,8 +288,10 @@ prop:
       orgId: Organization
       contractVersionId: Contract Version
       provider: Provider
+      provider_label: null
       providerRequestId: Provider Request ID
       status: Status
+      status_label: null
       signers: Signers
       signingDeadline: Signing Deadline
       completedAt: Completed At
@@ -352,6 +354,8 @@ dict:
     erp-ct/rebate-agreement-status: Rebate Agreement Status
     erp-ct/settlement-status: Settlement Status
     erp-ct/accrual-method: Accrual Method
+    erp-ct/sign-status: Signature Status
+    erp-ct/sign-provider: Signature Provider
 dict.option.label:
   erp-ct/contract-status:
     DRAFT: Draft
@@ -398,3 +402,15 @@ dict.option.label:
   erp-ct/accrual-method:
     PERIOD_END: Period End
     PROGRESSIVE: Progressive
+  erp-ct/sign-status:
+    '10': Pending Signature
+    '20': Partially Signed
+    '30': Fully Signed
+    '40': Rejected
+    '50': Expired
+    '60': Cancelled
+  erp-ct/sign-provider:
+    '10': eSign Bao
+    '20': DocuSign
+    '30': Tsign
+    '99': Mock

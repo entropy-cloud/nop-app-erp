@@ -34,7 +34,7 @@
         </prop>
         <prop name="provider" displayName="签名提供商" propId="4" i18n-en:displayName="Provider" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="50"/>
+            <schema type="java.lang.String" precision="50" dict="erp-ct/sign-provider"/>
         </prop>
         <prop name="providerRequestId" displayName="提供商请求ID" propId="5" i18n-en:displayName="Provider Request ID"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="providerRequest">
@@ -42,7 +42,7 @@
         </prop>
         <prop name="status" displayName="签章状态" propId="6" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="50"/>
+            <schema type="java.lang.String" precision="50" dict="erp-ct/sign-status"/>
         </prop>
         <prop name="signers" displayName="签署人(JSON)" propId="7" i18n-en:displayName="Signers" queryable="true"
               sortable="true" insertable="true" updatable="true">

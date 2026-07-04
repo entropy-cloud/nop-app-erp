@@ -79,6 +79,23 @@
             <option code="PERIOD_END" label="期末一次性" value="PERIOD_END" i18n-en:label='Period End'/>
             <option code="PROGRESSIVE" label="逐笔累计" value="PROGRESSIVE" i18n-en:label='Progressive'/>
         </dict>
+        <!-- 电子签章状态机（plan 2026-07-04-2200-2）：design e-signature.md 权威状态机 6 态；
+             design webhook 表列 DECLINED 但状态机/字典无此态——本期按权威状态机收敛 declined→REJECTED。 -->
+        <dict label="签章状态" name="erp-ct/sign-status" valueType="string" i18n-en:label='Signature Status'>
+            <option code="PENDING_SIGNATURE" label="待签署" value="10" i18n-en:label='Pending Signature'/>
+            <option code="PARTIALLY_SIGNED" label="部分签署" value="20" i18n-en:label='Partially Signed'/>
+            <option code="FULLY_SIGNED" label="全部签署" value="30" i18n-en:label='Fully Signed'/>
+            <option code="REJECTED" label="拒签" value="40" i18n-en:label='Rejected'/>
+            <option code="EXPIRED" label="过期" value="50" i18n-en:label='Expired'/>
+            <option code="CANCELLED" label="已撤销" value="60" i18n-en:label='Cancelled'/>
+        </dict>
+        <!-- 电子签章提供商（design e-signature.md 列 3 供应商 + MOCK 占位供 stub 测试）。 -->
+        <dict label="签章提供商" name="erp-ct/sign-provider" valueType="string" i18n-en:label='Signature Provider'>
+            <option code="ESIGN_BAO" label="e签宝" value="10" i18n-en:label='eSign Bao'/>
+            <option code="DOCUSIGN" label="DocuSign" value="20" i18n-en:label='DocuSign'/>
+            <option code="TSIGN" label="Tsign" value="30" i18n-en:label='Tsign'/>
+            <option code="MOCK" label="Mock(测试)" value="99" i18n-en:label='Mock'/>
+        </dict>
     </dicts>
 
     <domains>
@@ -489,9 +506,9 @@
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="contractVersionId" displayName="合同版本" stdSqlType="BIGINT" mandatory="true" code="CONTRACT_VERSION_ID" propId="3" stdDataType="long" i18n-en:displayName='Contract Version' />
-                <column name="provider" displayName="签名提供商" stdSqlType="VARCHAR" precision="50" mandatory="true" code="PROVIDER" propId="4" stdDataType="string" i18n-en:displayName='Provider' />
+                <column name="provider" displayName="签名提供商" ext:dict="erp-ct/sign-provider" stdSqlType="VARCHAR" precision="50" mandatory="true" code="PROVIDER" propId="4" stdDataType="string" i18n-en:displayName='Provider' />
                 <column name="providerRequestId" displayName="提供商请求ID" stdSqlType="VARCHAR" precision="200" code="PROVIDER_REQUEST_ID" propId="5" stdDataType="string" i18n-en:displayName='Provider Request ID' />
-                <column name="status" displayName="签章状态" stdSqlType="VARCHAR" precision="50" mandatory="true" code="STATUS" propId="6" stdDataType="string" i18n-en:displayName='Status' />
+                <column name="status" displayName="签章状态" ext:dict="erp-ct/sign-status" stdSqlType="VARCHAR" precision="50" mandatory="true" code="STATUS" propId="6" stdDataType="string" i18n-en:displayName='Status' />
                 <column name="signers" displayName="签署人(JSON)" stdSqlType="VARCHAR" precision="2000" code="SIGNERS" propId="7" stdDataType="string" i18n-en:displayName='Signers' />
                 <column name="signingDeadline" displayName="签署截止日期" stdSqlType="DATE" code="SIGNING_DEADLINE" propId="8" stdDataType="date" i18n-en:displayName='Signing Deadline' />
                 <column name="completedAt" displayName="签署完成时间" stdSqlType="DATETIME" code="COMPLETED_AT" propId="9" stdDataType="datetime" i18n-en:displayName='Completed At' />

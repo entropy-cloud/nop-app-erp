@@ -301,10 +301,12 @@ prop:
       provider: 签名提供商
       providerRequest: null
       providerRequestId: 提供商请求ID
+      provider_label: 签名提供商
       remark: 备注
       signers: 签署人(JSON)
       signingDeadline: 签署截止日期
       status: 签章状态
+      status_label: 签章状态
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
