@@ -28,7 +28,8 @@
 - 3.4：✅ done（CRM 销售预测：refreshForecast 聚合引擎(commit/upside/best-case/weighted 分类+团队→公司层级 rollup+ForecastLine 快照清旧重建) + 期间状态机(OPEN→FROZEN/CLOSED, FROZEN/CLOSED 拒绝重算) + closePeriod 触发准确率(config-gated)，2026-07-04，同上计划）
 - 3.5：✅ done（客服工单状态机：六态 assign/start/resolve/close/reopen/cancel + 非法迁移/终态 ErrorCode + TicketAction 审计 + SLA 策略匹配(ticketType+priority 精确度排序，无 isActive 过滤) + deadline 计算(日历小时 + 工作日跳周末，无工作时段窗口/节假日) + isSlaCompleted 标记 + scanOverdueTickets ESCALATE 升级 + findSlaWarnings 预警查询；config-gated sla-enabled/sla-warning-before/auto-assign-on-create，2026-07-04，`docs/plans/2026-07-04-0700-2-cs-ticket-sla-csat.md`）
 - 3.6：✅ done（CSAT 调查生命周期：createSurvey(RESOLVED 触发 config-gated，UUID token 无鉴权，一工单一调查唯一约束，delay=0 立即 SENT) + submitSurvey(csat 1-5/nps 0-10/ces 1-7 区间校验各 config-gated，状态时间戳派生 PENDING/SENT/COMPLETED) + NPS 分类(推荐者/被动者/贬损者派生不持久化) + reopen 取消未响应调查 + findSurveyReminders/findExpiredSurveys 查询；nop-job cron 注册归 Non-Goal，2026-07-04，同上计划）
-- 3.7–3.21：`todo`
+- 3.7：✅ done（HR 薪酬核算引擎 + 个税累计预扣：6 配置实体新增(ErpHrSalaryItem/SocialInsuranceConfig/SocialInsuranceBase/TaxConfig/TaxSpecialDeduction/PayrollBankFile) + ErpHrSalary 扩展(approvalStatus 6 态审批状态机 PENDING→REVIEWED→APPROVED_FINANCE→APPROVED_MANAGER→PAID/VOID + 累计个税/考勤派生字段，paymentStatus 派生投影) + 核算引擎(出勤比例→基本工资→津贴→加班→绩效→社保基数 min/max 钳制→公积金→个税累计预扣法七级累进→实发) + runPayroll 批量幂等 + 审批链不可跳过(ERR_SALARY_ILLEGAL_STATUS_TRANSITION/LOCKED_AFTER_PAID) + 业财过账 SalaryPostingProvider(SALARY 270/SALARY_PAYMENT 280/SOCIAL_INSURANCE_ER 290/HOUSING_FUND_ER 300，ErpFinBusinessType 枚举+字典同步保护区域契约扩展) APPROVED_MANAGER 计提/PAID 发放 + 银行代发文件 CSV 生成，2026-07-04，`docs/plans/2026-07-04-0831-2-hr-payroll-engine-income-tax.md`）
+- 3.8–3.21：`todo`
 
 ## Implementation Order
 

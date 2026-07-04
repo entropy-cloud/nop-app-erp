@@ -12,6 +12,8 @@
 | DIRECT | 直接审核（单级审批） | 中低风险单据（如普通采购订单） |
 | WORKFLOW | 工作流审批（多级） | 高风险单据（如大额付款、资产处置） |
 
+> **强制性规则**：所有需要审批的实体**必须**通过 ORM `tagSet="use-approval"` 接入平台机制。禁止自建审批状态迁移、禁止手动在 Java `@BizMutation` 中实现 approve/reject 逻辑。现有未标 `use-approval` 的审批实体应规划迁移。
+
 ## 按单据类型配置
 
 | 单据类型 | 默认审批模式 | 可配置 |
@@ -39,8 +41,10 @@
 
 ## 与 nop-wf 集成
 
-- WORKFLOW 模式使用 nop-wf 引擎
-- DIRECT 模式可使用 nop-wf 简单流程或直接状态变更
+所有审批实体**必须**通过 ORM `tagSet="use-approval"` 接入：
+
+- WORKFLOW 模式使用 nop-wf 引擎（xmeta 配 `wf:wfName`）
+- DIRECT 模式同样标 `use-approval`、不配 `wfName`，codegen 生成标准 approve/reject action，审批状态迁移由平台标准 source 处理
 - nop-wf 完成回调更新业务单据 approveStatus
 - `approveStatus` 只跟踪业务终态，严格限定为**四态**：`UNSUBMITTED`（未提交）/ `SUBMITTED`（已提交待审批）/ `APPROVED`（已批准）/ `REJECTED`（已驳回），不跟踪 wf 内部状态。`SUBMITTED` 表示单据已提交等待审批，审批过程中的场内进度（会签、转审、待阅等）完全由 nop-wf 引擎在 `NopWfStepInstance`/`NopWfWork` 表中管理，不污染业务表。**禁止**使用 `APPROVING`、`PENDING_APPROVAL` 等中间态值。
 

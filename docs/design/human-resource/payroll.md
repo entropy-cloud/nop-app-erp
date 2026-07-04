@@ -10,6 +10,18 @@
 - **与 finance/posting 的边界**：薪酬核算完成后通过 `IErpFinAcctDocProvider`（businessType=SALARY）生成应付职工薪酬凭证；发放完成后生成 SALARY_PAYMENT 凭证。凭证模板在 finance 域定义。
 - 本设计不负责：绩效奖金计算逻辑（HR 手动录入或未来绩效模块输入）；银行实际转账执行。
 
+### 实现偏离补注（2026-07-04，plan 2026-07-04-0831-2）
+
+- **公式引擎（§1.4）**：裁决选用 Nop 平台 `IEvalScope`（Xpl 表达式）求值 `ErpHrSalaryItem.formula`，不引入第三方表达式库（遵循 AGENTS.md 平台优先）。本期预置项目走 FIXED/INPUT 路径，FORMULA 求值基础设施（`TaxBracketParser` 示范 JSON 解析模式）就绪，完整公式求值归 follow-up。
+- **薪酬周期（§5.1）**：本期仅实现月薪 MONTHLY；半月薪 BI_MONTHLY 归 follow-up。
+- **币种**：本期本位币单一币种；多币种薪酬归 follow-up。
+- **绩效奖金（§设计边界）**：本期 `performanceBonus` 手工录入（核算生成 0，HR 后续录入），绩效系数/奖金计算逻辑归未来绩效模块。
+- **工资单 PDF + 推送（§八）**：归 follow-up（邮件/企业微信/钉钉/自助门户）。
+- **年度汇算清缴（§十）**：导出/个税 APP 对接归 follow-up。
+- **cron 自动核算（§5.2 SalaryCalculateJob）**：手动/外部调度触发已就绪（`IErpHrSalaryBiz.runPayroll`/`calculateSalary`），nop-job 定时注册归 follow-up。
+- **BizModel 落层**：设计引用 `IErpHrPayrollBiz` 独立接口；实现落在实体绑定 `IErpHrSalaryBiz` + `ErpHrSalaryBizModel`（extends CrudBizModel）以获得 `@SingleSession` 事务管理，方法签名与语义不变。
+- **审批/发放状态消歧**：`approvalStatus`（6 态 PENDING/REVIEWED/APPROVED_FINANCE/APPROVED_MANAGER/PAID/VOID）为权威端到端状态；存量 `paymentStatus`（3 态）保留为只读派生投影（`approvalStatus=PAID`→`paymentStatus=PAID`，`=VOID`→`=VOID`），新代码路径只读写 `approvalStatus`。
+
 ---
 
 ## 一、薪酬结构
