@@ -44,6 +44,11 @@
     <bean id="app.erp.fin.service.posting.ErpFinPostingExceptionRecorder"
           class="app.erp.fin.service.posting.ErpFinPostingExceptionRecorder"/>
 
+    <!-- 过账运行监控——进程内时延采样器（posting-log.md §裁决3；P99 时延不可 SQL 衍生，用环形缓冲
+         收集最近 N 次过账耗时；被 ErpFinPostingProcessor 成功路径喂样 + ErpFinPostingExceptionBizModel 查询）。 -->
+    <bean id="app.erp.fin.service.posting.ErpFinPostingMetrics"
+          class="app.erp.fin.service.posting.ErpFinPostingMetrics"/>
+
     <!-- 应收应付辅助账生成器（过账成功后同事务生成 ErpFinArApItem，被 ErpFinPostingProcessor 调用）。 -->
     <bean id="app.erp.fin.service.posting.ErpFinArApItemGenerator"
           class="app.erp.fin.service.posting.ErpFinArApItemGenerator"/>

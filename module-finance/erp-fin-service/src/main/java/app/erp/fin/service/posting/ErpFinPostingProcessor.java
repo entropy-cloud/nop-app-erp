@@ -90,6 +90,9 @@ public class ErpFinPostingProcessor {
     ErpFinPostingExceptionRecorder exceptionRecorder;
 
     @Inject
+    ErpFinPostingMetrics postingMetrics;
+
+    @Inject
     ErpFinReversalListenerRegistry reversalListenerRegistry;
 
     @Inject
@@ -106,6 +109,7 @@ public class ErpFinPostingProcessor {
     public Long process(PostingEvent event, IServiceContext context) {
         ensureTraceId(event);
         PostingRun run = PostingRun.forPost(event);
+        long processBegin = CoreMetrics.nanoTime();
 
         if (alreadyPosted(event, context)) {
             LOG.info("过账幂等命中（源单已过账），空操作：traceId={}, billHeadCode={}, businessType={}",
@@ -138,6 +142,7 @@ public class ErpFinPostingProcessor {
             // 凭证落库成功后、同事务内生成应收应付辅助账（强一致：凭证 + 辅助账同生共死）。
             timeStageVoid("generateArApItems", run, () -> arApItemGenerator.generate(event, context));
 
+            postingMetrics.recordLatency(CoreMetrics.nanoTimeDiff(processBegin));
             LOG.info("过账成功：traceId={}, billHeadCode={}, businessType={}, voucherId={}, provider={}, fallback={}, template={}, timings(ms)={}",
                     run.traceId, run.billHeadCode, run.businessType, voucherId,
                     run.providerName, run.isFallback, run.templateDesc, run.timingsMillis());
@@ -155,6 +160,7 @@ public class ErpFinPostingProcessor {
     @SingleSession
     public Long reverseProcess(String billHeadCode, ErpFinBusinessType businessType, IServiceContext context) {
         PostingRun run = PostingRun.forReverse(billHeadCode, businessType);
+        long reverseBegin = CoreMetrics.nanoTime();
 
         try {
             ErpFinVoucher original = timeStage("findPostedVoucher", run,
@@ -186,6 +192,7 @@ public class ErpFinPostingProcessor {
             timeStageVoid("notifyReversalListeners", run,
                     () -> dispatchReversalEvent(run, voucherId, original.getId(), billHeadCode, businessType, context));
 
+            postingMetrics.recordLatency(CoreMetrics.nanoTimeDiff(reverseBegin));
             LOG.info("红冲成功：traceId={}, billHeadCode={}, businessType={}, voucherId={}, reversalOf={}, timings(ms)={}",
                     run.traceId, run.billHeadCode, run.businessType, voucherId, original.getId(), run.timingsMillis());
             return voucherId;

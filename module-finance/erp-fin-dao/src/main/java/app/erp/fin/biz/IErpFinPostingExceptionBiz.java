@@ -7,6 +7,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
 
+import app.erp.fin.dao.ErpFinPostingMetricsSnapshot;
 import app.erp.fin.dao.entity.ErpFinPostingException;
 
 /**
@@ -19,6 +20,9 @@ import app.erp.fin.dao.entity.ErpFinPostingException;
  *
  * <p>处置状态机经 ErrorCode 守门（仅 PENDING 可处置；忽略须原因；补录须关联凭证）。
  * 期末结账前置检查扫描未处置（PENDING/RETRYING）记录阻止结账（见 {@code IErpFinAccountingPeriodBiz.preCheck}）。
+ *
+ * <p>运行监控指标查询（{@code posting-log.md §裁决3}）：{@link #getRuntimeMetrics} 聚合四指标
+ * （自动化记账率/时延 P99/异常率/闭环成功率）经 SQL + 进程内时延采样呈现，阈值 config-gated。
  */
 public interface IErpFinPostingExceptionBiz extends ICrudBiz<ErpFinPostingException> {
 
@@ -52,4 +56,18 @@ public interface IErpFinPostingExceptionBiz extends ICrudBiz<ErpFinPostingExcept
      */
     @BizQuery
     long countUnresolved(IServiceContext context);
+
+    /**
+     * 查询过账运行监控四指标快照（{@code posting-log.md §运行监控指标}）。
+     *
+     * <p>聚合窗口由 {@code erp-fin.metric.window-hours} 配置（默认 24h）。四指标：
+     * 自动化记账率（≥95% 达标）、凭证生成时延 P99（&lt;30s 达标，进程内窗口采样）、
+     * 过账异常率（&lt;1% 达标）、业财闭环成功率（≥99.5% 达标，SYNC 默认下为代理值）。
+     *
+     * @param windowHours 聚合窗口（小时）；null 则用配置默认值
+     */
+    @BizQuery
+    ErpFinPostingMetricsSnapshot getRuntimeMetrics(@Name("windowHours") Integer windowHours,
+                                                    IServiceContext context);
 }
+

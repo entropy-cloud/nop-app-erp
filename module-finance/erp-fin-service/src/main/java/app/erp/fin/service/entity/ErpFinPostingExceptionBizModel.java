@@ -4,17 +4,21 @@ package app.erp.fin.service.entity;
 import app.erp.fin.biz.IErpFinPostingExceptionBiz;
 import app.erp.fin.biz.IErpFinVoucherBiz;
 import app.erp.fin.dao.ErpFinBusinessType;
+import app.erp.fin.dao.ErpFinPostingMetricsSnapshot;
 import app.erp.fin.dao.PostingEvent;
 import app.erp.fin.dao.entity.ErpFinPostingException;
+import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.posting.ErpFinPostingErrors;
 import app.erp.fin.service.posting.ErpFinPostingExceptionRecorder;
+import app.erp.fin.service.posting.ErpFinPostingMetrics;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.api.core.auth.IUserContext;
@@ -25,6 +29,7 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,6 +37,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.in;
 
 /**
@@ -49,6 +55,9 @@ public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingEx
 
     @Inject
     IErpFinVoucherBiz voucherBiz;
+
+    @Inject
+    ErpFinPostingMetrics postingMetrics;
 
     public ErpFinPostingExceptionBizModel() {
         setEntityName(ErpFinPostingException.class.getName());
@@ -143,6 +152,110 @@ public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingEx
                 ErpFinConstants.POSTING_EXCEPTION_STATUS_RETRYING)));
         List<ErpFinPostingException> all = dao.findAllByQuery(q);
         return all.size();
+    }
+
+    /**
+     * 运行监控四指标快照（{@code posting-log.md §裁决3}）。
+     *
+     * <p>读路径直接用 {@code daoProvider().daoFor()} 聚合 COUNT（跨实体只读统计，非业务写操作；
+     * @BizQuery 自身的 auth 已是访问门控，无需 per-entity 权限管道——对齐 service-layer 跨实体只读统计约定）。
+     */
+    @Override
+    @BizQuery
+    public ErpFinPostingMetricsSnapshot getRuntimeMetrics(@Name("windowHours") Integer windowHours,
+                                                          IServiceContext context) {
+        int window = windowHours != null && windowHours > 0 ? windowHours
+                : AppConfig.var(ErpFinConstants.CONFIG_METRIC_WINDOW_HOURS,
+                        ErpFinConstants.DEFAULT_METRIC_WINDOW_HOURS);
+        Timestamp since = new Timestamp(CoreMetrics.currentTimeMillis() - window * 3600_000L);
+
+        long voucherCount = countVouchersSince(since);
+        long exceptionCount = countExceptionsSince(since);
+        long manualResolutionCount = countManualResolutionsSince(since);
+
+        ErpFinPostingMetricsSnapshot snapshot = new ErpFinPostingMetricsSnapshot();
+        snapshot.setWindowHours(window);
+        snapshot.setVoucherCount(voucherCount);
+        snapshot.setExceptionCount(exceptionCount);
+        snapshot.setManualResolutionCount(manualResolutionCount);
+        snapshot.setLatencySampleCount(postingMetrics.sampleCount());
+
+        double autoRateThreshold = resolveDouble(ErpFinConstants.CONFIG_METRIC_AUTO_POSTING_RATE_THRESHOLD,
+                ErpFinConstants.DEFAULT_METRIC_AUTO_POSTING_RATE_THRESHOLD);
+        double autoRate = computeAutoPostingRate(voucherCount, manualResolutionCount);
+        snapshot.setAutoPostingRate(new ErpFinPostingMetricsSnapshot.MetricValue(
+                autoRate, autoRateThreshold, autoRate >= autoRateThreshold, HIGHER_BETTER));
+
+        long latencyP99 = postingMetrics.p99LatencyMillis();
+        long latencyThreshold = AppConfig.var(
+                ErpFinConstants.CONFIG_METRIC_LATENCY_P99_THRESHOLD_MILLIS,
+                ErpFinConstants.DEFAULT_METRIC_LATENCY_P99_THRESHOLD_MILLIS);
+        snapshot.setLatencyP99Millis(new ErpFinPostingMetricsSnapshot.MetricValue(
+                (double) latencyP99, (double) latencyThreshold,
+                latencyP99 < latencyThreshold, LOWER_BETTER));
+
+        double exceptionRateThreshold = resolveDouble(ErpFinConstants.CONFIG_METRIC_EXCEPTION_RATE_THRESHOLD,
+                ErpFinConstants.DEFAULT_METRIC_EXCEPTION_RATE_THRESHOLD);
+        double exceptionRate = computeExceptionRate(exceptionCount, voucherCount);
+        snapshot.setExceptionRate(new ErpFinPostingMetricsSnapshot.MetricValue(
+                exceptionRate, exceptionRateThreshold, exceptionRate < exceptionRateThreshold, LOWER_BETTER));
+
+        double loopbackThreshold = resolveDouble(ErpFinConstants.CONFIG_METRIC_LOOPBACK_RATE_THRESHOLD,
+                ErpFinConstants.DEFAULT_METRIC_LOOPBACK_RATE_THRESHOLD);
+        snapshot.setLoopbackProxyMode(true);
+        snapshot.setLoopbackSuccessRate(new ErpFinPostingMetricsSnapshot.MetricValue(
+                1.0, loopbackThreshold, 1.0 >= loopbackThreshold, HIGHER_BETTER));
+        return snapshot;
+    }
+
+    // ---------- metrics helpers ----------
+
+    private static final String HIGHER_BETTER = "higher_better";
+    private static final String LOWER_BETTER = "lower_better";
+
+    /** 自动化记账率 = 自动凭证数 ÷ (自动凭证数 + 手工补录异常数)。 */
+    private static double computeAutoPostingRate(long voucherCount, long manualResolutionCount) {
+        long denom = voucherCount + manualResolutionCount;
+        if (denom == 0) {
+            return 1.0;
+        }
+        return (double) voucherCount / denom;
+    }
+
+    /** 过账异常率 = 异常记录数 ÷ (异常记录数 + 成功凭证数)。 */
+    private static double computeExceptionRate(long exceptionCount, long voucherCount) {
+        long denom = exceptionCount + voucherCount;
+        if (denom == 0) {
+            return 0.0;
+        }
+        return (double) exceptionCount / denom;
+    }
+
+    private long countVouchersSince(Timestamp since) {
+        // 跨实体只读 COUNT，经 daoProvider 直读（见方法注释说明）。
+        IEntityDao<ErpFinVoucher> dao = daoProvider().daoFor(ErpFinVoucher.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(ge("createTime", since));
+        return dao.findAllByQuery(q).size();
+    }
+
+    private long countExceptionsSince(Timestamp since) {
+        IEntityDao<ErpFinPostingException> dao = dao();
+        QueryBean q = new QueryBean();
+        q.addFilter(ge("occurrenceTime", since));
+        return dao.findAllByQuery(q).size();
+    }
+
+    private long countManualResolutionsSince(Timestamp since) {
+        IEntityDao<ErpFinPostingException> dao = dao();
+        QueryBean q = new QueryBean();
+        q.addFilter(ge("occurrenceTime", since));
+        q.addFilter(eq("resolution", ErpFinConstants.POSTING_EXCEPTION_RESOLUTION_MANUAL));
+        return dao.findAllByQuery(q).size();
+    }
+
+    private static double resolveDouble(String key, double defaultVal) {
+        return AppConfig.var(key, defaultVal);
     }
 
     // ---------- helpers ----------

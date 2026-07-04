@@ -167,6 +167,27 @@ public interface ErpFinConstants {
     String POSTING_EXCEPTION_RESOLUTION_IGNORE = "IGNORE";
     String POSTING_EXCEPTION_RESOLUTION_MANUAL = "MANUAL";
 
+    // ---- 运行监控配置项（posting-log.md §裁决3，经 AppConfig.var 读取）----
+    /** 自动化记账率阈值，默认 0.95（达标值）。 */
+    String CONFIG_METRIC_AUTO_POSTING_RATE_THRESHOLD = "erp-fin.metric.auto-posting-rate-threshold";
+    /** 凭证生成时延 P99 阈值（毫秒），默认 30000。 */
+    String CONFIG_METRIC_LATENCY_P99_THRESHOLD_MILLIS = "erp-fin.metric.latency-p99-threshold-millis";
+    /** 过账异常率阈值，默认 0.01。 */
+    String CONFIG_METRIC_EXCEPTION_RATE_THRESHOLD = "erp-fin.metric.exception-rate-threshold";
+    /** 业财闭环成功率阈值，默认 0.995。 */
+    String CONFIG_METRIC_LOOPBACK_RATE_THRESHOLD = "erp-fin.metric.loopback-rate-threshold";
+    /** 指标聚合窗口（小时），默认 24。 */
+    String CONFIG_METRIC_WINDOW_HOURS = "erp-fin.metric.window-hours";
+    /** 时延内存采样窗口大小（样本数），默认 1000。 */
+    String CONFIG_METRIC_LATENCY_SAMPLE_WINDOW = "erp-fin.metric.latency-sample-window";
+
+    double DEFAULT_METRIC_AUTO_POSTING_RATE_THRESHOLD = 0.95;
+    long DEFAULT_METRIC_LATENCY_P99_THRESHOLD_MILLIS = 30_000L;
+    double DEFAULT_METRIC_EXCEPTION_RATE_THRESHOLD = 0.01;
+    double DEFAULT_METRIC_LOOPBACK_RATE_THRESHOLD = 0.995;
+    int DEFAULT_METRIC_WINDOW_HOURS = 24;
+    int DEFAULT_METRIC_LATENCY_SAMPLE_WINDOW = 1000;
+
     // ---- 资金/票据配置项（treasury.md §配置点），经 AppConfig.var 读取 ----
     /** 开银承前是否强制校验授信可用额度，默认 true。 */
     String CONFIG_CREDIT_CHECK_ON_ISSUE = "erp-fin.credit-check-on-issue";
