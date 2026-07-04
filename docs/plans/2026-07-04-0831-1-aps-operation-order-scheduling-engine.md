@@ -188,6 +188,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 归 CRP owner 计划 follow-up（`1707-1` Deferred 承接）；本计划确保 OperationOrder 排程时间可读，re-wiring 是 CRP 结果表面。
 - Successor Required: yes（触发条件：本计划落地后，CRP 计划切换负荷来源）
+- **Status: resolved**（plan `2026-07-05-0306-2-crp-load-source-aps-operationorder.md` 已落地 SPI `IErpApsLoadSourceProvider`（声明于 mfg-dao、实现于 aps-service）+ config `erp-mfg.crp-load-source` 双源门控，CRP 可读 OperationOrder 排程时间作为负荷来源）。
 
 ### JobCard 按 OperationOrder 排程自动创建
 

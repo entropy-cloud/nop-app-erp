@@ -142,6 +142,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: APS 模块（M3 3.10/3.11）未落地，CRP 本期 fallback 为 WorkOrder 计划日期；APS 落地后负荷来源可切换为精确排程时间。
 - Successor Required: yes（触发条件：APS 模块落地时）
+- **Status: resolved**（plan `2026-07-05-0306-2-crp-load-source-aps-operationorder.md` 已落地 SPI `IErpApsLoadSourceProvider` + config `erp-mfg.crp-load-source` 双源门控）。
 
 ### maintenance 停机扣减工作中心可用时段
 
