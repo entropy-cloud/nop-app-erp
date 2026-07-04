@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 银行勾对状态
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 未勾对
+    value: UNMATCHED
+    description: 
+  
+  - label: 已自动勾对
+    value: MATCHED
+    description: 
+  
+  - label: 已手工勾对
+    value: MANUAL_MATCHED
+    description: 
+  
+  - label: 待查(多候选)
+    value: SUSPENSE
+    description: 
+  

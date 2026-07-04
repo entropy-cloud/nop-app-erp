@@ -57,6 +57,21 @@ public interface ErpFinErrors {
     String ARG_EXPECTED_PERIOD_STATUS = "expectedPeriodStatus";
     String ARG_ISSUE_COUNT = "issueCount";
 
+    // --- 银行对账作用域参数键 ---
+    String ARG_FUND_ACCOUNT_ID = "fundAccountId";
+    String ARG_ACCOUNT_TYPE = "accountType";
+    String ARG_STATEMENT_ID = "statementId";
+    String ARG_STATEMENT_CODE = "statementCode";
+    String ARG_REF_NO = "refNo";
+    String ARG_LINE_ID = "lineId";
+    String ARG_VOUCHER_LINE_ID = "voucherLineId";
+    String ARG_BOOK_BALANCE = "bookBalance";
+    String ARG_STATEMENT_BALANCE = "statementBalance";
+    String ARG_UNRECONCILED_DIFF = "unreconciledDiff";
+    String ARG_MATCHED = "matched";
+    String ARG_UNMATCHED = "unmatched";
+    String ARG_SUSPENSE = "suspense";
+
     ErrorCode ERR_AR_AP_ITEM_PARTNER_MISSING = ErrorCode.define("erp.err.fin.ar-ap.partner-missing",
             "来源单据 {sourceBillCode}（类型 {sourceBillType}）的 billData 缺少 partnerId，无法生成辅助账",
             ARG_SOURCE_BILL_CODE, ARG_SOURCE_BILL_TYPE);
@@ -211,4 +226,53 @@ public interface ErpFinErrors {
     ErrorCode ERR_CLOSE_SUBJECT_NOT_CONFIGURED = ErrorCode.define("erp.err.fin.period-close.subject-not-configured",
             "期末结账所需科目/汇率未配置：配置键 {configKey}",
             ARG_CONFIG_KEY);
+
+    // --- 银行对账作用域 ---
+
+    ErrorCode ERR_FUND_ACCOUNT_NOT_FOUND = ErrorCode.define("erp.err.fin.bank-recon.fund-account-not-found",
+            "资金账户 {fundAccountId} 不存在", ARG_FUND_ACCOUNT_ID);
+
+    ErrorCode ERR_FUND_ACCOUNT_NOT_BANK = ErrorCode.define("erp.err.fin.bank-recon.fund-account-not-bank",
+            "资金账户 {fundAccountId} 类型({accountType})非 BANK，不可导入银行对账单",
+            ARG_FUND_ACCOUNT_ID, ARG_ACCOUNT_TYPE);
+
+    ErrorCode ERR_BANK_STMT_DUPLICATE = ErrorCode.define("erp.err.fin.bank-recon.stmt-duplicate",
+            "银行流水重复导入：参考号 {refNo} 已存在（账户 {fundAccountId}）",
+            ARG_REF_NO, ARG_FUND_ACCOUNT_ID);
+
+    ErrorCode ERR_BANK_IMPORT_REFNO_REQUIRED = ErrorCode.define("erp.err.fin.bank-recon.import-refno-required",
+            "配置 erp-fin.bank-import-strict-refno=true 时，银行流水行必须提供 refNo",
+            ARG_FUND_ACCOUNT_ID);
+
+    ErrorCode ERR_BANK_IMPORT_LINE_INVALID = ErrorCode.define("erp.err.fin.bank-recon.import-line-invalid",
+            "银行流水行数据非法（账户 {fundAccountId}，参考号 {refNo}）：日期/方向/金额不可为空且金额不可为负",
+            ARG_FUND_ACCOUNT_ID, ARG_REF_NO);
+
+    ErrorCode ERR_BANK_STMT_NOT_FOUND = ErrorCode.define("erp.err.fin.bank-recon.stmt-not-found",
+            "银行对账单 {statementId} 不存在", ARG_STATEMENT_ID);
+
+    ErrorCode ERR_BANK_STMT_LINE_NOT_FOUND = ErrorCode.define("erp.err.fin.bank-recon.stmt-line-not-found",
+            "银行对账单行 {lineId} 不存在", ARG_LINE_ID);
+
+    ErrorCode ERR_BANK_STMT_LINE_ALREADY_MATCHED = ErrorCode.define("erp.err.fin.bank-recon.stmt-line-already-matched",
+            "银行对账单行 {lineId} 已勾对（状态非 UNMATCHED），不可重复勾对",
+            ARG_LINE_ID);
+
+    ErrorCode ERR_VOUCHER_LINE_NOT_FOUND = ErrorCode.define("erp.err.fin.bank-recon.voucher-line-not-found",
+            "凭证行 {voucherLineId} 不存在", ARG_VOUCHER_LINE_ID);
+
+    ErrorCode ERR_BANK_RECON_NOT_FOUND = ErrorCode.define("erp.err.fin.bank-recon.recon-not-found",
+            "银行余额调节表 {statementCode} 不存在", ARG_STATEMENT_CODE);
+
+    ErrorCode ERR_BANK_RECON_NOT_BALANCED = ErrorCode.define("erp.err.fin.bank-recon.not-balanced",
+            "余额调节表不平：账面余额 {bookBalance} + 在途 − 未达 ≠ 对账单余额 {statementBalance}（差异 {unreconciledDiff}）",
+            ARG_BOOK_BALANCE, ARG_STATEMENT_BALANCE, ARG_UNRECONCILED_DIFF);
+
+    ErrorCode ERR_BANK_RECON_PERIOD_CLOSED = ErrorCode.define("erp.err.fin.bank-recon.period-closed",
+            "对账单所属期间 glStatus=CLOSED，不可生成新的余额调节表（statementId={statementId}）",
+            ARG_STATEMENT_ID);
+
+    ErrorCode ERR_BANK_RECON_ILLEGAL_DOC_STATUS_TRANSITION = ErrorCode.define("erp.err.fin.bank-recon.illegal-doc-status-transition",
+            "余额调节表 {statementCode} 当前单据状态={currentDocStatus}，不允许执行该操作（期望状态={expectedDocStatus}）",
+            ARG_STATEMENT_CODE, ARG_CURRENT_DOC_STATUS, ARG_EXPECTED_DOC_STATUS);
 }

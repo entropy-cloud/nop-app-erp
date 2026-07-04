@@ -84,6 +84,7 @@
             <option code="SALARY_PAYMENT" label="薪酬发放" value="SALARY_PAYMENT" i18n-en:label='Salary Payment'/>
             <option code="SOCIAL_INSURANCE_ER" label="社保公司承担" value="SOCIAL_INSURANCE_ER" i18n-en:label='Social Insurance ER'/>
             <option code="HOUSING_FUND_ER" label="公积金公司承担" value="HOUSING_FUND_ER" i18n-en:label='Housing Fund ER'/>
+            <option code="BANK_RECON_ADJ" label="银行对账未达账项调整" value="BANK_RECON_ADJ" i18n-en:label='Bank Recon Adjustment'/>
         </dict>
         <dict label="期间状态" name="erp-fin/period-status" valueType="string" i18n-en:label='Period Status'>
             <option code="OPEN" label="开启" value="OPEN" i18n-en:label='Open'/>
@@ -112,6 +113,12 @@
             <option code="PARTIAL" label="部分核销" value="PARTIAL" i18n-en:label='Partially Matched'/>
             <option code="SETTLED" label="已核销" value="SETTLED" i18n-en:label='Matched'/>
             <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label='Voided'/>
+        </dict>
+        <dict label="银行勾对状态" name="erp-fin/bank-match-status" valueType="string" i18n-en:label='Bank Match Status'>
+            <option code="UNMATCHED" label="未勾对" value="UNMATCHED" i18n-en:label='Unmatched'/>
+            <option code="MATCHED" label="已自动勾对" value="MATCHED" i18n-en:label='Auto Matched'/>
+            <option code="MANUAL_MATCHED" label="已手工勾对" value="MANUAL_MATCHED" i18n-en:label='Manual Matched'/>
+            <option code="SUSPENSE" label="待查(多候选)" value="SUSPENSE" i18n-en:label='Suspense'/>
         </dict>
         <dict label="核销单状态" name="erp-fin/reconciliation-status" valueType="string" i18n-en:label='Reconciliation Status'>
             <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label='Draft'/>
@@ -749,7 +756,7 @@
                 <column name="amount" displayName="金额" domain="amount" mandatory="true" code="AMOUNT" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amount' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true" code="CURRENCY_ID" propId="9" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="balanceAfter" displayName="交易后余额" domain="amount" code="BALANCE_AFTER" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Balance After' />
-                <column name="matchStatus" displayName="匹配状态" ext:dict="erp-fin/ar-ap-status" mandatory="true" code="MATCH_STATUS" propId="11" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Match Status' />
+                <column name="matchStatus" displayName="匹配状态" ext:dict="erp-fin/bank-match-status" mandatory="true" code="MATCH_STATUS" propId="11" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Match Status' />
                 <column name="matchedLineId" displayName="匹配凭证行ID" stdSqlType="BIGINT" code="MATCHED_LINE_ID" propId="12" stdDataType="long" i18n-en:displayName='Matched Line' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="14" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />

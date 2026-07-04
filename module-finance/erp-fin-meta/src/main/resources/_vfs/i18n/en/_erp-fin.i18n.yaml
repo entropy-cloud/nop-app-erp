@@ -750,6 +750,7 @@ dict:
     erp-fin/fund-account-status: Account Status
     erp-fin/ar-ap-direction: AR/AP Direction
     erp-fin/ar-ap-status: AR/AP Status
+    erp-fin/bank-match-status: Bank Match Status
     erp-fin/reconciliation-status: Reconciliation Status
     erp-fin/module-close-status: Module Close Status
     erp-fin/approve-status: Approval Status
@@ -814,6 +815,7 @@ dict.option.label:
     SALARY_PAYMENT: Salary Payment
     SOCIAL_INSURANCE_ER: Social Insurance ER
     HOUSING_FUND_ER: Housing Fund ER
+    BANK_RECON_ADJ: Bank Recon Adjustment
   erp-fin/period-status:
     OPEN: Open
     CLOSING: Closing
@@ -837,6 +839,11 @@ dict.option.label:
     PARTIAL: Partially Matched
     SETTLED: Matched
     CANCELLED: Voided
+  erp-fin/bank-match-status:
+    UNMATCHED: Unmatched
+    MATCHED: Auto Matched
+    MANUAL_MATCHED: Manual Matched
+    SUSPENSE: Suspense
   erp-fin/reconciliation-status:
     DRAFT: Draft
     POSTED: Posted

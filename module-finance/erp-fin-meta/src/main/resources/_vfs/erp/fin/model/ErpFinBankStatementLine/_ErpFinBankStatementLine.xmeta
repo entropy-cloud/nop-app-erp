@@ -61,7 +61,7 @@
         </prop>
         <prop name="matchStatus" displayName="匹配状态" propId="11" i18n-en:displayName="Match Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="20" dict="erp-fin/ar-ap-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-fin/bank-match-status"/>
         </prop>
         <prop name="matchedLineId" displayName="匹配凭证行ID" propId="12" i18n-en:displayName="Matched Line" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="matchedLine">

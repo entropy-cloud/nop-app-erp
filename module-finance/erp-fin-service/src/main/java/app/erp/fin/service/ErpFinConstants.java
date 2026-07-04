@@ -236,4 +236,35 @@ public interface ErpFinConstants {
     String BILL_DATA_EXCHANGE_GAIN_LOSS = "EXCHANGE_GAIN_LOSS";
     String BILL_DATA_BUSINESS_DATE = "businessDate";
     String BILL_DATA_DUE_DATE = "dueDate";
+
+    // ---- 银行对账配置项（bank-reconciliation.md §配置项），经 AppConfig.var 读取 ----
+    /** 自动勾对日期容差窗口（天），默认 3。 */
+    String CONFIG_BANK_MATCH_TOLERANCE_DAYS = "erp-fin.bank-match-tolerance-days";
+    /** 缺 refNo 时是否拒绝导入，默认 false。 */
+    String CONFIG_BANK_IMPORT_STRICT_REFNO = "erp-fin.bank-import-strict-refno";
+    /** 未达调整凭证是否下月初自动红冲，默认 true（实际红冲由定时任务触发，本计划交付 reverse 入口）。 */
+    String CONFIG_BANK_RECON_AUTO_REVERSE_NEXT_MONTH = "erp-fin.bank-recon-auto-reverse-next-month";
+    /** 银行对账勾对默认天数窗口（CONFIG_BANK_MATCH_TOLERANCE_DAYS 缺省值）。 */
+    int DEFAULT_BANK_MATCH_TOLERANCE_DAYS = 3;
+
+    // ---- bank-match-status（erp-fin/bank-match-status） ----
+    String BANK_MATCH_UNMATCHED = "UNMATCHED";
+    String BANK_MATCH_MATCHED = "MATCHED";
+    String BANK_MATCH_MANUAL_MATCHED = "MANUAL_MATCHED";
+    String BANK_MATCH_SUSPENSE = "SUSPENSE";
+
+    // ---- fund-account-type ----
+    String FUND_ACCOUNT_TYPE_BANK = "BANK";
+
+    // ---- voucher-status CANCELLED（docStatus 终态）----
+    String VOUCHER_STATUS_CANCELLED = "CANCELLED";
+
+    // ---- 银行对账调节表 side（在途/未达方） ----
+    String BANK_RECON_SIDE_IN_TRANSIT = "IN_TRANSIT";
+    String BANK_RECON_SIDE_UNRECORDED = "UNRECORDED";
+
+    /** PostingEvent.billData 键：未达账项行金额合计（本位币）。 */
+    String BILL_DATA_BANK_RECON_ADJ_AMOUNT = "BANK_RECON_ADJ_AMOUNT";
+    /** PostingEvent.billData 键：资金账户对应科目编码（${SUBJECT_CODE} 占位符填充）。 */
+    String BILL_DATA_BANK_SUBJECT_CODE = "SUBJECT_CODE";
 }

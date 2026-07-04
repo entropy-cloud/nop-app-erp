@@ -219,6 +219,11 @@ public interface _ErpFinDaoConstants {
     String BUSINESS_TYPE_HOUSING_FUND_ER = "HOUSING_FUND_ER";
                     
     /**
+     * 业务类型: 银行对账未达账项调整 
+     */
+    String BUSINESS_TYPE_BANK_RECON_ADJ = "BANK_RECON_ADJ";
+                    
+    /**
      * 期间状态: 开启 
      */
     String PERIOD_STATUS_OPEN = "OPEN";
@@ -307,6 +312,26 @@ public interface _ErpFinDaoConstants {
      * AR/AP 状态: 已作废 
      */
     String AR_AP_STATUS_CANCELLED = "CANCELLED";
+                    
+    /**
+     * 银行勾对状态: 未勾对 
+     */
+    String BANK_MATCH_STATUS_UNMATCHED = "UNMATCHED";
+                    
+    /**
+     * 银行勾对状态: 已自动勾对 
+     */
+    String BANK_MATCH_STATUS_MATCHED = "MATCHED";
+                    
+    /**
+     * 银行勾对状态: 已手工勾对 
+     */
+    String BANK_MATCH_STATUS_MANUAL_MATCHED = "MANUAL_MATCHED";
+                    
+    /**
+     * 银行勾对状态: 待查(多候选) 
+     */
+    String BANK_MATCH_STATUS_SUSPENSE = "SUSPENSE";
                     
     /**
      * 核销单状态: 草稿 

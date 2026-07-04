@@ -77,6 +77,8 @@
             <option code="SOCIAL_INSURANCE_ER" label="社保公司承担" value="SOCIAL_INSURANCE_ER"
                     i18n-en:label="Social Insurance ER"/>
             <option code="HOUSING_FUND_ER" label="公积金公司承担" value="HOUSING_FUND_ER" i18n-en:label="Housing Fund ER"/>
+            <option code="BANK_RECON_ADJ" label="银行对账未达账项调整" value="BANK_RECON_ADJ"
+                    i18n-en:label="Bank Recon Adjustment"/>
         </dict>
         <dict label="期间状态" name="erp-fin/period-status" valueType="string" i18n-en:label="Period Status">
             <option code="OPEN" label="开启" value="OPEN" i18n-en:label="Open"/>
@@ -105,6 +107,12 @@
             <option code="PARTIAL" label="部分核销" value="PARTIAL" i18n-en:label="Partially Matched"/>
             <option code="SETTLED" label="已核销" value="SETTLED" i18n-en:label="Matched"/>
             <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label="Voided"/>
+        </dict>
+        <dict label="银行勾对状态" name="erp-fin/bank-match-status" valueType="string" i18n-en:label="Bank Match Status">
+            <option code="UNMATCHED" label="未勾对" value="UNMATCHED" i18n-en:label="Unmatched"/>
+            <option code="MATCHED" label="已自动勾对" value="MATCHED" i18n-en:label="Auto Matched"/>
+            <option code="MANUAL_MATCHED" label="已手工勾对" value="MANUAL_MATCHED" i18n-en:label="Manual Matched"/>
+            <option code="SUSPENSE" label="待查(多候选)" value="SUSPENSE" i18n-en:label="Suspense"/>
         </dict>
         <dict label="核销单状态" name="erp-fin/reconciliation-status" valueType="string"
               i18n-en:label="Reconciliation Status">
@@ -1393,7 +1401,7 @@
                         propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Balance After"/>
                 <column code="MATCH_STATUS" displayName="匹配状态" mandatory="true" name="matchStatus" precision="20"
-                        propId="11" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/ar-ap-status"
+                        propId="11" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/bank-match-status"
                         i18n-en:displayName="Match Status"/>
                 <column code="MATCHED_LINE_ID" displayName="匹配凭证行ID" name="matchedLineId" propId="12" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Matched Line"/>

@@ -125,3 +125,7 @@ options:
     value: HOUSING_FUND_ER
     description: 
   
+  - label: 银行对账未达账项调整
+    value: BANK_RECON_ADJ
+    description: 
+  
