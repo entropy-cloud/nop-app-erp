@@ -7,4 +7,8 @@
     <import resource="_dao.beans.xml"/>
 
     <import resource="_service.beans.xml"/>
+
+    <!-- 合同域服务（非 BizModel）：返利计提引擎（PERIOD_END/PROGRESSIVE 两法 + 跨档追溯补差） -->
+    <bean id="app.erp.ct.service.rebate.RebateEngine"
+          class="app.erp.ct.service.rebate.RebateEngine"/>
 </beans>

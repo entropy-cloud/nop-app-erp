@@ -18,6 +18,17 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- InvoicePlan 触发发票：经 IErpPurInvoiceBiz/IErpSalInvoiceBiz 跨域生成 AP/AR 发票草稿（contract→invoice 显式业务触发） -->
+        <dependency>
+            <artifactId>app-erp-purchase-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <artifactId>app-erp-sales-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <artifactId>app-erp-contract-codegen</artifactId>
             <groupId>io.nop.app</groupId>
