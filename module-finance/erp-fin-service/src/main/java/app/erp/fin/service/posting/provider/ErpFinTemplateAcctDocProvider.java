@@ -48,7 +48,8 @@ public class ErpFinTemplateAcctDocProvider implements IErpFinAcctDocProvider {
     private static final Set<ErpFinBusinessType> SUPPORTED = Collections.unmodifiableSet(EnumSet.of(
             ErpFinBusinessType.PURCHASE_INPUT, ErpFinBusinessType.SALES_OUTPUT,
             ErpFinBusinessType.AP_INVOICE, ErpFinBusinessType.AR_INVOICE,
-            ErpFinBusinessType.PAYMENT, ErpFinBusinessType.RECEIPT));
+            ErpFinBusinessType.PAYMENT, ErpFinBusinessType.RECEIPT,
+            ErpFinBusinessType.PURCHASE_PRICE_VARIANCE));
 
     private static final Pattern PLACEHOLDER = Pattern.compile("\\$\\{([^}]+)}");
 

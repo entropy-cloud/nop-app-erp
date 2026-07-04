@@ -49,6 +49,10 @@ public interface ErpInvErrors {
             "物料 {materialId} / 仓库 {warehouseId} 无可用成本层，请先入库后再出库",
             ARG_MATERIAL_ID, ARG_WAREHOUSE_ID);
 
+    ErrorCode ERR_STANDARD_COST_NOT_AVAILABLE = ErrorCode.define("erp.err.inv.standard-cost-not-available",
+            "物料 {materialId} 无可用标准成本（无已 FIRMED 的成本卷算行，且物料主数据未配置标准成本），不可使用 STANDARD 计价方法",
+            ARG_MATERIAL_ID);
+
     // ---------- 所有权转移（consignment.md §ErpInvOwnershipTransfer） ----------
 
     ErrorCode ERR_OWNERSHIP_TRANSFER_NOT_FOUND = ErrorCode.define("erp.err.inv.ownership-transfer-not-found",

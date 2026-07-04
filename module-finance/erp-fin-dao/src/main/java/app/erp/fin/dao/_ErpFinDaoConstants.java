@@ -224,6 +224,11 @@ public interface _ErpFinDaoConstants {
     String BUSINESS_TYPE_BANK_RECON_ADJ = "BANK_RECON_ADJ";
                     
     /**
+     * 业务类型: 采购价差 
+     */
+    String BUSINESS_TYPE_PURCHASE_PRICE_VARIANCE = "PURCHASE_PRICE_VARIANCE";
+                    
+    /**
      * 期间状态: 开启 
      */
     String PERIOD_STATUS_OPEN = "OPEN";

@@ -129,3 +129,7 @@ options:
     value: BANK_RECON_ADJ
     description: 
   
+  - label: 采购价差
+    value: PURCHASE_PRICE_VARIANCE
+    description: 
+  

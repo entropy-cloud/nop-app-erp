@@ -41,10 +41,11 @@ public class CostMethodResolver {
         return method;
     }
 
-    /** 当前已实现策略：MOVING_AVERAGE + FIFO。其他码值回退默认，待 successor 接管。 */
+    /** 当前已实现策略：MOVING_AVERAGE + FIFO + STANDARD。其他码值回退默认，待 successor 接管。 */
     private boolean isSupported(String method) {
         return Objects.equals(method, ErpInvConstants.COST_METHOD_MOVING_AVERAGE)
-                || Objects.equals(method, ErpInvConstants.COST_METHOD_FIFO);
+                || Objects.equals(method, ErpInvConstants.COST_METHOD_FIFO)
+                || Objects.equals(method, ErpInvConstants.COST_METHOD_STANDARD);
     }
 
     private String readMaterialCostMethod(Long materialId) {

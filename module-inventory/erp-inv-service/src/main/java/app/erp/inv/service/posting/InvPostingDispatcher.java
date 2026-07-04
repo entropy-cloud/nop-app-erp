@@ -7,6 +7,7 @@ import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.inv.dao.entity.ErpInvStockMoveLine;
 import app.erp.inv.service.ErpInvConstants;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.dao.api.IDaoProvider;
@@ -73,6 +74,63 @@ public class InvPostingDispatcher {
                 LOG.warn("存货过账失败，移动单 {} 保持 DONE、posted=false：{}", move.getCode(), e.getMessage());
             } else {
                 LOG.error("存货过账异常，移动单 {} 保持 DONE、posted=false", move.getCode(), e);
+            }
+        }
+
+        // STANDARD 物料采购入库：捕获采购价差（PPV），config-gated 总开关
+        dispatchPurchasePriceVariance(move, lines);
+    }
+
+    /**
+     * 采购价差（PPV）捕获（plan 2026-07-05-0427-2）：STANDARD 物料采购入库 DONE 时，实际入库成本
+     * （移动单行 {@code unitCost}）与标准成本（流水 {@code ledger.unitCost}）差额 × qty = PPV，
+     * 经 {@link ErpFinBusinessType#PURCHASE_PRICE_VARIANCE} 过账。config {@code erp-inv.standard-cost-ppv-enabled=false}
+     * 时跳过（标准成本仍记账，差异不分离）。
+     *
+     * <p>过账失败不阻塞主过账状态（try/catch 吞异常告警，对齐主过账语义）。
+     */
+    protected void dispatchPurchasePriceVariance(ErpInvStockMove move, List<ErpInvStockMoveLine> lines) {
+        if (!isPpvEnabled()) {
+            return;
+        }
+        if (!Objects.equals(move.getMoveType(), ErpInvConstants.MOVE_TYPE_INCOMING)) {
+            return;
+        }
+        // 采购退货入库移动：存货估值过账由 purchase 域独占，PPV 同样跳过
+        if (ErpInvConstants.RELATED_BILL_TYPE_PUR_RETURN.equals(move.getRelatedBillType())
+                || ErpInvConstants.RELATED_BILL_TYPE_SAL_RETURN.equals(move.getRelatedBillType())) {
+            return;
+        }
+        List<ErpInvStockLedger> ledgers = loadLedgers(move.getId());
+        for (ErpInvStockMoveLine line : lines) {
+            ErpInvStockLedger ledger = findLedgerForLine(ledgers, line.getId());
+            if (ledger == null) {
+                continue;
+            }
+            if (!Objects.equals(ledger.getCostMethod(), ErpInvConstants.COST_METHOD_STANDARD)) {
+                continue;
+            }
+            BigDecimal standardUnitCost = nz(ledger.getUnitCost());
+            BigDecimal actualUnitCost = nz(line.getUnitCost());
+            BigDecimal qty = nz(line.getQuantity());
+            BigDecimal variancePerUnit = actualUnitCost.subtract(standardUnitCost);
+            if (variancePerUnit.signum() == 0) {
+                continue;
+            }
+            BigDecimal ppvAmount = variancePerUnit.abs().multiply(qty);
+            String direction = variancePerUnit.signum() > 0
+                    ? PurchasePriceVarianceAcctDocProvider.DIRECTION_DEBIT
+                    : PurchasePriceVarianceAcctDocProvider.DIRECTION_CREDIT;
+
+            PostingEvent ppvEvent = buildPpvEvent(move, line, ppvAmount, direction, ledger);
+            try {
+                executor.postEvent(ppvEvent);
+            } catch (Exception e) {
+                if (e instanceof NopException) {
+                    LOG.warn("采购价差过账失败，移动单 {} 行 {}：{}", move.getCode(), line.getId(), e.getMessage());
+                } else {
+                    LOG.error("采购价差过账异常，移动单 {} 行 {}", move.getCode(), line.getId(), e);
+                }
             }
         }
     }
@@ -147,5 +205,45 @@ public class InvPostingDispatcher {
         QueryBean q = new QueryBean();
         q.addFilter(eq("moveId", moveId));
         return dao.findAllByQuery(q);
+    }
+
+    private ErpInvStockLedger findLedgerForLine(List<ErpInvStockLedger> ledgers, Long lineId) {
+        for (ErpInvStockLedger ledger : ledgers) {
+            if (Objects.equals(ledger.getMoveLineId(), lineId)) {
+                return ledger;
+            }
+        }
+        return null;
+    }
+
+    private PostingEvent buildPpvEvent(ErpInvStockMove move, ErpInvStockMoveLine line,
+                                       BigDecimal ppvAmount, String direction, ErpInvStockLedger ledger) {
+        PostingEvent event = new PostingEvent();
+        event.setBusinessType(ErpFinBusinessType.PURCHASE_PRICE_VARIANCE);
+        event.setBillHeadCode(move.getCode() + "-PPV");
+        event.setOrgId(move.getOrgId());
+        event.setAcctSchemaId(ledger.getAcctSchemaId());
+        event.setCurrencyId(line.getCurrencyId() != null ? line.getCurrencyId() : ledger.getCurrencyId());
+        event.setExchangeRate(BigDecimal.ONE);
+        LocalDate voucherDate = move.getBusinessDate() != null ? move.getBusinessDate() : CoreMetrics.today();
+        event.setVoucherDate(voucherDate);
+
+        Map<String, Object> billData = new LinkedHashMap<>();
+        billData.put(PurchasePriceVarianceAcctDocProvider.KEY_PPV_AMOUNT, ppvAmount);
+        billData.put(PurchasePriceVarianceAcctDocProvider.KEY_PPV_DIRECTION, direction);
+        billData.put(PurchasePriceVarianceAcctDocProvider.KEY_MATERIAL_ID, line.getMaterialId());
+        billData.put(PurchasePriceVarianceAcctDocProvider.KEY_WAREHOUSE_ID,
+                move.getDestWarehouseId() != null ? move.getDestWarehouseId() : ledger.getWarehouseId());
+        event.setBillData(billData);
+        return event;
+    }
+
+    private boolean isPpvEnabled() {
+        Boolean flag = AppConfig.var(ErpInvConstants.CONFIG_STANDARD_COST_PPV_ENABLED, Boolean.TRUE);
+        return !Boolean.FALSE.equals(flag);
+    }
+
+    private static BigDecimal nz(BigDecimal v) {
+        return v != null ? v : BigDecimal.ZERO;
     }
 }

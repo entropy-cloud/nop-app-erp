@@ -816,6 +816,7 @@ dict.option.label:
     SOCIAL_INSURANCE_ER: Social Insurance ER
     HOUSING_FUND_ER: Housing Fund ER
     BANK_RECON_ADJ: Bank Recon Adjustment
+    PURCHASE_PRICE_VARIANCE: Purchase Price Variance
   erp-fin/period-status:
     OPEN: Open
     CLOSING: Closing

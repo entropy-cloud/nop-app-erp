@@ -10,6 +10,7 @@ import app.erp.inv.service.costing.CostMethodResolver;
 import app.erp.inv.service.costing.CostingStrategy;
 import app.erp.inv.service.costing.FifoCostingStrategy;
 import app.erp.inv.service.costing.MovingAverageCostingStrategy;
+import app.erp.inv.service.costing.StandardCostingStrategy;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.commons.util.StringHelper;
@@ -57,6 +58,9 @@ public class StockMoveBookkeeper implements BookingContext {
     @Inject
     FifoCostingStrategy fifoCostingStrategy;
 
+    @Inject
+    StandardCostingStrategy standardCostingStrategy;
+
     /** 其他策略（FIFO 等）按 costMethod 注册——Phase 2 注入 FifoCostingStrategy 后填充。 */
     final Map<String, CostingStrategy> strategyByMethod = new HashMap<>();
 
@@ -64,6 +68,7 @@ public class StockMoveBookkeeper implements BookingContext {
     void initStrategyRegistry() {
         register(movingAverageCostingStrategy);
         register(fifoCostingStrategy);
+        register(standardCostingStrategy);
     }
 
     public void register(CostingStrategy strategy) {

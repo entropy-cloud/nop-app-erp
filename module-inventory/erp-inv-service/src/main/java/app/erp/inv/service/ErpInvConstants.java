@@ -19,6 +19,10 @@ public interface ErpInvConstants {
     // 物料/账套均未配 costMethod 时的回退默认值（dict erp-md/cost-method 的 int 码）
     String CONFIG_DEFAULT_COST_METHOD = "erp-inv.default-cost-method";
     String DEFAULT_COST_METHOD = "MOVING_AVERAGE"; // COST_METHOD_MOVING_AVERAGE
+    // STANDARD 计价：无已 FIRMED 卷算行时是否回退物料主数据标准成本列（plan 2026-07-05-0427-2）
+    String CONFIG_STANDARD_COST_FALLBACK_TO_MATERIAL_MASTER = "erp-inv.standard-cost-fallback-to-material-master";
+    // STANDARD 计价：采购价差（PPV）捕获总开关（plan 2026-07-05-0427-2）
+    String CONFIG_STANDARD_COST_PPV_ENABLED = "erp-inv.standard-cost-ppv-enabled";
 
     // 所有权维度配置项（consignment.md §配置点）
     // ownership-tracking-enabled=false（默认关，对齐 Odoo feature group）时 ownerId 一律 null、ownershipType=OWNED，

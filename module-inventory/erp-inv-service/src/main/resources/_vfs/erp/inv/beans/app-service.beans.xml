@@ -19,6 +19,11 @@
           class="app.erp.inv.service.costing.MovingAverageCostingStrategy"/>
     <bean id="app.erp.inv.service.costing.FifoCostingStrategy"
           class="app.erp.inv.service.costing.FifoCostingStrategy"/>
+    <!-- STANDARD 计价（plan 2026-07-05-0427-2） -->
+    <bean id="app.erp.inv.service.costing.StandardCostResolver"
+          class="app.erp.inv.service.costing.StandardCostResolver"/>
+    <bean id="app.erp.inv.service.costing.StandardCostingStrategy"
+          class="app.erp.inv.service.costing.StandardCostingStrategy"/>
 
     <!-- 存货成本核算服务 BizModel（plan 2026-07-02-1538-1 Phase 3）：期末成本兜底重算，经 IBizObjectManager 跨模块调用 -->
     <bean id="app.erp.inv.service.costing.ErpInvCostingBizModel"
@@ -32,6 +37,10 @@
 
     <bean id="app.erp.inv.service.posting.InvAcctDocProvider"
           class="app.erp.inv.service.posting.InvAcctDocProvider"/>
+
+    <!-- 采购价差 Provider（STANDARD 计价，plan 2026-07-05-0427-2） -->
+    <bean id="app.erp.inv.service.posting.PurchasePriceVarianceAcctDocProvider"
+          class="app.erp.inv.service.posting.PurchasePriceVarianceAcctDocProvider"/>
 
     <!-- 所有权转移过账（consignment.md §业财过账，plan 2026-07-04-0549-1） -->
     <bean id="app.erp.inv.service.posting.OwnershipTransferPostingDispatcher"

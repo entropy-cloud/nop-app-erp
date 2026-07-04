@@ -85,6 +85,7 @@
             <option code="SOCIAL_INSURANCE_ER" label="社保公司承担" value="SOCIAL_INSURANCE_ER" i18n-en:label='Social Insurance ER'/>
             <option code="HOUSING_FUND_ER" label="公积金公司承担" value="HOUSING_FUND_ER" i18n-en:label='Housing Fund ER'/>
             <option code="BANK_RECON_ADJ" label="银行对账未达账项调整" value="BANK_RECON_ADJ" i18n-en:label='Bank Recon Adjustment'/>
+            <option code="PURCHASE_PRICE_VARIANCE" label="采购价差" value="PURCHASE_PRICE_VARIANCE" i18n-en:label='Purchase Price Variance'/>
         </dict>
         <dict label="期间状态" name="erp-fin/period-status" valueType="string" i18n-en:label='Period Status'>
             <option code="OPEN" label="开启" value="OPEN" i18n-en:label='Open'/>
