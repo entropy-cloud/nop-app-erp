@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 测试专用桩 bean：注册 IErpApsLoadSourceProvider 桩，避免引入 aps-service 形成 reactor 环。
+     仅 mfg-service 测试使用，由 CrpLoadCalculator 经 ioc:collect-beans by-type 收集。 -->
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns="http://www.springframework.org/schema/beans">
+
+    <bean id="testStubApsLoadSourceProvider"
+          class="app.erp.mfg.service.TestStubApsLoadSourceProvider"/>
+</beans>

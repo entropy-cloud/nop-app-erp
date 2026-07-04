@@ -1,6 +1,8 @@
 package app.erp.mfg.service.crp;
 
+import app.erp.mfg.biz.ApsLoadSlot;
 import app.erp.mfg.biz.CrpLoadReportItem;
+import app.erp.mfg.biz.IErpApsLoadSourceProvider;
 import app.erp.mfg.dao.entity.ErpMfgCrpLoad;
 import app.erp.mfg.dao.entity.ErpMfgRoutingOperation;
 import app.erp.mfg.dao.entity.ErpMfgWorkcenter;
@@ -15,12 +17,16 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,30 +46,45 @@ import static io.nop.api.core.beans.FilterBeans.ne;
 /**
  * CRP 负荷计算引擎。服务于 {@code IErpMfgCrpBiz.calculateLoad/getLoadReport}（{@code crp.md §核心设计点}）。
  *
- * <p><b>负荷来源（fallback，无 APS）</b>：WorkOrder（plannedStartDate~plannedEndDate）经 RoutingOperation
- * 分派到工作中心，按 workcenter×loadDate 聚合 loadHours（RoutingOperation.standardTime 换算小时，均匀分派到区间日）
- * + setupHours（RoutingOperation.setupTime，计入首日）。
+ * <p><b>负荷来源（双源，plan 2026-07-05-0306-2）</b>：经 config {@code erp-mfg.crp-load-source} 选择——
+ * <ul>
+ *   <li>{@code WORK_ORDER}（默认，行为不变）：WorkOrder（plannedStartDate~plannedEndDate）经 RoutingOperation
+ *       分派到工作中心，按 workcenter×loadDate 聚合 loadHours（RoutingOperation.standardTime 换算小时，均匀分派到区间日）
+ *       + setupHours（RoutingOperation.setupTime，计入首日）。</li>
+ *   <li>{@code APS}：经 SPI {@link IErpApsLoadSourceProvider}（aps-service 实现，{@code ioc:collect-beans} 收集）
+ *       读取已排程 {@code ErpApsOperationOrder} 的 plannedStartT~plannedEndT × machineId（工作中心），按排程时段
+ *       精确分派 loadHours 到 workcenter×date（按排程跨日逐日累加 setupTime→首日 setupHours）。APS 模式下
+ *       某工单无 OperationOrder 或排程时间未回填 → 回退该工单到 WorkOrder 计划日期（混合 tolerated，日志记录来源分布）。</li>
+ * </ul>
  *
  * <p><b>可用产能</b>：WorkcenterCalendar 出勤时段（Σ endTime-startTime 满足 workDatePattern/生效区间的班次）
  * × WorkcenterCapacity.efficiencyFactor（无产能子实体则 1.0）。{@code loadRate = loadHours / capacityHours}；
  * {@code overloaded = loadRate > erp-mfg.crp-overload-threshold}（默认 1.0）。
  *
- * <p><b>Non-Goal</b>：APS 工序级排产（写 OperationOrder）、maintenance 停机扣减可用时段、
- * 标量 Workcenter.capacity 迁移、班次级粒度（本期日级）、AMIS 可视化（见计划 Non-Goals）。
+ * <p><b>Non-Goal</b>：maintenance 停机扣减可用时段、标量 Workcenter.capacity 迁移、班次级粒度（本期日级）、
+ * AMIS 可视化（见计划 Non-Goals）。
  *
  * <p>本类为非 BizModel 服务助手（对齐 {@code MrpEngine}/{@code BomExpander} 范式），manufacturing 域内只读聚合
- * （WorkOrder/RoutingOperation/Workcenter/Calendar/Capacity），无跨域写依赖。
+ * （WorkOrder/RoutingOperation/Workcenter/Calendar/Capacity），APS 排程时间经跨域 SPI 只读取不耦合 APS ORM。
  */
 public class CrpLoadCalculator {
 
     static final BigDecimal SIXTY = new BigDecimal("60");
     static final int SCALE = 4;
+    static final Logger LOG = LoggerFactory.getLogger(CrpLoadCalculator.class);
 
     @Inject
     IDaoProvider daoProvider;
 
+    /** APS 排程时间负荷来源 SPI 实现（aps-service 经 ioc:collect-beans 注入；空 list 时降级 WorkOrder）。 */
+    List<IErpApsLoadSourceProvider> apsLoadSourceProviders = Collections.emptyList();
+
     public void setDaoProvider(IDaoProvider daoProvider) {
         this.daoProvider = daoProvider;
+    }
+
+    public void setApsLoadSourceProviders(List<IErpApsLoadSourceProvider> apsLoadSourceProviders) {
+        this.apsLoadSourceProviders = apsLoadSourceProviders == null ? Collections.emptyList() : apsLoadSourceProviders;
     }
 
     /**
@@ -82,9 +103,29 @@ public class CrpLoadCalculator {
         }
         Set<Long> wcFilter = workcenterIds != null && !workcenterIds.isEmpty() ? new HashSet<>(workcenterIds) : null;
 
+        boolean apsMode = isApsLoadSourceEnabled();
+        Map<Long, List<ApsLoadSlot>> apsSlotsByWo = apsMode
+                ? indexApsSlotsByWorkOrder(workOrders, periodFrom, periodTo)
+                : Collections.emptyMap();
+
         int written = 0;
+        int apsHits = 0;
+        int woFallbacks = 0;
         for (ErpMfgWorkOrder wo : workOrders) {
-            written += distributeWorkOrder(loadDao, wo, periodFrom, periodTo, wcFilter);
+            List<ApsLoadSlot> woSlots = apsMode ? apsSlotsByWo.get(wo.getId()) : null;
+            if (woSlots != null && !woSlots.isEmpty()) {
+                written += distributeByApsSlots(loadDao, wo, woSlots, periodFrom, periodTo, wcFilter);
+                apsHits++;
+            } else {
+                written += distributeByWorkOrder(loadDao, wo, periodFrom, periodTo, wcFilter);
+                if (apsMode) {
+                    woFallbacks++;
+                }
+            }
+        }
+        if (apsMode) {
+            LOG.info("CRP APS 负荷来源分布：aps 命中 {} 工单，WorkOrder 日期回退 {} 工单（窗口 {}~{}）",
+                    apsHits, woFallbacks, periodFrom, periodTo);
         }
         return written;
     }
@@ -143,8 +184,77 @@ public class CrpLoadCalculator {
 
     // ---------- calculateLoad helpers ----------
 
-    private int distributeWorkOrder(IEntityDao<ErpMfgCrpLoad> loadDao, ErpMfgWorkOrder wo,
-                                    LocalDate periodFrom, LocalDate periodTo, Set<Long> wcFilter) {
+    /**
+     * APS 负荷来源分派：按 OperationOrder 排程时段精确分派到 workcenter×date。
+     *
+     * <p>每个 {@link ApsLoadSlot} 表达一个工序的 workCenter（machineId）× plannedStartT~plannedEndT 时段。
+     * loadHours 按 plannedStartT~plannedEndT 跨日逐日累加（按当日实际占用分钟/60，截断到 CRP 窗口边界）；
+     * setupHours 按 setupTime 换算小时计入时段首日（与 WorkOrder 路径"setup→首日"语义对齐）。
+     */
+    private int distributeByApsSlots(IEntityDao<ErpMfgCrpLoad> loadDao, ErpMfgWorkOrder wo,
+                                     List<ApsLoadSlot> slots, LocalDate periodFrom, LocalDate periodTo,
+                                     Set<Long> wcFilter) {
+        int written = 0;
+        for (ApsLoadSlot slot : slots) {
+            Long wcId = slot.getWorkcenterId();
+            if (wcId == null) {
+                continue;
+            }
+            if (wcFilter != null && !wcFilter.contains(wcId)) {
+                continue;
+            }
+            LocalDate slotStartDay = slot.getPlannedStartT().toLocalDate();
+            LocalDate slotEndDay = slot.getPlannedEndT().toLocalDate();
+            // 截断到 CRP 窗口
+            LocalDate dayFrom = slotStartDay.isBefore(periodFrom) ? periodFrom : slotStartDay;
+            LocalDate dayTo = slotEndDay.isAfter(periodTo) ? periodTo : slotEndDay;
+            if (dayFrom.isAfter(dayTo)) {
+                continue;
+            }
+
+            BigDecimal setupHours = toHours(slot.getSetupTime());
+            boolean firstDay = true;
+            for (LocalDate d = dayFrom; !d.isAfter(dayTo); d = d.plusDays(1)) {
+                // 当日占用分钟：intersect [day 00:00, day+1 00:00] ∩ [plannedStartT, plannedEndT]
+                LocalDateTime dayStart = d.atStartOfDay();
+                LocalDateTime dayEnd = d.plusDays(1).atStartOfDay();
+                LocalDateTime segStart = slot.getPlannedStartT().isAfter(dayStart) ? slot.getPlannedStartT() : dayStart;
+                LocalDateTime segEnd = slot.getPlannedEndT().isBefore(dayEnd) ? slot.getPlannedEndT() : dayEnd;
+                if (!segEnd.isAfter(segStart)) {
+                    firstDay = false;
+                    continue;
+                }
+                long mins = java.time.Duration.between(segStart, segEnd).toMinutes();
+                if (mins <= 0) {
+                    firstDay = false;
+                    continue;
+                }
+                BigDecimal dayLoad = new BigDecimal(mins).divide(SIXTY, SCALE, RoundingMode.HALF_UP);
+                BigDecimal daySetup = firstDay ? setupHours : BigDecimal.ZERO;
+                if (dayLoad.signum() == 0 && daySetup.signum() == 0) {
+                    firstDay = false;
+                    continue;
+                }
+                ErpMfgCrpLoad row = loadDao.newEntity();
+                row.setWorkcenterId(wcId);
+                row.setWorkOrderId(wo.getId());
+                row.setLoadDate(d);
+                row.setLoadHours(dayLoad);
+                row.setSetupHours(daySetup);
+                loadDao.saveEntity(row);
+                written++;
+                firstDay = false;
+            }
+        }
+        return written;
+    }
+
+    /**
+     * WorkOrder 计划日期负荷来源分派（既有路径，行为不变）：按 plannedStartDate~plannedEndDate 区间
+     * 均匀分派 RoutingOperation.standardTime 到区间日，setupTime 计入首日。
+     */
+    private int distributeByWorkOrder(IEntityDao<ErpMfgCrpLoad> loadDao, ErpMfgWorkOrder wo,
+                                      LocalDate periodFrom, LocalDate periodTo, Set<Long> wcFilter) {
         Long routingId = wo.getRoutingId();
         if (routingId == null) {
             return 0;
@@ -196,6 +306,52 @@ public class CrpLoadCalculator {
             }
         }
         return written;
+    }
+
+    /**
+     * 是否启用 APS 负荷来源。SPI 实现未注册（APS 模块缺失）时强制返回 false（无论 config 取值）。
+     */
+    private boolean isApsLoadSourceEnabled() {
+        String source = AppConfig.var(ErpMfgConstants.CONFIG_CRP_LOAD_SOURCE,
+                ErpMfgConstants.CRP_LOAD_SOURCE_WORK_ORDER);
+        if (!ErpMfgConstants.CRP_LOAD_SOURCE_APS.equals(source)) {
+            return false;
+        }
+        if (apsLoadSourceProviders == null || apsLoadSourceProviders.isEmpty()) {
+            LOG.warn("erp-mfg.crp-load-source=APS 但未收集到 IErpApsLoadSourceProvider 实现（APS 模块缺失？），回退 WORK_ORDER");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 批量查询工单的 APS 排程时段，按 workOrderId 索引。SPI 实现可空（已 isApsLoadSourceEnabled 兜底）。
+     */
+    private Map<Long, List<ApsLoadSlot>> indexApsSlotsByWorkOrder(List<ErpMfgWorkOrder> workOrders,
+                                                                  LocalDate periodFrom, LocalDate periodTo) {
+        if (apsLoadSourceProviders == null || apsLoadSourceProviders.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        List<Long> woIds = new ArrayList<>(workOrders.size());
+        for (ErpMfgWorkOrder wo : workOrders) {
+            if (wo.getId() != null) {
+                woIds.add(wo.getId());
+            }
+        }
+        Map<Long, List<ApsLoadSlot>> map = new HashMap<>();
+        for (IErpApsLoadSourceProvider provider : apsLoadSourceProviders) {
+            List<ApsLoadSlot> slots = provider.findScheduledSlots(woIds, periodFrom, periodTo);
+            if (slots == null || slots.isEmpty()) {
+                continue;
+            }
+            for (ApsLoadSlot slot : slots) {
+                if (slot.getWorkOrderId() == null) {
+                    continue;
+                }
+                map.computeIfAbsent(slot.getWorkOrderId(), k -> new ArrayList<>()).add(slot);
+            }
+        }
+        return map;
     }
 
     private List<ErpMfgRoutingOperation> findRoutingOperations(Long routingId) {

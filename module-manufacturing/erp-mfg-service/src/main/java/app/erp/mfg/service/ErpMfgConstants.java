@@ -126,6 +126,13 @@ public interface ErpMfgConstants {
     String CONFIG_CRP_OVERLOAD_THRESHOLD = "erp-mfg.crp-overload-threshold";
     double DEFAULT_CRP_OVERLOAD_THRESHOLD = 1.0;
 
+    // CRP 负荷来源（plan 2026-07-05-0306-2）。WORK_ORDER=按 WorkOrder 计划日期+RoutingOperation 标准工时均匀分派
+    // （行为不变，默认）；APS=按已排程 ErpApsOperationOrder 排程时间精确分派到 workcenter×date，无排程时段的工单
+    // 回退 WorkOrder 计划日期（混合 tolerated）。APS 模式需 APS 引擎（计划 0831-1）已落地+SPI 实现已注册。
+    String CONFIG_CRP_LOAD_SOURCE = "erp-mfg.crp-load-source";
+    String CRP_LOAD_SOURCE_WORK_ORDER = "WORK_ORDER";
+    String CRP_LOAD_SOURCE_APS = "APS";
+
     /** 定时 CRP 负荷计算 cron（空=不调度；plan 2026-07-05-0306-1 §配置点）。 */
     String CONFIG_CRP_RUN_CRON = "erp-mfg.crp-run-cron";
     /** CRP 定时计算默认向前窗口（月），0=当月（plan 2026-07-05-0306-1 Decision）。 */

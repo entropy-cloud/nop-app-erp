@@ -36,9 +36,17 @@
     <bean id="app.erp.mfg.service.mrp.MrpReleaseService"
           class="app.erp.mfg.service.mrp.MrpReleaseService"/>
 
-    <!-- CRP 负荷计算引擎（plan 2026-07-03-1707-1）：WorkOrder×RoutingOperation 分派→workcenter×date 负荷快照+报表 -->
+    <!-- CRP 负荷计算引擎（plan 2026-07-03-1707-1）：WorkOrder×RoutingOperation 分派→workcenter×date 负荷快照+报表。
+          plan 2026-07-05-0306-2：经 ioc:collect-beans by-type 跨模块收集 aps-service 实现的
+          IErpApsLoadSourceProvider（镜像 finance IErpFinAcctDocProvider 跨域 SPI 范式）；
+          APS 模块缺失时收集到空 list，CRP 回退 WorkOrder 计划日期（行为不变）。 -->
     <bean id="app.erp.mfg.service.crp.CrpLoadCalculator"
-          class="app.erp.mfg.service.crp.CrpLoadCalculator"/>
+          class="app.erp.mfg.service.crp.CrpLoadCalculator">
+        <property name="apsLoadSourceProviders">
+            <ioc:collect-beans by-type="app.erp.mfg.biz.IErpApsLoadSourceProvider"
+                               only-concrete-classes="true" ioc:ignore-depends="true"/>
+        </property>
+    </bean>
 
     <!-- manufacturing 域状态机编排 Processor（Facade + Processor 两层结构，protected step 方法供下游覆盖）。 -->
     <bean id="app.erp.mfg.service.processor.ErpMfgWorkOrderProcessor"

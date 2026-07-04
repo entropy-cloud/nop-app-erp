@@ -15,4 +15,11 @@
     <!-- ATP/CTP 交期承诺模拟服务（跨域 I*Biz 只读聚合 inventory + 工艺路线追溯 mfg） -->
     <bean id="app.erp.aps.service.atpctp.ErpApsAtpCtpService"
           class="app.erp.aps.service.atpctp.ErpApsAtpCtpServiceImpl"/>
+
+    <!-- CRP 负荷来源 SPI 实现（plan 2026-07-05-0306-2）：实现 mfg-dao 声明的 IErpApsLoadSourceProvider，
+          读 ErpApsOperationOrder 按 workOrderId 聚合排程时段。注册为 Bean 后由 mfg CrpLoadCalculator 经
+          ioc:collect-beans by-type 跨模块收集（镜像 finance IErpFinAcctDocProvider 跨域 SPI 范式）。
+          APS 模块缺失时 mfg 侧收集到空 list，CRP 回退 WorkOrder 计划日期（行为不变）。 -->
+    <bean id="app.erp.aps.service.loadsource.ApsLoadSourceProvider"
+          class="app.erp.aps.service.loadsource.ApsLoadSourceProvider"/>
 </beans>
