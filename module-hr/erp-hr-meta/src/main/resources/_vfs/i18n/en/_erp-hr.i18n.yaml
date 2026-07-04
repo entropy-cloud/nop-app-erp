@@ -534,6 +534,7 @@ prop:
       actualEndTime: Actual End Time
       isAbsent: Is Absent
       absenceReason: Absence Reason
+      absenceReason_label: null
       leaveRequestId: Leave Request
       swapRequestId: Swap Request
       replacedByAssignmentId: Replaced By
@@ -841,6 +842,7 @@ dict:
     erp-hr/simulation-status: Simulation Status
     erp-hr/shift-type: Shift Type
     erp-hr/swap-status: Swap Status
+    erp-hr/absence-reason: Absence Reason
     erp-hr/survey-type: Survey Type
     erp-hr/survey-status: Survey Status
     erp-hr/question-type: Question Type
@@ -985,6 +987,10 @@ dict.option.label:
     APPROVED: Approved
     REJECTED: Rejected
     CANCELLED: Cancelled
+  erp-hr/absence-reason:
+    LEAVE: Leave
+    LATE_NOT_CLOCKED: Late Not Clocked
+    OTHER: Other
   erp-hr/survey-type:
     ANNUAL_ENGAGEMENT: Annual Engagement
     PULSE: Pulse Survey

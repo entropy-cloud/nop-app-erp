@@ -177,6 +177,11 @@
             <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label="Rejected"/>
             <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
         </dict>
+        <dict label="缺勤原因" name="erp-hr/absence-reason" valueType="string" i18n-en:label="Absence Reason">
+            <option code="LEAVE" label="休假" value="LEAVE" i18n-en:label="Leave"/>
+            <option code="LATE_NOT_CLOCKED" label="未打卡" value="LATE_NOT_CLOCKED" i18n-en:label="Late Not Clocked"/>
+            <option code="OTHER" label="其他" value="OTHER" i18n-en:label="Other"/>
+        </dict>
         <dict label="调研类型" name="erp-hr/survey-type" valueType="string" i18n-en:label="Survey Type">
             <option code="ANNUAL_ENGAGEMENT" label="年度敬业度调研" value="ANNUAL_ENGAGEMENT" i18n-en:label="Annual Engagement"/>
             <option code="PULSE" label="脉搏调研" value="PULSE" i18n-en:label="Pulse Survey"/>
@@ -1600,7 +1605,8 @@
                 <column code="IS_ABSENT" defaultValue="false" displayName="是否缺勤" name="isAbsent" propId="8"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Absent"/>
                 <column code="ABSENCE_REASON" displayName="缺勤原因" name="absenceReason" precision="50" propId="9"
-                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Absence Reason"/>
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/absence-reason"
+                        i18n-en:displayName="Absence Reason"/>
                 <column code="LEAVE_REQUEST_ID" displayName="关联休假" name="leaveRequestId" propId="10" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Leave Request"/>
                 <column code="SWAP_REQUEST_ID" displayName="关联调换" name="swapRequestId" propId="11" stdDataType="long"

@@ -526,6 +526,7 @@ prop:
       version: 数据版本
     ErpHrShiftAssignment:
       absenceReason: 缺勤原因
+      absenceReason_label: 缺勤原因
       actualEndTime: 实际签退时间
       actualStartTime: 实际签到时间
       assignmentDate: 排班日期

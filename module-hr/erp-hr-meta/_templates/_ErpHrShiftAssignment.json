@@ -8,6 +8,7 @@
   "actualEndTime": "2000-01-01 14:00:00",
   "isAbsent": false,
   "absenceReason": "",
+  "absenceReason_label": "",
   "leaveRequestId": 0,
   "swapRequestId": 0,
   "replacedByAssignmentId": 0,

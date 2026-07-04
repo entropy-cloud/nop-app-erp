@@ -20,6 +20,12 @@ public interface ErpHrErrors {
     String ARG_SUBJECT_CODE = "subjectCode";
     String ARG_BATCH_NO = "batchNo";
     String ARG_BANK_ID = "bankId";
+    String ARG_EMPLOYEE_IDS = "employeeIds";
+    String ARG_SHIFT_ID = "shiftId";
+    String ARG_ASSIGNMENT_DATE = "assignmentDate";
+    String ARG_PATTERN_ID = "patternId";
+    String ARG_SWAP_REQUEST_ID = "swapRequestId";
+    String ARG_LEAVE_REQUEST_ID = "leaveRequestId";
 
     // --- 薪酬核算：配置缺失 ---
     ErrorCode ERR_SOCIAL_INSURANCE_BASE_NOT_FOUND = ErrorCode.define(
@@ -70,4 +76,34 @@ public interface ErpHrErrors {
             "erp.err.hr.no-approved-salary-for-bank-file",
             "未找到 APPROVED_MANAGER 状态的薪酬记录，无法生成银行代发文件",
             ARG_BANK_ID);
+
+    // --- 排班分配/轮换/调换（shift-scheduling.md） ---
+    ErrorCode ERR_SHIFT_DUPLICATE_ASSIGNMENT = ErrorCode.define(
+            "erp.err.hr.shift-duplicate-assignment",
+            "员工 {employeeId} 在 {assignmentDate} 已存在排班，违反一人一天一排班唯一约束",
+            ARG_EMPLOYEE_ID, ARG_ASSIGNMENT_DATE);
+    ErrorCode ERR_SHIFT_CROSS_DAY_INVALID = ErrorCode.define(
+            "erp.err.hr.shift-cross-day-invalid",
+            "班次 {shiftId} 跨天配置非法：endTime 须小于 startTime 才视为夜班跨天",
+            ARG_SHIFT_ID);
+    ErrorCode ERR_SHIFT_SWAP_TARGET_OCCUPIED = ErrorCode.define(
+            "erp.err.hr.shift-swap-target-occupied",
+            "调换目标员工在 {assignmentDate} 无有效排班或已被其他调换占用",
+            ARG_ASSIGNMENT_DATE);
+    ErrorCode ERR_SHIFT_ROTATION_PATTERN_INVALID = ErrorCode.define(
+            "erp.err.hr.shift-rotation-pattern-invalid",
+            "轮换模板 {patternId} 的 patternData 非法或包含不存在的班次编码",
+            ARG_PATTERN_ID);
+    ErrorCode ERR_SHIFT_ASSIGNMENT_NOT_SWAPPABLE = ErrorCode.define(
+            "erp.err.hr.shift-assignment-not-swappable",
+            "调换申请 {swapRequestId} 的排班不可调换（当前状态不允许或已被其他调换引用）",
+            ARG_SWAP_REQUEST_ID);
+    ErrorCode ERR_SHIFT_SWAP_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
+            "erp.err.hr.shift-swap-illegal-status-transition",
+            "调换申请 {swapRequestId} 当前状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_SWAP_REQUEST_ID, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+    ErrorCode ERR_LEAVE_REQUEST_NOT_FOUND = ErrorCode.define(
+            "erp.err.hr.leave-request-not-found",
+            "休假申请 {leaveRequestId} 不存在",
+            ARG_LEAVE_REQUEST_ID);
 }

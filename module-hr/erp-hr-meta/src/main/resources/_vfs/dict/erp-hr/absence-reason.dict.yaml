@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 缺勤原因
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 休假
+    value: LEAVE
+    description: 
+  
+  - label: 未打卡
+    value: LATE_NOT_CLOCKED
+    description: 
+  
+  - label: 其他
+    value: OTHER
+    description: 
+  

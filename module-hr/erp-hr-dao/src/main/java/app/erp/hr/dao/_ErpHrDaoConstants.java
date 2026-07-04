@@ -544,6 +544,21 @@ public interface _ErpHrDaoConstants {
     String SWAP_STATUS_CANCELLED = "CANCELLED";
                     
     /**
+     * 缺勤原因: 休假 
+     */
+    String ABSENCE_REASON_LEAVE = "LEAVE";
+                    
+    /**
+     * 缺勤原因: 未打卡 
+     */
+    String ABSENCE_REASON_LATE_NOT_CLOCKED = "LATE_NOT_CLOCKED";
+                    
+    /**
+     * 缺勤原因: 其他 
+     */
+    String ABSENCE_REASON_OTHER = "OTHER";
+                    
+    /**
      * 调研类型: 年度敬业度调研 
      */
     String SURVEY_TYPE_ANNUAL_ENGAGEMENT = "ANNUAL_ENGAGEMENT";

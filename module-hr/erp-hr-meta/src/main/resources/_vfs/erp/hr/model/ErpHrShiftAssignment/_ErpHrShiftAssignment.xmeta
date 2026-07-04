@@ -53,7 +53,7 @@
         </prop>
         <prop name="absenceReason" displayName="缺勤原因" propId="9" i18n-en:displayName="Absence Reason" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="50"/>
+            <schema type="java.lang.String" precision="50" dict="erp-hr/absence-reason"/>
         </prop>
         <prop name="leaveRequestId" displayName="关联休假" propId="10" i18n-en:displayName="Leave Request" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="leaveRequest">
