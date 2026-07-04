@@ -79,7 +79,9 @@
 
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
-| `erp-mfg.crp-run-schedule` | — | CRP 定时运行 cron |
+| `erp-mfg.crp-run-schedule` | — | CRP 定时运行 cron（旧语义键，已由下方 `erp-mfg.crp-run-cron` 接线取代） |
+| `erp-mfg.crp-run-cron` | —（默认不执行，运维启用配置键生效） | CRP 定时运行 cron 门控。**SCHEDULED**（plan 2026-07-05-0306-1）：`ErpMfgCrpRunJob` + `scheduler.yaml` 已接线，空值=跳过；非空时按窗口调 `IErpMfgCrpBiz.calculateLoad()`（全工作中心） |
+| `erp-mfg.crp-run-default-window-months` | 0（当月） | CRP 定时计算默认向前窗口（月），0=当前自然月 |
 | `erp-mfg.crp-overload-threshold` | 1.0 | 超负荷阈值 |
 
 ## 反模式警示
@@ -110,4 +112,4 @@
 - **标量 `Workcenter.capacity` 保留不删不依赖**：既有 `ErpMfgWorkcenter.capacity`/`capacityUnit` 为反模式（单一标量产能，见上方反模式警示）。本期 CRP 一律用新增 `ErpMfgWorkcenterCapacity` 子实体（按产品产能 + 换模/清理/效率），既有标量保留为旧显示字段不删（out-of-scope：存量数据迁移）。
 - **负荷桶粒度为日级（非班次级）**：`ErpMfgCrpLoad.loadDate` + loadHours/setupHours 按 workcenter×date 聚合。班次建模已就绪（WorkcenterCalendar.shiftType）但负荷按日聚合已足；日内多班次超负荷不可见（班次级为 APS 范畴）。
 - **CRP 可视化页面（AMIS 甘特/热力图）为 Non-Goal**：本期交付 GraphQL 负荷报表查询（`ErpMfgCrpLoad__getLoadReport`）；AMIS 可视化为独立前端面（successor）。
-- **CRP 定时运行 cron 为 Non-Goal**：`erp-mfg.crp-run-schedule` cron 本期不接线；负荷计算以按需 `@BizMutation calculateLoad` 暴露入口（手动/nop-job 可调），on-demand 入口已可被周期调度复用（successor：定时自动运行需求）。
+- **CRP 定时运行 cron 已接线**：`erp-mfg.crp-run-cron`（取代旧 `erp-mfg.crp-run-schedule`）经 `ErpMfgCrpRunJob` 三件套接线（plan 2026-07-05-0306-1，SCHEDULED）。负荷计算业务语义不变（仍按需 `@BizMutation calculateLoad`，job 仅做入参派生=当月窗口 + 全工作中心 + 委托）。APS OperationOrder 接线为负荷来源由计划 `2026-07-05-0306-2` 承接，不影响本作业注册。

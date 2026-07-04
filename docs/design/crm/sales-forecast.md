@@ -162,7 +162,7 @@
 | `erp-crm.forecast.commit-threshold` | 80 | commit 概率阈值（%） |
 | `erp-crm.forecast.upside-threshold` | 30 | upside 概率阈值（%） |
 | `erp-crm.forecast.auto-create-period` | true | 是否自动创建下期预测期间（月度/季度） |
-| `erp-crm.forecast.recalc-cron` | 0 3 * * * | 定时重算 cron（每日凌晨 3 点） |
+| `erp-crm.forecast.recalc-cron` | —（默认不执行，运维启用配置键生效） | 定时重算 cron 门控（设计 `0 3 * * *` 每日凌晨 3 点）。**SCHEDULED**（plan 2026-07-05-0306-1）：`ErpCrmForecastRecalcJob` + `scheduler.yaml` 已接线，空值=跳过；非空时查当前 OPEN 预测期间调 `IErpCrmForecastBiz.refreshForecast()` |
 | `erp-crm.forecast.accuracy-auto-compute` | true | 期间关闭后是否自动计算准确率 |
 
 ## 状态机关联

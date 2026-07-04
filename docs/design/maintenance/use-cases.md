@@ -27,6 +27,8 @@ nop-job 定时任务 →
 
 **涉及机制**:equipment-integration.md §五、state-machine.md
 
+**定时作业接线**:UC-MAIN-01 的 nop-job 触发已接线（plan 2026-07-05-0306-1，SCHEDULED）：`ErpMntDueVisitJob` + `app-service.beans.xml` `<bean>` + `scheduler.yaml` 条目。cron 门控键 `erp-mnt.due-visit-cron`（默认空=跳过；非空时以 `LocalDate.now()` 为基准调 `IErpMntScheduleBiz.generateDueVisits()`）。登记于 `docs/architecture/job-scheduling.md` §3.13 `erp-mnt-due-visit-generation`。
+
 ---
 
 ## UC-MAIN-02 运行时长触发维护

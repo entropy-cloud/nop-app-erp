@@ -213,7 +213,7 @@
 | 期末自动触发 | 财务期末结账时 | 常规月度折旧 |
 | 定时任务触发 | 每月固定时间 | 自动执行，无需人工干预 |
 
-> **定时作业登记**：批量折旧登记于 `docs/architecture/job-scheduling.md` §3.2 `erp-ast-depreciation`（每月 1 日 02:00，`erp-ast.depreciation-cron` 默认 `0 0 2 1 * ?`，nop-batch candidate；入口 `ErpAstDepreciationScheduleBizModel.executeBatchDepreciation()`）。cron 接线归 follow-up。
+> **定时作业登记**：批量折旧登记于 `docs/architecture/job-scheduling.md` §3.2 `erp-ast-depreciation`（每月 1 日 02:00，`erp-ast.depreciation-cron` 默认 `0 0 2 1 * ?`，nop-batch candidate）。**SCHEDULED**（plan 2026-07-05-0306-1）：`ErpAstDepreciationJob` + `app-service.beans.xml` `<bean>` + `scheduler.yaml` 条目已完成三件套接线，cron 配置键默认空=跳过门控（运维启用配置键即按设计 cronExpr 自动执行）。
 
 ### 折旧调度规则
 

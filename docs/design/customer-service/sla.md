@@ -278,7 +278,8 @@ ErpHolidayCalendar（节假日日历）
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
 | `erp-cs.sla-enabled` | true | 是否启用 SLA 计时 |
-| `erp-cs.sla-scan-interval` | 1（分钟） | SLA 超时检测 Job 扫描间隔 |
+| `erp-cs.sla-scan-interval` | 1（分钟） | SLA 超时检测 Job 扫描间隔（语义键） |
+| `erp-cs.sla-scan-cron` | —（默认不执行，运维启用配置键生效） | SLA 超时扫描 cron 门控。**SCHEDULED**（plan 2026-07-05-0306-1）：`ErpCsSlaScanJob` + `scheduler.yaml` 已接线，空值=跳过门控；非空时调 `IErpCsTicketBiz.scanOverdueTickets()` |
 | `erp-cs.sla-warning-before` | 60（分钟） | 超时预警提前时间 |
 | `erp-cs.escalation-l1-to-l2-hours` | 2 | 一级→二级升级等待小时数 |
 | `erp-cs.sla-default-working-hours` | 09:00-18:00 | 默认工作时间段 |

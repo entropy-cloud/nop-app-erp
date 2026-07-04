@@ -154,7 +154,7 @@
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
 | `erp-crm.lead-scoring.auto-qualify` | true | 是否启用自动转商机（开关） |
-| `erp-crm.lead-scoring.schedule-cron` | 0 2 * * * | 定时批量评分 cron（每日凌晨 2 点） |
+| `erp-crm.lead-scoring.schedule-cron` | —（默认不执行，运维启用配置键生效） | 定时批量评分 cron 门控（设计 `0 2 * * *` 每日凌晨 2 点）。**SCHEDULED**（plan 2026-07-05-0306-1）：`ErpCrmLeadScoringRecalcJob` + `scheduler.yaml` 已接线，空值=跳过；非空时迭代 active 线索逐条 `IErpCrmLeadScoreBiz.recalculateScore()`（triggerEvent=SCHEDULED，单线索失败隔离） |
 | `erp-crm.lead-scoring.recalc-on-lead-update` | true | 线索字段变更是否触发自动重新评分 |
 
 ## 状态机关联

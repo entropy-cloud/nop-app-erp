@@ -81,9 +81,12 @@ nop-job-local（已接入 app-erp-all 框架，docs/logs/2026/06-23.md:14-17）
 
 > 状态（Status）取值：
 > - **REGISTERED** = 原文档登记的 5 个标准作业（已纳入本目录）
-> - **WIRED** = BizModel 入口方法已交付（可被 GraphQL/测试调用），cron 注册 deferred
+> - **SCHEDULED** = 已完成 nop-job 三件套接线（job bean + 域 `app-service.beans.xml` `<bean>` 注册 + `scheduler.yaml` 条目），cron 经域配置键门控（默认空=不自动执行，运维按部署启用配置键即生效）
+> - **WIRED** = BizModel 入口方法已交付（可被 GraphQL/测试调用），cron 注册 deferred（尚未在 `scheduler.yaml` 登记）
 > - **DEFERRED** = 在某计划 `Deferred But Adjudicated` 段，触发条件已记录
 > - **DESIGN** = 仅设计文档提及，无计划/实现
+>
+> **WIRED vs SCHEDULED 区分**（plan 2026-07-05-0306-1 §4 收口）：WIRED 仅表示 BizModel callable；SCHEDULED 表示已 scheduler 注册。`erp-fin-ar-ap-auto-recon` 是首个 SCHEDULED（plan 0115-1 落地），本目录其余作业接线前为 WIRED。
 >
 > 数据量级：**小**（< 1万 / 定点查询）/ **中**（数千~数万）/ **大**（全表扫描或 ≥ 数万）。
 > 执行模式：**job** = nop-job 直调 BizModel；**batch-candidate** = nop-job 触发 + nop-batch 分 chunk（见 §7 汇总）。
@@ -94,9 +97,9 @@ nop-job-local（已接入 app-erp-all 框架，docs/logs/2026/06-23.md:14-17）
 |----------|----------|----------|----------|------|----------|------|--------|------|
 | `erp-fin-posting-scan` | 扫描 `posted=false` 已审核单据触发过账（兜底） | 每分钟 | （无独立 BizModel 方法，由过账引擎 `post(PostingEvent)` 承载） | 大 | **batch-candidate** | REGISTERED | `erp-fin.posting-scan-cron`（`0 * * * * ?`） | `job-scheduling.md`(原):30`；`docs/design/finance/posting.md:297-298` |
 | `erp-fin-period-close` | 期末结账：AR→AP→INV→AST→GL 模块顺序 + 损益结转 + 试算快照 | 每月最后一天 22:00（次月 1 日） | `ErpFinAccountingPeriodBizModel.closePeriod()` | 大 | **batch-candidate** | REGISTERED（编排已实现） | `erp-fin.period-close-cron`（`0 0 22 L * ?`） | `docs/design/finance/period-close.md:19-21`；`module-finance/erp-fin-service/.../ErpFinAccountingPeriodBizModel.java:45` |
-| `erp-fin-cash-forecast-refresh` | 聚合未清 AR/AP + 票据到期 → 现金预测 | 未定（deferred） | `ErpFinCashForecastBizModel.refreshForecast()` | 中 | batch-candidate | DEFERRED | `erp-fin.cash-forecast-cron` | `docs/design/finance/treasury.md:181-182`；`plans/2026-07-02-1000-1:178-182` |
+| `erp-fin-cash-forecast-refresh` | 聚合未清 AR/AP + 票据到期 → 现金预测 | 每日凌晨 | `ErpFinCashForecastJob.execute()` → `IErpFinCashForecastBiz.refreshForecast()` | 中 | batch-candidate | SCHEDULED | `erp-fin.cash-forecast-cron` | `docs/design/finance/treasury.md:181-182`；`plans/2026-07-02-1000-1:178-182`；`plans/2026-07-05-0306-1` |
 | `erp-fin-credit-facility-interest` | 授信利息自动计提（CREDIT_FACILITY_INTEREST 过账类型） | 未定 | （仅手动触发） | 中 | job | DEFERRED | — | `plans/2026-07-02-1000-1:43` |
-| `erp-fin-ar-ap-auto-recon` | 定时自动核销（按比例/账龄/到期日） | 每日凌晨 | `ErpFinAutoReconJob.execute()` → `IErpFinReconciliationBiz.runAutoReconciliation()` | 大 | **batch-candidate** | WIRED | `erp-fin.ar-ap-auto-recon-cron` | `docs/design/finance/ar-ap-reconciliation.md:132`；`module-finance/erp-fin-service/.../job/ErpFinAutoReconJob.java`；`app-erp-all/src/main/resources/_vfs/nop/job/conf/scheduler.yaml` |
+| `erp-fin-ar-ap-auto-recon` | 定时自动核销（按比例/账龄/到期日） | 每日凌晨 | `ErpFinAutoReconJob.execute()` → `IErpFinReconciliationBiz.runAutoReconciliation()` | 大 | **batch-candidate** | SCHEDULED | `erp-fin.ar-ap-auto-recon-cron` | `docs/design/finance/ar-ap-reconciliation.md:132`；`module-finance/erp-fin-service/.../job/ErpFinAutoReconJob.java`；`app-erp-all/src/main/resources/_vfs/nop/job/conf/scheduler.yaml` |
 | `erp-fin-bank-recon` | 月末银行对账、自动匹配、暂记调整凭证 | 月末 | （待实现） | 中 | job | DESIGN | — | `docs/design/finance/bank-reconciliation.md:23,103,108` |
 | `erp-fin-bank-recon-adj-reverse` | 下月初自动红冲上月银行对账调整凭证 | 下月初 | （待实现） | 小 | job | DESIGN | — | `docs/design/finance/bank-reconciliation.md:108` |
 | `erp-fin-fund-account-recon` | 资金账户余额 = Σ 总账分录 定期核对 | 定期 | （待实现） | 中 | job | DESIGN | — | `docs/design/finance/bank-reconciliation.md:110` |
@@ -111,7 +114,7 @@ nop-job-local（已接入 app-erp-all 框架，docs/logs/2026/06-23.md:14-17）
 
 | 作业标识 | 业务功能 | 触发频率 | 调用入口 | 量级 | 执行模式 | 状态 | 配置键 | 证据 |
 |----------|----------|----------|----------|------|----------|------|--------|------|
-| `erp-ast-depreciation` | 批量折旧计提（直线/双倍余额/工作量，残值底线，红冲+重生幂等，单资产错误隔离） | 每月 1 日 02:00（也由结账 AST 步骤触发） | `ErpAstDepreciationScheduleBizModel.executeBatchDepreciation()` | 大 | **batch-candidate** | REGISTERED（BizModel live） | `erp-ast.depreciation-cron`（`0 0 2 1 * ?`） | `docs/design/assets/depreciation-and-posting.md:206-250`；`module-assets/.../ErpAstDepreciationScheduleBizModel.java:45` |
+| `erp-ast-depreciation` | 批量折旧计提（直线/双倍余额/工作量，残值底线，红冲+重生幂等，单资产错误隔离） | 每月 1 日 02:00（也由结账 AST 步骤触发） | `ErpAstDepreciationJob.execute()` → `IErpAstDepreciationScheduleBiz.executeBatchDepreciation()` | 大 | **batch-candidate** | SCHEDULED | `erp-ast.depreciation-cron`（`0 0 2 1 * ?`） | `docs/design/assets/depreciation-and-posting.md:206-250`；`module-assets/.../ErpAstDepreciationScheduleBizModel.java:45`；`plans/2026-07-05-0306-1` |
 | `erp-ast-impairment-test` | 定期减值测试（可收回金额 < NBV 则计提减值准备） | 每年末或减值指示触发 | （待实现） | 中 | job | DESIGN | — | `docs/design/assets/depreciation-and-posting.md:190-202` |
 
 ### 3.3 Inventory / DRP（库存 / 分销需求计划）
@@ -155,7 +158,7 @@ nop-job-local（已接入 app-erp-all 框架，docs/logs/2026/06-23.md:14-17）
 
 | 作业标识 | 业务功能 | 触发频率 | 调用入口 | 量级 | 执行模式 | 状态 | 配置键 | 证据 |
 |----------|----------|----------|----------|------|----------|------|--------|------|
-| `erp-mfg-crp-run` | CRP 产能负荷计算（工作中心×日聚合 + 超载告警） | 未定 | `ErpMfgCrpLoadBizModel.calculateLoad()` | 中 | job | DEFERRED | `erp-mfg.crp-run-schedule` | `docs/design/manufacturing/crp.md:82,113`；`plans/2026-07-03-1707-1:173` |
+| `erp-mfg-crp-run` | CRP 产能负荷计算（工作中心×日聚合 + 超载告警） | 每日凌晨（默认当月窗口） | `ErpMfgCrpRunJob.execute()` → `IErpMfgCrpBiz.calculateLoad()` | 中 | job | SCHEDULED | `erp-mfg.crp-run-cron` | `docs/design/manufacturing/crp.md:82,113`；`plans/2026-07-03-1707-1:173`；`plans/2026-07-05-0306-1` |
 | `erp-aps-auto-dispatch` | 自动派工：扫 PLANNED 工单到派工窗口，检料/人/工具可用性自动开工 | 每分钟 | （待实现） | 小-中 | job | DESIGN | `erp-aps.auto-reschedule-on-insert` 等 | `docs/design/aps/auto-dispatch.md:59,70`；`docs/design/aps/scheduling.md:479-480` |
 | `erp-aps-auto-reschedule` | 插单/周期自动重排 | 未定 | （待实现） | 中 | job | DEFERRED | — | `plans/2026-07-04-0831-1:42,204` |
 
@@ -164,8 +167,8 @@ nop-job-local（已接入 app-erp-all 框架，docs/logs/2026/06-23.md:14-17）
 | 作业标识 | 业务功能 | 触发频率 | 调用入口 | 量级 | 执行模式 | 状态 | 配置键 | 证据 |
 |----------|----------|----------|----------|------|----------|------|--------|------|
 | `erp-crm-event-reminder` | 扫描 PLANNED 活动按 `reminderMinutesBefore` 发提醒 | 默认每小时 | `ErpCrmEventBizModel.findDueReminders()` | 小 | job | WIRED | `erp-crm.event-reminder-cron` | `docs/design/crm/use-cases.md:168`；`plans/2026-07-04-0700-1:155-159` |
-| `erp-crm-lead-scoring-recalc` | 每日批量重算线索评分 | `0 2 * * *`（每日 02:00） | `ErpCrmLeadScoreBizModel.recalculateScore()` | 小-中 | job | WIRED | `erp-crm.lead-scoring.schedule-cron` | `docs/design/crm/lead-scoring.md:157` |
-| `erp-crm-forecast-recalc` | 每日重算销售预测 | `0 3 * * *`（每日 03:00） | `ErpCrmForecastBizModel.refreshForecast()` | 中 | job | WIRED | `erp-crm.forecast.recalc-cron` | `docs/design/crm/sales-forecast.md:165` |
+| `erp-crm-lead-scoring-recalc` | 每日批量重算线索评分 | `0 2 * * *`（每日 02:00） | `ErpCrmLeadScoringRecalcJob.execute()` → `IErpCrmLeadScoreBiz.recalculateScore()` | 小-中 | job | SCHEDULED | `erp-crm.lead-scoring.schedule-cron` | `docs/design/crm/lead-scoring.md:157`；`plans/2026-07-05-0306-1` |
+| `erp-crm-forecast-recalc` | 每日重算销售预测 | `0 3 * * *`（每日 03:00） | `ErpCrmForecastRecalcJob.execute()` → `IErpCrmForecastBiz.refreshForecast()` | 中 | job | SCHEDULED | `erp-crm.forecast.recalc-cron` | `docs/design/crm/sales-forecast.md:165`；`plans/2026-07-05-0306-1` |
 | `erp-crm-funnel-aggregation` | 漏斗阶段聚合 rollup | `0 0 3 * * ?`（每日 03:00） | （待实现） | 中 | batch-candidate | DESIGN | `erp-crm.funnel.aggregation-cron` | `docs/design/crm/lead-waterfall.md:191` |
 | `erp-crm-sequence-step-reminder` | 销售序列步骤到期提醒 + 逾期检查 | 未定 | （待实现） | 小 | job | DESIGN | — | `docs/design/crm/sales-sequence.md:205` |
 
@@ -173,7 +176,7 @@ nop-job-local（已接入 app-erp-all 框架，docs/logs/2026/06-23.md:14-17）
 
 | 作业标识 | 业务功能 | 触发频率 | 调用入口 | 量级 | 执行模式 | 状态 | 配置键 | 证据 |
 |----------|----------|----------|----------|------|----------|------|--------|------|
-| `erp-cs-sla-scan` | 扫描 `adjustedDeadline < now` 工单，建 ESCALATE 动作 + 通知升级人 | 每分钟 | `scanOverdueTickets()` | 小 | job | WIRED | `erp-cs.sla-scan-interval` | `docs/design/customer-service/sla.md:281`；`plans/2026-07-04-0700-2:172-176` |
+| `erp-cs-sla-scan` | 扫描 `adjustedDeadline < now` 工单，建 ESCALATE 动作 + 通知升级人 | 每分钟 | `ErpCsSlaScanJob.execute()` → `IErpCsTicketBiz.scanOverdueTickets()` | 小 | job | SCHEDULED | `erp-cs.sla-scan-cron` | `docs/design/customer-service/sla.md:281`；`plans/2026-07-04-0700-2:172-176`；`plans/2026-07-05-0306-1` |
 | `erp-cs-sla-warning` | 截止前 1h/30min 向经办人发预警 | 随扫描 | `findSlaWarnings()` | 小 | job | WIRED | `erp-cs.sla-warning-before` | `docs/design/customer-service/sla.md:282` |
 | `erp-cs-csat-reminder` | CSAT 调查提醒 + 过期标记 | 定期 | `findSurveyReminders()`/`findExpiredSurveys()` | 小 | job | WIRED | `erp-cs.survey-reminder-hours` 等 | `docs/design/customer-service/csat.md:188,225` |
 | `erp-cs-csat-delayed-send` | `survey-send-delay>0` 时延迟发送调查 | 按延迟 | （待实现） | 小 | job | DESIGN | `erp-cs.survey-send-delay` | `docs/design/customer-service/csat.md:220` |
@@ -200,7 +203,7 @@ nop-job-local（已接入 app-erp-all 框架，docs/logs/2026/06-23.md:14-17）
 
 | 作业标识 | 业务功能 | 触发频率 | 调用入口 | 量级 | 执行模式 | 状态 | 配置键 | 证据 |
 |----------|----------|----------|----------|------|----------|------|--------|------|
-| `erp-mnt-due-visit-generation` | 扫描 `nextDueDate ≤ asOfDate` 维护计划生成 DRAFT 访问 + 推进 `nextDueDate` | 定期 | `IErpMntScheduleBiz.generateDueVisits()` | 小-中 | job | WIRED | `erp-mnt.auto-generate-due-visits` | `docs/design/maintenance/use-cases.md:16-23`；`plans/2026-07-03-1018-3:30` |
+| `erp-mnt-due-visit-generation` | 扫描 `nextDueDate ≤ asOfDate` 维护计划生成 DRAFT 访问 + 推进 `nextDueDate` | 每日凌晨 | `ErpMntDueVisitJob.execute()` → `IErpMntScheduleBiz.generateDueVisits()` | 小-中 | job | SCHEDULED | `erp-mnt.due-visit-cron` | `docs/design/maintenance/use-cases.md:16-23`；`plans/2026-07-03-1018-3:30`；`plans/2026-07-05-0306-1` |
 | `erp-mnt-usage-based-trigger` | 基于累计运行时长/产量的维护触发 | 按累计 | （待实现） | 中 | job | DESIGN | — | `docs/design/maintenance/equipment-integration.md:196-215` |
 
 ### 3.14 Projects（项目）
@@ -274,9 +277,11 @@ erp-fin-period-close（单个作业）
 |--------|--------|----|----|
 | `erp-fin.posting-scan-cron` | `0 * * * * ?`（每分钟） | finance | 本目录 §3.1（标准作业 cron 键，回流 `docs/design/finance/posting.md`） |
 | `erp-fin.period-close-cron` | `0 0 22 L * ?`（每月最后一天 22:00） | finance | 本目录 §3.1；`docs/design/finance/period-close.md` 配置项表 |
-| `erp-fin.cash-forecast-cron` | —（deferred） | finance | 本目录 §3.1；`docs/design/finance/treasury.md` 配置点表 |
-| `erp-fin.ar-ap-auto-recon-cron` | —（deferred） | finance | 本目录 §3.1；`docs/design/finance/ar-ap-reconciliation.md` 配置项表 |
-| `erp-ast.depreciation-cron` | `0 0 2 1 * ?`（每月 1 日 02:00） | assets | 本目录 §3.2；`docs/design/assets/depreciation-and-posting.md` §五 |
+| `erp-fin.cash-forecast-cron` | —（默认不执行，运维启用配置键生效） | finance | 本目录 §3.1；`docs/design/finance/treasury.md` 配置点表；SCHEDULED（plan 2026-07-05-0306-1） |
+| `erp-fin.cash-forecast-window-days` | 30 | finance | `ErpFinConstants.CONFIG_CASH_FORECAST_WINDOW_DAYS`；plan 2026-07-05-0306-1 |
+| `erp-fin.ar-ap-auto-recon-cron` | —（默认不执行，运维启用配置键生效） | finance | 本目录 §3.1；`docs/design/finance/ar-ap-reconciliation.md` 配置项表；SCHEDULED（plan 2026-07-05-0115-1） |
+| `erp-ast.depreciation-cron` | `0 0 2 1 * ?`（每月 1 日 02:00） | assets | 本目录 §3.2；`docs/design/assets/depreciation-and-posting.md` §五；SCHEDULED（plan 2026-07-05-0306-1） |
+| `erp-mnt.due-visit-cron` | —（默认不执行，运维启用配置键生效） | maintenance | 本目录 §3.13；SCHEDULED（plan 2026-07-05-0306-1） |
 | `erp-inv.stock-check-cron` | `0 0 3 * * ?`（每日 03:00） | inventory | 本目录 §3.3；`docs/design/inventory/README.md` 定时作业 |
 | `erp-md.data-sync-cron` | `0 0 * * * ?`（每小时） | master-data | 本目录 §3.4；`docs/design/master-data/README.md` 定时作业 |
 | `erp-log.tracking-poll-cron` | `0 0 */4 * * ?` | logistics | `docs/design/logistics/carrier-integration.md:357,458`；Java `ErpLogConfigs.java:15`（**已统一**，原计划侧 `tracking-polling-cron` 拼写已修正） |
@@ -288,14 +293,17 @@ erp-fin-period-close（单个作业）
 | `erp-log.webhook-signature-required` | true | logistics | `plans/2026-07-04-1115-3:57`；`ErpLogConfigs.java:19` |
 | `erp-sal.quotation-expiry-check-cron` | `0 0 2 * * *` | sales | `docs/design/sales/quotation.md:61` |
 | `erp-pur.scorecard-evaluation-cron` | — | purchase | `docs/design/purchase/supplier-evaluation.md:120` |
-| `erp-mfg.crp-run-schedule` | — | manufacturing | `docs/design/manufacturing/crp.md:82,113` |
+| `erp-mfg.crp-run-schedule` | — | manufacturing | `docs/design/manufacturing/crp.md:82,113`（**已由 `erp-mfg.crp-run-cron` 接线取代**，见下） |
+| `erp-mfg.crp-run-cron` | —（默认不执行，运维启用配置键生效） | manufacturing | 本目录 §3.8；`ErpMfgConstants.CONFIG_CRP_RUN_CRON`；SCHEDULED（plan 2026-07-05-0306-1） |
+| `erp-mfg.crp-run-default-window-months` | 0（当月） | manufacturing | `ErpMfgConstants.CONFIG_CRP_RUN_DEFAULT_WINDOW_MONTHS`；plan 2026-07-05-0306-1 Decision |
 | `erp-inv.drp-run-schedule` | — | drp | `docs/design/drp/README.md:99` |
 | `erp-inv.drp-ss-schedule-cron` | — | drp | `docs/design/drp/safety-stock-optimization.md:200` |
 | `erp-crm.event-reminder-cron` | —（默认每小时） | crm | `docs/design/crm/use-cases.md:168`；`docs/design/crm/README.md:253` |
 | `erp-crm.lead-scoring.schedule-cron` | `0 2 * * *` | crm | `docs/design/crm/lead-scoring.md:157` |
 | `erp-crm.forecast.recalc-cron` | `0 3 * * *` | crm | `docs/design/crm/sales-forecast.md:165` |
 | `erp-crm.funnel.aggregation-cron` | `0 0 3 * * ?` | crm | `docs/design/crm/lead-waterfall.md:191` |
-| `erp-cs.sla-scan-interval` | 1（分钟） | cs | `docs/design/customer-service/sla.md:281` |
+| `erp-cs.sla-scan-interval` | 1（分钟） | cs | `docs/design/customer-service/sla.md:281`（SLA 扫描频率语义键） |
+| `erp-cs.sla-scan-cron` | —（默认不执行，运维启用配置键生效） | cs | 本目录 §3.10；`ErpCsConstants.CONFIG_SLA_SCAN_CRON`；SCHEDULED（plan 2026-07-05-0306-1，cron 门控实际执行） |
 | `erp-cs.survey-reminder-hours` | 48 | cs | `docs/design/customer-service/csat.md:225` |
 | `erp-b2b.async-send-cron` | — | b2b | `docs/architecture/b2b-integration.md:226` |
 | `erp-ct.signature-status-polling-cron` | `0 0 */2 * * ?` | contract | `plans/2026-07-04-2200-2:51` |
@@ -332,7 +340,7 @@ erp-fin-period-close（单个作业）
 
 ## 8. 实施状态与接线 follow-up
 
-**当前（bootstrap）**：`nop-job-local` 框架已接入，**零作业注册**。各域 BizModel 入口已交付（§3"调用入口"列），cron 实际注册归各域 follow-up。
+**当前（bootstrap）**：`nop-job-local` 框架已接入，**8 个作业已完成三件套接线**（job bean + 域 `app-service.beans.xml` `<bean>` 注册 + `scheduler.yaml` 条目，见 `app-erp-all/src/main/resources/_vfs/nop/job/conf/scheduler.yaml`）：`erp-fin-ar-ap-auto-recon`（plan 0115-1）、`erp-ast-depreciation`/`erp-mnt-due-visit-generation`/`erp-cs-sla-scan`/`erp-fin-cash-forecast-refresh`/`erp-mfg-crp-run`/`erp-crm-forecast-recalc`/`erp-crm-lead-scoring-recalc`（plan 0306-1）。所有接线作业 cron 配置键默认空字符串=不自动执行（"已注册可发现、默认不执行、运维按部署启用"双层门控，见 §3 SCHEDULED 定义）。其余各域 BizModel 入口已交付（§3"调用入口"列），cron 实际注册归各域 follow-up。
 
 **Deferred 接线汇总（约 20 个计划 Deferred 段，对应 §3 的 DEFERRED 状态作业）**：
 
