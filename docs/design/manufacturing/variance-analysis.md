@@ -78,6 +78,8 @@
 
 ## 使用流程
 
+> **当前实现范围（plan 2026-07-05-0427-2）**：仅 PPV（采购价差）在采购入库 DONE 时由 inventory 域 `InvPostingDispatcher.dispatchPurchasePriceVariance` 捕获并过账（`PURCHASE_PRICE_VARIANCE` 业务类型）。以下「工单完工→差异计算→差异入账」流程为后继触发面（`ErpMfgCostVariance` 模型尚未落地）。
+
 1. **工单完工** → 过账后触发差异计算
 2. **差异计算** → 聚合实际成本与标准成本逐项对比
 3. **差异入账** → 差异金额转入差异科目（财务域）
