@@ -26,6 +26,11 @@ public interface ErpHrErrors {
     String ARG_PATTERN_ID = "patternId";
     String ARG_SWAP_REQUEST_ID = "swapRequestId";
     String ARG_LEAVE_REQUEST_ID = "leaveRequestId";
+    String ARG_SIMULATION_ID = "simulationId";
+    String ARG_SALARY_ITEM_CODE = "salaryItemCode";
+    String ARG_SOURCE_PERIOD = "sourcePeriod";
+    String ARG_TARGET_PERIOD = "targetPeriod";
+    String ARG_REVIEWER_ID = "reviewerId";
 
     // --- 薪酬核算：配置缺失 ---
     ErrorCode ERR_SOCIAL_INSURANCE_BASE_NOT_FOUND = ErrorCode.define(
@@ -106,4 +111,26 @@ public interface ErpHrErrors {
             "erp.err.hr.leave-request-not-found",
             "休假申请 {leaveRequestId} 不存在",
             ARG_LEAVE_REQUEST_ID);
+
+    // --- 薪酬模拟（payroll-simulation.md §1.2/§4.2） ---
+    ErrorCode ERR_HR_SIMULATION_ILLEGAL_TRANSITION = ErrorCode.define(
+            "erp.err.hr.simulation.illegal-status-transition",
+            "薪酬模拟 {simulationId} 当前状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_SIMULATION_ID, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+    ErrorCode ERR_HR_SIMULATION_NO_ADJUSTMENT = ErrorCode.define(
+            "erp.err.hr.simulation.no-adjustment",
+            "薪酬模拟 {simulationId} 未记录任何调整项，禁止提交审核",
+            ARG_SIMULATION_ID);
+    ErrorCode ERR_HR_SIMULATION_TARGET_PERIOD_CONFLICT = ErrorCode.define(
+            "erp.err.hr.simulation.target-period-conflict",
+            "目标期间 {targetPeriod} 已存在 PAID 正式薪酬，禁止转正式（先作废冲突薪酬）",
+            ARG_TARGET_PERIOD);
+    ErrorCode ERR_HR_SIMULATION_EMPLOYEE_DUPLICATE = ErrorCode.define(
+            "erp.err.hr.simulation.employee-duplicate",
+            "员工 {employeeId} 在目标期间 {targetPeriod} 已存在正式薪酬，禁止重复转正式",
+            ARG_EMPLOYEE_ID, ARG_TARGET_PERIOD);
+    ErrorCode ERR_HR_SIMULATION_SOURCE_NOT_FOUND = ErrorCode.define(
+            "erp.err.hr.simulation.source-not-found",
+            "源期间 {sourcePeriod} 未找到任何正式薪酬记录，无法创建模拟",
+            ARG_SOURCE_PERIOD);
 }

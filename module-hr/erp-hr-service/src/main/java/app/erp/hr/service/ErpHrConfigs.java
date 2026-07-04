@@ -20,6 +20,14 @@ public interface ErpHrConfigs {
     int DEFAULT_SHIFT_GRACE_EARLY_LEAVE_MINUTES = 15;
     /** 默认允许跨天班次。 */
     boolean DEFAULT_SHIFT_CROSS_DAY_ENABLED = true;
+    /** 模拟实发变化告警阈值（默认 ±20%）。 */
+    BigDecimal DEFAULT_SIM_NET_PAY_CHANGE_THRESHOLD = new BigDecimal("0.2");
+    /** 模拟总额偏差告警阈值（默认 ±10%）。 */
+    BigDecimal DEFAULT_SIM_TOTAL_CHANGE_THRESHOLD = new BigDecimal("0.1");
+    /** 模拟个税跳档告警默认启用。 */
+    boolean DEFAULT_SIM_TAX_BRACKET_JUMP_ALERT = true;
+    /** 模拟自动转正式默认关闭（手动触发）。 */
+    boolean DEFAULT_SIM_AUTO_CONVERT_ENABLED = false;
 
     static String defaultSocialInsuranceBaseCity() {
         String city = io.nop.api.core.config.AppConfig.var(
@@ -73,5 +81,29 @@ public interface ErpHrConfigs {
         Boolean v = io.nop.api.core.config.AppConfig.var(
                 ErpHrConstants.CONFIG_SHIFT_CROSS_DAY_ENABLED, DEFAULT_SHIFT_CROSS_DAY_ENABLED);
         return v == null ? DEFAULT_SHIFT_CROSS_DAY_ENABLED : v;
+    }
+
+    static BigDecimal simulationNetPayChangeThreshold() {
+        BigDecimal v = io.nop.api.core.config.AppConfig.var(
+                ErpHrConstants.CONFIG_SIM_NET_PAY_CHANGE_THRESHOLD, DEFAULT_SIM_NET_PAY_CHANGE_THRESHOLD);
+        return v == null ? DEFAULT_SIM_NET_PAY_CHANGE_THRESHOLD : v;
+    }
+
+    static BigDecimal simulationTotalChangeThreshold() {
+        BigDecimal v = io.nop.api.core.config.AppConfig.var(
+                ErpHrConstants.CONFIG_SIM_TOTAL_CHANGE_THRESHOLD, DEFAULT_SIM_TOTAL_CHANGE_THRESHOLD);
+        return v == null ? DEFAULT_SIM_TOTAL_CHANGE_THRESHOLD : v;
+    }
+
+    static boolean simulationTaxBracketJumpAlert() {
+        Boolean v = io.nop.api.core.config.AppConfig.var(
+                ErpHrConstants.CONFIG_SIM_TAX_BRACKET_JUMP_ALERT, DEFAULT_SIM_TAX_BRACKET_JUMP_ALERT);
+        return v == null ? DEFAULT_SIM_TAX_BRACKET_JUMP_ALERT : v;
+    }
+
+    static boolean simulationAutoConvertEnabled() {
+        Boolean v = io.nop.api.core.config.AppConfig.var(
+                ErpHrConstants.CONFIG_SIM_AUTO_CONVERT_ENABLED, DEFAULT_SIM_AUTO_CONVERT_ENABLED);
+        return v == null ? DEFAULT_SIM_AUTO_CONVERT_ENABLED : v;
     }
 }

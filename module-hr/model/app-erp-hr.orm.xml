@@ -152,6 +152,12 @@
             <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label='Rejected'/>
             <option code="CONVERTED" label="已转正式" value="CONVERTED" i18n-en:label='Converted'/>
         </dict>
+        <dict label="调整原因" name="erp-hr/adjustment-reason" valueType="string" i18n-en:label='Adjustment Reason'>
+            <option code="SALARY_CHANGE" label="调薪" value="SALARY_CHANGE" i18n-en:label='Salary Change'/>
+            <option code="ALLOWANCE_CHANGE" label="津贴调整" value="ALLOWANCE_CHANGE" i18n-en:label='Allowance Change'/>
+            <option code="BONUS_CHANGE" label="绩效变更" value="BONUS_CHANGE" i18n-en:label='Bonus Change'/>
+            <option code="MANUAL_ENTRY" label="手工录入" value="MANUAL_ENTRY" i18n-en:label='Manual Entry'/>
+        </dict>
         <dict label="班次类型" name="erp-hr/shift-type" valueType="string" i18n-en:label='Shift Type'>
             <option code="FIXED" label="固定班" value="FIXED" i18n-en:label='Fixed'/>
             <option code="ROTATING" label="倒班" value="ROTATING" i18n-en:label='Rotating'/>
@@ -647,7 +653,35 @@
             </relations>
         </entity>
 
-        <!-- 薪酬项目定义 -->
+        <!-- 薪酬模拟调整项（payroll-simulation.md §2.2） -->
+        <entity className="app.erp.hr.dao.entity.ErpHrSalarySimulationItemAdjustment"
+                displayName="薪酬模拟调整项" ext:icon="edit-3" i18n-en:displayName="Salary Simulation Item Adjustment" name="app.erp.hr.dao.entity.ErpHrSalarySimulationItemAdjustment"
+                tableName="erp_hr_salary_simulation_item_adj" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="simulationId" displayName="模拟" stdSqlType="BIGINT" mandatory="true" code="SIMULATION_ID" propId="2" stdDataType="long" i18n-en:displayName='Simulation' />
+                <column name="employeeId" displayName="员工" stdSqlType="BIGINT" mandatory="true" code="EMPLOYEE_ID" propId="3" stdDataType="long" i18n-en:displayName='Employee' />
+                <column name="salaryItemCode" displayName="薪酬项目编码" stdSqlType="VARCHAR" precision="50" mandatory="true" code="SALARY_ITEM_CODE" propId="4" stdDataType="string" i18n-en:displayName='Salary Item Code' />
+                <column name="originalAmount" displayName="源值" domain="amount" mandatory="true" code="ORIGINAL_AMOUNT" propId="5" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Original Amount' />
+                <column name="adjustedAmount" displayName="调整后值" domain="amount" mandatory="true" code="ADJUSTED_AMOUNT" propId="6" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Adjusted Amount' />
+                <column name="adjustmentReason" displayName="调整原因" ext:dict="erp-hr/adjustment-reason" code="ADJUSTMENT_REASON" propId="7" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Adjustment Reason' />
+                <column name="adjustedBy" displayName="调整人" stdSqlType="VARCHAR" precision="50" code="ADJUSTED_BY" propId="8" stdDataType="string" i18n-en:displayName='Adjusted By' />
+                <column name="adjustedAt" displayName="调整时间" stdSqlType="DATETIME" code="ADJUSTED_AT" propId="9" stdDataType="datetime" i18n-en:displayName='Adjusted At' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="10" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="12" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="13" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="14" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="15" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="16" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-one name="simulation" refEntityName="app.erp.hr.dao.entity.ErpHrSalarySimulation" tagSet="pub" i18n-en:displayName='Simulation'><join><on leftProp="simulationId" rightProp="id"/></join></to-one>
+                <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub" i18n-en:displayName='Employee'><join><on leftProp="employeeId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+            </relations>
+        </entity>
         <entity className="app.erp.hr.dao.entity.ErpHrSalaryItem"
                 displayName="薪酬项目" ext:icon="list" i18n-en:displayName="Salary Item" name="app.erp.hr.dao.entity.ErpHrSalaryItem"
                 tableName="erp_hr_salary_item" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">

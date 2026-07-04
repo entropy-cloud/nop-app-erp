@@ -509,6 +509,26 @@ public interface _ErpHrDaoConstants {
     String SIMULATION_STATUS_CONVERTED = "CONVERTED";
                     
     /**
+     * 调整原因: 调薪 
+     */
+    String ADJUSTMENT_REASON_SALARY_CHANGE = "SALARY_CHANGE";
+                    
+    /**
+     * 调整原因: 津贴调整 
+     */
+    String ADJUSTMENT_REASON_ALLOWANCE_CHANGE = "ALLOWANCE_CHANGE";
+                    
+    /**
+     * 调整原因: 绩效变更 
+     */
+    String ADJUSTMENT_REASON_BONUS_CHANGE = "BONUS_CHANGE";
+                    
+    /**
+     * 调整原因: 手工录入 
+     */
+    String ADJUSTMENT_REASON_MANUAL_ENTRY = "MANUAL_ENTRY";
+                    
+    /**
      * 班次类型: 固定班 
      */
     String SHIFT_TYPE_FIXED = "FIXED";

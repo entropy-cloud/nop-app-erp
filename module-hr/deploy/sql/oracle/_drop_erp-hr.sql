@@ -39,4 +39,5 @@ drop table erp_hr_survey_answer;
 drop table erp_hr_assessment_detail;
 drop table erp_hr_development_plan_item;
 drop table erp_hr_shift_swap_request;
+drop table erp_hr_salary_simulation_item_adj;
 

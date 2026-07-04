@@ -166,6 +166,12 @@
             <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label="Rejected"/>
             <option code="CONVERTED" label="已转正式" value="CONVERTED" i18n-en:label="Converted"/>
         </dict>
+        <dict label="调整原因" name="erp-hr/adjustment-reason" valueType="string" i18n-en:label="Adjustment Reason">
+            <option code="SALARY_CHANGE" label="调薪" value="SALARY_CHANGE" i18n-en:label="Salary Change"/>
+            <option code="ALLOWANCE_CHANGE" label="津贴调整" value="ALLOWANCE_CHANGE" i18n-en:label="Allowance Change"/>
+            <option code="BONUS_CHANGE" label="绩效变更" value="BONUS_CHANGE" i18n-en:label="Bonus Change"/>
+            <option code="MANUAL_ENTRY" label="手工录入" value="MANUAL_ENTRY" i18n-en:label="Manual Entry"/>
+        </dict>
         <dict label="班次类型" name="erp-hr/shift-type" valueType="string" i18n-en:label="Shift Type">
             <option code="FIXED" label="固定班" value="FIXED" i18n-en:label="Fixed"/>
             <option code="ROTATING" label="倒班" value="ROTATING" i18n-en:label="Rotating"/>
@@ -1158,6 +1164,76 @@
                         i18n-en:displayName="Converted Salary">
                     <join>
                         <on leftProp="convertedSalaryId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.hr.dao.entity.ErpHrSalarySimulationItemAdjustment" createTimeProp="createTime"
+                createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="薪酬模拟调整项"
+                name="app.erp.hr.dao.entity.ErpHrSalarySimulationItemAdjustment" registerShortName="true"
+                tableName="erp_hr_salary_simulation_item_adj" tagSet="gid,erp.hr" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="edit-3"
+                i18n-en:displayName="Salary Simulation Item Adjustment">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="SIMULATION_ID" displayName="模拟" mandatory="true" name="simulationId" propId="2"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Simulation"/>
+                <column code="EMPLOYEE_ID" displayName="员工" mandatory="true" name="employeeId" propId="3"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Employee"/>
+                <column code="SALARY_ITEM_CODE" displayName="薪酬项目编码" mandatory="true" name="salaryItemCode"
+                        precision="50" propId="4" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Salary Item Code"/>
+                <column code="ORIGINAL_AMOUNT" displayName="源值" domain="amount" mandatory="true" name="originalAmount"
+                        precision="18" propId="5" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Original Amount"/>
+                <column code="ADJUSTED_AMOUNT" displayName="调整后值" domain="amount" mandatory="true" name="adjustedAmount"
+                        precision="18" propId="6" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Adjusted Amount"/>
+                <column code="ADJUSTMENT_REASON" displayName="调整原因" name="adjustmentReason" precision="20" propId="7"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/adjustment-reason"
+                        i18n-en:displayName="Adjustment Reason"/>
+                <column code="ADJUSTED_BY" displayName="调整人" name="adjustedBy" precision="50" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Adjusted By"/>
+                <column code="ADJUSTED_AT" displayName="调整时间" name="adjustedAt" propId="9" stdDataType="datetime"
+                        stdSqlType="DATETIME" i18n-en:displayName="Adjusted At"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="10" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="11"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="12" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="13" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="14" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="16" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="simulation" refEntityName="app.erp.hr.dao.entity.ErpHrSalarySimulation" tagSet="pub"
+                        i18n-en:displayName="Simulation">
+                    <join>
+                        <on leftProp="simulationId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub"
+                        i18n-en:displayName="Employee">
+                    <join>
+                        <on leftProp="employeeId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"

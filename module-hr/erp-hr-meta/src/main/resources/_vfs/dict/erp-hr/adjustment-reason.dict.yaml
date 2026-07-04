@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 调整原因
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 调薪
+    value: SALARY_CHANGE
+    description: 
+  
+  - label: 津贴调整
+    value: ALLOWANCE_CHANGE
+    description: 
+  
+  - label: 绩效变更
+    value: BONUS_CHANGE
+    description: 
+  
+  - label: 手工录入
+    value: MANUAL_ENTRY
+    description: 
+  

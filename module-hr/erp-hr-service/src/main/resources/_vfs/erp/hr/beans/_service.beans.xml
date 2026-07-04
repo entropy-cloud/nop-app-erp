@@ -260,4 +260,13 @@
           primary="true">
         <property name="bizObjName" value="ErpHrShiftSwapRequest"/>
     </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrSalarySimulationItemAdjustmentBizModel" ioc:type="@bean:id"
+          ioc:default="true"/>
+
+    <bean id="biz_ErpHrSalarySimulationItemAdjustment" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrSalarySimulationItemAdjustmentBiz" ioc:force-lazy-property="true"
+          lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpHrSalarySimulationItemAdjustment"/>
+    </bean>
 </beans>

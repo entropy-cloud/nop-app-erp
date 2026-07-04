@@ -145,6 +145,118 @@ public class PayrollCalculator {
         return salary;
     }
 
+    /**
+     * 以覆盖输入重算模拟薪酬（payroll-simulation.md §2.2/§三 即时应变）。
+     *
+     * <p>Explore 结论：{@link SocialInsuranceCalculator} 仅接受 employeeId 内部读 master（员工社保基数），
+     * 不接受入参覆盖；{@link IncomeTaxCalculator} 接受 gross/specialDeduction 入参。故采用 Decision 降级方案——
+     * 克隆源 ErpHrSalary 为 base，按 overrides 覆盖薪酬项目字段，重算 gross/tax/net。
+     * 社保/公积金沿用源期间值（master 驱动，非月工资派生；社保基数钳制已在源期间核算时由
+     * {@link SocialInsuranceCalculator#clamp} 应用）。0831-2 计算规则零修改。
+     *
+     * <p>overrides 的 key 为 ErpHrSalary 薪酬项目字段名（basicSalary/positionAllowance/performanceBonus/
+     * overtimePay/mealAllowance/transportAllowance/otherAllowance/otherDeductions）。返回内存 ErpHrSalary，
+     * 不持久化——由 BizModel 层决定是否落库。
+     *
+     * @param base           源期间 ErpHrSalary 快照（不为 null）
+     * @param overrides      覆盖项（key=字段名，value=调整后值）；null 或空表示无调整，仅基于 base 重算
+     * @param targetYear     模拟目标期间年（个税累计预扣窗口对齐模拟期；与 base.year/Month 可能不同）
+     * @param targetMonth    模拟目标期间月
+     * @return 模拟 ErpHrSalary（employee/year/month=模拟期，金额经覆盖重算）
+     */
+    public ErpHrSalary recalculateWithOverrides(ErpHrSalary base,
+                                                java.util.Map<String, BigDecimal> overrides,
+                                                int targetYear, int targetMonth) {
+        if (base == null) {
+            throw new NopException(ErpHrErrors.ERR_HR_SIMULATION_SOURCE_NOT_FOUND);
+        }
+        int scale = ErpHrConfigs.salaryRoundingScale();
+
+        ErpHrSalary sim = base.cloneInstance();
+        // 切到模拟期间——个税累计预扣窗口按模拟期查询历史
+        sim.setYear(targetYear);
+        sim.setMonth(targetMonth);
+        // 清除主键——内存对象不持久化，避免误用为已存实体
+        sim.orm_propValue(1, null);
+
+        if (overrides != null) {
+            for (java.util.Map.Entry<String, BigDecimal> e : overrides.entrySet()) {
+                applyOverride(sim, e.getKey(), e.getValue());
+            }
+        }
+        recalculateDerived(sim, scale);
+        return sim;
+    }
+
+    void applyOverride(ErpHrSalary sim, String fieldName, BigDecimal value) {
+        if (fieldName == null) {
+            return;
+        }
+        BigDecimal v = value != null ? value : BigDecimal.ZERO;
+        switch (fieldName) {
+            case "basicSalary":
+                sim.setBasicSalary(v);
+                break;
+            case "positionAllowance":
+                sim.setPositionAllowance(v);
+                break;
+            case "performanceBonus":
+                sim.setPerformanceBonus(v);
+                break;
+            case "overtimePay":
+                sim.setOvertimePay(v);
+                break;
+            case "mealAllowance":
+                sim.setMealAllowance(v);
+                break;
+            case "transportAllowance":
+                sim.setTransportAllowance(v);
+                break;
+            case "otherAllowance":
+                sim.setOtherAllowance(v);
+                break;
+            case "otherDeductions":
+                sim.setOtherDeductions(v);
+                break;
+            default:
+                // 未知字段忽略——未来扩展点
+                break;
+        }
+    }
+
+    /**
+     * 据薪酬项目字段重算派生字段（gross/tax/net）。社保/公积金沿用 sim 当前值（master 驱动）。
+     */
+    void recalculateDerived(ErpHrSalary sim, int scale) {
+        BigDecimal grossSalary = nz(sim.getBasicSalary())
+                .add(nz(sim.getPositionAllowance()))
+                .add(nz(sim.getPerformanceBonus()))
+                .add(nz(sim.getOvertimePay()))
+                .add(nz(sim.getMealAllowance()))
+                .add(nz(sim.getTransportAllowance()))
+                .add(nz(sim.getOtherAllowance()))
+                .setScale(scale, RoundingMode.HALF_UP);
+        sim.setGrossSalary(grossSalary);
+
+        BigDecimal socialInsuranceEE = nz(sim.getSocialInsurance()).setScale(scale, RoundingMode.HALF_UP);
+        BigDecimal housingFundEE = nz(sim.getHousingFund()).setScale(scale, RoundingMode.HALF_UP);
+        BigDecimal specialDeduction = socialInsuranceEE.add(housingFundEE);
+
+        Long employeeId = sim.getEmployeeId();
+        int year = sim.getYear() != null ? sim.getYear() : 0;
+        int month = sim.getMonth() != null ? sim.getMonth() : 0;
+        Object[] taxResult = incomeTaxCalculator.calculate(employeeId, year, month, grossSalary, specialDeduction);
+        BigDecimal taxAmount = (BigDecimal) taxResult[0];
+        String cumulativeData = (String) taxResult[1];
+        sim.setTaxAmount(taxAmount);
+        sim.setCumulativeData(cumulativeData);
+
+        BigDecimal netSalary = grossSalary.subtract(socialInsuranceEE).subtract(housingFundEE)
+                .subtract(taxAmount).subtract(nz(sim.getOtherDeductions()))
+                .setScale(scale, RoundingMode.HALF_UP);
+        sim.setNetSalary(netSalary);
+    }
+
     ErpHrEmploymentContract findActiveContract(Long employeeId) {
         IEntityDao<ErpHrEmploymentContract> dao = daoProvider.daoFor(ErpHrEmploymentContract.class);
         QueryBean q = new QueryBean();

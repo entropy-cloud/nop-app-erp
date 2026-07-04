@@ -39,4 +39,5 @@ drop table  if exists  erp_hr_survey_answer;
 drop table  if exists  erp_hr_assessment_detail;
 drop table  if exists  erp_hr_development_plan_item;
 drop table  if exists  erp_hr_shift_swap_request;
+drop table  if exists  erp_hr_salary_simulation_item_adj;
 

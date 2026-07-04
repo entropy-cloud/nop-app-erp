@@ -783,6 +783,27 @@ CREATE TABLE erp_hr_shift_swap_request(
   constraint PK_erp_hr_shift_swap_request primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_hr_salary_simulation_item_adj(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  SIMULATION_ID BIGINT NOT NULL    COMMENT '模拟',
+  EMPLOYEE_ID BIGINT NOT NULL    COMMENT '员工',
+  SALARY_ITEM_CODE VARCHAR(50) NOT NULL    COMMENT '薪酬项目编码',
+  ORIGINAL_AMOUNT DECIMAL(18,2) NOT NULL    COMMENT '源值',
+  ADJUSTED_AMOUNT DECIMAL(18,2) NOT NULL    COMMENT '调整后值',
+  ADJUSTMENT_REASON VARCHAR(20) NULL    COMMENT '调整原因',
+  ADJUSTED_BY VARCHAR(50) NULL    COMMENT '调整人',
+  ADJUSTED_AT DATETIME NULL    COMMENT '调整时间',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_hr_salary_simulation_item_adj primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 
    ALTER TABLE erp_md_cost_center COMMENT '成本中心';
                 
@@ -863,4 +884,6 @@ CREATE TABLE erp_hr_shift_swap_request(
    ALTER TABLE erp_hr_development_plan_item COMMENT '发展计划项';
                 
    ALTER TABLE erp_hr_shift_swap_request COMMENT '排班调换申请';
+                
+   ALTER TABLE erp_hr_salary_simulation_item_adj COMMENT '薪酬模拟调整项';
                 

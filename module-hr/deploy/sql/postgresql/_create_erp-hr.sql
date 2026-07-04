@@ -783,6 +783,27 @@ CREATE TABLE erp_hr_shift_swap_request(
   constraint PK_erp_hr_shift_swap_request primary key (id)
 );
 
+CREATE TABLE erp_hr_salary_simulation_item_adj(
+  id INT8 NOT NULL ,
+  simulation_id INT8 NOT NULL ,
+  employee_id INT8 NOT NULL ,
+  salary_item_code VARCHAR(50) NOT NULL ,
+  original_amount NUMERIC(18,2) NOT NULL ,
+  adjusted_amount NUMERIC(18,2) NOT NULL ,
+  adjustment_reason VARCHAR(20)  ,
+  adjusted_by VARCHAR(50)  ,
+  adjusted_at TIMESTAMP  ,
+  org_id INT8  ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_salary_simulation_item_adj primary key (id)
+);
+
 
       COMMENT ON TABLE erp_md_cost_center IS '成本中心';
                 
@@ -2079,4 +2100,40 @@ CREATE TABLE erp_hr_shift_swap_request(
       COMMENT ON COLUMN erp_hr_shift_swap_request.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_hr_shift_swap_request.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_hr_salary_simulation_item_adj IS '薪酬模拟调整项';
+                
+      COMMENT ON COLUMN erp_hr_salary_simulation_item_adj.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation_item_adj.simulation_id IS '模拟';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation_item_adj.employee_id IS '员工';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation_item_adj.salary_item_code IS '薪酬项目编码';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation_item_adj.original_amount IS '源值';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation_item_adj.adjusted_amount IS '调整后值';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation_item_adj.adjustment_reason IS '调整原因';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation_item_adj.adjusted_by IS '调整人';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation_item_adj.adjusted_at IS '调整时间';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation_item_adj.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation_item_adj.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation_item_adj.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation_item_adj.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation_item_adj.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation_item_adj.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation_item_adj.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation_item_adj.update_time IS '修改时间';
                     

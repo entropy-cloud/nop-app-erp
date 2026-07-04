@@ -19,6 +19,7 @@ entity:
     ErpHrSalary: Salary Record
     ErpHrSalaryItem: Salary Item
     ErpHrSalarySimulation: Salary Simulation
+    ErpHrSalarySimulationItemAdjustment: Salary Simulation Item Adjustment
     ErpHrShift: Shift
     ErpHrShiftAssignment: Shift Assignment
     ErpHrShiftRotationPattern: Shift Rotation Pattern
@@ -498,6 +499,28 @@ prop:
       reviewer: Reviewer
       convertedSalary: Converted Salary
       org: Org
+    ErpHrSalarySimulationItemAdjustment:
+      id: ID
+      simulationId: Simulation
+      employeeId: Employee
+      salaryItemCode: Salary Item Code
+      originalAmount: Original Amount
+      adjustedAmount: Adjusted Amount
+      adjustmentReason: Adjustment Reason
+      adjustmentReason_label: null
+      adjustedBy: Adjusted By
+      adjustedAt: Adjusted At
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      simulation: Simulation
+      employee: Employee
+      org: Org
     ErpHrShift:
       id: ID
       code: Code
@@ -840,6 +863,7 @@ dict:
     erp-hr/attendance-source: Attendance Source
     erp-hr/recruitment-source: Recruitment Source
     erp-hr/simulation-status: Simulation Status
+    erp-hr/adjustment-reason: Adjustment Reason
     erp-hr/shift-type: Shift Type
     erp-hr/swap-status: Swap Status
     erp-hr/absence-reason: Absence Reason
@@ -978,6 +1002,11 @@ dict.option.label:
     APPROVED: Approved
     REJECTED: Rejected
     CONVERTED: Converted
+  erp-hr/adjustment-reason:
+    SALARY_CHANGE: Salary Change
+    ALLOWANCE_CHANGE: Allowance Change
+    BONUS_CHANGE: Bonus Change
+    MANUAL_ENTRY: Manual Entry
   erp-hr/shift-type:
     FIXED: Fixed
     ROTATING: Rotating

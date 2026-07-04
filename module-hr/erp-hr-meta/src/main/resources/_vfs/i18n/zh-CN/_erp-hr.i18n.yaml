@@ -19,6 +19,7 @@ entity:
     ErpHrSalary: 薪酬记录
     ErpHrSalaryItem: 薪酬项目
     ErpHrSalarySimulation: 薪酬模拟
+    ErpHrSalarySimulationItemAdjustment: 薪酬模拟调整项
     ErpHrShift: 班次模板
     ErpHrShiftAssignment: 排班分配
     ErpHrShiftRotationPattern: 轮换排班模板
@@ -495,6 +496,28 @@ prop:
       sourceSalaryId: 源薪酬记录
       status: 状态
       status_label: 状态
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpHrSalarySimulationItemAdjustment:
+      adjustedAmount: 调整后值
+      adjustedAt: 调整时间
+      adjustedBy: 调整人
+      adjustmentReason: 调整原因
+      adjustmentReason_label: 调整原因
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      employee: null
+      employeeId: 员工
+      id: ID
+      org: null
+      orgId: 业务组织
+      originalAmount: 源值
+      remark: 备注
+      salaryItemCode: 薪酬项目编码
+      simulation: null
+      simulationId: 模拟
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本

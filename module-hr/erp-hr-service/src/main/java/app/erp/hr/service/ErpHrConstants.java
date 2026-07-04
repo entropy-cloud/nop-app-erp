@@ -121,4 +121,35 @@ public interface ErpHrConstants {
     String PATTERN_TYPE_CYCLE_DAYS = "CYCLE_DAYS";
     String PATTERN_TYPE_CYCLE_WEEKS = "CYCLE_WEEKS";
     String PATTERN_OFF_SHIFT_CODE = "OFF";
+
+    // ---- erp-hr/simulation-status（payroll-simulation.md §1.1） ----
+    String SIMULATION_STATUS_DRAFT = "DRAFT";
+    String SIMULATION_STATUS_IN_REVIEW = "IN_REVIEW";
+    String SIMULATION_STATUS_APPROVED = "APPROVED";
+    String SIMULATION_STATUS_REJECTED = "REJECTED";
+    String SIMULATION_STATUS_CONVERTED = "CONVERTED";
+
+    // ---- erp-hr/adjustment-reason（payroll-simulation.md §2.2） ----
+    String ADJUSTMENT_REASON_SALARY_CHANGE = "SALARY_CHANGE";
+    String ADJUSTMENT_REASON_ALLOWANCE_CHANGE = "ALLOWANCE_CHANGE";
+    String ADJUSTMENT_REASON_BONUS_CHANGE = "BONUS_CHANGE";
+    String ADJUSTMENT_REASON_MANUAL_ENTRY = "MANUAL_ENTRY";
+
+    // ---- 模拟配置项（payroll-simulation.md §3.3）----
+    String CONFIG_SIM_NET_PAY_CHANGE_THRESHOLD = "erp-hr.simulation.net-pay-change-threshold";
+    String CONFIG_SIM_TOTAL_CHANGE_THRESHOLD = "erp-hr.simulation.total-change-threshold";
+    String CONFIG_SIM_TAX_BRACKET_JUMP_ALERT = "erp-hr.simulation.tax-bracket-jump-alert";
+    String CONFIG_SIM_AUTO_CONVERT_ENABLED = "erp-hr.simulation.auto-convert-enabled";
+
+    // ---- 批量调薪类型（payroll-simulation.md §5.1）----
+    String BATCH_ADJUST_TYPE_FIXED = "FIXED";
+    String BATCH_ADJUST_TYPE_RATIO = "RATIO";
+    String BATCH_ADJUST_TYPE_ALLOWANCE = "ALLOWANCE";
+    String BATCH_ADJUST_TYPE_LEVEL_MAP = "LEVEL_MAP";
+
+    // ---- 模拟异常告警类型（payroll-simulation.md §3.3）----
+    String ANOMALY_NET_PAY_CHANGE = "NET_PAY_CHANGE";
+    String ANOMALY_TOTAL_CHANGE = "TOTAL_CHANGE";
+    String ANOMALY_TAX_BRACKET_JUMP = "TAX_BRACKET_JUMP";
+    String ANOMALY_SOCIAL_BASE_OUT_OF_RANGE = "SOCIAL_BASE_OUT_OF_RANGE";
 }

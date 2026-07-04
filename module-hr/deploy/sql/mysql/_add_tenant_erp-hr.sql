@@ -79,6 +79,8 @@ alter table erp_hr_development_plan_item add NOP_TENANT_ID VARCHAR(32) DEFAULT '
 
 alter table erp_hr_shift_swap_request add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_hr_salary_simulation_item_adj add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_md_cost_center drop primary key;
 alter table erp_md_cost_center add primary key (NOP_TENANT_ID, ID);
 
@@ -198,5 +200,8 @@ alter table erp_hr_development_plan_item add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_hr_shift_swap_request drop primary key;
 alter table erp_hr_shift_swap_request add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_hr_salary_simulation_item_adj drop primary key;
+alter table erp_hr_salary_simulation_item_adj add primary key (NOP_TENANT_ID, ID);
 
 
