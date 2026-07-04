@@ -1,0 +1,5 @@
+erp-fin:
+  auto-reconcile: true
+  auto-recon-strategy: FIFO
+  reconcile-precision: 0.01
+  allow-over-reconcile: false

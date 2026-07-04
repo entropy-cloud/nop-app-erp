@@ -90,6 +90,12 @@ public interface ErpFinErrors {
     ErrorCode ERR_AR_AP_ITEM_NOT_FOUND = ErrorCode.define("erp.err.fin.ar-ap.not-found",
             "辅助账项 {id} 不存在", ARG_ID);
 
+    ErrorCode ERR_AUTO_RECON_DISABLED = ErrorCode.define("erp.err.fin.auto-recon.disabled",
+            "自动核销未启用（配置 erp-fin.auto-reconcile=false）");
+
+    ErrorCode ERR_AUTO_RECON_NO_OPEN_ITEMS = ErrorCode.define("erp.err.fin.auto-recon.no-open-items",
+            "方向 {direction} 往来单位 {partnerId} 无可核销的开口项", ARG_DIRECTION, ARG_PARTNER_ID);
+
     // --- 报销单作用域 ---
 
     ErrorCode ERR_EXPENSE_CLAIM_NOT_FOUND = ErrorCode.define("erp.err.fin.expense-claim.not-found",

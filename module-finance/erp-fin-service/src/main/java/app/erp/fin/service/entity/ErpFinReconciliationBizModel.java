@@ -2,16 +2,21 @@
 package app.erp.fin.service.entity;
 
 import app.erp.fin.biz.IErpFinReconciliationBiz;
+import app.erp.fin.dao.dto.AutoReconResult;
+import app.erp.fin.dao.dto.DualSideDiffReport;
 import app.erp.fin.dao.dto.ReconciliationLineInput;
 import app.erp.fin.dao.entity.ErpFinArApItem;
 import app.erp.fin.dao.entity.ErpFinReconciliation;
 import app.erp.fin.dao.entity.ErpFinReconciliationLine;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
+import app.erp.fin.service.reconciliation.AutoReconciliationEngine;
+import app.erp.fin.service.reconciliation.DualSideConsistencyChecker;
 import app.erp.fin.service.reconciliation.PartnerBalanceUpdater;
 import app.erp.fin.service.reconciliation.ReconciliationSettler;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.config.AppConfig;
@@ -21,6 +26,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.commons.util.StringHelper;
 import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 import java.util.Objects;
@@ -28,6 +34,7 @@ import java.util.Objects;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
@@ -53,6 +60,10 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
     ReconciliationSettler settler;
     @Inject
     PartnerBalanceUpdater partnerBalanceUpdater;
+    @Inject
+    AutoReconciliationEngine autoReconciliationEngine;
+    @Inject
+    DualSideConsistencyChecker dualSideConsistencyChecker;
 
     @Override
     @BizMutation
@@ -146,6 +157,65 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
         flushBeforeBalance();
         partnerBalanceUpdater.refresh(head.getPartnerId());
         return head;
+    }
+
+    // ---------- 自动核销 ----------
+
+    @Override
+    @BizMutation
+    public AutoReconResult runAutoReconciliation(@Name("direction") String direction,
+                                                  @Name("partnerId") Long partnerId,
+                                                  @Name("strategy") String strategy,
+                                                  IServiceContext context) {
+        if (!isAutoReconcileEnabled()) {
+            throw new NopException(ErpFinErrors.ERR_AUTO_RECON_DISABLED);
+        }
+        IServiceContext ctx = context != null ? context : new ServiceContextImpl();
+        String effectiveStrategy = resolveStrategy(strategy);
+        LocalDate businessDate = CoreMetrics.today();
+
+        AutoReconResult result = new AutoReconResult();
+        List<Long> partnerIds = partnerId != null
+                ? Collections.singletonList(partnerId)
+                : autoReconciliationEngine.findPartnersWithOpenItems(direction, ctx);
+
+        for (Long pid : partnerIds) {
+            AutoReconciliationEngine.MatchResult match =
+                    autoReconciliationEngine.matchAndBuild(direction, pid, effectiveStrategy, ctx);
+            result.getUnmatched().addAll(match.getUnmatched());
+            if (match.getLines().isEmpty()) {
+                continue;
+            }
+            ErpFinReconciliation head = create(direction, pid, businessDate, match.getLines(), ctx);
+            post(head.getId(), ctx);
+            result.getReconciliationIds().add(head.getId());
+        }
+        return result;
+    }
+
+    @Override
+    @BizQuery
+    public DualSideDiffReport checkDualSideConsistency(@Name("direction") String direction,
+                                                       @Name("partnerId") Long partnerId,
+                                                       IServiceContext context) {
+        IServiceContext ctx = context != null ? context : new ServiceContextImpl();
+        return dualSideConsistencyChecker.check(direction, partnerId, ctx);
+    }
+
+    // ---------- helpers ----------
+
+    protected boolean isAutoReconcileEnabled() {
+        Boolean flag = AppConfig.var(ErpFinConstants.CONFIG_AUTO_RECONCILE, Boolean.FALSE);
+        return Boolean.TRUE.equals(flag);
+    }
+
+    protected String resolveStrategy(String strategy) {
+        if (!StringHelper.isBlank(strategy)) {
+            return strategy.toUpperCase();
+        }
+        String s = AppConfig.var(ErpFinConstants.CONFIG_AUTO_RECON_STRATEGY,
+                ErpFinConstants.AUTO_RECON_STRATEGY_FIFO);
+        return !StringHelper.isBlank(s) ? s.toUpperCase() : ErpFinConstants.AUTO_RECON_STRATEGY_FIFO;
     }
 
     // ---------- 校验 ----------

@@ -1,0 +1,10 @@
+enabled: true
+jobs:
+  - jobName: erp-fin-ar-ap-auto-recon
+    displayName: Finance AR/AP Auto Reconciliation
+    description: 每日凌晨触发 AR/AP 自动核销（FIFO 全 partner）；cron 经 erp-fin.ar-ap-auto-recon-cron 配置门控
+    trigger:
+      cronExpr: "0 0 1 * * ?"
+    invoker:
+      bean: erpFinAutoReconJob
+      method: execute

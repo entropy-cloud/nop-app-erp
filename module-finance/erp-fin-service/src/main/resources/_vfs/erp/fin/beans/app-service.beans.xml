@@ -59,6 +59,21 @@
     <bean id="app.erp.fin.service.reconciliation.PartnerBalanceUpdater"
           class="app.erp.fin.service.reconciliation.PartnerBalanceUpdater"/>
 
+    <!-- 自动核销规则引擎（按 partner+direction+strategy 生成候选行，复用 0300-3 create+post 落核销单。
+         被 ErpFinReconciliationBizModel.runAutoReconciliation 调用）。 -->
+    <bean id="app.erp.fin.service.reconciliation.AutoReconciliationEngine"
+          class="app.erp.fin.service.reconciliation.AutoReconciliationEngine"/>
+
+    <!-- 双面对账一致性兜底检查器（finance 侧 vs 域级侧已核销额聚合，报告+告警，不自动修复。
+         被 ErpFinReconciliationBizModel.checkDualSideConsistency 调用）。 -->
+    <bean id="app.erp.fin.service.reconciliation.DualSideConsistencyChecker"
+          class="app.erp.fin.service.reconciliation.DualSideConsistencyChecker"/>
+
+    <!-- 定时自动核销 Job Bean（plan 2026-07-05-0115-1 Phase 2）。由 nop-job-local scheduler.yaml
+         经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-fin.ar-ap-auto-recon-cron 配置门控。 -->
+    <bean id="erpFinAutoReconJob"
+          class="app.erp.fin.service.job.ErpFinAutoReconJob"/>
+
     <!-- 报销/借款业财过账 Provider（注册为 Bean 后由 ErpFinAcctDocRegistry 自动聚合，
          处理 EXPENSE_CLAIM / EMPLOYEE_ADVANCE / EMPLOYEE_ADVANCE_SETTLE）。 -->
     <bean id="app.erp.fin.service.posting.provider.ExpenseClaimAcctDocProvider"

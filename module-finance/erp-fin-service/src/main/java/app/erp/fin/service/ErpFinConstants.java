@@ -15,9 +15,20 @@ public interface ErpFinConstants {
     String CONFIG_RECONCILE_PRECISION = "erp-fin.reconcile-precision";
     /** 是否允许超额核销，默认 false。 */
     String CONFIG_ALLOW_OVER_RECONCILE = "erp-fin.allow-over-reconcile";
+    /** 是否启用自动核销（总开关），默认 false（ar-ap-reconciliation.md §配置项）。 */
+    String CONFIG_AUTO_RECONCILE = "erp-fin.auto-reconcile";
+    /** 自动核销分摊策略（FIFO/BY_AMOUNT/BY_RATIO），默认 FIFO（plan 2026-07-05-0115-1 §配置项）。 */
+    String CONFIG_AUTO_RECON_STRATEGY = "erp-fin.auto-recon-strategy";
+    /** 定时自动核销 cron（空=不调度；plan 2026-07-05-0115-1 §配置项）。 */
+    String CONFIG_AR_AP_AUTO_RECON_CRON = "erp-fin.ar-ap-auto-recon-cron";
 
     String AGING_BASE_INVOICE_DATE = "invoice_date";
     String AGING_BASE_DUE_DATE = "due_date";
+
+    // ---- 自动核销分摊策略（CONFIG_AUTO_RECON_STRATEGY 取值）----
+    String AUTO_RECON_STRATEGY_FIFO = "FIFO";
+    String AUTO_RECON_STRATEGY_BY_AMOUNT = "BY_AMOUNT";
+    String AUTO_RECON_STRATEGY_BY_RATIO = "BY_RATIO";
 
     // ---- 配置项（expense-claim.md §配置项），经 AppConfig.var 读取 ----
     /** 报销时是否自动抵扣同员工未还借款，默认 true。 */
