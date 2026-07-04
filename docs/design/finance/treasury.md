@@ -179,7 +179,9 @@
 3. **拒付转应收**：应收票据 DISHONORED 时转为应收账款继续追索（开票人对持票人负连带责任）。
 4. **票据注销强制审批**：WRITE_OFF 属高风险操作（票据遗失/作废），需财务主管审批。
 5. **现金预测派生**：`ErpFinCashForecast` 由定时任务（nop-job）聚合 AR/AP/票据到期数据生成，不手工录入。
-   > **实现注（计划 1000-1）**：nop-job 定时基线未落地；当前提供手动触发的批量聚合方法 `IErpFinCashForecastBiz.refreshForecast(fromDate,toDate)`（聚合 ArApItem 未核销到期 + 票据到期，先清区间再写入），定时调度归 Follow-up（触发条件：nop-job 接线时）。拒付转应收的完整追索/坏账核销、电子票据（ECDS）集成/票据影像附件为 Non-Goal（见计划 1000-1 Deferred）。
+   > **实现注（计划 1000-1）**：nop-job 定时基线未落地；当前提供手动触发的批量聚合方法 `IErpFinCashForecastBiz.refreshForecast(fromDate,toDate)`（聚合 ArApItem 未核销到期 + 票据到期，先清区间再写入），定时调度归 Follow-up（触发条件：nop-job 接线时）。拒付转应收的完整追索/坏账核销为 Non-Goal（见计划 1000-1 Deferred）。
+   >
+   > **电子票据外部系统明确不在范围**：本项目票据模块聚焦**组织内部**的票据记账生命周期（收到/贴现/背书/托收/拒付/兑付/注销），**不对接任何外部电子票据系统**。人行 ECDS（电子商业汇票系统）已于 2024-07 正式下线关闭（被新一代票据系统取代），作为术语已废弃；新一代票据系统对接属银行/票交所接口集成，属强本地化运营层，本项目不承担。GitHub 实测亦证实开源 ERP（含国产 jsh/redragon/xingyun）均无电子票据系统对接实现。
 
 ## 反模式警示
 

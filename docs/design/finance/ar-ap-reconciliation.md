@@ -189,6 +189,8 @@
 | 91-180天 | 严重逾期 | 很高 |
 | 180天以上 | 坏账风险 | 极高 |
 
+> 账龄分级也是**坏账准备计提**的基础——每级账龄 × 历史损失率 = 必需准备，详见过账与核销展开 `bad-debt.md` §坏账准备计提方法。坏账核销/收回经本文件的 `ErpFinReconciliation` 核销单（`docStatus=REVERSED` 反向结算）+ `ErpFinArApItem.status=WRITTEN_OFF` 表达。
+
 ### 账龄计算基准
 
 | 类型 | 计算起点 | 说明 |

@@ -20,6 +20,15 @@
 4. **员工→partnerId 解析**：员工辅助账/核销单的 `partnerId` = **已解析的 `ErpMdEmployee.partnerId`**（即 `ErpMdPartner.id`），**非 `employee.id`**（员工与 partner 是不同 id 空间）。员工无 partner 记录时审核被拒（前置校验强制 `partnerId` 非空）。
 
 
+## 实现偏离补注（2026-07-04 补充：现金还款 Deferred 解除）
+
+前述补注 #3「现金/银行转账还款为 Non-Goal」的 Deferred 条件**已解除**：
+
+- **解除依据**：`docs/analysis/erp-survey/2026-07-04-0000-frappe-hrms.md` 实测 frappe/hrms 的 Employee Advance 用 Journal Entry（凭证）承载现金还款（`make_return_entry`：借 银行存款 / 贷 advance_account），**不依赖独立 Payment 实体**。
+- **本项目落地方案**：现金还款直接生成 `ErpFinVoucher`（`EMPLOYEE_ADVANCE_SETTLE` businessType），经业财过账引擎 + 业财回链承载，**无需新建通用 finance 付款实体**。`EMPLOYEE_ADVANCE_SETTLE` 的借贷方向（§业财过账表）已预留"借：银行存款（现金还款）/ 贷：其他应收款-员工预支"。
+- **设计依据 #5 演进**：原"还款复用 `ErpFinPayment`"前提不成立（本仓无该实体），演进出**凭证承载**方案（参 hrms），见下文 §现金还款。
+- **未解除项**：薪资扣回作为第三还款路径仍为 Follow-up（依赖 HR `Additional Salary` 机制，触发条件：HR 薪酬扣回项落地时）。
+
 ## 设计依据
 
 > 来源 `docs/analysis/2026-06-30-0001-advanced-scenario-design-comparison.md` §1.1。
@@ -30,7 +39,7 @@
 2. **价税分离三件套**：每行 untaxed/tax/total 分列，便于进项税抵扣（🟢 Odoo `hr_expense.py:154-187`）。
 3. **项目/成本中心作为报销行原生维度**：直接挂 `projectId`/`costCenterId`（🟢 Odoo `_inherit=['analytic.mixin']`），作为成本归集来源（消除与 `projects/cost-collection.md` 的不一致）。
 4. **借款科目方向 = 其他应收款-员工预支**（**非应付**，方向相反）——预付款单独科目，不污染应收应付余额（🟢 ERPNext `payment_entry.py:235-274` `book_advance_payments_in_separate_party_account`）。
-5. **还款复用收付款单**：借款还款不建独立还款单，复用 `ErpFinPayment`（`partyType=EMPLOYEE`）+ `ErpFinReconciliation`（`sourceBillType=EMPLOYEE_ADVANCE`）（🟢 ERPNext `payment_entry.py:548`）。
+5. **还款用凭证承载**（原"复用 `ErpFinPayment`"已演进）：借款还款不建独立还款单，现金还款直接生成 `ErpFinVoucher`（`EMPLOYEE_ADVANCE_SETTLE`）凭证，经业财回链关联源借款单（🟢 frappe/hrms `employee_advance.py:328-394` `make_return_entry` 凭证承载模式）。原 ERPNext `payment_entry.py:548` 复用 Payment Entry 的前提（通用 finance 付款实体）在本仓不成立。
 
 ## 实体清单
 
@@ -102,6 +111,55 @@
 
 > paymentMode 决定 EXPENSE_CLAIM 的贷方科目（员工垫付挂应付-员工，公司直付直接减银行），由凭证模板按 paymentMode 选模板行实现（posting.md 的模板配置化机制）。
 
+## 现金还款（Cash Repayment）
+
+> 来源：`docs/analysis/erp-survey/2026-07-04-0000-frappe-hrms.md`（frappe/hrms `make_return_entry` 实测）。员工借款未消费部分以现金/银行转账退回，不建独立还款单，**用 `ErpFinVoucher` 凭证承载**。
+
+### 还款分录
+
+现金还款生成 `EMPLOYEE_ADVANCE_SETTLE` 凭证：
+
+```
+借：银行存款（或库存现金）          returnAmount
+    贷：其他应收款-员工预支               returnAmount
+```
+
+凭证经业财过账引擎（`IErpFinAcctDocProvider`）生成，业财回链（`ErpFinVoucherBillR`）关联源借款单。**无需新建通用 finance 付款实体**——这是解除原 Deferred 的关键（参 hrms `make_return_entry` 模式：用 JE 承载，不依赖 Payment 实体）。
+
+### 借款清算三路径
+
+员工借款 `outstandingAmount` 归零有三条路径，可组合使用：
+
+| 路径 | 触发动作 | 凭证/核销 | businessType |
+|---|---|---|---|
+| **报销抵扣** | 报销单 APPROVED，自动抵扣同员工未还借款 | `ErpFinReconciliation` 净额核销 + 凭证 | EXPENSE_CLAIM（报销）/ EMPLOYEE_ADVANCE_SETTLE（抵扣结算） |
+| **现金还款** | 员工主动退回未消费现金 | `ErpFinVoucher` 凭证承载 | EMPLOYEE_ADVANCE_SETTLE |
+| **薪资扣回** | 从下月薪资抵扣 | 依赖 HR 薪酬扣回项 | Follow-up（HR `Additional Salary` 落地后） |
+
+### 借款金额维度建议
+
+> 对标 frappe/hrms 三金额闭环（paid/claimed/return）。属 ORM 字段建议（保护区域），落地须计划批准。
+
+`ErpFinEmployeeAdvance` 当前 `settledAmount`（已核销金额）混合了"报销抵扣"与"现金还款"。建议细化为二维以支持 hrms 式三金额闭环：
+
+| 维度 | 含义 | 对应 hrms |
+|---|---|---|
+| `claimedAmount` | 报销抵扣金额 | claimed |
+| `returnedAmount` | 现金还款金额 | return |
+| `settledAmount` | = claimed + returned（派生，向后兼容） | — |
+
+闭环等式：`paidAmount（已付借款）= claimedAmount + returnedAmount + outstandingAmount（未还）`。
+
+### 还款状态派生
+
+借款状态由金额比例派生（参 hrms `set_status` 派生投影，本项目 `ErpHrSalary.paymentStatus` 已有派生投影先例）：
+
+| 派生状态 | 条件 |
+|---|---|
+| 未还 | settledAmount = 0 |
+| 部分还款 | 0 < settledAmount < amount |
+| 已结清 | settledAmount = amount |
+
 ## 跨域协作
 
 | 对端 | 协作内容 |
@@ -132,7 +190,7 @@
 - ⛔ **学 Odoo 单轴 state**（draft→submitted→approved→posted→in_payment→paid 七态串一轴，🟢 `hr_expense.py:122-142`）——本项目坚持三轴分离（docStatus + approveStatus + posted + paidStatus），业务态与过账态解耦。
 - ⛔ **把员工借款塞进应付发票表**——借款方向=其他应收（资产），与应付（负债）方向相反，混表会导致余额语义错乱。
 - ⛔ **学管伊佳逗号字符串多账户**（business-design-takeaways.md 主题 8.2）——多费用类别用子表（ErpFinExpenseClaimLine），不用单字段逗号串。
-- ⛔ **建独立还款单**——还款复用 `ErpFinPayment` + 核销机制，不重复造单据。
+- ⛔ **建独立还款单 / 依赖通用 Payment 实体**——现金还款用 `ErpFinVoucher` 凭证承载（`EMPLOYEE_ADVANCE_SETTLE` businessType + 业财回链），不建独立还款单，也不依赖本仓不存在的 `ErpFinPayment`（参 frappe/hrms `make_return_entry` 凭证承载模式，🟢 `employee_advance.py:328-394`）。
 
 ## 菜单归属
 

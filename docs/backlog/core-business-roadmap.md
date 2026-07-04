@@ -28,9 +28,9 @@
 - 4.1/4.2/4.4：`done`（计划 1018-1：4.1/4.2 扩展既有 P2P/O2C E2E 断言财务核销层——AP_INVOICE/AR_INVOICE/PAYMENT/RECEIPT 过账生成辅助账 + ErpFinReconciliation 核销 openAmount 归零 + 账龄；4.4 新增采购/销售退货到退款连续链 E2E——退货审核→反向库存→红字过账→负 openAmount 辅助账回减→cancelOnReverse 归零 + 异常路径）
 
 ### Milestone M5 — 业财可运维性与闭环
-- 5.1 会计日志与可观测性：`todo`（设计 done `finance/posting-log.md`，对标 Metasfresh `Fact_Acct_Log`/`Fact_Acct_UserChange`；**P0**——排障"为何没自动记账/为何记错科目"与模板变更合规审计当前无依据；分析见 `docs/analysis/2026-07-04-finance-posting-engine-gap-vs-opensource.md`）
-- 5.2 冲销反写闭环：`todo`（设计 done `finance/posting.md` §冲销机制方向二；**P0**——当前 `reverse()` 仅生成红字凭证不回退业务单据状态，业财闭环断裂；解法为 `reverse()` 成功后发 `VoucherReversedEvent`，域 Provider 监听回退，引擎不持有源实体）
-- 5.3 运行监控：`todo`（设计 done `finance/posting-log.md` §运行监控指标；**P1**——四指标自动化记账率/时延/异常率/业财闭环成功率接入 nop-platform 监控）
+- 5.1 会计日志与可观测性：`done`（设计 done `finance/posting-log.md`；**plan `2026-07-04-1452-1` completed**——traceId 端到端贯穿 + 规则命中结构化日志 + 变更审计复用平台 `NopSysChangeLog`（模板/模板行 `tagSet="audit"`）+ 过账异常工作台（新增 `ErpFinPostingException` 实体，REQUIRES_NEW 独立事务落 PENDING，重试/忽略/补录三入口 ErrorCode 守门）+ 期末结账前置门控扫描未处置异常阻止结账）
+- 5.2 冲销反写闭环：`todo`（设计 done `finance/posting.md` §冲销机制方向二；**P0**——当前 `reverse()` 仅生成红字凭证不回退业务单据状态，业财闭环断裂；解法为 `reverse()` 成功后发 `VoucherReversedEvent`，域 Provider 监听回退，引擎不持有源实体；**plan active `2026-07-04-1452-2`**）
+- 5.3 运行监控：`todo`（设计 done `finance/posting-log.md` §运行监控指标；**P1**——四指标自动化记账率/时延/异常率/业财闭环成功率；**关键发现：平台无 metrics API（CoreMetrics 仅时钟），`posting-log.md`"接入平台监控大盘"表述为 owner-doc 漂移，须 Phase 1 Decision 裁定真实落地路径**；**plan active `2026-07-04-1452-3`**）
 
 > **M5 定位**：M1/M4 已交付业财打通的**功能正确性**（凭证生成、辅助账、核销、期末结账）；M5 补其**运营成熟度**——可观测（日志）、可闭环（冲销反写）、可监控（指标）。属生产级运维层，非新业务功能。落地须各自起草 `docs/plans/` 计划并经独立草案/结束审计；会计日志优先评估复用 nop-platform 审计能力（避免触及 ORM 保护区域）。
 
@@ -69,9 +69,9 @@
 
 | # | 工作项 | 域 | 设计文档 | 状态 |
 |---|--------|-----|---------|------|
-| 5.1 | 会计日志与可观测性（规则命中追溯 / 变更审计 / 异常工作台 / traceId 串联） | finance | `finance/posting-log.md` | ⬜ `todo`（P0） |
-| 5.2 | 冲销反写闭环（`VoucherReversedEvent` + 域 Provider 监听回退业务单据状态） | finance | `finance/posting.md` §冲销机制方向二 | ⬜ `todo`（P0） |
-| 5.3 | 运行监控（自动化记账率 / 时延 / 异常率 / 业财闭环成功率 + 告警 SLA） | finance | `finance/posting-log.md` §运行监控指标 | ⬜ `todo`（P1） |
+| 5.1 | 会计日志与可观测性（规则命中追溯 / 变更审计 / 异常工作台 / traceId 串联） | finance | `finance/posting-log.md` | ✅ `done`（P0，plan `2026-07-04-1452-1` completed） |
+| 5.2 | 冲销反写闭环（`VoucherReversedEvent` + 域 Provider 监听回退业务单据状态） | finance | `finance/posting.md` §冲销机制方向二 | ⬜ `todo`（P0，plan active `2026-07-04-1452-2`） |
+| 5.3 | 运行监控（自动化记账率 / 时延 / 异常率 / 业财闭环成功率 + 告警 SLA） | finance | `finance/posting-log.md` §运行监控指标 | ⬜ `todo`（P1，plan active `2026-07-04-1452-3`） |
 
 ## Reference
 
