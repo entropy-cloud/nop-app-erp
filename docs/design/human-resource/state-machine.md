@@ -200,6 +200,66 @@ DRAFT → CANCELLED
 3. 审核通过 → APPROVED，工时数据归集到 `projects/cost-collection`。
 4. 若发现工时填错，项目经理驳回 → REJECTED，员工修改后重新提交。
 
+---
+
+## 适用对象四：薪酬审批（ErpHrSalary.approveStatus）
+
+### 1. 设计说明
+
+薪酬审批不定义独立的状态机——采用平台标准 `wf/approve-status` 四态，与全 ERP 审批机制统一。多级审批链（HR 复核 → 财务审批 → 经理审批）由 nop-wf WORKFLOW 模式内部管理，不在业务表状态字段中编码。
+
+### 2. 状态定义
+
+| approveStatus | 业务含义 |
+|--------------|----------|
+| UNSUBMITTED | 新建/撤回，核算完成待提交 |
+| SUBMITTED | 已提交待审批（WF 内部多级处理中） |
+| APPROVED | 审批通过（全部三级均通过，终态） |
+| REJECTED | 任一级审批人驳回（终态，可修改后重新提交） |
+
+### 3. 迁移
+
+```
+UNSUBMITTED → SUBMITTED → APPROVED
+                       → REJECTED
+        ← withdrawApproval
+APPROVED → SUBMITTED（reverseApprove，需配置门控）
+```
+
+### 4. 发放执行独立轴
+
+审批通过后（`approveStatus=APPROVED`），发放执行和作废由 `paymentStatus` 独立管理：
+
+| paymentStatus | 业务含义 |
+|--------------|----------|
+| PENDING | 待发放 |
+| PAID | 已发放（终态，锁定） |
+| VOID | 已作废（终态） |
+
+迁移：`PENDING → PAID`（`markPaid`），`PENDING → VOID`（`voidSalary`），`PAID` 后锁定。
+
+### 5. 角色与权限
+
+| WF 步骤 | 执行角色 |
+|---------|----------|
+| hr-review | HR 薪酬专员 |
+| finance-review | 财务主管 |
+| manager-approval | 部门负责人/总经理 |
+| 发放（markPaid） | HR 薪酬专员/出纳 |
+
+### 6. 外部依赖
+
+- 薪酬核算引擎（`IErpHrSalaryBiz.calculateSalary`）在 `approveStatus=UNSUBMITTED` 下操作
+- 业财过账：`approveStatus → APPROVED` 触发 SALARY(270) 计提凭证 + SOCIAL_INSURANCE_ER(290)/HOUSING_FUND_ER(300)
+- `paymentStatus → PAID` 触发 SALARY_PAYMENT(280) 发放凭证
+- 银行文件生成：查询 `paymentStatus=PENDING AND approveStatus=APPROVED`
+
+### 7. 与设计文档一致性
+
+- 状态定义见 `payroll.md §五/§六`。
+- 状态码归 `wf/approve-status` 标准字典（nop-wf 模块统一定义），`ErpHrSalary.approveStatus` 字段引用 `ext:dict="wf/approve-status"`。
+- 业务覆盖：`docs/design/hr/payroll.md`
+
 ## 审查提示
 
 审查本状态机时，使用 `docs/skills/state-machine-business-review-prompt.md`，重点检查：
@@ -207,3 +267,5 @@ DRAFT → CANCELLED
 - 员工离职时未完成休假申请的联动取消。
 - 假期余额扣减与返还是否原子化（APPROVED 扣减、CANCELLED 返还）。
 - 工时表 APPROVED 后工时归集到项目成本的触发机制。
+- 薪酬审批 `approveStatus` 是否严格遵循四态标准，不含 WF 中间步骤值。
+- `paymentStatus` 的 PAID 锁定是否独立于 `approveStatus` 运作。

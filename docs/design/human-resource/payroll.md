@@ -20,7 +20,19 @@
 - **年度汇算清缴（§十）**：导出/个税 APP 对接归 follow-up。
 - **cron 自动核算（§5.2 SalaryCalculateJob）**：手动/外部调度触发已就绪（`IErpHrSalaryBiz.runPayroll`/`calculateSalary`），nop-job 定时注册归 follow-up。
 - **BizModel 落层**：设计引用 `IErpHrPayrollBiz` 独立接口；实现落在实体绑定 `IErpHrSalaryBiz` + `ErpHrSalaryBizModel`（extends CrudBizModel）以获得 `@SingleSession` 事务管理，方法签名与语义不变。
-- **审批/发放状态消歧**：`approvalStatus`（6 态 PENDING/REVIEWED/APPROVED_FINANCE/APPROVED_MANAGER/PAID/VOID）为权威端到端状态；存量 `paymentStatus`（3 态）保留为只读派生投影（`approvalStatus=PAID`→`paymentStatus=PAID`，`=VOID`→`=VOID`），新代码路径只读写 `approvalStatus`。
+
+### 设计修正记录（2026-07-04，use-approval 标准化）
+
+- **审批状态标准化（§五/§六 全面改写）**：裁决将 `approvalStatus`（原 6 态 PENDING/REVIEWED/APPROVED_FINANCE/APPROVED_MANAGER/PAID/VOID）拆分为标准三轴：
+  - `approveStatus` → 标准 4 态 `wf/approve-status`：`UNSUBMITTED → SUBMITTED → APPROVED / REJECTED`。多级审批链（HR 复核 → 财务审批 → 经理审批）由 nop-wf 引擎的 WORKFLOW 模式内部跟踪，不污染业务表状态字段。驳回走 `REJECTED`（终态），撤回修改走 `withdrawApproval` → `UNSUBMITTED`。
+  - **`paymentStatus`** 保留（PENDING/PAID/VOID），作为审批通过后的发放执行进度。
+  - **理由**：原 6 态混入了审批流中间步骤（REVIEWED/APPROVED_FINANCE/APPROVED_MANAGER）与业务执行终态（PAID/VOID），违反 `domain-design-guidelines.md §16` 三轴分离原则。标准化后：
+    - 审批与 `use-approval` 平台机制无缝集成（`tagSet="use-approval"` + `wf:wfName="salary-approval"`）
+    - 多级审批对业务表状态字段零污染（wf 内部 `NopWfStepInstance` 表跟踪）
+    - 驳回有明确审计痕迹（`REJECTED` 为终态，区别于"退回修改"）
+    - `paymentStatus` 的 PAID 锁定不变，`approveStatus=APPROVED` 仅表示审批通过，两轴解耦
+  - **参考比对**：ERP 调研报告（`docs/analysis/erp-survey/`）确认赤龙 ERP 采用三轴分离（status + approveStatus + paidStatus），`business-design-takeaways.md` 将其列为推荐范式；Odoo 单轴七态串一轴（`hr_expense.py:122-142`）明确列为反模式。本裁决采信三轴分离。
+  - 全文 `approvalStatus` 引用均已更新为 `approveStatus` + `paymentStatus` 两字段表述。
 
 ---
 
@@ -293,17 +305,15 @@
     │       ├─ 查看薪酬汇总表（部门/员工/项目汇总）
     │       ├─ 对比上月差异 / 异常值告警
     │       ├─ 手动修改（需记录修改日志）
-    │       └─ 提交审核 → status = REVIEWED
+    │       └─ 提交审批 → approveStatus = SUBMITTED（WF 启动）
     │
-    3. 财务复核
-    │       ├─ 校验总额与预算匹配
-    │       ├─ 校验社保/公积金合计与申报一致
-    │       └─ 复核通过 → status = APPROVED_FINANCE
+    3. 审批流（nop-wf 多级处理）
+    │       ├─ HR 复核（wf step: hr-review）
+    │       ├─ 财务复核（wf step: finance-review）
+    │       ├─ 经理审批（wf step: manager-approval）
+    │       └─ 全部通过 → wf 回调 approve → approveStatus = APPROVED
     │
-    4. 经理审批
-    │       └─ 审批通过 → status = APPROVED_MANAGER
-    │
-    5. 发放执行
+    4. 发放执行
     │       ├─ 生成银行代发文件（ErpPayrollBankFile）
     │       ├─ 过账：SALARY_PAYMENT 凭证
     │       └─ 更新 paymentStatus = PAID
@@ -329,58 +339,96 @@
 | totalOvertimeHours | 月总加班小时 |
 | unpaidLeaveDays | 无薪假天数 |
 | cumulativeData | 累计个税数据（JSON，年初至本月累计值） |
-| approvalStatus | 审批状态 dict `erp-hr/salary-approval-status`：PENDING / REVIEWED / APPROVED_FINANCE / APPROVED_MANAGER / PAID / VOID |
+| approveStatus | 审批状态 dict `wf/approve-status`（标准四态）：UNSUBMITTED / SUBMITTED / APPROVED / REJECTED |
+| approvedBy | 审批人（`stdDomain="userId"`，`approval-support.xbiz` 标准 action 自动填写） |
+| approvedAt | 审批时间（标准 action 自动填写） |
+| nopFlowId | 工作流实例 ID（`useWorkflow="true"` 由平台自动补齐，WORKFLOW 模式非空） |
 | reviewNote | 审核备注 |
 | paymentBatchNo | 发放批次号 |
 | bankFileId | 银行文件（→ErpHrPayrollBankFile） |
+
+> `approveStatus`/`approvedBy`/`approvedAt` 由 `use-approval` 平台机制的标准 action source 自动管理（经 `approval-support.xbiz`）。`nopFlowId` 由 `OrmEntityModelInitializer` 对 `useWorkflow="true"` 实体自动补齐。业务代码不需手动读写这些字段。
 
 ---
 
 ## 六、薪酬审批工作流
 
-### 6.1 审批状态机
+### 6.1 设计原则：三轴分离 + use-approval 标准化
+
+薪酬审批采用与全 ERP 一致的**三轴状态分离**原则（`domain-design-guidelines.md §16`）：
+
+| 轴 | 字段 | 取值 | 管理方 |
+|----|------|------|--------|
+| 审批状态 | `approveStatus` | `wf/approve-status` 标准四态：UNSUBMITTED → SUBMITTED → APPROVED / REJECTED | `use-approval` 平台机制（`approval-support.xbiz` 标准 action source） |
+| 发放执行 | `paymentStatus` | PENDING / PAID / VOID | 业务代码（`markPaid`/`voidSalary`） |
+| 业财过账 | `posted` | boolean | `PostingDispatcher` |
+
+**多级审批链**（HR 复核 → 财务审批 → 经理审批）不在 `approveStatus` 中编码，而是通过 nop-wf 的 **WORKFLOW 模式**实现：
+- 实体标 `tagSet="use-approval"` + `useWorkflow="true"`
+- xmeta 配 `wf:wfName="salary-approval"`
+- `.xwf` 文件定义三级审批步骤、参与者规则、transition
+- wf 内部步骤进度在 `NopWfStepInstance`/`NopWfWork` 表中管理，不污染业务表
+- 审批通过/驳回经 wf 结束事件 listener 回调业务标准 `approve`/`reject` action
+
+### 6.2 审批状态迁移（approveStatus 四态）
 
 ```
-待审核 (PENDING)
-    │
-    ├─ HR 审核 → 已复核 (REVIEWED)
-    │
-已复核 (REVIEWED)
-    │
-    ├─ 财务复核 → 财务已审批 (APPROVED_FINANCE)
-    │
-    └─ 退回 → 待审核 (PENDING)  [HR 修改后重新提交]
-    │
-财务已审批 (APPROVED_FINANCE)
-    │
-    ├─ 经理审批 → 经理已审批 (APPROVED_MANAGER)
-    │
-    └─ 退回 → 待审核 (PENDING)
-    │
-经理已审批 (APPROVED_MANAGER)
-    │
-    ├─ 发放 → 已发放 (PAID)  [终态]
-    │
-    └─ 作废 → 已作废 (VOID)  [终态]
+        核算完成
+            │
+            ▼
+     ┌──────────────┐
+     │  UNSUBMITTED  │  ← 新建/撤回
+     └──────┬───────┘
+            │ submitForApproval
+            ▼
+     ┌──────────────┐
+     │   SUBMITTED   │  ← 提交待审批（WF 内部多级处理中）
+     └──────┬───────┘
+            │            ┌──────────────────────┐
+            ├─ approve → │      APPROVED        │  ← 审批通过（终态，触发过账）
+            │            └──────────────────────┘
+            │            ┌──────────────────────┐
+            └─ reject →  │      REJECTED        │  ← 驳回（终态，可修改后重新提交）
+                         └──────────────────────┘
 ```
 
-### 6.2 审批角色
+| 迁移 | 触发方式 | 说明 |
+|------|----------|------|
+| UNSUBMITTED → SUBMITTED | 前端调 `submitForApproval` | 提交审批，DIRECT 模式直接入待审，WORKFLOW 模式同时启动 wf 实例 |
+| SUBMITTED → APPROVED | wf 结束回调 / DIRECT 前端调 `approve` | WORKFLOW 模式下所有审批步骤完成后，wf 回调触发标准 `approve` action |
+| SUBMITTED → REJECTED | wf 结束回调 / DIRECT 前端调 `reject` | 任一级审批人驳回即终态，wf 实例结束 |
+| SUBMITTED → UNSUBMITTED | 前端调 `withdrawApproval` | 撤回修改（仅限 wf 尚未完成时，审批人未处理） |
+| APPROVED → SUBMITTED | 前端调 `reverseApprove` | 反审核（需配置门控） |
 
-| 步骤 | 角色 | 操作 |
-|------|------|------|
-| 薪酬审核 | HR 薪酬专员 | 检查数据准确性，处理异常 |
-| 财务复核 | 财务主管 | 预算校验、总额审核 |
-| 经理审批 | 部门负责人/总经理 | 最终批准 |
-| 发放 | HR 薪酬专员/出纳 | 执行支付 |
+### 6.3 审批角色与 WF 步骤映射
 
-### 6.3 事件与 TODO
+| WF 步骤（.xwf 定义） | 角色 | 操作 | 说明 |
+|----------------------|------|------|------|
+| hr-review | HR 薪酬专员 | 检查数据准确性，处理异常 | 第一步审批 |
+| finance-review | 财务主管 | 预算校验、总额审核 | 第二步审批，可驳回 |
+| manager-approval | 部门负责人/总经理 | 最终批准 | 第三步审批，通过后 wf 结束 → 回调 `approve` action |
+| 退回（任意步骤） | — | wf 驳回触发回调 `reject` | 整单驳回到 `REJECTED`，需 HR 修改后重新提交 |
 
-| 迁移 | TODO |
-|------|------|
-| PENDING→REVIEWED | 分配财务复核待办 |
-| REVIEWED→APPROVED_FINANCE | 分配经理审批待办 |
-| APPROVED_FINANCE→APPROVED_MANAGER | 分配 HR 出纳发放待办 |
-| 退回（REVIEWED/APPROVED_FINANCE→PENDING） | 分配 HR 修正待办 |
+### 6.4 发放执行（独立于审批轴）
+
+审批通过后（`approveStatus=APPROVED`），由 HR 专员/出纳执行发放：
+
+| 操作 | 前置条件 | 效果 |
+|------|----------|------|
+| `markPaid` | `approveStatus=APPROVED`, `paymentStatus=PENDING` | `paymentStatus=PAID`，触发过账（SALARY_PAYMENT 凭证） |
+| `voidSalary` | `paymentStatus != PAID` | 作废：`paymentStatus=VOID` |
+
+> `paymentStatus=PAID` 后锁定（`ERR_SALARY_LOCKED_AFTER_PAID`），不允许修改或再次发放。如需调整走补发/追扣流程。
+
+### 6.5 入账触发时机
+
+| 动作 | 触发过账 | businessType | 说明 |
+|------|----------|-------------|------|
+| `approveStatus → APPROVED` | 计提 | SALARY(270) | 应付职工薪酬计提，由 `approve` action 的 xbiz `<source append>` 触发 |
+| `paymentStatus → PAID` | 发放 | SALARY_PAYMENT(280) | 银行发放凭证，由 `markPaid` 触发 |
+| 审批时联动 | 计提 | SOCIAL_INSURANCE_ER(290) / HOUSING_FUND_ER(300) | 公司承担部分，由 `approve` action 的 `append` 联动触发 |
+
+详见 `§九` 和 `docs/design/finance/posting.md`。
 
 ---
 
@@ -416,7 +464,7 @@
 ```
 银行文件生成
     │
-    ├─► 检索 paymentStatus = APPROVED_MANAGER 的 ErpHrSalary
+    ├─► 检索 paymentStatus = PENDING 且 approveStatus = APPROVED 的 ErpHrSalary
     │
     ├─► 按银行分组（员工工资卡所在银行）
     │
@@ -424,9 +472,7 @@
     │
     ├─► 创建 ErpHrPayrollBankFile
     │
-    ├─► 可下载 / 自动上传银行网银（集成层）
-    │
-    └─► 标记 ErpHrSalary.paymentStatus = PAID
+    └─► 标记 paymentStatus = PAID（同步写 approveStatus 不变）
 ```
 
 ---
@@ -480,10 +526,10 @@
 
 | businessType | 借方 | 贷方 | 触发时机 |
 |-------------|------|------|---------|
-| SALARY（计提） | 管理费用-工资/制造费用-工资 | 应付职工薪酬 | APPROVED_MANAGER |
-| SALARY_PAYMENT（发放） | 应付职工薪酬 | 银行存款 | PAID |
-| SOCIAL_INSURANCE_ER（社保公司） | 管理费用-社保 | 应付职工薪酬-社保 | 计提时 |
-| HOUSING_FUND_ER（公积金公司） | 管理费用-公积金 | 应付职工薪酬-公积金 | 计提时 |
+| SALARY（计提） | 管理费用-工资/制造费用-工资 | 应付职工薪酬 | approveStatus → APPROVED（由 `approve` action 的 xbiz `<source append>` 触发） |
+| SALARY_PAYMENT（发放） | 应付职工薪酬 | 银行存款 | paymentStatus → PAID（由 `markPaid` 触发） |
+| SOCIAL_INSURANCE_ER（社保公司） | 管理费用-社保 | 应付职工薪酬-社保 | approveStatus → APPROVED 时联动计提 |
+| HOUSING_FUND_ER（公积金公司） | 管理费用-公积金 | 应付职工薪酬-公积金 | approveStatus → APPROVED 时联动计提 |
 
 > 科目映射在 finance/posting.md 中定义，HR 域通过 `IErpFinAcctDocProvider` 提供核算数据。
 > 🟢 Axelor `PayrollLine.xml` + `AccountingSituation.xml` 过账联动。
@@ -511,10 +557,11 @@
 
 1. **薪酬计算顺序**：基本工资（考勤比例）→ 津贴/补贴 → 加班费 → 绩效奖金 → 社保公积金 → 个税 → 实发
 2. **社保基数上下限**：各城市不同，通过 ErpHrSocialInsuranceConfig 配置
-3. **个税累计预扣**：每年 1 月起重置累计，逐月累加，年终汇算清缴
-4. **审批链不可跳过**：HR → 财务 → 经理，每步需前一步完成
-5. **发放后不可修改**：PAID 后 ErpHrSalary 锁定，调整走补发/追扣流程
-6. **银行文件生成**：按银行分组，区分各银行模板格式
+3. **个税累计预扣**：每年 1 月重置累计，逐月累加，年终汇算清缴
+4. **审批链不可跳过**：HR → 财务 → 经理，每步需前一步完成（由 nop-wf `.xwf` 定义确保，非业务代码校验）
+5. **审批状态标准化**：`approveStatus` 使用平台标准四态（`wf/approve-status`），多级审批由 nop-wf 引擎内部跟踪，不构造自定义状态值
+6. **发放后不可修改**：`paymentStatus=PAID` 后锁定（`ERR_SALARY_LOCKED_AFTER_PAID`），调整走补发/追扣流程
+7. **银行文件生成**：按银行分组，区分各银行模板格式
 
 ## 参考
 
