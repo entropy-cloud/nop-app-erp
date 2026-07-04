@@ -7,4 +7,20 @@
     <import resource="_dao.beans.xml"/>
 
     <import resource="_service.beans.xml"/>
+
+    <!-- DRP 净需求只读聚合服务（plan 2026-07-04-1115-2 Phase 2）：StockBalance/TransferOrder/PurOrder → 净需求输入上下文 -->
+    <bean id="app.erp.drp.service.drp.DrpDemandAggregator"
+          class="app.erp.drp.service.drp.DrpDemandAggregator"/>
+
+    <!-- DRP 净需求计算引擎（plan 2026-07-04-1115-2 Phase 2）：netRequirement + orderMultiple 取整 + TRANSFER/PURCHASE 决策 → ErpDrpLine -->
+    <bean id="app.erp.drp.service.drp.DrpEngine"
+          class="app.erp.drp.service.drp.DrpEngine"/>
+
+    <!-- DRP 计划释放服务（plan 2026-07-04-1115-2 Phase 3）：APPROVED 行→调拨单/采购订单，回写 orderBillCode，DrpLine→ORDERED -->
+    <bean id="app.erp.drp.service.drp.DrpReleaseService"
+          class="app.erp.drp.service.drp.DrpReleaseService"/>
+
+    <!-- 安全库存优化引擎（plan 2026-07-04-1115-2 Phase 4）：STATISTICAL/SIMPLE/DDMRP 三法 → ErpInvDrpSafetyStockCalc -->
+    <bean id="app.erp.drp.service.safetystock.SafetyStockEngine"
+          class="app.erp.drp.service.safetystock.SafetyStockEngine"/>
 </beans>
