@@ -332,6 +332,19 @@ ErpHolidayCalendar（节假日日历）
 | master-data（ErpMdPartner） | 节假日日历（工作日模式依赖） |
 | CRM（ErpCrmLead） | 售后工单关联客户全生命周期 |
 
+## 实现偏离补注（2026-07-04 实现）
+
+> 权威计划：`docs/plans/2026-07-04-0700-2-cs-ticket-sla-csat.md`。本节相对 §1-3 设计的实现取舍。
+
+- **§1.2 匹配规则**：ORM 无 `isActive` 列——匹配器不做 active 过滤，按精确度（type+priority > type > 通用兜底；team 维度因工单无 `teamId` 列不参与，仅匹配 `policy.teamId IS NULL`）取首条。多策略同精确度取序为 Follow-up（触发条件：需显式启用/禁用策略切换时加 `isActive` 列）。
+- **§1.3 deadline 计算**：日历小时模式 `now + resolveHours`（days 折算 24h/天）；工作日模式仅跳周末（Sat/Sun），不含 `workingHourStart/End` 工作时段窗口与节假日日历（ORM 无 workingHour 字段，`ErpHolidayCalendar` 未确认存在）。精确工时累计与法定节假日准确截止归 Non-Goal。
+- **§2.1 计时起止**：`startDateTime = 首次 IN_PROGRESS 时间`（start 动作设置，非 NEW 创建时）；`duration = resolve 时 now - startDateTime`（分钟）。
+- **§2.2 暂停/恢复机制**：归 Non-Goal（无 `ErpCsTicketSlaPause` 实体与 `adjustedDeadlineDateTime` 列）。
+- **§3.1-3.2 超时升级**：仅 L1 通知 `escalationUserId`（`scanOverdueTickets` 创建 ESCALATE 审计）；L2/L3 多级升级链归 Non-Goal（ORM 无 `secondEscalationUserId`/`escalationDelayHours`）。`escalationUserId` 类型为 BIGINT(long)，非 `stdDomain=userId` 的 VARCHAR(36)。
+- **§3.4 预警**：`findSlaWarnings(beforeMinutes)` 查询 `deadlineDateTime BETWEEN now AND now+beforeMinutes`（dateTimeBetween）且未完成，供 nop-job 调用；cron 实际注册归 Non-Goal（Follow-up：生产部署需定时自动触发时接 nop-job）。
+- **§5.2 节假日日历**：`ErpHolidayCalendar` 未确认存在，首版不接入。
+- **配置默认值**：`erp-cs.sla-enabled=true`、`erp-cs.sla-warning-before=60`（分钟）、`erp-cs.auto-assign-on-create=true`。
+
 ## 参考
 
 - `state-machine.md`（工单状态机 + SLA 计时联动）

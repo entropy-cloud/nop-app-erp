@@ -26,7 +26,9 @@
 - 3.2：✅ done（CRM 活动提醒/时间线：Event complete/cancel 状态机(PLANNED→COMPLETED/CANCELLED) + 推模式回写 Lead.lastContactDate/nextActivityDate + findDueReminders(config-gated 窗口查询) + getLeadTimeline(Event+Activity 合并倒序)，2026-07-04，`docs/plans/2026-07-04-0700-1-crm-event-reminder-lead-scoring-forecast.md`）
 - 3.3：✅ done（CRM 线索评分引擎：config 驱动 LOOKUP/FORMULA/BOOLEAN 准则 → 归一化 totalScore(0-100) → append-only 评分记录+行级快照 + auto-qualify 阈值触发(复用 qualify NEW→QUALIFIED, config-gated) + recalc-on-lead-update(config-gated) + 多 active config 抛错/无 active 不阻断，2026-07-04，同上计划）
 - 3.4：✅ done（CRM 销售预测：refreshForecast 聚合引擎(commit/upside/best-case/weighted 分类+团队→公司层级 rollup+ForecastLine 快照清旧重建) + 期间状态机(OPEN→FROZEN/CLOSED, FROZEN/CLOSED 拒绝重算) + closePeriod 触发准确率(config-gated)，2026-07-04，同上计划）
-- 3.5–3.21：`todo`
+- 3.5：✅ done（客服工单状态机：六态 assign/start/resolve/close/reopen/cancel + 非法迁移/终态 ErrorCode + TicketAction 审计 + SLA 策略匹配(ticketType+priority 精确度排序，无 isActive 过滤) + deadline 计算(日历小时 + 工作日跳周末，无工作时段窗口/节假日) + isSlaCompleted 标记 + scanOverdueTickets ESCALATE 升级 + findSlaWarnings 预警查询；config-gated sla-enabled/sla-warning-before/auto-assign-on-create，2026-07-04，`docs/plans/2026-07-04-0700-2-cs-ticket-sla-csat.md`）
+- 3.6：✅ done（CSAT 调查生命周期：createSurvey(RESOLVED 触发 config-gated，UUID token 无鉴权，一工单一调查唯一约束，delay=0 立即 SENT) + submitSurvey(csat 1-5/nps 0-10/ces 1-7 区间校验各 config-gated，状态时间戳派生 PENDING/SENT/COMPLETED) + NPS 分类(推荐者/被动者/贬损者派生不持久化) + reopen 取消未响应调查 + findSurveyReminders/findExpiredSurveys 查询；nop-job cron 注册归 Non-Goal，2026-07-04，同上计划）
+- 3.7–3.21：`todo`
 
 ## Implementation Order
 
@@ -54,8 +56,8 @@
 | 3.2 | ✅ CRM 活动日历/事件提醒 | crm | `crm/README.md` |
 | 3.3 | ✅ CRM 线索评分引擎 | crm | `crm/lead-scoring.md` |
 | 3.4 | ✅ CRM 销售预测 | crm | `crm/sales-forecast.md` |
-| 3.5 | 客服 Ticket + SLA 计时 | customer-service | `customer-service/README.md`, `customer-service/sla.md` |
-| 3.6 | 客服满意度调查 | customer-service | `customer-service/csat.md` |
+| 3.5 | ✅ 客服 Ticket + SLA 计时 | customer-service | `customer-service/README.md`, `customer-service/sla.md` |
+| 3.6 | ✅ 客服满意度调查 | customer-service | `customer-service/csat.md` |
 | 3.7 | HR 薪酬核算 + 个税计算 | human-resource | `human-resource/payroll.md` |
 | 3.8 | HR 排班管理 | human-resource | `human-resource/shift-scheduling.md` |
 | 3.9 | HR 薪酬模拟 | human-resource | `human-resource/payroll-simulation.md` |

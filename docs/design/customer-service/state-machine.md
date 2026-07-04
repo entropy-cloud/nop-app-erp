@@ -143,7 +143,16 @@ NEW（新建）
 - 状态码归 `module-cs/model/app-erp-cs.orm.xml`（dict: erp-cs/ticket-status）。
 - 工单操作日志实体 ErpCsTicketAction 记录完整状态迁移历史。
 
-## 审查提示
+## 实现偏离补注（2026-07-04 实现）
+
+> 权威计划：`docs/plans/2026-07-04-0700-2-cs-ticket-sla-csat.md`。本节相对 §1-2 设计的实现取舍。
+
+- **§2 SLA 计时联动**：`startDateTime = 首次 IN_PROGRESS 时间`（start 动作设置，非 NEW/创建时）；与设计表"SLA 从创建时开始计时"表述不同——实现按 IN_PROGRESS 实际处理时长计 `duration`（更公平，NEW/ASSIGNED 未实际处理）。`resolve` 标 `isSlaCompleted = (now ≤ deadlineDateTime)`。
+- **关闭前检查**：`close` 动作校验——超时工单（`isSlaCompleted=false`）须在 `remark` 注明超时原因，否则抛 `ERR_TICKET_CLOSE_BREACHED_NO_REASON`。
+- **审计 actionType**：`erp-cs/action-type` 字典无 START/RESOLVE/REOPEN 码——start/resolve/reopen 复用 NOTE，迁移语义由 `fromStatus`/`toStatus` 承载；assign→ASSIGN、close→CLOSE、cancel→CANCEL、超时→ESCALATE。
+- **cancel 范围**：NEW/ASSIGNED/IN_PROGRESS/RESOLVED 均可 cancel（非终态→CANCELLED）；CLOSED/CANCELLED 终态再迁移抛 `ERR_TICKET_ALREADY_TERMINAL`。
+- **reopen 副作用**：RESOLVED→IN_PROGRESS 时取消未响应的调查（删除 `respondedAt` 空的调查），避免误发满意度问卷。
+- **CSAT 触发**：resolve 成功后（config-gated `survey-trigger-status=RESOLVED` 默认）自动创建调查。
 
 审查本状态机时，使用 `docs/skills/state-machine-business-review-prompt.md`，重点检查：
 - SLA 计时起止点是否正确（NEW 开始，RESOLVED 停止）。

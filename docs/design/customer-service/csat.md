@@ -209,3 +209,17 @@ ORDER BY avgCsat DESC
 | 工单（ErpCsTicket） | 调查关联工单，RESOLVED 触发调查创建 |
 | 通知（nop-sys） | 发送调查链接邮件/站内信 |
 | 客服绩效（HR） | CSAT 作为客服绩效 KPI 输入 |
+
+## 实现偏离补注（2026-07-04 实现）
+
+> 权威计划：`docs/plans/2026-07-04-0700-2-cs-ticket-sla-csat.md`。本节相对 §1-3 设计的实现取舍。
+
+- **§1.1 / §3.1 调查状态持久化**：`ErpCsSurvey` ORM 无独立 `status` 列；状态由时间戳派生——PENDING=`surveySentAt` 空 / SENT=`surveySentAt` 非空且 `respondedAt` 空 / COMPLETED=`respondedAt` 非空。FAILED/EXPIRED 仅查询期判定不持久。扩 `status` 列归 Non-Goal。
+- **§1.2 NPS 分类**：9-10 推荐者 / 7-8 被动者 / 0-6 贬损者经 `NpsClassifier` 派生，**不持久化**（ORM 无分类列）；报表需按分类聚合时运行时计算或扩列。
+- **§2.1 触发时机**：`resolve` 动作成功后（config-gated `survey-enabled` + `survey-trigger-status` 默认 RESOLVED）自动调 `createSurvey`。
+- **§2.2 延迟发送**：`survey-send-delay>0` 时 `surveySentAt` 留空（状态 PENDING），实际延迟发送由 nop-job 接线（cron 注册归 Non-Goal）；`delay=0`（默认）立即置 `surveySentAt=now`（状态 SENT）。
+- **§2.3 发送渠道**：`createSurvey` 默认 `surveyChannel=PORTAL`；实际邮件/门户渲染/发送归 nop-notification 独立面。
+- **§2.4 调查链接**：`surveyToken` 为 UUID（无鉴权访问），链接格式 `{portal-url}/cs/survey/{token}` 由前端渲染；本计划仅交付 token 生成与提交逻辑。
+- **§3.2 超时提醒**：`findSurveyReminders(reminderHours)` / `findExpiredSurveys(expireDays)` 查询方法交付；cron 实际注册归 Non-Goal。
+- **reopen 取消调查**：工单 RESOLVED→IN_PROGRESS（reopen）时，若调查未响应（`respondedAt` 空）则删除，避免误发。
+- **配置默认值**：`erp-cs.survey-enabled=true`、`erp-cs.survey-trigger-status=RESOLVED`、`erp-cs.survey-send-delay=0`（小时）、`erp-cs.survey-csat-enabled=true`、`erp-cs.survey-nps-enabled=false`、`erp-cs.survey-ces-enabled=false`、`erp-cs.survey-reminder-hours=48`、`erp-cs.survey-expire-days=7`。
