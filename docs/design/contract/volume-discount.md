@@ -156,6 +156,12 @@
 
 ### 结算流程
 
+> **实现落定（plan 2026-07-04-1115-1 Phase 1 Decision）**：贷项凭证复用既有
+> `IErpPurInvoiceBiz`/`IErpSalInvoiceBiz` 以**负额发票**表达，不新增 finance CreditMemo 实体。
+> `rebateType=PURCHASE`→AP 负额发票（冲减应付），`rebateType=SALES`→AR 负额发票（冲减应收）。
+> 经负额走标准 AP_INVOICE/AR_INVOICE 过账产生红字凭证 + 负 openAmount 辅助账
+>（与退货红字模式、PaymentSettler negate 模式一致）。
+
 ```
 返利协议到期或手动触发结算
     │
@@ -164,11 +170,11 @@
     │
     ├─► 生成 ErpCtRebateSettlement（DRAFT）
     │
-    ├─► 调用 finance 域 API：
-    │     rebateType=PURCHASE → 生成 AP Credit Memo（应收供应商返利）
-    │     rebateType=SALES   → 生成 AR Credit Memo（应付客户返利）
+    ├─► 生成贷项凭证（负额发票，经 IDaoProvider 直接持久化）：
+    │     rebateType=PURCHASE → 生成负额 AP 发票（冲减应付）
+    │     rebateType=SALES   → 生成负额 AR 发票（冲减应收）
     │
-    ├─► 信用单过账（finance 域标准过账流程）
+    ├─► 贷项发票后续走 purchase/sales 域标准审核过账流程（红字凭证）
     │
     └─► Settlement 状态 → POSTED
           ErpCtRebateAccrual.isSettled → true
