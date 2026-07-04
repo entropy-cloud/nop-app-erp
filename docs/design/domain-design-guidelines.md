@@ -236,33 +236,33 @@
 
 ### 7.1 命名空间
 
-ErrorCode 按域划分命名空间，格式 `erp.<domain>.<code>`：
+ErrorCode 遵循 Nop 平台惯例 `nop.err.<module>.<name>`，应用层以 `erp.err` 替换 `nop.err`。格式：`erp.err.<domain-short>.<name>`（`domain-short` 见 `docs/architecture/domain-module-split-analysis.md` §2.0 `appName` 列）。
 
 | 域 | 命名空间 | 示例 |
 |---|---|---|
-| purchase | `erp.purchase.*` | `erp.purchase.order-not-found` |
-| sales | `erp.sales.*` | `erp.sales.insufficient-credit` |
-| inventory | `erp.inventory.*` | `erp.inventory.negative-stock-blocked` |
-| finance | `erp.finance.*` | `erp.finance.period-not-open` |
-| assets | `erp.assets.*` | `erp.assets.asset-not-depreciatable` |
-| manufacturing | `erp.manufacturing.*` | `erp.manufacturing.bom-not-found` |
-| projects | `erp.projects.*` | `erp.projects.task-already-completed` |
-| maintenance | `erp.maintenance.*` | `erp.maintenance.equipment-not-found` |
-| quality | `erp.quality.*` | `erp.quality.ncr-already-resolved` |
-| master-data | `erp.master-data.*` | `erp.master-data.sku-duplicate` |
+| purchase | `erp.err.pur.*` | `erp.err.pur.order-not-found` |
+| sales | `erp.err.sal.*` | `erp.err.sal.insufficient-credit` |
+| inventory | `erp.err.inv.*` | `erp.err.inv.negative-stock-blocked` |
+| finance | `erp.err.fin.*` | `erp.err.fin.period-not-open` |
+| assets | `erp.err.ast.*` | `erp.err.ast.asset-not-depreciatable` |
+| manufacturing | `erp.err.mfg.*` | `erp.err.mfg.bom-not-found` |
+| projects | `erp.err.prj.*` | `erp.err.prj.task-already-completed` |
+| maintenance | `erp.err.mnt.*` | `erp.err.mnt.equipment-not-found` |
+| quality | `erp.err.qa.*` | `erp.err.qa.ncr-already-resolved` |
+| master-data | `erp.err.md.*` | `erp.err.md.sku-duplicate` |
 
 ### 7.2 编码规则
 
-- 使用 4 位数字编码，前两位归域、后两位归具体错误（如 `erp.purchase.0101`）
-- 或使用可读字符串标识（如 `erp.purchase.order-not-found`），推荐字符串形式
-- ErrorCode 枚举文件存放在各域 `-service` 模块的 `error/` 包下
-- 每个域的 ErrorCode 枚举类命名：`Erp<Domain>ErrorCode`（如 `ErpPurchaseErrorCode`）
+- 使用可读字符串标识（如 `erp.err.pur.order-not-found`），遵循 Nop 平台 kebab-case 惯例
+- 不推荐数字编码（与 Nop 平台惯例不符）
+- ErrorCode 定义存放在各域 `-service` 模块的 `service/` 包下（与 `ErpXxxConstants` 同级）
+- 每个域的 ErrorCode 定义以 `interface` + `ErrorCode` 静态字段形式：`Erp<Domain>Errors`（如 `ErpPurErrors`）
 
 ### 7.3 使用规范
 
 ```java
 // 正确：使用 ErrorCode + NopException
-throw new NopException(ErpPurchaseErrorCode.ORDER_NOT_FOUND).param("orderId", orderId);
+throw new NopException(ErpPurErrors.ERR_ORDER_NOT_FOUND).param("orderId", orderId);
 
 // 错误：直接抛出 RuntimeException 或自定义异常
 throw new RuntimeException("订单不存在"); // 禁止

@@ -61,8 +61,8 @@
 | 3.7 | HR 薪酬核算 + 个税计算 | human-resource | `human-resource/payroll.md` |
 | 3.8 | HR 排班管理 | human-resource | `human-resource/shift-scheduling.md` |
 | 3.9 | HR 薪酬模拟 | human-resource | `human-resource/payroll-simulation.md` |
-| 3.10 | APS OperationOrder 排产引擎 | aps | `aps/scheduling.md` |
-| 3.11 | APS ATP/CTP 交期承诺 | aps | `aps/scheduling.md` |
+| 3.10 | ✅ APS OperationOrder 排产引擎 | aps | `aps/scheduling.md` |
+| 3.11 | ✅ APS ATP/CTP 交期承诺 | aps | `aps/scheduling.md` |
 | 3.12 | 合同版本管理 + InvoicePlan 触发发票 | contract | `contract/README.md` |
 | 3.13 | 合同电子签章 | contract | `contract/e-signature.md` |
 | 3.14 | 合同批量折扣/返利计算 | contract | `contract/volume-discount.md` |

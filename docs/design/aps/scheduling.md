@@ -1,5 +1,13 @@
 # APS 排产算法
 
+> **实现偏离补注**（2026-07-04，plan `2026-07-04-0831-1`）：
+> - **贪心启发式非优化求解**：本期排产引擎为前向/后向贪心填充启发式（与 Axelor/Odoo 开源基线一致），无 ILP/CP 优化求解（计划 Non-Goal）。
+> - **MAINTENANCE 单约束 + capacity=1**：仅消费 `ErpApsConstraint` MAINTENANCE 类型约束；PERSONNEL/TOOL/capacity>1 并联排产归 follow-up（`constraint-type` 字典与实体已预留）。
+> - **工作中心班次日历未展开**：本期工作中心可用时间轴 = horizon 全域 − 维护停机区间；班次/节假日重复展开（`ErpMfgWorkcenterCalendar` shift 模式展开）归 follow-up。
+> - **ATP/CTP 跨域只读聚合经 IDaoProvider**：本期对 inventory/manufacturing 域的 ATP 库存聚合与 CTP 工艺路线追溯采用 `IDaoProvider` 只读实体查询，而非跨域 I*Biz 强注入（I*Biz 强注入在 aps-service 单模块部署/测试时因依赖模块未组装而启动失败）。仅只读聚合、非裸 SQL、未破坏物理边界；完整 `app-erp-all` 部署等价。CTP 影子 OperationOrder 经 `IEntityDao.newEntity()` 构造，仅参与内存模拟，从不 save。
+> - **甘特图前端可视化 / `dragUpdateOperation` 拖拽后端校验**：Non-Goal，归前端计划。
+> - **APS→CRP 负荷来源 re-wiring / JobCard 按 OperationOrder 排程自动创建 / maintenance 停机事件订阅扣减 / 自动派工（DispatchRule/DispatchLog）执行 / nop-job 定时自动重排**：均为 Non-Goal，归各 owner 计划 follow-up（触发条件：本计划落地）。
+
 ## 目的
 
 详细设计 APS 排产算法的三种核心模式（前向/后向/优先级排产）、有限产能约束、插单重排、ATP/CTP 模拟、以及甘特图数据模型。本文档是排产引擎的实现基准。
