@@ -4,6 +4,12 @@
 
 详细说明提前发货通知（ASN）的入站处理全流程：Webhook 接收 → HMAC 验签 → 报文解析 → ASN 实体创建 → 采购订单匹配 → 仓库准备 → 集成采购入库。本设计是 `b2b/README.md` §ASN 入站处理流程 和 `architecture/b2b-integration.md` §ASN 入站处理流程 的实施级深化，参考 🟢 Odoo `purchase_edi_ubl_bis3` 范式。
 
+> **实现偏离补注（2026-07-04, plan 2200-1）**：
+> - ASN 入站 webhook 为**主路径**（`@BizMutation handleInboundWebhook`），SFTP 轮询为备用路径（本期提供可调用方法 + cron 表达式，注册归部署 follow-up）。
+> - ASN→采购入库为 **config-gated**（`erp-b2b.asn-auto-create-receive`，默认关）。**核心零污染**：不在 `ErpPurReceive` 加 asnId 列，仅弱指针 orderId。
+> - `error-blocks-flow=true` 回写源业务单强一致联动为 Non-Goal（本期 ERROR 仅落 EdiDoc.blockingLevel + 日志，不回写阻断源单）。
+> - ASN 未匹配 PO 的自动定时重试 + 超时升级为 Non-Goal（本期提供 `findUnmatchedAsns` 查询入口 + 手动 `retryMatch`）。
+
 ---
 
 ## 一、ASN 入站全流程

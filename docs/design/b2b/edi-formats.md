@@ -4,6 +4,11 @@
 
 详细说明 EDI 格式 SPI（IErpB2bEdiProvider）的接口契约、适用性派发机制、各标准格式（UBL/X12/EDIFACT）的设计要点、内外代码映射、以及 EDI 信封事务状态机。本设计是 `b2b/README.md` §SPI 契约 和 `architecture/b2b-integration.md` 的实施级深化。
 
+> **实现偏离补注（2026-07-04, plan 2200-1）**：
+> - `ErpB2bEdiLog` ORM 无 `actionType`/`httpStatus` 列（§8.1 列出但未落地）→ 动作语义编码到既有 `direction`+`resultCode`+`resultMsg` 列，不新增列。
+> - `ErpB2bEdiDoc.attachmentFileId` 为 OrmFileComponent（文件引用），不可存 raw payload → rawPayload 改存 `ErpB2bEdiLog.requestPayload`（CLOB）。
+> - X12/EDIFACT Provider 为 Non-Goal（本期仅 UBL 样例）；真实 AS2/SFTP/FTPS 协议库集成归 follow-up。
+
 ---
 
 ## 一、Format SPI：IErpB2bEdiProvider

@@ -4,6 +4,11 @@
 
 设计 B2B 域的文件传输能力，支持 AS2（适用 EDI 传输）和 SFTP/FTPS 协议，包括证书管理、加密/解密、重试机制、死信队列和传输审计日志。与 EDI 信封事务（ErpB2bEdiDoc）协作，提供可靠的文件级传输层。
 
+> **实现偏离补注（2026-07-04, plan 2200-1）**：
+> - 本期仅 `MockTransportAdapter`（`protocol=HTTPS`，内联可测试，无外部网络）+ SPI 契约；真实 AS2/SFTP/FTPS 协议库集成归 follow-up（触发条件：具体传输伙伴接入 + 证书就绪）。
+> - `ErpB2bMftCertificate` ORM 仅存储证书元数据（指纹/算法/过期日期），无 `certificatePem`/`privateKeyRef` 列（§证书管理 列出但 ORM 未落地）→ 真实私钥加密存储（EncryptionHelper）归 follow-up。
+> - SFTP 入站轮询（`SftpPoller` 定时任务）生产注册为 Non-Goal（ASN 入站走 webhook 主动推送为主路径）。
+
 ## 设计依据
 
 > 参考 **Cleo Clarify**：多协议 MFT 平台（AS2/SFTP/FTPS/HTTP），证书管理和传输监控。
