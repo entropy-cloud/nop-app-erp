@@ -30,7 +30,8 @@
 - 3.6：✅ done（CSAT 调查生命周期：createSurvey(RESOLVED 触发 config-gated，UUID token 无鉴权，一工单一调查唯一约束，delay=0 立即 SENT) + submitSurvey(csat 1-5/nps 0-10/ces 1-7 区间校验各 config-gated，状态时间戳派生 PENDING/SENT/COMPLETED) + NPS 分类(推荐者/被动者/贬损者派生不持久化) + reopen 取消未响应调查 + findSurveyReminders/findExpiredSurveys 查询；nop-job cron 注册归 Non-Goal，2026-07-04，同上计划）
 - 3.7：✅ done（HR 薪酬核算引擎 + 个税累计预扣：6 配置实体新增(ErpHrSalaryItem/SocialInsuranceConfig/SocialInsuranceBase/TaxConfig/TaxSpecialDeduction/PayrollBankFile) + ErpHrSalary 扩展(approvalStatus 6 态审批状态机 PENDING→REVIEWED→APPROVED_FINANCE→APPROVED_MANAGER→PAID/VOID + 累计个税/考勤派生字段，paymentStatus 派生投影) + 核算引擎(出勤比例→基本工资→津贴→加班→绩效→社保基数 min/max 钳制→公积金→个税累计预扣法七级累进→实发) + runPayroll 批量幂等 + 审批链不可跳过(ERR_SALARY_ILLEGAL_STATUS_TRANSITION/LOCKED_AFTER_PAID) + 业财过账 SalaryPostingProvider(SALARY 270/SALARY_PAYMENT 280/SOCIAL_INSURANCE_ER 290/HOUSING_FUND_ER 300，ErpFinBusinessType 枚举+字典同步保护区域契约扩展) APPROVED_MANAGER 计提/PAID 发放 + 银行代发文件 CSV 生成，2026-07-04，`docs/plans/2026-07-04-0831-2-hr-payroll-engine-income-tax.md`）
 - 3.8：✅ done（HR 排班管理：班次模板+排班分配(assignSingle 强制一人一天一排班唯一约束 ERR_SHIFT_DUPLICATE_ASSIGNMENT / assignBatch 员工组×日期范围 / copyFromPeriod 上期复制) + 轮换生成(generateRotation patternData JSON 序列+staggerDays 错峰+regenerate 清旧重生成，瞬态入参 Decision 不新增 RotationGroup 实体) + 迟到/早退/缺勤计算(calcAttendance 结果写 ErpHrAttendance 已有列，ShiftAssignment 保持标准输入角色，跨天夜班 endTime 次日基准，休假覆盖不计旷工) + 排班调换审批(submit→PENDING/approve→APPROVED 互换双方 assignment 班次+swapRequestId/replacedByAssignmentId 追溯/reject/cancel 非法迁移 ErrorCode) + 休假联动(onLeaveApproved 标记 ABSENT+LEAVE/onLeaveCancelled 解除，同域跨实体同步调用) + 新增 erp-hr/absence-reason 字典；本期无 ErpHrShiftAssignment 模型变更，2026-07-04，`docs/plans/2026-07-04-0831-3-hr-shift-scheduling.md`）
-- 3.9–3.21：`todo`
+- 3.9：✅ done（HR 薪酬模拟 What-If：新增 `ErpHrSalarySimulationItemAdjustment` 加性实体（调整追踪 simulationId/employeeId/salaryItemCode/originalAmount/adjustedAmount/adjustmentReason 字典 erp-hr/adjustment-reason）+ `PayrollCalculator.recalculateWithOverrides` 覆盖重算（Explore 降级方案：克隆源 base→覆盖薪酬项目字段→重算 gross/tax/net，社保/公积金沿用源期间值 master 驱动，0831-2 计算规则零修改）+ createSimulation（冻结源快照经 ItemAdjustment.originalAmount 锚定）+ adjustItem（仅 DRAFT 即时应变）+ getComparison 三列对比 + getDepartmentSummary/getProjectSummary/getCompanySummary 聚合 + applyBatchAdjustment（FIXED/RATIO/ALLOWANCE/LEVEL_MAP jobGrade 映射）+ findAnomalies（NET_PAY_CHANGE/TOTAL_CHANGE/TAX_BRACKET_JUMP config 阈值告警）+ 审批状态机（submitForReview DRAFT→IN_REVIEW 前置 hasAnyAdjustment / approve→APPROVED / reject→REJECTED / convertToFormal APPROVED→CONVERTED 逐员工 PAID/重复冲突检查+创建正式 PENDING 薪酬+回填 convertedSalaryId/convertedAt+部分冲突仅转无冲突）+ findSimulationsByConvertedSalary 反向追溯；核心零污染 ErpHrSalary 不加 convertedFromSimulationId 列（单向追溯）；转正式 DRAFT 冲突简化为拒绝（design §4.2 原为覆盖确认，归前端 Non-Goal），2026-07-04，`docs/plans/2026-07-04-2200-3-hr-payroll-simulation.md`）
+- 3.10–3.21：`todo`
 
 ## Implementation Order
 
@@ -62,7 +63,7 @@
 | 3.6 | ✅ 客服满意度调查 | customer-service | `customer-service/csat.md` |
 | 3.7 | HR 薪酬核算 + 个税计算 | human-resource | `human-resource/payroll.md` |
 | 3.8 | ✅ HR 排班管理 | human-resource | `human-resource/shift-scheduling.md` |
-| 3.9 | HR 薪酬模拟 | human-resource | `human-resource/payroll-simulation.md` |
+| 3.9 | ✅ HR 薪酬模拟 | human-resource | `human-resource/payroll-simulation.md` |
 | 3.10 | ✅ APS OperationOrder 排产引擎 | aps | `aps/scheduling.md` |
 | 3.11 | ✅ APS ATP/CTP 交期承诺 | aps | `aps/scheduling.md` |
 | 3.12 | ✅ 合同版本管理 + InvoicePlan 触发发票 | contract | `contract/README.md` |

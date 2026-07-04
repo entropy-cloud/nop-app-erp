@@ -174,9 +174,22 @@ HR 选择"创建模拟"
 
 | 场景 | 处理 |
 |------|------|
-| 目标期间已有 DRAFT 正式薪酬 | 覆盖确认（保留被替换版本的快照） |
-| 目标期间已有 PAID 正式薪酬 | 不允许转正式，提示先作废 |
-| 部分员工已在目标期间有薪酬 | 仅转换无冲突的员工 |
+| 目标期间已有 DRAFT 正式薪酬 | **本期简化为拒绝**（`ERR_HR_SIMULATION_EMPLOYEE_DUPLICATE`，含 DRAFT/PENDING 等全部非 VOID）。design 原为「覆盖确认」，需前端二次确认交互，归前端计划后续实现 |
+| 目标期间已有 PAID 正式薪酬 | 不允许转正式，提示先作废（`ERR_HR_SIMULATION_TARGET_PERIOD_CONFLICT`） |
+| 部分员工已在目标期间有薪酬 | 仅转换无冲突的员工（部分冲突仅转无冲突） |
+
+### 4.3 追溯方向（实现偏离补注）
+
+- **单向追溯**：`Simulation.convertedSalaryId → ErpHrSalary`（已存在外键 + to-one 关系）。
+- **不在 `ErpHrSalary` 加 `convertedFromSimulationId` 列**（核心零污染——避免污染 0831-2 既有薪酬实体模型契约）。
+- **反向追溯**：经查询 `findSimulationsByConvertedSalary(salaryId)` 补全，而非外键导航。
+
+### 4.4 PayrollCalculator 覆盖重算（实现偏离补注）
+
+- `SocialInsuranceCalculator` 深度耦合 master 读取（仅接受 employeeId，不接受入参覆盖）。
+- 故覆盖重算采用降级方案：克隆源 `ErpHrSalary` → 按 overrides 覆盖薪酬项目字段 → 重算 gross/tax/net。
+- **社保/公积金沿用源期间值**（master 驱动，非月工资派生；社保基数钳制已在源期间核算时由 `SocialInsuranceCalculator.clamp` 应用）。
+- 0831-2 计算规则零修改，`IncomeTaxCalculator.calculate` 入参路径复用（gross/specialDeduction 走入参，历史累计窗口按模拟期查询）。
 
 ---
 
@@ -236,7 +249,7 @@ HR 选择批量调薪模拟
 3. **即时应变**：每次调整一个项目后自动重新计算所有关联项目（个税、社保、实发）
 4. **审批必过不可跳过**：模拟值不可直接从 DRAFT 转正式，必须有审批记录
 5. **目标期间去重**：同一员工同一期间只能有一条正式薪酬（模拟转正前检查冲突）
-6. **可追溯**：正式薪酬通过 `convertedFromSimulationId` 关联回模拟，模拟通过 `sourceSalaryId` 关联回源薪酬
+6. **可追溯**：模拟通过 `sourceSalaryId` 关联回源薪酬。**追溯单向** `Simulation.convertedSalaryId → ErpHrSalary`（不在 ErpHrSalary 加 `convertedFromSimulationId` 列，核心零污染）；反向经查询 `findSimulationsByConvertedSalary(salaryId)` 补全
 
 ## 参考
 
