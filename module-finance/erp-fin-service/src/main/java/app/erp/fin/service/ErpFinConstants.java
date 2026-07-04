@@ -140,6 +140,22 @@ public interface ErpFinConstants {
     String VOUCHER_STATUS_DRAFT = "DRAFT";
     String VOUCHER_STATUS_POSTED = "POSTED";
 
+    // ---- 过账类型（与 erp-fin/posting-type 字典对齐） ----
+    String POSTING_TYPE_NORMAL = "NORMAL";
+    String POSTING_TYPE_REVERSAL = "REVERSAL";
+
+    // ---- 过账异常处置状态（与 erp-fin/posting-exception-status 字典对齐，见 posting-log.md §过账异常处置） ----
+    String POSTING_EXCEPTION_STATUS_PENDING = "PENDING";
+    String POSTING_EXCEPTION_STATUS_RETRYING = "RETRYING";
+    String POSTING_EXCEPTION_STATUS_RETRIED = "RETRIED";
+    String POSTING_EXCEPTION_STATUS_IGNORED = "IGNORED";
+    String POSTING_EXCEPTION_STATUS_MANUAL = "MANUAL";
+
+    // ---- 过账异常处置动作（与 erp-fin/posting-exception-resolution 字典对齐） ----
+    String POSTING_EXCEPTION_RESOLUTION_RETRY = "RETRY";
+    String POSTING_EXCEPTION_RESOLUTION_IGNORE = "IGNORE";
+    String POSTING_EXCEPTION_RESOLUTION_MANUAL = "MANUAL";
+
     // ---- 资金/票据配置项（treasury.md §配置点），经 AppConfig.var 读取 ----
     /** 开银承前是否强制校验授信可用额度，默认 true。 */
     String CONFIG_CREDIT_CHECK_ON_ISSUE = "erp-fin.credit-check-on-issue";

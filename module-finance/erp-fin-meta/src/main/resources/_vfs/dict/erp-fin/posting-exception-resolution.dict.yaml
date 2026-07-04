@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 过账异常处置动作
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 重试
+    value: RETRY
+    description: 
+  
+  - label: 忽略
+    value: IGNORE
+    description: 
+  
+  - label: 手工补录
+    value: MANUAL
+    description: 
+  

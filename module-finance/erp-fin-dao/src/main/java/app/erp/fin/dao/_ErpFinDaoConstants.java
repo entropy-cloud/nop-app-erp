@@ -548,4 +548,44 @@ public interface _ErpFinDaoConstants {
      */
     String CASH_FLOW_DIRECTION_OUTFLOW = "OUTFLOW";
                     
+    /**
+     * 过账异常处置状态: 待处置 
+     */
+    String POSTING_EXCEPTION_STATUS_PENDING = "PENDING";
+                    
+    /**
+     * 过账异常处置状态: 重试中 
+     */
+    String POSTING_EXCEPTION_STATUS_RETRYING = "RETRYING";
+                    
+    /**
+     * 过账异常处置状态: 重试成功 
+     */
+    String POSTING_EXCEPTION_STATUS_RETRIED = "RETRIED";
+                    
+    /**
+     * 过账异常处置状态: 已忽略 
+     */
+    String POSTING_EXCEPTION_STATUS_IGNORED = "IGNORED";
+                    
+    /**
+     * 过账异常处置状态: 手工补录 
+     */
+    String POSTING_EXCEPTION_STATUS_MANUAL = "MANUAL";
+                    
+    /**
+     * 过账异常处置动作: 重试 
+     */
+    String POSTING_EXCEPTION_RESOLUTION_RETRY = "RETRY";
+                    
+    /**
+     * 过账异常处置动作: 忽略 
+     */
+    String POSTING_EXCEPTION_RESOLUTION_IGNORE = "IGNORE";
+                    
+    /**
+     * 过账异常处置动作: 手工补录 
+     */
+    String POSTING_EXCEPTION_RESOLUTION_MANUAL = "MANUAL";
+                    
 }

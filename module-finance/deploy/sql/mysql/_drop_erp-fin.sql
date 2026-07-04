@@ -9,6 +9,7 @@ drop table  if exists  erp_md_material;
 drop table  if exists  erp_prj_project;
 drop table  if exists  erp_md_cost_center;
 drop table  if exists  erp_md_employee;
+drop table  if exists  erp_fin_posting_exception;
 drop table  if exists  erp_ast_asset;
 drop table  if exists  erp_fin_voucher_template;
 drop table  if exists  erp_fin_accounting_period;

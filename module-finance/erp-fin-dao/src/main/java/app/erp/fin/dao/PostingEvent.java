@@ -18,6 +18,12 @@ import java.util.Map;
 public class PostingEvent {
     private ErpFinBusinessType businessType;
     private String billHeadCode;
+    /**
+     * 端到端追踪 ID。由业务域调用方在单据审核通过后构造时可选传入；引擎入口缺失时生成
+     * （{@code StringHelper.generateUUID()}），透传至 {@code AcctDocContext} 与异常记录，
+     * 串联业务域审核 → 事件派发 → 过账编排 → GL 写入全链路（见 {@code posting-log.md §关联穿透}）。
+     */
+    private String traceId;
     private String tenantId;
     private Long acctSchemaId;
     private Long orgId;
@@ -40,6 +46,14 @@ public class PostingEvent {
 
     public void setBillHeadCode(String billHeadCode) {
         this.billHeadCode = billHeadCode;
+    }
+
+    public String getTraceId() {
+        return traceId;
+    }
+
+    public void setTraceId(String traceId) {
+        this.traceId = traceId;
     }
 
     public String getTenantId() {

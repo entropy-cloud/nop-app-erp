@@ -17,6 +17,7 @@ entity:
     ErpFinNotesDiscount: Notes Discount
     ErpFinNotesPayable: Notes Payable
     ErpFinNotesReceivable: Notes Receivable
+    ErpFinPostingException: Posting Exception
     ErpFinReconciliation: Reconciliation
     ErpFinReconciliationLine: Reconciliation Line
     ErpFinTrialBalance: Trial Balance
@@ -501,6 +502,39 @@ prop:
       currency: Currency
       org: Org
       endorsementFrom: Endorsement From
+    ErpFinPostingException:
+      id: ID
+      traceId: Trace ID
+      billHeadCode: Bill Head Code
+      businessType: Business Type
+      businessType_label: null
+      postingType: Posting Type
+      postingType_label: null
+      errorCode: Error Code
+      errorMessage: Error Message
+      failedStage: Failed Stage
+      voucherDate: Voucher Date
+      orgId: Organization
+      acctSchemaId: Acct Schema
+      status: Status
+      status_label: null
+      retryCount: Retry Count
+      resolution: Resolution
+      resolution_label: null
+      resolutionNote: Resolution Note
+      resolvedBy: Resolved By
+      resolvedAt: Resolved At
+      voucherId: Voucher
+      occurrenceTime: Occurrence Time
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      eventData: Event Data
     ErpFinReconciliation:
       id: ID
       code: Code
@@ -729,6 +763,8 @@ dict:
     erp-fin/notes-payable-status: Notes Payable Status
     erp-fin/credit-facility-type: Credit Facility Type
     erp-fin/cash-flow-direction: Cash Flow Direction
+    erp-fin/posting-exception-status: Posting Exception Status
+    erp-fin/posting-exception-resolution: Posting Exception Resolution
 dict.option.label:
   erp-fin/voucher-type:
     RECEIPT: Receive
@@ -862,3 +898,13 @@ dict.option.label:
   erp-fin/cash-flow-direction:
     INFLOW: Inflow
     OUTFLOW: Outflow
+  erp-fin/posting-exception-status:
+    PENDING: Pending
+    RETRYING: Retrying
+    RETRIED: Retried
+    IGNORED: Ignored
+    MANUAL: Manual Entry
+  erp-fin/posting-exception-resolution:
+    RETRY: Retry
+    IGNORE: Ignore
+    MANUAL: Manual Entry

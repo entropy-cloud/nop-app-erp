@@ -9,6 +9,7 @@ drop table erp_md_material;
 drop table erp_prj_project;
 drop table erp_md_cost_center;
 drop table erp_md_employee;
+drop table erp_fin_posting_exception;
 drop table erp_ast_asset;
 drop table erp_fin_voucher_template;
 drop table erp_fin_accounting_period;

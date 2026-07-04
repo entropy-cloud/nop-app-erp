@@ -47,4 +47,24 @@ public interface ErpFinPostingErrors {
     ErrorCode ERR_REVERSE_SOURCE_NOT_FOUND = ErrorCode.define("erp.err.fin.posting.reverse-source-not-found",
             "未找到业务单据 {billHeadCode}（业务类型 {businessType}）的已过账凭证，无法红冲",
             ARG_BILL_HEAD_CODE, ARG_BUSINESS_TYPE);
+
+    // ===================== 过账异常工作台（异常处置状态机守门） =====================
+
+    String ARG_EXCEPTION_ID = "exceptionId";
+    String ARG_CURRENT_STATUS = "currentStatus";
+    String ARG_RESOLUTION = "resolution";
+
+    ErrorCode ERR_POSTING_EXCEPTION_NOT_PENDING = ErrorCode.define("erp.err.fin.posting-exception.not-pending",
+            "过账异常 {exceptionId} 当前状态为 {currentStatus}，仅 PENDING 可处置", ARG_EXCEPTION_ID, ARG_CURRENT_STATUS);
+
+    ErrorCode ERR_POSTING_EXCEPTION_IGNORE_REASON_REQUIRED = ErrorCode.define(
+            "erp.err.fin.posting-exception.ignore-reason-required",
+            "忽略过账异常 {exceptionId} 须填写处置说明（resolutionNote）", ARG_EXCEPTION_ID);
+
+    ErrorCode ERR_POSTING_EXCEPTION_MANUAL_VOUCHER_REQUIRED = ErrorCode.define(
+            "erp.err.fin.posting-exception.manual-voucher-required",
+            "手工补录过账异常 {exceptionId} 须关联已过账凭证（voucherId）", ARG_EXCEPTION_ID);
+
+    ErrorCode ERR_POSTING_EXCEPTION_NOT_FOUND = ErrorCode.define("erp.err.fin.posting-exception.not-found",
+            "未找到过账异常记录 {exceptionId}", ARG_EXCEPTION_ID);
 }

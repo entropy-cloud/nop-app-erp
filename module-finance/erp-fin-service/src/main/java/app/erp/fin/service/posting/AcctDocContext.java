@@ -8,6 +8,8 @@ import java.time.LocalDate;
  * 供 Provider 与 Validator 共享，避免各组件重复查询主数据。
  */
 public class AcctDocContext {
+    /** 端到端追踪 ID（由 PostingEvent 透传，串联全链路日志与异常记录）。 */
+    private String traceId;
     private LocalDate voucherDate;
     private Long acctSchemaId;
     private Long orgId;
@@ -79,5 +81,13 @@ public class AcctDocContext {
 
     public void setVoucherType(String voucherType) {
         this.voucherType = voucherType;
+    }
+
+    public String getTraceId() {
+        return traceId;
+    }
+
+    public void setTraceId(String traceId) {
+        this.traceId = traceId;
     }
 }

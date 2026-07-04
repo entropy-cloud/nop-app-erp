@@ -82,6 +82,7 @@ public class ErpFinAccountingPeriodProcessor {
         PeriodPreCheckReport report = new PeriodPreCheckReport();
         report.setUnpostedVoucherCodes(findUnpostedVoucherCodes(period));
         report.setUnsettledArApCodes(findUnsettledArApCodes(period));
+        report.setUnresolvedPostingExceptionKeys(findUnresolvedPostingExceptionKeys(period));
         return report;
     }
 
@@ -398,6 +399,22 @@ public class ErpFinAccountingPeriodProcessor {
                         && !Objects.equals(i.getStatus(), ErpFinConstants.AR_AP_STATUS_SETTLED)
                         && !Objects.equals(i.getStatus(), ErpFinConstants.AR_AP_STATUS_CANCELLED))
                 .map(ErpFinArApItem::getCode)
+                .collect(Collectors.toList());
+    }
+
+    /** 扫描本期未处置过账异常（status=PENDING/RETRYING 且 voucherDate 落在本期，见 posting-log.md §失败不静默丢弃）。 */
+    private List<String> findUnresolvedPostingExceptionKeys(ErpFinAccountingPeriod period) {
+        IEntityDao<app.erp.fin.dao.entity.ErpFinPostingException> dao =
+                daoProvider.daoFor(app.erp.fin.dao.entity.ErpFinPostingException.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(in("status", java.util.Arrays.asList(
+                ErpFinConstants.POSTING_EXCEPTION_STATUS_PENDING,
+                ErpFinConstants.POSTING_EXCEPTION_STATUS_RETRYING)));
+        if (period.getStartDate() != null && period.getEndDate() != null) {
+            q.addFilter(and(ge("voucherDate", period.getStartDate()), le("voucherDate", period.getEndDate())));
+        }
+        return dao.findAllByQuery(q).stream()
+                .map(e -> e.getBillHeadCode() == null ? ("trace:" + e.getTraceId()) : e.getBillHeadCode())
                 .collect(Collectors.toList());
     }
 

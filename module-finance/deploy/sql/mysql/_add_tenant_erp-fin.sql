@@ -19,6 +19,8 @@ alter table erp_md_cost_center add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NUL
 
 alter table erp_md_employee add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_fin_posting_exception add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_ast_asset add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_voucher_template add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -100,6 +102,9 @@ alter table erp_md_cost_center add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_md_employee drop primary key;
 alter table erp_md_employee add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_fin_posting_exception drop primary key;
+alter table erp_fin_posting_exception add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_ast_asset drop primary key;
 alter table erp_ast_asset add primary key (NOP_TENANT_ID, ID);

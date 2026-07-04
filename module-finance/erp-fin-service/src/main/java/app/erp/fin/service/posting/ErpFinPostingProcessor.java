@@ -19,6 +19,8 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -54,6 +56,8 @@ import static io.nop.api.core.beans.FilterBeans.le;
  */
 public class ErpFinPostingProcessor {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ErpFinPostingProcessor.class);
+
     static final String DC_DEBIT = ErpFinConstants.DC_DEBIT;
     static final String DC_CREDIT = ErpFinConstants.DC_CREDIT;
 
@@ -80,29 +84,61 @@ public class ErpFinPostingProcessor {
     @Inject
     ErpFinArApItemGenerator arApItemGenerator;
 
+    @Inject
+    ErpFinPostingExceptionRecorder exceptionRecorder;
+
     /**
      * 正向过账编排。幂等命中（源单已过账）返回 {@code null}。
+     *
+     * <p>可观测性：入口解析 {@code traceId}（缺失生成），各 protected step 经 {@link #timeStage} 埋结构化日志
+     * （成功含 traceId+billHeadCode+businessType+voucherId+命中 Provider/模板+各阶段耗时；失败含同一键+ErrorCode+阶段）。
+     * 埋点在编排方法（非覆盖点），派生 Processor 覆盖单步时仍保留编排层埋点。
      */
     @SingleSession
     public Long process(PostingEvent event, IServiceContext context) {
+        ensureTraceId(event);
+        PostingRun run = PostingRun.forPost(event);
+
         if (alreadyPosted(event, context)) {
+            LOG.info("过账幂等命中（源单已过账），空操作：traceId={}, billHeadCode={}, businessType={}",
+                    run.traceId, run.billHeadCode, run.businessType);
             return null;
         }
 
-        IErpFinAcctDocProvider provider = resolveProvider(event, context);
-        ErpFinAccountingPeriod period = resolveOpenPeriod(event.getVoucherDate(), context);
-        AcctDocContext ctx = prepareContext(event, period, context);
+        try {
+            IErpFinAcctDocProvider provider = timeStage("resolveProvider", run,
+                    () -> resolveProvider(event, context));
+            run.providerName = provider.getClass().getSimpleName();
+            run.isFallback = provider.isFallback();
 
-        List<VoucherFact> facts = generateFacts(event, provider, ctx, context);
-        resolveSubjects(facts, context);
+            ErpFinAccountingPeriod period = timeStage("resolveOpenPeriod", run,
+                    () -> resolveOpenPeriod(event.getVoucherDate(), context));
+            AcctDocContext ctx = prepareContext(event, period, context);
+            ctx.setTraceId(run.traceId);
 
-        BigDecimal[] totals = balanceTotals(facts, context);
-        assertBalanced(totals[0], totals[1], context);
+            List<VoucherFact> facts = timeStage("generateFacts", run,
+                    () -> generateFacts(event, provider, ctx, context));
+            run.captureTemplate(facts);
+            timeStageVoid("resolveSubjects", run, () -> resolveSubjects(facts, context));
 
-        Long voucherId = persistVoucher(event, ctx, facts, totals[0], totals[1], false, null, POSTING_TYPE_NORMAL, context);
-        // 凭证落库成功后、同事务内生成应收应付辅助账（强一致：凭证 + 辅助账同生共死）。
-        arApItemGenerator.generate(event, context);
-        return voucherId;
+            BigDecimal[] totals = timeStage("balanceTotals", run,
+                    () -> balanceTotals(facts, context));
+            timeStageVoid("assertBalanced", run, () -> assertBalanced(totals[0], totals[1], context));
+
+            Long voucherId = timeStage("persistVoucher", run,
+                    () -> persistVoucher(event, ctx, facts, totals[0], totals[1], false, null, POSTING_TYPE_NORMAL, context));
+            // 凭证落库成功后、同事务内生成应收应付辅助账（强一致：凭证 + 辅助账同生共死）。
+            timeStageVoid("generateArApItems", run, () -> arApItemGenerator.generate(event, context));
+
+            LOG.info("过账成功：traceId={}, billHeadCode={}, businessType={}, voucherId={}, provider={}, fallback={}, template={}, timings(ms)={}",
+                    run.traceId, run.billHeadCode, run.businessType, voucherId,
+                    run.providerName, run.isFallback, run.templateDesc, run.timingsMillis());
+            return voucherId;
+        } catch (RuntimeException e) {
+            logFailure(run, e);
+            recordPostFailure(run, event, e);
+            throw e;
+        }
     }
 
     /**
@@ -110,24 +146,161 @@ public class ErpFinPostingProcessor {
      */
     @SingleSession
     public Long reverseProcess(String billHeadCode, ErpFinBusinessType businessType, IServiceContext context) {
-        ErpFinVoucher original = findPostedVoucher(billHeadCode, businessType, context);
-        if (original == null) {
-            throw new NopException(ErpFinPostingErrors.ERR_REVERSE_SOURCE_NOT_FOUND)
-                    .param(ErpFinPostingErrors.ARG_BILL_HEAD_CODE, billHeadCode)
-                    .param(ErpFinPostingErrors.ARG_BUSINESS_TYPE, businessType);
+        PostingRun run = PostingRun.forReverse(billHeadCode, businessType);
+
+        try {
+            ErpFinVoucher original = timeStage("findPostedVoucher", run,
+                    () -> findPostedVoucher(billHeadCode, businessType, context));
+            if (original == null) {
+                throw new NopException(ErpFinPostingErrors.ERR_REVERSE_SOURCE_NOT_FOUND)
+                        .param(ErpFinPostingErrors.ARG_BILL_HEAD_CODE, billHeadCode)
+                        .param(ErpFinPostingErrors.ARG_BUSINESS_TYPE, businessType);
+            }
+
+            List<ErpFinVoucherLine> originalLines = timeStage("loadLines", run,
+                    () -> loadLines(original.getId(), context));
+            ErpFinAccountingPeriod period = timeStage("resolveOpenPeriod", run,
+                    () -> resolveOpenPeriod(original.getVoucherDate(), context));
+            AcctDocContext ctx = prepareReversalContext(original, period, originalLines, context);
+            ctx.setTraceId(run.traceId);
+
+            ReversalDraft draft = timeStage("buildReversalDraft", run,
+                    () -> buildReversalDraft(originalLines, businessType, context));
+
+            Long voucherId = timeStage("persistVoucher", run,
+                    () -> persistVoucher(null, ctx, draft.facts, draft.totalDebit, draft.totalCredit, true,
+                            original.getId(), POSTING_TYPE_REVERSAL, billHeadCode, businessType, context));
+            // 红冲凭证落库后、同事务内取消原辅助账项（对齐冲销语义）。
+            timeStageVoid("cancelArApOnReverse", run,
+                    () -> arApItemGenerator.cancelOnReverse(billHeadCode, businessType, context));
+
+            LOG.info("红冲成功：traceId={}, billHeadCode={}, businessType={}, voucherId={}, reversalOf={}, timings(ms)={}",
+                    run.traceId, run.billHeadCode, run.businessType, voucherId, original.getId(), run.timingsMillis());
+            return voucherId;
+        } catch (RuntimeException e) {
+            logFailure(run, e);
+            recordReverseFailure(run, e);
+            throw e;
+        }
+    }
+
+    // ---------- 可观测性埋点辅助 ----------
+
+    /** 解析 traceId：业务域调用方已传则沿用，否则生成。 */
+    protected void ensureTraceId(PostingEvent event) {
+        if (StringHelper.isBlank(event.getTraceId())) {
+            event.setTraceId(StringHelper.generateUUID());
+        }
+    }
+
+    private <T> T timeStage(String stage, PostingRun run, java.util.function.Supplier<T> action) {
+        long start = CoreMetrics.nanoTime();
+        run.currentStage = stage;
+        try {
+            T result = action.get();
+            run.recordStage(stage, CoreMetrics.nanoTimeDiff(start));
+            return result;
+        } catch (RuntimeException e) {
+            run.recordStage(stage, CoreMetrics.nanoTimeDiff(start));
+            throw e;
+        }
+    }
+
+    private void timeStageVoid(String stage, PostingRun run, Runnable action) {
+        long start = CoreMetrics.nanoTime();
+        run.currentStage = stage;
+        try {
+            action.run();
+            run.recordStage(stage, CoreMetrics.nanoTimeDiff(start));
+        } catch (RuntimeException e) {
+            run.recordStage(stage, CoreMetrics.nanoTimeDiff(start));
+            throw e;
+        }
+    }
+
+    private void logFailure(PostingRun run, RuntimeException e) {
+        String code = e instanceof NopException ? ((NopException) e).getErrorCode() : null;
+        LOG.error("过账失败：traceId={}, billHeadCode={}, businessType={}, failedStage={}, errorCode={}, errorMsg={}",
+                run.traceId, run.billHeadCode, run.businessType, run.currentStage, code, e.getMessage());
+    }
+
+    /** 失败先落异常记录再抛（posting-log.md §失败不静默丢弃）：仅对 NopException 落 PENDING 记录，独立事务保证不随回滚丢失。 */
+    private void recordPostFailure(PostingRun run, PostingEvent event, RuntimeException e) {
+        if (!(e instanceof NopException)) {
+            return;
+        }
+        String errorCode = ((NopException) e).getErrorCode();
+        String errorMessage = ((NopException) e).getDescription();
+        if (errorMessage == null) {
+            errorMessage = e.getMessage();
+        }
+        LocalDate voucherDate = event != null ? event.getVoucherDate() : null;
+        Long orgId = event != null ? event.getOrgId() : null;
+        Long acctSchemaId = event != null ? event.getAcctSchemaId() : null;
+        Long currencyId = event != null ? event.getCurrencyId() : null;
+        java.math.BigDecimal exchangeRate = event != null ? event.getExchangeRate() : null;
+        String eventData = event != null
+                ? ErpFinPostingExceptionRecorder.serializeEventData(event.getBillData()) : null;
+        exceptionRecorder.record(run.traceId, run.billHeadCode, run.businessType, POSTING_TYPE_NORMAL,
+                errorCode, errorMessage, run.currentStage, voucherDate, orgId, acctSchemaId,
+                currencyId, exchangeRate, eventData);
+    }
+
+    private void recordReverseFailure(PostingRun run, RuntimeException e) {
+        if (!(e instanceof NopException)) {
+            return;
+        }
+        String errorCode = ((NopException) e).getErrorCode();
+        String errorMessage = ((NopException) e).getDescription();
+        if (errorMessage == null) {
+            errorMessage = e.getMessage();
+        }
+        // 红冲无完整 PostingEvent 快照（按回链反查），eventData 留空；重试经 reverse() 重建。
+        exceptionRecorder.record(run.traceId, run.billHeadCode, run.businessType, POSTING_TYPE_REVERSAL,
+                errorCode, errorMessage, run.currentStage, null, null, null,
+                null, null, null);
+    }
+
+    /** 过账运行态（traceId+路由结果+各阶段耗时），供编排层埋点与失败记录复用。 */
+    protected static final class PostingRun {
+        final String traceId;
+        final String billHeadCode;
+        final String businessType;
+        String providerName;
+        boolean isFallback;
+        String templateDesc;
+        String currentStage;
+        final java.util.Map<String, Long> stageNanos = new java.util.LinkedHashMap<>();
+
+        static PostingRun forPost(PostingEvent event) {
+            return new PostingRun(event.getTraceId(), event.getBillHeadCode(),
+                    event.getBusinessType() == null ? null : event.getBusinessType().name());
         }
 
-        List<ErpFinVoucherLine> originalLines = loadLines(original.getId(), context);
-        ErpFinAccountingPeriod period = resolveOpenPeriod(original.getVoucherDate(), context);
-        AcctDocContext ctx = prepareReversalContext(original, period, originalLines, context);
+        static PostingRun forReverse(String billHeadCode, ErpFinBusinessType businessType) {
+            String traceId = StringHelper.generateUUID();
+            return new PostingRun(traceId, billHeadCode, businessType == null ? null : businessType.name());
+        }
 
-        ReversalDraft draft = buildReversalDraft(originalLines, businessType, context);
+        private PostingRun(String traceId, String billHeadCode, String businessType) {
+            this.traceId = traceId;
+            this.billHeadCode = billHeadCode;
+            this.businessType = businessType;
+        }
 
-        Long voucherId = persistVoucher(null, ctx, draft.facts, draft.totalDebit, draft.totalCredit, true,
-                original.getId(), POSTING_TYPE_REVERSAL, billHeadCode, businessType, context);
-        // 红冲凭证落库后、同事务内取消原辅助账项（对齐冲销语义）。
-        arApItemGenerator.cancelOnReverse(billHeadCode, businessType, context);
-        return voucherId;
+        void captureTemplate(List<VoucherFact> facts) {
+            templateDesc = null;
+        }
+
+        void recordStage(String stage, long nanos) {
+            stageNanos.put(stage, nanos);
+        }
+
+        java.util.Map<String, Long> timingsMillis() {
+            java.util.Map<String, Long> ms = new java.util.LinkedHashMap<>();
+            stageNanos.forEach((k, v) -> ms.put(k, CoreMetrics.nanoToMillis(v)));
+            return ms;
+        }
     }
 
     // ---------- 步骤（protected + IServiceContext 末参，供派生覆盖） ----------

@@ -1,0 +1,27 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 过账异常处置状态
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 待处置
+    value: PENDING
+    description: 
+  
+  - label: 重试中
+    value: RETRYING
+    description: 
+  
+  - label: 重试成功
+    value: RETRIED
+    description: 
+  
+  - label: 已忽略
+    value: IGNORED
+    description: 
+  
+  - label: 手工补录
+    value: MANUAL
+    description: 
+  

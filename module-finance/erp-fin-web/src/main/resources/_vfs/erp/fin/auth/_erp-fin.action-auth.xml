@@ -245,114 +245,128 @@
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpFinReconciliation-main" displayName="核销单" orderNo="10052"
+                <resource id="ErpFinPostingException-main" displayName="过账异常记录" orderNo="10052"
+                          i18n-en:displayName="Posting Exception" icon="triangle-exclamation" component="AMIS"
+                          resourceType="SUBM" url="/erp/fin/pages/ErpFinPostingException/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpFinPostingException:query" displayName="查询过账异常记录"
+                                  i18n-en:displayName="Query Posting Exception" orderNo="10053" resourceType="FNPT">
+                            <permissions>ErpFinPostingException:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpFinPostingException:mutation" displayName="修改过账异常记录"
+                                  i18n-en:displayName="Modify Posting Exception" orderNo="10054" resourceType="FNPT">
+                            <permissions>ErpFinPostingException:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpFinReconciliation-main" displayName="核销单" orderNo="10055"
                           i18n-en:displayName="Reconciliation" icon="check-check" component="AMIS" resourceType="SUBM"
                           url="/erp/fin/pages/ErpFinReconciliation/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpFinReconciliation:query" displayName="查询核销单"
-                                  i18n-en:displayName="Query Reconciliation" orderNo="10053" resourceType="FNPT">
+                                  i18n-en:displayName="Query Reconciliation" orderNo="10056" resourceType="FNPT">
                             <permissions>ErpFinReconciliation:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpFinReconciliation:mutation" displayName="修改核销单"
-                                  i18n-en:displayName="Modify Reconciliation" orderNo="10054" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Reconciliation" orderNo="10057" resourceType="FNPT">
                             <permissions>ErpFinReconciliation:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpFinReconciliationLine-main" displayName="核销单行" orderNo="10055"
+                <resource id="ErpFinReconciliationLine-main" displayName="核销单行" orderNo="10058"
                           i18n-en:displayName="Reconciliation Line" icon="list" component="AMIS" resourceType="SUBM"
                           url="/erp/fin/pages/ErpFinReconciliationLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpFinReconciliationLine:query" displayName="查询核销单行"
-                                  i18n-en:displayName="Query Reconciliation Line" orderNo="10056" resourceType="FNPT">
+                                  i18n-en:displayName="Query Reconciliation Line" orderNo="10059" resourceType="FNPT">
                             <permissions>ErpFinReconciliationLine:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpFinReconciliationLine:mutation" displayName="修改核销单行"
-                                  i18n-en:displayName="Modify Reconciliation Line" orderNo="10057" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Reconciliation Line" orderNo="10060" resourceType="FNPT">
                             <permissions>ErpFinReconciliationLine:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpFinTrialBalance-main" displayName="试算平衡表" orderNo="10058"
+                <resource id="ErpFinTrialBalance-main" displayName="试算平衡表" orderNo="10061"
                           i18n-en:displayName="Trial Balance" icon="git-compare" component="AMIS" resourceType="SUBM"
                           url="/erp/fin/pages/ErpFinTrialBalance/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpFinTrialBalance:query" displayName="查询试算平衡表"
-                                  i18n-en:displayName="Query Trial Balance" orderNo="10059" resourceType="FNPT">
+                                  i18n-en:displayName="Query Trial Balance" orderNo="10062" resourceType="FNPT">
                             <permissions>ErpFinTrialBalance:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpFinTrialBalance:mutation" displayName="修改试算平衡表"
-                                  i18n-en:displayName="Modify Trial Balance" orderNo="10060" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Trial Balance" orderNo="10063" resourceType="FNPT">
                             <permissions>ErpFinTrialBalance:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpFinVoucher-main" displayName="会计凭证" orderNo="10061"
+                <resource id="ErpFinVoucher-main" displayName="会计凭证" orderNo="10064"
                           i18n-en:displayName="Accounting Voucher" icon="book-up" component="AMIS" resourceType="SUBM"
                           url="/erp/fin/pages/ErpFinVoucher/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpFinVoucher:query" displayName="查询会计凭证"
-                                  i18n-en:displayName="Query Accounting Voucher" orderNo="10062" resourceType="FNPT">
+                                  i18n-en:displayName="Query Accounting Voucher" orderNo="10065" resourceType="FNPT">
                             <permissions>ErpFinVoucher:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpFinVoucher:mutation" displayName="修改会计凭证"
-                                  i18n-en:displayName="Modify Accounting Voucher" orderNo="10063" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Accounting Voucher" orderNo="10066" resourceType="FNPT">
                             <permissions>ErpFinVoucher:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpFinVoucherBillR-main" displayName="业财回链" orderNo="10064"
+                <resource id="ErpFinVoucherBillR-main" displayName="业财回链" orderNo="10067"
                           i18n-en:displayName="Voucher Business Link" icon="link" component="AMIS" resourceType="SUBM"
                           url="/erp/fin/pages/ErpFinVoucherBillR/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpFinVoucherBillR:query" displayName="查询业财回链"
-                                  i18n-en:displayName="Query Voucher Business Link" orderNo="10065" resourceType="FNPT">
+                                  i18n-en:displayName="Query Voucher Business Link" orderNo="10068" resourceType="FNPT">
                             <permissions>ErpFinVoucherBillR:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpFinVoucherBillR:mutation" displayName="修改业财回链"
-                                  i18n-en:displayName="Modify Voucher Business Link" orderNo="10066" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Voucher Business Link" orderNo="10069" resourceType="FNPT">
                             <permissions>ErpFinVoucherBillR:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpFinVoucherLine-main" displayName="凭证分录行" orderNo="10067"
+                <resource id="ErpFinVoucherLine-main" displayName="凭证分录行" orderNo="10070"
                           i18n-en:displayName="Voucher Line" icon="list" component="AMIS" resourceType="SUBM"
                           url="/erp/fin/pages/ErpFinVoucherLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpFinVoucherLine:query" displayName="查询凭证分录行"
-                                  i18n-en:displayName="Query Voucher Line" orderNo="10068" resourceType="FNPT">
+                                  i18n-en:displayName="Query Voucher Line" orderNo="10071" resourceType="FNPT">
                             <permissions>ErpFinVoucherLine:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpFinVoucherLine:mutation" displayName="修改凭证分录行"
-                                  i18n-en:displayName="Modify Voucher Line" orderNo="10069" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Voucher Line" orderNo="10072" resourceType="FNPT">
                             <permissions>ErpFinVoucherLine:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpFinVoucherTemplate-main" displayName="凭证模板" orderNo="10070"
+                <resource id="ErpFinVoucherTemplate-main" displayName="凭证模板" orderNo="10073"
                           i18n-en:displayName="Voucher Template" icon="book-template" component="AMIS"
                           resourceType="SUBM" url="/erp/fin/pages/ErpFinVoucherTemplate/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpFinVoucherTemplate:query" displayName="查询凭证模板"
-                                  i18n-en:displayName="Query Voucher Template" orderNo="10071" resourceType="FNPT">
+                                  i18n-en:displayName="Query Voucher Template" orderNo="10074" resourceType="FNPT">
                             <permissions>ErpFinVoucherTemplate:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpFinVoucherTemplate:mutation" displayName="修改凭证模板"
-                                  i18n-en:displayName="Modify Voucher Template" orderNo="10072" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Voucher Template" orderNo="10075" resourceType="FNPT">
                             <permissions>ErpFinVoucherTemplate:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpFinVoucherTemplateLine-main" displayName="凭证模板行" orderNo="10073"
+                <resource id="ErpFinVoucherTemplateLine-main" displayName="凭证模板行" orderNo="10076"
                           i18n-en:displayName="Voucher Template Line" icon="list" component="AMIS" resourceType="SUBM"
                           url="/erp/fin/pages/ErpFinVoucherTemplateLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpFinVoucherTemplateLine:query" displayName="查询凭证模板行"
-                                  i18n-en:displayName="Query Voucher Template Line" orderNo="10074" resourceType="FNPT">
+                                  i18n-en:displayName="Query Voucher Template Line" orderNo="10077" resourceType="FNPT">
                             <permissions>ErpFinVoucherTemplateLine:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpFinVoucherTemplateLine:mutation" displayName="修改凭证模板行"
-                                  i18n-en:displayName="Modify Voucher Template Line" orderNo="10075" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Voucher Template Line" orderNo="10078" resourceType="FNPT">
                             <permissions>ErpFinVoucherTemplateLine:mutation</permissions>
                         </resource>
                     </children>

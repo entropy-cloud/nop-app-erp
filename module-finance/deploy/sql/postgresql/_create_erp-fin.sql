@@ -94,6 +94,38 @@ CREATE TABLE erp_md_employee(
   constraint PK_erp_md_employee primary key (id)
 );
 
+CREATE TABLE erp_fin_posting_exception(
+  id INT8 NOT NULL ,
+  trace_id VARCHAR(50)  ,
+  bill_head_code VARCHAR(50)  ,
+  business_type VARCHAR(30)  ,
+  posting_type VARCHAR(20)  ,
+  error_code VARCHAR(100) NOT NULL ,
+  error_message VARCHAR(500)  ,
+  failed_stage VARCHAR(50)  ,
+  voucher_date DATE  ,
+  org_id INT8  ,
+  acct_schema_id INT8  ,
+  status VARCHAR(20) NOT NULL ,
+  retry_count INT4 default 0   ,
+  resolution VARCHAR(20)  ,
+  resolution_note VARCHAR(500)  ,
+  resolved_by VARCHAR(36)  ,
+  resolved_at TIMESTAMP  ,
+  voucher_id INT8  ,
+  occurrence_time TIMESTAMP NOT NULL ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  currency_id INT8  ,
+  exchange_rate NUMERIC(20,8)  ,
+  event_data VARCHAR(4000)  ,
+  constraint PK_erp_fin_posting_exception primary key (id)
+);
+
 CREATE TABLE erp_ast_asset(
   id INT8  ,
   code VARCHAR(50)  ,
@@ -743,6 +775,64 @@ CREATE TABLE erp_fin_bank_reconciliation_line(
                 
       COMMENT ON TABLE erp_md_employee IS '职员';
                 
+      COMMENT ON TABLE erp_fin_posting_exception IS '过账异常记录';
+                
+      COMMENT ON COLUMN erp_fin_posting_exception.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.trace_id IS '追踪ID';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.bill_head_code IS '单据编号';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.business_type IS '业务类型';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.posting_type IS '过账类型';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.error_code IS '错误码';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.error_message IS '错误信息';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.failed_stage IS '失败阶段';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.voucher_date IS '凭证日期';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.org_id IS '核算组织';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.acct_schema_id IS '账套';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.status IS '处置状态';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.retry_count IS '重试次数';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.resolution IS '处置动作';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.resolution_note IS '处置说明';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.resolved_by IS '处置人';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.resolved_at IS '处置时间';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.voucher_id IS '关联凭证ID';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.occurrence_time IS '发生时间';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.currency_id IS '币种';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.exchange_rate IS '汇率';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.event_data IS '原始事件数据(JSON)';
+                    
       COMMENT ON TABLE erp_ast_asset IS '固定资产';
                 
       COMMENT ON TABLE erp_fin_voucher_template IS '凭证模板';

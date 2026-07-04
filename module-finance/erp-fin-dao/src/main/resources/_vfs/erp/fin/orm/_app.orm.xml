@@ -2,7 +2,7 @@
 <orm ext:registerShortName="true" ext:appName="erp-fin" ext:entityPackageName="app.erp.fin.dao.entity"
      ext:basePackageName="app.erp.fin" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-finance"
      ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
-     ext:allowIdAsColName="true" ext:icon="landmark" xmlns:i18n-en="i18n-en" xmlns:biz="biz"
+     ext:allowIdAsColName="true" ext:icon="landmark" xmlns:i18n-en="i18n-en" xmlns:biz="biz" xmlns:orm="orm"
      x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:ref-i18n-en="ref-i18n-en" xmlns:ext="ext"
      xmlns:orm-gen="orm-gen" xmlns:xpl="xpl" xmlns:ui="ui">
 
@@ -183,6 +183,20 @@
         <dict label="现金流方向" name="erp-fin/cash-flow-direction" valueType="string" i18n-en:label="Cash Flow Direction">
             <option code="INFLOW" label="流入" value="INFLOW" i18n-en:label="Inflow"/>
             <option code="OUTFLOW" label="流出" value="OUTFLOW" i18n-en:label="Outflow"/>
+        </dict>
+        <dict label="过账异常处置状态" name="erp-fin/posting-exception-status" valueType="string"
+              i18n-en:label="Posting Exception Status">
+            <option code="PENDING" label="待处置" value="PENDING" i18n-en:label="Pending"/>
+            <option code="RETRYING" label="重试中" value="RETRYING" i18n-en:label="Retrying"/>
+            <option code="RETRIED" label="重试成功" value="RETRIED" i18n-en:label="Retried"/>
+            <option code="IGNORED" label="已忽略" value="IGNORED" i18n-en:label="Ignored"/>
+            <option code="MANUAL" label="手工补录" value="MANUAL" i18n-en:label="Manual Entry"/>
+        </dict>
+        <dict label="过账异常处置动作" name="erp-fin/posting-exception-resolution" valueType="string"
+              i18n-en:label="Posting Exception Resolution">
+            <option code="RETRY" label="重试" value="RETRY" i18n-en:label="Retry"/>
+            <option code="IGNORE" label="忽略" value="IGNORE" i18n-en:label="Ignore"/>
+            <option code="MANUAL" label="手工补录" value="MANUAL" i18n-en:label="Manual Entry"/>
         </dict>
     </dicts>
 
@@ -459,9 +473,9 @@
         <entity className="app.erp.fin.dao.entity.ErpFinVoucherTemplate" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="凭证模板"
                 name="app.erp.fin.dao.entity.ErpFinVoucherTemplate" registerShortName="true"
-                tableName="erp_fin_voucher_template" tagSet="gid,erp.finance" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="book-template"
-                i18n-en:displayName="Voucher Template">
+                tableName="erp_fin_voucher_template" tagSet="gid,erp.finance,audit,audit-save"
+                updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true" versionProp="version"
+                ext:icon="book-template" i18n-en:displayName="Voucher Template" orm:bizKeyProp="code">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -520,9 +534,9 @@
         <entity className="app.erp.fin.dao.entity.ErpFinVoucherTemplateLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="凭证模板行"
                 name="app.erp.fin.dao.entity.ErpFinVoucherTemplateLine" registerShortName="true"
-                tableName="erp_fin_voucher_template_line" tagSet="gid,erp.finance" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list"
-                i18n-en:displayName="Voucher Template Line">
+                tableName="erp_fin_voucher_template_line" tagSet="gid,erp.finance,audit,audit-save"
+                updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true" versionProp="version"
+                ext:icon="list" i18n-en:displayName="Voucher Template Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -2262,6 +2276,79 @@
                     </join>
                 </to-one>
             </relations>
+        </entity>
+        <entity className="app.erp.fin.dao.entity.ErpFinPostingException" createTimeProp="createTime"
+                createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="过账异常记录"
+                name="app.erp.fin.dao.entity.ErpFinPostingException" registerShortName="true"
+                tableName="erp_fin_posting_exception" tagSet="gid,erp.finance" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="triangle-exclamation"
+                i18n-en:displayName="Posting Exception">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="TRACE_ID" displayName="追踪ID" name="traceId" precision="50" propId="2" stdDataType="string"
+                        stdSqlType="VARCHAR" i18n-en:displayName="Trace ID"/>
+                <column code="BILL_HEAD_CODE" displayName="单据编号" name="billHeadCode" precision="50" propId="3"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Bill Head Code"/>
+                <column code="BUSINESS_TYPE" displayName="业务类型" name="businessType" precision="30" propId="4"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/business-type"
+                        i18n-en:displayName="Business Type"/>
+                <column code="POSTING_TYPE" displayName="过账类型" name="postingType" precision="20" propId="5"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/posting-type"
+                        i18n-en:displayName="Posting Type"/>
+                <column code="ERROR_CODE" displayName="错误码" mandatory="true" name="errorCode" precision="100" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Error Code"/>
+                <column code="ERROR_MESSAGE" displayName="错误信息" name="errorMessage" precision="500" propId="7"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Error Message"/>
+                <column code="FAILED_STAGE" displayName="失败阶段" name="failedStage" precision="50" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Failed Stage"/>
+                <column code="VOUCHER_DATE" displayName="凭证日期" name="voucherDate" propId="9" stdDataType="date"
+                        stdSqlType="DATE" i18n-en:displayName="Voucher Date"/>
+                <column code="ORG_ID" displayName="核算组织" name="orgId" propId="10" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="ACCT_SCHEMA_ID" displayName="账套" name="acctSchemaId" propId="11" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
+                <column code="STATUS" displayName="处置状态" mandatory="true" name="status" precision="20" propId="12"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/posting-exception-status"
+                        i18n-en:displayName="Status"/>
+                <column code="RETRY_COUNT" defaultValue="0" displayName="重试次数" name="retryCount" propId="13"
+                        stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Retry Count"/>
+                <column code="RESOLUTION" displayName="处置动作" name="resolution" precision="20" propId="14"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/posting-exception-resolution"
+                        i18n-en:displayName="Resolution"/>
+                <column code="RESOLUTION_NOTE" displayName="处置说明" name="resolutionNote" precision="500" propId="15"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Resolution Note"/>
+                <column code="RESOLVED_BY" displayName="处置人" name="resolvedBy" precision="36" propId="16"
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Resolved By"/>
+                <column code="RESOLVED_AT" displayName="处置时间" name="resolvedAt" propId="17" stdDataType="datetime"
+                        stdSqlType="DATETIME" i18n-en:displayName="Resolved At"/>
+                <column code="VOUCHER_ID" displayName="关联凭证ID" name="voucherId" propId="18" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Voucher"/>
+                <column code="OCCURRENCE_TIME" displayName="发生时间" mandatory="true" name="occurrenceTime" propId="19"
+                        stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Occurrence Time"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="20" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="21" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="22" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="23" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="24" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="25" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="27" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
+                <column code="EXCHANGE_RATE" displayName="汇率" domain="amount" name="exchangeRate" precision="20"
+                        propId="28" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Exchange Rate"/>
+                <column code="EVENT_DATA" displayName="原始事件数据(JSON)" name="eventData" precision="4000" propId="29"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Event Data"/>
+            </columns>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdSubject" displayName="会计科目"
                 name="app.erp.md.dao.entity.ErpMdSubject" notGenCode="true" tableName="erp_md_subject"

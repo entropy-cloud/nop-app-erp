@@ -17,6 +17,7 @@ entity:
     ErpFinNotesDiscount: 票据贴现明细
     ErpFinNotesPayable: 应付票据
     ErpFinNotesReceivable: 应收票据
+    ErpFinPostingException: 过账异常记录
     ErpFinReconciliation: 核销单
     ErpFinReconciliationLine: 核销单行
     ErpFinTrialBalance: 试算平衡表
@@ -501,6 +502,39 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+    ErpFinPostingException:
+      acctSchemaId: 账套
+      billHeadCode: 单据编号
+      businessType: 业务类型
+      businessType_label: 业务类型
+      createTime: 创建时间
+      createdBy: 创建人
+      currencyId: 币种
+      delVersion: 逻辑删除版本
+      errorCode: 错误码
+      errorMessage: 错误信息
+      eventData: 原始事件数据(JSON)
+      exchangeRate: 汇率
+      failedStage: 失败阶段
+      id: ID
+      occurrenceTime: 发生时间
+      orgId: 核算组织
+      postingType: 过账类型
+      postingType_label: 过账类型
+      resolution: 处置动作
+      resolutionNote: 处置说明
+      resolution_label: 处置动作
+      resolvedAt: 处置时间
+      resolvedBy: 处置人
+      retryCount: 重试次数
+      status: 处置状态
+      status_label: 处置状态
+      traceId: 追踪ID
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      voucherDate: 凭证日期
+      voucherId: 关联凭证ID
     ErpFinReconciliation:
       acctSchema: null
       acctSchemaId: 账套

@@ -16,6 +16,8 @@ public class PeriodPreCheckReport {
     private List<String> unpostedVoucherCodes = new ArrayList<>();
     /** 本期未核销应收应付辅助账号清单（status != SETTLED/CANCELLED）。 */
     private List<String> unsettledArApCodes = new ArrayList<>();
+    /** 本期未处置过账异常记录键清单（status = PENDING/RETRYING，见 posting-log.md §过账异常处置）。 */
+    private List<String> unresolvedPostingExceptionKeys = new ArrayList<>();
 
     public List<String> getUnpostedVoucherCodes() {
         return unpostedVoucherCodes;
@@ -33,12 +35,22 @@ public class PeriodPreCheckReport {
         this.unsettledArApCodes = unsettledArApCodes == null ? Collections.emptyList() : unsettledArApCodes;
     }
 
+    public List<String> getUnresolvedPostingExceptionKeys() {
+        return unresolvedPostingExceptionKeys;
+    }
+
+    public void setUnresolvedPostingExceptionKeys(List<String> unresolvedPostingExceptionKeys) {
+        this.unresolvedPostingExceptionKeys = unresolvedPostingExceptionKeys == null
+                ? Collections.emptyList() : unresolvedPostingExceptionKeys;
+    }
+
     /** 是否存在任何前置检查问题。 */
     public boolean hasIssues() {
-        return !unpostedVoucherCodes.isEmpty() || !unsettledArApCodes.isEmpty();
+        return !unpostedVoucherCodes.isEmpty() || !unsettledArApCodes.isEmpty()
+                || !unresolvedPostingExceptionKeys.isEmpty();
     }
 
     public int issueCount() {
-        return unpostedVoucherCodes.size() + unsettledArApCodes.size();
+        return unpostedVoucherCodes.size() + unsettledArApCodes.size() + unresolvedPostingExceptionKeys.size();
     }
 }
