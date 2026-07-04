@@ -1,0 +1,27 @@
+# __XGEN_FORCE_OVERRIDE__
+label: MFT 协议
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: AS2
+    value: AS2
+    description: 
+  
+  - label: SFTP
+    value: SFTP
+    description: 
+  
+  - label: FTPS
+    value: FTPS
+    description: 
+  
+  - label: HTTP
+    value: HTTP
+    description: 
+  
+  - label: HTTPS
+    value: HTTPS
+    description: 
+  

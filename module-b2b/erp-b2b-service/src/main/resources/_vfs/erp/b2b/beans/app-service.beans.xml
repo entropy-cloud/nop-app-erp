@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns:ioc="ioc"
        xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
@@ -7,4 +8,44 @@
     <import resource="_dao.beans.xml"/>
 
     <import resource="_service.beans.xml"/>
+
+    <!-- EDI 格式三层 SPI（edi-formats.md §一/§二）：Registry 镜像 logistics ErpLogCarrierGatewayRegistry 的
+         List 注入 + 内部建图范式；UBL Provider 注册为 Bean（UBL_DESPATCH_ADVICE 入站 + UBL_INVOICE 出站）。
+         X12/EDIFACT 归 follow-up（Non-Goal）。 -->
+    <bean id="app.erp.b2b.service.spi.ErpB2bEdiRegistry"
+          class="app.erp.b2b.service.spi.ErpB2bEdiRegistry">
+        <property name="providers">
+            <ioc:collect-beans by-type="app.erp.b2b.service.spi.IErpB2bEdiProvider"
+                               only-concrete-classes="true" ioc:ignore-depends="true"/>
+        </property>
+    </bean>
+
+    <bean id="app.erp.b2b.service.spi.ubl.UblDespatchAdviceEdiProvider"
+          class="app.erp.b2b.service.spi.ubl.UblDespatchAdviceEdiProvider"/>
+
+    <bean id="app.erp.b2b.service.spi.ubl.UblInvoiceEdiProvider"
+          class="app.erp.b2b.service.spi.ubl.UblInvoiceEdiProvider"/>
+
+    <!-- 代码映射解析器（edi-formats.md §6） -->
+    <bean id="app.erp.b2b.service.codemapping.CodeMappingResolver"
+          class="app.erp.b2b.service.codemapping.CodeMappingResolver"/>
+
+    <!-- MFT 传输三层 SPI（managed-file-transfer.md §架构概览）：Registry List 注入建图；
+         MockTransportAdapter（protocol="HTTPS"）注册为 Bean。
+         真实 AS2/SFTP/FTPS 协议库集成归 follow-up（Non-Goal）。 -->
+    <bean id="app.erp.b2b.service.spi.transport.ErpB2bMftTransportRegistry"
+          class="app.erp.b2b.service.spi.transport.ErpB2bMftTransportRegistry">
+        <property name="adapters">
+            <ioc:collect-beans by-type="app.erp.b2b.service.spi.transport.IErpB2bTransportAdapter"
+                               only-concrete-classes="true" ioc:ignore-depends="true"/>
+        </property>
+    </bean>
+
+    <bean id="app.erp.b2b.service.spi.transport.mock.MockTransportAdapter"
+          class="app.erp.b2b.service.spi.transport.mock.MockTransportAdapter"/>
+
+    <!-- MFT 传输管理器（非 BizModel 编排层）：路由/重试/死信/写 ErpB2bMftLog + 成功回填 markSent。
+         被 EdiDocBizModel 出站发送委托调用（config-gated）。 -->
+    <bean id="app.erp.b2b.service.spi.transport.TransportManager"
+          class="app.erp.b2b.service.spi.transport.TransportManager"/>
 </beans>

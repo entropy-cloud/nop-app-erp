@@ -83,6 +83,21 @@
             <option code="OUTBOUND" label="出站" value="OUTBOUND" i18n-en:label="Outbound"/>
             <option code="INBOUND" label="入站" value="INBOUND" i18n-en:label="Inbound"/>
         </dict>
+        <dict label="MFT 协议" name="erp-b2b/mft-protocol" valueType="string" i18n-en:label="MFT Protocol">
+            <option code="AS2" label="AS2" value="AS2" i18n-en:label="AS2"/>
+            <option code="SFTP" label="SFTP" value="SFTP" i18n-en:label="SFTP"/>
+            <option code="FTPS" label="FTPS" value="FTPS" i18n-en:label="FTPS"/>
+            <option code="HTTP" label="HTTP" value="HTTP" i18n-en:label="HTTP"/>
+            <option code="HTTPS" label="HTTPS" value="HTTPS" i18n-en:label="HTTPS"/>
+        </dict>
+        <dict label="MFT 状态" name="erp-b2b/mft-status" valueType="string" i18n-en:label="MFT Status">
+            <option code="PENDING" label="待传输" value="PENDING" i18n-en:label="Pending"/>
+            <option code="SENT" label="已发送" value="SENT" i18n-en:label="Sent"/>
+            <option code="RECEIVED" label="已接收" value="RECEIVED" i18n-en:label="Received"/>
+            <option code="FAILED" label="失败" value="FAILED" i18n-en:label="Failed"/>
+            <option code="RETRYING" label="重试中" value="RETRYING" i18n-en:label="Retrying"/>
+            <option code="DEAD_LETTER" label="死信" value="DEAD_LETTER" i18n-en:label="Dead Letter"/>
+        </dict>
     </dicts>
 
     <domains>
@@ -722,7 +737,8 @@
                 <column code="PARTNER_ID" displayName="合作伙伴" mandatory="true" name="partnerId" propId="3"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
                 <column code="PROTOCOL" displayName="传输协议" mandatory="true" name="protocol" precision="50" propId="4"
-                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Protocol"/>
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-b2b/mft-protocol"
+                        i18n-en:displayName="Protocol"/>
                 <column code="TRANSPORT_ENDPOINT" displayName="传输端点" mandatory="true" name="transportEndpoint"
                         precision="500" propId="5" stdDataType="string" stdSqlType="VARCHAR"
                         i18n-en:displayName="Transport Endpoint"/>
@@ -897,9 +913,11 @@
                 <column code="MDN_STATUS" displayName="MDN状态" name="mdnStatus" precision="50" propId="11"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="MDN Status"/>
                 <column code="PROTOCOL" displayName="传输协议" mandatory="true" name="protocol" precision="50" propId="12"
-                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Protocol"/>
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-b2b/mft-protocol"
+                        i18n-en:displayName="Protocol"/>
                 <column code="STATUS" displayName="传输状态" mandatory="true" name="status" precision="50" propId="13"
-                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Status"/>
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-b2b/mft-status"
+                        i18n-en:displayName="Status"/>
                 <column code="START_TIME" displayName="开始时间" name="startTime" propId="14" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Start Time"/>
                 <column code="END_TIME" displayName="结束时间" name="endTime" propId="15" stdDataType="datetime"

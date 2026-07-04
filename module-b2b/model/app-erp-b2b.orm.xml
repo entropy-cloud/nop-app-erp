@@ -92,6 +92,24 @@
             <option code="OUTBOUND" label="出站" value="OUTBOUND" i18n-en:label='Outbound'/>
             <option code="INBOUND" label="入站" value="INBOUND" i18n-en:label='Inbound'/>
         </dict>
+        <!-- MFT 协议字典（Phase 1 Decision：新增加性字典，绑定 ErpB2bMftConfig.protocol / ErpB2bMftLog.protocol）。
+             替代方案——复用既有 erp-b2b/protocol（rejected：缺 FTPS，且 MFT 语义独立于伙伴档案 protocol）。 -->
+        <dict label="MFT 协议" name="erp-b2b/mft-protocol" valueType="string" i18n-en:label='MFT Protocol'>
+            <option code="AS2" label="AS2" value="AS2" i18n-en:label='AS2'/>
+            <option code="SFTP" label="SFTP" value="SFTP" i18n-en:label='SFTP'/>
+            <option code="FTPS" label="FTPS" value="FTPS" i18n-en:label='FTPS'/>
+            <option code="HTTP" label="HTTP" value="HTTP" i18n-en:label='HTTP'/>
+            <option code="HTTPS" label="HTTPS" value="HTTPS" i18n-en:label='HTTPS'/>
+        </dict>
+        <!-- MFT 状态字典（Phase 1 Decision：新增加性字典，绑定 ErpB2bMftLog.status） -->
+        <dict label="MFT 状态" name="erp-b2b/mft-status" valueType="string" i18n-en:label='MFT Status'>
+            <option code="PENDING" label="待传输" value="PENDING" i18n-en:label='Pending'/>
+            <option code="SENT" label="已发送" value="SENT" i18n-en:label='Sent'/>
+            <option code="RECEIVED" label="已接收" value="RECEIVED" i18n-en:label='Received'/>
+            <option code="FAILED" label="失败" value="FAILED" i18n-en:label='Failed'/>
+            <option code="RETRYING" label="重试中" value="RETRYING" i18n-en:label='Retrying'/>
+            <option code="DEAD_LETTER" label="死信" value="DEAD_LETTER" i18n-en:label='Dead Letter'/>
+        </dict>
     </dicts>
 
     <domains>
@@ -414,7 +432,7 @@
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="partnerId" displayName="合作伙伴" stdSqlType="BIGINT" mandatory="true" code="PARTNER_ID" propId="3" stdDataType="long" i18n-en:displayName='Partner' />
-                <column name="protocol" displayName="传输协议" stdSqlType="VARCHAR" precision="50" mandatory="true" code="PROTOCOL" propId="4" stdDataType="string" i18n-en:displayName='Protocol' />
+                <column name="protocol" displayName="传输协议" ext:dict="erp-b2b/mft-protocol" stdSqlType="VARCHAR" precision="50" mandatory="true" code="PROTOCOL" propId="4" stdDataType="string" i18n-en:displayName='Protocol' />
                 <column name="transportEndpoint" displayName="传输端点" stdSqlType="VARCHAR" precision="500" mandatory="true" code="TRANSPORT_ENDPOINT" propId="5" stdDataType="string" i18n-en:displayName='Transport Endpoint' />
                 <column name="localAs2Id" displayName="本地AS2 ID" stdSqlType="VARCHAR" precision="100" code="LOCAL_AS2_ID" propId="6" stdDataType="string" i18n-en:displayName='Local AS2 ID' />
                 <column name="remoteAs2Id" displayName="对方AS2 ID" stdSqlType="VARCHAR" precision="100" code="REMOTE_AS2_ID" propId="7" stdDataType="string" i18n-en:displayName='Remote AS2 ID' />
@@ -500,8 +518,8 @@
                 <column name="fileHash" displayName="文件哈希" stdSqlType="VARCHAR" precision="100" code="FILE_HASH" propId="9" stdDataType="string" i18n-en:displayName='File Hash' />
                 <column name="messageId" displayName="AS2 Message-ID" stdSqlType="VARCHAR" precision="200" code="MESSAGE_ID" propId="10" stdDataType="string" i18n-en:displayName='Message ID' />
                 <column name="mdnStatus" displayName="MDN状态" stdSqlType="VARCHAR" precision="50" code="MDN_STATUS" propId="11" stdDataType="string" i18n-en:displayName='MDN Status' />
-                <column name="protocol" displayName="传输协议" stdSqlType="VARCHAR" precision="50" mandatory="true" code="PROTOCOL" propId="12" stdDataType="string" i18n-en:displayName='Protocol' />
-                <column name="status" displayName="传输状态" stdSqlType="VARCHAR" precision="50" mandatory="true" code="STATUS" propId="13" stdDataType="string" i18n-en:displayName='Status' />
+                <column name="protocol" displayName="传输协议" ext:dict="erp-b2b/mft-protocol" stdSqlType="VARCHAR" precision="50" mandatory="true" code="PROTOCOL" propId="12" stdDataType="string" i18n-en:displayName='Protocol' />
+                <column name="status" displayName="传输状态" ext:dict="erp-b2b/mft-status" stdSqlType="VARCHAR" precision="50" mandatory="true" code="STATUS" propId="13" stdDataType="string" i18n-en:displayName='Status' />
                 <column name="startTime" displayName="开始时间" stdSqlType="DATETIME" code="START_TIME" propId="14" stdDataType="datetime" i18n-en:displayName='Start Time' />
                 <column name="endTime" displayName="结束时间" stdSqlType="DATETIME" code="END_TIME" propId="15" stdDataType="datetime" i18n-en:displayName='End Time' />
                 <column name="durationMs" displayName="耗时(毫秒)" stdSqlType="BIGINT" code="DURATION_MS" propId="16" stdDataType="long" i18n-en:displayName='Duration Ms' />

@@ -65,11 +65,11 @@
         </prop>
         <prop name="protocol" displayName="传输协议" propId="12" i18n-en:displayName="Protocol" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="50"/>
+            <schema type="java.lang.String" precision="50" dict="erp-b2b/mft-protocol"/>
         </prop>
         <prop name="status" displayName="传输状态" propId="13" i18n-en:displayName="Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="50"/>
+            <schema type="java.lang.String" precision="50" dict="erp-b2b/mft-status"/>
         </prop>
         <prop name="startTime" displayName="开始时间" propId="14" i18n-en:displayName="Start Time" queryable="true"
               sortable="true" insertable="true" updatable="true">

@@ -3,6 +3,7 @@
   "orgId": 0,
   "partnerId": 0,
   "protocol": "",
+  "protocol_label": "",
   "transportEndpoint": "",
   "localAs2Id": "",
   "remoteAs2Id": "",

@@ -233,4 +233,59 @@ public interface _ErpB2bDaoConstants {
      */
     String EXCHANGE_DIRECTION_INBOUND = "INBOUND";
                     
+    /**
+     * MFT 协议: AS2 
+     */
+    String MFT_PROTOCOL_AS2 = "AS2";
+                    
+    /**
+     * MFT 协议: SFTP 
+     */
+    String MFT_PROTOCOL_SFTP = "SFTP";
+                    
+    /**
+     * MFT 协议: FTPS 
+     */
+    String MFT_PROTOCOL_FTPS = "FTPS";
+                    
+    /**
+     * MFT 协议: HTTP 
+     */
+    String MFT_PROTOCOL_HTTP = "HTTP";
+                    
+    /**
+     * MFT 协议: HTTPS 
+     */
+    String MFT_PROTOCOL_HTTPS = "HTTPS";
+                    
+    /**
+     * MFT 状态: 待传输 
+     */
+    String MFT_STATUS_PENDING = "PENDING";
+                    
+    /**
+     * MFT 状态: 已发送 
+     */
+    String MFT_STATUS_SENT = "SENT";
+                    
+    /**
+     * MFT 状态: 已接收 
+     */
+    String MFT_STATUS_RECEIVED = "RECEIVED";
+                    
+    /**
+     * MFT 状态: 失败 
+     */
+    String MFT_STATUS_FAILED = "FAILED";
+                    
+    /**
+     * MFT 状态: 重试中 
+     */
+    String MFT_STATUS_RETRYING = "RETRYING";
+                    
+    /**
+     * MFT 状态: 死信 
+     */
+    String MFT_STATUS_DEAD_LETTER = "DEAD_LETTER";
+                    
 }

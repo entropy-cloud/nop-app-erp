@@ -185,6 +185,7 @@ prop:
       orgId: Organization
       partnerId: Partner
       protocol: Protocol
+      protocol_label: null
       transportEndpoint: Transport Endpoint
       localAs2Id: Local AS2 ID
       remoteAs2Id: Remote AS2 ID
@@ -227,7 +228,9 @@ prop:
       messageId: Message ID
       mdnStatus: MDN Status
       protocol: Protocol
+      protocol_label: null
       status: Status
+      status_label: null
       startTime: Start Time
       endTime: End Time
       durationMs: Duration Ms
@@ -331,6 +334,8 @@ dict:
     erp-b2b/auth-method: Auth Method
     erp-b2b/credential-type: Credential Type
     erp-b2b/exchange-direction: Exchange Direction
+    erp-b2b/mft-protocol: MFT Protocol
+    erp-b2b/mft-status: MFT Status
 dict.option.label:
   erp-b2b/edi-doc-state:
     TO_SEND: To Send
@@ -389,3 +394,16 @@ dict.option.label:
   erp-b2b/exchange-direction:
     OUTBOUND: Outbound
     INBOUND: Inbound
+  erp-b2b/mft-protocol:
+    AS2: AS2
+    SFTP: SFTP
+    FTPS: FTPS
+    HTTP: HTTP
+    HTTPS: HTTPS
+  erp-b2b/mft-status:
+    PENDING: Pending
+    SENT: Sent
+    RECEIVED: Received
+    FAILED: Failed
+    RETRYING: Retrying
+    DEAD_LETTER: Dead Letter

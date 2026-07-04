@@ -203,6 +203,7 @@ prop:
       partner: null
       partnerId: 合作伙伴
       protocol: 传输协议
+      protocol_label: 传输协议
       remark: 备注
       remoteAs2Id: 对方AS2 ID
       retryIntervalMin: 重试间隔(分钟)
@@ -237,12 +238,14 @@ prop:
       org: null
       orgId: 业务组织
       protocol: 传输协议
+      protocol_label: 传输协议
       relatedBillCode: 关联单据号
       relatedBillType: 关联单据类型
       remark: 备注
       retryCount: 重试次数
       startTime: 开始时间
       status: 传输状态
+      status_label: 传输状态
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本

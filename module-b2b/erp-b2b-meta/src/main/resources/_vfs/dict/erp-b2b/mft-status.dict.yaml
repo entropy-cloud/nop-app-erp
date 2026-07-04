@@ -1,0 +1,31 @@
+# __XGEN_FORCE_OVERRIDE__
+label: MFT 状态
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 待传输
+    value: PENDING
+    description: 
+  
+  - label: 已发送
+    value: SENT
+    description: 
+  
+  - label: 已接收
+    value: RECEIVED
+    description: 
+  
+  - label: 失败
+    value: FAILED
+    description: 
+  
+  - label: 重试中
+    value: RETRYING
+    description: 
+  
+  - label: 死信
+    value: DEAD_LETTER
+    description: 
+  

@@ -18,6 +18,13 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- compile: ASN→采购入库 config-gated 集成（IErpPurReceiveBiz / ErpPurOrder 只读匹配）。
+             b2b→purchase 单向无环（purchase 经弱指针 relatedBillType/Code 引用 ASN，不反向编译依赖 b2b）。 -->
+        <dependency>
+            <artifactId>app-erp-purchase-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <artifactId>app-erp-b2b-codegen</artifactId>
             <groupId>io.nop.app</groupId>
