@@ -1,6 +1,6 @@
 # 2026-07-04-1452-2-finance-reversal-writeback-loop 冲销反写闭环
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-04
 > Source: `docs/backlog/core-business-roadmap.md` M5 工作项 5.2（P0）；`docs/design/finance/posting.md` §冲销机制 方向二（设计 done）；`docs/analysis/2026-07-04-finance-posting-engine-gap-vs-opensource.md` §2.3（真实缺口：发票红冲→源单状态不回退）
 > Related: `2026-07-04-1452-1-finance-posting-log-observability.md`（提供 traceId + 告警队列载体，前置）、`2026-07-01-0811-1-finance-posting-engine-foundation.md`（reverse() 基线，已完成）
@@ -48,64 +48,64 @@
 
 ### Phase 1 - Decision: 派发机制与 SPI 形状
 
-Status: planned
+Status: completed
 Targets: `posting.md`（实现策略）、本计划
 Skill: `nop-backend-dev`
 
 - Item Types: `Decision | Explore`
 - Prereqs: 5.1（traceId 字段）已 active 或本批次先行落地 traceId
 
-- [ ] Explore：核实 `IErpFinVoucherBiz.reverse()` Facade 事务边界（现 `@Transactional(REQUIRES_NEW)`，`FinPostingExecutor.java:14-16` 注释），确认 SYNC 同事务通知与 `txn().afterCommit` 在该边界的可用性；核实各域源单 `docStatus` 状态机当前"已过账"态名以确定回退目标态。
+- [x] Explore：核实 `IErpFinVoucherBiz.reverse()` Facade 事务边界（现 `@Transactional(REQUIRES_NEW)`，`FinPostingExecutor.java:14-16` 注释），确认 SYNC 同事务通知与 `txn().afterCommit` 在该边界的可用性；核实各域源单 `docStatus` 状态机当前"已过账"态名以确定回退目标态。
       - Skill: `nop-backend-dev`
-- [ ] Decision（派发机制）：选择"finance 定义 `IErpFinVoucherReversedListener` SPI + `@Inject List` 聚合 + 默认 SYNC 同事务同步通知、ASYNC post-commit afterCommit"。替代方案：外部 MQ（被拒：破坏 SYNC 强一致默认 + 引入 infra）；Spring ApplicationEvent（被拒：平台无该设施）。残留风险：监听者抛错隔离策略（见 Phase 3）记录。
+- [x] Decision（派发机制）：选择"finance 定义 `IErpFinVoucherReversedListener` SPI + `@Inject List` 聚合 + 默认 SYNC 同事务同步通知、ASYNC post-commit afterCommit"。替代方案：外部 MQ（被拒：破坏 SYNC 强一致默认 + 引入 infra）；Spring ApplicationEvent（被拒：平台无该设施）。残留风险：监听者抛错隔离策略（见 Phase 3）记录。
       - Skill: `nop-backend-dev`
-- [ ] Decision（回退目标态）：逐域裁定"红冲→源单回退到哪个 docStatus"（如 posted invoice → 待开票/草稿态，各域按其状态机自决并在监听器内实现）。
+- [x] Decision（回退目标态）：逐域裁定"红冲→源单回退到哪个 docStatus"（如 posted invoice → 待开票/草稿态，各域按其状态机自决并在监听器内实现）。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] 派发机制 Decision + 各域回退目标态结论写入 `posting.md` 实现策略与本计划
+- [x] 派发机制 Decision + 各域回退目标态结论写入 `posting.md` 实现策略与本计划
 
 ### Phase 2 - VoucherReversedEvent + SPI + 发布接线
 
-Status: planned
+Status: completed
 Targets: `IErpFinVoucherReversedListener`（新 SPI）、`VoucherReversedEvent`（新 DTO）、`ErpFinAcctDocRegistry`（或新 `ErpFinReversalListenerRegistry`）、`ErpFinPostingProcessor.reverseProcess()`、`IErpFinVoucherBiz` Facade
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1
 
-- [ ] Add：finance 定义 `VoucherReversedEvent`（字段对齐 `posting.md:355-366` 契约）与 `IErpFinVoucherReversedListener`（`void onVoucherReversed(VoucherReversedEvent, IServiceContext)`）；聚合 bean 收集所有实现（对标 `ErpFinAcctDocRegistry` 收集 Provider 的模式）。
+- [x] Add：finance 定义 `VoucherReversedEvent`（字段对齐 `posting.md:355-366` 契约）与 `IErpFinVoucherReversedListener`（`void onVoucherReversed(VoucherReversedEvent, IServiceContext)`）；聚合 bean 收集所有实现（对标 `ErpFinAcctDocRegistry` 收集 Provider 的模式）。
       - Skill: `nop-backend-dev`
-- [ ] Add：`reverseProcess()` 生成红字凭证并 `cancelOnReverse` 后，构造 `VoucherReversedEvent`（携带 traceId，来自 Phase 2 of 5.1）并按 Decision 派发——默认 SYNC 同事务遍历监听者同步通知；ASYNC 配置下经 `txn().afterCommit`。
+- [x] Add：`reverseProcess()` 生成红字凭证并 `cancelOnReverse` 后，构造 `VoucherReversedEvent`（携带 traceId，来自 Phase 2 of 5.1）并按 Decision 派发——默认 SYNC 同事务遍历监听者同步通知；ASYNC 配置下经 `txn().afterCommit`。
       - Skill: `nop-backend-dev`
-- [ ] Proof：单元测试——注册 mock 监听者，断言 `reverse()` 后监听者收到事件且字段（voucherId/reversalOfVoucherId/billHeadCode/businessType/traceId）正确；无监听者时不报错。
+- [x] Proof：单元测试——注册 mock 监听者，断言 `reverse()` 后监听者收到事件且字段（voucherId/reversalOfVoucherId/billHeadCode/businessType/traceId）正确；无监听者时不报错。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] `VoucherReversedEvent` + SPI + 聚合落地；`reverse()` 派发事件，mock 监听者收到正确字段，单测通过
-- [ ] finance service 改动包类型检查通过（解除 Phase 3 域监听接线阻塞）
+- [x] `VoucherReversedEvent` + SPI + 聚合落地；`reverse()` 派发事件，mock 监听者收到正确字段，单测通过
+- [x] finance service 改动包类型检查通过（解除 Phase 3 域监听接线阻塞）
 
 ### Phase 3 - 业务域回退监听器 + 失败隔离
 
-Status: planned
+Status: completed
 Targets: purchase/sales/inventory 各域 `*Processor` 或新 `*ReversalListener`、`ErpFinVoucherBillR` 反查
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 2
 
-- [ ] Add：purchase/sales/inventory 各实现 `IErpFinVoucherReversedListener`——经 `ErpFinVoucherBillR` 反查源单（billType+billHeadCode），按 Phase 1 回退目标态回退源单 `docStatus` + 置 `posted=false`/`postedAt=null`/`postedBy=null`。复用各域既有 reverseApprove/cancel 中已验证的状态回退逻辑，不重复造。
+- [x] Add：purchase/sales/inventory 各实现 `IErpFinVoucherReversedListener`——经 `ErpFinVoucherBillR` 反查源单（billType+billHeadCode），按 Phase 1 回退目标态回退源单 `docStatus` + 置 `posted=false`/`postedAt=null`/`postedBy=null`。复用各域既有 reverseApprove/cancel 中已验证的状态回退逻辑，不重复造。
       - Skill: `nop-backend-dev`
-- [ ] Add：失败隔离——单监听者抛 `NopException` 不中断其他监听者、不回滚已过账红字凭证；失败记录（源单类型+billHeadCode+ErrorCode）落入 5.1 告警队列（或本计划最小载体），状态供人工处置。
+- [x] Add：失败隔离——单监听者抛 `NopException` 不中断其他监听者、不回滚已过账红字凭证；失败记录（源单类型+billHeadCode+ErrorCode）落入 5.1 告警队列（或本计划最小载体），状态供人工处置。
       - Skill: `nop-backend-dev`
-- [ ] Proof：集成测试——purchase 发票红冲 → 采购单 `posted=false` + docStatus 回退目标态；构造监听者抛错 → 红字凭证仍在、其他域监听仍执行、告警队列有记录；inventory/sales 同型断言。
+- [x] Proof：集成测试——purchase 发票红冲 → 采购单 `posted=false` + docStatus 回退目标态；构造监听者抛错 → 红字凭证仍在、其他域监听仍执行、告警队列有记录；inventory/sales 同型断言。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] 核心三域红冲后源单 `posted=false`+状态回退；监听者抛错隔离且红字凭证不回滚、告警队列留痕，集成测试通过
+- [x] 核心三域红冲后源单 `posted=false`+状态回退；监听者抛错隔离且红字凭证不回滚、告警队列留痕，集成测试通过
 
 ## Draft Review Record
 
@@ -115,14 +115,14 @@ Exit Criteria:
 
 > 仅在所有项目和每阶段退出标准都勾选 `[x]` 后关闭。结束时运行一次完整仓库验证。
 
-- [ ] 范围内行为完成（VoucherReversedEvent + SPI + finance 发布 + 核心三域回退监听 + 失败隔离）
-- [ ] 相关文档对齐（`posting.md` §冲销方向二实现策略；`core-business-roadmap.md` 5.2 标进展；当日日志）
-- [ ] 已运行验证：`mvn clean install -DskipTests` + `mvn test -pl module-finance/erp-fin-service -am` + 受影响 purchase/sales/inventory service 测试
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控、日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（VoucherReversedEvent + SPI + finance 发布 + 核心三域回退监听 + 失败隔离）
+- [x] 相关文档对齐（`posting.md` §冲销方向二实现策略；`core-business-roadmap.md` 5.2 标进展；当日日志）
+- [x] 已运行验证：`mvn clean install -DskipTests` + `mvn test -pl module-finance/erp-fin-service -am` + 受影响 purchase/sales/inventory service 测试
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控、日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -146,11 +146,18 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: 待实施完成后填写。
+Status Note: 业财闭环方向二（财务侧红冲→业务单据回退）已实现并通过全仓验证。finance 定义 `IErpFinVoucherReversedListener` SPI + `ErpFinReversalListenerRegistry`（镜像既有 `ErpFinAcctDocRegistry` 范式），`ErpFinPostingProcessor.reverseProcess()` 在红字凭证+回链+辅助账落库后构造 `VoucherReversedEvent` 并按配置派发（默认 SYNC 同事务同步通知；ASYNC 经 `txn().afterCommit`）。失败隔离：派发循环 try/catch 包裹——单监听者抛错不阻断其他监听者、不回滚已过账红字凭证（法律效力），失败落入 5.1 异常工作台（`ErpFinPostingException`，postingType=REVERSAL，failedStage=`notify-reversal-listener`）。purchase/sales/inventory 三域各实现监听者（`PurReversalListener`/`SalReversalListener`/`InvReversalListener`），按裁决 4 回退目标态表回退自身 `posted`+`docStatus`/`approveStatus`。
 
 Closure Audit Evidence:
 
-- 待独立结束审计。
+- 实现：`module-finance/erp-fin-service/src/main/java/app/erp/fin/service/posting/` 新增 `VoucherReversedEvent.java`、`IErpFinVoucherReversedListener.java`、`ErpFinReversalListenerRegistry.java`；`ErpFinPostingProcessor.reverseProcess()` 接线派发（`dispatchReversalEvent`+`recordListenerFailures`）；`ErpFinPostingErrors` 增 `ERR_REVERSAL_LISTENER_FAILED`；`ErpFinConstants` 增 `CONFIG_REVERSAL_DISPATCH_MODE`/`REVERSAL_DISPATCH_MODE_SYNC`/`REVERSAL_DISPATCH_MODE_ASYNC`/`FAILED_STAGE_NOTIFY_REVERSAL_LISTENER`；`app-service.beans.xml` 注册 `ErpFinReversalListenerRegistry` bean（`ioc:collect-beans` 收集监听者）。
+- 业务域监听者：`module-purchase/.../posting/PurReversalListener.java`（AP_INVOICE/PAYMENT/PURCHASE_RETURN/PURCHASE_INPUT）、`module-sales/.../posting/SalReversalListener.java`（AR_INVOICE/RECEIPT/SALES_RETURN/SALES_OUTPUT）、`module-inventory/.../posting/InvReversalListener.java`（OWNERSHIP_TRANSFER/INTER_TRANSFER）；各域 `app-service.beans.xml` 注册监听者 bean。
+- 设计裁决：`docs/design/finance/posting.md` §冲销机制方向二新增「实现策略」小节（裁决 3 派发机制 + 裁决 4 各域回退目标态表）。
+- 验证基线（全绿 — full-green verification）：
+  - `mvn clean install -DskipTests`（根 reactor）：BUILD SUCCESS
+  - `mvn test`（全量 reactor）：所有模块测试通过，零失败零回归
+  - 新增测试：`TestErpFinReversalListenerRegistry`（4 单元测试：空监听者空操作/事件字段透传/失败隔离不阻断其他监听者/addListener 追加）、`TestErpFinReversalDispatch`（3 集成测试：reverse() 派发事件含正确字段/无监听者不报错/失败监听者隔离+红字凭证保留+5.1 异常工作台留痕）、`TestErpPurFinanceReversalWriteback`（2 集成测试：财务红冲→采购发票 posted=false+REJECTED/源单不存在时监听者静默）、`TestErpSalFinanceReversalWriteback`（1 集成测试：财务红冲→销售发票 posted=false+REJECTED）、`TestErpInvFinanceReversalWriteback`（1 集成测试：财务红冲→所有权转移单 posted=false，docStatus 保留审计轨迹）。
+- 结束审计：由独立子代理（新会话，closure-auditor，不重用执行者上下文）执行并通过。逐项核对：(1) 结构合规——front matter `completed`+`Last Reviewed`、三 Phase 均带 `Status: completed` 与 `Exit Criteria` 全 `[x]`、`## Closure` 含真实证据；(2) Phase 0 一致性——各 Phase body 无残留 `[ ]`；(3) Exit Criteria 对照实时仓库——`VoucherReversedEvent`/`IErpFinVoucherReversedListener`/`ErpFinReversalListenerRegistry`（finance posting 目录）+ `PurReversalListener`/`SalReversalListener`/`InvReversalListener`（三域 posting 目录）+ 5 个测试类均存在；`ErpFinPostingProcessor.reverseProcess()` 于 `dispatchReversalEvent`（:186-187）真实接线派发；`ErpFinPostingErrors.ERR_REVERSAL_LISTENER_FAILED`（:74）、`ErpFinConstants` 4 常量（:149-156）、4 份 `app-service.beans.xml` 注册齐备；(4) Anti-Hollow——`dispatchReversalEvent` 构造事件+SYNC/ASYNC 派发+失败落 5.1 工作台，`Registry.dispatch()` 真实 try/catch 隔离，`PurReversalListener.rollbackInvoice` 真实回退 posted/approveStatus，无空体/return-null/吞异常；(5) 五点一致；(6) Deferred 三项均为带触发条件的 out-of-scope improvement，无活缺陷隐藏；(7) 文档同步——`docs/logs/2026/07-04.md` 有本计划条目、`docs/design/finance/posting.md` §实现策略 裁决3/4 对齐。审计无阻塞，Closure Gates 全 `[x]`。
 
 Follow-up:
 

@@ -365,6 +365,38 @@ ErpFinAcctDocRegistry
 
 > 事件派发时机：红字凭证 `post()` 事务提交后（post-commit），与 `posting.md` §总体架构 第②层 ASYNC 模式一致。SYNC 模式下可在同事务内同步通知域监听器。
 
+#### 实现策略（计划 `2026-07-04-1452-2` Phase 1 裁决）
+
+> 本节为已落地裁决。具体执行证据见该计划与 `docs/logs/`。
+
+##### 裁决 3：派发机制——finance 定义 SPI + `@Inject List` 聚合 + 默认 SYNC 同事务通知
+
+- **裁决**：finance 域定义 `IErpFinVoucherReversedListener` SPI（`void onVoucherReversed(VoucherReversedEvent, IServiceContext)`）；新 `ErpFinReversalListenerRegistry` 经 `@Inject List<IErpFinVoucherReversedListener>` 启动期聚合所有监听者 Bean（**镜像既有 `ErpFinAcctDocRegistry` 收集 `IErpFinAcctDocProvider` 的范式**）；`ErpFinPostingProcessor.reverseProcess()` 在红字凭证 + 业财回链 + `cancelOnReverse` 落库之后构造 `VoucherReversedEvent` 并按配置派发：
+  - **默认 SYNC**（与 `posting.md §总体架构` 默认 SYNC 强一致对齐）：在同事务内**同步遍历**监听者调用 `onVoucherReversed`——监听者与红字凭证原子提交，回退失败即整体回滚（保持业财强一致）。
+  - **可选 ASYNC**（与第②层 ASYNC 模式对齐）：经 `ITransactionTemplate.afterCommit(txnGroup, runnable)` 注册 post-commit 回调，红字凭证事务提交成功后再异步派发。
+- **平台能力核实**：
+  - 进程内**无** `IEventBus`/`@EventListener`（grep 平台源码确认）；`txn().afterCommit` **存在**（`ITransactionTemplate.java:87-94`，仅在事务提交成功时触发，回滚路径不执行）。
+  - `IErpFinVoucherBiz.reverse()` Facade（`ErpFinVoucherBizModel.reverse()`）跟随 `@BizMutation` 事务（REQUIRED），不像 `post()` 叠加 `REQUIRES_NEW`——财务侧直接红冲时事务边界由调用方 `@BizMutation` 承接，SYNC 同事务通知与 `afterCommit` 在该边界均可用。
+- **替代方案（被拒）**：
+  - 外部 MQ（`nop-message-*`）：破坏 SYNC 强一致默认 + 引入 infra 依赖，与"默认 SYNC"哲学冲突。
+  - Spring `ApplicationEvent`：平台无该设施。
+- **失败隔离裁决**：SYNC 同事务通知下，监听者抛 `NopException` 会回滚整张红字凭证事务——**违反"凭证一旦过账具有法律效力不回滚"原则**。故裁决：**派发循环对每个监听者 try/catch 包裹**，单个监听者抛错不中断其他监听者、不回滚已过账红字凭证；失败记录（源单类型+billHeadCode+ErrorCode+处置状态）落入 5.1 异常工作台（`ErpFinPostingException`，postingType=`REVERSAL`，failedStage=`notify-reversal-listener`）的 PENDING 队列供人工处置。该裁决使"红字凭证法律效力"与"监听者失败可见可处置"两者并存。
+- **代价**：finance-service 新增 1 SPI + 1 DTO + 1 Registry bean；业务域各加 1 监听者 bean（按需）。零 ORM 实体新增、零列新增。
+
+##### 裁决 4：各域回退目标态——逐域裁定，复用既有 reverseApprove 语义
+
+- **裁决**：监听者经 `ErpFinVoucherBillR` 反查源单（`billType`+`billCode`），按各域既有"业务侧反审核（reverseApprove）"已验证的状态回退逻辑回退自身状态——**不重复造回退逻辑**，直接复用各 `*Processor.reverseApprove/doReverseApprove` 中的状态迁移。
+
+| 域 | 源单类型（billType） | 回退目标态（posted=true → ?） | 依据 |
+|----|---------------------|------------------------------|------|
+| purchase | `AP_INVOICE`（ErpPurInvoice）/`PAYMENT`（ErpPurPayment）/`PUR_RETURN`（ErpPurReturn） | `approveStatus`: APPROVED → **REJECTED**；`posted=false`/`postedAt=null`/`postedBy=null` | `ErpPurInvoiceProcessor.doReverseApprove`/`ErpPurPaymentProcessor`/`ErpPurReturnProcessor` 同型：reverseApprove 后置 REJECTED |
+| purchase | `PURCHASE_INPUT`（ErpPurReceive） | 经库存 `ErpInvStockMove` 反冲已落地（receive 自身仅 posted=false，不回退 approveStatus——库存物理冲销已发生，单据终态保留 APPROVED 审计轨迹） | `ErpPurReceiveProcessor.ensureReversed` 已在 reverseApprove 链中调 `stockMoveBiz.reverse` |
+| sales | `AR_INVOICE`（ErpSalInvoice）/`RECEIPT`（ErpSalReceipt）/`SAL_RETURN`（ErpSalReturn） | `approveStatus`: APPROVED → **REJECTED**；`posted=false`/`postedAt=null`/`postedBy=null` | sales 域 `ErpSal*Processor.doReverseApprove` 同型镜像 purchase |
+| sales | `SALES_OUTPUT`（ErpSalDelivery） | 经库存 `ErpInvStockMove` 反冲已出库（delivery 自身仅 posted=false） | 同 purchase receive 语义 |
+| inventory | `OWNERSHIP_TRANSFER`（ErpInvOwnershipTransfer）/`INTER_TRANSFER`（ErpInvTransferOrder）/StockMove/StockTake | `posted=false`/`postedAt=null`/`postedBy=null`（inventory 单据无 approveStatus 状态机轴，仅 posted 翻转） | `ErpInvStockMoveProcessor` 既有 reversal 模式 |
+
+> **判定原则**：回退目标态由各域自治（设计 `posting.md §反写契约` "域自治、引擎不持有源实体"）。引擎只持 `VoucherReversedEvent` 快照（含 billType+billCode+businessType+traceId），不反向 import 业务域模块（保持 DAG 顶层约束）。
+
 ### 业财回链表
 
 ```
