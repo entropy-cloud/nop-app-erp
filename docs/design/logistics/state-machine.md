@@ -96,7 +96,9 @@
 |----------|----------|
 | 销售出库审核触发发运 | sales 域发布出库事件，本域订阅生成发运单草稿 |
 | 承运商网关回调（追踪更新） | 本域暴露网关回调端点，更新发运单状态和 `ErpLogShipmentLog` |
-| 运费过账 | DELIVERED 后本域发布 `ShipmentDeliveredEvent`，finance 域订阅执行过账 |
+| 运费过账 | DELIVERED 后本域**直接调用** `IErpFinVoucherBiz.post(PostingEvent{businessType=FREIGHT})`（参 inventory `InvPostingExecutor` 范式），非事件订阅模型 |
+
+> **实现裁决补注（plan 2026-07-04-1115-3）**：原描述"DELIVERED 后本域发布 `ShipmentDeliveredEvent`，finance 域订阅执行过账"已调整为 path-1（SALES_DELIVERY）**直接调用** `IErpFinVoucherBiz.post`——与现有全域过账（inventory/sales/projects）一致。path-2（PURCHASE_RECEIPT 采购运费）仍仅发事件占位，待 finance Landed Cost 能力落地后订阅（Deferred）。
 
 外部触发渠道：
 - 用户手工创建发运单（主要渠道）。

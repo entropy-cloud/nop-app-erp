@@ -22,6 +22,8 @@
 
 > 来源 `docs/analysis/2026-06-30-0001-advanced-scenario-design-comparison.md` §3.2。**SPI 形态**：Metasfresh 黄金参考三层 Client/Factory/Registry。
 
+> **实现状态补注（plan 2026-07-04-1115-3）**：三层 SPI + 运费 path-1 过账已落地。当前仅 `mock` 承运商 stub（无外部 HTTP，覆盖全链行为验证）；真实承运商 HTTP 集成、比价生产路径、path-2 采购运费到岸成本分摊（依赖 finance Landed Cost，`costing-methods.md:40` Deferred）归 follow-up。
+
 ### 主证：🟢 Metasfresh shipper.gateway（源码全读）
 
 **为什么必须三层而非单层**：单层 Provider 会丢失"per-carrier 配置化 client"能力（🟢 `DhlShipperGatewayClientFactory.java:34-47` 证明每个承运商需要独立配置化 client 实例）。三层 = Client（具体承运商交互）+ ClientFactory（per-carrier 配置化创建）+ Registry（自动聚合）。

@@ -70,8 +70,8 @@
 | 3.14 | ✅ 合同批量折扣/返利计算 | contract | `contract/volume-discount.md` |
 | 3.15 | ✅ DRP 净需求计算 | drp | `drp/README.md` |
 | 3.16 | ✅ DRP 安全库存优化 | drp | `drp/safety-stock-optimization.md` |
-| 3.17 | TMS 承运商网关三层 SPI | logistics | `logistics/carrier-integration.md` |
-| 3.18 | TMS 运费双路径过账 | logistics | `logistics/README.md` |
+| 3.17 | ✅ TMS 承运商网关三层 SPI | logistics | `logistics/carrier-integration.md` |
+| 3.18 | ✅ TMS 运费双路径过账 | logistics | `logistics/README.md` |
 | 3.19 | B2B EDI 格式 SPI + 信封状态机 | b2b | `b2b/edi-formats.md` |
 | 3.20 | B2B ASN 入站处理 | b2b | `b2b/asn-processing.md` |
 | 3.21 | B2B MFT AS2/SFTP 传输 | b2b | `b2b/managed-file-transfer.md` |
