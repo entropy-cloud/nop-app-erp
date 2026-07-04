@@ -125,4 +125,11 @@ public interface ErpMfgConstants {
     // CRP 超负荷阈值（经 AppConfig.var 读取；默认 1.0=负荷率超过 100% 即告警）。无 .env/外部服务。
     String CONFIG_CRP_OVERLOAD_THRESHOLD = "erp-mfg.crp-overload-threshold";
     double DEFAULT_CRP_OVERLOAD_THRESHOLD = 1.0;
+
+    /** 定时 CRP 负荷计算 cron（空=不调度；plan 2026-07-05-0306-1 §配置点）。 */
+    String CONFIG_CRP_RUN_CRON = "erp-mfg.crp-run-cron";
+    /** CRP 定时计算默认向前窗口（月），0=当月（plan 2026-07-05-0306-1 Decision）。 */
+    String CONFIG_CRP_RUN_DEFAULT_WINDOW_MONTHS = "erp-mfg.crp-run-default-window-months";
+    /** CONFIG_CRP_RUN_DEFAULT_WINDOW_MONTHS 缺省值。 */
+    int DEFAULT_CRP_RUN_WINDOW_MONTHS = 0;
 }

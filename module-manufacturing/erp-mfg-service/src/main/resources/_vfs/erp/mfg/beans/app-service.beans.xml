@@ -45,4 +45,9 @@
           class="app.erp.mfg.service.processor.ErpMfgWorkOrderProcessor"/>
     <bean id="app.erp.mfg.service.processor.ErpMfgJobCardProcessor"
           class="app.erp.mfg.service.processor.ErpMfgJobCardProcessor"/>
+
+    <!-- 定时 CRP 负荷计算 Job Bean（plan 2026-07-05-0306-1 Phase 1）。由 nop-job-local scheduler.yaml
+          经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-mfg.crp-run-cron 配置门控。 -->
+    <bean id="erpMfgCrpRunJob"
+          class="app.erp.mfg.service.job.ErpMfgCrpRunJob"/>
 </beans>

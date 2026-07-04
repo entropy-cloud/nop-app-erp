@@ -44,6 +44,8 @@ public interface ErpCrmConstants {
     // ===== 线索评分（3.3）配置点 =====
     String CONFIG_LEAD_SCORING_AUTO_QUALIFY = "erp-crm.lead-scoring.auto-qualify";
     String CONFIG_LEAD_SCORING_RECALC_ON_LEAD_UPDATE = "erp-crm.lead-scoring.recalc-on-lead-update";
+    /** 定时线索评分批量重算 cron（空=不调度；plan 2026-07-05-0306-1 §配置点）。 */
+    String CONFIG_LEAD_SCORING_SCHEDULE_CRON = "erp-crm.lead-scoring.schedule-cron";
 
     // erp-crm/scoring-method 字典
     String SCORING_METHOD_LOOKUP = "LOOKUP";
@@ -64,6 +66,8 @@ public interface ErpCrmConstants {
     String CONFIG_FORECAST_COMMIT_THRESHOLD = "erp-crm.forecast.commit-threshold";
     String CONFIG_FORECAST_UPSIDE_THRESHOLD = "erp-crm.forecast.upside-threshold";
     String CONFIG_FORECAST_ACCURACY_AUTO_COMPUTE = "erp-crm.forecast.accuracy-auto-compute";
+    /** 定时销售预测重算 cron（空=不调度；plan 2026-07-05-0306-1 §配置点）。 */
+    String CONFIG_FORECAST_RECALC_CRON = "erp-crm.forecast.recalc-cron";
 
     // erp-crm/forecast-period-status 字典
     String FORECAST_PERIOD_STATUS_OPEN = "OPEN";

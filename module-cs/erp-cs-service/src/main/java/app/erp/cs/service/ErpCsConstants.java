@@ -65,4 +65,6 @@ public interface ErpCsConstants {
     String CONFIG_SURVEY_CES_ENABLED = "erp-cs.survey-ces-enabled";
     String CONFIG_SURVEY_REMINDER_HOURS = "erp-cs.survey-reminder-hours";  // 默认 48
     String CONFIG_SURVEY_EXPIRE_DAYS = "erp-cs.survey-expire-days";        // 默认 7
+    /** 定时 SLA 超时扫描 cron（空=不调度；plan 2026-07-05-0306-1 §配置点）。 */
+    String CONFIG_SLA_SCAN_CRON = "erp-cs.sla-scan-cron";
 }

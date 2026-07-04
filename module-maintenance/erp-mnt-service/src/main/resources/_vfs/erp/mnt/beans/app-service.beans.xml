@@ -19,4 +19,9 @@
     <!-- 维护域服务（非 BizModel）：维护计划到期生成访问生成器（扫描 active 计划生成 PLANNED 访问 + 推进 nextDueDate） -->
     <bean id="app.erp.mnt.service.support.ScheduleDueGenerator"
           class="app.erp.mnt.service.support.ScheduleDueGenerator"/>
+
+    <!-- 定时到期访问生成 Job Bean（plan 2026-07-05-0306-1 Phase 1）。由 nop-job-local scheduler.yaml
+          经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-mnt.due-visit-cron 配置门控。 -->
+    <bean id="erpMntDueVisitJob"
+          class="app.erp.mnt.service.job.ErpMntDueVisitJob"/>
 </beans>

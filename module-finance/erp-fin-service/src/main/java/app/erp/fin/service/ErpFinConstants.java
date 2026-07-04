@@ -21,6 +21,12 @@ public interface ErpFinConstants {
     String CONFIG_AUTO_RECON_STRATEGY = "erp-fin.auto-recon-strategy";
     /** 定时自动核销 cron（空=不调度；plan 2026-07-05-0115-1 §配置项）。 */
     String CONFIG_AR_AP_AUTO_RECON_CRON = "erp-fin.ar-ap-auto-recon-cron";
+    /** 定时现金预测刷新 cron（空=不调度；plan 2026-07-05-0306-1 §配置点）。 */
+    String CONFIG_CASH_FORECAST_CRON = "erp-fin.cash-forecast-cron";
+    /** 现金预测默认向前预测窗口（天），默认 30。 */
+    String CONFIG_CASH_FORECAST_WINDOW_DAYS = "erp-fin.cash-forecast-window-days";
+    /** CONFIG_CASH_FORECAST_WINDOW_DAYS 缺省值。 */
+    int DEFAULT_CASH_FORECAST_WINDOW_DAYS = 30;
 
     String AGING_BASE_INVOICE_DATE = "invoice_date";
     String AGING_BASE_DUE_DATE = "due_date";

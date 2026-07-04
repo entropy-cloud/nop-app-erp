@@ -74,6 +74,11 @@
     <bean id="erpFinAutoReconJob"
           class="app.erp.fin.service.job.ErpFinAutoReconJob"/>
 
+    <!-- 定时现金预测刷新 Job Bean（plan 2026-07-05-0306-1 Phase 1）。由 nop-job-local scheduler.yaml
+         经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-fin.cash-forecast-cron 配置门控。 -->
+    <bean id="erpFinCashForecastJob"
+          class="app.erp.fin.service.job.ErpFinCashForecastJob"/>
+
     <!-- 报销/借款业财过账 Provider（注册为 Bean 后由 ErpFinAcctDocRegistry 自动聚合，
          处理 EXPENSE_CLAIM / EMPLOYEE_ADVANCE / EMPLOYEE_ADVANCE_SETTLE）。 -->
     <bean id="app.erp.fin.service.posting.provider.ExpenseClaimAcctDocProvider"

@@ -8,3 +8,66 @@ jobs:
     invoker:
       bean: erpFinAutoReconJob
       method: execute
+
+  - jobName: erp-ast-depreciation
+    displayName: Assets Batch Depreciation
+    description: 每月 1 日 02:00 批量计提折旧（当前自然月）；cron 经 erp-ast.depreciation-cron 配置门控
+    trigger:
+      cronExpr: "0 0 2 1 * ?"
+    invoker:
+      bean: erpAstDepreciationJob
+      method: execute
+
+  - jobName: erp-mnt-due-visit-generation
+    displayName: Maintenance Due Visit Generation
+    description: 每日凌晨扫描 active 维护计划生成到期访问；cron 经 erp-mnt.due-visit-cron 配置门控
+    trigger:
+      cronExpr: "0 0 1 * * ?"
+    invoker:
+      bean: erpMntDueVisitJob
+      method: execute
+
+  - jobName: erp-cs-sla-scan
+    displayName: Customer Service SLA Overdue Scan
+    description: 每分钟扫描 SLA 超时工单建 ESCALATE 审计 + 升级通知；cron 经 erp-cs.sla-scan-cron 配置门控
+    trigger:
+      cronExpr: "0 * * * * ?"
+    invoker:
+      bean: erpCsSlaScanJob
+      method: execute
+
+  - jobName: erp-fin-cash-forecast-refresh
+    displayName: Finance Cash Forecast Refresh
+    description: 每日凌晨聚合未核销 AR/AP + 票据到期项刷新现金预测；cron 经 erp-fin.cash-forecast-cron 配置门控
+    trigger:
+      cronExpr: "0 0 1 * * ?"
+    invoker:
+      bean: erpFinCashForecastJob
+      method: execute
+
+  - jobName: erp-mfg-crp-run
+    displayName: Manufacturing CRP Load Calculation
+    description: 每日凌晨按当月窗口计算 CRP 产能负荷快照（全工作中心）；cron 经 erp-mfg.crp-run-cron 配置门控
+    trigger:
+      cronExpr: "0 0 1 * * ?"
+    invoker:
+      bean: erpMfgCrpRunJob
+      method: execute
+
+  - jobName: erp-crm-forecast-recalc
+    displayName: CRM Sales Forecast Recalc
+    description: 每日 03:00 重算当前 OPEN 预测期间的销售预测；cron 经 erp-crm.forecast.recalc-cron 配置门控
+    trigger:
+      cronExpr: "0 3 * * *"
+    invoker:
+      bean: erpCrmForecastRecalcJob
+      method: execute
+
+  - jobName: erp-crm-lead-scoring-recalc
+    displayName: CRM Lead Scoring Recalc
+    description: 每日 02:00 迭代 active 线索批量重算评分（单线索失败隔离）；cron 经 erp-crm.lead-scoring.schedule-cron 配置门控
+    trigger:
+      cronExpr: "0 2 * * *"
+    invoker:
+      bean: erpCrmLeadScoringRecalcJob
+      method: execute

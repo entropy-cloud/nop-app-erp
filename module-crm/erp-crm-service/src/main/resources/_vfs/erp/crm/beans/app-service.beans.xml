@@ -35,4 +35,14 @@
     <!-- CRM 销售预测聚合引擎（commit/upside/best-case/weighted 分类 + 商机级 ForecastLine 快照 + 团队→公司层级 rollup + 准确率） -->
     <bean id="app.erp.crm.service.support.ForecastAggregator"
           class="app.erp.crm.service.support.ForecastAggregator"/>
+
+    <!-- 定时销售预测重算 Job Bean（plan 2026-07-05-0306-1 Phase 1）。由 nop-job-local scheduler.yaml
+          经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-crm.forecast.recalc-cron 配置门控。 -->
+    <bean id="erpCrmForecastRecalcJob"
+          class="app.erp.crm.service.job.ErpCrmForecastRecalcJob"/>
+
+    <!-- 定时线索评分批量重算 Job Bean（plan 2026-07-05-0306-1 Phase 1）。由 nop-job-local scheduler.yaml
+          经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-crm.lead-scoring.schedule-cron 配置门控。 -->
+    <bean id="erpCrmLeadScoringRecalcJob"
+          class="app.erp.crm.service.job.ErpCrmLeadScoringRecalcJob"/>
 </beans>

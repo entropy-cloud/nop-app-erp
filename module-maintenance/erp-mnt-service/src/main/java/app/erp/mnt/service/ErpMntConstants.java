@@ -19,6 +19,8 @@ public interface ErpMntConstants {
     // 配置项（经 AppConfig.var 读取，缺失走默认，无 .env）
     String CONFIG_AUTO_GENERATE_DUE_VISITS = "erp-mnt.auto-generate-due-visits";
     String CONFIG_EQUIPMENT_STATUS_LINK_ENABLED = "erp-mnt.equipment-status-link-enabled";
+    /** 定时到期访问生成 cron（空=不调度；plan 2026-07-05-0306-1 §配置点）。 */
+    String CONFIG_DUE_VISIT_CRON = "erp-mnt.due-visit-cron";
 
     boolean DEFAULT_AUTO_GENERATE_DUE_VISITS = true;
     boolean DEFAULT_EQUIPMENT_STATUS_LINK_ENABLED = true;

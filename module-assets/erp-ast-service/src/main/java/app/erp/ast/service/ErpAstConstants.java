@@ -15,6 +15,8 @@ public interface ErpAstConstants {
     String CONFIG_DEPRECIATION_PARALLEL_BY_CATEGORY = "erp-ast.depreciation-parallel-by-category";
     /** 折旧后净值是否强制不低于残值，默认 true。 */
     String CONFIG_RESIDUAL_VALUE_ENFORCED = "erp-ast.residual-value-enforced";
+    /** 定时批量折旧 cron（空=不调度；plan 2026-07-05-0306-1 §配置点）。 */
+    String CONFIG_DEPRECIATION_CRON = "erp-ast.depreciation-cron";
 
     // ---- asset-status ----
     String ASSET_STATUS_DRAFT = "DRAFT";

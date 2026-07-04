@@ -36,4 +36,9 @@
           class="app.erp.ast.service.processor.ErpAstDepreciationScheduleProcessor"/>
     <bean id="app.erp.ast.service.processor.ErpAstDisposalProcessor"
           class="app.erp.ast.service.processor.ErpAstDisposalProcessor"/>
+
+    <!-- 定时批量折旧 Job Bean（plan 2026-07-05-0306-1 Phase 1）。由 nop-job-local scheduler.yaml
+          经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-ast.depreciation-cron 配置门控。 -->
+    <bean id="erpAstDepreciationJob"
+          class="app.erp.ast.service.job.ErpAstDepreciationJob"/>
 </beans>

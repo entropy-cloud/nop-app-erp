@@ -7,4 +7,9 @@
     <import resource="_dao.beans.xml"/>
 
     <import resource="_service.beans.xml"/>
+
+    <!-- 定时 SLA 超时扫描 Job Bean（plan 2026-07-05-0306-1 Phase 1）。由 nop-job-local scheduler.yaml
+          经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-cs.sla-scan-cron 配置门控。 -->
+    <bean id="erpCsSlaScanJob"
+          class="app.erp.cs.service.job.ErpCsSlaScanJob"/>
 </beans>
