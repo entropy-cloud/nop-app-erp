@@ -87,14 +87,14 @@
 
 ## 运行监控指标
 
-四个核心指标，接入 nop-platform 监控大盘：
+四个核心指标。**nop-platform 无内建 metrics API**（`CoreMetrics` 仅时钟；全仓无 Micrometer/Prometheus/Actuator 依赖），故采用**应用级指标快照**落地：自动化记账率/异常率/闭环成功率经 SQL 聚合 `ErpFinVoucher`+`ErpFinPostingException` 由查询接口呈现；凭证生成时延经进程内窗口采样（复用 §裁决 2 各阶段 `nanoTimeDiff`）呈现。阈值 config-gated，越限可检出。完整落地裁决见 §实现策略 裁决 3。
 
 | 指标 | 定义 | 目标 | 低于阈值的含义 |
 |---|---|---|---|
-| 自动化记账率 | 自动生成凭证数 ÷ 总凭证数 | ≥95% | 下降说明有新业务场景未被规则覆盖，需补模板/Provider |
-| 凭证生成时延 | 业务事件触发到凭证过账耗时（P99） | <30s | 升高说明规则匹配效率下降或 GL 写入瓶颈 |
+| 自动化记账率 | 自动生成凭证数 ÷ (自动凭证数 + 手工补录异常数) | ≥95% | 下降说明有新业务场景未被规则覆盖，需补模板/Provider |
+| 凭证生成时延 | 业务事件触发到凭证过账耗时（P99，进程内窗口采样） | <30s | 升高说明规则匹配效率下降或 GL 写入瓶颈 |
 | 过账异常率 | 过账失败或规则未命中占比 | <1% | 走高说明业务系统数据质量问题或规则配置需更新 |
-| 业财闭环成功率 | 源单据 `posted=true` 翻转成功数 ÷ 过账成功数 | ≥99.5% | 走低说明域调用方未正确置位 `posted`，需联合排查 |
+| 业财闭环成功率 | 源单据 `posted=true` 翻转成功数 ÷ 过账成功数（SYNC 默认下为代理值，见裁决 3 残留风险） | ≥99.5% | 走低说明域调用方未正确置位 `posted`，需联合排查 |
 
 > 第四个指标（业财闭环成功率）替代了通用文章的"反写成功率"——本项目反写由域自治置位 `posted`（见 `posting.md` §反写契约），故监控"源单据 `posted` 翻转与凭证过账的一致性"，而非引擎主动反写的成功率。
 
@@ -128,6 +128,23 @@
 - **`txn().afterCommit` 语义核实**（修正项目日志 `docs/logs/2026/07-04.md:55` 的事实错误）：`ITransactionTemplate.afterCommit` 注册 `onAfterCommit` 监听器，**仅在事务提交成功时触发**；主事务回滚时不触发（见 `nop-entropy/.../txn/ITransactionTemplate.java:87-94`）。故**失败记录持久化不可依赖 `afterCommit`**——须用独立 session / `REQUIRES_NEW` 事务写入，确保不随主事务回滚丢失。
 - **替代方案（被拒绝）**：全量持久化规则命中日志（成功也建表）。被拒理由：成功路径高频（每笔过账一条），写放大且与凭证本身信息冗余；排障主要诉求是"失败为何失败"，成功路径结构化日志 + 日志聚合已足够。
 - **保护区域影响**：新增 `ErpFinPostingException` 实体触及 finance ORM 保护区域（`model/*.orm.xml` 模式 = ask first，required evidence = design doc + plan audit）。本计划已经独立草案审计（见计划 `Draft Review Record`），且回滚策略为模型增量随重新生成移除、无数据迁移。owner-doc（本文件 §过账异常处置）已描述该实体的业务语义与处置状态机。
+
+### 裁决 3：运行监控落地路径——应用级指标快照 + 内存时延采样
+
+- **裁决**：四指标以**应用级快照**落地，零新依赖、零 ORM 保护区域触及。
+  - **自动化记账率**：SQL 聚合 `ErpFinVoucher`（自动凭证数）÷（`ErpFinVoucher` + `ErpFinPostingException.resolution=MANUAL`）。手工补录（`manualEntry`）代表规则未覆盖需人工干预的事件，计入分母。
+  - **凭证生成时延 P99**：进程内窗口采样（`ErpFinPostingMetrics` 环形缓冲），复用 §裁决 2 各阶段 `nanoTimeDiff` 求和为单次过账时延。**不持久化**——事件触发时间未入库，SQL 不可行；持久化须加列触保护区域，无充分理由。
+  - **过账异常率**：SQL 聚合 `ErpFinPostingException` ÷（`ErpFinVoucher` + `ErpFinPostingException`）。
+  - **业财闭环成功率**：**代理值**——`posted` 翻转在源域单据（purchase/sales/inventory/...），finance 不可见。SYNC 默认下 post 成功隐含源单 posted 翻转（域自治强一致），故代理 = 过账成功数÷过账成功数 = 1.0；查询结果标注 `loopbackProxyMode=true`。
+- **平台能力核实**：nop-platform **无** metrics 埋点 API——`CoreMetrics` 仅时钟（`currentTimeMillis`/`nanoTime`/`nanoTimeDiff`/`nanoToMillis`），全仓无 Micrometer/Prometheus/Actuator 依赖。可用"监控面"仅 `/q/health*`、`/q/metrics*` 平台信息端点（非业务指标埋点）。故"接入平台监控大盘"在本平台不可行，须应用级自建查询接口。
+- **替代方案（被拒绝）**：
+  - (a) 引入 Micrometer + Actuator + `/q/metrics` 暴露——需新增 pom 依赖 + 部署侧抓取设施，超出应用层最小落地。**Follow-up**：生产部署需 Prometheus 抓取时采纳（见 Deferred「监控大盘可视化」「上游 metrics 模块回迁」）。
+  - (c) 持久化 `ErpFinPostingMetric` 快照表 + 定时 rollup——触及 finance ORM 保护区域（`model/*.orm.xml` ask first），且内存采样 + SQL 聚合已满足"指标可查询呈现"目标。
+- **残留风险**：
+  - (i) 时延为进程内窗口采样，重启清零、无历史趋势（Follow-up：生产趋势须接 Micrometer + 时序库）。
+  - (ii) 闭环成功率为代理值，ASYNC 模式或域忘记翻转 `posted` 不可检出（Follow-up：可选 `IErpFinPostedProbe` SPI 让各域上报翻转确认）。
+  - (iii) 无自动告警通道对接（Deferred：SMS/邮件/webhook 通道属运营通知层）。
+- **代价**：零 ORM 实体新增、零列新增、零 pom 依赖新增；仅新增应用级查询接口 + 进程内采样组件。
 
 ### 其他原则
 
