@@ -1,6 +1,6 @@
 # Core Business Logic Roadmap
 
-> 最后更新：2026-07-02
+> 最后更新：2026-07-04
 > 本路线图覆盖**进销存+财务** 5 域的自定义 BizModel 方法、跨域编排、业财过账。
 > 前置条件：`crud-roadmap.md` 中对应域的 CRUD 已完成。
 
@@ -26,6 +26,13 @@
 ### Milestone M4 — 业财一体端到端
 - 4.3 期末结账全流程：`done`（计划 1000-3；含 4.3 前置「存货成本核算」done 计划 1538-1：记账器策略分派 MOVING_AVERAGE/FIFO + ErpInvCostLayer FIFO 队列 + period-close step2 接线 IErpInvCostingBiz.reclosePeriodCosts）
 - 4.1/4.2/4.4：`done`（计划 1018-1：4.1/4.2 扩展既有 P2P/O2C E2E 断言财务核销层——AP_INVOICE/AR_INVOICE/PAYMENT/RECEIPT 过账生成辅助账 + ErpFinReconciliation 核销 openAmount 归零 + 账龄；4.4 新增采购/销售退货到退款连续链 E2E——退货审核→反向库存→红字过账→负 openAmount 辅助账回减→cancelOnReverse 归零 + 异常路径）
+
+### Milestone M5 — 业财可运维性与闭环
+- 5.1 会计日志与可观测性：`todo`（设计 done `finance/posting-log.md`，对标 Metasfresh `Fact_Acct_Log`/`Fact_Acct_UserChange`；**P0**——排障"为何没自动记账/为何记错科目"与模板变更合规审计当前无依据；分析见 `docs/analysis/2026-07-04-finance-posting-engine-gap-vs-opensource.md`）
+- 5.2 冲销反写闭环：`todo`（设计 done `finance/posting.md` §冲销机制方向二；**P0**——当前 `reverse()` 仅生成红字凭证不回退业务单据状态，业财闭环断裂；解法为 `reverse()` 成功后发 `VoucherReversedEvent`，域 Provider 监听回退，引擎不持有源实体）
+- 5.3 运行监控：`todo`（设计 done `finance/posting-log.md` §运行监控指标；**P1**——四指标自动化记账率/时延/异常率/业财闭环成功率接入 nop-platform 监控）
+
+> **M5 定位**：M1/M4 已交付业财打通的**功能正确性**（凭证生成、辅助账、核销、期末结账）；M5 补其**运营成熟度**——可观测（日志）、可闭环（冲销反写）、可监控（指标）。属生产级运维层，非新业务功能。落地须各自起草 `docs/plans/` 计划并经独立草案/结束审计；会计日志优先评估复用 nop-platform 审计能力（避免触及 ORM 保护区域）。
 
 ## Implementation Order
 
@@ -57,6 +64,14 @@
 
 > **存货成本核算引擎（M4 前置 / 1000-3 step2 deferred 承接）**：`done` 计划 `2026-07-02-1538-1`——`StockMoveBookkeeper` 重构为按物料 `costMethod` 策略分派（`CostMethodResolver` → `MovingAverageCostingStrategy` 抽取既有逻辑行为不变 / 新增 `FifoCostingStrategy` 维护消耗 `ErpInvCostLayer` FIFO 队列、多层加权 COGS 经既有 `ledger.totalCost` 通道、红冲按加权 unitCost 追加层、首次无成本抛 `ERR_COST_NOT_AVAILABLE`）；`IErpInvCostingBiz.reclosePeriodCosts` + finance `closeInvModule` 接线 period-close §步骤2 兜底重算（finance→inventory R，config-gated）。解除 1000-3 step2 deferred。Non-Goal：BATCH/INDIVIDUAL/STANDARD/全月一次/LIFO/Landed Cost/成本调整/报表（见计划 Deferred）。
 | 4.4 | 采购/销售退货到退款全链路 | purchase/sales/finance | ✅ `done`（计划 1018-1） |
+
+### M5 — 业财可运维性与闭环
+
+| # | 工作项 | 域 | 设计文档 | 状态 |
+|---|--------|-----|---------|------|
+| 5.1 | 会计日志与可观测性（规则命中追溯 / 变更审计 / 异常工作台 / traceId 串联） | finance | `finance/posting-log.md` | ⬜ `todo`（P0） |
+| 5.2 | 冲销反写闭环（`VoucherReversedEvent` + 域 Provider 监听回退业务单据状态） | finance | `finance/posting.md` §冲销机制方向二 | ⬜ `todo`（P0） |
+| 5.3 | 运行监控（自动化记账率 / 时延 / 异常率 / 业财闭环成功率 + 告警 SLA） | finance | `finance/posting-log.md` §运行监控指标 | ⬜ `todo`（P1） |
 
 ## Reference
 
