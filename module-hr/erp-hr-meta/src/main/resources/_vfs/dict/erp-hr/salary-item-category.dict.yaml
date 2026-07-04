@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 薪酬项目类别
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 应发项
+    value: EARNINGS
+    description: 
+  
+  - label: 扣款项
+    value: DEDUCTION
+    description: 
+  

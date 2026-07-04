@@ -13,6 +13,14 @@ alter table erp_prj_task add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_hr_department add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_hr_salary_item add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_hr_social_insurance_config add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_hr_tax_config add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_hr_payroll_bank_file add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_hr_shift add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_hr_shift_rotation_pattern add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -42,6 +50,10 @@ alter table erp_hr_timesheet add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 alter table erp_hr_salary add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_hr_recruitment add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_hr_social_insurance_base add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_hr_tax_special_deduction add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_hr_survey_response add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -88,6 +100,18 @@ alter table erp_prj_task add constraint PK_erp_prj_task primary key (NOP_TENANT_
 alter table erp_hr_department drop constraint PK_erp_hr_department;
 alter table erp_hr_department add constraint PK_erp_hr_department primary key (NOP_TENANT_ID, id);
 
+alter table erp_hr_salary_item drop constraint PK_erp_hr_salary_item;
+alter table erp_hr_salary_item add constraint PK_erp_hr_salary_item primary key (NOP_TENANT_ID, id);
+
+alter table erp_hr_social_insurance_config drop constraint PK_erp_hr_social_insurance_config;
+alter table erp_hr_social_insurance_config add constraint PK_erp_hr_social_insurance_config primary key (NOP_TENANT_ID, id);
+
+alter table erp_hr_tax_config drop constraint PK_erp_hr_tax_config;
+alter table erp_hr_tax_config add constraint PK_erp_hr_tax_config primary key (NOP_TENANT_ID, id);
+
+alter table erp_hr_payroll_bank_file drop constraint PK_erp_hr_payroll_bank_file;
+alter table erp_hr_payroll_bank_file add constraint PK_erp_hr_payroll_bank_file primary key (NOP_TENANT_ID, id);
+
 alter table erp_hr_shift drop constraint PK_erp_hr_shift;
 alter table erp_hr_shift add constraint PK_erp_hr_shift primary key (NOP_TENANT_ID, id);
 
@@ -132,6 +156,12 @@ alter table erp_hr_salary add constraint PK_erp_hr_salary primary key (NOP_TENAN
 
 alter table erp_hr_recruitment drop constraint PK_erp_hr_recruitment;
 alter table erp_hr_recruitment add constraint PK_erp_hr_recruitment primary key (NOP_TENANT_ID, id);
+
+alter table erp_hr_social_insurance_base drop constraint PK_erp_hr_social_insurance_base;
+alter table erp_hr_social_insurance_base add constraint PK_erp_hr_social_insurance_base primary key (NOP_TENANT_ID, id);
+
+alter table erp_hr_tax_special_deduction drop constraint PK_erp_hr_tax_special_deduction;
+alter table erp_hr_tax_special_deduction add constraint PK_erp_hr_tax_special_deduction primary key (NOP_TENANT_ID, id);
 
 alter table erp_hr_survey_response drop constraint PK_erp_hr_survey_response;
 alter table erp_hr_survey_response add constraint PK_erp_hr_survey_response primary key (NOP_TENANT_ID, id);

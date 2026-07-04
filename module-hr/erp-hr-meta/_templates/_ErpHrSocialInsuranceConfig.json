@@ -1,0 +1,22 @@
+{
+  "id": 0,
+  "cityCode": "",
+  "cityCode_label": "",
+  "insuranceType": "",
+  "insuranceType_label": "",
+  "companyRate": 0.0,
+  "employeeRate": 0.0,
+  "baseLowerLimit": 0.0,
+  "baseUpperLimit": 0.0,
+  "effectiveFrom": "2000-01-01",
+  "effectiveTo": "2000-01-01",
+  "orgId": 0,
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "org": null
+}

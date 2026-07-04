@@ -199,6 +199,26 @@ public interface _ErpFinDaoConstants {
     String BUSINESS_TYPE_OWNERSHIP_TRANSFER = "OWNERSHIP_TRANSFER";
                     
     /**
+     * 业务类型: 薪酬计提 
+     */
+    String BUSINESS_TYPE_SALARY = "SALARY";
+                    
+    /**
+     * 业务类型: 薪酬发放 
+     */
+    String BUSINESS_TYPE_SALARY_PAYMENT = "SALARY_PAYMENT";
+                    
+    /**
+     * 业务类型: 社保公司承担 
+     */
+    String BUSINESS_TYPE_SOCIAL_INSURANCE_ER = "SOCIAL_INSURANCE_ER";
+                    
+    /**
+     * 业务类型: 公积金公司承担 
+     */
+    String BUSINESS_TYPE_HOUSING_FUND_ER = "HOUSING_FUND_ER";
+                    
+    /**
      * 期间状态: 开启 
      */
     String PERIOD_STATUS_OPEN = "OPEN";

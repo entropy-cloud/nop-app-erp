@@ -95,35 +95,76 @@
               sortable="true" insertable="true" updatable="true">
             <schema type="java.time.LocalDate"/>
         </prop>
-        <prop name="orgId" displayName="业务组织" propId="20" i18n-en:displayName="Organization" queryable="true"
+        <prop name="approvalStatus" displayName="审批状态" propId="28" i18n-en:displayName="Approval Status"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true"
+              defaultValue="PENDING">
+            <schema type="java.lang.String" precision="20" dict="erp-hr/salary-approval-status"/>
+        </prop>
+        <prop name="performanceFactor" displayName="绩效系数" propId="29" i18n-en:displayName="Performance Factor"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.math.BigDecimal" precision="5" scale="2"/>
+        </prop>
+        <prop name="actualWorkDays" displayName="实际出勤日" propId="30" i18n-en:displayName="Actual Work Days"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.math.BigDecimal" precision="10" scale="2"/>
+        </prop>
+        <prop name="requiredWorkDays" displayName="应出勤日" propId="31" i18n-en:displayName="Required Work Days"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.math.BigDecimal" precision="10" scale="2"/>
+        </prop>
+        <prop name="totalOvertimeHours" displayName="月总加班小时" propId="32" i18n-en:displayName="Total Overtime Hours"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema domain="hours" type="java.math.BigDecimal" precision="10" scale="2"/>
+        </prop>
+        <prop name="unpaidLeaveDays" displayName="无薪假天数" propId="33" i18n-en:displayName="Unpaid Leave Days"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.math.BigDecimal" precision="10" scale="2"/>
+        </prop>
+        <prop name="cumulativeData" displayName="累计个税数据" propId="34" i18n-en:displayName="Cumulative Tax Data"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="2000"/>
+        </prop>
+        <prop name="reviewNote" displayName="审核备注" propId="35" i18n-en:displayName="Review Note" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="paymentBatchNo" displayName="发放批次号" propId="36" i18n-en:displayName="Payment Batch No"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="bankFileId" displayName="银行文件" propId="37" i18n-en:displayName="Bank File" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="bankFile">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="orgId" displayName="业务组织" propId="38" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="remark" displayName="备注" propId="21" i18n-en:displayName="Remark" queryable="true" sortable="true"
+        <prop name="remark" displayName="备注" propId="39" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
-        <prop name="delVersion" displayName="逻辑删除版本" propId="22" i18n-en:displayName="Del Flag" mandatory="true"
+        <prop name="delVersion" displayName="逻辑删除版本" propId="40" i18n-en:displayName="Del Flag" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
             <schema domain="delVersion" type="java.lang.Long"/>
         </prop>
-        <prop name="version" displayName="数据版本" propId="23" i18n-en:displayName="Version" mandatory="true"
+        <prop name="version" displayName="数据版本" propId="41" i18n-en:displayName="Version" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
             <schema domain="version" type="java.lang.Integer"/>
         </prop>
-        <prop name="createdBy" displayName="创建人" propId="24" i18n-en:displayName="Created By" mandatory="true"
+        <prop name="createdBy" displayName="创建人" propId="42" i18n-en:displayName="Created By" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="createdBy" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="createTime" displayName="创建时间" propId="25" i18n-en:displayName="Create Time" mandatory="true"
+        <prop name="createTime" displayName="创建时间" propId="43" i18n-en:displayName="Create Time" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="createTime" type="java.sql.Timestamp"/>
         </prop>
-        <prop name="updatedBy" displayName="修改人" propId="26" i18n-en:displayName="Updated By" mandatory="true"
+        <prop name="updatedBy" displayName="修改人" propId="44" i18n-en:displayName="Updated By" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updatedBy" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="updateTime" displayName="修改时间" propId="27" i18n-en:displayName="Update Time" mandatory="true"
+        <prop name="updateTime" displayName="修改时间" propId="45" i18n-en:displayName="Update Time" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
@@ -136,6 +177,11 @@
               ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
               lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="bankFile" i18n-en:displayName="Bank File" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="bankFileId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpHrPayrollBankFile"/>
         </prop>
     </props>
 </meta>

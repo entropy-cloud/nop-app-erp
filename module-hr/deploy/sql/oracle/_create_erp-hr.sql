@@ -57,6 +57,88 @@ CREATE TABLE erp_hr_department(
   constraint PK_erp_hr_department primary key (ID)
 );
 
+CREATE TABLE erp_hr_salary_item(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  NAME VARCHAR2(200) NOT NULL ,
+  ITEM_CATEGORY VARCHAR2(20) NOT NULL ,
+  ITEM_GROUP VARCHAR2(20) NOT NULL ,
+  CALC_METHOD VARCHAR2(20) NOT NULL ,
+  FORMULA VARCHAR2(1000)  ,
+  IS_TAXABLE CHAR(1) default 0   ,
+  IS_SOCIAL_INSURANCE_BASE CHAR(1) default 0   ,
+  IS_MANDATORY CHAR(1) default 0   ,
+  SORT_ORDER INTEGER default 0   ,
+  ORG_ID NUMBER(20)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_salary_item primary key (ID)
+);
+
+CREATE TABLE erp_hr_social_insurance_config(
+  ID NUMBER(20) NOT NULL ,
+  CITY_CODE VARCHAR2(20) NOT NULL ,
+  INSURANCE_TYPE VARCHAR2(20) NOT NULL ,
+  COMPANY_RATE NUMBER(8,6) default 0   ,
+  EMPLOYEE_RATE NUMBER(8,6) default 0   ,
+  BASE_LOWER_LIMIT NUMBER(18,2)  ,
+  BASE_UPPER_LIMIT NUMBER(18,2)  ,
+  EFFECTIVE_FROM DATE  ,
+  EFFECTIVE_TO DATE  ,
+  ORG_ID NUMBER(20)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_social_insurance_config primary key (ID)
+);
+
+CREATE TABLE erp_hr_tax_config(
+  ID NUMBER(20) NOT NULL ,
+  YEAR INTEGER NOT NULL ,
+  TAX_THRESHOLD NUMBER(18,2) NOT NULL ,
+  TAX_BRACKETS VARCHAR2(4000)  ,
+  SPECIAL_DEDUCTION_ITEMS VARCHAR2(2000)  ,
+  ORG_ID NUMBER(20)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_tax_config primary key (ID)
+);
+
+CREATE TABLE erp_hr_payroll_bank_file(
+  ID NUMBER(20) NOT NULL ,
+  BATCH_NO VARCHAR2(50) NOT NULL ,
+  PAYMENT_DATE DATE NOT NULL ,
+  TOTAL_AMOUNT NUMBER(18,2) NOT NULL ,
+  RECORD_COUNT INTEGER default 0  NOT NULL ,
+  FILE_FORMAT VARCHAR2(20) NOT NULL ,
+  FILE_CONTENT CLOB  ,
+  STATUS VARCHAR2(20) default 'GENERATED'  NOT NULL ,
+  BANK_ID NUMBER(20)  ,
+  ORG_ID NUMBER(20)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_payroll_bank_file primary key (ID)
+);
+
 CREATE TABLE erp_hr_shift(
   ID NUMBER(20) NOT NULL ,
   CODE VARCHAR2(50) NOT NULL ,
@@ -379,6 +461,16 @@ CREATE TABLE erp_hr_salary(
   NET_SALARY NUMBER(18,2)  ,
   PAYMENT_STATUS VARCHAR2(20) NOT NULL ,
   PAYMENT_DATE DATE  ,
+  APPROVAL_STATUS VARCHAR2(20) default 'PENDING'  NOT NULL ,
+  PERFORMANCE_FACTOR NUMBER(5,2)  ,
+  ACTUAL_WORK_DAYS NUMBER(10,2)  ,
+  REQUIRED_WORK_DAYS NUMBER(10,2)  ,
+  TOTAL_OVERTIME_HOURS NUMBER(10,2)  ,
+  UNPAID_LEAVE_DAYS NUMBER(10,2)  ,
+  CUMULATIVE_DATA VARCHAR2(2000)  ,
+  REVIEW_NOTE VARCHAR2(1000)  ,
+  PAYMENT_BATCH_NO VARCHAR2(100)  ,
+  BANK_FILE_ID NUMBER(20)  ,
   ORG_ID NUMBER(20)  ,
   REMARK VARCHAR2(1000)  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
@@ -416,6 +508,44 @@ CREATE TABLE erp_hr_recruitment(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   constraint PK_erp_hr_recruitment primary key (ID)
+);
+
+CREATE TABLE erp_hr_social_insurance_base(
+  ID NUMBER(20) NOT NULL ,
+  EMPLOYEE_ID NUMBER(20) NOT NULL ,
+  CITY_CODE VARCHAR2(20) NOT NULL ,
+  SOCIAL_INSURANCE_BASE NUMBER(18,2) NOT NULL ,
+  HOUSING_FUND_BASE NUMBER(18,2)  ,
+  EFFECTIVE_FROM DATE NOT NULL ,
+  EFFECTIVE_TO DATE  ,
+  ORG_ID NUMBER(20)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_social_insurance_base primary key (ID)
+);
+
+CREATE TABLE erp_hr_tax_special_deduction(
+  ID NUMBER(20) NOT NULL ,
+  EMPLOYEE_ID NUMBER(20) NOT NULL ,
+  YEAR INTEGER NOT NULL ,
+  MONTH INTEGER NOT NULL ,
+  DEDUCTION_TYPE VARCHAR2(30) NOT NULL ,
+  MONTHLY_AMOUNT NUMBER(18,2) NOT NULL ,
+  VERIFIED CHAR(1) default 0   ,
+  ORG_ID NUMBER(20)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_hr_tax_special_deduction primary key (ID)
 );
 
 CREATE TABLE erp_hr_survey_response(
@@ -695,6 +825,146 @@ CREATE TABLE erp_hr_shift_swap_request(
       COMMENT ON COLUMN erp_hr_department.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_hr_department.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_hr_salary_item IS '薪酬项目';
+                
+      COMMENT ON COLUMN erp_hr_salary_item.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_salary_item.CODE IS '编码';
+                    
+      COMMENT ON COLUMN erp_hr_salary_item.NAME IS '名称';
+                    
+      COMMENT ON COLUMN erp_hr_salary_item.ITEM_CATEGORY IS '类别';
+                    
+      COMMENT ON COLUMN erp_hr_salary_item.ITEM_GROUP IS '分组';
+                    
+      COMMENT ON COLUMN erp_hr_salary_item.CALC_METHOD IS '计算方式';
+                    
+      COMMENT ON COLUMN erp_hr_salary_item.FORMULA IS '计算公式';
+                    
+      COMMENT ON COLUMN erp_hr_salary_item.IS_TAXABLE IS '是否应税';
+                    
+      COMMENT ON COLUMN erp_hr_salary_item.IS_SOCIAL_INSURANCE_BASE IS '计入社保基数';
+                    
+      COMMENT ON COLUMN erp_hr_salary_item.IS_MANDATORY IS '是否必含';
+                    
+      COMMENT ON COLUMN erp_hr_salary_item.SORT_ORDER IS '排序号';
+                    
+      COMMENT ON COLUMN erp_hr_salary_item.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_hr_salary_item.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_hr_salary_item.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_salary_item.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_salary_item.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_salary_item.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_salary_item.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_salary_item.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_hr_social_insurance_config IS '社保配置';
+                
+      COMMENT ON COLUMN erp_hr_social_insurance_config.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_config.CITY_CODE IS '城市';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_config.INSURANCE_TYPE IS '险种';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_config.COMPANY_RATE IS '公司比例';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_config.EMPLOYEE_RATE IS '个人比例';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_config.BASE_LOWER_LIMIT IS '基数下限';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_config.BASE_UPPER_LIMIT IS '基数上限';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_config.EFFECTIVE_FROM IS '生效日期';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_config.EFFECTIVE_TO IS '失效日期';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_config.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_config.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_config.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_config.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_config.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_config.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_config.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_config.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_hr_tax_config IS '个税配置';
+                
+      COMMENT ON COLUMN erp_hr_tax_config.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_tax_config.YEAR IS '年份';
+                    
+      COMMENT ON COLUMN erp_hr_tax_config.TAX_THRESHOLD IS '起征点(月)';
+                    
+      COMMENT ON COLUMN erp_hr_tax_config.TAX_BRACKETS IS '税率表';
+                    
+      COMMENT ON COLUMN erp_hr_tax_config.SPECIAL_DEDUCTION_ITEMS IS '专项附加扣除项配置';
+                    
+      COMMENT ON COLUMN erp_hr_tax_config.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_hr_tax_config.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_hr_tax_config.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_tax_config.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_tax_config.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_tax_config.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_tax_config.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_tax_config.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_hr_payroll_bank_file IS '银行代发文件';
+                
+      COMMENT ON COLUMN erp_hr_payroll_bank_file.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_payroll_bank_file.BATCH_NO IS '批次号';
+                    
+      COMMENT ON COLUMN erp_hr_payroll_bank_file.PAYMENT_DATE IS '发放日期';
+                    
+      COMMENT ON COLUMN erp_hr_payroll_bank_file.TOTAL_AMOUNT IS '总金额';
+                    
+      COMMENT ON COLUMN erp_hr_payroll_bank_file.RECORD_COUNT IS '记录数';
+                    
+      COMMENT ON COLUMN erp_hr_payroll_bank_file.FILE_FORMAT IS '文件格式';
+                    
+      COMMENT ON COLUMN erp_hr_payroll_bank_file.FILE_CONTENT IS '文件内容';
+                    
+      COMMENT ON COLUMN erp_hr_payroll_bank_file.STATUS IS '状态';
+                    
+      COMMENT ON COLUMN erp_hr_payroll_bank_file.BANK_ID IS '开户银行';
+                    
+      COMMENT ON COLUMN erp_hr_payroll_bank_file.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_hr_payroll_bank_file.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_hr_payroll_bank_file.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_payroll_bank_file.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_payroll_bank_file.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_payroll_bank_file.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_payroll_bank_file.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_payroll_bank_file.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_hr_shift IS '班次模板';
                 
@@ -1262,6 +1532,26 @@ CREATE TABLE erp_hr_shift_swap_request(
                     
       COMMENT ON COLUMN erp_hr_salary.PAYMENT_DATE IS '实发日期';
                     
+      COMMENT ON COLUMN erp_hr_salary.APPROVAL_STATUS IS '审批状态';
+                    
+      COMMENT ON COLUMN erp_hr_salary.PERFORMANCE_FACTOR IS '绩效系数';
+                    
+      COMMENT ON COLUMN erp_hr_salary.ACTUAL_WORK_DAYS IS '实际出勤日';
+                    
+      COMMENT ON COLUMN erp_hr_salary.REQUIRED_WORK_DAYS IS '应出勤日';
+                    
+      COMMENT ON COLUMN erp_hr_salary.TOTAL_OVERTIME_HOURS IS '月总加班小时';
+                    
+      COMMENT ON COLUMN erp_hr_salary.UNPAID_LEAVE_DAYS IS '无薪假天数';
+                    
+      COMMENT ON COLUMN erp_hr_salary.CUMULATIVE_DATA IS '累计个税数据';
+                    
+      COMMENT ON COLUMN erp_hr_salary.REVIEW_NOTE IS '审核备注';
+                    
+      COMMENT ON COLUMN erp_hr_salary.PAYMENT_BATCH_NO IS '发放批次号';
+                    
+      COMMENT ON COLUMN erp_hr_salary.BANK_FILE_ID IS '银行文件';
+                    
       COMMENT ON COLUMN erp_hr_salary.ORG_ID IS '业务组织';
                     
       COMMENT ON COLUMN erp_hr_salary.REMARK IS '备注';
@@ -1327,6 +1617,70 @@ CREATE TABLE erp_hr_shift_swap_request(
       COMMENT ON COLUMN erp_hr_recruitment.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_hr_recruitment.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_hr_social_insurance_base IS '员工社保基数';
+                
+      COMMENT ON COLUMN erp_hr_social_insurance_base.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_base.EMPLOYEE_ID IS '员工';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_base.CITY_CODE IS '参保城市';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_base.SOCIAL_INSURANCE_BASE IS '社保基数';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_base.HOUSING_FUND_BASE IS '公积金基数';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_base.EFFECTIVE_FROM IS '生效日期';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_base.EFFECTIVE_TO IS '失效日期';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_base.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_base.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_base.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_base.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_base.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_base.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_base.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_social_insurance_base.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_hr_tax_special_deduction IS '员工专项附加扣除';
+                
+      COMMENT ON COLUMN erp_hr_tax_special_deduction.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_tax_special_deduction.EMPLOYEE_ID IS '员工';
+                    
+      COMMENT ON COLUMN erp_hr_tax_special_deduction.YEAR IS '年份';
+                    
+      COMMENT ON COLUMN erp_hr_tax_special_deduction.MONTH IS '月份';
+                    
+      COMMENT ON COLUMN erp_hr_tax_special_deduction.DEDUCTION_TYPE IS '扣除项目';
+                    
+      COMMENT ON COLUMN erp_hr_tax_special_deduction.MONTHLY_AMOUNT IS '每月扣除金额';
+                    
+      COMMENT ON COLUMN erp_hr_tax_special_deduction.VERIFIED IS '是否已核验';
+                    
+      COMMENT ON COLUMN erp_hr_tax_special_deduction.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_hr_tax_special_deduction.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_hr_tax_special_deduction.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_tax_special_deduction.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_tax_special_deduction.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_tax_special_deduction.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_tax_special_deduction.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_tax_special_deduction.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_hr_survey_response IS '答卷';
                 

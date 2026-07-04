@@ -7,4 +7,23 @@
     <import resource="_dao.beans.xml"/>
 
     <import resource="_service.beans.xml"/>
+
+    <!-- HR 薪酬核算引擎组件（payroll.md §五/§六/§七）。BizModel 逻辑挂在 ErpHrSalaryBizModel（实体绑定，
+         由 _service.beans.xml 自动注册 BizProxy），此处仅注册核算/过账辅助组件。 -->
+    <bean id="app.erp.hr.service.payroll.TaxBracketParser"
+          class="app.erp.hr.service.payroll.TaxBracketParser"/>
+    <bean id="app.erp.hr.service.payroll.SocialInsuranceCalculator"
+          class="app.erp.hr.service.payroll.SocialInsuranceCalculator"/>
+    <bean id="app.erp.hr.service.payroll.IncomeTaxCalculator"
+          class="app.erp.hr.service.payroll.IncomeTaxCalculator"/>
+    <bean id="app.erp.hr.service.payroll.PayrollCalculator"
+          class="app.erp.hr.service.payroll.PayrollCalculator"/>
+
+    <!-- HR 业财过账：执行器 + 派发器 + Provider（Registry 容器级 collect-by-type 自动收录） -->
+    <bean id="app.erp.hr.service.posting.SalaryPostingExecutor"
+          class="app.erp.hr.service.posting.SalaryPostingExecutor"/>
+    <bean id="app.erp.hr.service.posting.SalaryPostingDispatcher"
+          class="app.erp.hr.service.posting.SalaryPostingDispatcher"/>
+    <bean id="app.erp.hr.service.posting.SalaryPostingProvider"
+          class="app.erp.hr.service.posting.SalaryPostingProvider"/>
 </beans>

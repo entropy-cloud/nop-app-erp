@@ -1,0 +1,20 @@
+{
+  "id": 0,
+  "employeeId": 0,
+  "year": 0,
+  "month": 0,
+  "deductionType": "",
+  "deductionType_label": "",
+  "monthlyAmount": 0.0,
+  "verified": false,
+  "orgId": 0,
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "employee": null,
+  "org": null
+}

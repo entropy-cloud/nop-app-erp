@@ -1,0 +1,27 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 城市
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 深圳
+    value: SHENZHEN
+    description: 
+  
+  - label: 上海
+    value: SHANGHAI
+    description: 
+  
+  - label: 北京
+    value: BEIJING
+    description: 
+  
+  - label: 广州
+    value: GUANGZHOU
+    description: 
+  
+  - label: 杭州
+    value: HANGZHOU
+    description: 
+  

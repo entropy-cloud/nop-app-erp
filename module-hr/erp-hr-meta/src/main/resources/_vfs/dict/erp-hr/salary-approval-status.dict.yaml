@@ -1,0 +1,31 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 薪酬审批状态
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 待审核
+    value: PENDING
+    description: 
+  
+  - label: 已复核
+    value: REVIEWED
+    description: 
+  
+  - label: 财务已审批
+    value: APPROVED_FINANCE
+    description: 
+  
+  - label: 经理已审批
+    value: APPROVED_MANAGER
+    description: 
+  
+  - label: 已发放
+    value: PAID
+    description: 
+  
+  - label: 已作废
+    value: VOID
+    description: 
+  

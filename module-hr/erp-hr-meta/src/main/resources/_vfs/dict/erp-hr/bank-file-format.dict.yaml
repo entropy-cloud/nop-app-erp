@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 银行文件格式
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: CSV
+    value: CSV
+    description: 
+  
+  - label: TXT
+    value: TXT
+    description: 
+  

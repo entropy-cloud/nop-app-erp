@@ -1,0 +1,20 @@
+{
+  "id": 0,
+  "employeeId": 0,
+  "cityCode": "",
+  "cityCode_label": "",
+  "socialInsuranceBase": 0.0,
+  "housingFundBase": 0.0,
+  "effectiveFrom": "2000-01-01",
+  "effectiveTo": "2000-01-01",
+  "orgId": 0,
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "employee": null,
+  "org": null
+}

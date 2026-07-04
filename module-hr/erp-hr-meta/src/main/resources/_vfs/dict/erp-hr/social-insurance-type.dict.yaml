@@ -1,0 +1,31 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 社保险种
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 养老保险
+    value: PENSION
+    description: 
+  
+  - label: 医疗保险
+    value: MEDICAL
+    description: 
+  
+  - label: 失业保险
+    value: UNEMPLOYMENT
+    description: 
+  
+  - label: 工伤保险
+    value: WORK_INJURY
+    description: 
+  
+  - label: 生育保险
+    value: MATERNITY
+    description: 
+  
+  - label: 住房公积金
+    value: HOUSING_FUND
+    description: 
+  

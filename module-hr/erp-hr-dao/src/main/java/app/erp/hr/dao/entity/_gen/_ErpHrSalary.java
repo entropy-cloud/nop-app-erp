@@ -97,40 +97,80 @@ public class _ErpHrSalary extends DynamicOrmEntity{
     public static final String PROP_NAME_paymentDate = "paymentDate";
     public static final int PROP_ID_paymentDate = 19;
     
+    /* 审批状态: APPROVAL_STATUS VARCHAR */
+    public static final String PROP_NAME_approvalStatus = "approvalStatus";
+    public static final int PROP_ID_approvalStatus = 28;
+    
+    /* 绩效系数: PERFORMANCE_FACTOR DECIMAL */
+    public static final String PROP_NAME_performanceFactor = "performanceFactor";
+    public static final int PROP_ID_performanceFactor = 29;
+    
+    /* 实际出勤日: ACTUAL_WORK_DAYS DECIMAL */
+    public static final String PROP_NAME_actualWorkDays = "actualWorkDays";
+    public static final int PROP_ID_actualWorkDays = 30;
+    
+    /* 应出勤日: REQUIRED_WORK_DAYS DECIMAL */
+    public static final String PROP_NAME_requiredWorkDays = "requiredWorkDays";
+    public static final int PROP_ID_requiredWorkDays = 31;
+    
+    /* 月总加班小时: TOTAL_OVERTIME_HOURS DECIMAL */
+    public static final String PROP_NAME_totalOvertimeHours = "totalOvertimeHours";
+    public static final int PROP_ID_totalOvertimeHours = 32;
+    
+    /* 无薪假天数: UNPAID_LEAVE_DAYS DECIMAL */
+    public static final String PROP_NAME_unpaidLeaveDays = "unpaidLeaveDays";
+    public static final int PROP_ID_unpaidLeaveDays = 33;
+    
+    /* 累计个税数据: CUMULATIVE_DATA VARCHAR */
+    public static final String PROP_NAME_cumulativeData = "cumulativeData";
+    public static final int PROP_ID_cumulativeData = 34;
+    
+    /* 审核备注: REVIEW_NOTE VARCHAR */
+    public static final String PROP_NAME_reviewNote = "reviewNote";
+    public static final int PROP_ID_reviewNote = 35;
+    
+    /* 发放批次号: PAYMENT_BATCH_NO VARCHAR */
+    public static final String PROP_NAME_paymentBatchNo = "paymentBatchNo";
+    public static final int PROP_ID_paymentBatchNo = 36;
+    
+    /* 银行文件: BANK_FILE_ID BIGINT */
+    public static final String PROP_NAME_bankFileId = "bankFileId";
+    public static final int PROP_ID_bankFileId = 37;
+    
     /* 业务组织: ORG_ID BIGINT */
     public static final String PROP_NAME_orgId = "orgId";
-    public static final int PROP_ID_orgId = 20;
+    public static final int PROP_ID_orgId = 38;
     
     /* 备注: REMARK VARCHAR */
     public static final String PROP_NAME_remark = "remark";
-    public static final int PROP_ID_remark = 21;
+    public static final int PROP_ID_remark = 39;
     
     /* 逻辑删除版本: DEL_VERSION BIGINT */
     public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 22;
+    public static final int PROP_ID_delVersion = 40;
     
     /* 数据版本: VERSION INTEGER */
     public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 23;
+    public static final int PROP_ID_version = 41;
     
     /* 创建人: CREATED_BY VARCHAR */
     public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 24;
+    public static final int PROP_ID_createdBy = 42;
     
     /* 创建时间: CREATE_TIME TIMESTAMP */
     public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 25;
+    public static final int PROP_ID_createTime = 43;
     
     /* 修改人: UPDATED_BY VARCHAR */
     public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 26;
+    public static final int PROP_ID_updatedBy = 44;
     
     /* 修改时间: UPDATE_TIME TIMESTAMP */
     public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 27;
+    public static final int PROP_ID_updateTime = 45;
     
 
-    private static int _PROP_ID_BOUND = 28;
+    private static int _PROP_ID_BOUND = 46;
 
     
     /* relation:  */
@@ -139,11 +179,14 @@ public class _ErpHrSalary extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_org = "org";
     
+    /* relation:  */
+    public static final String PROP_NAME_bankFile = "bankFile";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[28];
+    private static final String[] PROP_ID_TO_NAME = new String[46];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -203,6 +246,36 @@ public class _ErpHrSalary extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_paymentDate] = PROP_NAME_paymentDate;
           PROP_NAME_TO_ID.put(PROP_NAME_paymentDate, PROP_ID_paymentDate);
+      
+          PROP_ID_TO_NAME[PROP_ID_approvalStatus] = PROP_NAME_approvalStatus;
+          PROP_NAME_TO_ID.put(PROP_NAME_approvalStatus, PROP_ID_approvalStatus);
+      
+          PROP_ID_TO_NAME[PROP_ID_performanceFactor] = PROP_NAME_performanceFactor;
+          PROP_NAME_TO_ID.put(PROP_NAME_performanceFactor, PROP_ID_performanceFactor);
+      
+          PROP_ID_TO_NAME[PROP_ID_actualWorkDays] = PROP_NAME_actualWorkDays;
+          PROP_NAME_TO_ID.put(PROP_NAME_actualWorkDays, PROP_ID_actualWorkDays);
+      
+          PROP_ID_TO_NAME[PROP_ID_requiredWorkDays] = PROP_NAME_requiredWorkDays;
+          PROP_NAME_TO_ID.put(PROP_NAME_requiredWorkDays, PROP_ID_requiredWorkDays);
+      
+          PROP_ID_TO_NAME[PROP_ID_totalOvertimeHours] = PROP_NAME_totalOvertimeHours;
+          PROP_NAME_TO_ID.put(PROP_NAME_totalOvertimeHours, PROP_ID_totalOvertimeHours);
+      
+          PROP_ID_TO_NAME[PROP_ID_unpaidLeaveDays] = PROP_NAME_unpaidLeaveDays;
+          PROP_NAME_TO_ID.put(PROP_NAME_unpaidLeaveDays, PROP_ID_unpaidLeaveDays);
+      
+          PROP_ID_TO_NAME[PROP_ID_cumulativeData] = PROP_NAME_cumulativeData;
+          PROP_NAME_TO_ID.put(PROP_NAME_cumulativeData, PROP_ID_cumulativeData);
+      
+          PROP_ID_TO_NAME[PROP_ID_reviewNote] = PROP_NAME_reviewNote;
+          PROP_NAME_TO_ID.put(PROP_NAME_reviewNote, PROP_ID_reviewNote);
+      
+          PROP_ID_TO_NAME[PROP_ID_paymentBatchNo] = PROP_NAME_paymentBatchNo;
+          PROP_NAME_TO_ID.put(PROP_NAME_paymentBatchNo, PROP_ID_paymentBatchNo);
+      
+          PROP_ID_TO_NAME[PROP_ID_bankFileId] = PROP_NAME_bankFileId;
+          PROP_NAME_TO_ID.put(PROP_NAME_bankFileId, PROP_ID_bankFileId);
       
           PROP_ID_TO_NAME[PROP_ID_orgId] = PROP_NAME_orgId;
           PROP_NAME_TO_ID.put(PROP_NAME_orgId, PROP_ID_orgId);
@@ -287,6 +360,36 @@ public class _ErpHrSalary extends DynamicOrmEntity{
     
     /* 实发日期: PAYMENT_DATE */
     private java.time.LocalDate _paymentDate;
+    
+    /* 审批状态: APPROVAL_STATUS */
+    private java.lang.String _approvalStatus;
+    
+    /* 绩效系数: PERFORMANCE_FACTOR */
+    private java.math.BigDecimal _performanceFactor;
+    
+    /* 实际出勤日: ACTUAL_WORK_DAYS */
+    private java.math.BigDecimal _actualWorkDays;
+    
+    /* 应出勤日: REQUIRED_WORK_DAYS */
+    private java.math.BigDecimal _requiredWorkDays;
+    
+    /* 月总加班小时: TOTAL_OVERTIME_HOURS */
+    private java.math.BigDecimal _totalOvertimeHours;
+    
+    /* 无薪假天数: UNPAID_LEAVE_DAYS */
+    private java.math.BigDecimal _unpaidLeaveDays;
+    
+    /* 累计个税数据: CUMULATIVE_DATA */
+    private java.lang.String _cumulativeData;
+    
+    /* 审核备注: REVIEW_NOTE */
+    private java.lang.String _reviewNote;
+    
+    /* 发放批次号: PAYMENT_BATCH_NO */
+    private java.lang.String _paymentBatchNo;
+    
+    /* 银行文件: BANK_FILE_ID */
+    private java.lang.Long _bankFileId;
     
     /* 业务组织: ORG_ID */
     private java.lang.Long _orgId;
@@ -442,6 +545,36 @@ public class _ErpHrSalary extends DynamicOrmEntity{
         
             case PROP_ID_paymentDate:
                return getPaymentDate();
+        
+            case PROP_ID_approvalStatus:
+               return getApprovalStatus();
+        
+            case PROP_ID_performanceFactor:
+               return getPerformanceFactor();
+        
+            case PROP_ID_actualWorkDays:
+               return getActualWorkDays();
+        
+            case PROP_ID_requiredWorkDays:
+               return getRequiredWorkDays();
+        
+            case PROP_ID_totalOvertimeHours:
+               return getTotalOvertimeHours();
+        
+            case PROP_ID_unpaidLeaveDays:
+               return getUnpaidLeaveDays();
+        
+            case PROP_ID_cumulativeData:
+               return getCumulativeData();
+        
+            case PROP_ID_reviewNote:
+               return getReviewNote();
+        
+            case PROP_ID_paymentBatchNo:
+               return getPaymentBatchNo();
+        
+            case PROP_ID_bankFileId:
+               return getBankFileId();
         
             case PROP_ID_orgId:
                return getOrgId();
@@ -668,6 +801,106 @@ public class _ErpHrSalary extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_approvalStatus:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_approvalStatus));
+               }
+               setApprovalStatus(typedValue);
+               break;
+            }
+        
+            case PROP_ID_performanceFactor:{
+               java.math.BigDecimal typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBigDecimal(value,
+                       err-> newTypeConversionError(PROP_NAME_performanceFactor));
+               }
+               setPerformanceFactor(typedValue);
+               break;
+            }
+        
+            case PROP_ID_actualWorkDays:{
+               java.math.BigDecimal typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBigDecimal(value,
+                       err-> newTypeConversionError(PROP_NAME_actualWorkDays));
+               }
+               setActualWorkDays(typedValue);
+               break;
+            }
+        
+            case PROP_ID_requiredWorkDays:{
+               java.math.BigDecimal typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBigDecimal(value,
+                       err-> newTypeConversionError(PROP_NAME_requiredWorkDays));
+               }
+               setRequiredWorkDays(typedValue);
+               break;
+            }
+        
+            case PROP_ID_totalOvertimeHours:{
+               java.math.BigDecimal typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBigDecimal(value,
+                       err-> newTypeConversionError(PROP_NAME_totalOvertimeHours));
+               }
+               setTotalOvertimeHours(typedValue);
+               break;
+            }
+        
+            case PROP_ID_unpaidLeaveDays:{
+               java.math.BigDecimal typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBigDecimal(value,
+                       err-> newTypeConversionError(PROP_NAME_unpaidLeaveDays));
+               }
+               setUnpaidLeaveDays(typedValue);
+               break;
+            }
+        
+            case PROP_ID_cumulativeData:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_cumulativeData));
+               }
+               setCumulativeData(typedValue);
+               break;
+            }
+        
+            case PROP_ID_reviewNote:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_reviewNote));
+               }
+               setReviewNote(typedValue);
+               break;
+            }
+        
+            case PROP_ID_paymentBatchNo:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_paymentBatchNo));
+               }
+               setPaymentBatchNo(typedValue);
+               break;
+            }
+        
+            case PROP_ID_bankFileId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_bankFileId));
+               }
+               setBankFileId(typedValue);
+               break;
+            }
+        
             case PROP_ID_orgId:{
                java.lang.Long typedValue = null;
                if(value != null){
@@ -886,6 +1119,76 @@ public class _ErpHrSalary extends DynamicOrmEntity{
             case PROP_ID_paymentDate:{
                onInitProp(propId);
                this._paymentDate = (java.time.LocalDate)value;
+               
+               break;
+            }
+        
+            case PROP_ID_approvalStatus:{
+               onInitProp(propId);
+               this._approvalStatus = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_performanceFactor:{
+               onInitProp(propId);
+               this._performanceFactor = (java.math.BigDecimal)value;
+               
+               break;
+            }
+        
+            case PROP_ID_actualWorkDays:{
+               onInitProp(propId);
+               this._actualWorkDays = (java.math.BigDecimal)value;
+               
+               break;
+            }
+        
+            case PROP_ID_requiredWorkDays:{
+               onInitProp(propId);
+               this._requiredWorkDays = (java.math.BigDecimal)value;
+               
+               break;
+            }
+        
+            case PROP_ID_totalOvertimeHours:{
+               onInitProp(propId);
+               this._totalOvertimeHours = (java.math.BigDecimal)value;
+               
+               break;
+            }
+        
+            case PROP_ID_unpaidLeaveDays:{
+               onInitProp(propId);
+               this._unpaidLeaveDays = (java.math.BigDecimal)value;
+               
+               break;
+            }
+        
+            case PROP_ID_cumulativeData:{
+               onInitProp(propId);
+               this._cumulativeData = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_reviewNote:{
+               onInitProp(propId);
+               this._reviewNote = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_paymentBatchNo:{
+               onInitProp(propId);
+               this._paymentBatchNo = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_bankFileId:{
+               onInitProp(propId);
+               this._bankFileId = (java.lang.Long)value;
                
                break;
             }
@@ -1314,6 +1617,196 @@ public class _ErpHrSalary extends DynamicOrmEntity{
     }
     
     /**
+     * 审批状态: APPROVAL_STATUS
+     */
+    public final java.lang.String getApprovalStatus(){
+         onPropGet(PROP_ID_approvalStatus);
+         return _approvalStatus;
+    }
+
+    /**
+     * 审批状态: APPROVAL_STATUS
+     */
+    public final void setApprovalStatus(java.lang.String value){
+        if(onPropSet(PROP_ID_approvalStatus,value)){
+            this._approvalStatus = value;
+            internalClearRefs(PROP_ID_approvalStatus);
+            
+        }
+    }
+    
+    /**
+     * 绩效系数: PERFORMANCE_FACTOR
+     */
+    public final java.math.BigDecimal getPerformanceFactor(){
+         onPropGet(PROP_ID_performanceFactor);
+         return _performanceFactor;
+    }
+
+    /**
+     * 绩效系数: PERFORMANCE_FACTOR
+     */
+    public final void setPerformanceFactor(java.math.BigDecimal value){
+        if(onPropSet(PROP_ID_performanceFactor,value)){
+            this._performanceFactor = value;
+            internalClearRefs(PROP_ID_performanceFactor);
+            
+        }
+    }
+    
+    /**
+     * 实际出勤日: ACTUAL_WORK_DAYS
+     */
+    public final java.math.BigDecimal getActualWorkDays(){
+         onPropGet(PROP_ID_actualWorkDays);
+         return _actualWorkDays;
+    }
+
+    /**
+     * 实际出勤日: ACTUAL_WORK_DAYS
+     */
+    public final void setActualWorkDays(java.math.BigDecimal value){
+        if(onPropSet(PROP_ID_actualWorkDays,value)){
+            this._actualWorkDays = value;
+            internalClearRefs(PROP_ID_actualWorkDays);
+            
+        }
+    }
+    
+    /**
+     * 应出勤日: REQUIRED_WORK_DAYS
+     */
+    public final java.math.BigDecimal getRequiredWorkDays(){
+         onPropGet(PROP_ID_requiredWorkDays);
+         return _requiredWorkDays;
+    }
+
+    /**
+     * 应出勤日: REQUIRED_WORK_DAYS
+     */
+    public final void setRequiredWorkDays(java.math.BigDecimal value){
+        if(onPropSet(PROP_ID_requiredWorkDays,value)){
+            this._requiredWorkDays = value;
+            internalClearRefs(PROP_ID_requiredWorkDays);
+            
+        }
+    }
+    
+    /**
+     * 月总加班小时: TOTAL_OVERTIME_HOURS
+     */
+    public final java.math.BigDecimal getTotalOvertimeHours(){
+         onPropGet(PROP_ID_totalOvertimeHours);
+         return _totalOvertimeHours;
+    }
+
+    /**
+     * 月总加班小时: TOTAL_OVERTIME_HOURS
+     */
+    public final void setTotalOvertimeHours(java.math.BigDecimal value){
+        if(onPropSet(PROP_ID_totalOvertimeHours,value)){
+            this._totalOvertimeHours = value;
+            internalClearRefs(PROP_ID_totalOvertimeHours);
+            
+        }
+    }
+    
+    /**
+     * 无薪假天数: UNPAID_LEAVE_DAYS
+     */
+    public final java.math.BigDecimal getUnpaidLeaveDays(){
+         onPropGet(PROP_ID_unpaidLeaveDays);
+         return _unpaidLeaveDays;
+    }
+
+    /**
+     * 无薪假天数: UNPAID_LEAVE_DAYS
+     */
+    public final void setUnpaidLeaveDays(java.math.BigDecimal value){
+        if(onPropSet(PROP_ID_unpaidLeaveDays,value)){
+            this._unpaidLeaveDays = value;
+            internalClearRefs(PROP_ID_unpaidLeaveDays);
+            
+        }
+    }
+    
+    /**
+     * 累计个税数据: CUMULATIVE_DATA
+     */
+    public final java.lang.String getCumulativeData(){
+         onPropGet(PROP_ID_cumulativeData);
+         return _cumulativeData;
+    }
+
+    /**
+     * 累计个税数据: CUMULATIVE_DATA
+     */
+    public final void setCumulativeData(java.lang.String value){
+        if(onPropSet(PROP_ID_cumulativeData,value)){
+            this._cumulativeData = value;
+            internalClearRefs(PROP_ID_cumulativeData);
+            
+        }
+    }
+    
+    /**
+     * 审核备注: REVIEW_NOTE
+     */
+    public final java.lang.String getReviewNote(){
+         onPropGet(PROP_ID_reviewNote);
+         return _reviewNote;
+    }
+
+    /**
+     * 审核备注: REVIEW_NOTE
+     */
+    public final void setReviewNote(java.lang.String value){
+        if(onPropSet(PROP_ID_reviewNote,value)){
+            this._reviewNote = value;
+            internalClearRefs(PROP_ID_reviewNote);
+            
+        }
+    }
+    
+    /**
+     * 发放批次号: PAYMENT_BATCH_NO
+     */
+    public final java.lang.String getPaymentBatchNo(){
+         onPropGet(PROP_ID_paymentBatchNo);
+         return _paymentBatchNo;
+    }
+
+    /**
+     * 发放批次号: PAYMENT_BATCH_NO
+     */
+    public final void setPaymentBatchNo(java.lang.String value){
+        if(onPropSet(PROP_ID_paymentBatchNo,value)){
+            this._paymentBatchNo = value;
+            internalClearRefs(PROP_ID_paymentBatchNo);
+            
+        }
+    }
+    
+    /**
+     * 银行文件: BANK_FILE_ID
+     */
+    public final java.lang.Long getBankFileId(){
+         onPropGet(PROP_ID_bankFileId);
+         return _bankFileId;
+    }
+
+    /**
+     * 银行文件: BANK_FILE_ID
+     */
+    public final void setBankFileId(java.lang.Long value){
+        if(onPropSet(PROP_ID_bankFileId,value)){
+            this._bankFileId = value;
+            internalClearRefs(PROP_ID_bankFileId);
+            
+        }
+    }
+    
+    /**
      * 业务组织: ORG_ID
      */
     public final java.lang.Long getOrgId(){
@@ -1505,6 +1998,29 @@ public class _ErpHrSalary extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_org, refEntity,()->{
            
                            this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.hr.dao.entity.ErpHrPayrollBankFile getBankFile(){
+       return (app.erp.hr.dao.entity.ErpHrPayrollBankFile)internalGetRefEntity(PROP_NAME_bankFile);
+    }
+
+    public final void setBankFile(app.erp.hr.dao.entity.ErpHrPayrollBankFile refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setBankFileId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_bankFile, refEntity,()->{
+           
+                           this.setBankFileId(refEntity.getId());
                        
            });
            }

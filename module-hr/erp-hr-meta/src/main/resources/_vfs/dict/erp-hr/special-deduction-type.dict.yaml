@@ -1,0 +1,35 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 专项附加扣除类型
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 子女教育
+    value: CHILDREN_EDUCATION
+    description: 
+  
+  - label: 继续教育
+    value: CONTINUING_EDUCATION
+    description: 
+  
+  - label: 大病医疗
+    value: CRITICAL_ILLNESS
+    description: 
+  
+  - label: 住房贷款利息
+    value: HOUSING_LOAN
+    description: 
+  
+  - label: 住房租金
+    value: HOUSING_RENT
+    description: 
+  
+  - label: 赡养老人
+    value: SUPPORTING_ELDERLY
+    description: 
+  
+  - label: 3岁以下婴幼儿照护
+    value: INFANT_CARE
+    description: 
+  

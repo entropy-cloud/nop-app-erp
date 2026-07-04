@@ -12,20 +12,26 @@ entity:
     ErpHrEmploymentContract: 劳动合同
     ErpHrGapAnalysis: 差距分析
     ErpHrLeaveRequest: 休假申请
+    ErpHrPayrollBankFile: 银行代发文件
     ErpHrPosition: 职位
     ErpHrRecruitment: 招聘记录
     ErpHrRoleCompetency: 岗位胜任力要求
     ErpHrSalary: 薪酬记录
+    ErpHrSalaryItem: 薪酬项目
     ErpHrSalarySimulation: 薪酬模拟
     ErpHrShift: 班次模板
     ErpHrShiftAssignment: 排班分配
     ErpHrShiftRotationPattern: 轮换排班模板
     ErpHrShiftSwapRequest: 排班调换申请
+    ErpHrSocialInsuranceBase: 员工社保基数
+    ErpHrSocialInsuranceConfig: 社保配置
     ErpHrSurvey: 问卷模板
     ErpHrSurveyAnswer: 回答明细
     ErpHrSurveyQuestion: 问卷题目
     ErpHrSurveyResponse: 答卷
     ErpHrSurveyResult: 调研结果
+    ErpHrTaxConfig: 个税配置
+    ErpHrTaxSpecialDeduction: 员工专项附加扣除
     ErpHrTimesheet: 工时表
     ErpHrTimesheetLine: 工时表明细
 prop:
@@ -313,6 +319,28 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+    ErpHrPayrollBankFile:
+      bank: null
+      bankId: 开户银行
+      batchNo: 批次号
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      fileContent: 文件内容
+      fileFormat: 文件格式
+      fileFormat_label: 文件格式
+      id: ID
+      org: null
+      orgId: 业务组织
+      paymentDate: 发放日期
+      recordCount: 记录数
+      remark: 备注
+      status: 状态
+      status_label: 状态
+      totalAmount: 总金额
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
     ErpHrPosition:
       code: 编码
       createTime: 创建时间
@@ -379,9 +407,15 @@ prop:
       version: 数据版本
       weight: 权重
     ErpHrSalary:
+      actualWorkDays: 实际出勤日
+      approvalStatus: 审批状态
+      approvalStatus_label: 审批状态
+      bankFile: null
+      bankFileId: 银行文件
       basicSalary: 基本工资
       createTime: 创建时间
       createdBy: 创建人
+      cumulativeData: 累计个税数据
       delVersion: 逻辑删除版本
       employee: null
       employeeId: 员工
@@ -396,19 +430,49 @@ prop:
       otherAllowance: 其他补贴
       otherDeductions: 其他扣款
       overtimePay: 加班费
+      paymentBatchNo: 发放批次号
       paymentDate: 实发日期
       paymentStatus: 支付状态
       paymentStatus_label: 支付状态
       performanceBonus: 绩效奖金
+      performanceFactor: 绩效系数
       positionAllowance: 岗位津贴
       remark: 备注
+      requiredWorkDays: 应出勤日
+      reviewNote: 审核备注
       socialInsurance: 社保个人部分
       taxAmount: 个税
+      totalOvertimeHours: 月总加班小时
       transportAllowance: 交通补贴
+      unpaidLeaveDays: 无薪假天数
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
       year: 年份
+    ErpHrSalaryItem:
+      calcMethod: 计算方式
+      calcMethod_label: 计算方式
+      code: 编码
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      formula: 计算公式
+      id: ID
+      isMandatory: 是否必含
+      isSocialInsuranceBase: 计入社保基数
+      isTaxable: 是否应税
+      itemCategory: 类别
+      itemCategory_label: 类别
+      itemGroup: 分组
+      itemGroup_label: 分组
+      name: 名称
+      org: null
+      orgId: 业务组织
+      remark: 备注
+      sortOrder: 排序号
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
     ErpHrSalarySimulation:
       code: 编号
       convertedAt: 转正式时间
@@ -528,6 +592,46 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+    ErpHrSocialInsuranceBase:
+      cityCode: 参保城市
+      cityCode_label: 参保城市
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      effectiveFrom: 生效日期
+      effectiveTo: 失效日期
+      employee: null
+      employeeId: 员工
+      housingFundBase: 公积金基数
+      id: ID
+      org: null
+      orgId: 业务组织
+      remark: 备注
+      socialInsuranceBase: 社保基数
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpHrSocialInsuranceConfig:
+      baseLowerLimit: 基数下限
+      baseUpperLimit: 基数上限
+      cityCode: 城市
+      cityCode_label: 城市
+      companyRate: 公司比例
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      effectiveFrom: 生效日期
+      effectiveTo: 失效日期
+      employeeRate: 个人比例
+      id: ID
+      insuranceType: 险种
+      insuranceType_label: 险种
+      org: null
+      orgId: 业务组织
+      remark: 备注
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
     ErpHrSurvey:
       avgScore: 平均分
       code: 编号
@@ -636,6 +740,40 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+    ErpHrTaxConfig:
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      org: null
+      orgId: 业务组织
+      remark: 备注
+      specialDeductionItems: 专项附加扣除项配置
+      taxBrackets: 税率表
+      taxThreshold: 起征点(月)
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      year: 年份
+    ErpHrTaxSpecialDeduction:
+      createTime: 创建时间
+      createdBy: 创建人
+      deductionType: 扣除项目
+      deductionType_label: 扣除项目
+      delVersion: 逻辑删除版本
+      employee: null
+      employeeId: 员工
+      id: ID
+      month: 月份
+      monthlyAmount: 每月扣除金额
+      org: null
+      orgId: 业务组织
+      remark: 备注
+      updateTime: 修改时间
+      updatedBy: 修改人
+      verified: 是否已核验
+      version: 数据版本
+      year: 年份
     ErpHrTimesheet:
       code: 单号
       createTime: 创建时间

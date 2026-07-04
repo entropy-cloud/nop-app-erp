@@ -173,227 +173,313 @@
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpHrPosition-main" displayName="职位" orderNo="10037" i18n-en:displayName="Position"
+                <resource id="ErpHrPayrollBankFile-main" displayName="银行代发文件" orderNo="10037"
+                          i18n-en:displayName="Payroll Bank File" icon="file-text" component="AMIS" resourceType="SUBM"
+                          url="/erp/hr/pages/ErpHrPayrollBankFile/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpHrPayrollBankFile:query" displayName="查询银行代发文件"
+                                  i18n-en:displayName="Query Payroll Bank File" orderNo="10038" resourceType="FNPT">
+                            <permissions>ErpHrPayrollBankFile:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpHrPayrollBankFile:mutation" displayName="修改银行代发文件"
+                                  i18n-en:displayName="Modify Payroll Bank File" orderNo="10039" resourceType="FNPT">
+                            <permissions>ErpHrPayrollBankFile:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpHrPosition-main" displayName="职位" orderNo="10040" i18n-en:displayName="Position"
                           icon="badge" component="AMIS" resourceType="SUBM"
                           url="/erp/hr/pages/ErpHrPosition/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpHrPosition:query" displayName="查询职位" i18n-en:displayName="Query Position"
-                                  orderNo="10038" resourceType="FNPT">
+                                  orderNo="10041" resourceType="FNPT">
                             <permissions>ErpHrPosition:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpHrPosition:mutation" displayName="修改职位"
-                                  i18n-en:displayName="Modify Position" orderNo="10039" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Position" orderNo="10042" resourceType="FNPT">
                             <permissions>ErpHrPosition:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpHrRecruitment-main" displayName="招聘记录" orderNo="10040"
+                <resource id="ErpHrRecruitment-main" displayName="招聘记录" orderNo="10043"
                           i18n-en:displayName="Recruitment" icon="user-plus" component="AMIS" resourceType="SUBM"
                           url="/erp/hr/pages/ErpHrRecruitment/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpHrRecruitment:query" displayName="查询招聘记录"
-                                  i18n-en:displayName="Query Recruitment" orderNo="10041" resourceType="FNPT">
+                                  i18n-en:displayName="Query Recruitment" orderNo="10044" resourceType="FNPT">
                             <permissions>ErpHrRecruitment:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpHrRecruitment:mutation" displayName="修改招聘记录"
-                                  i18n-en:displayName="Modify Recruitment" orderNo="10042" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Recruitment" orderNo="10045" resourceType="FNPT">
                             <permissions>ErpHrRecruitment:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpHrRoleCompetency-main" displayName="岗位胜任力要求" orderNo="10043"
+                <resource id="ErpHrRoleCompetency-main" displayName="岗位胜任力要求" orderNo="10046"
                           i18n-en:displayName="Role Competency" icon="briefcase" component="AMIS" resourceType="SUBM"
                           url="/erp/hr/pages/ErpHrRoleCompetency/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpHrRoleCompetency:query" displayName="查询岗位胜任力要求"
-                                  i18n-en:displayName="Query Role Competency" orderNo="10044" resourceType="FNPT">
+                                  i18n-en:displayName="Query Role Competency" orderNo="10047" resourceType="FNPT">
                             <permissions>ErpHrRoleCompetency:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpHrRoleCompetency:mutation" displayName="修改岗位胜任力要求"
-                                  i18n-en:displayName="Modify Role Competency" orderNo="10045" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Role Competency" orderNo="10048" resourceType="FNPT">
                             <permissions>ErpHrRoleCompetency:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpHrSalary-main" displayName="薪酬记录" orderNo="10046" i18n-en:displayName="Salary Record"
+                <resource id="ErpHrSalary-main" displayName="薪酬记录" orderNo="10049" i18n-en:displayName="Salary Record"
                           icon="wallet" component="AMIS" resourceType="SUBM"
                           url="/erp/hr/pages/ErpHrSalary/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpHrSalary:query" displayName="查询薪酬记录"
-                                  i18n-en:displayName="Query Salary Record" orderNo="10047" resourceType="FNPT">
+                                  i18n-en:displayName="Query Salary Record" orderNo="10050" resourceType="FNPT">
                             <permissions>ErpHrSalary:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpHrSalary:mutation" displayName="修改薪酬记录"
-                                  i18n-en:displayName="Modify Salary Record" orderNo="10048" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Salary Record" orderNo="10051" resourceType="FNPT">
                             <permissions>ErpHrSalary:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpHrSalarySimulation-main" displayName="薪酬模拟" orderNo="10049"
+                <resource id="ErpHrSalaryItem-main" displayName="薪酬项目" orderNo="10052" i18n-en:displayName="Salary Item"
+                          icon="list" component="AMIS" resourceType="SUBM"
+                          url="/erp/hr/pages/ErpHrSalaryItem/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpHrSalaryItem:query" displayName="查询薪酬项目"
+                                  i18n-en:displayName="Query Salary Item" orderNo="10053" resourceType="FNPT">
+                            <permissions>ErpHrSalaryItem:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpHrSalaryItem:mutation" displayName="修改薪酬项目"
+                                  i18n-en:displayName="Modify Salary Item" orderNo="10054" resourceType="FNPT">
+                            <permissions>ErpHrSalaryItem:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpHrSalarySimulation-main" displayName="薪酬模拟" orderNo="10055"
                           i18n-en:displayName="Salary Simulation" icon="calculator" component="AMIS" resourceType="SUBM"
                           url="/erp/hr/pages/ErpHrSalarySimulation/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpHrSalarySimulation:query" displayName="查询薪酬模拟"
-                                  i18n-en:displayName="Query Salary Simulation" orderNo="10050" resourceType="FNPT">
+                                  i18n-en:displayName="Query Salary Simulation" orderNo="10056" resourceType="FNPT">
                             <permissions>ErpHrSalarySimulation:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpHrSalarySimulation:mutation" displayName="修改薪酬模拟"
-                                  i18n-en:displayName="Modify Salary Simulation" orderNo="10051" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Salary Simulation" orderNo="10057" resourceType="FNPT">
                             <permissions>ErpHrSalarySimulation:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpHrShift-main" displayName="班次模板" orderNo="10052" i18n-en:displayName="Shift"
+                <resource id="ErpHrShift-main" displayName="班次模板" orderNo="10058" i18n-en:displayName="Shift"
                           icon="clock" component="AMIS" resourceType="SUBM"
                           url="/erp/hr/pages/ErpHrShift/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpHrShift:query" displayName="查询班次模板" i18n-en:displayName="Query Shift"
-                                  orderNo="10053" resourceType="FNPT">
+                                  orderNo="10059" resourceType="FNPT">
                             <permissions>ErpHrShift:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpHrShift:mutation" displayName="修改班次模板" i18n-en:displayName="Modify Shift"
-                                  orderNo="10054" resourceType="FNPT">
+                                  orderNo="10060" resourceType="FNPT">
                             <permissions>ErpHrShift:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpHrShiftAssignment-main" displayName="排班分配" orderNo="10055"
+                <resource id="ErpHrShiftAssignment-main" displayName="排班分配" orderNo="10061"
                           i18n-en:displayName="Shift Assignment" icon="calendar-days" component="AMIS"
                           resourceType="SUBM" url="/erp/hr/pages/ErpHrShiftAssignment/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpHrShiftAssignment:query" displayName="查询排班分配"
-                                  i18n-en:displayName="Query Shift Assignment" orderNo="10056" resourceType="FNPT">
+                                  i18n-en:displayName="Query Shift Assignment" orderNo="10062" resourceType="FNPT">
                             <permissions>ErpHrShiftAssignment:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpHrShiftAssignment:mutation" displayName="修改排班分配"
-                                  i18n-en:displayName="Modify Shift Assignment" orderNo="10057" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Shift Assignment" orderNo="10063" resourceType="FNPT">
                             <permissions>ErpHrShiftAssignment:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpHrShiftRotationPattern-main" displayName="轮换排班模板" orderNo="10058"
+                <resource id="ErpHrShiftRotationPattern-main" displayName="轮换排班模板" orderNo="10064"
                           i18n-en:displayName="Shift Rotation Pattern" icon="rotate-cw" component="AMIS"
                           resourceType="SUBM" url="/erp/hr/pages/ErpHrShiftRotationPattern/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpHrShiftRotationPattern:query" displayName="查询轮换排班模板"
-                                  i18n-en:displayName="Query Shift Rotation Pattern" orderNo="10059" resourceType="FNPT">
+                                  i18n-en:displayName="Query Shift Rotation Pattern" orderNo="10065" resourceType="FNPT">
                             <permissions>ErpHrShiftRotationPattern:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpHrShiftRotationPattern:mutation" displayName="修改轮换排班模板"
-                                  i18n-en:displayName="Modify Shift Rotation Pattern" orderNo="10060"
+                                  i18n-en:displayName="Modify Shift Rotation Pattern" orderNo="10066"
                                   resourceType="FNPT">
                             <permissions>ErpHrShiftRotationPattern:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpHrShiftSwapRequest-main" displayName="排班调换申请" orderNo="10061"
+                <resource id="ErpHrShiftSwapRequest-main" displayName="排班调换申请" orderNo="10067"
                           i18n-en:displayName="Shift Swap Request" icon="arrows-left-right" component="AMIS"
                           resourceType="SUBM" url="/erp/hr/pages/ErpHrShiftSwapRequest/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpHrShiftSwapRequest:query" displayName="查询排班调换申请"
-                                  i18n-en:displayName="Query Shift Swap Request" orderNo="10062" resourceType="FNPT">
+                                  i18n-en:displayName="Query Shift Swap Request" orderNo="10068" resourceType="FNPT">
                             <permissions>ErpHrShiftSwapRequest:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpHrShiftSwapRequest:mutation" displayName="修改排班调换申请"
-                                  i18n-en:displayName="Modify Shift Swap Request" orderNo="10063" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Shift Swap Request" orderNo="10069" resourceType="FNPT">
                             <permissions>ErpHrShiftSwapRequest:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpHrSurvey-main" displayName="问卷模板" orderNo="10064" i18n-en:displayName="Survey"
+                <resource id="ErpHrSocialInsuranceBase-main" displayName="员工社保基数" orderNo="10070"
+                          i18n-en:displayName="Social Insurance Base" icon="user-check" component="AMIS"
+                          resourceType="SUBM" url="/erp/hr/pages/ErpHrSocialInsuranceBase/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpHrSocialInsuranceBase:query" displayName="查询员工社保基数"
+                                  i18n-en:displayName="Query Social Insurance Base" orderNo="10071" resourceType="FNPT">
+                            <permissions>ErpHrSocialInsuranceBase:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpHrSocialInsuranceBase:mutation" displayName="修改员工社保基数"
+                                  i18n-en:displayName="Modify Social Insurance Base" orderNo="10072" resourceType="FNPT">
+                            <permissions>ErpHrSocialInsuranceBase:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpHrSocialInsuranceConfig-main" displayName="社保配置" orderNo="10073"
+                          i18n-en:displayName="Social Insurance Config" icon="settings" component="AMIS"
+                          resourceType="SUBM" url="/erp/hr/pages/ErpHrSocialInsuranceConfig/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpHrSocialInsuranceConfig:query" displayName="查询社保配置"
+                                  i18n-en:displayName="Query Social Insurance Config" orderNo="10074"
+                                  resourceType="FNPT">
+                            <permissions>ErpHrSocialInsuranceConfig:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpHrSocialInsuranceConfig:mutation" displayName="修改社保配置"
+                                  i18n-en:displayName="Modify Social Insurance Config" orderNo="10075"
+                                  resourceType="FNPT">
+                            <permissions>ErpHrSocialInsuranceConfig:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpHrSurvey-main" displayName="问卷模板" orderNo="10076" i18n-en:displayName="Survey"
                           icon="file-question" component="AMIS" resourceType="SUBM"
                           url="/erp/hr/pages/ErpHrSurvey/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpHrSurvey:query" displayName="查询问卷模板" i18n-en:displayName="Query Survey"
-                                  orderNo="10065" resourceType="FNPT">
+                                  orderNo="10077" resourceType="FNPT">
                             <permissions>ErpHrSurvey:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpHrSurvey:mutation" displayName="修改问卷模板"
-                                  i18n-en:displayName="Modify Survey" orderNo="10066" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Survey" orderNo="10078" resourceType="FNPT">
                             <permissions>ErpHrSurvey:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpHrSurveyAnswer-main" displayName="回答明细" orderNo="10067"
+                <resource id="ErpHrSurveyAnswer-main" displayName="回答明细" orderNo="10079"
                           i18n-en:displayName="Survey Answer" icon="check-circle" component="AMIS" resourceType="SUBM"
                           url="/erp/hr/pages/ErpHrSurveyAnswer/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpHrSurveyAnswer:query" displayName="查询回答明细"
-                                  i18n-en:displayName="Query Survey Answer" orderNo="10068" resourceType="FNPT">
+                                  i18n-en:displayName="Query Survey Answer" orderNo="10080" resourceType="FNPT">
                             <permissions>ErpHrSurveyAnswer:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpHrSurveyAnswer:mutation" displayName="修改回答明细"
-                                  i18n-en:displayName="Modify Survey Answer" orderNo="10069" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Survey Answer" orderNo="10081" resourceType="FNPT">
                             <permissions>ErpHrSurveyAnswer:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpHrSurveyQuestion-main" displayName="问卷题目" orderNo="10070"
+                <resource id="ErpHrSurveyQuestion-main" displayName="问卷题目" orderNo="10082"
                           i18n-en:displayName="Survey Question" icon="help-circle" component="AMIS" resourceType="SUBM"
                           url="/erp/hr/pages/ErpHrSurveyQuestion/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpHrSurveyQuestion:query" displayName="查询问卷题目"
-                                  i18n-en:displayName="Query Survey Question" orderNo="10071" resourceType="FNPT">
+                                  i18n-en:displayName="Query Survey Question" orderNo="10083" resourceType="FNPT">
                             <permissions>ErpHrSurveyQuestion:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpHrSurveyQuestion:mutation" displayName="修改问卷题目"
-                                  i18n-en:displayName="Modify Survey Question" orderNo="10072" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Survey Question" orderNo="10084" resourceType="FNPT">
                             <permissions>ErpHrSurveyQuestion:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpHrSurveyResponse-main" displayName="答卷" orderNo="10073"
+                <resource id="ErpHrSurveyResponse-main" displayName="答卷" orderNo="10085"
                           i18n-en:displayName="Survey Response" icon="file-check" component="AMIS" resourceType="SUBM"
                           url="/erp/hr/pages/ErpHrSurveyResponse/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpHrSurveyResponse:query" displayName="查询答卷"
-                                  i18n-en:displayName="Query Survey Response" orderNo="10074" resourceType="FNPT">
+                                  i18n-en:displayName="Query Survey Response" orderNo="10086" resourceType="FNPT">
                             <permissions>ErpHrSurveyResponse:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpHrSurveyResponse:mutation" displayName="修改答卷"
-                                  i18n-en:displayName="Modify Survey Response" orderNo="10075" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Survey Response" orderNo="10087" resourceType="FNPT">
                             <permissions>ErpHrSurveyResponse:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpHrSurveyResult-main" displayName="调研结果" orderNo="10076"
+                <resource id="ErpHrSurveyResult-main" displayName="调研结果" orderNo="10088"
                           i18n-en:displayName="Survey Result" icon="bar-chart" component="AMIS" resourceType="SUBM"
                           url="/erp/hr/pages/ErpHrSurveyResult/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpHrSurveyResult:query" displayName="查询调研结果"
-                                  i18n-en:displayName="Query Survey Result" orderNo="10077" resourceType="FNPT">
+                                  i18n-en:displayName="Query Survey Result" orderNo="10089" resourceType="FNPT">
                             <permissions>ErpHrSurveyResult:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpHrSurveyResult:mutation" displayName="修改调研结果"
-                                  i18n-en:displayName="Modify Survey Result" orderNo="10078" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Survey Result" orderNo="10090" resourceType="FNPT">
                             <permissions>ErpHrSurveyResult:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpHrTimesheet-main" displayName="工时表" orderNo="10079" i18n-en:displayName="Timesheet"
+                <resource id="ErpHrTaxConfig-main" displayName="个税配置" orderNo="10091" i18n-en:displayName="Tax Config"
+                          icon="percent" component="AMIS" resourceType="SUBM"
+                          url="/erp/hr/pages/ErpHrTaxConfig/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpHrTaxConfig:query" displayName="查询个税配置"
+                                  i18n-en:displayName="Query Tax Config" orderNo="10092" resourceType="FNPT">
+                            <permissions>ErpHrTaxConfig:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpHrTaxConfig:mutation" displayName="修改个税配置"
+                                  i18n-en:displayName="Modify Tax Config" orderNo="10093" resourceType="FNPT">
+                            <permissions>ErpHrTaxConfig:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpHrTaxSpecialDeduction-main" displayName="员工专项附加扣除" orderNo="10094"
+                          i18n-en:displayName="Tax Special Deduction" icon="receipt" component="AMIS"
+                          resourceType="SUBM" url="/erp/hr/pages/ErpHrTaxSpecialDeduction/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpHrTaxSpecialDeduction:query" displayName="查询员工专项附加扣除"
+                                  i18n-en:displayName="Query Tax Special Deduction" orderNo="10095" resourceType="FNPT">
+                            <permissions>ErpHrTaxSpecialDeduction:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpHrTaxSpecialDeduction:mutation" displayName="修改员工专项附加扣除"
+                                  i18n-en:displayName="Modify Tax Special Deduction" orderNo="10096" resourceType="FNPT">
+                            <permissions>ErpHrTaxSpecialDeduction:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpHrTimesheet-main" displayName="工时表" orderNo="10097" i18n-en:displayName="Timesheet"
                           icon="clock" component="AMIS" resourceType="SUBM"
                           url="/erp/hr/pages/ErpHrTimesheet/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpHrTimesheet:query" displayName="查询工时表"
-                                  i18n-en:displayName="Query Timesheet" orderNo="10080" resourceType="FNPT">
+                                  i18n-en:displayName="Query Timesheet" orderNo="10098" resourceType="FNPT">
                             <permissions>ErpHrTimesheet:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpHrTimesheet:mutation" displayName="修改工时表"
-                                  i18n-en:displayName="Modify Timesheet" orderNo="10081" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Timesheet" orderNo="10099" resourceType="FNPT">
                             <permissions>ErpHrTimesheet:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpHrTimesheetLine-main" displayName="工时表明细" orderNo="10082"
+                <resource id="ErpHrTimesheetLine-main" displayName="工时表明细" orderNo="10100"
                           i18n-en:displayName="Timesheet Line" icon="list" component="AMIS" resourceType="SUBM"
                           url="/erp/hr/pages/ErpHrTimesheetLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpHrTimesheetLine:query" displayName="查询工时表明细"
-                                  i18n-en:displayName="Query Timesheet Line" orderNo="10083" resourceType="FNPT">
+                                  i18n-en:displayName="Query Timesheet Line" orderNo="10101" resourceType="FNPT">
                             <permissions>ErpHrTimesheetLine:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpHrTimesheetLine:mutation" displayName="修改工时表明细"
-                                  i18n-en:displayName="Modify Timesheet Line" orderNo="10084" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Timesheet Line" orderNo="10102" resourceType="FNPT">
                             <permissions>ErpHrTimesheetLine:mutation</permissions>
                         </resource>
                     </children>

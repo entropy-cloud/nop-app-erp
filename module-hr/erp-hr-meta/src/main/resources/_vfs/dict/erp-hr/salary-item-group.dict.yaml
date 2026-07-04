@@ -1,0 +1,39 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 薪酬项目分组
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 基本工资
+    value: BASIC
+    description: 
+  
+  - label: 津贴
+    value: ALLOWANCE
+    description: 
+  
+  - label: 奖金
+    value: BONUS
+    description: 
+  
+  - label: 加班
+    value: OVERTIME
+    description: 
+  
+  - label: 社保
+    value: SOCIAL
+    description: 
+  
+  - label: 公积金
+    value: FUND
+    description: 
+  
+  - label: 个税
+    value: TAX
+    description: 
+  
+  - label: 其他
+    value: OTHER
+    description: 
+  

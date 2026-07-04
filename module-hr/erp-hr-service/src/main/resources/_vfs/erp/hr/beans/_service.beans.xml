@@ -12,6 +12,36 @@
         <property name="bizObjName" value="ErpHrDepartment"/>
     </bean>
 
+    <bean id="app.erp.hr.service.entity.ErpHrSalaryItemBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrSalaryItem" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrSalaryItemBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpHrSalaryItem"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrSocialInsuranceConfigBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrSocialInsuranceConfig" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrSocialInsuranceConfigBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpHrSocialInsuranceConfig"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrTaxConfigBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrTaxConfig" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrTaxConfigBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpHrTaxConfig"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrPayrollBankFileBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrPayrollBankFile" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrPayrollBankFileBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpHrPayrollBankFile"/>
+    </bean>
+
     <bean id="app.erp.hr.service.entity.ErpHrShiftBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpHrShift" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.hr.biz.IErpHrShiftBiz"
@@ -120,6 +150,22 @@
     <bean id="biz_ErpHrRecruitment" class="io.nop.biz.proxy.BizProxyFactoryBean"
           ioc:type="app.erp.hr.biz.IErpHrRecruitmentBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
         <property name="bizObjName" value="ErpHrRecruitment"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrSocialInsuranceBaseBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrSocialInsuranceBase" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrSocialInsuranceBaseBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpHrSocialInsuranceBase"/>
+    </bean>
+
+    <bean id="app.erp.hr.service.entity.ErpHrTaxSpecialDeductionBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrTaxSpecialDeduction" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrTaxSpecialDeductionBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpHrTaxSpecialDeduction"/>
     </bean>
 
     <bean id="app.erp.hr.service.entity.ErpHrSurveyResponseBizModel" ioc:type="@bean:id" ioc:default="true"/>

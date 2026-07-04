@@ -109,3 +109,19 @@ options:
     value: OWNERSHIP_TRANSFER
     description: 
   
+  - label: 薪酬计提
+    value: SALARY
+    description: 
+  
+  - label: 薪酬发放
+    value: SALARY_PAYMENT
+    description: 
+  
+  - label: 社保公司承担
+    value: SOCIAL_INSURANCE_ER
+    description: 
+  
+  - label: 公积金公司承担
+    value: HOUSING_FUND_ER
+    description: 
+  

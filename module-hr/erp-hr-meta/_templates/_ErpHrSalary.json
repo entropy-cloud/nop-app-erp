@@ -19,6 +19,17 @@
   "paymentStatus": "",
   "paymentStatus_label": "",
   "paymentDate": "2000-01-01",
+  "approvalStatus": "",
+  "approvalStatus_label": "",
+  "performanceFactor": 0.0,
+  "actualWorkDays": 0.0,
+  "requiredWorkDays": 0.0,
+  "totalOvertimeHours": 0.0,
+  "unpaidLeaveDays": 0.0,
+  "cumulativeData": "",
+  "reviewNote": "",
+  "paymentBatchNo": "",
+  "bankFileId": 0,
   "orgId": 0,
   "remark": "",
   "delVersion": 0,
@@ -28,5 +39,6 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "employee": null,
-  "org": null
+  "org": null,
+  "bankFile": null
 }

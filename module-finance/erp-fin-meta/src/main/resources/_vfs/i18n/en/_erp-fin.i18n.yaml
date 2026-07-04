@@ -774,6 +774,10 @@ dict.option.label:
     NOTES_PAYABLE_HONORED: Notes Payable Honored
     CREDIT_FACILITY_INTEREST: Credit Facility Interest
     OWNERSHIP_TRANSFER: Ownership Transfer
+    SALARY: Salary Accrual
+    SALARY_PAYMENT: Salary Payment
+    SOCIAL_INSURANCE_ER: Social Insurance ER
+    HOUSING_FUND_ER: Housing Fund ER
   erp-fin/period-status:
     OPEN: Open
     CLOSING: Closing

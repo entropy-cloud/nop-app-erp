@@ -12,20 +12,26 @@ entity:
     ErpHrEmploymentContract: Employment Contract
     ErpHrGapAnalysis: Gap Analysis
     ErpHrLeaveRequest: Leave Request
+    ErpHrPayrollBankFile: Payroll Bank File
     ErpHrPosition: Position
     ErpHrRecruitment: Recruitment
     ErpHrRoleCompetency: Role Competency
     ErpHrSalary: Salary Record
+    ErpHrSalaryItem: Salary Item
     ErpHrSalarySimulation: Salary Simulation
     ErpHrShift: Shift
     ErpHrShiftAssignment: Shift Assignment
     ErpHrShiftRotationPattern: Shift Rotation Pattern
     ErpHrShiftSwapRequest: Shift Swap Request
+    ErpHrSocialInsuranceBase: Social Insurance Base
+    ErpHrSocialInsuranceConfig: Social Insurance Config
     ErpHrSurvey: Survey
     ErpHrSurveyAnswer: Survey Answer
     ErpHrSurveyQuestion: Survey Question
     ErpHrSurveyResponse: Survey Response
     ErpHrSurveyResult: Survey Result
+    ErpHrTaxConfig: Tax Config
+    ErpHrTaxSpecialDeduction: Tax Special Deduction
     ErpHrTimesheet: Timesheet
     ErpHrTimesheetLine: Timesheet Line
 prop:
@@ -313,6 +319,28 @@ prop:
       employee: Employee
       approver: Approver
       org: Org
+    ErpHrPayrollBankFile:
+      id: ID
+      batchNo: Batch No
+      paymentDate: Payment Date
+      totalAmount: Total Amount
+      recordCount: Record Count
+      fileFormat: File Format
+      fileFormat_label: null
+      fileContent: File Content
+      status: Status
+      status_label: null
+      bankId: Bank
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      bank: Bank
+      org: Org
     ErpHrPosition:
       id: ID
       code: Code
@@ -399,6 +427,17 @@ prop:
       paymentStatus: Payment Status
       paymentStatus_label: null
       paymentDate: Payment Date
+      approvalStatus: Approval Status
+      approvalStatus_label: null
+      performanceFactor: Performance Factor
+      actualWorkDays: Actual Work Days
+      requiredWorkDays: Required Work Days
+      totalOvertimeHours: Total Overtime Hours
+      unpaidLeaveDays: Unpaid Leave Days
+      cumulativeData: Cumulative Tax Data
+      reviewNote: Review Note
+      paymentBatchNo: Payment Batch No
+      bankFileId: Bank File
       orgId: Organization
       remark: Remark
       delVersion: Del Flag
@@ -408,6 +447,31 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       employee: Employee
+      org: Org
+      bankFile: Bank File
+    ErpHrSalaryItem:
+      id: ID
+      code: Code
+      name: Name
+      itemCategory: Item Category
+      itemCategory_label: null
+      itemGroup: Item Group
+      itemGroup_label: null
+      calcMethod: Calc Method
+      calcMethod_label: null
+      formula: Formula
+      isTaxable: Is Taxable
+      isSocialInsuranceBase: Is Social Insurance Base
+      isMandatory: Is Mandatory
+      sortOrder: Sort Order
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
       org: Org
     ErpHrSalarySimulation:
       id: ID
@@ -528,6 +592,46 @@ prop:
       sourceAssignment: Source Assignment
       targetAssignment: Target Assignment
       org: Org
+    ErpHrSocialInsuranceBase:
+      id: ID
+      employeeId: Employee
+      cityCode: City
+      cityCode_label: null
+      socialInsuranceBase: Social Insurance Base
+      housingFundBase: Housing Fund Base
+      effectiveFrom: Effective From
+      effectiveTo: Effective To
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      employee: Employee
+      org: Org
+    ErpHrSocialInsuranceConfig:
+      id: ID
+      cityCode: City
+      cityCode_label: null
+      insuranceType: Insurance Type
+      insuranceType_label: null
+      companyRate: Company Rate
+      employeeRate: Employee Rate
+      baseLowerLimit: Base Lower Limit
+      baseUpperLimit: Base Upper Limit
+      effectiveFrom: Effective From
+      effectiveTo: Effective To
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
     ErpHrSurvey:
       id: ID
       code: Code
@@ -636,6 +740,40 @@ prop:
       updateTime: Update Time
       survey: Survey
       department: Department
+    ErpHrTaxConfig:
+      id: ID
+      year: Year
+      taxThreshold: Tax Threshold
+      taxBrackets: Tax Brackets
+      specialDeductionItems: Special Deduction Items
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+    ErpHrTaxSpecialDeduction:
+      id: ID
+      employeeId: Employee
+      year: Year
+      month: Month
+      deductionType: Deduction Type
+      deductionType_label: null
+      monthlyAmount: Monthly Amount
+      verified: Verified
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      employee: Employee
+      org: Org
     ErpHrTimesheet:
       id: ID
       code: Code
@@ -689,6 +827,15 @@ dict:
     erp-hr/timesheet-status: Timesheet Status
     erp-hr/recruitment-status: Recruitment Status
     erp-hr/salary-payment-status: Payment Status
+    erp-hr/salary-approval-status: Salary Approval Status
+    erp-hr/salary-item-category: Salary Item Category
+    erp-hr/salary-item-group: Salary Item Group
+    erp-hr/calc-method: Calc Method
+    erp-hr/social-insurance-type: Social Insurance Type
+    erp-hr/special-deduction-type: Special Deduction Type
+    erp-hr/bank-file-format: Bank File Format
+    erp-hr/city: City
+    erp-hr/bank-file-status: Bank File Status
     erp-hr/attendance-source: Attendance Source
     erp-hr/recruitment-source: Recruitment Source
     erp-hr/simulation-status: Simulation Status
@@ -763,6 +910,57 @@ dict.option.label:
     PENDING: Pending
     PAID: Paid
     VOID: Void
+  erp-hr/salary-approval-status:
+    PENDING: Pending
+    REVIEWED: Reviewed
+    APPROVED_FINANCE: Approved Finance
+    APPROVED_MANAGER: Approved Manager
+    PAID: Paid
+    VOID: Void
+  erp-hr/salary-item-category:
+    EARNINGS: Earnings
+    DEDUCTION: Deduction
+  erp-hr/salary-item-group:
+    BASIC: Basic
+    ALLOWANCE: Allowance
+    BONUS: Bonus
+    OVERTIME: Overtime
+    SOCIAL: Social Insurance
+    FUND: Housing Fund
+    TAX: Tax
+    OTHER: Other
+  erp-hr/calc-method:
+    FIXED: Fixed
+    FORMULA: Formula
+    INPUT: Input
+  erp-hr/social-insurance-type:
+    PENSION: Pension
+    MEDICAL: Medical
+    UNEMPLOYMENT: Unemployment
+    WORK_INJURY: Work Injury
+    MATERNITY: Maternity
+    HOUSING_FUND: Housing Fund
+  erp-hr/special-deduction-type:
+    CHILDREN_EDUCATION: Children Education
+    CONTINUING_EDUCATION: Continuing Education
+    CRITICAL_ILLNESS: Critical Illness
+    HOUSING_LOAN: Housing Loan
+    HOUSING_RENT: Housing Rent
+    SUPPORTING_ELDERLY: Supporting Elderly
+    INFANT_CARE: Infant Care
+  erp-hr/bank-file-format:
+    CSV: CSV
+    TXT: TXT
+  erp-hr/city:
+    SHENZHEN: Shenzhen
+    SHANGHAI: Shanghai
+    BEIJING: Beijing
+    GUANGZHOU: Guangzhou
+    HANGZHOU: Hangzhou
+  erp-hr/bank-file-status:
+    GENERATED: Generated
+    UPLOADED: Uploaded
+    CONFIRMED: Confirmed
   erp-hr/attendance-source:
     CARD: Card
     BIOMETRIC: Biometric

@@ -80,6 +80,10 @@
             <option code="NOTES_PAYABLE_HONORED" label="应付票据兑付" value="NOTES_PAYABLE_HONORED" i18n-en:label='Notes Payable Honored'/>
             <option code="CREDIT_FACILITY_INTEREST" label="授信利息" value="CREDIT_FACILITY_INTEREST" i18n-en:label='Credit Facility Interest'/>
             <option code="OWNERSHIP_TRANSFER" label="所有权转移" value="OWNERSHIP_TRANSFER" i18n-en:label='Ownership Transfer'/>
+            <option code="SALARY" label="薪酬计提" value="SALARY" i18n-en:label='Salary Accrual'/>
+            <option code="SALARY_PAYMENT" label="薪酬发放" value="SALARY_PAYMENT" i18n-en:label='Salary Payment'/>
+            <option code="SOCIAL_INSURANCE_ER" label="社保公司承担" value="SOCIAL_INSURANCE_ER" i18n-en:label='Social Insurance ER'/>
+            <option code="HOUSING_FUND_ER" label="公积金公司承担" value="HOUSING_FUND_ER" i18n-en:label='Housing Fund ER'/>
         </dict>
         <dict label="期间状态" name="erp-fin/period-status" valueType="string" i18n-en:label='Period Status'>
             <option code="OPEN" label="开启" value="OPEN" i18n-en:label='Open'/>

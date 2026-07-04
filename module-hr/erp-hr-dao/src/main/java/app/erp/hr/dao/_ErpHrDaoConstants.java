@@ -239,6 +239,216 @@ public interface _ErpHrDaoConstants {
     String SALARY_PAYMENT_STATUS_VOID = "VOID";
                     
     /**
+     * 薪酬审批状态: 待审核 
+     */
+    String SALARY_APPROVAL_STATUS_PENDING = "PENDING";
+                    
+    /**
+     * 薪酬审批状态: 已复核 
+     */
+    String SALARY_APPROVAL_STATUS_REVIEWED = "REVIEWED";
+                    
+    /**
+     * 薪酬审批状态: 财务已审批 
+     */
+    String SALARY_APPROVAL_STATUS_APPROVED_FINANCE = "APPROVED_FINANCE";
+                    
+    /**
+     * 薪酬审批状态: 经理已审批 
+     */
+    String SALARY_APPROVAL_STATUS_APPROVED_MANAGER = "APPROVED_MANAGER";
+                    
+    /**
+     * 薪酬审批状态: 已发放 
+     */
+    String SALARY_APPROVAL_STATUS_PAID = "PAID";
+                    
+    /**
+     * 薪酬审批状态: 已作废 
+     */
+    String SALARY_APPROVAL_STATUS_VOID = "VOID";
+                    
+    /**
+     * 薪酬项目类别: 应发项 
+     */
+    String SALARY_ITEM_CATEGORY_EARNINGS = "EARNINGS";
+                    
+    /**
+     * 薪酬项目类别: 扣款项 
+     */
+    String SALARY_ITEM_CATEGORY_DEDUCTION = "DEDUCTION";
+                    
+    /**
+     * 薪酬项目分组: 基本工资 
+     */
+    String SALARY_ITEM_GROUP_BASIC = "BASIC";
+                    
+    /**
+     * 薪酬项目分组: 津贴 
+     */
+    String SALARY_ITEM_GROUP_ALLOWANCE = "ALLOWANCE";
+                    
+    /**
+     * 薪酬项目分组: 奖金 
+     */
+    String SALARY_ITEM_GROUP_BONUS = "BONUS";
+                    
+    /**
+     * 薪酬项目分组: 加班 
+     */
+    String SALARY_ITEM_GROUP_OVERTIME = "OVERTIME";
+                    
+    /**
+     * 薪酬项目分组: 社保 
+     */
+    String SALARY_ITEM_GROUP_SOCIAL = "SOCIAL";
+                    
+    /**
+     * 薪酬项目分组: 公积金 
+     */
+    String SALARY_ITEM_GROUP_FUND = "FUND";
+                    
+    /**
+     * 薪酬项目分组: 个税 
+     */
+    String SALARY_ITEM_GROUP_TAX = "TAX";
+                    
+    /**
+     * 薪酬项目分组: 其他 
+     */
+    String SALARY_ITEM_GROUP_OTHER = "OTHER";
+                    
+    /**
+     * 薪酬项目计算方式: 固定金额 
+     */
+    String CALC_METHOD_FIXED = "FIXED";
+                    
+    /**
+     * 薪酬项目计算方式: 公式 
+     */
+    String CALC_METHOD_FORMULA = "FORMULA";
+                    
+    /**
+     * 薪酬项目计算方式: 手工录入 
+     */
+    String CALC_METHOD_INPUT = "INPUT";
+                    
+    /**
+     * 社保险种: 养老保险 
+     */
+    String SOCIAL_INSURANCE_TYPE_PENSION = "PENSION";
+                    
+    /**
+     * 社保险种: 医疗保险 
+     */
+    String SOCIAL_INSURANCE_TYPE_MEDICAL = "MEDICAL";
+                    
+    /**
+     * 社保险种: 失业保险 
+     */
+    String SOCIAL_INSURANCE_TYPE_UNEMPLOYMENT = "UNEMPLOYMENT";
+                    
+    /**
+     * 社保险种: 工伤保险 
+     */
+    String SOCIAL_INSURANCE_TYPE_WORK_INJURY = "WORK_INJURY";
+                    
+    /**
+     * 社保险种: 生育保险 
+     */
+    String SOCIAL_INSURANCE_TYPE_MATERNITY = "MATERNITY";
+                    
+    /**
+     * 社保险种: 住房公积金 
+     */
+    String SOCIAL_INSURANCE_TYPE_HOUSING_FUND = "HOUSING_FUND";
+                    
+    /**
+     * 专项附加扣除类型: 子女教育 
+     */
+    String SPECIAL_DEDUCTION_TYPE_CHILDREN_EDUCATION = "CHILDREN_EDUCATION";
+                    
+    /**
+     * 专项附加扣除类型: 继续教育 
+     */
+    String SPECIAL_DEDUCTION_TYPE_CONTINUING_EDUCATION = "CONTINUING_EDUCATION";
+                    
+    /**
+     * 专项附加扣除类型: 大病医疗 
+     */
+    String SPECIAL_DEDUCTION_TYPE_CRITICAL_ILLNESS = "CRITICAL_ILLNESS";
+                    
+    /**
+     * 专项附加扣除类型: 住房贷款利息 
+     */
+    String SPECIAL_DEDUCTION_TYPE_HOUSING_LOAN = "HOUSING_LOAN";
+                    
+    /**
+     * 专项附加扣除类型: 住房租金 
+     */
+    String SPECIAL_DEDUCTION_TYPE_HOUSING_RENT = "HOUSING_RENT";
+                    
+    /**
+     * 专项附加扣除类型: 赡养老人 
+     */
+    String SPECIAL_DEDUCTION_TYPE_SUPPORTING_ELDERLY = "SUPPORTING_ELDERLY";
+                    
+    /**
+     * 专项附加扣除类型: 3岁以下婴幼儿照护 
+     */
+    String SPECIAL_DEDUCTION_TYPE_INFANT_CARE = "INFANT_CARE";
+                    
+    /**
+     * 银行文件格式: CSV 
+     */
+    String BANK_FILE_FORMAT_CSV = "CSV";
+                    
+    /**
+     * 银行文件格式: TXT 
+     */
+    String BANK_FILE_FORMAT_TXT = "TXT";
+                    
+    /**
+     * 城市: 深圳 
+     */
+    String CITY_SHENZHEN = "SHENZHEN";
+                    
+    /**
+     * 城市: 上海 
+     */
+    String CITY_SHANGHAI = "SHANGHAI";
+                    
+    /**
+     * 城市: 北京 
+     */
+    String CITY_BEIJING = "BEIJING";
+                    
+    /**
+     * 城市: 广州 
+     */
+    String CITY_GUANGZHOU = "GUANGZHOU";
+                    
+    /**
+     * 城市: 杭州 
+     */
+    String CITY_HANGZHOU = "HANGZHOU";
+                    
+    /**
+     * 银行文件状态: 已生成 
+     */
+    String BANK_FILE_STATUS_GENERATED = "GENERATED";
+                    
+    /**
+     * 银行文件状态: 已上传 
+     */
+    String BANK_FILE_STATUS_UPLOADED = "UPLOADED";
+                    
+    /**
+     * 银行文件状态: 已确认 
+     */
+    String BANK_FILE_STATUS_CONFIRMED = "CONFIRMED";
+                    
+    /**
      * 考勤来源: 打卡 
      */
     String ATTENDANCE_SOURCE_CARD = "CARD";

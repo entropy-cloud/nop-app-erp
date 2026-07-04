@@ -13,6 +13,14 @@ alter table erp_prj_task add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_hr_department add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_hr_salary_item add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_hr_social_insurance_config add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_hr_tax_config add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_hr_payroll_bank_file add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_hr_shift add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_hr_shift_rotation_pattern add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -42,6 +50,10 @@ alter table erp_hr_timesheet add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 alter table erp_hr_salary add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_hr_recruitment add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_hr_social_insurance_base add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_hr_tax_special_deduction add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_hr_survey_response add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -88,6 +100,18 @@ alter table erp_prj_task add primary key (NOP_TENANT_ID, ID);
 alter table erp_hr_department drop primary key;
 alter table erp_hr_department add primary key (NOP_TENANT_ID, ID);
 
+alter table erp_hr_salary_item drop primary key;
+alter table erp_hr_salary_item add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_hr_social_insurance_config drop primary key;
+alter table erp_hr_social_insurance_config add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_hr_tax_config drop primary key;
+alter table erp_hr_tax_config add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_hr_payroll_bank_file drop primary key;
+alter table erp_hr_payroll_bank_file add primary key (NOP_TENANT_ID, ID);
+
 alter table erp_hr_shift drop primary key;
 alter table erp_hr_shift add primary key (NOP_TENANT_ID, ID);
 
@@ -132,6 +156,12 @@ alter table erp_hr_salary add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_hr_recruitment drop primary key;
 alter table erp_hr_recruitment add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_hr_social_insurance_base drop primary key;
+alter table erp_hr_social_insurance_base add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_hr_tax_special_deduction drop primary key;
+alter table erp_hr_tax_special_deduction add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_hr_survey_response drop primary key;
 alter table erp_hr_survey_response add primary key (NOP_TENANT_ID, ID);

@@ -75,6 +75,36 @@
                 <!--实发日期-->
                 <col id="paymentDate" sortable="true"/>
 
+                <!--审批状态-->
+                <col id="approvalStatus" mandatory="true" sortable="true"/>
+
+                <!--绩效系数-->
+                <col id="performanceFactor" ui:number="true" sortable="true"/>
+
+                <!--实际出勤日-->
+                <col id="actualWorkDays" ui:number="true" sortable="true"/>
+
+                <!--应出勤日-->
+                <col id="requiredWorkDays" ui:number="true" sortable="true"/>
+
+                <!--月总加班小时-->
+                <col id="totalOvertimeHours" ui:number="true" sortable="true"/>
+
+                <!--无薪假天数-->
+                <col id="unpaidLeaveDays" ui:number="true" sortable="true"/>
+
+                <!--累计个税数据-->
+                <col id="cumulativeData" sortable="true"/>
+
+                <!--审核备注-->
+                <col id="reviewNote" sortable="true"/>
+
+                <!--发放批次号-->
+                <col id="paymentBatchNo" sortable="true"/>
+
+                <!--银行文件-->
+                <col id="bankFileId" ui:number="true" sortable="true"/>
+
                 <!--业务组织-->
                 <col id="orgId" ui:number="true" sortable="true"/>
 
@@ -112,7 +142,12 @@
  socialInsurance[社保个人部分] housingFund[公积金个人部分]
  taxAmount[个税] otherDeductions[其他扣款]
  netSalary[实发合计] paymentStatus[支付状态]
- paymentDate[实发日期] orgId[业务组织]
+ paymentDate[实发日期] approvalStatus[审批状态]
+ performanceFactor[绩效系数] actualWorkDays[实际出勤日]
+ requiredWorkDays[应出勤日] totalOvertimeHours[月总加班小时]
+ unpaidLeaveDays[无薪假天数] cumulativeData[累计个税数据]
+ reviewNote[审核备注] paymentBatchNo[发放批次号]
+ bankFileId[银行文件] orgId[业务组织]
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
@@ -129,7 +164,12 @@
  socialInsurance[社保个人部分] housingFund[公积金个人部分]
  taxAmount[个税] otherDeductions[其他扣款]
  netSalary[实发合计] paymentStatus[支付状态]
- paymentDate[实发日期] orgId[业务组织]
+ paymentDate[实发日期] approvalStatus[审批状态]
+ performanceFactor[绩效系数] actualWorkDays[实际出勤日]
+ requiredWorkDays[应出勤日] totalOvertimeHours[月总加班小时]
+ unpaidLeaveDays[无薪假天数] cumulativeData[累计个税数据]
+ reviewNote[审核备注] paymentBatchNo[发放批次号]
+ bankFileId[银行文件] orgId[业务组织]
  remark[备注] 
 </layout>
         </form>
@@ -144,7 +184,12 @@
  socialInsurance[社保个人部分] housingFund[公积金个人部分]
  taxAmount[个税] otherDeductions[其他扣款]
  netSalary[实发合计] paymentStatus[支付状态]
- paymentDate[实发日期] orgId[业务组织]
+ paymentDate[实发日期] approvalStatus[审批状态]
+ performanceFactor[绩效系数] actualWorkDays[实际出勤日]
+ requiredWorkDays[应出勤日] totalOvertimeHours[月总加班小时]
+ unpaidLeaveDays[无薪假天数] cumulativeData[累计个税数据]
+ reviewNote[审核备注] paymentBatchNo[发放批次号]
+ bankFileId[银行文件] orgId[业务组织]
  remark[备注] delVersion[逻辑删除版本]
 </layout>
         </form>
