@@ -308,6 +308,7 @@
 | `erp-fin.auto-reconcile` | false | 是否启用自动核销 |
 | `erp-fin.reconcile-precision` | 0.01 | 核销金额精度（容忍分摊误差） |
 | `erp-fin.allow-over-reconcile` | false | 是否允许超额核销 |
+| `erp-fin.ar-ap-auto-recon-cron` | —（deferred） | 定时自动核销（按比例/账龄/到期日规则）；登记于 `docs/architecture/job-scheduling.md` §3.1 `erp-fin-ar-ap-auto-recon`，定时调度归 follow-up |
 
 ## 异常处理
 

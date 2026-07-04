@@ -116,6 +116,17 @@
 5. **汇率匹配**：多币种单据按业务日期匹配汇率；缺失汇率时凭证过账报错而非静默使用默认值。
 6. **单位换算**：业务单据数量按 SKU 包装单位录入，落账时按换算系数转为基本单位数量。
 
+## 定时作业
+
+主数据域定时作业登记于 `docs/architecture/job-scheduling.md` §3.4：
+
+| 作业 | 频率 | 配置键 | 入口 |
+|------|------|--------|------|
+| `erp-md-data-sync`（主数据缓存刷新） | 每小时 | `erp-md.data-sync-cron`（默认 `0 0 * * * ?`） | 待实现 |
+| `erp-md-exchange-rate-fetch`（汇率源拉取） | 每日 | — | 待实现（见 `exchange-rate-management.md:51`） |
+
+> cron 接线（`scheduler.yaml` 注册）归 follow-up，触发条件见 `job-scheduling.md` §8。
+
 ## 本域文档
 
 | 文档 | 职责 |

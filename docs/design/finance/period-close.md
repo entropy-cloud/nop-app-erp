@@ -278,6 +278,7 @@
 | `erp-inv.allow-negative-stock (引用库存域)` | false | 结账时是否允许负库存 |
 | `erp-fin.auto-depreciation` | true | 结账时自动计提折旧 |
 | `erp-fin.closing-reminder-days` | 3 | 结账提醒提前天数 |
+| `erp-fin.period-close-cron` | `0 0 22 L * ?` | 期末结账定时触发（每月最后一天 22:00）；登记于 `docs/architecture/job-scheduling.md` §3.1 `erp-fin-period-close` 作业，cron 接线归 follow-up |
 
 ## 异常处理
 

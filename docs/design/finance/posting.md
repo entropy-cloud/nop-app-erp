@@ -296,6 +296,7 @@ ErpFinAcctDocRegistry
 - 业务单据带 `posted` 字段（boolean），与单据+库存同事务落盘。
 - 定期兜底扫描（定时任务）：扫描 `posted=false` 且已审核超过 N 分钟的单据，重新触发过账。
 - 处理异步事件丢失、服务重启等异常场景——兜底扫描对 SYNC/ASYNC 两种模式统一生效。
+- **定时作业登记**：兜底扫描登记于 `docs/architecture/job-scheduling.md` §3.1 `erp-fin-posting-scan`（每分钟，`erp-fin.posting-scan-cron`，nop-batch candidate 大数据量迁移）；cron 接线归 follow-up。
 
 ### 同步测试缝（postNow）
 

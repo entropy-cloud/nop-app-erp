@@ -54,7 +54,7 @@
 
 - 无新增端口/密钥/.env；webhook 端点复用平台 HTTP 路由（`/r/log/webhook/...`）。
 - **模块编译依赖**：`erp-log-service` 需 compile 依赖 `erp-fin-dao`（`IErpFinVoucherBiz`/`PostingEvent`/`ErpFinBusinessType`）+ `erp-fin-service`（`IErpFinAcctDocProvider`/`AcctDocContext`/`VoucherFact`/`ErpFinAcctDocRegistry`），类比 projects/inventory posting Provider。
-- 配置项经 `AppConfig.var(..., defaultValue)`（`ErpLogConfigs.java` 已存在，扩展；键名对齐 `carrier-integration.md` §8）：`erp-log.gateway-timeout-secs`（默认 30，范围 5–120）、`erp-log.gateway-max-retries`（默认 3）、`erp-log.retry-base-interval-secs`（默认 `30,120,600`）、`erp-log.tracking-polling-cron`（默认 `0 0 */4 * * ?`）、`erp-log.shipment-settlement-mode`（AUTO 默认 / MANUAL）、`erp-log.webhook-signature-required`（默认 true）。
+- 配置项经 `AppConfig.var(..., defaultValue)`（`ErpLogConfigs.java` 已存在，扩展；键名对齐 `carrier-integration.md` §8）：`erp-log.gateway-timeout-secs`（默认 30，范围 5–120）、`erp-log.gateway-max-retries`（默认 3）、`erp-log.retry-base-interval-secs`（默认 `30,120,600`）、`erp-log.tracking-poll-cron`（默认 `0 0 */4 * * ?`）、`erp-log.shipment-settlement-mode`（AUTO 默认 / MANUAL）、`erp-log.webhook-signature-required`（默认 true）。
 - 无数据迁移；不新增 ORM 列（运单/承运商字段已齐备）。Phase 3 finance 枚举 + 字典扩展为保护区域变更。
 
 ## Execution Plan
@@ -98,7 +98,7 @@ Skill: `nop-backend-dev`
   - Skill: `nop-backend-dev`
 - [x] `Add`：`handleTrackingWebhook(carrierCode, signature, payload)`——HMAC-SHA256 校验（`erp-log.webhook-signature-required`，失败 `ERR_LOG_WEBHOOK_SIGNATURE_INVALID`）；按 event 推进 IN_TRANSIT/DELIVERED（`actualDeliveryDate`/`signedBy`）；幂等（同 event 重复不重复推进）；DELIVERED 触发 Phase 4 过账入口。
   - Skill: `nop-backend-dev`
-- [x] `Add`：`scanForPolling()`——轮询兜底（`erp-log.tracking-polling-cron`），对 DISPATCHED 未 DELIVERED 运单调 `client.trackShipment` 推进。
+- [x] `Add`：`scanForPolling()`——轮询兜底（`erp-log.tracking-poll-cron`），对 DISPATCHED 未 DELIVERED 运单调 `client.trackShipment` 推进。
   - Skill: `nop-backend-dev`
 - [x] `Add`：`cancelShipment(shipmentId)`——ADVISED/DISPATCHED→CANCELLED（经 `client.cancelShipment`，承运商不支持则标记本地取消）。
   - Skill: `nop-backend-dev`

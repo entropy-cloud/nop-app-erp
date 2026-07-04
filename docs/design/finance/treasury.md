@@ -171,6 +171,7 @@
 |---|---|---|
 | `erp-fin.credit-check-on-issue` | true | 开银承前是否强制校验授信可用额度 |
 | `erp-fin.notes-discount-rate-default` | — | 默认贴现率（缺省时提示配置） |
+| `erp-fin.cash-forecast-cron` | —（deferred） | 现金预测定时刷新（聚合 AR/AP + 票据到期）；登记于 `docs/architecture/job-scheduling.md` §3.1 `erp-fin-cash-forecast-refresh`，定时调度归 follow-up（见下方实现注） |
 
 ## 关键业务规则
 

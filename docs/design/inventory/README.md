@@ -107,6 +107,16 @@
 
 > 仓库级配置的 ORM 字段定义见 `module-master-data/model/app-erp-master-data.orm.xml` → `ErpMdWarehouse.batchSelectionStrategy`。FEFO 仅对启用保质期管理的物料生效。
 
+## 定时作业
+
+库存域定时作业登记于 `docs/architecture/job-scheduling.md` §3.3：
+
+| 作业 | 频率 | 配置键 | 入口 |
+|------|------|--------|------|
+| `erp-inv-stock-check`（库存余额对账） | 每日 03:00 | `erp-inv.stock-check-cron`（默认 `0 0 3 * * ?`） | 待实现（nop-batch candidate，大数据量迁移） |
+
+> cron 接线（`scheduler.yaml` 注册）归 follow-up，触发条件见 `job-scheduling.md` §8。
+
 ## 本域文档
 
 | 文档 | 职责 |
