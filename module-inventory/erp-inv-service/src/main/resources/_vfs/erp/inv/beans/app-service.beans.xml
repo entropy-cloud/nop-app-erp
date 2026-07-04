@@ -40,6 +40,11 @@
     <bean id="app.erp.inv.service.posting.InvOwnershipTransferProvider"
           class="app.erp.inv.service.posting.InvOwnershipTransferProvider"/>
 
+    <!-- 库存域凭证红冲监听者（业财闭环方向二：财务侧红冲→库存单据回退 posted=false）。
+         注册为 Bean 后由 finance ErpFinReversalListenerRegistry 自动聚合，处理 OWNERSHIP_TRANSFER/INTER_TRANSFER。 -->
+    <bean id="app.erp.inv.service.posting.InvReversalListener"
+          class="app.erp.inv.service.posting.InvReversalListener"/>
+
     <!-- 所有权转移单状态机/同库位调账编排 Processor -->
     <bean id="app.erp.inv.service.processor.ErpInvOwnershipTransferProcessor"
           class="app.erp.inv.service.processor.ErpInvOwnershipTransferProcessor"/>

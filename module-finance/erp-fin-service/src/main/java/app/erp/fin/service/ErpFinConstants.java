@@ -144,6 +144,17 @@ public interface ErpFinConstants {
     String POSTING_TYPE_NORMAL = "NORMAL";
     String POSTING_TYPE_REVERSAL = "REVERSAL";
 
+    // ---- 配置项（posting.md §冲销机制方向二 §实现策略 裁决3），经 AppConfig.var 读取 ----
+    /** 凭证红冲事件派发模式：SYNC（默认，同事务同步通知）/ ASYNC（post-commit afterCommit）。 */
+    String CONFIG_REVERSAL_DISPATCH_MODE = "erp-fin.reversal-dispatch-mode";
+    /** 派发模式取值：SYNC（默认）。 */
+    String REVERSAL_DISPATCH_MODE_SYNC = "SYNC";
+    /** 派发模式取值：ASYNC（post-commit afterCommit）。 */
+    String REVERSAL_DISPATCH_MODE_ASYNC = "ASYNC";
+
+    /** 监听者派发失败记录的 failedStage 标识（落入 ErpFinPostingException 异常工作台）。 */
+    String FAILED_STAGE_NOTIFY_REVERSAL_LISTENER = "notify-reversal-listener";
+
     // ---- 过账异常处置状态（与 erp-fin/posting-exception-status 字典对齐，见 posting-log.md §过账异常处置） ----
     String POSTING_EXCEPTION_STATUS_PENDING = "PENDING";
     String POSTING_EXCEPTION_STATUS_RETRYING = "RETRYING";

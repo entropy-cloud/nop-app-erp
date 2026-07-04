@@ -10,6 +10,7 @@ import app.erp.fin.service.ErpFinConstants;
 import app.erp.md.biz.IErpMdSubjectBiz;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.time.CoreMetrics;
@@ -18,6 +19,7 @@ import io.nop.commons.util.StringHelper;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.dao.txn.ITransactionTemplate;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +88,12 @@ public class ErpFinPostingProcessor {
 
     @Inject
     ErpFinPostingExceptionRecorder exceptionRecorder;
+
+    @Inject
+    ErpFinReversalListenerRegistry reversalListenerRegistry;
+
+    @Inject
+    ITransactionTemplate transactionTemplate;
 
     /**
      * 正向过账编排。幂等命中（源单已过账）返回 {@code null}。
@@ -173,6 +181,10 @@ public class ErpFinPostingProcessor {
             // 红冲凭证落库后、同事务内取消原辅助账项（对齐冲销语义）。
             timeStageVoid("cancelArApOnReverse", run,
                     () -> arApItemGenerator.cancelOnReverse(billHeadCode, businessType, context));
+            // 业财闭环方向二（冲销反写）：红字凭证+回链+辅助账落库后，构造 VoucherReversedEvent 派发给
+            // 各域监听者回退源单状态。默认 SYNC 同事务同步通知（posting.md §实现策略 裁决3）。
+            timeStageVoid("notifyReversalListeners", run,
+                    () -> dispatchReversalEvent(run, voucherId, original.getId(), billHeadCode, businessType, context));
 
             LOG.info("红冲成功：traceId={}, billHeadCode={}, businessType={}, voucherId={}, reversalOf={}, timings(ms)={}",
                     run.traceId, run.billHeadCode, run.businessType, voucherId, original.getId(), run.timingsMillis());
@@ -259,6 +271,75 @@ public class ErpFinPostingProcessor {
         exceptionRecorder.record(run.traceId, run.billHeadCode, run.businessType, POSTING_TYPE_REVERSAL,
                 errorCode, errorMessage, run.currentStage, null, null, null,
                 null, null, null);
+    }
+
+    /**
+     * 构造 {@link VoucherReversedEvent} 并按配置派发给各域监听者（业财闭环方向二）。
+     *
+     * <p>派发模式（{@link ErpFinConstants#CONFIG_REVERSAL_DISPATCH_MODE}）：
+     * <ul>
+     *   <li>默认 SYNC：同事务内同步遍历监听者调用——监听者回退与红字凭证原子提交（强一致）。
+     *       监听者失败经 {@link ErpFinReversalListenerRegistry#dispatch} 的 try/catch 隔离
+     *       （不阻断其他监听者、不回滚红字凭证），失败记录落入 5.1 异常工作台。</li>
+     *   <li>ASYNC：经 {@code txn().afterCommit} 注册 post-commit 回调，红字凭证事务提交成功后再派发
+     *       （对齐 posting.md §总体架构 第②层 ASYNC 模式）。</li>
+     * </ul>
+     */
+    protected void dispatchReversalEvent(PostingRun run, Long voucherId, Long reversalOfVoucherId,
+                                          String billHeadCode, ErpFinBusinessType businessType,
+                                          IServiceContext context) {
+        VoucherReversedEvent event = new VoucherReversedEvent();
+        event.setVoucherId(voucherId);
+        event.setReversalOfVoucherId(reversalOfVoucherId);
+        event.setBillHeadCode(billHeadCode);
+        event.setBusinessType(businessType == null ? null : businessType.name());
+        event.setBillType(businessType == null ? null : businessType.name());
+        event.setTraceId(run.traceId);
+
+        String mode = resolveDispatchMode();
+        if (ErpFinConstants.REVERSAL_DISPATCH_MODE_ASYNC.equals(mode)) {
+            // post-commit 派发：红字凭证事务提交成功后再通知域监听者（ASYNC 解耦）。
+            transactionTemplate.afterCommit(null, () -> {
+                List<ErpFinReversalListenerRegistry.ListenerFailure> failures =
+                        reversalListenerRegistry.dispatch(event, context);
+                recordListenerFailures(run, failures, billHeadCode, businessType);
+            });
+        } else {
+            // SYNC 同事务派发：监听者回退与红字凭证原子提交（强一致默认）。
+            List<ErpFinReversalListenerRegistry.ListenerFailure> failures =
+                    reversalListenerRegistry.dispatch(event, context);
+            recordListenerFailures(run, failures, billHeadCode, businessType);
+        }
+    }
+
+    /** 读取派发模式配置（默认 SYNC）。 */
+    protected String resolveDispatchMode() {
+        String mode = AppConfig.var(ErpFinConstants.CONFIG_REVERSAL_DISPATCH_MODE,
+                ErpFinConstants.REVERSAL_DISPATCH_MODE_SYNC);
+        return ErpFinConstants.REVERSAL_DISPATCH_MODE_ASYNC.equals(mode)
+                ? ErpFinConstants.REVERSAL_DISPATCH_MODE_ASYNC
+                : ErpFinConstants.REVERSAL_DISPATCH_MODE_SYNC;
+    }
+
+    /**
+     * 监听者派发失败记录落入 5.1 异常工作台（独立事务，posting-log.md §失败不静默丢弃）。
+     * 凭证法律效力：红字凭证已过账不回滚；监听者失败进 PENDING 队列供人工处置。
+     */
+    protected void recordListenerFailures(PostingRun run,
+                                            List<ErpFinReversalListenerRegistry.ListenerFailure> failures,
+                                            String billHeadCode, ErpFinBusinessType businessType) {
+        if (failures == null || failures.isEmpty()) {
+            return;
+        }
+        String bizType = businessType == null ? null : businessType.name();
+        for (ErpFinReversalListenerRegistry.ListenerFailure f : failures) {
+            String errorCode = StringHelper.isBlank(f.getErrorCode())
+                    ? ErpFinPostingErrors.ERR_REVERSAL_LISTENER_FAILED.getErrorCode() : f.getErrorCode();
+            String errorMsg = "监听者=" + f.getListenerName() + "；" + (f.getErrorMessage() == null ? "" : f.getErrorMessage());
+            exceptionRecorder.record(run.traceId, billHeadCode, bizType, POSTING_TYPE_REVERSAL,
+                    errorCode, errorMsg, ErpFinConstants.FAILED_STAGE_NOTIFY_REVERSAL_LISTENER,
+                    null, null, null, null, null, null);
+        }
     }
 
     /** 过账运行态（traceId+路由结果+各阶段耗时），供编排层埋点与失败记录复用。 */

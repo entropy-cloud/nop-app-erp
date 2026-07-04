@@ -22,6 +22,17 @@
         </property>
     </bean>
 
+    <!-- 凭证红冲监听者注册中心（业财闭环方向二：财务侧红冲→业务单据回退）。启动期收集各业务域
+         IErpFinVoucherReversedListener 实现（purchase/sales/inventory），由 ErpFinPostingProcessor.reverseProcess()
+         红字凭证落库后派发 VoucherReversedEvent。镜像 ErpFinAcctDocRegistry 的 @Inject List 聚合范式。 -->
+    <bean id="app.erp.fin.service.posting.ErpFinReversalListenerRegistry"
+          class="app.erp.fin.service.posting.ErpFinReversalListenerRegistry">
+        <property name="listeners">
+            <ioc:collect-beans by-type="app.erp.fin.service.posting.IErpFinVoucherReversedListener"
+                               only-concrete-classes="true" ioc:ignore-depends="true"/>
+        </property>
+    </bean>
+
     <bean id="app.erp.fin.service.posting.provider.ErpFinTemplateAcctDocProvider"
           class="app.erp.fin.service.posting.provider.ErpFinTemplateAcctDocProvider"/>
 

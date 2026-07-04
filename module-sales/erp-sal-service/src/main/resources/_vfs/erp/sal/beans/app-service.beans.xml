@@ -48,6 +48,11 @@
     <bean id="app.erp.sal.service.posting.SalReturnPostingDispatcher"
           class="app.erp.sal.service.posting.SalReturnPostingDispatcher"/>
 
+    <!-- 销售域凭证红冲监听者（业财闭环方向二：财务侧红冲→销售单据回退 posted=false + approveStatus→REJECTED）。
+         注册为 Bean 后由 finance ErpFinReversalListenerRegistry 自动聚合，处理 AR_INVOICE/RECEIPT/SALES_RETURN/SALES_OUTPUT。 -->
+    <bean id="app.erp.sal.service.posting.SalReversalListener"
+          class="app.erp.sal.service.posting.SalReversalListener"/>
+
     <!-- 收款→发票域级核销器（ErpSalReceiptLine 多对多，回写 receivedStatus/receivedAmount/writtenOffStatus） -->
     <bean id="app.erp.sal.service.entity.ReceiptSettler"
           class="app.erp.sal.service.entity.ReceiptSettler"/>

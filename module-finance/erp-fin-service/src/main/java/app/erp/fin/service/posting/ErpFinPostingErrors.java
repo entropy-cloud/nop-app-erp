@@ -53,6 +53,7 @@ public interface ErpFinPostingErrors {
     String ARG_EXCEPTION_ID = "exceptionId";
     String ARG_CURRENT_STATUS = "currentStatus";
     String ARG_RESOLUTION = "resolution";
+    String ARG_LISTENER = "listener";
 
     ErrorCode ERR_POSTING_EXCEPTION_NOT_PENDING = ErrorCode.define("erp.err.fin.posting-exception.not-pending",
             "过账异常 {exceptionId} 当前状态为 {currentStatus}，仅 PENDING 可处置", ARG_EXCEPTION_ID, ARG_CURRENT_STATUS);
@@ -67,4 +68,10 @@ public interface ErpFinPostingErrors {
 
     ErrorCode ERR_POSTING_EXCEPTION_NOT_FOUND = ErrorCode.define("erp.err.fin.posting-exception.not-found",
             "未找到过账异常记录 {exceptionId}", ARG_EXCEPTION_ID);
+
+    // ===================== 冲销反写闭环（凭证红冲→业务单据回退） =====================
+
+    ErrorCode ERR_REVERSAL_LISTENER_FAILED = ErrorCode.define("erp.err.fin.posting.reversal-listener-failed",
+            "凭证红冲监听者 {listener} 回退业务单据 {billHeadCode} 失败（业务类型 {businessType}）",
+            ARG_LISTENER, ARG_BILL_HEAD_CODE, ARG_BUSINESS_TYPE);
 }

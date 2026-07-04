@@ -48,6 +48,11 @@
     <bean id="app.erp.pur.service.posting.PurPaymentPostingDispatcher"
           class="app.erp.pur.service.posting.PurPaymentPostingDispatcher"/>
 
+    <!-- 采购域凭证红冲监听者（业财闭环方向二：财务侧红冲→采购单据回退 posted=false + approveStatus→REJECTED）。
+         注册为 Bean 后由 finance ErpFinReversalListenerRegistry 自动聚合，处理 AP_INVOICE/PAYMENT/PURCHASE_RETURN/PURCHASE_INPUT。 -->
+    <bean id="app.erp.pur.service.posting.PurReversalListener"
+          class="app.erp.pur.service.posting.PurReversalListener"/>
+
     <!-- 付款→发票域级核销器（ErpPurPaymentLine 多对多，回写 paidStatus/paidAmount/writtenOffStatus） -->
     <bean id="app.erp.pur.service.entity.PaymentSettler"
           class="app.erp.pur.service.entity.PaymentSettler"/>
