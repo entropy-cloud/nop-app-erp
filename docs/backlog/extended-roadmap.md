@@ -66,7 +66,7 @@
 | 3.10 | ✅ APS OperationOrder 排产引擎 | aps | `aps/scheduling.md` |
 | 3.11 | ✅ APS ATP/CTP 交期承诺 | aps | `aps/scheduling.md` |
 | 3.12 | ✅ 合同版本管理 + InvoicePlan 触发发票 | contract | `contract/README.md` |
-| 3.13 | 合同电子签章 | contract | `contract/e-signature.md` |
+| 3.13 | ✅ 合同电子签章 | contract | `contract/e-signature.md` |
 | 3.14 | ✅ 合同批量折扣/返利计算 | contract | `contract/volume-discount.md` |
 | 3.15 | ✅ DRP 净需求计算 | drp | `drp/README.md` |
 | 3.16 | ✅ DRP 安全库存优化 | drp | `drp/safety-stock-optimization.md` |
