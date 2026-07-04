@@ -79,12 +79,13 @@ ErpMfgPlannedOrder
 | 损耗率来源 | BOM 子件行 | 物料主数据/类别默认值 |
 | `erp-mfg.default-lot-size` | 0（lot-for-lot） | >0 时按倍数向上取整（本期全局配置；物料级 fixedLotSize/minOrderQty/maxOrderQty 列不存在，Non-Goal） |
 | `erp-mfg.mfg-leadtime-days-per-routing-hour` | 0.125（8h/天） | 制造件 BOM 工序累计工时换算提前期天数 |
+| `erp-mfg.forecast-consume-enabled` | true | 是否消费 APPROVED 预测行作为 FORECAST 需求来源（plan 2026-07-05-0427-1 §Phase 2）；false 时不消费 |
 
 ## 实现偏离补注（2026-07-03，plan 2026-07-02-2237-2）
 
 本期实现相对上方设计描述的已知偏离（均为计划内 Non-Goal 或必要实现细节，已记录于计划 Task Route Decision / Deferred）：
 
-- **FORECAST 需求来源**：上方「销售预测（ErpMfgForecast）」ORM 无此实体，本期不支持。需求整合仅销售订单 + 安全库存 + 手工需求。`demandSource` 字典含 FORECAST=20 码值但无数据入口。触发条件：预测实体建模落地时（successor）。
+- **FORECAST 需求来源（已收口，2026-07-05，plan 2026-07-05-0427-1）**：实体 `ErpMfgForecast`/`ErpMfgForecastLine` 已落地（制造域）；`DemandAggregator.collectForecastDemands` 仅消费头 `status=APPROVED` 且区间与计划期相交的预测行，按物料聚合 `forecastQty`，`demandSource=FORECAST`，warehouseId 维度由 MRP 忽略（产品级需求）；config-gated `erp-mfg.forecast-consume-enabled`（默认 true）。状态机 `DRAFT→APPROVED`（approve）/ `→CANCELLED`（cancel）经 `ErpMfgForecastBizModel` 实现；`CONSUMED` 状态值预留但本期不自动迁移（plan 2026-07-05-0427-1 Deferred，触发条件：预测消费后状态回写需求落地）。
 - **lot sizing 简化**：上方「固定批量/最小订货量/最大订货量」对应物料级 fixedLotSize/minOrderQty/maxOrderQty 列在 ORM 不存在。本期 lot-for-lot 为主 + 全局配置 `erp-mfg.default-lot-size`（>0 时按倍数取整）。触发条件：物料级批量精细化需求时（须 ask-first 加列）。
 - **低层码**：上方「低层编码」经 BomExpander DFS 层级标记实现（同物料取最低层级展开基准），不预计算物化 lowLevelCode 列（ORM 无此列）。
 - **可用量来源**：上方「在途采购/在制工单」未实时跨域汇总（purchase/manufacturing 复杂查询）。本期可用量 = `ErpInvStockBalance.availableQuantity`（既有预计算列 = total − reserved − locked；null 时回退计算）；在途/在制以 `ErpMfgMrpPlanLine.scheduledReceipt` 列承载（粗估，计划员录入或后续从在途汇总）。
@@ -92,3 +93,12 @@ ErpMfgPlannedOrder
 - **委外建议释放**：orderType=SUBCONTRACT_REQUEST 字典存在但委外流程独立面，本期不支持释放。触发条件：委外加工落地时。
 - **需求时界 / CRP / AUTO_SCHEDULED**：本期不区分需求时界、不做产能校验（CRP 见 2.8 独立面）、仅 MANUAL 触发。
 - **建议单释放耦合度**：上方「一键转为采购订单/生产工单」本期实现为释放直接持久化目标域实体（`ErpPurOrder`/`ErpPurOrderLine`、`ErpMfgWorkOrder`）——IErpPurOrderBiz/IErpMfgWorkOrderBiz 仅订单头级通用 CRUD 无 purpose-built `createFromMrpLine` 方法，故走 service-helper 范式直接落库（仅写 MRP 已知字段：物料/数量/日期/org）。释放分两个 purpose-built 方法（`releasePurchaseRequest` 须 supplierId/currencyId 因 ErpPurOrder ORM 必填；`releaseWorkRequest` 仅需 planLineId）。残留：生成的采购单单价/金额=0、币种由参数提供，须采购员后续补录。
+
+### CRM 销售预测 vs 运营需求预测的关系（2026-07-05，plan 2026-07-05-0427-1）
+
+CRM 域 `ErpCrmForecast`/`ErpCrmForecastLine`（金额/分类/owner 维度，COMMIT/UPSIDE/BEST_CASE 分类）与本域 `ErpMfgForecast`（产品×数量×时间桶运营预测）**语义不同**，本期两者独立维护：
+
+- CRM 预测服务于销售目标管理/线索评分，单位为金额；
+- 运营预测（ErpMfgForecast）服务于 MRP/DRP 单位级需求计算，单位为数量。
+
+**CRM 金额预测 → 运营数量预测的自动 disaggregation 本期不实现**（Decision：金额→数量分解依赖售价策略 + 多币种 + 折扣，误差大；归后继）。触发条件：CRM 金额预测驱动运营数量需求的产品决策落地时（successor）。

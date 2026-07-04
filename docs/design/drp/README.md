@@ -47,7 +47,7 @@
 | currentStock | 当前库存量 |
 | allocatedQty | 已分配量 |
 | onOrderQty | 在途/在单量 |
-| forecastDemand | 预测需求量（期间内） |
+| forecastDemand | 预测需求量（期间内，由制造域 `ErpMfgForecast/Line` APPROVED 行按 materialId + warehouseId 聚合填充，plan 2026-07-05-0427-1 §Phase 3；config-gated `erp-drp.forecast-consume-enabled` 默认 true；关闭或无匹配预测时为 0） |
 | safetyStock | 安全库存 |
 | netRequirement | 净需求（= safetyStock + forecastDemand - currentStock + allocatedQty - onOrderQty，<0 时不补货） |
 | suggestedQty | 建议补货量（净需求向上取整到包装倍数） |
@@ -74,6 +74,7 @@
 ## 业务规则
 
 1. **净需求计算**：`netRequirement = max(0, safetyStock + forecastDemand - currentStock + allocatedQty - onOrderQty)`。结果为 0 或负时表示库存充足，不产生补货建议。
+   - **forecastDemand 来源（plan 2026-07-05-0427-1 §Phase 3）**：消费制造域 `ErpMfgForecast`（头 status=APPROVED）下的 `ErpMfgForecastLine` 行——按 `materialId + 目标 warehouseId + 区间相交` 聚合 `forecastQty`；warehouseId 为 null 的产品级预测不进入 DRP 仓级消费（由 MRP 消费）。config-gated `erp-drp.forecast-consume-enabled`（默认 true；关闭或无匹配预测时 forecastDemand=0）。
 2. **补货类型决策**：若 `warehouse.distributionCenterId` 存在（有上级分销中心），优先走仓间调拨（sourceWarehouseId = distributionCenterId）；否则走采购（supplierId = preferredSupplierId）。
 3. **补货量调整**：netRequirement 向上取整到 `orderMultiple` 倍数，生成 `suggestedQty`。
 4. **与 MRP 的关系**：DRP 运行在 MRP 之前（DRP 补货采购单的到货时间作为 MRP 的可供量输入之一）；或并行运行（DRP 管分销网络，MRP 管制造端）。
@@ -99,6 +100,7 @@ DRP 本身不产生会计凭证。DRP 触发的调拨单走跨法人调拨过账
 | `erp-inv.drp-run-schedule` | — | DRP 定时运行 cron |
 | `erp-inv.drp-default-forecast-horizon-days` | 90 | 默认预测展望期 |
 | `erp-inv.drp-auto-generate-order` | false | DRP 批准后是否自动生成补货单 |
+| `erp-drp.forecast-consume-enabled` | true | 是否消费制造域 APPROVED 预测填充 forecastDemand（plan 2026-07-05-0427-1 §Phase 3）；false 时 forecastDemand=0 |
 
 ## 菜单归属
 
