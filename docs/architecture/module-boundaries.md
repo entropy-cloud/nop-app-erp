@@ -33,8 +33,8 @@ app-erp-maintenance（依赖 master-data + inventory + assets；被 manufacturin
 |----------|----------|----------|
 | `app-erp-master-data` | （无业务依赖，仅平台） | 任何业务域 |
 | `app-erp-inventory` | master-data | purchase / sales / finance / 扩展域 |
-| `app-erp-purchase` | master-data / inventory | sales / finance / 扩展域 |
-| `app-erp-sales` | master-data / inventory | purchase / finance / 扩展域 |
+| `app-erp-purchase` | master-data / inventory / projects（只读 ORM 引用） | sales / finance / 其他扩展域（assets/manufacturing/quality/maintenance） |
+| `app-erp-sales` | master-data / inventory / projects（只读 ORM 引用） | purchase / finance / 其他扩展域（assets/manufacturing/quality/maintenance） |
 | `app-erp-finance` | master-data + 各域 `I*Biz`（只读查询） | （处于核心 DAG 顶层） |
 
 ### 扩展业务域

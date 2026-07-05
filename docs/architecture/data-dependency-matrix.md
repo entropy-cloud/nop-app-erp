@@ -510,8 +510,8 @@ GROUP BY vl.subject.name
 | 业务域 | 引用的 master-data 表 | 跨业务域引用 |
 |---|---|---|
 | **inventory** | material / materialSku / warehouse / location / uom / currency / organization / acctSchema | — |
-| **purchase** | material / materialSku / partner / warehouse / uom / currency / organization / taxRate / settlementMethod / bankAccount | — |
-| **sales** | material / materialSku / partner / warehouse / uom / currency / organization / taxRate / settlementMethod / bankAccount | — |
+| **purchase** | material / materialSku / partner / warehouse / uom / currency / organization / taxRate / settlementMethod / bankAccount | **projects.project**（订单/发票按 `projectId` 建 to-one 只读引用，归集项目采购成本） |
+| **sales** | material / materialSku / partner / warehouse / uom / currency / organization / taxRate / settlementMethod / bankAccount | **projects.project**（订单/发票按 `projectId` 建 to-one 只读引用，归集项目销售成本） |
 | **finance** | subject / acctSchema / currency / partner / organization / warehouse / material | **projects.project**（凭证行辅助核算 projectId） |
 | **assets** | organization / currency / employee / location / materialCategory / subject | — |
 | **projects** | organization / currency / employee / partner / subject | — |
@@ -527,7 +527,7 @@ GROUP BY vl.subject.name
 | **logistics** | organization / partner / material 等（实测 9 to-one） | — |
 | **b2b** | organization / partner / material 等（实测 15 to-one） | — |
 
-> **终态统计**（全量核对）：17 个业务域（除 master-data 根域）orm.xml 共建立约 **369 个跨模块 to-one**（其中 inventory/purchase/sales/finance/assets/projects/manufacturing/quality/maintenance 共 267 个 + crm/cs/hr/aps/contract/drp/logistics/b2b 共约 102 个），引用约 68+ 个外部实体声明。所有业务域 ORM 层均**只引用 master-data**（跨业务域仅 finance→projects 单向合法），零循环依赖。全量 to-one 总数与外部实体声明数待 codegen 后跑脚本精确统一。DAG 验证：所有引用边单向合法，零循环依赖。
+> **终态统计**（全量核对）：17 个业务域（除 master-data 根域）orm.xml 共建立约 **369 个跨模块 to-one**（其中 inventory/purchase/sales/finance/assets/projects/manufacturing/quality/maintenance 共 267 个 + crm/cs/hr/aps/contract/drp/logistics/b2b 共约 102 个），引用约 68+ 个外部实体声明。所有业务域 ORM 层均引用 master-data；跨业务域 ORM 只读引用（机制 B 单向合法）：**finance → projects/assets**（凭证行辅助核算）+ **purchase/sales → projects**（项目采购/销售单按 `projectId` 建 to-one 归集项目成本），零循环依赖。全量 to-one 总数与外部实体声明数待 codegen 后跑脚本精确统一。DAG 验证：所有引用边单向合法，零循环依赖。
 >
 > **关于 finance → assets**：assets 关联走 `voucher_bill_r` 弱指针（`billType=AST_DEPRECIATION` + `billHeadCode` 反查资产），不是固定 `assetId` 外键——因此 finance 不建到 assets 的 to-one（业务单据反查源单应用弱指针，见 §5.1）。
 >
@@ -543,13 +543,16 @@ app-erp-master-data ←（被引用，notGenCode）
         ├── inventory / purchase / sales / assets / projects / manufacturing / quality / maintenance
         │   （单向依赖 master-data，合法）
         │
+        ├── purchase / sales → projects（只读 ORM 引用，项目采购/销售成本归集，机制 B 单向合法）
+        │
         └── finance
             （依赖 master-data + projects + assets，单向合法，finance 是顶）
 
 禁止（循环或反向）：
   inventory → purchase/sales/finance      （业务域之间走弱指针 + I*Biz）
   purchase ↔ sales                        （走弱指针 + I*Biz）
-  projects/assets → finance               （finance 引用它们，不反向）
+  projects → finance/purchase/sales       （finance/purchase/sales 引用 projects，projects 不反向）
+  assets → finance                        （finance 引用 assets，assets 不反向）
   quality → 任何业务域                     （quality 被业务域引用，不反向）
 ```
 

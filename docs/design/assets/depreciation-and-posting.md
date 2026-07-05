@@ -338,9 +338,9 @@
 
 以下为已落地实现相对上文设计的明确偏离/收窄，均为计划内 Non-Goal，留后继计划：
 
-- **资产减值/重估（VALUE_ADJUSTMENT）**：§一/§四描述的减值/重估凭证未在本工作项实现；`ErpAstValueAdjustment` 实体存在但 BizModel 仍为空 CRUD 存根。触发条件：减值测试需求启动。
+- **资产减值/重估（VALUE_ADJUSTMENT）**：§一/§四描述的减值/重估凭证已落地（plan 2026-07-05-0540-3）；`ErpAstValueAdjustmentBizModel` 实现三轴状态机（docStatus/approveStatus/posted）+ VALUE_ADJUSTMENT 过账 Provider（按 adjustmentType 分支科目分解）+ 资产净值/折旧基数联动 + 反向红冲。Deferred 仅余自动减值测试（可收回金额计算 + cron），触发条件：减值测试自动化需求 + 可收回金额数据源落地时。
 - **库存物料转固（INVENTORY 来源）**：§2.1 库存转固需跨域调 `IErpInvStockMoveBiz` 生成出库移动单，未实现；资本化 `sourceType` 仅支持 `DIRECT_PURCHASE(30)` + `CIP(20)`。触发条件：库存转固业务上线。
 - **nop-job 定时自动折旧**：§5.1 定时任务触发折旧未接线；本实现提供手动 `executeBatchDepreciation`，期末结账（1000-3）可经 I*Biz 调用。触发条件：nop-job 接线。
-- **业务类型码段**：§一/§7.1 旧表仍列 `DISPOSAL_SCRAP`/`DISPOSAL_SALE`/`VALUE_ADJUSTMENT` 等业务类型——实际 `ErpFinBusinessType` 仅含单一 `DISPOSAL(90)`（报废/出售的科目分解差异由 `DisposalAcctDocProvider` 按 `disposalType=SCRAPPED/SOLD` 内部分支处理，不拆业务类型常量）；`DEPRECIATION(70)`/`CAPITALIZATION(80)` 复用既有。§一/§7.1 的旧表行为最终正确（科目方向一致），仅业务类型命名过时。
+- **业务类型码段**：§一/§7.1 旧表仍列 `DISPOSAL_SCRAP`/`DISPOSAL_SALE` 等业务类型——实际 `ErpFinBusinessType` 含单一 `DISPOSAL(90)`（报废/出售的科目分解差异由 `DisposalAcctDocProvider` 按 `disposalType=SCRAPPED/SOLD` 内部分支处理，不拆业务类型常量）；`DEPRECIATION(70)`/`CAPITALIZATION(80)`/`VALUE_ADJUSTMENT(390)` 已落地。§一/§7.1 的旧表行为最终正确（科目方向一致），仅部分业务类型命名过时（DISPOSAL_SCRAP/DISPOSAL_SALE 应理解为 DISPOSAL 的内部分支）。
 - **期间状态值**：实现以 `ErpFinAccountingPeriod.status` 判定（`OPEN=10` 可折旧，`CLOSED=30` 等非 OPEN 拒绝），非任何 `CLOSED_FINAL` 值。
 - **批量折旧并行/汇总**：§5.2 按类别分组并行 + 汇总单张凭证多行为性能优化；基线实现为按资产串行（错误隔离）+ 每资产单张凭证，留 Follow-up。
