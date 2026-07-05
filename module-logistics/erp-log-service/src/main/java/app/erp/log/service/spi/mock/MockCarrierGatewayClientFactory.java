@@ -16,7 +16,6 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -120,7 +119,7 @@ public class MockCarrierGatewayClientFactory implements IErpLogCarrierGatewayCli
                     : ErpLogConstants.TRACKING_EVENT_DELIVERED);
 
             TrackingEvent event = new TrackingEvent();
-            event.setEventTime(LocalDateTime.now());
+            event.setEventTime(CoreMetrics.currentDateTime());
             event.setStatusCode(result.getCurrentStatus());
             event.setLocation("MOCK-HUB");
             event.setDescription(result.getCurrentStatus());

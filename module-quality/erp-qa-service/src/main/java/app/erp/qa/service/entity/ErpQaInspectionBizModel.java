@@ -80,7 +80,7 @@ public class ErpQaInspectionBizModel extends CrudBizModel<ErpQaInspection> imple
         }
 
         boolean concession = Boolean.TRUE.equals(allowConcession);
-        String aggregated = InspectionResultEvaluator.aggregate(lines, concession);
+        String aggregated = InspectionResultEvaluator.aggregate(lines, concession, inspection.getCode());
         inspection.setResult(aggregated);
         inspection.setPosted(Boolean.TRUE);
         if (concession && Objects.equals(aggregated, ErpQaConstants.INSPECTION_RESULT_CONDITIONAL)) {
@@ -163,8 +163,8 @@ public class ErpQaInspectionBizModel extends CrudBizModel<ErpQaInspection> imple
         inspection.setDocStatus(ErpQaConstants.DOC_STATUS_ACTIVE);
         inspection.setApproveStatus(ErpQaConstants.APPROVE_STATUS_UNSUBMITTED);
         inspection.setPosted(Boolean.FALSE);
-        inspection.setInspectionDate(java.time.LocalDate.now());
-        inspection.setBusinessDate(java.time.LocalDate.now());
+        inspection.setInspectionDate(CoreMetrics.today());
+        inspection.setBusinessDate(CoreMetrics.today());
         if (match != null) {
             inspection.setTemplateId(match.getTemplateId());
         }

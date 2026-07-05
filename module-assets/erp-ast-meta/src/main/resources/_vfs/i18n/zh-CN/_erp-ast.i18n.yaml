@@ -170,7 +170,6 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
-      voucher: null
       voucherId: 凭证ID
     ErpAstDisposal:
       amountFunctional: 本位币金额

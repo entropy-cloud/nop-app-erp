@@ -47,12 +47,6 @@ CREATE TABLE erp_md_subject(
   constraint PK_erp_md_subject primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_fin_voucher(
-  ID BIGINT NULL    COMMENT 'null',
-  CODE VARCHAR(50) NULL    COMMENT 'null',
-  constraint PK_erp_fin_voucher primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
 CREATE TABLE erp_md_material_category(
   ID BIGINT NULL    COMMENT 'null',
   CODE VARCHAR(50) NULL    COMMENT 'null',
@@ -369,8 +363,6 @@ CREATE TABLE erp_ast_merge(
    ALTER TABLE erp_md_currency COMMENT '币种';
                 
    ALTER TABLE erp_md_subject COMMENT '会计科目';
-                
-   ALTER TABLE erp_fin_voucher COMMENT '凭证';
                 
    ALTER TABLE erp_md_material_category COMMENT '物料分类';
                 

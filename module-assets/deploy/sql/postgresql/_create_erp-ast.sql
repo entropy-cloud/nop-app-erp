@@ -47,12 +47,6 @@ CREATE TABLE erp_md_subject(
   constraint PK_erp_md_subject primary key (id)
 );
 
-CREATE TABLE erp_fin_voucher(
-  id INT8  ,
-  code VARCHAR(50)  ,
-  constraint PK_erp_fin_voucher primary key (id)
-);
-
 CREATE TABLE erp_md_material_category(
   id INT8  ,
   code VARCHAR(50)  ,
@@ -369,8 +363,6 @@ CREATE TABLE erp_ast_merge(
       COMMENT ON TABLE erp_md_currency IS '币种';
                 
       COMMENT ON TABLE erp_md_subject IS '会计科目';
-                
-      COMMENT ON TABLE erp_fin_voucher IS '凭证';
                 
       COMMENT ON TABLE erp_md_material_category IS '物料分类';
                 

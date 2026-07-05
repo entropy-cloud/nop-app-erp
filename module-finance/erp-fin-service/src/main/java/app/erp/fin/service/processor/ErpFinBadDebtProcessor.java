@@ -23,7 +23,6 @@ import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -274,7 +273,7 @@ public class ErpFinBadDebtProcessor {
         debt.setAmount(amount);
         debt.setCurrencyId(item.getCurrencyId());
         debt.setExchangeRate(nz(item.getExchangeRate()));
-        debt.setBusinessDate(LocalDate.now());
+        debt.setBusinessDate(CoreMetrics.today());
         debt.setReason(reason);
         debt.setApprovalStatus(ErpFinConstants.APPROVE_STATUS_UNSUBMITTED);
         debt.setPeriodId(item.getPeriodId());

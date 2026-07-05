@@ -11,6 +11,8 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.commons.util.StringHelper;
 import io.nop.dao.api.IDaoProvider;
 import jakarta.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -36,6 +38,8 @@ import java.util.List;
  * <p>订单头金额族（{@code totalAmount}/{@code totalTaxAmount}/{@code totalAmountWithTax}）按行汇总（VARCHAR 写入）。
  */
 public class RequisitionToOrderConverter {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RequisitionToOrderConverter.class);
 
     private static final BigDecimal HUNDRED = new BigDecimal("100");
 
@@ -122,6 +126,7 @@ public class RequisitionToOrderConverter {
         try {
             return new BigDecimal(taxRate.trim());
         } catch (NumberFormatException e) {
+            LOG.warn("请购→订单转化遇到非法税率格式 [{}]，按零税率处理", taxRate, e);
             return null;
         }
     }

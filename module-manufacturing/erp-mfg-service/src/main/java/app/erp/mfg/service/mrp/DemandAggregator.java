@@ -27,6 +27,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.le;
 import static io.nop.api.core.beans.FilterBeans.ne;
+import io.nop.api.core.time.CoreMetrics;
 
 /**
  * MRP 独立需求整合。服务于 {@code IErpMfgMrpPlanBiz.runMrp} 的需求整合阶段（{@code mrp.md §MRP 流程：需求来源}）。
@@ -70,7 +71,7 @@ public class DemandAggregator {
 
         List<ErpMfgMrpDemand> active = clearSynthesized(dao, planId);
 
-        LocalDate planDate = plan.getBusinessDate() != null ? plan.getBusinessDate() : LocalDate.now();
+        LocalDate planDate = plan.getBusinessDate() != null ? plan.getBusinessDate() : CoreMetrics.today();
         int lineNo = nextLineNo(dao, planId);
 
         lineNo = collectSalesOrderDemands(dao, plan, planDate, lineNo, active);

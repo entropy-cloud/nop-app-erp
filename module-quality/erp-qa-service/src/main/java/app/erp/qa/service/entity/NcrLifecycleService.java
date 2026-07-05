@@ -51,7 +51,7 @@ public class NcrLifecycleService {
         IEntityDao<ErpQaNonConformance> dao = daoProvider.daoFor(ErpQaNonConformance.class);
         ErpQaNonConformance ncr = dao.newEntity();
         ncr.setCode("NCR-" + inspection.getCode());
-        ncr.setNcrDate(LocalDate.now());
+        ncr.setNcrDate(CoreMetrics.today());
         ncr.setSourceType(ErpQaConstants.NCR_SOURCE_TYPE_INSPECTION);
         ncr.setSourceCode(inspection.getCode());
         ncr.setInspectionId(inspection.getId());

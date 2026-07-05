@@ -25,12 +25,19 @@ import static io.nop.api.core.beans.FilterBeans.ne;
 /**
  * 客户信用额度校验器。供 {@link ErpSalOrderBizModel#approve} 在 SUBMITTED→APPROVED 时调用。
  *
- * <p>额度计算口径（MVP）：{@code available = ErpMdPartner.creditLimit − outstanding}，其中
- * {@code outstanding = Σ(totalAmountWithTax) of ErpSalOrder where customerId=该客户 AND approveStatus=APPROVED
- * AND deliveryStatus≠DELIVERED AND docStatus≠CANCELLED}。若 {@code available < 本单 totalAmountWithTax} 判定超额度。
+ * <p>额度计算口径：{@code available = ErpMdPartner.creditLimit − outstanding}，其中
+ * {@code outstanding = Σ(totalAmountWithTax × exchangeRate) of ErpSalOrder where customerId=该客户 AND approveStatus=APPROVED
+ * AND deliveryStatus≠DELIVERED AND docStatus≠CANCELLED}。本单含税亦按其 {@code exchangeRate} 折算为本位币后比较。
+ * {@code creditLimit} 与 outstanding/本单金额均以本位币（functional currency）口径比较，支持多币种订单。
  *
  * <p>客户主数据读取经 {@link IErpMdPartnerBiz}（跨域只读经 I*Biz 管道）；
  * sales 域 outstanding 订单聚合为本域内部只读（{@code daoFor(ErpSalOrder.class)}，对齐 plan S2 C 段保留项）。
+ *
+ * <p><b>Non-Goals（触发条件见 sales/README.md）</b>：
+ * <ul>
+ *   <li>AR 未核销余额未纳入 outstanding —— 开票后绕过信用控制的风险已知，待业财一体端到端验证启动时纳入。</li>
+ *   <li>SPECIAL_APPROVAL 审批流未实现 —— 需 use-approval 多级审批工作流迁移，属独立 successor。</li>
+ * </ul>
  */
 public class CreditLimitChecker {
 
@@ -43,10 +50,12 @@ public class CreditLimitChecker {
     IErpMdPartnerBiz mdPartnerBiz;
 
     /**
-     * @param customerId       客户 ID
-     * @param thisOrderAmount  当前审核订单的含税总额（totalAmountWithTax），null 视为 0
+     * @param customerId             客户 ID
+     * @param thisOrderAmount        当前审核订单的含税总额（totalAmountWithTax，原币），null 视为 0
+     * @param thisOrderExchangeRate  当前审核订单折算本位币的汇率（{@code amountFunctional = amountSource × rate}），null 视为 1
      */
-    public void check(Long customerId, BigDecimal thisOrderAmount, IServiceContext context) {
+    public void check(Long customerId, BigDecimal thisOrderAmount, BigDecimal thisOrderExchangeRate,
+                      IServiceContext context) {
         if (customerId == null) {
             return;
         }
@@ -60,18 +69,18 @@ public class CreditLimitChecker {
         }
         BigDecimal outstanding = sumOutstanding(customerId);
         BigDecimal available = creditLimit.subtract(outstanding);
-        BigDecimal orderAmount = thisOrderAmount == null ? BigDecimal.ZERO : thisOrderAmount;
-        if (available.compareTo(orderAmount) < 0) {
+        BigDecimal orderAmountFunctional = toFunctional(thisOrderAmount, thisOrderExchangeRate);
+        if (available.compareTo(orderAmountFunctional) < 0) {
             String level = resolveLevel();
             if (ErpSalConstants.CREDIT_CHECK_LEVEL_HARD_BLOCK.equals(level)) {
                 throw new NopException(ErpSalErrors.ERR_CREDIT_LIMIT_EXCEEDED)
                         .param(ErpSalErrors.ARG_CUSTOMER_ID, customerId)
                         .param(ErpSalErrors.ARG_CREDIT_LIMIT, creditLimit)
                         .param(ErpSalErrors.ARG_AVAILABLE, available)
-                        .param(ErpSalErrors.ARG_ORDER_AMOUNT, orderAmount);
+                        .param(ErpSalErrors.ARG_ORDER_AMOUNT, orderAmountFunctional);
             }
-            LOG.warn("客户 {} 信用额度超限（额度={}, 可用={}, 本单含税={}），策略={} 放行审核",
-                    customerId, creditLimit, available, orderAmount, level);
+            LOG.warn("客户 {} 信用额度超限（额度={}, 可用={}, 本单含税(本位币)={}），策略={} 放行审核",
+                    customerId, creditLimit, available, orderAmountFunctional, level);
         }
     }
 
@@ -94,11 +103,16 @@ public class CreditLimitChecker {
         List<ErpSalOrder> orders = dao.findAllByQuery(q);
         BigDecimal sum = BigDecimal.ZERO;
         for (ErpSalOrder o : orders) {
-            BigDecimal amt = o.getTotalAmountWithTax();
-            if (amt != null) {
-                sum = sum.add(amt);
-            }
+            sum = sum.add(toFunctional(o.getTotalAmountWithTax(), o.getExchangeRate()));
         }
         return sum;
+    }
+
+    private BigDecimal toFunctional(BigDecimal amount, BigDecimal exchangeRate) {
+        if (amount == null) {
+            return BigDecimal.ZERO;
+        }
+        BigDecimal rate = exchangeRate == null ? BigDecimal.ONE : exchangeRate;
+        return amount.multiply(rate);
     }
 }

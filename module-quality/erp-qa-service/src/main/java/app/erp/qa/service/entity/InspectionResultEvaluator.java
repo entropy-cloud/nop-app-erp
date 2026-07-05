@@ -2,6 +2,9 @@ package app.erp.qa.service.entity;
 
 import app.erp.qa.dao.entity.ErpQaInspectionLine;
 import app.erp.qa.service.ErpQaConstants;
+import app.erp.qa.service.ErpQaErrors;
+import io.nop.api.core.exceptions.NopException;
+
 import java.util.Objects;
 
 import java.math.BigDecimal;
@@ -62,13 +65,15 @@ public final class InspectionResultEvaluator {
     /**
      * 汇总全部行结果为质检单结果。
      *
-     * @param lines          质检单行
+     * @param lines           质检单行
      * @param allowConcession 是否允许让步接收（部分不合格 + 让步审批 → CONDITIONAL）
+     * @param inspectionCode  质检单编码（异常上下文）
      * @return 汇总结果（ACCEPTED / CONDITIONAL / REJECTED）
      */
-    public static String aggregate(List<ErpQaInspectionLine> lines, boolean allowConcession) {
+    public static String aggregate(List<ErpQaInspectionLine> lines, boolean allowConcession, String inspectionCode) {
         if (lines == null || lines.isEmpty()) {
-            throw new IllegalStateException("质检单无质检行，无法汇总结果");
+            throw new NopException(ErpQaErrors.ERR_INSPECTION_LINES_EMPTY)
+                    .param(ErpQaErrors.ARG_INSPECTION_CODE, inspectionCode);
         }
         boolean anyRejected = false;
         for (ErpQaInspectionLine line : lines) {

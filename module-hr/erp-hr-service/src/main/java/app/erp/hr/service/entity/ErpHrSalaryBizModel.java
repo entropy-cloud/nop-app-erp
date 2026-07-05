@@ -21,7 +21,6 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +28,7 @@ import java.util.List;
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
+import io.nop.api.core.time.CoreMetrics;
 
 /**
  * 薪酬记录聚合根 BizModel（payroll.md §五/§六/§七）。继承 {@link CrudBizModel} 标准 CRUD，
@@ -106,7 +106,7 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
         postingDispatcher.tryPostPayment(salary);
         salary = requireSalary(salaryId, context);
         salary.setPaymentStatus(ErpHrConstants.PAYMENT_PAID);
-        salary.setPaymentDate(LocalDate.now());
+        salary.setPaymentDate(CoreMetrics.today());
         dao().updateEntity(salary);
         return salary;
     }
@@ -137,7 +137,7 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
             throw new NopException(ErpHrErrors.ERR_NO_APPROVED_SALARY_FOR_BANK_FILE)
                     .param(ErpHrErrors.ARG_BANK_ID, bankId);
         }
-        String batchNo = "PAY-" + year + String.format("%02d", month) + "-" + System.nanoTime();
+        String batchNo = "PAY-" + year + String.format("%02d", month) + "-" + CoreMetrics.nanoTime();
         StringBuilder content = new StringBuilder();
         BigDecimal total = BigDecimal.ZERO;
         int count = 0;
@@ -150,13 +150,13 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
                     .append(net.toPlainString()).append(",工资\n");
             s.setPaymentBatchNo(batchNo);
             s.setPaymentStatus(ErpHrConstants.PAYMENT_PAID);
-            s.setPaymentDate(LocalDate.now());
+            s.setPaymentDate(CoreMetrics.today());
             updateEntity(s, null, context);
         }
 
         ErpHrPayrollBankFile bankFile = new ErpHrPayrollBankFile();
         bankFile.setBatchNo(batchNo);
-        bankFile.setPaymentDate(LocalDate.now());
+        bankFile.setPaymentDate(CoreMetrics.today());
         bankFile.setTotalAmount(total);
         bankFile.setRecordCount(count);
         bankFile.setFileFormat(ErpHrConstants.BANK_FILE_FORMAT_CSV);

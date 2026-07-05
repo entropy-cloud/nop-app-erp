@@ -270,9 +270,6 @@
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'>
                     <join><on leftProp="orgId" rightProp="id"/></join>
                 </to-one>
-                <to-one name="voucher" refEntityName="app.erp.fin.dao.entity.ErpFinVoucher" tagSet="pub" i18n-en:displayName='Voucher'>
-                    <join><on leftProp="voucherId" rightProp="id"/></join>
-                </to-one>
                 <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency'>
                     <join><on leftProp="currencyId" rightProp="id"/></join>
                 </to-one>
@@ -737,13 +734,6 @@
                 <column name="parentId" code="PARENT_ID" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Parent' />
                 <column name="subjectClass" code="SUBJECT_CLASS" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Subject Class' />
                 <column name="direction" code="DIRECTION" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Direction' />
-            </columns>
-        </entity>
-        <entity displayName="凭证" name="app.erp.fin.dao.entity.ErpFinVoucher"
-                notGenCode="true" biz:moduleId="erp/fin" tableName="erp_fin_voucher">
-            <columns>
-                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' />
             </columns>
         </entity>
     </entities>

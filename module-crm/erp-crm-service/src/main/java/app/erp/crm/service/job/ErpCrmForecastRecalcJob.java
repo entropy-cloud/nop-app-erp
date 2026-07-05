@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.le;
+import io.nop.api.core.time.CoreMetrics;
 
 /**
  * 定时销售预测重算 Job Bean（plan 2026-07-05-0306-1 Phase 1）。
@@ -50,7 +51,7 @@ public class ErpCrmForecastRecalcJob {
             return;
         }
         IServiceContext ctx = new ServiceContextImpl();
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.today();
         ErpCrmForecastPeriod period = findOpenPeriod(today, ctx);
         if (period == null) {
             LOG.info("erp-crm-forecast-recalc-skipped: no OPEN period covering today={}", today);

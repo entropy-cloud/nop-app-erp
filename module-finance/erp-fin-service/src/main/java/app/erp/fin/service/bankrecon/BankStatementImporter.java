@@ -17,7 +17,6 @@ import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +24,7 @@ import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
+import io.nop.api.core.time.CoreMetrics;
 
 /**
  * 银行对账单导入器。校验资金账户类型（必须 BANK）+ 幂等去重 + 写头/行。
@@ -68,7 +68,7 @@ public class BankStatementImporter {
         head.setEndingBalance(account.getCurrentBalance() != null ? account.getCurrentBalance() : BigDecimal.ZERO);
         head.setTotalDebit(BigDecimal.ZERO);
         head.setTotalCredit(BigDecimal.ZERO);
-        head.setImportTime(LocalDateTime.now());
+        head.setImportTime(CoreMetrics.currentDateTime());
         head.setDocStatus(ErpFinConstants.VOUCHER_STATUS_DRAFT);
         headDao.saveEntity(head);
 

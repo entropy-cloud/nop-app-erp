@@ -41,6 +41,11 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 与测试种子方式），仅写入 MRP 已知字段（物料/数量/日期/org），其余（供应商由参数提供，单价/金额置 0 待采购员补录）。
  * 残留风险：生成的采购单单价/金额为 0、币种由参数提供，须计划员/采购员后续完善。
  *
+ * <p><b>数据权限边界</b>：释放由 {@code ErpMfgMrpPlanLineBizModel} 的 {@code @BizMutation} 入口触发，权限校验在该入口完成；
+ * 生成的采购单/工单继承 MRP 计划的 {@code orgId}；{@code @BizMutation} 自动事务保证 MRP 行 firmed 与目标单据生成原子。
+ * 跨域持久化经 {@code IDaoProvider}（非 {@code IErpPurOrderBiz}），因目标单为骨架草稿（单价/金额 0），通用 save 管道会因
+ * 必填校验拒绝；待采购域提供 purpose-built {@code createFromMrpLine} 时可收敛为 I*Biz 调用（successor）。
+ *
  * <p><b>Non-Goal</b>：SUBCONTRACT_REQUEST（委外）释放——委外流程独立面，本期不支持。
  */
 public class MrpReleaseService {

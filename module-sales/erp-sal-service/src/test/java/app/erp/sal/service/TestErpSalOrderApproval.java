@@ -160,6 +160,28 @@ public class TestErpSalOrderApproval extends JunitAutoTestCase {
     }
 
     @Test
+    public void testCreditLimitMultiCurrencyFunctionalComparison() {
+        setCreditCheckLevel(ErpSalConstants.CREDIT_CHECK_LEVEL_HARD_BLOCK);
+        // 外币订单：原币 50 × 汇率 2 = 本位币 100，恰好占满额度
+        ErpSalOrder orderA = newOrderWithRate("SO-CREDIT-FX-A-001", "50", new BigDecimal("2"));
+        // 外币订单：原币 10 × 汇率 2 = 本位币 20，叠加 A 后超额度
+        ErpSalOrder orderB = newOrderWithRate("SO-CREDIT-FX-B-001", "10", new BigDecimal("2"));
+        ormTemplate.runInSession(() -> {
+            seedActiveCustomer(CUSTOMER_ID, new BigDecimal("100"));
+            saveOrderWithLine(orderA, "10");
+            saveOrderWithLine(orderB, "10");
+        });
+
+        assertEquals(0, submit(orderA.getId()).getStatus());
+        assertEquals(0, approve(orderA.getId()).getStatus(), "外币 A 折算本位币 100 不超额度");
+
+        assertEquals(0, submit(orderB.getId()).getStatus());
+        ApiResponse<?> bad = approve(orderB.getId());
+        assertEquals(ErpSalErrors.ERR_CREDIT_LIMIT_EXCEEDED.getErrorCode(), bad.getCode(),
+                "外币 B 折算本位币 20 叠加 A 的 outstanding(100) 超额度(100) 应拒绝");
+    }
+
+    @Test
     public void testOutstandingIncludesApprovedUndeliveredOrders() {
         setCreditCheckLevel(ErpSalConstants.CREDIT_CHECK_LEVEL_HARD_BLOCK);
         ErpSalOrder orderA = newOrder("SO-OUT-A-001", "60");
@@ -222,6 +244,10 @@ public class TestErpSalOrderApproval extends JunitAutoTestCase {
     }
 
     private ErpSalOrder newOrder(String code, String totalAmountWithTax) {
+        return newOrderWithRate(code, totalAmountWithTax, new BigDecimal("1"));
+    }
+
+    private ErpSalOrder newOrderWithRate(String code, String totalAmountWithTax, BigDecimal exchangeRate) {
         ErpSalOrder order = new ErpSalOrder();
         order.setCode(code);
         order.setOrgId(ORG_ID);
@@ -229,7 +255,7 @@ public class TestErpSalOrderApproval extends JunitAutoTestCase {
         order.setWarehouseId(WAREHOUSE_ID);
         order.setBusinessDate(LocalDate.of(2026, 7, 1));
         order.setCurrencyId(CURRENCY_ID);
-        order.setExchangeRate(new BigDecimal("1"));
+        order.setExchangeRate(exchangeRate);
         order.setTotalAmountWithTax(new BigDecimal(totalAmountWithTax));
         order.setTotalAmount(new BigDecimal(totalAmountWithTax));
         order.setDocStatus(ErpSalConstants.DOC_STATUS_DRAFT);

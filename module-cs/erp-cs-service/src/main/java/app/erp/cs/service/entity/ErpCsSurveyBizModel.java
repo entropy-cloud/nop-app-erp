@@ -23,6 +23,7 @@ import java.util.List;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.isNull;
 import static io.nop.api.core.beans.FilterBeans.lt;
+import io.nop.api.core.time.CoreMetrics;
 
 /**
  * 满意度调查 BizModel。权威：{@code docs/design/customer-service/csat.md}、
@@ -70,7 +71,7 @@ public class ErpCsSurveyBizModel extends CrudBizModel<ErpCsSurvey> implements IE
         survey.setSurveyChannel(ErpCsConstants.SURVEY_CHANNEL_PORTAL);
         int delayHours = ErpCsConfigs.getSurveySendDelayHours();
         // delay=0 立即发送（surveySentAt=now，状态 SENT）；delay>0 留空（状态 PENDING，待 nop-job 延迟发送）
-        survey.setSurveySentAt(delayHours <= 0 ? LocalDateTime.now() : null);
+        survey.setSurveySentAt(delayHours <= 0 ? CoreMetrics.currentDateTime() : null);
         saveEntity(survey, null, context);
         return survey;
     }
@@ -107,7 +108,7 @@ public class ErpCsSurveyBizModel extends CrudBizModel<ErpCsSurvey> implements IE
         survey.setNpsScore(npsScore);
         survey.setCesScore(cesScore);
         survey.setComment(comment);
-        survey.setRespondedAt(LocalDateTime.now());
+        survey.setRespondedAt(CoreMetrics.currentDateTime());
         // NPS 分类（派生，不持久化——ORM 无分类列）
         dao().updateEntity(survey);
         return survey;
@@ -118,7 +119,7 @@ public class ErpCsSurveyBizModel extends CrudBizModel<ErpCsSurvey> implements IE
     public List<ErpCsSurvey> findSurveyReminders(@Optional @Name("reminderHours") Integer reminderHours,
                                                   IServiceContext context) {
         int hours = reminderHours != null ? reminderHours : ErpCsConfigs.getSurveyReminderHours();
-        LocalDateTime threshold = LocalDateTime.now().minusHours(hours);
+        LocalDateTime threshold = CoreMetrics.currentDateTime().minusHours(hours);
         QueryBean q = new QueryBean();
         // SENT：surveySentAt 非空 且 respondedAt 空 且 surveySentAt < now - reminderHours
         q.addFilter(isNull("respondedAt"));
@@ -131,7 +132,7 @@ public class ErpCsSurveyBizModel extends CrudBizModel<ErpCsSurvey> implements IE
     public List<ErpCsSurvey> findExpiredSurveys(@Optional @Name("expireDays") Integer expireDays,
                                                  IServiceContext context) {
         int days = expireDays != null ? expireDays : ErpCsConfigs.getSurveyExpireDays();
-        LocalDateTime threshold = LocalDateTime.now().minusDays(days);
+        LocalDateTime threshold = CoreMetrics.currentDateTime().minusDays(days);
         QueryBean q = new QueryBean();
         q.addFilter(isNull("respondedAt"));
         q.addFilter(lt("surveySentAt", threshold));

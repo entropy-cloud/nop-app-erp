@@ -27,7 +27,6 @@ import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -134,7 +133,7 @@ public class ErpMfgWorkOrderProcessor {
         }
         wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_CLOSED);
         if (wo.getActualEndDate() == null) {
-            wo.setActualEndDate(LocalDate.now());
+            wo.setActualEndDate(CoreMetrics.today());
         }
         workOrderDao().updateEntity(wo);
         return wo;
@@ -194,7 +193,7 @@ public class ErpMfgWorkOrderProcessor {
 
         if (willFinish) {
             wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED);
-            wo.setActualEndDate(LocalDate.now());
+            wo.setActualEndDate(CoreMetrics.today());
         }
         workOrderDao().updateEntity(wo);
         return wo;
@@ -302,7 +301,7 @@ public class ErpMfgWorkOrderProcessor {
     protected void doStart(ErpMfgWorkOrder wo, IServiceContext context) {
         wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS);
         if (wo.getActualStartDate() == null) {
-            wo.setActualStartDate(LocalDate.now());
+            wo.setActualStartDate(CoreMetrics.today());
         }
         workOrderDao().updateEntity(wo);
     }
@@ -328,7 +327,7 @@ public class ErpMfgWorkOrderProcessor {
         StockMoveRequest request = new StockMoveRequest();
         request.setMoveType(ErpMfgConstants.MOVE_TYPE_MANUFACTURING);
         request.setOrgId(wo.getOrgId());
-        request.setBusinessDate(wo.getBusinessDate() != null ? wo.getBusinessDate() : LocalDate.now());
+        request.setBusinessDate(wo.getBusinessDate() != null ? wo.getBusinessDate() : CoreMetrics.today());
         request.setDestWarehouseId(destWarehouseId);
         request.setCurrencyId(wo.getCurrencyId());
         request.setRelatedBillType(ErpMfgConstants.RELATED_BILL_TYPE_MFG_WORK_ORDER);

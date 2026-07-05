@@ -9,8 +9,6 @@ alter table erp_md_currency add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_subject add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
-alter table erp_fin_voucher add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
-
 alter table erp_md_material_category add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ast_asset_category add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -47,9 +45,6 @@ alter table erp_md_currency add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_md_subject drop primary key;
 alter table erp_md_subject add primary key (NOP_TENANT_ID, ID);
-
-alter table erp_fin_voucher drop primary key;
-alter table erp_fin_voucher add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_md_material_category drop primary key;
 alter table erp_md_material_category add primary key (NOP_TENANT_ID, ID);

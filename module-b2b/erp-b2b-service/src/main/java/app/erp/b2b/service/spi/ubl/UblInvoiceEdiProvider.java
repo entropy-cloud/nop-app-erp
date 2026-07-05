@@ -13,9 +13,9 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import io.nop.api.core.time.CoreMetrics;
 
 /**
  * UBL Invoice EDI Provider（出站 AR 发票生成）。
@@ -68,7 +68,7 @@ public class UblInvoiceEdiProvider implements IErpB2bEdiProvider {
         xml.append(" xmlns:cbc=\"").append(ErpB2bConstants.UBL_NS_CBC).append("\">");
 
         xml.append("<cbc:ID>").append(escapeXml(relatedBillCode)).append("</cbc:ID>");
-        xml.append("<cbc:IssueDate>").append(LocalDate.now()).append("</cbc:IssueDate>");
+        xml.append("<cbc:IssueDate>").append(CoreMetrics.today()).append("</cbc:IssueDate>");
 
         xml.append("<cac:AccountingSupplierParty><cac:Party><cbc:EndpointID/></cac:Party></cac:AccountingSupplierParty>");
         xml.append("<cac:AccountingCustomerParty><cac:Party><cbc:EndpointID/></cac:Party></cac:AccountingCustomerParty>");

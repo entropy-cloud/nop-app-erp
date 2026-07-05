@@ -19,7 +19,6 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -132,7 +131,7 @@ public class SafetyStockEngine {
 
         calc.setCalculatedSafetyStock(safetyStock);
         calc.setCalculatedRop(rop);
-        calc.setLastCalculatedAt(LocalDateTime.now());
+        calc.setLastCalculatedAt(CoreMetrics.currentDateTime());
         daoProvider.daoFor(ErpInvDrpSafetyStockCalc.class).updateEntity(calc);
         return calc;
     }

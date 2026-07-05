@@ -47,7 +47,7 @@ public class MockSignatureProvider implements IErpCtSignatureProvider {
 
     @Override
     public SignatureInitResponse initSignature(SignatureInitRequest request) {
-        String providerRequestId = "MOCK-REQ-" + System.nanoTime();
+        String providerRequestId = "MOCK-REQ-" + CoreMetrics.nanoTime();
         queryCounts.put(providerRequestId, new AtomicInteger(0));
 
         SignatureInitResponse resp = new SignatureInitResponse();

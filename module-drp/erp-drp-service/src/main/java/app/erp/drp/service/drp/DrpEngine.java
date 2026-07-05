@@ -13,11 +13,11 @@ import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import io.nop.api.core.time.CoreMetrics;
 
 /**
  * DRP 净需求计算引擎。服务于 {@code IErpDrpPlanBiz.runDrp}（{@code drp/README.md §DRP 流程}、
@@ -109,7 +109,7 @@ public class DrpEngine {
         }
 
         plan.setTotalReplenishmentQty(totalReplenishment);
-        plan.setRunAt(LocalDateTime.now());
+        plan.setRunAt(CoreMetrics.currentDateTime());
         // runBy（运行人）由 BizModel 层从 IServiceContext 注入用户身份后回写；helper 引擎不持有用户上下文
         plan.setStatus(ErpDrpConstants.DRP_PLAN_STATUS_COMPUTED);
         daoProvider.daoFor(ErpDrpPlan.class).updateEntity(plan);

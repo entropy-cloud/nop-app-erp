@@ -132,9 +132,6 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
     public static final String PROP_NAME_org = "org";
     
     /* relation:  */
-    public static final String PROP_NAME_voucher = "voucher";
-    
-    /* relation:  */
     public static final String PROP_NAME_currency = "currency";
     
 
@@ -1413,29 +1410,6 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_org, refEntity,()->{
            
                            this.setOrgId(refEntity.getId());
-                       
-           });
-           }
-       
-    }
-       
-    /**
-     * 
-     */
-    public final app.erp.fin.dao.entity.ErpFinVoucher getVoucher(){
-       return (app.erp.fin.dao.entity.ErpFinVoucher)internalGetRefEntity(PROP_NAME_voucher);
-    }
-
-    public final void setVoucher(app.erp.fin.dao.entity.ErpFinVoucher refEntity){
-   
-           if(refEntity == null){
-           
-                   this.setVoucherId(null);
-               
-           }else{
-           internalSetRefEntity(PROP_NAME_voucher, refEntity,()->{
-           
-                           this.setVoucherId(refEntity.getId());
                        
            });
            }

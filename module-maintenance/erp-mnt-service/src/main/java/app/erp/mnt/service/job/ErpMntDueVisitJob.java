@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
+import io.nop.api.core.time.CoreMetrics;
 
 /**
  * 定时到期访问生成 Job Bean（plan 2026-07-05-0306-1 Phase 1）。
@@ -29,7 +30,7 @@ public class ErpMntDueVisitJob {
 
     /**
      * 定时触发入口（无参方法，BeanMethodJobInvoker 反射调用）。
-     * cron 空值跳过；非空时以 LocalDate.now() 为基准生成到期访问。
+     * cron 空值跳过；非空时以 CoreMetrics.today() 为基准生成到期访问。
      */
     public void execute() {
         String cron = resolveCronConfig();
@@ -38,7 +39,7 @@ public class ErpMntDueVisitJob {
             return;
         }
         IServiceContext ctx = new ServiceContextImpl();
-        LocalDate asOfDate = LocalDate.now();
+        LocalDate asOfDate = CoreMetrics.today();
         try {
             Integer generated = runGenerateDueVisits(asOfDate, ctx);
             LOG.info("erp-mnt-due-visit-done: asOfDate={} generated={}", asOfDate, generated);

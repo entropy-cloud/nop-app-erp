@@ -15,7 +15,7 @@ import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
+import io.nop.api.core.time.CoreMetrics;
 
 /**
  * 作业卡状态机编排 Processor（{@code processor-extension-pattern.md} 两层结构：Facade + Processor）。
@@ -143,7 +143,7 @@ public class ErpMfgJobCardProcessor {
         log.setJobCardId(jc.getId());
         log.setWorkOrderId(jc.getWorkOrderId());
         log.setOperatorId(record.getOperatorId());
-        log.setWorkDate(record.getWorkDate() != null ? record.getWorkDate() : LocalDate.now());
+        log.setWorkDate(record.getWorkDate() != null ? record.getWorkDate() : CoreMetrics.today());
         log.setDurationMins(nz(record.getDurationMins()));
         log.setSetupMins(nz(record.getSetupMins()));
         log.setRunMins(nz(record.getRunMins()));

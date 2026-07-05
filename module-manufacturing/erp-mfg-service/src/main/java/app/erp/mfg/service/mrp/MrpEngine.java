@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import io.nop.api.core.time.CoreMetrics;
 
 /**
  * MRP 计算引擎。服务于 {@code IErpMfgMrpPlanBiz.runMrp}（{@code mrp.md §MRP 流程}）。
@@ -86,7 +87,7 @@ public class MrpEngine {
         IEntityDao<ErpMfgMrpPlanLine> lineDao = daoProvider.daoFor(ErpMfgMrpPlanLine.class);
         clearLines(lineDao, planId);
 
-        LocalDate defaultDate = plan.getBusinessDate() != null ? plan.getBusinessDate() : LocalDate.now();
+        LocalDate defaultDate = plan.getBusinessDate() != null ? plan.getBusinessDate() : CoreMetrics.today();
         int[] lineNo = {10};
 
         for (TopDemand top : topDemandsByMaterial(demands)) {

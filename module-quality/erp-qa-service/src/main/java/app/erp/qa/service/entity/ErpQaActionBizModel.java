@@ -14,7 +14,7 @@ import io.nop.core.context.IServiceContext;
 import java.util.Objects;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import io.nop.api.core.time.CoreMetrics;
 
 /**
  * CAPA BizModel。实现纠正预防措施生命周期（{@code docs/design/quality/state-machine.md §NCR 与 CAPA 的关系`}）。
@@ -46,7 +46,7 @@ public class ErpQaActionBizModel extends CrudBizModel<ErpQaAction> implements IE
         ErpQaAction action = requireAction(actionId, context);
         requireActionStatus(action, ErpQaConstants.ACTION_STATUS_IN_PROGRESS, "IN_PROGRESS");
         action.setStatus(ErpQaConstants.ACTION_STATUS_COMPLETED);
-        action.setCompletedAt(LocalDateTime.now());
+        action.setCompletedAt(CoreMetrics.currentDateTime());
         // completedBy 为 Long（职员 ID），IUserContext userId 为 String；此处留空，由前端按职员录入
         dao().updateEntity(action);
         return action;

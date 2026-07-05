@@ -36,15 +36,6 @@
                 <!--接口地址-->
                 <col id="apiEndpoint" sortable="true"/>
 
-                <!--API密钥-->
-                <col id="apiKey" sortable="true"/>
-
-                <!--API密钥-->
-                <col id="apiSecret" sortable="true"/>
-
-                <!--完整凭证-->
-                <col id="credentials" sortable="true"/>
-
                 <!--追踪URL模板-->
                 <col id="trackingUrlTemplate" sortable="true"/>
 
@@ -85,13 +76,11 @@
  id[ID] carrierId[承运商ID]
  orgId[业务组织] configCode[配置编码]
  serviceType[服务类型] apiEndpoint[接口地址]
- apiKey[API密钥] apiSecret[API密钥]
- credentials[完整凭证] trackingUrlTemplate[追踪URL模板]
- printFormat[面单打印格式] additionalProperties[扩展参数]
- isActive[是否启用] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ trackingUrlTemplate[追踪URL模板] printFormat[面单打印格式]
+ additionalProperties[扩展参数] isActive[是否启用]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-承运商配置" i18n-en:title="Add Carrier Config">
@@ -99,10 +88,9 @@
  id[ID] carrierId[承运商ID]
  orgId[业务组织] configCode[配置编码]
  serviceType[服务类型] apiEndpoint[接口地址]
- apiKey[API密钥] apiSecret[API密钥]
- credentials[完整凭证] trackingUrlTemplate[追踪URL模板]
- printFormat[面单打印格式] additionalProperties[扩展参数]
- isActive[是否启用] remark[备注]
+ trackingUrlTemplate[追踪URL模板] printFormat[面单打印格式]
+ additionalProperties[扩展参数] isActive[是否启用]
+ remark[备注] 
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-承运商配置" i18n-en:title="Edit Carrier Config">
@@ -110,11 +98,9 @@
  id[ID] carrierId[承运商ID]
  orgId[业务组织] configCode[配置编码]
  serviceType[服务类型] apiEndpoint[接口地址]
- apiKey[API密钥] apiSecret[API密钥]
- credentials[完整凭证] trackingUrlTemplate[追踪URL模板]
- printFormat[面单打印格式] additionalProperties[扩展参数]
- isActive[是否启用] remark[备注]
- delVersion[逻辑删除版本] 
+ trackingUrlTemplate[追踪URL模板] printFormat[面单打印格式]
+ additionalProperties[扩展参数] isActive[是否启用]
+ remark[备注] delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

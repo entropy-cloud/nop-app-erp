@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import io.nop.api.core.time.CoreMetrics;
 
 /**
  * 员工借款过账派发器。借款 APPROVED 后组装 {@link PostingEvent}(EMPLOYEE_ADVANCE) 经 {@link FinPostingExecutor}
@@ -68,7 +69,7 @@ public class EmployeeAdvancePostingDispatcher {
         event.setAcctSchemaId(resolveAcctSchemaId(orgId));
         event.setCurrencyId(currencyId != null ? currencyId : 1L);
         event.setExchangeRate(BigDecimal.ONE);
-        event.setVoucherDate(voucherDate != null ? voucherDate : LocalDate.now());
+        event.setVoucherDate(voucherDate != null ? voucherDate : CoreMetrics.today());
         Map<String, Object> billData = new LinkedHashMap<>();
         billData.put(ErpFinConstants.BILL_DATA_EMPLOYEE_ID, partnerId);
         billData.put("TOTAL", netAmount);

@@ -26,7 +26,6 @@ import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import io.nop.api.core.time.CoreMetrics;
 
 /**
  * 召回事件 BizModel。在 {@link CrudBizModel} 标准 CRUD 之上实现召回 5 态状态机
@@ -94,7 +94,7 @@ public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IE
         recall.setApproveStatus(ErpQaConstants.APPROVE_STATUS_UNSUBMITTED);
         recall.setNotifyCustomer(Boolean.FALSE);
         if (recall.getBusinessDate() == null) {
-            recall.setBusinessDate(LocalDate.now());
+            recall.setBusinessDate(CoreMetrics.today());
         }
         saveEntity(recall, null, context);
         return recall;
@@ -132,7 +132,7 @@ public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IE
         ErpQaRecall recall = requireRecall(recallId, context);
         requireRecallStatus(recall, ErpQaConstants.RECALL_STATUS_IN_PROGRESS, "IN_PROGRESS");
         for (ErpQaRecallTarget target : loadTargets(recallId, null, context)) {
-            target.setNotifiedAt(LocalDateTime.now());
+            target.setNotifiedAt(CoreMetrics.currentDateTime());
             target.setNotifiedBy(context.getUserId());
             target.setReturnStatus(ErpQaConstants.RECALL_TARGET_RETURN_NOTIFIED);
             recallTargetBiz.updateEntity(target, null, context);
@@ -217,7 +217,7 @@ public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IE
         data.put("deliveryId", target.getSalesDeliveryId());
         data.put("warehouseId", warehouseId);
         data.put("currencyId", currencyId);
-        data.put("businessDate", LocalDate.now().toString());
+        data.put("businessDate", CoreMetrics.today().toString());
         data.put("docStatus", ErpQaConstants.SAL_DOC_STATUS_DRAFT);
         data.put("approveStatus", ErpQaConstants.SAL_APPROVE_STATUS_UNSUBMITTED);
         data.put("lines", java.util.Collections.singletonList(line));

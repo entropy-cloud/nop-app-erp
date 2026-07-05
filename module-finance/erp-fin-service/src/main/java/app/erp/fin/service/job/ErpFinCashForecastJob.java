@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
+import io.nop.api.core.time.CoreMetrics;
 
 /**
  * 定时现金预测刷新 Job Bean（plan 2026-07-05-0306-1 Phase 1）。
@@ -39,7 +40,7 @@ public class ErpFinCashForecastJob {
             return;
         }
         IServiceContext ctx = new ServiceContextImpl();
-        LocalDate fromDate = LocalDate.now();
+        LocalDate fromDate = CoreMetrics.today();
         LocalDate toDate = fromDate.plusDays(resolveForecastWindowDays());
         try {
             int generated = runRefreshForecast(fromDate, toDate, ctx);

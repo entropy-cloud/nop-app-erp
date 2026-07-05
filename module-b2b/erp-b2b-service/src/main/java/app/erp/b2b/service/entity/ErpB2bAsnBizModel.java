@@ -284,7 +284,7 @@ public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2
 
         // 建 ASN
         ErpB2bAsn asn = new ErpB2bAsn();
-        asn.setCode("ASN-" + System.currentTimeMillis());
+        asn.setCode("ASN-" + CoreMetrics.currentTimeMillis());
         asn.setSourceEdiDocId(ediDoc.getId());
         asn.setPartnerId(profile.getPartnerId());
         asn.setRelatedBillType(ErpB2bConstants.RELATED_BILL_TYPE_PO_ORDER);

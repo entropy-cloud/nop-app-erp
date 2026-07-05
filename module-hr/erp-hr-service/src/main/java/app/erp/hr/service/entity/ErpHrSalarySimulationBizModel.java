@@ -25,7 +25,6 @@ import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,6 +35,7 @@ import java.util.Map;
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
+import io.nop.api.core.time.CoreMetrics;
 
 /**
  * 薪酬模拟聚合根 BizModel（payroll-simulation.md §一/§二/§三/§四/§五）。继承 {@link CrudBizModel} 标准 CRUD，
@@ -119,7 +119,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         adj.setAdjustedAmount(adjustedAmount != null ? adjustedAmount : BigDecimal.ZERO);
         adj.setAdjustmentReason(reason);
         adj.setAdjustedBy(context.getUserId());
-        adj.setAdjustedAt(LocalDateTime.now());
+        adj.setAdjustedAt(CoreMetrics.currentDateTime());
 
         IEntityDao<ErpHrSalarySimulationItemAdjustment> adjDao = daoProvider().daoFor(ErpHrSalarySimulationItemAdjustment.class);
         if (isNew) {
@@ -409,7 +409,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         }
         simulation.setStatus(ErpHrConstants.SIMULATION_STATUS_APPROVED);
         simulation.setReviewerId(reviewerId);
-        simulation.setReviewedAt(LocalDateTime.now());
+        simulation.setReviewedAt(CoreMetrics.currentDateTime());
         updateEntity(simulation, null, context);
         return simulation;
     }
@@ -520,7 +520,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
 
         simulation.setStatus(ErpHrConstants.SIMULATION_STATUS_CONVERTED);
         simulation.setConvertedSalaryId(firstConvertedId);
-        simulation.setConvertedAt(LocalDateTime.now());
+        simulation.setConvertedAt(CoreMetrics.currentDateTime());
         updateEntity(simulation, null, context);
         return simulation;
     }
@@ -719,7 +719,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
     }
 
     String buildSimulationCode(int year, int month) {
-        return "SIM-" + year + String.format("%02d", month) + "-" + System.nanoTime();
+        return "SIM-" + year + String.format("%02d", month) + "-" + CoreMetrics.nanoTime();
     }
 
     static final List<String> SALARY_ITEM_CODES = Arrays.asList(
@@ -864,7 +864,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         adj.setAdjustedAmount(adjustedAmount);
         adj.setAdjustmentReason(reason);
         adj.setAdjustedBy(context.getUserId());
-        adj.setAdjustedAt(LocalDateTime.now());
+        adj.setAdjustedAt(CoreMetrics.currentDateTime());
         IEntityDao<ErpHrSalarySimulationItemAdjustment> dao = daoProvider().daoFor(ErpHrSalarySimulationItemAdjustment.class);
         if (isNew) {
             dao.saveEntity(adj);

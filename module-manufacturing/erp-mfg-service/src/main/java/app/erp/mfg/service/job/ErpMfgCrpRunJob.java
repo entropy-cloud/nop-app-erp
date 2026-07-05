@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import io.nop.api.core.time.CoreMetrics;
 
 /**
  * 定时 CRP 产能负荷计算 Job Bean（plan 2026-07-05-0306-1 Phase 1）。
@@ -42,7 +43,7 @@ public class ErpMfgCrpRunJob {
             return;
         }
         IServiceContext ctx = new ServiceContextImpl();
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.today();
         int windowMonths = resolveWindowMonths();
         LocalDate periodFrom = today.withDayOfMonth(1);
         LocalDate periodTo = YearMonth.from(today).plusMonths(windowMonths).atEndOfMonth();

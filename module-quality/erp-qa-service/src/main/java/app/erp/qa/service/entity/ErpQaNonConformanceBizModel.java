@@ -16,10 +16,9 @@ import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 import java.util.Objects;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import io.nop.api.core.time.CoreMetrics;
 
 /**
  * NCR BizModel。在 {@link CrudBizModel} 标准 CRUD 之上实现 NCR 5 态状态机
@@ -74,7 +73,7 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
         if (resolution != null) {
             ncr.setResolution(resolution);
         }
-        ncr.setResolvedAt(LocalDateTime.now());
+        ncr.setResolvedAt(CoreMetrics.currentDateTime());
         dao().updateEntity(ncr);
         return ncr;
     }
@@ -110,7 +109,7 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
         // NCR severity(LOW/NORMAL/HIGH/CRITICAL=10/20/30/40) 与 recall severity(LOW/MEDIUM/HIGH/CRITICAL=10/20/30/40) 码值对齐
         String severity = ncr.getSeverity() != null ? ncr.getSeverity() : ErpQaConstants.RECALL_SEVERITY_MEDIUM;
         data.put("severityLevel", severity);
-        data.put("businessDate", LocalDate.now().toString());
+        data.put("businessDate", CoreMetrics.today().toString());
         data.put("rootCause", ncr.getDescription());
         return recallBiz.register(data, context);
     }

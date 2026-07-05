@@ -12,6 +12,8 @@ import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -36,6 +38,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p>权威：{@code docs/design/finance/costing-methods.md}（STANDARD 方法）。
  */
 public class StandardCostResolver {
+
+    private static final Logger LOG = LoggerFactory.getLogger(StandardCostResolver.class);
 
     static final String STATUS_FIRMED = "FIRMED";
 
@@ -103,8 +107,9 @@ public class StandardCostResolver {
             if (value != null) {
                 return new BigDecimal(value.toString());
             }
-        } catch (Exception ignored) {
-            // 属性不存在时反射读取抛错，返回 null 由调用方抛 ERR_STANDARD_COST_NOT_AVAILABLE
+        } catch (Exception e) {
+            // 属性不存在时反射读取抛错（预期，当前 Non-Goal 路径），记录 debug 便于诊断，返回 null 由调用方抛 ERR_STANDARD_COST_NOT_AVAILABLE
+            LOG.debug("standardCost 属性读取失败（物料 {}），返回 null 走标准成本缺失处理", materialId, e);
         }
         return null;
     }

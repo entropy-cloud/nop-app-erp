@@ -12,9 +12,9 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import io.nop.api.core.time.CoreMetrics;
 
 /**
  * 备件领料出库服务。按行构造 {@link StockMoveRequest}（OUTGOING，relatedBillType 非空自动 DONE 扣余额）
@@ -35,7 +35,7 @@ public class SparePartIssueService {
         StockMoveRequest request = new StockMoveRequest();
         request.setMoveType(ErpMntConstants.MOVE_TYPE_OUTGOING);
         request.setOrgId(usage.getOrgId());
-        request.setBusinessDate(usage.getBusinessDate() != null ? usage.getBusinessDate() : LocalDate.now());
+        request.setBusinessDate(usage.getBusinessDate() != null ? usage.getBusinessDate() : CoreMetrics.today());
         request.setSourceWarehouseId(usage.getWarehouseId());
         request.setRelatedBillType(ErpMntConstants.RELATED_BILL_TYPE_MNT_SPARE_PART);
         request.setRelatedBillCode(usage.getCode());

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import io.nop.api.core.time.CoreMetrics;
 
 /**
  * DRP 计划释放。服务于 {@code IErpDrpLineBiz.releaseLine/releaseApproved}（{@code drp/state-machine.md §场景 C}、
@@ -70,14 +71,14 @@ public class DrpReleaseService {
             Long sourceWh = param.getPreferredSourceWarehouseId() != null
                     ? param.getPreferredSourceWarehouseId() : line.getSourceWarehouseId();
             billType = ErpDrpConstants.ORDER_BILL_TYPE_TRANSFER_ORDER;
-            billCode = releaseToTransferOrder(line, sourceWh, LocalDate.now());
+            billCode = releaseToTransferOrder(line, sourceWh, CoreMetrics.today());
         } else if (ErpDrpConstants.REPLENISHMENT_TYPE_PURCHASE.equals(line.getReplenishmentType())) {
             if (param.getPreferredSupplierId() == null) {
                 throw new NopException(ErpDrpErrors.ERR_DRP_NO_PREFERRED_SUPPLIER)
                         .param(ErpDrpErrors.ARG_DRP_LINE_ID, lineId);
             }
             billType = ErpDrpConstants.ORDER_BILL_TYPE_PURCHASE_ORDER;
-            billCode = releaseToPurchaseOrder(line, param.getPreferredSupplierId(), LocalDate.now());
+            billCode = releaseToPurchaseOrder(line, param.getPreferredSupplierId(), CoreMetrics.today());
         } else {
             throw new NopException(ErpDrpErrors.ERR_DRP_LINE_NOT_SUGGESTED)
                     .param(ErpDrpErrors.ARG_DRP_LINE_ID, lineId);

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpB2bPartnerProfile.xmeta">
 
-    <props/>
+    <props>
+        <!-- 安全：凭证字段从 GraphQL schema 移除并禁止查询/排序，防止密钥明文泄露。请勿删除此屏蔽。 -->
+        <prop name="webhookSecret" published="false" queryable="false" sortable="false" x:override="merge"/>
+    </props>
 </meta>

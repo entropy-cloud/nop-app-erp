@@ -4,7 +4,6 @@ drop table  if exists  erp_md_location;
 drop table  if exists  erp_md_employee;
 drop table  if exists  erp_md_currency;
 drop table  if exists  erp_md_subject;
-drop table  if exists  erp_fin_voucher;
 drop table  if exists  erp_md_material_category;
 drop table  if exists  erp_ast_asset_category;
 drop table  if exists  erp_ast_asset;

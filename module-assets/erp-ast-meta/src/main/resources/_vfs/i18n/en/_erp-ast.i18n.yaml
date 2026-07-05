@@ -170,7 +170,6 @@ prop:
       amountFunctional: Amt (Functional)
       asset: Asset
       org: Org
-      voucher: Voucher
       currency: Currency
     ErpAstDisposal:
       id: ID

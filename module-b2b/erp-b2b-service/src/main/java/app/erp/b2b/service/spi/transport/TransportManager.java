@@ -65,14 +65,14 @@ public class TransportManager {
                 ErpB2bConfigs.DEFAULT_MFT_MAX_RETRIES);
 
         LocalDateTime startTime = CoreMetrics.currentDateTime();
-        long startNanos = System.nanoTime();
+        long startNanos = CoreMetrics.nanoTime();
 
         NopException lastFailure = null;
         boolean retryable = false;
         for (int attempt = 0; attempt <= maxRetries; attempt++) {
             try {
                 TransportResult result = adapter.send(config, payload, fileName);
-                long durationMs = (System.nanoTime() - startNanos) / 1_000_000;
+                long durationMs = (CoreMetrics.nanoTime() - startNanos) / 1_000_000;
                 writeLog(config, ediDocId, ErpB2bConstants.DIRECTION_OUTBOUND,
                         ErpB2bConstants.MFT_STATUS_SENT, result, null, startTime, durationMs, 0);
                 markEdiDocSent(ediDocId);
@@ -88,7 +88,7 @@ public class TransportManager {
             }
         }
 
-        long durationMs = (System.nanoTime() - startNanos) / 1_000_000;
+        long durationMs = (CoreMetrics.nanoTime() - startNanos) / 1_000_000;
         String errorCode = retryable ? "MFT_RETRY_EXHAUSTED" : "MFT_NON_RETRYABLE";
         String errorMsg = (retryable ? "[传输重试耗尽] " : "[传输不可重试错误] ")
                 + (lastFailure != null ? lastFailure.getMessage() : "unknown");

@@ -397,17 +397,6 @@
         }
 
 
-        private Map<String,Object> _voucher;
-
-        public Map<String,Object> getVoucher(){
-            return _voucher;
-        }
-
-        public void setVoucher(Map<String,Object> value){
-            this._voucher = value;
-        }
-
-
         private Map<String,Object> _currency;
 
         public Map<String,Object> getCurrency(){

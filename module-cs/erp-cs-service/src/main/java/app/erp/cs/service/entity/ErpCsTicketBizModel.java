@@ -30,6 +30,7 @@ import java.util.Objects;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.lt;
+import io.nop.api.core.time.CoreMetrics;
 
 /**
  * 客服工单 BizModel。权威：{@code docs/design/customer-service/state-machine.md}、
@@ -95,7 +96,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
         }
         ticket.setStatus(ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
         // 计时起点：首次进入 IN_PROGRESS（见 plan Decision：startDateTime=首次 IN_PROGRESS 时间）
-        ticket.setStartDateTime(LocalDateTime.now());
+        ticket.setStartDateTime(CoreMetrics.currentDateTime());
         dao().updateEntity(ticket);
         writeAction(ticket, ErpCsConstants.ACTION_TYPE_NOTE, from, ErpCsConstants.TICKET_STATUS_IN_PROGRESS,
                 "开始处理", context);
@@ -112,7 +113,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
         if (!Objects.equals(from, ErpCsConstants.TICKET_STATUS_IN_PROGRESS)) {
             throw illegalTransition(ticket, from, ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
         }
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = CoreMetrics.currentDateTime();
         // 停 SLA 计时算 duration（分钟）；startDateTime 为空时 duration 留空
         if (ticket.getStartDateTime() != null) {
             long minutes = SlaDeadlineCalculator.minutesBetween(ticket.getStartDateTime(), now);
@@ -153,7 +154,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
                     .param(ErpCsErrors.ARG_TICKET_CODE, ticket.getCode());
         }
         ticket.setStatus(ErpCsConstants.TICKET_STATUS_CLOSED);
-        ticket.setEndDateTime(LocalDateTime.now());
+        ticket.setEndDateTime(CoreMetrics.currentDateTime());
         dao().updateEntity(ticket);
         writeAction(ticket, ErpCsConstants.ACTION_TYPE_CLOSE, from, ErpCsConstants.TICKET_STATUS_CLOSED,
                 "关闭工单", context);
@@ -218,7 +219,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
             return ticket;
         }
         ticket.setSlaPolicyId(policy.getId());
-        LocalDateTime deadline = SlaDeadlineCalculator.calculate(LocalDateTime.now(), policy);
+        LocalDateTime deadline = SlaDeadlineCalculator.calculate(CoreMetrics.currentDateTime(), policy);
         ticket.setDeadlineDateTime(deadline);
         // priority 变更重算时保留原 startDateTime（plan Phase 1 item 3）
         dao().updateEntity(ticket);
@@ -231,7 +232,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
         if (!ErpCsConfigs.isSlaEnabled()) {
             return new ArrayList<>();
         }
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = CoreMetrics.currentDateTime();
         QueryBean q = new QueryBean();
         // status IN (ASSIGNED, IN_PROGRESS) AND deadlineDateTime < now AND isSlaCompleted=false
         q.addFilter(in("status", java.util.Arrays.asList(
@@ -254,7 +255,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
     public List<ErpCsTicket> findSlaWarnings(@Optional @Name("beforeMinutes") Integer beforeMinutes,
                                               IServiceContext context) {
         int minutes = beforeMinutes != null ? beforeMinutes : ErpCsConfigs.getSlaWarningBeforeMinutes();
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = CoreMetrics.currentDateTime();
         QueryBean q = new QueryBean();
         // deadlineDateTime BETWEEN now AND now+beforeMinutes 且未完成（供 nop-job 预警）
         q.addFilter(in("status", java.util.Arrays.asList(

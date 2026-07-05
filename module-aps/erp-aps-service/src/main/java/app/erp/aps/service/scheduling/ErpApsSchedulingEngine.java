@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import io.nop.api.core.time.CoreMetrics;
 
 /**
  * APS 有限产能排产引擎（贪心启发式，{@code scheduling.md §二/三/四/五}）。
@@ -285,7 +286,7 @@ public class ErpApsSchedulingEngine {
             f = horizonStart;
         }
         if (f == null) {
-            f = java.time.LocalDateTime.now();
+            f = CoreMetrics.currentDateTime();
         }
         return f;
     }
